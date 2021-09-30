@@ -1,60 +1,53 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>8.2. Tutorial &mdash; HΦ Documentation  documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ Documentation  documentation" href="../index.html" />
-    <link rel="up" title="8. Downfolding with Wannier functions" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>8.2. Tutorial &#8212; HΦ Documentation 3.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="8.3. Input parameters for Standard mode" href="parameter.html" />
     <link rel="prev" title="8.1. Overview" href="overview.html" />
    
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="tutorial">
-<span id="tutorialwannier"></span><h1>8.2. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+  <section id="tutorial">
+<span id="tutorialwannier"></span><h1><span class="section-number">8.2. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <p>In this tutorial, we downfold Sr<sub>2</sub>CuO<sub>3</sub>
 into single orbital 1D Hubbard model,
 and simulate that model with HPhi/mVMC.
 We use QuantumESPRESSO for the DFT calculation.
-Input files are served in <code class="docutils literal"><span class="pre">samples/Wannier/Sr2CuO3</span></code> directory.</p>
+Input files are served in <code class="docutils literal notranslate"><span class="pre">samples/Wannier/Sr2CuO3</span></code> directory.</p>
 <p>In actual studies, the input files etc. of each solver should be modified for more high accuracy calculation.
 Please refer to the manuals of each solver for the details of the input files.</p>
-<div class="section" id="scf-calculation-of-charge-density">
-<h2>8.2.1. SCF calculation of charge density<a class="headerlink" href="#scf-calculation-of-charge-density" title="Permalink to this headline">¶</a></h2>
+<section id="scf-calculation-of-charge-density">
+<h2><span class="section-number">8.2.1. </span>SCF calculation of charge density<a class="headerlink" href="#scf-calculation-of-charge-density" title="Permalink to this headline">¶</a></h2>
 <p>First, we perform the SCF calculation of the charge density.
 The input file is as follows:</p>
-<p><a class="reference download internal" href="../_downloads/scf.in" download=""><code class="xref download docutils literal"><span class="pre">scf.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
+<p><a class="reference download internal" download="" href="../_downloads/fc8a03ca4d72a607207c9c468c338dd3/scf.in"><code class="xref download docutils literal notranslate"><span class="pre">scf.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
  calculation = &#39;scf&#39;
   pseudo_dir = &#39;../pseudo&#39;
 prefix = &#39;sr2cuo3&#39;
@@ -91,17 +84,17 @@ K_POINTS automatic
 </div>
 <p>The pseudopotential (UPF file) are downloaded from
 <a class="reference external" href="www.quantum-simulation.org/potentials/sg15_oncv/">The SG15 Optimized Norm-Conserving Vanderbilt (ONCV) pseudopotentials</a>.
-Put the pseudopotential files into <code class="docutils literal"><span class="pre">../pseudo</span></code> directory.</p>
+Put the pseudopotential files into <code class="docutils literal notranslate"><span class="pre">../pseudo</span></code> directory.</p>
 <p><a class="reference external" href="http://www.quantum-simulation.org/potentials/sg15_oncv/sg15_oncv_upf_2015-10-07.tar.gz">http://www.quantum-simulation.org/potentials/sg15_oncv/sg15_oncv_upf_2015-10-07.tar.gz</a></p>
-<p>We use the program <code class="docutils literal"><span class="pre">pw.x</span></code> in QuantumESPRESSO as follows.</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in scf.in
+<p>We use the program <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> in QuantumESPRESSO as follows.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in scf.in
 </pre></div>
 </div>
-</div>
-<div class="section" id="optional-band-structure">
-<h2>8.2.2. (Optional) Band structure<a class="headerlink" href="#optional-band-structure" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference download internal" href="../_downloads/band.in" download=""><code class="xref download docutils literal"><span class="pre">band.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
+</section>
+<section id="optional-band-structure">
+<h2><span class="section-number">8.2.2. </span>(Optional) Band structure<a class="headerlink" href="#optional-band-structure" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference download internal" download="" href="../_downloads/da167c3c214ea2b40788f448a3605d0b/band.in"><code class="xref download docutils literal notranslate"><span class="pre">band.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
  calculation = &#39;bands&#39;
   pseudo_dir = &#39;../pseudo&#39;
 prefix = &#39;sr2cuo3&#39;
@@ -185,28 +178,28 @@ K_POINTS crystal
         0.5000000000    0.0000000000   -0.0000000000    1.0
 </pre></div>
 </div>
-<p>We use <code class="docutils literal"><span class="pre">pw.x</span></code>.</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in band.in
+<p>We use <code class="docutils literal notranslate"><span class="pre">pw.x</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in band.in
 </pre></div>
 </div>
-<p><a class="reference download internal" href="../_downloads/bands.in" download=""><code class="xref download docutils literal"><span class="pre">bands.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>&amp;BANDS
+<p><a class="reference download internal" download="" href="../_downloads/b1ec3039cdf0202e36301d36c1f37b1a/bands.in"><code class="xref download docutils literal notranslate"><span class="pre">bands.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;BANDS
       prefix = &#39;sr2cuo3&#39;
        lsym = .false.
 /
 </pre></div>
 </div>
-<p>We use <code class="docutils literal"><span class="pre">bands.x</span></code> QuantumESPRESSO.</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ bands.x -in bands.in
+<p>We use <code class="docutils literal notranslate"><span class="pre">bands.x</span></code> QuantumESPRESSO.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ bands.x -in bands.in
 </pre></div>
 </div>
-<p>We can plot the band structure by reading output <code class="docutils literal"><span class="pre">bands.out.gnu</span></code> from
+<p>We can plot the band structure by reading output <code class="docutils literal notranslate"><span class="pre">bands.out.gnu</span></code> from
 GnuPlot etc.</p>
-</div>
-<div class="section" id="kohn-sham-orbitals-for-wannier">
-<h2>8.2.3. Kohn-Sham orbitals for Wannier<a class="headerlink" href="#kohn-sham-orbitals-for-wannier" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference download internal" href="../_downloads/nscf.in" download=""><code class="xref download docutils literal"><span class="pre">nscf.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>&amp;CONTROL
+</section>
+<section id="kohn-sham-orbitals-for-wannier">
+<h2><span class="section-number">8.2.3. </span>Kohn-Sham orbitals for Wannier<a class="headerlink" href="#kohn-sham-orbitals-for-wannier" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference download internal" download="" href="../_downloads/b593b96ec06a24a051e56aa0df84bd84/nscf.in"><code class="xref download docutils literal notranslate"><span class="pre">nscf.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
  calculation = &#39;nscf&#39;
   pseudo_dir = &#39;../pseudo&#39;
   wf_collect = .true.
@@ -242,20 +235,20 @@ K_POINTS automatic
  4 4 4 0 0 0
 </pre></div>
 </div>
-<p>We use <code class="docutils literal"><span class="pre">pw.x</span></code> as</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ pw.x -in nscf.in
+<p>We use <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> as</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pw.x -in nscf.in
 </pre></div>
 </div>
-<p>Then, we use the utility <code class="docutils literal"><span class="pre">qe2respack.py</span></code> which is included in the RESPACK package.
-The command-line argument is the name of <code class="docutils literal"><span class="pre">[prefix].save</span></code> directory.</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ qe2respack.py sr2cuo3.save
+<p>Then, we use the utility <code class="docutils literal notranslate"><span class="pre">qe2respack.py</span></code> which is included in the RESPACK package.
+The command-line argument is the name of <code class="docutils literal notranslate"><span class="pre">[prefix].save</span></code> directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ qe2respack.py sr2cuo3.save
 </pre></div>
 </div>
-</div>
-<div class="section" id="wannier-function-dielectric-function-effective-interaction">
-<h2>8.2.4. Wannier function, dielectric function, effective interaction<a class="headerlink" href="#wannier-function-dielectric-function-effective-interaction" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference download internal" href="../_downloads/respack.in" download=""><code class="xref download docutils literal"><span class="pre">respack.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>&amp;PARAM_CHIQW
+</section>
+<section id="wannier-function-dielectric-function-effective-interaction">
+<h2><span class="section-number">8.2.4. </span>Wannier function, dielectric function, effective interaction<a class="headerlink" href="#wannier-function-dielectric-function-effective-interaction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference download internal" download="" href="../_downloads/b37127883768c5403e364998cb94cc7f/respack.in"><code class="xref download docutils literal notranslate"><span class="pre">respack.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;PARAM_CHIQW
 Num_freq_grid = 1
 !Ecut_for_eps = 
 flg_cRPA = 1
@@ -301,26 +294,26 @@ iz_intJ_max = 1
 /
 </pre></div>
 </div>
-<p>We use <code class="docutils literal"><span class="pre">calc_wannier</span></code>, <code class="docutils literal"><span class="pre">calc_chiqw</span></code>, <code class="docutils literal"><span class="pre">calc_j3d</span></code>,
-<code class="docutils literal"><span class="pre">calc_w3d</span></code> in RESPACK.</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ calc_wannier &lt; respack.in
+<p>We use <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code>, <code class="docutils literal notranslate"><span class="pre">calc_chiqw</span></code>, <code class="docutils literal notranslate"><span class="pre">calc_j3d</span></code>,
+<code class="docutils literal notranslate"><span class="pre">calc_w3d</span></code> in RESPACK.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ calc_wannier &lt; respack.in
 $ calc_chiqw &lt; respack.in
 $ calc_w3d &lt; respack.in
 $ calc_j3d &lt; respack.in
 </pre></div>
 </div>
-<p>After finishing calculations, the files are outputted in <code class="docutils literal"><span class="pre">dir-model</span></code> folder.
+<p>After finishing calculations, the files are outputted in <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> folder.
 The format of these files is Wannier90 format and the data such as the hopping integrals are written.
-(If you use the old version of RESPACK (20190226), the folder name is  <code class="docutils literal"><span class="pre">dir-mvmc</span></code> .)</p>
-</div>
-<div class="section" id="quantum-lattice-mode-for-hphi-mvmc">
-<h2>8.2.5. Quantum lattice mode for HPhi/mVMC<a class="headerlink" href="#quantum-lattice-mode-for-hphi-mvmc" title="Permalink to this headline">¶</a></h2>
-<p>Using standard mode of HPhi/mVMC, the calculation will be done by reading the files in <code class="docutils literal"><span class="pre">dir-model</span></code> folder.
-First, the files in <code class="docutils literal"><span class="pre">dir-model</span></code> directory should be moved to the current directry.
+(If you use the old version of RESPACK (20190226), the folder name is  <code class="docutils literal notranslate"><span class="pre">dir-mvmc</span></code> .)</p>
+</section>
+<section id="quantum-lattice-mode-for-hphi-mvmc">
+<h2><span class="section-number">8.2.5. </span>Quantum lattice mode for HPhi/mVMC<a class="headerlink" href="#quantum-lattice-mode-for-hphi-mvmc" title="Permalink to this headline">¶</a></h2>
+<p>Using standard mode of HPhi/mVMC, the calculation will be done by reading the files in <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> folder.
+First, the files in <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> directory should be moved to the current directry.
 Then, the calculation will be started by using standard mode.
 For example, in HPhi, the calculation will be dobe by typing the following command:</p>
-<p><a class="reference download internal" href="../_downloads/stan1.in" download=""><code class="xref download docutils literal"><span class="pre">stan.in</span></code></a></p>
-<div class="highlight-none"><div class="highlight"><pre>model = &quot;Hubbard&quot;
+<p><a class="reference download internal" download="" href="../_downloads/2230fa7451cede3854a6deef75032ce9/stan.in"><code class="xref download docutils literal notranslate"><span class="pre">stan.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
 lattice = &quot;wannier90&quot;
 a0w = 8
 a0l = 0
@@ -339,15 +332,16 @@ cutoff_u = 1.0
 cutoff_j = 0.02
 </pre></div>
 </div>
-<div class="highlight-bash"><div class="highlight"><pre>$ cp ./dir-model/* .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ cp ./dir-model/* .
 $ HPhi -s stan.in
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -363,18 +357,13 @@ $ HPhi -s stan.in
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
@@ -382,7 +371,7 @@ $ HPhi -s stan.in
 <li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Downfolding with Wannier functions</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. Overview</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">8.2. Tutorial</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.2. Tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#scf-calculation-of-charge-density">8.2.1. SCF calculation of charge density</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optional-band-structure">8.2.2. (Optional) Band structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#kohn-sham-orbitals-for-wannier">8.2.3. Kohn-Sham orbitals for Wannier</a></li>
@@ -401,39 +390,44 @@ $ HPhi -s stan.in
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">8. Downfolding with Wannier functions</a><ul>
-      <li>Previous: <a href="overview.html" title="previous chapter">8.1. Overview</a></li>
-      <li>Next: <a href="parameter.html" title="next chapter">8.3. Input parameters for Standard mode</a></li>
+  <li><a href="index.html"><span class="section-number">8. </span>Downfolding with Wannier functions</a><ul>
+      <li>Previous: <a href="overview.html" title="previous chapter"><span class="section-number">8.1. </span>Overview</a></li>
+      <li>Next: <a href="parameter.html" title="next chapter"><span class="section-number">8.3. </span>Input parameters for Standard mode</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/wannier/tutorial.txt"
+      <a href="../_sources/wannier/tutorial.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

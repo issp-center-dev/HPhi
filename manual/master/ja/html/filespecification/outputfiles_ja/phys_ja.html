@@ -1,52 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ja">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.3.23. phys.dat &mdash; HΦ マニュアル  ドキュメント</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
-    <link rel="up" title="4.3. 出力ファイル" href="index_outputfiles_ja.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.23. phys.dat &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.3.24. ham.dat" href="ham_ja.html" />
     <link rel="prev" title="4.3.22. Eigenvalue.dat" href="Eigenvalue_ja.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="phys-dat">
-<span id="subsec-phys"></span><h1>4.3.23. phys.dat<a class="headerlink" href="#phys-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+  <section id="phys-dat">
+<span id="subsec-phys"></span><h1><span class="section-number">4.3.23. </span>phys.dat<a class="headerlink" href="#phys-dat" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <div class="line-block">
 <div class="line">(FullDiagでのみ出力)全対角法で計算したエネルギーと物理量を出力します。エネルギーの低い基底エネルギーから順に出力されます。以下にファイル例を記載します。</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre>&lt;H&gt;         &lt;N&gt;        &lt;Sz&gt;       &lt;S2&gt;       &lt;D&gt;
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;H&gt;         &lt;N&gt;        &lt;Sz&gt;       &lt;S2&gt;       &lt;D&gt;
  -4.814170   0.000000   0.000000  -0.000000   0.590568
  -3.796850   0.000000   0.000000   1.333333   0.423804
 …
@@ -54,54 +48,55 @@
 14.852520   0.000000   0.000000   0.000000   2.329157
 </pre></div>
 </div>
-<div class="section" id="id1">
+<section id="id1">
 <h2>ファイル名<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul class="simple">
-<li>カノニカル: ##_phys_Nup_$$Ndown%%.dat</li>
-<li>グランドカノニカル: ##_phys.dat</li>
+<li><p>カノニカル: ##_phys_Nup_$$Ndown%%.dat</p></li>
+<li><p>グランドカノニカル: ##_phys.dat</p></li>
 </ul>
 <p>##はModParaファイル内の[string02]で指定されるヘッダ、$$はNup、%%はNdownを表します。</p>
-</div>
-<div class="section" id="id2">
+</section>
+<section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。</p>
 <ul class="simple">
-<li><span class="math">\([\)</span>double01<span class="math">\(]\)</span> <span class="math">\([\)</span>double02<span class="math">\(]\)</span>
-<span class="math">\([\)</span>double03<span class="math">\(]\)</span> <span class="math">\([\)</span>double04<span class="math">\(]\)</span>
-<span class="math">\([\)</span>double05<span class="math">\(]\)</span></li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span> <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>
+<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span> <span class="math notranslate nohighlight">\([\)</span>double04<span class="math notranslate nohighlight">\(]\)</span>
+<span class="math notranslate nohighlight">\([\)</span>double05<span class="math notranslate nohighlight">\(]\)</span></p></li>
 </ul>
-</div>
-<div class="section" id="id3">
+</section>
+<section id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><span class="math">\([\)</span>double01<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> ハミルトニアンの期待値(エネルギー)<span class="math">\(\langle \mathcal{H}\rangle\)</span>。</p>
+<p><strong>説明 :</strong> ハミルトニアンの期待値(エネルギー)<span class="math notranslate nohighlight">\(\langle \mathcal{H}\rangle\)</span>。</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>double02<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> 粒子数の期待値<span class="math">\(\langle {n}\rangle\)</span>。</p>
+<p><strong>説明 :</strong> 粒子数の期待値<span class="math notranslate nohighlight">\(\langle {n}\rangle\)</span>。</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>double03<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> スピンのz成分の期待値<span class="math">\(\langle S_z\rangle\)</span>。</p>
+<p><strong>説明 :</strong> スピンのz成分の期待値<span class="math notranslate nohighlight">\(\langle S_z\rangle\)</span>。</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>double04<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double04<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> スピンの2乗の期待値<span class="math">\(\langle  S^2\rangle\)</span>。</p>
+<p><strong>説明 :</strong> スピンの2乗の期待値<span class="math notranslate nohighlight">\(\langle  S^2\rangle\)</span>。</p>
 </li>
-<li><p class="first"><span class="math">\([\)</span>double05<span class="math">\(]\)</span></p>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double05<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong> ダブロン
-<span class="math">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
-(ただし <span class="math">\(N_s\)</span>はサイト数)。</p>
+<span class="math notranslate nohighlight">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
+(ただし <span class="math notranslate nohighlight">\(N_s\)</span>はサイト数)。</p>
 </li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -117,18 +112,13 @@
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
 
 
 
-
-<h3>Navigation</h3>
+<h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
@@ -156,7 +146,7 @@
 <li class="toctree-l3"><a class="reference internal" href="SS_ja.html">4.3.20. SS.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Flct_ja.html">4.3.21. Flct.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Eigenvalue_ja.html">4.3.22. Eigenvalue.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.23. phys.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.23. phys.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ham_ja.html">4.3.24. ham.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajs_ja.html">4.3.25. cisajs.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cisajscktalt_ja.html">4.3.26. cisajscktalt.dat</a></li>
@@ -182,41 +172,46 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
-  <li><a href="index_outputfiles_ja.html">4.3. 出力ファイル</a><ul>
-      <li>Previous: <a href="Eigenvalue_ja.html" title="前の章へ">4.3.22. Eigenvalue.dat</a></li>
-      <li>Next: <a href="ham_ja.html" title="次の章へ">4.3.24. ham.dat</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_outputfiles_ja.html"><span class="section-number">4.3. </span>出力ファイル</a><ul>
+      <li>Previous: <a href="Eigenvalue_ja.html" title="前の章へ"><span class="section-number">4.3.22. </span>Eigenvalue.dat</a></li>
+      <li>Next: <a href="ham_ja.html" title="次の章へ"><span class="section-number">4.3.24. </span>ham.dat</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>クイック検索</h3>
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    モジュール、クラス、または関数名を入力してください
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_ja/phys_ja.txt"
+      <a href="../../_sources/filespecification/outputfiles_ja/phys_ja.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

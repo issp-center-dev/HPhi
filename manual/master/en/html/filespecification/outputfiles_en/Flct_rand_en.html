@@ -1,55 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.3.17. Flct_rand.dat &mdash; HΦ Documentation  documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ Documentation  documentation" href="../../index.html" />
-    <link rel="up" title="4.3. Output files" href="index_outputfiles_en.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.17. Flct_rand.dat &#8212; HΦ Documentation 3.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="4.3.18. Time_TE_Step.dat" href="Time_TE_Step_en.html" />
     <link rel="prev" title="4.3.16. SS_rand.dat" href="SS_rand_en.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="flct-rand-dat">
-<span id="subsec-flctrand"></span><h1>4.3.17. Flct_rand.dat<a class="headerlink" href="#flct-rand-dat" title="Permalink to this headline">¶</a></h1>
+  <section id="flct-rand-dat">
+<span id="subsec-flctrand"></span><h1><span class="section-number">4.3.17. </span>Flct_rand.dat<a class="headerlink" href="#flct-rand-dat" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
 <div class="line">(For the TPQ method) This file is outputted to show the calculation
 results of the fluctuation of the particle number, doublon, and
-<span class="math">\(S_z\)</span> for the TPQ method. In the restart calculation, the values
+<span class="math notranslate nohighlight">\(S_z\)</span> for the TPQ method. In the restart calculation, the values
 are added to the previous file. An example of the file format is as
 follows.</div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre> # inv_temp, N, N^2, D, D^2, Sz, Sz^2, step_i
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # inv_temp, N, N^2, D, D^2, Sz, Sz^2, step_i
 0.0826564 12.00 144.00 0.00 0.00 0.0009345626081113 0.2500 1
 0.1639935 12.00 144.00 0.00 0.00 0.0023147006319775 0.2500 2
 0.2440168 12.00 144.00 0.00 0.00 0.0037424057659867 0.2500 3
@@ -58,78 +52,79 @@ follows.</div>
 136.04474 12.00 144.00 0.00 0.00 -0.0000000000165344 0.2500 1999
 </pre></div>
 </div>
-<div class="section" id="file-name">
+<section id="file-name">
 <span id="file-name-9"></span><h2>File name<a class="headerlink" href="#file-name" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Flct_rand??.dat</li>
+<li><p>Flct_rand??.dat</p></li>
 </ul>
 <p>?? indicates the number of runs in the calculation of the TPQ method.</p>
-</div>
-<div class="section" id="file-format">
+</section>
+<section id="file-format">
 <span id="file-format-32"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Line 1: Header</li>
-<li>Lines 2-: [double01]
+<li><p>Line 1: Header</p></li>
+<li><p>Lines 2-: [double01]
 [double02] [double03]
 [double04] [double05]
 [double06] [double07]
-[int01].</li>
+[int01].</p></li>
 </ul>
-</div>
-<div class="section" id="parameters">
+</section>
+<section id="parameters">
 <span id="parameters-32"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">[double01]</p>
+<li><p>[double01]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> Inverse temperature <span class="math">\(1/{k_{\rm B}T}\)</span>.</p>
+<p><strong>Description :</strong> Inverse temperature <span class="math notranslate nohighlight">\(1/{k_{\rm B}T}\)</span>.</p>
 </li>
-<li><p class="first">[double02]</p>
+<li><p>[double02]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> A total particle number
-<span class="math">\(\sum_{i} \langle {n}_i \rangle\)</span>.</p>
+<span class="math notranslate nohighlight">\(\sum_{i} \langle {n}_i \rangle\)</span>.</p>
 </li>
-<li><p class="first">[double03]</p>
+<li><p>[double03]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The expected value of the square of the particle
-number <span class="math">\(\langle (\sum_{i} {n}_i)^2 \rangle\)</span>.</p>
+number <span class="math notranslate nohighlight">\(\langle (\sum_{i} {n}_i)^2 \rangle\)</span>.</p>
 </li>
-<li><p class="first">[double04]</p>
+<li><p>[double04]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The expected value of doublon
-<span class="math">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
-(<span class="math">\(N_s\)</span> is the total number of sites).</p>
+<span class="math notranslate nohighlight">\(\frac{1}{N_s} \sum_{i}\langle n_{i\uparrow}n_{i\downarrow}\rangle\)</span>
+(<span class="math notranslate nohighlight">\(N_s\)</span> is the total number of sites).</p>
 </li>
-<li><p class="first">[double05]</p>
+<li><p>[double05]</p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> The expected value of the square of doublon
-<span class="math">\(\frac{1}{N_s}\langle ( \sum_{i} n_{i\uparrow} n_{i\downarrow})^2\rangle\)</span>
-(<span class="math">\(N_s\)</span> is the total number of sites).</p>
+<span class="math notranslate nohighlight">\(\frac{1}{N_s}\langle ( \sum_{i} n_{i\uparrow} n_{i\downarrow})^2\rangle\)</span>
+(<span class="math notranslate nohighlight">\(N_s\)</span> is the total number of sites).</p>
 </li>
-<li><p class="first">[double06]</p>
+<li><p>[double06]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> The expected value of <span class="math">\(S_z\)</span>,
-<span class="math">\(\frac{1}{N_s} \sum_{i}\langle {S}_i^z\rangle\)</span> (<span class="math">\(N_s\)</span>
+<p><strong>Description :</strong> The expected value of <span class="math notranslate nohighlight">\(S_z\)</span>,
+<span class="math notranslate nohighlight">\(\frac{1}{N_s} \sum_{i}\langle {S}_i^z\rangle\)</span> (<span class="math notranslate nohighlight">\(N_s\)</span>
 is the total number of sites).</p>
 </li>
-<li><p class="first">[double07]</p>
+<li><p>[double07]</p>
 <p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> The expected value of the square of <span class="math">\(S_z\)</span>,
-<span class="math">\(\frac{1}{N_s} \langle (\sum_{i} {S}_i^z)^2\rangle\)</span>
-(<span class="math">\(N_s\)</span> is the total number of sites).</p>
+<p><strong>Description :</strong> The expected value of the square of <span class="math notranslate nohighlight">\(S_z\)</span>,
+<span class="math notranslate nohighlight">\(\frac{1}{N_s} \langle (\sum_{i} {S}_i^z)^2\rangle\)</span>
+(<span class="math notranslate nohighlight">\(N_s\)</span> is the total number of sites).</p>
 </li>
-<li><p class="first">[int01]</p>
+<li><p>[int01]</p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> The number of operations of
-<span class="math">\((l-{\mathcal H}/N_{s})\)</span> for an initial wave function, where
-<span class="math">\(l\)</span> is <code class="docutils literal"><span class="pre">LargeValue</span></code> defined in a ModPara file and
-<span class="math">\(N_{s}\)</span> is the total number of sites.</p>
+<span class="math notranslate nohighlight">\((l-{\mathcal H}/N_{s})\)</span> for an initial wave function, where
+<span class="math notranslate nohighlight">\(l\)</span> is <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code> defined in a ModPara file and
+<span class="math notranslate nohighlight">\(N_{s}\)</span> is the total number of sites.</p>
 </li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -145,18 +140,13 @@ is the total number of sites).</p>
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
 
 
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
@@ -178,7 +168,7 @@ is the total number of sites).</p>
 <li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_en.html">4.3.14. Time_TPQ_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Norm_rand_en.html">4.3.15. Norm_rand.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SS_rand_en.html">4.3.16. SS_rand.dat</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.3.17. Flct_rand.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.17. Flct_rand.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_en.html">4.3.18. Time_TE_Step.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Norm_en.html">4.3.19. Norm.dat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SS_en.html">4.3.20. SS.dat</a></li>
@@ -210,41 +200,46 @@ is the total number of sites).</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. File specification</a><ul>
-  <li><a href="index_outputfiles_en.html">4.3. Output files</a><ul>
-      <li>Previous: <a href="SS_rand_en.html" title="previous chapter">4.3.16. SS_rand.dat</a></li>
-      <li>Next: <a href="Time_TE_Step_en.html" title="next chapter">4.3.18. Time_TE_Step.dat</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="SS_rand_en.html" title="previous chapter"><span class="section-number">4.3.16. </span>SS_rand.dat</a></li>
+      <li>Next: <a href="Time_TE_Step_en.html" title="next chapter"><span class="section-number">4.3.18. </span>Time_TE_Step.dat</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/outputfiles_en/Flct_rand_en.txt"
+      <a href="../../_sources/filespecification/outputfiles_en/Flct_rand_en.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

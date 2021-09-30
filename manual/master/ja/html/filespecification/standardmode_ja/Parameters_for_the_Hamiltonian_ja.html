@@ -1,421 +1,402 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ja">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4.1.4. ハミルトニアンの各項の係数 &mdash; HΦ マニュアル  ドキュメント</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/translations.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="HΦ マニュアル  ドキュメント" href="../../index.html" />
-    <link rel="up" title="4.1. スタンダードモード用入力ファイル" href="index_standardmode_ja.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1.4. ハミルトニアンの各項の係数 &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="4.1.5. 計算条件のパラメータ" href="Parameters_for_the_numerical_condition.html" />
     <link rel="prev" title="4.1.3. 保存量に関するパラメータ" href="Parameters_for_conserved_quantities_ja.html" />
    
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">  
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="id1">
-<h1>4.1.4. ハミルトニアンの各項の係数<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+  <section id="id1">
+<h1><span class="section-number">4.1.4. </span>ハミルトニアンの各項の係数<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
 <p>デフォルト値は特に記載されていないものについては0に設定してあります。
 型が複素数のパラメータは「実部, 虚部」(間に“,”)の形式で指定し、
 実数の場合には「実部」で指定が可能です。</p>
-<div class="section" id="id2">
+<section id="id2">
 <h2>局所項<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">mu</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での化学ポテンシャルを指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">U</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">U</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型でのオンサイトクーロン積分を指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">Jx</span></code>, <code class="docutils literal"><span class="pre">Jy</span></code>, <code class="docutils literal"><span class="pre">Jz</span></code>, <code class="docutils literal"><span class="pre">Jxy</span></code>, <code class="docutils literal"><span class="pre">Jyx</span></code>, <code class="docutils literal"><span class="pre">Jxz</span></code>, <code class="docutils literal"><span class="pre">Jzx</span></code>, <code class="docutils literal"><span class="pre">Jyz</span></code>,
-<code class="docutils literal"><span class="pre">Jzy</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">Jx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jy</span></code>, <code class="docutils literal notranslate"><span class="pre">Jz</span></code>, <code class="docutils literal notranslate"><span class="pre">Jxy</span></code>, <code class="docutils literal notranslate"><span class="pre">Jyx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jxz</span></code>, <code class="docutils literal notranslate"><span class="pre">Jzx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jyz</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Jzy</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 近藤格子模型での、局在電子と遍歴電子のスピン結合を指定します。
 また対角項について,
-<code class="docutils literal"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz</span></code>を指定する代わりに、パラメータ<code class="docutils literal"><span class="pre">J</span></code>を指定すると
-<code class="docutils literal"><span class="pre">Jx</span> <span class="pre">=</span> <span class="pre">Jy</span> <span class="pre">=</span> <span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">J</span></code>が代入されます。 <code class="docutils literal"><span class="pre">J</span></code>を指定した上で<code class="docutils literal"><span class="pre">Jx</span></code>,
-<code class="docutils literal"><span class="pre">Jy</span></code>, <code class="docutils literal"><span class="pre">Jz</span></code>を指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+<code class="docutils literal notranslate"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz</span></code>を指定する代わりに、パラメータ<code class="docutils literal notranslate"><span class="pre">J</span></code>を指定すると
+<code class="docutils literal notranslate"><span class="pre">Jx</span> <span class="pre">=</span> <span class="pre">Jy</span> <span class="pre">=</span> <span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">J</span></code>が代入されます。 <code class="docutils literal notranslate"><span class="pre">J</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">Jx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Jy</span></code>, <code class="docutils literal notranslate"><span class="pre">Jz</span></code>を指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">h</span></code></p>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">h</span></code></p></li>
 </ul>
 <blockquote>
 <div><p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong> 縦磁場を指定します。</p>
 </div></blockquote>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">Gamma</span></code>, <code class="docutils literal"><span class="pre">D</span></code></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Gamma</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code></p></li>
 </ul>
 <blockquote>
 <div><p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 スピン模型での縦磁場、横磁場、異方性パラメータを指定します。
-ただし異方性パラメータについては、<code class="docutils literal"><span class="pre">model=SpinGCCMA</span></code>では使用できません。</p>
+ただし異方性パラメータについては、<code class="docutils literal notranslate"><span class="pre">model=SpinGCCMA</span></code>では使用できません。</p>
 </div></blockquote>
 <p>下記の非局所項は、梯子格子の場合とそれ以外(１次元鎖、矩形格子、三角格子、蜂の巣格子、カゴメ格子)
 の場合で指定の仕方が異なります。
 また、各格子で指定可能なパラメーターを
-Table <a class="reference internal" href="#table-interactions"><span>TABLE 4.1</span></a> に表します。</p>
-<table border="1" class="docutils" id="id3">
-<span id="table-interactions"></span><caption><span class="caption-number">TABLE 4.1 </span><span class="caption-text">各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。</span><a class="headerlink" href="#id3" title="このテーブルへのパーマリンク">¶</a></caption>
+Table <a class="reference internal" href="#table-interactions"><span class="std std-numref">表 4.1</span></a> に表します。</p>
+<span id="table-interactions"></span><table class="docutils align-default" id="id3">
+<caption><span class="caption-number">表 4.1 </span><span class="caption-text">各格子で定義可能な相互作用一覧。ただし、スピン結合については行列として与えることが可能。</span><a class="headerlink" href="#id3" title="このテーブルへのパーマリンク">¶</a></caption>
 <colgroup>
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">相互作用</th>
-<th class="head">1次元鎖</th>
-<th class="head">矩形格子</th>
-<th class="head">三角格子</th>
-<th class="head">蜂の巣格子</th>
-<th class="head">カゴメ格子</th>
-<th class="head">梯子格子</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>相互作用</p></th>
+<th class="head"><p>1次元鎖</p></th>
+<th class="head"><p>矩形格子</p></th>
+<th class="head"><p>三角格子</p></th>
+<th class="head"><p>蜂の巣格子</p></th>
+<th class="head"><p>カゴメ格子</p></th>
+<th class="head"><p>梯子格子</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J</span></code>, <code class="docutils literal"><span class="pre">t</span></code>, <code class="docutils literal"><span class="pre">V</span></code> (省略形)</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J</span></code>, <code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">V</span></code> (省略形)</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J0</span></code>, <code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">V0</span></code></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J0</span></code>, <code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J1</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>, <code class="docutils literal"><span class="pre">V1</span></code></td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J1</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>, <code class="docutils literal notranslate"><span class="pre">V1</span></code></p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J2</span></code>, <code class="docutils literal"><span class="pre">t2</span></code>, <code class="docutils literal"><span class="pre">V2</span></code></td>
-<td>-</td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J2</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code>, <code class="docutils literal notranslate"><span class="pre">V2</span></code></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J'</span></code>, <code class="docutils literal"><span class="pre">t'</span></code>, <code class="docutils literal"><span class="pre">V'</span></code> (省略形)</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J'</span></code>, <code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">V'</span></code> (省略形)</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J0'</span></code>, <code class="docutils literal"><span class="pre">t0'</span></code>, <code class="docutils literal"><span class="pre">V0'</span></code></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J0'</span></code>, <code class="docutils literal notranslate"><span class="pre">t0'</span></code>, <code class="docutils literal notranslate"><span class="pre">V0'</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J1'</span></code>, <code class="docutils literal"><span class="pre">t1'</span></code>, <code class="docutils literal"><span class="pre">V1'</span></code></td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J1'</span></code>, <code class="docutils literal notranslate"><span class="pre">t1'</span></code>, <code class="docutils literal notranslate"><span class="pre">V1'</span></code></p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J2'</span></code>, <code class="docutils literal"><span class="pre">t2'</span></code>, <code class="docutils literal"><span class="pre">V2'</span></code></td>
-<td>-</td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J2'</span></code>, <code class="docutils literal notranslate"><span class="pre">t2'</span></code>, <code class="docutils literal notranslate"><span class="pre">V2'</span></code></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J''</span></code>, <code class="docutils literal"><span class="pre">t''</span></code>, <code class="docutils literal"><span class="pre">V''</span></code> (省略形)</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
-<td>-</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J''</span></code>, <code class="docutils literal notranslate"><span class="pre">t''</span></code>, <code class="docutils literal notranslate"><span class="pre">V''</span></code> (省略形)</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J0''</span></code>, <code class="docutils literal"><span class="pre">t0''</span></code>, <code class="docutils literal"><span class="pre">V0''</span></code></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
-<td>-</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J0''</span></code>, <code class="docutils literal notranslate"><span class="pre">t0''</span></code>, <code class="docutils literal notranslate"><span class="pre">V0''</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">J1''</span></code>, <code class="docutils literal"><span class="pre">t1''</span></code>, <code class="docutils literal"><span class="pre">V1''</span></code></td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
-<td>-</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">J1''</span></code>, <code class="docutils literal notranslate"><span class="pre">t1''</span></code>, <code class="docutils literal notranslate"><span class="pre">V1''</span></code></p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">J2''</span></code>, <code class="docutils literal"><span class="pre">t2''</span></code>, <code class="docutils literal"><span class="pre">V2''</span></code></td>
-<td>-</td>
-<td>-</td>
-<td><span class="math">\({\circ}\)</span></td>
-<td><span class="math">\({\circ}\)</span></td>
-<td>-</td>
-<td>-</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">J2''</span></code>, <code class="docutils literal notranslate"><span class="pre">t2''</span></code>, <code class="docutils literal notranslate"><span class="pre">V2''</span></code></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\({\circ}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="fig-ladder">
-<h2>非局所項 [ 梯子格子 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> )]<a class="headerlink" href="#fig-ladder" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</section>
+<section id="fig-ladder">
+<h2>非局所項 [ 梯子格子 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> )]<a class="headerlink" href="#fig-ladder" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>, <code class="docutils literal"><span class="pre">t1'</span></code>, <code class="docutils literal"><span class="pre">t2</span></code>, <code class="docutils literal"><span class="pre">t2'</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>, <code class="docutils literal notranslate"><span class="pre">t1'</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code>, <code class="docutils literal notranslate"><span class="pre">t2'</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
 <p><strong>説明 :</strong> 梯子格子でのホッピング
-(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> 参照)を指定します。</p>
+(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> 参照)を指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">V0</span></code>, <code class="docutils literal"><span class="pre">V1</span></code>, <code class="docutils literal"><span class="pre">V1'</span></code>, <code class="docutils literal"><span class="pre">V2</span></code>, <code class="docutils literal"><span class="pre">V2'</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">V0</span></code>, <code class="docutils literal notranslate"><span class="pre">V1</span></code>, <code class="docutils literal notranslate"><span class="pre">V1'</span></code>, <code class="docutils literal notranslate"><span class="pre">V2</span></code>, <code class="docutils literal notranslate"><span class="pre">V2'</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong> 梯子格子でのオフサイトクーロン積分
-(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span>図 4.2</span></a> 参照)を指定します。</p>
+(<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> 参照)を指定します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J0x</span></code>, <code class="docutils literal"><span class="pre">J0y</span></code>, <code class="docutils literal"><span class="pre">J0z</span></code>, <code class="docutils literal"><span class="pre">J0xy</span></code>, <code class="docutils literal"><span class="pre">J0yx</span></code>, <code class="docutils literal"><span class="pre">J0xz</span></code>, <code class="docutils literal"><span class="pre">J0zx</span></code>,
-<code class="docutils literal"><span class="pre">J0yz</span></code>, <code class="docutils literal"><span class="pre">J0zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J1x</span></code>, <code class="docutils literal"><span class="pre">J1y</span></code>, <code class="docutils literal"><span class="pre">J1z</span></code>, <code class="docutils literal"><span class="pre">J1xy</span></code>, <code class="docutils literal"><span class="pre">J1yx</span></code>, <code class="docutils literal"><span class="pre">J1xz</span></code>, <code class="docutils literal"><span class="pre">J1zx</span></code>,
-<code class="docutils literal"><span class="pre">J1yz</span></code>, <code class="docutils literal"><span class="pre">J1zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J1'x</span></code>, <code class="docutils literal"><span class="pre">J1'y</span></code>, <code class="docutils literal"><span class="pre">J1'z</span></code>, <code class="docutils literal"><span class="pre">J1'xy</span></code>, <code class="docutils literal"><span class="pre">J1'yx</span></code>, <code class="docutils literal"><span class="pre">J1'xz</span></code>,
-<code class="docutils literal"><span class="pre">J1'zx</span></code>, <code class="docutils literal"><span class="pre">J1'yz</span></code>, <code class="docutils literal"><span class="pre">J1'zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J2x</span></code>, <code class="docutils literal"><span class="pre">J2y</span></code>, <code class="docutils literal"><span class="pre">J2z</span></code>, <code class="docutils literal"><span class="pre">J2xy</span></code>, <code class="docutils literal"><span class="pre">J2yx</span></code>, <code class="docutils literal"><span class="pre">J2xz</span></code>, <code class="docutils literal"><span class="pre">J2zx</span></code>,
-<code class="docutils literal"><span class="pre">J2yz</span></code>, <code class="docutils literal"><span class="pre">J2zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J2'x</span></code>, <code class="docutils literal"><span class="pre">J2'y</span></code>, <code class="docutils literal"><span class="pre">J2'z</span></code>, <code class="docutils literal"><span class="pre">J2'xy</span></code>, <code class="docutils literal"><span class="pre">J2'yx</span></code>, <code class="docutils literal"><span class="pre">J2'xz</span></code>,
-<code class="docutils literal"><span class="pre">J2'zx</span></code>, <code class="docutils literal"><span class="pre">J2'yz</span></code>, <code class="docutils literal"><span class="pre">J2'zy</span></code>.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">J0x</span></code>, <code class="docutils literal notranslate"><span class="pre">J0y</span></code>, <code class="docutils literal notranslate"><span class="pre">J0z</span></code>, <code class="docutils literal notranslate"><span class="pre">J0xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J0yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J0xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J0yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J1x</span></code>, <code class="docutils literal notranslate"><span class="pre">J1y</span></code>, <code class="docutils literal notranslate"><span class="pre">J1z</span></code>, <code class="docutils literal notranslate"><span class="pre">J1xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J1yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J1yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J1'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'xz</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J1'zx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J2x</span></code>, <code class="docutils literal notranslate"><span class="pre">J2y</span></code>, <code class="docutils literal notranslate"><span class="pre">J2z</span></code>, <code class="docutils literal notranslate"><span class="pre">J2xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J2yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J2yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J2'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'xz</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J2'zx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'zy</span></code>.</p>
 <p><strong>形式 :</strong> 実数</p>
-<p><strong>説明 :</strong> 梯子格子でのスピン相互作用 (<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span>図 4.4</span></a> 参照)
+<p><strong>説明 :</strong> 梯子格子でのスピン相互作用 (<a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-ladder"><span class="std std-numref">図 4.4</span></a> 参照)
 を指定します。
-また対角項について、例えば<code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>を指定する代わりに
-パラメータ<code class="docutils literal"><span class="pre">J0</span></code>を指定すると
-<code class="docutils literal"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J0y</span> <span class="pre">=</span> <span class="pre">J0z</span> <span class="pre">=</span> <span class="pre">J0</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">J0</span></code>を指定した上で<code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>等も指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。
-<code class="docutils literal"><span class="pre">J1</span></code>, <code class="docutils literal"><span class="pre">J1'</span></code>, <code class="docutils literal"><span class="pre">J2</span></code>, <code class="docutils literal"><span class="pre">J2'</span></code>についても同様です。</p>
+また対角項について、例えば<code class="docutils literal notranslate"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>を指定する代わりに
+パラメータ<code class="docutils literal notranslate"><span class="pre">J0</span></code>を指定すると
+<code class="docutils literal notranslate"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J0y</span> <span class="pre">=</span> <span class="pre">J0z</span> <span class="pre">=</span> <span class="pre">J0</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">J0</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>等も指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。
+<code class="docutils literal notranslate"><span class="pre">J1</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'</span></code>, <code class="docutils literal notranslate"><span class="pre">J2</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'</span></code>についても同様です。</p>
 </li>
 </ul>
-</div>
-<div class="section" id="fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome">
-<h2>非局所項 [梯子格子以外 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span>図 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span>図 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span>図 4.3</span></a> )]<a class="headerlink" href="#fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</section>
+<section id="fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome">
+<h2>非局所項 [梯子格子以外 ( <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-lattice"><span class="std std-numref">図 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-chap04-1-honeycomb"><span class="std std-numref">図 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_ja.html#fig-kagome"><span class="std std-numref">図 4.3</span></a> )]<a class="headerlink" href="#fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">t</span></code>, <code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>, <code class="docutils literal"><span class="pre">t2</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、最近接サイト間の各方向のホッピングを指定します。
-また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">t1</span></code>,
-<code class="docutils literal"><span class="pre">t2</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">t</span></code>を指定すると、<code class="docutils literal"><span class="pre">t0</span> <span class="pre">=</span> <span class="pre">t1</span> <span class="pre">=</span> <span class="pre">t2</span> <span class="pre">=</span> <span class="pre">t</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">t</span></code>と<code class="docutils literal"><span class="pre">t0</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t2</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">t</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">t0</span> <span class="pre">=</span> <span class="pre">t1</span> <span class="pre">=</span> <span class="pre">t2</span> <span class="pre">=</span> <span class="pre">t</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">t</span></code>と<code class="docutils literal notranslate"><span class="pre">t0</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">t'</span></code>, <code class="docutils literal"><span class="pre">t0'</span></code>, <code class="docutils literal"><span class="pre">t1'</span></code>, <code class="docutils literal"><span class="pre">t2'</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">t0'</span></code>, <code class="docutils literal notranslate"><span class="pre">t1'</span></code>, <code class="docutils literal notranslate"><span class="pre">t2'</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、次近接サイト間の各方向のホッピングを指定します。
-また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">t0'</span></code>, <code class="docutils literal"><span class="pre">t1'</span></code>,
-<code class="docutils literal"><span class="pre">t2'</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">t'</span></code>を指定すると、<code class="docutils literal"><span class="pre">t0'</span> <span class="pre">=</span> <span class="pre">t1'</span> <span class="pre">=</span> <span class="pre">t2'</span> <span class="pre">=</span> <span class="pre">t'</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">t'</span></code>と<code class="docutils literal"><span class="pre">t0'</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">t0'</span></code>, <code class="docutils literal notranslate"><span class="pre">t1'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t2'</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">t'</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">t0'</span> <span class="pre">=</span> <span class="pre">t1'</span> <span class="pre">=</span> <span class="pre">t2'</span> <span class="pre">=</span> <span class="pre">t'</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">t'</span></code>と<code class="docutils literal notranslate"><span class="pre">t0'</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">t''</span></code>, <code class="docutils literal"><span class="pre">t0''</span></code>, <code class="docutils literal"><span class="pre">t1''</span></code>, <code class="docutils literal"><span class="pre">t2''</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">t''</span></code>, <code class="docutils literal notranslate"><span class="pre">t0''</span></code>, <code class="docutils literal notranslate"><span class="pre">t1''</span></code>, <code class="docutils literal notranslate"><span class="pre">t2''</span></code></p>
 <p><strong>形式 :</strong> 複素数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、第三近接サイト間の各方向のホッピングを指定します。
-また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">t0''</span></code>, <code class="docutils literal"><span class="pre">t1''</span></code>,
-<code class="docutils literal"><span class="pre">t2''</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">t''</span></code>を指定すると、<code class="docutils literal"><span class="pre">t0''</span> <span class="pre">=</span> <span class="pre">t1''</span> <span class="pre">=</span> <span class="pre">t2''</span> <span class="pre">=</span> <span class="pre">t''</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">t''</span></code>と<code class="docutils literal"><span class="pre">t0''</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、ホッピングのボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">t0''</span></code>, <code class="docutils literal notranslate"><span class="pre">t1''</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t2''</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">t''</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">t0''</span> <span class="pre">=</span> <span class="pre">t1''</span> <span class="pre">=</span> <span class="pre">t2''</span> <span class="pre">=</span> <span class="pre">t''</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">t''</span></code>と<code class="docutils literal notranslate"><span class="pre">t0''</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">V</span></code>, <code class="docutils literal"><span class="pre">V0</span></code>, <code class="docutils literal"><span class="pre">V1</span></code>, <code class="docutils literal"><span class="pre">V2</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">V</span></code>, <code class="docutils literal notranslate"><span class="pre">V0</span></code>, <code class="docutils literal notranslate"><span class="pre">V1</span></code>, <code class="docutils literal notranslate"><span class="pre">V2</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、最近接サイト間のCoulomb積分を指定します。
-また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">V0</span></code>,
-<code class="docutils literal"><span class="pre">V1</span></code>, <code class="docutils literal"><span class="pre">V2</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">V</span></code>を指定すると、<code class="docutils literal"><span class="pre">V0</span> <span class="pre">=</span> <span class="pre">V1</span> <span class="pre">=</span> <span class="pre">V2</span> <span class="pre">=</span> <span class="pre">V</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">V</span></code>と<code class="docutils literal"><span class="pre">V0</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">V0</span></code>,
+<code class="docutils literal notranslate"><span class="pre">V1</span></code>, <code class="docutils literal notranslate"><span class="pre">V2</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">V</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">V0</span> <span class="pre">=</span> <span class="pre">V1</span> <span class="pre">=</span> <span class="pre">V2</span> <span class="pre">=</span> <span class="pre">V</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">V</span></code>と<code class="docutils literal notranslate"><span class="pre">V0</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">V'</span></code>, <code class="docutils literal"><span class="pre">V0'</span></code>, <code class="docutils literal"><span class="pre">V1'</span></code>, <code class="docutils literal"><span class="pre">V2'</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">V'</span></code>, <code class="docutils literal notranslate"><span class="pre">V0'</span></code>, <code class="docutils literal notranslate"><span class="pre">V1'</span></code>, <code class="docutils literal notranslate"><span class="pre">V2'</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、次近接サイト間のCoulomb積分を指定します。
-また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">V0'</span></code>,
-<code class="docutils literal"><span class="pre">V1'</span></code>, <code class="docutils literal"><span class="pre">V2'</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">V'</span></code>を指定すると、<code class="docutils literal"><span class="pre">V0'</span> <span class="pre">=</span> <span class="pre">V1'</span> <span class="pre">=</span> <span class="pre">V2'</span> <span class="pre">=</span> <span class="pre">V'</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">V'</span></code>と<code class="docutils literal"><span class="pre">V0'</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">V0'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">V1'</span></code>, <code class="docutils literal notranslate"><span class="pre">V2'</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">V'</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">V0'</span> <span class="pre">=</span> <span class="pre">V1'</span> <span class="pre">=</span> <span class="pre">V2'</span> <span class="pre">=</span> <span class="pre">V'</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">V'</span></code>と<code class="docutils literal notranslate"><span class="pre">V0'</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">V''</span></code>, <code class="docutils literal"><span class="pre">V0''</span></code>, <code class="docutils literal"><span class="pre">V1''</span></code>, <code class="docutils literal"><span class="pre">V2''</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">V''</span></code>, <code class="docutils literal notranslate"><span class="pre">V0''</span></code>, <code class="docutils literal notranslate"><span class="pre">V1''</span></code>, <code class="docutils literal notranslate"><span class="pre">V2''</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積分を指定します。
-また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal"><span class="pre">V0''</span></code>,
-<code class="docutils literal"><span class="pre">V1''</span></code>, <code class="docutils literal"><span class="pre">V2''</span></code>を
-別々に指定する代わりにパラメータ<code class="docutils literal"><span class="pre">V''</span></code>を指定すると、<code class="docutils literal"><span class="pre">V0''</span> <span class="pre">=</span> <span class="pre">V1''</span> <span class="pre">=</span> <span class="pre">V2''</span> <span class="pre">=</span> <span class="pre">V''</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">V''</span></code>と<code class="docutils literal"><span class="pre">V0''</span></code>等の両方が指定された場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また、サイト間Coulomb積分のボンド方向依存性がない場合は<code class="docutils literal notranslate"><span class="pre">V0''</span></code>,
+<code class="docutils literal notranslate"><span class="pre">V1''</span></code>, <code class="docutils literal notranslate"><span class="pre">V2''</span></code>を
+別々に指定する代わりにパラメータ<code class="docutils literal notranslate"><span class="pre">V''</span></code>を指定すると、<code class="docutils literal notranslate"><span class="pre">V0''</span> <span class="pre">=</span> <span class="pre">V1''</span> <span class="pre">=</span> <span class="pre">V2''</span> <span class="pre">=</span> <span class="pre">V''</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">V''</span></code>と<code class="docutils literal notranslate"><span class="pre">V0''</span></code>等の両方が指定された場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J0x</span></code>, <code class="docutils literal"><span class="pre">J0y</span></code>, <code class="docutils literal"><span class="pre">J0z</span></code>, <code class="docutils literal"><span class="pre">J0xy</span></code>, <code class="docutils literal"><span class="pre">J0yx</span></code>, <code class="docutils literal"><span class="pre">J0xz</span></code>, <code class="docutils literal"><span class="pre">J0zx</span></code>,
-<code class="docutils literal"><span class="pre">J0yz</span></code>, <code class="docutils literal"><span class="pre">J0zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J1x</span></code>, <code class="docutils literal"><span class="pre">J1y</span></code>, <code class="docutils literal"><span class="pre">J1z</span></code>, <code class="docutils literal"><span class="pre">J1xy</span></code>, <code class="docutils literal"><span class="pre">J1yx</span></code>, <code class="docutils literal"><span class="pre">J1xz</span></code>, <code class="docutils literal"><span class="pre">J1zx</span></code>,
-<code class="docutils literal"><span class="pre">J1yz</span></code>, <code class="docutils literal"><span class="pre">J1zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J2x</span></code>, <code class="docutils literal"><span class="pre">J2y</span></code>, <code class="docutils literal"><span class="pre">J2z</span></code>, <code class="docutils literal"><span class="pre">J2xy</span></code>, <code class="docutils literal"><span class="pre">J2yx</span></code>, <code class="docutils literal"><span class="pre">J2xz</span></code>, <code class="docutils literal"><span class="pre">J2zx</span></code>,
-<code class="docutils literal"><span class="pre">J2yz</span></code>, <code class="docutils literal"><span class="pre">J2zy</span></code></p>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J0x</span></code>, <code class="docutils literal notranslate"><span class="pre">J0y</span></code>, <code class="docutils literal notranslate"><span class="pre">J0z</span></code>, <code class="docutils literal notranslate"><span class="pre">J0xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J0yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J0xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J0yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J1x</span></code>, <code class="docutils literal notranslate"><span class="pre">J1y</span></code>, <code class="docutils literal notranslate"><span class="pre">J1z</span></code>, <code class="docutils literal notranslate"><span class="pre">J1xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J1yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J1yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J2x</span></code>, <code class="docutils literal notranslate"><span class="pre">J2y</span></code>, <code class="docutils literal notranslate"><span class="pre">J2z</span></code>, <code class="docutils literal notranslate"><span class="pre">J2xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J2yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J2yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2zy</span></code></p></li>
 </ul>
 <blockquote>
 <div><p><strong>形式 :</strong> 実数</p>
 <blockquote>
 <div><p><strong>説明 :</strong>
 スピン模型での、最近接サイト間のスピン相互作用を指定します。
-また対角項について、例えば<code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>を指定する代わりに
-パラメータ<code class="docutils literal"><span class="pre">J0</span></code>を指定すると
-<code class="docutils literal"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J0y</span> <span class="pre">=</span> <span class="pre">J0z</span> <span class="pre">=</span> <span class="pre">J0</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">J0</span></code>を指定した上で<code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>等も指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。
-<code class="docutils literal"><span class="pre">J1</span></code>, <code class="docutils literal"><span class="pre">J2</span></code>についても同様です。</p>
-<p>スピン間相互作用のボンド方向依存性がない場合には、 <code class="docutils literal"><span class="pre">Jx</span></code>, <code class="docutils literal"><span class="pre">Jy</span></code>,
-<code class="docutils literal"><span class="pre">Jz</span></code>, <code class="docutils literal"><span class="pre">Jxy</span></code>, <code class="docutils literal"><span class="pre">Jyx</span></code>, <code class="docutils literal"><span class="pre">Jxz</span></code>, <code class="docutils literal"><span class="pre">Jzx</span></code>, <code class="docutils literal"><span class="pre">Jyz</span></code>, <code class="docutils literal"><span class="pre">Jzy</span></code>
-を指定すると、<code class="docutils literal"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J1x</span> <span class="pre">=</span> <span class="pre">J2x</span> <span class="pre">=</span> <span class="pre">Jx</span></code>のようにすべてのボンド方向のスピン間相互作用に
+また対角項について、例えば<code class="docutils literal notranslate"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>を指定する代わりに
+パラメータ<code class="docutils literal notranslate"><span class="pre">J0</span></code>を指定すると
+<code class="docutils literal notranslate"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J0y</span> <span class="pre">=</span> <span class="pre">J0z</span> <span class="pre">=</span> <span class="pre">J0</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">J0</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z</span></code>等も指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。
+<code class="docutils literal notranslate"><span class="pre">J1</span></code>, <code class="docutils literal notranslate"><span class="pre">J2</span></code>についても同様です。</p>
+<p>スピン間相互作用のボンド方向依存性がない場合には、 <code class="docutils literal notranslate"><span class="pre">Jx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Jz</span></code>, <code class="docutils literal notranslate"><span class="pre">Jxy</span></code>, <code class="docutils literal notranslate"><span class="pre">Jyx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jxz</span></code>, <code class="docutils literal notranslate"><span class="pre">Jzx</span></code>, <code class="docutils literal notranslate"><span class="pre">Jyz</span></code>, <code class="docutils literal notranslate"><span class="pre">Jzy</span></code>
+を指定すると、<code class="docutils literal notranslate"><span class="pre">J0x</span> <span class="pre">=</span> <span class="pre">J1x</span> <span class="pre">=</span> <span class="pre">J2x</span> <span class="pre">=</span> <span class="pre">Jx</span></code>のようにすべてのボンド方向のスピン間相互作用に
 同じ値を代入することが出来ます。
-<code class="docutils literal"><span class="pre">Jx</span></code><span class="math">\(\sim\)</span><code class="docutils literal"><span class="pre">Jzy</span></code>系列のどれかと<code class="docutils literal"><span class="pre">J0x</span></code><span class="math">\(\sim\)</span><code class="docutils literal"><span class="pre">J2zy</span></code>系列のどれかを両方指定した
-場合には<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+<code class="docutils literal notranslate"><span class="pre">Jx</span></code><span class="math notranslate nohighlight">\(\sim\)</span><code class="docutils literal notranslate"><span class="pre">Jzy</span></code>系列のどれかと<code class="docutils literal notranslate"><span class="pre">J0x</span></code><span class="math notranslate nohighlight">\(\sim\)</span><code class="docutils literal notranslate"><span class="pre">J2zy</span></code>系列のどれかを両方指定した
+場合には<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 <p>以下に最近接間スピン相互作用の指定方法の例を挙げます。</p>
 <ul>
-<li><p class="first">ボンド方向依存性、スピン方向依存性、相互作用の非対角成分(<span class="math">\(J_{x y}\)</span>等)がない場合</p>
-<p><code class="docutils literal"><span class="pre">J</span></code>を指定</p>
+<li><p>ボンド方向依存性、スピン方向依存性、相互作用の非対角成分(<span class="math notranslate nohighlight">\(J_{x y}\)</span>等)がない場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">J</span></code>を指定</p>
 </li>
-<li><p class="first">ボンド方向依存性、相互作用の非対角成分がなく、スピン方向依存性がある場合</p>
-<p><code class="docutils literal"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz</span></code>のうち<code class="docutils literal"><span class="pre">0</span></code>でないものを指定</p>
+<li><p>ボンド方向依存性、相互作用の非対角成分がなく、スピン方向依存性がある場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz</span></code>のうち<code class="docutils literal notranslate"><span class="pre">0</span></code>でないものを指定</p>
 </li>
-<li><p class="first">ボンド方向依存性がなく、スピン方向依存性、相互作用の非対角成分がある場合</p>
-<p><code class="docutils literal"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz,</span> <span class="pre">Jxy,</span> <span class="pre">Jyz,</span> <span class="pre">Jxz,</span> <span class="pre">Jyx,</span> <span class="pre">Jzy,</span> <span class="pre">Jzx</span></code>のうち<code class="docutils literal"><span class="pre">0</span></code>でないものを指定</p>
+<li><p>ボンド方向依存性がなく、スピン方向依存性、相互作用の非対角成分がある場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">Jx,</span> <span class="pre">Jy,</span> <span class="pre">Jz,</span> <span class="pre">Jxy,</span> <span class="pre">Jyz,</span> <span class="pre">Jxz,</span> <span class="pre">Jyx,</span> <span class="pre">Jzy,</span> <span class="pre">Jzx</span></code>のうち<code class="docutils literal notranslate"><span class="pre">0</span></code>でないものを指定</p>
 </li>
-<li><p class="first">スピン方向依存性、相互作用の非対角成分がなく、ボンド方向依存性がある場合</p>
-<p><code class="docutils literal"><span class="pre">J0,</span> <span class="pre">J1,</span> <span class="pre">J2</span></code>のうち<code class="docutils literal"><span class="pre">0</span></code>でないものを指定</p>
+<li><p>スピン方向依存性、相互作用の非対角成分がなく、ボンド方向依存性がある場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">J0,</span> <span class="pre">J1,</span> <span class="pre">J2</span></code>のうち<code class="docutils literal notranslate"><span class="pre">0</span></code>でないものを指定</p>
 </li>
-<li><p class="first">スピン方向依存性がなく、ボンド方向依存性、相互作用の非対角成分がある場合</p>
-<p><code class="docutils literal"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z,</span> <span class="pre">J1x,</span> <span class="pre">J1y,</span> <span class="pre">J1z,</span> <span class="pre">J2x,</span> <span class="pre">J2y,</span> <span class="pre">J2z</span></code>のうち<code class="docutils literal"><span class="pre">0</span></code>でないものを指定</p>
+<li><p>スピン方向依存性がなく、ボンド方向依存性、相互作用の非対角成分がある場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">J0x,</span> <span class="pre">J0y,</span> <span class="pre">J0z,</span> <span class="pre">J1x,</span> <span class="pre">J1y,</span> <span class="pre">J1z,</span> <span class="pre">J2x,</span> <span class="pre">J2y,</span> <span class="pre">J2z</span></code>のうち<code class="docutils literal notranslate"><span class="pre">0</span></code>でないものを指定</p>
 </li>
-<li><p class="first">ボンド方向依存性、スピン方向依存性、相互作用の非対角成分がある場合</p>
-<p><code class="docutils literal"><span class="pre">J0x</span></code><span class="math">\(\sim\)</span><code class="docutils literal"><span class="pre">J2zy</span></code>のすべてのうち<code class="docutils literal"><span class="pre">0</span></code>でないものを指定</p>
+<li><p>ボンド方向依存性、スピン方向依存性、相互作用の非対角成分がある場合</p>
+<p><code class="docutils literal notranslate"><span class="pre">J0x</span></code><span class="math notranslate nohighlight">\(\sim\)</span><code class="docutils literal notranslate"><span class="pre">J2zy</span></code>のすべてのうち<code class="docutils literal notranslate"><span class="pre">0</span></code>でないものを指定</p>
 </li>
 </ul>
 </div></blockquote>
 </div></blockquote>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">J'x</span></code>, <code class="docutils literal"><span class="pre">J'y</span></code>, <code class="docutils literal"><span class="pre">J'z</span></code>, <code class="docutils literal"><span class="pre">J'xy</span></code>, <code class="docutils literal"><span class="pre">J'yx</span></code>, <code class="docutils literal"><span class="pre">J'xz</span></code>, <code class="docutils literal"><span class="pre">J'zx</span></code>,
-<code class="docutils literal"><span class="pre">J'yz</span></code>, <code class="docutils literal"><span class="pre">J'zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J0'x</span></code>, <code class="docutils literal"><span class="pre">J0'y</span></code>, <code class="docutils literal"><span class="pre">J0'z</span></code>, <code class="docutils literal"><span class="pre">J0'xy</span></code>, <code class="docutils literal"><span class="pre">J0'yx</span></code>, <code class="docutils literal"><span class="pre">J0'xz</span></code>, <code class="docutils literal"><span class="pre">J0'zx</span></code>,
-<code class="docutils literal"><span class="pre">J0'yz</span></code>, <code class="docutils literal"><span class="pre">J0'zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J1'x</span></code>, <code class="docutils literal"><span class="pre">J1'y</span></code>, <code class="docutils literal"><span class="pre">J1'z</span></code>, <code class="docutils literal"><span class="pre">J1'xy</span></code>, <code class="docutils literal"><span class="pre">J1'yx</span></code>, <code class="docutils literal"><span class="pre">J1'xz</span></code>, <code class="docutils literal"><span class="pre">J1'zx</span></code>,
-<code class="docutils literal"><span class="pre">J1'yz</span></code>, <code class="docutils literal"><span class="pre">J1'zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J2'x</span></code>, <code class="docutils literal"><span class="pre">J2'y</span></code>, <code class="docutils literal"><span class="pre">J2'z</span></code>, <code class="docutils literal"><span class="pre">J2'xy</span></code>, <code class="docutils literal"><span class="pre">J2'yx</span></code>, <code class="docutils literal"><span class="pre">J2'xz</span></code>, <code class="docutils literal"><span class="pre">J2'zx</span></code>,
-<code class="docutils literal"><span class="pre">J2'yz</span></code>, <code class="docutils literal"><span class="pre">J2'zy</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">J'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J'xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J'zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J'zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J0'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J0'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0'zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J1'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J1'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1'zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J2'x</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'y</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'z</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J2'yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2'zy</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 スピン模型での、次近接サイト間のスピン相互作用を指定します。
-ただし、蜂の巣格子またはカゴメ格子で<code class="docutils literal"><span class="pre">model=SpinGCCMA</span></code>の場合には
+ただし、蜂の巣格子またはカゴメ格子で<code class="docutils literal notranslate"><span class="pre">model=SpinGCCMA</span></code>の場合には
 まだ対応していません。
-また対角項について、<code class="docutils literal"><span class="pre">J'x,</span> <span class="pre">J'y,</span> <span class="pre">J'z</span></code>を指定する代わりに
-パラメータ<code class="docutils literal"><span class="pre">J'</span></code>を指定すると
-<code class="docutils literal"><span class="pre">J'x</span> <span class="pre">=</span> <span class="pre">J'y</span> <span class="pre">=</span> <span class="pre">J'z</span> <span class="pre">=</span> <span class="pre">J'</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">J'</span></code>を指定した上で<code class="docutils literal"><span class="pre">J'x,</span> <span class="pre">J'y,</span> <span class="pre">J'z</span></code>も指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また対角項について、<code class="docutils literal notranslate"><span class="pre">J'x,</span> <span class="pre">J'y,</span> <span class="pre">J'z</span></code>を指定する代わりに
+パラメータ<code class="docutils literal notranslate"><span class="pre">J'</span></code>を指定すると
+<code class="docutils literal notranslate"><span class="pre">J'x</span> <span class="pre">=</span> <span class="pre">J'y</span> <span class="pre">=</span> <span class="pre">J'z</span> <span class="pre">=</span> <span class="pre">J'</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">J'</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">J'x,</span> <span class="pre">J'y,</span> <span class="pre">J'z</span></code>も指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J''x</span></code>, <code class="docutils literal"><span class="pre">J''y</span></code>, <code class="docutils literal"><span class="pre">J''z</span></code>, <code class="docutils literal"><span class="pre">J''xy</span></code>, <code class="docutils literal"><span class="pre">J''yx</span></code>, <code class="docutils literal"><span class="pre">J''xz</span></code>, <code class="docutils literal"><span class="pre">J''zx</span></code>,
-<code class="docutils literal"><span class="pre">J''yz</span></code>, <code class="docutils literal"><span class="pre">J''zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J0''x</span></code>, <code class="docutils literal"><span class="pre">J0''y</span></code>, <code class="docutils literal"><span class="pre">J0''z</span></code>, <code class="docutils literal"><span class="pre">J0''xy</span></code>, <code class="docutils literal"><span class="pre">J0''yx</span></code>, <code class="docutils literal"><span class="pre">J0''xz</span></code>, <code class="docutils literal"><span class="pre">J0''zx</span></code>,
-<code class="docutils literal"><span class="pre">J0''yz</span></code>, <code class="docutils literal"><span class="pre">J0''zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J1''x</span></code>, <code class="docutils literal"><span class="pre">J1''y</span></code>, <code class="docutils literal"><span class="pre">J1''z</span></code>, <code class="docutils literal"><span class="pre">J1''xy</span></code>, <code class="docutils literal"><span class="pre">J1''yx</span></code>, <code class="docutils literal"><span class="pre">J1''xz</span></code>, <code class="docutils literal"><span class="pre">J1''zx</span></code>,
-<code class="docutils literal"><span class="pre">J1''yz</span></code>, <code class="docutils literal"><span class="pre">J1''zy</span></code></p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">J2''x</span></code>, <code class="docutils literal"><span class="pre">J2''y</span></code>, <code class="docutils literal"><span class="pre">J2''z</span></code>, <code class="docutils literal"><span class="pre">J2''xy</span></code>, <code class="docutils literal"><span class="pre">J2''yx</span></code>, <code class="docutils literal"><span class="pre">J2''xz</span></code>, <code class="docutils literal"><span class="pre">J2''zx</span></code>,
-<code class="docutils literal"><span class="pre">J2''yz</span></code>, <code class="docutils literal"><span class="pre">J2''zy</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">J''x</span></code>, <code class="docutils literal notranslate"><span class="pre">J''y</span></code>, <code class="docutils literal notranslate"><span class="pre">J''z</span></code>, <code class="docutils literal notranslate"><span class="pre">J''xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J''yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J''xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J''zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J''yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J''zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J0''x</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''y</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''z</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J0''yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J0''zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J1''x</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''y</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''z</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J1''yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J1''zy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">J2''x</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''y</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''z</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''xy</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''yx</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''xz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''zx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">J2''yz</span></code>, <code class="docutils literal notranslate"><span class="pre">J2''zy</span></code></p>
 <p><strong>形式 :</strong> 実数</p>
 <p><strong>説明 :</strong>
 スピン模型での、第三近接サイト間のスピン相互作用を指定します。
-ただし、蜂の巣格子またはカゴメ格子で<code class="docutils literal"><span class="pre">model=SpinGCCMA</span></code>の場合には
+ただし、蜂の巣格子またはカゴメ格子で<code class="docutils literal notranslate"><span class="pre">model=SpinGCCMA</span></code>の場合には
 まだ対応していません。
-また対角項について、<code class="docutils literal"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>を指定する代わりに
-パラメータ<code class="docutils literal"><span class="pre">J''</span></code>を指定すると
-<code class="docutils literal"><span class="pre">J''x</span> <span class="pre">=</span> <span class="pre">J''y</span> <span class="pre">=</span> <span class="pre">J''z</span> <span class="pre">=</span> <span class="pre">J''</span></code>が代入されます。
-<code class="docutils literal"><span class="pre">J''</span></code>を指定した上で<code class="docutils literal"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>も指定した場合は<span class="math">\({\mathcal H}\Phi\)</span>を終了します。</p>
+また対角項について、<code class="docutils literal notranslate"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>を指定する代わりに
+パラメータ<code class="docutils literal notranslate"><span class="pre">J''</span></code>を指定すると
+<code class="docutils literal notranslate"><span class="pre">J''x</span> <span class="pre">=</span> <span class="pre">J''y</span> <span class="pre">=</span> <span class="pre">J''z</span> <span class="pre">=</span> <span class="pre">J''</span></code>が代入されます。
+<code class="docutils literal notranslate"><span class="pre">J''</span></code>を指定した上で<code class="docutils literal notranslate"><span class="pre">J''x,</span> <span class="pre">J''y,</span> <span class="pre">J''z</span></code>も指定した場合は<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を終了します。</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">phase0</span></code>, <code class="docutils literal"><span class="pre">phase1</span></code></p>
-<p><strong>形式 :</strong> 実数 (デフォルトでは <code class="docutils literal"><span class="pre">0.0</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase0</span></code>, <code class="docutils literal notranslate"><span class="pre">phase1</span></code></p>
+<p><strong>形式 :</strong> 実数 (デフォルトでは <code class="docutils literal notranslate"><span class="pre">0.0</span></code>)</p>
 <p><strong>説明 :</strong>
 計算するセルの境界をまたいだホッピング項に付く因子の位相を指定することが出来ます
 (単位: 度)。
-<span class="math">\(\vec{a}_0\)</span>方向、<span class="math">\(\vec{a}_1\)</span>方向それぞれ別の位相因子を用いることが出来ます。
-１次元系では<code class="docutils literal"><span class="pre">phase0</span></code>のみ使用できます。
-例えば、<span class="math">\(i\)</span>サイトから<span class="math">\(j\)</span>サイトへのホッピングで、
+<span class="math notranslate nohighlight">\(\vec{a}_0\)</span>方向、<span class="math notranslate nohighlight">\(\vec{a}_1\)</span>方向それぞれ別の位相因子を用いることが出来ます。
+１次元系では<code class="docutils literal notranslate"><span class="pre">phase0</span></code>のみ使用できます。
+例えば、<span class="math notranslate nohighlight">\(i\)</span>サイトから<span class="math notranslate nohighlight">\(j\)</span>サイトへのホッピングで、
 正の方向に境界をまたいだ場合には次のようになります。</p>
-<div class="math">
-\[\exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
+<div class="math notranslate nohighlight" id="equation-filespecification-standardmode-ja-parameters-for-the-hamiltonian-ja-0">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-filespecification-standardmode-ja-parameters-for-the-hamiltonian-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\exp(i \times {\rm phase0}\times\pi/180) \times t {c}_{j \sigma}^\dagger {c}_{i \sigma}
 + \exp(-i \times {\rm phase0}\times\pi/180) \times t^* {c}_{i \sigma}^\dagger {c}_{j \sigma}\]</div>
 </li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -431,25 +412,20 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 
 
 
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=&repo=&type=watch&count=true&size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
 
 
 
-
-<h3>Navigation</h3>
+<h3>ナビゲーション</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math">\({\mathcal H}\Phi\)</span>?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_type_of_calculation_ja.html">4.1.1. 計算の種類に関する必須パラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_lattice_ja.html">4.1.2. 格子に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_conserved_quantities_ja.html">4.1.3. 保存量に関するパラメータ</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">4.1.4. ハミルトニアンの各項の係数</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.4. ハミルトニアンの各項の係数</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_numerical_condition.html">4.1.5. 計算条件のパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_the_dynamical_Greens_function.html">4.1.6. 動的グリーン関数の計算に関するパラメータ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Parameters_for_time-evolution.html">4.1.7. 実時間発展計算に関するパラメータ</a></li>
@@ -470,41 +446,46 @@ Hubbardおよび近藤格子模型での、第三近接サイト間のCoulomb積
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../fi-index.html">4. ファイルフォーマット</a><ul>
-  <li><a href="index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a><ul>
-      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ">4.1.3. 保存量に関するパラメータ</a></li>
-      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ">4.1.5. 計算条件のパラメータ</a></li>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_standardmode_ja.html"><span class="section-number">4.1. </span>スタンダードモード用入力ファイル</a><ul>
+      <li>Previous: <a href="Parameters_for_conserved_quantities_ja.html" title="前の章へ"><span class="section-number">4.1.3. </span>保存量に関するパラメータ</a></li>
+      <li>Next: <a href="Parameters_for_the_numerical_condition.html" title="次の章へ"><span class="section-number">4.1.5. </span>計算条件のパラメータ</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>クイック検索</h3>
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    モジュール、クラス、または関数名を入力してください
-    </p>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja.txt"
+      <a href="../../_sources/filespecification/standardmode_ja/Parameters_for_the_Hamiltonian_ja.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
