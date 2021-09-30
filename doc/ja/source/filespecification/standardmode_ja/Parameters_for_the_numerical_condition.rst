@@ -87,6 +87,8 @@
    **説明 :**
    (TPQ法のみで使用) :math:`l-\mathcal{H}/N_{s}`\ の\ :math:`l`\ 。
    ハミルトニアンの各項の係数の絶対値の総和をサイト数で割ったものがデフォルト値になります。
+   cTPQ計算では, ``LargeValue`` は虚時間発展の刻み幅として使われます( :math:`\Delta\tau=1/LargeValue`).
+   :math:`\Delta\tau` の定義はアルゴリズムの章を見てください(:ref:`Ch:algorithm`) 。
 
 *  ``NumAve``
 

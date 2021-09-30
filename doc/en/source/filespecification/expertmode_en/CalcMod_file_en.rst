@@ -68,9 +68,11 @@ The parameters correlated with the keywords are as follows.
    | **Description :** Select the method for calculation from the
      following list:
    | 0: Lanczos method
-   | 1: Analysis of the physical properties by using TPQ
-   | 2: Full diagonalization method.
-   | 3: LOBCG for the ground state.
+   | 1: mTPQ method
+   | 2: Full diagonalization method
+   | 3: LOBCG for the ground state
+   | 4: Time-evolution
+   | 5: cTPQ method
 
 *  ``CalcModel``
 
@@ -108,9 +110,12 @@ The parameters correlated with the keywords are as follows.
 
    **Type :** Int (default value: 0)
 
-   | **Description :** Select the type of an initial vector:
-   | 0: Complex type
-   | 1: Real type.
+   | **Description :** Select the type of an initial vector (:math:`v0`):
+   | -1: Real part (:math:`{\rm Re}[v0]]`) and imaginary part  (:math:`{\rm Re}[v0]]`) of the initial 
+    vector are give as the normally distributed random numbers. Thus, the normalized initial vectors are uniformly distributed
+    on the :math:`N_{\rm H}` dimensional super sphere (:math:`N_{\rm H}` is the dimension of the Hilbert space). 
+   | 0: Complex type (:math:`{\rm Re}[v0]\in[-1:1]`, :math:`{\rm Im}[v0]\in[-1:1]` ).
+   | 1: Real type (:math:`{\rm Re}[v0]\in[-1:1]`, :math:`{\rm Im}[v0]=0`).
 
 *  ``OutputEigenVec``
 

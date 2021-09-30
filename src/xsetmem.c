@@ -96,6 +96,7 @@ void setmem_def
 
   X->Def.TBody = i_2d_allocate(X->Def.NTBody, 12);
   X->Def.FBody = i_2d_allocate(X->Def.NFBody, 16);
+  X->Def.SBody = i_2d_allocate(X->Def.NSBody, 24);
 
   X->Def.SingleExcitationOperator = i_2d_allocate(X->Def.NSingleExcitationOperator, 3);
   X->Def.ParaSingleExcitationOperator = cd_1d_allocate(X->Def.NSingleExcitationOperator);
@@ -177,7 +178,7 @@ int setmem_large
     list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
     v0 = cd_1d_allocate(X->Check.idim_max + 1);
     v1 = cd_1d_allocate(X->Check.idim_max + 1);
-  if (X->Def.iCalcType == TimeEvolution) {
+  if (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ) {
       v2 = cd_1d_allocate(X->Check.idim_max + 1);
   } else {
       v2 = cd_1d_allocate(1);
@@ -185,7 +186,7 @@ int setmem_large
 #ifdef MPI
     v1buf = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
-  if (X->Def.iCalcType == TPQCalc) {
+  if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
       vg = cd_1d_allocate(1);
   } else {
       vg = cd_1d_allocate(X->Check.idim_max + 1);
@@ -202,7 +203,7 @@ int setmem_large
     return -1;
   }
 
-  if (X->Def.iCalcType == TPQCalc || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+  if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
       vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
   } else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
     if (X->Def.LanczosTarget > X->Def.nvec) {

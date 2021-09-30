@@ -93,11 +93,13 @@ Parameters for the numerical condition
 
    **Type :** Double (the default value is provided below)
 
-   **Description :** (Only for TPQ) :math:`l` as :math:`l-{\mathcal H}/N_{s}`
-   is used in the TPQ calculation. Usually, the largest eigenvalue of
+   **Description :** (Only for TPQ) :math:`l` as :math:`(l-{\mathcal H}/N_{s})`
+   is used in the mTPQ calculation. Usually, the largest eigenvalue of
    the Hamiltonian is used as :math:`l`. Thus, the default value of
    :math:`l` is taken as the summation of the absolute values of each
    coefficient in the Hamiltonian divided by the number of sites.
+   In the cTPQ calculation, ``LargeValue`` is used as :math:`\Delta\tau=1/LargeValue`.
+   The definition of :math:`\Delta\tau` is explained in :ref:`Ch:algorithm`.
 
 *  ``NumAve``
 

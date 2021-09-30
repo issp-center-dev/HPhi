@@ -6,7 +6,8 @@ set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -DNDEBUG -DHAVE_SSE2" CACHE STRING "" FORCE
 
 if(USE_SCALAPACK)
   if(SCALAPACK_LIBRARIES MATCHES "")
-    set(SCALAPACK_LIBRARIES "-L$ENV{MKLROOT}/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_sgimpt_lp64")
+     set(SCALAPACK_LIBRARIES "-mkl=cluster")
+    #set(SCALAPACK_LIBRARIES "-L$ENV{MKLROOT}/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_sgimpt_lp64")
   endif(SCALAPACK_LIBRARIES MATCHES "")
 
   message(STATUS "SCALAPACK_LIBRARIES is ${SCALAPACK_LIBRARIES}")

@@ -66,7 +66,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "TEOneBody",
   "TETwoBody",
   "ThreeBodyG",
-  "FourBodyG"
+  "FourBodyG",
+  "SixBodyG"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -340,7 +341,7 @@ int ReadcalcmodFile(
     return (-1);
   }
   
-  if(ValidateValue(X->iInitialVecType, 0, NUM_SETINITAILVEC-1)){
+  if(ValidateValue(X->iInitialVecType, -1, NUM_SETINITAILVEC-1)){
     fprintf(stdoutMPI, cErrSetIniVec, defname);
     return (-1);
   }
@@ -733,6 +734,12 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NFBody));
             break;
+      case KWSixBodyG:
+        /* Read cisajscktaltdc.def--------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+            fgetsMPI(ctmp2, 256, fp);
+            sscanf(ctmp2, "%s %d\n", ctmp, &(X->NSBody));
+            break;
  
       case KWLaser:
         /* Read laser.def--------------------------------*/
@@ -1005,8 +1012,8 @@ int ReadDefFileIdxPara(
   int xitmp[8];
   int iKWidx=0;
   int iboolLoc=0;
-  int isite1, isite2, isite3, isite4,isite5,isite6,isite7,isite8;
-  int isigma1, isigma2, isigma3, isigma4,isigma5,isigma6,isigma7,isigma8;
+  int isite1, isite2, isite3, isite4,isite5,isite6,isite7,isite8,isite9,isite10,isite11,isite12;
+  int isigma1, isigma2, isigma3, isigma4,isigma5,isigma6,isigma7,isigma8,isigma9,isigma10,isigma11,isigma12;
   double dvalue_re, dvalue_im;
   double dArrayValue_re[3]; 
   int icnt_diagonal=0;
@@ -1633,6 +1640,90 @@ int ReadDefFileIdxPara(
         }
       }
       break;
+
+      case KWSixBodyG:
+      /*cisajscktaltdc.def--------------------------------*/
+      if(X->NSBody>0){
+        while(fgetsMPI(ctmp2, 256, fp) != NULL){
+          if(idx==X->NSBody){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          sscanf(ctmp2, "%d %d %d %d %d %d %d %d %d %d %d %d  %d %d %d %d  %d %d %d %d %d %d %d %d\n",
+                 &isite1,
+                 &isigma1,
+                 &isite2,
+                 &isigma2,
+                 &isite3,
+                 &isigma3,
+                 &isite4,
+                 &isigma4,
+                 &isite5,
+                 &isigma5,
+                 &isite6,
+                 &isigma6,
+                 &isite7,
+                 &isigma7,
+                 &isite8,
+                 &isigma8,
+                 &isite9,
+                 &isigma9,
+                 &isite10,
+                 &isigma10,
+                 &isite11,
+                 &isigma11,
+                 &isite12,
+                 &isigma12
+                 );
+          /*
+          if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
+            if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
+                exitMPI(-1);
+              //X->NCisAjtCkuAlvDC--;
+              //continue;
+            }
+          }
+          */
+
+          X->SBody[idx][0]  = isite1;
+          X->SBody[idx][1]  = isigma1;
+          X->SBody[idx][2]  = isite2;
+          X->SBody[idx][3]  = isigma2;
+          X->SBody[idx][4]  = isite3;
+          X->SBody[idx][5]  = isigma3;
+          X->SBody[idx][6]  = isite4;
+          X->SBody[idx][7]  = isigma4;
+          X->SBody[idx][8]  = isite5;
+          X->SBody[idx][9]  = isigma5;
+          X->SBody[idx][10] = isite6;
+          X->SBody[idx][11] = isigma6;
+          X->SBody[idx][12] = isite7;
+          X->SBody[idx][13] = isigma7;
+          X->SBody[idx][14] = isite8;
+          X->SBody[idx][15] = isigma8;
+          X->SBody[idx][16] = isite9;
+          X->SBody[idx][17] = isigma9;
+          X->SBody[idx][18] = isite10;
+          X->SBody[idx][19] = isigma10;
+          X->SBody[idx][20] = isite11;
+          X->SBody[idx][21] = isigma11;
+          X->SBody[idx][22] = isite12;
+          X->SBody[idx][23] = isigma12;
+          //printf("%d \n",isite8);
+
+          /*
+          if(CheckQuadSite(isite1, isite2, isite3, isite4,X->Nsite) !=0){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          */
+          idx++;
+        }
+      }
+      break;
+
+
 
 
 
@@ -2704,6 +2795,7 @@ void InitializeInteractionNum
   X->NCisAjtCkuAlvDC=0;
   X->NTBody=0;
   X->NFBody=0;
+  X->NSBody=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
   //[s] Time Evolution

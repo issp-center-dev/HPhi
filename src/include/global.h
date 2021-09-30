@@ -104,8 +104,9 @@ extern const char* cFileNameEnergy_CG;/**> Name of the file to output energies o
 extern const char* cFileName1BGreen_Lanczos;/**> Name of the file to output One-Body Green's functions obtained by Lanczos method.*/
 extern const char* cFileName1BGreen_CG;/**> Name of the file to output One-Body Green's functions obtained by CG method.*/
 extern const char* cFileName2BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
-extern const char* cFileName3BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
-extern const char* cFileName4BGreen_Lanczos;/**> Name of the file to output Two-Body Green's functions obtained by Lanczos method.*/
+extern const char* cFileName3BGreen_Lanczos;/**> Name of the file to output Three-Body Green's functions obtained by Lanczos method.*/
+extern const char* cFileName4BGreen_Lanczos;/**> Name of the file to output Four-Body Green's functions obtained by Lanczos method.*/
+extern const char* cFileName6BGreen_Lanczos;/**> Name of the file to output Six-Body Green's functions obtained by Lanczos method.*/
 extern const char* cFileName2BGreen_CG;/**> Name of the file to output Two-Body Green's functions obtained by CG method.*/
 extern const char* cFileNameTimeEV_CG;/**> Name of the file to output time for getting eigen vector by CG method.*/
 extern const char* cFileNameListModel;/**> Name of the file to output list.*/
@@ -121,12 +122,14 @@ extern const char* cFileNameNormRand;/**> Name of the NormRand file.*/
 extern const char* cFileNameFlctRand;/**> Name of the Flct file.*/
 extern const char* cFileName1BGreen_TPQ;/**> Name of the file to output one-body Green's functions for TPQ calculation.*/
 extern const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
-extern const char* cFileName3BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
-extern const char* cFileName4BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
+extern const char* cFileName3BGreen_TPQ;/**> Name of the file to output three-body Green's functions for TPQ calculation.*/
+extern const char* cFileName4BGreen_TPQ;/**> Name of the file to output four-body Green's functions for TPQ calculation.*/
+extern const char* cFileName6BGreen_TPQ;/**> Name of the file to output six-body Green's functions for TPQ calculation.*/
 extern const char* cFileName1BGreen_TE;/**> Name of the file to output one-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName2BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
-extern const char* cFileName3BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
-extern const char* cFileName4BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName3BGreen_TE;/**> Name of the file to output three-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName4BGreen_TE;/**> Name of the file to output four-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName6BGreen_TE;/**> Name of the file to output six-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
@@ -141,8 +144,9 @@ extern const char* cFileNamePhys_FullDiag;/**> Name of the file to output physic
 extern const char* cFileNamePhys_FullDiag_GC;/**> Name of the file to output physical values for grand canonical ensemble.*/
 extern const char* cFileName1BGreen_FullDiag;/**> Name of the file to output one-body Green's functions for Full diagonalization.*/
 extern const char* cFileName2BGreen_FullDiag;/**> Name of the file to output two-body Green's functions for Full diagonalization.*/
-extern const char* cFileName3BGreen_FullDiag;/**> Name of the file to output two-body Green's functions for Full diagonalization.*/
-extern const char* cFileName4BGreen_FullDiag;/**> Name of the file to output two-body Green's functions for Full diagonalization.*/
+extern const char* cFileName3BGreen_FullDiag;/**> Name of the file to output three-body Green's functions for Full diagonalization.*/
+extern const char* cFileName4BGreen_FullDiag;/**> Name of the file to output four-body Green's functions for Full diagonalization.*/
+extern const char* cFileName6BGreen_FullDiag;/**> Name of the file to output six-body Green's functions for Full diagonalization.*/
 extern const char* cFileNamePhys_FullDiag_Ham;/**> Name of the file to output Hamiltonian for Full diagonalization.*/
 
 //For Spectrum
