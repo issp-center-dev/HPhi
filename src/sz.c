@@ -314,34 +314,60 @@ int sz
         }
         break;
       }else if(hacker==1){
-        // this part can not be parallelized
-        jb = 0;
+        jbthread = lui_1d_allocate(nthreads);
+        #pragma omp parallel default(none) \
+        shared(X,list_jb,ihfbit,N2,nthreads,jbthread) \
+        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,jb,all_up,all_down,comb2,mythread)
+        {
+          jb = 0;
+#ifdef _OPENMP
+          mythread = omp_get_thread_num();
+#else
+          mythread = 0;
+#endif
+          comb2 = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+          #pragma omp for
+          for(ib=0;ib<X->Check.sdim;ib++){
+            list_jb[ib]=jb;
 
-        for(ib=0;ib<X->Check.sdim;ib++){
-          list_jb[ib]=jb;
+            i=ib*ihfbit;
+            num_up=0;
+            for(j=0;j<=N2-2;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_up+=div;
+            }
+            num_down=0;
+            for(j=1;j<=N2-1;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_down+=div;
+            }
 
-          i=ib*ihfbit;
-          num_up=0;
-          for(j=0;j<=N2-2;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_up+=div;
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+
+            tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
+            tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
+            jb   += tmp_1*tmp_2;
           }
-          num_down=0;
-          for(j=1;j<=N2-1;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_down+=div;
+          free_li_2d_allocate(comb2);
+          if(mythread != nthreads-1) jbthread[mythread+1] = jb;
+          #pragma omp barrier
+          #pragma omp single
+          {
+            jbthread[0] = 0;
+            for(j=1;j<nthreads;j++){
+              jbthread[j] += jbthread[j-1];
+            }
           }
-
-          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-          all_up   = (X->Def.Nsite+tmp_res)/2;
-          all_down = (X->Def.Nsite-tmp_res)/2;
-
-          tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-          tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-          jb   += tmp_1*tmp_2;
-        }
+          #pragma omp for
+          for(ib=0;ib<X->Check.sdim;ib++){
+            list_jb[ib] += jbthread[mythread];
+          }
+        }//omp parallel
+        free_lui_1d_allocate(jbthread);
 
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
@@ -408,7 +434,6 @@ int sz
         break;
       }
       else if(hacker==1){
-        // this part can not be parallelized
         iMinup=0;
         iAllup=X->Def.Ne;
         if(X->Def.Ne > X->Def.Nsite){
