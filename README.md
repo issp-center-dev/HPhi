@@ -27,7 +27,25 @@ You can install HΦ and also get a manual for HΦ from a [release note](https://
 
 ## Licence
 
-The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)).
+The distribution of the program package and the source codes for HPhi follow GNU General Public License version 3 ([GPL v3](http://www.gnu.org/licenses/gpl-3.0.en.html)).We hope that you cite the following reference when you publish the results using HΦ (hphi):
+
+[“Quantum lattice model solver HΦ”, M. Kawamura, K. Yoshimi, T. Misawa, Y. Yamaji, S. Todo, and N. Kawashima, Computer Physics Communications 217, 180 (2017).](https://github.com/issp-center-dev/HPhi/edit/master/README.md)
+
+Bibtex:
+
+@article{KAWAMURA2017180,
+title = {Quantum lattice model solver HΦ},
+journal = {Computer Physics Communications},
+volume = {217},
+pages = {180-192},
+year = {2017},
+issn = {0010-4655},
+doi = {https://doi.org/10.1016/j.cpc.2017.04.006},
+url = {https://www.sciencedirect.com/science/article/pii/S0010465517301200},
+author = {Mitsuaki Kawamura and Kazuyoshi Yoshimi and Takahiro Misawa and Youhei Yamaji and Synge Todo and Naoki Kawashima}
+}
+
+
 
 ## Official page
 - [HPhi portal site](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en)
