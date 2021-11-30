@@ -71,7 +71,7 @@ int sz
   char sdt[D_FileNameMax],sdt_err[D_FileNameMax];
   long unsigned int *HilbertNumToSz;
   long unsigned int i,icnt; 
-  long unsigned int ib,jb;
+  long unsigned int ib,jb,ib_start,ib_end, sdim_div, sdim_rest;
     
   long unsigned int j;
   long unsigned int div;
@@ -317,7 +317,8 @@ int sz
         jbthread = lui_1d_allocate(nthreads);
         #pragma omp parallel default(none) \
         shared(X,list_jb,ihfbit,N2,nthreads,jbthread) \
-        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,jb,all_up,all_down,comb2,mythread)
+        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
+                comb2,mythread,sdim_div,sdim_rest,ib_start,ib_end)
         {
           jb = 0;
 #ifdef _OPENMP
@@ -326,8 +327,21 @@ int sz
           mythread = 0;
 #endif
           comb2 = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
-          #pragma omp for
-          for(ib=0;ib<X->Check.sdim;ib++){
+          //
+          // explict loop decomposition is nessesary to fix the asignment to each thread
+          //
+          sdim_div = X->Check.sdim / nthreads;
+          sdim_rest = X->Check.sdim % nthreads;
+          if(mythread < sdim_rest){
+            ib_start = sdim_div*mythread + mythread;
+            ib_end = ib_start + sdim_div + 1;
+          }
+          else{
+            ib_start = sdim_div*mythread + sdim_rest;
+            ib_end = ib_start + sdim_div;
+          }
+          //
+          for(ib=ib_start;ib<ib_end;ib++){
             list_jb[ib]=jb;
 
             i=ib*ihfbit;
@@ -362,8 +376,7 @@ int sz
               jbthread[j] += jbthread[j-1];
             }
           }
-          #pragma omp for
-          for(ib=0;ib<X->Check.sdim;ib++){
+          for(ib=ib_start;ib<ib_end;ib++){
             list_jb[ib] += jbthread[mythread];
           }
         }//omp parallel
@@ -443,7 +456,8 @@ int sz
         jbthread = lui_1d_allocate(nthreads);
         #pragma omp parallel default(none) \
         shared(X,iMinup,iAllup,list_jb,ihfbit,N2,nthreads,jbthread) \
-        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,iSpnup,jb,all_up,all_down,comb2,mythread)
+        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,iSpnup,jb,all_up,all_down,comb2, \
+                mythread,sdim_rest,sdim_div,ib_start,ib_end)
         {
           jb = 0;
           iSpnup=0;
@@ -453,8 +467,21 @@ int sz
           mythread = 0;
 #endif
           comb2 = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
-          #pragma omp for
-          for(ib=0;ib<X->Check.sdim;ib++){
+          //
+          // explict loop decomposition is nessesary to fix the asignment to each thread
+          //
+          sdim_div = X->Check.sdim / nthreads;
+          sdim_rest = X->Check.sdim % nthreads;
+          if(mythread < sdim_rest){
+            ib_start = sdim_div*mythread + mythread;
+            ib_end = ib_start + sdim_div + 1;
+          }
+          else{
+            ib_start = sdim_div*mythread + sdim_rest;
+            ib_end = ib_start + sdim_div;
+          }
+          //
+          for(ib=ib_start;ib<ib_end;ib++){
             list_jb[ib]=jb;
             i=ib*ihfbit;
             num_up=0;
@@ -489,8 +516,7 @@ int sz
               jbthread[j] += jbthread[j-1];
             }
           }
-          #pragma omp for
-          for(ib=0;ib<X->Check.sdim;ib++){
+          for(ib=ib_start;ib<ib_end;ib++){
             list_jb[ib] += jbthread[mythread];
           }
         }//omp parallel
