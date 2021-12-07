@@ -38,11 +38,11 @@
 <h1><span class="section-number">5.5. </span>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this headline">¶</a></h1>
 <p>In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, real time evolution calculation is done by using the following relation</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-en-0">
-<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-en-0" title="Permalink to this equation">¶</a></span>\[|\Phi (t_n)\rangle = \exp^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle,\]</div>
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-en-0" title="Permalink to this equation">¶</a></span>\[|\Phi (t_n)\rangle = \exp (-i {\cal H}  \Delta t_n)|\Phi (t_{n-1})\rangle,\]</div>
 <p>where <span class="math notranslate nohighlight">\(|\Phi(t_0)\rangle\)</span> is an initial wave function and <span class="math notranslate nohighlight">\(t_n = \sum_{j=1}^n  \Delta t_j\)</span>.
-In calculation, we approximate <span class="math notranslate nohighlight">\(\exp^{-i {\cal H}  \Delta t_n}\)</span> as</p>
+In calculation, we approximate <span class="math notranslate nohighlight">\(\exp (-i {\cal H}  \Delta t_n)\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-en-1">
-<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-en-1" title="Permalink to this equation">¶</a></span>\[\exp^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .\]</div>
+<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-en-1" title="Permalink to this equation">¶</a></span>\[\exp (-i {\cal H}  \Delta t_n) =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .\]</div>
 <p>Here, the cut-off integer <span class="math notranslate nohighlight">\(m\)</span> can be set by <cite>ExpandCoef</cite> in <cite>ModPara</cite>.
 We can judge whether the expansion order is enough or not by checking the norm conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span> and energy conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\hat{\cal H}|\Phi (t_n)\rangle=E\)</span>.</p>
 </section>
@@ -125,7 +125,7 @@ We can judge whether the expansion order is enough or not by checking the norm c
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
