@@ -69,6 +69,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_hubbard_square.sh
 )
 add_test(
+  NAME lobcg_hubbard_szunconserv
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_hubbard_szunconserv.sh
+)
+add_test(
   NAME lobcg_kondo_chain
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_kondo_chain.sh
 )
