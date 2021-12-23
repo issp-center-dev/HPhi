@@ -867,7 +867,13 @@ SUBROUTINE output_cor()
         END DO
         !
         DO ik = 1, ikk
-           WRITE(fo,'(1000e15.5)') xk(ik), cor_ave(ik,1:6, 1:norb, 1:norb), cor_err(ik,1:6, 1:norb, 1:norb)
+           WRITE(fo,'(e15.5)',advance="no") xk(ik)
+           DO iorb = 1, norb
+              DO jorb = 1, norb
+                 WRITE(fo,'(24e15.5)',advance="no") cor_ave(ik,1:6, jorb, iorb), cor_err(ik,1:6, jorb, iorb)
+              END DO
+           END DO
+           WRITE(fo,*)
         END DO
         !
         CLOSE(fo)
