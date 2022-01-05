@@ -467,7 +467,7 @@ END SUBROUTINE set_kpoints
 SUBROUTINE read_corrindx()
   !
   USE fourier_val, ONLY : file_one, file_two, ncor1, ncor2, ncor, indx, &
-  &                       calctype, nr, rindx, orb, norb
+  &                       calctype, nr, rindx, orb, norb, irv
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, itmp(8), icor
@@ -495,7 +495,14 @@ SUBROUTINE read_corrindx()
   !
   ncor(1:2) = 0
   DO icor = 1, ncor1
+     !
      READ(fi,*) itmp(1:4)
+     !
+     IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+        WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+        CYCLE
+     END IF
+     !
      IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN
         !
         ! Up-Up correlation
@@ -533,6 +540,11 @@ SUBROUTINE read_corrindx()
      READ(fi,*) itmp(1:8)
      !
      IF(itmp(1) == itmp(3) .AND. itmp(5) == itmp(7)) THEN
+        !
+        IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+           WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+           CYCLE
+        END IF
         !
         IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN
            !
@@ -583,6 +595,11 @@ SUBROUTINE read_corrindx()
      END IF
      !
      IF(calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5))) THEN
+        !
+        IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+           WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+           CYCLE
+        END IF
         !
         ! S+S- & S-S+ for mVMC
         !
