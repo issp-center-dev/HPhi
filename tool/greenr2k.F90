@@ -620,7 +620,7 @@ SUBROUTINE read_corrindx()
   END DO
   !
   IF(COUNT(indx(1:nr,3:8,1:norb,1:norb) == 0) /= 0) THEN
-     WRITE(*,*) "ERROR! The following correelation function is missed:"
+     WRITE(*,*) "ERROR! The following correlation function is missed:"
      WRITE(*,*) "R,   kind,   orb1,   orb2"
      DO icor = 3, 8
         DO ir = 1, nr
