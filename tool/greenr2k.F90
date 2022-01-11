@@ -470,7 +470,7 @@ SUBROUTINE read_corrindx()
   &                       calctype, nr, rindx, orb, norb, irv
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, itmp(8), icor
+  INTEGER :: fi = 10, itmp(8), icor, ir, iorb, jorb
   CHARACTER(100) :: ctmp
   !
   WRITE(*,*) 
@@ -618,6 +618,35 @@ SUBROUTINE read_corrindx()
      END IF ! (calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5)))
      !
   END DO
+  !
+  IF(COUNT(indx(1:nr,3:8,1:norb,1:norb) == 0) /= 0) THEN
+     WRITE(*,*) "ERROR! The following correelation function is missed:"
+     WRITE(*,*) "R,   kind,   orb1,   orb2"
+     DO icor = 3, 8
+        DO ir = 1, nr
+           DO iorb = 1, norb
+              DO jorb = 1, norb
+                 IF(indx(ir,icor,iorb,jorb) == 0) THEN
+                    IF(icor == 3) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Up-Up-Up         ", iorb, jorb
+                    ELSE IF(icor == 4) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Up-Down-Down     ", iorb, jorb
+                    ELSE IF(icor == 5) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Down-Up-Up     ", iorb, jorb
+                    ELSE IF(icor == 6) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Down-Down-Down ", iorb, jorb
+                    ELSE IF(icor == 7) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Down-Down-Up     ", iorb, jorb
+                    ELSE
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Up-Up-Down     ", iorb, jorb
+                    END IF
+                 END IF
+              END DO
+           END DO
+        END DO
+     END DO
+     STOP "Missing indices for the Green function."
+  END IF
   !
   WRITE(*,*) "    Number of UpUpUpUp         Index : ", COUNT(indx(1:nr, 3, 1:norb, 1:norb) /= 0)
   WRITE(*,*) "    Number of UpUpDownDown     Index : ", COUNT(indx(1:nr, 4, 1:norb, 1:norb) /= 0)
