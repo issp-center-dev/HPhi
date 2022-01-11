@@ -542,7 +542,7 @@ double complex pairhopp(
   double complex *tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
 ) {
-  long int j;
+  long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
   double complex dam_pr = 0.0;
@@ -771,7 +771,7 @@ double complex GC_pairhopp(
   double complex *tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
 ) {
-  long int j;
+  long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
   double complex dam_pr = 0.0;
@@ -793,7 +793,7 @@ double complex GC_exchange(
   double complex *tmp_v1,
   struct BindStruct *X
 ) {
-  long int j;
+  long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
   double complex dam_pr = 0.0;
