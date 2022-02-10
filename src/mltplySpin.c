@@ -423,27 +423,16 @@ void mltplyHalfSpinGC_mini(
   double complex *tmp_v1//!<[in] Input producted vector
 ) {
   long unsigned int j;
-  long unsigned int i;
-  long unsigned int off = 0;
-  long unsigned int is1_spin = 0;
   /**/
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2;
-  long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int isA_up, isB_up;
+  long unsigned int org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
   double complex dam_pr;
-  double complex tmp_trans;
   long int tmp_sgn;
-  /*[s] For InterAll */
-  double complex tmp_V;
-  /*[e] For InterAll */
 
   long unsigned int i_max;
   i_max = X->Check.idim_max;
-
-  int ihermite=0;
-  int idx=0;
 
   //EDGeneralTransfer[i][0] -> site_i  
   //EDGeneralTransfer[i][1] -> spin_i  

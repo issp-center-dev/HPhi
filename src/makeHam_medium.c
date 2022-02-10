@@ -613,8 +613,8 @@ int makeHam_medium(struct BindStruct *X) {
           }
         }
       }
-
       break;
   }
+
   return 0;
 }

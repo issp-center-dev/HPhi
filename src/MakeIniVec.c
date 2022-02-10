@@ -42,14 +42,12 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
-  double Ns;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
   int mythread;
   double rand_X,rand_Y;
   double complex rand_Z1,rand_Z2;
 
-  Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
 #pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \

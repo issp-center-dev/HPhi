@@ -92,7 +92,7 @@ int expec_cisajscktaltdc
 {
 
   FILE *fp,*fp_2,*fp_3,*fp_4;
-  char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],sdt_4[D_FileNameMax],*tmp_char;
+  char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],sdt_4[D_FileNameMax];
   long unsigned int irght,ilft,ihfbit;
 
   //For TPQ
@@ -902,8 +902,10 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
     long unsigned int i,j;
     long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6,tmp_org_isite7,tmp_org_isite8,tmp_org_isite9,tmp_org_isite10,tmp_org_isite11,tmp_org_isite12;
     long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6,tmp_org_sigma7,tmp_org_sigma8,tmp_org_sigma9,tmp_org_sigma10,tmp_org_sigma11,tmp_org_sigma12;
-    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6,org_isite7,org_isite8,org_isite9,org_isite10,org_isite11,org_isite12;
-    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6,org_sigma7,org_sigma8,org_sigma9,org_sigma10,org_sigma11,org_sigma12;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
+//    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6,org_isite7,org_isite8,org_isite9,org_isite10,org_isite11,org_isite12;
+//    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6,org_sigma7,org_sigma8,org_sigma9,org_sigma10,org_sigma11,org_sigma12;
     long unsigned int isA_up, isB_up;
     long unsigned int tmp_off=0;
     double complex tmp_V;
@@ -950,26 +952,26 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
         tmp_org_isite12  = X->Def.SBody[i][22]+1;
         tmp_org_sigma12  = X->Def.SBody[i][23];
  
-        /**/
-        org_isite5   = X->Def.SBody[i][8]+1;
-        org_sigma5   = X->Def.SBody[i][9];
-        org_isite6   = X->Def.SBody[i][10]+1;
-        org_sigma6   = X->Def.SBody[i][11];
-        /**/
-        org_isite7   = X->Def.SBody[i][12]+1;
-        org_sigma7   = X->Def.SBody[i][13];
-        org_isite8   = X->Def.SBody[i][14]+1;
-        org_sigma8   = X->Def.SBody[i][15];
-        /**/
-        org_isite9   = X->Def.SBody[i][16]+1;
-        org_sigma9   = X->Def.SBody[i][17];
-        org_isite10  = X->Def.SBody[i][18]+1;
-        org_sigma10  = X->Def.SBody[i][19];
-        /**/
-        org_isite11  = X->Def.SBody[i][20]+1;
-        org_sigma11  = X->Def.SBody[i][21];
-        org_isite12  = X->Def.SBody[i][22]+1;
-        org_sigma12  = X->Def.SBody[i][23];
+//        /**/
+//        org_isite5   = X->Def.SBody[i][8]+1;
+//        org_sigma5   = X->Def.SBody[i][9];
+//        org_isite6   = X->Def.SBody[i][10]+1;
+//        org_sigma6   = X->Def.SBody[i][11];
+//        /**/
+//        org_isite7   = X->Def.SBody[i][12]+1;
+//        org_sigma7   = X->Def.SBody[i][13];
+//        org_isite8   = X->Def.SBody[i][14]+1;
+//        org_sigma8   = X->Def.SBody[i][15];
+//        /**/
+//        org_isite9   = X->Def.SBody[i][16]+1;
+//        org_sigma9   = X->Def.SBody[i][17];
+//        org_isite10  = X->Def.SBody[i][18]+1;
+//        org_sigma10  = X->Def.SBody[i][19];
+//        /**/
+//        org_isite11  = X->Def.SBody[i][20]+1;
+//        org_sigma11  = X->Def.SBody[i][21];
+//        org_isite12  = X->Def.SBody[i][22]+1;
+//        org_sigma12  = X->Def.SBody[i][23];
 
         X->Large.mode = M_MLTPLY;
         /* |vec_pr_0>= c11a12|vec>*/
@@ -1122,8 +1124,10 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
     long unsigned int i,j;
     long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6,tmp_org_isite7,tmp_org_isite8;
     long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6,tmp_org_sigma7,tmp_org_sigma8;
-    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6,org_isite7,org_isite8;
-    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6,org_sigma7,org_sigma8;
+    //long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6,org_isite7,org_isite8;
+    //long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6,org_sigma7,org_sigma8;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
     long unsigned int isA_up, isB_up;
     long unsigned int tmp_off=0;
     double complex tmp_V;
@@ -1157,15 +1161,15 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
         tmp_org_isite8   = X->Def.FBody[i][14]+1;
         tmp_org_sigma8   = X->Def.FBody[i][15];
         /**/
-        org_isite5   = X->Def.FBody[i][8]+1;
-        org_sigma5   = X->Def.FBody[i][9];
-        org_isite6   = X->Def.FBody[i][10]+1;
-        org_sigma6   = X->Def.FBody[i][11];
-        /**/
-        org_isite7   = X->Def.FBody[i][12]+1;
-        org_sigma7   = X->Def.FBody[i][13];
-        org_isite8   = X->Def.FBody[i][14]+1;
-        org_sigma8   = X->Def.FBody[i][15];
+//        org_isite5   = X->Def.FBody[i][8]+1;
+//        org_sigma5   = X->Def.FBody[i][9];
+//        org_isite6   = X->Def.FBody[i][10]+1;
+//        org_sigma6   = X->Def.FBody[i][11];
+//        /**/
+//        org_isite7   = X->Def.FBody[i][12]+1;
+//        org_sigma7   = X->Def.FBody[i][13];
+//        org_isite8   = X->Def.FBody[i][14]+1;
+//        org_sigma8   = X->Def.FBody[i][15];
 
         X->Large.mode = M_MLTPLY;
         /* |vec_pr_tmp>= c7a8|vec>*/
@@ -1282,8 +1286,10 @@ int expec_Threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
     long unsigned int i,j;
     long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6;
     long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6;
-    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6;
-    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6;
+//    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6;
+//    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4;
     long unsigned int isA_up, isB_up;
     long unsigned int tmp_off=0;
     double complex tmp_V;
@@ -1310,10 +1316,10 @@ int expec_Threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
         tmp_org_isite6   = X->Def.TBody[i][10]+1;
         tmp_org_sigma6   = X->Def.TBody[i][11];
         /**/
-        org_isite5   = X->Def.TBody[i][8]+1;
-        org_sigma5   = X->Def.TBody[i][9];
-        org_isite6   = X->Def.TBody[i][10]+1;
-        org_sigma6   = X->Def.TBody[i][11];
+//        org_isite5   = X->Def.TBody[i][8]+1;
+//        org_sigma5   = X->Def.TBody[i][9];
+//        org_isite6   = X->Def.TBody[i][10]+1;
+//        org_sigma6   = X->Def.TBody[i][11];
 
         X->Large.mode = M_MLTPLY;
         /* |vec_pr>= c5a6|phi>*/
