@@ -59,7 +59,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   long unsigned int ilft=0;
   long unsigned int ihfbit=0;
 
-  double complex dam_pr;
+  double complex dam_pr, dmv;
 
   long unsigned int i_max;
 
@@ -94,7 +94,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.mode = M_MLTPLY;
 
   StartTimer(100);
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) private(j, dmv) shared(tmp_v0, tmp_v1, list_Diagonal)
   for (j = 1; j <= i_max; j++) {
     tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
     dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
@@ -104,13 +104,16 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 
   if (X->Def.iFlgMediumMod > 0){
       unsigned long int i = 0;
+      unsigned long int i_counter = 0;
       unsigned long int NHam_offdiagonal = 0;
       NHam_offdiagonal = X->Def.EDNTransfer+X->Def.NPairHopping+X->Def.NExchangeCoupling+X->Def.NPairLiftCoupling+X->Def.NInterAll;
+#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max, NHam_offdiagonal) private(dmv, i_counter, i, j) shared(tmp_v0, tmp_v1, Ham, lui_counter_vec)
       for (i=1; i<=NHam_offdiagonal; i++){
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i, i_max) shared(tmp_v0, tmp_v1, Ham, lui_counter_vec)
           for(j = 1; j <= i_max; j++) {
-              tmp_v0[lui_counter_vec[i][j]] += Ham[i][j]*tmp_v1[j];
-              dam_pr += Ham[i][j]* conj(tmp_v1[lui_counter_vec[i][j]])*tmp_v1[j];
+              dmv =  Ham[i][j]*tmp_v1[j];
+              i_counter = lui_counter_vec[i][j];
+              tmp_v0[i_counter] += dmv;
+              dam_pr += dmv* conj(tmp_v1[i_counter]);
           }
       }
       X->Large.prdct += dam_pr;
