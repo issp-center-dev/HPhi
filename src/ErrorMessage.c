@@ -52,6 +52,7 @@ char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1:
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
+char *cErrMedium="Error in %s\n HoldHam: HoldHam must be greater than 0.\n";
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";

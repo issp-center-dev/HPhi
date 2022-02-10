@@ -253,6 +253,7 @@ int ReadcalcmodFile(
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
+  X->iFlgMediumMod=0;
   X->iFlgScaLAPACK=0;
 #ifdef _MAGMA
   X->iNGPU=2;
@@ -310,6 +311,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "NGPU")==0){
         X->iNGPU=itmp;
     }
+    else if(CheckWords(ctmp, "HoldHamMode")==0){
+        X->iFlgMediumMod=itmp;
+    }
     else if(CheckWords(ctmp, "ScaLAPACK")==0){
 #ifdef _SCALAPACK
       X->iFlgScaLAPACK=itmp;
@@ -366,8 +370,14 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrCUDA, defname);
     return (-1);
   }
+
+  if(X->iFlgMediumMod < 0){
+      fprintf(stdoutMPI, cErrMedium, defname);
+      return (-1);
+  }
+
   if(ValidateValue(X->iFlgScaLAPACK, 0, 1)){
-    fprintf(stdoutMPI, cErrCUDA, defname);
+    fprintf(stdoutMPI, cErrScaLAPACK, defname);
     return (-1);
   }
 

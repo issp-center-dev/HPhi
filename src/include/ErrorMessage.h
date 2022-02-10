@@ -53,6 +53,7 @@ extern char *cErrOutputHamForFullDiag;
 extern char *cErrRestart;
 extern char *cErrFiniteTemp;
 extern char *cErrCUDA;
+extern char *cErrMedium;
 extern char *cErrScaLAPACK;
 
 extern char *cErrKW;

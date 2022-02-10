@@ -136,6 +136,8 @@ double complex *Z_vec=0;
 int descZ_vec[9] = {0};
 #endif
 
+long unsigned int **lui_counter_vec=0;
+
 /* Timer */
 double *Timer = 0;
 double *TimerStart = 0;

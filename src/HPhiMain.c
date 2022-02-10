@@ -32,7 +32,7 @@
 #include "wrapperMPI.h"
 #include "splash.h"
 #include "CalcTime.h"
-
+#include "makeHam_medium.h"
 /*!
   @mainpage
 
@@ -287,7 +287,10 @@ int main(int argc, char* argv[]){
     StartTimer(2000);
     diagonalcalc(&(X.Bind));
     StopTimer(2000);
-      
+
+    if(X.Bind.Def.iFlgMediumMod>0){
+        makeHam_medium(&(X.Bind));
+    }
     switch (X.Bind.Def.iCalcType) {
     case Lanczos:
       StartTimer(4000);

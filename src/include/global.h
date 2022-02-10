@@ -78,6 +78,10 @@ extern int descZ_vec[9]; /*descriptor for Z_vec*/
 #endif
 /*[e] For All Diagonalization*/
 
+/*[s] For medium mode*/
+extern long unsigned int **lui_counter_vec;
+/*[e] For medium mode*/
+
 extern const char* cParentOutputFolder; /**> Path to output results*/
 
 //For TimeKeep

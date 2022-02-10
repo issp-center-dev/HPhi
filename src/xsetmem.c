@@ -244,6 +244,13 @@ int setmem_large
       X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
       X->Phys.all_s2 = d_1d_allocate( X->Def.k_exct);
   }
+
+  if (X->Def.iFlgMediumMod > 0){
+      unsigned long int NHam_offdiagonal = 0;
+      NHam_offdiagonal = X->Def.EDNTransfer+X->Def.NPairHopping+X->Def.NExchangeCoupling+X->Def.NPairLiftCoupling+X->Def.NInterAll_OffDiagonal;
+      Ham = cd_2d_allocate(NHam_offdiagonal+1,X->Check.idim_max + 1);
+      lui_counter_vec = lui_2d_allocate(NHam_offdiagonal+1, X->Check.idim_max + 1);
+  }
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
 }

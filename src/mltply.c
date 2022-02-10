@@ -101,6 +101,22 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   }
   X->Large.prdct += dam_pr;
   StopTimer(100);
+
+  if (X->Def.iFlgMediumMod > 0){
+      unsigned long int i = 0;
+      unsigned long int NHam_offdiagonal = 0;
+      NHam_offdiagonal = X->Def.EDNTransfer+X->Def.NPairHopping+X->Def.NExchangeCoupling+X->Def.NPairLiftCoupling+X->Def.NInterAll;
+      for (i=1; i<=NHam_offdiagonal; i++){
+          for(j = 1; j <= i_max; j++) {
+              tmp_v0[lui_counter_vec[i][j]] += Ham[i][j]*tmp_v1[j];
+              dam_pr += Ham[i][j]* conj(tmp_v1[lui_counter_vec[i][j]])*tmp_v1[j];
+          }
+      }
+      X->Large.prdct += dam_pr;
+      StopTimer(1);
+      return 0;
+  }
+
   if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, tmp_v0, tmp_v1);
   
   switch (X->Def.iCalcModel) {

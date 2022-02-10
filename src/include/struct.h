@@ -243,6 +243,12 @@ struct DefineList {
     - >0: Use GPU
     */
 
+    int iFlgMediumMod;/**<@brief Meidium mode (hold hamiltonian matrix. not used for mpi.)
+    - 0: Select Normal mode (Generate Hamiltonian matrix at each step)
+    - >0: Select Medium mode
+    */
+
+
     int iFlgScaLAPACK;/**<@brief ScaLAPACK mode ( only for FullDiag )
     - 0: Use lapack
     - 1: Use ScaLAPACK

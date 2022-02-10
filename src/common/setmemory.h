@@ -37,7 +37,19 @@ unsigned int *ui_1d_allocate(const long unsigned int N);
 ///
 /// \brief Function to free 1d array (int)
 /// \param A Pointer of 1d array A
-void free_ui_1d_allocate(unsigned int *A);
+void free_lui_1d_allocate(long unsigned int *A);
+
+///
+/// \brief Allocation for A[N][M]
+/// \param N [in] The size of the array A
+/// \param M [in] The size of the array M
+/// \return A Pointer to array A
+/// \author Kazuyoshi Yoshimi (University of Tokyo)
+long unsigned int **lui_2d_allocate(const long unsigned int N, const long unsigned int M);
+///
+/// \brief Function to free 2d array (int)
+/// \param A Pointer of 2d array A
+void free_lui_2d_allocate(long unsigned int **A);
 
 ///
 /// \brief Allocation for A[N]
