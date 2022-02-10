@@ -119,7 +119,7 @@ int makeHam_medium(struct BindStruct *X) {
           }
           tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
 
-#pragma omp parallel for default(none) firstprivate(X, tmp_trans, count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec)
+#pragma omp parallel for default(none) firstprivate(X, tmp_trans, count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
           for (j = 1; j <= X->Large.i_max; j++) {
             dmv = tmp_trans *
                   GC_CisAjt(j, v0, v1, X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
@@ -311,21 +311,21 @@ int makeHam_medium(struct BindStruct *X) {
           }
           else {
               if (isite1 == isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) firstprivate(X, tmp_V, isite1, isite3, isite4, Bsum, Bdiff, count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, tmp_V, isite1, isite3, isite4, Bsum, Bdiff, count_idx, i_max) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
                   for (j = 1; j <= i_max; j++) {
                       dmv = CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
                       Ham[count_idx][j] += dmv;
                       lui_counter_vec[count_idx][j] = tmp_off;
                   }
               } else if (isite1 != isite2 && isite3 == isite4) {
-#pragma omp parallel for default(none) firstprivate(X, isite1, isite3, isite4, Asum, Adiff,tmp_V, count_idx) private(j,  tmp_off, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, isite1, isite2, isite3, isite4, Asum, Adiff,tmp_V, count_idx, i_max) private(j,  tmp_off, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
                   for (j = 1; j <= i_max; j++) {
                       dmv = CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
                       Ham[count_idx][j] += dmv;
                       lui_counter_vec[count_idx][j] = tmp_off;
                   }
               } else if (isite1 != isite2 && isite3 != isite4) {
-#pragma omp parallel for default(none) firstprivate(X, tmp_V, count_idx, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, tmp_V, count_idx, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, i_max) private(j, tmp_off, tmp_off_2, dmv) shared(Ham, lui_counter_vec, list_1, v0, v1)
                   for (j = 1; j <= i_max; j++) {
                       dmv = CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, v0,
                                                  v1, X, &tmp_off_2);
@@ -392,7 +392,7 @@ int makeHam_medium(struct BindStruct *X) {
               } else {
                 // transverse magnetic field
                 is1_spin = X->Def.Tpow[isite1 - 1];
-#pragma omp parallel for default(none) firstprivate(X, tmp_trans, is1_spin, sigma2, i_max) private(j, off) shared(Ham, lui_counter_vec)
+#pragma omp parallel for default(none) firstprivate(X, tmp_trans, is1_spin, sigma2, i_max, count_idx) private(j, off, dmv) shared(Ham, lui_counter_vec)
                   for (j = 1; j <= i_max; j++) {
                     dmv = tmp_trans * child_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
                     Ham[count_idx][j] += dmv;
@@ -424,14 +424,14 @@ int makeHam_medium(struct BindStruct *X) {
                 isB_up = X->Def.Tpow[isite2 - 1];
 
                 if (sigma1 == sigma2 && sigma3 == sigma4) { //diagonal
-#pragma omp parallel for default(none) firstprivate(X, isA_up, isB_up, sigma2, sigma4, tmp_V) private(j, tmp_off, dmv) shared(Ham, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, isA_up, isB_up, sigma2, sigma4, tmp_V, i_max) private(j, tmp_off, dmv) shared(Ham, v0, v1)
                     for (j = 1; j <= i_max; j++) {
                         dmv = GC_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
                         Ham[0][j] += dmv;
                     }
                 } else { //off-diagonal
                     if (sigma1 == sigma2 && sigma3 != sigma4) {
-#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max, count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
                         for (j = 1; j <= i_max; j++) {
                             dmv = GC_CisAisCitAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X,
                                                                &tmp_off);
@@ -439,7 +439,7 @@ int makeHam_medium(struct BindStruct *X) {
                             lui_counter_vec[count_idx][j] = tmp_off + 1;
                         }
                     } else if (sigma1 != sigma2 && sigma3 == sigma4) {
-#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max, count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
                         for (j = 1; j <= i_max; j++) {
                             dmv = GC_CisAitCiuAiu_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X,
                                                                &tmp_off);
@@ -447,7 +447,7 @@ int makeHam_medium(struct BindStruct *X) {
                             lui_counter_vec[count_idx][j] = tmp_off + 1;
                         }
                     } else if (sigma1 != sigma2 && sigma3 != sigma4) {
-#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max) private(j, tmp_off_2, dmv) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, sigma2, sigma4, isA_up, isB_up, tmp_V, i_max, count_idx) private(j, tmp_off_2, dmv) shared(Ham, lui_counter_vec, v0, v1)
                         for (j = 1; j <= i_max; j++) {
                             dmv = GC_CisAitCiuAiv_spin_element(j, sigma2, sigma4, isA_up, isB_up, tmp_V, v0, v1, X,
                                                                &tmp_off_2);
@@ -462,7 +462,7 @@ int makeHam_medium(struct BindStruct *X) {
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
             exchange_spin_GetInfo(i, X);
-#pragma omp parallel for default(none) firstprivate(X) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X,count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
             for (j = 1; j <= X->Large.i_max; j++) {
             dmv = GC_exchange_spin_element(j, v0, v1, X, &tmp_off);
             Ham[count_idx][j] += dmv;
@@ -476,7 +476,7 @@ int makeHam_medium(struct BindStruct *X) {
           for (ihermite = 0; ihermite < 2; ihermite++) {
             idx = 2 * i + ihermite;
             pairlift_spin_GetInfo(idx, X);
-#pragma omp parallel for default(none) firstprivate(X) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X,count_idx) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
             for (j = 1; j <= X->Large.i_max; j++) {
               dmv = GC_pairlift_spin_element(j, v0, v1, X, &tmp_off);
               Ham[count_idx][j] += dmv;
@@ -498,7 +498,7 @@ int makeHam_medium(struct BindStruct *X) {
             if (isite1 == isite2) {
               // longitudinal magnetic field is absorbed in diagonal calculation.
               // transverse magnetic field
-#pragma omp parallel for default(none) firstprivate(X, isite1, sigma2, sigma1, tmp_trans) private(j, off, num1) shared(Ham, lui_counter_vec, v0, v1)
+#pragma omp parallel for default(none) firstprivate(X, isite1, sigma2, sigma1, tmp_trans, count_idx, i_max) private(j, off, num1) shared(Ham, lui_counter_vec, v0, v1)
               for (j = 1; j <= i_max; j++) {
                 num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
                 Ham[count_idx][j] += tmp_trans * num1;
@@ -523,7 +523,7 @@ int makeHam_medium(struct BindStruct *X) {
             sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-#pragma omp parallel for default(none) firstprivate(X, isite1, isite2, sigma4, sigma3, sigma2, sigma1, tmp_V) private(j, tmp_off, off, num1) shared(Ham, lui_counter_vec)
+#pragma omp parallel for default(none) firstprivate(X, isite1, isite2, sigma4, sigma3, sigma2, sigma1, tmp_V, i_max, count_idx) private(j, tmp_off, off, num1) shared(Ham, lui_counter_vec)
               for (j = 1; j <= i_max; j++) {
               num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
               if (num1 != 0) {
@@ -559,7 +559,7 @@ int makeHam_medium(struct BindStruct *X) {
             isA_up = X->Large.is1_up;
             isB_up = X->Large.is2_up;
 
-#pragma omp parallel for default(none) firstprivate(X, isA_up, isB_up, sigma2, sigma4, tmp_V, i_max) private(j, tmp_sign, tmp_off, dmv) shared(Ham, lui_counter_vec)
+#pragma omp parallel for default(none) firstprivate(X, isA_up, isB_up, sigma2, sigma4, tmp_V, i_max,count_idx) private(j, tmp_sgn, tmp_off, dmv) shared(Ham, lui_counter_vec)
             for (j = 1; j <= i_max; j++) {
               tmp_sgn = child_exchange_spin_element(j, X, isA_up, isB_up, sigma2, sigma4, &tmp_off);
               dmv = tmp_sgn * tmp_V;
@@ -573,8 +573,8 @@ int makeHam_medium(struct BindStruct *X) {
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           exchange_spin_GetInfo(i, X);
-#pragma omp parallel for default(none) firstprivate(X) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
-            for (j = 1; j <= X->Large.i_max; j++) {
+#pragma omp parallel for default(none) firstprivate(X, count_idx, i_max) private(j, tmp_off, dmv) shared(Ham, lui_counter_vec, v0, v1)
+            for (j = 1; j <= i_max; j++) {
             dmv = exchange_spin_element(j, v0, v1, X, &tmp_off);
             Ham[count_idx][j] += dmv;
             lui_counter_vec[count_idx][j] = tmp_off;
@@ -597,7 +597,7 @@ int makeHam_medium(struct BindStruct *X) {
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 
-#pragma omp parallel for default(none) firstprivate(X, i_max, isite1, sigma2, sigma1, isite2, sigma4, sigma3, tmp_V) private(j, tmp_off, offm num1) shared(Ham, lui_counter_vec, list_1)
+#pragma omp parallel for default(none) firstprivate(X, i_max, isite1, sigma2, sigma1, isite2, sigma4, sigma3, tmp_V, count_idx) private(j, tmp_off, off, num1) shared(Ham, lui_counter_vec, list_1)
               for (j = 1; j <= i_max; j++) {
               num1 = GetOffCompGeneralSpin(list_1[j], isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
               if (num1 != 0) {
