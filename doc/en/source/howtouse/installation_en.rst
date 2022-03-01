@@ -3,7 +3,7 @@ Installation
 
 You can download :math:`{\mathcal H}\Phi` at the following location.
 
-https://github.com/QLMS/HPhi/releases
+https://github.com/issp-center-dev/HPhi/releases
 
 You can obtain the :math:`{\mathcal H}\Phi` directory by typing
 
