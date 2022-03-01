@@ -3,7 +3,7 @@
 
 :math:`{\mathcal H}\Phi` は次の場所からダウンロードできます。
 
-https://github.com/QLMS/HPhi/releases
+https://github.com/issp-center-dev/HPhi/releases
 
 ダウンロードしたファイルを次のように展開してください。
 
