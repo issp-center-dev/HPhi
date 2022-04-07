@@ -2320,7 +2320,8 @@ int CheckInterAllHermite
         }
       } else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 &&
                  isite4 == itmpsite3) {      //for spin and Kondo
-        if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
+        //if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
+          if (iCalcModel == Kondo || iCalcModel == KondoGC) {
           if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
             ddiff_intall = ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]);
             if (cabs(ddiff_intall) < eps_CheckImag0) {
@@ -2362,7 +2363,8 @@ int CheckInterAllHermite
     }
   }
 
-  if (icntincorrect != 0) {
+  //if (icntincorrect != 0) {
+  if (icntincorrect != 0 || NInterAllOffDiagonal != 2*icntHermite) {
     return (-1);
   }
 
