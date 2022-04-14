@@ -2318,45 +2318,48 @@ int CheckInterAllHermite
       }
 
       if (itmpret != 1) {
-          for (j = 0; j < NInterAllOffDiagonal; j++) {
-              itmpsite1 = InterAllOffDiagonal[j][0];
-              itmpsigma1 = InterAllOffDiagonal[j][1];
-              itmpsite2 = InterAllOffDiagonal[j][2];
-              itmpsigma2 = InterAllOffDiagonal[j][3];
-              itmpsite3 = InterAllOffDiagonal[j][4];
-              itmpsigma3 = InterAllOffDiagonal[j][5];
-              itmpsite4 = InterAllOffDiagonal[j][6];
-              itmpsigma4 = InterAllOffDiagonal[j][7];
-              if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 &&
-                  isite4 == itmpsite3) {      //for spin and Kondo
-                  if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
-                      if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 &&
-                          isigma4 == itmpsigma3) {
-                          ddiff_intall = ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]);
-                          if (cabs(ddiff_intall) < eps_CheckImag0) {
-                              itmpret = 1;
-                              if (i <= j) {
-                                  if (icheckHermiteCount == FALSE) {
-                                      icheckHermiteCount = TRUE; // for not double-counting
-                                      if (2 * icntHermite >= NInterAllOffDiagonal) {
-                                          fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
-                                          return (-1);
-                                      }
-                                      for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                                          InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
-                                      }
-                                      for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
-                                          InterAll[2 * icntHermite + 1][2 * itmpIdx] = InterAllOffDiagonal[i][6 -
-                                                                                                              2 *
-                                                                                                              itmpIdx];
-                                          InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = InterAllOffDiagonal[i][7 -
+          if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
+              if (isite1 != isite3 && isigma1 != isigma3 && isite2 != isite4 && isigma2 != isigma4) {
+                  for (j = 0; j < NInterAllOffDiagonal; j++) {
+                      itmpsite1 = InterAllOffDiagonal[j][0];
+                      itmpsigma1 = InterAllOffDiagonal[j][1];
+                      itmpsite2 = InterAllOffDiagonal[j][2];
+                      itmpsigma2 = InterAllOffDiagonal[j][3];
+                      itmpsite3 = InterAllOffDiagonal[j][4];
+                      itmpsigma3 = InterAllOffDiagonal[j][5];
+                      itmpsite4 = InterAllOffDiagonal[j][6];
+                      itmpsigma4 = InterAllOffDiagonal[j][7];
+                      if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 &&
+                          isite4 == itmpsite3) {      //for spin and Kondo
+                          if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 &&
+                              isigma4 == itmpsigma3) {
+                              ddiff_intall = ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]);
+                              if (cabs(ddiff_intall) < eps_CheckImag0) {
+                                  itmpret = 1;
+                                  if (i <= j) {
+                                      if (icheckHermiteCount == FALSE) {
+                                          icheckHermiteCount = TRUE; // for not double-counting
+                                          if (2 * icntHermite >= NInterAllOffDiagonal) {
+                                              fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                                              return (-1);
+                                          }
+                                          for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+                                              InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
+                                          }
+                                          for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
+                                              InterAll[2 * icntHermite + 1][2 * itmpIdx] = InterAllOffDiagonal[i][6 -
                                                                                                                   2 *
                                                                                                                   itmpIdx];
+                                              InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = InterAllOffDiagonal[i][
+                                                      7 -
+                                                      2 *
+                                                      itmpIdx];
+                                          }
+                                          ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
+                                          ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
+                                          icntHermite++;
+                                          break;
                                       }
-                                      ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
-                                      ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
-                                      icntHermite++;
-                                      break;
                                   }
                               }
                           }
