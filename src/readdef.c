@@ -2318,42 +2318,43 @@ int CheckInterAllHermite
             }
           }
         }
-      } else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 &&
-                 isite4 == itmpsite3) {      //for spin and Kondo
-        //if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
-          if (iCalcModel == Kondo || iCalcModel == KondoGC) {
-          if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
-            ddiff_intall = ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]);
-            if (cabs(ddiff_intall) < eps_CheckImag0) {
-              itmpret = 1;
-              if (icheckHermiteCount == FALSE) {
-                icheckHermiteCount = TRUE; // for not double-counting
-                if (i <= j) {
-                  if (2 * icntHermite >= NInterAllOffDiagonal) {
-                    fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
-                    return (-1);
-                  }
-                  for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                    InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
-                  }
-                  for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
-                    InterAll[2 * icntHermite + 1][2 * itmpIdx] = InterAllOffDiagonal[i][6 -
-                                                                                        2 *
-                                                                                        itmpIdx];
-                    InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = InterAllOffDiagonal[i][7 - 2 *
-                                                                                                itmpIdx];
-
-                  }
-                  ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
-                  ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
-                  icntHermite++;
-                }
-                break;
-              }
-            }
-          }
-        }
       }
+//      else if (isite1 == itmpsite2 && isite2 == itmpsite1 && isite3 == itmpsite4 &&
+//                 isite4 == itmpsite3) {      //for spin and Kondo
+//        //if (iCalcModel == Kondo || iCalcModel == KondoGC || iCalcModel == Spin || iCalcModel == SpinGC) {
+//          if (iCalcModel == Kondo || iCalcModel == KondoGC) {
+//          if (isigma1 == itmpsigma2 && isigma2 == itmpsigma1 && isigma3 == itmpsigma4 && isigma4 == itmpsigma3) {
+//            ddiff_intall = ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]);
+//            if (cabs(ddiff_intall) < eps_CheckImag0) {
+//              itmpret = 1;
+//              if (icheckHermiteCount == FALSE) {
+//                icheckHermiteCount = TRUE; // for not double-counting
+//                if (i <= j) {
+//                  if (2 * icntHermite >= NInterAllOffDiagonal) {
+//                    fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+//                    return (-1);
+//                  }
+//                  for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+//                    InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
+//                  }
+//                  for (itmpIdx = 0; itmpIdx < 4; itmpIdx++) {
+//                    InterAll[2 * icntHermite + 1][2 * itmpIdx] = InterAllOffDiagonal[i][6 -
+//                                                                                        2 *
+//                                                                                        itmpIdx];
+//                    InterAll[2 * icntHermite + 1][2 * itmpIdx + 1] = InterAllOffDiagonal[i][7 - 2 *
+//                                                                                                itmpIdx];
+//
+//                  }
+//                  ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
+//                  ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
+//                  icntHermite++;
+//                }
+//                break;
+//              }
+//            }
+//          }
+//        }
+//      }
     }
     //if counterpart for satisfying hermite conjugate does not exist.
     if (itmpret != 1) {
