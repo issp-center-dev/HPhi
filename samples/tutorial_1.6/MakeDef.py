@@ -15,7 +15,7 @@ num      = read.func_count(tmp_sdt)
 #[s] set input.
 list_input = ['Ns','exct']
 dict_input = read.func_input(list_input)
-max_site = 2
+max_site = int(dict_input["Ns"])
 exct     = 2
 All_N    = max_site
 #[e] set input.
