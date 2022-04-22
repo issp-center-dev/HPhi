@@ -61,7 +61,7 @@ for cnt in range(num):
         InterAll[I][1][I][0][J][1][J][0] += complex(0,0.25*para[cnt])
     if intT1[cnt] == 'x' and intT2[cnt] == 'z':
         I = siteI[cnt]
-        J = siteI[cnt]
+        J = siteJ[cnt]
         # xz
         InterAll[I][0][I][1][J][0][J][0] +=  0.25*para[cnt]
         InterAll[I][0][I][1][J][1][J][1] += -0.25*para[cnt]
@@ -74,7 +74,7 @@ for cnt in range(num):
         InterAll[I][1][I][1][J][1][J][0] += -0.25*para[cnt]
     if intT1[cnt] == 'y' and intT2[cnt] == 'z':
         I = siteI[cnt]
-        J = siteI[cnt]
+        J = siteJ[cnt]
         # yz
         InterAll[I][0][I][1][J][0][J][0] += complex(0,-0.25*para[cnt])
         InterAll[I][0][I][1][J][1][J][1] += complex(0,0.25*para[cnt])
