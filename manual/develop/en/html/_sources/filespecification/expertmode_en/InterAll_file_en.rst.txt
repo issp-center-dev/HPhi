@@ -13,7 +13,9 @@ integrals :math:`I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}`,
    {\mathcal H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
    I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.
 
-For spin, the conditions :math:`i=j` and :math:`k=l` must be satisfied. An example of the file format is as follows.
+For the off-diagonal component, be sure to provide a pair of i1 sigma1 i2 sigma2 i3 sigma3 i4 sigma4 and i4 sigma4 i3 sigma3 i2 sigma2 i1 sigma1.
+For spin, the conditions :math:`i=j` and :math:`k=l` must be satisfied.
+An example of the file format is as follows.
 
 ::
 
