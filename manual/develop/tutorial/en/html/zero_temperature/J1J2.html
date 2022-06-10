@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>1.5. J1-J2 Heisenberg model &#8212; HΦ Tutorial  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="j1-j2-heisenberg-model">
-<h1><span class="section-number">1.5. </span>J1-J2 Heisenberg model<a class="headerlink" href="#j1-j2-heisenberg-model" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1.5. </span>J1-J2 Heisenberg model<a class="headerlink" href="#j1-j2-heisenberg-model" title="Permalink to this heading">¶</a></h1>
 <p>Here, we solve the <span class="math notranslate nohighlight">\(J_{1}-J_{2}\)</span> Heisenberg model on the square lattice,
 which is a canonical example of the frustrated magnets.
 Its Hamiltonian is defined as</p>
@@ -57,7 +58,7 @@ exct = 4
 </div>
 <p>Here, J (J’) represents <span class="math notranslate nohighlight">\(J_{1}\)</span> (<span class="math notranslate nohighlight">\(J_{2}\)</span>).</p>
 <section id="calculations-of-spin-structure-factors-for-ground-state">
-<h2><span class="section-number">1.5.1. </span>Calculations of spin structure factors for ground state<a class="headerlink" href="#calculations-of-spin-structure-factors-for-ground-state" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.5.1. </span>Calculations of spin structure factors for ground state<a class="headerlink" href="#calculations-of-spin-structure-factors-for-ground-state" title="Permalink to this heading">¶</a></h2>
 <p>First, we calculate the spin structure factors, which are defined as</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-j1j2-1">
 <span class="eqno">(1.8)<a class="headerlink" href="#equation-zero-temperature-j1j2-1" title="Permalink to this equation">¶</a></span>\[S({\bf q})=\frac{1}{N_{\rm s}}\sum_{i,j} {\bf S}_{i}\cdot{\bf S}_{j}\]</div>
@@ -93,7 +94,7 @@ As an example, we show <span class="math notranslate nohighlight">\(S({\bf q})\)
 <img alt="../_images/J1J2_Sq.png" class="align-center" src="../_images/J1J2_Sq.png" />
 </section>
 <section id="calculations-of-spin-structure-factors-for-excited-states">
-<h2><span class="section-number">1.5.2. </span>Calculations of spin structure factors for excited states<a class="headerlink" href="#calculations-of-spin-structure-factors-for-excited-states" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.5.2. </span>Calculations of spin structure factors for excited states<a class="headerlink" href="#calculations-of-spin-structure-factors-for-excited-states" title="Permalink to this heading">¶</a></h2>
 <p>By changing exct in stan.in, you can obtain several excited states.
 For those excited states, by changing <strong>max_num=1</strong> in CalcSq.py as,
 for example, <strong>max_num=4</strong>,
@@ -169,7 +170,7 @@ first excited state J’=0,0.5, and 1.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -186,7 +187,7 @@ first excited state J’=0,0.5, and 1.</p>
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

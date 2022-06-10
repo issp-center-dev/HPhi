@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>1. What is \({\mathcal H}\Phi\)? &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,25 +37,25 @@
           <div class="body" role="main">
             
   <section id="what-is-mathcal-h-phi">
-<h1><span class="section-number">1. </span>What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#what-is-mathcal-h-phi" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">1. </span>What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?<a class="headerlink" href="#what-is-mathcal-h-phi" title="Permalink to this heading">¶</a></h1>
 <section id="mathcal-h-phi">
-<h2><span class="section-number">1.1. </span><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> とは？<a class="headerlink" href="#mathcal-h-phi" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">1.1. </span><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> とは？<a class="headerlink" href="#mathcal-h-phi" title="Permalink to this heading">¶</a></h2>
 <p>実験データと理論模型の解析結果との直接比較は、物質科学の研究プロセスの一つの核となっています。
 例えば、低エネルギー励起構造を反映する比熱の温度依存性や、帯磁率から見積もった有効スピン・モーメントおよびキュリー・ワイス温度等の実験データからその背後にある電子状態を理解するためには、理論模型の解析結果との比較が必要不可欠です。</p>
-<p>理論模型の解析手法としては、厳密対角化法 <a class="footnote-reference brackets" href="#id12" id="id1">1</a> が近似を用いず定量的な計算ができる
+<p>理論模型の解析手法としては、厳密対角化法 <a class="footnote-reference brackets" href="#id12" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> が近似を用いず定量的な計算ができる
 最も信頼できる手法です。この目的のためには、東京工業大学の西森秀稔教授が作られた
 固有値問題ソルバパッケージ TITPACK が長年広く利用されてきました。
 これまでは計算機資源の制約もあり、その利用は比較的小さな系への適用に限られてきました。
 しかし、計算機の進歩によって、並列化を利用してハバード模型18格子点、
 スピン1/2の格子スピン模型36格子点程度の計算が容易に実行可能となっています。
-また、量子統計力学の発展 <a class="footnote-reference brackets" href="#id13" id="id2">2</a> <a class="footnote-reference brackets" href="#id14" id="id3">3</a> <a class="footnote-reference brackets" href="#id15" id="id4">4</a> <a class="footnote-reference brackets" href="#id16" id="id5">5</a> により、
+また、量子統計力学の発展 <a class="footnote-reference brackets" href="#id13" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id14" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id15" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id16" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> により、
 基底状態計算と同程度のコストでの有限温度計算が可能となり、
-比熱や帯磁率の実験との定量的比較が十分可能となってきています <a class="footnote-reference brackets" href="#id17" id="id6">6</a> 。
+比熱や帯磁率の実験との定量的比較が十分可能となってきています <a class="footnote-reference brackets" href="#id17" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a> 。
 これらの計算が可能になった背景には低バンド幅で多数の分散メモリ計算コアを持つ新しい計算機アーキテクチャがあり、
 その性能を最大限に生かしつつ、簡便に利用可能な新しいソフトウェアの登場が待たれていました。</p>
 <p>このような背景に基づき、汎用量子模型ソルバーパッケージ<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>  は、
 ランチョス法に基づく量子多体模型の基底状態および低励起状態に対する厳密対角化法と、
-熱的純粋量子状態 <a class="footnote-reference brackets" href="#id16" id="id7">5</a> を基礎とした有限温度計算を、
+熱的純粋量子状態 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> を基礎とした有限温度計算を、
 簡便かつ柔軟なユーザー・インターフェイスとともに並列実装されたアプリケーションを目指して開発されました。
 シンプルなハバード模型やハイゼンベルグ模型に始まり、
 多軌道ハバード模型やジャロシンスキー-守谷相互作用やキタエフ項のようにSU(2)対称性を破る
@@ -64,7 +65,7 @@
 比熱や電荷・スピン構造因子を始めとする様々な物理量が計算可能となっています。
 実験研究者を含む幅広いユーザーに気楽にご利用いただければ幸いです。</p>
 <section id="id8">
-<h3><span class="section-number">1.1.1. </span>ライセンス<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3><span class="section-number">1.1.1. </span>ライセンス<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <div class="line-block">
 <div class="line">本ソフトウェアのプログラムパッケージおよびソースコード一式はGNU
 General Public License version 3（GPL v3）に準じて配布されています。
@@ -75,7 +76,7 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
 </div>
 </section>
 <section id="id9">
-<h3><span class="section-number">1.1.2. </span>コピーライト<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3><span class="section-number">1.1.2. </span>コピーライト<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p><em>©2015- The University of Tokyo.</em> <em>All rights reserved.</em></p>
 </div></blockquote>
@@ -83,7 +84,7 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
 ソフトウェア高度化プロジェクトの支援を受け開発されており、その著作権は東京大学が所持しています。</p>
 </section>
 <section id="id10">
-<h3><span class="section-number">1.1.3. </span>開発貢献者<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3><span class="section-number">1.1.3. </span>開発貢献者<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
 <p>本ソフトウェアは以下の開発貢献者により開発されています。</p>
 <ul class="simple">
 <li><p>ver.3.4 (2020/6/2 リリース)</p>
@@ -152,7 +153,7 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
 </li>
 </ul>
 <section id="id11">
-<h4>動作環境<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<h4>動作環境<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h4>
 <p>以下の環境で動作することを確認しています。</p>
 <ul class="simple">
 <li><p>東京大学物性研究所スーパーコンピューターシステムB「sekirei」、システムC「enaga」</p></li>
@@ -161,26 +162,31 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
 <li><p>Linux PC + gcc</p></li>
 <li><p>Mac + gcc</p></li>
 </ul>
-<dl class="footnote brackets">
-<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>E. Dagotto, Rev. Mod. Phys. <strong>66</strong>, 763-840 (1994).</p>
-</dd>
-<dt class="label" id="id13"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>M. Imada, M. Takahashi, Journal of the Physical Society of Japan <strong>55</strong>, 3354-3361 (1986).</p>
-</dd>
-<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
-<dd><p>J. Jaklič, P. Prelovšek, Phys. Rev. B <strong>49</strong>, 5065-5068 (1994).</p>
-</dd>
-<dt class="label" id="id15"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
-<dd><p>A. Hams, H. De Raedt, Phys. Rev. E <strong>62</strong>, 4365-4377 (2000).</p>
-</dd>
-<dt class="label" id="id16"><span class="brackets">5</span><span class="fn-backref">(<a href="#id5">1</a>,<a href="#id7">2</a>)</span></dt>
-<dd><p>S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</p>
-</dd>
-<dt class="label" id="id17"><span class="brackets"><a class="fn-backref" href="#id6">6</a></span></dt>
-<dd><p>Y. Yamaji, Y. Nomura, M. Kurita, R. Arita, M. Imada, Phys. Rev. Lett. <strong>113</strong>, 107201 (2014).</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id12" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>E. Dagotto, Rev. Mod. Phys. <strong>66</strong>, 763-840 (1994).</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>M. Imada, M. Takahashi, Journal of the Physical Society of Japan <strong>55</strong>, 3354-3361 (1986).</p>
+</aside>
+<aside class="footnote brackets" id="id14" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>J. Jaklič, P. Prelovšek, Phys. Rev. B <strong>49</strong>, 5065-5068 (1994).</p>
+</aside>
+<aside class="footnote brackets" id="id15" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>A. Hams, H. De Raedt, Phys. Rev. E <strong>62</strong>, 4365-4377 (2000).</p>
+</aside>
+<aside class="footnote brackets" id="id16" role="note">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<p>S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</p>
+</aside>
+<aside class="footnote brackets" id="id17" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">6</a><span class="fn-bracket">]</span></span>
+<p>Y. Yamaji, Y. Nomura, M. Kurita, R. Arita, M. Imada, Phys. Rev. Lett. <strong>113</strong>, 107201 (2014).</p>
+</aside>
 </section>
 </section>
 </section>
@@ -245,7 +251,7 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -262,7 +268,7 @@ Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. <strong>217</strong> (2017)
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

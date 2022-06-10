@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>7.3. File format &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,9 +36,9 @@
           <div class="body" role="main">
             
   <section id="file-format">
-<span id="fileformat"></span><h1><span class="section-number">7.3. </span>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h1>
+<span id="fileformat"></span><h1><span class="section-number">7.3. </span>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h1>
 <section id="geometry">
-<span id="id1"></span><h2><span class="section-number">7.3.1. </span>Geometry<a class="headerlink" href="#geometry" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><span class="section-number">7.3.1. </span>Geometry<a class="headerlink" href="#geometry" title="Permalink to this heading">¶</a></h2>
 <p>The file name in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">Tutorial</span></a> is <code class="docutils literal notranslate"><span class="pre">geometry.dat</span></code>.
 When we use Standard mode of mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>,
 the information of the cell and geometry is generated automatically.</p>
@@ -80,9 +81,9 @@ along high symmetry line.</p></li>
 </ol>
 </section>
 <section id="one-and-two-body-correlation-function-in-the-site-representation">
-<h2><span class="section-number">7.3.2. </span>One- and Two-body correlation function in the site representation<a class="headerlink" href="#one-and-two-body-correlation-function-in-the-site-representation" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">7.3.2. </span>One- and Two-body correlation function in the site representation<a class="headerlink" href="#one-and-two-body-correlation-function-in-the-site-representation" title="Permalink to this heading">¶</a></h2>
 <section id="specify-the-index-of-correlation-function-to-be-computed">
-<span id="greenindex"></span><h3>Specify the index of correlation function to be computed<a class="headerlink" href="#specify-the-index-of-correlation-function-to-be-computed" title="Permalink to this headline">¶</a></h3>
+<span id="greenindex"></span><h3>Specify the index of correlation function to be computed<a class="headerlink" href="#specify-the-index-of-correlation-function-to-be-computed" title="Permalink to this heading">¶</a></h3>
 <p>Specify the index of correlation functions
 computed with mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.
 When we use the standard mode, this file is generated automatically.
@@ -130,7 +131,7 @@ the above indices are specified automatically.
 Therefore we do not have to care it.</p>
 </section>
 <section id="results-of-correlation-function-in-the-site-representation">
-<span id="zvocisajs"></span><h3>Results of correlation function in the site representation<a class="headerlink" href="#results-of-correlation-function-in-the-site-representation" title="Permalink to this headline">¶</a></h3>
+<span id="zvocisajs"></span><h3>Results of correlation function in the site representation<a class="headerlink" href="#results-of-correlation-function-in-the-site-representation" title="Permalink to this heading">¶</a></h3>
 <p>The correlation functions having the indices specified in <a class="reference internal" href="#greenindex"><span class="std std-ref">Specify the index of correlation function to be computed</span></a>
 are computed by mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>,
 and written to files.
@@ -145,7 +146,7 @@ this utility assume them as 0.</p>
 </section>
 </section>
 <section id="correlation-functions-on-the-k-path">
-<span id="zvocorr"></span><h2><span class="section-number">7.3.3. </span>Correlation functions on the <em>k</em> path<a class="headerlink" href="#correlation-functions-on-the-k-path" title="Permalink to this headline">¶</a></h2>
+<span id="zvocorr"></span><h2><span class="section-number">7.3.3. </span>Correlation functions on the <em>k</em> path<a class="headerlink" href="#correlation-functions-on-the-k-path" title="Permalink to this heading">¶</a></h2>
 <p>This file contains the Fourier-transformed correlation function and
 generated by the utility <code class="docutils literal notranslate"><span class="pre">fourier</span></code>.
 The file name in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">Tutorial</span></a> is <code class="docutils literal notranslate"><span class="pre">output/zvo_corr.dat</span></code>.</p>
@@ -164,7 +165,7 @@ then the <em>k</em> coordinate along the path and the real- and imaginary- part
 of the correlation function are written.</p>
 </section>
 <section id="gnuplot-script">
-<span id="gnuplot"></span><h2><span class="section-number">7.3.4. </span>gnuplot script<a class="headerlink" href="#gnuplot-script" title="Permalink to this headline">¶</a></h2>
+<span id="gnuplot"></span><h2><span class="section-number">7.3.4. </span>gnuplot script<a class="headerlink" href="#gnuplot-script" title="Permalink to this heading">¶</a></h2>
 <p>This file is generated by <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code>.
 This script is used for displaying the <em>k</em> labels in gnuplot.
 The file name is <code class="docutils literal notranslate"><span class="pre">kpath.gp</span></code>.</p>
@@ -175,7 +176,7 @@ The file name is <code class="docutils literal notranslate"><span class="pre">kp
 </div>
 </section>
 <section id="fermisurfer-file-to-display-the-isosurface-of-the-momentum-distribution">
-<span id="correlation"></span><h2><span class="section-number">7.3.5. </span>FermiSurfer file to display the isosurface of the momentum distribution<a class="headerlink" href="#fermisurfer-file-to-display-the-isosurface-of-the-momentum-distribution" title="Permalink to this headline">¶</a></h2>
+<span id="correlation"></span><h2><span class="section-number">7.3.5. </span>FermiSurfer file to display the isosurface of the momentum distribution<a class="headerlink" href="#fermisurfer-file-to-display-the-isosurface-of-the-momentum-distribution" title="Permalink to this heading">¶</a></h2>
 <p>This file is generated by <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code>.
 The file name in the tutorial is <code class="docutils literal notranslate"><span class="pre">output/zvo_corr_eigen0.dat.frmsf</span></code>.</p>
 </section>
@@ -248,7 +249,7 @@ The file name in the tutorial is <code class="docutils literal notranslate"><spa
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -265,7 +266,7 @@ The file name in the tutorial is <code class="docutils literal notranslate"><spa
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

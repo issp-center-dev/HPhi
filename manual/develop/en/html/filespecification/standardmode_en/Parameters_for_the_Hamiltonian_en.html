@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>4.1.4. Parameters for the Hamiltonian &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -35,14 +36,14 @@
           <div class="body" role="main">
             
   <section id="parameters-for-the-hamiltonian">
-<h1><span class="section-number">4.1.4. </span>Parameters for the Hamiltonian<a class="headerlink" href="#parameters-for-the-hamiltonian" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">4.1.4. </span>Parameters for the Hamiltonian<a class="headerlink" href="#parameters-for-the-hamiltonian" title="Permalink to this heading">¶</a></h1>
 <p>A default value is <span class="math notranslate nohighlight">\(0\)</span> unless a specific value is written in the
 description. <a class="reference internal" href="#table-interactions"><span class="std std-numref">Table 4.1</span></a>
 shows the parameters for each models. In the case of a complex type, a
 file format is “<em>a real part, an imaginary part</em> ” while in the case
 of a real type, only “<em>a real part</em> “.</p>
 <section id="local-terms">
-<h2>Local terms<a class="headerlink" href="#local-terms" title="Permalink to this headline">¶</a></h2>
+<h2>Local terms<a class="headerlink" href="#local-terms" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
 <p><strong>Type :</strong> Real</p>
@@ -91,15 +92,6 @@ non-local terms are specified differently from those for the
 each lattice are shown in <a class="reference internal" href="#table-interactions"><span class="std std-numref">Table 4.1</span></a> .</p>
 <span id="table-interactions"></span><table class="docutils align-default" id="id1">
 <caption><span class="caption-number">Table 4.1 </span><span class="caption-text">Interactions for each model defined in an input file. We can define spin couplings as a matrix format.</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Interactions</p></th>
 <th class="head"><p>1D chain</p></th>
@@ -211,7 +203,7 @@ each lattice are shown in <a class="reference internal" href="#table-interaction
 </table>
 </section>
 <section id="non-local-terms-for-ladder-fig-ladder">
-<h2>Non-local terms[ for Ladder ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> )]<a class="headerlink" href="#non-local-terms-for-ladder-fig-ladder" title="Permalink to this headline">¶</a></h2>
+<h2>Non-local terms[ for Ladder ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-ladder"><span class="std std-numref">Fig. 4.4</span></a> )]<a class="headerlink" href="#non-local-terms-for-ladder-fig-ladder" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>, <code class="docutils literal notranslate"><span class="pre">t1'</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code>, <code class="docutils literal notranslate"><span class="pre">t2'</span></code></p>
 <p><strong>Type :</strong> Complex</p>
@@ -248,7 +240,7 @@ for the simplified parameters, <code class="docutils literal notranslate"><span 
 </ul>
 </section>
 <section id="non-local-terms-other-than-ladder-fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome">
-<h2>Non-local terms [other than Ladder ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> )]<a class="headerlink" href="#non-local-terms-other-than-ladder-fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="Permalink to this headline">¶</a></h2>
+<h2>Non-local terms [other than Ladder ( <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-lattice"><span class="std std-numref">Fig. 4.1</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-chap04-1-honeycomb"><span class="std std-numref">Fig. 4.2</span></a> , <a class="reference internal" href="Parameters_for_the_lattice_en.html#fig-kagome"><span class="std std-numref">Fig. 4.3</span></a> )]<a class="headerlink" href="#non-local-terms-other-than-ladder-fig-chap04-1-lattice-fig-chap04-1-honeycomb-fig-kagome" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">t1</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code></p>
 <p><strong>Type :</strong> Complex</p>
@@ -487,7 +479,7 @@ the positive direction becomes as</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -504,7 +496,7 @@ the positive direction becomes as</p>
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

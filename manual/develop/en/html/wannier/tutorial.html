@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>8.2. Tutorial &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -34,7 +35,7 @@
           <div class="body" role="main">
             
   <section id="tutorial">
-<span id="tutorialwannier"></span><h1><span class="section-number">8.2. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<span id="tutorialwannier"></span><h1><span class="section-number">8.2. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading">¶</a></h1>
 <p>In this tutorial, we downfold Sr<sub>2</sub>CuO<sub>3</sub>
 into single orbital 1D Hubbard model,
 and simulate that model with HPhi/mVMC.
@@ -43,7 +44,7 @@ Input files are served in <code class="docutils literal notranslate"><span class
 <p>In actual studies, the input files etc. of each solver should be modified for more high accuracy calculation.
 Please refer to the manuals of each solver for the details of the input files.</p>
 <section id="scf-calculation-of-charge-density">
-<h2><span class="section-number">8.2.1. </span>SCF calculation of charge density<a class="headerlink" href="#scf-calculation-of-charge-density" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">8.2.1. </span>SCF calculation of charge density<a class="headerlink" href="#scf-calculation-of-charge-density" title="Permalink to this heading">¶</a></h2>
 <p>First, we perform the SCF calculation of the charge density.
 The input file is as follows:</p>
 <p><a class="reference download internal" download="" href="../_downloads/fc8a03ca4d72a607207c9c468c338dd3/scf.in"><code class="xref download docutils literal notranslate"><span class="pre">scf.in</span></code></a></p>
@@ -92,7 +93,7 @@ Put the pseudopotential files into <code class="docutils literal notranslate"><s
 </div>
 </section>
 <section id="optional-band-structure">
-<h2><span class="section-number">8.2.2. </span>(Optional) Band structure<a class="headerlink" href="#optional-band-structure" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">8.2.2. </span>(Optional) Band structure<a class="headerlink" href="#optional-band-structure" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference download internal" download="" href="../_downloads/da167c3c214ea2b40788f448a3605d0b/band.in"><code class="xref download docutils literal notranslate"><span class="pre">band.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
  calculation = &#39;bands&#39;
@@ -197,7 +198,7 @@ K_POINTS crystal
 GnuPlot etc.</p>
 </section>
 <section id="kohn-sham-orbitals-for-wannier">
-<h2><span class="section-number">8.2.3. </span>Kohn-Sham orbitals for Wannier<a class="headerlink" href="#kohn-sham-orbitals-for-wannier" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">8.2.3. </span>Kohn-Sham orbitals for Wannier<a class="headerlink" href="#kohn-sham-orbitals-for-wannier" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference download internal" download="" href="../_downloads/b593b96ec06a24a051e56aa0df84bd84/nscf.in"><code class="xref download docutils literal notranslate"><span class="pre">nscf.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
  calculation = &#39;nscf&#39;
@@ -246,7 +247,7 @@ The command-line argument is the name of <code class="docutils literal notransla
 </div>
 </section>
 <section id="wannier-function-dielectric-function-effective-interaction">
-<h2><span class="section-number">8.2.4. </span>Wannier function, dielectric function, effective interaction<a class="headerlink" href="#wannier-function-dielectric-function-effective-interaction" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">8.2.4. </span>Wannier function, dielectric function, effective interaction<a class="headerlink" href="#wannier-function-dielectric-function-effective-interaction" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference download internal" download="" href="../_downloads/b37127883768c5403e364998cb94cc7f/respack.in"><code class="xref download docutils literal notranslate"><span class="pre">respack.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;PARAM_CHIQW
 Num_freq_grid = 1
@@ -307,7 +308,7 @@ The format of these files is Wannier90 format and the data such as the hopping i
 (If you use the old version of RESPACK (20190226), the folder name is  <code class="docutils literal notranslate"><span class="pre">dir-mvmc</span></code> .)</p>
 </section>
 <section id="quantum-lattice-mode-for-hphi-mvmc">
-<h2><span class="section-number">8.2.5. </span>Quantum lattice mode for HPhi/mVMC<a class="headerlink" href="#quantum-lattice-mode-for-hphi-mvmc" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">8.2.5. </span>Quantum lattice mode for HPhi/mVMC<a class="headerlink" href="#quantum-lattice-mode-for-hphi-mvmc" title="Permalink to this heading">¶</a></h2>
 <p>Using standard mode of HPhi/mVMC, the calculation will be done by reading the files in <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> folder.
 First, the files in <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> directory should be moved to the current directry.
 Then, the calculation will be started by using standard mode.
@@ -406,7 +407,7 @@ $ HPhi -s stan.in
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -423,7 +424,7 @@ $ HPhi -s stan.in
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

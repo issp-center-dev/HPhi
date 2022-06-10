@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>4.1.1. 計算の種類に関する必須パラメータ &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,12 +37,12 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">4.1.1. </span>計算の種類に関する必須パラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">4.1.1. </span>計算の種類に関する必須パラメータ<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p>
 <p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Spin&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">&quot;Kondo</span> <span class="pre">Lattice&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">HubbardGC&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;SpinGC&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;Kondo</span> <span class="pre">LatticeGC&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;SpinGCCMA&quot;</span></code>のいずれか) <a class="footnote-reference brackets" href="#id9" id="id2">1</a></p>
+<code class="docutils literal notranslate"><span class="pre">&quot;Kondo</span> <span class="pre">LatticeGC&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;SpinGCCMA&quot;</span></code>のいずれか) <a class="footnote-reference brackets" href="#id9" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <p><strong>説明 :</strong> 計算対象の模型を指定します。上記の文字列はそれぞれ
 カノニカル集団のフェルミ粒子Hubbard模型</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-hubbard">
@@ -68,7 +69,7 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 グランドカノニカル集団のスピン模型[式 <a class="reference internal" href="#equation-fml4-1-spin">(4.2)</a> ]、
 グランドカノニカル集団の近藤格子模型[式 <a class="reference internal" href="#equation-fml4-1-kondo">(4.3)</a> ]に対応します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;SpinGCCMA&quot;</span></code>では<code class="docutils literal notranslate"><span class="pre">&quot;SpinGC&quot;</span></code>と同じ計算を
-より速いアルゴリズム <a class="footnote-reference brackets" href="#id10" id="id3">2</a> を用いて行います。
+より速いアルゴリズム <a class="footnote-reference brackets" href="#id10" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を用いて行います。
 ただし、扱うことのできるモデルやMPI並列数に強い制約があります。
 以下の<code class="docutils literal notranslate"><span class="pre">&quot;Lattice&quot;</span></code>の項もご参照ください。</p>
 </li>
@@ -80,12 +81,12 @@ S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
 <p><strong>説明 :</strong> 実行する計算の種類を指定します。
 上記の文字列はそれぞれランチョス法による少数固有状態の計算,
 熱力学的純粋状態を用いた有限温度計算, 直接法による全固有状態計算,
-LOBCG法 <a class="footnote-reference brackets" href="#id11" id="id4">3</a> <a class="footnote-reference brackets" href="#id12" id="id5">4</a> による少数固有状態の計算,
+LOBCG法 <a class="footnote-reference brackets" href="#id11" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id12" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> による少数固有状態の計算,
 実時間発展計算 に対応します。</p>
 <p>後述のスペクトル計算において使用される手法もこのパラメーターで指定されます
 <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code>とした場合には
-付属している<span class="math notranslate nohighlight">\(K\omega\)</span>ライブラリ <a class="footnote-reference brackets" href="#id13" id="id6">5</a> が呼び出され、
-シードスイッチ <a class="footnote-reference brackets" href="#id14" id="id7">6</a> 付きシフト双共役勾配法 <a class="footnote-reference brackets" href="#id15" id="id8">7</a> が適用されます。</p>
+付属している<span class="math notranslate nohighlight">\(K\omega\)</span>ライブラリ <a class="footnote-reference brackets" href="#id13" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> が呼び出され、
+シードスイッチ <a class="footnote-reference brackets" href="#id14" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a> 付きシフト双共役勾配法 <a class="footnote-reference brackets" href="#id15" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> が適用されます。</p>
 </li>
 </ul>
 <ul>
@@ -124,29 +125,34 @@ LOBCG法 <a class="footnote-reference brackets" href="#id11" id="id4">3</a> <a c
 </ul>
 </li>
 </ul>
-<dl class="footnote brackets">
-<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p>GC=Grand Canonical</p>
-</dd>
-<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p>Y. Yamaji <em>et. al.</em>, manuscript in preparation.</p>
-</dd>
-<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
-<dd><p>A.V.Knyazev, SIAM Journal on Scientific Computing <strong>23</strong>, 517 (2001).</p>
-</dd>
-<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id5">4</a></span></dt>
-<dd><p>S.Yamada, T.Imamura, M.Machida, The Japan Society for Computational Engineering and Science <strong>2006</strong>, 20060027 (2006).</p>
-</dd>
-<dt class="label" id="id13"><span class="brackets"><a class="fn-backref" href="#id6">5</a></span></dt>
-<dd><p><a class="reference external" href="https://github.com/issp-center-dev/Komega">https://github.com/issp-center-dev/Komega</a>.</p>
-</dd>
-<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id7">6</a></span></dt>
-<dd><p>S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
-</dd>
-<dt class="label" id="id15"><span class="brackets"><a class="fn-backref" href="#id8">7</a></span></dt>
-<dd><p>A.Frommer, Computing <strong>70</strong>, 87-109 (2003).</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id9" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>GC=Grand Canonical</p>
+</aside>
+<aside class="footnote brackets" id="id10" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>Y. Yamaji <em>et. al.</em>, manuscript in preparation.</p>
+</aside>
+<aside class="footnote brackets" id="id11" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>A.V.Knyazev, SIAM Journal on Scientific Computing <strong>23</strong>, 517 (2001).</p>
+</aside>
+<aside class="footnote brackets" id="id12" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">4</a><span class="fn-bracket">]</span></span>
+<p>S.Yamada, T.Imamura, M.Machida, The Japan Society for Computational Engineering and Science <strong>2006</strong>, 20060027 (2006).</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/issp-center-dev/Komega">https://github.com/issp-center-dev/Komega</a>.</p>
+</aside>
+<aside class="footnote brackets" id="id14" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">6</a><span class="fn-bracket">]</span></span>
+<p>S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
+</aside>
+<aside class="footnote brackets" id="id15" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">7</a><span class="fn-bracket">]</span></span>
+<p>A.Frommer, Computing <strong>70</strong>, 87-109 (2003).</p>
+</aside>
 </section>
 
 
@@ -219,7 +225,7 @@ LOBCG法 <a class="footnote-reference brackets" href="#id11" id="id4">3</a> <a c
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -236,7 +242,7 @@ LOBCG法 <a class="footnote-reference brackets" href="#id11" id="id4">3</a> <a c
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

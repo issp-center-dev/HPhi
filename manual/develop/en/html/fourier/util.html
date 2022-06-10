@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>7.4. Behavior of greenr2k utility &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="behavior-of-greenr2k-utility">
-<h1><span class="section-number">7.4. </span>Behavior of <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> utility<a class="headerlink" href="#behavior-of-greenr2k-utility" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">7.4. </span>Behavior of <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> utility<a class="headerlink" href="#behavior-of-greenr2k-utility" title="Permalink to this heading">¶</a></h1>
 <p>This utility is used as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>/greenr2k <span class="si">${</span><span class="nv">NAMELIST</span><span class="si">}</span> <span class="si">${</span><span class="nv">GEOMETRY</span><span class="si">}</span>
 </pre></div>
@@ -50,7 +51,7 @@ and mVMC.
 In the following cases, we assume that
 <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> in the ModPara input file is <code class="docutils literal notranslate"><span class="pre">&quot;zvo&quot;</span></code> (default).</p>
 <section id="hphi-lanczos">
-<h2><span class="section-number">7.4.1. </span>HPhi-Lanczos<a class="headerlink" href="#hphi-lanczos" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">7.4.1. </span>HPhi-Lanczos<a class="headerlink" href="#hphi-lanczos" title="Permalink to this heading">¶</a></h2>
 <p>In this case, <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> writes correlation functions to the files
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs.dat</span></code> (one body) and <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt.dat</span></code> (two body)
 in <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.
@@ -58,7 +59,7 @@ in <code class="docutils literal notranslate"><span class="pre">output/</span></
 generate single file <code class="docutils literal notranslate"><span class="pre">zvo_corr.dat</span></code> in <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.</p>
 </section>
 <section id="hphi-tpq">
-<h2><span class="section-number">7.4.2. </span>HPhi-TPQ<a class="headerlink" href="#hphi-tpq" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">7.4.2. </span>HPhi-TPQ<a class="headerlink" href="#hphi-tpq" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">HPhi</span></code> writes correlation functions to files
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs_run*step*.dat</span></code> (one body), <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt_run*step*.dat</span></code> (two body)
 at each trial and TPQ step to the <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.
@@ -67,7 +68,7 @@ and performs Fourier transformation, and
 write to a file <code class="docutils literal notranslate"><span class="pre">zvo_corr_run*step*.dat</span></code> in <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.</p>
 </section>
 <section id="hphi-full-diagonalization-and-lobcg">
-<h2><span class="section-number">7.4.3. </span>HPhi-Full diagonalization and LOBCG<a class="headerlink" href="#hphi-full-diagonalization-and-lobcg" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">7.4.3. </span>HPhi-Full diagonalization and LOBCG<a class="headerlink" href="#hphi-full-diagonalization-and-lobcg" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">HPhi</span></code> writes correlation functions to files
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs_eigen*.dat</span></code> (one body) and <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt_eigen*.dat</span></code> (two body)
 for each wavefunction to the <code class="docutils literal notranslate"><span class="pre">output/</span></code> directory.
@@ -76,7 +77,7 @@ and performs Fourier transformation, and
 write to a file <code class="docutils literal notranslate"><span class="pre">zvo_corr_eigen*.dat</span></code> in <code class="docutils literal notranslate"><span class="pre">output/</span></code>.</p>
 </section>
 <section id="mvmc">
-<h2><span class="section-number">7.4.4. </span>mVMC<a class="headerlink" href="#mvmc" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">7.4.4. </span>mVMC<a class="headerlink" href="#mvmc" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">vmc.out</span></code> performs calculations according to the input parameters <code class="docutils literal notranslate"><span class="pre">NDataIdxStart</span></code> and <code class="docutils literal notranslate"><span class="pre">NDataQtySmp</span></code>
 in <code class="docutils literal notranslate"><span class="pre">ModPara</span></code> file, and it generates
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs_???.dat</span></code> (one body) and <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt_???.dat</span></code> (two body)
@@ -164,7 +165,7 @@ writes them to a file <code class="docutils literal notranslate"><span class="pr
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -181,7 +182,7 @@ writes them to a file <code class="docutils literal notranslate"><span class="pr
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

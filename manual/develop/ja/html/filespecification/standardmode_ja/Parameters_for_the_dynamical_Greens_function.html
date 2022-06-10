@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>4.1.6. 動的グリーン関数の計算に関するパラメータ &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">4.1.6. </span>動的グリーン関数の計算に関するパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">4.1.6. </span>動的グリーン関数の計算に関するパラメータ<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
 <p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Normal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;NoIteration&quot;</span></code>,
@@ -55,8 +56,8 @@
 反復が終了した時点で再計算用のデータをファイル出力する。
 スペクトル計算において使用される手法はパラメーター<code class="docutils literal notranslate"><span class="pre">method</span></code>で指定されます。
 (<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>とした場合には
-付属している<span class="math notranslate nohighlight">\(K\omega\)</span>ライブラリ <a class="footnote-reference brackets" href="#id5" id="id2">1</a> が呼び出され、
-シードスイッチ <a class="footnote-reference brackets" href="#id6" id="id3">2</a> 付きシフト双共役勾配法 <a class="footnote-reference brackets" href="#id7" id="id4">3</a> が使われます。</p>
+付属している<span class="math notranslate nohighlight">\(K\omega\)</span>ライブラリ <a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> が呼び出され、
+シードスイッチ <a class="footnote-reference brackets" href="#id6" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 付きシフト双共役勾配法 <a class="footnote-reference brackets" href="#id7" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> が使われます。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SpectrumType</span></code></p>
 <p><strong>形式 :</strong> 文字列(<code class="docutils literal notranslate"><span class="pre">&quot;SzSz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;S+S-&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Density&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code>,
@@ -101,17 +102,18 @@ coordinateで指定する。 逆格子ベクトルは
 <p><strong>説明 :</strong> 計算する動的グリーン関数の振動数のグリッド数。</p>
 </li>
 </ul>
-<dl class="footnote brackets">
-<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p><a class="reference external" href="https://github.com/issp-center-dev/Komega">https://github.com/issp-center-dev/Komega</a>.</p>
-</dd>
-<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p>S. Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
-</dd>
-<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
-<dd><p>A. Frommer, Computing <strong>70</strong>, 87-109 (2003).</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id5" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/issp-center-dev/Komega">https://github.com/issp-center-dev/Komega</a>.</p>
+</aside>
+<aside class="footnote brackets" id="id6" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>S. Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
+</aside>
+<aside class="footnote brackets" id="id7" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>A. Frommer, Computing <strong>70</strong>, 87-109 (2003).</p>
+</aside>
 </section>
 
 
@@ -184,7 +186,7 @@ coordinateで指定する。 逆格子ベクトルは
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -201,7 +203,7 @@ coordinateで指定する。 逆格子ベクトルは
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

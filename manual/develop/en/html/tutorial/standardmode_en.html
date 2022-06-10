@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>3.1. Quick guide to Standard mode &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,9 +36,9 @@
           <div class="body" role="main">
             
   <section id="quick-guide-to-standard-mode">
-<h1><span class="section-number">3.1. </span>Quick guide to <em>Standard</em> mode<a class="headerlink" href="#quick-guide-to-standard-mode" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.1. </span>Quick guide to <em>Standard</em> mode<a class="headerlink" href="#quick-guide-to-standard-mode" title="Permalink to this heading">¶</a></h1>
 <section id="heisenberg-model">
-<h2><span class="section-number">3.1.1. </span>Heisenberg model<a class="headerlink" href="#heisenberg-model" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1.1. </span>Heisenberg model<a class="headerlink" href="#heisenberg-model" title="Permalink to this heading">¶</a></h2>
 <p>This tutorial should be performed in</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>samples/old/CG/Heisenberg/
 </pre></div>
@@ -62,7 +63,7 @@ J = 1.0
 </div>
 <p>In this tutorial, J and the number of sites are set to 1 (arbitrary unit) and 16, respectively.</p>
 <section id="log-output">
-<h3><strong>Log output</strong><a class="headerlink" href="#log-output" title="Permalink to this headline">¶</a></h3>
+<h3><strong>Log output</strong><a class="headerlink" href="#log-output" title="Permalink to this heading">¶</a></h3>
 <p>Log messages are outputted to the standard output.
 Log files for the calculation procedure are created in the &quot;output&quot; directory which is automatically created.
 In this example, the following files are outputted.</p>
@@ -289,9 +290,9 @@ files describing the details of the considered Hamiltonian
 (<code class="docutils literal notranslate"><span class="pre">locspin.def</span></code>, <code class="docutils literal notranslate"><span class="pre">trans.def</span></code>, <code class="docutils literal notranslate"><span class="pre">exchange.def</span></code>, <code class="docutils literal notranslate"><span class="pre">coulombintra.def</span></code>, <code class="docutils literal notranslate"><span class="pre">hund.def</span></code>, <code class="docutils literal notranslate"><span class="pre">namelist.def</span></code>, <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code>, <code class="docutils literal notranslate"><span class="pre">modpara.def</span></code>) and files specifying the elements of the correlation functions that will be calculated(<code class="docutils literal notranslate"><span class="pre">greenone.def</span></code>, <code class="docutils literal notranslate"><span class="pre">greentwo.def</span></code>) are generated.</p>
 </section>
 <section id="outputs-for-calculation-results">
-<h3><strong>Outputs for calculation results</strong><a class="headerlink" href="#outputs-for-calculation-results" title="Permalink to this headline">¶</a></h3>
+<h3><strong>Outputs for calculation results</strong><a class="headerlink" href="#outputs-for-calculation-results" title="Permalink to this heading">¶</a></h3>
 <section id="locally-optimal-block-conjugate-gradient-lobcg-method">
-<h4><strong>Locally Optimal Block Conjugate Gradient (LOBCG) method</strong><a class="headerlink" href="#locally-optimal-block-conjugate-gradient-lobcg-method" title="Permalink to this headline">¶</a></h4>
+<h4><strong>Locally Optimal Block Conjugate Gradient (LOBCG) method</strong><a class="headerlink" href="#locally-optimal-block-conjugate-gradient-lobcg-method" title="Permalink to this heading">¶</a></h4>
 <p>When a calculation by the LOBCG method is finished normally, eigenenergies, one-body Green’s functions, and two-body Green’s functions are calculated and outputted to the files, respectively. In this sample, the following files are outputted.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_energy.dat
 zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
@@ -300,7 +301,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 <p>where xx is the number of the eigenstate counting from 0.</p>
 </section>
 <section id="lanczos-method">
-<h4><strong>Lanczos method</strong><a class="headerlink" href="#lanczos-method" title="Permalink to this headline">¶</a></h4>
+<h4><strong>Lanczos method</strong><a class="headerlink" href="#lanczos-method" title="Permalink to this heading">¶</a></h4>
 <p>When a calculation by the Lanczos method is completed normally, eigenenergies, one-body Green’s functions, and two-body Green’s functions are calculated and outputted to the files, respectively. In this sample, the following files are outputted.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_energy.dat zvo_cisajs.dat
 zvo_cisajscktalt.dat
@@ -309,7 +310,7 @@ zvo_cisajscktalt.dat
 <p>For Standard mode, all pairs of <span class="math notranslate nohighlight">\(\langle n_{i\sigma} \rangle\)</span> are calculated as one-body Green’s functions and those of <span class="math notranslate nohighlight">\(\langle n_{i\sigma} n_{j\sigma'} \rangle\)</span> are calculated as two-body Green’s functions on the basis of the definition files, <code class="docutils literal notranslate"><span class="pre">greenone.def</span></code> and <code class="docutils literal notranslate"><span class="pre">greentwo.def</span></code>. When the accuracy of the Lanczos vectors is sufficient, one-body and two-body Green’s functions are calculated by the eigenvectors obtained by the Lanczos method. When the accuracy of the Lanczos vectors is <em>not</em> sufficient, a message &quot;Accuracy of Lanczos vector is not enough&quot; is outputted to the standard output and the one-body and two-body Green’s functions are calculated by the eigenvectors obtained by CG method. The details of output files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/energy_en.html#subsec-energy-dat"><span class="std std-ref">energy.dat</span></a> , <a class="reference internal" href="../filespecification/outputfiles_en/cisajs_en.html#subsec-cgcisajs"><span class="std std-ref">cisajs.dat</span></a> , <a class="reference internal" href="../filespecification/outputfiles_en/cisajscktalt_en.html#subsec-cisajscktalt"><span class="std std-ref">cisajscktalt.dat</span></a>.</p>
 </section>
 <section id="tpq-method">
-<h4><strong>TPQ method</strong><a class="headerlink" href="#tpq-method" title="Permalink to this headline">¶</a></h4>
+<h4><strong>TPQ method</strong><a class="headerlink" href="#tpq-method" title="Permalink to this heading">¶</a></h4>
 <p>When <code class="docutils literal notranslate"><span class="pre">method=&quot;TPQ&quot;</span></code> is selected in an input file, a calculation by the TPQ method is started. After the calculation is completed normally, the following files are outputted, where %% is the number of runs and &amp;&amp; is the number of steps for the TPQ method.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Norm_rand%%.dat SS_rand%%.dat
 zvo_cisajs_set%%step&amp;&amp;.dat
@@ -319,7 +320,7 @@ zvo_cisajscktalt_set%%step&amp;&amp;.dat
 <p>In Norm_rand%%.dat, basic information such as the inverse of temperature and the norm of the wave function before normalization is outputted with a TPQ step for each number of runs. In SS_rand%%.dat, physical quantities such as the inverse of temperature, energy, and expected value of the square of the Hamiltonian are outputted with a TPQ step for each number of runs. In zvo_cisajs_set%%step&amp;&amp;.dat and zvo_cisajscktalt_set%%step&amp;&amp;.dat, one-body and two-body Green’s functions are outputted for each number of a TPQ steps and runs. The details of these files are shown in <a class="reference internal" href="../filespecification/outputfiles_en/Norm_rand_en.html#subsec-normrand"><span class="std std-ref">Norm_rand.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_en/SS_rand_en.html#subsec-ssrand"><span class="std std-ref">SS_rand.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_en/cisajs_en.html#subsec-cgcisajs"><span class="std std-ref">cisajs.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_en/cisajscktalt_en.html#subsec-cisajscktalt"><span class="std std-ref">cisajscktalt.dat</span></a>.</p>
 </section>
 <section id="full-diagonalization-method">
-<h4><strong>Full diagonalization method</strong><a class="headerlink" href="#full-diagonalization-method" title="Permalink to this headline">¶</a></h4>
+<h4><strong>Full diagonalization method</strong><a class="headerlink" href="#full-diagonalization-method" title="Permalink to this heading">¶</a></h4>
 <p>When <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;fulldiag&quot;</span></code> is selected in an input file, a calculation by the full diagonalization method is started. After the calculation is completed normally, the following files are outputted, where xx is the number of the eigenstate counting from 0.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Eigenvalue.dat zvo_cisajs_eigen_xx.dat
 zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
@@ -330,7 +331,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </section>
 </section>
 <section id="other-tutorials">
-<h2><span class="section-number">3.1.2. </span>Other tutorials<a class="headerlink" href="#other-tutorials" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1.2. </span>Other tutorials<a class="headerlink" href="#other-tutorials" title="Permalink to this heading">¶</a></h2>
 <p>There are many tutorials in <code class="docutils literal notranslate"><span class="pre">samples</span></code>. For more details, please see <code class="docutils literal notranslate"><span class="pre">README.md</span></code> at each directory or <a href="#id1"><span class="problematic" id="id2">`the manual for HPhi-tutorial&lt;https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html&gt;`_</span></a> .</p>
 </section>
 </section>
@@ -397,7 +398,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -414,7 +415,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

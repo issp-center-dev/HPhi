@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>5.2. 完全対角化 &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,9 +37,9 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">5.2. </span>完全対角化<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">5.2. </span>完全対角化<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
 <section id="id2">
-<h2><span class="section-number">5.2.1. </span>手法概要<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.2.1. </span>手法概要<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <p>ハミルトニアン<span class="math notranslate nohighlight">\({{\mathcal H}}\)</span>を実空間配置<span class="math notranslate nohighlight">\(| \psi_j \rangle\)</span>(<span class="math notranslate nohighlight">\(j=1\cdots N\)</span>)を用いて
 作成します:
 <span class="math notranslate nohighlight">\(H_{ij}= \langle \psi_i | {\hat H} | \psi_j \rangle\)</span>。
@@ -49,7 +50,7 @@
 期待値<span class="math notranslate nohighlight">\(\langle A_i\rangle \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle\)</span>を計算・出力するようにしています。</p>
 </section>
 <section id="id3">
-<h2><span class="section-number">5.2.2. </span>有限温度物理量の計算<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.2.2. </span>有限温度物理量の計算<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
 <p>完全対角化で求めた<span class="math notranslate nohighlight">\(\langle A_i\rangle \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle\)</span>を用い、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-fulldiagonalization-ja-0">
 <span class="eqno">(5.8)<a class="headerlink" href="#equation-algorithm-fulldiagonalization-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\langle {\hat A}\rangle=\frac{\sum_{i=1}^N \langle A_i\rangle {\rm  e}^{-\beta E_i}}{\sum_{i=1}^N{\rm  e}^{-\beta E_i}}\]</div>
@@ -123,7 +124,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -140,7 +141,7 @@
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

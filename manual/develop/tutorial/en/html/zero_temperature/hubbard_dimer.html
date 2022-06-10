@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>1.2. Hubbard Dimer &#8212; HΦ Tutorial  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="hubbard-dimer">
-<h1><span class="section-number">1.2. </span>Hubbard Dimer<a class="headerlink" href="#hubbard-dimer" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1.2. </span>Hubbard Dimer<a class="headerlink" href="#hubbard-dimer" title="Permalink to this heading">¶</a></h1>
 <p>Let’s solve the following the Hubbard dimer model.</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-hubbard-dimer-0">
 <span class="eqno">(1.2)<a class="headerlink" href="#equation-zero-temperature-hubbard-dimer-0" title="Permalink to this equation">¶</a></span>\[H = -t \sum_{\sigma}(c_{0\sigma}^{\dagger}c_{1\sigma}+{\rm H.c.})
@@ -56,7 +57,7 @@ nelec = 2
 </pre></div>
 </div>
 <section id="check-the-energy">
-<h2><span class="section-number">1.2.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.2.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this heading">¶</a></h2>
 <p>For the Hubbard dimer at half filling with total Sz=0,
 energies are given as follows:</p>
 <blockquote>
@@ -75,7 +76,7 @@ can be done using:</p>
 <p>on the terminal.</p>
 </section>
 <section id="try-to-use-lobcg-method">
-<h2><span class="section-number">1.2.2. </span>Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.2.2. </span>Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this heading">¶</a></h2>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.2/stan2.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
 method = &quot;CG&quot;
@@ -155,7 +156,7 @@ reproduces the energies including the excited states.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -172,7 +173,7 @@ reproduces the energies including the excited states.</p>
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

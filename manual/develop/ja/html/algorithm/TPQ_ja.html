@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>5.3. 熱的純粋量子状態による有限温度計算 &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,9 +37,9 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">5.3. </span>熱的純粋量子状態による有限温度計算<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">5.3. </span>熱的純粋量子状態による有限温度計算<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
 <p>杉浦・清水によって、 少数個（サイズが大きい場合はほぼ一つ）の
-波動関数から有限温度の物理量を計算する方法が提案されました <a class="footnote-reference brackets" href="#id10" id="id2">1</a> <a class="footnote-reference brackets" href="#id11" id="id3">2</a> 。
+波動関数から有限温度の物理量を計算する方法が提案されました <a class="footnote-reference brackets" href="#id10" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id11" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 。
 その状態は熱的純粋量子状態(TPQ)と呼ばれています。
 TPQはハミルトニアンを波動関数に順次作用させて得られるので、
 Lanczos法の技術がそのまま使うことができます。
@@ -49,11 +50,11 @@ TPQ状態は次のように与えられます。</p>
 <span class="math notranslate nohighlight">\(|\Phi(\beta)\rangle\)</span> の期待値として、有限温度の物理量が計算できることが
 示されています.</p>
 <section id="id4">
-<h2><span class="section-number">5.3.1. </span>実際の実装について<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.3.1. </span>実際の実装について<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
 <section id="mtpq">
-<h3>mTPQ状態の構成について<a class="headerlink" href="#mtpq" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3>mTPQ状態の構成について<a class="headerlink" href="#mtpq" title="Permalink to this heading">¶</a></h3>
 <p>ここでは、とくに計算が簡単な, micro canonical TPQ(mTPQ)の
-概要を述べます <a class="footnote-reference brackets" href="#id10" id="id5">1</a>。</p>
+概要を述べます <a class="footnote-reference brackets" href="#id10" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
 <p><span class="math notranslate nohighlight">\(|\Phi_{\rm rand}\rangle\)</span>をあるランダムベクトルとします。
 これに<span class="math notranslate nohighlight">\((l-{\mathcal H}/N_{s})\)</span>(<span class="math notranslate nohighlight">\(l\)</span>はある定数、<span class="math notranslate nohighlight">\(N_{s}\)</span>はサイト数)を<span class="math notranslate nohighlight">\(k\)</span>回作用させた
 （規格化された）ベクトルは次のように与えられます。</p>
@@ -66,7 +67,7 @@ TPQ状態は次のように与えられます。</p>
 <span class="eqno">(5.11)<a class="headerlink" href="#equation-algorithm-tpq-ja-2" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
 \beta_{k}\sim \frac{2k/N_{s}}{l-u_{k}},~~
 u_{k} = \langle \Phi_{k}|{\mathcal H}|\Phi_{k}\rangle/N_{s}.\end{aligned}\]</div>
-<p>そして、任意 <a class="footnote-reference brackets" href="#id12" id="id6">3</a> の物理量<span class="math notranslate nohighlight">\(\hat{A}\)</span>の<span class="math notranslate nohighlight">\(\beta_{k}\)</span>での平均値は</p>
+<p>そして、任意 <a class="footnote-reference brackets" href="#id12" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> の物理量<span class="math notranslate nohighlight">\(\hat{A}\)</span>の<span class="math notranslate nohighlight">\(\beta_{k}\)</span>での平均値は</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-tpq-ja-3">
 <span class="eqno">(5.12)<a class="headerlink" href="#equation-algorithm-tpq-ja-3" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
 \langle \hat{A}\rangle_{\beta_{k}} =  \langle \Phi_{k}|\hat{A}|\Phi_{k}\rangle/N_{s}\end{aligned}\]</div>
@@ -75,8 +76,8 @@ u_{k} = \langle \Phi_{k}|{\mathcal H}|\Phi_{k}\rangle/N_{s}.\end{aligned}\]</div
 に関する平均値および標準偏差を見積もっています。</p>
 </section>
 <section id="ctpq">
-<h3>cTPQ状態の構成について<a class="headerlink" href="#ctpq" title="このヘッドラインへのパーマリンク">¶</a></h3>
-<p>カノニカルTPQ(cTPQ)状態の構成方法について述べます <a class="footnote-reference brackets" href="#id11" id="id7">2</a>,
+<h3>cTPQ状態の構成について<a class="headerlink" href="#ctpq" title="Permalink to this heading">¶</a></h3>
+<p>カノニカルTPQ(cTPQ)状態の構成方法について述べます <a class="footnote-reference brackets" href="#id11" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>,
 cTPQ法では <span class="math notranslate nohighlight">\(\exp[-\beta\hat{\mathcal H}/2]\)</span> は
 次にように近似されます.</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-tpq-ja-4">
@@ -88,7 +89,7 @@ cTPQ法では <span class="math notranslate nohighlight">\(\exp[-\beta\hat{\math
 <span class="eqno">(5.14)<a class="headerlink" href="#equation-algorithm-tpq-ja-5" title="この数式へのパーマリンク">¶</a></span>\[\langle \hat{A}\rangle_{\beta_{k}} =  \frac{\langle\Phi_{k}|\hat{A}|\Phi_{k}\rangle}{\langle\Phi_{k}|\Phi_{k}\rangle}.\]</div>
 </section>
 <section id="id8">
-<h3>初期ベクトルの設定について<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3>初期ベクトルの設定について<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <p>熱的純粋量子状態による有限温度計算では、初期ベクトルは全ての成分に対してランダムな係数を与えます。
 初期ベクトルの係数の型はModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>を用い、
 実数もしくは複素数の指定をすることができます。乱数のシードは<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>
@@ -99,23 +100,27 @@ cTPQ法では <span class="math notranslate nohighlight">\(\exp[-\beta\hat{\math
 <p>で与えられます。ここで、<span class="math notranslate nohighlight">\(n_{\rm run}\)</span>はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、
 もしくはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">NumAve</span></code>で指定します。
 <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>はスタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定される入力ファイルで指定します。乱数はSIMD-oriented
-Fast Mersenne Twister(dSFMT)を用い発生させています <a class="footnote-reference brackets" href="#id13" id="id9">4</a> 。
+Fast Mersenne Twister(dSFMT)を用い発生させています <a class="footnote-reference brackets" href="#id13" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 。
 また、<span class="math notranslate nohighlight">\(k_{\rm Thread}, N_{\rm Thread}, k_{\rm Process}\)</span>はそれぞれスレッド番号、スレッド数、プロセス番号を表します。
 したがって同じ<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>を用いても、並列数が異なる場合には別の初期波動関数が生成されます。</p>
-<dl class="footnote brackets">
-<dt class="label" id="id10"><span class="brackets">1</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id5">2</a>)</span></dt>
-<dd><p>S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</p>
-</dd>
-<dt class="label" id="id11"><span class="brackets">2</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id7">2</a>)</span></dt>
-<dd><p>S. Sugiura and A. Shimizu, Phys. Rev. Lett. <strong>111</strong>, 010401 (2013).</p>
-</dd>
-<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id6">3</a></span></dt>
-<dd><p>局所的にという条件がつきます。</p>
-</dd>
-<dt class="label" id="id13"><span class="brackets"><a class="fn-backref" href="#id9">4</a></span></dt>
-<dd><p>http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT.</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id10" role="note">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>S. Sugiura, A. Shimizu, Phys. Rev. Lett. <strong>108</strong>, 240401 (2012).</p>
+</aside>
+<aside class="footnote brackets" id="id11" role="note">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<p>S. Sugiura and A. Shimizu, Phys. Rev. Lett. <strong>111</strong>, 010401 (2013).</p>
+</aside>
+<aside class="footnote brackets" id="id12" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">3</a><span class="fn-bracket">]</span></span>
+<p>局所的にという条件がつきます。</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">4</a><span class="fn-bracket">]</span></span>
+<p>http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT.</p>
+</aside>
 </section>
 </section>
 </section>
@@ -184,7 +189,7 @@ Fast Mersenne Twister(dSFMT)を用い発生させています <a class="footnote
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -201,7 +206,7 @@ Fast Mersenne Twister(dSFMT)を用い発生させています <a class="footnote
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>2.4. Basic usage &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,10 +36,10 @@
           <div class="body" role="main">
             
   <section id="basic-usage">
-<h1><span class="section-number">2.4. </span>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">2.4. </span>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h1>
 <p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> has two modes: Standard mode and Expert mode. Here, the basic flows of calculations of the Standard and expert modes are shown.</p>
 <section id="standard-mode">
-<h2><span class="section-number">2.4.1. </span><em>Standard</em> mode<a class="headerlink" href="#standard-mode" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.4.1. </span><em>Standard</em> mode<a class="headerlink" href="#standard-mode" title="Permalink to this heading">¶</a></h2>
 <p>The procedure of calculation through the standard mode is as follows:</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -93,7 +94,7 @@
 </div>
 </section>
 <section id="expert-mode">
-<h2><span class="section-number">2.4.2. </span><em>Expert</em> mode<a class="headerlink" href="#expert-mode" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.4.2. </span><em>Expert</em> mode<a class="headerlink" href="#expert-mode" title="Permalink to this heading">¶</a></h2>
 <dl>
 <dt>The calculation procedure for Expert mode is as follows.</dt><dd><ol class="arabic simple">
 <li><p>Create a directory for a calculation scenario</p></li>
@@ -152,7 +153,7 @@
 </dl>
 </section>
 <section id="creating-input-files-for-expert-mode">
-<span id="subsec-creatingexpert"></span><h2><span class="section-number">2.4.3. </span>Creating input files for <em>Expert</em> mode<a class="headerlink" href="#creating-input-files-for-expert-mode" title="Permalink to this headline">¶</a></h2>
+<span id="subsec-creatingexpert"></span><h2><span class="section-number">2.4.3. </span>Creating input files for <em>Expert</em> mode<a class="headerlink" href="#creating-input-files-for-expert-mode" title="Permalink to this heading">¶</a></h2>
 <p>This mode is for creating input files for <em>Expert</em> mode.
 A set of input files created using this mode gives a model provided in <em>Standard</em> mode.
 The usage is shown as follows.</p>
@@ -175,7 +176,7 @@ greenone.def  modpara.def   zInterAll.def zlocspn.def
 </div></blockquote>
 </section>
 <section id="setting-the-process-number-for-mpi-hybrid-parallelization">
-<span id="subsec-process"></span><h2><span class="section-number">2.4.4. </span>Setting the process number for MPI/hybrid parallelization<a class="headerlink" href="#setting-the-process-number-for-mpi-hybrid-parallelization" title="Permalink to this headline">¶</a></h2>
+<span id="subsec-process"></span><h2><span class="section-number">2.4.4. </span>Setting the process number for MPI/hybrid parallelization<a class="headerlink" href="#setting-the-process-number-for-mpi-hybrid-parallelization" title="Permalink to this heading">¶</a></h2>
 <p>For using MPI/hybrid parallelization, the process number must be set as follows.</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -226,7 +227,7 @@ NlocalSpin     3
 </div></blockquote>
 </section>
 <section id="printing-version-id">
-<h2><span class="section-number">2.4.5. </span>Printing version ID<a class="headerlink" href="#printing-version-id" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.4.5. </span>Printing version ID<a class="headerlink" href="#printing-version-id" title="Permalink to this heading">¶</a></h2>
 <p>By using the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option as follows, you can check which version of <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> you are using.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></p>
@@ -300,7 +301,7 @@ NlocalSpin     3
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -317,7 +318,7 @@ NlocalSpin     3
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
