@@ -14,6 +14,7 @@ InterAll指定ファイル
 
 
 なお、スピンに関して計算する場合には、\ :math:`i=j, k=l`\ となるよう設定してください。
+また、オフダイアゴナル成分については、i1 sigma1 i2 sigma2 i3 sigma3 i4 sigma4 とi4 sigma4 i3 sigma3 i2 sigma2 i1 sigma1 のペアを必ず用意するようにしてください。
 以下にファイル例を記載します。
 
 ::
