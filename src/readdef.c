@@ -485,6 +485,7 @@ int ReadDefFileNInt(
   NumAve=1;
   X->Param.ExpecInterval=1;
   cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
+  X->PreCG = 0;
 
   fprintf(stdoutMPI, cReadFileNamelist, xNameListFile); 
   if(GetFileName(xNameListFile, cFileNameListFile)!=0){
@@ -641,6 +642,9 @@ int ReadDefFileNInt(
               }
               else if(CheckWords(ctmp, "TargetTPQRand")==0) {
                 X->irand=(int)dtmp;
+              }
+              else if (CheckWords(ctmp, "PreCG") == 0) {
+                X->PreCG = (int)dtmp;
               }
               else {
                 return (-1);
