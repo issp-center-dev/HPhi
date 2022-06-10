@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>4.2.3. ModPara file &#8212; HΦ Documentation 3.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -35,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="modpara-file">
-<span id="subsec-modpara"></span><h1><span class="section-number">4.2.3. </span>ModPara file<a class="headerlink" href="#modpara-file" title="Permalink to this headline">¶</a></h1>
+<span id="subsec-modpara"></span><h1><span class="section-number">4.2.3. </span>ModPara file<a class="headerlink" href="#modpara-file" title="Permalink to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">This file determines the parameters for calculation. The file format
 is as follows.</div>
@@ -62,7 +63,7 @@ ExpecInterval  20
 </pre></div>
 </div>
 <section id="file-format">
-<span id="file-format-2"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<span id="file-format-2"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Lines 1-4: Header</p></li>
 <li><p>Line 6: [string01] [string02]</p></li>
@@ -71,7 +72,7 @@ ExpecInterval  20
 </ul>
 </section>
 <section id="parameters">
-<span id="parameters-2"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<span id="parameters-2"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p>[string01]</p>
 <p><strong>Type :</strong> String</p>
@@ -88,7 +89,7 @@ ExpecInterval  20
 </ul>
 </section>
 <section id="use-rules">
-<span id="use-rules-2"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this headline">¶</a></h2>
+<span id="use-rules-2"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>From Line 9: After setting keywords at [string 01], a half-width
 blank is needed for setting a parameter</p></li>
@@ -97,12 +98,12 @@ fixed</p></li>
 </ul>
 </section>
 <section id="keywords-and-parameters">
-<span id="keywords-and-parameter-1"></span><h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this headline">¶</a></h2>
+<span id="keywords-and-parameter-1"></span><h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the following, common parameters and parameters for each method are
 shown.</p>
 </section>
 <section id="common-parameters">
-<h2>Common parameters<a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Common parameters<a class="headerlink" href="#common-parameters" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code></p>
 <p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
@@ -162,7 +163,7 @@ value is 1 and the efficient algorithm is used.</p>
 </ul>
 </section>
 <section id="lanczos-method">
-<h2>Lanczos method<a class="headerlink" href="#lanczos-method" title="Permalink to this headline">¶</a></h2>
+<h2>Lanczos method<a class="headerlink" href="#lanczos-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -195,7 +196,7 @@ and a first excited state when <code class="docutils literal notranslate"><span 
 </ul>
 </section>
 <section id="cg-method">
-<h2>CG method<a class="headerlink" href="#cg-method" title="Permalink to this headline">¶</a></h2>
+<h2>CG method<a class="headerlink" href="#cg-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -218,7 +219,7 @@ the 2-norm of the residual vector becomes smaller than
 </ul>
 </section>
 <section id="tpq-mtpq-ctpq-method">
-<h2>TPQ (mTPQ/cTPQ) method<a class="headerlink" href="#tpq-mtpq-ctpq-method" title="Permalink to this headline">¶</a></h2>
+<h2>TPQ (mTPQ/cTPQ) method<a class="headerlink" href="#tpq-mtpq-ctpq-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -257,7 +258,7 @@ cTPQ method;</p>
 </ul>
 </section>
 <section id="calculating-dynamical-greens-functions">
-<h2>Calculating dynamical Green’s functions<a class="headerlink" href="#calculating-dynamical-greens-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Calculating dynamical Green’s functions<a class="headerlink" href="#calculating-dynamical-greens-functions" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>Type :</strong> Complex</p>
@@ -295,7 +296,7 @@ frequency <span class="math notranslate nohighlight">\(\Delta \omega = (\)</span
 </ul>
 </section>
 <section id="real-time-evolution-method">
-<h2>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this headline">¶</a></h2>
+<h2>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -414,7 +415,7 @@ file.</div>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -431,7 +432,7 @@ file.</div>
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

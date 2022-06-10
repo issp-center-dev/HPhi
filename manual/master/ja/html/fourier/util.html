@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>7.4. greenr2k ユーティリティの動作について &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="greenr2k">
-<h1><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> ユーティリティの動作について<a class="headerlink" href="#greenr2k" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> ユーティリティの動作について<a class="headerlink" href="#greenr2k" title="Permalink to this heading">¶</a></h1>
 <p>このユーティリティーは, 次のようにして使う.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>/greenr2k <span class="si">${</span><span class="nv">NAMELIST</span><span class="si">}</span> <span class="si">${</span><span class="nv">GEOMETRY</span><span class="si">}</span>
 </pre></div>
@@ -50,14 +51,14 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 以下では ModPara インプットファイルの <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> が
 <code class="docutils literal notranslate"><span class="pre">&quot;zvo&quot;</span></code> (デフォルト値)であるとする.</p>
 <section id="hphi-lanczos">
-<h2><span class="section-number">7.4.1. </span>HPhi-Lanczos<a class="headerlink" href="#hphi-lanczos" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.4.1. </span>HPhi-Lanczos<a class="headerlink" href="#hphi-lanczos" title="Permalink to this heading">¶</a></h2>
 <p>この場合に <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> が <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力するサイト表示の相関関数は,
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs.dat</span></code> (1体), <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt.dat</span></code> (2体)である.
 <code class="docutils literal notranslate"><span class="pre">fourier</span></code> ユーティリティーは, これらを読み込みFourier変換を行った後,
 単一のファイル <code class="docutils literal notranslate"><span class="pre">zvo_corr.dat</span></code> を <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力する.</p>
 </section>
 <section id="hphi-tpq">
-<h2><span class="section-number">7.4.2. </span>HPhi-TPQ<a class="headerlink" href="#hphi-tpq" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.4.2. </span>HPhi-TPQ<a class="headerlink" href="#hphi-tpq" title="Permalink to this heading">¶</a></h2>
 <p>この場合に <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> は, 各試行/TPQステップ毎に
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs_run*step*.dat</span></code> (1体), <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt_run*step*.dat</span></code> (2体)というファイルを
 <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力する.
@@ -66,7 +67,7 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 <code class="docutils literal notranslate"><span class="pre">zvo_corr_run*step*.dat</span></code> という名前のファイルとして <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力する.</p>
 </section>
 <section id="hphi-lobcg">
-<h2><span class="section-number">7.4.3. </span>HPhi-全対角化およびLOBCG<a class="headerlink" href="#hphi-lobcg" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.4.3. </span>HPhi-全対角化およびLOBCG<a class="headerlink" href="#hphi-lobcg" title="Permalink to this heading">¶</a></h2>
 <p>この場合に <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> は, 各波動関数ごとに
 <code class="docutils literal notranslate"><span class="pre">zvo_cisajs_eigen*.dat</span></code> (1体), <code class="docutils literal notranslate"><span class="pre">zvo_cisajscktalt_eigen*.dat</span></code> (2体)というファイルを
 <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力する.
@@ -75,7 +76,7 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
 <code class="docutils literal notranslate"><span class="pre">zvo_corr_eigen*.dat</span></code> という名前のファイルとして <code class="docutils literal notranslate"><span class="pre">output/</span></code> ディレクトリに出力する.</p>
 </section>
 <section id="mvmc">
-<h2><span class="section-number">7.4.4. </span>mVMC<a class="headerlink" href="#mvmc" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.4.4. </span>mVMC<a class="headerlink" href="#mvmc" title="Permalink to this heading">¶</a></h2>
 <p>この場合に <code class="docutils literal notranslate"><span class="pre">vmc.out</span></code> は, <code class="docutils literal notranslate"><span class="pre">ModPara</span></code> インプットファイルで指定された
 <code class="docutils literal notranslate"><span class="pre">NDataIdxStart</span></code> および <code class="docutils literal notranslate"><span class="pre">NDataQtySmp</span></code> というパラメーターに応じて
 試行を行いインデックスをつけられた
@@ -165,7 +166,7 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -182,7 +183,7 @@ ${GEOMETRY}は <a class="reference internal" href="format.html#geometry"><span c
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

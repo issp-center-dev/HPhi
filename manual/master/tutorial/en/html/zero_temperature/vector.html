@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>1.7. Use eigenvectors &#8212; HΦ Tutorial  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="use-eigenvectors">
-<h1><span class="section-number">1.7. </span>Use eigenvectors<a class="headerlink" href="#use-eigenvectors" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1.7. </span>Use eigenvectors<a class="headerlink" href="#use-eigenvectors" title="Permalink to this heading">¶</a></h1>
 <p>In this tutorial, we will study how to read the eigenvectors.
 In the standard mode, setting <code class="docutils literal notranslate"><span class="pre">EigenVecIO</span> <span class="pre">=</span> <span class="pre">&quot;Out&quot;</span></code> makes HPhi to write the calculated eigenvectors as <code class="docutils literal notranslate"><span class="pre">output/zvo_eigenvec_[index]_rank_[rank].dat</span></code>, where <code class="docutils literal notranslate"><span class="pre">[index]</span></code> is the index of the states (e.g., the ground state has <code class="docutils literal notranslate"><span class="pre">[index]</span> <span class="pre">=</span> <span class="pre">0</span></code>) and <code class="docutils literal notranslate"><span class="pre">[rank]</span></code> is the rank of the process.
 In the MPI parallelization with Npara processes, HPhi splits the whole Hilbert space into the Npara blocks and each process treats one of them.
@@ -62,7 +63,7 @@ For example, the following python function (<code class="docutils literal notran
 </pre></div>
 </div>
 <section id="exercise">
-<h2><span class="section-number">1.7.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.7.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">¶</a></h2>
 <p>Check the orthogonality of the eigenvectors calculated by the LOBCG method by calculating the norm and the inner product of some of the eigenvectors.</p>
 <p><em>Hint</em> : In the standard mode, the <code class="docutils literal notranslate"><span class="pre">exct</span></code> keyword controls the number of eigenvectors to be calculated.</p>
 <p><em>Solution</em> : See <code class="docutils literal notranslate"><span class="pre">samples/tutorial-1.7/solution.py</span></code>.
@@ -131,7 +132,7 @@ This script firstly generates the input file for calculating the ground state an
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -148,7 +149,7 @@ This script firstly generates the input file for calculating the ground state an
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

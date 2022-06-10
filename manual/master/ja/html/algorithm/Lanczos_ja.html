@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>5.1. Lanczos法 &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,15 +37,15 @@
           <div class="body" role="main">
             
   <section id="lanczos">
-<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="Permalink to this heading">¶</a></h1>
 <section id="id1">
-<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>Lanczos法の解説については TITPACK <a class="footnote-reference brackets" href="#id12" id="id2">1</a> のマニュアルと 線形計算の数理 <a class="footnote-reference brackets" href="#id13" id="id3">2</a> を参考にしています.</p>
+<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>Lanczos法の解説については TITPACK <a class="footnote-reference brackets" href="#id12" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> のマニュアルと 線形計算の数理 <a class="footnote-reference brackets" href="#id13" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参考にしています.</p>
 <p>Lanczos法はある初期ベクトルにハミルトニアン
 を作用させて最大・最小近傍の固有値・固有ベクトルを
 求める方法です。
 Lanczos法で固有値を求める際にはHilbert空間の次元の
-大きさの波動関数を表すベクトルが2つ <a class="footnote-reference brackets" href="#id14" id="id4">3</a> あれば原理的には実行可能なため、
+大きさの波動関数を表すベクトルが2つ <a class="footnote-reference brackets" href="#id14" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> あれば原理的には実行可能なため、
 大規模疎行列の対角化手法として有用であることが知られています。
 後述するように、固有ベクトルを求める際にはHilbert空間の次元の大きさのベクトルがもう1本必要です。</p>
 <p>Lanczos法の 原理はべき乗法に基づいています。
@@ -100,7 +101,7 @@ T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}\]</div>
 (Hilbert空間の次元 <span class="math notranslate nohighlight">\(\times\)</span> Lanczos法の反復回数)の
 大きさの行列を保持することは不可能です。
 そこで、Lanczos法で固有値を求めた後、
-<span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>を保存しておき  <a class="footnote-reference brackets" href="#id15" id="id5">4</a>、
+<span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>を保存しておき  <a class="footnote-reference brackets" href="#id15" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>、
 再び同じLanczos法の計算を行い
 求めた<span class="math notranslate nohighlight">\(V\)</span>から元の固有ベクトルを再現 するようにしています。</p>
 <p>Lanczos法では, 元のHilbert空間の次元より十分小さい反復回数
@@ -109,10 +110,10 @@ T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}\]</div>
 すなわち<span class="math notranslate nohighlight">\(T_{n}\)</span>の次元<span class="math notranslate nohighlight">\(n\)</span>は数百-数千程度ですみます。
 定量的には、最大及び最小固有値の評価の誤差は
 Lanczosの反復回数に対して指数関数的に減少することが
-示されています(詳細はRef. <a class="footnote-reference brackets" href="#id13" id="id6">2</a> を参照して下さい)。</p>
+示されています(詳細はRef. <a class="footnote-reference brackets" href="#id13" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参照して下さい)。</p>
 </section>
 <section id="id7">
-<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
 <p>固有値の近似値がわかっているときは
 適当なベクトル<span class="math notranslate nohighlight">\(\vec{y}_{0}\)</span>に対して
 <span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を 逐次的に作用させれば、
@@ -130,9 +131,9 @@ CG法の実行にはヒルベルト空間の次元のベクトル を4本確保�
 大規模系の計算を実行する際にはメモリが足りなくなる恐れがあるので注意が必要です。</p>
 </section>
 <section id="id8">
-<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
 <section id="id9">
-<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 <p>Lanczos法では、スタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定する<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>(<span class="math notranslate nohighlight">\(\equiv r_s\)</span>)により初期ベクトルの設定方法を指定します。また、初期ベクトルはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>を用い、実数もしくは複素数の指定をすることができます。</p>
 <ul>
 <li><p>カノニカル集団かつ <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span>の場合</p>
@@ -150,12 +151,12 @@ CG法の実行にはヒルベルト空間の次元のベクトル を4本確保�
 123432+|r_s|\end{aligned}\]</div>
 <p>で指定します。ここで、<span class="math notranslate nohighlight">\(n_{\rm run}\)</span>はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">NumAve</span></code>で指定します。<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>は入力ファイルで指定します。乱数はSIMD-oriented
 Fast Mersenne Twister
-(dSFMT)を用い発生させています <a class="footnote-reference brackets" href="#id16" id="id10">5</a> 。</p>
+(dSFMT)を用い発生させています <a class="footnote-reference brackets" href="#id16" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> 。</p>
 </li>
 </ul>
 </section>
 <section id="id11">
-<h3>収束判定について<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<h3>収束判定について<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
 <p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、<span class="math notranslate nohighlight">\(T_{n}\)</span>の対角化にlapackのルーチン
 <span class="math notranslate nohighlight">\(\rm dsyev\)</span>を使用しており、
 <span class="math notranslate nohighlight">\(T_{n}\)</span>の基底状態の次の固有値（第一励起状態のエネルギー）
@@ -179,23 +180,26 @@ Fast Mersenne Twister
 逆反復法の初期ベクトルとしてLanczos法で求めた
 固有ベクトルをとった方が一般に収束が早いので、
 標準の設定ではそのように取っています。</p>
-<dl class="footnote brackets">
-<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p>http://www.qa.iir.titech.ac.jp/~nishimori/titpack2_new/index-e.html</p>
-</dd>
-<dt class="label" id="id13"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p>M. Sugihara, K. Murota, Theoretical Numerical Linear Algebra, Iwanami Stud-ies in Advanced Mathematics, Iwanami Shoten, Publishers, 2009.</p>
-</dd>
-<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
-<dd><p>高速化のために、In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> ではハミルトニアンの対角成分を表すベクトル1本と,スピン <span class="math notranslate nohighlight">\(z\)</span> 成分 <span class="math notranslate nohighlight">\(S_{z}\)</span> 保存, 粒子数保存の場合はその状態を指定するベクトル1本を余計に確保しています。いずれのベクトルの大きさもHilbert空間の次元です。</p>
-</dd>
-<dt class="label" id="id15"><span class="brackets">4</span></dt>
-<dd><p><span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>の次元は高々Lanczos法の反復回数であることに注意。</p>
-</dd>
-<dt class="label" id="id16"><span class="brackets">5</span></dt>
-<dd><p>http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id12" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>http://www.qa.iir.titech.ac.jp/~nishimori/titpack2_new/index-e.html</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>M. Sugihara, K. Murota, Theoretical Numerical Linear Algebra, Iwanami Stud-ies in Advanced Mathematics, Iwanami Shoten, Publishers, 2009.</p>
+</aside>
+<aside class="footnote brackets" id="id14" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>高速化のために、In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> ではハミルトニアンの対角成分を表すベクトル1本と,スピン <span class="math notranslate nohighlight">\(z\)</span> 成分 <span class="math notranslate nohighlight">\(S_{z}\)</span> 保存, 粒子数保存の場合はその状態を指定するベクトル1本を余計に確保しています。いずれのベクトルの大きさもHilbert空間の次元です。</p>
+</aside>
+<aside class="footnote brackets" id="id15" role="note">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p><span class="math notranslate nohighlight">\(\tilde{\vec{e}_{i}}\)</span>の次元は高々Lanczos法の反復回数であることに注意。</p>
+</aside>
+<aside class="footnote brackets" id="id16" role="note">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html</p>
+</aside>
 </section>
 </section>
 </section>
@@ -266,7 +270,7 @@ Fast Mersenne Twister
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -283,7 +287,7 @@ Fast Mersenne Twister
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

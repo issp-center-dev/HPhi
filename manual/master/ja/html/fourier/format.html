@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>7.3. ファイルフォーマット &#8212; HΦ マニュアル 3.5.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,6 +12,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -36,9 +37,9 @@
           <div class="body" role="main">
             
   <section id="fileformat">
-<span id="id1"></span><h1><span class="section-number">7.3. </span>ファイルフォーマット<a class="headerlink" href="#fileformat" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">7.3. </span>ファイルフォーマット<a class="headerlink" href="#fileformat" title="Permalink to this heading">¶</a></h1>
 <section id="k">
-<span id="geometry"></span><h2><span class="section-number">7.3.1. </span>サイトの位置と軌道のインデックス, <em>k</em> 点<a class="headerlink" href="#k" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<span id="geometry"></span><h2><span class="section-number">7.3.1. </span>サイトの位置と軌道のインデックス, <em>k</em> 点<a class="headerlink" href="#k" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は <code class="docutils literal notranslate"><span class="pre">geometry.dat</span></code> .
 各サイトの位置と軌道の情報は
 mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のスタンンダードモードを用いた場合には
@@ -81,9 +82,9 @@ G 0 0 0      (6)
 </ol>
 </section>
 <section id="id2">
-<h2><span class="section-number">7.3.2. </span>サイト表示の1体および2体相関関数<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.3.2. </span>サイト表示の1体および2体相関関数<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <section id="greenindex">
-<span id="id3"></span><h3>計算する相関関数のインデックスの指定<a class="headerlink" href="#greenindex" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<span id="id3"></span><h3>計算する相関関数のインデックスの指定<a class="headerlink" href="#greenindex" title="Permalink to this heading">¶</a></h3>
 <p>mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> で計算する相関関数を指定する.
 スタンダードモードを使った場合には自動的に生成される.
 総合的な説明はmVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のマニュアルを参照.
@@ -127,7 +128,7 @@ mVMC の場合は
 自動的に上記のインデックスが指定されるため, 特に気にする必要はない.</p>
 </section>
 <section id="zvocisajs">
-<span id="id4"></span><h3>サイト表示の1体および2体相関関数の計算結果<a class="headerlink" href="#zvocisajs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<span id="id4"></span><h3>サイト表示の1体および2体相関関数の計算結果<a class="headerlink" href="#zvocisajs" title="Permalink to this heading">¶</a></h3>
 <p><a class="reference internal" href="#greenindex"><span class="std std-ref">計算する相関関数のインデックスの指定</span></a> で指定したインデックスを持つ相関関数が
 mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> によって計算され,
 ファイルに出力される.
@@ -142,7 +143,7 @@ mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> に�
 </section>
 </section>
 <section id="zvocorr">
-<span id="id5"></span><h2><span class="section-number">7.3.3. </span><em>k</em> パス上での相関関数<a class="headerlink" href="#zvocorr" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<span id="id5"></span><h2><span class="section-number">7.3.3. </span><em>k</em> パス上での相関関数<a class="headerlink" href="#zvocorr" title="Permalink to this heading">¶</a></h2>
 <p>Fourier変換された相関関数(波数表示)が入っている.
 ユーティリイティ <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> によって生成される.
 <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">チュートリアル</span></a> でのファイル名は <code class="docutils literal notranslate"><span class="pre">output/zvo_corr_eigen0.dat</span></code> である.</p>
@@ -160,18 +161,18 @@ mVMC/<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> に�
 それに続いて <em>k</em> 点の距離とそれぞれの相関関数の実部と虚部が書かれている.</p>
 </section>
 <section id="gnuplot">
-<span id="id6"></span><h2><span class="section-number">7.3.4. </span>gnuplot スクリプト<a class="headerlink" href="#gnuplot" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<span id="id6"></span><h2><span class="section-number">7.3.4. </span>gnuplot スクリプト<a class="headerlink" href="#gnuplot" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> にて作成される.
 gnuplotでこれを読み込むことでグラフ中に <em>k</em> 点のラベルを表示する.
 ファイル名は <code class="docutils literal notranslate"><span class="pre">kpath.gp</span></code> である.</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">set</span> <span class="nb">xtics</span> <span class="p">(</span><span class="s">&#39;G&#39;</span>     <span class="mf">0.00000</span><span class="o">,</span> <span class="s">&#39;X&#39;</span>     <span class="mf">0.50000</span><span class="o">,</span> <span class="s">&#39;M&#39;</span>     <span class="mf">1.00000</span><span class="o">,</span> <span class="s">&#39;G&#39;</span>    <span class="mf">1.70711</span><span class="p">)</span>
-<span class="k">set</span> <span class="nb">ylabel</span> <span class="s">&#39;Correlation function&#39;</span>
-<span class="k">set</span> <span class="nb">grid</span> <span class="n">xtics</span> <span class="n">lt</span> <span class="mi">1</span> <span class="n">lc</span> <span class="mi">0</span>
+<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span><span class="nb">xtics</span><span class="w"> </span><span class="p">(</span><span class="s">&#39;G&#39;</span><span class="w">     </span><span class="mf">0.00000</span><span class="o">,</span><span class="w"> </span><span class="s">&#39;X&#39;</span><span class="w">     </span><span class="mf">0.50000</span><span class="o">,</span><span class="w"> </span><span class="s">&#39;M&#39;</span><span class="w">     </span><span class="mf">1.00000</span><span class="o">,</span><span class="w"> </span><span class="s">&#39;G&#39;</span><span class="w">    </span><span class="mf">1.70711</span><span class="p">)</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="nb">ylabel</span><span class="w"> </span><span class="s">&#39;Correlation function&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="nb">grid</span><span class="w"> </span><span class="n">xtics</span><span class="w"> </span><span class="n">lt</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">lc</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
 <section id="fermisurfer">
-<span id="correlation"></span><h2><span class="section-number">7.3.5. </span>運動量分布関数の等値面をプロットするためのFermiSurferファイル<a class="headerlink" href="#fermisurfer" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<span id="correlation"></span><h2><span class="section-number">7.3.5. </span>運動量分布関数の等値面をプロットするためのFermiSurferファイル<a class="headerlink" href="#fermisurfer" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> にて作成される.
 ファイル名は <code class="docutils literal notranslate"><span class="pre">output/zvo_corr_eigen0.dat.frmsf</span></code></p>
 </section>
@@ -244,7 +245,7 @@ gnuplotでこれを読み込むことでグラフ中に <em>k</em> 点のラベ�
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -261,7 +262,7 @@ gnuplotでこれを読み込むことでグラフ中に <em>k</em> 点のラベ�
       &copy;2021, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
