@@ -1000,7 +1000,7 @@ double complex GC_pairlift_spin(
   double complex *tmp_v1,//!<[in] Input producted vector
   struct BindStruct *X//!<[inout]
 ) {
-  long int j;
+  long unsigned int j;
   long unsigned int i_max = X->Large.i_max;
   long unsigned int off = 0;
   double complex dam_pr = 0;

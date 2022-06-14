@@ -147,8 +147,8 @@ Details of implementation
 For the Lanczos method, an initial vector is specified with ``initial_iv``:math:`(\equiv r_s)` defined in an input file for Standard mode or a ModPara file for Expert mode. The type of initial vector can be selected as a real number or complex number by using ``InitialVecType`` in a ModPara file.
 
 
- * For canonical ensemble and ``initial_iv``:math:`\geq 0`
-   A component of a target of the Hilbert space is given by
+ * For canonical ensemble and ``initial_iv``:math:`\geq 0`,
+   a component of a target of the Hilbert space is given by
    
    .. math::
  
@@ -157,8 +157,8 @@ For the Lanczos method, an initial vector is specified with ``initial_iv``:math:
    where :math:`N_{\rm dim}` is the total number of the Hilbert spaces and :math:`N_{\rm dim}/2` is added to avoid selecting a special Hilbert space for a default value ``initial_iv`` :math:`=1`.
    When the type of initial vector is selected as a real number, the coefficient value is given by :math:`1`, while when it is selected as a complex number, the value is given by :math:`(1+i)/\sqrt{2}`.
 
- * For a grand canonical ensemble or ``initial_iv`` :math:`<0`
-   The initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as 
+ * For a grand canonical ensemble or ``initial_iv`` :math:`<0`,
+   the initial vector is given by using a random generator, i.e., the coefficients of all the components for the initial vector are given by random numbers. The seed is calculated as 
    
    .. math::
    

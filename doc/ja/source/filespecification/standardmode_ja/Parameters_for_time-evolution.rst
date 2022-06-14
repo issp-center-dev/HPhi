@@ -17,7 +17,7 @@
    :math:`U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}`\ が加えられる。
    ``"Pulse Laser"``, ``"AC Laser"``, ``"DC Laser"``\ では、
    ホッピング項に
-   :math:`-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^dagger_{i \sigma} c_{j \sigma}`
+   :math:`-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^{\dagger}_{i \sigma} c_{j \sigma}`
    のように位相因子が付く。
    ここで\ :math:`{\bf A}(t)`\ はベクトルポテンシャルであり、
    ``"Pulse Laser"``\ では
