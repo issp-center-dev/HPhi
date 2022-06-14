@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'HΦ Documentation'
-copyright = u'2021, The University of Tokyo'
+copyright = u'2022, The University of Tokyo'
 author = u'The University of Tokyo'
 
 # The version info for the project you're documenting, acts as replacement for
