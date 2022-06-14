@@ -306,6 +306,7 @@ struct DefineList {
     int **SpinTEChemi;  /**< [NTE][Nsite] */
     double **ParaTEChemi;  /**< [NTE][Nsite] */
     //[e] For Time Evolution
+    int PreCG;/**< 1: Use preconditioning in LOBPCG */
 };/*struct DefineList*/
 /**
 @brief Size of the Hilbert space

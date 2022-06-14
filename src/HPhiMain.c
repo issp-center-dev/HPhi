@@ -84,17 +84,17 @@
   - @ref page_addexpert
   - @ref page_time
   - @ref page_log
-  - Some contrivances for HPhi (only in Jananese) http://qlms.github.io/HPhi/develop/tips.pdf
+  - Some contrivances for HPhi (only in Jananese) https://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf
   .
   <HR>
   <H2>Link</H2>
-  https://github.com/QLMS/HPhi
+  https://github.com/issp-center-dev/HPhi
   <HR>
   <H2>Download</H2>
-  https://github.com/QLMS/HPhi/releases
+  https://github.com/issp-center-dev/HPhi/releases
   <HR>
   <H2>Forum</H2>
-  https://github.com/QLMS/HPhi/issues
+  https://github.com/issp-center-dev/HPhi/issues
   <HR>
   <H2>licence</H2>
   <B>GNU GPL version 3</B>\n

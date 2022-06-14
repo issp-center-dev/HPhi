@@ -26,7 +26,7 @@ Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji, Synge Todo
 
 ダウンロード
 ------------------
-:math:`{\mathcal H}\Phi` のソースコードは `GitHub page <https://github.com/QLMS/HPhi>`_ or `release page <https://github.com/QLMS/HPhi/releases>`_ からダウンロードできます。
+:math:`{\mathcal H}\Phi` のソースコードは `GitHub page <https://github.com/issp-center-dev/HPhi>`_ or `release page <https://github.com/issp-center-dev/HPhi/releases>`_ からダウンロードできます。
 
 
 Contents
