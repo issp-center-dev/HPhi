@@ -85,8 +85,8 @@ msgstr ""
 #: ../../index.rst:30
 msgid ""
 "You can download software and source codes of :math:`{\\mathcal H}\\Phi` "
-"from `GitHub page <https://github.com/QLMS/HPhi>`_ or `release page "
-"<https://github.com/QLMS/HPhi/releases>`_."
+"from `GitHub page <https://github.com/issp-center-dev/HPhi>`_ or `release page "
+"<https://github.com/issp-center-dev/HPhi/releases>`_."
 msgstr ""
 
 #: ../../index.rst:34

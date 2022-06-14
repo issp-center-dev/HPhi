@@ -156,7 +156,9 @@ void InitShadowRes(
   double complex *v4//!<[out] [CheckList::idim_max] shadow residual vector
 )
 {
-  long int idim, iv;
+
+  long int iv;
+  long unsigned int idim;
   int mythread;
   double dnorm;
   /*

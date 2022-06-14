@@ -1280,7 +1280,7 @@ msgid ""
 "**Description :** If CalcHS=1, an efficient algorithm for generating the "
 "restricted Hilbert space with the specified quantum number is used "
 "(Details of algorithm is shown in "
-"http://qlms.github.io/HPhi/develop/tips.pdf [in Japanese]). Default value"
+"https://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf [in Japanese]). Default value"
 " is 1 and the efficient algorithm is used."
 msgstr ""
 
