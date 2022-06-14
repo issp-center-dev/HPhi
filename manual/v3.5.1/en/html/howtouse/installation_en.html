@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>2.2. Installation &#8212; HΦ Documentation 3.5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.3. Directory structure" href="directorystructure_en.html" />
+    <link rel="prev" title="2.1. Prerequisite" href="prerequisite_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1><span class="section-number">2.2. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+<p>You can download <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> at the following location.</p>
+<p><a class="reference external" href="https://github.com/issp-center-dev/HPhi/releases">https://github.com/issp-center-dev/HPhi/releases</a></p>
+<p>You can obtain the <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> directory by typing</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">tar</span> <span class="pre">xzvf</span> <span class="pre">HPhi-xxx.tar.gz</span></code></p>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> can be installed by using cmake.
+We can compile <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd $HOME/build/hphi
+cmake -DCONFIG=gcc $PathTohphi
+make
+</pre></div>
+</div>
+<p>To use ScaLAPACK library for full diagonalization, the cmake option <code class="docutils literal notranslate"><span class="pre">-DUSE_SCALAPACK=ON</span></code> is needed.
+Here, we set a path to <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> as <code class="docutils literal notranslate"><span class="pre">$PathTohphi</span></code>
+and to a build directory as <code class="docutils literal notranslate"><span class="pre">$HOME/build/hphi</span></code>.
+After compilation, <code class="docutils literal notranslate"><span class="pre">src</span></code> folder is constructed below a <code class="docutils literal notranslate"><span class="pre">$HOME/build/hphi</span></code>
+folder and we obtain an executable <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> in <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory.
+When no MPI library exists in the system, an executable <code class="docutils literal notranslate"><span class="pre">HPhi</span></code>
+is automatically compiled without an MPI library.</p>
+<p>In the above example,
+we compile <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> by using a gcc compiler.
+We can select a compiler by using the following options:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sekirei</span></code> : ISSP system-B &quot;sekirei&quot;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sekirei_acc</span></code>: ISSP system-B &quot;sekirei&quot; (for using MAGMA library)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fujitsu</span></code> : Fujitsu compiler</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">intel</span></code> : Intel compiler + Linux PC</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gcc</span></code> : GCC compiler + Linux PC.</p></li>
+</ul>
+</div></blockquote>
+<p>An example of compiling <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> by using the Intel compiler is shown as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mkdir ./build
+cd ./build
+cmake -DCONFIG=intel ../
+make
+</pre></div>
+</div>
+<p>After compilation,
+<code class="docutils literal notranslate"><span class="pre">src</span></code> folder is created below the <code class="docutils literal notranslate"><span class="pre">build</span></code> folder and
+an execute <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> in the <code class="docutils literal notranslate"><span class="pre">src</span></code> folder.
+Please note that we must delete the <code class="docutils literal notranslate"><span class="pre">build</span></code> folder and
+repeat the above operations when we change the compiler.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<div class="line-block">
+<div class="line">CMake automatically trys to download StdFace package (<a class="reference external" href="https://github.com/issp-center-dev/StdFace">https://github.com/issp-center-dev/StdFace</a>, parser for standard mode),</div>
+<div class="line">but this may fail due to network problem (e.g., IP unreachable)</div>
+<div class="line">In such a case, please run <code class="docutils literal notranslate"><span class="pre">sh</span> <span class="pre">src/StdFace/download.sh</span></code> to download manually.</div>
+<div class="line"><br /></div>
+<div class="line">If you want to use StdFace downloaded into another directory,</div>
+<div class="line">pass <code class="docutils literal notranslate"><span class="pre">-DSTDFACE_DIR=&lt;path_to_stdface&gt;</span></code> to cmake command.</div>
+</div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prerequisite_en.html">2.1. Prerequisite</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.2. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="directorystructure_en.html">2.3. Directory structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basicusage_en.html">2.4. Basic usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="ho-index.html"><span class="section-number">2. </span>How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
+      <li>Previous: <a href="prerequisite_en.html" title="previous chapter"><span class="section-number">2.1. </span>Prerequisite</a></li>
+      <li>Next: <a href="directorystructure_en.html" title="next chapter"><span class="section-number">2.3. </span>Directory structure</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/howtouse/installation_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

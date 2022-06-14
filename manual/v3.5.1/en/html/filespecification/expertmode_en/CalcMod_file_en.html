@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>4.2.2. CalcMod file &#8212; HΦ Documentation 3.5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.2.3. ModPara file" href="ModPara_file_en.html" />
+    <link rel="prev" title="4.2.1. List file for the input files" href="List_file_for_the_input_files_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="calcmod-file">
+<span id="subsec-calcmod"></span><h1><span class="section-number">4.2.2. </span>CalcMod file<a class="headerlink" href="#calcmod-file" title="Permalink to this heading">¶</a></h1>
+<p>This file determines the parameters for the calculation method, model, and output mode. The file format is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcType   0
+CalcModel   2
+CalcEigenVec 0
+</pre></div>
+</div>
+<section id="file-format">
+<span id="file-format-1"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h2>
+<p>[string01] [int01]</p>
+</section>
+<section id="parameters">
+<span id="parameters-1"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>[string01]</p>
+<p><strong>Type :</strong> String</p>
+<p><strong>Description :</strong> Select a word from keywords.</p>
+</li>
+<li><p>[int01]</p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> A parameter that is correlated with a keyword.</div>
+</div>
+</li>
+</ul>
+</section>
+<section id="use-rules">
+<span id="use-rules-1"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>After setting the keywords at [string 01], a half-width blank is
+needed for setting a parameter.</p></li>
+<li><p>Keywords can be set in random order.</p></li>
+<li><p>If the keywords or filenames are incorrect, the program is
+terminated.</p></li>
+<li><p>The keywords “CalcType” and “CalcModel” are essential.</p></li>
+<li><p>When a head of line is &quot;#”, the line is skipped.</p></li>
+</ul>
+</section>
+<section id="keywords-and-parameters">
+<h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this heading">¶</a></h2>
+<p>The parameters correlated with the keywords are as follows.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CalcType</span></code></p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the method for calculation from the
+following list:</div>
+<div class="line">0: Lanczos method</div>
+<div class="line">1: mTPQ method</div>
+<div class="line">2: Full diagonalization method</div>
+<div class="line">3: LOBCG for the ground state</div>
+<div class="line">4: Time-evolution</div>
+<div class="line">5: cTPQ method</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CalcModel</span></code></p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the model from the following list:</div>
+<div class="line">0: Fermion Hubbard model (canonical ensemble: conservation of
+particles or conservation of particles and the component of
+<span class="math notranslate nohighlight">\(S_z\)</span>)</div>
+<div class="line">1: Spin model (canonical ensemble: conservation of the component of
+<span class="math notranslate nohighlight">\(S_z\)</span>)</div>
+<div class="line">2: Kondo lattice model (canonical ensemble: conservation of
+particles, the component of <span class="math notranslate nohighlight">\(S_z\)</span>)</div>
+<div class="line">3: Fermion Hubbard model (grand canonical ensemble)</div>
+<div class="line">4: Spin model (grand canonical ensemble)</div>
+<div class="line">5: Kondo lattice model (grand canonical ensemble).</div>
+</div>
+<p>For the fermion Hubbard model, you can select the model under the
+conservation of the particles by setting <code class="docutils literal notranslate"><span class="pre">NCond</span></code> in the ModPara
+file. When you want to select the model under the conservation of
+particles and the component of <span class="math notranslate nohighlight">\(S_z\)</span>, set both <code class="docutils literal notranslate"><span class="pre">NCond</span></code> and
+<code class="docutils literal notranslate"><span class="pre">2Sz</span></code> in the ModPara file.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CalcEigenVec</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the method to calculate the eigenvectors:</div>
+<div class="line">0: Lanczos+CG methods (when the convergence of eigenvectors is not
+sufficient for using the Lanczos method, the CG method is applied
+to calculate eigenvectors).</div>
+<div class="line">1: Lanczos method.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the type of an initial vector (<span class="math notranslate nohighlight">\(v0\)</span>):</div>
+<div class="line">-1: Real part (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) and imaginary part  (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) of the initial
+vector are give as the normally distributed random numbers. Thus, the normalized initial vectors are uniformly distributed
+on the <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> dimensional super sphere (<span class="math notranslate nohighlight">\(N_{\rm H}\)</span> is the dimension of the Hilbert space).</div>
+<div class="line">0: Complex type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]\in[-1:1]\)</span> ).</div>
+<div class="line">1: Real type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]=0\)</span>).</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the mode of outputting an eigenvector:</div>
+<div class="line">0: Not output an eigenvector</div>
+<div class="line">1: Output an eigenvector.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the mode of inputting an eigenvector:</div>
+<div class="line">0: Not input an eigenvector</div>
+<div class="line">1: Input an eigenvector.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ReStart</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the mode of inputting a restart vector:</div>
+<div class="line">0: Not restart calculation</div>
+<div class="line">1: Output a restart vector</div>
+<div class="line">2: Input a restart vector and output a new restart vector</div>
+<div class="line">3: Input a restart vector.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the mode of calculating dynamical Green’s functions:</div>
+<div class="line">0: Not calculate dynamical Green’s functions</div>
+<div class="line">1: (not restart) Input an initial vector and files for generating single excited or pair excited states</div>
+<div class="line">2: Input components of triangular diagonal matrix</div>
+<div class="line">3: Output both components of triangular diagonal matrix and a restart vector</div>
+<div class="line">4: Input both components of triangular diagonal matrix and a restart vector</div>
+<div class="line">5: Input and output both components of triangular diagonal matrix and a restart vector.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputHam</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Full Diag)Select the mode of outputting Hamiltonian:</div>
+<div class="line">0: not output Hamiltonian.</div>
+<div class="line">1: output Hamiltonian.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputHam</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> (Full Diag)Select the mode of inputting Hamiltonian:</div>
+<div class="line">0: not input Hamiltonian.</div>
+<div class="line">1: input Hamiltonian.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> Select the mode of outputting an excited vector:</div>
+<div class="line">0: Not output an eigenvector</div>
+<div class="line">1: Output an eigenvector.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> (Full Diag)Select to use ScaLAPACK library for full diagonalization:</div>
+<div class="line">0: not to use ScaLAPACK.</div>
+<div class="line">1: use ScaLAPACK.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NGPU</span></code></p>
+<p><strong>Type :</strong> Int (default value: 2)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> (Full Diag)Select the number of GPU devices for full diagonalization:</div>
+<div class="line"><span class="math notranslate nohighlight">\({\mathcal H} \Phi\)</span> does not support to use GPU devices at multi-nodes.</div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="List_file_for_the_input_files_en.html">4.2.1. List file for the input files</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.2.2. CalcMod file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModPara_file_en.html">4.2.3. ModPara file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="LocSpin_file_en.html">4.2.4. LocSpin file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Trans_file_en.html">4.2.5. Trans file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterAll_file_en.html">4.2.6. InterAll file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CoulombIntra_file_en.html">4.2.7. CoulombIntra file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CoulombInter_file_en.html">4.2.8. CoulombInter file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hund_file_en.html">4.2.9. Hund file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairHop_file_en.html">4.2.10. PairHop file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Exchange_file_en.html">4.2.11. Exchange file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Ising_file_en.html">4.2.12. Ising file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairLift_file_en.html">4.2.13. PairLift file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyG_file_en.html">4.2.14. OneBodyG file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyG_file_en.html">4.2.15. TwoBodyG file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SingleExcitation_file_en.html">4.2.16. SingleExcitation file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairExcitation_file_en.html">4.2.17. PairExcitation file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpectrumVec_File_en.html">4.2.18. SpectrumVec File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="OneBodyTE_File_en.html">4.2.19. OneBodyTE File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TwoBodyTE_File_en.html">4.2.20. TwoBodyTE File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_en/index_outputfiles_en.html">4.3. Output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_expertmode_en.html"><span class="section-number">4.2. </span>Input files for <em>Expert</em> mode</a><ul>
+      <li>Previous: <a href="List_file_for_the_input_files_en.html" title="previous chapter"><span class="section-number">4.2.1. </span>List file for the input files</a></li>
+      <li>Next: <a href="ModPara_file_en.html" title="next chapter"><span class="section-number">4.2.3. </span>ModPara file</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_en/CalcMod_file_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

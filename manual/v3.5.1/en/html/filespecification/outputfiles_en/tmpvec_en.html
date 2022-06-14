@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>4.3.28. tmpvec.dat &#8212; HΦ Documentation 3.5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.3.29. DynamicalGreen.dat" href="DynamicalGreen_en.html" />
+    <link rel="prev" title="4.3.27. eigenvec.dat" href="eigenvec_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tmpvec-dat">
+<span id="subsec-restart"></span><h1><span class="section-number">4.3.28. </span>tmpvec.dat<a class="headerlink" href="#tmpvec-dat" title="Permalink to this heading">¶</a></h1>
+<p>When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops
+at an indicated step are outputted. The file format is of the binary
+type. An example of the file format is as follows.</p>
+<section id="file-name">
+<span id="file-name-19"></span><h2>File name<a class="headerlink" href="#file-name" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Lanczos method: ##_tmpvec_rank_$$.dat</p></li>
+<li><p>TPQ and LOBPCG method: ##_tmpvec_set_&amp;&amp;_rank_$$.dat .</p></li>
+</ul>
+<p>## indicates [string02] in a ModPara file, and $$ is the number of rank.
+&amp;&amp; is the sampling number for the TPQ calculation.</p>
+</section>
+<section id="file-format">
+<span id="file-format-43"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h2>
+<p>This file is written through the following source code (a little
+different from the actual <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> source).</p>
+<div class="line-block">
+<div class="line">Lanczos</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_rank_0.dat&quot;, &quot;wb&quot;);
+fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
+fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
+fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);
+fwrite(&amp;second_last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">TPQ and LOBPCG</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_set_0_rank_0.dat&quot;, &quot;wb&quot;);
+fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
+fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
+fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);
+fclose(fp);
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">number_of_interations</span></code> is the number of iterations,
+<code class="docutils literal notranslate"><span class="pre">local_size</span></code> is the size of eigenvector (if MPI is used, it differs
+from the dimension of the Hilbert space), <code class="docutils literal notranslate"><span class="pre">last_vector</span></code> is the vector
+at the last iteration and <code class="docutils literal notranslate"><span class="pre">second_last_vector</span></code> is the vector at the
+second last iteration.</p>
+<p><strong>Note:</strong> The fist component of <code class="docutils literal notranslate"><span class="pre">last_vector</span></code> and
+<code class="docutils literal notranslate"><span class="pre">second_last_vector</span></code> (<code class="docutils literal notranslate"><span class="pre">last_vector[0]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">second_last_vector[0]</span></code>) are not used for calculation.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Chemi_en.html">4.3.1. CHECK_Chemi.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_InterAll_en.html">4.3.2. CHECK_InterAll.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_CoulombIntra_en.html">4.3.3. CHECK_CoulombIntra.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Hund_en.html">4.3.4. CHECK_Hund.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_INTER_U_en.html">4.3.5. CHECK_INTER_U.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHECK_Memory_en.html">4.3.6. CHECK_Memory.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="WarningOnTransfer_en.html">4.3.7. WarningOnTransfer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CalcTimer_en.html">4.3.8. CalcTimer.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TimeKeeper_en.html">4.3.9. TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sz_TimeKeeper_en.html">4.3.10. sz_TimeKeeper.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_CG_EigenVector_en.html">4.3.11. Time_CG_EigenVector.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="energy_en.html">4.3.12. energy.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lanczos_Step_en.html">4.3.13. Lanczos_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TPQ_Step_en.html">4.3.14. Time_TPQ_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_rand_en.html">4.3.15. Norm_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_rand_en.html">4.3.16. SS_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_rand_en.html">4.3.17. Flct_rand.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Time_TE_Step_en.html">4.3.18. Time_TE_Step.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Norm_en.html">4.3.19. Norm.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SS_en.html">4.3.20. SS.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Flct_en.html">4.3.21. Flct.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Eigenvalue_en.html">4.3.22. Eigenvalue.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="phys_en.html">4.3.23. phys.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ham_en.html">4.3.24. ham.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajs_en.html">4.3.25. cisajs.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cisajscktalt_en.html">4.3.26. cisajscktalt.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eigenvec_en.html">4.3.27. eigenvec.dat</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.3.28. tmpvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DynamicalGreen_en.html">4.3.29. DynamicalGreen.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recalcvec_en.html">4.3.30. recalcvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TMcomponents_en.html">4.3.31. TMcomponents.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitedvec_en.html">4.3.32. eigenvec.dat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="residual_en.html">4.3.33. residual.dat</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../error_en/error_en.html">4.4. Error messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wannier/index.html">8. Downfolding with Wannier functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="eigenvec_en.html" title="previous chapter"><span class="section-number">4.3.27. </span>eigenvec.dat</a></li>
+      <li>Next: <a href="DynamicalGreen_en.html" title="next chapter"><span class="section-number">4.3.29. </span>DynamicalGreen.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/tmpvec_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

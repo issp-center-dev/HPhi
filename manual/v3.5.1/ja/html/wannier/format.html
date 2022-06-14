@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>8.4. ファイルフォーマット &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="8.5. Contact" href="contact.html" />
+    <link rel="prev" title="8.3. スタンダードモードの入力パラメーター" href="parameter.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">8.4. </span>ファイルフォーマット<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<p>HPhi/mVMCのスタンダードモードでは以下のファイルを読み込む.
+これらのファイルはRESPACKのプログラムを実行すると,
+<code class="docutils literal notranslate"><span class="pre">dir-model</span></code> ディレクトリに <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]=zvo</span></code> として自動出力される.</p>
+<section id="id2">
+<h2><span class="section-number">8.4.1. </span>ジオメトリー<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_geom.dat</span></code>.
+このファイルを必要に応じて修正することで取り扱う軌道数を変更できる.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-1.917800 1.917800 6.280100
+1.917800 -1.917800 6.280100
+1.917800 1.917800 -6.280100
+3
+0.000000 -0.000000 -0.000000
+-0.000000 -0.000000 -0.000000
+0.000000 0.000000 0.000000
+</pre></div>
+</div>
+<ul>
+<li><p>1 - 3行目</p>
+<p>結晶並進ベクトル. デカルト座標系で任意単位.</p>
+</li>
+<li><p>4行目</p>
+<p>mVMC/HPhiで取り入れる, ユニットセルあたりの軌道数.
+Wannier関数の数よりも少なくすることも可能であり,
+その場合には先頭からこの数の分だけの軌道を取り入れたモデルが構築される.</p>
+</li>
+<li><p>5行目以降</p>
+<p>各軌道のWannier中心 (フラクショナル座標). Fourier変換ツールで使われる.
+なお, ここで定義されたWannier関数の順番が, 以下の4つのファイルのWannier関数のインデックスに対応する.</p>
+</li>
+</ul>
+</section>
+<section id="coulomb">
+<h2><span class="section-number">8.4.2. </span>ホッピング, Coulomb積分, 交換積分, 電荷密度<a class="headerlink" href="#coulomb" title="Permalink to this heading">¶</a></h2>
+<p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_hr.dat</span></code>, <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_ur.dat</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_jr.dat</span></code>,  <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_dr.dat</span></code>.
+Wannier90のホッピング積分の形式に従う(詳細はwannier90のuser_guideの <code class="docutils literal notranslate"><span class="pre">8.19</span> <span class="pre">seedname_hr.dat</span></code> を参照のこと).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wannier90 format for mvmcdry
+8
+343
+1    1    1    1    1    1    1    1    1    1    1    1    1
+...
+ -3   -3   -3    1    1   0.0004104251  -0.0000000000
+ -3   -3   -3    1    2   0.0001515941  -0.0000000006
+ -3   -3   -3    1    3  -0.0001515941   0.0000000002
+</pre></div>
+</div>
+<ul>
+<li><p>1行目</p>
+<p>ファイルヘッダ</p>
+</li>
+<li><p>2行目</p>
+<p>Wannier関数の数.</p>
+</li>
+<li><p>3行目</p>
+<p>スーパーセルの数 <code class="docutils literal notranslate"><span class="pre">nrpts</span></code> .</p>
+</li>
+<li><p>4行- 5 + int(<code class="docutils literal notranslate"><span class="pre">nrpts</span></code>/15) 行</p>
+<p>各スーパーセルでの縮退値 (基本的には1).</p>
+</li>
+<li><p>6 + int(<code class="docutils literal notranslate"><span class="pre">nrpts</span></code>/15) 行 -</p>
+<p>1-3列がスーパーセルの格子ベクトル,
+4列目が原点のWannier軌道のインデックス,
+5列目がスーパーセルのWannier軌道のインデックス,
+6列目が実数値, 7列目が虚数値をそれぞれ与える.</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. チュートリアル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. スタンダードモードの入力パラメーター</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.4. ファイルフォーマット</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">8.4.1. ジオメトリー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coulomb">8.4.2. ホッピング, Coulomb積分, 交換積分, 電荷密度</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">8. </span>Wannier関数を用いたダウンフォールディング</a><ul>
+      <li>Previous: <a href="parameter.html" title="前の章へ"><span class="section-number">8.3. </span>スタンダードモードの入力パラメーター</a></li>
+      <li>Next: <a href="contact.html" title="次の章へ"><span class="section-number">8.5. </span>Contact</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/wannier/format.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

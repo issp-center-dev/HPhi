@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>8.3. Input parameters for Standard mode &#8212; HΦ Documentation 3.5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="8.4. File format" href="format.html" />
+    <link rel="prev" title="8.2. Tutorial" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="input-parameters-for-standard-mode">
+<h1><span class="section-number">8.3. </span>Input parameters for Standard mode<a class="headerlink" href="#input-parameters-for-standard-mode" title="Permalink to this heading">¶</a></h1>
+<p>We show the following example of the input file.</p>
+<p><a class="reference download internal" download="" href="../_downloads/39b79291a25a68995da77549bd533beb/stan.in"><code class="xref download docutils literal notranslate"><span class="pre">stan.in</span></code></a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
+lattice = &quot;wannier90&quot;
+a0w = 2
+a0l = 0
+a0h = 2
+a1w = 0
+a1l = 2
+a1h = 2
+a2w = 1
+a2l = 0
+a2h = 0
+method = &quot;CG&quot;
+2Sz = 0
+nelec = 4
+exct = 1
+cutoff_t = 0.2
+cutoff_u = 0.4
+cutoff_j = 0.1
+</pre></div>
+</div>
+<p>The input parameters for the Standard mode to perform calculation
+of the downfolded model are as follows:</p>
+<ul>
+<li><p>lattice</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;wannier90&quot;</span></code></p></li>
+</ul>
+</li>
+<li><p>Parameters related to the lattice</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">W</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, <code class="docutils literal notranslate"><span class="pre">Height</span></code></p>
+<p><strong>Type :</strong> int</p>
+<p><strong>Description :</strong> The alignment of original unit cells is specified.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a0H</span></code>, <code class="docutils literal notranslate"><span class="pre">a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1H</span></code>, <code class="docutils literal notranslate"><span class="pre">a2W</span></code>, <code class="docutils literal notranslate"><span class="pre">a2L</span></code>, <code class="docutils literal notranslate"><span class="pre">a2H</span></code></p>
+<p><strong>Type :</strong> int</p>
+<p><strong>Description :</strong>  Three vectors (<span class="math notranslate nohighlight">\({\vec a}_0, {\vec a}_1, {\vec a}_2\)</span>) that specify the lattice . These vectors should be written in the Fractional coordinates of the original transrational vectors.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">Hsub</span></code></p>
+<p><strong>Type :</strong> int (positive). In the default setting, <code class="docutils literal notranslate"><span class="pre">Wsub=W</span></code>, <code class="docutils literal notranslate"><span class="pre">Lsub=L</span></code>, <code class="docutils literal notranslate"><span class="pre">Hsub=Height</span></code> . Namely, there is no sublattice.</p>
+<p><strong>Description :</strong>
+They are available only in mVMC.
+By using these parameters, we can force the pair-orbital symmetrical to the translation of the sublattice. If the sublattice is incommensurate with the original lattice, <code class="docutils literal notranslate"><span class="pre">vmcdry.out</span></code> stops.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a0Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Hsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Hsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Wsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Lsub</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Hsub</span></code></p>
+<p><strong>Type :</strong> int (positive). In the default setting, <code class="docutils literal notranslate"><span class="pre">a0Wsub=a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Lsub=a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a0Hsub=a0H</span></code>,
+<code class="docutils literal notranslate"><span class="pre">a1Wsub=a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Lsub=a1L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1Hsub=a1H</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Wsub=a2W</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Lsub=a2L</span></code>, <code class="docutils literal notranslate"><span class="pre">a2Hsub=a2H</span></code>. Namely, there is no sublattice.</p>
+<p><strong>Description :</strong>
+The manner to set these aparameters is same as that for <code class="docutils literal notranslate"><span class="pre">a0W</span></code>, <code class="docutils literal notranslate"><span class="pre">a0L</span></code>, <code class="docutils literal notranslate"><span class="pre">a0H</span></code>,
+<code class="docutils literal notranslate"><span class="pre">a1W</span></code>, <code class="docutils literal notranslate"><span class="pre">a1L</span></code>, <code class="docutils literal notranslate"><span class="pre">a1H</span></code>,   <code class="docutils literal notranslate"><span class="pre">a2W</span></code>, <code class="docutils literal notranslate"><span class="pre">a2L</span></code>, <code class="docutils literal notranslate"><span class="pre">a2H</span></code>.
+If the sublattice is incommensurate with the original lattice, <code class="docutils literal notranslate"><span class="pre">vmcdry.out</span></code> stops.</p>
+</li>
+</ul>
+</li>
+<li><p>Parameters related to interactions</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda_u</span></code></p>
+<p><strong>Type :</strong> float (greater than or equal to 0)</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<blockquote>
+<div><p><strong>Description :</strong> A parameter to tune the strength of Coulomb interactions by multiplying :math: <cite>lambda_u</cite> by them.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda_j</span></code></p>
+<p><strong>Type :</strong> float (greater than or equal to 0)</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<blockquote>
+<div><p><strong>Description :</strong> A parameter to tune the strength of exchange Coulomb interactions by multiplying :math: <cite>lambda_j</cite> by them.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda</span></code></p>
+<p><strong>Type :</strong> float (greater than or equal to 0)</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<blockquote>
+<div><p><strong>Description :</strong> A parameter to tune the strength of Coulomb and exchange interactions by multiplying :math: <cite>lambda</cite> by them. When  <span class="math notranslate nohighlight">\(\lambda_U\)</span> , <span class="math notranslate nohighlight">\(\lambda_J\)</span> are specified, these settings are used.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutoff_t</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_u</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_j</span></code></p>
+<p><strong>Type :</strong> float</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">1.0e-8</span></code></p>
+<p><strong>Description :</strong> The cutoff parameters for the hopping, Coulomb, exchange integrals.
+We ignore these integrals smaller than cutoff values.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutoff_tW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tH</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutoff_UW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_UL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_UH</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutoff_JW</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_JL</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_JH</span></code></p>
+<p><strong>Type :</strong></p>
+<p><strong>Default :</strong>  <code class="docutils literal notranslate"><span class="pre">cutoff_tW</span> <span class="pre">=</span> <span class="pre">int((W-1)/2)</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tL=int((L-1)/2)</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_tH=int((Height-1)/2)</span></code> (when <code class="docutils literal notranslate"><span class="pre">W</span></code> , <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">Height</span></code> are not defined, the values are set to 0) and others are set to <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<p><strong>Description :</strong> The cutoff parameters for the hopping, Coulomb, exchange integrals.
+We ignore these integrals that have lattice vector <span class="math notranslate nohighlight">\({\bf R}\)</span> larger than these values.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutoff_length_t</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_length_U</span></code>, <code class="docutils literal notranslate"><span class="pre">cutoff_length_J</span></code></p>
+<p><strong>Type :</strong> float</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">cutoff_length_t</span> <span class="pre">=</span> <span class="pre">-1.0</span></code> (include all terms), others are set to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>.</p>
+<p><strong>Description</strong></p>
+<p>The cutoff parameters for the hopping, Coulomb, exchange integrals.
+We ignore these integrals whose distances are longer than these values.
+The distances are computed from the position of the Wannier center and  unit lattice vectors.</p>
+</li>
+</ul>
+</li>
+<li><p>Parameters for one body correction</p>
+<p>To avoid double countings in analyzing the lattice model,
+one body correction is done by subtracting the following terms from one body terms:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight" id="equation-wannier-parameter-0">
+<span class="eqno">(8.6)<a class="headerlink" href="#equation-wannier-parameter-0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+t_{mm}^{\rm DC}({\bf 0}) &amp;\equiv \alpha U_{mm}({\bf 0}) D_{mm}({\bf 0})
++ \sum_{({\bf R}, n) \neq ({\bf 0}, m)} U_{m n} ({\bf R})D_{nn}({\bf 0})\\
+&amp; - (1-\alpha) \sum_{({\bf R}, n) \neq ({\bf 0}, 0)} J_{m n}({\bf R}) D_{nn}({\bf R}),\\
+t_{mn}^{\rm DC}({\bf R}_{ij}) &amp;\equiv \frac{1}{2} J_{mn}({\bf R}_{ij}) \left(D_{nm}({\bf R}_{ji}) + 2 {\rm Re} [D_{nm}({\bf R}_{ji})]\right)\\
+&amp;-\frac{1}{2}  U_{mn}({\bf R}_{ij}) D_{nm}({\bf R}_{ji}),
+\quad ({\bf R}_{ij}, m) \neq ({\bf 0}, n),
+\\
+D_{mn}({\bf R}_{ij}) &amp;\equiv \sum_{\sigma}
+\left\langle c_{im \sigma}^{\dagger} c_{jn \sigma}\right\rangle_{\rm KS},
+\end{aligned}\end{split}\]</div>
+</div></blockquote>
+<p>where, the first and second terms correspond to the Hartree and Fock corrections, respectively.
+<span class="math notranslate nohighlight">\(\alpha\)</span> is a tuning parameter for one body correction from the on-site Coulomb interactions.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">doublecounting</span></code></p>
+<blockquote>
+<div><p><strong>Type :</strong> char</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">none</span></code></p>
+<p><strong>Description :</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">none</span></code>: One body correction is not considered.  <code class="docutils literal notranslate"><span class="pre">Hartree_U</span></code>: Hartree correction only considered the contribution from Coulomb interactions <span class="math notranslate nohighlight">\(U_{Rii}\)</span> . <code class="docutils literal notranslate"><span class="pre">Hartree</span></code>: Hartree correction. <code class="docutils literal notranslate"><span class="pre">full</span></code>: One body correction including Fock correction.
+Charge densities <span class="math notranslate nohighlight">\(D_{Rij}\)</span> are obtained by <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_dr.dat</span></code> which is automatically outputted by RESPACK.
+It is noted that the charge densities are assumed not to depend on spin components.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p>
+<blockquote>
+<div><p><strong>Type :</strong> float</p>
+<p><strong>Default :</strong> <code class="docutils literal notranslate"><span class="pre">0.5</span></code></p>
+<p><strong>Description :</strong></p>
+<p>A tuning parameter for one body correction from the on-site Coulomb interactions (<span class="math notranslate nohighlight">\(0\le \alpha \le 1\)</span>).</p>
+</div></blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. HPhi/mVMC Fourier-Transformation utility</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Downfolding with Wannier functions</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.3. Input parameters for Standard mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html">8.4. File format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">8. </span>Downfolding with Wannier functions</a><ul>
+      <li>Previous: <a href="tutorial.html" title="previous chapter"><span class="section-number">8.2. </span>Tutorial</a></li>
+      <li>Next: <a href="format.html" title="next chapter"><span class="section-number">8.4. </span>File format</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/wannier/parameter.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

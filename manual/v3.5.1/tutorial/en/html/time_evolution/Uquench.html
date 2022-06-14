@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>3.1. U quench in Hubbard model &#8212; HΦ Tutorial  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.2. Dynamical phase transition in 1D transverse-field Ising model" href="transverse_ising.html" />
+    <link rel="prev" title="3. Tutorials for real-time evolution" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="u-quench-in-hubbard-model">
+<h1><span class="section-number">3.1. </span>U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Permalink to this heading">¶</a></h1>
+<p>Let’s solve the following U quench in 2D Hubbard model at half filling.</p>
+<div class="math notranslate nohighlight" id="equation-time-evolution-uquench-0">
+<span class="eqno">(3.1)<a class="headerlink" href="#equation-time-evolution-uquench-0" title="Permalink to this equation">¶</a></span>\[H(\tau) = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})
+  +U \sum_{i} n_{i\uparrow}n_{i\downarrow}
+  +U_{\rm quench} h(\tau) \sum_{i} n_{i\uparrow}n_{i\downarrow}\]</div>
+<p><span class="math notranslate nohighlight">\(h(\tau)\)</span> means the step function.
+The input files (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_3.1/stan1.in</span></code> and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_3.1/stan2.in</span></code>) are as follows</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan1.in
+
+model = &quot;Hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;square&quot;
+a0W =  2
+a0L =  2
+a1W =  2
+a1L = -2
+2Sz = 0
+t = 1.0
+U = 4.0
+nelec = 8
+EigenvecIO = &quot;out&quot;
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan2.in
+
+model = &quot;Hubbard&quot;
+method = &quot;Time-Evolution&quot;
+lattice = &quot;square&quot;
+a0W =  2
+a0L =  2
+a1W =  2
+a1L = -2
+2Sz = 0
+t = 1.0
+U = 4.0
+nelec = 8
+PumpType = &quot;Quench&quot;
+Uquench = -8
+EigenvecIO = &quot;in&quot;
+dt = 0.01
+lanczos_max = 1000
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi -s stan1.in
+HPhi -s stan2.in
+</pre></div>
+</div>
+<section id="check-norm-and-energy">
+<h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Permalink to this heading">¶</a></h2>
+<p>Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
+Using gnuplot, check the dynamics of the norm for this problem</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/Norm.dat&quot; u 1:2 w l
+</pre></div>
+</div>
+<p>In sudden U-quench simulations, the total energy should be conserved for <span class="math notranslate nohighlight">\(\tau&gt;0\)</span>.
+Using gnuplot, check whether the energy is conserved during the real-time evolution</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:2 w l
+</pre></div>
+</div>
+</section>
+<section id="dynamics-of-double-occupation">
+<h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Permalink to this heading">¶</a></h2>
+<p>The double occupation <span class="math notranslate nohighlight">\(D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle\)</span> is not conserved because <span class="math notranslate nohighlight">\([D, H] \neq 0\)</span>.
+You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</span> by executing the following command on gnuplot</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:4 w l
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../zero_temperature/index.html">1. Tutorial for calculations at zero temperature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Tutorials for real-time evolution</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.1. U quench in Hubbard model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-norm-and-energy">3.1.1. Check norm and energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamics-of-double-occupation">3.1.2. Dynamics of double occupation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transverse_ising.html">3.2. Dynamical phase transition in 1D transverse-field Ising model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../dynamical/index.html">4. Tutorial for calculations of dynamical properties</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">3. </span>Tutorials for real-time evolution</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><span class="section-number">3. </span>Tutorials for real-time evolution</a></li>
+      <li>Next: <a href="transverse_ising.html" title="next chapter"><span class="section-number">3.2. </span>Dynamical phase transition in 1D transverse-field Ising model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/time_evolution/Uquench.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
