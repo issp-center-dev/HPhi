@@ -42,7 +42,9 @@ integrals <span class="math notranslate nohighlight">\(I_{ijkl\sigma_1\sigma_2\s
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-interall-file-en-0">
 <span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-en-interall-file-en-0" title="Permalink to this equation">¶</a></span>\[{\mathcal H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}
 I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
-<p>For spin, the conditions <span class="math notranslate nohighlight">\(i=j\)</span> and <span class="math notranslate nohighlight">\(k=l\)</span> must be satisfied. An example of the file format is as follows.</p>
+<p>For the off-diagonal component, be sure to provide a pair of i1 sigma1 i2 sigma2 i3 sigma3 i4 sigma4 and i4 sigma4 i3 sigma3 i2 sigma2 i1 sigma1.
+For spin, the conditions <span class="math notranslate nohighlight">\(i=j\)</span> and <span class="math notranslate nohighlight">\(k=l\)</span> must be satisfied.
+An example of the file format is as follows.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
 NInterAll      36
 ======================
@@ -242,7 +244,7 @@ the range of the defined values.</p></li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>

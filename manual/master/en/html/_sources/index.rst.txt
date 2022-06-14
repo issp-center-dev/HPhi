@@ -27,7 +27,7 @@ This software was developed with the support of \"*Project for advancement of so
 
 Download
 --------
-You can download software and source codes of :math:`{\mathcal H}\Phi` from `GitHub page <https://github.com/QLMS/HPhi>`_ or `release page <https://github.com/QLMS/HPhi/releases>`_.
+You can download software and source codes of :math:`{\mathcal H}\Phi` from `GitHub page <https://github.com/issp-center-dev/HPhi>`_ or `release page <https://github.com/issp-center-dev/HPhi/releases>`_.
 
 
 Contents
