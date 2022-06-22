@@ -15,9 +15,11 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
  |--doc/
  |    |--en/
  |    |--ja/
- |    |--fourier/
+ |    |--tutorial/
+ |    |--tutorial_HPhi_en.pdf
  |    |--userguide_en.pdf
  |    |--userguide_jp.pdf
+ |--README.md
  |--samples/
  |--src/
  |    |--*.c

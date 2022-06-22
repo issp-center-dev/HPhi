@@ -15,9 +15,11 @@ HPhi-xxx.gzを解凍後に構成されるディレクトリ構成を以下に示
  |--doc/
  |    |--en/
  |    |--ja/
- |    |--fourier/
+ |    |--tutorial/
+ |    |--tutorial_HPhi_en.pdf
  |    |--userguide_en.pdf
  |    |--userguide_jp.pdf
+ |--README.md     
  |--samples/
  |--src/
  |    |--*.c

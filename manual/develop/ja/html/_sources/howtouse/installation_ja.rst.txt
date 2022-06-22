@@ -10,21 +10,6 @@ https://github.com/issp-center-dev/HPhi/releases
 ``$ tar xzvf HPhi-xxx.tar.gz``
 
 :math:`{\mathcal H}\Phi`\ はcmakeを利用してインストールできます。
-
-
-.. tip::
-
- | 物性研スパコンシステムであるsekireiとenaga で cmake を利用するには
- | ``module load cmake``
- | をあらかじめ実行する必要があります。
- | なお、両システムでは :math:`{\mathcal H}\Phi` がプレインストールされております。
- | 詳しくは `スパコン公式ページ <http://www.issp.u-tokyo.ac.jp/supercom/visitor/softwaredev/softwareall/hphi>`_ をご参照ください。
- 
-.. | sekirei で cmake を利用するには
- | ``source /home/issp/materiapps/tool/env.sh``
- | をあらかじめ実行する必要があります。
-   
-
 :math:`{\mathcal H}\Phi`\ を展開したディレクトリのパスを$PathTohphi
 、ビルドディレクトリを$HOME/build/hphi
 (任意の場所を指定可能)とした場合に、 ::

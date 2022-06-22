@@ -31,6 +31,10 @@ Contributors
 
 This software was developed by the following contributors.
 
+* ver.3.5.1 (released on 2022/6/14)
+  
+* ver.3.5 (released on 2021/9/29)
+
 * ver.3.4 (released on 2020/6/2)
 
   * Developers
@@ -114,8 +118,7 @@ Operating environment
 
 :math:`{\mathcal H}\Phi` was tested on the following platforms
 
-* The supercomputer system-B \"sekirei\" and system-C \"enaga\" in ISSP
-* Fujitsu FX-10 
+* The supercomputer system-B \"ohtaka\" in ISSP
 * Linux PC + Intel compiler
 * Linux PC + GCC.
 * Mac + GCC.
