@@ -158,12 +158,6 @@ int CalcByCanonicalTPQ(
       delta_tau = 1.0/LargeValue;
       /*[e] tau*/
       StopTimer(3100);
-      if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
-        return -1;
-      }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
-        X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
-      fclose(fp);
       // for norm
       if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
         return -1;
@@ -189,7 +183,14 @@ int CalcByCanonicalTPQ(
       iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
       StopTimer(3200);
       if(iret !=0) return -1;
-      inv_temp = 0; /* (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);*/
+      //inv_temp = 0; /* (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);*/
+      if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
+        return -1;
+      }
+      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
+        X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+      fclose(fp);
+
       StartTimer(3600);
 // for fluctuations
       if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
