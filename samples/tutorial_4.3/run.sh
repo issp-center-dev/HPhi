@@ -1,2 +1,2 @@
 #!/bin/sh
-python spinchain_example.py $1
+python3 spinchain_example.py $1
