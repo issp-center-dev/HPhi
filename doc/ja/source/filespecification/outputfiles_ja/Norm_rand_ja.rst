@@ -47,14 +47,14 @@ Norm\_rand.dat
    **形式 :** double型
 
    **説明 :** TPQ法で計算される規格化前の波動関数(ベクトル)のノルム:
-   :math:`\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle`\ 。ただし、\ :math:`|\tilde{\psi}_{k}\rangle \equiv(l-\mathcal{H}/N_{s})|\psi_{k-1}\rangle`\ 。
+   :math:`\sqrt{\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle}`\ 。ただし、\ :math:`|\tilde{\psi}_{k}\rangle \equiv(l-\mathcal{H}/N_{s})|\psi_{k-1}\rangle`\ 。
 
 -  :math:`[`\ double03\ :math:`]`
 
    **形式 :** double型
 
    **説明 :**
-   規格化前の初期波動関数(ランダムベクトル)のノルム：\ :math:`\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle`\ 。ただし、\ :math:`|\tilde{\psi}_{0}\rangle`\ は規格化前の初期波動関数。
+   規格化前の初期波動関数(ランダムベクトル)のノルム：\ :math:`\sqrt{\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle}`\ 。ただし、\ :math:`|\tilde{\psi}_{0}\rangle`\ は規格化前の初期波動関数。
 
 -  :math:`[`\ int01\ :math:`]`
 
