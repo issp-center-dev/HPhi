@@ -25,6 +25,16 @@ int mltplyHalfSpin(struct BindStruct *X, int nstate, double complex **tmp_v0,dou
 
 int mltplyGeneralSpin(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
+void mltplyHalfSpinGC_mini(
+  struct BindStruct *X,//!<[inout]
+  int site_i,
+  int spin_i,
+  int site_j,
+  int spin_j,
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Result vector
+  double complex **tmp_v1//!<[in] Input producted vector
+);
 
 int mltplySpinGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
@@ -34,14 +44,14 @@ int mltplyGeneralSpinGC(struct BindStruct *X, int nstate, double complex **tmp_v
 
 int mltplySpinGCBoost(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-void GC_child_general_int_spin
+double complex GC_general_int_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-void child_general_int_spin
+double complex general_int_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
@@ -49,21 +59,21 @@ void child_general_int_spin
  );
 
 
-void GC_child_exchange_spin
+double complex GC_exchange_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-void child_exchange_spin
+double complex exchange_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-void GC_child_pairlift_spin
+double complex GC_pairlift_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,

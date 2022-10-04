@@ -14,7 +14,11 @@ You can obtain the :math:`{\mathcal H}\Phi` directory by typing
 .. tip::
 
  | Before using cmake for sekirei, you must type
- | ``source /home/issp/materiapps/tool/env.sh``
+ | ``module load cmake``
+ | :math:`{\mathcal H}\Phi` has been preinstalled on ISSP supercomputers.
+ | If you want to use this preinstalled version, please type
+ | ``source /home/issp/materiapps/hphi/hphivars.sh``
+.. | ``source /home/issp/materiapps/tool/env.sh``
 
 We can compile :math:`{\mathcal H}\Phi` as::
 
@@ -52,3 +56,13 @@ After compilation,
 an execute :math:`{\mathcal H}\Phi` in the ``src`` folder.
 Please note that we must delete the ``build`` folder and
 repeat the above operations when we change the compiler.
+
+
+.. tip::
+
+ | CMake automatically trys to download StdFace package (https://github.com/issp-center-dev/StdFace, parser for standard mode),
+ | but this may fail due to network problem (e.g., IP unreachable)
+ | In such a case, please run ``sh src/StdFace/download.sh`` to download manually.
+ |
+ | If you want to use StdFace downloaded into another directory,
+ | pass ``-DSTDFACE_DIR=<path_to_stdface>`` to cmake command.

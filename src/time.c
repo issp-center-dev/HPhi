@@ -105,7 +105,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "  sz", 1000);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
-    if(X->Def.iCalcType==TPQCalc) {
+    if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
       StampTime(fp, "  CalcByTPQ", 3000);
       StampTime(fp, "    FirstMultiply", 3100);
       StampTime(fp, "      rand   in FirstMultiply", 3101);

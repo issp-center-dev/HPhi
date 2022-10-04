@@ -36,7 +36,7 @@
  * 
  */
 
-int child_omp_sz_Kondo_hacker(
+int omp_sz_Kondo_hacker(
         long unsigned int ib,
         long unsigned int ihfbit,
         struct BindStruct *X,
@@ -71,17 +71,19 @@ int sz
   char sdt[D_FileNameMax],sdt_err[D_FileNameMax];
   long unsigned int *HilbertNumToSz;
   long unsigned int i,icnt; 
-  long unsigned int ib,jb;
+  long unsigned int ib,jb,ib_start,ib_end, sdim_div, sdim_rest;
     
   long unsigned int j;
   long unsigned int div;
   long unsigned int num_up,num_down;
   long unsigned int irght,ilft,ihfbit;
+  long unsigned int *jbthread;
 
   //*[s] for omp parall
+  int mythread;
   unsigned int  all_up,all_down,tmp_res,num_threads;
   long unsigned int tmp_1,tmp_2,tmp_3;
-  long int **comb;
+  long int **comb, **comb2;
   //*[e] for omp parall
 
   // [s] for Kondo
@@ -98,8 +100,8 @@ int sz
   long unsigned int div_up;
 
   // [s] for general spin
-  long int *list_2_1_Sz;
-  long int *list_2_2_Sz;
+  long int *list_2_1_Sz = NULL;
+  long int *list_2_2_Sz = NULL;
   if(X->Def.iFlgGeneralSpin==TRUE){
     list_2_1_Sz = li_1d_allocate(X->Check.sdim+2);
     list_2_2_Sz = li_1d_allocate((X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1]/X->Check.sdim)+2);
@@ -267,7 +269,7 @@ int sz
       icnt = 0; 
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
       for(ib=0;ib<X->Check.sdim;ib++){
-        icnt+=child_omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+        icnt+=omp_sz_KondoGC(ib, ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
       }      
     break;
 
@@ -308,38 +310,77 @@ int sz
 
         icnt = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }else if(hacker==1){
-        // this part can not be parallelized
-        jb = 0;
-
-        for(ib=0;ib<X->Check.sdim;ib++){
-          list_jb[ib]=jb;
-
-          i=ib*ihfbit;
-          num_up=0;
-          for(j=0;j<=N2-2;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_up+=div;
+        jbthread = lui_1d_allocate(nthreads);
+        #pragma omp parallel default(none) \
+        shared(X,list_jb,ihfbit,N2,nthreads,jbthread) \
+        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
+                comb2,mythread,sdim_div,sdim_rest,ib_start,ib_end)
+        {
+          jb = 0;
+#ifdef _OPENMP
+          mythread = omp_get_thread_num();
+#else
+          mythread = 0;
+#endif
+          comb2 = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+          //
+          // explict loop decomposition is nessesary to fix the asignment to each thread
+          //
+          sdim_div = X->Check.sdim / nthreads;
+          sdim_rest = X->Check.sdim % nthreads;
+          if(mythread < sdim_rest){
+            ib_start = sdim_div*mythread + mythread;
+            ib_end = ib_start + sdim_div + 1;
           }
-          num_down=0;
-          for(j=1;j<=N2-1;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_down+=div;
+          else{
+            ib_start = sdim_div*mythread + sdim_rest;
+            ib_end = ib_start + sdim_div;
           }
+          //
+          for(ib=ib_start;ib<ib_end;ib++){
+            list_jb[ib]=jb;
 
-          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-          all_up   = (X->Def.Nsite+tmp_res)/2;
-          all_down = (X->Def.Nsite-tmp_res)/2;
+            i=ib*ihfbit;
+            num_up=0;
+            for(j=0;j<=N2-2;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_up+=div;
+            }
+            num_down=0;
+            for(j=1;j<=N2-1;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_down+=div;
+            }
 
-          tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-          tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-          jb   += tmp_1*tmp_2;
-        }
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+
+            tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
+            tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
+            jb   += tmp_1*tmp_2;
+          }
+          free_li_2d_allocate(comb2);
+          if(mythread != nthreads-1) jbthread[mythread+1] = jb;
+          #pragma omp barrier
+          #pragma omp single
+          {
+            jbthread[0] = 0;
+            for(j=1;j<nthreads;j++){
+              jbthread[j] += jbthread[j-1];
+            }
+          }
+          for(ib=ib_start;ib<ib_end;ib++){
+            list_jb[ib] += jbthread[mythread];
+          }
+        }//omp parallel
+        free_lui_1d_allocate(jbthread);
 
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
@@ -348,7 +389,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }
@@ -401,45 +442,85 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
       }
       else if(hacker==1){
-        // this part can not be parallelized
-        jb = 0;
-        iSpnup=0;
         iMinup=0;
         iAllup=X->Def.Ne;
         if(X->Def.Ne > X->Def.Nsite){
           iMinup = X->Def.Ne-X->Def.Nsite;
           iAllup = X->Def.Nsite;
         }
-        for(ib=0;ib<X->Check.sdim;ib++){
-          list_jb[ib]=jb;
-          i=ib*ihfbit;
-          num_up=0;
-          for(j=0;j<=N2-2;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_up+=div;
+        jbthread = lui_1d_allocate(nthreads);
+        #pragma omp parallel default(none) \
+        shared(X,iMinup,iAllup,list_jb,ihfbit,N2,nthreads,jbthread) \
+        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,iSpnup,jb,all_up,all_down,comb2, \
+                mythread,sdim_rest,sdim_div,ib_start,ib_end)
+        {
+          jb = 0;
+          iSpnup=0;
+#ifdef _OPENMP
+          mythread = omp_get_thread_num();
+#else
+          mythread = 0;
+#endif
+          comb2 = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+          //
+          // explict loop decomposition is nessesary to fix the asignment to each thread
+          //
+          sdim_div = X->Check.sdim / nthreads;
+          sdim_rest = X->Check.sdim % nthreads;
+          if(mythread < sdim_rest){
+            ib_start = sdim_div*mythread + mythread;
+            ib_end = ib_start + sdim_div + 1;
           }
-          num_down=0;
-          for(j=1;j<=N2-1;j+=2){
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_down+=div;
+          else{
+            ib_start = sdim_div*mythread + sdim_rest;
+            ib_end = ib_start + sdim_div;
           }
-          tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-          all_up   = (X->Def.Nsite+tmp_res)/2;
-          all_down = (X->Def.Nsite-tmp_res)/2;
+          //
+          for(ib=ib_start;ib<ib_end;ib++){
+            list_jb[ib]=jb;
+            i=ib*ihfbit;
+            num_up=0;
+            for(j=0;j<=N2-2;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_up+=div;
+            }
+            num_down=0;
+            for(j=1;j<=N2-1;j+=2){
+              div=i & X->Def.Tpow[j];
+              div=div/X->Def.Tpow[j];
+              num_down+=div;
+            }
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
 
-          for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
-            tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
-            tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
-            jb   += tmp_1*tmp_2;
+            for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+              tmp_1 = Binomial(all_up, iSpnup-num_up,comb2,all_up);
+              tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb2,all_down);
+              jb   += tmp_1*tmp_2;
+            }
           }
-        }
+          free_li_2d_allocate(comb2);
+          if(mythread != nthreads-1) jbthread[mythread+1] = jb;
+          #pragma omp barrier
+          #pragma omp single
+          {
+            jbthread[0] = 0;
+            for(j=1;j<nthreads;j++){
+              jbthread[j] += jbthread[j-1];
+            }
+          }
+          for(ib=ib_start;ib<ib_end;ib++){
+            list_jb[ib] += jbthread[mythread];
+          }
+        }//omp parallel
+        free_lui_1d_allocate(jbthread);
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
@@ -447,7 +528,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb) 
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
 
         break;
@@ -541,13 +622,13 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_Kondo(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         }
       }else if(hacker==1){
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          icnt+=child_omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+          icnt+=omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
         } 
       }
       break;
@@ -618,7 +699,7 @@ int sz
           icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X, list_1_, list_2_1_, list_2_2_, list_jb)
           for(ib=0;ib<X->Check.sdim;ib++){
-            icnt+=child_omp_sz_spin_hacker(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_jb);
+            icnt+=omp_sz_spin_hacker(ib,ihfbit,N,X, list_1_, list_2_1_, list_2_2_, list_jb);
           }
           //printf(" rank=%d ib=%ld:Ne=%d icnt=%ld :idim_max=%ld N=%d\n", myrank,ib,X->Def.Ne,icnt,X->Check.idim_max,N);
           // old version
@@ -644,7 +725,7 @@ int sz
           icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, N, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
           for(ib=0;ib<X->Check.sdim;ib++){
-            icnt+=child_omp_sz_spin(ib,ihfbit,N,X,list_1_, list_2_1_, list_2_2_, list_jb);
+            icnt+=omp_sz_spin(ib,ihfbit,N,X,list_1_, list_2_1_, list_2_2_, list_jb);
           }
         }
         else{
@@ -700,7 +781,7 @@ int sz
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)  shared(list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb)
         for(ib=0;ib<ilftdim; ib++){
-          icnt+=child_omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
+          icnt+=omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
         }
 
         free_lui_1d_allocate(HilbertNumToSz);
@@ -813,7 +894,7 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz(
+int omp_sz(
                  long unsigned int ib,    //!<[in]
                  long unsigned int ihfbit, //!<[in]
                  struct BindStruct *X,     //!<[in]
@@ -909,7 +990,7 @@ int child_omp_sz(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_hacker(long unsigned int ib,
+int omp_sz_hacker(long unsigned int ib,
                         long unsigned int ihfbit,
                         struct BindStruct *X,
                         long unsigned int *list_1_,
@@ -1026,7 +1107,7 @@ int child_omp_sz_hacker(long unsigned int ib,
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_Kondo(
+int omp_sz_Kondo(
                        long unsigned int ib,        //[in]
                        long unsigned int ihfbit,    //[in]
                        struct BindStruct *X,        //[in]
@@ -1138,7 +1219,7 @@ int child_omp_sz_Kondo(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_Kondo_hacker(
+int omp_sz_Kondo_hacker(
                        long unsigned int ib,
                        long unsigned int ihfbit,
                        struct BindStruct *X,
@@ -1258,7 +1339,7 @@ int child_omp_sz_Kondo_hacker(
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int child_omp_sz_KondoGC(
+int omp_sz_KondoGC(
                          long unsigned int ib,  //!<[in]
                          long unsigned int ihfbit,//!<[in]
                          struct BindStruct *X,    //!<[in]
@@ -1347,7 +1428,7 @@ int child_omp_sz_KondoGC(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_spin(
+int omp_sz_spin(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       unsigned int N,
@@ -1411,7 +1492,7 @@ int child_omp_sz_spin(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_spin_hacker(
+int omp_sz_spin_hacker(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
                              unsigned int N,
@@ -1480,7 +1561,7 @@ int child_omp_sz_spin_hacker(
  * @return 
  * @author Takahiro Misawa (The University of Tokyo)
  */
-int child_omp_sz_GeneralSpin(
+int omp_sz_GeneralSpin(
                              long unsigned int ib, 
                              long unsigned int ihfbit,
                              struct BindStruct *X,

@@ -75,14 +75,20 @@ MODULE fourier_routine
   !
   IMPLICIT NONE
   !
-  INTERFACE
-     SUBROUTINE key2lower(key) BIND(c)
-       USE,INTRINSIC :: iso_c_binding
-       CHARACTER(KIND=C_CHAR) :: key(*)
-     END SUBROUTINE key2lower
-  END INTERFACE
-  !
 CONTAINS
+!
+SUBROUTINE key2lower(key)
+  CHARACTER(*) :: key
+  !
+  INTEGER :: ii, acode
+  !
+  DO ii = 1, LEN(TRIM(key))
+     acode = IACHAR(key(ii:ii))
+     IF(65 <= acode .AND. acode <= 90) THEN
+        key(ii:ii) = ACHAR(acode + 32)
+     END IF
+  END DO
+END SUBROUTINE key2lower
 !
 ! Read from HPhi/mVMC input files
 !
@@ -612,10 +618,10 @@ END SUBROUTINE read_corrindx
 SUBROUTINE read_corrfile()
   !
   USE fourier_val, ONLY : filehead, filetail, nwfc, calctype, &  
-  &                       ncor1, ncor2, indx, cor, norb, nr
+  &                       ncor1, ncor2, indx, cor, norb, nr, irv
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, icor, itmp(8), iwfc, iorb, jorb, ir
+  INTEGER :: fi = 10, icor, itmp(8), iwfc, iorb, jorb, ir, ir0
   COMPLEX(8),ALLOCATABLE :: cor0(:)
   REAL(8) :: cor0_r(2)
   CHARACTER(256) :: filename
@@ -624,6 +630,13 @@ SUBROUTINE read_corrfile()
   ALLOCATE(cor0(0:MAX(ncor1,ncor2)))
   cor(1:nr,1:6,1:norb,1:norb,1:nwfc) = CMPLX(0d0, 0d0, KIND(1d0))
   cor0(0) = CMPLX(0d0, 0d0, KIND(1d0))
+  !
+  DO ir = 1, nr
+     IF(all(irv(1:3, 1, ir) == 0)) THEN
+        ir0 = ir
+        EXIT
+     END IF
+  END DO
   !
   DO iwfc = 1, nwfc
      !
@@ -675,8 +688,8 @@ SUBROUTINE read_corrfile()
               &                            + cor0(indx(ir, 6, jorb, iorb))
               !
               cor(ir, 3, jorb, iorb, iwfc) = cor(ir, 3,   jorb, iorb, iwfc) &
-              &                        - SUM(cor(ir, 1:2, jorb, iorb, iwfc)) &
-              &                        * SUM(cor(ir, 1:2, jorb, iorb, iwfc))
+              &                       - SUM(cor(ir0, 1:2, iorb, iorb, iwfc)) &
+              &                       * SUM(cor(ir0, 1:2, jorb, jorb, iwfc))
               !
               cor(ir, 4, jorb, iorb, iwfc) = cor0(indx(ir, 3, jorb, iorb)) &
               &                            - cor0(indx(ir, 4, jorb, iorb)) &
@@ -738,7 +751,7 @@ SUBROUTINE fourier_cor()
         fmat(ik,ir) = CMPLX(0d0, 0d0, KIND(1d0))
         DO ireq = 1, nreq(ir)
            theta = - tpi * DOT_PRODUCT(kvec(1:3,ik), DBLE(irv(1:3,ireq,ir))) &
-           &     + tpi * phase(ireq,ir)
+           &     + phase(ireq,ir)
            fmat(ik,ir) = fmat(ik,ir) + CMPLX(COS(theta), SIN(theta), KIND(1d0))
         END DO
         fmat(ik,ir) = fmat(ik,ir) / DBLE(nreq(ir))
@@ -854,7 +867,13 @@ SUBROUTINE output_cor()
         END DO
         !
         DO ik = 1, ikk
-           WRITE(fo,'(1000e15.5)') xk(ik), cor_ave(ik,1:6, 1:norb, 1:norb), cor_err(ik,1:6, 1:norb, 1:norb)
+           WRITE(fo,'(e15.5)',advance="no") xk(ik)
+           DO iorb = 1, norb
+              DO jorb = 1, norb
+                 WRITE(fo,'(24e15.5)',advance="no") cor_ave(ik,1:6, jorb, iorb), cor_err(ik,1:6, jorb, iorb)
+              END DO
+           END DO
+           WRITE(fo,*)
         END DO
         !
         CLOSE(fo)

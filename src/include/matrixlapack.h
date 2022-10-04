@@ -22,8 +22,8 @@
  *-------------------------------------------------------------*/
 /*=================================================================================================*/
 
-#ifndef MATRIX_LAPACK_
-#define MATRIX_LAPACK_
+#ifndef MATRIchild_LAPACK_
+#define MATRIchild_LAPACK_
 
 #ifdef SR
 #define M_DSYEV dsyevd_

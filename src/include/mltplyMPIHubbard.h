@@ -21,7 +21,7 @@
 #include <complex.h>
 #include "struct.h"
 
-void GC_child_general_hopp_MPIdouble
+void GC_general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
@@ -29,7 +29,7 @@ void GC_child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-void X_GC_child_general_hopp_MPIdouble
+double complex child_GC_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -41,7 +41,7 @@ void X_GC_child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-void GC_child_general_hopp_MPIsingle
+void GC_general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
@@ -49,7 +49,7 @@ void GC_child_general_hopp_MPIsingle
  double complex **tmp_v1
  );
 
-void X_GC_child_general_hopp_MPIsingle
+double complex child_GC_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -62,7 +62,7 @@ void X_GC_child_general_hopp_MPIsingle
  );
 
 
-void child_general_hopp_MPIdouble
+void general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
@@ -70,7 +70,7 @@ void child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-void X_child_general_hopp_MPIdouble
+double complex child_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -82,7 +82,7 @@ void X_child_general_hopp_MPIdouble
  double complex **tmp_v1
  );
 
-void child_general_hopp_MPIsingle
+void general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
@@ -90,7 +90,7 @@ void child_general_hopp_MPIsingle
  double complex **tmp_v1
  );
 
-void X_child_general_hopp_MPIsingle
+double complex child_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,

@@ -14,9 +14,16 @@ https://github.com/QLMS/HPhi/releases
 
 .. tip::
 
- | sekirei で cmake を利用するには
+ | 物性研スパコンシステムであるsekireiとenaga で cmake を利用するには
+ | ``module load cmake``
+ | をあらかじめ実行する必要があります。
+ | なお、両システムでは :math:`{\mathcal H}\Phi` がプレインストールされております。
+ | 詳しくは `スパコン公式ページ <http://www.issp.u-tokyo.ac.jp/supercom/visitor/softwaredev/softwareall/hphi>`_ をご参照ください。
+ 
+.. | sekirei で cmake を利用するには
  | ``source /home/issp/materiapps/tool/env.sh``
  | をあらかじめ実行する必要があります。
+   
 
 :math:`{\mathcal H}\Phi`\ を展開したディレクトリのパスを$PathTohphi
 、ビルドディレクトリを$HOME/build/hphi
@@ -54,3 +61,12 @@ MPIライブラリがない場合には、MPI非対応の実行ファイルが�
 なお、コンパイラを変更しコンパイルし直したい場合には、都度buildフォルダごと削除を行った上で、
 新規に上記作業を行うことをお薦めします。
 また、SSE2が使用出来る場合には、cmakeでのコンパイル時\ ``-DHAVE_SSE2``\ を付け加えてください.
+
+
+.. tip::
+
+ | CMake 中に StdFace (https://github.com/issp-center-dev/StdFace, スタンダードモードのパーサー) が自動でダウンロードされます。
+ | もしもこのダウンロードに失敗した場合は、 ``sh src/StdFace/download.sh`` を実行してダウンロードをしてください。
+ | 
+ | もしくは、別の場所にダウンロードした StdFace を使いたい場合は、
+ | ``-DSTDFACE_DIR=<path_to_stdface>`` を cmake コマンドに渡してください。

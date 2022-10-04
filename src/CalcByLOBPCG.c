@@ -87,7 +87,7 @@ static int diag_ovrp(
   */
   nsub2 = 0;
   for (isub = 0; isub < nsub; isub++) {
-    if (eig[isub] > 1.0e-14) {
+    if (eig[isub] > 1.0e-10) { /*to be changed default 1.0e-14*/
       for (jsub = 0; jsub < nsub; jsub++)
         ovlp[jsub + nsub*nsub2] = ovlp[jsub + nsub*isub] / sqrt(eig[isub]);
       nsub2 += 1;
@@ -167,7 +167,7 @@ static void Initialize_wave(
 {
   FILE *fp;
   char sdt[D_FileNameMax];
-  size_t byte_size;
+  size_t byte_size = 0;
   double complex *vin;
   int iproc, ie, ierr;
   long int idim, iv, i_max;
@@ -312,7 +312,7 @@ static void Output_restart(
 )
 {
   FILE *fp;
-  size_t byte_size;
+  size_t byte_size = 0;
   char sdt[D_FileNameMax];
   int ie;
   long unsigned int idim;
@@ -446,7 +446,7 @@ int LOBPCG_Main(
     /**@brief
     <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
     */
-    if (stp /= 1) {
+    if (stp != 1) {
       if (do_precon == 1) {
         for (ie = 0; ie < X->Def.k_exct; ie++) 
           preshift = calc_preshift(eig[ie], dnorm[ie], eps_LOBPCG);
@@ -641,7 +641,7 @@ int CalcByLOBPCG(
 )
 {
   char sdt[D_FileNameMax];
-  size_t byte_size;
+  size_t byte_size = 0;
   long int i_max = 0, ie, idim;
   FILE *fp;
   double complex *vin;

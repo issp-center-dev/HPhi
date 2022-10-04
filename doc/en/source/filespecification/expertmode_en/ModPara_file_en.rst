@@ -153,10 +153,10 @@ Common parameters
 
    **Type :** Int (positive integer)
 
-   **Description :** If CalcHS=1, an efficient algorithm for generating
+   **Description :** If ``CalcHS=1``, an efficient algorithm for generating
    the restricted Hilbert space with the specified quantum number is
-   used (Details of algorithm is shown in
-   http://qlms.github.io/HPhi/develop/tips.pdf [in Japanese]). Default
+   used (Details of algorithm is shown in 
+   http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf [in Japanese]). Default
    value is 1 and the efficient algorithm is used.
 
  
@@ -218,7 +218,7 @@ CG method
    **Description :** The maximum number of iteration steps in the
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
-   Lanczos_max. In the case of restart calculation, ``Lanczos_max``
+   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
    must be larger than that of the previous calculation.
 
 *  ``LanczosEps``
@@ -231,7 +231,7 @@ CG method
 
  
 
-TPQ method
+TPQ (mTPQ/cTPQ) method
 ~~~~~~~~~~
 
 *  ``Lanczos_max``
@@ -247,7 +247,9 @@ TPQ method
    **Type :** Double
 
    **Description :** An integer giving :math:`l` of 
-   :math:`l=\hat{\mathcal H}/N_{s}` used in the TPQ method.
+   :math:`l-{\mathcal H}/N_{s}` used in the mTPQ method.
+   In the cTPQ method,  :math:`l` is used as the width of the imaginary-time evolution, i.e.,
+   :math:`\Delta\tau=1/l`. See :ref:`Ch:algorithm` for the details of the cTPQ method.
 
 *  ``NumAve``
 
@@ -263,6 +265,18 @@ TPQ method
    | **Description :** An integer giving the interval steps of
      calculating the correlation functions in the TPQ method.
    | **Note:** A small interval increases the time cost of calculations.
+
+*  ``ExpandCoef``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer giving the expansion order :math:`n_{\rm max}` for
+   cTPQ method;
+
+   .. math:: U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .
+
+   See :ref:`Ch:algorithm` for the details of the cTPQ method.
+
 
  
 
@@ -328,9 +342,11 @@ Real time evolution method
    **Type :** Int (positive integer)
 
    **Description :** An integer giving the expansion order :math:`n` for
-   real time evolution method;
+   real-time evolution method;
 
-   .. math:: \exp\left(-i \hat{\cal H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \hat{\cal H} \Delta t \right)^n .
+   .. math:: \exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.
+
+
 
 *  ``ExpecInterval``
 

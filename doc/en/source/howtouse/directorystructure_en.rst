@@ -14,9 +14,8 @@ When HPhi-xxx.tar.gz is unzipped, the following directory structure is composed.
  |    |--sekirei_acc.cmake
  |--doc/
  |    |--en/
- |    |--jp/
+ |    |--ja/
  |    |--fourier/
- |    |--sphinx/
  |    |--userguide_en.pdf
  |    |--userguide_jp.pdf
  |--samples/

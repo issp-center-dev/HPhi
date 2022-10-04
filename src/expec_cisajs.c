@@ -85,26 +85,26 @@ int expec_cisajs_HubbardGC(
         }
       }
       else {
-        X_GC_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+        child_GC_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
           -tmp_OneGreen, X, nstate, Xvec, vec);
       }
     }
     else if (org_isite2 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
       if (org_isite1 < org_isite2) {
-        X_GC_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+        child_GC_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
           -tmp_OneGreen, X, nstate, Xvec, vec);
       }
       else {
-        X_GC_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, 
+        child_GC_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1,
           -tmp_OneGreen, X, nstate, Xvec, vec);
         complex_conj = 1;
       }
     }
     else {
-      if (child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
+      if (general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
         return -1;
       }
-      GC_child_general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
+      GC_general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
     }
 
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
@@ -173,23 +173,23 @@ int expec_cisajs_Hubbard(
         }
       }
       else {
-        X_child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, 
+        child_general_hopp_MPIdouble(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2, 
           -tmp_OneGreen, X, nstate, Xvec, vec);
       }
     }
     else if (org_isite2 > X->Def.Nsite || org_isite1 > X->Def.Nsite) {
       if (org_isite1 < org_isite2) {
-        X_child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+        child_general_hopp_MPIsingle(org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
           -tmp_OneGreen, X, nstate, Xvec, vec);
       }
       else {
-        X_child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, 
+        child_general_hopp_MPIsingle(org_isite2 - 1, org_sigma2, org_isite1 - 1, org_sigma1, 
           -tmp_OneGreen, X, nstate, Xvec, vec);
         complex_conj = 1;
       }
     }
     else {
-      if (child_general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
+      if (general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2) != 0) {
         return -1;
       }
       if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
@@ -205,7 +205,7 @@ firstprivate(i_max, is) private(num1, ibit, dmv)
         }
       }
       else {
-        child_general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
+        general_hopp(nstate, Xvec, vec, X, tmp_OneGreen);
       }
     }
     MultiVecProdMPI(i_max, nstate, vec, Xvec, prod[i]);
@@ -252,7 +252,7 @@ int expec_cisajs_SpinHalf(
       if (org_isite1 == org_isite2) {
         if (org_isite1 > X->Def.Nsite) {
           is1_up = X->Def.Tpow[org_isite1 - 1];
-          ibit1 = X_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+          ibit1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
           if (ibit1 != 0) {
             zaxpy_long(i_max*nstate, 1.0, &vec[1][0], &Xvec[1][0]);
           }
@@ -262,7 +262,7 @@ int expec_cisajs_SpinHalf(
 #pragma omp parallel for default(none) private(j,dmv)  \
   firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            dmv = X_Spin_CisAis(j, X, isite1, org_sigma1);
+            dmv = child_Spin_CisAis(j, X, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
@@ -365,10 +365,10 @@ int expec_cisajs_SpinGCHalf(
     if (org_isite1 == org_isite2) {
       if (org_isite1 > X->Def.Nsite) {
         if (org_sigma1 == org_sigma2) {  // longitudinal magnetic field
-          X_GC_child_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, 1.0, X, nstate, Xvec, vec);
+          child_GC_CisAis_spin_MPIdouble(org_isite1 - 1, org_sigma1, 1.0, X, nstate, Xvec, vec);
         }
         else {  // transverse magnetic field
-          X_GC_child_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 1.0, X, nstate, Xvec, vec);
+          child_GC_CisAit_spin_MPIdouble(org_isite1 - 1, org_sigma1, org_sigma2, 1.0, X, nstate, Xvec, vec);
         }
       }
       else {
@@ -379,7 +379,7 @@ int expec_cisajs_SpinGCHalf(
 #pragma omp parallel for default(none) private(j, tmp_sgn,dmv) \
   firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            dmv = X_SpinGC_CisAis(j, X, isite1, org_sigma1);
+            dmv = child_SpinGC_CisAis(j, X, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
@@ -388,7 +388,7 @@ int expec_cisajs_SpinGCHalf(
 #pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off,dmv) \
   firstprivate(i_max, isite1, org_sigma2, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            tmp_sgn = X_SpinGC_CisAit(j, X, isite1, org_sigma2, &tmp_off);
+            tmp_sgn = child_SpinGC_CisAit(j, X, isite1, org_sigma2, &tmp_off);
             if (tmp_sgn != 0) {
               dmv = (double complex)tmp_sgn;
               zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[tmp_off + 1][0], &one);
@@ -436,12 +436,12 @@ int expec_cisajs_SpinGCGeneral(
       if (org_isite1 > X->Def.Nsite) {
         if (org_sigma1 == org_sigma2) {
           // longitudinal magnetic field
-          X_GC_child_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1,
+          child_GC_CisAis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1,
             1.0, X, nstate, Xvec, vec);
         }
         else {
           // transverse magnetic field
-          X_GC_child_CisAit_GeneralSpin_MPIdouble(
+          child_GC_CisAit_GeneralSpin_MPIdouble(
             org_isite1 - 1, org_sigma1, org_sigma2, 1.0, X, nstate, Xvec, vec);
         }
       }

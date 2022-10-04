@@ -41,7 +41,7 @@ What is :math:`{\mathcal H}\Phi`?
   General Public License version 3（GPL v3）に準じて配布されています。
   :math:`{\mathcal H}\Phi` (hphi)を引用する際には、以下の文献を引用してください。
 | Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
-  Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. 217 (2017)
+  Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. **217** (2017)
   180-192.
 
 コピーライト
@@ -57,17 +57,19 @@ What is :math:`{\mathcal H}\Phi`?
 
 本ソフトウェアは以下の開発貢献者により開発されています。
 
--  ver.3.1 (2018/9/3 リリース)
+-  ver.3.4 (2020/6/2 リリース)
 
    -  開発者
 
-      -  三澤 貴宏 (東京大学 物性研究所)
+      -  井戸 康太 (東京大学 物性研究所)
 
       -  河村 光晶 (東京大学 物性研究所)
 
+      -  本山 裕一 (東京大学 物性研究所)
+
       -  吉見 一慶 (東京大学 物性研究所)
 
-      -  井戸 康太 (東京大学大学院 工学系研究科)
+      -  三澤 貴宏 (早稲田大学 理工学術院総合研究所)
 
       -  山地 洋平 (東京大学大学院 工学系研究科)
 
@@ -78,6 +80,13 @@ What is :math:`{\mathcal H}\Phi`?
    -  プロジェクトコーディネーター
 
       -  川島 直輝 (東京大学 物性研究所)
+
+
+-  ver.3.3 (2019/7/19 リリース)
+
+-  ver.3.2 (2019/4/27 リリース)
+
+-  ver.3.1 (2018/9/3 リリース)
 
 -  ver.3.0 (2017/12/25 リリース)
 
@@ -128,9 +137,9 @@ What is :math:`{\mathcal H}\Phi`?
 
 以下の環境で動作することを確認しています。
 
--  東京大学物性研究所スーパーコンピューターシステムB「sekirei」
+-  東京大学物性研究所スーパーコンピューターシステムB「sekirei」、システムC「enaga」
 
--  富士通 FX-10および京コンピューター
+-  富士通 FX-10
 
 -  Linux PC + intelコンパイラ
 

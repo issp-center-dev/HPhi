@@ -1,0 +1,222 @@
+include make.sys
+
+MTFLAGS = -DDSFMT_MEXP=19937
+
+OBJS = \
+CG_EigenVector.o \
+CalcByFullDiag.o \
+CalcByLOBPCG.o \
+CalcByLanczos.o \
+CalcByTPQ.o \
+CalcSpectrum.o \
+CalcSpectrumByBiCG.o \
+CalcSpectrumByFullDiag.o \
+CalcSpectrumByLanczos.o \
+CalcSpectrumByTPQ.o \
+CheckMPI.o \
+ErrorMessage.o \
+FileIO.o \
+FirstMultiply.o \
+HPhiMain.o \
+HPhiTrans.o \
+input.o \
+Lanczos_EigenValue.o \
+Lanczos_EigenVector.o \
+LogMessage.o \
+Multiply.o \
+PairEx.o \
+PairExHubbard.o \
+PairExSpin.o \
+PowerLanczos.o \
+ProgressMessage.o \
+SingleEx.o \
+SingleExHubbard.o \
+bisec.o \
+bitcalc.o \
+check.o \
+dSFMT.o \
+diagonalcalc.o \
+expec_cisajs.o \
+expec_cisajscktaltdc.o \
+expec_energy_flct.o \
+expec_totalspin.o \
+global.o \
+lapack_diag.o \
+log.o \
+makeHam.o \
+matrixlapack.o \
+mltply.o \
+mltplyHubbard.o\
+mltplySpinCore.o\
+mltplyHubbardCore.o\
+mltplyMPIHubbard.o \
+mltplyMPIHubbardCore.o \
+mltplyMPISpin.o \
+mltplyMPISpinCore.o \
+mltplyMPIBoost.o \
+mltplySpin.o \
+output.o \
+output_list.o \
+phys.o \
+readdef.o \
+splash.o \
+sz.o \
+time.o \
+vec12.o \
+wrapperMPI.o \
+xsetmem.o \
+StdFace/libStdFace.a \
+komega/libkomega.a
+
+HEADERS= \
+include/CG_EigenVector.h \
+include/CalcByFullDiag.h \
+include/CalcByLanczos.h \
+include/CalcByTPQ.h \
+include/CalcSpectrum.h \
+include/CalcSpectrumByFullDiag.h \
+include/CalcSpectrumByLanczos.h \
+include/CalcSpectrumByTPQ.h \
+include/CalcTime.h\
+include/CheckMPI.h \
+include/Common.h \
+include/DefCommon.h \
+include/ErrorMessage.h \
+include/FileIO.h \
+include/FirstMultiply.h \
+include/HPhiMain.h \
+include/HPhiTrans.h \
+include/Lanczos_EigenValue.h \
+include/Lanczos_EigenVector.h \
+include/LogMessage.h \
+include/Multiply.h \
+include/PairEx.h \
+include/PairExSpin.h \
+include/PairExHubbard.h \
+include/PowerLanczos.h \
+include/ProgressMessage.h \
+include/SingleEx.h \
+include/SingleExHubbard.h \
+include/StdFace_main.h \
+include/bisec.h \
+include/bitcalc.h \
+include/check.h \
+include/dSFMT-params.h \
+include/dSFMT-params19937.h \
+include/dSFMT.h \
+include/defmodelBoost.h \
+include/diagonalcalc.h \
+include/expec_cisajs.h \
+include/expec_cisajscktaltdc.h \
+include/expec_totalspin.h \
+include/expec_energy_flct.h \
+include/global.h \
+include/input.h \
+include/lapack_diag.h \
+include/log.h \
+include/makeHam.h \
+include/matrixlapack.h \
+include/mfmemory.h \
+include/mltply.h \
+include/mltplyHubbard.h \
+include/mltplySpin.h \
+include/mltplyHubbardCore.h \
+include/mltplySpinCore.h \
+include/mltplyMPIBoost.h \
+include/mltplyMPIHubbard.h \
+include/mltplyMPIHubbardCore.h \
+include/mltplyMPISpin.h \
+include/mltplyMPISpinCore.h \
+include/output.h \
+include/output_list.h \
+include/phys.h \
+include/readdef.h \
+include/splash.h \
+include/struct.h \
+include/sz.h \
+include/vec12.h \
+include/version_major.h \
+include/version_minor.h \
+include/version_patch.h \
+include/wrapperMPI.h \
+include/xsetmem.h \
+include/xsetmem_def.h \
+include/xsetmem_large.h \
+komega/komega.h
+
+all:
+	cd StdFace; make -f makefile_StdFace
+	cd komega; make -f makefile_komega
+	make -f makefile_src HPhi
+
+SUFFIXES: .o .c
+
+.c.o:
+	$(CC) $(CFLAGS) $(MTFLAGS) -I ./include -c $<
+
+HPhi: $(OBJS)
+	$(CC) -o $@ -g $(OBJS) StdFace/libStdFace.a komega/libkomega.a $(LIBS)
+
+clean:
+	cd StdFace; make -f makefile_StdFace clean
+	cd komega; make -f makefile_komega clean
+	rm -f HPhi *.o *.a
+
+CG_EigenVector.o:$(HEADERS)
+CalcByFullDiag.o:$(HEADERS)
+CalcByLOBPCG.o:$(HEADERS)
+CalcByLanczos.o:$(HEADERS)
+CalcByTPQ.o:$(HEADERS)
+CalcSpectrum.o:$(HEADERS)
+CalcSpectrumByBiCG.o:$(HEADERS)
+CalcSpectrumByFullDiag.o:$(HEADERS)
+CalcSpectrumByLanczos.o:$(HEADERS)
+CalcSpectrumByTPQ.o:$(HEADERS)
+CheckMPI.o:$(HEADERS)
+ErrorMessage.o:$(HEADERS)
+FileIO.o:$(HEADERS)
+FirstMultiply.o:$(HEADERS)
+HPhiMain.o:$(HEADERS)
+HPhiTrans.o:$(HEADERS)
+Lanczos_EigenValue.o:$(HEADERS)
+Lanczos_EigenVector.o:$(HEADERS)
+LogMessage.o:$(HEADERS)
+Multiply.o:$(HEADERS)
+PairEx.o:$(HEADERS)
+PairExHubbard.o:$(HEADERS)
+PairExSpin.o:$(HEADERS)
+PowerLanczos.o:$(HEADERS)
+ProgressMessage.o:$(HEADERS)
+SingleEx.o:$(HEADERS)
+SingleExHubbard.o:$(HEADERS)
+bisec.o:$(HEADERS)
+bitcalc.o:$(HEADERS)
+check.o:$(HEADERS)
+dSFMT.o:$(HEADERS)
+diagonalcalc.o:$(HEADERS)
+expec_cisajs.o:$(HEADERS)
+expec_cisajscktaltdc.o:$(HEADERS)
+expec_energy_flct.o:$(HEADERS)
+expec_totalspin.o:$(HEADERS)
+global.o:$(HEADERS)
+lapack_diag.o:$(HEADERS)
+log.o:$(HEADERS)
+makeHam.o:$(HEADERS)
+matrixlapack.o:$(HEADERS)
+mltply.o:$(HEADERS)
+mltplyHubbard.o:$(HEADERS)
+mltplyHubbardCore.o:$(HEADERS)
+mltplySpinCore.o:$(HEADERS)
+mltplyMPI.o:$(HEADERS)
+mltplyMPIBoost.o:$(HEADERS)
+mltplySpin.o:$(HEADERS)
+output.o:$(HEADERS)
+output_list.o:$(HEADERS)
+phys.o:$(HEADERS)
+readdef.o:$(HEADERS)
+splash.o:$(HEADERS)
+sz.o:$(HEADERS)
+time.o:$(HEADERS)
+vec12.o:$(HEADERS)
+wrapperMPI.o:$(HEADERS)
+xsetmem.o:$(HEADERS)

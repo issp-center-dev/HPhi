@@ -69,7 +69,7 @@ Lanczos法では、 :math:`\mathcal{K}_{n}({\mathcal H},\vec{x}_{0})`
    T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}
 
 と変形されます。 ここで、
-:math:`V_{n}`\ を\ :math:`\vec{v}_{i}(i=0,1,\dots,n-1)`\ を
+:math:`V_{n}`\ は\ :math:`\vec{v}_{i}(i=0,1,\dots,n-1)`\ を
 並べた行列です。 :math:`T_{n}`\ は三重対角行列であり、 その対角成分は
 :math:`\alpha_{i}`, 副対角成分は\ :math:`\beta_{i}`\ で与えられます。
 この三重対角行列\ :math:`T_{n}`\ の
@@ -183,7 +183,7 @@ Lanczos法では、スタンダードモード用の入力ファイル、もし�
 標準の設定ではそのように取っています。
 
 
-.. [#] \http://www.stat.phys.titech.ac.jp/~nishimori/titpack2_new/index-e.html
+.. [#] \http://www.qa.iir.titech.ac.jp/~nishimori/titpack2_new/index-e.html
 .. [#] \M. Sugihara, K. Murota, Theoretical Numerical Linear Algebra, Iwanami Stud-ies in Advanced Mathematics, Iwanami Shoten, Publishers, 2009.
 .. [#] 高速化のために、\In :math:`{\mathcal H}\Phi` ではハミルトニアンの対角成分を表すベクトル1本と,スピン :math:`z` 成分 :math:`S_{z}` 保存, 粒子数保存の場合はその状態を指定するベクトル1本を余計に確保しています。いずれのベクトルの大きさもHilbert空間の次元です。 
 .. [#] :math:`\tilde{\vec{e}_{i}}`\ の次元は高々Lanczos法の反復回数であることに注意。

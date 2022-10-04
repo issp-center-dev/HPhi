@@ -20,7 +20,7 @@ The procedure of calculation through the standard mode is as follows:
   
  3. Run
  
-  Run an executable ``HPhi`` in the terminal by setting option \" ``-s``\" (or \" ``--standard``\") and the name of the input file written in the previous step.
+  Run an executable ``HPhi`` in the terminal by setting option \"``-s``\" (or \"``--standard``\") and the name of the input file written in the previous step.
   
    * Serial/OpenMP parallel
    

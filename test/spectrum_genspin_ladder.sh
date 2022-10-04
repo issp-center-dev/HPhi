@@ -38,7 +38,7 @@ BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} 
 END{printf "%8.6f", diff}
 ' paste1.dat`
-echo "Diff output/vo_DynamicalGreen.dat (SzSz) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen.dat (SzSz) : " ${diff}
 test "${diff}" = "0.000000"
 #
 # S+S- spectrum
@@ -76,7 +76,7 @@ BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} 
 END{printf "%7.5f", diff}
 ' paste2.dat`
-echo "Diff output/vo_DynamicalGreen.dat (S+S-) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen.dat (S+S-) : " ${diff}
 test "${diff}" = "0.00000"
 
 exit $?

@@ -1,4 +1,4 @@
-実時間発展計算に関するパラメーター
+実時間発展計算に関するパラメータ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``dt``
@@ -17,7 +17,7 @@
    :math:`U_{\rm quench} \sum_i n_{i \uparrow} n_{i \downarrow}`\ が加えられる。
    ``"Pulse Laser"``, ``"AC Laser"``, ``"DC Laser"``\ では、
    ホッピング項に
-   :math:`-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c_{i \sigma} c_{j \sigma}`
+   :math:`-\sum_{i j \sigma} t_{i j} \exp[-i{\bf A}(t) \cdot ({\bf R}_i-{\bf R}_j)/(2\pi)] c^{\dagger}_{i \sigma} c_{j \sigma}`
    のように位相因子が付く。
    ここで\ :math:`{\bf A}(t)`\ はベクトルポテンシャルであり、
    ``"Pulse Laser"``\ では
@@ -61,7 +61,7 @@
    時刻\ :math:`t=t_0`\ でのベクトルポテンシャル\ :math:`{\bf A}_0`\ を
    逆格子のFractional coordinateで指定する。 逆格子ベクトルはFigs.
    :numref:`fig_chap04_1_lattice`, :numref:`fig_chap04_1_honeycomb`,
-   :numref:`fig_ladder`, :numref:`fig_kagome`
+   :numref:`fig_kagome`, :numref:`fig_ladder`
    に表されている格子ベクトルと対応するものとなる。
 
 .. raw:: latex

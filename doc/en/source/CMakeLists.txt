@@ -37,12 +37,12 @@ add_custom_target(doc-en-pdf ALL
 add_custom_target(doc-en DEPENDS doc-en-html doc-en-pdf)
 
 install(DIRECTORY ${SPHINX_HTML_DIR}
-  DESTINATION doc
+  DESTINATION doc/manual/en
   PATTERN "_sources" EXCLUDE
   PATTERN ".buildinfo" EXCLUDE
   PATTERN "objects.inv" EXCLUDE
   )
 install(DIRECTORY ${SPHINX_PDF_DIR}
-  DESTINATION doc
+  DESTINATION doc/manual/en
   FILES_MATCHING PATTERN "*.pdf"
   )

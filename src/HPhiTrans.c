@@ -90,7 +90,7 @@ int HPhiTrans(struct BindStruct *X) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferWithPeierls(struct BindStruct *X, const double time) {
-  unsigned int i;
+  int i;
   int ri_x, rj_x;
   int ri_y, rj_y;
   double complex dir;
@@ -106,9 +106,7 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
   const double dt = time - time_c;
   const double dt2 = time - (time_c + time_d);
   const double td = time_c / 3.0;
-  double VecPot;
-
-  //printf("Make Trasfer with Pierles factor");
+  double VecPot = 0.0;
 
   if (Mode == 0) {//Gaussian Wave
     VecPot = Avp * cos(omega * dt) * exp(-dt * dt / (2.0 * time_d * time_d));
@@ -172,19 +170,13 @@ int TransferWithPeierls(struct BindStruct *X, const double time) {
  * @author Kota Ido (The University of Tokyo)
  */
 int TransferForQuench(struct BindStruct *X, const double time) {
-  unsigned int i;
-  int ri_x, rj_x;
-  int ri_y, rj_y;
+  int i;
   const int Mode = (int) (X->Def.ParaLaser[0]);
   const double Avp = X->Def.ParaLaser[1];
   const double time_d = X->Def.ParaLaser[3];
   const double time_c = X->Def.ParaLaser[4];
-  const int Lx = (int) (X->Def.ParaLaser[5]);
-  const int Ly = (int) (X->Def.ParaLaser[6]);
   const double dt = time - time_c;
-  double Bessel;
-
-  //printf("Make Trasfer with Pierles factor");
+  double Bessel = 0.0;
 
   if (Mode == 0) {//Gaussian Wave
     if (dt <= 0.0) {
@@ -197,21 +189,6 @@ int TransferForQuench(struct BindStruct *X, const double time) {
   }
 
   for (i = 0; i < X->Def.EDNTransfer; i++) {
-    ri_x = X->Def.EDGeneralTransfer[i][0] % Lx;
-    rj_x = X->Def.EDGeneralTransfer[i][2] % Lx;
-    ri_y = X->Def.EDGeneralTransfer[i][0] / Lx;
-    rj_y = X->Def.EDGeneralTransfer[i][2] / Lx;
-    if (ri_x - rj_x > 1) {
-      rj_x += Lx;
-    } else if (ri_x - rj_x < -1) {
-      rj_x -= Lx;
-    }
-    if (ri_y - rj_y > 1) {
-      rj_y += Ly;
-    } else if (ri_y - rj_y < -1) {
-      rj_y -= Ly;
-    }
-
     X->Def.EDParaGeneralTransfer[i] = X->Def.ParaGeneralTransfer[i] * Bessel;
   }
 

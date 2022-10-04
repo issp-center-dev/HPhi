@@ -15,7 +15,7 @@ This file determines the input filenames, which are correlated with the keywords
     Trans    ztransfer.def
     InterAll zinterall.def
     OneBodyG zcisajs.def
-    TwoBodyG    zcisajscktaltdc.def
+    TwoBodyG zcisajscktaltdc.def
 
 File format
 ~~~~~~~~~~~
@@ -71,12 +71,14 @@ Use rules
     "PairHop", "Pair hopping couplings"
     "Exchange", "Exchange couplings"
     "Ising", "Ising interactions"
-    "PairLift", "Pair lift couplings."
+    "PairLift", "Pair lift couplings"
     "OneBodyG", "Output components for one-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle`"
     "TwoBodyG", "Output components for two-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle`"
     "SingleExcitation", "Operators for generating a single excited state"
     "PairExcitation", "Operators for generating a pair excited state"
     "SpectrumVec", "An input vector to calculate a restart vector"
+    "OneBodyTE", "Time-dependent transfer integrals"
+    "TwoBodyTE", "Time-dependent two-body interactions"
 
 .. raw:: latex
 

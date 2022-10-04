@@ -21,7 +21,7 @@
 #include <complex.h>
 #include "struct.h"
 
-void child_general_int_spin_MPIBoost
+void general_int_spin_MPIBoost
 (
   struct BindStruct *X,
   double complex *tmp_v0,

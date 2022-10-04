@@ -44,6 +44,172 @@ int zheev_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *
 int dsyevx_(char *jobz, char *range, char *uplo, int *n, double *a, int *lda, double *vl, double *vu, 
         int *il, int *iu, double *abstol, int *m, double *w, double *z__, int *ldz, 
         double *work, int *lwork, int *iwork, int *ifail, int *info);
+
+/**
+ *
+ * @brief function for transforming Row-major matrix (C) to Column-major matrix (Fortran)
+ * @param[in] N
+ * @param[in] M
+ * @param[in] A  Row-major matrix
+ * @param[out] a  Column-major matrix
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+void to_f(
+  int N,  //!<[in]
+  int M,   //!<[in]
+  double** A,   //!<[in]
+  double* a   //!<[out]
+) {
+  int i, j, k;
+  k = 0;
+  for (j = 0; j < M; j++) {
+    for (i = 0; i < N; i++) {
+      a[k] = A[i][j];
+      k++;
+    }
+  }
+}
+
+/**
+ *
+ * @brief obtain eigenvalues of real symmetric A
+ * @param[in] xNsize
+ * @param[in] A  matrix
+ * @param[out] r  eigenvalues
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int DSEVvalue(int xNsize, double** A, double* r) {
+
+  int k;
+  char jobz, uplo;
+  int n, lda, lwork, info;
+  double* a, * w, * work;
+#ifdef SR
+  int* iwork, liwork;
+  liwork = 5 * xNsize + 3;
+  iwork = (int*)malloc(liwork * sizeof(double));
+#endif
+
+  n = lda = xNsize;
+  lwork = 4 * xNsize; /* 3*xNsize OK?*/
+
+  a = (double*)malloc(xNsize * xNsize * sizeof(double));
+  w = (double*)malloc(xNsize * sizeof(double));
+  work = (double*)malloc(lwork * sizeof(double));
+
+  to_f(xNsize, xNsize, A, a);
+
+  jobz = 'N';
+  uplo = 'U';
+
+#ifdef SR
+  M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &iwork, &liwork, &info);
+  free(iwork);
+#else
+  M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);
+#endif
+
+  if (info != 0) {
+    free(a);
+    free(w);
+    free(work);
+    return 0;
+  }
+
+  for (k = 0; k < xNsize; k++) {
+    r[k] = w[k];
+  }
+
+  free(a);
+  free(w);
+  free(work);
+
+  return 1;
+}
+
+// added by Misawa 20090309
+// obtain eigen vectors
+/**
+ *
+ *
+ * @brief obtain eigenvalues and eigenvectors of real symmetric A
+ * @param xNsize  size of matrix
+ * @param A  matrix
+ * @param r  eigenvalues
+ * @param vec  eignevectos
+ *
+ * @return
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int DSEVvector(int xNsize, double** A, double* r, double** vec) {
+
+  int i, j, k;
+  char jobz, uplo;
+  int n, lda, lwork, info;
+  double* a, * w, * work;
+#ifdef SR
+  int* iwork, liwork;
+  liwork = 5 * xNsize + 3;
+  iwork = (int*)malloc(liwork * sizeof(double));
+  lwork = 2 * xNsize * xNsize + 6 * xNsize + 1; /* 3*xNsize OK?*/
+#else
+  lwork = 4 * xNsize; /* 3*xNsize OK?*/
+#endif
+
+  n = lda = xNsize;
+
+  a = (double*)malloc(xNsize * xNsize * sizeof(double));
+  w = (double*)malloc(xNsize * sizeof(double));
+  work = (double*)malloc(lwork * sizeof(double));
+
+  k = 0;
+  for (j = 0; j < xNsize; j++) {
+    for (i = 0; i < xNsize; i++) {
+      a[k] = A[i][j];
+      k++;
+    }
+  }
+
+  jobz = 'V';
+  uplo = 'U';
+
+#ifdef SR
+  M_DSYEV(&jobz, &uplo, &n, a, &lda, w, work, &lwork, iwork, &liwork, &info);
+  free(iwork);
+#else
+  dsyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, &info);
+#endif
+
+  k = 0;
+  for (i = 0; i < xNsize; i++) {
+    for (j = 0; j < xNsize; j++) {
+      vec[i][j] = a[k];
+      k++;
+    }
+  }
+
+  if (info != 0) {
+    free(a);
+    free(w);
+    free(work);
+    return 0;
+  }
+
+  for (k = 0; k < xNsize; k++) {
+    r[k] = w[k];
+  }
+
+  free(a);
+  free(w);
+  free(work);
+
+  return 1;
+}
+
 //added by Misawa 130121
 //For complex Hermite matrix
 /** 

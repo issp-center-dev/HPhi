@@ -29,24 +29,25 @@
   When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_int_spin_MPIdouble(
+void general_int_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-  X_child_general_int_spin_MPIdouble(
+  child_general_int_spin_MPIdouble(
     (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1],
     (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
     (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-}/*void child_general_int_spin_MPIdouble*/
+}/*void general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void X_child_general_int_spin_MPIdouble(
+double complex child_general_int_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -55,7 +56,8 @@ void X_child_general_int_spin_MPIdouble(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  int nstate,
+  double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
   int mask1, mask2, state1, state2, origin;
@@ -92,17 +94,18 @@ void X_child_general_int_spin_MPIdouble(
         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
     zaxpy_(&nstate, &Jint, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-}/*double complex X_child_general_int_spin_MPIdouble*/
+}/*double complex child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
   When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void X_child_general_int_spin_TotalS_MPIdouble(
+double complex child_general_int_spin_TotalS_MPIdouble(
   int org_isite1,//!<[in] site 1
   int org_isite3,//!<[in] site 3
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  int nstate,
+  double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ){
   int mask1, mask2, num1_up, num2_up, origin, one = 1;
@@ -131,31 +134,31 @@ void X_child_general_int_spin_TotalS_MPIdouble(
       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
     zaxpy_(&nstate, &dmv, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-  return;
-}/*double complex X_child_general_int_spin_MPIdouble*/
+}/*double complex child_general_int_spin_MPIdouble*/
 /**
 @brief Exchange term in Spin model
   When only site2 is in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_int_spin_MPIsingle(
+void general_int_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 
-  X_child_general_int_spin_MPIsingle(
+  child_general_int_spin_MPIsingle(
     (int)X->Def.InterAll_OffDiagonal[i_int][0], (int)X->Def.InterAll_OffDiagonal[i_int][1], 
     (int)X->Def.InterAll_OffDiagonal[i_int][3], (int)X->Def.InterAll_OffDiagonal[i_int][4],
     (int)X->Def.InterAll_OffDiagonal[i_int][5], (int)X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-}/*void child_general_int_spin_MPIsingle*/
+}/*void general_int_spin_MPIsingle*/
 /*
 @brief General interaction term of canonical spin system.
 site 3 is in the inter process region
 */
-void X_child_general_int_spin_MPIsingle(
+double complex child_general_int_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -164,7 +167,8 @@ void X_child_general_int_spin_MPIsingle(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_J,//!<[in] Copupling constatnt
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
+  int nstate,
+  double complex **tmp_v0,//!<[inout] @f${\bf v}_0=H {\bf v}_1@f$
   double complex **tmp_v1//!<[in] Vector to be producted
 ) {
   int mask2, state2, origin;
@@ -213,156 +217,159 @@ shared(list_2_1, list_2_2, list_1buf, v1buf, tmp_v1, tmp_v0,nstate,one)
       zaxpy_(&nstate, &Jint, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
     }
   }
-}/*double complex X_child_general_int_spin_MPIsingle*/
+}/*double complex child_general_int_spin_MPIsingle*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_int_spin_MPIdouble(
+void GC_general_int_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    GC_child_CisAisCjuAjv_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAisCjuAjv_spin_MPIdouble(i_int, X, tmp_v0, nstate, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    GC_child_CisAitCjuAju_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAitCjuAju_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
   }
   else {
-    GC_child_CisAitCiuAiv_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAitCiuAiv_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
   }
-}/*void GC_child_general_int_spin_MPIdouble*/
+}/*void GC_general_int_spin_MPIdouble*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_int_spin_MPIsingle(
+void GC_general_int_spin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    GC_child_CisAisCjuAjv_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAisCjuAjv_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    GC_child_CisAitCjuAju_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAitCjuAju_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
   }
   else {
-    GC_child_CisAitCiuAiv_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
+    GC_CisAitCiuAiv_spin_MPIsingle(i_int, X, nstate, tmp_v0, tmp_v1);
   }
-}/*void GC_child_general_int_spin_MPIsingle*/
+}/*void GC_general_int_spin_MPIsingle*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_int_GeneralSpin_MPIdouble(
+void GC_general_int_GeneralSpin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    X_GC_child_CisAisCjuAjv_GeneralSpin_MPIdouble(
+    child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
       X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
       X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    X_GC_child_CisAitCjuAju_GeneralSpin_MPIdouble(
+    child_GC_CisAitCjuAju_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
   else {
-    X_GC_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+    child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
       X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
-}/*void GC_child_general_int_spin_MPIdouble*/
+}/*void GC_general_int_spin_MPIdouble*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void GC_child_general_int_GeneralSpin_MPIsingle(
+void GC_general_int_GeneralSpin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
 
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    X_GC_child_CisAisCjuAjv_GeneralSpin_MPIsingle(
+    child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
       X->Def.InterAll_OffDiagonal[i_int][4], X->Def.InterAll_OffDiagonal[i_int][5],
       X->Def.InterAll_OffDiagonal[i_int][7], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {
-    X_GC_child_CisAitCjuAju_GeneralSpin_MPIsingle(
+    child_GC_CisAitCjuAju_GeneralSpin_MPIsingle(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
     }
   else {
-    X_GC_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+    child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
       X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
   }
 
-}/*void GC_child_general_int_spin_MPIsingle*/
+}/*void GC_general_int_spin_MPIsingle*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_int_GeneralSpin_MPIdouble(
+void general_int_GeneralSpin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate, 
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-    X_child_CisAitCjuAjv_GeneralSpin_MPIdouble(
+    child_CisAitCjuAjv_GeneralSpin_MPIdouble(
       X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1], 
       X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
       X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
       X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-
-}/*void GC_child_general_int_spin_MPIdouble*/
+}/*void GC_general_int_spin_MPIdouble*/
 /**
 @brief General interaction term in the Spin model + GC
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-void child_general_int_GeneralSpin_MPIsingle(
+void general_int_GeneralSpin_MPIsingle(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[out] Result v0 = H v1
+  int nstate,
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
   double complex **tmp_v1//!<[in] v0 = H v1
 ){
-
-  X_child_CisAitCjuAjv_GeneralSpin_MPIsingle(
+child_CisAitCjuAjv_GeneralSpin_MPIsingle(
     X->Def.InterAll_OffDiagonal[i_int][0], X->Def.InterAll_OffDiagonal[i_int][1],
     X->Def.InterAll_OffDiagonal[i_int][3], X->Def.InterAll_OffDiagonal[i_int][4],
     X->Def.InterAll_OffDiagonal[i_int][5], X->Def.InterAll_OffDiagonal[i_int][7],
     X->Def.ParaInterAll_OffDiagonal[i_int], X, nstate, tmp_v0, tmp_v1);
-
-}/*void GC_child_general_int_spin_MPIsingle*/
+}/*void GC_general_int_spin_MPIsingle*/

@@ -6,19 +6,19 @@ Heisenberg model
 
 This tutorial should be performed in ::
 
- samples/CG/Heisenberg/
+ samples/old/CG/Heisenberg/
  
 The input file is provided as follows::
 
- samples/CG/Heisenberg/stan.in
+ samples/old/CG/Heisenberg/stan.in
  
 In this case, we treat the two-dimensional antiferromagnetic Heisenberg model that has a nearest neighbor spin coupling.
 
 .. math::
 
-   \hat{\mathcal H}=J \sum_{i,j=1}^{4} (\hat{ S }_{i j} \cdot \hat{ S }_{i+1 j} + \hat{ S }_{i j} \cdot \hat{ S }_{i j+1},)
+  {\mathcal H}=J \sum_{i,j=1}^{4} ({\bf S }_{i j} \cdot {\bf S }_{i+1 j} + {\bf S }_{i j} \cdot {\bf S }_{i j+1}),
 
-where we use the periodic boundary condition :math:`(S_{15}=S_{51}= S_{11})`.
+where we use the periodic boundary condition :math:`({\bf S}_{15}={\bf S}_{51}= {\bf S}_{11})`.
 
 The input file is as follows::
 
@@ -308,4 +308,4 @@ In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each line.
 Other tutorials
 ---------------
 
-There are many tutorials in ``samples/Standard/``. For more details, please see ``README.md`` at each directory.
+There are many tutorials in ``samples``. For more details, please see ``README.md`` at each directory or `the manual for HPhi-tutorial<https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html>`_ .

@@ -55,7 +55,6 @@ int CalcByTEM(
   const int ExpecInterval,
   struct EDMainCalStruct *X
 ) {
-  size_t byte_size;
   char *defname;
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
@@ -95,12 +94,11 @@ int CalcByTEM(
       fclose(fp);
       exitMPI(-1);
     }
-    byte_size = fread(&step_initial, sizeof(int), 1, fp);
-    byte_size = fread(&i_max, sizeof(long int), 1, fp);
+    fread(&step_initial, sizeof(int), 1, fp);
+    fread(&i_max, sizeof(long int), 1, fp);
     if (i_max != X->Bind.Check.idim_max) {
       fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
       fclose(fp);
-      printf("byte_size : %d\n", (int)byte_size);
       exitMPI(-1);
     }
     fread(&v1[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
@@ -161,7 +159,7 @@ int CalcByTEM(
       // Set interactions
       if (X->Bind.Def.NTETransferMax != 0 && X->Bind.Def.NTEInterAllMax != 0) {
         fprintf(stdoutMPI,
-          "Error: Time Evoluation mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
+          "Error: Time Evolution mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
         return -1;
       }
       else if (X->Bind.Def.NTETransferMax > 0) { //One-Body type

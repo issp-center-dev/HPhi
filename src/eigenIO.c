@@ -117,7 +117,6 @@ int InputRealEigenValue(int xNsize, double *ene, char *filename) {
 
 int InputCmpEigenValue(int xNsize, complex double *ene, char *filename) {
   FILE *fp = NULL;
-
   fp = fopen(filename, "rb+");
   if(fp == NULL) {
     return -1;

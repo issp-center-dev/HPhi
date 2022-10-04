@@ -6,7 +6,7 @@ CHECK_INTER_U.dat
 This file is outputted to check the input of the diagonal components of
 the off-site interactions :math:`V_{ij}`,
 
-.. math:: \mathcal H+=\sum_{i} V_{ij} n_{i} n_{j}
+.. math:: \sum_{i,j} V_{ij} n_{i} n_{j}
 
 An example of the file format is as follows.
 

@@ -76,7 +76,7 @@ Lanczos\_Step.dat
    Lanczos法\ :math:`\cdot`\ LOBCG法で計算時に求められた固有値を昇順に並べたもの。
    Lanczos法では4個分,
    LOBCG法では\ ``exct``\ で指定した個数が出力されます
-   (上記の例では``exct=3``).
+   (上記の例では ``exct=3``).
    Lanczos法では縮退している固有値はまとめて1個と数えられますが,
    LOBCG法では縮退している個数に応じて固有値が出力されます.
    上記の例では第一励起状態が2重以上に縮退していることが分かります.
@@ -87,7 +87,7 @@ Lanczos\_Step.dat
 
    **説明 :** (Lanczos法のみ) ``LanczosTarget``\ で指定した,
    収束判定に用いられる固有値が出力されます
-   (上記の例では``LanczosTarget=3``).
+   (上記の例では ``LanczosTarget=3``).
 
 -  :math:`[`\ double-b\ :math:`]`
 

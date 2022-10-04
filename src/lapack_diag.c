@@ -47,7 +47,6 @@ struct BindStruct *X//!<[inout]
 #endif
 
   i_max = X->Check.idim_max;
-
   for (i = 0; i < i_max; i++) {
     for (j = 0; j < i_max; j++) {
       v0[i][j] = v0[i + 1][j];
@@ -69,20 +68,10 @@ struct BindStruct *X//!<[inout]
       blacs_gridinfo_(&ictxt, &nprow, &npcol, &myrow, &mycol);
       
       mb = GetBlockSize(xMsize, size);
-
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
       Z_vec = malloc(mp*nq*sizeof(complex double));
-      //printf("xMsize %d\n", xMsize);
-      /*if(rank == 0){
-        for(i=0; i<xMsize; i++){
-          for(j=0; j<xMsize; j++){
-            printf("Ham %f %f ", creal(Ham[i][j]), cimag(Ham[i][j]));
-          }
-        }
-      }*/
       diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
-      //printf("Z %f %f\n", creal(Z_vec[0]), cimag(Z_vec[1]));
     } else {
       ZHEEVall(xMsize, Ham, v0, v1);
     }

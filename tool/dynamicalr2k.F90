@@ -1,4 +1,4 @@
-MODULE fourier_val
+MODULE dynamical_val
   !
   IMPLICIT NONE
   !
@@ -41,28 +41,34 @@ MODULE fourier_val
   CHARACTER(256),ALLOCATABLE :: &
   & kname(:) ! (nnode) Label of k-point node
   !
-END MODULE fourier_val
+END MODULE dynamical_val
 !
 !
 !
-MODULE fourier_routine
+MODULE dynamical_routine
   !
   IMPLICIT NONE
   !
-  INTERFACE
-     SUBROUTINE key2lower(key) BIND(c)
-       USE,INTRINSIC :: iso_c_binding
-       CHARACTER(KIND=C_CHAR) :: key(*)
-     END SUBROUTINE key2lower
-  END INTERFACE
-  !
 CONTAINS
+!
+SUBROUTINE key2lower(key)
+  CHARACTER(*) :: key
+  !
+  INTEGER :: ii, acode
+  !
+  DO ii = 1, LEN(TRIM(key))
+     acode = IACHAR(key(ii:ii))
+     IF(65 <= acode .AND. acode <= 90) THEN
+        key(ii:ii) = ACHAR(acode + 32)
+     END IF
+  END DO
+END SUBROUTINE key2lower
 !
 ! Read from HPhi/mVMC input files
 !
 SUBROUTINE read_filename()
   !
-  USE fourier_val, ONLY : file_gindx, filehead, nsite, omegamin, omegamax, nomega
+  USE dynamical_val, ONLY : file_gindx, filehead, nsite, omegamin, omegamax, nomega
   IMPLICIT NONE
   !
   INTEGER :: fi = 10
@@ -152,7 +158,7 @@ END SUBROUTINE read_filename
 !
 SUBROUTINE read_geometry()
   !
-  USE fourier_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, &
+  USE dynamical_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, &
   &                       nr, nreq, norb, nnode, knode, nk_line, kname
   IMPLICIT NONE
   !
@@ -285,7 +291,7 @@ END SUBROUTINE read_geometry
 !
 SUBROUTINE set_kpoints()
   !
-  USE fourier_val, ONLY : nk, kvec, nnode, nk_line, knode
+  USE dynamical_val, ONLY : nk, kvec, nnode, nk_line, knode
   !
   IMPLICIT NONE
   !
@@ -312,7 +318,7 @@ END SUBROUTINE set_kpoints
 !
 SUBROUTINE read_corrindx()
   !
-  USE fourier_val, ONLY : file_gindx, ncor, indx, nr, rindx, orb, norb
+  USE dynamical_val, ONLY : file_gindx, ncor, indx, nr, rindx, orb, norb
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, itmp, icor, nops, iops
@@ -363,7 +369,7 @@ END SUBROUTINE read_corrindx
 !
 SUBROUTINE read_corrfile()
   !
-  USE fourier_val, ONLY : filehead, ncor, indx, cor, norb, nr, nomega
+  USE dynamical_val, ONLY : filehead, ncor, indx, cor, norb, nr, nomega
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, icor, iorb, ir, iomega
@@ -399,9 +405,9 @@ END SUBROUTINE read_corrfile
 !
 ! Fourier transformation
 !
-SUBROUTINE fourier_cor()
+SUBROUTINE dynamical_cor()
   !
-  USE fourier_val, ONLY : cor, cor_k, kvec, nk, nr, nreq, norb, irv, phase, nomega
+  USE dynamical_val, ONLY : cor, cor_k, kvec, nk, nr, nreq, norb, irv, phase, nomega
   IMPLICIT NONE
   !
   INTEGER :: ik, ir, ireq
@@ -429,13 +435,13 @@ SUBROUTINE fourier_cor()
   !
   DEALLOCATE(fmat, cor)
   !
-END SUBROUTINE fourier_cor
+END SUBROUTINE dynamical_cor
 !
 ! Output Fourier component of Correlation function
 !
 SUBROUTINE output_cor()
   !
-  USE fourier_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, &
+  USE dynamical_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, &
   &                       recipr, filehead, nomega, omegamin, omegamax
   IMPLICIT NONE
   !
@@ -498,14 +504,14 @@ SUBROUTINE output_cor()
   !
 END SUBROUTINE output_cor
 !
-END MODULE fourier_routine
+END MODULE dynamical_routine
 !
 ! Main routine
 !
 PROGRAM dynamicalr2k
   !
-  USE fourier_routine, ONLY : read_filename, read_geometry, set_kpoints, &
-  &                           read_corrindx, read_corrfile, fourier_cor, output_cor
+  USE dynamical_routine, ONLY : read_filename, read_geometry, set_kpoints, &
+  &                           read_corrindx, read_corrfile, dynamical_cor, output_cor
   IMPLICIT NONE
   !
   CALL read_filename()
@@ -513,7 +519,7 @@ PROGRAM dynamicalr2k
   CALL set_kpoints()
   CALL read_corrindx()
   CALL read_corrfile()
-  CALL fourier_cor()
+  CALL dynamical_cor()
   CALL output_cor()
   !
   WRITE(*,*) 

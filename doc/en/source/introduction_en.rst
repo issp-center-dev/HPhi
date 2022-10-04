@@ -31,18 +31,20 @@ Contributors
 
 This software was developed by the following contributors.
 
-* ver.3.1 (released on 2018/9/3)
+* ver.3.4 (released on 2020/6/2)
 
   * Developers
 
-    * | Takahiro Misawa
-      | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kazuyoshi Yoshimi
+    * | Kota Ido
       | (The Institute for Solid State Physics, The University of Tokyo)
     * | Mitsuaki Kawamura
       | (The Institute for Solid State Physics, The University of Tokyo)
-    * | Kota Ido
-      | (Department of Applied Physics, The University of Tokyo)
+    * | Yuichi Motoyama
+      | (The Institute for Solid State Physics, The University of Tokyo)
+    * | Kazuyoshi Yoshimi
+      | (The Institute for Solid State Physics, The University of Tokyo)
+    * | Takahiro Misawa
+      | (Waseda Research Institute for Science and Engineering (RISE), Waseda University)
     * | Youhei Yamaji
       | (Department of Applied Physics, The University of Tokyo)
     * | Synge Todo
@@ -54,6 +56,13 @@ This software was developed by the following contributors.
 
     * | Naoki Kawashima
       | (The Institute for Solid State Physics, The University of Tokyo)
+
+
+* ver.3.3 (released on 2019/7/19)
+
+* ver.3.2 (released on 2019/4/27)
+
+* ver.3.1 (released on 2018/9/3)
 
 * ver.3.0 (released on 2017/12/22)
 
@@ -105,8 +114,8 @@ Operating environment
 
 :math:`{\mathcal H}\Phi` was tested on the following platforms
 
-* The supercomputer system-B \"sekirei\" in ISSP
-* Fujitsu FX-10 and K computer
+* The supercomputer system-B \"sekirei\" and system-C \"enaga\" in ISSP
+* Fujitsu FX-10 
 * Linux PC + Intel compiler
 * Linux PC + GCC.
 * Mac + GCC.

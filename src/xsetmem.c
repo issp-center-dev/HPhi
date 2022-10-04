@@ -94,6 +94,9 @@ void setmem_def
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 
+  X->Def.TBody = i_2d_allocate(X->Def.NTBody, 12);
+  X->Def.FBody = i_2d_allocate(X->Def.NFBody, 16);
+  X->Def.SBody = i_2d_allocate(X->Def.NSBody, 24);
   X->Def.NSingleExcitationOperator = ui_1d_allocate(X->Def.NNSingleExcitationOperator);
   X->Def.SingleExcitationOperator = (int***)malloc(sizeof(int**)*X->Def.NNSingleExcitationOperator);
   X->Def.ParaSingleExcitationOperator = (double complex**)malloc(
@@ -184,6 +187,31 @@ int setmem_large
   }
   v0 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
   v1 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
+
+  if (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ) {
+      v2 = cd_1d_allocate(X->Check.idim_max + 1);
+  } else {
+      v2 = cd_1d_allocate(1);
+  }
+
+  if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
+      vg = cd_2d_allocate(1, 1);
+  } else {
+      vg = cd_2d_allocate(X->Check.idim_max + 1, nstate);
+  }
+
+  if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
+      vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);
+  }
+  else if (X->Def.iCalcType == Lanczos || X->Def.iCalcType == CG) {
+    if (X->Def.LanczosTarget > X->Def.nvec) {
+      vec = cd_2d_allocate(X->Def.LanczosTarget + 1, X->Def.Lanczos_max + 1);
+    }
+    else {
+      vec = cd_2d_allocate(X->Def.nvec + 1, X->Def.Lanczos_max + 1);
+    }
+  }
+  
 #ifdef MPI
   unsigned long int MAXidim_max;
   MAXidim_max = MaxMPI_li(X->Check.idim_max);

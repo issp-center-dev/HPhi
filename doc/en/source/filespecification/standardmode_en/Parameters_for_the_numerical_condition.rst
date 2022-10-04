@@ -22,7 +22,7 @@ Parameters for the numerical condition
    calculation with the restart-file generated in the previous run,
    ``"Restart"`` for ``"Restart_out"`` + ``"Restart_in"``.
 
-*  ``anczos_max``
+*  ``Lanczos_max``
 
    **Type :** Positive integer (default value: ``2000``)
 
@@ -76,7 +76,7 @@ Parameters for the numerical condition
    **Description :** The convergence criterion for the Lanczos method is
    specified with this parameter. If the difference between the old and
    the new target eigenvalue falls below
-   :math:`10^{- LanczosEps|}`, the Lanczos step will finish. For
+   :math:`10^{- {\tt LanczosEps}}`, the Lanczos step will finish. For
    ``method="CG"``, we assume the calculation is converged when the
    2-norm of the residual vector becomes smaller than
    :math:`10^{-{\tt LanczosEps}/2}`.
@@ -93,11 +93,13 @@ Parameters for the numerical condition
 
    **Type :** Double (the default value is provided below)
 
-   **Description :** (Only for TPQ) :math:`l` as :math:`l=\hat{\mathcal H}/N_{s}`
-   is used in the TPQ calculation. Usually, the largest eigenvalue of
+   **Description :** (Only for TPQ) :math:`l` as :math:`(l-{\mathcal H}/N_{s})`
+   is used in the mTPQ calculation. Usually, the largest eigenvalue of
    the Hamiltonian is used as :math:`l`. Thus, the default value of
    :math:`l` is taken as the summation of the absolute values of each
    coefficient in the Hamiltonian divided by the number of sites.
+   In the cTPQ calculation, ``LargeValue`` is used as :math:`\Delta\tau=1/LargeValue`.
+   The definition of :math:`\Delta\tau` is explained in :ref:`Ch:algorithm`.
 
 *  ``NumAve``
 
@@ -151,6 +153,27 @@ Parameters for the numerical condition
    eigenvector to a file, ``"In"`` for reading the eigenvector from a
    file and using it in the subsequent calculation (such as the Green’s
    function).
+
+*  ``HamIO``
+
+   **Type :** String (choose from ``"None"``, ``"Out"``, ``"In"``.
+   ``"None"`` as a default)
+
+   | **Description :** (Only used in Full Diag mode) 
+   | The I/O of the Hamiltonian is specified.
+   | ``None``: not output Hamiltonian.
+   | ``Out``: output Hamiltonian.
+   | ``Iut``: Input Hamiltonian.
+
+*  ``OutputExcitedVec``
+
+   **Type :** String (choose from ``"None"`` or ``"Out"``.
+   ``"None"`` as a default)
+
+   | **Description :**  (Only used in the mode to calculate dynamical green's functions)
+   | The mode to output the excited vector is specified.
+   | ``None``: not output the excited vector.
+   | ``Out``: output the excited vector.
 
 .. raw:: latex
 

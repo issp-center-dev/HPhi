@@ -11,7 +11,7 @@ lattice = "chain"
 t = 1.0
 J = 4.0
 mu = 0.6
-h = 0.2
+h = -0.2
 exct = 3
 EOF
 

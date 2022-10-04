@@ -56,8 +56,8 @@ int check(struct BindStruct *X){
   long unsigned int u_tmp;
   long unsigned int tmp;
   long unsigned int Ns,comb_1,comb_2,comb_3,comb_sum, comb_up, comb_down;
-  unsigned int u_loc;
-  long int **comb;    
+  int u_loc;
+  long int **comb;
   long unsigned int idimmax=0;
   long unsigned int idim=0;
   long unsigned int isite=0;
@@ -211,6 +211,7 @@ int check(struct BindStruct *X){
       }
       break;
     case TPQCalc:
+    case cTPQ:
       switch (X->Def.iCalcModel) {
         case Hubbard:
         case HubbardNConserved:

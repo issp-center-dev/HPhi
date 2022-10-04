@@ -16,7 +16,7 @@
 #pragma once
 #include "Common.h"
 
-int child_omp_sz(
+int omp_sz(
                  long unsigned int ib, 
                  long unsigned int ihfbit,
                  struct BindStruct *X,
@@ -26,7 +26,7 @@ int child_omp_sz(
          long unsigned int *list_jb_
                  );
 
-int child_omp_sz_hacker(
+int omp_sz_hacker(
                  long unsigned int ib, 
                  long unsigned int ihfbit,
                  struct BindStruct *X,
@@ -36,7 +36,7 @@ int child_omp_sz_hacker(
          long unsigned int *list_jb_
                  );
 
-int child_omp_sz_Kondo(
+int omp_sz_Kondo(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       struct BindStruct *X,
@@ -46,7 +46,7 @@ int child_omp_sz_Kondo(
               long unsigned int *list_jb_              
                       );
 
-int child_omp_sz_KondoGC(
+int omp_sz_KondoGC(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       struct BindStruct *X,
@@ -56,7 +56,7 @@ int child_omp_sz_KondoGC(
               long unsigned int *list_jb_
                          );
 
-int child_omp_sz_spin(
+int omp_sz_spin(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       unsigned int N, 
@@ -67,7 +67,7 @@ int child_omp_sz_spin(
               long unsigned int *list_jb_
                       );
 
-int child_omp_sz_spin_hacker(
+int omp_sz_spin_hacker(
                       long unsigned int ib, 
                       long unsigned int ihfbit,
                       unsigned int N, 
@@ -80,7 +80,7 @@ int child_omp_sz_spin_hacker(
 
 
 
-int child_omp_sz_GeneralSpin(
+int omp_sz_GeneralSpin(
               long unsigned int ib, 
               long unsigned int ihfbit,
               struct BindStruct *X,

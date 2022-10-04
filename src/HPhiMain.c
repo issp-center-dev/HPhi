@@ -24,6 +24,7 @@
 #include <CalcByTPQ.h>
 #include <CalcSpectrum.h>
 #include <check.h>
+#include "CalcByCanonicalTPQ.h"
 #include "CalcByTEM.h"
 #include "readdef.h"
 #include "StdFace_main.h"
@@ -247,6 +248,14 @@ int main(int argc, char* argv[]){
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
 
+  if (X.Bind.Def.iCalcType == FullDiag
+      && X.Bind.Def.iFlgScaLAPACK ==0
+      && nproc != 1) {
+    fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
+    FinalizeMPI();
+    return(-1);
+  }
+
   /*---------------------------*/
   if(HPhiTrans(&(X.Bind))!=0) {
     exitMPI(-1);
@@ -289,12 +298,8 @@ int main(int argc, char* argv[]){
 
     case FullDiag:
       StartTimer(5000);
-      if (X.Bind.Def.iFlgScaLAPACK == 0 && nproc != 1) {
-        fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
-        FinalizeMPI();
-      }
       if (CalcByFullDiag(&X) != TRUE) {
-        FinalizeMPI();
+          FinalizeMPI();
       }
       StopTimer(5000);
       break;
@@ -308,10 +313,20 @@ int main(int argc, char* argv[]){
       StopTimer(3000);
       break;
 
-    case TimeEvolution:
-      if (CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X) != 0) {
-        exitMPI(-3);
-      }
+      case cTPQ:
+        StartTimer(3000);        
+        if (CalcByCanonicalTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
+          StopTimer(3000);
+          exitMPI(-3);
+        }
+        StopTimer(3000);
+      break;
+
+
+      case TimeEvolution:
+        if(CalcByTEM(X.Bind.Def.Param.ExpecInterval, &X)!=0){
+            exitMPI(-3);
+        }
       break;
 
     default:

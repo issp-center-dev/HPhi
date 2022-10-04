@@ -217,7 +217,7 @@ int GetSgnInterAll(
     if (tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1 * 2;
     else diffA = tmp_ispin1-tmp_ispin2*2;
 
-    tmp_sgn=X_GC_CisAjt(orgbit, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, &tmp_off);
+    tmp_sgn=child_GC_CisAjt(orgbit, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, &tmp_off);
     if(tmp_sgn ==0){
       *offbit =0;
       *Fsgn = 0;
@@ -239,7 +239,7 @@ int GetSgnInterAll(
   else{
     if(tmp_ispin2 > tmp_ispin1) diffA = tmp_ispin2 - tmp_ispin1*2;
     else diffA = tmp_ispin1-tmp_ispin2*2;
-    tmp_sgn *=X_GC_CisAjt(tmp_off, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, offbit);
+    tmp_sgn *=child_GC_CisAjt(tmp_off, X, tmp_ispin1, tmp_ispin2, tmp_ispin1+tmp_ispin2, diffA, offbit);
     
     if(tmp_sgn ==0){
       *offbit =0;
@@ -256,14 +256,15 @@ int GetSgnInterAll(
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAisCjtAjt_Hubbard_MPI(
+double complex child_GC_CisAisCjtAjt_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   int iCheck;
@@ -294,12 +295,12 @@ void X_GC_child_CisAisCjtAjt_Hubbard_MPI(
       }
     }/*for (j = 1; j <= i_max; j++)*/
   }
-}/*double complex X_GC_child_CisAisCjtAjt_Hubbard_MPI*/
+}/*double complex child_GC_CisAisCjtAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
+double complex child_GC_CisAjtCkuAku_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -308,7 +309,8 @@ void X_GC_child_CisAjtCkuAku_Hubbard_MPI(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -417,12 +419,12 @@ firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4)
       }
     }/*End of parallel region*/
   }/*myrank != origin*/
-}/*double complex X_GC_child_CisAjtCkuAku_Hubbard_MPI*/
+}/*double complex child_GC_CisAjtCkuAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAisCjtAku_Hubbard_MPI(
+double complex child_GC_CisAisCjtAku_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -431,18 +433,19 @@ void X_GC_child_CisAisCjtAku_Hubbard_MPI(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-  X_GC_child_CisAjtCkuAku_Hubbard_MPI(
+  child_GC_CisAjtCkuAku_Hubbard_MPI(
     org_isite4, org_ispin4, org_isite3, org_ispin3,
     org_isite1, org_ispin1, conj(tmp_V), X, nstate, tmp_v0, tmp_v1);
-}/*double complex X_GC_child_CisAisCjtAku_Hubbard_MPI*/
+}/*double complex child_GC_CisAisCjtAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
+double complex child_GC_CisAjtCkuAlv_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -453,7 +456,8 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -505,9 +509,9 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
   if (myrank == origin) {
     if (isite1 == isite4 && isite2 == isite3) { // CisAjvCjvAis =Cis(1-njv)Ais=nis-nisnjv
             //calc nis
-      X_GC_child_CisAis_Hubbard_MPI(org_isite1, org_ispin1, tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_GC_CisAis_Hubbard_MPI(org_isite1, org_ispin1, tmp_V, X, nstate, tmp_v0, tmp_v1);
       //calc -nisniv
-      X_GC_child_CisAisCjtAjt_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_GC_CisAisCjtAjt_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
     }/*if (isite1 == isite4 && isite2 == isite3)*/
     else if (isite2 == isite3) { // CisAjvCjvAku= Cis(1-njv)Aku=-CisAkunjv+CisAku: j is in PE
             //calc CisAku
@@ -520,8 +524,8 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
         GC_CisAjt(j - 1, nstate, tmp_v0, tmp_v1, X, isite1, isite4, (isite1 + isite4), Adiff, tmp_V, &tmp_off);
       
       //calc -CisAku njv
-      X_GC_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, 
-                                          org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_GC_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4, 
+                                        org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       if (X->Large.mode != M_CORR) { //for hermite
 #pragma omp parallel for default(none)  private(j, tmp_off) \
   firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0,nstate)
@@ -529,16 +533,16 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
           GC_CisAjt(j - 1, nstate, tmp_v0, tmp_v1, X, isite4, isite1, (isite1 + isite4), Adiff, tmp_V, &tmp_off);
         
         //calc -njvCkuAis
-        X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4,
-                                            org_isite1, org_ispin1, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+        child_GC_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4,
+                                          org_isite1, org_ispin1, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       }/*if (X->Large.mode != M_CORR)*/
     }/*if (isite2 == isite3)*/
     else {// CisAjtCkuAis = -CisAisCkuAjt: i is in PE
-      X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3,
-                                          org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_GC_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3,
+                                        org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       if (X->Large.mode != M_CORR) { //for hermite
-        X_GC_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2,
-                                            org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+        child_GC_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2,
+                                          org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       }/*if (X->Large.mode != M_CORR)*/
     }/*if (isite2 != isite3)*/
     return;
@@ -556,13 +560,13 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
       else Bdiff = isite3 - isite4 * 2;
 
       if (iFlgHermite == FALSE) {
-        Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1 + isite2), Adiff, &tmp_off2);
-        Fsgn *= X_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3 + isite4), Bdiff, &tmp_off);
+        Fsgn = child_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1 + isite2), Adiff, &tmp_off2);
+        Fsgn *= child_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3 + isite4), Bdiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == FALSE)*/
       else {
-        Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite3, isite4, (isite3 + isite4), Bdiff, &tmp_off2);
-        Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
+        Fsgn = child_GC_CisAjt((long unsigned int) myrank, X, isite3, isite4, (isite3 + isite4), Bdiff, &tmp_off2);
+        Fsgn *= child_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == TRUE)*/
 
@@ -581,17 +585,18 @@ void X_GC_child_CisAjtCkuAlv_Hubbard_MPI(
       }/*for (j = 1; j <= idim_max_buf; j++)*/
     }
   }/*myrank != origin*/
-}/*double complex X_GC_child_CisAjtCkuAlv_Hubbard_MPI*/
+}/*double complex child_GC_CisAjtCkuAlv_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAis_Hubbard_MPI(
+double complex child_GC_CisAis_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -616,54 +621,55 @@ void X_GC_child_CisAis_Hubbard_MPI(
       }/*for (j = 1; j <= i_max; j++)*/
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
-}/*double complex X_GC_child_CisAis_Hubbard_MPI*/
+}/*double complex child_GC_CisAis_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt}@f$
 term of grandcanonical Hubbard system
 */
-void X_GC_child_CisAjt_Hubbard_MPI(
+double complex child_GC_CisAjt_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
   int org_ispin2,//!<[in] Spin 2
   double complex tmp_trans,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
 
   if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite) {
-    X_GC_child_general_hopp_MPIdouble(org_isite1, org_ispin1, org_isite2, org_ispin2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
+    child_GC_general_hopp_MPIdouble(org_isite1, org_ispin1, org_isite2, org_ispin2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
   }
   else if (org_isite1 + 1 > X->Def.Nsite || org_isite2 + 1 > X->Def.Nsite) {
-    X_GC_child_general_hopp_MPIsingle(org_isite1, org_ispin1, org_isite2, org_ispin2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
+    child_GC_general_hopp_MPIsingle(org_isite1, org_ispin1, org_isite2, org_ispin2, tmp_trans, X, nstate, tmp_v0, tmp_v1);
   }
   else {
     //error message will be added.
     exitMPI(-1);
   }
-}/*double complex X_GC_child_CisAjt_Hubbard_MPI*/
+}/*double complex child_GC_CisAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}@f$
 term of canonical Hubbard system
 */
-void X_child_CisAisCjtAjt_Hubbard_MPI(
+double complex child_CisAisCjtAjt_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-  int iCheck;
   unsigned long int tmp_ispin1;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int tmp_off, j;
   int one = 1;
 
-  iCheck = CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
+  int iCheck = CheckBit_PairPE(org_isite1, org_ispin1, org_isite3, org_ispin3, X, (long unsigned int) myrank);
   if (iCheck != TRUE) return;
   
   if (org_isite1 + 1 > X->Def.Nsite && org_isite3 + 1 > X->Def.Nsite) {
@@ -682,12 +688,12 @@ shared(tmp_v0,tmp_v1,list_1,org_isite1,org_ispin1,org_isite3,org_ispin3,nstate,o
       }
     }/*for (j = 1; j <= i_max; j++)*/
   }/*if (org_isite1 + 1 > X->Def.Nsite || org_isite3 + 1 > X->Def.Nsite)*/
-}/*double complex X_child_CisAisCjtAjt_Hubbard_MPI*/
+}/*double complex child_CisAisCjtAjt_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of canonical Hubbard system
 */
-void X_child_CisAjtCkuAlv_Hubbard_MPI(
+double complex child_CisAjtCkuAlv_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -698,7 +704,8 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -707,9 +714,10 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
-  double complex dmv;
+  double complex dmv = 0.0;
   unsigned long int origin, tmp_off, tmp_off2;
-  unsigned long int org_rankbit, ioff;
+  unsigned long int org_rankbit = 0;
+  unsigned long int ioff = 0;
   int iFlgHermite = FALSE;
   int one = 1;
 
@@ -747,9 +755,9 @@ void X_child_CisAjtCkuAlv_Hubbard_MPI(
   if (myrank == origin) {
     if (isite1 == isite4 && isite2 == isite3) { // CisAjvCjvAis =Cis(1-njv)Ais=nis-nisnjv
             //calc nis
-      X_child_CisAis_Hubbard_MPI(org_isite1, org_ispin1, tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_CisAis_Hubbard_MPI(org_isite1, org_ispin1, tmp_V, X, nstate, tmp_v0, tmp_v1);
       //calc -nisniv
-      X_child_CisAisCjtAjt_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_CisAisCjtAjt_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
     }/* if (isite1 == isite4 && isite2 == isite3)*/
     else if (isite2 == isite3) { // CisAjvCjvAku= Cis(1-njv)Aku=-CisAkunjv+CisAku: j is in PE
       if (isite4 > isite1) Adiff = isite4 - isite1 * 2;
@@ -762,8 +770,8 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, nstate, tmp_
         CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite1, isite4, (isite1 + isite4), Adiff, tmp_V);
       
       //calc -CisAku njv
-      X_child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4,
-                                       org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_CisAjtCkuAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite4, org_ispin4,
+                                                 org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
 
       if (X->Large.mode != M_CORR) {  //for hermite
 #pragma omp parallel for default(none)  private(j, tmp_off) \
@@ -772,17 +780,15 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, nstate, tmp_
           CisAjt(j, nstate, tmp_v0, tmp_v1, X, isite4, isite1, (isite1 + isite4), Adiff, tmp_V);
                 
         //calc -njvCkuAis
-        X_child_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4, 
-                                         org_isite1, org_ispin1, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+        child_CisAisCjtAku_Hubbard_MPI(org_isite2, org_ispin2, org_isite4, org_ispin4, org_isite1, org_ispin1, -tmp_V, X, nstate, tmp_v0, tmp_v1);
       }/*if (X->Large.mode != M_CORR)*/
     }/*if (isite2 == isite3)*/
     else {// CisAjtCkuAis = -CisAisCkuAjt: i is in PE
-      X_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, 
-                                       org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
+      child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite3, org_ispin3, org_isite2, org_ispin2, -tmp_V, X, nstate, tmp_v0, tmp_v1);
 
       if (X->Large.mode != M_CORR) //for hermite: CisAkuCjtAis=-CisAisCjtAku
-        X_child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2,
-                                         org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);    
+        child_CisAisCjtAku_Hubbard_MPI(org_isite1, org_ispin1, org_isite2, org_ispin2,
+                                                   org_isite3, org_ispin3, -tmp_V, X, nstate, tmp_v0, tmp_v1);
     }/*if (isite2 != isite3)*/
     return;
   }//myrank =origin
@@ -800,13 +806,13 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, nstate, tmp_
       else Bdiff = isite3 - isite4 * 2;
 
       if (iFlgHermite == FALSE) {
-        Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1 + isite2), Adiff, &tmp_off2);
-        Fsgn *= X_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3 + isite4), Bdiff, &tmp_off);
+        Fsgn = child_GC_CisAjt((long unsigned int) myrank, X, isite2, isite1, (isite1 + isite2), Adiff, &tmp_off2);
+        Fsgn *= child_GC_CisAjt(tmp_off2, X, isite4, isite3, (isite3 + isite4), Bdiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == FALSE)*/
       else {
-        Fsgn = X_GC_CisAjt((long unsigned int) myrank, X, isite3, isite4, (isite3 + isite4), Bdiff, &tmp_off2);
-        Fsgn *= X_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
+        Fsgn = child_GC_CisAjt((long unsigned int) myrank, X, isite3, isite4, (isite3 + isite4), Bdiff, &tmp_off2);
+        Fsgn *= child_GC_CisAjt(tmp_off2, X, isite1, isite2, (isite1 + isite2), Adiff, &tmp_off);
         tmp_V *= Fsgn;
       }/*if (iFlgHermite == TRUE)*/
 #pragma omp parallel default(none) private(j,ioff) \
@@ -847,12 +853,12 @@ org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isit
       }/*End of parallel region*/
     }
   }/*if (myrank != origin)*/
-}/*double complex X_child_CisAjtCkuAlv_Hubbard_MPI*/
+}/*double complex child_CisAjtCkuAlv_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of canonical Hubbard system
 */
-void X_child_CisAjtCkuAku_Hubbard_MPI(
+double complex child_CisAjtCkuAku_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite2,//!<[in] Site 2
@@ -861,7 +867,8 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
   int org_ispin3,//!<[in] Spin 3
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
   unsigned long int i_max = X->Check.idim_max;
@@ -872,11 +879,9 @@ void X_child_CisAjtCkuAku_Hubbard_MPI(
   unsigned long int j, Asum, Adiff;
   double complex dmv;
   unsigned long int origin, tmp_off;
-  unsigned long int org_rankbit;
+  unsigned long int org_rankbit = 0;
   int one = 1;
-  //printf("Deubg0-0: org_isite1=%d, org_ispin1=%d, org_isite2=%d, org_ispin2=%d, org_isite3=%d, org_ispin3=%d\n", org_isite1, org_ispin1,org_isite2, org_ispin2,org_isite3, org_ispin3);
   iCheck = CheckBit_InterAllPE(org_isite1, org_ispin1, org_isite2, org_ispin2, org_isite3, org_ispin3, org_isite3, org_ispin3, X, (long unsigned int) myrank, &origin);
-  //printf("iCheck=%d, myrank=%d, origin=%d\n", iCheck, myrank, origin);
 
   isite1 = X->Def.Tpow[2 * org_isite1 + org_ispin1];
   isite2 = X->Def.Tpow[2 * org_isite2 + org_ispin2];
@@ -976,12 +981,12 @@ firstprivate(idim_max_buf,tmp_V,X,tmp_isite1,tmp_isite2,tmp_isite3,tmp_isite4,is
       }
     }/*End of parallel region*/
   }/*if (myrank != origin)*/
-}/*double complex X_child_CisAjtCkuAku_Hubbard_MPI*/
+}/*double complex child_CisAjtCkuAku_Hubbard_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of canonical Hubbard system
 */
-void X_child_CisAisCjtAku_Hubbard_MPI(
+double complex child_CisAisCjtAku_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_isite3,//!<[in] Site 3
@@ -990,15 +995,20 @@ void X_child_CisAisCjtAku_Hubbard_MPI(
   int org_ispin4,//!<[in] Spin 4
   double complex tmp_V,//!<[in] Coupling constant
   struct BindStruct *X,//!<[inout]
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1//!<[inout] Initial wavefunction
 ) {
-  X_child_CisAjtCkuAku_Hubbard_MPI(
+  double complex dam_pr = 0;
+  
+  dam_pr = child_CisAjtCkuAku_Hubbard_MPI(
     org_isite4, org_ispin4, org_isite3, org_ispin3,
     org_isite1, org_ispin1, conj(tmp_V), X, nstate, tmp_v0, tmp_v1);
-}/*double complex X_child_CisAisCjtAku_Hubbard_MPI*/
+  
+  return conj(dam_pr);
+}/*double complex child_CisAisCjtAku_Hubbard_MPI*/
 
-void X_child_CisAis_Hubbard_MPI(
+double complex child_CisAis_Hubbard_MPI(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   double complex tmp_V,//!<[in] Coupling constant
@@ -1024,13 +1034,13 @@ void X_child_CisAis_Hubbard_MPI(
     {
 #pragma omp for
       for (j = 1; j <= i_max; j++) {
-        if (X_CisAis(list_1[j], X, isite1) != 0) {
+        if (child_CisAis(list_1[j], X, isite1) != 0) {
           zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
         }/*if (X_CisAis(list_1[j], X, isite1) != 0)*/
       }/*for (j = 1; j <= i_max; j++)*/
     }/*End of parallel region*/
   }/*if (org_isite1 + 1 <= X->Def.Nsite)*/
-}/*double complex X_child_CisAis_Hubbard_MPI*/
+}/*double complex child_CisAis_Hubbard_MPI*/
 /**
 @brief Single creation/annihilation operator
  in the inter process region for HubbardGC.
@@ -1038,11 +1048,11 @@ void X_child_CisAis_Hubbard_MPI(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Youhei Yamaji (The University of Tokyo)
 */
-void X_GC_Cis_MPI(
+double complex child_GC_Cis_MPI(
   int org_isite,//!<[in] Site i
   int org_ispin,//!<[in] Spin s
   double complex tmp_trans,//!<[in] Coupling constant//!<[in]
-  int nstate, 
+  int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex **tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
@@ -1078,7 +1088,7 @@ void X_GC_Cis_MPI(
   else return;
 
   zaxpy_long(idim_max_buf*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
-}/*double complex X_GC_Cis_MPI*/
+}/*double complex child_GC_Cis_MPI*/
 /**
 @brief Single creation/annihilation operator
   in the inter process region for HubbardGC.
@@ -1086,11 +1096,11 @@ void X_GC_Cis_MPI(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 @author Youhei Yamaji (The University of Tokyo)
 */
-void X_GC_Ajt_MPI(
+double complex child_GC_Ajt_MPI(
   int org_isite,//!<[in] Site j
   int org_ispin,//!<[in] Spin t
   double complex tmp_trans,//!<[in] Coupling constant//!<[in]
-  int nstate, 
+  int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[out] Result v0 += H v1*/,
   double complex **tmp_v1,//!<[in] v0 += H v1*/,
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
@@ -1122,16 +1132,16 @@ void X_GC_Ajt_MPI(
   else return;
 
   zaxpy_long(idim_max_buf*nstate, trans, &v1buf[1][0], &tmp_v0[1][0]);
-}/*double complex X_GC_Ajt_MPI*/
+}/*double complex child_GC_Ajt_MPI*/
 /**
 @brief Compute @f$c_{is}^\dagger@f$
 term of canonical Hubbard system
 */
-void X_Cis_MPI(
+double complex child_Cis_MPI(
   int org_isite,//!<[in] Site i
   unsigned int org_ispin,//!<[in] Spin s
   double complex tmp_trans,//!<[in] Coupling constant
-  int nstate, 
+  int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[inout] Initial wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
@@ -1141,8 +1151,10 @@ void X_Cis_MPI(
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ) {
   int mask2, state2, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j, ioff;
-  double complex trans;
+  unsigned long int idim_max_buf = 0;
+  unsigned long int j = 0;
+  unsigned long int ioff = 0;
+  double complex trans, dmv, dam_pr;
   int one = 1;
 
   // org_isite >= Nsite
@@ -1178,16 +1190,17 @@ firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1, list_2
       _irght, _ilft, _ihfbit, &ioff);
     zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }/*for (j = 1; j <= idim_max_buf; j++)*/
-}/*double complex X_GC_Cis_MPI*/
+}/*double complex child_GC_Cis_MPI*/
 /**
 @brief Compute @f$c_{jt}@f$
 term of canonical Hubbard system
 */
-void X_Ajt_MPI(
+double complex child_Ajt_MPI(
   int org_isite,//!<[in] Site j
   unsigned int org_ispin,//!<[in] Spin t
   double complex tmp_trans,//!<[in] Coupling constant
-  int nstate, double complex **tmp_v0,//!<[inout] Resulting wavefunction
+  int nstate,//!<[in] Number of vectors
+  double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[inout] Initial wavefunction
   unsigned long int idim_max,//!<[in] Similar to CheckList::idim_max
   long unsigned int *Tpow,//!<[in] Similar to DefineList::Tpow
@@ -1196,8 +1209,10 @@ void X_Ajt_MPI(
   long unsigned int _ihfbit//!<[in] Similer to LargeList::ihfbit
 ){
   int mask2, state2, origin, bit2diff, Fsgn;
-  unsigned long int idim_max_buf, j, ioff;
-  double complex trans;
+  unsigned long int idim_max_buf = 0;
+  unsigned long int j = 0;
+  unsigned long int ioff = 0;
+  double complex trans, dmv, dam_pr;
   int one = 1;
 
   // org_isite >= Nsite
@@ -1232,4 +1247,4 @@ firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1, list_2
       _irght, _ilft, _ihfbit, &ioff);
     zaxpy_(&nstate, &trans, &v1buf[j][0], &one, &tmp_v0[ioff][0], &one);
   }
-}/*double complex X_Ajt_MPI*/
+}/*double complex child_Ajt_MPI*/

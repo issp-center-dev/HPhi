@@ -138,7 +138,7 @@ SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
-SpectrumType = "Up"
+SpectrumType = "Down"
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -177,7 +177,7 @@ SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
-SpectrumType = "Down"
+SpectrumType = "Up"
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
