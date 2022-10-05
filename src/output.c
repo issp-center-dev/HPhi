@@ -88,7 +88,7 @@ int outputHam(struct BindStruct *X){
     }
   }
 
-  strcpy(cHeader, "%%%%MatrixMarket matrix coordinate complex hermitian\n");
+  strcpy(cHeader, "%%MatrixMarket matrix coordinate complex hermitian\n");
   sprintf(sdt,cFileNamePhys_FullDiag_Ham, X->Def.CDataFileHead);
   if(childfopenMPI(sdt,"w",&fp)!=0){
     return -1;

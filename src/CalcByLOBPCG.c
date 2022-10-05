@@ -143,10 +143,8 @@ static double calc_preshift(
   double k, i;
   double preshift;
 
-  if (fabs(eig) > 10.0) k = trunc(log10(fabs(eig)));
-  else k = 1.0;
-
   if (res < 1.0) {
+    k = trunc(log10(fabs(eig)));
     if (eps_LOBPCG > res) i = ceil(log10(eps_LOBPCG));
     else i = ceil(log10(res));
 
@@ -357,13 +355,13 @@ int LOBPCG_Main(
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/,
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p of Ref.1*/,
     ****hsub, ****ovlp; /*Subspace Hamiltonian and Overlap*/
-  double *eig, *dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub;
-  int do_precon = 0;//If = 1, use preconditioning (experimental)
+  double *eig, *dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
   char tN = 'N', tC = 'C';
   double complex one = 1.0, zero = 0.0;
 
   nsub = 3 * X->Def.k_exct;
   nstate = X->Def.k_exct;
+  eig_pos_shift = LargeValue * X->Def.NsiteMPI;
 
   eig = d_1d_allocate(X->Def.k_exct);
   dnorm = d_1d_allocate(X->Def.k_exct);
@@ -447,9 +445,9 @@ int LOBPCG_Main(
     <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
     */
     if (stp != 1) {
-      if (do_precon == 1) {
+      if (X->Def.PreCG == 1) {
         for (ie = 0; ie < X->Def.k_exct; ie++) 
-          preshift = calc_preshift(eig[ie], dnorm[ie], eps_LOBPCG);
+          preshift = calc_preshift(eig[ie] + eig_pos_shift, dnorm[ie], eps_LOBPCG) - eig_pos_shift;
 #pragma omp parallel for default(none) shared(wxp,list_Diagonal,preshift,i_max,eps_LOBPCG,X) \
 private(idim,precon,ie)
         for (idim = 1; idim <= i_max; idim++) {
@@ -458,7 +456,7 @@ private(idim,precon,ie)
             if (fabs(precon) > eps_LOBPCG) wxp[0][idim][ie] /= precon;
           }
         }
-      }/*if(do_precon == 1)*/
+      }/*if(X->Def.PreCG == 1)*/
       /**@brief
         <li>Normalize residual vector: @f${\bf w}={\bf w}/|w|@f$
       */

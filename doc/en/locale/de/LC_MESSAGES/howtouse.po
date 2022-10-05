@@ -345,7 +345,7 @@ msgid "You can download :math:`{\\mathcal H}\\Phi` at the following location."
 msgstr ""
 
 #: ../../howtouse/installation_en.rst:6
-msgid "https://github.com/QLMS/HPhi/releases"
+msgid "https://github.com/issp-center-dev/HPhi/releases"
 msgstr ""
 
 #: ../../howtouse/installation_en.rst:8

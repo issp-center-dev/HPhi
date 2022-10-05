@@ -467,10 +467,10 @@ END SUBROUTINE set_kpoints
 SUBROUTINE read_corrindx()
   !
   USE fourier_val, ONLY : file_one, file_two, ncor1, ncor2, ncor, indx, &
-  &                       calctype, nr, rindx, orb, norb
+  &                       calctype, nr, rindx, orb, norb, irv
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, itmp(8), icor
+  INTEGER :: fi = 10, itmp(8), icor, ir, iorb, jorb
   CHARACTER(100) :: ctmp
   !
   WRITE(*,*) 
@@ -495,7 +495,14 @@ SUBROUTINE read_corrindx()
   !
   ncor(1:2) = 0
   DO icor = 1, ncor1
+     !
      READ(fi,*) itmp(1:4)
+     !
+     IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+        WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+        CYCLE
+     END IF
+     !
      IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN
         !
         ! Up-Up correlation
@@ -533,6 +540,11 @@ SUBROUTINE read_corrindx()
      READ(fi,*) itmp(1:8)
      !
      IF(itmp(1) == itmp(3) .AND. itmp(5) == itmp(7)) THEN
+        !
+        IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+           WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+           CYCLE
+        END IF
         !
         IF(itmp(2) == 0 .AND. itmp(4) == 0) THEN
            !
@@ -584,6 +596,11 @@ SUBROUTINE read_corrindx()
      !
      IF(calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5))) THEN
         !
+        IF(ANY(irv(1:3,1,rindx(itmp(1)+1)) /= 0)) THEN
+           WRITE(*,'(a,i0,a)') "       REMARK : The left operator at # ", icor, " is not at R=0."
+           CYCLE
+        END IF
+        !
         ! S+S- & S-S+ for mVMC
         !
         IF((itmp(2) == 0 .AND. itmp(4) == 0) .AND. (itmp(6) == 1 .AND. itmp(8) == 1)) THEN
@@ -601,6 +618,35 @@ SUBROUTINE read_corrindx()
      END IF ! (calctype == 4 .AND. (itmp(1) == itmp(7) .AND. itmp(3) == itmp(5)))
      !
   END DO
+  !
+  IF(COUNT(indx(1:nr,3:8,1:norb,1:norb) == 0) /= 0) THEN
+     WRITE(*,*) "ERROR! The following correlation function is missed:"
+     WRITE(*,*) "R,   kind,   orb1,   orb2"
+     DO icor = 3, 8
+        DO ir = 1, nr
+           DO iorb = 1, norb
+              DO jorb = 1, norb
+                 IF(indx(ir,icor,iorb,jorb) == 0) THEN
+                    IF(icor == 3) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Up-Up-Up         ", iorb, jorb
+                    ELSE IF(icor == 4) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Up-Down-Down     ", iorb, jorb
+                    ELSE IF(icor == 5) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Down-Up-Up     ", iorb, jorb
+                    ELSE IF(icor == 6) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Down-Down-Down ", iorb, jorb
+                    ELSE IF(icor == 7) THEN
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Up-Down-Down-Up     ", iorb, jorb
+                    ELSE
+                       WRITE(*,'(i0,a,i0,2x,i0)') ir, " Down-Up-Up-Down     ", iorb, jorb
+                    END IF
+                 END IF
+              END DO
+           END DO
+        END DO
+     END DO
+     STOP "Missing indices for the Green function."
+  END IF
   !
   WRITE(*,*) "    Number of UpUpUpUp         Index : ", COUNT(indx(1:nr, 3, 1:norb, 1:norb) /= 0)
   WRITE(*,*) "    Number of UpUpDownDown     Index : ", COUNT(indx(1:nr, 4, 1:norb, 1:norb) /= 0)
