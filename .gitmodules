@@ -1,0 +1,3 @@
+[submodule "src/StdFace"]
+	path = src/StdFace
+	url = https://github.com/issp-center-dev/StdFace
