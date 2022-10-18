@@ -19,6 +19,7 @@
 #include <HPhiTrans.h>
 #include <output_list.h>
 #include <diagonalcalc.h>
+#include <CalcByLanczos.h>
 #include <CalcByLOBPCG.h>
 #include <CalcByFullDiag.h>
 #include <CalcByTPQ.h>
