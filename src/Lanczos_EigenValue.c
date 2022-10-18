@@ -425,7 +425,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
 /// \retval 0 Succeed to read the initial vector.
 /// \version 1.2
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
-int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex *_v1, unsigned long int *liLanczosStp_vec)
+int ReadInitialVector(struct BindStruct *X, double complex** _v0, double complex **_v1, unsigned long int *liLanczosStp_vec)
 {
   size_t byte_size;
   char sdt[D_FileNameMax];
@@ -444,8 +444,8 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
     fprintf(stderr, "Error: A size of Inputvector is incorrect.\n");
     return -1;
   }
-  byte_size = fread(_v0, sizeof(complex double), X->Check.idim_max + 1, fp);
-  byte_size = fread(_v1, sizeof(complex double), X->Check.idim_max + 1, fp);
+  byte_size = fread(&_v0[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
+  byte_size = fread(&_v1[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
   fclose(fp);
   fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
   TimeKeeper(X, cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
@@ -464,8 +464,8 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
 /// \version 2.0
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int OutputLanczosVector(struct BindStruct *X,
-                        double complex* tmp_v0,
-                        double complex *tmp_v1,
+                        double complex** tmp_v0,
+                        double complex **tmp_v1,
                         unsigned long int liLanczosStp_vec){
   char sdt[D_FileNameMax];
   FILE *fp;
@@ -479,8 +479,8 @@ int OutputLanczosVector(struct BindStruct *X,
   }
   fwrite(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
   fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max),1,fp);
-  fwrite(tmp_v0, sizeof(complex double),X->Check.idim_max+1, fp);
-  fwrite(tmp_v1, sizeof(complex double),X->Check.idim_max+1, fp);
+  fwrite(&tmp_v0[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
+  fwrite(&tmp_v1[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
   fclose(fp);
 
   fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
@@ -496,7 +496,7 @@ int OutputLanczosVector(struct BindStruct *X,
 /// Output: Large.iv.
 /// \param tmp_v0 [out] The initial vector whose components are zero.
 /// \param tmp_v1 [out] The initial vector whose components are randomly given when initial_mode=1, otherwise, iv-th component is only given.
-void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
+void SetInitialVector(struct BindStruct *X, double complex** tmp_v0, double complex **tmp_v1) {
   int iproc;
   long int i, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
@@ -522,8 +522,8 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
             X->Def.k_exct);
 #pragma omp parallel for default(none) private(i) shared(tmp_v0, tmp_v1) firstprivate(i_max)
     for (i = 1; i <= i_max; i++) {
-      tmp_v0[i] = 0.0;
-      tmp_v1[i] = 0.0;
+      tmp_v0[i][0] = 0.0;
+      tmp_v1[i][0] = 0.0;
     }
 
     sum_i_max = 0;
@@ -532,10 +532,10 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
         i_max_tmp = BcastMPI_li(iproc, i_max);
         if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
           if (myrank == iproc) {
-            tmp_v1[iv - sum_i_max + 1] = 1.0;
+            tmp_v1[iv - sum_i_max + 1][0] = 1.0;
             if (X->Def.iInitialVecType == 0) {
-              tmp_v1[iv - sum_i_max + 1] += 1.0 * I;
-              tmp_v1[iv - sum_i_max + 1] /= sqrt(2.0);
+              tmp_v1[iv - sum_i_max + 1][0] += 1.0 * I;
+              tmp_v1[iv - sum_i_max + 1][0] /= sqrt(2.0);
             }
           }/*if (myrank == iproc)*/
         }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -545,10 +545,10 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
       }/*for (iproc = 0; iproc < nproc; iproc++)*/
     }
     else {
-      tmp_v1[iv + 1] = 1.0;
+      tmp_v1[iv + 1][0] = 1.0;
       if (X->Def.iInitialVecType == 0) {
-        tmp_v1[iv + 1] += 1.0 * I;
-        tmp_v1[iv + 1] /= sqrt(2.0);
+        tmp_v1[iv + 1][0] += 1.0 * I;
+        tmp_v1[iv + 1][0] /= sqrt(2.0);
       }
     }
   }/*if(initial_mode == 0)*/
@@ -562,7 +562,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
 
 #pragma omp for
       for (i = 1; i <= i_max; i++) {
-        tmp_v0[i] = 0.0;
+        tmp_v0[i][0] = 0.0;
       }
       /*
        Initialise MT
@@ -583,12 +583,12 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
       if (X->Def.iInitialVecType == 0) {
 #pragma omp for
         for (i = 1; i <= i_max; i++)
-          tmp_v1[i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) +
-                      2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) * I;
+          tmp_v1[i][0] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) +
+                         2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) * I;
       } else {
 #pragma omp for
         for (i = 1; i <= i_max; i++)
-          tmp_v1[i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
+          tmp_v1[i][0] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
       }
 
     }/*#pragma omp parallel*/
@@ -596,7 +596,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
     cdnorm = 0.0;
 #pragma omp parallel for default(none) private(i) shared(tmp_v1, i_max) reduction(+: cdnorm)
     for (i = 1; i <= i_max; i++) {
-      cdnorm += conj(tmp_v1[i]) * tmp_v1[i];
+      cdnorm += conj(tmp_v1[i][0]) * tmp_v1[i][0];
     }
     if(X->Def.iFlgMPI==0) {
       cdnorm = SumMPI_dc(cdnorm);
@@ -605,7 +605,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
     dnorm = sqrt(dnorm);
 #pragma omp parallel for default(none) private(i) shared(tmp_v1) firstprivate(i_max, dnorm)
     for (i = 1; i <= i_max; i++) {
-      tmp_v1[i] = tmp_v1[i] / dnorm;
+      tmp_v1[i][0] = tmp_v1[i][0] / dnorm;
     }
   }/*else if(initial_mode==1)*/
 }

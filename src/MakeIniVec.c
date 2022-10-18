@@ -38,20 +38,21 @@
 /*Note: X->Def.iInitialVecType == 0: All components are given by random complex numbers x+i*y, x = [-1,1),y=[-1,1]*/
 /*Note: X->Def.iInitialVecType ==-1: random vectors on the 2*i_max complex sphere*/
 /*Note: X->Def.iInitialVecType == others: All components are given by random real numbers x, x=[-1,1)*/
-int MakeIniVec(int rand_i, struct BindStruct *X) {
+int MakeIniVec(struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
   double Ns;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
-  int mythread;
+  int mythread, rand_i;
   double rand_X,rand_Y;
   double complex rand_Z1,rand_Z2;
 
   Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
+  for (rand_i = 0; rand_i < NumAve; rand_i++) {
 #pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \
         shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
         firstprivate(i_max)
@@ -69,48 +70,50 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 #else
     mythread = 0;
 #endif
-    u_long_i = 123432 + (rand_i+1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
+    u_long_i = 123432 + (rand_i + 1) * labs(X->Def.initial_iv) + mythread + nthreads * myrank;
     dsfmt_init_gen_rand(&dsfmt, u_long_i);
 
     if (X->Def.iInitialVecType == 0) {
       StartTimer(3101);
-      #pragma omp for
+#pragma omp for
       for (i = 1; i <= i_max; i++)
-        v1[i][rand_i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+        v1[i][rand_i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) * I;
       /*if (X->Def.iInitialVecType == 0)*/
-    }else if (X->Def.iInitialVecType == -1) {
+    }
+    else if (X->Def.iInitialVecType == -1) {
       StartTimer(3101);
-      #pragma omp for 
-      for (i = 1; i <= i_max; i++){
-        rand_X   = dsfmt_genrand_close_open(&dsfmt);
-        rand_Y   = dsfmt_genrand_close_open(&dsfmt);
-        rand_Z1  = sqrt(-2.0*log(rand_X))*cos(2.0*M_PI*rand_Y);
-        rand_Z2  = sqrt(-2.0*log(rand_X))*sin(2.0*M_PI*rand_Y);
-        v1[i][rand_i] = rand_Z1+I*rand_Z2;
-      } 
-    /*if (X->Def.iInitialVecType == -1)*/
-    }else {
-      #pragma omp for
+#pragma omp for 
+      for (i = 1; i <= i_max; i++) {
+        rand_X = dsfmt_genrand_close_open(&dsfmt);
+        rand_Y = dsfmt_genrand_close_open(&dsfmt);
+        rand_Z1 = sqrt(-2.0 * log(rand_X)) * cos(2.0 * M_PI * rand_Y);
+        rand_Z2 = sqrt(-2.0 * log(rand_X)) * sin(2.0 * M_PI * rand_Y);
+        v1[i][rand_i] = rand_Z1 + I * rand_Z2;
+      }
+      /*if (X->Def.iInitialVecType == -1)*/
+    }
+    else {
+#pragma omp for
       for (i = 1; i <= i_max; i++)
-         v1[i][rand_i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+        v1[i][rand_i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }
     StopTimer(3101);
   }/*#pragma omp parallel*/
   /*Normalize v*/
-  dnorm=0.0;
+  dnorm = 0.0;
 #pragma omp parallel for default(none) private(i) shared(v1, i_max, rand_i) reduction(+: dnorm) 
-  for(i=1;i<=i_max;i++){
+  for (i = 1; i <= i_max; i++) {
     dnorm += conj(v1[i][rand_i]) * v1[i][rand_i];
   }
   dnorm = SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
+  dnorm = sqrt(dnorm);
   global_1st_norm[rand_i] = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm, rand_i)
-  for(i=1;i<=i_max;i++){
-    v1[i][rand_i] = v1[i][rand_i] /dnorm;
+  for (i = 1; i <= i_max; i++) {
+    v1[i][rand_i] = v1[i][rand_i] / dnorm;
     v0[i][rand_i] = v1[i][rand_i];
   }
-  
+  }
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
   return 0;

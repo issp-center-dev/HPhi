@@ -270,10 +270,6 @@ int ReadcalcmodFile(
     }   
     if(CheckWords(ctmp, "CalcType")==0){
       X->iCalcType=itmp;
-      if (X->iCalcType == Lanczos) {
-        fprintf(stdoutMPI, "  LOBPCG is used alternative to Lanczos.\n");
-        X->iCalcType = CG;
-      }
     }
     else if(CheckWords(ctmp, "FlgFiniteTemperature")==0){
       X->iFlgFiniteTemperature = itmp;
@@ -2030,7 +2026,6 @@ int ReadDefFileIdxPara(
             }
           }/*for (i = 0; i < X->NPairExcitationOperator[idx]; ++i)*/
           idx++;
-          printf("debug %d %d %d\n", idx, X->NNPairExcitationOperator, X->NPairExcitationOperator[0]);
         }
         if (idx != X->NNPairExcitationOperator) {
           fclose(fp);

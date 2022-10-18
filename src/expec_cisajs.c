@@ -569,6 +569,7 @@ int expec_cisajs(
 
   switch (X->Def.iCalcType) {
   case TPQCalc:
+  case cTPQ:
     step = X->Def.istep;
     TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGStart, "a", 0, step);
     break;
@@ -578,6 +579,7 @@ int expec_cisajs(
     break;
   case FullDiag:
   case CG:
+  case Lanczos:
     break;
   }
 
@@ -615,7 +617,21 @@ int expec_cisajs(
 
   for (istate = 0; istate < nstate; istate++) {
     switch (X->Def.iCalcType) {
+    case Lanczos:
+      if (X->Def.St == 0) {
+        sprintf(sdt, cFileName1BGreen_Lanczos, X->Def.CDataFileHead);
+        fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGStart);
+        TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGStart, "a");
+      }
+      else if (X->Def.St == 1) {
+        sprintf(sdt, cFileName1BGreen_CG, X->Def.CDataFileHead);
+        TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGStart, "a");
+        fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGStart);
+      }
+      //vec=v0;
+      break;
     case TPQCalc:
+    case cTPQ:
       step = X->Def.istep;
       sprintf(sdt, cFileName1BGreen_TPQ, X->Def.CDataFileHead, istate, step);
       break;
@@ -640,7 +656,12 @@ int expec_cisajs(
   }/*for (istate = 0; istate < nstate; istate++)*/
 
   if (X->Def.St == 0) {
-    if (X->Def.iCalcType == TPQCalc) {
+    if (X->Def.iCalcType == Lanczos) {
+      TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
+      fprintf(stdoutMPI, "%s", cLogLanczosExpecOneBodyGEnd);
+      TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
+    }
+    else if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
       TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQExpecOneBodyGFinish, "a", rand_i, step);
     }
     else if (X->Def.iCalcType == TimeEvolution) {

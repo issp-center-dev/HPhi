@@ -55,9 +55,9 @@ int FirstMultiply(struct BindStruct *X) {
   /**@brief
   Initialize v1 and v0 = v1
   */
-  MakeIniVec(rand_i,X);
+  MakeIniVec(X);
   
-  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
+  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", 0, step_i);
   /**@brief
 Compute expectation value at infinite temperature
 */
@@ -101,6 +101,6 @@ firstprivate(i_max) reduction(+: dnorm)
 #pragma omp parallel for default(none) private(i) shared(v0,rand_i) firstprivate(i_max, dnorm)
     for (i = 1; i <= i_max; i++) v0[i][rand_i] = v0[i][rand_i] / dnorm;
   }/*for (rand_i = 0; rand_i < NumAve; rand_i++)*/
-  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", rand_i, step_i);
+  TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStepEnd, "a", 0, step_i);
   return 0;
 }

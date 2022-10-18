@@ -66,8 +66,7 @@ int CalcByTEM(
   FILE *fp;
   double Time = X->Bind.Def.Param.Tinit;
   double dt = ((X->Bind.Def.NLaser == 0) ? 0.0 : X->Bind.Def.Param.TimeSlice);
-  double complex **v2;  /**< Ttemporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
-
+  
   global_norm = d_1d_allocate(1);
 
   if (X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max) {

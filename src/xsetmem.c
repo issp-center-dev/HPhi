@@ -179,7 +179,7 @@ int setmem_large
   else if (X->Def.iCalcType == CG) {
     nstate = X->Def.k_exct;
   }
-  else if (X->Def.iCalcType == TPQCalc) {
+  else if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
     nstate = NumAve;
   }
   else {
@@ -189,9 +189,9 @@ int setmem_large
   v1 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
 
   if (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ) {
-      v2 = cd_1d_allocate(X->Check.idim_max + 1);
+      v2 = cd_2d_allocate(X->Check.idim_max + 1, nstate);
   } else {
-      v2 = cd_1d_allocate(1);
+      v2 = cd_2d_allocate(1, 1);
   }
 
   if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
@@ -199,6 +199,8 @@ int setmem_large
   } else {
       vg = cd_2d_allocate(X->Check.idim_max + 1, nstate);
   }
+  alpha = d_1d_allocate(X->Def.Lanczos_max + 1);
+  beta = d_1d_allocate(X->Def.Lanczos_max + 1);
 
   if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ || X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
       vec = cd_2d_allocate(X->Def.Lanczos_max + 1, X->Def.Lanczos_max + 1);

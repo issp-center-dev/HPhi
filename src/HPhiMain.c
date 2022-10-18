@@ -290,6 +290,15 @@ int main(int argc, char* argv[]){
     StopTimer(2000);
       
     switch (X.Bind.Def.iCalcType) {
+    case Lanczos:
+      StartTimer(4000);
+      if (CalcByLanczos(&X) != TRUE) {
+        StopTimer(4000);
+        exitMPI(-3);
+      }
+      StopTimer(4000);
+      break;
+
     case CG:
       if (CalcByLOBPCG(&X) != TRUE) {
           exitMPI(-3);

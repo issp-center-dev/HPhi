@@ -195,6 +195,21 @@ int check(struct BindStruct *X){
 
   X->Check.idim_max = comb_sum;
   switch(X->Def.iCalcType) {
+    case Lanczos:
+      switch (X->Def.iCalcModel) {
+      case Hubbard:
+      case HubbardNConserved:
+      case Kondo:
+      case KondoGC:
+      case Spin:
+        X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+        break;
+      case HubbardGC:
+      case SpinGC:
+        X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+        break;
+      }
+      break;
     case CG:
       switch (X->Def.iCalcModel) {
         case Hubbard:

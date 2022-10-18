@@ -654,7 +654,7 @@ int expec_totalspin
 
 int expec_totalSz(
   struct BindStruct* X,
-  double complex* vec
+  double complex** vec
 ) {
   X->Large.mode = M_TOTALS;
   switch (X->Def.iCalcModel) {
@@ -693,7 +693,7 @@ int expec_totalSz(
 void totalSz_HubbardGC
 (
   struct BindStruct* X,
-  double complex* vec
+  double complex** vec
 ) {
 
   long unsigned int j;
@@ -718,7 +718,7 @@ void totalSz_HubbardGC
       num1_sz = num1_up - num1_down;
 #pragma omp parallel for reduction(+:spn_z) default(none) firstprivate(i_max) private(j) shared(num1_sz,vec)
       for (j = 1; j <= i_max; j++) {
-        spn_z += (num1_sz) / 2.0 * conj(vec[j]) * vec[j];
+        spn_z += (num1_sz) / 2.0 * conj(vec[j][0]) * vec[j][0];
       }
 #endif
     }
@@ -733,7 +733,7 @@ void totalSz_HubbardGC
         num1_up = ibit1_up / is1_up;
         ibit1_down = list_1_j & is1_down;
         num1_down = ibit1_down / is1_down;
-        spn_z += conj(vec[j]) * vec[j] * (num1_up - num1_down) / 2.0;
+        spn_z += conj(vec[j][0]) * vec[j][0] * (num1_up - num1_down) / 2.0;
       }
     }
   }
@@ -753,7 +753,7 @@ void totalSz_HubbardGC
 void totalSz_SpinGC
 (
   struct BindStruct* X,
-  double complex* vec
+  double complex** vec
 ) {
   long unsigned int j, list_1_j;
   long unsigned int isite1;
@@ -776,7 +776,7 @@ void totalSz_SpinGC
         num1_down = 1 - num1_up;
 #pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(i_max, is1_up, num1_up, num1_down) shared(vec)
         for (j = 1; j <= i_max; j++) {
-          spn_z += conj(vec[j]) * vec[j] * (num1_up - num1_down) / 2.0;
+          spn_z += conj(vec[j][0]) * vec[j][0] * (num1_up - num1_down) / 2.0;
         }
 #endif
       }
@@ -788,7 +788,7 @@ void totalSz_SpinGC
           ibit1_up = list_1_j & is1_up;
           num1_up = ibit1_up / is1_up;
           num1_down = 1 - num1_up;
-          spn_z += conj(vec[j]) * vec[j] * (num1_up - num1_down) / 2.0;
+          spn_z += conj(vec[j][0]) * vec[j][0] * (num1_up - num1_down) / 2.0;
         }
       }//else
     }
@@ -800,14 +800,14 @@ void totalSz_SpinGC
         spn_z1 = 0.5 * GetLocal2Sz(isite1, (unsigned long int) myrank, X->Def.SiteToBit, X->Def.Tpow);
 #pragma omp parallel for reduction(+: spn_z) default(none) firstprivate(spn_z1, i_max) shared(vec)
         for (j = 1; j <= i_max; j++) {
-          spn_z += conj(vec[j]) * vec[j] * spn_z1;
+          spn_z += conj(vec[j][0]) * vec[j][0] * spn_z1;
         }
       }
       else {
 #pragma omp parallel for reduction(+:  spn_z) default(none) firstprivate(i_max, isite1, X) private(spn_z1) shared(vec)
         for (j = 1; j <= i_max; j++) {
           spn_z1 = 0.5 * GetLocal2Sz(isite1, j - 1, X->Def.SiteToBit, X->Def.Tpow);
-          spn_z += conj(vec[j]) * vec[j] * spn_z1;
+          spn_z += conj(vec[j][0]) * vec[j][0] * spn_z1;
         }
       }
     }//isite1

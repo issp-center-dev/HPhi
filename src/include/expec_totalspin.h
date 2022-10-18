@@ -20,5 +20,5 @@ int expec_totalspin(struct BindStruct *X, int nstate, double complex **vec);
 int expec_totalSz
 (
   struct BindStruct* X,
-  double complex* vec
+  double complex**vec
 );

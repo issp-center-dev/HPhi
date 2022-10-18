@@ -111,7 +111,7 @@ int CalcByLanczos(
       StartTimer(4200);
       Lanczos_EigenVector(&(X->Bind));
       StopTimer(4200);
-
+      
       StartTimer(4300);
       iret=expec_energy_flct(&(X->Bind), 1, v0, v1);
       StopTimer(4300);
@@ -123,7 +123,7 @@ int CalcByLanczos(
 
       fprintf(stdoutMPI, "\n");
       fprintf(stdoutMPI, "  Accuracy check !!!\n");
-      fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy,diff_ene,var);
+      fprintf(stdoutMPI, "  LanczosEnergy = %.14e \n  EnergyByVec   = %.14e \n  diff_ene      = %.14e \n  var           = %.14e \n",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy[0], diff_ene, var);
       if(diff_ene < eps_Energy && var< eps_Energy){
         fprintf(stdoutMPI, "  Accuracy of Lanczos vectors is enough.\n");
         fprintf(stdoutMPI, "\n");
@@ -145,13 +145,13 @@ int CalcByLanczos(
         diff_ene = fabs(X->Bind.Phys.Target_CG_energy-X->Bind.Phys.energy[0]) / fabs(X->Bind.Phys.Target_CG_energy);
         fprintf(stdoutMPI, "\n");
         fprintf(stdoutMPI, "  CG Accuracy check !!!\n");
-        fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy,diff_ene,var);
+        fprintf(stdoutMPI, "  LanczosEnergy = %.14e\n  EnergyByVec   = %.14e\n  diff_ene      = %.14e\n  var           = %.14e \n ",X->Bind.Phys.Target_CG_energy,X->Bind.Phys.energy[0], diff_ene, var);
         fprintf(stdoutMPI, "\n");
         //}
       }
     }
     else{//idim_max=1
-      v0[1]=1;
+      v0[1][0] = 1;
       StartTimer(4300);
       iret=expec_energy_flct(&(X->Bind), 1, v0, v1);
       StopTimer(4300);
@@ -253,9 +253,9 @@ int CalcByLanczos(
     exitMPI(-1);
   }
 
-  fprintf(fp,"Energy  %.16lf \n",X->Bind.Phys.energy);
-  fprintf(fp,"Doublon  %.16lf \n",X->Bind.Phys.doublon);
-  fprintf(fp,"Sz  %.16lf \n",X->Bind.Phys.Sz);
+  fprintf(fp,"Energy  %.16lf \n",X->Bind.Phys.energy[0]);
+  fprintf(fp,"Doublon  %.16lf \n",X->Bind.Phys.doublon[0]);
+  fprintf(fp,"Sz  %.16lf \n",X->Bind.Phys.Sz[0]);
   //    fprintf(fp,"total S^2  %.10lf \n",X->Bind.Phys.s2);    
   fclose(fp);
 
@@ -267,7 +267,7 @@ int CalcByLanczos(
     }
     fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr),1,fp);
     fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-    fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+    fwrite(&v1[0][0], sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
     fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecFinish, "a");
   }

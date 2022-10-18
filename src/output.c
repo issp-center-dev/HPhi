@@ -97,8 +97,8 @@ int outputHam(struct BindStruct *X){
   fprintf(fp, "%ld %ld %ld \n", imax, imax, ihermite);
   for (i=1; i<=imax; i++){
     for (j=1; j<=i; j++){
-      if(cabs(v0[i][j])>1.0e-13){
-        fprintf(fp, "%ld %ld %lf %lf\n",i,j,creal(v0[i][j]),cimag(v0[i][j]));
+      if(cabs(v0[i][j-1])>1.0e-13){
+        fprintf(fp, "%ld %ld %lf %lf\n",i,j,creal(v0[i][j-1]),cimag(v0[i][j-1]));
       }
     }
   }

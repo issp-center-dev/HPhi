@@ -626,7 +626,7 @@ shared(tmp_v0, tmp_v1,one,nstate)
     if (X->Def.InterAll_OffDiagonal[i][0] + 1 > X->Def.Nsite &&
         X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {
       StartTimer(521);
-      GC_general_int_spin_MPIdouble(i, X, tmp_v0, nstate, tmp_v1);
+      GC_general_int_spin_MPIdouble(i, X, nstate, tmp_v0, tmp_v1);
       StopTimer(521);
     }
     else if (X->Def.InterAll_OffDiagonal[i][4] + 1 > X->Def.Nsite) {

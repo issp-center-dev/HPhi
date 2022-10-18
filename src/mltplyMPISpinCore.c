@@ -997,21 +997,34 @@ double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle(
 firstprivate(X, tmp_V, isite, IniSpin, FinSpin) private(j, dmv, num1, off) \
 shared (tmp_v0, tmp_v1, v1buf,nstate,one)
   {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
-    for (j = 1; j <= X->Check.idim_max; j++) {
-      if (GetOffCompGeneralSpin(j - 1, isite, IniSpin, FinSpin, &off,
-        X->Def.SiteToBit, X->Def.Tpow) == TRUE)
-      {
-        dmv = tmp_V;
-        zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
-      }
-      else if (GetOffCompGeneralSpin(j - 1, isite, FinSpin, IniSpin, &off,
-        X->Def.SiteToBit, X->Def.Tpow) == TRUE)
-      {
-        dmv = conj(tmp_V);
-        zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
-      }
-    }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        if (GetOffCompGeneralSpin(j - 1, isite, IniSpin, FinSpin, &off,
+          X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+        {
+          dmv = tmp_V;
+          zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
+        }
+        else if (GetOffCompGeneralSpin(j - 1, isite, FinSpin, IniSpin, &off,
+          X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+        {
+          dmv = conj(tmp_V);
+          zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
+        }
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }
+    else {
+#pragma omp for
+      for (j = 1; j <= X->Check.idim_max; j++) {
+        if (GetOffCompGeneralSpin(j - 1, isite, IniSpin, FinSpin, &off,
+          X->Def.SiteToBit, X->Def.Tpow) == TRUE)
+        {
+          dmv = tmp_V;
+          zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
+        }
+      }/*for (j = 1; j <= X->Check.idim_max; j++)*/
+    }
   }/*End of parallel region*/
 }/*double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle*/
 /**

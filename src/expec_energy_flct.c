@@ -727,6 +727,7 @@ int expec_energy_flct(
 
   switch (X->Def.iCalcType) {
   case TPQCalc:
+  case cTPQ:
   case TimeEvolution:
 #ifdef _DEBUG
     fprintf(stdoutMPI, "%s", cLogExpecEnergyStart);
@@ -735,6 +736,7 @@ int expec_energy_flct(
     break;
   case FullDiag:
   case CG:
+  case Lanczos:
     break;
   default:
     return -1;
