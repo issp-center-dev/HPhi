@@ -71,9 +71,9 @@ struct BindStruct *X//!<[inout]
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
       Z_vec = malloc(mp*nq*sizeof(complex double));
-      diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
+      diag_scalapack_cmp(xMsize, v0, X->Phys.energy, Z_vec, descZ_vec);
     } else {
-      ZHEEVall(xMsize, Ham, v0, v1);
+      ZHEEVall(xMsize, v0, X->Phys.energy, v1);
     }
 #else
     ZHEEVall(xMsize, v0, X->Phys.energy, v1);

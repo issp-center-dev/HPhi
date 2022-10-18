@@ -10,6 +10,7 @@ method = "FullDiag"
 lattice = "chain"
 t = 1.0
 J = 4.0
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan.in

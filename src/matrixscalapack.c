@@ -198,7 +198,7 @@ void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, doubl
  * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
 int diag_scalapack_cmp(long int xNsize, double complex **A, 
-                       double complex *r, double complex *Z, int *descZ) {
+                       double *r, double complex *Z, int *descZ) {
   const int i_one=1, i_zero=0;
   const long int i_negone=-1;
   const double zero=0.0, one=1.0;

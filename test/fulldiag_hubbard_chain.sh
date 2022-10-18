@@ -12,6 +12,7 @@ t = 1.0
 U = 4.0
 nelec = 4
 2Sz = 0
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan.in

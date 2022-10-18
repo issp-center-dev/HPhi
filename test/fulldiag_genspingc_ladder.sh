@@ -12,6 +12,7 @@ lattice = "ladder"
 J0 = 1.0
 J1 = 1.0
 2S = 3
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan.in

@@ -12,6 +12,7 @@ model = "SpinGC"
 method = "FullDiag"
 lattice = "triangular"
 J = 1.0
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan.in

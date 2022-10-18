@@ -62,34 +62,24 @@ void phys(struct BindStruct *X, //!<[inout]
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
   for (i = 0; i < neig; i++) {
-    for (j = 0; j < i_max; j++) {
-      v0[j + 1] = 0.0;
-    }
     if (use_scalapack) {
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
       GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
       if (rank == 0) {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = vec_tmp[j];
+          v0[j + 1][i] = vec_tmp[j];
         }
       }
       else {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = 0.0;
+          v0[j + 1][i] = 0.0;
         }
       }
     }
     else {
       if (X->Def.iCalcType == FullDiag) {
-        if (myrank == 0) {
-          for (j = 0; j < i_max; j++) {
-            v0[j + 1] = v1[i][j];
-          }
-        }
-      }
-      else {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = v1[i][j];
+          v0[j + 1][i] = v1[j][i];
         }
       }
     }
@@ -109,29 +99,12 @@ void phys(struct BindStruct *X, //!<[inout]
     exitMPI(-1);
   }
     
-#ifdef _SCALAPACK
-  if (use_scalapack) {
-    if (X->Def.iCalcType == FullDiag) {
-      X->Phys.s2 = 0.0;
-      X->Phys.Sz = 0.0;
-    }
-  }
-  else {
-    if (X->Def.iCalcType == FullDiag) {
-      if (expec_totalspin(X, v1) != 0) {
-        fprintf(stderr, "Error: calc TotalSpin.\n");
-        exitMPI(-1);
-      }
-    }
-  }
-#else
   if (X->Def.iCalcType == FullDiag) {
     if (expec_totalspin(X, neig, v1) != 0) {
       fprintf(stderr, "Error: calc TotalSpin.\n");
       exitMPI(-1);
     }
   }
-#endif
 
   for (i = 0; i < neig; i++) {
     if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
@@ -141,19 +114,8 @@ void phys(struct BindStruct *X, //!<[inout]
       tmp_N = X->Phys.num_up[i] + X->Phys.num_down[i];
     }
     if (X->Def.iCalcType == FullDiag) {
-#ifdef _SCALAPACK
-      if (use_scalapack) {
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-          X->Phys.Sz, X->Phys.doublon);
-      }
-      else {
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-          X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
-      }
-#else
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",
         i, X->Phys.energy[i], tmp_N, X->Phys.Sz[i], X->Phys.s2[i], X->Phys.doublon[i]);
-#endif      
     }
     else if (X->Def.iCalcType == CG)
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n",
