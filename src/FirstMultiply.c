@@ -45,9 +45,7 @@ int FirstMultiply(struct BindStruct *X) {
   long int i, i_max;
   double complex dnorm;
   double Ns;
-  long unsigned int u_long_i;
-  dsfmt_t dsfmt;
-  int mythread, rand_i, iret;
+  int rand_i, iret;
 
   Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;

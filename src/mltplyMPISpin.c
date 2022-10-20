@@ -47,7 +47,7 @@ void general_int_spin_MPIdouble(
  When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex child_general_int_spin_MPIdouble(
+void child_general_int_spin_MPIdouble(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -100,7 +100,7 @@ double complex child_general_int_spin_MPIdouble(
   When both site1 and site2 are in the inter process region.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
-double complex child_general_int_spin_TotalS_MPIdouble(
+void child_general_int_spin_TotalS_MPIdouble(
   int org_isite1,//!<[in] site 1
   int org_isite3,//!<[in] site 3
   struct BindStruct *X,//!<[inout]
@@ -158,7 +158,7 @@ void general_int_spin_MPIsingle(
 @brief General interaction term of canonical spin system.
 site 3 is in the inter process region
 */
-double complex child_general_int_spin_MPIsingle(
+void child_general_int_spin_MPIsingle(
   int org_isite1,//!<[in] Site 1
   int org_ispin1,//!<[in] Spin 1
   int org_ispin2,//!<[in] Spin 2
@@ -232,7 +232,7 @@ void GC_general_int_spin_MPIdouble(
 ){
   if (X->Def.InterAll_OffDiagonal[i_int][1] == X->Def.InterAll_OffDiagonal[i_int][3] &&
       X->Def.InterAll_OffDiagonal[i_int][5] != X->Def.InterAll_OffDiagonal[i_int][7]) {
-    GC_CisAisCjuAjv_spin_MPIdouble(i_int, X, tmp_v0, nstate, tmp_v1);
+    GC_CisAisCjuAjv_spin_MPIdouble(i_int, X, nstate, tmp_v0, tmp_v1);
   }
   else if (X->Def.InterAll_OffDiagonal[i_int][1] != X->Def.InterAll_OffDiagonal[i_int][3] &&
            X->Def.InterAll_OffDiagonal[i_int][5] == X->Def.InterAll_OffDiagonal[i_int][7]) {

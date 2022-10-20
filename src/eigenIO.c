@@ -69,7 +69,7 @@ int OutputCmpEigenValue(int xNsize, complex double *ene, char *filename) {
 
   return 0;
 }
-
+/*
 int OutputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc, char *filename) {
   FILE *fp = NULL;
 
@@ -84,7 +84,8 @@ int OutputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc
 
   return 0;
 }
-
+*/
+/*
 int OutputCmpEigenVec(int xNsize, const int nene, complex double **vec, const int nproc, char *filename) {
   FILE *fp = NULL;
 
@@ -99,7 +100,8 @@ int OutputCmpEigenVec(int xNsize, const int nene, complex double **vec, const in
 
   return 0;
 }
-
+*/
+/*
 int InputRealEigenValue(int xNsize, double *ene, char *filename) {
   FILE *fp = NULL;
 
@@ -114,7 +116,8 @@ int InputRealEigenValue(int xNsize, double *ene, char *filename) {
 
   return 0;
 }
-
+*/
+/*
 int InputCmpEigenValue(int xNsize, complex double *ene, char *filename) {
   FILE *fp = NULL;
   fp = fopen(filename, "rb+");
@@ -128,7 +131,8 @@ int InputCmpEigenValue(int xNsize, complex double *ene, char *filename) {
 
   return 0;
 }
-
+*/
+/*
 int InputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc, char *filename) {
   FILE *fp = NULL;
 
@@ -143,7 +147,8 @@ int InputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc,
 
   return 0;
 }
-
+*/
+/*
 int InputCmpEigenVec(int xNsize, const int nene, complex double **vec, const int nproc, char *filename) {
   FILE *fp = NULL;
 
@@ -158,4 +163,4 @@ int InputCmpEigenVec(int xNsize, const int nene, complex double **vec, const int
 
   return 0;
 }
-
+*/

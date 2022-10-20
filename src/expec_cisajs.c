@@ -252,7 +252,7 @@ int expec_cisajs_SpinHalf(
       if (org_isite1 == org_isite2) {
         if (org_isite1 > X->Def.Nsite) {
           is1_up = X->Def.Tpow[org_isite1 - 1];
-          ibit1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, org_sigma1);
+          ibit1 = child_SpinGC_CisAis((unsigned long int)myrank + 1, is1_up, org_sigma1);
           if (ibit1 != 0) {
             zaxpy_long(i_max*nstate, 1.0, &vec[1][0], &Xvec[1][0]);
           }
@@ -262,7 +262,7 @@ int expec_cisajs_SpinHalf(
 #pragma omp parallel for default(none) private(j,dmv)  \
   firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            dmv = child_Spin_CisAis(j, X, isite1, org_sigma1);
+            dmv = child_Spin_CisAis(j, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
@@ -379,7 +379,7 @@ int expec_cisajs_SpinGCHalf(
 #pragma omp parallel for default(none) private(j, tmp_sgn,dmv) \
   firstprivate(i_max, isite1, org_sigma1, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            dmv = child_SpinGC_CisAis(j, X, isite1, org_sigma1);
+            dmv = child_SpinGC_CisAis(j, isite1, org_sigma1);
             zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[j][0], &one);
           }
         }
@@ -388,7 +388,7 @@ int expec_cisajs_SpinGCHalf(
 #pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off,dmv) \
   firstprivate(i_max, isite1, org_sigma2, X) shared(vec,Xvec,nstate,one)
           for (j = 1; j <= i_max; j++) {
-            tmp_sgn = child_SpinGC_CisAit(j, X, isite1, org_sigma2, &tmp_off);
+            tmp_sgn = child_SpinGC_CisAit(j, isite1, org_sigma2, &tmp_off);
             if (tmp_sgn != 0) {
               dmv = (double complex)tmp_sgn;
               zaxpy_(&nstate, &dmv, &vec[j][0], &one, &Xvec[tmp_off + 1][0], &one);

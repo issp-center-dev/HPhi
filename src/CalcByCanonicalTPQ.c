@@ -61,7 +61,7 @@ int CalcByCanonicalTPQ(
   unsigned long int i_max;
   int step_iO = 0;
   FILE* fp;
-  double inv_temp, Ns, delta_tau;
+  double inv_temp, delta_tau;
   struct TimeKeepStruct tstruct;
   size_t byte_size;
 
@@ -81,7 +81,6 @@ int CalcByCanonicalTPQ(
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
 
-  Ns = 1.0 * X->Bind.Def.NsiteMPI;
   //fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
   iret = 0;
   //X->Bind.Def.irand = rand_i;

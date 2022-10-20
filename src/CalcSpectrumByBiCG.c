@@ -177,7 +177,7 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int idcSpectrum, iret;
+  int idcSpectrum;
   unsigned long int liLanczosStp_vec = 0;
   double complex **vL, **v12, **v14, *res_proj;
   int stp, status[3], iomega;

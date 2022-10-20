@@ -74,7 +74,6 @@ int general_hopp_GetInfo(
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
 int general_int_GetInfo(
-  int iInterAll,//!<[in] It is not used
   struct BindStruct *X,//!<[inout]
   long unsigned int isite1,//!<[in] Site index
   long unsigned int isite2,//!<[in] Site index
@@ -234,7 +233,6 @@ void GC_CisAis(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Mask for occupation of @f$(i \sigma)@f$
   double complex tmp_trans//!<[in] Transfer integral
 ) {
@@ -254,9 +252,9 @@ void GC_CisAis(
 */
 void GC_AisCis(
   long unsigned int j,//!<[in] Index of element of wavefunction
-  int nstate, double complex **tmp_v0,//!<[inout] Result vector
+  int nstate, 
+  double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Mask for occupation of @f$(i \sigma)@f$
   double complex tmp_trans//!<[in] Transfer integral
 ) {
@@ -278,7 +276,6 @@ void GC_AisCis(
 */
 int child_CisAis(
   long unsigned int list_1_j,
-  struct BindStruct *X,
   long unsigned int is1_spin
 ) {
   int A_ibit_tmp;
@@ -335,7 +332,6 @@ void GC_CisAjt(
   long unsigned int j,//!<[in] Index of wavefunction
   int nstate, double complex **tmp_v0,//!<[in] @f$v_0 = H v_1@f$
   double complex **tmp_v1,//!<[in]Vector to be producted
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
   long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
   long unsigned int sum_spin,//!<[in] Mask for hopping
@@ -385,7 +381,7 @@ int child_CisAjt(
   long unsigned int off;
   int sgn = 1;
 
-  sgn = child_GC_CisAjt(list_1_j, X, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
+  sgn = child_GC_CisAjt(list_1_j, is1_spin, is2_spin, sum_spin, diff_spin, tmp_off);
   if (sgn != 0) {
     if(GetOffComp(list_2_1, list_2_2, *tmp_off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)!=TRUE){
       *tmp_off = 0;
@@ -407,7 +403,6 @@ int child_CisAjt(
 */
 int child_GC_CisAjt(
   long unsigned int list_1_j,//!<[in] ::list_1 ?
-  struct BindStruct *X,//!<[in]
   long unsigned int is1_spin,//!<[in] Mask for occupation of (is)
   long unsigned int is2_spin,//!<[in] Mask for occupation of (jt)
   long unsigned int sum_spin,//!<[in] Mask for hopping
@@ -445,7 +440,7 @@ int child_GC_CisAjt(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex exchange_element(
+void exchange_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate, //!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] @f$v_0 = H v_1@f$
@@ -498,7 +493,7 @@ double complex exchange_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex pairhopp_element(
+void pairhopp_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
@@ -542,7 +537,7 @@ double complex pairhopp_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_exchange_element(
+void GC_exchange_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
@@ -592,7 +587,7 @@ double complex GC_exchange_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_pairhopp_element(
+void GC_pairhopp_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
@@ -636,22 +631,20 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex CisAisCisAis_element(
+void CisAisCisAis_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite3,//!<[in] Site 3
   double complex tmp_V,//!<[in] Coupling constant
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
-  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
-  long unsigned int *tmp_off//!<[out] Index of final wavefunction
+  double complex **tmp_v1//!<[in] Wavefunction to be multiplied
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_CisAis(list_1[j], X, isite3);
-  tmp_sgn *= child_CisAis(list_1[j], X, isite1);
+  tmp_sgn = child_CisAis(list_1[j], isite3);
+  tmp_sgn *= child_CisAis(list_1[j], isite1);
   dmv = tmp_V * tmp_sgn;
   zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
  }/*double complex CisAisCisAis_element*/
@@ -661,7 +654,7 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex CisAisCjtAku_element(
+void CisAisCjtAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite3,//!<[in] Site 3
@@ -680,7 +673,7 @@ double complex CisAisCjtAku_element(
   int one = 1;
   tmp_sgn = child_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAis(list_1[*tmp_off], X, isite1);
+    tmp_sgn *= child_CisAis(list_1[*tmp_off], isite1);
     if (tmp_sgn != 0) {
       dmv = tmp_V * tmp_sgn;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off][0], &one);
@@ -693,7 +686,7 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex CisAjtCkuAku_element(
+void CisAjtCkuAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite2,//!<[in] Site 2
@@ -710,7 +703,7 @@ double complex CisAjtCkuAku_element(
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_CisAis(list_1[j], X, isite3);
+  tmp_sgn = child_CisAis(list_1[j], isite3);
   if (tmp_sgn != 0) {
     tmp_sgn *= child_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
     if (tmp_sgn != 0) {
@@ -725,7 +718,7 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex CisAjtCkuAlv_element(
+void CisAjtCkuAlv_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite2,//!<[in] Site 2
@@ -747,7 +740,7 @@ double complex CisAjtCkuAlv_element(
   int one = 1;
 
   double complex dmv;
-  tmp_sgn = child_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
+  tmp_sgn = child_GC_CisAjt(list_1[j], isite3, isite4, Bsum, Bdiff, &tmp_off_1);
 
   if (tmp_sgn != 0) {
     tmp_sgn *= child_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
@@ -764,22 +757,20 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAisCisAis_element(
+void GC_CisAisCisAis_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite3,//!<[in] Site 3
   double complex tmp_V,//!<[in] Coupling constant
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
-  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
-  long unsigned int *tmp_off//!<[out] Index of final wavefunction
+  double complex **tmp_v1//!<[in] Wavefunction to be multiplied
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_CisAis(j - 1, X, isite3);
-  tmp_sgn *= child_CisAis(j - 1, X, isite1);
+  tmp_sgn = child_CisAis(j - 1, isite3);
+  tmp_sgn *= child_CisAis(j - 1, isite1);
   if (tmp_sgn != 0) {
     dmv = tmp_V * tmp_sgn;
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
@@ -791,7 +782,7 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAisCjtAku_element(
+void GC_CisAisCjtAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite3,//!<[in] Site 3
@@ -802,15 +793,14 @@ double complex GC_CisAisCjtAku_element(
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
+  tmp_sgn = child_GC_CisAjt((j - 1), isite3, isite4, Bsum, Bdiff, tmp_off);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAis(*tmp_off, X, isite1);
+    tmp_sgn *= child_CisAis(*tmp_off, isite1);
     if (tmp_sgn != 0) {
       dmv = tmp_V * tmp_sgn;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
@@ -823,7 +813,7 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAjtCkuAku_element(
+void GC_CisAjtCkuAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite2,//!<[in] Site 2
@@ -834,15 +824,14 @@ double complex GC_CisAjtCkuAku_element(
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_CisAis((j - 1), X, isite3);
+  tmp_sgn = child_CisAis(j - 1, isite3);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
+    tmp_sgn *= child_GC_CisAjt(j - 1, isite1, isite2, Asum, Adiff, tmp_off);
     if (tmp_sgn != 0) {
       dmv = tmp_V * tmp_sgn;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
@@ -855,7 +844,7 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAjtCkuAlv_element(
+void GC_CisAjtCkuAlv_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
   long unsigned int isite2,//!<[in] Site 2
@@ -869,7 +858,6 @@ double complex GC_CisAjtCkuAlv_element(
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[inout] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
@@ -877,9 +865,9 @@ double complex GC_CisAjtCkuAlv_element(
   double complex dmv;
   int one = 1;
 
-  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
+  tmp_sgn = child_GC_CisAjt(j - 1, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
+    tmp_sgn *= child_GC_CisAjt(tmp_off_1, isite1, isite2, Asum, Adiff, tmp_off_2);
     if (tmp_sgn != 0) {
       dmv = tmp_V * tmp_sgn;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off_2 + 1][0], &one);

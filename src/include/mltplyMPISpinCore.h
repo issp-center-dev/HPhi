@@ -21,7 +21,7 @@
 #include <complex.h>
 #include "struct.h"
 
-double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble
+void child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -34,7 +34,7 @@ double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAju_GeneralSpin_MPIdouble
+void child_GC_CisAitCjuAju_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -47,7 +47,7 @@ double complex child_GC_CisAitCjuAju_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble
+void child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -62,7 +62,7 @@ double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble
  );
 
 //general spin - single 
-double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle
+void child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -75,7 +75,7 @@ double complex child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle
+void child_GC_CisAitCjuAju_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -88,7 +88,7 @@ double complex child_GC_CisAitCjuAju_GeneralSpin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle
+void child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -102,7 +102,7 @@ double complex child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAit_GeneralSpin_MPIdouble
+void child_GC_CisAit_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -113,7 +113,7 @@ double complex child_GC_CisAit_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAis_GeneralSpin_MPIdouble
+void child_GC_CisAis_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -123,7 +123,7 @@ double complex child_GC_CisAis_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_AisCis_GeneralSpin_MPIdouble
+void child_GC_AisCis_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -133,7 +133,7 @@ double complex child_GC_AisCis_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAju_GeneralSpin_MPIdouble
+void child_GC_CisAisCjuAju_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -145,7 +145,7 @@ double complex child_GC_CisAisCjuAju_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAju_GeneralSpin_MPIsingle
+void child_GC_CisAisCjuAju_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -157,7 +157,7 @@ double complex child_GC_CisAisCjuAju_GeneralSpin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_CisAit_GeneralSpin_MPIdouble
+void child_CisAit_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -170,7 +170,7 @@ double complex child_CisAit_GeneralSpin_MPIdouble
  );
 
 
-double complex child_GC_CisAitCiuAiv_spin_MPIdouble
+void child_GC_CisAitCiuAiv_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -184,7 +184,7 @@ double complex child_GC_CisAitCiuAiv_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAjv_spin_MPIdouble
+void child_GC_CisAisCjuAjv_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -197,7 +197,7 @@ double complex child_GC_CisAisCjuAjv_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAju_spin_MPIdouble
+void child_GC_CisAitCjuAju_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -210,7 +210,7 @@ double complex child_GC_CisAitCjuAju_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAju_spin_MPIdouble
+void child_GC_CisAisCjuAju_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -222,7 +222,7 @@ double complex child_GC_CisAisCjuAju_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCiuAiv_spin_MPIsingle
+void child_GC_CisAitCiuAiv_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -236,7 +236,7 @@ double complex child_GC_CisAitCiuAiv_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAjv_spin_MPIsingle
+void child_GC_CisAisCjuAjv_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -249,7 +249,7 @@ double complex child_GC_CisAisCjuAjv_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAitCjuAju_spin_MPIsingle
+void child_GC_CisAitCjuAju_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin2,
@@ -261,7 +261,7 @@ double complex child_GC_CisAitCjuAju_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAju_spin_MPIsingle
+void child_GC_CisAisCjuAju_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -273,7 +273,7 @@ double complex child_GC_CisAisCjuAju_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjuAju_spin_MPIsingle
+void child_GC_CisAisCjuAju_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -285,7 +285,7 @@ double complex child_GC_CisAisCjuAju_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAit_spin_MPIdouble
+void child_GC_CisAit_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -296,7 +296,7 @@ double complex child_GC_CisAit_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_CisAis_spin_MPIdouble
+void child_GC_CisAis_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -306,7 +306,7 @@ double complex child_GC_CisAis_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_GC_AisCis_spin_MPIdouble
+void child_GC_AisCis_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -316,7 +316,7 @@ double complex child_GC_AisCis_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_CisAit_spin_MPIdouble
+void child_CisAit_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin2,
@@ -328,7 +328,7 @@ double complex child_CisAit_spin_MPIdouble
  unsigned long int idim_max
  );
 
-double complex child_CisAisCjuAju_GeneralSpin_MPIdouble
+void child_CisAisCjuAju_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -340,7 +340,7 @@ double complex child_CisAisCjuAju_GeneralSpin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_CisAitCjuAjv_GeneralSpin_MPIdouble
+void child_CisAitCjuAjv_GeneralSpin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -355,7 +355,7 @@ double complex child_CisAitCjuAjv_GeneralSpin_MPIdouble
  );
 
 //general spin - single 
-double complex child_CisAisCjuAju_GeneralSpin_MPIsingle
+void child_CisAisCjuAju_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -367,7 +367,7 @@ double complex child_CisAisCjuAju_GeneralSpin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_CisAitCjuAjv_GeneralSpin_MPIsingle
+void child_CisAitCjuAjv_GeneralSpin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,

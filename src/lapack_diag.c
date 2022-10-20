@@ -42,7 +42,7 @@ struct BindStruct *X//!<[inout]
 #ifdef _SCALAPACK
   int rank, size, nprocs, nprow, npcol, myrow, mycol, ictxt;
   int i_negone=-1, i_zero=0, iam;
-  long int mb, nb, mp, nq;
+  long int mb, mp, nq;
   int dims[2]={0,0};
 #endif
 

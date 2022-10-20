@@ -24,6 +24,7 @@
 #include "Lanczos_EigenValue.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "matrixlapack.h"
 
 /**
  * @file   Lanczos_EigenValue.c
@@ -325,7 +326,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
         struct BindStruct *X,
         double *_alpha,
         double *_beta,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         unsigned long int *liLanczos_step
  ) {
 
@@ -353,12 +354,12 @@ int Lanczos_GetTridiagonalMatrixComponents(
 #pragma omp parallel for default(none) private(i) shared(v0, v1, tmp_v1) firstprivate(i_max)
     for (i = 1; i <= i_max; i++) {
       v0[i][0] = 0.0;
-      v1[i][0] = tmp_v1[i];
+      v1[i][0] = tmp_v1[i][0];
     }
     stp = 0;
     mltply(X, 1, v0, tmp_v1);
     TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-    alpha1 = creal(VecProdMPI(i_max, tmp_v1, &v0[0][0]));// alpha = v^{\dag}*H*v
+    alpha1 = creal(VecProdMPI(i_max, &tmp_v1[0][0], &v0[0][0]));// alpha = v^{\dag}*H*v
     _alpha[1] = alpha1;
     cbeta1 = 0.0;
     fprintf(stdoutMPI, "  Step / Step_max alpha beta \n");

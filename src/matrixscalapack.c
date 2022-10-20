@@ -201,7 +201,6 @@ int diag_scalapack_cmp(long int xNsize, double complex **A,
                        double *r, double complex *Z, int *descZ) {
   const int i_one=1, i_zero=0;
   const long int i_negone=-1;
-  const double zero=0.0, one=1.0;
   long int m, n, mb, nb;
   int nprow, npcol;
   int myrow, mycol, info, lld;
@@ -213,7 +212,7 @@ int diag_scalapack_cmp(long int xNsize, double complex **A,
   int rank, size, iam, nprocs;
   long int lwork, lrwork;
   int dims[2]={0,0};
-  long int i, j, ip, jp;
+  long int i, j;
   m=n=xNsize;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);

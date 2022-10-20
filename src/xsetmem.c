@@ -247,6 +247,7 @@ int setmem_large
 /// \param NInterAll [in] Total number of InterAll interactions.
 /// \author Kazuyoshi Yoshimi
 /// \version 1.2
+/*
 void setmem_IntAll_Diagonal(
   int **InterAllOffDiagonal,
   double complex *ParaInterAllOffDiagonal,
@@ -259,6 +260,7 @@ void setmem_IntAll_Diagonal(
   InterAllDiagonal = i_2d_allocate(NInterAll, 4);
   ParaInterAllDiagonal = d_1d_allocate(NInterAll);
 }
+*/
 ///
 /// \brief Set size of lists for the canonical ensemble.
 /// \param X [in,out] Give the information for getting the list size and get the lists.\n

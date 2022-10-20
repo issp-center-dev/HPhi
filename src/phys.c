@@ -52,7 +52,7 @@ void phys(struct BindStruct *X, //!<[inout]
   double tmp_N;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
-  int ictxt, ierr, rank;
+  int rank;
   long unsigned int j, i_max;
 
   i_max = X->Check.idim_max;

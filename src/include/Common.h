@@ -30,8 +30,8 @@
 #include <sys/types.h>
 #include "ProgressMessage.h"
 #include "ErrorMessage.h"
-#include "struct.h"
 #include "log.h"
+#include "struct.h"
 #include "dSFMT.h"
 
 #endif /* HPHI_COMMON_H */

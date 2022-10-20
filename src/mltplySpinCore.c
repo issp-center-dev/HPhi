@@ -145,7 +145,7 @@ int child_Spin_CisAit(
   long unsigned int list_1_j;
   long unsigned int off;
   list_1_j = list_1_org[j];
-  if (child_SpinGC_CisAit(list_1_j + 1, X, is1_spin, sigma2, &off) != 0) {
+  if (child_SpinGC_CisAit(list_1_j + 1, is1_spin, sigma2, &off) != 0) {
     GetOffComp(list_2_1, list_2_2, off, X->Large.irght, X->Large.ilft, X->Large.ihfbit, tmp_off);
     return 1;
   }
@@ -162,7 +162,6 @@ int child_Spin_CisAit(
 */
 int child_Spin_CisAis(
   long unsigned int j,//!<[in] Index of wavefunction
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Bit mask
   long unsigned int sigma1//!<[in] Target spin state
 ) {
@@ -179,7 +178,6 @@ int child_Spin_CisAis(
 */
 int child_SpinGC_CisAis(
   long unsigned int j,//!<[in] Index of wavefunction
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Bit mask
   long unsigned int sigma1//!<[in] Target spin state
 ) {
@@ -199,7 +197,6 @@ int child_SpinGC_CisAis(
 */
 int child_SpinGC_CisAit(
   long unsigned int j,//!<[in] Index of wavefunction
-  struct BindStruct *X,//!<[inout]
   long unsigned int is1_spin,//!<[in] Bit mask for computing spin state
   long unsigned int sigma2,//!<[in] Spin state at site 2
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
@@ -266,7 +263,7 @@ int child_exchange_spin_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex exchange_spin_element(
+void exchange_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[out] Resulting wavefunction
@@ -300,7 +297,7 @@ double complex exchange_spin_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_exchange_spin_element(
+void GC_exchange_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[out] Resulting wavefunction
@@ -331,7 +328,7 @@ double complex GC_exchange_spin_element(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_pairlift_spin_element(
+void GC_pairlift_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[out] Resulting wavefunction
@@ -361,7 +358,7 @@ canonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex CisAisCisAis_spin_element(
+void CisAisCisAis_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
   long unsigned int isB_up,//!<[in] Bit mask for spin 2
@@ -370,15 +367,14 @@ double complex CisAisCisAis_spin_element(
   double complex tmp_V,//!<[in] Coupling constatnt
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[in] Resulting wavefunction
-  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X//!<[inout]
+  double complex **tmp_v1//!<[in] Wavefunction to be multiplied
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
 
-  tmp_sgn = child_Spin_CisAis(j, X, isB_up, org_sigma4);
-  tmp_sgn *= child_Spin_CisAis(j, X, isA_up, org_sigma2);
+  tmp_sgn = child_Spin_CisAis(j, isB_up, org_sigma4);
+  tmp_sgn *= child_Spin_CisAis(j, isA_up, org_sigma2);
   dmv = tmp_sgn * tmp_V;
   zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
 }/*double complex CisAisCisAis_spin_element*/
@@ -392,7 +388,7 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAisCisAis_spin_element(
+void GC_CisAisCisAis_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
   long unsigned int isB_up,//!<[in] Bit mask for spin 2
@@ -401,15 +397,14 @@ double complex GC_CisAisCisAis_spin_element(
   double complex tmp_V,//!<[in] Coupling constatnt
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[in] Resulting wavefunction
-  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X//!<[inout]
+  double complex **tmp_v1//!<[in] Wavefunction to be multiplied
 ) {
   int tmp_sgn;
   double complex dmv = 0;
   int one = 1;
 
-  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
-  tmp_sgn *= child_SpinGC_CisAis(j, X, isA_up, org_sigma2);
+  tmp_sgn = child_SpinGC_CisAis(j, isB_up, org_sigma4);
+  tmp_sgn *= child_SpinGC_CisAis(j, isA_up, org_sigma2);
   if (tmp_sgn != 0) {
     dmv = tmp_sgn * tmp_V;
     zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
@@ -421,7 +416,7 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAisCitAiu_spin_element(
+void GC_CisAisCitAiu_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
   long unsigned int org_sigma4,//!<[in] Target for spin 2
@@ -431,15 +426,14 @@ double complex GC_CisAisCitAiu_spin_element(
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[in] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, tmp_off);
+  tmp_sgn = child_SpinGC_CisAit(j, isB_up, org_sigma4, tmp_off);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAis((*tmp_off + 1), X, isA_up, org_sigma2);
+    tmp_sgn *= child_SpinGC_CisAis(*tmp_off + 1, isA_up, org_sigma2);
     if (tmp_sgn != 0) {
       dmv = tmp_sgn * tmp_V;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
@@ -452,7 +446,7 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAitCiuAiu_spin_element(
+void GC_CisAitCiuAiu_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
   long unsigned int org_sigma4,//!<[in] Target for spin 2
@@ -461,15 +455,14 @@ double complex GC_CisAitCiuAiu_spin_element(
   double complex tmp_V,//!<[in] Coupling constatnt
   int nstate, double complex **tmp_v0,//!<[in] Resulting wavefunction
   double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
+  tmp_sgn = child_SpinGC_CisAis(j, isB_up, org_sigma4);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAit(j, X, isA_up, org_sigma2, tmp_off);
+    tmp_sgn *= child_SpinGC_CisAit(j, isA_up, org_sigma2, tmp_off);
     if (tmp_sgn != 0) {
       dmv = tmp_sgn * tmp_V;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off + 1][0], &one);
@@ -482,7 +475,7 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_CisAitCiuAiv_spin_element(
+void GC_CisAitCiuAiv_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
   long unsigned int org_sigma4,//!<[in] Target for spin 2
@@ -491,17 +484,16 @@ double complex GC_CisAitCiuAiv_spin_element(
   double complex tmp_V,//!<[in] Coupling constatnt
   int nstate,//!<[in] Number of vectors
   double complex **tmp_v0,//!<[in] Resulting wavefunction
-  double complex **tmp_v1,//!<[in] Wavefunction to be multiplied
-  struct BindStruct *X,//!<[inout]
+  double complex **tmp_v1,//!<[in] Wavefunction to be multiplieds
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
   long unsigned int tmp_off_1;
   double complex dmv;
   int one = 1;
-  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, &tmp_off_1);
+  tmp_sgn = child_SpinGC_CisAit(j, isB_up, org_sigma4, &tmp_off_1);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAit((tmp_off_1 + 1), X, isA_up, org_sigma2, tmp_off_2);
+    tmp_sgn *= child_SpinGC_CisAit(tmp_off_1 + 1, isA_up, org_sigma2, tmp_off_2);
     if (tmp_sgn != 0) {
       dmv = tmp_sgn * tmp_V;
       zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[*tmp_off_2 + 1][0], &one);

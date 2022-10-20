@@ -42,14 +42,12 @@ int MakeIniVec(struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
-  double Ns;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
   int mythread, rand_i;
   double rand_X,rand_Y;
   double complex rand_Z1,rand_Z2;
 
-  Ns = 1.0*X->Def.NsiteMPI;
   i_max = X->Check.idim_max;
 
   for (rand_i = 0; rand_i < NumAve; rand_i++) {

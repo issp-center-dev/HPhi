@@ -463,17 +463,11 @@ void mltplyHalfSpinGC_mini(
   double complex **tmp_v1//!<[in] Input producted vector
 ) {
   long unsigned int j;
-  long unsigned int i;
-  long unsigned int off = 0;
-  long unsigned int is1_spin = 0;
   /**/
   long unsigned int isite1;
   long unsigned int org_isite1, org_isite2;
-  long unsigned int org_sigma1, org_sigma2, org_sigma3, org_sigma4;
-  long unsigned int isA_up, isB_up;
+  long unsigned int org_sigma1, org_sigma2;
   long unsigned int tmp_off = 0;
-  double complex dam_pr;
-  double complex tmp_trans;
   long int tmp_sgn;
   /*[s] For InterAll */
   double complex tmp_V;
@@ -482,8 +476,7 @@ void mltplyHalfSpinGC_mini(
   long unsigned int i_max;
   i_max = X->Check.idim_max;
 
-  int ihermite=0;
-  int idx=0, one = 1;
+  int one = 1;
 
   //EDGeneralTransfer[i][0] -> site_i  
   //EDGeneralTransfer[i][1] -> spin_i  
@@ -494,32 +487,31 @@ void mltplyHalfSpinGC_mini(
   org_isite2 = site_j+1;
   org_sigma1 = spin_i;
   org_sigma2 = spin_j;
-  dam_pr=0.0;
   if(org_isite1 == org_isite2){
     if(org_isite1 > X->Def.Nsite){
       if(org_sigma1==org_sigma2){  // longitudinal magnetic field
-        dam_pr += child_GC_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, nstate, tmp_v0, tmp_v1);
+        child_GC_CisAis_spin_MPIdouble(org_isite1-1, org_sigma1, 1.0, X, nstate, tmp_v0, tmp_v1);
       }else{  // transverse magnetic field
         X->Large.mode = M_MLTPLY2;
-        dam_pr += child_GC_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, nstate, tmp_v0, tmp_v1);
+        child_GC_CisAit_spin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, 1.0, X, nstate, tmp_v0, tmp_v1);
         X->Large.mode = M_MLTPLY;
       }
     }else{
       isite1 = X->Def.Tpow[org_isite1-1];
       if(org_sigma1==org_sigma2){
        // longitudinal magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_V) \
+#pragma omp parallel for default(none) private(j, tmp_sgn, tmp_V) \
 firstprivate(i_max, isite1, org_sigma1, X) shared(tmp_v0,tmp_v1,one,nstate)
         for(j=1;j<=i_max;j++){
-          tmp_V = child_SpinGC_CisAis(j, X, isite1, org_sigma1);
+          tmp_V = child_SpinGC_CisAis(j, isite1, org_sigma1);
           zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
         }
       }else{
         // transverse magnetic field
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, tmp_sgn, tmp_off, tmp_V) \
+#pragma omp parallel for default(none) private(j, tmp_sgn, tmp_off, tmp_V) \
 firstprivate(i_max, isite1, org_sigma2, X) shared(tmp_v0,tmp_v1,one,nstate)
         for(j=1;j <= i_max;j++){
-          tmp_sgn  =  child_SpinGC_CisAit(j,X,isite1,org_sigma2,&tmp_off);
+          tmp_sgn  =  child_SpinGC_CisAit(j,isite1,org_sigma2,&tmp_off);
           if(tmp_sgn !=0){
             tmp_V = tmp_sgn;
             zaxpy_(&nstate, &tmp_V, &tmp_v1[j][0], &one, &tmp_v0[tmp_off + 1][0], &one);
@@ -607,7 +599,7 @@ int mltplyHalfSpinGC(
 private(j, tmp_sgn) firstprivate(i_max, is1_spin, sigma2, X,off, tmp_trans) \
 shared(tmp_v0, tmp_v1,one,nstate)
           for (j = 1; j <= i_max; j++) {
-            tmp_sgn = child_SpinGC_CisAit(j, X, is1_spin, sigma2, &off);
+            tmp_sgn = child_SpinGC_CisAit(j, is1_spin, sigma2, &off);
             if(tmp_sgn !=0){
               zaxpy_(&nstate, &tmp_trans, &tmp_v1[j][0], &one, &tmp_v0[off + 1][0], &one);
             }/*if(tmp_sgn !=0)*/
@@ -927,7 +919,7 @@ shared(tmp_v0, tmp_v1,one,nstate)
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex exchange_spin(
+void exchange_spin(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
@@ -947,7 +939,7 @@ double complex exchange_spin(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_exchange_spin(
+void GC_exchange_spin(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
@@ -967,7 +959,7 @@ double complex GC_exchange_spin(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_pairlift_spin(
+void GC_pairlift_spin(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
@@ -987,7 +979,7 @@ double complex GC_pairlift_spin(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex general_int_spin(
+void general_int_spin(
   int nstate,
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
@@ -1024,7 +1016,7 @@ shared(tmp_v1, tmp_v0,one,nstate)
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
-double complex GC_general_int_spin(
+void GC_general_int_spin(
   int nstate, 
   double complex **tmp_v0,//!<[inout] Result vector
   double complex **tmp_v1,//!<[in] Input producted vector
@@ -1056,25 +1048,25 @@ firstprivate(i_max,X,isA_up,isB_up,org_sigma1,org_sigma2,org_sigma3,org_sigma4,t
 #pragma omp for
       for (j = 1; j <= i_max; j++)
         GC_CisAisCisAis_spin_element(
-          j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, nstate, tmp_v0, tmp_v1, X);
+          j, isA_up, isB_up, org_sigma2, org_sigma4, tmp_V, nstate, tmp_v0, tmp_v1);
     }
     else if (org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
         GC_CisAisCitAiu_spin_element(
-          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
+          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, &tmp_off);
     }
     else if (org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
         GC_CisAitCiuAiu_spin_element(
-          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
+          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, &tmp_off);
     }
     else if (org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4) {
 #pragma omp for
       for (j = 1; j <= i_max; j++)
         GC_CisAitCiuAiv_spin_element(
-          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, X, &tmp_off);
+          j, org_sigma2, org_sigma4, isA_up, isB_up, tmp_V, nstate, tmp_v0, tmp_v1, &tmp_off);
     }
   }/*End of parallel region*/
 }/*double complex GC_general_int_spin*/

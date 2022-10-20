@@ -108,7 +108,7 @@ int GetPairExcitedStateHubbardGC(
 #pragma omp parallel for default(none) private(j) \
 firstprivate(i_max,X,isite1, tmp_trans) shared(tmp_v0,tmp_v1,nstate)
         for (j = 1; j <= i_max; j++) {
-          GC_AisCis(j, nstate, tmp_v0, tmp_v1, X, isite1, -tmp_trans);
+          GC_AisCis(j, nstate, tmp_v0, tmp_v1, isite1, -tmp_trans);
         }
       }
       else {

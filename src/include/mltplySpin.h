@@ -44,14 +44,14 @@ int mltplyGeneralSpinGC(struct BindStruct *X, int nstate, double complex **tmp_v
 
 int mltplySpinGCBoost(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-double complex GC_general_int_spin
+void GC_general_int_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex general_int_spin
+void general_int_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
@@ -59,21 +59,21 @@ double complex general_int_spin
  );
 
 
-double complex GC_exchange_spin
+void GC_exchange_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex exchange_spin
+void exchange_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_pairlift_spin
+void GC_pairlift_spin
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,

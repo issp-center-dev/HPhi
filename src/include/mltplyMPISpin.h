@@ -29,7 +29,7 @@ void general_int_spin_MPIdouble
  double complex **tmp_v1
  );
 
-double complex child_general_int_spin_MPIdouble
+void child_general_int_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -45,7 +45,7 @@ double complex child_general_int_spin_MPIdouble
  );
 
 
-double complex child_general_int_spin_TotalS_MPIdouble
+void child_general_int_spin_TotalS_MPIdouble
 (
  int org_isite1,
  int org_isite3,
@@ -63,7 +63,7 @@ void general_int_spin_MPIsingle
  double complex **tmp_v1
  );
 
-double complex child_general_int_spin_MPIsingle
+void child_general_int_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,

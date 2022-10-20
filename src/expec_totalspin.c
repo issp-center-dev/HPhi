@@ -224,8 +224,6 @@ void totalspin_Spin(
   double complex spn_z = 0.0;
   double complex spn_z1 = 0.0;
   double complex spn_z2 = 0.0;
-  double complex spn_zd = 0.0;
-  double complex spn = 0.0;
   long unsigned int i_max;
 
   i_max = X->Check.idim_max;
@@ -243,9 +241,9 @@ void totalspin_Spin(
           is1_up = X->Def.Tpow[isite1 - 1];
           is2_up = X->Def.Tpow[isite2 - 1];
           is_up = is1_up + is2_up;
-          num1_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, 1);
+          num1_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, is1_up, 1);
           num1_down = 1 - num1_up;
-          num2_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, is2_up, 1);
+          num2_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, is2_up, 1);
           num2_down = 1 - num2_up;
           spn_z = (num1_up - num1_down) * (num2_up - num2_down);
 
@@ -259,7 +257,7 @@ void totalspin_Spin(
                 X->Phys.s2[istate] += conj(vec[j][istate]) * vec[j][istate] / 2.0;
             }
           } else {//off diagonal
-            spn += child_general_int_spin_TotalS_MPIdouble(isite1 - 1, isite2 - 1, X, nstate, vec, vec);
+            child_general_int_spin_TotalS_MPIdouble(isite1 - 1, isite2 - 1, X, nstate, vec, vec);
           }
 #endif
         }
@@ -276,7 +274,7 @@ void totalspin_Spin(
 
           is1_up = X->Def.Tpow[tmp_isite1 - 1];
           is2_up = X->Def.Tpow[tmp_isite2 - 1];
-          num2_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, is2_up, 1);
+          num2_up = child_SpinGC_CisAis((unsigned long int) myrank + 1, is2_up, 1);
           num2_down = 1 - num2_up;
 
           //diagonal
@@ -289,9 +287,9 @@ void totalspin_Spin(
               X->Phys.s2[istate] += conj(vec[j][istate]) * vec[j][istate] * spn_z / 4.0;
           }
           if (isite1 < isite2) {
-            spn += child_general_int_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec);
+            child_general_int_spin_MPIsingle(isite1 - 1, 0, 1, isite2 - 1, 1, 0, 1.0, X, nstate, vec, vec);
           } else {
-            spn += conj(child_general_int_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec));
+            child_general_int_spin_MPIsingle(isite2 - 1, 1, 0, isite1 - 1, 0, 1, 1.0, X, nstate, vec, vec);
           }
 #endif
         }//isite1 > Nsite || isite2 > Nsite
@@ -454,9 +452,9 @@ void totalspin_SpinGC(
         if (isite1 > X->Def.Nsite && isite2 > X->Def.Nsite) {
           is1_up = X->Def.Tpow[isite1 - 1];
           is2_up = X->Def.Tpow[isite2 - 1];
-          num1_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is1_up, 1);
+          num1_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, is1_up, 1);
           num1_down = 1 - num1_up;
-          num2_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
+          num2_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, is2_up, 1);
           num2_down = 1 - num2_up;
           spn_z2 = (num1_up - num1_down)*(num2_up - num2_down) / 4.0;
           for (j = 1; j <= i_max; j++) {
@@ -485,7 +483,7 @@ void totalspin_SpinGC(
           }
           is1_up = X->Def.Tpow[tmp_isite1 - 1];
           is2_up = X->Def.Tpow[tmp_isite2 - 1];
-          num2_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, X, is2_up, 1);
+          num2_up = child_SpinGC_CisAis((unsigned long int)myrank + 1, is2_up, 1);
           num2_down = 1 - num2_up;
           //diagonal
           for (j = 1; j <= i_max; j++) {
@@ -652,35 +650,6 @@ int expec_totalspin
   return 0;
 }
 
-int expec_totalSz(
-  struct BindStruct* X,
-  double complex** vec
-) {
-  X->Large.mode = M_TOTALS;
-  switch (X->Def.iCalcModel) {
-  case Spin:
-    X->Phys.Sz[0] = X->Def.Total2SzMPI / 2.;
-    break;
-  case SpinGC:
-    totalSz_SpinGC(X, vec);
-    break;
-  case Hubbard:
-  case Kondo:
-    X->Phys.Sz[0] = X->Def.Total2SzMPI / 2.;
-
-    break;
-  case HubbardGC:
-  case KondoGC:
-    totalSz_HubbardGC(X, vec);
-    break;
-  default:
-    X->Phys.Sz[0] = 0.0;
-  }
-
-  return 0;
-}
-
-
 /**
  * @brief function of calculating totalSz for Hubbard model in grand canonical ensemble
  *
@@ -814,4 +783,32 @@ void totalSz_SpinGC
   }
   spn_z = SumMPI_dc(spn_z);
   X->Phys.Sz[0] = creal(spn_z);
+}
+
+int expec_totalSz(
+  struct BindStruct* X,
+  double complex** vec
+) {
+  X->Large.mode = M_TOTALS;
+  switch (X->Def.iCalcModel) {
+  case Spin:
+    X->Phys.Sz[0] = X->Def.Total2SzMPI / 2.;
+    break;
+  case SpinGC:
+    totalSz_SpinGC(X, vec);
+    break;
+  case Hubbard:
+  case Kondo:
+    X->Phys.Sz[0] = X->Def.Total2SzMPI / 2.;
+
+    break;
+  case HubbardGC:
+  case KondoGC:
+    totalSz_HubbardGC(X, vec);
+    break;
+  default:
+    X->Phys.Sz[0] = 0.0;
+  }
+
+  return 0;
 }

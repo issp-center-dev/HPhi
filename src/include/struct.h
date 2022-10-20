@@ -24,8 +24,8 @@
 */
 #ifndef HPHI_STRUCT_H
 #define HPHI_STRUCT_H
-
-#include "Common.h"
+#include <complex.h>
+#include <time.h>
 
 /*=================================================================================================*/
 //For TEM

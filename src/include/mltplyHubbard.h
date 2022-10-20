@@ -23,7 +23,7 @@ int mltplyHubbard(struct BindStruct *X, int nstate, double complex **tmp_v0,doub
 
 int mltplyHubbardGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-double complex GC_general_hopp
+void GC_general_hopp
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
@@ -31,22 +31,21 @@ double complex GC_general_hopp
  double complex trans
  );
 
-
-double complex GC_general_int(
+void GC_general_int(
                          int nstate, double complex **tmp_v0,
                          double complex **tmp_v1,
                          struct BindStruct *X
                          );
 
 
-double complex general_int
+void general_int
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex general_hopp
+void general_hopp
 (
   int nstate,
   double complex** tmp_v0,
@@ -55,7 +54,7 @@ double complex general_hopp
   double complex trans
 );
 
-double complex exchange
+void exchange
   (
  int nstate, 
   double complex **tmp_v0,
@@ -63,21 +62,21 @@ double complex exchange
  struct BindStruct *X
  );
 
-double complex pairhopp
+void pairhopp
 (
   int nstate, double complex** tmp_v0,
   double complex** tmp_v1,
   struct BindStruct* X
 ); 
 
-double complex GC_exchange
+void GC_exchange
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_pairhopp
+void GC_pairhopp
 (
  int nstate, double complex **tmp_v0,
  double complex **tmp_v1,
