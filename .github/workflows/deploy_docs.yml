@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v3.x
+      uses: rlespinasse/github-slug-action@v4.x
 
     - name: Checkout
       uses: actions/checkout@v3
