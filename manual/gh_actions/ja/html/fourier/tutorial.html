@@ -4,15 +4,17 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>7.2. チュートリアル &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>7.2. チュートリアル &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -36,10 +38,10 @@
           <div class="body" role="main">
             
   <section id="tutorial">
-<span id="id1"></span><h1><span class="section-number">7.2. </span>チュートリアル<a class="headerlink" href="#tutorial" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">7.2. </span>チュートリアル<a class="headerlink" href="#tutorial" title="この見出しへのパーマリンク">¶</a></h1>
 <p>このチュートリアルでは, 正方格子ハバードモデル(8サイト)を例にとり説明する.</p>
 <section id="hphi-vmc-out">
-<h2><span class="section-number">7.2.1. </span>HPhi/vmc.out の実行<a class="headerlink" href="#hphi-vmc-out" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.1. </span>HPhi/vmc.out の実行<a class="headerlink" href="#hphi-vmc-out" title="この見出しへのパーマリンク">¶</a></h2>
 <ul>
 <li><p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> の場合</p>
 <p>基底状態および相関関数の計算を行う.
@@ -100,7 +102,7 @@ nelec = 8
 </ul>
 </section>
 <section id="id2">
-<h2><span class="section-number">7.2.2. </span>相関関数のフーリエ変換<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.2. </span>相関関数のフーリエ変換<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
 <p>ユーティリティプログラム <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> を使って,
 相関関数をフーリエ変関する.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;4 20</span>
@@ -125,11 +127,11 @@ $ greenr2k namelist.def geometry.dat
 </ul>
 </section>
 <section id="id3">
-<h2><span class="section-number">7.2.3. </span>相関関数のプロット<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.3. </span>相関関数のプロット<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
 <p>gnuplotを使って,
 相関関数を <span class="math notranslate nohighlight">\(k\)</span> 空間でプロットする.</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span> <span class="s">&quot;kpath.gp&quot;</span>
-<span class="k">plot</span> <span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span> <span class="nb">u</span> <span class="mi">1</span><span class="o">:</span><span class="mi">12</span> <span class="nb">w</span> <span class="n">l</span>
+<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span><span class="w"> </span><span class="s">&quot;kpath.gp&quot;</span><span class="w"></span>
+<span class="k">plot</span><span class="w"> </span><span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span><span class="w"> </span><span class="nb">u</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">12</span><span class="w"> </span><span class="nb">w</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
 </pre></div>
 </div>
 <figure class="align-default" id="id4">
@@ -207,12 +209,12 @@ $ greenr2k namelist.def geometry.dat
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -226,10 +228,10 @@ $ greenr2k namelist.def geometry.dat
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

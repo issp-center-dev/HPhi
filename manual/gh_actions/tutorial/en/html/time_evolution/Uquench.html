@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>3.1. U quench in Hubbard model &#8212; HΦ Tutorial  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,7 +12,9 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="u-quench-in-hubbard-model">
-<h1><span class="section-number">3.1. </span>U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.1. </span>U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Permalink to this heading">¶</a></h1>
 <p>Let’s solve the following U quench in 2D Hubbard model at half filling.</p>
 <div class="math notranslate nohighlight" id="equation-time-evolution-uquench-0">
 <span class="eqno">(3.1)<a class="headerlink" href="#equation-time-evolution-uquench-0" title="Permalink to this equation">¶</a></span>\[H(\tau) = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})
@@ -85,7 +87,7 @@ HPhi -s stan2.in
 </pre></div>
 </div>
 <section id="check-norm-and-energy">
-<h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Permalink to this heading">¶</a></h2>
 <p>Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
 Using gnuplot, check the dynamics of the norm for this problem</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/Norm.dat&quot; u 1:2 w l
@@ -98,7 +100,7 @@ Using gnuplot, check whether the energy is conserved during the real-time evolut
 </div>
 </section>
 <section id="dynamics-of-double-occupation">
-<h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Permalink to this heading">¶</a></h2>
 <p>The double occupation <span class="math notranslate nohighlight">\(D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle\)</span> is not conserved because <span class="math notranslate nohighlight">\([D, H] \neq 0\)</span>.
 You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</span> by executing the following command on gnuplot</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:4 w l
@@ -159,12 +161,12 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -181,7 +183,7 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

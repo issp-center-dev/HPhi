@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>1.1. Spin 1/2 Dimer &#8212; HΦ Tutorial  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -12,7 +12,9 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="spin-1-2-dimer">
-<h1><span class="section-number">1.1. </span>Spin 1/2 Dimer<a class="headerlink" href="#spin-1-2-dimer" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1.1. </span>Spin 1/2 Dimer<a class="headerlink" href="#spin-1-2-dimer" title="Permalink to this heading">¶</a></h1>
 <p>Let’s solve the following spin 1/2 dimer model (2-site Heisenberg model).</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-spin-dimer-0">
 <span class="eqno">(1.1)<a class="headerlink" href="#equation-zero-temperature-spin-dimer-0" title="Permalink to this equation">¶</a></span>\[H = J {\bf S}_{0}\cdot{\bf S}_{1}\]</div>
@@ -55,7 +57,7 @@ J = 0.5
 </pre></div>
 </div>
 <section id="check-the-energy">
-<h2><span class="section-number">1.1.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this heading">¶</a></h2>
 <p>Please check whether the energies are given as follows.</p>
 <blockquote>
 <div><p><span class="math notranslate nohighlight">\(E_{\rm min}=-3/4\)</span> (singlet)</p>
@@ -63,7 +65,7 @@ J = 0.5
 </div></blockquote>
 </section>
 <section id="check-s-dependence">
-<h2><span class="section-number">1.1.2. </span>Check S dependence<a class="headerlink" href="#check-s-dependence" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1.2. </span>Check S dependence<a class="headerlink" href="#check-s-dependence" title="Permalink to this heading">¶</a></h2>
 <p>By changing 2S=1 in stan.in, you can treat spin-S dimer (eg. 2S=2 means S=1, see <code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan2.in</span></code>).
 Please check whether the energies are given as follows.</p>
 <blockquote>
@@ -72,7 +74,7 @@ Please check whether the energies are given as follows.</p>
 </div></blockquote>
 </section>
 <section id="add-magnetic-field-h">
-<h2><span class="section-number">1.1.3. </span>Add magnetic field H<a class="headerlink" href="#add-magnetic-field-h" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1.3. </span>Add magnetic field H<a class="headerlink" href="#add-magnetic-field-h" title="Permalink to this heading">¶</a></h2>
 <p>By adding  H in stan.in, selecting model as “SpinGC”, and deleting “2Sz=0”
 you can examine the
 effects of the magnetic field in the dimer model.
@@ -89,7 +91,7 @@ H   = 2
 <p>Please check whether the ground state becomes polarized state (Sz=1).</p>
 </section>
 <section id="try-to-use-lanczos-method">
-<h2><span class="section-number">1.1.4. </span>Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1.4. </span>Try to use Lanczos method<a class="headerlink" href="#try-to-use-lanczos-method" title="Permalink to this heading">¶</a></h2>
 <p>By selecting method as “Lanczos”
 you can perform the Lanczos calculations.
 An example of the input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan4.in</span></code>) is as follows:</p>
@@ -111,7 +113,7 @@ This calculation may <strong>fail</strong>!
 Please think why the Lanczos method fails for large magnetic field.</p>
 </section>
 <section id="try-to-use-lobcg-method">
-<h2><span class="section-number">1.1.5. </span>Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1.5. </span>Try to use LOBCG method<a class="headerlink" href="#try-to-use-lobcg-method" title="Permalink to this heading">¶</a></h2>
 <p>LOBCG is locally optimal block conjugate gradient method.
 By selecting method as “CG”,
 you can perform the LOBCG calculations.
@@ -212,12 +214,12 @@ obtained by the LOBCG method.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -234,7 +236,7 @@ obtained by the LOBCG method.</p>
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

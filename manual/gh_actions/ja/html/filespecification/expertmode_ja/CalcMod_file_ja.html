@@ -4,15 +4,17 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>4.2.2. CalcModファイル &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>4.2.2. CalcModファイル &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
@@ -36,7 +38,7 @@
           <div class="body" role="main">
             
   <section id="calcmod">
-<span id="subsec-calcmod"></span><h1><span class="section-number">4.2.2. </span>CalcModファイル<a class="headerlink" href="#calcmod" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<span id="subsec-calcmod"></span><h1><span class="section-number">4.2.2. </span>CalcModファイル<a class="headerlink" href="#calcmod" title="この見出しへのパーマリンク">¶</a></h1>
 <div class="line-block">
 <div class="line">計算手法、計算モデル、出力モードを指定します。以下のようなフォーマットをしています。</div>
 </div>
@@ -49,11 +51,11 @@ CalcEigenVec 0
 <div class="line"><br /></div>
 </div>
 <section id="id1">
-<h2>ファイル形式<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>ファイル形式<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h2>
 <p>[string01] [int01]</p>
 </section>
 <section id="id2">
-<h2>パラメータ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>パラメータ<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
 <ul>
 <li><p><span class="math notranslate nohighlight">\([\)</span>string01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> string型 (固定)</p>
@@ -68,7 +70,7 @@ CalcEigenVec 0
 </ul>
 </section>
 <section id="id3">
-<h2>使用ルール<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>使用ルール<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
 <li><p>キーワードを記載後、半角空白を開けた後に整数値を書きます。</p></li>
@@ -80,7 +82,7 @@ CalcEigenVec 0
 </ul>
 </section>
 <section id="id4">
-<h2>キーワード<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2>キーワード<a class="headerlink" href="#id4" title="この見出しへのパーマリンク">¶</a></h2>
 <p>次に各キーワードで指定されるパラメータに関して説明します。</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcType</span></code></p>
@@ -88,10 +90,11 @@ CalcEigenVec 0
 <div class="line-block">
 <div class="line"><strong>説明 :</strong> 計算手法の指定を行います。</div>
 <div class="line">0: Lanczos法</div>
-<div class="line">1: TPQを利用した有限温度解析</div>
+<div class="line">1: mTPQ計算</div>
 <div class="line">2: 全対角化</div>
 <div class="line">3: LOBCG法</div>
 <div class="line">4: 実時間発展</div>
+<div class="line">5: cTPQ計算</div>
 <div class="line">を選択することができます。</div>
 </div>
 </li>
@@ -124,9 +127,10 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 <li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
-<div class="line"><strong>説明 :</strong> 固有ベクトルの初期値の型の指定を行います。</div>
-<div class="line">0: 複素数</div>
-<div class="line">1: 実数</div>
+<div class="line"><strong>説明 :</strong> 固有ベクトル(<span class="math notranslate nohighlight">\(v0\)</span>)の初期値の型の指定を行います。</div>
+<div class="line">-1:実部、虚部ともに正規分布乱数で与えられます。したがって,規格化した初期ベクトルは <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> 次元の超球面上に一様分布したものとなります。</div>
+<div class="line">0: 複素数(<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]\in[-1:1]\)</span> ).</div>
+<div class="line">1: 実数(<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]=0\)</span>).</div>
 <div class="line">から選択することが出来ます。</div>
 </div>
 </li>
@@ -283,12 +287,12 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -302,10 +306,10 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -69,7 +69,7 @@ Lanczos法では、 :math:`\mathcal{K}_{n}({\mathcal H},\vec{x}_{0})`
    T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}
 
 と変形されます。 ここで、
-:math:`V_{n}`\ を\ :math:`\vec{v}_{i}(i=0,1,\dots,n-1)`\ を
+:math:`V_{n}`\ は\ :math:`\vec{v}_{i}(i=0,1,\dots,n-1)`\ を
 並べた行列です。 :math:`T_{n}`\ は三重対角行列であり、 その対角成分は
 :math:`\alpha_{i}`, 副対角成分は\ :math:`\beta_{i}`\ で与えられます。
 この三重対角行列\ :math:`T_{n}`\ の

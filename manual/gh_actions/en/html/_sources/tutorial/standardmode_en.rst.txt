@@ -6,11 +6,11 @@ Heisenberg model
 
 This tutorial should be performed in ::
 
- samples/CG/Heisenberg/
+ samples/old/CG/Heisenberg/
  
 The input file is provided as follows::
 
- samples/CG/Heisenberg/stan.in
+ samples/old/CG/Heisenberg/stan.in
  
 In this case, we treat the two-dimensional antiferromagnetic Heisenberg model that has a nearest neighbor spin coupling.
 
@@ -308,4 +308,4 @@ In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each line.
 Other tutorials
 ---------------
 
-There are many tutorials in ``samples/Standard/``. For more details, please see ``README.md`` at each directory.
+There are many tutorials in ``samples``. For more details, please see ``README.md`` at each directory or `the manual for HPhi-tutorial<https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html>`_ .

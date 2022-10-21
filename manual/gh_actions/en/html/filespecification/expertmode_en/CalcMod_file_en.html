@@ -4,15 +4,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>4.2.2. CalcMod file &#8212; HΦ Documentation  documentation</title>
+    <title>4.2.2. CalcMod file &#8212; HΦ Documentation 3.5.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="calcmod-file">
-<span id="subsec-calcmod"></span><h1><span class="section-number">4.2.2. </span>CalcMod file<a class="headerlink" href="#calcmod-file" title="Permalink to this headline">¶</a></h1>
+<span id="subsec-calcmod"></span><h1><span class="section-number">4.2.2. </span>CalcMod file<a class="headerlink" href="#calcmod-file" title="Permalink to this heading">¶</a></h1>
 <p>This file determines the parameters for the calculation method, model, and output mode. The file format is as follows.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcType   0
 CalcModel   2
@@ -43,11 +45,11 @@ CalcEigenVec 0
 </pre></div>
 </div>
 <section id="file-format">
-<span id="file-format-1"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<span id="file-format-1"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h2>
 <p>[string01] [int01]</p>
 </section>
 <section id="parameters">
-<span id="parameters-1"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<span id="parameters-1"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p>[string01]</p>
 <p><strong>Type :</strong> String</p>
@@ -62,7 +64,7 @@ CalcEigenVec 0
 </ul>
 </section>
 <section id="use-rules">
-<span id="use-rules-1"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this headline">¶</a></h2>
+<span id="use-rules-1"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>After setting the keywords at [string 01], a half-width blank is
 needed for setting a parameter.</p></li>
@@ -74,7 +76,7 @@ terminated.</p></li>
 </ul>
 </section>
 <section id="keywords-and-parameters">
-<h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this heading">¶</a></h2>
 <p>The parameters correlated with the keywords are as follows.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcType</span></code></p>
@@ -83,9 +85,11 @@ terminated.</p></li>
 <div class="line"><strong>Description :</strong> Select the method for calculation from the
 following list:</div>
 <div class="line">0: Lanczos method</div>
-<div class="line">1: Analysis of the physical properties by using TPQ</div>
-<div class="line">2: Full diagonalization method.</div>
-<div class="line">3: LOBCG for the ground state.</div>
+<div class="line">1: mTPQ method</div>
+<div class="line">2: Full diagonalization method</div>
+<div class="line">3: LOBCG for the ground state</div>
+<div class="line">4: Time-evolution</div>
+<div class="line">5: cTPQ method</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcModel</span></code></p>
@@ -122,9 +126,12 @@ to calculate eigenvectors).</div>
 <li><p><code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
 <div class="line-block">
-<div class="line"><strong>Description :</strong> Select the type of an initial vector:</div>
-<div class="line">0: Complex type</div>
-<div class="line">1: Real type.</div>
+<div class="line"><strong>Description :</strong> Select the type of an initial vector (<span class="math notranslate nohighlight">\(v0\)</span>):</div>
+<div class="line">-1: Real part (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) and imaginary part  (<span class="math notranslate nohighlight">\({\rm Re}[v0]]\)</span>) of the initial
+vector are give as the normally distributed random numbers. Thus, the normalized initial vectors are uniformly distributed
+on the <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> dimensional super sphere (<span class="math notranslate nohighlight">\(N_{\rm H}\)</span> is the dimension of the Hilbert space).</div>
+<div class="line">0: Complex type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]\in[-1:1]\)</span> ).</div>
+<div class="line">1: Real type (<span class="math notranslate nohighlight">\({\rm Re}[v0]\in[-1:1]\)</span>, <span class="math notranslate nohighlight">\({\rm Im}[v0]=0\)</span>).</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code></p>
@@ -286,12 +293,12 @@ to calculate eigenvectors).</div>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -305,10 +312,10 @@ to calculate eigenvectors).</div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

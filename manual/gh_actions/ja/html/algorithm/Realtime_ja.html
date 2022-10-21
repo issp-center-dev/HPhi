@@ -4,15 +4,17 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>5.5. 実時間発展 &#8212; HΦ マニュアル  ドキュメント</title>
+    <title>5.5. 実時間発展 &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -36,15 +38,15 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">5.5. </span>実時間発展<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">5.5. </span>実時間発展<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h1>
 <p><span class="math notranslate nohighlight">\({\cal H}\Phi\)</span>では初期波動関数を<span class="math notranslate nohighlight">\(|\Phi(t_0)\rangle\)</span>として、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-0">
-<span class="eqno">(5.17)<a class="headerlink" href="#equation-algorithm-realtime-ja-0" title="この数式へのパーマリンク">¶</a></span>\[|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle\]</div>
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-ja-0" title="この数式へのパーマリンク">¶</a></span>\[|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle\]</div>
 <p>の関係を用いて逐次時間発展の計算をしています。
 ここで時刻 <span class="math notranslate nohighlight">\(t_n = \sum_{j=1}^n  \Delta t_j\)</span> です。
 実際の計算では<span class="math notranslate nohighlight">\(e^{-i {\cal H}  \Delta t_n}\)</span>を</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-1">
-<span class="eqno">(5.18)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="この数式へのパーマリンク">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
+<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="この数式へのパーマリンク">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
 <p>と近似しています。展開次数の上限<span class="math notranslate nohighlight">\(m\)</span>は<code class="docutils literal notranslate"><span class="pre">ModPara</span></code>ファイルの<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>で指定することができます。
 展開次数が十分かどうかは、
 ノルム<span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span>が成立しているかで検証することができます。</p>
@@ -106,12 +108,12 @@
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="検索" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -125,10 +127,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

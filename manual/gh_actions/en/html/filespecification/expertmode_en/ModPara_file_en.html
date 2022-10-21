@@ -4,15 +4,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>4.2.3. ModPara file &#8212; HΦ Documentation  documentation</title>
+    <title>4.2.3. ModPara file &#8212; HΦ Documentation 3.5.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -35,7 +37,7 @@
           <div class="body" role="main">
             
   <section id="modpara-file">
-<span id="subsec-modpara"></span><h1><span class="section-number">4.2.3. </span>ModPara file<a class="headerlink" href="#modpara-file" title="Permalink to this headline">¶</a></h1>
+<span id="subsec-modpara"></span><h1><span class="section-number">4.2.3. </span>ModPara file<a class="headerlink" href="#modpara-file" title="Permalink to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">This file determines the parameters for calculation. The file format
 is as follows.</div>
@@ -62,7 +64,7 @@ ExpecInterval  20
 </pre></div>
 </div>
 <section id="file-format">
-<span id="file-format-2"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<span id="file-format-2"></span><h2>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Lines 1-4: Header</p></li>
 <li><p>Line 6: [string01] [string02]</p></li>
@@ -71,7 +73,7 @@ ExpecInterval  20
 </ul>
 </section>
 <section id="parameters">
-<span id="parameters-2"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<span id="parameters-2"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p>[string01]</p>
 <p><strong>Type :</strong> String</p>
@@ -88,7 +90,7 @@ ExpecInterval  20
 </ul>
 </section>
 <section id="use-rules">
-<span id="use-rules-2"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this headline">¶</a></h2>
+<span id="use-rules-2"></span><h2>Use rules<a class="headerlink" href="#use-rules" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>From Line 9: After setting keywords at [string 01], a half-width
 blank is needed for setting a parameter</p></li>
@@ -97,12 +99,12 @@ fixed</p></li>
 </ul>
 </section>
 <section id="keywords-and-parameters">
-<span id="keywords-and-parameter-1"></span><h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this headline">¶</a></h2>
+<span id="keywords-and-parameter-1"></span><h2>Keywords and parameters<a class="headerlink" href="#keywords-and-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the following, common parameters and parameters for each method are
 shown.</p>
 </section>
 <section id="common-parameters">
-<h2>Common parameters<a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Common parameters<a class="headerlink" href="#common-parameters" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code></p>
 <p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
@@ -162,7 +164,7 @@ value is 1 and the efficient algorithm is used.</p>
 </ul>
 </section>
 <section id="lanczos-method">
-<h2>Lanczos method<a class="headerlink" href="#lanczos-method" title="Permalink to this headline">¶</a></h2>
+<h2>Lanczos method<a class="headerlink" href="#lanczos-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -195,7 +197,7 @@ and a first excited state when <code class="docutils literal notranslate"><span 
 </ul>
 </section>
 <section id="cg-method">
-<h2>CG method<a class="headerlink" href="#cg-method" title="Permalink to this headline">¶</a></h2>
+<h2>CG method<a class="headerlink" href="#cg-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -217,8 +219,8 @@ the 2-norm of the residual vector becomes smaller than
 </li>
 </ul>
 </section>
-<section id="tpq-method">
-<h2>TPQ method<a class="headerlink" href="#tpq-method" title="Permalink to this headline">¶</a></h2>
+<section id="tpq-mtpq-ctpq-method">
+<h2>TPQ (mTPQ/cTPQ) method<a class="headerlink" href="#tpq-mtpq-ctpq-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -229,7 +231,9 @@ must be larger than that of the previous calculation.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
 <p><strong>Description :</strong> An integer giving <span class="math notranslate nohighlight">\(l\)</span> of
-<span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span> used in the TPQ method.</p>
+<span class="math notranslate nohighlight">\(l-{\mathcal H}/N_{s}\)</span> used in the mTPQ method.
+In the cTPQ method,  <span class="math notranslate nohighlight">\(l\)</span> is used as the width of the imaginary-time evolution, i.e.,
+<span class="math notranslate nohighlight">\(\Delta\tau=1/l\)</span>. See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for the details of the cTPQ method.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumAve</span></code></p>
 <p><strong>Type :</strong> Int</p>
@@ -244,10 +248,18 @@ calculating the correlation functions in the TPQ method.</div>
 <div class="line"><strong>Note:</strong> A small interval increases the time cost of calculations.</div>
 </div>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
+<p><strong>Type :</strong> Int (positive integer)</p>
+<p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n_{\rm max}\)</span> for
+cTPQ method;</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .\]</div>
+<p>See <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">Algorithm</span></a> for the details of the cTPQ method.</p>
+</li>
 </ul>
 </section>
 <section id="calculating-dynamical-greens-functions">
-<h2>Calculating dynamical Green’s functions<a class="headerlink" href="#calculating-dynamical-greens-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Calculating dynamical Green’s functions<a class="headerlink" href="#calculating-dynamical-greens-functions" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>Type :</strong> Complex</p>
@@ -285,7 +297,7 @@ frequency <span class="math notranslate nohighlight">\(\Delta \omega = (\)</span
 </ul>
 </section>
 <section id="real-time-evolution-method">
-<h2>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this headline">¶</a></h2>
+<h2>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -296,9 +308,9 @@ specified with this parameter. In the case of restart calculation,
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n\)</span> for
-real time evolution method;</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-0">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-0" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n .\]</div>
+real-time evolution method;</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-1">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-1" title="Permalink to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.\]</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -399,12 +411,12 @@ file.</div>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -418,10 +430,10 @@ file.</div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, The University of Tokyo.
+      &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
