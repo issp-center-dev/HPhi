@@ -17,18 +17,18 @@ jobs:
       uses: rlespinasse/github-slug-action@v3.x
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: main
 
     - name: Checkout gh-pages
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: gh-pages
         path: gh-pages
 
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
 
