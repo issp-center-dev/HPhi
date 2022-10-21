@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>5.1. Lanczos法 &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -37,9 +38,9 @@
           <div class="body" role="main">
             
   <section id="lanczos">
-<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="この見出しへのパーマリンク">¶</a></h1>
 <section id="id1">
-<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h2>
 <p>Lanczos法の解説については TITPACK <a class="footnote-reference brackets" href="#id12" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> のマニュアルと 線形計算の数理 <a class="footnote-reference brackets" href="#id13" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参考にしています.</p>
 <p>Lanczos法はある初期ベクトルにハミルトニアン
 を作用させて最大・最小近傍の固有値・固有ベクトルを
@@ -113,7 +114,7 @@ Lanczosの反復回数に対して指数関数的に減少することが
 示されています(詳細はRef. <a class="footnote-reference brackets" href="#id13" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参照して下さい)。</p>
 </section>
 <section id="id7">
-<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="この見出しへのパーマリンク">¶</a></h2>
 <p>固有値の近似値がわかっているときは
 適当なベクトル<span class="math notranslate nohighlight">\(\vec{y}_{0}\)</span>に対して
 <span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を 逐次的に作用させれば、
@@ -131,9 +132,9 @@ CG法の実行にはヒルベルト空間の次元のベクトル を4本確保�
 大規模系の計算を実行する際にはメモリが足りなくなる恐れがあるので注意が必要です。</p>
 </section>
 <section id="id8">
-<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="この見出しへのパーマリンク">¶</a></h2>
 <section id="id9">
-<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="この見出しへのパーマリンク">¶</a></h3>
 <p>Lanczos法では、スタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定する<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>(<span class="math notranslate nohighlight">\(\equiv r_s\)</span>)により初期ベクトルの設定方法を指定します。また、初期ベクトルはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>を用い、実数もしくは複素数の指定をすることができます。</p>
 <ul>
 <li><p>カノニカル集団かつ <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span>の場合</p>
@@ -156,7 +157,7 @@ Fast Mersenne Twister
 </ul>
 </section>
 <section id="id11">
-<h3>収束判定について<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<h3>収束判定について<a class="headerlink" href="#id11" title="この見出しへのパーマリンク">¶</a></h3>
 <p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、<span class="math notranslate nohighlight">\(T_{n}\)</span>の対角化にlapackのルーチン
 <span class="math notranslate nohighlight">\(\rm dsyev\)</span>を使用しており、
 <span class="math notranslate nohighlight">\(T_{n}\)</span>の基底状態の次の固有値（第一励起状態のエネルギー）
@@ -180,6 +181,7 @@ Fast Mersenne Twister
 逆反復法の初期ベクトルとしてLanczos法で求めた
 固有ベクトルをとった方が一般に収束が早いので、
 標準の設定ではそのように取っています。</p>
+<aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id12" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
 <p>http://www.qa.iir.titech.ac.jp/~nishimori/titpack2_new/index-e.html</p>
@@ -199,6 +201,7 @@ Fast Mersenne Twister
 <aside class="footnote brackets" id="id16" role="note">
 <span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
 <p>http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html</p>
+</aside>
 </aside>
 </section>
 </section>
@@ -287,7 +290,7 @@ Fast Mersenne Twister
       &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>3.1. スタンダードモード &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -37,9 +38,9 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">3.1. </span>スタンダードモード<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">3.1. </span>スタンダードモード<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h1>
 <section id="heisenberg">
-<h2><span class="section-number">3.1.1. </span>Heisenberg模型<a class="headerlink" href="#heisenberg" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.1.1. </span>Heisenberg模型<a class="headerlink" href="#heisenberg" title="この見出しへのパーマリンク">¶</a></h2>
 <p>以下のチュートリアルはディレクトリ</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>samples/old/CG/Heisenberg/
 </pre></div>
@@ -67,7 +68,7 @@ J = 1.0
 </div>
 <p>この例ではスピン結合 <span class="math notranslate nohighlight">\(J=1\)</span> (任意単位)とし、サイト数は16としました。</p>
 <section id="log">
-<h3><strong>Log 出力</strong><a class="headerlink" href="#log" title="Permalink to this heading">¶</a></h3>
+<h3><strong>Log 出力</strong><a class="headerlink" href="#log" title="この見出しへのパーマリンク">¶</a></h3>
 <p>標準出力でログが出力されます。
 また、 &quot;output&quot; ディレクトリが自動生成され、
 そこにも計算経過を示すログが出力されます。
@@ -292,9 +293,9 @@ i=    0 Energy=-11.228483 N= 16.000000 Sz=  0.000000 Doublon=  0.000000
 (<code class="docutils literal notranslate"><span class="pre">locspin.def</span></code> , <code class="docutils literal notranslate"><span class="pre">trans.def</span></code> , <code class="docutils literal notranslate"><span class="pre">exchange.def</span></code> , <code class="docutils literal notranslate"><span class="pre">coulombintra.def</span></code> , <code class="docutils literal notranslate"><span class="pre">hund.def</span></code> , <code class="docutils literal notranslate"><span class="pre">namelist.def</span></code> , <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> , <code class="docutils literal notranslate"><span class="pre">modpara.def</span></code> ) と、結果として出力する相関関数の要素を指定するファイル( <code class="docutils literal notranslate"><span class="pre">greenone.def</span></code> , <code class="docutils literal notranslate"><span class="pre">greentwo.def</span></code> ) が生成されます。これらのファイルはエキスパートモードと共通です。</p>
 </section>
 <section id="id2">
-<h3><strong>計算結果出力</strong><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><strong>計算結果出力</strong><a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h3>
 <section id="lobcg">
-<h4><strong>局所最適ブロック共役勾配(LOBCG)法</strong><a class="headerlink" href="#lobcg" title="Permalink to this heading">¶</a></h4>
+<h4><strong>局所最適ブロック共役勾配(LOBCG)法</strong><a class="headerlink" href="#lobcg" title="この見出しへのパーマリンク">¶</a></h4>
 <p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;CG&quot;</span></code> を選択すると、LOBCG法での計算が行われます。
 LOBCG法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。
 以下に、このサンプルでの出力ファイル例を記載します。
@@ -310,7 +311,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 <p>に固有値番号に対応した一体グリーン関数および二体グリーン関数の値が出力されます。</p>
 </section>
 <section id="lanczos">
-<h4><strong>Lanczos法</strong><a class="headerlink" href="#lanczos" title="Permalink to this heading">¶</a></h4>
+<h4><strong>Lanczos法</strong><a class="headerlink" href="#lanczos" title="この見出しへのパーマリンク">¶</a></h4>
 <p>Lanczos法での計算が正常終了すると、固有エネルギーおよび一体グリーン関数、二体グリーン関数が計算され、ファイル出力されます。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>zvo_energy.dat zvo_cisajs.dat
 zvo_cisajscktalt.dat
@@ -326,7 +327,7 @@ CG法で固有ベクトルが求められます。
 各ファイルの詳細は、セクション <a class="reference internal" href="../filespecification/outputfiles_ja/energy_ja.html#subsec-energy-dat"><span class="std std-ref">energy.dat</span></a> , <a class="reference internal" href="../filespecification/outputfiles_ja/cisajs_ja.html#subsec-cgcisajs"><span class="std std-ref">cisajs.dat</span></a> , <a class="reference internal" href="../filespecification/outputfiles_ja/cisajscktalt_ja.html#subsec-cisajscktalt"><span class="std std-ref">cisajscktalt.dat</span></a> に記載がありますので、ご参照ください。</p>
 </section>
 <section id="tpq">
-<h4><strong>TPQ法</strong><a class="headerlink" href="#tpq" title="Permalink to this heading">¶</a></h4>
+<h4><strong>TPQ法</strong><a class="headerlink" href="#tpq" title="この見出しへのパーマリンク">¶</a></h4>
 <p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;TPQ&quot;</span></code> を選択すると、TPQ法での計算が行われます。
 TPQ法での計算が正常終了すると、以下のファイルが出力されます
 (%%にはrunの回数、&amp;&amp;にはTPQのステップ数が入ります)。:</p>
@@ -338,7 +339,7 @@ zvo_cisajscktalt_set%%step&amp;&amp;.dat
 <p>Norm_rand%%.datには、逆温度や波動関数の規格前の大きさなどの基礎情報が、各run回数に応じステップ数とともに出力されます。また、SS_rand%%.datには、逆温度、エネルギー、ハミルトニアンの二乗の期待値などの物理量が各run回数に応じステップ数とともに出力されます。zvo_cisajs_set%%step&amp;&amp;.datとzvo_cisajscktalt_set%%step&amp;&amp;.datには各run回数でのステップ数に応じた一体グリーン関数および二体グリーン関数が出力されます。各ファイルの詳細はそれぞれ、セクション <a class="reference internal" href="../filespecification/outputfiles_ja/Norm_rand_ja.html#subsec-normrand"><span class="std std-ref">Norm_rand.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_ja/SS_rand_ja.html#subsec-ssrand"><span class="std std-ref">SS_rand.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_ja/cisajs_ja.html#subsec-cgcisajs"><span class="std std-ref">cisajs.dat</span></a>, <a class="reference internal" href="../filespecification/outputfiles_ja/cisajscktalt_ja.html#subsec-cisajscktalt"><span class="std std-ref">cisajscktalt.dat</span></a> に記載がありますので、ご参照ください。</p>
 </section>
 <section id="id3">
-<h4><strong>全対角化法</strong><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h4>
+<h4><strong>全対角化法</strong><a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h4>
 <p>入力ファイルで <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;fulldiag&quot;</span></code> を選択すると、全対角化法での計算が行われます。
 全対角化法での計算が正常終了すると、下記のファイルが出力されます(xxには0から始まる固有値番号が入ります)。:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Eigenvalue.dat zvo_cisajs_eigen_xx.dat
@@ -350,7 +351,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
 </section>
 </section>
 <section id="id4">
-<h2><span class="section-number">3.1.2. </span>その他の系でのチュートリアル<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.1.2. </span>その他の系でのチュートリアル<a class="headerlink" href="#id4" title="この見出しへのパーマリンク">¶</a></h2>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">samples</span></code> 以下にはこの他にも様々なチュートリアルが置いてあります。それぞれのチュートリアルの内容や手順については、各フォルダにある <code class="docutils literal notranslate"><span class="pre">README.md</span></code> または <a class="reference external" href="https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html">チュートリアル向けの説明資料</a> をご覧ください。</p>
 </div></blockquote>
@@ -436,7 +437,7 @@ zvo_cisajscktalt_eigen_xx.dat  zvo_phys_Nup4_Ndown4.dat
       &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

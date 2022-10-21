@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>3.2. エキスパートモード &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -37,7 +38,7 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">3.2. </span>エキスパートモード<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">3.2. </span>エキスパートモード<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h1>
 <p>エキスパートモードでは、入力ファイルとして</p>
 <ol class="arabic simple">
 <li><p>入力ファイルリスト</p></li>
@@ -48,7 +49,7 @@
 <p>を用意した後、計算を行います。計算開始後に関しては、スタンダードモードと同様です。
 ここでは前節のスタンダードモードでのチュートリアルを行った後の状況を例に入力ファイルの作成に関する説明を行います。</p>
 <section id="id2">
-<h2><span class="section-number">3.2.1. </span>入力ファイルリストファイル<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.2.1. </span>入力ファイルリストファイル<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
 <p>入力ファイルの種類と名前を指定するファイルnamelist.defには、下記の内容が記載されています。
 各入力ファイルリストファイルでは、行毎にKeywordとファイル名を記載し、ファイルの種類の区別を行います。
 詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/List_file_for_the_input_files_ja.html#subsec-inputfilelist"><span class="std std-ref">入力ファイル指定用ファイル</span></a> をご覧ください。</p>
@@ -66,10 +67,10 @@ PairExcitation  pair.def
 </div>
 </section>
 <section id="id3">
-<h2><span class="section-number">3.2.2. </span>基本パラメータの指定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.2.2. </span>基本パラメータの指定<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
 <p>計算モード、計算用パラメータ、局在スピンの位置を以下のファイルで指定します。</p>
 <section id="id4">
-<h3><strong>計算モードの指定</strong><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><strong>計算モードの指定</strong><a class="headerlink" href="#id4" title="この見出しへのパーマリンク">¶</a></h3>
 <p>CalcModでひも付けられるファイル(ここではcalcmod.def)で計算モードを指定します。
 ファイルの中身は下記の通りです。
 計算モード、計算用パラメータ、局在スピンの位置を以下のファイルで指定します。:</p>
@@ -92,7 +93,7 @@ CalcModファイルでは固有ベクトルの入出力機能も指定するこ�
 CalcModファイルの詳細は <a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> をご覧ください。</p>
 </section>
 <section id="id5">
-<h3><strong>計算用パラメータの指定</strong><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><strong>計算用パラメータの指定</strong><a class="headerlink" href="#id5" title="この見出しへのパーマリンク">¶</a></h3>
 <p>ModParaでひも付けられるファイル(ここではmodpara.def)で計算用パラメータを指定します。ファイルの中身は下記の通りです。:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--------------------
 Model_Parameters   0
@@ -121,7 +122,7 @@ OmegaOrg       0.0 0.0
 <p>このファイルでは、サイト数、伝導電子の数、トータル <span class="math notranslate nohighlight">\(S_z\)</span> やLanczosステップの最大数などを指定します。ModParaファイルの詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModParaファイル</span></a> をご覧ください。</p>
 </section>
 <section id="id6">
-<h3><strong>局在スピンの位置の指定</strong><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3><strong>局在スピンの位置の指定</strong><a class="headerlink" href="#id6" title="この見出しへのパーマリンク">¶</a></h3>
 <p>LocSpinでひも付けられるファイル(ここではlocspn.def)で局在スピンの位置と <span class="math notranslate nohighlight">\(S\)</span> の値を指定します。ファイルの中身は下記の通りです。:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
 NlocalSpin    16
@@ -141,7 +142,7 @@ NlocalSpin    16
 </section>
 </section>
 <section id="hamiltonian">
-<h2><span class="section-number">3.2.3. </span>Hamiltonianの指定<a class="headerlink" href="#hamiltonian" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.2.3. </span>Hamiltonianの指定<a class="headerlink" href="#hamiltonian" title="この見出しへのパーマリンク">¶</a></h2>
 <dl class="simple">
 <dt>基本パラメータを設定した後は、Hamiltonianを構築するためのファイルを作成します。</dt><dd><p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、電子系の表現で計算を行うため、スピン系では以下の関係式</p>
 </dd>
@@ -152,7 +153,7 @@ S^+_{i}&amp;=c_{i\uparrow}^{\dagger}c_{i\downarrow},\\
 S^-_{i}&amp;=c_{i\downarrow}^{\dagger}c_{i\uparrow}.\end{split}\]</div>
 <p>を用い、電子系の演算子に変換しHamiltonianの作成をする必要があります。</p>
 <section id="transfer">
-<h3><strong>Transfer部の指定</strong><a class="headerlink" href="#transfer" title="Permalink to this heading">¶</a></h3>
+<h3><strong>Transfer部の指定</strong><a class="headerlink" href="#transfer" title="この見出しへのパーマリンク">¶</a></h3>
 <p>Transでひも付けられるファイル(ここではzTrans.def)で電子系のTransferに相当するHamiltonian</p>
 <div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-1">
 <span class="eqno">(3.3)<a class="headerlink" href="#equation-tutorial-expertmode-ja-1" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H} +=-\sum_{ij\sigma_1\sigma2}
@@ -180,7 +181,7 @@ NTransfer      1
 <p>Transファイルの詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/Trans_file_ja.html#subsec-trans"><span class="std std-ref">Trans指定ファイル</span></a> をご覧ください。</p>
 </section>
 <section id="id7">
-<h3><strong>二体相互作用部の指定</strong><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3><strong>二体相互作用部の指定</strong><a class="headerlink" href="#id7" title="この見出しへのパーマリンク">¶</a></h3>
 <p>InterAllでひも付けられるファイル(ここではzInterAll.def)で電子系の二体相互作用部に相当するHamiltonian</p>
 <div class="math notranslate nohighlight" id="equation-tutorial-expertmode-ja-2">
 <span class="eqno">(3.4)<a class="headerlink" href="#equation-tutorial-expertmode-ja-2" title="この数式へのパーマリンク">¶</a></span>\[\mathcal{H}+=\sum_{i,j,k,l}\sum_{\sigma_1,\sigma_2, \sigma_3, \sigma_4}I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}.\]</div>
@@ -225,10 +226,10 @@ i     1     i     0    i+1     0    i+1     1   1.000000  0.000000
 </section>
 </section>
 <section id="id8">
-<h2><span class="section-number">3.2.4. </span>出力ファイルの指定<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.2.4. </span>出力ファイルの指定<a class="headerlink" href="#id8" title="この見出しへのパーマリンク">¶</a></h2>
 <p>一体Green関数および二体Green関数の計算する成分を、それぞれOneBodyG, TwoBodyGでひも付けられるファイルで指定します。</p>
 <section id="green">
-<h3><strong>一体Green関数の計算対象の指定</strong><a class="headerlink" href="#green" title="Permalink to this heading">¶</a></h3>
+<h3><strong>一体Green関数の計算対象の指定</strong><a class="headerlink" href="#green" title="この見出しへのパーマリンク">¶</a></h3>
 <p>OneBodyGでひも付けられるファイル(ここではgreenone.def)で計算する一体Green関数  <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>===============================
 NCisAjs         32
@@ -246,7 +247,7 @@ NCisAjs         32
 <p>一体Green関数計算対象成分の指定に関するファイル入力形式の詳細はセクション <a class="reference internal" href="../filespecification/expertmode_ja/OneBodyG_file_ja.html#subsec-onebodyg"><span class="std std-ref">OneBodyG指定ファイル</span></a> をご覧ください。</p>
 </section>
 <section id="id9">
-<h3><strong>二体Green関数の計算対象の指定</strong><a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3><strong>二体Green関数の計算対象の指定</strong><a class="headerlink" href="#id9" title="この見出しへのパーマリンク">¶</a></h3>
 <p>TwoBodyGでひも付けられるファイル(ここではgreentwo.def)で計算する二体Green関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4} \rangle\)</span> の成分を指定します。ファイルの中身は下記の通りです。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>=============================================
 NCisAjsCktAltDC       1024
@@ -265,7 +266,7 @@ NCisAjsCktAltDC       1024
 </section>
 </section>
 <section id="id10">
-<h2><span class="section-number">3.2.5. </span>計算の実行<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.2.5. </span>計算の実行<a class="headerlink" href="#id10" title="この見出しへのパーマリンク">¶</a></h2>
 <p>全ての入力ファイルが準備できた後、計算実行します。実行時はエキスパートモードを指定する &quot;-e&quot; をオプションとして指定の上、入力ファイルリストファイル(ここではnamelist.def)を引数とし、ターミナルから <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> を実行します。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ Path/HPhi -e namelist.def
 </pre></div>
@@ -356,7 +357,7 @@ NCisAjsCktAltDC       1024
       &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

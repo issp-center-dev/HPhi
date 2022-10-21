@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>4.3.24. ham.dat &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
@@ -37,7 +38,7 @@
           <div class="body" role="main">
             
   <section id="ham-dat">
-<span id="subsec-ham"></span><h1><span class="section-number">4.3.24. </span>ham.dat<a class="headerlink" href="#ham-dat" title="Permalink to this heading">¶</a></h1>
+<span id="subsec-ham"></span><h1><span class="section-number">4.3.24. </span>ham.dat<a class="headerlink" href="#ham-dat" title="この見出しへのパーマリンク">¶</a></h1>
 <p>(FullDiagでのみ出力)
 <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>ファイルで<code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code>の場合に、HΦ内部で計算されたハミルトニアンをMatrixMarket形式で出力します。<code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>ファイルで<code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code>とすると、定義ファイル一式と本ファイルを読み込み、再計算することができます。以下にファイル例を記載します。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%%%%MatrixMarket matrix coordinate complex hermitian
@@ -54,14 +55,14 @@
 </pre></div>
 </div>
 <section id="id1">
-<h2>ファイル名<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<h2>ファイル名<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h2>
 <ul class="simple">
 <li><p>##_ham.dat</p></li>
 </ul>
 <p>##はModParaファイル内の[string02]で指定されるヘッダを表します。</p>
 </section>
 <section id="id2">
-<h2>ファイル形式<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<h2>ファイル形式<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
 <ul class="simple">
 <li><p>1行：ヘッダ</p></li>
 <li><p>2行：<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span></p></li>
@@ -69,7 +70,7 @@
 </ul>
 </section>
 <section id="id3">
-<h2>パラメータ<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<h2>パラメータ<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
 <ul>
 <li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>
@@ -207,7 +208,7 @@
       &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

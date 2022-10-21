@@ -4,7 +4,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>5.4. 動的グリーン関数 &#8212; HΦ マニュアル 3.5.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/translations.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
@@ -37,7 +38,7 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">5.4. </span>動的グリーン関数<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">5.4. </span>動的グリーン関数<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h1>
 <p><span class="math notranslate nohighlight">\({\cal H}\Phi\)</span>では励起状態<span class="math notranslate nohighlight">\(|\Phi ' \rangle  = \hat{O} | \Phi _0 \rangle\)</span>に対する動的関数</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-dynamicalgreen-ja-0">
 <span class="eqno">(5.16)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-ja-0" title="この数式へのパーマリンク">¶</a></span>\[I(z) = \langle \Phi ' | \frac{1}{ {\cal H}- z\hat{I} } | \Phi '\rangle\]</div>
@@ -53,6 +54,7 @@
 <p>のように定義することで計算することができます。
 なお、動的グリーン関数の計算には、Lanczos法を用いた連分数展開による解法 <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> とシフト型クリロフ理論による解法 <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> の2つが実装されています。
 詳細については各文献を参照してください。</p>
+<aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id4" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
 <p>E. Dagotto, Rev. Mod. Phys. <strong>66</strong>, 763-840 (1994).</p>
@@ -60,6 +62,7 @@
 <aside class="footnote brackets" id="id5" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
 <p>S.Yamamoto, T. Sogabe, T. Hoshi, S.-L. Zhang, T. Fujiwara, Journal of the Physical Society of Japan <strong>77</strong>, 114713 (2008).</p>
+</aside>
 </aside>
 </section>
 
@@ -141,7 +144,7 @@
       &copy;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
