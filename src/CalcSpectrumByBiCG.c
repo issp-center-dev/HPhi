@@ -169,7 +169,7 @@ int CalcSpectrumByBiCG(
   int Nomega,//!<[in] Number of Frequencies
   int NdcSpectrum,
   double complex **dcSpectrum,//!<[out] [Nomega] Spectrum
-  double complex *dcomega,//!<[in] [Nomega] Frequency
+  double complex **dcomega,//!<[in] [Nomega] Frequency
   double complex **v1Org
 )
 {
@@ -241,7 +241,7 @@ int CalcSpectrumByBiCG(
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
-  ReadTMComponents_BiCG(X, &v2[0][0], &v4[0][0], &v12[0][0], &v14[0][0], Nomega, NdcSpectrum, dcSpectrum, dcomega);
+  ReadTMComponents_BiCG(X, &v2[0][0], &v4[0][0], &v12[0][0], &v14[0][0], Nomega, NdcSpectrum, dcSpectrum, dcomega[0]);
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -278,7 +278,7 @@ int CalcSpectrumByBiCG(
 
       for (iomega = 0; iomega < Nomega; iomega++) {
         fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
-          stp, creal(dcomega[iomega]), 
+          stp, creal(dcomega[0][iomega]), 
           creal(dcSpectrum[iomega][0]), cimag(dcSpectrum[iomega][0]),
           resz[iomega]);
       }

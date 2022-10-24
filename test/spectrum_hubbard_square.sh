@@ -21,6 +21,8 @@ NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
 SpectrumType = "SzSz"
+OmegaMin = -85.7470470447365507
+OmegaMax = 106.2529529552634493
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -32,13 +34,13 @@ cat > reference.dat <<EOF
   19.2000000000 1.0000000000 0.1409881461 -0.0052067704
   57.6000000000 1.0000000000 0.0585833763 -0.0008903186
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste1.dat
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste1.dat
 diff=`awk '
 BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))}
 END{printf "%8.6f", diff}
 ' paste1.dat`
-echo "Diff output/vo_DynamicalGreen.dat (SzSz) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen_0.dat (SzSz) : " ${diff}
 test "${diff}" = "0.000000"
 #
 # S+S- spectrum
@@ -59,6 +61,8 @@ NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
 SpectrumType = "S+S-"
+OmegaMin = -85.7470470447365507
+OmegaMax = 106.2529529552634493
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -70,13 +74,13 @@ cat > reference.dat <<EOF
 19.2000000000 1.0000000000 0.2819763059 -0.0104135413
 57.6000000000 1.0000000000 0.1171667584 -0.0017806372
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste2.dat
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste2.dat
 diff=`awk '
 BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))}
 END{printf "%8.6f", diff}
 ' paste2.dat`
-echo "Diff output/vo_DynamicalGreen.dat (S+S-) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen_0.dat (S+S-) : " ${diff}
 test "${diff}" = "0.000000"
 #
 # Density-Density spectrum
@@ -97,6 +101,8 @@ NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
 SpectrumType = "Density"
+OmegaMin = -85.7470470447365507
+OmegaMax = 106.2529529552634493
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -108,13 +114,13 @@ cat > reference.dat <<EOF
   19.2000000000 1.0000000000 0.1765475276 -0.0081635110
   57.6000000000 1.0000000000 0.0639222321 -0.0010611510
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste3.dat
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste3.dat
 diff=`awk '
 BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))}
 END{printf "%8.6f", diff}
 ' paste3.dat`
-echo "Diff output/vo_DynamicalGreen.dat (Density) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen_0.dat (Density) : " ${diff}
 test "${diff}" = "0.000000"
 #
 # Up-Up spectrum
@@ -135,6 +141,8 @@ NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
 SpectrumType = "Up"
+OmegaMin = -85.7470470447365507
+OmegaMax = 106.2529529552634493
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -146,13 +154,13 @@ cat > reference.dat <<EOF
   19.2000000000 1.0000000000 0.0109868431 -0.0004402674
   57.6000000000 1.0000000000 0.0043424898 -0.0000683658
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste4.dat
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste4.dat
 diff=`awk '
 BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))}
 END{printf "%8.6f", diff}
 ' paste4.dat`
-echo "Diff output/vo_DynamicalGreen.dat (Up) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen_0.dat (Up) : " ${diff}
 test "${diff}" = "0.000000"
 #
 # Down-Down spectrum
@@ -173,6 +181,8 @@ NOmega = 5
 OmegaIm = 1.0
 CalcSpec = "Scratch"
 SpectrumType = "Down"
+OmegaMin = -85.7470470447365507
+OmegaMax = 106.2529529552634493
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan2.in
@@ -184,13 +194,13 @@ cat > reference.dat <<EOF
   19.2000000000 1.0000000000 0.0109868431 -0.0004402674
   57.6000000000 1.0000000000 0.0043424898 -0.0000683658
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste5.dat
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste5.dat
 diff=`awk '
 BEGIN{diff=0.0}
 {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))}
 END{printf "%8.6f", diff}
 ' paste5.dat`
-echo "Diff output/vo_DynamicalGreen.dat (Down) : " ${diff}
+echo "Diff output/zvo_DynamicalGreen_0.dat (Down) : " ${diff}
 test "${diff}" = "0.000000"
 
 exit $?

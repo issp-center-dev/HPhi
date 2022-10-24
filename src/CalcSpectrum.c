@@ -110,10 +110,10 @@ int SetOmega
     }/**/
     //Read Lanczos_Step
     if (X->iFlgSpecOmegaMax == FALSE) {
-      X->dcOmegaMax = Emax * (double)X->Nsite;
+      X->dcOmegaMax = Emax * (double)X->Nsite - E1;
     }
     if (X->iFlgSpecOmegaMin == FALSE) {
-      X->dcOmegaMin = E1;
+      X->dcOmegaMin = 0.0;
     }
   }/*Omegamax and omegamin is not specified in modpara*/
 
@@ -349,31 +349,36 @@ int MakeExcitedList(
 /// \retval TRUE Success to output the spectrum.
 int OutputSpectrum(
   struct EDMainCalStruct *X,
+  int nstate,
   int Nomega,
   int NdcSpectrum,
   double complex **dcSpectrum,
-  double complex *dcomega) 
+  double complex **dcomega,
+  double *energy0) 
 {
   FILE *fp;
   char sdt[D_FileNameMax];
-  int iomega, idcSpectrum;
+  int iomega, idcSpectrum, istate;
 
   //output spectrum
-  sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead);
-  if(childfopenMPI(sdt, "w", &fp)!=0){
-    return FALSE;
-  }
+  for (istate = 0; istate < nstate; istate++) {
+    sprintf(sdt, cFileNameCalcDynamicalGreen, X->Bind.Def.CDataFileHead, istate);
+    if (childfopenMPI(sdt, "w", &fp) != 0) {
+      return FALSE;
+    }
 
-  for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
-    for (iomega = 0; iomega < Nomega; iomega++) {
-      fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
-        creal(dcomega[iomega] - X->Bind.Def.dcOmegaOrg), cimag(dcomega[iomega] - X->Bind.Def.dcOmegaOrg),
-        creal(dcSpectrum[iomega][idcSpectrum]), cimag(dcSpectrum[iomega][idcSpectrum]));
-    }/*for (i = 0; i < Nomega; i++)*/
-    fprintf(fp, "\n");
-  }
+    for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
+      for (iomega = 0; iomega < Nomega; iomega++) {
+        fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+          creal(dcomega[istate][iomega] - X->Bind.Def.dcOmegaOrg - energy0[istate]),
+          cimag(dcomega[istate][iomega] - X->Bind.Def.dcOmegaOrg),
+          creal(dcSpectrum[iomega][idcSpectrum]), cimag(dcSpectrum[iomega][idcSpectrum]));
+      }/*for (i = 0; i < Nomega; i++)*/
+      fprintf(fp, "\n");
+    }
 
-  fclose(fp);
+    fclose(fp);
+  }
   return TRUE;
 }/*int OutputSpectrum*/
 /// \brief Parent function to calculate the excited state.
@@ -431,11 +436,26 @@ int CalcSpectrum(
   double complex **v1Org; /**< Input vector to calculate spectrum function.*/
 
   //ToDo: Nomega should be given as a parameter
-  int Nomega;
+  int Nomega, nstate, istate;
   double complex OmegaMax, OmegaMin;
   double complex **dcSpectrum;
-  double complex *dcomega;
+  double complex **dcomega;
+  double *energy0;
   size_t byte_size;
+
+  if (X->Bind.Def.iCalcType == FullDiag) {
+    nstate = X->Bind.Check.idim_max;
+  }
+  else if (X->Bind.Def.iCalcType == CG) {
+    nstate = X->Bind.Def.k_exct;
+  }
+  else if (X->Bind.Def.iCalcType == TPQCalc || X->Bind.Def.iCalcType == cTPQ) {
+    nstate = NumAve;
+  }
+  else {
+    nstate = 1;
+  }
+  energy0 = d_1d_allocate(nstate);
 
   if (X->Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH) {
     X->Bind.Def.Nsite = X->Bind.Def.NsiteMPI;
@@ -480,15 +500,42 @@ int CalcSpectrum(
       X->Bind.Def.dcOmegaOrg = I * (X->Bind.Def.dcOmegaMax - X->Bind.Def.dcOmegaMin) / (double)X->Bind.Def.iNOmega;
     }
   }
+  //
+  // Read energy origin of each state
+  //
+  if (X->Bind.Def.iCalcType == FullDiag) {
+    strcpy(sdt, cFileNameEigenvalue_Lanczos);
+    childfopenMPI(sdt, "r", &fp);
+    for (istate = 0; istate < nstate; istate++) {
+      fgetsMPI(sdt, D_FileNameMax, fp);
+      sscanf(sdt, "%ld%lf", &i, &energy0[istate]);
+    }
+    fclose(fp);
+  }
+  else if (X->Bind.Def.iCalcType == CG) {
+    sprintf(sdt, cFileNameEnergy_CG, X->Bind.Def.CDataFileHead);
+    childfopenMPI(sdt, "r", &fp);
+    for (istate = 0; istate < nstate; istate++) {
+      fgetsMPI(sdt, D_FileNameMax, fp);
+      fgetsMPI(sdt, D_FileNameMax, fp);
+      sscanf(sdt, "  Energy  %lf", &energy0[istate]);
+      fgetsMPI(sdt, D_FileNameMax, fp);
+      fgetsMPI(sdt, D_FileNameMax, fp);
+      fgetsMPI(sdt, D_FileNameMax, fp);
+    }
+    fclose(fp);
+  }
   /*
    Set & malloc omega grid
   */
   Nomega = X->Bind.Def.iNOmega;
-  dcomega = cd_1d_allocate(Nomega);
+  dcomega = cd_2d_allocate(nstate, Nomega);
   OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
   OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
-  for (i = 0; i < Nomega; i++) {
-    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+  for (istate = 0; istate < nstate; istate++) {
+    for (i = 0; i < Nomega; i++) {
+      dcomega[istate][i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin + energy0[istate];
+    }
   }
 
   fprintf(stdoutMPI, "\nFrequency range:\n");
@@ -584,9 +631,10 @@ int CalcSpectrum(
 
   fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-  iret = OutputSpectrum(X, Nomega, NdcSpectrum, dcSpectrum, dcomega);
+  iret = OutputSpectrum(X, nstate, Nomega, NdcSpectrum, dcSpectrum, dcomega, energy0);
   free_cd_2d_allocate(dcSpectrum);
-  free_cd_1d_allocate(dcomega);
+  free_cd_2d_allocate(dcomega);
+  free_d_1d_allocate(energy0);
   return TRUE;
 
 }/*int CalcSpectrum*/

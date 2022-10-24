@@ -39,7 +39,7 @@ int CalcSpectrumByFullDiag(
   int Nomega,//!<[in] Number of frequencies
   int NdcSpectrum,
   double complex **dcSpectrum,//!<[out] [Nomega] Spectrum
-  double complex *dcomega,//!<[in] [Nomega] Frequency
+  double complex **dcomega,//!<[in] [Nomega] Frequency
   double complex **v1Org
 )
 {
@@ -99,12 +99,14 @@ int CalcSpectrumByFullDiag(
     </ul>
     */
     StartTimer(6304);
-    for (iomega = 0; iomega < Nomega; iomega++) {
-      dcSpectrum[iomega][idcSpectrum] = 0.0;
-      for (idim = 0; idim < idim_max_int; idim++) {
-        dcSpectrum[iomega][idcSpectrum] += vLvvRv[idim] / (dcomega[iomega] - X->Bind.Phys.energy[idim]);
-      }/*for (idim = 0; idim < idim_max_int; idim++)*/
-    }/*for (iomega = 0; iomega < Nomega; iomega++)*/
+    for (jdim = 0; jdim < idim_max_int; jdim++) {
+      for (iomega = 0; iomega < Nomega; iomega++) {
+        dcSpectrum[iomega][idcSpectrum] = 0.0;
+        for (idim = 0; idim < idim_max_int; idim++) {
+          dcSpectrum[iomega][idcSpectrum] += vLvvRv[idim] / (dcomega[jdim][iomega] - X->Bind.Phys.energy[idim]);
+        }/*for (idim = 0; idim < idim_max_int; idim++)*/
+      }/*for (iomega = 0; iomega < Nomega; iomega++)*/
+    }
     StopTimer(6304);
   }/*for (idcSpectrum = 1; idcSpectrum < NdcSpectrum; idcSpectrum++)*/
   free_cd_2d_allocate(vL);

@@ -23,6 +23,6 @@ int CalcSpectrumByBiCG(
   int Nomega,
   int NdcSpectrum,
   double complex **dcSpectrum,
-  double complex *dcomega,
+  double complex **dcomega,
   double complex **v1Org
 );

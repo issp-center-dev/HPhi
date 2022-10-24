@@ -51,7 +51,7 @@ const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
 const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
 const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameInputEigen="%s_eigenvec_%d_rank_%d.dat";
-const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen.dat";
+const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen_%d.dat";
 const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
 
 
