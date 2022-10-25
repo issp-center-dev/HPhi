@@ -149,8 +149,8 @@ SUBROUTINE read_filename()
   READ(fi,*) keyname, eig0
   CLOSE(fi)
   WRITE(*,*) "    Minimum energy : ", eig0
-  omegamin = omegamin - eig0
-  omegamax = omegamax - eig0
+  !omegamin = omegamin - eig0
+  !omegamax = omegamax - eig0
   !
 END SUBROUTINE read_filename
 !
@@ -380,7 +380,7 @@ SUBROUTINE read_corrfile()
   ALLOCATE(cor0(nomega,ncor))
   cor(1:nr,1:norb,1:nomega) = CMPLX(0d0, 0d0, KIND(1d0))
   !
-  OPEN(fi, file = TRIM(filehead) // "_DynamicalGreen.dat")
+  OPEN(fi, file = TRIM(filehead) // "_DynamicalGreen_0.dat")
   !
   DO icor = 1, ncor
      DO iomega = 1, nomega
@@ -481,6 +481,7 @@ SUBROUTINE output_cor()
         WRITE(fo,'(1000e15.5)') xk(ik), omega, cor_k(ik, 1:norb, iomega)
      END DO
      WRITE(fo,*)
+     WRITE(fo,*)
   END DO
   !
   CLOSE(fo)
@@ -492,7 +493,7 @@ SUBROUTINE output_cor()
      WRITE(fo,'(a,a,a,f10.5,a)',advance="no") "'", TRIM(kname(inode)), "'  ", xk_label(inode), ", "
   END DO
   WRITE(fo,'(a,a,a,f10.5,a)') "'", TRIM(kname(nnode)), "' ", xk_label(nnode), ")"
-  WRITE(fo,'(a)') "set ylabel 'Energy from E_0'"
+  WRITE(fo,'(a)') "set ylabel 'Energy'"
   WRITE(fo,'(a)') "set zlabel 'Spectrum' rotate"
   WRITE(fo,'(a)') "set ticslevel 0"
   WRITE(fo,'(a)') "set xzeroaxis"
