@@ -693,9 +693,9 @@ int CalcByLOBPCG(
     and read from files.
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
     vin = cd_1d_allocate(X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
       sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
@@ -711,10 +711,10 @@ int CalcByLOBPCG(
       byte_size = fread(vin, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
 #pragma omp parallel for default(none) shared(v1,vin, i_max, ie), private(idim)
       for (idim = 1; idim <= i_max; idim++) {
-        v1[ie][idim] = vin[idim];
+        v1[idim][ie] = vin[idim];
       }
+      fclose(fp);
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-    fclose(fp);
     free_cd_1d_allocate(vin);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 

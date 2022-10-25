@@ -38,29 +38,31 @@ int CalcSpectrumByFullDiag(
   struct EDMainCalStruct *X,//!<[inout]
   int Nomega,//!<[in] Number of frequencies
   int NdcSpectrum,
-  double complex **dcSpectrum,//!<[out] [Nomega] Spectrum
+  double complex ***dcSpectrum,//!<[out] [Nomega] Spectrum
   double complex **dcomega,//!<[in] [Nomega] Frequency
   double complex **v1Org
 )
 {
-  int idim, jdim, iomega;
-  int idim_max_int;
+  int idim0, idim1, idim2, iomega;
+  int idim_max_int, idim_maxorg_int;
   int idcSpectrum;
-  double complex **vR, **vL, vRv, vLv, *vLvvRv;
+  double complex **vR, **vL, **vRv, **vLv;
   /**
   <ul>
   <li>Generate fully stored Hamiltonian. Because ::v0 & ::v1 are overwritten,
   copy ::v0 into ::vg.</li>
   */
   idim_max_int = (int)X->Bind.Check.idim_max;
-  vR = cd_2d_allocate(idim_max_int, 1);
-  vL = cd_2d_allocate(idim_max_int, 1);
-  vLvvRv = cd_1d_allocate(idim_max_int);
+  idim_maxorg_int = (int)X->Bind.Check.idim_maxOrg;
+  vR = cd_2d_allocate(idim_max_int+1, idim_maxorg_int);
+  vL = cd_2d_allocate(idim_max_int+1, idim_maxorg_int);
+  vLv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
+  vRv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
 
   StartTimer(6301);
   zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v0[0][0]);
   zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v1[0][0]);
-  for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) v1[idim][idim] = 1.0;
+  for (idim0 = 1; idim0 <= X->Bind.Check.idim_max; idim0++) v1[idim0][idim0] = 1.0;
   mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
   StopTimer(6301);
   /**
@@ -75,20 +77,20 @@ int CalcSpectrumByFullDiag(
   where @f$c|0\rangle@f$ is ::vg.</li>
   */
   zclear(X->Bind.Check.idim_max, &vR[1][0]);
-  GetExcitedState(&(X->Bind), 1, vR, v1Org, 0);
+  GetExcitedState(&(X->Bind), X->Bind.Check.idim_maxOrg, vR, v1Org, 0);
+  for (idim0 = 1; idim0 < idim_max_int+1; idim0++)
+    for (idim1 = 0; idim1 < idim_max_int; idim1++)
+      for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
+        vRv[idim0][idim2] += conj(v0[idim0][idim1]) * vR[idim0][idim2];
   for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
     StartTimer(6303);
     zclear(X->Bind.Check.idim_max, &vL[1][0]);
-    GetExcitedState(&(X->Bind), 1, vL, v1Org, idcSpectrum + 1);
-    for (idim = 0; idim < idim_max_int; idim++) {
-      vRv = 0.0;
-      vLv = 0.0;
-      for (jdim = 0; jdim < idim_max_int; jdim++) {
-        vRv += conj(v1[jdim][idim]) * vR[jdim][1];
-        vLv += conj(v1[jdim][idim]) * vL[jdim][1];
-      }
-      vLvvRv[idim] = conj(vLv) * vRv;
-    }/*for (idim = 0; idim < idim_max_int; idim++)*/
+    GetExcitedState(&(X->Bind), X->Bind.Check.idim_maxOrg, vL, v1Org, idcSpectrum + 1);
+    zclear(X->Bind.Check.idim_max* X->Bind.Check.idim_max, &vLv[0][0]);
+    for (idim0 = 1; idim0 < idim_max_int + 1; idim0++)
+      for (idim1 = 0; idim1 < idim_max_int; idim1++)
+        for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
+          vLv[idim0][idim2] += conj(v0[idim0][idim1]) * vL[idim0][idim2];
     StopTimer(6303);
     /**
     <li>Compute spectrum
@@ -99,11 +101,12 @@ int CalcSpectrumByFullDiag(
     </ul>
     */
     StartTimer(6304);
-    for (jdim = 0; jdim < idim_max_int; jdim++) {
+    for (idim0 = 0; idim0 < idim_maxorg_int; idim0++) {
       for (iomega = 0; iomega < Nomega; iomega++) {
-        dcSpectrum[iomega][idcSpectrum] = 0.0;
-        for (idim = 0; idim < idim_max_int; idim++) {
-          dcSpectrum[iomega][idcSpectrum] += vLvvRv[idim] / (dcomega[jdim][iomega] - X->Bind.Phys.energy[idim]);
+        dcSpectrum[idim0][iomega][idcSpectrum] = 0.0;
+        for (idim1 = 0; idim1 < idim_max_int; idim1++) {
+          dcSpectrum[idim0][iomega][idcSpectrum] += conj(vLv[idim1][idim0]) * vRv[idim1][idim0]
+            / (dcomega[idim0][iomega] - X->Bind.Phys.energy[idim1]);
         }/*for (idim = 0; idim < idim_max_int; idim++)*/
       }/*for (iomega = 0; iomega < Nomega; iomega++)*/
     }
@@ -111,7 +114,8 @@ int CalcSpectrumByFullDiag(
   }/*for (idcSpectrum = 1; idcSpectrum < NdcSpectrum; idcSpectrum++)*/
   free_cd_2d_allocate(vL);
   free_cd_2d_allocate(vR);
-  free_cd_1d_allocate(vLvvRv);
+  free_cd_2d_allocate(vLv);
+  free_cd_2d_allocate(vRv);
   return TRUE;
 }/*CalcSpectrumByFullDiag*/
 

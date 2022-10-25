@@ -352,7 +352,7 @@ int OutputSpectrum(
   int nstate,
   int Nomega,
   int NdcSpectrum,
-  double complex **dcSpectrum,
+  double complex ***dcSpectrum,
   double complex **dcomega,
   double *energy0) 
 {
@@ -372,7 +372,7 @@ int OutputSpectrum(
         fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
           creal(dcomega[istate][iomega] - X->Bind.Def.dcOmegaOrg - energy0[istate]),
           cimag(dcomega[istate][iomega] - X->Bind.Def.dcOmegaOrg),
-          creal(dcSpectrum[iomega][idcSpectrum]), cimag(dcSpectrum[iomega][idcSpectrum]));
+          creal(dcSpectrum[istate][iomega][idcSpectrum]), cimag(dcSpectrum[istate][iomega][idcSpectrum]));
       }/*for (i = 0; i < Nomega; i++)*/
       fprintf(fp, "\n");
     }
@@ -433,12 +433,12 @@ int CalcSpectrum(
   int i_stp, NdcSpectrum;
   int iFlagListModified = FALSE;
   FILE *fp;
-  double complex **v1Org; /**< Input vector to calculate spectrum function.*/
+  double complex **v1Org, *vin; /**< Input vector to calculate spectrum function.*/
 
   //ToDo: Nomega should be given as a parameter
   int Nomega, nstate, istate;
   double complex OmegaMax, OmegaMin;
-  double complex **dcSpectrum;
+  double complex ***dcSpectrum;
   double complex **dcomega;
   double *energy0;
   size_t byte_size;
@@ -470,8 +470,10 @@ int CalcSpectrum(
     }
     free_d_1d_allocate(list_Diagonal);
     free_cd_2d_allocate(v0);
-    v1Org = cd_2d_allocate(X->Bind.Check.idim_max + 1, 1);
-    for (i = 1; i <= X->Bind.Check.idim_max; i++) v1Org[i][0] = v1[i][0];
+    v1Org = cd_2d_allocate(X->Bind.Check.idim_max + 1, nstate);
+    for (i = 1; i <= X->Bind.Check.idim_max; i++) 
+      for (istate =0;istate < nstate;istate ++)
+        v1Org[i][istate] = v1[i][istate];
     free_cd_2d_allocate(v1);
 #ifdef MPI
     free_lui_1d_allocate(list_1buf);
@@ -559,7 +561,7 @@ int CalcSpectrum(
     fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     exitMPI(-1);
   }
-  dcSpectrum = cd_2d_allocate(Nomega, NdcSpectrum);
+  dcSpectrum = cd_3d_allocate(nstate, Nomega, NdcSpectrum);
 
   //Make New Lists
   if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
@@ -572,34 +574,37 @@ int CalcSpectrum(
   if (X->Bind.Def.iFlgCalcSpec == RECALC_NOT ||
     X->Bind.Def.iFlgCalcSpec == RECALC_OUTPUT_TMComponents_VEC ||
     (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
-    v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1, 1);
+    v1Org = cd_2d_allocate(X->Bind.Check.idim_maxOrg + 1, nstate);
+    vin = cd_1d_allocate(X->Bind.Check.idim_maxOrg + 1);
     //input eigen vector
     StartTimer(6101);
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    GetFileNameByKW(KWSpectrumVec, &defname);
-    strcat(defname, "_rank_%d.dat");
-    //    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      return -1;
-    }
-
-    byte_size = fread(&i_stp, sizeof(i_stp), 1, fp);
-    X->Bind.Large.itr = i_stp; //For TPQ
-    byte_size = fread(&i_max, sizeof(i_max), 1, fp);
-    if (i_max != X->Bind.Check.idim_maxOrg) {
-      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
-      fprintf(stderr, "Error: A file of Input vector is incorrect.\n");
-      return -1;
-    }
-    byte_size = fread(&v1Org[0][0], sizeof(complex double), i_max + 1, fp);
-    fclose(fp);
+    for (istate = 0; istate < nstate; istate++) {
+      sprintf(sdt, cFileNameInputEigen, nstate, istate, myrank);
+      childfopenALL(sdt, "rb", &fp);
+      if (fp == NULL) {
+        fprintf(stderr, "Error: Inputvector file is not found.\n");
+        exitMPI(-1);
+      }
+      byte_size = fread(&i_stp, sizeof(int), 1, fp);
+      X->Bind.Large.itr = i_stp; //For TPQ
+      byte_size = fread(&i_max, sizeof(long int), 1, fp);
+      if (i_max != X->Bind.Check.idim_maxOrg) {
+        fprintf(stderr, "Error: Invalid Inputvector file.\n");
+        exitMPI(-1);
+      }
+      byte_size = fread(vin, sizeof(complex double), i_max, fp);
+#pragma omp parallel for default(none) shared(v1Org,vin, i_max, istate), private(i)
+      for (i = 1; i <= i_max; i++) {
+        v1Org[i][istate] = vin[i];
+      }
+      fclose(fp);
+    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     StopTimer(6101);
     if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+ 
+    free_cd_1d_allocate(vin);
   }
   StopTimer(6100);
 
@@ -632,7 +637,7 @@ int CalcSpectrum(
   fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
   iret = OutputSpectrum(X, nstate, Nomega, NdcSpectrum, dcSpectrum, dcomega, energy0);
-  free_cd_2d_allocate(dcSpectrum);
+  free_cd_3d_allocate(dcSpectrum);
   free_cd_2d_allocate(dcomega);
   free_d_1d_allocate(energy0);
   return TRUE;
