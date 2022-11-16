@@ -22,7 +22,7 @@ jobs:
       OMP_NUM_THREADS: ${{ matrix.ompsize }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: apt
         if: ${{ runner.os == 'Linux' }}
