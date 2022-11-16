@@ -8,7 +8,7 @@ import hphi_io #using hphi_io.py#
 
 #cnt_name   = "input"
 #output_dir = "dir_"+"{}".format(cnt_name)
-output_dir = ""
+output_dir = "./"
 #os.makedirs(output_dir,exist_ok=True)
 tmp_sdt  = "pair.txt"
 num      = read.func_count(tmp_sdt)
@@ -20,17 +20,17 @@ exct     = 2
 All_N    = max_site
 #[e] set input.
 #[s] interaction
-Ising     = np.zeros([max_site,max_site],dtype=np.float)
-Exchange  = np.zeros([max_site,max_site],dtype=np.float)
-PairLift  = np.zeros([max_site,max_site],dtype=np.float)
-InterAll  = np.zeros([max_site,2,max_site,2,max_site,2,max_site,2],dtype=np.complex)
+Ising     = np.zeros([max_site,max_site],dtype=np.float64)
+Exchange  = np.zeros([max_site,max_site],dtype=np.float64)
+PairLift  = np.zeros([max_site,max_site],dtype=np.float64)
+InterAll  = np.zeros([max_site,2,max_site,2,max_site,2,max_site,2],dtype=np.complex128)
 #[e] interaction
 #[s] read pair.txt
-siteI   = np.zeros([num],dtype=np.int)
-siteJ   = np.zeros([num],dtype=np.int)
-intT1   = np.zeros([num],dtype=np.unicode)
-intT2   = np.zeros([num],dtype=np.unicode)
-para    = np.zeros([num],dtype=np.double)
+siteI   = np.zeros([num],dtype=np.int64)
+siteJ   = np.zeros([num],dtype=np.int64)
+intT1   = np.zeros([num],dtype=np.compat.unicode)
+intT2   = np.zeros([num],dtype=np.compat.unicode)
+para    = np.zeros([num],dtype=np.float64)
 read.func_readpair(tmp_sdt,siteI,siteJ,intT1,intT2,para)
 #[e] read pair.txt
 
@@ -45,46 +45,51 @@ for cnt in range(num):
     if intT1[cnt] == 'z' and intT2[cnt] == 'z':
         Ising[siteI[cnt]][siteJ[cnt]] += para[cnt]
     #[e] for diagonal part
+    # S^{+}=P, S^{-}=M
+    # Sx=(1/2)[  P(I) + M(I)]
+    # Sy=(i/2)[ -P(I) + M(I)]
+    # Sz=(1/2)[  U(I) - D(I)]
     #[s] for non-diagonal part
     if intT1[cnt] == 'x' and intT2[cnt] == 'y':
         I = siteI[cnt]
         J = siteJ[cnt]
-        # xy
-        InterAll[I][0][I][1][J][0][J][1] += complex(0,-0.25*para[cnt])
-        InterAll[I][0][I][1][J][1][J][0] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][0][J][0][J][1] += complex(0,-0.25*para[cnt])
-        InterAll[I][1][I][0][J][1][J][0] += complex(0,0.25*para[cnt])
-        # yx
-        InterAll[I][0][I][1][J][0][J][1] += complex(0,-0.25*para[cnt])
-        InterAll[I][0][I][1][J][1][J][0] += complex(0,-0.25*para[cnt])
-        InterAll[I][1][I][0][J][0][J][1] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][0][J][1][J][0] += complex(0,0.25*para[cnt])
+        # x(I)y(J)  =  (i/4) [P(I) + M(I)]*[-P(J) + M(J)]
+        # x(J)y(I)  =  (i/4) [P(J) + M(J)]*[-P(I) + M(I)]      
+        # x(I)y(J) + x(J)y(I) = (i/2)*[-P(I)P(J)+M(I)M(J)]
+        InterAll[I][0][I][1][J][0][J][1] += complex(0,-0.5*para[cnt]) # -(i/2)*P(I)P(J)
+        InterAll[J][1][J][0][I][1][I][0] += complex(0,0.5*para[cnt])  #  (i/2)*M(J)M(I)
     if intT1[cnt] == 'x' and intT2[cnt] == 'z':
         I = siteI[cnt]
-        J = siteI[cnt]
-        # xz
-        InterAll[I][0][I][1][J][0][J][0] +=  0.25*para[cnt]
-        InterAll[I][0][I][1][J][1][J][1] += -0.25*para[cnt]
-        InterAll[I][1][I][0][J][0][J][0] +=  0.25*para[cnt]
-        InterAll[I][1][I][0][J][1][J][1] += -0.25*para[cnt]
-        # zx
-        InterAll[I][0][I][0][J][0][J][1] +=  0.25*para[cnt]
-        InterAll[I][0][I][0][J][1][J][0] +=  0.25*para[cnt]
-        InterAll[I][1][I][1][J][0][J][1] += -0.25*para[cnt]
-        InterAll[I][1][I][1][J][1][J][0] += -0.25*para[cnt]
+        J = siteJ[cnt]
+        # x(I)z(J)   =  (1/4) [P(I) + M(I)] * [U(J)-D(J)]
+        # x(J)z(I)   =  (1/4) [P(J) + M(J)] * [U(I)-D(I)] 
+        InterAll[I][0][I][1][J][0][J][0] +=  0.25*para[cnt] #  (1/4) * P(I)U(J) 
+        InterAll[J][0][J][0][I][1][I][0] +=  0.25*para[cnt] #  (1/4) * U(J)M(I) 
+
+        InterAll[I][0][I][1][J][1][J][1] += -0.25*para[cnt] # -(1/4) * P(I)D(J) 
+        InterAll[J][1][J][1][I][1][I][0] += -0.25*para[cnt] # -(1/4) * D(J)M(I) 
+
+        InterAll[J][0][J][1][I][0][I][0] +=  0.25*para[cnt] #  (1/4) * P(J)U(I) 
+        InterAll[I][0][I][0][J][1][J][0] +=  0.25*para[cnt] #  (1/4) * U(I)M(J) 
+
+        InterAll[J][1][J][0][I][1][I][1] += -0.25*para[cnt] # -(1/4) * M(J)D(I) 
+        InterAll[I][1][I][1][J][0][J][1] += -0.25*para[cnt] # -(1/4) * D(I)P(J) 
     if intT1[cnt] == 'y' and intT2[cnt] == 'z':
         I = siteI[cnt]
-        J = siteI[cnt]
-        # yz
-        InterAll[I][0][I][1][J][0][J][0] += complex(0,-0.25*para[cnt])
-        InterAll[I][0][I][1][J][1][J][1] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][0][J][0][J][0] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][0][J][1][J][1] += complex(0,-0.25*para[cnt])
-        # zy
-        InterAll[I][0][I][0][J][0][J][1] += complex(0,-0.25*para[cnt])
-        InterAll[I][0][I][0][J][1][J][0] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][1][J][0][J][1] += complex(0,0.25*para[cnt])
-        InterAll[I][1][I][1][J][1][J][0] += complex(0,-0.25*para[cnt])
+        J = siteJ[cnt]
+        # y(I)z(J)         =  (i/4) [-P(I) + M(I)] * [U(J)-D(J)]
+        # y(J)z(I)         =  (i/4) [-P(J) + M(J)] * [U(I)-D(I)]
+        InterAll[I][0][I][1][J][0][J][0] += complex(0,-0.25*para[cnt]) # -(i/4)* P(I)U(J)
+        InterAll[J][0][J][0][I][1][I][0] += complex(0,0.25*para[cnt])  #  (i/4)* U(J)M(I)
+
+        InterAll[I][0][I][1][J][1][J][1] += complex(0,0.25*para[cnt])  #  (i/4)* P(I)D(J)
+        InterAll[J][1][J][1][I][1][I][0] += complex(0,-0.25*para[cnt]) # -(i/4)* D(J)M(I)
+
+        InterAll[J][0][J][1][I][0][I][0] += complex(0,-0.25*para[cnt]) # -(i/4)* P(J)U(I)
+        InterAll[I][0][I][0][J][1][J][0] += complex(0,0.25*para[cnt])  #  (i/4)* U(I)M(J)
+
+        InterAll[J][1][J][0][I][1][I][1] += complex(0,-0.25*para[cnt]) # -(i/4)* M(J)D(I) 
+        InterAll[I][1][I][1][J][0][J][1] += complex(0,0.25*para[cnt])  #  (i/4)* D(I)P(J)
     if intT1[cnt] == 'y' and intT2[cnt] == 'x':
         print('should be xy')
     if intT1[cnt] == 'z' and intT2[cnt] == 'x':
@@ -93,13 +98,13 @@ for cnt in range(num):
         print('should be yz')
     #[e] for non-diagonal part
 #[s] io hamiltonians
-hphi_io.func_io("./{}/".format(output_dir)+"Ising.def",Ising,"two")
-hphi_io.func_io("./{}/".format(output_dir)+"Exchange.def",Exchange,"two")
-hphi_io.func_io("./{}/".format(output_dir)+"PairLift.def",PairLift,"two")
-hphi_io.func_io_all("./{}/".format(output_dir)+"InterAll.def",max_site,InterAll)
+hphi_io.func_io("{}".format(output_dir)+"Ising.def",Ising,"two")
+hphi_io.func_io("{}".format(output_dir)+"Exchange.def",Exchange,"two")
+hphi_io.func_io("{}".format(output_dir)+"PairLift.def",PairLift,"two")
+hphi_io.func_io_all("{}".format(output_dir)+"InterAll.def",max_site,InterAll)
 #[e] io hamiltonians
  
-f        = open("./{}/".format(output_dir)+"calcmod_cg.def", 'wt')
+f        = open("{}".format(output_dir)+"calcmod_cg.def", 'wt')
 f.write("  #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, 4:Time-evolution"+"\n")
 f.write("  #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC"+"\n")
 f.write("  #Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart"+"\n")
@@ -114,7 +119,7 @@ f.write("  InputEigenVec   0"+"\n")
 f.write("  OutputEigenVec   0"+"\n")
 f.close()
 
-f        = open("./{}/".format(output_dir)+"calcmod_tpq.def", 'wt')
+f        = open("{}".format(output_dir)+"calcmod_tpq.def", 'wt')
 f.write("  #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, 4:Time-evolution"+"\n")
 f.write("  #CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC"+"\n")
 f.write("  #Restart = 0:None, 1:Save, 2:Restart&Save, 3:Restart"+"\n")
@@ -130,7 +135,7 @@ f.write("  OutputEigenVec   0"+"\n")
 f.close()
 
 
-f        = open("./{}/".format(output_dir)+"namelist_cg.def", 'wt')
+f        = open("{}".format(output_dir)+"namelist_cg.def", 'wt')
 f.write("  ModPara       modpara.def"+"\n")
 f.write("  CalcMod       calcmod_cg.def"+"\n")
 f.write("  LocSpin       locspn.def"+"\n")
@@ -142,7 +147,7 @@ f.write("  OneBodyG      greenone.def"+"\n")
 f.write("  TwoBodyG      greentwo.def"+"\n")
 f.close()
 
-f        = open("./{}/".format(output_dir)+"namelist_tpq.def", 'wt')
+f        = open("{}".format(output_dir)+"namelist_tpq.def", 'wt')
 f.write("  ModPara       modpara.def"+"\n")
 f.write("  CalcMod       calcmod_tpq.def"+"\n")
 f.write("  LocSpin       locspn.def"+"\n")
@@ -176,7 +181,7 @@ f.write("ExpecInterval  20  "+"\n")
 f.close()
 
 num_loc  = max_site
-f        = open("./{}/".format(output_dir)+"locspn.def", 'wt')
+f        = open("{}".format(output_dir)+"locspn.def", 'wt')
 f.write("==================="+"\n")
 f.write("loc "+"{0:8d}".format(num_loc)+"\n")
 f.write("==================="+"\n")
@@ -188,7 +193,7 @@ for all_i in range(0,All_N):
 f.close()
 
 num_green  = 0
-f        = open("./{}/".format(output_dir)+"greenone.def", 'wt')
+f        = open("{}".format(output_dir)+"greenone.def", 'wt')
 f.write("==================="+"\n")
 f.write("loc "+"{0:8d}".format(num_green)+"\n")
 f.write("==================="+"\n")
@@ -197,7 +202,7 @@ f.write("==================="+"\n")
 f.close()
 
 num_green  = 6*All_N*All_N
-f        = open("./{}/".format(output_dir)+"greentwo.def", 'wt')
+f        = open("{}".format(output_dir)+"greentwo.def", 'wt')
 f.write("==================="+"\n")
 f.write("loc "+"{0:8d}".format(num_green)+"\n")
 f.write("==================="+"\n")
