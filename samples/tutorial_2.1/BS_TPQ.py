@@ -36,12 +36,12 @@ def BS_Basic(max_BS,log_Z,phys_Z,phys_Ene,phys_Ene2,phys_Sz,phys_Sz2,phys_InvTem
     max_set     = num_sample 
     BS_sample   = num_sample
     #[s] Boot strap [BS]
-    BS_Z         = np.zeros([max_BS,max_eigen],dtype=np.float)
-    BS_Ene       = np.zeros([max_BS,max_eigen],dtype=np.float)
-    BS_Spc       = np.zeros([max_BS,max_eigen],dtype=np.float)
-    BS_Sz        = np.zeros([max_BS,max_eigen],dtype=np.float)
-    BS_Chi       = np.zeros([max_BS,max_eigen],dtype=np.float)
-    BS_Ent       = np.zeros([max_BS,max_eigen],dtype=np.float)
+    BS_Z         = np.zeros([max_BS,max_eigen],dtype=np.float64)
+    BS_Ene       = np.zeros([max_BS,max_eigen],dtype=np.float64)
+    BS_Spc       = np.zeros([max_BS,max_eigen],dtype=np.float64)
+    BS_Sz        = np.zeros([max_BS,max_eigen],dtype=np.float64)
+    BS_Chi       = np.zeros([max_BS,max_eigen],dtype=np.float64)
+    BS_Ent       = np.zeros([max_BS,max_eigen],dtype=np.float64)
     for set_BS in range(0,max_BS):
         print(set_BS)
         for cnt in range(0,max_eigen):
@@ -124,11 +124,11 @@ def BS_Phys(max_BS,phys_Z,dir_Norm,dir_Phys,header):
     num_phys       = Norm_Phys.shape[2]
     print("num_phys=",num_phys,max_eigen_phys)
     #[s]BS
-    BS_Phys      = np.zeros([max_BS,max_eigen_phys,num_phys],dtype=np.float)
+    BS_Phys      = np.zeros([max_BS,max_eigen_phys,num_phys],dtype=np.float64)
     for set_BS in range(0,max_BS):
         print("set_BS",set_BS)
         for cnt in range(0,max_eigen_phys):
-            tmp_phys   = np.zeros([num_phys],dtype=np.float)
+            tmp_phys   = np.zeros([num_phys],dtype=np.float64)
             tmp_z      = 0.0
             for cnt_BS in range(0,BS_sample):
                 rand_set  = random.randrange(max_set)
