@@ -1,0 +1,9 @@
+L  = 12
+J  = 1
+2S = 1
+model   = "SpinGC" 
+method  = "cTPQ" 
+lattice = "chain" 
+lanczos_max = 2000
+LargeValue  = 50
+NumAve      = 10
