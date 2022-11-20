@@ -158,7 +158,7 @@ Because of this feature, it is possible to
 estimate the errors originating from fluctuations of the initial states
 without ambiguity using the bootstarp method.
 
-The input file (``samples/tutorial_2.1/stan4.in``) for 12-site Heisenberg model is as follows::
+A input file (``samples/tutorial_2.1/stan4.in``) for 12-site Heisenberg model is as follows::
 
  L  = 12
  J  = 1
@@ -205,7 +205,7 @@ For example, you can see the temperature dependence of the specific heat as::
  se colors classic
  se xlabel "T/J"
  se ylabel "C"
- plot    "BS_MaxBS5.dat"  u 1:4:5 w e lc rgb "#FFBBBB" ps 1 pt 6
+ plot    "BS_MaxBS5.dat"  u 1:4:5 w e lt 1 ps 1 pt 6
 
 We note that ``Ext_BS_MaxBS5.dat`` is a file with several temperatures omitted from
 ``BS_MaxBS5.dat`` for clarity. To see overall temperature dependence, it is better to
@@ -214,6 +214,3 @@ plot ``Ext_BS_MaxBS5.dat``.
 **More advanced exercise**:
 By increasing ``NumAve`` (e.g. ``NumAve=100``), 
 please examine how the error bars of the physical quantities decrease. 
-
-
-
