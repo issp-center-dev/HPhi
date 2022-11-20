@@ -50,7 +50,7 @@ for cnt in range(num):
     # Sy=(i/2)[ -P(I) + M(I)]
     # Sz=(1/2)[  U(I) - D(I)]
     #[s] for non-diagonal part
-    if intT1[cnt] == 'x' and intT2[cnt] == 'y':
+    if (intT1[cnt] == 'x' and intT2[cnt] == 'y') or (intT1[cnt] == 'y' and intT2[cnt] == 'x'):
         I = siteI[cnt]
         J = siteJ[cnt]
         # x(I)y(J)  =  (i/4) [P(I) + M(I)]*[-P(J) + M(J)]
@@ -58,7 +58,7 @@ for cnt in range(num):
         # x(I)y(J) + x(J)y(I) = (i/2)*[-P(I)P(J)+M(I)M(J)]
         InterAll[I][0][I][1][J][0][J][1] += complex(0,-0.5*para[cnt]) # -(i/2)*P(I)P(J)
         InterAll[J][1][J][0][I][1][I][0] += complex(0,0.5*para[cnt])  #  (i/2)*M(J)M(I)
-    if intT1[cnt] == 'x' and intT2[cnt] == 'z':
+    if (intT1[cnt] == 'x' and intT2[cnt] == 'z') or (intT1[cnt] == 'z' and intT2[cnt] == 'x'):
         I = siteI[cnt]
         J = siteJ[cnt]
         # x(I)z(J)   =  (1/4) [P(I) + M(I)] * [U(J)-D(J)]
@@ -74,7 +74,7 @@ for cnt in range(num):
 
         InterAll[J][1][J][0][I][1][I][1] += -0.25*para[cnt] # -(1/4) * M(J)D(I) 
         InterAll[I][1][I][1][J][0][J][1] += -0.25*para[cnt] # -(1/4) * D(I)P(J) 
-    if intT1[cnt] == 'y' and intT2[cnt] == 'z':
+    if (intT1[cnt] == 'y' and intT2[cnt] == 'z') or (intT1[cnt] == 'z' and intT2[cnt] == 'y'):
         I = siteI[cnt]
         J = siteJ[cnt]
         # y(I)z(J)         =  (i/4) [-P(I) + M(I)] * [U(J)-D(J)]
@@ -90,12 +90,12 @@ for cnt in range(num):
 
         InterAll[J][1][J][0][I][1][I][1] += complex(0,-0.25*para[cnt]) # -(i/4)* M(J)D(I) 
         InterAll[I][1][I][1][J][0][J][1] += complex(0,0.25*para[cnt])  #  (i/4)* D(I)P(J)
-    if intT1[cnt] == 'y' and intT2[cnt] == 'x':
-        print('should be xy')
-    if intT1[cnt] == 'z' and intT2[cnt] == 'x':
-        print('should be xz')
-    if intT1[cnt] == 'z' and intT2[cnt] == 'y':
-        print('should be yz')
+    #if intT1[cnt] == 'y' and intT2[cnt] == 'x':
+    #    print('should be xy')
+    #if intT1[cnt] == 'z' and intT2[cnt] == 'x':
+    #    print('should be xz')
+    #if intT1[cnt] == 'z' and intT2[cnt] == 'y':
+     #   print('should be yz')
     #[e] for non-diagonal part
 #[s] io hamiltonians
 hphi_io.func_io("{}".format(output_dir)+"Ising.def",Ising,"two")
