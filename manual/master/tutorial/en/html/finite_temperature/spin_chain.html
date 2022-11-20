@@ -43,23 +43,25 @@ properties of spin 1/2 Heisenberg model on the chain.</p>
 <div class="math notranslate nohighlight" id="equation-finite-temperature-spin-chain-0">
 <span class="eqno">(2.1)<a class="headerlink" href="#equation-finite-temperature-spin-chain-0" title="Permalink to this equation">¶</a></span>\[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_2.1/stan1.in</span></code>) for 12-site Heisenberg model is as follows:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L       = 12
-model   = &quot;Spin&quot;
-method  = &quot;FullDiag&quot;
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L  = 12
+J  = 1
+2S = 1
+model   = &quot;SpinGC&quot;
+method  = &quot;cTPQ&quot;
 lattice = &quot;chain&quot;
-J = 1
-2Sz = 0
-2S  = 1
+lanczos_max = 2000
+LargeValue  = 50
+NumAve      = 10
 </pre></div>
 </div>
 <p>You can execute HPhi as follows</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi -s stan.in
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi -s stan1.in
 </pre></div>
 </div>
 <section id="full-diagonalization">
 <h2><span class="section-number">2.1.1. </span>Full diagonalization<a class="headerlink" href="#full-diagonalization" title="Permalink to this heading">¶</a></h2>
 <p>After executing the full diagonalization,
-all the eigen energies are output in <strong>output/Eiegenvalue.dat</strong>.
+all the eigenvalues are output in <strong>output/Eiegenvalue.dat</strong>.
 By using the python script <strong>(``samples/tutorial_2.1/Finite.py``)</strong>,
 you can obtain the temperature dependence of the energy and the specific heat.</p>
 <p>You can execute <strong>Finite.py</strong> as follows</p>
@@ -78,10 +80,10 @@ you can obtain the temperature dependence of the energy and the specific heat.</
 the 3rd row represents the specific heat defined
 by <span class="math notranslate nohighlight">\(C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2\)</span>.</p>
 </section>
-<section id="tpq-method-sz-0">
-<h2><span class="section-number">2.1.2. </span>TPQ method (Sz=0)<a class="headerlink" href="#tpq-method-sz-0" title="Permalink to this heading">¶</a></h2>
+<section id="micro-canonical-tpq-mtpq-method-sz-0">
+<h2><span class="section-number">2.1.2. </span>Micro-canonical TPQ (mTPQ) method (Sz=0)<a class="headerlink" href="#micro-canonical-tpq-mtpq-method-sz-0" title="Permalink to this heading">¶</a></h2>
 <p>By selecting method as “TPQ”,
-you can perform the finite-temperature calculations using the TPQ method.</p>
+you can perform the finite-temperature calculations using the mTPQ method.</p>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_2.1/stan2.in</span></code>) for 12-site Heisenberg model is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L       = 12
 model   = &quot;Spin&quot;
@@ -113,9 +115,9 @@ physical quantities such as the energy and the specific heat.</p>
 <p>You can see the following output image.</p>
 <img alt="../_images/finiteT.png" class="align-center" src="../_images/finiteT.png" />
 </section>
-<section id="tpq-method-susceptibility">
-<h2><span class="section-number">2.1.3. </span>TPQ method (susceptibility)<a class="headerlink" href="#tpq-method-susceptibility" title="Permalink to this heading">¶</a></h2>
-<p>By using the TPQ method, it is also possible
+<section id="mtpq-method-susceptibility">
+<h2><span class="section-number">2.1.3. </span>mTPQ method (susceptibility)<a class="headerlink" href="#mtpq-method-susceptibility" title="Permalink to this heading">¶</a></h2>
+<p>By using the mTPQ method, it is also possible
 to calculate the spin susceptibility by performing
 the calculations for all Sz sectors.</p>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_2.1/stan3.in</span></code>) for 12-site Heisenberg model is as follows:</p>
@@ -160,6 +162,74 @@ plot    &quot;ave_Flct.dat&quot;   u 1:5:6 w e lc rgb &quot;#FFBBBB&quot; ps 1 p
 <p>You can see the following output image.</p>
 <img alt="../_images/chi.png" class="align-center" src="../_images/chi.png" />
 </section>
+<section id="canonical-tpq-ctpq-method-advanced">
+<h2><span class="section-number">2.1.4. </span>Canonical TPQ (cTPQ) method (Advanced)<a class="headerlink" href="#canonical-tpq-ctpq-method-advanced" title="Permalink to this heading">¶</a></h2>
+<p>In the cTPQ method, we generate the <em>k</em>th TPQ state as</p>
+<div class="math notranslate nohighlight" id="equation-finite-temperature-spin-chain-2">
+<span class="eqno">(2.3)<a class="headerlink" href="#equation-finite-temperature-spin-chain-2" title="Permalink to this equation">¶</a></span>\[\begin{split}&amp;\ket{\Phi_{\rm cTPQ}(\beta_{k})}=[U_{\rm c}(\Delta \tau)]^{k}\ket{\Phi_{\rm rand}},\\
+&amp;U_{\rm c}(\Delta \tau) \equiv \exp[-\frac{\Delta\tau}{2}\hat{H}]\sim\sum_{n=0}^{n_{\rm max}}\frac{1}{n!}(-\frac{\Delta\tau}{2}\hat{H})^{n},\\
+&amp;\beta_{k}=k\Delta\tau,\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_{\rm max}\)</span> represents the order of the Taylor expansion and
+<span class="math notranslate nohighlight">\(\Delta\tau\)</span> represents increment of the imaginary-time evolution.
+An advantage of the cTPQ method is the inverse temperatures
+do not depend on the initial states <span class="math notranslate nohighlight">\(\ket{\Phi_{\rm rand}}\)</span>.
+Because of this feature, it is possible to
+estimate the errors originating from fluctuations of the initial states
+without ambiguity using the bootstarp method.</p>
+<p>A input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_2.1/stan4.in</span></code>) for 12-site Heisenberg model is as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L  = 12
+J  = 1
+2S = 1
+model   = &quot;SpinGC&quot;
+method  = &quot;cTPQ&quot;
+lattice = &quot;chain&quot;
+lanczos_max = 2000
+LargeValue  = 50
+NumAve      = 10
+</pre></div>
+</div>
+<p>The increment of the imaginary-time evolution <span class="math notranslate nohighlight">\(\Delta\tau\)</span> is given by
+<span class="math notranslate nohighlight">\(\Delta\tau=1/{\rm LargeValue }=1/50=0.02\)</span>. The default value of <span class="math notranslate nohighlight">\(n_{\rm max}=10\)</span>
+is used in this calculation.
+Please note that this cTPQ calculation takes 2-3 minutes.</p>
+<p>After the calculation, by executing <code class="docutils literal notranslate"><span class="pre">sh</span> <span class="pre">Aft_cTPQ.sh</span></code>,
+you can estimate the average values and errors by using the bootstrap method.
+In this example, we choose <code class="docutils literal notranslate"><span class="pre">10</span></code> samples from <code class="docutils literal notranslate"><span class="pre">10</span></code> samples with allowing
+duplications for <code class="docutils literal notranslate"><span class="pre">5</span></code> times in the bootstrap sampling.
+In <code class="docutils literal notranslate"><span class="pre">BS_MaxBS5.dat</span></code>, the following physical quantities are output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z Z_err k
+</pre></div>
+</div>
+<p>where
+<code class="docutils literal notranslate"><span class="pre">T</span></code> :temperature (<span class="math notranslate nohighlight">\(T=1/\beta=1/(k\Delta\tau)\)</span>),
+<code class="docutils literal notranslate"><span class="pre">E</span></code> :average value of energy,
+<code class="docutils literal notranslate"><span class="pre">E_err</span></code> :error of energy,
+<code class="docutils literal notranslate"><span class="pre">C</span></code>  :average value of specific heat,
+<code class="docutils literal notranslate"><span class="pre">C_err</span></code> :error of specific heat,
+<code class="docutils literal notranslate"><span class="pre">S</span></code>  :average value of entropy,
+<code class="docutils literal notranslate"><span class="pre">S_err</span></code> :error of entropy,
+<code class="docutils literal notranslate"><span class="pre">Sz</span></code>  :average value of Sz,
+<code class="docutils literal notranslate"><span class="pre">Sz_err</span></code> :error of Sz,
+<code class="docutils literal notranslate"><span class="pre">chi_Sz</span></code> :average value of chi_Sz,
+<code class="docutils literal notranslate"><span class="pre">chi_Sz_err</span></code> :error of chi_Sz,
+<code class="docutils literal notranslate"><span class="pre">Z</span></code> :average value of norm the wave function,
+<code class="docutils literal notranslate"><span class="pre">Z_err</span></code> :error of norm of the wave function, and
+<code class="docutils literal notranslate"><span class="pre">k</span></code> :number of the cTPQ state.</p>
+<p>For example, you can see the temperature dependence of the specific heat as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>se log x
+se colors classic
+se xlabel &quot;T/J&quot;
+se ylabel &quot;C&quot;
+plot    &quot;BS_MaxBS5.dat&quot;  u 1:4:5 w e lt 1 ps 1 pt 6
+</pre></div>
+</div>
+<p>We note that <code class="docutils literal notranslate"><span class="pre">Ext_BS_MaxBS5.dat</span></code> is a file with several temperatures omitted from
+<code class="docutils literal notranslate"><span class="pre">BS_MaxBS5.dat</span></code> for clarity. To see overall temperature dependence, it is better to
+plot <code class="docutils literal notranslate"><span class="pre">Ext_BS_MaxBS5.dat</span></code>.</p>
+<p><strong>More advanced exercise</strong>:
+By increasing <code class="docutils literal notranslate"><span class="pre">NumAve</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">NumAve=100</span></code>),
+please examine how the error bars of the physical quantities decrease.</p>
+</section>
 </section>
 
 
@@ -189,8 +259,9 @@ plot    &quot;ave_Flct.dat&quot;   u 1:5:6 w e lc rgb &quot;#FFBBBB&quot; ps 1 p
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tutorial for finite-temperature calculations</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. Heisenberg chain (finite temperatures)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#full-diagonalization">2.1.1. Full diagonalization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tpq-method-sz-0">2.1.2. TPQ method (Sz=0)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tpq-method-susceptibility">2.1.3. TPQ method (susceptibility)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#micro-canonical-tpq-mtpq-method-sz-0">2.1.2. Micro-canonical TPQ (mTPQ) method (Sz=0)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mtpq-method-susceptibility">2.1.3. mTPQ method (susceptibility)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#canonical-tpq-ctpq-method-advanced">2.1.4. Canonical TPQ (cTPQ) method (Advanced)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Kitaev.html">2.2. Kitaev cluster (finite temperatures)</a></li>
