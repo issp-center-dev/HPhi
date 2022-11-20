@@ -56,16 +56,19 @@ are specified.</p>
 exct 2
 </pre></div>
 </div>
-<p>In <strong>pair.txt</strong>, you specify the interaction terms in the form</p>
+<p>In <strong>pair.txt</strong>, one specify the interaction terms in the form</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-expert-1">
 <span class="eqno">(1.10)<a class="headerlink" href="#equation-zero-temperature-expert-1" title="Permalink to this equation">¶</a></span>\[i~~~~~j~~~~~\alpha~~~~~\beta~~~~~J_{i,j}^{\alpha,\beta}\]</div>
+<p>For diagonal interactions (<span class="math notranslate nohighlight">\(\alpha=\beta\)</span>), <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\alpha} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\alpha}\)</span> is added,
+and <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\beta} [{\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}+{\bf S}_{j}^{\alpha} {\bf S}_{i}^{\beta} ]\)</span> is added
+for off-diagonal interactions (<span class="math notranslate nohighlight">\(\alpha\neq\beta\)</span>),</p>
 <p>Below is an example of <strong>pair.txt</strong> for 2 site Heisenberg model</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0 1 x x 0.5
 0 1 y y 0.5
 0 1 z z 0.5
 </pre></div>
 </div>
-<p>You can also specify the non-diagonal interaction as</p>
+<p>One can also specify the off-diagonal interaction as</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0 1 x x 0.5
 0 1 y y 0.5
 0 1 z z 0.5
@@ -74,20 +77,31 @@ exct 2
 0 1 y z 0.5
 </pre></div>
 </div>
-<p>Note that interaction terms must be specified for <strong>(x,y), (x,z), (y,z)</strong>
-and <strong>(y,x), (z,x), (z,y) cannot be used</strong>.</p>
+<p>Note that interaction <span class="math notranslate nohighlight">\((\alpha,\beta)\)</span> and <span class="math notranslate nohighlight">\((\beta,\alpha)\)</span> generate the same interaction
+since we assume <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\beta}\)</span> is real.</p>
 <section id="exercise">
 <h2><span class="section-number">1.6.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">¶</a></h2>
-<p>By changing <strong>pair.txt</strong> and <strong>input.txt</strong>,
-you can treat your favorite models.
-For example, please try to make input files
-for the <strong>Kitaev model</strong> on the honeycomb lattice.
-We note that the <strong>Kitaev model</strong> can be used in the Standard mode.</p>
-<p>Another example is the <strong>XY model</strong> on the chain.
-In the standard model,
-you can also treat <strong>XY model</strong> by omitting
-“CoulombInter  coulombinter.def”  and
-“Hund  hund.def” in namelist.def.</p>
+<p>As a simple exercise, for small system sizes (e.g. 2-site system),
+please try to
+confirm that
+<span class="math notranslate nohighlight">\(H_{xy} = \sum_{i,j} J_{i,j}^{x,y} [{\bf S}_{i}^{x} {\bf S}_{j}^{y}+{\bf S}_{j}^{x} {\bf S}_{i}^{y} ]\)</span>,
+<span class="math notranslate nohighlight">\(H_{yz} = \sum_{i,j} J_{i,j}^{y,z} [{\bf S}_{i}^{y} {\bf S}_{j}^{z}+{\bf S}_{j}^{y} {\bf S}_{i}^{z} ]\)</span>, and
+<span class="math notranslate nohighlight">\(H_{zx} = \sum_{i,j} J_{i,j}^{z,x} [{\bf S}_{i}^{z} {\bf S}_{j}^{x}+{\bf S}_{j}^{z} {\bf S}_{i}^{x} ]\)</span>
+are equivalent by calculating the ground-state energy and the excited-state energies.</p>
+<p>As an advanced exercise,
+please try to make input files
+for the <strong>Kitaev model</strong> on the honeycomb lattice
+by changing <strong>pair.txt</strong> and <strong>input.txt</strong>.
+Since the <strong>Kitaev model</strong> can also be treated in Standard mode,
+please confirm the results by Expert mode are
+consistent with those by Standard mode.</p>
+<p>Another example is the <strong>XY model</strong> on the one-dimensional chain.
+Although Standard mode only supports the Heisenberg model,
+it is easy to treat <strong>XY model</strong>
+by omitting “CoulombInter  coulombinter.def”  and
+“Hund  hund.def” in namelist.def generated for the Heisenberg model.
+Please confirm the results by Expert mode are
+consistent with those by Standard mode.</p>
 </section>
 </section>
 

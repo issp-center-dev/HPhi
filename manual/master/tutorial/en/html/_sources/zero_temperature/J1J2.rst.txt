@@ -51,12 +51,12 @@ By using a python script **CalcSq.py** (``samples/tutorial_1.5/CalcSq.py``),
 you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**.
 
 Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
- 1. HPhi -sdrt stan.in
- 2. pyhton3 MakeGreen.py (input.txt is necessary)
+ 1. HPhi -sdry stan.in
+ 2. python3 MakeGreen.py (input.txt is necessary)
  3. HPhi -e namelist.def 
  4. python3 CalcSq.py (input.txt is necessary)
  5. You can obtain **Sq_eigen0.dat** !!
- 6. plot "Sq_eigen0.dat" u 1:2:3 (using gnuplot)
+ 6. splot "Sq_eigen0.dat" u 1:2:3 (using gnuplot)
 
 Following the procedure, please see how :math:`S({\bf q})` changes
 by changing J'.

@@ -41,18 +41,18 @@ An input file (``samples/tutorial_4.2/stan1.in``) for 6-site Hubbard model is as
 
 
 Scripts for calculating the optical conductivity are 
-available at **``samples/tutorial_4.2/``**.
+available at ``samples/tutorial_4.2/``.
   
-By performing the all-in-one script (All.sh),  ::
+By performing the all-in-one script (``All.sh``),  ::
 
  sh ./All.sh
 
-you can obtain **optical.dat**.
-Note that ``samples/tutorial_4.2/OpticalSpectrum.py``,``samples/tutorial_4.1/lattice.py``,
+you can obtain ``optical.dat``
+Note that ``samples/tutorial_4.2/OpticalSpectrum.py``, ``samples/tutorial_4.1/lattice.py``,
 ``samples/tutorial_4.2/lattice.py``, and ``samples/tutorial_4.2/input.txt`` 
 are necessary.
 
-A way for plotting **optical.dat** is as follows  ::
+A way for plotting ``optical.dat`` is as follows  ::
 
  plot "optical.dat" u 1:(-($4+$8)/$1) w l
 
