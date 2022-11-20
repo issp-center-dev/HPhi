@@ -80,12 +80,12 @@ orb_num 1
 you can calculate <span class="math notranslate nohighlight">\(S({\bf q})\)</span> from <strong>output/zvo_cisajscktalt_eigen0.dat</strong>.</p>
 <dl class="simple">
 <dt>Procedure for calculating and visualizing <span class="math notranslate nohighlight">\(S({\bf q})\)</span> is given as follows ::</dt><dd><ol class="arabic simple">
-<li><p>HPhi -sdrt stan.in</p></li>
-<li><p>pyhton3 MakeGreen.py (input.txt is necessary)</p></li>
+<li><p>HPhi -sdry stan.in</p></li>
+<li><p>python3 MakeGreen.py (input.txt is necessary)</p></li>
 <li><p>HPhi -e namelist.def</p></li>
 <li><p>python3 CalcSq.py (input.txt is necessary)</p></li>
 <li><p>You can obtain <strong>Sq_eigen0.dat</strong> !!</p></li>
-<li><p>plot “Sq_eigen0.dat” u 1:2:3 (using gnuplot)</p></li>
+<li><p>splot “Sq_eigen0.dat” u 1:2:3 (using gnuplot)</p></li>
 </ol>
 </dd>
 </dl>

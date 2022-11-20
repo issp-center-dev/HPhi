@@ -67,16 +67,16 @@ EigenVecIO  = &quot;out&quot;
 </pre></div>
 </div>
 <p>Scripts for calculating the optical conductivity are
-available at <strong>``samples/tutorial_4.2/``</strong>.</p>
-<p>By performing the all-in-one script (All.sh),</p>
+available at <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/</span></code>.</p>
+<p>By performing the all-in-one script (<code class="docutils literal notranslate"><span class="pre">All.sh</span></code>),</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sh ./All.sh
 </pre></div>
 </div>
-<p>you can obtain <strong>optical.dat</strong>.
-Note that <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/OpticalSpectrum.py</span></code>,``samples/tutorial_4.1/lattice.py``,
+<p>you can obtain <code class="docutils literal notranslate"><span class="pre">optical.dat</span></code>
+Note that <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/OpticalSpectrum.py</span></code>, <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.1/lattice.py</span></code>,
 <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/lattice.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/input.txt</span></code>
 are necessary.</p>
-<p>A way for plotting <strong>optical.dat</strong> is as follows</p>
+<p>A way for plotting <code class="docutils literal notranslate"><span class="pre">optical.dat</span></code> is as follows</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;optical.dat&quot; u 1:(-($4+$8)/$1) w l
 </pre></div>
 </div>
