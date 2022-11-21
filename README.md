@@ -51,6 +51,7 @@ author = {Mitsuaki Kawamura and Kazuyoshi Yoshimi and Takahiro Misawa and Youhei
 - [HPhi portal site](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en)
 - [User-Manual](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en/doc/manual)
 - [HPhi tutorial](https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html)
+- [HPhi Gallery](https://isspns-gitlab.issp.u-tokyo.ac.jp/hphi-dev/hphi-gallery)
 
 ## Author
 Youhei Yamaji, Takahiro Misawa, Synge Todo, Kota Ido, Yuichi Motoyama, Kazuyoshi Yoshimi, Mitsuaki Kawamura, Naoki Kawashima.
