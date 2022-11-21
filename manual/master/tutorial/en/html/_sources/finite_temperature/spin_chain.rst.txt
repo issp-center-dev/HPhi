@@ -28,7 +28,7 @@ Full diagonalization
 """""""""""""""""""""""""""""""
 After executing the full diagonalization,
 all the eigenvalues are output in **output/Eiegenvalue.dat**.
-By using the python script **(``samples/tutorial_2.1/Finite.py``)**, 
+By using the python script **(samples/tutorial_2.1/Finite.py)**, 
 you can obtain the temperature dependence of the energy and the specific heat.
 
 You can execute **Finite.py** as follows ::
@@ -48,11 +48,11 @@ the 3rd row represents the specific heat defined
 by :math:`C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2`.
 
 Micro-canonical TPQ (mTPQ) method (Sz=0)
-"""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""
 By selecting method as "TPQ",
 you can perform the finite-temperature calculations using the mTPQ method.
 
-The input file (``samples/tutorial_2.1/stan2.in``) for 12-site Heisenberg model is as follows::
+The input file (**samples/tutorial_2.1/stan2.in**) for 12-site Heisenberg model is as follows::
 
  L       = 12
  model   = "Spin" 
@@ -64,7 +64,7 @@ The input file (``samples/tutorial_2.1/stan2.in``) for 12-site Heisenberg model 
 
 After performing the TPQ calculations,
 results are output in **output/SS_rand*.dat**.
-By using the python script **(``samples/tutorial_2.1/AveSSrand.py``)**, 
+By using the python script **(samples/tutorial_2.1/AveSSrand.py)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the specific heat.
 
@@ -107,7 +107,7 @@ Here, note that "model = Spin" is changed to "model = SpinGC" and
 After performing the TPQ calculations,
 temperature dependence of several physical
 quantities such as number of particel N and total Sz are output in **output/Flct_rand*.dat**.
-By using the python script **(``samples/tutorial_2.1/AveFlct.py``)**, 
+By using the python script **(samples/tutorial_2.1/AveFlct.py)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the spin susceptibility :math:`\chi`.
 Note that :math:`\chi` is defined as
@@ -141,7 +141,7 @@ You can see the following output image.
    :align: center
 
 Canonical TPQ (cTPQ) method (Advanced)
-"""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""
 In the cTPQ method, we generate the *k*\th TPQ state as 
 
 .. math::
@@ -181,23 +181,24 @@ In this example, we choose ``10`` samples from ``10`` samples with allowing
 duplications for ``5`` times in the bootstrap sampling.
 In ``BS_MaxBS5.dat``, the following physical quantities are output::
  
- T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z Z_err k 
+ T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z  Z_err k 
 
 where 
-``T`` :temperature (:math:`T=1/\beta=1/(k\Delta\tau)`), 
-``E`` :average value of energy, 
-``E_err`` :error of energy, 
-``C``  :average value of specific heat,
-``C_err`` :error of specific heat, 
-``S``  :average value of entropy, 
-``S_err`` :error of entropy, 
-``Sz``  :average value of Sz, 
-``Sz_err`` :error of Sz,  
-``chi_Sz`` :average value of chi_Sz, 
-``chi_Sz_err`` :error of chi_Sz,  
-``Z`` :average value of norm the wave function, 
-``Z_err`` :error of norm of the wave function, and
-``k`` :number of the cTPQ state.
+
+#. ``T`` : temperature (:math:`T=1/\beta=1/(k\Delta\tau)`), 
+#. ``E`` : average value of energy, 
+#. ``E_err`` : error of energy, 
+#. ``C``  : average value of specific heat,
+#. ``C_err`` : error of specific heat, 
+#. ``S``  : average value of entropy, 
+#. ``S_err`` : error of entropy, 
+#. ``Sz``  : average value of Sz, 
+#. ``Sz_err`` : error of Sz,  
+#. ``chi_Sz`` : average value of chi_Sz, 
+#. ``chi_Sz_err`` : error of chi_Sz,  
+#. ``Z`` : average value of norm the wave function, 
+#. ``Z_err`` : error of norm of the wave function, and
+#. ``k`` : number of the cTPQ state.
 
 For example, you can see the temperature dependence of the specific heat as::
 

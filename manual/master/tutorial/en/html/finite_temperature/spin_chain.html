@@ -62,7 +62,7 @@ NumAve      = 10
 <h2><span class="section-number">2.1.1. </span>Full diagonalization<a class="headerlink" href="#full-diagonalization" title="Permalink to this heading">¶</a></h2>
 <p>After executing the full diagonalization,
 all the eigenvalues are output in <strong>output/Eiegenvalue.dat</strong>.
-By using the python script <strong>(``samples/tutorial_2.1/Finite.py``)</strong>,
+By using the python script <strong>(samples/tutorial_2.1/Finite.py)</strong>,
 you can obtain the temperature dependence of the energy and the specific heat.</p>
 <p>You can execute <strong>Finite.py</strong> as follows</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python3 Finite.py
@@ -84,7 +84,7 @@ by <span class="math notranslate nohighlight">\(C=(\langle E^2 \rangle-\langle E
 <h2><span class="section-number">2.1.2. </span>Micro-canonical TPQ (mTPQ) method (Sz=0)<a class="headerlink" href="#micro-canonical-tpq-mtpq-method-sz-0" title="Permalink to this heading">¶</a></h2>
 <p>By selecting method as “TPQ”,
 you can perform the finite-temperature calculations using the mTPQ method.</p>
-<p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_2.1/stan2.in</span></code>) for 12-site Heisenberg model is as follows:</p>
+<p>The input file (<strong>samples/tutorial_2.1/stan2.in</strong>) for 12-site Heisenberg model is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L       = 12
 model   = &quot;Spin&quot;
 method  = &quot;TPQ&quot;
@@ -96,7 +96,7 @@ J = 1
 </div>
 <p>After performing the TPQ calculations,
 results are output in <strong>output/SS_rand*.dat</strong>.
-By using the python script <strong>(``samples/tutorial_2.1/AveSSrand.py``)</strong>,
+By using the python script <strong>(samples/tutorial_2.1/AveSSrand.py)</strong>,
 you can obtain the temperature dependence of
 physical quantities such as the energy and the specific heat.</p>
 <p>Then, you can obtain <strong>ave_TPQ.dat</strong> as follows</p>
@@ -134,7 +134,7 @@ J = 1
 <p>After performing the TPQ calculations,
 temperature dependence of several physical
 quantities such as number of particel N and total Sz are output in <strong>output/Flct_rand*.dat</strong>.
-By using the python script <strong>(``samples/tutorial_2.1/AveFlct.py``)</strong>,
+By using the python script <strong>(samples/tutorial_2.1/AveFlct.py)</strong>,
 you can obtain the temperature dependence of
 physical quantities such as the energy and the spin susceptibility <span class="math notranslate nohighlight">\(\chi\)</span>.
 Note that <span class="math notranslate nohighlight">\(\chi\)</span> is defined as</p>
@@ -197,24 +197,26 @@ you can estimate the average values and errors by using the bootstrap method.
 In this example, we choose <code class="docutils literal notranslate"><span class="pre">10</span></code> samples from <code class="docutils literal notranslate"><span class="pre">10</span></code> samples with allowing
 duplications for <code class="docutils literal notranslate"><span class="pre">5</span></code> times in the bootstrap sampling.
 In <code class="docutils literal notranslate"><span class="pre">BS_MaxBS5.dat</span></code>, the following physical quantities are output:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z Z_err k
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z  Z_err k
 </pre></div>
 </div>
-<p>where
-<code class="docutils literal notranslate"><span class="pre">T</span></code> :temperature (<span class="math notranslate nohighlight">\(T=1/\beta=1/(k\Delta\tau)\)</span>),
-<code class="docutils literal notranslate"><span class="pre">E</span></code> :average value of energy,
-<code class="docutils literal notranslate"><span class="pre">E_err</span></code> :error of energy,
-<code class="docutils literal notranslate"><span class="pre">C</span></code>  :average value of specific heat,
-<code class="docutils literal notranslate"><span class="pre">C_err</span></code> :error of specific heat,
-<code class="docutils literal notranslate"><span class="pre">S</span></code>  :average value of entropy,
-<code class="docutils literal notranslate"><span class="pre">S_err</span></code> :error of entropy,
-<code class="docutils literal notranslate"><span class="pre">Sz</span></code>  :average value of Sz,
-<code class="docutils literal notranslate"><span class="pre">Sz_err</span></code> :error of Sz,
-<code class="docutils literal notranslate"><span class="pre">chi_Sz</span></code> :average value of chi_Sz,
-<code class="docutils literal notranslate"><span class="pre">chi_Sz_err</span></code> :error of chi_Sz,
-<code class="docutils literal notranslate"><span class="pre">Z</span></code> :average value of norm the wave function,
-<code class="docutils literal notranslate"><span class="pre">Z_err</span></code> :error of norm of the wave function, and
-<code class="docutils literal notranslate"><span class="pre">k</span></code> :number of the cTPQ state.</p>
+<p>where</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> : temperature (<span class="math notranslate nohighlight">\(T=1/\beta=1/(k\Delta\tau)\)</span>),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">E</span></code> : average value of energy,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">E_err</span></code> : error of energy,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span></code>  : average value of specific heat,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C_err</span></code> : error of specific heat,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">S</span></code>  : average value of entropy,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">S_err</span></code> : error of entropy,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sz</span></code>  : average value of Sz,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sz_err</span></code> : error of Sz,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chi_Sz</span></code> : average value of chi_Sz,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chi_Sz_err</span></code> : error of chi_Sz,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Z</span></code> : average value of norm the wave function,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Z_err</span></code> : error of norm of the wave function, and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code> : number of the cTPQ state.</p></li>
+</ol>
 <p>For example, you can see the temperature dependence of the specific heat as:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>se log x
 se colors classic
