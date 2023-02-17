@@ -40,6 +40,7 @@
 
 int expec_cisajs_HubbardGC(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajs_Hubbard(struct BindStruct *X,double complex *vec, FILE **_fp);
+int expec_twist(struct BindStruct *X,double complex *vec, FILE **_fp,double sign);
 
 int expec_cisajs_Spin(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajs_SpinHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
@@ -68,7 +69,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 
-  FILE *fp;
+  FILE *fp,*fp2;
   char sdt[D_FileNameMax];
 
   long unsigned int irght,ilft,ihfbit;
@@ -126,6 +127,9 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   if(childfopenMPI(sdt, "w", &fp)!=0){
     return -1;
   } 
+  if(childfopenMPI("twist", "w", &fp2)!=0){
+    return -1;
+  } 
   switch(X->Def.iCalcModel){
   case HubbardGC:
     if(expec_cisajs_HubbardGC(X, vec, &fp)!=0){
@@ -139,16 +143,26 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(expec_cisajs_Hubbard(X, vec, &fp)!=0){
           return -1;
       }
+      if(expec_twist(X, vec, &fp2,1.0)!=0){
+          return -1;
+      }
+
     break;
 
   case Spin: // for the Sz-conserved spin system
       if(expec_cisajs_Spin(X, vec, &fp)!=0){
           return -1;
       }
+      if(expec_twist(X, vec, &fp2,-1.0)!=0){
+          return -1;
+      }
     break;
     
   case SpinGC:
       if(expec_cisajs_SpinGC(X, vec, &fp)!=0){
+          return -1;
+      }
+      if(expec_twist(X, vec, &fp2,-1.0)!=0){
           return -1;
       }
           break;
@@ -158,6 +172,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   }
 
   fclose(fp);
+  fclose(fp2);
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");
@@ -339,10 +354,49 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         }
         dam_pr= SumMPI_dc(dam_pr);
       //fprintf(stdoutMPI, "rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
-      fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
 }
+
+int expec_twist(struct BindStruct *X, double complex *vec, FILE **_fp,double sign) {
+    long unsigned int i,j,tmp_i;
+    long unsigned int org_isite1,org_isite2,org_sigma1,org_sigma2;
+    double complex dam_pr=0,tmp_dam;
+    long int i_max;
+    int num1,tot_num;
+    long int ibit;
+    long unsigned int is;
+    double complex tmp_OneGreen=1.0;
+    double position,pi;
+    pi=3.14159265359;
+
+    i_max = X->Check.idim_max;
+#pragma omp parallel for default(none) shared(list_1,vec,position,sign) reduction(+:dam_pr) firstprivate(i_max, is) private(num1, ibit)
+    for(j = 1;j <= i_max;j++){
+        num1=0;
+        for (i=0;i<X->Def.NsiteMPI;i++){
+            position=((i)-(i)%2)/2+1;
+            //printf("%lu %f \n",i,position);
+            is    = X->Def.Tpow[2 * i  + 0];
+            ibit  = list_1[j]&is;
+            num1 += (ibit/is)*position;
+            is    = X->Def.Tpow[2 * i  + 1];
+            ibit  = list_1[j]&is;
+            num1 += sign*(ibit/is)*position; // if sign=-1, n_up-u_down
+            //num1 += -position/2.0;
+        }
+        printf("j=%lu: num1=%d : list_1=%lu   :%f %f\n",j,num1,list_1[j],creal(vec[j]),cimag(vec[j]));
+        tmp_dam = conj(vec[j])*vec[j]*cexp(I*4*pi*(num1)/(1.0*X->Def.NsiteMPI));
+        dam_pr += tmp_dam;
+        printf(" %lu num1=%d:  weight=%f :%f %f: %f %f \n",j,num1,creal(conj(vec[j])*vec[j]),creal(tmp_dam),cimag(tmp_dam),creal(dam_pr),cimag(dam_pr));
+    }
+    dam_pr = SumMPI_dc(dam_pr);
+    //fprintf(stdoutMPI, "rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
+    fprintf(*_fp," %.10lf %.10lf\n",creal(dam_pr),cimag(dam_pr));
+    return 0;
+}
+
 
 /**
  * @brief function of calculation for one body green's function for Spin model.
