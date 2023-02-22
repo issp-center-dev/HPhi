@@ -34,7 +34,7 @@ def mainBasic(num_sample,dir_Norm):
 
     phys_Z,phys_Ene,phys_Ene2,phys_Sz,phys_Sz2,phys_InvTemp  = CalcBasic(Norm,Ene,Ene2,Sz,Sz2,InvTemp,tpq_type)
 
-    log_Z  = np.zeros([num_step],dtype=np.float)
+    log_Z  = np.zeros([num_step],dtype=np.float64)
     with open("%s/Norm.dat" % (dir_Norm),'w') as f:
          tmp_log_Z =  -math.log(Norm[0][0])
          for k in range(0,num_step):
@@ -79,14 +79,14 @@ def read_file(num_sample):
         data      = f.read()
         data      = data.split("\n")
     num_step    = int(len(data)-2)
-    Norm        = np.zeros([num_sample,num_step],dtype=np.float)
-    InvTemp     = np.zeros([num_sample,num_step],dtype=np.float)
-    Ene         = np.zeros([num_sample,num_step],dtype=np.float)
-    Ene2        = np.zeros([num_sample,num_step],dtype=np.float)
-    Spc         = np.zeros([num_sample,num_step],dtype=np.float)
-    Sz          = np.zeros([num_sample,num_step],dtype=np.float)
-    Sz2         = np.zeros([num_sample,num_step],dtype=np.float)
-    chi         = np.zeros([num_sample,num_step],dtype=np.float)
+    Norm        = np.zeros([num_sample,num_step],dtype=np.float64)
+    InvTemp     = np.zeros([num_sample,num_step],dtype=np.float64)
+    Ene         = np.zeros([num_sample,num_step],dtype=np.float64)
+    Ene2        = np.zeros([num_sample,num_step],dtype=np.float64)
+    Spc         = np.zeros([num_sample,num_step],dtype=np.float64)
+    Sz          = np.zeros([num_sample,num_step],dtype=np.float64)
+    Sz2         = np.zeros([num_sample,num_step],dtype=np.float64)
+    chi         = np.zeros([num_sample,num_step],dtype=np.float64)
 
     for cnt_samp in range(num_sample):
         in_file = "output/Norm_rand%d.dat" % (cnt_samp)
@@ -136,12 +136,12 @@ def CalcBasic(Norm,Ene,Ene2,Sz,Sz2,InvTemp,tpq_type):
     num_sample  = Norm.shape[0]
     num_step    = Norm.shape[1]
     print(num_step)
-    phys_InvTemp   = np.zeros([num_sample,num_step],dtype=np.float)
-    phys_Z      = np.zeros([num_sample,num_step],dtype=np.float)
-    phys_Ene    = np.zeros([num_sample,num_step],dtype=np.float)
-    phys_Ene2   = np.zeros([num_sample,num_step],dtype=np.float)
-    phys_Sz     = np.zeros([num_sample,num_step],dtype=np.float)
-    phys_Sz2    = np.zeros([num_sample,num_step],dtype=np.float)
+    phys_InvTemp   = np.zeros([num_sample,num_step],dtype=np.float64)
+    phys_Z      = np.zeros([num_sample,num_step],dtype=np.float64)
+    phys_Ene    = np.zeros([num_sample,num_step],dtype=np.float64)
+    phys_Ene2   = np.zeros([num_sample,num_step],dtype=np.float64)
+    phys_Sz     = np.zeros([num_sample,num_step],dtype=np.float64)
+    phys_Sz2    = np.zeros([num_sample,num_step],dtype=np.float64)
     #NB: cnt_samp=0, Z is always 1
     for k in range(0,num_step):
         phys_Z[0][k]       = 1.0       
@@ -214,7 +214,7 @@ def CalcPhys(IPL_Z,IPL_InvTemp,Phys,tpq_type):
     num_step    = Phys.shape[1]
     num_phys    = Phys.shape[2]
     print(num_sample,num_step,num_phys)
-    Norm_Phys   = np.zeros([num_sample,num_step,num_phys],dtype=np.float)
+    Norm_Phys   = np.zeros([num_sample,num_step,num_phys],dtype=np.float64)
     for k in range(0,num_step):
         for cnt_phys in range(0,num_phys):
             Norm_Phys[0][k][cnt_phys]  = Phys[0][k][cnt_phys]
@@ -255,7 +255,7 @@ def read_phys(num_sample,dir_Phys,header):
     num_phys    = len(tmp)
     print(num_step)
     print(num_phys)
-    Phys        = np.zeros([num_sample,num_step,num_phys],dtype=np.float)
+    Phys        = np.zeros([num_sample,num_step,num_phys],dtype=np.float64)
 
     for cnt_samp in range(num_sample):
         in_file = "%s/%s_set%d.dat" % (dir_Phys,header,cnt_samp)
@@ -278,8 +278,8 @@ def read_Norm(num_sample,dir_Norm):
         data      = data.split("\n")
     num_step    = int(len(data)-2)
     print("num_step=",num_step)
-    IPL_Z       = np.zeros([num_sample,num_step],dtype=np.float)
-    IPL_InvTemp = np.zeros([num_sample,num_step],dtype=np.float)
+    IPL_Z       = np.zeros([num_sample,num_step],dtype=np.float64)
+    IPL_InvTemp = np.zeros([num_sample,num_step],dtype=np.float64)
 
     for cnt_samp in range(num_sample):
         in_file = "%s/TPQ_%d.dat" % (dir_Norm,cnt_samp)

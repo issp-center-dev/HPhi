@@ -14,30 +14,30 @@ def main():
     #[e] read modpara
 
     #
-    Ref_ave_Temp     = np.zeros([max_eigen],dtype=np.float)
-    Ref_err_Temp     = np.zeros([max_eigen],dtype=np.float)
-    Ref_ave_Ene      = np.zeros([max_eigen],dtype=np.float)
-    Ref_err_Ene      = np.zeros([max_eigen],dtype=np.float)
+    Ref_ave_Temp     = np.zeros([max_eigen],dtype=np.float64)
+    Ref_err_Temp     = np.zeros([max_eigen],dtype=np.float64)
+    Ref_ave_Ene      = np.zeros([max_eigen],dtype=np.float64)
+    Ref_err_Ene      = np.zeros([max_eigen],dtype=np.float64)
     # 
-    ave_Temp     = np.zeros([max_eigen],dtype=np.float)
-    err_Temp     = np.zeros([max_eigen],dtype=np.float)
+    ave_Temp     = np.zeros([max_eigen],dtype=np.float64)
+    err_Temp     = np.zeros([max_eigen],dtype=np.float64)
     # 
-    InvTemp      = np.zeros([max_set,max_eigen],dtype=np.float)
-    ave_InvTemp  = np.zeros([max_eigen],dtype=np.float)
-    err_InvTemp  = np.zeros([max_eigen],dtype=np.float)
-    Ene          = np.zeros([max_set,max_eigen],dtype=np.float)
-    ave_Ene      = np.zeros([max_eigen],dtype=np.float)
-    err_Ene      = np.zeros([max_eigen],dtype=np.float)
-    Ene2         = np.zeros([max_set,max_eigen],dtype=np.float)
-    ave_Ene2     = np.zeros([max_eigen],dtype=np.float)
-    err_Ene2     = np.zeros([max_eigen],dtype=np.float)
+    InvTemp      = np.zeros([max_set,max_eigen],dtype=np.float64)
+    ave_InvTemp  = np.zeros([max_eigen],dtype=np.float64)
+    err_InvTemp  = np.zeros([max_eigen],dtype=np.float64)
+    Ene          = np.zeros([max_set,max_eigen],dtype=np.float64)
+    ave_Ene      = np.zeros([max_eigen],dtype=np.float64)
+    err_Ene      = np.zeros([max_eigen],dtype=np.float64)
+    Ene2         = np.zeros([max_set,max_eigen],dtype=np.float64)
+    ave_Ene2     = np.zeros([max_eigen],dtype=np.float64)
+    err_Ene2     = np.zeros([max_eigen],dtype=np.float64)
     #
-    Spc          = np.zeros([max_set,max_eigen],dtype=np.float)
-    ave_Spc      = np.zeros([max_eigen],dtype=np.float)
-    err_Spc      = np.zeros([max_eigen],dtype=np.float)
-    Ent          = np.zeros([max_set,max_eigen-1],dtype=np.float)
-    ave_Ent      = np.zeros([max_eigen-1],dtype=np.float)
-    err_Ent      = np.zeros([max_eigen-1],dtype=np.float)
+    Spc          = np.zeros([max_set,max_eigen],dtype=np.float64)
+    ave_Spc      = np.zeros([max_eigen],dtype=np.float64)
+    err_Spc      = np.zeros([max_eigen],dtype=np.float64)
+    Ent          = np.zeros([max_set,max_eigen-1],dtype=np.float64)
+    ave_Ent      = np.zeros([max_eigen-1],dtype=np.float64)
+    err_Ent      = np.zeros([max_eigen-1],dtype=np.float64)
     #
 
     for cnt_set in range(0,max_set):
