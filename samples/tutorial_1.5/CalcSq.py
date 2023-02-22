@@ -58,8 +58,8 @@ list_org   = [Lx,Ly,Lz,orb_num]
 #[e] initialize
 
 #[s] allocate
-Sq     = np.zeros([Lx+1,Ly+1],dtype=np.float)
-Sq_err = np.zeros([Lx+1,Ly+1],dtype=np.float)
+Sq     = np.zeros([Lx+1,Ly+1],dtype=np.float64)
+Sq_err = np.zeros([Lx+1,Ly+1],dtype=np.float64)
 #[e] allocate
 max_num = 1
 for num_cg in range(0,max_num):
