@@ -19,17 +19,17 @@ exct     = 2
 All_N    = max_site
 #[e] set input.
 #[s] interaction
-Ising     = np.zeros([max_site,max_site],dtype=np.float)
-Exchange  = np.zeros([max_site,max_site],dtype=np.float)
-PairLift  = np.zeros([max_site,max_site],dtype=np.float)
-InterAll  = np.zeros([max_site,2,max_site,2,max_site,2,max_site,2],dtype=np.complex)
+Ising     = np.zeros([max_site,max_site],dtype=np.float64)
+Exchange  = np.zeros([max_site,max_site],dtype=np.float64)
+PairLift  = np.zeros([max_site,max_site],dtype=np.float64)
+InterAll  = np.zeros([max_site,2,max_site,2,max_site,2,max_site,2],dtype=np.complex128)
 #[e] interaction
 #[s] read pair.txt
-siteI   = np.zeros([num],dtype=np.int)
-siteJ   = np.zeros([num],dtype=np.int)
-intT1   = np.zeros([num],dtype=np.unicode)
-intT2   = np.zeros([num],dtype=np.unicode)
-para    = np.zeros([num],dtype=np.double)
+siteI   = np.zeros([num],dtype=np.int64)
+siteJ   = np.zeros([num],dtype=np.int64)
+intT1   = np.zeros([num],dtype=np.unicode_)
+intT2   = np.zeros([num],dtype=np.unicode_)
+para    = np.zeros([num],dtype=np.float64)
 read.func_readpair(tmp_sdt,siteI,siteJ,intT1,intT2,para)
 #[e] read pair.txt
 
