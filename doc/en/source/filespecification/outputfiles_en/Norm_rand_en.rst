@@ -56,7 +56,7 @@ Parameters
    **Type :** Double
 
    **Description :** The norm of a wave function before normalization
-   given by :math:`\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle`,
+   given by :math:`\sqrt{\langle \tilde{\psi}_{k} |\tilde{\psi}_{k}\rangle}`,
    where
    :math:`|\tilde{\psi}_{k}\rangle \equiv(l-{\mathcal H}/N_{s})|\psi_{k=1}\rangle`.
 
@@ -66,7 +66,7 @@ Parameters
 
    **Description :** The norm of an initial wave function before
    normalization given by
-   :math:`\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle`, where
+   :math:`\sqrt{\langle \tilde{\psi}_{0} |\tilde{\psi}_{0}\rangle}`, where
    :math:`|\tilde{\psi}_{0}\rangle` is an initial random vector.
 
 *  [int01]
