@@ -60,8 +60,9 @@ int CalcSpectrumByFullDiag(
   vRv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
 
   StartTimer(6301);
-  zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v0[0][0]);
-  zclear((X->Bind.Check.idim_max + 1)*(X->Bind.Check.idim_max + 1), &v1[0][0]);
+  v0[0][0] = 0.0;
+  zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v0[0][0]);
+  zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v1[0][0]);
   for (idim0 = 1; idim0 <= X->Bind.Check.idim_max; idim0++) v1[idim0][idim0] = 1.0;
   mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
   StopTimer(6301);
@@ -81,7 +82,7 @@ int CalcSpectrumByFullDiag(
   for (idim0 = 1; idim0 < idim_max_int+1; idim0++)
     for (idim1 = 0; idim1 < idim_max_int; idim1++)
       for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
-        vRv[idim0][idim2] += conj(v0[idim0][idim1]) * vR[idim0][idim2];
+        vRv[idim1][idim2] += conj(v0[idim0][idim1]) * vR[idim0][idim2];
   for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
     StartTimer(6303);
     zclear(X->Bind.Check.idim_max, &vL[1][0]);
@@ -90,7 +91,7 @@ int CalcSpectrumByFullDiag(
     for (idim0 = 1; idim0 < idim_max_int + 1; idim0++)
       for (idim1 = 0; idim1 < idim_max_int; idim1++)
         for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
-          vLv[idim0][idim2] += conj(v0[idim0][idim1]) * vL[idim0][idim2];
+          vLv[idim1][idim2] += conj(v0[idim0][idim1]) * vL[idim0][idim2];
     StopTimer(6303);
     /**
     <li>Compute spectrum
