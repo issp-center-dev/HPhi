@@ -60,11 +60,10 @@ int CalcSpectrumByFullDiag(
   vRv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
 
   StartTimer(6301);
-  v0[0][0] = 0.0;
   zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v0[0][0]);
   zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v1[0][0]);
-  for (idim0 = 1; idim0 <= X->Bind.Check.idim_max; idim0++) v1[idim0][idim0] = 1.0;
-  mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
+  for (idim0 = 1; idim0 <= X->Bind.Check.idim_max; idim0++) v1[idim0][idim0-1] = 1.0;
+  mltply(&(X->Bind), idim_max_int, v0, v1);
   StopTimer(6301);
   /**
   <li>::v0 becomes eigenvalues in lapack_diag(), and
@@ -77,17 +76,17 @@ int CalcSpectrumByFullDiag(
   <li>Compute @f$|\langle n|c|0\rangle|^2@f$ for all @f$n@f$ and store them into ::v1,
   where @f$c|0\rangle@f$ is ::vg.</li>
   */
-  zclear(X->Bind.Check.idim_max, &vR[1][0]);
-  GetExcitedState(&(X->Bind), X->Bind.Check.idim_maxOrg, vR, v1Org, 0);
+  zclear(idim_max_int * idim_maxorg_int, &vR[1][0]);
+  GetExcitedState(&(X->Bind), idim_maxorg_int, vR, v1Org, 0);
   for (idim0 = 1; idim0 < idim_max_int+1; idim0++)
     for (idim1 = 0; idim1 < idim_max_int; idim1++)
       for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
         vRv[idim1][idim2] += conj(v0[idim0][idim1]) * vR[idim0][idim2];
   for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
     StartTimer(6303);
-    zclear(X->Bind.Check.idim_max, &vL[1][0]);
-    GetExcitedState(&(X->Bind), X->Bind.Check.idim_maxOrg, vL, v1Org, idcSpectrum + 1);
-    zclear(X->Bind.Check.idim_max* X->Bind.Check.idim_max, &vLv[0][0]);
+    zclear(idim_max_int * idim_maxorg_int, &vL[1][0]);
+    GetExcitedState(&(X->Bind), idim_maxorg_int, vL, v1Org, idcSpectrum + 1);
+    zclear(idim_max_int*idim_maxorg_int, &vLv[0][0]);
     for (idim0 = 1; idim0 < idim_max_int + 1; idim0++)
       for (idim1 = 0; idim1 < idim_max_int; idim1++)
         for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)

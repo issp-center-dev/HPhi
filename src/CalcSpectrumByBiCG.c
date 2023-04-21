@@ -49,7 +49,10 @@ void ShiftedEq(
 
   for (iomega = 0; iomega < Nomega; iomega++) {
 
-    if (lz_conv[iomega] == 1) continue;
+    if (lz_conv[iomega] == 1) {
+      pi[iter][iomega] = pi[iter - 1][iomega];
+      continue;
+    }
 
     if (iter == 1)
       pi_2 = 1.0;
@@ -96,11 +99,13 @@ void SeedSwitch(
   //
   // Initialize for min
   //
+  iz_seed0 = -1;
   for (iomega = 0; iomega < Nomega; iomega++)
     if (lz_conv[iomega] == 0) {
       iz_seed0 = iomega;
       pi_min = cabs(pi[iter][iz_seed0]);
     }
+  if (iz_seed0 == -1) return;
   //
   // Search min.
   //
@@ -181,7 +186,7 @@ int CalcSpectrumByBiCG(
   unsigned long int liLanczosStp_vec = 0;
   double complex **vL, **v12, **v14, **v3, **v5, *z_seed, *rho, *rho_old,
     ** alpha, ** beta, *** res_proj, *** pi, *** pBiCG, alpha_denom;
-  int stp, iomega, istate, *iz_seed, ** lz_conv, lz_conv_all;
+  int stp, iomega, istate, *iz_seed, ** lz_conv, *lz_conv_state, lz_conv_all;
   double resz, *resnorm, dtmp[4];
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
@@ -207,6 +212,7 @@ int CalcSpectrumByBiCG(
   v14 = cd_2d_allocate(X->Bind.Check.idim_max + 1, X->Bind.Def.k_exct);
   vL = cd_2d_allocate(X->Bind.Check.idim_max + 1, X->Bind.Def.k_exct);
   lz_conv = i_2d_allocate(X->Bind.Def.k_exct, Nomega);
+  lz_conv_state = i_1d_allocate(X->Bind.Def.k_exct);
   /**
   <li>Set initial result vector(+shadow result vector)
   Read residual vectors if restart</li>
@@ -375,6 +381,8 @@ int CalcSpectrumByBiCG(
     for (istate = 0; istate < X->Bind.Def.k_exct; istate++)rho_old[istate] = rho[istate];
     MultiVecProdMPI(X->Bind.Check.idim_max, X->Bind.Def.k_exct, v4, v2, rho);
     for (istate = 0; istate < X->Bind.Def.k_exct; istate++) {
+      lz_conv_all *= lz_conv[istate][iomega];
+
       if (stp == 1)
         beta[istate][stp] = 0.0;
       else
@@ -389,6 +397,8 @@ int CalcSpectrumByBiCG(
     MultiVecProdMPI(X->Bind.Check.idim_max, X->Bind.Def.k_exct, v4, v12, rho_old);
 
     for (istate = 0; istate < X->Bind.Def.k_exct; istate++) {
+      if (lz_conv_state[istate] == 1) continue;
+
       alpha_denom = rho_old[istate] - beta[istate][stp] * rho[istate] / alpha[istate][stp - 1];
 
       if (cabs(alpha_denom) < 1.0e-50) {
@@ -435,12 +445,14 @@ int CalcSpectrumByBiCG(
     lz_conv_all = 1;
     fprintf(stdoutMPI, "  %9d  ", stp);
     for (istate = 0; istate < X->Bind.Def.k_exct; istate++) {
+      lz_conv_state[istate] = 1;
       for (iomega = 0; iomega < Nomega; iomega++) {
         if (lz_conv[istate][iomega] == 0)
           if(fabs(resnorm[istate] / pi[istate][stp][iomega]) < eps_Lanczos)
             lz_conv[istate][iomega] = 1;
-        lz_conv_all *= lz_conv[istate][iomega];
+        lz_conv_state[istate] *= lz_conv[istate][iomega];
       }
+      lz_conv_all *= lz_conv_state[istate];
 
       fprintf(stdoutMPI, "%9d %25.15e", iz_seed[istate], resnorm[istate]);
     }/*for (istate = 0; istate < nstate; istate++)*/
@@ -538,6 +550,7 @@ int CalcSpectrumByBiCG(
   free_cd_2d_allocate(v14);
   free_cd_2d_allocate(vL);
   free_i_2d_allocate(lz_conv);
+  free_i_1d_allocate(lz_conv_state);
   free_cd_2d_allocate(alpha);
   free_cd_2d_allocate(beta);
   free_cd_3d_allocate(pi);

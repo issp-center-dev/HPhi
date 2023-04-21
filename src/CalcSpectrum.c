@@ -522,7 +522,6 @@ int CalcSpectrum(
       sscanf(sdt, "  Energy  %lf", &energy0[istate]);
       fgetsMPI(sdt, D_FileNameMax, fp);
       fgetsMPI(sdt, D_FileNameMax, fp);
-      fgetsMPI(sdt, D_FileNameMax, fp);
     }
     fclose(fp);
   }
