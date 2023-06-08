@@ -5,27 +5,51 @@
 PairExcitation file
 -------------------
 
-The operators to generate the pair excited state
-:math:`c_{i\sigma_1}c_{j\sigma_2}^{\dagger}(c_{i\sigma_1}^{\dagger}c_{j\sigma_2})`
-are defined. The type of pair excitation operators
-(:math:`c_{i\sigma_1}c_{j\sigma_2}^{\dagger}` or
-:math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}`) must be same in the input
-file. In the :math:`S_z` conserved system, :math:`\sigma_1` must be
-equal to :math:`\sigma_2`. An example of the file format is as follows.
+To compute the dynamical correlation function
+
+.. math:: G_n^{O_l,O_r}(z) = \langle \Phi_n | \hat{O}_l (z + E_n - \hat{\cal H})^{-1} \hat{O}_r| \Phi_n \rangle,
+
+we set a pair-excitation operator as
+
+.. math::
+
+    \hat{O}_{l,r} = \sum_{i, j, \sigma_1, \sigma_2} A_{i \sigma_1 j \sigma_2}
+    c_{i \sigma_1}c_{j \sigma_2}^{\dagger} \quad \textrm{or} \quad
+    \sum_{i, j, \sigma_1, \sigma_2} A_{i \sigma_1 j \sigma_2}
+    c_{i\sigma_1}^{\dagger}c_{j\sigma_2}
+
+We can compute efficiently by using single :math:`\hat{O}_r` and multiple :math:`\hat{O}_l`.
+
+The type of pair excitation operators (:math:`c_{i\sigma_1}c_{j\sigma_2}^{\dagger}` or
+:math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}`) must be the same in the input file.
+
+In the :math:`S_z` conserved system, :math:`\sigma_1` must be equal to :math:`\sigma_2`.
+
+An example of the file format is as follows.
 
 ::
 
-    ===============================
-    NPair         24
-    ===============================
-    ======== Pair Excitation ======
-    ===============================
-        0     0     0     0    0    1.0    0.0
-        0     1     0     1    0    1.0    0.0
-        1     0     1     0    0    1.0    0.0
-       (continue...)
-       11     0    11     0    0    1.0    0.0
-       11     1    11     1    0    1.0    0.0
+    =============================================
+    NPair 9
+    =============================================
+    =============== Pair Excitation =============
+    =============================================
+    2
+    0 0 0 0 1        -0.500000000000000 0.0
+    0 1 0 1 1         0.500000000000000 0.0
+    2
+    0 0 0 0 1        -0.500000000000000 0.0
+    0 1 0 1 1         0.500000000000000 0.0
+    2
+    1 0 1 0 1        -0.500000000000000 0.0
+    1 1 1 1 1         0.500000000000000 0.0
+    2
+    2 0 2 0 1        -0.500000000000000 0.0
+    2 1 2 1 1         0.500000000000000 0.0
+    2
+    3 0 3 0 1        -0.500000000000000 0.0
+    3 1 3 1 1         0.500000000000000 0.0
+    :
 
 .. _file_format_16:
 
@@ -39,7 +63,16 @@ File format
 *  Lines 3-5: Header
 
 *  Lines 6-:
-   [int02]  [int03]  [int04]  [int05]  [int06]  [double01]  [double02].
+
+    Repeat the following block [int01] times.
+    The first block corresponds to :math:`\hat{O}_{r}` and other blocks correspond to :math:`\hat{O}_{l}`.
+    
+    ::
+      
+        [int02]
+        [int03]  [int04]  [int05]  [int06]  [int07]  [double01]  [double02]
+        :
+        (Repeat [int02] times)
 
 .. _parameters_16:
 
@@ -57,17 +90,25 @@ Parameters
 
    **Type :** Int (a blank parameter is not allowed)
 
-   **Description :** An integer giving the total number of pair
-   excitation operators.
+   **Description :** An integer giving the total number of pair-excitation operators
+   :math:`\hat{O}_r` and :math:`\hat{O}_l`.
+   For the above example, we have 9 operators (one :math:`\hat{O}_{r}` and 8 :math:`\hat{O}_{l}`),
 
-*  [int02], [int04]
+*  [int02]
+
+   **Type :** Int (a blank parameter is not allowed)
+
+   **Description :** An integer giving the total number of pair-excitation operators
+   included in each :math:`\hat{O}_r` and :math:`\hat{O}_l`.
+
+*  [int03], [int05]
 
    **Type :** Int (a blank parameter is not allowed)
 
    **Description :** An integer giving a site index
    (:math:`0<=` [int02], [int04] :math:`<` ``Nsite``).
 
-*  [int03], [int05]
+*  [int04], [int06]
 
    **Type :** Int (a blank parameter is not allowed)
 

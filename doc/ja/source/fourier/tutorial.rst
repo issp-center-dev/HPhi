@@ -174,7 +174,8 @@ HPhi の実行
    G 0 0 0
    X 0.5 0 0
    M 0.5 0.5 0
-   G 0 0 0" >> geometry.dat
+   G 0 0 0
+   1 1 1" >> geometry.dat
    $ dynamicalr2k namelist.def geometry.dat
      
 これにより, カレントディレクトリの ``output/`` 以下に

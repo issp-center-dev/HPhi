@@ -31,10 +31,13 @@ Parameters for the dynamical Green’s function
 * ``SpectrumType``
 
    **Type :** String (choose from ``"SzSz"``, ``"S+S-"``, ``"Density"``,
-   ``"up"``, ``"down"``. ``"SzSz"`` as default.)
+   ``"up"``, ``"down"``, ``"SzSz_R"``, ``"S+S-_R"``, ``"Density_R"``, ``"up_R"``,
+   ``"down_R"``. ``"SzSz"`` as default.)
 
    **Description :** The type of the dynamical Green’s function to be
-   computed is specified. ``"SzSz"`` for
+   computed is specified.
+   The following values are used For the correlation function in the reciplocal space:
+   ``"SzSz"`` for
    :math:`\langle {S}^z_{-\bf q} {S}^z_{\bf q}\rangle`, ``"S+S-"`` for
    :math:`\langle {S}^{+}_{-\bf q} {S}^{-}_{\bf q}\rangle`,
    ``"Density"`` for :math:`\langle {n}_{-\bf q} {n}_{\bf q}\rangle`,
@@ -42,6 +45,14 @@ Parameters for the dynamical Green’s function
    :math:`\langle {c}^{\dagger}_{{\bf q} \uparrow} {c}_{{\bf q} \uparrow}\rangle`,
    ``"down"`` for
    :math:`\langle {c}^{\dagger}_{{\bf q} \downarrow} {c}_{{\bf q} \downarrow}\rangle`.
+   For the real space, the following values are used:
+   ``"SzSz_R"`` for :math:`\langle {\hat S}_{z R} {\hat S}_{z 0}\rangle`,
+   ``"S+S-_R"`` for :math:`\langle {\hat S}^{+}_{R} {\hat S}^{-}_{0}\rangle`,
+   ``"Density_R"`` for :math:`\langle {\hat n}_{R} {\hat n}_{0}\rangle`,
+   ``"up_R"`` for :math:`\langle {\hat c}^{\dagger}_{R \uparrow} {\hat c}_{0 \uparrow}\rangle`, and
+   ``"down_R"`` for :math:`\langle {\hat c}^{\dagger}_{R \downarrow} {\hat c}_{0 \downarrow}\rangle`.
+   Here :math:`R` spans all site index.
+   See :ref:`Fourier-Transformation utility <fourier>` to compute dynamical correlation function in the reciplocal space with the Fourier transformation.
 
 *  ``SpectrumQW``, ``SpectrumQL``
 

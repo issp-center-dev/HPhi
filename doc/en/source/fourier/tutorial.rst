@@ -1,7 +1,7 @@
 .. _tutorial:
 
-Tutorial
-========
+Tutorial for static correlation function
+========================================
 
 In this tutorial, we explain through a sample calculation of
 the 8-site Hubbard model on the square lattice.
@@ -125,3 +125,82 @@ Related files
 
 - kpath.gp (:ref:`gnuplot`)
 - output/zvo_corr.dat (:ref:`zvocorr`)
+
+Tutorial for dynamical correlation function
+===========================================
+
+In this tutorial, we consider one-dimentional Heisenberg model with 12 sites.
+
+Run HPhi
+--------
+
+We compute the ground state and the correlation function.
+Input file is as follows:
+
+::
+   
+   model = Spin
+   lattice = Chain
+   method = CG
+   L = 12
+   2Sz = 0
+   J = 1.0
+   CalcSpec = Scratch
+   SpectrumType = SzSz_r
+   OmegaIm = 0.1
+   OmegaMin = -6.0
+   OmegaMax = -2.0
+
+.. code-block:: bash
+
+   $ HPhi -s input
+
+Then, we obtain files for dynamical correlation function in ``output/``.
+
+Releted files
+
+- stan.in (See manual of mVMC/:math:`{\mathcal H}\Phi`)
+
+Fourier transformation of correlation function
+----------------------------------------------
+
+Perform Fourier transformation with the utility ``dynamicalr2k``.
+
+.. code-block:: bash
+
+   $ echo "4 20
+   G 0 0 0
+   X 0.5 0 0
+   M 0.5 0.5 0
+   G 0 0 0
+   1 1 1" >> geometry.dat
+   $ dynamicalr2k namelist.def geometry.dat
+     
+Then, we obtain files for Fourier-transformed dynamical correlation function in ``output/``.
+
+Releted files
+
+- output/zvo_DynamicalGreen.dat
+- geometry.dat (:ref:`geometry`)
+- output/zvo_dyn.dat
+
+Display correlation function
+----------------------------
+
+Plot correlation functions in the :math:`k` space by using gnuplot.
+
+::
+
+   load "kpath.gp"
+   splot "output/zvo_dyn.dat" u 1:2:(-$4) w l
+
+.. _dynamicalr2gpng:
+     
+.. figure:: ../../../figs/dynamicalr2g.png
+
+   Imaginary part of the correlation function :math:`\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle(\omega)` (fourth column of an output file)
+
+Releted files
+
+- kpath.gp (:ref:`gnuplot`)
+- output/zvo_dyn*.dat

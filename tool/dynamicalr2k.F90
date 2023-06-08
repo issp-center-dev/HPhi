@@ -6,6 +6,7 @@ MODULE dynamical_val
   & ntemp, & ! Number of temperature
   & nwfc, & 
   & nomega, &
+  & nkg(3), & ! k-grid for momentum ditribution
   & nk_line, & ! Numberof along each k line
   & nnode, & ! Number of node of k-path
   & nr,   & ! Number of R-vector
@@ -211,7 +212,7 @@ END SUBROUTINE read_filename
 SUBROUTINE read_geometry()
   !
   USE dynamical_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, ntemp, &
-  &                         nr, nreq, norb, nnode, knode, nk_line, kname, temp
+  &                         nr, nreq, norb, nnode, knode, nk_line, kname, temp, nkg
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, isite, ii, ir, ipiv(3), irv0(3), i1, i2, i3, inode
@@ -287,6 +288,8 @@ SUBROUTINE read_geometry()
      READ(fi,*) kname(inode), knode(1:3,inode)
      WRITE(*,'(a,a,3f10.5)') "      ", TRIM(kname(inode)), knode(1:3,inode)
   END DO
+  READ(fi,*) nkg(1:3)
+  WRITE(*,'(a,3i3)') "k-grid for momentum distribution :", nkg(1:3)
   !
   ! (Optional) Temperature
   !

@@ -50,6 +50,7 @@ SingleExcitation指定ファイル
 
        [int02]
        [int03]  [int04]  [int05]  [double01]  [double02]
+       :
 
 パラメータ
 ^^^^^^^^^^
@@ -71,7 +72,8 @@ SingleExcitation指定ファイル
 
    **形式 :** int型 (空白不可)
 
-   **説明 :** 一体励起演算子の総数を指定します。
+   **説明 :** 各\ :math:`\hat{O}_r`\, \ :math:`\hat{O}_l`\ にふくまれる
+   一体励起演算子の総数をそれぞれ指定します。
 
 -  :math:`[`\ int03\ :math:`]`
 
