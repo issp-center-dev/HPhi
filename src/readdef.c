@@ -848,6 +848,7 @@ int ReadDefFileNInt(
   switch(X->iCalcModel){
   case Spin:
   case Hubbard:
+  case tJ:
   case Kondo: 
   case SpinlessFermion:
    
@@ -871,13 +872,21 @@ int ReadDefFileNInt(
           X->Ndown/=2;
         }
         else{
-          if(X->iCalcModel == Hubbard){
+          if(X->iCalcModel == Hubbard ){
             X->Ne=X->NCond;
             if(X->Ne <1){
               fprintf(stdoutMPI, "Ncond is incorrect.\n");
               return(-1);
             }
             X->iCalcModel=HubbardNConserved;
+          }
+          else if(X->iCalcModel == tJ){
+            X->Ne=X->NCond;
+            if(X->Ne <1){
+              fprintf(stdoutMPI, "Ncond is incorrect.\n");
+              return(-1);
+            }
+            X->iCalcModel=tJNConserved;
           }
           else if(X->iCalcModel ==SpinlessFermion){
             X->Ne=X->NCond;  
@@ -931,6 +940,7 @@ int ReadDefFileNInt(
   case SpinGC:
   case KondoGC:
   case HubbardGC:
+  case tJGC:
   case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");

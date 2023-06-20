@@ -139,6 +139,9 @@ int sz
   case HubbardGC:
   case HubbardNConserved:
   case Hubbard:
+  case tJGC:
+  case tJNConserved:
+  case tJ:
     N2=2*X->Def.Nsite;
     idim = pow(2.0,N2);
     break;
@@ -169,6 +172,8 @@ int sz
   i_max=X->Check.idim_max;
   
   switch(X->Def.iCalcModel){
+  case tJNConserved:
+  case tJ:
   case HubbardNConserved:
   case Hubbard:
   case KondoGC:
@@ -178,9 +183,9 @@ int sz
       if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
         exitMPI(-1);
       }
-      X->Large.irght=irght;
-      X->Large.ilft=ilft;
-      X->Large.ihfbit=ihfbit;
+      X->Large.irght  = irght;
+      X->Large.ilft   = ilft;
+      X->Large.ihfbit = ihfbit;
       //fprintf(stdoutMPI, "idim=%lf irght=%ld ilft=%ld ihfbit=%ld \n",idim,irght,ilft,ihfbit);
     }
      else{
@@ -274,6 +279,7 @@ int sz
     break;
 
     case Hubbard:
+    case tJ:
       hacker = X->Def.read_hacker;
       if(hacker==0){
         // this part can not be parallelized
@@ -399,6 +405,8 @@ int sz
       }
       
     case HubbardNConserved:
+    case tJNConserved:
+    case tJGC:
       hacker = X->Def.read_hacker;
       if(hacker==0){
         // this part can not be parallelized
@@ -907,26 +915,29 @@ int omp_sz(
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
-  long unsigned int num_up,num_down;
-  long unsigned int tmp_num_up,tmp_num_down;
+  long unsigned int num_up,num_down,num_doublon;
+  long unsigned int tmp_num_up,tmp_num_down,tmp_num_doublon;
     
   jb = list_jb_[ib];
   i  = ib*ihfbit;
     
-  num_up   = 0;
-  num_down = 0;
+  num_up      = 0;
+  num_down    = 0;
+  num_doublon = 0;
   for(j=0;j< X->Def.Nsite ;j++){
-    div_up    = i & X->Def.Tpow[2*j];
-    div_up    = div_up/X->Def.Tpow[2*j];
-    div_down  = i & X->Def.Tpow[2*j+1];
-    div_down  = div_down/X->Def.Tpow[2*j+1];
-    num_up += div_up;
-    num_down += div_down;
+    div_up       = i & X->Def.Tpow[2*j];
+    div_up       = div_up/X->Def.Tpow[2*j];
+    div_down     = i & X->Def.Tpow[2*j+1];
+    div_down     = div_down/X->Def.Tpow[2*j+1];
+    num_up      += div_up;
+    num_down    += div_down;
+    num_doublon += div_up*div_down;
   }
   
   ja=1;
-  tmp_num_up   = num_up;
-  tmp_num_down = num_down;
+  tmp_num_up      = num_up;
+  tmp_num_down    = num_down;
+  tmp_num_doublon = num_doublon;
 
   if(X->Def.iCalcModel==Hubbard){
     for(ia=0;ia<X->Check.sdim;ia++){
@@ -972,6 +983,76 @@ int omp_sz(
       } 
     }  
   }
+  else if(X->Def.iCalcModel==tJ){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i=ia;
+      num_up      =  tmp_num_up;
+      num_down    =  tmp_num_down;
+      num_doublon = tmp_num_doublon;
+      for(j=0;j<X->Def.Nsite;j++){
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];
+        num_up   += div_up;
+        num_down += div_down;
+        num_doublon += div_up*div_down;
+      }
+      if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        ja+=1;
+      } 
+    }
+  }
+  else if(X->Def.iCalcModel==tJNConserved){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i=ia;
+      num_up      =  tmp_num_up;
+      num_down    =  tmp_num_down;
+      num_doublon =  tmp_num_doublon;
+      for(j=0;j<X->Def.Nsite;j++){
+        div_up       = i & X->Def.Tpow[2*j];
+        div_up       = div_up/X->Def.Tpow[2*j];
+        div_down     = i & X->Def.Tpow[2*j+1];
+        div_down     = div_down/X->Def.Tpow[2*j+1];
+        num_up      += div_up;
+        num_down    += div_down;
+        num_doublon += div_up*div_down;
+      }
+      if( (num_up+num_down) == X->Def.Ne && num_doublon==0){
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        ja+=1;
+      } 
+    }  
+  }
+   else if(X->Def.iCalcModel==tJGC){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i=ia;
+      num_up      =  tmp_num_up;
+      num_down    =  tmp_num_down;
+      num_doublon =  tmp_num_doublon;
+      for(j=0;j<X->Def.Nsite;j++){
+        div_up       = i & X->Def.Tpow[2*j];
+        div_up       = div_up/X->Def.Tpow[2*j];
+        div_down     = i & X->Def.Tpow[2*j+1];
+        div_down     = div_down/X->Def.Tpow[2*j+1];
+        num_up      += div_up;
+        num_down    += div_down;
+        num_doublon += div_up*div_down;
+      }
+      if(num_doublon==0){
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        ja+=1;
+      } 
+    }  
+  }
+
   ja=ja-1;    
   return ja; 
 }

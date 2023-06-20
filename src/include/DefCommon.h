@@ -37,6 +37,9 @@
 #define HubbardNConserved 6 /*!< CalcModel is Hubbard model under particle number conserved. This symmetry is automatically introduced by not defining 2Sz in a modpara file.*/
 #define SpinlessFermion 7 /*!< CalcModel is GrandCanonical Spinless fermion model.*/
 #define SpinlessFermionGC 8 /*!< CalcModel is GrandCanonical Spinless fermionGC model.*/
+#define tJ    9         /*!< CalcModel is Canonical      tJ model.*/
+#define tJGC 10         /*!< CalcModel is GrandCanonical tJ model.*/
+#define tJNConserved 11 /*!< CalcModel is Canonical  w/o Sz conservation  tJ model.*/
 
 /*!< OutputMode */
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/
