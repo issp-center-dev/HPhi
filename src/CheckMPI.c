@@ -38,6 +38,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
   case HubbardGC: /****************************************************/
   case Hubbard:
   case HubbardNConserved:
+  case tJGC: 
+  case tJ:
+  case tJNConserved:
   case Kondo:
   case KondoGC:
 
@@ -78,6 +81,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
 
     case Hubbard:
+    case tJ:
       /**@brief
       <li>For canonical Hubbard
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -105,6 +109,8 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       break;/*case Hubbard:*/
 
     case HubbardNConserved:
+    case tJNConserved:
+    case tJGC: /*is it correct?*/
       /**@brief
       <li>For N-conserved canonical Hubbard
       DefineList::Ne should be differerent in each PE.</li>
@@ -321,6 +327,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
+        case tJGC:
+        case tJ:
+        case tJNConserved:
         case Kondo:
         case KondoGC:
 
@@ -349,6 +358,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
+        case tJGC:
+        case tJ:
+        case tJNConserved:
         case Kondo:
         case KondoGC:
 
@@ -407,6 +419,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
         case HubbardGC: /****************************************************/
         case Hubbard:
         case HubbardNConserved:
+        case tJGC: /****************************************************/
+        case tJ:
+        case tJNConserved:
         case Kondo:
         case KondoGC:
 
@@ -469,6 +484,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
   case HubbardGC: /****************************************************/
   case Hubbard:
   case HubbardNConserved:
+  case tJGC: 
+  case tJ:
+  case tJNConserved:
   case Kondo:
   case KondoGC:
 

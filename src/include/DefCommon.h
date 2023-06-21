@@ -27,7 +27,7 @@
 #define cTPQ 5 /*!< CalcType is canonical TPQ*/
 
 /*!< CalcModel */
-#define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
+#define NUM_CALCMODEL 12 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
 #define Hubbard 0 /*!< CalcModel is Hubbard model.*/
 #define Spin 1 /*!< CalcModel is Spin system.*/
 #define Kondo 2 /*!< CalcModel is Kondo model.*/

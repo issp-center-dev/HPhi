@@ -136,6 +136,7 @@ int ValidateValue(
                   const int iHighestValue
                   ){
 
+  //printf("check: %d %d %d \n ", icheckValue,ilowestValue,iHighestValue);
   if(icheckValue < ilowestValue || icheckValue > iHighestValue){
     return(-1);
   }
@@ -324,7 +325,7 @@ int ReadcalcmodFile(
     
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
-    fprintf(stdoutMPI, cErrCalcType, defname);
+    fprintf(stdoutMPI,cErrCalcModel, defname);
     return (-1);
   }
   if(ValidateValue(X->iCalcType, 0, NUM_CALCTYPE-1)){
@@ -2491,6 +2492,9 @@ int GetDiagonalInterAll
         case Kondo:
         case KondoGC:
         case HubbardGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
           if(isigma1 == isigma2 && isigma3 == isigma4){
             for(tmp_i=0; tmp_i<8; tmp_i++){
               InterAllOffDiagonal[icnt_offdiagonal][tmp_i]=InterAll[i][tmp_i];
@@ -2510,7 +2514,7 @@ int GetDiagonalInterAll
           }
           else{
             // Sz symmetry is assumed
-            if(iCalcModel==Hubbard || iCalcModel==Kondo){
+            if(iCalcModel==Hubbard || iCalcModel==Kondo || iCalcModel==tJ){
               fprintf(stdoutMPI, cErrNonConservedInterAll,
                       isite1,
                       isigma1,
@@ -2739,6 +2743,9 @@ int CheckLocSpin
   case Hubbard:
   case HubbardNConserved:
   case HubbardGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
   case SpinlessFermion:
   case SpinlessFermionGC:
     for(i=0; i<X->Nsite; i++){

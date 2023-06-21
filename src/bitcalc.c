@@ -89,6 +89,9 @@ int GetSplitBitByModel(
   case KondoGC:
   case HubbardNConserved:
   case Hubbard:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
   case Kondo:
     tmpNsite *= 2;
     break;

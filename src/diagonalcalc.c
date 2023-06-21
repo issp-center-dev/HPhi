@@ -281,6 +281,8 @@ int SetDiagonalCoulombIntra
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
 
       is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
@@ -328,6 +330,8 @@ int SetDiagonalCoulombIntra
       break;
     case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
       is1_up   = X->Def.Tpow[2*isite1-2];
       is1_down = X->Def.Tpow[2*isite1-1];
@@ -397,6 +401,9 @@ int SetDiagonalChemi
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
+
 
       if (spin == 0) {
         is1 = X->Def.Tpow[2 * isite1 - 2];
@@ -463,6 +470,8 @@ firstprivate(i_max, dtmp_V) private(j)
   case KondoGC:
   case Hubbard:
   case Kondo:
+  case tJ:
+  case tJGC:
     if(spin==0){
       is1   = X->Def.Tpow[2*isite1-2];
     }else{
@@ -582,6 +591,8 @@ int SetDiagonalCoulombInter
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
 
       is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
@@ -631,6 +642,8 @@ int SetDiagonalCoulombInter
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
       is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
       is2_up   = X->Def.Tpow[2 * isite2 - 2];
@@ -672,6 +685,8 @@ private(num1, ibit1_up, ibit1_down, j)
 
     case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
       
 #pragma omp parallel for default(none) shared(list_1, list_Diagonal) \
@@ -731,6 +746,8 @@ private(num1, ibit1_up, ibit1_down, j)
       break;
     case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
       is1_up   = X->Def.Tpow[2*isite1-2];
       is1_down = X->Def.Tpow[2*isite1-1];
@@ -822,6 +839,8 @@ int SetDiagonalHund
     case HubbardGC:
     case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
 
       is1_up   = X->Def.Tpow[2 * isite1 - 2];
@@ -911,6 +930,8 @@ private(num1_up, num1_down, ibit1_up, ibit1_down, j)
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
 
       is1_up   = X->Def.Tpow[2 * isite1 - 2];
       is1_down = X->Def.Tpow[2 * isite1 - 1];
@@ -1035,6 +1056,8 @@ firstprivate(i_max, dtmp_V, is1_up) private(j, ibit1_up)
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
       is1_up   = X->Def.Tpow[2*isite1-2];
       is1_down = X->Def.Tpow[2*isite1-1];
       is2_up   = X->Def.Tpow[2*isite2-2];
@@ -1156,6 +1179,8 @@ int SetDiagonalInterAll
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
 
       is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
       is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
@@ -1238,6 +1263,9 @@ firstprivate(i_max, dtmp_V, is1_spin, num2) private(num1, ibit1_spin, j)
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
+
 
       is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
       is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
@@ -1342,6 +1370,8 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
   case KondoGC:
   case Hubbard:
   case Kondo:
+  case tJ:
+  case tJGC:
     is1_spin  = X->Def.Tpow[2*isite1-2+isigma1];
     is2_spin = X->Def.Tpow[2*isite2-2+isigma2];
 
@@ -1480,6 +1510,8 @@ int SetDiagonalTEInterAll(
       case KondoGC:
       case Hubbard:
       case Kondo:
+      case tJ:
+      case tJGC:
         is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
         is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
         num1 = 0;
@@ -1552,6 +1584,8 @@ firstprivate(i_max, dtmp_V) private(j)
       case KondoGC:
       case Hubbard:
       case Kondo:
+      case tJ:
+      case tJGC:
 
         is1_spin = X->Def.Tpow[2 * isite1 - 2 + isigma1];
         is2_spin = X->Def.Tpow[2 * isite2 - 2 + isigma2];
@@ -1667,6 +1701,8 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
       is1_spin  = X->Def.Tpow[2*isite1-2+isigma1];
       is2_spin = X->Def.Tpow[2*isite2-2+isigma2];
 
@@ -1791,6 +1827,8 @@ int SetDiagonalTEChemi(
       case KondoGC:
       case Hubbard:
       case Kondo:
+      case tJ:
+      case tJGC:
 
         if (spin == 0) {
           is1 = X->Def.Tpow[2 * isite1 - 2];
@@ -1853,6 +1891,8 @@ firstprivate(i_max, dtmp_V) private(j)
     case KondoGC:
     case Hubbard:
     case Kondo:
+    case tJ:
+    case tJGC:
       if(spin==0){
         is1   = X->Def.Tpow[2*isite1-2];
       }else{
@@ -1970,6 +2010,8 @@ int SetDiagonalTETransfer
       case KondoGC:
       case Hubbard:
       case Kondo:
+      case tJ:
+      case tJGC:
         if (spin == 0) {
           is1 = X->Def.Tpow[2 * isite1 - 2];
         }
@@ -2028,6 +2070,8 @@ int SetDiagonalTETransfer
       case KondoGC:
       case Hubbard:
       case Kondo:
+      case tJ:
+      case tJGC:
         if (spin == 0) {
           is1 = X->Def.Tpow[2 * isite1 - 2];
         } else {
