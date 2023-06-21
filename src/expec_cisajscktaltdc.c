@@ -191,6 +191,8 @@ int expec_cisajscktaltdc
  
   case KondoGC:
   case Hubbard:
+  case tJ:
+  case tJGC:
   case Kondo:
       if(expec_cisajscktalt_Hubbard(X, vec, &fp)!=0){
           return -1;

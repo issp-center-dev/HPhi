@@ -194,6 +194,8 @@ void OutputTimer(struct BindStruct *X) {
     break;
     
   case Hubbard:
+  case tJ:
+  case tJGC:
     StampTime(fp,"  Hubbard", 300);
     StampTime(fp,"    trans    in Hubbard", 310);
     StampTime(fp,"      double", 311);

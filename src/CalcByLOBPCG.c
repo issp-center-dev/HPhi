@@ -651,10 +651,12 @@ int CalcByLOBPCG(
     case HubbardGC:
     case SpinGC:
     case KondoGC:
+    case tJGC:
     case SpinlessFermionGC:
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
+    case tJ:
     case Kondo:
     case Spin:
     case SpinlessFermion:

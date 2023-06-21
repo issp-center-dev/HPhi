@@ -457,6 +457,9 @@ int MakeExcitedList(
             case HubbardNConserved:
             case KondoGC:
             case Hubbard:
+            case tJ:
+            case tJNConserved:
+            case tJGC:
             case Kondo:
                 *iFlgListModifed = TRUE;
                 break;
@@ -472,6 +475,9 @@ int MakeExcitedList(
                 break;
             case KondoGC:
             case Hubbard:
+            case tJ:
+            case tJNConserved:
+            case tJGC:
             case Kondo:
             case Spin:
                 if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
@@ -519,6 +525,7 @@ int MakeExcitedList(
                 case HubbardGC:
                     break;
                 case HubbardNConserved:
+                case tJNConserved:
                     if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
                         X->Def.Ne = X->Def.NeMPI + 1;
                     }
@@ -528,6 +535,8 @@ int MakeExcitedList(
                     break;
                 case KondoGC:
                 case Hubbard:
+                case tJ:
+                case tJGC:
                 case Kondo:
                     if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
                         X->Def.Ne = X->Def.NeMPI + 1;
@@ -560,9 +569,12 @@ int MakeExcitedList(
                 case HubbardGC:
                 case SpinGC:
                 case HubbardNConserved:
+                case tJNConserved:
+                case tJGC:
                     break;
                 case KondoGC:
                 case Hubbard:
+                case tJ:
                 case Kondo:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                       if (X->Def.PairExcitationOperator[0][1] == 0) {//up

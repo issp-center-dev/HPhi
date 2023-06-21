@@ -212,6 +212,8 @@ int makeHam(struct BindStruct *X) {
       break;
     case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer / 2; i++) {

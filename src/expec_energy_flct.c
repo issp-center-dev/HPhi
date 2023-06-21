@@ -88,6 +88,8 @@ int expec_energy_flct(struct BindStruct *X){
   break;
   case KondoGC:
   case Hubbard:
+  case tJ:
+  case tJGC:
   case Kondo:
       expec_energy_flct_Hubbard(X);
   break;

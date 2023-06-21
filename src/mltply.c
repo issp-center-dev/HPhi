@@ -110,6 +110,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       
   case KondoGC:
   case Hubbard:
+  case tJ:
+  case tJGC:
   case Kondo:
     mltplyHubbard(X, tmp_v0, tmp_v1);
     break;

@@ -68,12 +68,14 @@ int CalcByLanczos(
     // this part will be modified
     switch(X->Bind.Def.iCalcModel){
     case HubbardGC:
+    case tJGC:
     case SpinGC:
     case KondoGC:
     case SpinlessFermionGC:
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
+    case tJ:
     case Kondo:
     case Spin:
     case SpinlessFermion:

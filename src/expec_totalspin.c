@@ -62,6 +62,8 @@ int expec_totalspin
      totalspin_SpinGC(X,vec);
      break;
    case Hubbard:
+   case tJ:
+   case tJGC:
    case Kondo:
      totalspin_Hubbard(X,vec);
      break;
