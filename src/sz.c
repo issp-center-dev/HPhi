@@ -75,7 +75,7 @@ int sz
     
   long unsigned int j;
   long unsigned int div;
-  long unsigned int num_up,num_down;
+  long unsigned int num_up,num_down,num_doublon;
   long unsigned int irght,ilft,ihfbit;
   long unsigned int *jbthread;
 
@@ -290,27 +290,40 @@ int sz
           i           = ib*ihfbit;
           //[s] counting # of up and down electrons
           num_up      = 0;
-          for(j=0;j<=N2-2;j+=2){ // even -> up spin
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_up+=div;
-          }
-          num_down=0;
-          for(j=1;j<=N2-1;j+=2){ // odd -> down spin
-            div=i & X->Def.Tpow[j];
-            div=div/X->Def.Tpow[j];
-            num_down+=div;
+          num_down    = 0;
+          num_doublon = 0;
+          for(j=0;j<(N2/2);j++){ // even -> up spin
+            div_up       = i & X->Def.Tpow[2*j];
+            div_up       = div_up/X->Def.Tpow[2*j];
+            num_up      += div_up;
+
+            div_down     = i & X->Def.Tpow[2*j+1];
+            div_down     = div_down/X->Def.Tpow[2*j+1];
+            num_down    += div_down;
+
+            num_doublon += div_up*div_down;
           }
           //[e] counting # of up and down electrons
           tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
           all_up   = (X->Def.Nsite+tmp_res)/2;
           all_down = (X->Def.Nsite-tmp_res)/2;
-
-          tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-          tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-          jb   += tmp_1*tmp_2;
+          if(X->Def.iCalcModel==Hubbard){
+              tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+              tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+              jb   += tmp_1*tmp_2;
+          }else if(X->Def.iCalcModel==tJ){
+              if(num_doublon==0){
+                if(X->Def.Nup-num_up>=X->Def.Ndown-num_down){
+                  tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+                  tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);
+                }else{
+                  tmp_1 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
+                  tmp_2 = Binomial(all_up-(X->Def.Ndown-num_down),X->Def.Nup-num_up,comb,all_up);
+                }
+                jb   += tmp_1*tmp_2;
+              }
+          }
         }
-
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
@@ -324,7 +337,7 @@ int sz
         jbthread = lui_1d_allocate(nthreads);
         #pragma omp parallel default(none) \
         shared(X,list_jb,ihfbit,N2,nthreads,jbthread) \
-        private(ib,i,j,num_up,num_down,div,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
+        private(ib,i,j,num_up,num_down,num_doublon,div,div_up,div_down,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
                 comb2,mythread,sdim_div,sdim_rest,ib_start,ib_end)
         {
           jb = 0;
@@ -352,26 +365,52 @@ int sz
             list_jb[ib]=jb;
 
             i=ib*ihfbit;
-            num_up=0;
-            for(j=0;j<=N2-2;j+=2){
-              div=i & X->Def.Tpow[j];
-              div=div/X->Def.Tpow[j];
-              num_up+=div;
+            num_up      = 0;
+            num_down    = 0;
+            num_doublon = 0;
+            for(j=0;j<(N2/2);j++){ // even -> up spin
+              div_up       = i & X->Def.Tpow[2*j];
+              div_up       = div_up/X->Def.Tpow[2*j];
+              num_up      += div_up;
+
+              div_down     = i & X->Def.Tpow[2*j+1];
+              div_down     = div_down/X->Def.Tpow[2*j+1];
+              num_down    += div_down;
+
+              num_doublon += div_up*div_down;
             }
-            num_down=0;
-            for(j=1;j<=N2-1;j+=2){
-              div=i & X->Def.Tpow[j];
-              div=div/X->Def.Tpow[j];
-              num_down+=div;
-            }
+ 
+            printf("i=%d ib=%d up=%d down=%d d=%d \n",i,ib,num_up,num_down,num_doublon);
 
             tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
             all_up   = (X->Def.Nsite+tmp_res)/2;
             all_down = (X->Def.Nsite-tmp_res)/2;
 
-            tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
-            tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
-            jb   += tmp_1*tmp_2;
+            //tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
+            //tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
+            //jb   += tmp_1*tmp_2;
+            if(X->Def.iCalcModel==Hubbard){
+                tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
+                tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
+                jb   += tmp_1*tmp_2;
+            }else if(X->Def.iCalcModel==tJ){
+                if(num_doublon==0){
+                  if(X->Def.Nup-num_up>=X->Def.Ndown-num_down){
+                    tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb2,all_up);
+                    tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb2,all_down);
+                    //printf("AAA up:   all_up=%d Nup=%d num_up=%d %d_C_%d = %d\n",all_up,X->Def.Nup,num_up,all_up,X->Def.Nup-num_up,tmp_1);
+                    //printf("AAA down: all_down=%d Ndown=%d num_down=%d %d_C_%d = %d\n",all_down,X->Def.Ndown,num_down,all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,tmp_2);
+                    printf("A: jb=%d tmp_1*tmp_2=%d %d %d %d; %d %d %d \n",jb,tmp_1*tmp_2,all_up,X->Def.Nup,num_up,all_down,X->Def.Ndown,num_down);
+                  }else{
+                    tmp_1 = Binomial(all_down,X->Def.Ndown-num_down,comb2,all_down);
+                    tmp_2 = Binomial(all_up-(X->Def.Ndown-num_down),X->Def.Nup-num_up,comb2,all_up);
+                    //printf("BBB: %d %d %d %d %d %d; %d %d\n",all_up,X->Def.Nup,num_up,all_down,X->Def.Ndown,num_down,tmp_1,tmp_2);
+                    printf("B: jb=%d tmp_1*tmp_2=%d %d %d %d; %d %d %d \n",jb,tmp_1*tmp_2,all_up,X->Def.Nup,num_up,all_down,X->Def.Ndown,num_down);
+                  }
+                  jb   += tmp_1*tmp_2;
+                }
+            }
+
           }
           free_li_2d_allocate(comb2);
           if(mythread != nthreads-1) jbthread[mythread+1] = jb;
@@ -392,11 +431,13 @@ int sz
         //#pragma omp barrier
         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
         TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+        for(ib=0;ib<X->Check.sdim;ib++){
+          printf( "ib=%d jb=%d \n",ib,list_jb[ib]);
+        }
 
         icnt = 0;
 #pragma omp parallel for default(none) reduction(+:icnt) private(ib) firstprivate(ihfbit, X) shared(list_1_, list_2_1_, list_2_2_, list_jb)
         for(ib=0;ib<X->Check.sdim;ib++){
-          //printf( "%d %d \n",ib,icnt);
           icnt+=omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
         }
         break;
@@ -1091,8 +1132,8 @@ int omp_sz_hacker(long unsigned int ib,
   jb = list_jb_[ib];
   i  = ib*ihfbit;
     
-  num_up   = 0;
-  num_down = 0;
+  num_up      = 0;
+  num_down    = 0;
   num_doublon = 0;
   for(j=0;j< X->Def.Nsite ;j++){
     div_up       = i & X->Def.Tpow[2*j];
@@ -1102,9 +1143,10 @@ int omp_sz_hacker(long unsigned int ib,
     num_up      += div_up;
     num_down    += div_down;
     num_doublon += div_up*div_down;
+    //printf("ib=%d jb=%d ihfbit=%d i=%d j=%d up=%d down=%d\n",ib,jb,ihfbit,i,j,div_up,div_down );
   }
   
-  ja=1;
+  ja              = 1;
   tmp_num_up      = num_up;
   tmp_num_down    = num_down;
   tmp_num_doublon = num_doublon;
@@ -1192,9 +1234,10 @@ int omp_sz_hacker(long unsigned int ib,
           num_doublon += div_up*div_down;
         }
         if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
-          if (ja+jb>=X->Check.idim_max+1){
-              printf("A:%d %d %d %d %d\n",ia,ib,ja+jb,ja,jb);
-          }
+          printf("A: ib=%d ia=%d ja=%d jb=%d ja+jb=%d up=%d down=%d doublon=%d\n",ib,ia,ja,jb,ja+jb,num_up,num_down,num_doublon);
+          //if (ja+jb>=X->Check.idim_max+1){
+          //    printf("A:%d %d %d %d %d\n",ia,ib,ja+jb,ja,jb);
+          //}
           list_1_[ja+jb]=ia+ib*ihfbit;
           list_2_1_[ia]=ja+1;
           list_2_2_[ib]=jb+1;
@@ -1216,9 +1259,10 @@ int omp_sz_hacker(long unsigned int ib,
               num_doublon += div_up*div_down;
             }
             if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
-              if (ja+jb>=X->Check.idim_max+1){
-                printf("B:%d %d %d %d %d %f\n",ia,ib,ja+jb,ja,jb,num_doublon);
-              }
+              printf("B: ib=%d ia=%d ja=%d jb=%d ja+jb=%d up=%d down=%d doublon=%d\n",ib,ia,ja,jb,ja+jb,num_up,num_down,num_doublon);
+              //if (ja+jb>=X->Check.idim_max+1){
+              //  printf("B:%d %d %d %d %d %f\n",ia,ib,ja+jb,ja,jb,num_doublon);
+              //}
               list_1_[ja+jb]=ia+ib*ihfbit;
               list_2_1_[ia]=ja+1;
               list_2_2_[ib]=jb+1;
