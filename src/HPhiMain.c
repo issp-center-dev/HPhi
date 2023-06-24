@@ -274,11 +274,13 @@ int main(int argc, char* argv[]){
       exitMPI(-1);
     }
     
+    printf("A: %d \n", X.Bind.Def.iCalcModel);
     StartTimer(1000);
     if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){
       exitMPI(-1);
     }
 
+    printf("B: %d \n", X.Bind.Def.iCalcModel);
     StopTimer(1000);
     if(X.Bind.Def.WRITE==1){
       output_list(&(X.Bind));
@@ -288,6 +290,7 @@ int main(int argc, char* argv[]){
     diagonalcalc(&(X.Bind));
     StopTimer(2000);
       
+    printf("C: %d \n", X.Bind.Def.iCalcModel);
     switch (X.Bind.Def.iCalcType) {
     case Lanczos:
       StartTimer(4000);

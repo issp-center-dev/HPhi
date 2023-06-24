@@ -156,15 +156,10 @@ int check(struct BindStruct *X){
       iAllup = X->Def.Nsite;
     }
     for(i=iMinup; i<= iAllup; i++){
-        if(i >=  X->Def.Ne-i){
-            comb_up   = Binomial(Ns, i, comb, Ns);
-            comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
-            comb_sum += comb_up*comb_down;
-        }else{
-            comb_down = Binomial(Ns, X->Def.Ne-i, comb, Ns);
-            comb_up   = Binomial(Ns-(X->Def.Ne-i), i, comb, Ns);
-            comb_sum += comb_up*comb_down;
-        }
+        comb_up   = Binomial(Ns, i, comb, Ns);
+        comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
+        comb_sum +=comb_up*comb_down;
+        printf("i=%d %d; Ns=%d i=%d, Ns-i=%d X->Def.Ne-i=%d  \n",i,comb_up*comb_down,Ns,i,Ns-i, X->Def.Ne-i);
     }
     break;
     

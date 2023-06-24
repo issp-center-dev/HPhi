@@ -274,7 +274,6 @@ int SetDiagonalCoulombIntra
    When isite1 is in the inter process region
   */
   if (isite1 > X->Def.Nsite){
-    
     switch (X->Def.iCalcModel) {
 
     case HubbardGC:

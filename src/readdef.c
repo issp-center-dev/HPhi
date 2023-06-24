@@ -888,6 +888,7 @@ int ReadDefFileNInt(
               return(-1);
             }
             X->iCalcModel=tJNConserved;
+            printf("Mode; %d %d \n",X->iCalcModel,tJNConserved);
           }
           else if(X->iCalcModel ==SpinlessFermion){
             X->Ne=X->NCond;  
