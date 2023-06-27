@@ -1194,6 +1194,7 @@ void make_list_jb(
     long unsigned int num_up,num_down,num_doublon;
     long unsigned int div_up,div_down;
     long unsigned int tmp_res,all_up,all_down,tmp_1,tmp_2;
+    unsigned int N;
     int iSpnup,iMinup,iAllup;
 
 
@@ -1208,6 +1209,7 @@ void make_list_jb(
     }
 
     if (X->Def.iCalcModel == Spin){
+        N  = X->Def.Nsite;
         jb = 0;
         for(ib=0;ib<X->Check.sdim;ib++){
             list_jb[ib] = jb;
