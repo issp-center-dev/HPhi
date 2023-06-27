@@ -417,59 +417,8 @@ int sz(
                     // this part can not be parallelized
                     if(X->Def.iFlgGeneralSpin==FALSE){
                         hacker = X->Def.read_hacker;
-                        // using hacker's delight only + no open mp 
-                        if(hacker        ==  -1){
-                            icnt    = 1;
-                            tmp_pow = 1;
-                            tmp_i   = 0;
-                            jb      = 0;
-                            ja      = 0;
-                            while(tmp_pow < X->Def.Tpow[X->Def.Ne]){
-                                tmp_i   += tmp_pow;
-                                tmp_pow  = tmp_pow*2;
-                            }
-                            if(X->Def.Nsite%2==0){
-                                max_tmp_i = X->Check.sdim*X->Check.sdim;
-                            }else{
-                                max_tmp_i = X->Check.sdim*X->Check.sdim*2-1;
-                            }  
-                            while(tmp_i<max_tmp_i){
-                                list_1_[icnt]=tmp_i;
-                         
-                                ia= tmp_i & irght;
-                                ib= tmp_i & ilft;
-                                ib= ib/ihfbit; 
-                                if(ib==ibpatn){
-                                    ja=ja+1;
-                                }else{
-                                    ibpatn = ib;
-                                    ja     = 1;
-                                    jb     = icnt-1;
-                                }
-                          
-                                list_2_1_[ia] = ja+1;
-                                list_2_2_[ib] = jb+1;
-                                tmp_j = snoob(tmp_i);
-                                tmp_i =        tmp_j;
-                                icnt        +=  1;
-                            }
-                            icnt = icnt-1;
-                            // old version + hacker's delight
-                        }else if(hacker  ==  1){
-                            jb = 0;
-                            for(ib=0;ib<X->Check.sdim;ib++){
-                                list_jb[ib] = jb;
-                                i           = ib*ihfbit;
-                                num_up      = 0;
-                                for(j=0;j<N; j++){
-                                    div_up  = i & X->Def.Tpow[j];
-                                    div_up  = div_up/X->Def.Tpow[j];
-                                    num_up += div_up;
-                                }
-                                all_up   = (X->Def.Nsite+1)/2;
-                                tmp_1    = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-                                jb      += tmp_1;
-                            }
+                        if(hacker  ==  1){
+                            make_list_jb(ihfbit,N2,comb,X,list_jb);
                             //#pragma omp barrier
                             TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                             TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
@@ -481,20 +430,7 @@ int sz(
                             }
                           // old version
                         }else if(hacker  ==  0){
-                            jb = 0;
-                            for(ib=0;ib<X->Check.sdim;ib++){
-                                list_jb[ib] = jb;
-                                i           = ib*ihfbit;
-                                num_up      = 0;
-                                for(j=0;j<N; j++){
-                                    div_up  = i & X->Def.Tpow[j];
-                                    div_up  = div_up/X->Def.Tpow[j];
-                                    num_up +=div_up;
-                                }
-                                all_up  = (X->Def.Nsite+1)/2;
-                                tmp_1   = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
-                                jb     += tmp_1;
-                            }
+                            make_list_jb(ihfbit,N2,comb,X,list_jb);
                             //#pragma omp barrier
                             TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                             TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
@@ -514,41 +450,41 @@ int sz(
                         long unsigned int itmpSize=1;
                         int i2Sz=0;
                         for(j=0; j<X->Def.Nsite; j++){
-                          itmpSize *= X->Def.SiteToBit[j];
-                          if(itmpSize==ihfbit){
-                            break;
-                          }
-                          irghtsite++;
+                            itmpSize *= X->Def.SiteToBit[j];
+                            if(itmpSize==ihfbit){
+                                break;
+                            }
+                            irghtsite++;
                         }
                         for(j=0; j<X->Def.Nsite; j++){
-                          Max2Sz += X->Def.LocSpn[j];
+                            Max2Sz += X->Def.LocSpn[j];
                         }
                 
                         HilbertNumToSz = lui_1d_allocate(2*Max2Sz+1);
                         for(ib=0; ib<2*Max2Sz+1; ib++){
-                          HilbertNumToSz[ib]=0;
+                            HilbertNumToSz[ib]=0;
                         }
                 
                         for(ib =0; ib<ihfbit; ib++){
-                          i2Sz=0;
-                          for(j=1; j<= irghtsite; j++){
-                            i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
-                          }
-                          list_2_1_Sz[ib]=i2Sz;
-                          HilbertNumToSz[i2Sz+Max2Sz]++;
+                            i2Sz=0;
+                            for(j=1; j<= irghtsite; j++){
+                                i2Sz += GetLocal2Sz(j,ib, X->Def.SiteToBit, X->Def.Tpow);
+                            }
+                            list_2_1_Sz[ib]=i2Sz;
+                            HilbertNumToSz[i2Sz+Max2Sz]++;
                         }
                         jb = 0;
                         long unsigned int ilftdim=(X->Def.Tpow[X->Def.Nsite-1]*X->Def.SiteToBit[X->Def.Nsite-1])/ihfbit;
                         for(ib=0;ib<ilftdim;ib++){
-                          list_jb[ib]=jb;
-                          i2Sz=0;
-                          for(j=1;j<=(N-irghtsite); j++){
-                            i2Sz += GetLocal2Sz(j+irghtsite,ib*ihfbit, X->Def.SiteToBit, X->Def.Tpow);
-                          }
-                          list_2_2_Sz[ib]=i2Sz;
-                          if((X->Def.Total2Sz- i2Sz +(int)Max2Sz)>=0 && (X->Def.Total2Sz- i2Sz) <= (int)Max2Sz){
-                            jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
-                          }
+                            list_jb[ib]=jb;
+                            i2Sz=0;
+                            for(j=1;j<=(N-irghtsite); j++){
+                                i2Sz += GetLocal2Sz(j+irghtsite,ib*ihfbit, X->Def.SiteToBit, X->Def.Tpow);
+                            }
+                            list_2_2_Sz[ib]=i2Sz;
+                            if((X->Def.Total2Sz- i2Sz +(int)Max2Sz)>=0 && (X->Def.Total2Sz- i2Sz) <= (int)Max2Sz){
+                                jb += HilbertNumToSz[X->Def.Total2Sz- i2Sz +Max2Sz];
+                            }
                         }
                 
                         TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
@@ -559,7 +495,6 @@ int sz(
                         for(ib=0;ib<ilftdim; ib++){
                             icnt+=omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
                         }
-
                         free_lui_1d_allocate(HilbertNumToSz);
                     }
       
@@ -627,31 +562,31 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
   int tmp_i,tmp_j;
 
   if(n==0 && k==0){
-    return 1;
+      return 1;
   } 
   else if(n<0 || k<0 || n<k){
-    return 0;
+      return 0;
   }
   
   for(tmp_i=0;tmp_i<=Nsite;tmp_i++){
-    for(tmp_j=0;tmp_j<=Nsite;tmp_j++){
-      comb[tmp_i][tmp_j] = 0;
-    }
+      for(tmp_j=0;tmp_j<=Nsite;tmp_j++){
+          comb[tmp_i][tmp_j] = 0;
+      }
   }
 
   comb[0][0] = 1;
   comb[1][0] = 1;
   comb[1][1] = 1;
   for(tmp_i=2;tmp_i<=n;tmp_i++){
-    for(tmp_j=0;tmp_j<=tmp_i;tmp_j++){
-      if(tmp_j==0){
-        comb[tmp_i][tmp_j] = 1;
-      }else if(tmp_j==tmp_i){
-        comb[tmp_i][tmp_j] = 1;
-      }else{
-        comb[tmp_i][tmp_j] = comb[tmp_i-1][tmp_j-1]+comb[tmp_i-1][tmp_j];
+      for(tmp_j=0;tmp_j<=tmp_i;tmp_j++){
+          if(tmp_j==0){
+              comb[tmp_i][tmp_j] = 1;
+          }else if(tmp_j==tmp_i){
+              comb[tmp_i][tmp_j] = 1;
+          }else{
+              comb[tmp_i][tmp_j] = comb[tmp_i-1][tmp_j-1]+comb[tmp_i-1][tmp_j];
+          }
       }
-    }
   }
   return comb[n][k];
 }
@@ -1272,56 +1207,72 @@ void make_list_jb(
         }
     }
 
-    jb = 0;
-    for(ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
-        list_jb[ib] = jb;
-        i           = ib*ihfbit;
-        //[s] counting # of up and down electrons
-        num_up      = 0;
-        num_down    = 0;
-        num_doublon = 0;
-        for(j=0;j<(N2/2);j++){ // even -> up spin
-            div_up       = i & X->Def.Tpow[2*j];
-            div_up       = div_up/X->Def.Tpow[2*j];
-            num_up      += div_up;
-              
-            div_down     = i & X->Def.Tpow[2*j+1];
-            div_down     = div_down/X->Def.Tpow[2*j+1];
-            num_down    += div_down;
-              
-            num_doublon += div_up*div_down;
+    if (X->Def.iCalcModel == Spin){
+        jb = 0;
+        for(ib=0;ib<X->Check.sdim;ib++){
+            list_jb[ib] = jb;
+            i           = ib*ihfbit;
+            num_up      = 0;
+            for(j=0;j<N; j++){
+                div_up  = i & X->Def.Tpow[j];
+                div_up  = div_up/X->Def.Tpow[j];
+                num_up += div_up;
+            }
+            all_up   = (X->Def.Nsite+1)/2;
+            tmp_1    = Binomial(all_up,X->Def.Ne-num_up,comb,all_up);
+            jb      += tmp_1;
         }
-        //[e] counting # of up and down electrons
-        tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
-        all_up   = (X->Def.Nsite+tmp_res)/2;
-        all_down = (X->Def.Nsite-tmp_res)/2;
-        if(X->Def.iCalcModel == Hubbard){
-            tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-            tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
-            jb   += tmp_1*tmp_2;
-        }else if(X->Def.iCalcModel == tJ){
-            if(num_doublon==0){
+    }else{
+        jb = 0;
+        for(ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
+            list_jb[ib] = jb;
+            i           = ib*ihfbit;
+            //[s] counting # of up and down electrons
+            num_up      = 0;
+            num_down    = 0;
+            num_doublon = 0;
+            for(j=0;j<(N2/2);j++){ // even -> up spin
+                div_up       = i & X->Def.Tpow[2*j];
+                div_up       = div_up/X->Def.Tpow[2*j];
+                num_up      += div_up;
+                  
+                div_down     = i & X->Def.Tpow[2*j+1];
+                div_down     = div_down/X->Def.Tpow[2*j+1];
+                num_down    += div_down;
+                  
+                num_doublon += div_up*div_down;
+            }
+            //[e] counting # of up and down electrons
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+            if(X->Def.iCalcModel == Hubbard){
                 tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-                tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);
+                tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
                 jb   += tmp_1*tmp_2;
-            }
-        }else if(X->Def.iCalcModel == HubbardNConserved){
-            for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
-                tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
-                tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
-                jb   += tmp_1*tmp_2;
-            }
-        }else if(X->Def.iCalcModel == tJNConserved){
-            for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
+            }else if(X->Def.iCalcModel == tJ){
                 if(num_doublon==0){
-                    tmp_1 = Binomial(all_up,iSpnup-num_up,comb,all_up);
-                    tmp_2 = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-iSpnup-num_down,comb,all_down);
+                    tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+                    tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);
                     jb   += tmp_1*tmp_2;
+                }
+            }else if(X->Def.iCalcModel == HubbardNConserved){
+                for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
+                    tmp_1 = Binomial(all_up, iSpnup-num_up,comb,all_up);
+                    tmp_2 = Binomial(all_down, X->Def.Ne-iSpnup-num_down,comb,all_down);
+                    jb   += tmp_1*tmp_2;
+                }
+            }else if(X->Def.iCalcModel == tJNConserved){
+                for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
+                    if(num_doublon==0){
+                        tmp_1 = Binomial(all_up,iSpnup-num_up,comb,all_up);
+                        tmp_2 = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-iSpnup-num_down,comb,all_down);
+                        jb   += tmp_1*tmp_2;
+                    }
                 }
             }
         }
     }
-
 }
 
 
