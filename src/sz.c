@@ -51,7 +51,7 @@ void make_list_jb(
     unsigned int N2,
     long int **comb,    
     struct BindStruct *X,        
-    long unsigned int *list_jb_
+    long unsigned int *list_jb
 );
 
 void omp_make_list_jb(
@@ -59,7 +59,7 @@ void omp_make_list_jb(
     unsigned int N2,
     long int **comb,    
     struct BindStruct *X,
-    long unsigned int *list_jb_
+    long unsigned int *list_jb
 );
 
 
@@ -1118,7 +1118,7 @@ void omp_make_list_jb(
     unsigned int N2,             //[in]
     long int **comb,             //[in]
     struct BindStruct *X,        //[in]
-    long unsigned int *list_jb_  //[out]
+    long unsigned int *list_jb  //[out]
 ){
 
     int iSpnup,iMinup,iAllup;
@@ -1145,9 +1145,9 @@ void omp_make_list_jb(
 
     jbthread = lui_1d_allocate(nthreads);
     #pragma omp parallel default(none) \
-    shared(X,iMinup,iAllup,list_jb,ihfbit,N2,nthreads,jbthread) \
+    shared(X,iMinup,iAllup,iSpnup,list_jb,ihfbit,N2,nthreads,jbthread) \
     private(ib,i,j,num_up,num_down,num_doublon,div,div_up,div_down,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
-    comb2,mythread,sdim_div,sdim_rest,ib_start,ib_end)
+    comb,mythread,sdim_div,sdim_rest,ib_start,ib_end)
     {
     jb = 0;
     #ifdef _OPENMP
@@ -1215,7 +1215,7 @@ void omp_make_list_jb(
             }
         }
     }
-    free_li_2d_allocate(comb2);
+    free_li_2d_allocate(comb);
     if(mythread != nthreads-1) jbthread[mythread+1] = jb;
         #pragma omp barrier
         #pragma omp single
@@ -1251,10 +1251,10 @@ void make_list_jb(
     unsigned int N2,            //[in]
     long int **comb,            //[in]
     struct BindStruct *X,       //[in]
-    long unsigned int *list_jb_ //[out]
+    long unsigned int *list_jb //[out]
 ){
 
-    long unsigned int jb,ib,i;
+    long unsigned int jb,ib,i,j;
     long unsigned int div;
     long unsigned int num_up,num_down,num_doublon;
     long unsigned int div_up,div_down;
