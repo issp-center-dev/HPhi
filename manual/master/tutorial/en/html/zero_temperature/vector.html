@@ -50,12 +50,12 @@ For example, the following python function (<code class="docutils literal notran
     with open(filename, &quot;rb&quot;) as f:
         f.read(4)
         nelems = unpack(&quot;L&quot;, f.read(8))[0]
-        ret = np.zeros(nelems, dtype=np.complex)
+        ret = np.zeros(nelems, dtype=np.complex128)
         f.read(16)
         for i in range(nelems):
             re = unpack(&quot;d&quot;, f.read(8))[0]
             im = unpack(&quot;d&quot;, f.read(8))[0]
-            ret[i] = np.complex(re, im)
+            ret[i] = complex(re, im)
         return ret
 </pre></div>
 </div>
@@ -146,7 +146,7 @@ This script firstly generates the input file for calculating the ground state an
       &copy;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
