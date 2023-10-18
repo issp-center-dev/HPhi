@@ -3,7 +3,10 @@ MODULE dynamical_val
   IMPLICIT NONE
   !
   INTEGER,SAVE :: &
+  & ntemp, & ! Number of temperature
+  & nwfc, & 
   & nomega, &
+  & nkg(3), & ! k-grid for momentum ditribution
   & nk_line, & ! Numberof along each k line
   & nnode, & ! Number of node of k-path
   & nr,   & ! Number of R-vector
@@ -30,13 +33,15 @@ MODULE dynamical_val
   & indx(:,:) ! (nr,norb) Mapping index for each Correlation function
   !
   REAL(8),ALLOCATABLE,SAVE :: &
+  & temp(:), & ! (ntemp) Temperature
+  & energy(:), & ! (nwfc) energy eigenvalue
   & knode(:,:), & ! (3,nnode) Nodes of k path
   & phase(:,:), & ! (125,nr) Boundary phase 
   & kvec(:,:)     ! (3,nk) k-vector in the 1st BZ
   !
   COMPLEX(8),ALLOCATABLE,SAVE :: &
-  & cor(:,:,:), & ! (nr,norb,nomega) Correlation function in real space
-  & cor_k(:,:,:)  ! (nk,norb,nomega) Correlation function in the k-space
+  & cor(:,:,:,:), & ! (nr,norb,nomega,nwfc) Correlation function in real space
+  & cor_k(:,:,:,:)  ! (nk,norb,nomega,nwfc) Correlation function in the k-space
   !
   CHARACTER(256),ALLOCATABLE :: &
   & kname(:) ! (nnode) Label of k-point node
@@ -68,12 +73,12 @@ END SUBROUTINE key2lower
 !
 SUBROUTINE read_filename()
   !
-  USE dynamical_val, ONLY : file_gindx, filehead, nsite, omegamin, omegamax, nomega
+  USE dynamical_val, ONLY : file_gindx, filehead, nsite, omegamin, &
+  &                         omegamax, nomega, nwfc, energy
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10
-  CHARACTER(256) :: modpara, keyname, namelist
-  REAL(8) :: eig0
+  INTEGER :: fi = 10, iwfc, calctype
+  CHARACTER(256) :: modpara, keyname, namelist, calcmod
   !
   WRITE(*,*) 
   WRITE(*,*) "#####  Read HPhi Input Files  #####" 
@@ -97,6 +102,8 @@ SUBROUTINE read_filename()
         READ(fi,*) keyname, file_gindx
      ELSE IF(TRIM(ADJUSTL(keyname)) == "modpara") THEN
         READ(fi,*) keyname, modpara
+     ELSE IF(TRIM(ADJUSTL(keyname)) == "calcmod") THEN
+        READ(fi,*) keyname, calcmod
      ELSE
         READ(fi,*) keyname
      END IF
@@ -108,6 +115,28 @@ SUBROUTINE read_filename()
   !
   WRITE(*,*) "    Excitation Index file : ", TRIM(ADJUSTL(file_gindx))
   WRITE(*,*) "    ModPara file : ", TRIM(ADJUSTL(modpara)) 
+  WRITE(*,*) "    CalcMod file : ", TRIM(ADJUSTL(calcmod))
+  !
+  ! Read from CalcMod file
+  !
+  OPEN(fi,file = TRIM(calcmod))
+  !
+  DO
+     READ(fi,*,END=30) keyname
+     BACKSPACE(fi)
+     CALL key2lower(keyname)
+     !
+     IF(TRIM(ADJUSTL(keyname)) == "calctype") THEN
+        READ(fi,*) keyname, calctype
+     ELSE
+        READ(fi,*) keyname
+     END IF
+  END DO
+  !
+30 CONTINUE
+  WRITE(*,*) "  Read from ", TRIM(calcmod)
+  WRITE(*,*) "    CalcType : ", calctype
+  CLOSE(FI)
   !
   ! Read from Modpara file
   !
@@ -128,29 +157,53 @@ SUBROUTINE read_filename()
         READ(fi,*) keyname, omegamax
      ELSE IF(TRIM(ADJUSTL(keyname)) == "omegamin") THEN
         READ(fi,*) keyname, omegamin
+      ELSE IF(TRIM(ADJUSTL(keyname)) == "exct") THEN
+         READ(fi,*) keyname, nwfc
      ELSE
         READ(fi,*) keyname
      END IF
   END DO
   !
 20 CONTINUE
+  !
+  ! FullDiag
+  !
+  IF(calctype == 2) THEN
+     OPEN(fi, file = "output/CHECK_Memory.dat")
+     READ(fi, '(25x,i16)') nwfc
+     CLOSE(fi)
+  END IF
+  !
   WRITE(*,*) "  Read from ", TRIM(modpara)
   WRITE(*,*) "    FileHead : ", TRIM(ADJUSTL(filehead))
   WRITE(*,*) "    Number of site : ", nsite
   WRITE(*,*) "    Number of omega : ", nomega
   WRITE(*,*) "    Minimum Omega : ", omegamin
   WRITE(*,*) "    Maximum Omega : ", omegamax
+  WRITE(*,*) "    Number of states : ", nwfc
   CLOSE(FI)
   !
   filehead = "output/" // TRIM(ADJUSTL(filehead))
+  ALLOCATE(energy(nwfc))
   !
-  OPEN(fi,file = TRIM(filehead)//"_energy.dat")
-  READ(fi,*) keyname
-  READ(fi,*) keyname, eig0
-  CLOSE(fi)
-  WRITE(*,*) "    Minimum energy : ", eig0
-  !omegamin = omegamin - eig0
-  !omegamax = omegamax - eig0
+  IF(calctype == 2) THEN
+     OPEN(fi,file = "output/Eigenvalue.dat")
+     DO iwfc = 1, nwfc
+        READ(fi,*) keyname, energy(iwfc)
+        WRITE(*,*) "    Energy ", iwfc, " : ", energy(iwfc)
+     END DO
+     CLOSE(fi)
+  ELSE
+     OPEN(fi,file = TRIM(filehead)//"_energy.dat")
+     DO iwfc = 1, nwfc
+        READ(fi,*) keyname
+        READ(fi,*) keyname, energy(iwfc)
+        READ(fi,*) keyname
+        READ(fi,*) keyname
+        WRITE(*,*) "    Energy ", iwfc, " : ", energy(iwfc)
+     END DO
+     CLOSE(fi)
+  END IF
   !
 END SUBROUTINE read_filename
 !
@@ -158,8 +211,8 @@ END SUBROUTINE read_filename
 !
 SUBROUTINE read_geometry()
   !
-  USE dynamical_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, &
-  &                       nr, nreq, norb, nnode, knode, nk_line, kname
+  USE dynamical_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, ntemp, &
+  &                         nr, nreq, norb, nnode, knode, nk_line, kname, temp, nkg
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, isite, ii, ir, ipiv(3), irv0(3), i1, i2, i3, inode
@@ -235,6 +288,18 @@ SUBROUTINE read_geometry()
      READ(fi,*) kname(inode), knode(1:3,inode)
      WRITE(*,'(a,a,3f10.5)') "      ", TRIM(kname(inode)), knode(1:3,inode)
   END DO
+  READ(fi,*) nkg(1:3)
+  WRITE(*,'(a,3i3)') "k-grid for momentum distribution :", nkg(1:3)
+  !
+  ! (Optional) Temperature
+  !
+  READ(fi,*,iostat=ii) ntemp
+  IF(ii == 0) THEN
+     ALLOCATE(temp(ntemp))
+     READ(fi,*) temp(1:ntemp)
+  ELSE
+     ntemp = 0
+  END IF
   !
   CLOSE(fi)
   !
@@ -369,35 +434,41 @@ END SUBROUTINE read_corrindx
 !
 SUBROUTINE read_corrfile()
   !
-  USE dynamical_val, ONLY : filehead, ncor, indx, cor, norb, nr, nomega
+  USE dynamical_val, ONLY : filehead, ncor, indx, cor, norb, nr, nomega, nwfc
   IMPLICIT NONE
   !
-  INTEGER :: fi = 10, icor, iorb, ir, iomega
+  INTEGER :: fi = 10, icor, iorb, ir, iomega, iwfc
   COMPLEX(8),ALLOCATABLE :: cor0(:,:)
   REAL(8) :: dtmp(4)
+  CHARACTER(256) :: fname
   !
-  ALLOCATE(cor(nr,norb,nomega))
+  ALLOCATE(cor(nr,norb,nomega,nwfc))
   ALLOCATE(cor0(nomega,ncor))
-  cor(1:nr,1:norb,1:nomega) = CMPLX(0d0, 0d0, KIND(1d0))
+  cor(1:nr,1:norb,1:nomega,1:nwfc) = CMPLX(0d0, 0d0, KIND(1d0))
   !
-  OPEN(fi, file = TRIM(filehead) // "_DynamicalGreen_0.dat")
-  !
-  DO icor = 1, ncor
-     DO iomega = 1, nomega
+  DO iwfc = 1, nwfc
+    !
+    WRITE(fname,'(a,a,i0,a)') TRIM(filehead), "_DynamicalGreen_", iwfc-1, ".dat"
+    OPEN(fi, file = TRIM(fname))
+    !
+    DO icor = 1, ncor
+      DO iomega = 1, nomega
         READ(fi,*) dtmp(1:4)
         cor0(iomega,icor) = CMPLX(dtmp(3), dtmp(4), KIND(1d0))
-     END DO
-  END DO
-  !
-  CLOSE(fi)
-  !
-  ! Map it into Up-Up(1) and Down-Down(2) Correlation
-  !
-  DO iorb = 1, norb
-     DO ir = 1, nr
-        cor(ir, iorb, 1:nomega) = cor0(1:nomega, indx(ir, iorb))
-     END DO
-  END DO
+      END DO
+    END DO
+    !
+    CLOSE(fi)
+    !
+    ! Map it into Up-Up(1) and Down-Down(2) Correlation
+    !
+    DO iorb = 1, norb
+      DO ir = 1, nr
+        cor(ir, iorb, 1:nomega, iwfc) = cor0(1:nomega, indx(ir, iorb))
+      END DO
+    END DO
+    !
+  END DO ! iwfc
   !
   DEALLOCATE(cor0, indx)
   !
@@ -407,14 +478,15 @@ END SUBROUTINE read_corrfile
 !
 SUBROUTINE dynamical_cor()
   !
-  USE dynamical_val, ONLY : cor, cor_k, kvec, nk, nr, nreq, norb, irv, phase, nomega
+  USE dynamical_val, ONLY : cor, cor_k, kvec, nk, nr, nreq, norb, irv, &
+  &                         phase, nomega, nwfc
   IMPLICIT NONE
   !
   INTEGER :: ik, ir, ireq
   REAL(8) :: tpi = 2.0 * ACOS(-1d0), theta
   COMPLEX(8),ALLOCATABLE :: fmat(:,:)
   !
-  ALLOCATE(fmat(nk,nr), cor_k(nk,norb,nomega))
+  ALLOCATE(fmat(nk,nr), cor_k(nk,norb,nomega,nwfc))
   !
   ! Matirx for Fourier trans. exp(-i k R)
   !
@@ -430,7 +502,7 @@ SUBROUTINE dynamical_cor()
      END DO ! ir = 1, nr
   END DO ! ik = 1, nk
   !
-  CALL zgemm('N', 'N', nk, norb*nomega, nr, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
+  CALL zgemm('N', 'N', nk, norb*nomega*nwfc, nr, CMPLX(1d0, 0d0, KIND(1d0)), fmat, nk, &
   &          cor, nr, CMPLX(0d0,0d0,KIND(1d0)), cor_k, nk)
   !
   DEALLOCATE(fmat, cor)
@@ -441,13 +513,15 @@ END SUBROUTINE dynamical_cor
 !
 SUBROUTINE output_cor()
   !
-  USE dynamical_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, &
-  &                       recipr, filehead, nomega, omegamin, omegamax
+  USE dynamical_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, ntemp, energy, &
+  &                       recipr, filehead, nomega, omegamin, omegamax, nwfc, temp
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, inode, ikk, iomega
-  REAL(8) :: dk(3), dk_cart(3), xk(nk), &
+  INTEGER :: fo = 20, ik, inode, ikk, iomega, iwfc, itemp, ndeg
+  REAL(8) :: dk(3), dk_cart(3), xk(nk), Zpart, &
   &          xk_label(nnode), klength, omega
+  COMPLEX(8),ALLOCATABLE :: cor_t(:,:,:)
+  CHARACTER(256) :: fname
   !
   ! Compute x-position for plotting band
   !
@@ -471,20 +545,75 @@ SUBROUTINE output_cor()
   WRITE(*,*) "#####  Output Files  #####" 
   WRITE(*,*) 
   !
-  WRITE(*,*) "  Correlation in k-space : ", TRIM(filehead) // "_dyn.dat"
-  !
-  OPEN(fo, file = TRIM(filehead) // "_dyn.dat")
-  !
-  DO ik = 1, ikk
-     DO iomega = 1, nomega
+  DO iwfc = 1, nwfc
+    !
+    WRITE(fname,'(a,a,i0,a)') TRIM(filehead), "_dyn", iwfc-1, ".dat"
+    WRITE(*,*) "  Correlation in k-space : ", TRIM(fname)
+    !
+    OPEN(fo, file = TRIM(fname))
+    !
+    DO ik = 1, nk
+      DO iomega = 1, nomega
         omega = (omegamax - omegamin) * DBLE(iomega - 1) / DBLE(nomega) + omegamin
-        WRITE(fo,'(1000e15.5)') xk(ik), omega, cor_k(ik, 1:norb, iomega)
-     END DO
-     WRITE(fo,*)
-     WRITE(fo,*)
+        WRITE(fo,'(1000e15.5)') xk(ik), omega, cor_k(ik, 1:norb, iomega, iwfc)
+      END DO
+      WRITE(fo,*)
+      WRITE(fo,*)
+    END DO
+    !
+    CLOSE(fo)
+    !
   END DO
   !
-  CLOSE(fo)
+  ! Output temperature dependent correlation function
+  !
+  ALLOCATE(cor_t(nk,norb,nomega))
+  !
+  DO itemp = 1, ntemp
+    !
+    IF(temp(itemp) < 1.0d-8) THEN
+      !
+      ! Zero temperature
+      !
+      ndeg = COUNT(energy(1:nwfc)-energy(1) < 1.0d-5)
+      cor_t(:,:,:) = SUM(cor_k(:,:,:,1:ndeg), 4) / dble(ndeg)
+      ! 
+    ELSE
+      !
+      Zpart = 1.0d0
+      cor_t(:,:,:) = cor_k(:,:,:,nwfc)
+      DO iwfc = nwfc, 2, -1
+        Zpart = 1.0d0 + exp(-(energy(iwfc)-energy(iwfc-1))/temp(itemp))*Zpart
+        cor_t(:,:,:) = cor_k(:,:,:,iwfc-1) &
+        &            + exp(-(energy(iwfc)-energy(iwfc-1))/temp(itemp))*cor_t(:,:,:)
+      END DO
+      cor_t(:,:,:) = cor_t(:,:,:) / Zpart
+      !
+    END IF
+    !
+    WRITE(fname,'(a,a,i0,a)') TRIM(filehead), "_dyn_t", itemp, ".dat"
+    WRITE(*,*) "  Correlation in k-space : ", TRIM(fname)
+    !
+    OPEN(fo, file = TRIM(fname))
+    !
+    WRITE(fo,'(a,e15.5)') "#Temperature: ", temp(itemp)
+    !
+    DO ik = 1, nk
+      DO iomega = 1, nomega
+        omega = (omegamax - omegamin) * DBLE(iomega - 1) / DBLE(nomega) + omegamin
+        WRITE(fo,'(1000e15.5)') xk(ik), omega, cor_t(ik, 1:norb, iomega)
+      END DO
+      WRITE(fo,*)
+      WRITE(fo,*)
+    END DO
+    !
+    CLOSE(fo)
+    !
+  END DO
+  !
+  DEALLOCATE(cor_t)
+  !
+  ! Gnuplot setting file
   !
   OPEN(fo, file = "kpath.gp")
   !

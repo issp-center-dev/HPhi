@@ -45,6 +45,9 @@ HPhi-全対角化およびLOBCG
 1体および2体の相関関数を読み込みFourier変換を行った後,
 ``zvo_corr_eigen*.dat`` という名前のファイルとして ``output/`` ディレクトリに出力する.
 
+オプションで指定可能な温度を指定した場合には、
+``zvo_corr_t*.dat`` という名前のファイルとして ``output/`` ディレクトリに出力する.
+
 mVMC
 ~~~~
 
@@ -85,10 +88,12 @@ mVMC
    $ ${PATH}/dynamicalr2k ${NAMELIST} ${GEOMETRY}
 
 ここで, ``${PATH}`` は ``dynamicalr2k`` ユーティリティのバイナリのあるディレクトリのパス,
-${NAMELIST}は :math:`{\mathcal H}\Phi`/mVMC の NameList インプットファイル名,
+${NAMELIST}は :math:`{\mathcal H}\Phi` の NameList インプットファイル名,
 ${GEOMETRY}は :ref:`geometry` ファイルへのパスである.
 この場合に ``HPhi`` が ``output/`` ディレクトリに出力するサイト表示の動的相関関数は,
-``zvo_DynamicalGreen.dat`` である.
-``greenr2k`` ユーティリティーは, これらを読み込みFourier変換を行った後,
-単一のファイル ``zvo_corr.dat`` を ``output/`` ディレクトリに出力する.
+``zvo_DynamicalGreen_*.dat`` である.
+``dynamicalr2k`` ユーティリティーは, これらを読み込みFourier変換を行った後,
+ファイル ``zvo_dyn*.dat`` を ``output/`` ディレクトリに出力する.
+
+オプションで指定可能な温度を指定した場合には, ファイル ``zvo_dyn_t*.dat`` を ``output/`` ディレクトリに出力する.
 
