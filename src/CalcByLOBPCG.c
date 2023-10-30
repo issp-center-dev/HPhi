@@ -66,11 +66,16 @@ static int diag_ovrp(
   lwork = nsub*nsub + 2 * nsub;
   lrwork = 3 * nsub*nsub + (4 + (int)log2(nsub) + 1) * nsub + 1;
 
-  iwork = (int*)malloc(liwork * sizeof(int));
-  rwork = (double*)malloc(lrwork * sizeof(double));
-  work = (double complex*)malloc(lwork * sizeof(double complex));
-  mat = (double complex*)malloc(nsub*nsub * sizeof(double complex));
-  for (isub = 0; isub < nsub*nsub; isub++)mat[isub] = 0.0;
+  iwork = i_1d_allocate(liwork);
+  rwork = d_1d_allocate(lrwork);
+  mat = cd_1d_allocate(nsub*nsub);
+#ifdef FUJITSU
+  void *vptr;
+  posix_memalign(&vptr, 256, lwork * sizeof(double complex));
+  work = (double complex*)vptr;
+#else
+  work = cd_1d_allocate(lwork);
+#endif
   /**@brief
   (1) Compute @f${\hat O}^{-1/2}@f$ with diagonalizing overrap matrix
   */
@@ -122,10 +127,10 @@ static int diag_ovrp(
  // printf("%d %d %15.5f %15.5f %15.5f\n", info, nsub2, eig[0], eig[1], eig[2]);
   for (isub = 0; isub < nsub*nsub; isub++)hsub[isub] = mat[isub];
 
-  free(mat);
-  free(work);
-  free(rwork);
-  free(iwork);
+  free_cd_1d_allocate(mat);
+  free_cd_1d_allocate(work);
+  free_d_1d_allocate(rwork);
+  free_i_1d_allocate(iwork);
 
   return(nsub2);
 }/*void diag_ovrp*/
