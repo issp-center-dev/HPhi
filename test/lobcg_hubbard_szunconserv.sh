@@ -15,6 +15,7 @@ nelec = 8
 exct = 3
 h = 2.0
 Gamma = 1.0
+initia_iv=-20
 EOF
 
 ${MPIRUN} ../../src/HPhi -s stan.in
