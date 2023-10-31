@@ -39,7 +39,7 @@
 #define SpinlessFermionGC 8 /*!< CalcModel is GrandCanonical Spinless fermionGC model.*/
 #define tJ    9         /*!< CalcModel is Canonical      tJ model.*/
 #define tJGC 10         /*!< CalcModel is GrandCanonical tJ model.*/
-#define tJNConserved 11 /*!< CalcModel is Canonical  w/o Sz conservation  tJ model.*/
+#define tJNConserved 11 /*!< CalcModel is Canonical  w/o Sz conservation  tJ model. to be checked*/
 
 /*!< OutputMode */
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/
