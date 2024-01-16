@@ -76,9 +76,12 @@ int CalcByCanonicalTPQ(
   rand_max = NumAve;
   step_spin = ExpecInterval;
 
-  flag_read_invtemp = 1;
-  if (flag_read_invtemp==1){
-      strcpy(file_name,"inv_temp.dat");
+  flag_read_invtemp = X->Bind.Def.flag_read_invtemp;
+  strcpy(file_name,X->Bind.Def.file_invtemp);
+  printf("check %d \n",X->Bind.Def.flag_read_invtemp);
+  printf("check %s \n",file_name);
+  if (X->Bind.Def.flag_read_invtemp==1){
+      //strcpy(file_name,"inv_temp.dat");
       num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,file_name,0); /*count lines of files*/
       //[s] allocate
       read_invtemp   = (double*)malloc(num_line * sizeof(double));
