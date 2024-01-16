@@ -56,23 +56,43 @@ int CalcByCanonicalTPQ(
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
   char sdt_flct[D_FileNameMax];
+  char file_name[D_FileNameMax];
   int rand_i, rand_max, iret;
   unsigned long int i_max;
-  int step_iO=0;
+  int step_i,step_iO=0;
   FILE *fp;
-  double inv_temp, Ns,delta_tau;
+  double inv_temp,Ns,delta_tau;
   struct TimeKeepStruct tstruct;
   size_t byte_size;
+  /*[s] for inverse temperatures*/
+  double *read_invtemp=NULL;
+  int    *read_nmax=NULL,*read_physcal=NULL; 
+  int    flag_read_invtemp;
+  int    num_line;
+  /*[e] for inverse temperatures*/
 
   tstruct.tstart=time(NULL);
   
   rand_max = NumAve;
   step_spin = ExpecInterval;
-  if (X->Bind.Def.Param.ExpandCoef==0){
-     X->Bind.Def.Param.ExpandCoef=10;   
-     fprintf(stdout, "In cTPQ calc., the default value of ExpandCoef (=10) is used. \n");
+
+  flag_read_invtemp = 1;
+  if (flag_read_invtemp==1){
+      strcpy(file_name,"inv_temp.dat");
+      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,file_name,0); /*count lines of files*/
+      //[s] allocate
+      read_invtemp   = (double*)malloc(num_line * sizeof(double));
+      read_nmax      = (int *)malloc(num_line * sizeof(int));
+      read_physcal    = (int *)malloc(num_line * sizeof(int));
+      //[e] allocate
+      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,file_name,1); /*read files*/
   }else{
-     fprintf(stdout, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
+    if (X->Bind.Def.Param.ExpandCoef==0){
+      X->Bind.Def.Param.ExpandCoef=10;   
+      fprintf(stdout, "In cTPQ calc., the default value of ExpandCoef (=10) is used. \n");
+    }else{
+      fprintf(stdout, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
+    }
   }
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
@@ -85,7 +105,7 @@ int CalcByCanonicalTPQ(
     iret=0;
     X->Bind.Def.irand=rand_i;
 
-  //Make or Read initial vector
+    //Make or Read initial vector
     if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
       StartTimer(3600);
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
@@ -205,8 +225,15 @@ int CalcByCanonicalTPQ(
       step_iO=0;
     }
 
+    if (flag_read_invtemp == 1){
+      X->Bind.Def.Lanczos_max      = num_line;
+      //printf("num_line = %d  %d %d \n",num_line,X->Bind.Def.istep,X->Bind.Def.Lanczos_max);
+    }
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
-      X->Bind.Def.istep=step_i;
+      if (flag_read_invtemp == 1){
+        X->Bind.Def.Param.ExpandCoef = read_nmax[step_i-1];
+        delta_tau                    = read_invtemp[step_i]-read_invtemp[step_i-1];
+      }
       if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
@@ -250,17 +277,30 @@ int CalcByCanonicalTPQ(
 //
       StopTimer(3600);
 
+      if (flag_read_invtemp == 1){
+        if (read_physcal[step_i] == 1){
+          StartTimer(3300);
+          iret=expec_cisajs(&(X->Bind),v1);
+          StopTimer(3300);
+          if(iret !=0) return -1;
 
-      if (step_i%step_spin == 0){
-        StartTimer(3300);
-        iret=expec_cisajs(&(X->Bind),v1);
-        StopTimer(3300);
-        if(iret !=0) return -1;
+          StartTimer(3400);
+          iret=expec_cisajscktaltdc(&(X->Bind), v1);
+          StopTimer(3400);
+          if(iret !=0) return -1;
+        }
+      }else{  
+        if (step_i%step_spin == 0){
+          StartTimer(3300);
+          iret=expec_cisajs(&(X->Bind),v1);
+          StopTimer(3300);
+          if(iret !=0) return -1;
 
-        StartTimer(3400);
-        iret=expec_cisajscktaltdc(&(X->Bind), v1);
-        StopTimer(3400);
-        if(iret !=0) return -1;
+          StartTimer(3400);
+          iret=expec_cisajscktaltdc(&(X->Bind), v1);
+          StopTimer(3400);
+          if(iret !=0) return -1;
+        }
       }
     }
 
@@ -284,4 +324,39 @@ int CalcByCanonicalTPQ(
   tstruct.tend=time(NULL);
   fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
   return TRUE;
+}
+
+int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, char *file_name,int int_read) {
+    FILE  *file;
+    char  ch;
+    int   lines, i;
+
+    /*open file*/
+    file = fopen(file_name, "r");
+    if (file == NULL) {
+        fprintf(stderr, "could not open file for inverse temperatue\n");
+        return 1;
+    }
+
+    /*count number of lines*/
+    lines=0;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            lines++;
+        }
+    }
+
+    if (int_read == 1){
+      // rewind
+      rewind(file);
+      // read inverse temperature
+      i = 0;
+      while (fscanf(file, "%lf %d %d", &read_invtemp[i], &read_nmax[i],&read_physcal[i]) != EOF) {
+          printf("read_invtemp[%d]: %lf, read_nmax[%d]: %d read_physcal[%d]:%d\n", i, read_invtemp[i], i, read_nmax[i],i,read_physcal[i]);
+          i++;
+      }
+    }
+    // close file
+    fclose(file);
+    return lines;
 }

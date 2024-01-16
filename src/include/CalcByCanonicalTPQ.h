@@ -16,6 +16,9 @@
 #pragma once
 #include "Common.h"
 
+
+int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, char *file_name,int int_read);
+
 int CalcByCanonicalTPQ(
               const int NumAve,
               const int ExpecInterval,
