@@ -17,7 +17,7 @@
 #include "Common.h"
 
 
-int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, char *file_name,int int_read);
+int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, int *read_eigen, char *file_name,int int_read);
 
 int CalcByCanonicalTPQ(
               const int NumAve,

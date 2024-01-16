@@ -66,7 +66,7 @@ int CalcByCanonicalTPQ(
   size_t byte_size;
   /*[s] for inverse temperatures*/
   double *read_invtemp=NULL;
-  int    *read_nmax=NULL,*read_physcal=NULL; 
+  int    *read_nmax=NULL,*read_physcal=NULL,*read_eigen=NULL; 
   int    flag_read_invtemp;
   int    num_line;
   /*[e] for inverse temperatures*/
@@ -82,13 +82,14 @@ int CalcByCanonicalTPQ(
   printf("check %s \n",file_name);
   if (X->Bind.Def.flag_read_invtemp==1){
       //strcpy(file_name,"inv_temp.dat");
-      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,file_name,0); /*count lines of files*/
+      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,read_eigen,file_name,0); /*count lines of files*/
       //[s] allocate
-      read_invtemp   = (double*)malloc(num_line * sizeof(double));
-      read_nmax      = (int *)malloc(num_line * sizeof(int));
-      read_physcal    = (int *)malloc(num_line * sizeof(int));
+      read_invtemp   = (double*)calloc(num_line,sizeof(double));
+      read_nmax      = (int *)calloc(num_line, sizeof(int));
+      read_physcal   = (int *)calloc(num_line, sizeof(int));
+      read_eigen     = (int *)calloc(num_line, sizeof(int));
       //[e] allocate
-      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,file_name,1); /*read files*/
+      num_line = func_read_invtemp(read_invtemp,read_nmax,read_physcal,read_eigen,file_name,1); /*read files*/
   }else{
     if (X->Bind.Def.Param.ExpandCoef==0){
       X->Bind.Def.Param.ExpandCoef=10;   
@@ -229,7 +230,21 @@ int CalcByCanonicalTPQ(
     }
 
     if (flag_read_invtemp == 1){
-      X->Bind.Def.Lanczos_max      = num_line;
+      X->Bind.Def.Lanczos_max = num_line;
+      if(read_eigen[0]==1){
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, 0);
+        fprintf(stdoutMPI, "%s", cLogOutputVecStart);
+        sprintf(sdt, cFileNameTPQVector, rand_i, myrank,0);
+        if(childfopenALL(sdt, "wb", &fp)!=0){
+          exitMPI(-1);
+        }
+        fwrite(&step_i, sizeof(step_i), 1, fp);
+        fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
+        fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+        fclose(fp);
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, 0);
+        fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
+      } 
       //printf("num_line = %d  %d %d \n",num_line,X->Bind.Def.istep,X->Bind.Def.Lanczos_max);
     }
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
@@ -305,6 +320,20 @@ int CalcByCanonicalTPQ(
           if(iret !=0) return -1;
         }
       }
+      if (flag_read_invtemp == 1 && read_eigen[step_i]==1){
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
+        fprintf(stdoutMPI, "%s", cLogOutputVecStart);
+        sprintf(sdt, cFileNameTPQVector, rand_i, myrank,step_i);
+        if(childfopenALL(sdt, "wb", &fp)!=0){
+          exitMPI(-1);
+        }
+        fwrite(&step_i, sizeof(step_i), 1, fp);
+        fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
+        fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
+        fclose(fp);
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
+        fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
+      }  
     }
 
     if(X->Bind.Def.iReStart== RESTART_OUT || X->Bind.Def.iReStart==RESTART_INOUT){
@@ -329,7 +358,7 @@ int CalcByCanonicalTPQ(
   return TRUE;
 }
 
-int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, char *file_name,int int_read) {
+int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, int *read_eigen, char *file_name,int int_read) {
     FILE  *file;
     char  ch;
     int   lines, i;
@@ -354,8 +383,8 @@ int func_read_invtemp(double *read_invtemp,int *read_nmax, int *read_physcal, ch
       rewind(file);
       // read inverse temperature
       i = 0;
-      while (fscanf(file, "%lf %d %d", &read_invtemp[i], &read_nmax[i],&read_physcal[i]) != EOF) {
-          printf("read_invtemp[%d]: %lf, read_nmax[%d]: %d read_physcal[%d]:%d\n", i, read_invtemp[i], i, read_nmax[i],i,read_physcal[i]);
+      while (fscanf(file, "%lf %d %d %d", &read_invtemp[i], &read_nmax[i],&read_physcal[i],&read_eigen[i]) != EOF) {
+          printf("read_invtemp[%d]: %lf, read_nmax[%d]: %d read_physcal[%d]:%d  read_eigen[%d]:%d  \n", i, read_invtemp[i], i, read_nmax[i],i,read_physcal[i],i,read_eigen[i]);
           i++;
       }
     }

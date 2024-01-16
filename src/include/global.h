@@ -131,6 +131,7 @@ extern const char* cFileName3BGreen_TE;/**> Name of the file to output three-bod
 extern const char* cFileName4BGreen_TE;/**> Name of the file to output four-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName6BGreen_TE;/**> Name of the file to output six-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
+extern const char* cFileNameTPQVector;/**> Name of the file to output cTPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
 //For Time evolution
