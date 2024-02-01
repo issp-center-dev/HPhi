@@ -17,7 +17,7 @@ cp *.def ./DG_M
 #[e] for negative omega
 
 #[s] sorting
-sort -r -n DG_P/zvo_DynamicalGreen.dat > tmp_P
-cat        DG_M/zvo_DynamicalGreen.dat > tmp_M
+sort -r -n DG_P/zvo_DynamicalGreen_0.dat > tmp_P
+cat        DG_M/zvo_DynamicalGreen_0.dat > tmp_M
 paste tmp_P tmp_M > optical.dat
 #[e] sorting

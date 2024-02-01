@@ -579,7 +579,7 @@ int CalcSpectrum(
     fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
     for (istate = 0; istate < nstate; istate++) {
-      sprintf(sdt, cFileNameInputEigen, nstate, istate, myrank);
+      sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, istate, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
         fprintf(stderr, "Error: Inputvector file is not found.\n");
