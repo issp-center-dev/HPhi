@@ -2,7 +2,7 @@
 
 mkdir -p te_hubbard_chain_interall/
 cd te_hubbard_chain_interall
-python "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}"
+python3 "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}"
 
 # Check value: flct
 cat > reference.dat <<EOF
