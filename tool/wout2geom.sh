@@ -1,6 +1,6 @@
 #!/bin/bash
 
-grep -A 3 " Lattice Vectors " boron.wout | awk 'NR>1{print $2, $3, $4}'
+grep -A 3 " Lattice Vectors " $1 | awk 'NR>1{print $2, $3, $4}'
 declare -a b0=`grep " b_1 " ${1} | awk '{print "("$2, $3, $4")"}'`
 declare -a b1=`grep " b_2 " ${1} | awk '{print "("$2, $3, $4")"}'`
 declare -a b2=`grep " b_3 " ${1} | awk '{print "("$2, $3, $4")"}'`

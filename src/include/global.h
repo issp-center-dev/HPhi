@@ -31,14 +31,14 @@
 #define ITINERANT 0
 #define LOCSPIN 1
 
-extern double complex *v0;  /**< A vector after multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
-extern double complex *v1;  /**< A vector before multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
-extern double complex *v2;  /**< A temporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
-extern double complex *v1buf; /**< A temporary vector for MPI. */
+extern double complex **v0;  /**< A vector after multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
+extern double complex **v1;  /**< A vector before multiplying Hamiltonian, @f$ v_0 = H v_1@f$.*/
+extern double complex **v2;  /**< A temporary vector for time evolution calculation, @f$ v2 = H*v1 = H^coef |psi(t)>@f$.*/
+extern double complex **v1buf; /**< A temporary vector for MPI. */
 
 //[s] For calcSpectrum
 extern double complex *v1Org; /**< An input vector to calculate spectrum function.*/
-extern double complex *vg; /**< A vector used in the CG mode.*/
+extern double complex **vg; /**< A vector used in the CG mode.*/
 //[e] For calcSpectrum
 
 extern double *alpha,*beta; /**< Tridiagonal components used in Lanczos mode.*/
@@ -64,8 +64,8 @@ extern int     initial_mode;/**< mode to get initial state (0: use same random g
 extern double LargeValue;/**< constant value l for TPQ calculation.*/
 extern int    NumAve;/**< Average number for TPQ calculation*/
 extern int step_i;/**< step for TPQ calculation*/
-extern double global_norm;/**< norm before normalization for TPQ calculation*/
-extern double global_1st_norm;/**< 1-st norm for TPQ calculation*/
+extern double *global_norm;/**< norm before normalization for TPQ calculation*/
+extern double *global_1st_norm;/**< 1-st norm for TPQ calculation*/
 extern int step_spin;/**< output step for TE calculation.*/
 /*[e] For TPQ*/
 

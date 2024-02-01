@@ -5,23 +5,37 @@
 SingleExcitation file
 ---------------------
 
-The operators to generate the single excited state
-:math:`c_{i\sigma_1}(c_{i\sigma_1}^{\dagger})` are defined. An example
-of the file format is as follows.
+To compute the ynamical correlation function
+
+.. math:: G_n^{O_l,O_r}(z) = \langle \Phi_n | \hat{O}_l (z + E_n - \hat{\cal H})^{-1} \hat{O}_r| \Phi_n \rangle,
+
+we set a single-exciation operator
+
+.. math::
+
+    \hat{O}_{l,r} = \sum_{i, \sigma_1} A_{i \sigma_1} c_{i \sigma_1} \quad
+    \textrm{or} \quad \sum_{i, \sigma_1} A_{i \sigma_1} c_{i\sigma_1}^{\dagger}.
+
+We can compute efficiently by using single :math:`\hat{O}_r` and multiple :math:`\hat{O}_l`.
+
+An example of the file format is as follows.
 
 ::
 
     ===============================
-    NSingle         24
+    NSingle         13
     ===============================
     ======== Single Excitation ======
     ===============================
-        0     0     0    1.0    0.0
-        0     1     0    1.0    0.0
-        1     0     0    1.0    0.0
-       (continue...)
-       11     0    0    1.0    0.0
-       11     1    0    1.0    0.0
+    1
+    0     0     0    1.0    0.0
+    1
+    0     0     0    1.0    0.0
+    1
+    1     0     0    1.0    0.0
+    (continue...)
+    1
+    11     0    0    1.0    0.0
 
 .. _file_format_15:
 
@@ -34,7 +48,12 @@ File format
 
 *  Lines 3-5: Header
 
-*  Lines 6-: [int02]  [int03]  [int04]  [double01]  [double02].
+*  Lines 6-:
+   ::
+
+       [int02]
+       [int03]  [int04]  [int05]  [double01]  [double02]
+       :
 
 .. _parameters_15:
 
@@ -52,17 +71,25 @@ Parameters
 
    **Type :** Int (a blank parameter is not allowed)
 
-   **Description :** An integer giving the total number of total number
-   of single excitation operators.
+   **Description :** An integer giving the total number of single excitation operators
+   :math:`\hat{O}_r` and :math:`\hat{O}_l`.
+   For the above example, we have 13 operators (one :math:`\hat{O}_{r}` and 12 :math:`\hat{O}_{l}`),
 
 *  [int02]
+
+   **Type :** Int (a blank parameter is not allowed)
+
+   **Description :** An integer giving the total number of single excitation operators
+   included in each :math:`\hat{O}_r` and :math:`\hat{O}_l`.
+
+*  [int03]
 
    **Type :** Int (a blank parameter is not allowed)
 
    **Description :** An integer giving a site index
    (:math:`0<=` [int02] :math:`<` ``Nsite``).
 
-*  [int03]
+*  [int04]
 
    **Type :** Int (a blank parameter is not allowed)
 
@@ -74,7 +101,7 @@ Parameters
    | :math:`0, 1, \cdots, 2S+1` (corresponding to
      -:math:`S-0.5, -S+0.5, \cdots S+0.5`).
 
-*  [int04]
+*  [int05]
 
    **Type :** Int (a blank parameter is not allowed)
 

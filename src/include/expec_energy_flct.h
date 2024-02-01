@@ -16,16 +16,4 @@
 #pragma once
 #include "Common.h"
 
-int expec_energy_flct(struct BindStruct *X);
-
-int expec_energy_flct_Hubbard(struct BindStruct *X);
-
-int expec_energy_flct_HubbardGC(struct BindStruct *X);
-
-int expec_energy_flct_HalfSpinGC(struct BindStruct *X);
-
-int expec_energy_flct_GeneralSpinGC(struct BindStruct *X);
-
-int expec_energy_flct_HalfSpin(struct BindStruct *X);
-
-int expec_energy_flct_GeneralSpin(struct BindStruct *X);
+int expec_energy_flct(struct BindStruct *X, int nstate, double complex **tmp_v0, double complex **tmp_v1);

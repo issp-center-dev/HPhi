@@ -53,40 +53,33 @@
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) {
+int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1) {
+  int one = 1;
   long unsigned int j=0;
   long unsigned int irght=0;
   long unsigned int ilft=0;
   long unsigned int ihfbit=0;
+  double complex dmv;
 
-  double complex dam_pr;
 
   long unsigned int i_max;
 
   StartTimer(1);
   i_max = X->Check.idim_max;
-  X->Large.prdct = 0.0;
-  dam_pr = 0.0;
 
-  if(i_max!=0){
-    if (X->Def.iFlgGeneralSpin == FALSE) {
-      if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+      return -1;
+    }
+  }
+  else {
+    if (X->Def.iCalcModel == Spin) {
+      if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
         return -1;
       }
     }
-    else{
-      if(X->Def.iCalcModel==Spin){
-        if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
-          return -1;
-        }
-      }
-    }
-  }
-  else{
-    irght=0;
-    ilft=0;
-    ihfbit=0;
-  }
+  }  
+ 
   X->Large.i_max = i_max;
   X->Large.irght = irght;
   X->Large.ilft = ilft;
@@ -94,39 +87,66 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.mode = M_MLTPLY;
 
   StartTimer(100);
-#pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)
+#pragma omp parallel for default(none) private(dmv) \
+  firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal,one,nstate)
   for (j = 1; j <= i_max; j++) {
-    tmp_v0[j] += (list_Diagonal[j]) * tmp_v1[j];
-    dam_pr += (list_Diagonal[j]) * conj(tmp_v1[j]) * tmp_v1[j];
+    dmv = list_Diagonal[j];
+    zaxpy_(&nstate, &dmv, &tmp_v1[j][0], &one, &tmp_v0[j][0], &one);
   }
-  X->Large.prdct += dam_pr;
   StopTimer(100);
-  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, tmp_v0, tmp_v1);
+  if (X->Def.iCalcType == TimeEvolution) diagonalcalcForTE(step_i, X, &tmp_v0[0][0], &tmp_v1[0][0]);
   
   switch (X->Def.iCalcModel) {
   case HubbardGC:
-    mltplyHubbardGC(X, tmp_v0, tmp_v1);
+    mltplyHubbardGC(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case KondoGC:
   case Hubbard:
   case Kondo:
-    mltplyHubbard(X, tmp_v0, tmp_v1);
+    mltplyHubbard(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case Spin:
-    mltplySpin(X, tmp_v0, tmp_v1);
+    mltplySpin(X, nstate, tmp_v0, tmp_v1);
     break;
       
   case SpinGC:
-    mltplySpinGC(X, tmp_v0, tmp_v1);
+    mltplySpinGC(X, nstate, tmp_v0, tmp_v1);
     break;
       
   default:
     return -1;
   }
   
-  X->Large.prdct = SumMPI_dc(X->Large.prdct);  
   StopTimer(1);
   return 0;
+}
+/**
+@brief Wrapper of zaxpy.
+*/
+void zaxpy_long(
+  unsigned long int n, 
+  double complex a, 
+  double complex *x, 
+  double complex *y
+) {
+  unsigned long int i;
+
+#pragma omp parallel for default(none) private(i) shared(n, a, x, y)
+  for (i = 0; i < n; i++) 
+    y[i] += a * x[i];
+}
+/**
+@brief clear double complex array.
+*/
+void zclear(
+  unsigned long int n,
+  double complex *x
+) {
+  unsigned long int i;
+
+#pragma omp parallel for default(none) private(i) shared(n, x)
+  for (i = 0; i < n; i++) 
+    x[i] = 0.0;
 }

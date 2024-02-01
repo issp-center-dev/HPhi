@@ -48,9 +48,10 @@
 (4) Output:
     
     | **OneBodyG** :出力する一体Green関数を指定します。
-      :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle`\ が出力されます。  
+      :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle`\ が出力されます。
     | **TwoBodyG** :出力する二体Green関数を指定します。
-    :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle`
+      :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k \sigma_3}c_{l\sigma_4}\rangle`
+
     が出力されます。
 
 .. toctree::

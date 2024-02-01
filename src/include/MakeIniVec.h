@@ -16,6 +16,5 @@
 #pragma once
 #include "Common.h"
 int  MakeIniVec(
-  int rand_i,
   struct BindStruct *X
   );

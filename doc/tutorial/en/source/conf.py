@@ -141,7 +141,7 @@ latex_elements = {
 
     # Additional stuff for the LaTeX preamble.
     #
-    # 'preamble': '',
+    'preamble': '\\usepackage{braket}',
 
     # Latex figure (float) alignment
     #

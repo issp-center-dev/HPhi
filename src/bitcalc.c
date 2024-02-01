@@ -418,7 +418,7 @@ int BitCheckGeneral(
  * @version 0.2
  * @author Kazuyoshi Yoshimi (The University of Tokyo) 
  */
-int GetBitGeneral( 
+unsigned int GetBitGeneral( 
        const unsigned int isite,  //!<[in]
        const long unsigned int org_bit,  //!<[in]
        const long int *SiteToBit,  //!<[in]
@@ -453,7 +453,7 @@ int GetLocal2Sz
  )
 {
   int TwiceSz=0;
-  int bitAtSite=0;
+  unsigned int bitAtSite=0;
   //get bit
   bitAtSite=GetBitGeneral(isite, org_bit, SiteToBit, Tpow);
   TwiceSz=-(SiteToBit[isite-1]-1)+2*bitAtSite; //-2S^{total}_i+2Sz_i

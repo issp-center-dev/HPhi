@@ -135,14 +135,16 @@ list_org = [Lx,Ly,Lz,orb_num]
 list_trans = [0, 0, 0, 0]  # x,y,z,orb
 with open("Current.def", 'w') as f:
     print("======optical conductivity ",  file=f)
-    print("NCurrent %4d               " % (4*All_N), file=f)
+    print("NCurrent 2                 ",  file=f)
     print("======optical conductivity ",  file=f)
     print("======optical conductivity ",  file=f)
     print("======optical conductivity ",  file=f)
-    for spin_i in range(0,2):
-        for all_i in range(0,All_N):
-            list_trans[0] = 1 # only +1 for x direction
-            list_site = lattice.func_site(all_i, list_org)
-            all_j     = lattice.func_strans(list_trans, list_site, list_org)
-            print("%4d %4d %4d %4d 1 0 1 " % (all_i, spin_i, all_j, spin_i), file=f)
-            print("%4d %4d %4d %4d 1 0 -1 " % (all_j, spin_i, all_i, spin_i), file=f)
+    for leftright in range(2):
+        print("%4d" % (4*All_N), file=f)
+        for spin_i in range(0,2):
+            for all_i in range(0,All_N):
+                list_trans[0] = 1 # only +1 for x direction
+                list_site = lattice.func_site(all_i, list_org)
+                all_j     = lattice.func_strans(list_trans, list_site, list_org)
+                print("%4d %4d %4d %4d 1 0 1 " % (all_i, spin_i, all_j, spin_i), file=f)
+                print("%4d %4d %4d %4d 1 0 -1 " % (all_j, spin_i, all_i, spin_i), file=f)

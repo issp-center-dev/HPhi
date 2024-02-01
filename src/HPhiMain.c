@@ -32,6 +32,7 @@
 #include "wrapperMPI.h"
 #include "splash.h"
 #include "CalcTime.h"
+#include "common/setmemory.h"
 
 /*!
   @mainpage
@@ -262,7 +263,8 @@ int main(int argc, char* argv[]){
   }
 
   //Start Calculation
-  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT) {
+  if(X.Bind.Def.iFlgCalcSpec == CALCSPEC_NOT ||
+     X.Bind.Def.iFlgCalcSpec == CALCSPEC_SCRATCH) {
     
     if(check(&(X.Bind))==MPIFALSE){
      exitMPI(-1);
@@ -304,21 +306,21 @@ int main(int argc, char* argv[]){
       }
       break;
 
-      case FullDiag:
-        StartTimer(5000);
-        if (CalcByFullDiag(&X) != TRUE) {
-            FinalizeMPI();
-        }
-        StopTimer(5000);
+    case FullDiag:
+      StartTimer(5000);
+      if (CalcByFullDiag(&X) != TRUE) {
+          FinalizeMPI();
+      }
+      StopTimer(5000);
       break;
 
-      case TPQCalc:
-        StartTimer(3000);        
-        if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
-          StopTimer(3000);
-          exitMPI(-3);
-        }
+    case TPQCalc:
+      StartTimer(3000);
+      if (CalcByTPQ(NumAve, X.Bind.Def.Param.ExpecInterval, &X) != TRUE) {
         StopTimer(3000);
+        exitMPI(-3);
+      }
+      StopTimer(3000);
       break;
 
       case cTPQ:
@@ -342,7 +344,8 @@ int main(int argc, char* argv[]){
       exitMPI(-3);
     }
   }
-  else{
+
+  if(X.Bind.Def.iFlgCalcSpec != CALCSPEC_NOT){
     StartTimer(6000);
     if (CalcSpectrum(&X) != TRUE) {
       StopTimer(6000);

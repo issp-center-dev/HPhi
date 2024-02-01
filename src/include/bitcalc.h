@@ -84,7 +84,7 @@ int BitCheckGeneral(
       );
 
 
-int GetBitGeneral( 
+unsigned int GetBitGeneral( 
       const unsigned int isite,
       const long unsigned int org_bit,
       const long int *SiteToBit,

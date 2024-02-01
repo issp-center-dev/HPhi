@@ -109,10 +109,17 @@ cat > reference.dat <<EOF
 EOF
 sed -e "1d" output/SS.dat > ss.dat
 paste ss.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$8)*($2-$8))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$9)*($3-$9))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($4-$10)*($4-$10))} END{printf "%8.6f", diff}' paste1.dat`
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($5-$11)*($5-$11))} END{printf "%8.6f", diff}' paste1.dat`
-
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($2-$8)*($2-$8))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff Energy : " ${diff}
 test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$9)*($3-$9))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff E^2 : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($4-$10)*($4-$10))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff D : " ${diff}
+test "${diff}" = "0.000000"
+diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($5-$11)*($5-$11))} END{printf "%8.6f", diff/NR}' paste1.dat`
+echo "Diff N : " ${diff}
+test "${diff}" = "0.000000"
+
 exit $?

@@ -1,0 +1,11 @@
+model = Spin
+lattice = Chain
+method = CG
+L = 12
+2Sz = 0
+J = 1.0
+CalcSpec = Scratch
+SpectrumType = SzSz_r
+OmegaIm = 0.1
+OmegaMin = -6.0
+OmegaMax = -2.0

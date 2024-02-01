@@ -21,8 +21,7 @@ int Multiply
  );
 
 int MultiplyForTEM(
-        struct BindStruct *X
-);
+        struct BindStruct *X, double complex** v2);
 
 int MultiplyForCanonicalTPQ(
         struct BindStruct *X,double delta_tau

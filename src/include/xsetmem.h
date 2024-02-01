@@ -39,7 +39,7 @@ int GetlistSize
          struct BindStruct *X
         );
 
-
+/*
 void setmem_IntAll_Diagonal
 (
         int **InterAllOffDiagonal,
@@ -48,3 +48,4 @@ void setmem_IntAll_Diagonal
         double *ParaInterAllDiagonal,
         const int NInterAll
 );
+*/

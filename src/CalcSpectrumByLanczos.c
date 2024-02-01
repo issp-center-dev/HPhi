@@ -42,7 +42,7 @@
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CalcSpectrumByLanczos(
         struct EDMainCalStruct *X,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         double dnorm,
         int Nomega,
         double complex *dcSpectrum,

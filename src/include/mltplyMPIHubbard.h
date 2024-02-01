@@ -25,11 +25,11 @@ void GC_general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_general_hopp_MPIdouble
+void child_GC_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -37,19 +37,19 @@ double complex child_GC_general_hopp_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_general_hopp_MPIsingle
+void child_GC_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -57,8 +57,8 @@ double complex child_GC_general_hopp_MPIsingle
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 
@@ -66,11 +66,11 @@ void general_hopp_MPIdouble
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_general_hopp_MPIdouble
+void child_general_hopp_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -78,19 +78,19 @@ double complex child_general_hopp_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void general_hopp_MPIsingle
 (
  unsigned long int itrans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_general_hopp_MPIsingle
+void child_general_hopp_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -98,6 +98,6 @@ double complex child_general_hopp_MPIsingle
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X ,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );

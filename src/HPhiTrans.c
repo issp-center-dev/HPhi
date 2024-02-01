@@ -46,8 +46,8 @@ int HPhiTrans(struct BindStruct *X) {
   FILE *fp_err;
   char sdt_err[D_FileNameMax];
 
-  int i, k;
-  int cnt_trans;
+  unsigned int i, k;
+  unsigned int cnt_trans;
 
   strcpy(sdt_err, cFileNameWarningOnTransfer);
   if (childfopenMPI(sdt_err, "w", &fp_err) != 0) {

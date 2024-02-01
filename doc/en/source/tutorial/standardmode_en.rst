@@ -308,4 +308,4 @@ In Eigenvalue.dat, an eigennumber and an eigenvalue are outputted for each line.
 Other tutorials
 ---------------
 
-There are many tutorials in ``samples``. For more details, please see ``README.md`` at each directory or `the manual for HPhi-tutorial<https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html>`_ .
+There are many tutorials in ``samples``. For more details, please see ``README.md`` at each directory or `the manual for HPhi-tutorial <https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html>`_ .

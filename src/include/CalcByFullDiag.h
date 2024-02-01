@@ -15,7 +15,6 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #pragma once
 #include "Common.h"
-#include "makeHam.h"
 #include "lapack_diag.h"
 #include "phys.h"
 #include "output.h"

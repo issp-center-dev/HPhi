@@ -16,6 +16,7 @@
 #pragma once
 #include "global.h"
 #include "LogMessage.h"
+#include "struct.h"
 
 int TimeKeeper
 (

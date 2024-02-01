@@ -6,9 +6,6 @@ CONTAINS
   !
 SUBROUTINE read_modpara(nLan, nSite, nAve, Large, ss_rand, norm_rand)
   !
-#if defined(FUJITSU)
-  USE service_routines, ONLY : IARGC
-#endif
   IMPLICIT NONE
   !
   INTEGER,INTENT(OUT) :: nLan, nSite, nAve
@@ -17,9 +14,6 @@ SUBROUTINE read_modpara(nLan, nSite, nAve, Large, ss_rand, norm_rand)
   !
   INTEGER :: fi = 10, iAve
   CHARACTER(256) :: modpara, command
-#if defined(SR)
-  INTEGER,INTRINSIC :: IARGC
-#endif
   !
   WRITE(*,*)
   WRITE(*,*) "#################################################"
@@ -27,14 +21,6 @@ SUBROUTINE read_modpara(nLan, nSite, nAve, Large, ss_rand, norm_rand)
   WRITE(*,*) "        Please use it at your own risk !         "
   WRITE(*,*) "#################################################"
   WRITE(*,*)
-  !
-  IF(IARGC() /= 1) THEN
-     WRITE(*,*)
-     WRITE(*,*) "Usage :"
-     WRITE(*,*) "$ cTPQ {Modpara file}"
-     WRITE(*,*) 
-     STOP
-  END IF
   !
   CALL getarg(1, modpara)
   !

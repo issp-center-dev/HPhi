@@ -3,9 +3,9 @@
 mkdir -p spectrum_genspingc_ladder/
 cd spectrum_genspingc_ladder
 #
-# Ground state
+# Sz-Sz spectrum
 #
-cat > stan1.in <<EOF
+cat > stan2.in <<EOF
 L = 2
 W = 2
 model = "SpinGC"
@@ -14,20 +14,11 @@ lattice = "ladder"
 J0 = 1.0
 J1 = 1.0
 2S = 3
-EigenVecIO = out
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 NOmega = 5
 OmegaIm = 1.0
-EOF
-
-${MPIRUN} ../../src/HPhi -s stan1.in
-#
-# Sz-Sz spectrum
-#
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+CalcSpec = "Scratch"
 SpectrumType = "SzSz"
 EOF
 
@@ -40,14 +31,31 @@ cat > reference.dat <<EOF
 55.0276877527 1.0000000000 0.1323558007 -0.0018620664
 165.0830632580 1.0000000000 0.0519570272 -0.0002867699
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste1.dat
-diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste1.dat`
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste1.dat
+diff=`awk '
+BEGIN{diff=0.0} 
+{diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} 
+END{printf "%8.6f", diff}
+' paste1.dat`
+echo "Diff output/zvo_DynamicalGreen_0.dat (SzSz) : " ${diff}
+test "${diff}" = "0.000000"
 #
 # S+S- spectrum
 #
-cp stan1.in stan2.in
-cat >> stan2.in <<EOF
-CalcSpec = "Normal"
+cat > stan2.in <<EOF
+L = 2
+W = 2
+model = "SpinGC"
+method = "CG"
+lattice = "ladder"
+J0 = 1.0
+J1 = 1.0
+2S = 3
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+NOmega = 5
+OmegaIm = 1.0
+CalcSpec = "Scratch"
 SpectrumType = "S+S-"
 EOF
 
@@ -60,9 +68,13 @@ cat > reference.dat <<EOF
 55.0276877527 1.0000000000 0.2647116014 -0.0037241328
 165.0830632580 1.0000000000 0.1039140545 -0.0005735397
 EOF
-paste output/zvo_DynamicalGreen.dat reference.dat > paste2.dat
-diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%8.6f", diff}' paste2.dat`
-
+paste output/zvo_DynamicalGreen_0.dat reference.dat > paste2.dat
+diff=`awk '
+BEGIN{diff=0.0} 
+{diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} 
+END{printf "%8.6f", diff}
+' paste2.dat`
+echo "Diff output/zvo_DynamicalGreen_0.dat (S+S-) : " ${diff}
 test "${diff}" = "0.000000"
 
 exit $?

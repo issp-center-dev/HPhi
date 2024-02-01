@@ -4,8 +4,6 @@ enable_testing()
 project(HPhi NONE)
 option(USE_SCALAPACK "Use Scalapack" OFF)
 
-set(CMAKE_C_FLAGS "-Wall")
-
 if(CONFIG)
   message(STATUS "Loading configration: " ${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
   include(${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)

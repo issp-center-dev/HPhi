@@ -18,7 +18,7 @@
 
 int CalcSpectrumByTPQ(
   struct EDMainCalStruct *X,
-  double complex *tmp_v1,
+  double complex **tmp_v1,
   double norm,
   int Nomega,
   double complex *dcSpectrum,

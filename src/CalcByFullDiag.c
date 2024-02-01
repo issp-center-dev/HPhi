@@ -17,6 +17,8 @@
 #include "input.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "mltplyCommon.h"
+#include "mltply.h"
 
  /// \brief Parent function for FullDiag mode
  /// \param X [in,out] Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
@@ -24,14 +26,19 @@
  /// \retval FALSE(=0) abnormally finished.
 
 int CalcByFullDiag(
-       struct EDMainCalStruct *X
-       )
+  struct EDMainCalStruct *X
+)
 {
   int iret=0;
+  unsigned long int idim;
+
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
-    makeHam(&(X->Bind));
+    zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v0[0][0]);
+    zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v1[0][0]);
+    for (idim = 1; idim <= X->Bind.Check.idim_max; idim++) v1[idim][idim-1] = 1.0;
+    mltply(&(X->Bind), X->Bind.Check.idim_max, v0, v1);
   }
   else if(X->Bind.Def.iInputHam==TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);

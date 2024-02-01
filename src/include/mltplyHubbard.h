@@ -19,74 +19,67 @@
 
 #include "Common.h"
 
-int mltplyHubbard(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyHubbard(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplyHubbardGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyHubbardGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-double complex GC_general_hopp
+void GC_general_hopp
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X,
  double complex trans
  );
 
-
-double complex GC_general_int(
-                         double complex *tmp_v0,
-                         double complex *tmp_v1,
+void GC_general_int(
+                         int nstate, double complex **tmp_v0,
+                         double complex **tmp_v1,
                          struct BindStruct *X
                          );
 
 
-double complex general_int
+void general_int
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-
-double complex general_hopp
+void general_hopp
 (
- double complex       *tmp_v0,
- double complex       *tmp_v1,
- struct BindStruct *X,
- double complex trans
- );
+  int nstate,
+  double complex** tmp_v0,
+  double complex** tmp_v1,
+  struct BindStruct* X,
+  double complex trans
+);
 
-double complex exchange
-(
- double complex *tmp_v0,
- double complex *tmp_v1,
+void exchange
+  (
+ int nstate, 
+  double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex pairhopp
+void pairhopp
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+  int nstate, double complex** tmp_v0,
+  double complex** tmp_v1,
+  struct BindStruct* X
+); 
+
+void GC_exchange
+(
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_exchange
+void GC_pairhopp
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
- struct BindStruct *X
- );
-
-double complex GC_pairlift
-(
- double complex *tmp_v0,
- double complex *tmp_v1,
- struct BindStruct *X
- );
-
-double complex GC_pairhopp
-(
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 

@@ -8,9 +8,11 @@ endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 
 add_executable(greenr2k greenr2k.F90)
 add_executable(cTPQ cTPQ.F90)
+add_executable(dynamicalr2k dynamicalr2k.F90)
 target_link_libraries(greenr2k ${LAPACK_LIBRARIES})
+target_link_libraries(dynamicalr2k ${LAPACK_LIBRARIES})
 
-install(TARGETS greenr2k RUNTIME DESTINATION bin)
+install(TARGETS greenr2k dynamicalr2k RUNTIME DESTINATION bin)
 #
 # Scripts
 #

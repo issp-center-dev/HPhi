@@ -232,7 +232,7 @@ CG method
  
 
 TPQ (mTPQ/cTPQ) method
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``Lanczos_max``
 

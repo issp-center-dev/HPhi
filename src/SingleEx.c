@@ -29,8 +29,10 @@ Target System: Hubbard, Kondo
 */
 int GetSingleExcitedState(
   struct BindStruct *X,//!<define list to get and put information of calcuation
-  double complex *tmp_v0,//!<[out] Result v0 = H v1
-  double complex *tmp_v1//!<[in] v0 = H v1
+  int nstate, 
+  double complex **tmp_v0,//!<[out] Result v0 = H v1
+  double complex **tmp_v1,//!<[in] v0 = H v1
+  int iEx
 ) {
   int iret = 0;
   //tmp_v0
@@ -38,13 +40,13 @@ int GetSingleExcitedState(
 
   switch (X->Def.iCalcModel) {
   case HubbardGC:
-    iret = GetSingleExcitedStateHubbardGC(X, tmp_v0, tmp_v1);
+    iret = GetSingleExcitedStateHubbardGC(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   case KondoGC:
   case Hubbard:
   case Kondo:
-    iret = GetSingleExcitedStateHubbard(X, tmp_v0, tmp_v1);
+    iret = GetSingleExcitedStateHubbard(X, nstate, tmp_v0, tmp_v1, iEx);
     break;
 
   case Spin:

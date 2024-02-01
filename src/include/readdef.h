@@ -85,7 +85,7 @@ int CheckInterAllHermite
 (
         int **InterAll,
         double complex* ParaInterAll,
-        int **InterAllOffDiagonal,
+        unsigned int **InterAllOffDiagonal,
         double complex*ParaInterAllOffDiagonal,
         const int NInterAllOffDiagonal,
         const int iCalcModel
@@ -105,7 +105,7 @@ int GetDiagonalInterAll
                                 const int NInterAll,
                                 int **InterAllDiagonal,
                                 double *ParaInterAllDiagonal,
-                                int **InterAllOffDiagonal,
+                                unsigned int **InterAllOffDiagonal,
                                 complex double *ParaInterAllOffDiagonal,
                                 int *Chemi,
                                 int *SpinChemi,

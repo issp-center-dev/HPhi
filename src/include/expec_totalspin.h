@@ -16,23 +16,9 @@
 #pragma once
 #include "Common.h"
 
-int expec_totalspin
-(
- struct BindStruct *X,
- double complex *vec
- );
-
+int expec_totalspin(struct BindStruct *X, int nstate, double complex **vec);
 int expec_totalSz
 (
- struct BindStruct *X,
- double complex *vec
- );
-
-void totalspin_Hubbard(struct BindStruct *X,double complex *vec);
-void totalspin_HubbardGC(struct BindStruct *X,double complex *vec);
-void totalspin_Spin(struct BindStruct *X,double complex *vec);
-void totalspin_SpinGC(struct BindStruct *X,double complex *vec);
-
-
-void totalSz_HubbardGC(struct BindStruct *X,double complex *vec);
-void totalSz_SpinGC(struct BindStruct *X,double complex *vec);
+  struct BindStruct* X,
+  double complex**vec
+);
