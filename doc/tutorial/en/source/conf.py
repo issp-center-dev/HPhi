@@ -156,6 +156,10 @@ latex_documents = [
      u'University of Tokyo', 'manual', 'True'),
 ]
 
+latex_elements = {
+    'extrapackages': r'\usepackage{braket}'
+}
+
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
