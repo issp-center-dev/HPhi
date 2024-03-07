@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.4. 基本的な使い方 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=e9d6491c"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="3. チュートリアル" href="../tutorial/tu-index.html" />
+    <link rel="prev" title="2.3. ディレクトリ構成" href="directorystructure_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">2.4. </span>基本的な使い方<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h1>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>ではスタンダードモードとエキスパートモードの2つのモードが存在します。
+ここでは、スタンダードモードおよびエキスパートモードでの計算に関して、それぞれ基本的な流れを記載します。</p>
+<section id="id2">
+<h2><span class="section-number">2.4.1. </span>スタンダードモード<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
+<p>スタンダードモードでの動作方法は下記の通りです。</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>計算用ディレクトリの作成</p></li>
+</ol>
+<blockquote>
+<div><p>計算シナリオ名を記載したディレクトリを作成します。</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>スタンダードモード用入力ファイルの作成</p></li>
+</ol>
+<blockquote>
+<div><p>スタンダードモードでは、あらかじめ用意されたいくつかの
+モデル(HeisenbergモデルやHubbardモデル)や格子(正方格子など)を指定し、
+それらに対するいくつかのパラメーター(最近接<span class="math notranslate nohighlight">\(\cdot\)</span>次近接スピン結合やオンサイトクーロン積分など)と
+計算手法(Lanczos法、TPQ法など)を設定します。 各ファイルは
+<a class="reference internal" href="prerequisite_ja.html#ch-prerequisite"><span class="std std-ref">How to use HPhi</span></a> に従い記載してください。</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>実行</p></li>
+</ol>
+<blockquote>
+<div><p>“<code class="docutils literal notranslate"><span class="pre">-s</span></code>”(“<code class="docutils literal notranslate"><span class="pre">--standard</span></code>” でも可)をオプションとして指定の上、
+1で作成した入力ファイル名を引数とし、<code class="docutils literal notranslate"><span class="pre">HPhi</span></code>を実行します。</p>
+<ul class="simple">
+<li><p>シリアル/OpenMP並列 の場合</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
+<ul class="simple">
+<li><p>MPI並列/ハイブリッド並列 の場合</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path</span> <span class="pre">/HPhi</span> <span class="pre">-s</span> <span class="pre">Input_file_name</span></code></p>
+<p>ワークステーションやスパコン等でキューイングシステムを利用している場合は
+プロセス数をジョブ投入コマンドの引数として与える場合があります。
+詳しくはお使いのシステムのマニュアルをご参照ください。
+プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。
+詳細は <a class="reference internal" href="#subsec-process"><span class="std std-ref">プロセス数の設定</span></a> を参照ください。</p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>途中経過</p></li>
+</ol>
+<blockquote>
+<div><p>計算実行の経過についてoutputフォルダにログファイルが出力されます。
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</p>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>最終結果</p></li>
+</ol>
+<blockquote>
+<div><p>計算が正常終了した場合、
+計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</p>
+</div></blockquote>
+</div></blockquote>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<div class="line-block">
+<div class="line"><strong>OpenMPスレッド数の指定</strong></div>
+<div class="line">実行時のOpenMPのスレッド数を指定する場合は、</div>
+<div class="line"><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を実行する前に以下の様にしてください(16スレッドの場合)。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">OMP_NUM_THREADS=16</span></code></div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h2><span class="section-number">2.4.2. </span>エキスパートモード<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
+<dl>
+<dt>エキスパートモードでの動作方法は下記の通りです。</dt><dd><ol class="arabic simple">
+<li><p>計算用ディレクトリの作成</p></li>
+</ol>
+<blockquote>
+<div><p>計算シナリオ名(名前は任意)を記載したディレクトリを作成します。</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>詳細入力ファイルの作成</p></li>
+</ol>
+<blockquote>
+<div><p>エキスパートモードでは、ハミルトニアンのすべての項を記述する詳細入力ファイルと計算条件のファイル、
+およびそれらのファイル名のリストファイルを作成します。各ファイルは
+<a class="reference internal" href="../filespecification/expertmode_ja/index_expertmode_ja.html#ch-howtoexpert"><span class="std std-ref">エキスパートモード用入力ファイル</span></a> に従い記載してください。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<div class="line-block">
+<div class="line">リストファイルの作成はスタンダード用のファイルStdFace.defを用いると容易に作成することができます。</div>
+</div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>実行</p></li>
+</ol>
+<blockquote>
+<div><p>“<code class="docutils literal notranslate"><span class="pre">-e</span></code>”(“<code class="docutils literal notranslate"><span class="pre">--expert</span></code>” でも可)をオプションとして指定の上、
+2で作成した入力リストファイル名を引数とし、ターミナルから<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を実行します。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>シリアル/OpenMP並列</p></li>
+</ul>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>MPI並列/ハイブリッド並列</p></li>
+</ul>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">number_of_processes</span> <span class="pre">Path/HPhi</span> <span class="pre">-e</span> <span class="pre">Input_List_file_name</span></code></div>
+<div class="line">プロセス数の指定に関しては計算する系により固定のものに設定する必要があります。</div>
+<div class="line">詳細は <a class="reference internal" href="#subsec-process"><span class="std std-ref">プロセス数の設定</span></a> を参照ください。</div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>途中経過</p></li>
+</ol>
+<blockquote>
+<div><p>計算実行の経過についてoutputフォルダにログファイルが出力されます。
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</p>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>最終結果</p></li>
+</ol>
+<blockquote>
+<div><p>計算が正常終了した場合、計算モードに従いoutputフォルダに計算結果ファイルが出力されます。
+出力されるファイルの詳細に関しては <a class="reference internal" href="../filespecification/outputfiles_ja/index_outputfiles_ja.html#sec-outputfile"><span class="std std-ref">出力ファイル</span></a> を参考にしてください。</p>
+</div></blockquote>
+</dd>
+</dl>
+</section>
+<section id="subsec-process">
+<span id="id4"></span><h2><span class="section-number">2.4.3. </span>プロセス数の設定<a class="headerlink" href="#subsec-process" title="この見出しへのパーマリンク">¶</a></h2>
+<p>MPI並列/ハイブリッド並列を用いる場合、プロセス数は以下のように設定してください。</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Standardモード</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>電子系及び近藤格子系</p></li>
+</ul>
+<blockquote>
+<div><p>スタンダードモード用入力ファイルで<code class="docutils literal notranslate"><span class="pre">model</span></code>=<code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Kondo</span> <span class="pre">Lattice&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">HubbardGC&quot;</span></code>の場合は、プロセス数が<span class="math notranslate nohighlight">\(4^n\)</span>となるように設定してください。</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>スピン系</p></li>
+</ul>
+<blockquote>
+<div><p>スタンダードモード用入力ファイルで<code class="docutils literal notranslate"><span class="pre">model</span></code>=<code class="docutils literal notranslate"><span class="pre">&quot;Spin&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;SpinGC&quot;</span></code>の場合は、入力ファイルの<code class="docutils literal notranslate"><span class="pre">2S</span></code>の値に対して
+プロセス数が(<code class="docutils literal notranslate"><span class="pre">2S</span></code>+1)<span class="math notranslate nohighlight">\({}^n\)</span>となるように設定してください(デフォルトは<code class="docutils literal notranslate"><span class="pre">2S</span></code>=1)。</p>
+</div></blockquote>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Expertモード</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>電子系及び近藤格子系</p></li>
+</ul>
+<blockquote>
+<div><p><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code>としてfermion
+Hubbard模型、近藤模型を選択した場合は、プロセス数が<span class="math notranslate nohighlight">\(4^n\)</span>となるように設定してください。</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>スピン系</p></li>
+</ul>
+<blockquote>
+<div><p><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code>としてスピン模型を選択した場合は、
+<a class="reference internal" href="../filespecification/expertmode_ja/LocSpin_file_ja.html#subsec-locspn"><span class="std std-ref">LocSpin指定ファイル</span></a> の<strong>LocSpin</strong>ファイルを参考にプロセス数を指定する必要があります。
+許容されるプロセス数は、サイト数の大きいものから順に局在スピンの状態数(<code class="docutils literal notranslate"><span class="pre">2S</span></code>+1)を掛けたもので指定されます。</p>
+<p>例えば、<strong>LocSpin</strong>ファイルが</p>
+</div></blockquote>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>================================
+NlocalSpin     3
+================================
+========i_0IteElc_2S ======
+================================
+    0      3
+    1      2
+    2      1
+</pre></div>
+</div>
+<p>で与えられる場合、許容されるプロセス数は<span class="math notranslate nohighlight">\(2=1+1,~6=2\times(2+1),~24=6\times(3+1)\)</span>となります。</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="id5">
+<h2><span class="section-number">2.4.4. </span>バージョン番号の確認<a class="headerlink" href="#id5" title="この見出しへのパーマリンク">¶</a></h2>
+<p>次のように<code class="docutils literal notranslate"><span class="pre">-v</span></code>オプションをつけて<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を実行すると,
+バージョン番号を標準出力した後終了します。</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></p>
+</div></blockquote>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prerequisite_ja.html">2.1. 要件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation_ja.html">2.2. インストール方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="directorystructure_ja.html">2.3. ディレクトリ構成</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4. 基本的な使い方</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2.4.1. スタンダードモード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.4.2. エキスパートモード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subsec-process">2.4.3. プロセス数の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">2.4.4. バージョン番号の確認</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="ho-index.html"><span class="section-number">2. </span>How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
+      <li>Previous: <a href="directorystructure_ja.html" title="前の章へ"><span class="section-number">2.3. </span>ディレクトリ構成</a></li>
+      <li>Next: <a href="../tutorial/tu-index.html" title="次の章へ"><span class="section-number">3. </span>チュートリアル</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/howtouse/basicusage_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

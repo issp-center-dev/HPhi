@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4.1. Dynamical spin structure factor &#8212; HΦ Tutorial  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.2. Hubbard chain (optical conductivity)" href="optical_conductivity.html" />
+    <link rel="prev" title="4. Tutorial for calculations of dynamical properties" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dynamical-spin-structure-factor">
+<h1><span class="section-number">4.1. </span>Dynamical spin structure factor<a class="headerlink" href="#dynamical-spin-structure-factor" title="Permalink to this heading">¶</a></h1>
+<p>Let’s solve the following Hubbard model on the square lattice.</p>
+<div class="math notranslate nohighlight" id="equation-dynamical-spectrum-0">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-dynamical-spectrum-0" title="Permalink to this equation">¶</a></span>\[H = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})+U \sum_{i} n_{i\uparrow}n_{i\downarrow}\]</div>
+<p>The input files (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.1/stan1.in</span></code> and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.1/stan2.in</span></code>) for 8-site Hubbard model are as follows</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan1.in
+
+a0W = 2
+a0L = 2
+a1W = -2
+a1L = 2
+model = &quot;hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;square&quot;
+t = 1.0
+t&#39; = 0.5
+U = 4.0
+2Sz = 0
+nelec = 8
+EigenvecIO = &quot;out&quot;
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan2.in
+
+a0W = 2
+a0L = 2
+a1W = -2
+a1L = 2
+model = &quot;hubbard&quot;
+method = &quot;CG&quot;
+lattice = &quot;square&quot;
+t = 1.0
+t&#39; = 0.5
+U = 4.0
+2Sz = 0
+nelec = 8
+LanczosEPS = 8
+CalcSpec = &quot;Normal&quot;
+SpectrumType = &quot;SzSz&quot;
+SpectrumQW = 0.5
+SpectrumQL = 0.5
+OmegaMin = -10.0
+OmegaMax = 20.0
+OmegaIM = 0.2
+OmegaOrg = 10.0
+</pre></div>
+</div>
+<p>You can execute HPhi as follows</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi -s stan1.in
+HPhi -s stan2.in
+</pre></div>
+</div>
+<p>After finishing calculations, the spectrum <span class="math notranslate nohighlight">\(G_{S_z S_z}({\bf Q} \equiv (\pi, \pi), \omega) = \langle S_z(-{\bf Q}) \left[H-\omega-\omega_0 + i\eta\right]^{-1}S_z({\bf Q})\rangle\)</span> is outputted in <cite>output/zvo_DynamicalGreen.dat</cite>. Here, <span class="math notranslate nohighlight">\(S_z({\bf Q})= \sum_{i}e^{i {\bf Q} \cdot {\bf r}_i} S_z^i\)</span> and the frequency <span class="math notranslate nohighlight">\(\omega\)</span> moves from <span class="math notranslate nohighlight">\(-10\)</span> to <span class="math notranslate nohighlight">\(10\)</span>, <span class="math notranslate nohighlight">\(\omega_0 = 10\)</span>, and <span class="math notranslate nohighlight">\(\eta\)</span> is set as <span class="math notranslate nohighlight">\(0.2\)</span>. You can check the result by executing the following command on gnuplot:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>gnuplot
+gnuplot&gt; set xlabel &quot;Energy&quot;
+gnuplot&gt; set ylabel &quot;G_{SzSz}(E)&quot;
+gnuplot&gt; set xzeroaxis
+gnuplot&gt; plot &quot;output/zvo_DynamicalGreen.dat&quot; u 1:3 w l tit &quot;Real&quot;, \
+&gt; &quot;output/zvo_DynamicalGreen.dat&quot; u 1:4 w l tit &quot;Imaginary&quot;
+</pre></div>
+</div>
+<p>You can see the following output image.</p>
+<a class="reference internal image-reference" href="../_images/spectrum.png"><img alt="../_images/spectrum.png" class="align-center" src="../_images/spectrum.png" style="width: 700px; height: 500px;" /></a>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../zero_temperature/index.html">1. Tutorial for calculations at zero temperature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../finite_temperature/index.html">2. Tutorial for finite-temperature calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_evolution/index.html">3. Tutorials for real-time evolution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. Tutorial for calculations of dynamical properties</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. Dynamical spin structure factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optical_conductivity.html">4.2. Hubbard chain (optical conductivity)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sqomega.html">4.3. Spectrum calculation for 12-site one-dimeinsional Heisenberg chain model.</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">4. </span>Tutorial for calculations of dynamical properties</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><span class="section-number">4. </span>Tutorial for calculations of dynamical properties</a></li>
+      <li>Next: <a href="optical_conductivity.html" title="next chapter"><span class="section-number">4.2. </span>Hubbard chain (optical conductivity)</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020-, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/dynamical/spectrum.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

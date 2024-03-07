@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>5.6. Bogoliubov表現 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=e9d6491c"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6. 謝辞" href="../acknowledgement_ja.html" />
+    <link rel="prev" title="5.5. 実時間発展" href="Realtime_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="bogoliubov">
+<span id="sec-sec-bogoliubov-rep"></span><h1><span class="section-number">5.6. </span>Bogoliubov表現<a class="headerlink" href="#bogoliubov" title="この見出しへのパーマリンク">¶</a></h1>
+<p>スピン系の計算において一体項(<code class="docutils literal notranslate"><span class="pre">transfer</span></code>)、<code class="docutils literal notranslate"><span class="pre">InterAll</span></code>形式での相互作用、
+相関関数のインデックスの指定にはBogoliubov表現が使われています。
+スピンの演算子は次のように生成<span class="math notranslate nohighlight">\(\cdot\)</span>消滅演算子で書き換えられます。</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-bogoliubov-ja-0">
+<span class="eqno">(5.22)<a class="headerlink" href="#equation-algorithm-bogoliubov-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}S_{i z} &amp;= \sum_{\sigma = -S}^{S} \sigma c_{i \sigma}^\dagger c_{i \sigma}
+\\
+S_{i}^+ &amp;= \sum_{\sigma = -S}^{S-1}
+\sqrt{S(S+1) - \sigma(\sigma+1)}
+c_{i \sigma+1}^\dagger c_{i \sigma}
+\\
+S_{i}^- &amp;= \sum_{\sigma = -S}^{S-1}
+\sqrt{S(S+1) - \sigma(\sigma+1)}
+c_{i \sigma}^\dagger c_{i \sigma+1}\end{split}\]</div>
+<p>HPhiでは最も大きな <span class="math notranslate nohighlight">\(\sigma\)</span> の状態のインデックスを0とします。</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="al-index.html">5. アルゴリズム</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Lanczos_ja.html">5.1. Lanczos法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_ja.html">5.2. 完全対角化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TPQ_ja.html">5.3. 熱的純粋量子状態による有限温度計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DynamicalGreen_ja.html">5.4. 動的グリーン関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Realtime_ja.html">5.5. 実時間発展</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.6. Bogoliubov表現</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="al-index.html"><span class="section-number">5. </span>アルゴリズム</a><ul>
+      <li>Previous: <a href="Realtime_ja.html" title="前の章へ"><span class="section-number">5.5. </span>実時間発展</a></li>
+      <li>Next: <a href="../acknowledgement_ja.html" title="次の章へ"><span class="section-number">6. </span>謝辞</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/algorithm/Bogoliubov_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
