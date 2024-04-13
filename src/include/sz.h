@@ -17,14 +17,14 @@
 #include "Common.h"
 
 int omp_sz(
-                 long unsigned int ib, 
-                 long unsigned int ihfbit,
-                 struct BindStruct *X,
-         long unsigned int *list_1_,
-         long unsigned int *list_2_1_,
-         long unsigned int *list_2_2_,
-         long unsigned int *list_jb_
-                 );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
 
 int omp_sz_hacker(
                  long unsigned int ib, 
@@ -76,8 +76,17 @@ int omp_sz_spin_hacker(
               long unsigned int *list_2_1_,
               long unsigned int *list_2_2_,
               long unsigned int *list_jb_      
-                      );
+);
 
+int omp_sz_Kondo_hacker(
+    long unsigned int ib,
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
 
 
 int omp_sz_GeneralSpin(
@@ -106,11 +115,25 @@ int sz(
        long unsigned int *list_2_2_
        );
 
-int Read_sz
-(
- struct BindStruct *X,
- const long unsigned int irght,
- const long unsigned int ilft,
- const long unsigned int ihfbit,
- long unsigned int *i_max
- );
+int Read_sz(
+    struct BindStruct *X,
+    const long unsigned int irght,
+    const long unsigned int ilft,
+    const long unsigned int ihfbit,
+    long unsigned int *i_max
+);
+
+/*[s] func. for refactoring */
+int count_localized_spins(struct BindStruct *X);
+void calculate_jb_GeneralSpin(struct BindStruct *X, long unsigned int *list_jb, long int *list_2_1_Sz,long int *list_2_2_Sz, long unsigned int ihfbit,long unsigned int ilftdim,unsigned int N);
+void calculate_jb_Spin_m1(struct BindStruct *X, long unsigned int *list_jb, long unsigned int *list_1_, long unsigned int *list_2_1,long unsigned int *list_2_2,\
+long unsigned int ihfbit,long unsigned int irght,long unsigned int ilft,long unsigned int ibpatn, unsigned int N);
+void calculate_jb_Spin_Old(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N);
+void calculate_jb_Spin_Hacker(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N);
+void calculate_jb_Kondo(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit);
+void calculate_jb_KondoGC(struct BindStruct *X, int num_loc, long unsigned int *list_jb, long unsigned int ihfbit);
+void calculate_jb_Hubbard(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_Hubbard_Hacker(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_HubbardNCoserved(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_HubbardNCoserved_Hacker(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+/*[e] func. for refactoring */
