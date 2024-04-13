@@ -37,14 +37,24 @@ int omp_sz_hacker(
                  );
 
 int omp_sz_Kondo(
-                      long unsigned int ib, 
-                      long unsigned int ihfbit,
-                      struct BindStruct *X,
-              long unsigned int *list_1_,
-              long unsigned int *list_2_1_,
-              long unsigned int *list_2_2_,
-              long unsigned int *list_jb_              
-                      );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_              
+);
+
+int omp_sz_KondoNConserved(
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_              
+);
 
 int omp_sz_KondoGC(
                       long unsigned int ib, 
@@ -132,6 +142,7 @@ void calculate_jb_Spin_Old(struct BindStruct *X, long unsigned int *list_jb, lon
 void calculate_jb_Spin_Hacker(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N);
 void calculate_jb_Kondo(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit);
 void calculate_jb_KondoGC(struct BindStruct *X, int num_loc, long unsigned int *list_jb, long unsigned int ihfbit);
+void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit);
 void calculate_jb_Hubbard(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
 void calculate_jb_Hubbard_Hacker(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
 void calculate_jb_HubbardNCoserved(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);

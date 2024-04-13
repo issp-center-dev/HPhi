@@ -39,6 +39,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
   case Hubbard:
   case HubbardNConserved:
   case Kondo:
+  case KondoNConserved:
   case KondoGC:
 
     /**@brief

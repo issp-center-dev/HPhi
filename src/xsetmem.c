@@ -294,6 +294,7 @@ int setmem_large
       case Hubbard:
       case HubbardNConserved:
       case Kondo:
+      case KondoNConserved:
       case KondoGC:
         if (X->Def.iFlgGeneralSpin == FALSE) {
           if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {

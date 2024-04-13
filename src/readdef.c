@@ -869,8 +869,7 @@ int ReadDefFileNInt(
           X->Ndown=X->NLocSpn+X->NCond-X->Total2Sz;
           X->Nup/=2;
           X->Ndown/=2;
-        }
-        else{
+        }else{
           if(X->iCalcModel == Hubbard){
             X->Ne=X->NCond;
             if(X->Ne <1){
@@ -878,8 +877,14 @@ int ReadDefFileNInt(
               return(-1);
             }
             X->iCalcModel=HubbardNConserved;
-          }
-          else if(X->iCalcModel ==SpinlessFermion){
+          }else if(X->iCalcModel == Kondo){
+            X->Ne=X->NCond + X->NLocSpn;
+            if(X->Ne <1){
+              fprintf(stdoutMPI, "Ncond is incorrect.\n");
+              return(-1);
+            }
+            X->iCalcModel=KondoNConserved;
+          }else if(X->iCalcModel ==SpinlessFermion){
             X->Ne=X->NCond;  
             X->Nup=X->NCond;
             X->Ndown=0;
@@ -2739,6 +2744,7 @@ int CheckLocSpin
     break;
 
   case Kondo:
+  case KondoNConserved:
   case KondoGC:
     for(i=0; i<X->Nsite; i++){
       if(X->LocSpn[i]>LOCSPIN){

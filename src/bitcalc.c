@@ -90,6 +90,7 @@ int GetSplitBitByModel(
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
+  case KondoNConserved:
     tmpNsite *= 2;
     break;
   case Spin:

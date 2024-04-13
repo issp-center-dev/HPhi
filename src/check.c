@@ -213,6 +213,7 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
         case Spin:
           X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
@@ -228,6 +229,7 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
         case Spin:
           X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
@@ -244,6 +246,7 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
         case Spin:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
@@ -303,6 +306,7 @@ int check(struct BindStruct *X){
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
+  case KondoNConserved:
     while(tmp <= X->Def.Nsite){
       tmp_sdim=tmp_sdim*2;
       tmp+=1;
@@ -338,6 +342,7 @@ int check(struct BindStruct *X){
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
+  case KondoNConserved:
     //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
