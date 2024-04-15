@@ -26,7 +26,7 @@ int omp_sz(
     long unsigned int *list_jb_
 );
 
-int omp_tJ(
+int omp_sz_tJ(
     long unsigned int ib, 
     long unsigned int ihfbit,
     struct BindStruct *X,

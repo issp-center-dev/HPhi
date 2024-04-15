@@ -369,11 +369,14 @@ int check(struct BindStruct *X){
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-  case KondoGC:
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
   case KondoNConserved:
+  case KondoGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
     while(tmp <= X->Def.Nsite){
       tmp_sdim=tmp_sdim*2;
       tmp+=1;
@@ -431,16 +434,19 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case tJGC:
     for(i=1;i<=2*X->Def.Nsite;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;
       fprintf(fp,"%ld %ld \n",i,u_tmp);
     }
     break;
-  case HubbardNConserved:
   case Hubbard:
+  case HubbardNConserved:
   case Kondo:
   case KondoNConserved:
+  case tJ:
+  case tJNConserved:
     for(i=1;i<=2*X->Def.Nsite-1;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;

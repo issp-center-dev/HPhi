@@ -344,7 +344,8 @@ int sz(
                       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
                       icnt = 0;
                       for(ib=0;ib<X->Check.sdim;ib++){
-                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                          //printf("ib=%lu jb=list_jb[ib]=%lu \n",ib,list_jb[ib]);
+                          icnt += omp_sz_tJ(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
                       break;
                   case tJNConserved:
@@ -353,7 +354,7 @@ int sz(
                       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
                       icnt = 0;
                       for(ib=0;ib<X->Check.sdim;ib++){
-                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                          icnt += omp_sz_tJ(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
                       break;
                   case tJGC:
@@ -362,7 +363,7 @@ int sz(
                       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
                       icnt = 0;
                       for(ib=0;ib<X->Check.sdim;ib++){
-                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                          icnt += omp_sz_tJ(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
                       break;
                   case Spin:
@@ -536,29 +537,30 @@ int omp_sz_tJ(
   long unsigned int div_down, div_up;
   long unsigned int num_up,num_down;
   long unsigned int tmp_num_up,tmp_num_down;
-  int check_doublon_1,check_doublon_2;
+  int check_doublon;
     
   jb = list_jb_[ib];
   i  = ib*ihfbit;
     
   num_up          = 0;
   num_down        = 0;
-  check_doublon_1 = 1;
+  check_doublon   = 0;
   ja              = 1;
   for(j=0;j< X->Def.Nsite ;j++){
     div_up          = i & X->Def.Tpow[2*j];
     div_up          = div_up/X->Def.Tpow[2*j];
     div_down        = i & X->Def.Tpow[2*j+1];
     div_down        = div_down/X->Def.Tpow[2*j+1];
-    check_doublon_1 = div_up^div_down;
-    if (check_doublon_1==0){
+    check_doublon   = div_up*div_down;
+    //printf("Ns %d i %ld j %ld  div_up %ld div_down %ld \n",X->Def.Nsite,i,j,div_up,div_down);
+    if (check_doublon==1){
       break;
     }
     num_up   += div_up;
     num_down += div_down;
   }
   
-  if(check_doublon_1==1){
+  if(check_doublon==0){
     tmp_num_up   = num_up;
     tmp_num_down = num_down;
 
@@ -567,26 +569,26 @@ int omp_sz_tJ(
         i               = ia;
         num_up          = tmp_num_up;
         num_down        = tmp_num_down;
-        check_doublon_2 = 1;
+        check_doublon   = 0;
         for(j=0;j<X->Def.Nsite;j++){
           div_up    = i & X->Def.Tpow[2*j];
           div_up    = div_up/X->Def.Tpow[2*j];
           div_down  = i & X->Def.Tpow[2*j+1];
           div_down  = div_down/X->Def.Tpow[2*j+1];
-          check_doublon_2 = div_up^div_down;
-          if (check_doublon_2==0){
+          check_doublon = div_up*div_down;
+          if (check_doublon==1){
             break;
           }
-          num_up  += div_up;
+          num_up   += div_up;
           num_down += div_down;
-          if(check_doublon_2==1){
-            if(num_up == X->Def.Nup && num_down == X->Def.Ndown ){
-              list_1_[ja+jb]=ia+ib*ihfbit;
-              list_2_1_[ia]=ja+1;
-              list_2_2_[ib]=jb+1;
-              ja+=1;
-            } 
-          }
+        }
+        if(check_doublon==0){
+          if(num_up == X->Def.Nup && num_down == X->Def.Ndown ){
+            list_1_[ja+jb]=ia+ib*ihfbit;
+            list_2_1_[ia]=ja+1;
+            list_2_2_[ib]=jb+1;
+            ja+=1;
+          } 
         }
       }
     }else if(X->Def.iCalcModel==tJNConserved){
@@ -594,19 +596,19 @@ int omp_sz_tJ(
         i               =  ia;
         num_up          =  tmp_num_up;
         num_down        =  tmp_num_down;
-        check_doublon_2 =  1;
         for(j=0;j<X->Def.Nsite;j++){
           div_up    = i & X->Def.Tpow[2*j];
           div_up    = div_up/X->Def.Tpow[2*j];
           div_down  = i & X->Def.Tpow[2*j+1];
           div_down  = div_down/X->Def.Tpow[2*j+1];
-          if (check_doublon_2==0){
+          check_doublon = div_up*div_down;
+          if (check_doublon==0){
             break;
           }
           num_up   += div_up;
           num_down += div_down;
         }
-        if(check_doublon_2==1){
+        if(check_doublon==0){
           if( (num_up+num_down) == X->Def.Ne){
             list_1_[ja+jb]=ia+ib*ihfbit;
             list_2_1_[ia]=ja+1;
@@ -620,19 +622,19 @@ int omp_sz_tJ(
         i               =  ia;
         num_up          =  tmp_num_up;
         num_down        =  tmp_num_down;
-        check_doublon_2 =  1;
         for(j=0;j<X->Def.Nsite;j++){
-          div_up    = i & X->Def.Tpow[2*j];
-          div_up    = div_up/X->Def.Tpow[2*j];
-          div_down  = i & X->Def.Tpow[2*j+1];
-          div_down  = div_down/X->Def.Tpow[2*j+1];
-          if (check_doublon_2==0){
+          div_up        = i & X->Def.Tpow[2*j];
+          div_up        = div_up/X->Def.Tpow[2*j];
+          div_down      = i & X->Def.Tpow[2*j+1];
+          div_down      = div_down/X->Def.Tpow[2*j+1];
+          check_doublon = div_up*div_down;
+          if (check_doublon==1){
             break;
           }
           num_up   += div_up;
           num_down += div_down;
         }
-        if(check_doublon_2==1){
+        if(check_doublon==0){
           list_1_[ja+jb]=ia+ib*ihfbit;
           list_2_1_[ia]=ja+1;
           list_2_2_[ib]=jb+1;
@@ -2090,17 +2092,17 @@ void calculate_jb_tJ(struct BindStruct *X,long unsigned int *list_jb, long unsig
     for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
         list_jb[ib]   = jb;
         i             = ib*ihfbit;
-        check_doublon = 1;
+        check_doublon = 0;
         //[s] counting # of up and down electrons
         num_up   = 0;
         num_down = 0;
-        for(j=0;j<=N2-2;j+=2){ 
+        for(j=0;j<(N2/2);j++){ 
             div_up         = i & X->Def.Tpow[2*j];// even -> up spin
             div_up         = div_up/X->Def.Tpow[2*j];
             div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
             div_down       = div_down/X->Def.Tpow[2*j+1];
-            check_doublon  = div_up^div_down;
-            if (check_doublon==0){
+            check_doublon  = div_up*div_down;
+            if (check_doublon==1){
                 break;
             }
             num_up        += div_up;
@@ -2112,13 +2114,14 @@ void calculate_jb_tJ(struct BindStruct *X,long unsigned int *list_jb, long unsig
         /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
         /* all_up   -> # of up   sites in the lower half of bits*/
         /* all_down -> # of down sites in the lower half of bits*/
-        if (check_doublon==1){
+        if (check_doublon==0){
             tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
             all_up   = (X->Def.Nsite+tmp_res)/2;
             all_down = (X->Def.Nsite-tmp_res)/2;
             tmp_1    = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-            tmp_2    = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down-(X->Def.Nup-num_up));/* tJ all_down-(X->Def.Nup-num_up)*/
-            jb   += tmp_1*tmp_2;
+            tmp_2    = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);/* tJ all_down-(X->Def.Nup-num_up)*/
+            jb       += tmp_1*tmp_2;
+            //printf("DBB jb=%ld %ld %ld: num_up %d num_down %d : %d %d\n",jb,tmp_1,tmp_2,num_up,num_down,(X->Def.Nup-num_up),X->Def.Ndown-num_down);
         }
     }
     free_li_2d_allocate(comb);
@@ -2144,17 +2147,17 @@ void calculate_jb_tJNConserved(struct BindStruct *X,long unsigned int *list_jb, 
     for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
         list_jb[ib]   = jb;
         i             = ib*ihfbit;
-        check_doublon = 1;
+        check_doublon = 0;
         //[s] counting # of up and down electrons
         num_up        = 0;
         num_down      = 0;
-        for(j=0;j<=N2-2;j+=2){ 
+        for(j=0;j<(N2/2);j++){ 
             div_up         = i & X->Def.Tpow[2*j];// even -> up spin
             div_up         = div_up/X->Def.Tpow[2*j];
             div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
             div_down       = div_down/X->Def.Tpow[2*j+1];
-            check_doublon  = div_up^div_down;
-            if (check_doublon==0){
+            check_doublon  = div_up*div_down;
+            if (check_doublon==1){
                 break;
             }
             num_up        += div_up;
@@ -2166,7 +2169,7 @@ void calculate_jb_tJNConserved(struct BindStruct *X,long unsigned int *list_jb, 
         /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
         /* all_up   -> # of up   sites in the lower half of bits*/
         /* all_down -> # of down sites in the lower half of bits*/
-        if (check_doublon==1){
+        if (check_doublon==0){
             tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
             all_up   = (X->Def.Nsite+tmp_res)/2;
             all_down = (X->Def.Nsite-tmp_res)/2;
@@ -2195,17 +2198,17 @@ void calculate_jb_tJGC(struct BindStruct *X,long unsigned int *list_jb, long uns
     for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
         list_jb[ib]   = jb;
         i             = ib*ihfbit;
-        check_doublon = 1;
+        check_doublon = 0;
         //[s] counting # of up and down electrons
         num_up   = 0;
         num_down = 0;
-        for(j=0;j<=N2-2;j+=2){ 
+        for(j=0;j<(N2/2);j++){ 
             div_up         = i & X->Def.Tpow[2*j];// even -> up spin
             div_up         = div_up/X->Def.Tpow[2*j];
             div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
             div_down       = div_down/X->Def.Tpow[2*j+1];
-            check_doublon  = div_up^div_down;
-            if (check_doublon==0){
+            check_doublon  = div_up*div_down;
+            if (check_doublon==1){
                 break;
             }
             num_up        += div_up;
@@ -2217,7 +2220,7 @@ void calculate_jb_tJGC(struct BindStruct *X,long unsigned int *list_jb, long uns
         /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
         /* all_up   -> # of up   sites in the lower half of bits*/
         /* all_down -> # of down sites in the lower half of bits*/
-        if (check_doublon==1){
+        if (check_doublon==0){
             tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
             all_up   = (X->Def.Nsite+tmp_res)/2;
             all_down = (X->Def.Nsite-tmp_res)/2;
