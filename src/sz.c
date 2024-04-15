@@ -129,6 +129,9 @@ int sz(
             case HubbardGC:
             case HubbardNConserved:
             case Hubbard:
+            case tJGC:
+            case tJNConserved:
+            case tJ:
                 N2=2*X->Def.Nsite;
                 idim = pow(2.0,N2);
                 break;
@@ -164,6 +167,9 @@ int sz(
         switch(X->Def.iCalcModel){
             case HubbardNConserved:
             case Hubbard:
+            case tJGC:
+            case tJNConserved:
+            case tJ:
             case KondoGC:
             case Kondo:
             case KondoNConserved:
@@ -332,6 +338,33 @@ int sz(
                           }     
                       }
                       break;
+                  case tJ:
+                      calculate_jb_tJ(X,list_jb,ihfbit,N2);
+                      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+                      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+                      icnt = 0;
+                      for(ib=0;ib<X->Check.sdim;ib++){
+                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                      }
+                      break;
+                  case tJNConserved:
+                      calculate_jb_tJNConserved(X,list_jb,ihfbit,N2);
+                      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+                      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+                      icnt = 0;
+                      for(ib=0;ib<X->Check.sdim;ib++){
+                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                      }
+                      break;
+                  case tJGC:
+                      calculate_jb_tJGC(X,list_jb,ihfbit,N2);
+                      TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
+                      TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
+                      icnt = 0;
+                      for(ib=0;ib<X->Check.sdim;ib++){
+                          icnt += omp_sz(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
+                      }
+                      break;
                   case Spin:
                       if(X->Def.iFlgGeneralSpin==FALSE){
                           hacker = X->Def.read_hacker;
@@ -379,7 +412,6 @@ int sz(
                               icnt+=omp_sz_GeneralSpin(ib,ihfbit,X, list_1_, list_2_1_, list_2_2_, list_2_1_Sz, list_2_2_Sz,list_jb);
                           }
                       }
-                  
                       break;
                   default:
                       exitMPI(-1);
@@ -471,6 +503,145 @@ long int Binomial(int n,int k,long int **comb,int Nsite){
   }
   return comb[n][k];
 }
+
+/** 
+ * @brief calculating restricted Hilbert space for the tJ systems
+ * 
+ * @param[in] ib   upper half bit of i    
+ * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] X
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
+ * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
+ * @param[in] list_jb_   list_jb_[ib]  = jb  
+ * 
+ * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ */
+int omp_sz_tJ(
+                 long unsigned int ib,    //!<[in]
+                 long unsigned int ihfbit, //!<[in]
+                 struct BindStruct *X,     //!<[in]
+                 long unsigned int *list_1_, //!<[out]
+                 long unsigned int *list_2_1_,//!<[out]
+                 long unsigned int *list_2_2_,//!<[out]
+                 long unsigned int *list_jb_ //!<[in]
+                 )
+{
+  long unsigned int i,j; 
+  long unsigned int ia,ja,jb;
+  long unsigned int div_down, div_up;
+  long unsigned int num_up,num_down;
+  long unsigned int tmp_num_up,tmp_num_down;
+  int check_doublon_1,check_doublon_2;
+    
+  jb = list_jb_[ib];
+  i  = ib*ihfbit;
+    
+  num_up          = 0;
+  num_down        = 0;
+  check_doublon_1 = 1;
+  ja              = 1;
+  for(j=0;j< X->Def.Nsite ;j++){
+    div_up          = i & X->Def.Tpow[2*j];
+    div_up          = div_up/X->Def.Tpow[2*j];
+    div_down        = i & X->Def.Tpow[2*j+1];
+    div_down        = div_down/X->Def.Tpow[2*j+1];
+    check_doublon_1 = div_up^div_down;
+    if (check_doublon_1==0){
+      break;
+    }
+    num_up   += div_up;
+    num_down += div_down;
+  }
+  
+  if(check_doublon_1==1){
+    tmp_num_up   = num_up;
+    tmp_num_down = num_down;
+
+    if(X->Def.iCalcModel==tJ){
+      for(ia=0;ia<X->Check.sdim;ia++){
+        i               = ia;
+        num_up          = tmp_num_up;
+        num_down        = tmp_num_down;
+        check_doublon_2 = 1;
+        for(j=0;j<X->Def.Nsite;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          check_doublon_2 = div_up^div_down;
+          if (check_doublon_2==0){
+            break;
+          }
+          num_up  += div_up;
+          num_down += div_down;
+          if(check_doublon_2==1){
+            if(num_up == X->Def.Nup && num_down == X->Def.Ndown ){
+              list_1_[ja+jb]=ia+ib*ihfbit;
+              list_2_1_[ia]=ja+1;
+              list_2_2_[ib]=jb+1;
+              ja+=1;
+            } 
+          }
+        }
+      }
+    }else if(X->Def.iCalcModel==tJNConserved){
+      for(ia=0;ia<X->Check.sdim;ia++){
+        i               =  ia;
+        num_up          =  tmp_num_up;
+        num_down        =  tmp_num_down;
+        check_doublon_2 =  1;
+        for(j=0;j<X->Def.Nsite;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          if (check_doublon_2==0){
+            break;
+          }
+          num_up   += div_up;
+          num_down += div_down;
+        }
+        if(check_doublon_2==1){
+          if( (num_up+num_down) == X->Def.Ne){
+            list_1_[ja+jb]=ia+ib*ihfbit;
+            list_2_1_[ia]=ja+1;
+            list_2_2_[ib]=jb+1;
+            ja+=1;
+          } 
+        }
+      }  
+    }else if(X->Def.iCalcModel==tJGC){
+      for(ia=0;ia<X->Check.sdim;ia++){
+        i               =  ia;
+        num_up          =  tmp_num_up;
+        num_down        =  tmp_num_down;
+        check_doublon_2 =  1;
+        for(j=0;j<X->Def.Nsite;j++){
+          div_up    = i & X->Def.Tpow[2*j];
+          div_up    = div_up/X->Def.Tpow[2*j];
+          div_down  = i & X->Def.Tpow[2*j+1];
+          div_down  = div_down/X->Def.Tpow[2*j+1];
+          if (check_doublon_2==0){
+            break;
+          }
+          num_up   += div_up;
+          num_down += div_down;
+        }
+        if(check_doublon_2==1){
+          list_1_[ja+jb]=ia+ib*ihfbit;
+          list_2_1_[ia]=ja+1;
+          list_2_2_[ib]=jb+1;
+          ja+=1;
+        }
+      }  
+    }
+  }
+  ja=ja-1;    
+  return ja; 
+}
+
 
 /** 
  * @brief calculating restricted Hilbert space for Hubbard systems
@@ -1904,3 +2075,159 @@ void calculate_jb_HubbardNCoserved_Hacker(struct BindStruct *X,long unsigned int
     }//omp parallel
     free_lui_1d_allocate(jbthread);
 }
+
+void calculate_jb_tJ(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2){
+    /*[s] this part can not be parallelized*/
+    long unsigned int jb = 0,div_up,div_down,i,j,tmp_1,tmp_2;
+    long int **comb;
+    int num_up,num_down,check_doublon;
+    int tmp_res,all_up,all_down;
+    comb          = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+
+    for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
+        list_jb[ib]   = jb;
+        i             = ib*ihfbit;
+        check_doublon = 1;
+        //[s] counting # of up and down electrons
+        num_up   = 0;
+        num_down = 0;
+        for(j=0;j<=N2-2;j+=2){ 
+            div_up         = i & X->Def.Tpow[2*j];// even -> up spin
+            div_up         = div_up/X->Def.Tpow[2*j];
+            div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
+            div_down       = div_down/X->Def.Tpow[2*j+1];
+            check_doublon  = div_up^div_down;
+            if (check_doublon==0){
+                break;
+            }
+            num_up        += div_up;
+            num_down      += div_down;
+        }
+        //[e] counting # of up and down electrons
+          
+        /* eg of even sites: 4site-> |DU|DU || |DU|DU|*/
+        /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
+        /* all_up   -> # of up   sites in the lower half of bits*/
+        /* all_down -> # of down sites in the lower half of bits*/
+        if (check_doublon==1){
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+            tmp_1    = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
+            tmp_2    = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down-(X->Def.Nup-num_up));/* tJ all_down-(X->Def.Nup-num_up)*/
+            jb   += tmp_1*tmp_2;
+        }
+    }
+    free_li_2d_allocate(comb);
+    /*[e] this part can not be parallelized*/
+}
+
+void calculate_jb_tJNConserved(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2){
+    /*[s] this part can not be parallelized*/
+    long unsigned int jb = 0,div_up,div_down,i,j,tmp_1,tmp_2;
+    long int **comb;
+    int num_up,num_down,check_doublon;
+    int tmp_res,all_up,all_down;
+    int iSpnup, iMinup,iAllup;
+
+    comb          = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+    iMinup        = 0;
+    iAllup        = X->Def.Ne;
+    if(X->Def.Ne > X->Def.Nsite){
+        iMinup = X->Def.Ne-X->Def.Nsite;
+        iAllup = X->Def.Nsite;
+    }
+
+    for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
+        list_jb[ib]   = jb;
+        i             = ib*ihfbit;
+        check_doublon = 1;
+        //[s] counting # of up and down electrons
+        num_up        = 0;
+        num_down      = 0;
+        for(j=0;j<=N2-2;j+=2){ 
+            div_up         = i & X->Def.Tpow[2*j];// even -> up spin
+            div_up         = div_up/X->Def.Tpow[2*j];
+            div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
+            div_down       = div_down/X->Def.Tpow[2*j+1];
+            check_doublon  = div_up^div_down;
+            if (check_doublon==0){
+                break;
+            }
+            num_up        += div_up;
+            num_down      += div_down;
+        }
+        //[e] counting # of up and down electrons
+          
+        /* eg of even sites: 4site-> |DU|DU || |DU|DU|*/
+        /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
+        /* all_up   -> # of up   sites in the lower half of bits*/
+        /* all_down -> # of down sites in the lower half of bits*/
+        if (check_doublon==1){
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+
+            for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
+                tmp_1    = Binomial(all_up,iSpnup-num_up,comb,all_up);
+                tmp_2    = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-(iSpnup+num_down),comb,all_down-(iSpnup-num_up));/* tJ all_down-(iSpnup-num_up)*/
+                jb      += tmp_1*tmp_2;
+            }
+        }
+    }
+    free_li_2d_allocate(comb);
+    /*[e] this part can not be parallelized*/
+}
+
+void calculate_jb_tJGC(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2){
+    /*[s] this part can not be parallelized*/
+    long unsigned int jb = 0,div_up,div_down,i,j,tmp_1,tmp_2;
+    long int **comb;
+    int num_up,num_down,check_doublon;
+    int tmp_res,all_up,all_down;
+    int iSpnup,iSpndown,iMinup,iAllup;
+
+    comb          = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+
+    for(long unsigned ib=0;ib<X->Check.sdim;ib++){ // sdim = 2^(N/2)
+        list_jb[ib]   = jb;
+        i             = ib*ihfbit;
+        check_doublon = 1;
+        //[s] counting # of up and down electrons
+        num_up   = 0;
+        num_down = 0;
+        for(j=0;j<=N2-2;j+=2){ 
+            div_up         = i & X->Def.Tpow[2*j];// even -> up spin
+            div_up         = div_up/X->Def.Tpow[2*j];
+            div_down       = i & X->Def.Tpow[2*j+1];//odd -> down spin
+            div_down       = div_down/X->Def.Tpow[2*j+1];
+            check_doublon  = div_up^div_down;
+            if (check_doublon==0){
+                break;
+            }
+            num_up        += div_up;
+            num_down      += div_down;
+        }
+        //[e] counting # of up and down electrons
+          
+        /* eg of even sites: 4site-> |DU|DU || |DU|DU|*/
+        /* eg of odd  sites: 3site-> |DU|D  ||  |U|DU|*/
+        /* all_up   -> # of up   sites in the lower half of bits*/
+        /* all_down -> # of down sites in the lower half of bits*/
+        if (check_doublon==1){
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_up   = (X->Def.Nsite+tmp_res)/2;
+            all_down = (X->Def.Nsite-tmp_res)/2;
+            for(iSpnup=0; iSpnup<= all_up; iSpnup++){
+                tmp_1   = Binomial(all_up,iSpnup,comb,all_up);
+                for(iSpndown=0; iSpndown<= all_down; iSpndown++){
+                    tmp_2   = Binomial(all_down-iSpnup,iSpndown,comb,all_down-iSpnup);
+                    jb     += tmp_1*tmp_2;
+                }
+            }
+        }
+    }
+    free_li_2d_allocate(comb);
+    /*[e] this part can not be parallelized*/
+}
+

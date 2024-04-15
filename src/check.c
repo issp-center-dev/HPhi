@@ -51,7 +51,7 @@
 int check(struct BindStruct *X){
     
   FILE *fp;
-  long unsigned int i,tmp_sdim;
+  long unsigned int i,j,tmp_sdim;
   int NLocSpn,NCond,Nup,Ndown;
   long unsigned int u_tmp;
   long unsigned int tmp;
@@ -130,6 +130,37 @@ int check(struct BindStruct *X){
       comb_sum +=comb_up*comb_down;
     }
     break;
+
+  case tJ:
+    comb_up   = Binomial(Ns, X->Def.Nup, comb, Ns);
+    comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
+    comb_sum  = comb_up*comb_down;
+    break;
+
+  case tJNConserved:
+    comb_sum=0;
+    if(X->Def.Ne > X->Def.Nsite){
+      iMinup = X->Def.Ne-X->Def.Nsite;
+      iAllup = X->Def.Nsite;
+    }
+
+    for(i=iMinup; i<= iAllup; i++){
+      comb_up   = Binomial(Ns, i, comb, Ns);
+      comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns-i);
+      comb_sum += comb_up*comb_down;
+    }
+    break;
+
+  case tJGC:
+    comb_sum=0;
+    for(i=0; i<= X->Def.Ne; i++){
+      comb_up   = Binomial(Ns, i, comb, Ns);
+      for(j=0; j<= X->Def.Ne; j++){
+        comb_down = Binomial(Ns-i, j, comb, Ns-i);
+        comb_sum += comb_up*comb_down;
+      }
+    }
+    break;
     
   case Kondo:
     //idim_max
@@ -195,7 +226,6 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
-
     if(X->Def.iFlgGeneralSpin ==FALSE){
       if(X->Def.Nup+X->Def.Ndown != X->Def.Nsite){
         fprintf(stderr, " 2Sz is incorrect.\n");

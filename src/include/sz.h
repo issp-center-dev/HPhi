@@ -26,15 +26,25 @@ int omp_sz(
     long unsigned int *list_jb_
 );
 
+int omp_tJ(
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
+
 int omp_sz_hacker(
-                 long unsigned int ib, 
-                 long unsigned int ihfbit,
-                 struct BindStruct *X,
-         long unsigned int *list_1_,
-         long unsigned int *list_2_1_,
-         long unsigned int *list_2_2_,
-         long unsigned int *list_jb_
-                 );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
 
 int omp_sz_Kondo(
     long unsigned int ib, 
@@ -57,35 +67,35 @@ int omp_sz_KondoNConserved(
 );
 
 int omp_sz_KondoGC(
-                      long unsigned int ib, 
-                      long unsigned int ihfbit,
-                      struct BindStruct *X,
-              long unsigned int *list_1_,
-              long unsigned int *list_2_1_,
-              long unsigned int *list_2_2_,
-              long unsigned int *list_jb_
-                         );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
 
 int omp_sz_spin(
-                      long unsigned int ib, 
-                      long unsigned int ihfbit,
-                      unsigned int N, 
-                      struct BindStruct *X,
-              long unsigned int *list_1_,
-              long unsigned int *list_2_1_,
-              long unsigned int *list_2_2_,
-              long unsigned int *list_jb_
-                      );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    unsigned int N, 
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_
+);
 
 int omp_sz_spin_hacker(
-                      long unsigned int ib, 
-                      long unsigned int ihfbit,
-                      unsigned int N, 
-                      struct BindStruct *X,
-              long unsigned int *list_1_,
-              long unsigned int *list_2_1_,
-              long unsigned int *list_2_2_,
-              long unsigned int *list_jb_      
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    unsigned int N, 
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long unsigned int *list_jb_      
 );
 
 int omp_sz_Kondo_hacker(
@@ -100,30 +110,30 @@ int omp_sz_Kondo_hacker(
 
 
 int omp_sz_GeneralSpin(
-              long unsigned int ib, 
-              long unsigned int ihfbit,
-              struct BindStruct *X,
-              long unsigned int *list_1_,
-              long unsigned int *list_2_1_,
-              long unsigned int *list_2_2_,
-              long int *list_2_1_Sz_,
-              long int *list_2_2_Sz_,
-              long unsigned int *list_jb_
-              );
+    long unsigned int ib, 
+    long unsigned int ihfbit,
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_,
+    long int *list_2_1_Sz_,
+    long int *list_2_2_Sz_,
+    long unsigned int *list_jb_
+);
 
 long int Binomial(
-         int n,
-         int k,
-         long int **comb,
-         int Nsite
-         );
+    int n,
+    int k,
+    long int **comb,
+    int Nsite
+);
 
 int sz(
-       struct BindStruct *X,
-       long unsigned int *list_1_,
-       long unsigned int *list_2_1_,
-       long unsigned int *list_2_2_
-       );
+    struct BindStruct *X,
+    long unsigned int *list_1_,
+    long unsigned int *list_2_1_,
+    long unsigned int *list_2_2_
+);
 
 int Read_sz(
     struct BindStruct *X,
@@ -147,4 +157,7 @@ void calculate_jb_Hubbard(struct BindStruct *X,long unsigned int *list_jb, long 
 void calculate_jb_Hubbard_Hacker(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
 void calculate_jb_HubbardNCoserved(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
 void calculate_jb_HubbardNCoserved_Hacker(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_tJ(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_tJNConserved(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
+void calculate_jb_tJGC(struct BindStruct *X,long unsigned int *list_jb, long unsigned int ihfbit, unsigned int N2);
 /*[e] func. for refactoring */

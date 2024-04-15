@@ -27,17 +27,20 @@
 #define cTPQ 5 /*!< CalcType is canonical TPQ*/
 
 /*!< CalcModel */
-#define NUM_CALCMODEL 6 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
-#define Hubbard 0 /*!< CalcModel is Hubbard model.*/
-#define Spin 1 /*!< CalcModel is Spin system.*/
-#define Kondo 2 /*!< CalcModel is Kondo model.*/
-#define HubbardGC 3 /*!< CalcModel is GrandCanonical Hubbard model.*/
-#define SpinGC 4 /*!< CalcModel is GrandCanonical Spin system.*/
-#define KondoGC 5 /*!< CalcModel is GrandCanonical Kondo model.*/
-#define HubbardNConserved 6 /*!< CalcModel is Hubbard model under particle number conserved. This symmetry is automatically introduced by not defining 2Sz in a modpara file.*/
-#define SpinlessFermion 7 /*!< CalcModel is GrandCanonical Spinless fermion model.*/
-#define SpinlessFermionGC 8 /*!< CalcModel is GrandCanonical Spinless fermionGC model.*/
-#define KondoNConserved 20 /*!< CalcModel is Kondo model under particle number conserved.*/
+#define NUM_CALCMODEL     12 /*!< Number of model types defined by CalcModel in calcmodfile. Note: HubbardNConserved is not explicitly defined in calcmod file and thus not counted. SpinlessFermion and SpinlessFermionGC are not yet supported*/
+#define Hubbard           0  /*!< CalcModel is Hubbard model.*/
+#define Spin              1  /*!< CalcModel is Spin system.*/
+#define Kondo             2  /*!< CalcModel is Kondo model.*/
+#define HubbardGC         3  /*!< CalcModel is GrandCanonical Hubbard model.*/
+#define SpinGC            4  /*!< CalcModel is GrandCanonical Spin system.*/
+#define KondoGC           5  /*!< CalcModel is GrandCanonical Kondo model.*/
+#define HubbardNConserved 6  /*!< CalcModel is Hubbard model under particle number conserved. This symmetry is automatically introduced by not defining 2Sz in a modpara file.*/
+#define SpinlessFermion   7  /*!< CalcModel is GrandCanonical Spinless fermion model.*/
+#define SpinlessFermionGC 8  /*!< CalcModel is GrandCanonical Spinless fermionGC model.*/
+#define tJ                9  /*!< CalcModel is Canonical      tJ model.*/
+#define tJGC              10 /*!< CalcModel is GrandCanonical tJ model.*/
+#define tJNConserved      11 /*!< CalcModel is Canonical  w/o Sz conservation  tJ model*/
+#define KondoNConserved   12 /*!< CalcModel is Kondo model under particle number conserved.*/
 
 /*!< OutputMode */
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/
