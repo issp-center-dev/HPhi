@@ -296,6 +296,9 @@ int setmem_large
       case Kondo:
       case KondoNConserved:
       case KondoGC:
+      case tJ:
+      case tJNConserved:
+      case tJGC:
         if (X->Def.iFlgGeneralSpin == FALSE) {
           if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
             X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;

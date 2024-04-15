@@ -41,6 +41,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
   case Kondo:
   case KondoNConserved:
   case KondoGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
 
     /**@brief
      <li> For Hubbard & Kondo
@@ -79,6 +82,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
 
     case Hubbard:
+    case tJ:
       /**@brief
       <li>For canonical Hubbard
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -106,6 +110,8 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       break;/*case Hubbard:*/
 
     case HubbardNConserved:
+    case tJNConserved:
+    case tJGC:/*is this correct?*/
       /**@brief
       <li>For N-conserved canonical Hubbard
       DefineList::Ne should be differerent in each PE.</li>
@@ -319,11 +325,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     fprintf(stdoutMPI, "    Site    Bit\n");
     for (isite = 0; isite < X->Def.Nsite; isite++) {
       switch (X->Def.iCalcModel) {
-        case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
+        case HubbardGC:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
 
           fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
               break;
@@ -347,11 +357,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     fprintf(stdoutMPI, "    Site    Bit\n");
     for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
       switch (X->Def.iCalcModel) {
-        case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
+        case HubbardGC:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
 
           fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
               break;
@@ -405,11 +419,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
        as a binary (excepting general spin) format.
       */
       switch (X->Def.iCalcModel) {
-        case HubbardGC: /****************************************************/
         case Hubbard:
         case HubbardNConserved:
+        case HubbardGC: /****************************************************/
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
 
           SmallDim = iproc;
               for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
@@ -467,11 +485,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     affected by the number of processes.
   */
   switch (X->Def.iCalcModel) {
-  case HubbardGC: /****************************************************/
   case Hubbard:
   case HubbardNConserved:
+  case HubbardGC: /****************************************************/
   case Kondo:
+  case KondoNConserved:
   case KondoGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
 
     X->Def.Tpow[2 * X->Def.Nsite] = 1;
     for (isite = 2 * X->Def.Nsite + 1; isite < 2 * X->Def.NsiteMPI; isite++)

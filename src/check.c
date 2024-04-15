@@ -273,6 +273,9 @@ int check(struct BindStruct *X){
         case Kondo:
         case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
@@ -289,6 +292,9 @@ int check(struct BindStruct *X){
         case Kondo:
         case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
@@ -306,6 +312,9 @@ int check(struct BindStruct *X){
         case Kondo:
         case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));

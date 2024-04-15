@@ -422,13 +422,16 @@ int sz(
               TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzFinish, "a");
               TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
           }
-
+          /* NConserved -> Normal */
           if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
-              if(X->Def.iCalcModel==HubbardNConserved){
-                  X->Def.iCalcModel=Hubbard;
+              if(X->Def.iCalcModel  == HubbardNConserved){
+                  X->Def.iCalcModel =  Hubbard;
               }
-              if(X->Def.iCalcModel==KondoNConserved){
-                  X->Def.iCalcModel=Hubbard;
+              if(X->Def.iCalcModel  == KondoNConserved){
+                  X->Def.iCalcModel  = Kondo;
+              }
+              if(X->Def.iCalcModel  == tJNConserved){
+                  X->Def.iCalcModel  = tJ;
               }
           }
   

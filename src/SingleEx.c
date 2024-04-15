@@ -41,9 +41,11 @@ int GetSingleExcitedState(
     iret = GetSingleExcitedStateHubbardGC(X, tmp_v0, tmp_v1);
     break;
 
-  case KondoGC:
   case Hubbard:
   case Kondo:
+  case KondoGC:
+  case tJ:
+  case tJGC:
     iret = GetSingleExcitedStateHubbard(X, tmp_v0, tmp_v1);
     break;
 

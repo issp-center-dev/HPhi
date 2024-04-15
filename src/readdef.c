@@ -848,6 +848,7 @@ int ReadDefFileNInt(
   switch(X->iCalcModel){
   case Spin:
   case Hubbard:
+  case tJ:
   case Kondo: 
   case SpinlessFermion:
    
@@ -870,13 +871,20 @@ int ReadDefFileNInt(
           X->Nup/=2;
           X->Ndown/=2;
         }else{
-          if(X->iCalcModel == Hubbard){
+          if(X->iCalcModel == Hubbard ){
             X->Ne=X->NCond;
             if(X->Ne <1){
               fprintf(stdoutMPI, "Ncond is incorrect.\n");
               return(-1);
             }
             X->iCalcModel=HubbardNConserved;
+          }else if(X->iCalcModel == tJ ){
+            X->Ne=X->NCond;
+            if(X->Ne <1){
+              fprintf(stdoutMPI, "Ncond is incorrect.\n");
+              return(-1);
+            }
+            X->iCalcModel=tJNConserved;
           }else if(X->iCalcModel == Kondo){
             X->Ne=X->NCond + X->NLocSpn;
             if(X->Ne <1){
@@ -936,6 +944,7 @@ int ReadDefFileNInt(
   case SpinGC:
   case KondoGC:
   case HubbardGC:
+  case tJGC:
   case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
@@ -2483,9 +2492,13 @@ int GetDiagonalInterAll
       switch(iCalcModel){
         case Hubbard:
         case HubbardNConserved:
-        case Kondo:
-        case KondoGC:
         case HubbardGC:
+        case Kondo:
+        case KondoNConserved:
+        case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
           if(isigma1 == isigma2 && isigma3 == isigma4){
             for(tmp_i=0; tmp_i<8; tmp_i++){
               InterAllOffDiagonal[icnt_offdiagonal][tmp_i]=InterAll[i][tmp_i];
@@ -2734,6 +2747,9 @@ int CheckLocSpin
   case Hubbard:
   case HubbardNConserved:
   case HubbardGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
   case SpinlessFermion:
   case SpinlessFermionGC:
     for(i=0; i<X->Nsite; i++){
