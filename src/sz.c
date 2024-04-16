@@ -602,7 +602,7 @@ int omp_sz_tJ(
           div_down  = i & X->Def.Tpow[2*j+1];
           div_down  = div_down/X->Def.Tpow[2*j+1];
           check_doublon = div_up*div_down;
-          if (check_doublon==0){
+          if (check_doublon==1){
             break;
           }
           num_up   += div_up;
@@ -2176,7 +2176,7 @@ void calculate_jb_tJNConserved(struct BindStruct *X,long unsigned int *list_jb, 
 
             for(iSpnup=iMinup; iSpnup<= iAllup; iSpnup++){
                 tmp_1    = Binomial(all_up,iSpnup-num_up,comb,all_up);
-                tmp_2    = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-(iSpnup+num_down),comb,all_down-(iSpnup-num_up));/* tJ all_down-(iSpnup-num_up)*/
+                tmp_2    = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-(iSpnup+num_down),comb,all_down);/* tJ all_down-(iSpnup-num_up)*/
                 jb      += tmp_1*tmp_2;
             }
         }
