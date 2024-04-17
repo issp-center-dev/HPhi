@@ -129,6 +129,7 @@ int check(struct BindStruct *X){
       comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
       comb_sum +=comb_up*comb_down;
     }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
     break;
 
   case tJ:
@@ -146,9 +147,10 @@ int check(struct BindStruct *X){
 
     for(i=iMinup; i<= iAllup; i++){
       comb_up   = Binomial(Ns, i, comb, Ns);
-      comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns-i);
+      comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
       comb_sum += comb_up*comb_down;
     }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
     break;
 
   case tJGC:
@@ -156,7 +158,7 @@ int check(struct BindStruct *X){
     for(i=0; i<= X->Def.Ne; i++){
       comb_up   = Binomial(Ns, i, comb, Ns);
       for(j=0; j<= X->Def.Ne; j++){
-        comb_down = Binomial(Ns-i, j, comb, Ns-i);
+        comb_down = Binomial(Ns-i, j, comb, Ns);
         comb_sum += comb_up*comb_down;
       }
     }
@@ -413,6 +415,9 @@ int check(struct BindStruct *X){
   case Hubbard:
   case Kondo:
   case KondoNConserved:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
     //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;

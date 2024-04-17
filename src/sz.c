@@ -122,7 +122,6 @@ int sz(
     fprintf(stdoutMPI, "%s", cProStartCalcSz);
     TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
     TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
-
     if(X->Check.idim_max!=0){
         /*[s] calculating the maximum size of Hilbert dimensions*/
         switch(X->Def.iCalcModel){
@@ -344,7 +343,6 @@ int sz(
                       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
                       icnt = 0;
                       for(ib=0;ib<X->Check.sdim;ib++){
-                          //printf("ib=%lu jb=list_jb[ib]=%lu \n",ib,list_jb[ib]);
                           icnt += omp_sz_tJ(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
                       break;
@@ -424,6 +422,9 @@ int sz(
               TimeKeeper(X, cFileNameTimeKeep, cOMPSzFinish, "a");
           }
           /* NConserved -> Normal */
+          // this part is move to the ene of sz.c so that this change is made even 
+          // when idim_max=0
+          /*
           if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
               if(X->Def.iCalcModel  == HubbardNConserved){
                   X->Def.iCalcModel =  Hubbard;
@@ -435,7 +436,7 @@ int sz(
                   X->Def.iCalcModel  = tJ;
               }
           }
-  
+          */
           //Error message
           if(i_max!=X->Check.idim_max){
             //printf("DDD %lu %lu  \n",i_max, X->Check.idim_max);
@@ -449,15 +450,29 @@ int sz(
             fclose(fp_err);
             exitMPI(-1);
           }
-
           free_li_2d_allocate(comb);
     }
     fprintf(stdoutMPI, "%s", cProEndCalcSz);
     free(list_jb);
+
+    /* NConserved -> Normal */
+    if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
+        if(X->Def.iCalcModel  == HubbardNConserved){
+            X->Def.iCalcModel =  Hubbard;
+        }
+        if(X->Def.iCalcModel  == KondoNConserved){
+            X->Def.iCalcModel  = Kondo;
+        }
+        if(X->Def.iCalcModel  == tJNConserved){
+            X->Def.iCalcModel  = tJ;
+        }
+    }
+
     if(X->Def.iFlgGeneralSpin==TRUE){
         free(list_2_1_Sz);
         free(list_2_2_Sz);
     }
+    BarrierMPI();
     return 0;    
 }
 

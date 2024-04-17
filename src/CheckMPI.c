@@ -82,7 +82,6 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
 
     case Hubbard:
-    case tJ:
       /**@brief
       <li>For canonical Hubbard
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -109,9 +108,33 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 
       break;/*case Hubbard:*/
 
+    case tJ:
+      /**@brief
+      <li>For canonical Hubbard
+      DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
+      differerent in each PE.</li>
+      */
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 1 /*01*/) {
+          X->Def.Nup -= 1;
+          X->Def.Ne -= 1;
+        }
+        else if (SpinNum == 2 /*10*/) {
+          X->Def.Ndown -= 1;
+          X->Def.Ne -= 1;
+        }
+        /*else if (SpinNum == 3 //11){
+          X->Def.Nup -= 1;
+          X->Def.Ndown -= 1;
+          X->Def.Ne -= 2;
+        }*/
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+      break;/*case tJ:*/
+
     case HubbardNConserved:
-    case tJNConserved:
-    case tJGC:/*is this correct?*/
       /**@brief
       <li>For N-conserved canonical Hubbard
       DefineList::Ne should be differerent in each PE.</li>
@@ -124,6 +147,21 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
         else if (SpinNum == 3 /*11*/) X->Def.Ne -= 2;
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
+      break; /*case HubbardNConserved:*/
+
+    case tJNConserved:
+    case tJGC:/*is this correct?*/
+      /**@brief
+      <li>For N-conserved canonical Hubbard
+      DefineList::Ne should be differerent in each PE.</li>
+      */
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 1 /*01*/ || SpinNum == 2 /*10*/) X->Def.Ne -= 1;
+        //else if (SpinNum == 3 /*11*/) X->Def.Ne -= 2;
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       break; /*case HubbardNConserved:*/
 
     case KondoGC:
