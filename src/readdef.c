@@ -1861,24 +1861,53 @@ int ReadDefFileIdxPara(
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx] = icnt_diagonal;
             X->NTEInterAllOffDiagonal[idx] = icnt_interall - icnt_diagonal;
-            //Diagonal -> OffDiagonal -> search pair -> hermite
-            if (GetDiagonalInterAll(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
-                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
-            {
-              fclose(fp);
-              return (-1);
-            }
 
-            if(CheckInterAllHermite(
-                    X->TEInterAll[idx], X->ParaTEInterAll[idx],
-                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
-                    X->NTEInterAllOffDiagonal[idx], X->iCalcModel
-            )!=0) {
-              fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
-              fclose(fp);
-              return (-1);
-            }
-            idx++;
+            //Diagonal -> OffDiagonal -> search pair -> hermite
+//            if (GetDiagonalInterAll(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
+//                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
+//            {
+//              fclose(fp);
+//              return (-1);
+//            }
+//
+//            if(CheckInterAllHermite(
+//                    X->TEInterAll[idx], X->ParaTEInterAll[idx],
+//                    X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
+//                    X->NTEInterAllOffDiagonal[idx], X->iCalcModel
+//            )!=0) {
+//              fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
+//              fclose(fp);
+//              return (-1);
+//            }
+//            idx++;
+//          }
+
+              if (GetDiagonalInterAll_simple(X->TEInterAll[idx], X->ParaTEInterAll[idx], X->NTEInterAll[idx], X->TEInterAllDiagonal[idx], X->ParaTEInterAllDiagonal[idx],
+                                      X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx], X->TEChemi[idx], X->SpinTEChemi[idx], X->ParaTEChemi[idx], &X->NTEChemi[idx], X->iCalcModel) != 0)
+              {
+                  fclose(fp);
+                  return (-1);
+              }
+
+              if(CheckInterAllHermite_simple(
+                      X->TEInterAll[idx], X->ParaTEInterAll[idx],
+                      X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
+                      X->NTEInterAllOffDiagonal[idx], X->iCalcModel
+              )!=0) {
+                  fprintf(stdoutMPI, "%s", cErrNonHermiteInterAllForAll);
+                  fclose(fp);
+                  return (-1);
+              }
+
+                if(ArrangeInterAllOffDiagonal(
+                        X->NTEInterAllOffDiagonal[idx],
+                        X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
+                        X->iCalcModel
+                )!=0){
+                    fclose(fp);
+                    return(-1);
+                }
+              idx++;
           }
 
           if(idx!=X->NTETimeSteps){
