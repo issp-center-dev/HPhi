@@ -164,8 +164,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       break; /*case HubbardNConserved:*/
 
-    case KondoGC:
     case Kondo:
+    case KondoNConserved:
+    case KondoGC:
       /**@brief
       <li>For canonical Kondo system
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -200,7 +201,32 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
-
+      else if(X->Def.iCalcModel == KondoNConserved){
+        SmallDim = myrank;
+        for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+          SpinNum = SmallDim % 4;
+          SmallDim /= 4;
+          if (X->Def.LocSpn[isite] == ITINERANT) {
+            if (SpinNum == 1 /*01*/) {
+              //X->Def.Nup -= 1;
+              X->Def.Ne -= 1;
+            }
+            else if (SpinNum == 2 /*10*/) {
+              //X->Def.Ndown -= 1;
+              X->Def.Ne -= 1;
+            }
+            else if (SpinNum == 3 /*11*/) {
+              //X->Def.Nup -= 1;
+              //X->Def.Ndown -= 1;
+              X->Def.Ne -= 2;
+            }
+          }
+          else {
+            fprintf(stdoutMPI, "\n Stop because local spin in the inter process region\n");
+            return FALSE;
+          }
+        }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+      }  
       break; /*case KondoGC, Kondo*/
 
     } /*switch (X->Def.iCalcModel) 2(inner)*/
