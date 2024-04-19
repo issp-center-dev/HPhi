@@ -48,10 +48,10 @@ void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *
 with the Lowdin's orthogonalization
 @return the truncated dimension, nsub2
 */
-static int diag_ovrp(
+static int diag_ovrlp(
   int nsub,//!<[in] Original dimension of subspace
   double complex *hsub,//!<[inout] (nsub*nsub) subspace hamiltonian -> eigenvector
-  double complex *ovlp,//!<[inout] (nsub*nsub) Overrap matrix -> @f${\hat O}^{1/2}@f$
+  double complex *ovrlp,//!<[inout] (nsub*nsub) overlap matrix -> @f${\hat O}^{1/2}@f$
   double *eig//!<[out] (nsub) Eigenvalue
 )
 {
@@ -77,9 +77,9 @@ static int diag_ovrp(
   work = cd_1d_allocate(lwork);
 #endif
   /**@brief
-  (1) Compute @f${\hat O}^{-1/2}@f$ with diagonalizing overrap matrix
+  (1) Compute @f${\hat O}^{-1/2}@f$ with diagonalizing overlap matrix
   */
-  zheevd_(&jobz, &uplo, &nsub, ovlp, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
+  zheevd_(&jobz, &uplo, &nsub, ovrlp, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
   /**@brief
   @f[
    {\hat O}^{-1/2} = \left(\frac{|O_1\rangle}{\sqrt{o_1}}, \frac{|O_2\rangle}{\sqrt{o_2}},
@@ -94,21 +94,21 @@ static int diag_ovrp(
   for (isub = 0; isub < nsub; isub++) {
     if (eig[isub] > 1.0e-10) { /*to be changed default 1.0e-14*/
       for (jsub = 0; jsub < nsub; jsub++)
-        ovlp[jsub + nsub*nsub2] = ovlp[jsub + nsub*isub] / sqrt(eig[isub]);
+        ovrlp[jsub + nsub*nsub2] = ovrlp[jsub + nsub*isub] / sqrt(eig[isub]);
       nsub2 += 1;
     }
   }
   for (isub = nsub2; isub < nsub; isub++) 
     for (jsub = 0; jsub < nsub; jsub++)
-      ovlp[jsub + nsub*isub] = 0.0;
+      ovrlp[jsub + nsub*isub] = 0.0;
   /**
   (2) Transform @f${\hat H}'\equiv {\hat O}^{-1/2 \dagger}{\hat H}{\hat O}^{-1/2}@f$.
   @f${\hat H}'@f$ is nsub2*nsub2 matrix.
   */
   transa = 'N';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, hsub, &nsub, ovlp, &nsub, &zero, mat, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, hsub, &nsub, ovrlp, &nsub, &zero, mat, &nsub);
   transa = 'C';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovlp, &nsub, mat, &nsub, &zero, hsub, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrlp, &nsub, mat, &nsub, &zero, hsub, &nsub);
   /**
   (3) Diagonalize @f${\hat H}'@f$. It is the standard eigenvalue problem.
   @f[
@@ -123,7 +123,7 @@ static int diag_ovrp(
   @f]
   */
   transa = 'N';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovlp, &nsub, hsub, &nsub, &zero, mat, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrlp, &nsub, hsub, &nsub, &zero, mat, &nsub);
  // printf("%d %d %15.5f %15.5f %15.5f\n", info, nsub2, eig[0], eig[1], eig[2]);
   for (isub = 0; isub < nsub*nsub; isub++)hsub[isub] = mat[isub];
 
@@ -132,8 +132,11 @@ static int diag_ovrp(
   free_d_1d_allocate(rwork);
   free_i_1d_allocate(iwork);
 
-  return(nsub2);
-}/*void diag_ovrp*/
+  BcastMPI_cv(0, nsub * nsub, hsub);
+  BcastMPI_cv(0, nsub * nsub, ovrlp);
+  BcastMPI_dv(0, nsub, eig);
+  return(BcastMPI_i(0, nsub2));
+}/*void diag_ovrlp*/
 /**@brief
 Compute adaptively shifted preconditionar written in
 S. Yamada, et al., Transactions of JSCES, Paper No. 20060027 (2006).
@@ -359,7 +362,7 @@ int LOBPCG_Main(
   int ii, jj, ie, nsub, stp, nsub_cut, nstate;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/,
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p of Ref.1*/,
-    ****hsub, ****ovlp; /*Subspace Hamiltonian and Overlap*/
+    ****hsub, ****ovrlp; /*Subspace Hamiltonian and Overlap*/
   double *eig, *dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
   char tN = 'N', tC = 'C';
   double complex one = 1.0, zero = 0.0;
@@ -372,7 +375,7 @@ int LOBPCG_Main(
   dnorm = d_1d_allocate(X->Def.k_exct);
   eigsub = d_1d_allocate(nsub);
   hsub = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
-  ovlp = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
+  ovrlp = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
 
   i_max = X->Check.idim_max;
   i4_max = (int)i_max;
@@ -500,7 +503,7 @@ private(idim,precon,ie)
 
     TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     /**@brief
-    <li>Compute subspace Hamiltonian and overrap matrix:
+    <li>Compute subspace Hamiltonian and overlap matrix:
     @f${\hat H}_{\rm sub}=\{{\bf w},{\bf x},{\bf p}\}^\dagger \{{\bf W},{\bf X},{\bf P}\}@f$, 
     @f${\hat O}=\{{\bf w},{\bf x},{\bf p}\}^\dagger \{{\bf w},{\bf x},{\bf p}\}@f$,
     </li>
@@ -508,12 +511,12 @@ private(idim,precon,ie)
     for (ii = 0; ii < 3; ii++) {
       for (jj = 0; jj < 3; jj++) {
         zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
-          &wxp[ii][1][0], &nstate, &wxp[jj][1][0], &nstate, &zero, &ovlp[jj][0][ii][0], &nsub);
+          &wxp[ii][1][0], &nstate, &wxp[jj][1][0], &nstate, &zero, &ovrlp[jj][0][ii][0], &nsub);
         zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
           &wxp[ii][1][0], &nstate, &hwxp[jj][1][0], &nstate, &zero, &hsub[jj][0][ii][0], &nsub);
       }
     }
-    SumMPI_cv(nsub*nsub, &ovlp[0][0][0][0]);
+    SumMPI_cv(nsub*nsub, &ovrlp[0][0][0][0]);
     SumMPI_cv(nsub*nsub, &hsub[0][0][0][0]);
 
     for (ie = 0; ie < X->Def.k_exct; ie++)
@@ -523,7 +526,7 @@ private(idim,precon,ie)
         generalized eigenvalue problem: @f${\hat H}_{\rm sub}{\bf v}={\hat O}\mu_{\rm sub}{\bf v}@f$,
         @f${\bf v}=(\alpha, \beta, \gamma)@f$</li>
     */
-    nsub_cut = diag_ovrp(nsub, &hsub[0][0][0][0], &ovlp[0][0][0][0], eigsub);
+    nsub_cut = diag_ovrlp(nsub, &hsub[0][0][0][0], &ovrlp[0][0][0][0], eigsub);
     /**@brief
     <li>Update @f$\mu=(\mu+\mu_{\rm sub})/2@f$</li>
     */
@@ -604,7 +607,7 @@ private(idim,precon,ie)
   free_d_1d_allocate(dnorm);
   free_d_1d_allocate(eigsub);
   free_cd_4d_allocate(hsub);
-  free_cd_4d_allocate(ovlp);
+  free_cd_4d_allocate(ovrlp);
   free_cd_3d_allocate(hwxp);
   /**@brief
   <li>Output resulting vectors for restart</li>

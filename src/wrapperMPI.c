@@ -313,6 +313,50 @@ unsigned long int BcastMPI_li(
   return(idim0);
 }/*unsigned long int BcastMPI_li*/
 /**
+@brief MPI wrapper function to broadcast integer across processes.
+@return Broadcasted value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+int BcastMPI_i(
+  int root,//!<[in] The source process of the broadcast
+  int nsub//!<[in] Value to be broadcasted
+) {
+  int nsub0;
+  nsub0 = nsub;
+#ifdef MPI
+  MPI_Bcast(&nsub0, 1, MPI_INT, root, MPI_COMM_WORLD);
+#endif
+  return(nsub0);
+}/*int BcastMPI_i*/
+/**
+@brief MPI wrapper function to broadcast double precision vector.
+       And store it in place.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void BcastMPI_dv(
+  int root,//!<[in] The source process of the broadcast
+  int nlen,//!<[in] Length of broadcasted vector
+  double *vector//!<[inout] Broadcasted vector
+) {
+#ifdef MPI
+  MPI_Bcast(vector, nlen, MPI_DOUBLE_PRECISION, root, MPI_COMM_WORLD);
+#endif
+}/*void BcastMPI_dv*/
+/**
+@brief MPI wrapper function to broadcast double complex vector.
+       And store it in place.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+void BcastMPI_cv(
+  int root,//!<[in] The source process of the broadcast
+  int nlen,//!<[in] Length of broadcasted vector
+  double complex* vector//!<[inout] Broadcasted vector
+) {
+#ifdef MPI
+  MPI_Bcast(vector, nlen, MPI_DOUBLE_COMPLEX, root, MPI_COMM_WORLD);
+#endif
+}/*void BcastMPI_cv*/
+/**
 @brief Compute norm of process-distributed vector
 @f$|{\bf v}_1|^2@f$
 @return Norm @f$|{\bf v}_1|^2@f$
