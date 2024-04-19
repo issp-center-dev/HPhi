@@ -18,6 +18,11 @@ jobs:
           - os: ubuntu-20.04
             mpisize: 1
             ompsize: 1
+        exclude:
+          - mpisize: 16
+            ompsize: 3
+          - mpisize: 4
+            ompsize: 3
       fail-fast: false
 
     env:
