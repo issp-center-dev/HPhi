@@ -2815,6 +2815,7 @@ int ArrangeInterAllOffDiagonal
             case Hubbard:
             case HubbardNConserved:
             case Kondo:
+            case KondoNConserved:
             case KondoGC:
             case HubbardGC:
                 if (isigma1 == isigma2 && isigma3 == isigma4) {
@@ -3339,7 +3340,8 @@ int CheckInterAllCondition(
       return -1;
     }
   }
-  else if(iCalcModel == Kondo){
+  //else if(iCalcModel == Kondo){
+  else if(iCalcModel == Kondo || iCalcModel == KondoNConserved){
     if(CheckFormatForKondoInt(isite1, isite2, isite3, isite4, iLocInfo)!=0){
       return -1;
     }
