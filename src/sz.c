@@ -311,7 +311,7 @@ int sz(
                           icnt+=omp_sz_KondoNConserved(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
                       BarrierMPI();
-                      printf("AAA icnt=%ld\n",icnt);
+                      //printf("AAA icnt=%ld\n",icnt);
                       break;
                   case Kondo:
                       calculate_jb_Kondo(X, list_jb,ihfbit);
@@ -922,36 +922,68 @@ int omp_sz_KondoNConserved(
     if(X->Def.LocSpn[j] == ITINERANT){
       num_up   += div_up;        
       num_down += div_down;  
+    }else{    
+      num_up   += div_up;        
+      num_down += div_down;
+      if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+        icheck_loc= icheck_loc;
+      }
+      else{
+        icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
+      }
     }
   }
-  
-  ja=1;
-  //printf("DEBUG: num_up %d num_down %d Ne %d NLocSpn %d \n",num_up,num_down,X->Def.Ne,X->Def.NLocSpn);
-  if(num_up+num_down == X->Def.Ne-X->Def.NLocSpn){
-      for(ia=0;ia<X->Check.sdim;ia++){
-          i=ia;
-          num_up   =  0;
-          num_down =  0;
-          icheck_loc=1;
-          //for(j=0;j<(X->Def.Nsite+1)/2;j++){ /* is this correct?*/
-          for(j=0;j<(X->Def.Nsite)/2;j++){ /*we assume local spins exist i<X->Def.Nsite/2, X->Def.Nsite should be a even number.*/
-              div_up    = i & X->Def.Tpow[2*j];
-              div_up    = div_up/X->Def.Tpow[2*j];
-              div_down  = i & X->Def.Tpow[2*j+1];
-              div_down  = div_down/X->Def.Tpow[2*j+1];
 
-              if (div_up^div_down == 0){
-                  icheck_loc = 0; /* if double occupied site exists, break!*/
-              }
+  ja=1;
+  tmp_num_up   = num_up;
+  tmp_num_down = num_down;
+  if(icheck_loc ==1){
+    for(ia=0;ia<X->Check.sdim;ia++){
+      i        =  ia;
+      num_up   =  tmp_num_up;
+      num_down =  tmp_num_down;
+      icheck_loc=1;
+      for(j=0;j<(X->Def.Nsite+1)/2;j++){
+        div_up    = i & X->Def.Tpow[2*j];
+        div_up    = div_up/X->Def.Tpow[2*j];
+        div_down  = i & X->Def.Tpow[2*j+1];
+        div_down  = div_down/X->Def.Tpow[2*j+1];
+
+        if(X->Def.LocSpn[j] ==  ITINERANT){
+          num_up   += div_up;        
+          num_down += div_down;  
+        }else{    
+          num_up   += div_up;        
+          num_down += div_down;  
+          if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){
+            icheck_loc= icheck_loc;
           }
-          if (icheck_loc ==1){
-              list_1_[ja+jb] = ia+ib*ihfbit;
-              list_2_1_[ia]  = ja+1;
-              list_2_2_[ib]  = jb+1;
-              //printf("DEBUG: ja+jb %lu ja %lu jb %lu ia %lu ib %lu\n",ja+jb,ja,jb,ia,ib);
-              ja+=1;
+          else{
+            icheck_loc   = icheck_loc*(div_up^div_down);// exclude doubllly ocupited site
           }
-      }  
+        }
+      }
+      
+      if(icheck_loc == 1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT && X->Def.Nsite%2==1){
+        div_up    = ia & X->Def.Tpow[X->Def.Nsite-1];
+        div_up    = div_up/X->Def.Tpow[X->Def.Nsite-1];
+        div_down  = (ib*ihfbit) & X->Def.Tpow[X->Def.Nsite];
+        div_down  = div_down/X->Def.Tpow[X->Def.Nsite];
+        icheck_loc= icheck_loc*(div_up^div_down);
+      }
+      
+      if(num_up+num_down == X->Def.Ne && icheck_loc==1){
+        list_1_[ja+jb]=ia+ib*ihfbit;
+        /*
+        list_2_1_[ia]=ja;
+        list_2_2_[ib]=jb;
+         */
+        list_2_1_[ia]=ja+1;
+        list_2_2_[ib]=jb+1;
+        //printf("DEBUG: rank=%d, list_1[%d]=%d, list_2_1_[%d]=%d, list_2_2_[%d]=%d\n", myrank, ja+jb, list_1_[ja+jb], ia, list_2_1[ia], ib, list_2_2[ib]);
+        ja+=1;
+      }
+    }
   }
   //printf("XXX ib  %lu ja %lu\n",ib,ja);
   ja=ja-1;    
@@ -1847,7 +1879,7 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
                 all_up   = (X->Def.Nsite)/2-all_loc;
                 all_down = (X->Def.Nsite)/2-all_loc;
             }
-            printf("all_loc %d all_up %d  all_down %d Ne %d Nsite %d\n",all_loc,all_up,all_down,X->Def.Ne,X->Def.Nsite);
+            //printf("all_loc %d all_up %d  all_down %d Ne %d Nsite %d\n",all_loc,all_up,all_down,X->Def.Ne,X->Def.Nsite);
             if (num_up+num_down==X->Def.Ne-all_loc){
                jb       += X->Def.Tpow[all_loc];
             }
