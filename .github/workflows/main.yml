@@ -46,9 +46,13 @@ jobs:
         run: |
           brew install openmpi scalapack
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: pip
         run: |
-          python -m pip install numpy
           python3 -m pip install numpy
 
       - name: make workspace
