@@ -213,7 +213,7 @@ int check(struct BindStruct *X){
       comb_2     = Binomial(NsCond,tmp_Nup,comb,NsCond);
       comb_3     = Binomial(NsCond,NCond-tmp_Nup,comb,NsCond);
       comb_sum  += comb_1*comb_2*comb_3;
-      printf("tmp %ld %ld %ld\n",comb_sum,comb_2,comb_3);
+      //printf("tmp %ld %ld %ld\n",comb_sum,comb_2,comb_3);
     }
     //printf("Ne=%d NLocSpn=%d NsCond %d NCond=%d comb_1=%ld comb_2=%ld comb_3=%ld comb_sum=%ld\n",X->Def.Ne,NLocSpn,NsCond,NCond,comb_1,comb_2,comb_3,comb_sum);
     break;

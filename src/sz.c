@@ -309,9 +309,9 @@ int sz(
                       shared(list_1_, list_2_1_, list_2_2_, list_jb)
                       for(ib=0;ib<X->Check.sdim;ib++){
                           icnt+=omp_sz_KondoNConserved(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
-                          //printf("ib = %ld icnt =%ld \n",ib,icnt);
                       }
-                      //printf("AAA icnt=%ld\n",icnt);
+                      BarrierMPI();
+                      printf("AAA icnt=%ld\n",icnt);
                       break;
                   case Kondo:
                       calculate_jb_Kondo(X, list_jb,ihfbit);
@@ -439,7 +439,7 @@ int sz(
           */
           //Error message
           if(i_max!=X->Check.idim_max){
-            //printf("DDD %lu %lu  \n",i_max, X->Check.idim_max);
+            //printf("DDD %d %lu %lu  \n",i_max, X->Check.idim_max);
             fprintf(stderr, "%s", cErrSz);
             fprintf(stderr, cErrSz_ShowDim, i_max, X->Check.idim_max);
             strcpy(sdt_err,cFileNameErrorSz);
@@ -1797,7 +1797,6 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
     int all_cond,all_cond_up,all_cond_down,num_cond;
 
     Ne   = X->Def.Ne;
-    //printf("DEBUG Ne %d\n",X->Def.Ne);
             
     jb      = 0;
     num_loc = 0;
@@ -1810,10 +1809,53 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
     all_loc     = X->Def.NLocSpn;
     for(ib=0;ib<X->Check.sdim;ib++){ //sdim = 2^(N/2)
         list_jb[ib] = jb;
-        //printf("DEBUG ib %lu jb %lu %lu Ne %d\n",ib,jb,X->Large.SizeOflistjb,X->Def.Ne);
         i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
-        //printf("DEBUG num_loc %lu %d i=%lu %lu\n",ib,X->Def.Nsite,i,ihfbit);
+        num_up      = 0;
+        num_down    = 0;
+        icheck_loc  = 1;
             
+        for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
+            div_up    = i & X->Def.Tpow[2*j];
+            div_up    = div_up/X->Def.Tpow[2*j];
+            div_down  = i & X->Def.Tpow[2*j+1];
+            div_down  = div_down/X->Def.Tpow[2*j+1];
+            if(X->Def.LocSpn[j] == ITINERANT){
+                num_up   += div_up;        
+                num_down += div_down;  
+            }else{    
+                /*this part may not be used*/
+                num_up   += div_up;     
+                num_down += div_down;
+                if(X->Def.Nsite%2==1 && j==(X->Def.Nsite/2)){ // odd site
+                    icheck_loc  = icheck_loc;
+                    ihfSpinDown = div_down;
+                    if(div_down ==0){
+                        num_up += 1;
+                    }
+                }else{
+                    icheck_loc   = icheck_loc*(div_up^div_down);// exclude empty or doubly occupied site
+                }
+            }
+        }
+            
+        if(icheck_loc == 1){ // itinerant of local spins without holon or doublon
+            tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
+            all_loc  = X->Def.NLocSpn-num_loc; // # of local spins
+            all_up   = (X->Def.Nsite+tmp_res)/2-all_loc;
+            all_down = (X->Def.Nsite-tmp_res)/2-all_loc;
+            if(X->Def.Nsite%2==1 && X->Def.LocSpn[X->Def.Nsite/2] != ITINERANT){
+                all_up   = (X->Def.Nsite)/2-all_loc;
+                all_down = (X->Def.Nsite)/2-all_loc;
+            }
+            printf("all_loc %d all_up %d  all_down %d Ne %d Nsite %d\n",all_loc,all_up,all_down,X->Def.Ne,X->Def.Nsite);
+            if (num_up+num_down==X->Def.Ne-all_loc){
+               jb       += X->Def.Tpow[all_loc];
+            }
+        }
+    }
+/*           
+        list_jb[ib] = jb;
+        i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
         num_up      = 0;
         num_down    = 0;
         for(j=X->Def.Nsite/2; j< X->Def.Nsite ;j++){
@@ -1830,7 +1872,7 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
         if (num_up+num_down==X->Def.Ne-all_loc){
             jb       += X->Def.Tpow[all_loc];
         }
-    }
+*/
 }
 
 void calculate_jb_KondoGC(struct BindStruct *X, int num_loc, long unsigned int *list_jb, long unsigned int ihfbit){
