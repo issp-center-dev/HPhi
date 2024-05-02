@@ -408,6 +408,93 @@ int mltplySpinGC(
 
   return iret;
 }/*int mltplySpinGC*/
+
+/**
+@brief Driver function for General Spin Hamiltonian (grandcanonical)
+@return error code
+@author Takahiro Misawa (The University of Tokyo)
+*/
+void mltplyGeneralSpinGC_mini(
+  struct BindStruct *X,//!<[inout]
+  int site_i,
+  int spin_i,
+  int site_j,
+  int spin_j,
+  double complex *tmp_v0,//!<[inout] Result vector
+  double complex *tmp_v1//!<[in] Input producted vector
+) {
+  long unsigned int j;
+  long unsigned int i;
+  long unsigned int off = 0;
+  long unsigned int tmp_off = 0;
+  long unsigned int isite1, isite2, sigma1, sigma2;
+  long unsigned int sigma3, sigma4;
+  double complex dam_pr;
+  double complex tmp_trans;
+  long int tmp_sgn;
+  double num1 = 0;
+  /*[s] For InterAll */
+  double complex tmp_V;
+  double complex dmv=0;
+  /*[e] For InterAll */
+
+  long unsigned int i_max;
+  i_max = X->Check.idim_max;
+
+  int ihermite=0;
+  int idx=0;
+
+  StartTimer(510);
+  //for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+    isite1    = site_i + 1;
+    isite2    = site_j + 1;
+    sigma1    = spin_i;
+    sigma2    = spin_j;
+    tmp_trans = 1.0;
+    dam_pr    = 0.0;
+    if (isite1 == isite2) {
+      if (sigma1 != sigma2) {
+        if (isite1 > X->Def.Nsite) {
+          dam_pr = child_GC_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+          //X->Large.prdct += dam_pr;
+        }/*if (isite1 > X->Def.Nsite)*/
+        else {
+          //for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+
+            isite1    = site_i + 1;
+            isite2    = site_j + 1;
+            sigma1    = spin_i;
+            sigma2    = spin_j;
+            tmp_trans = 1.0;
+            // transverse magnetic field
+            //dam_pr = 0.0;
+            #pragma omp parallel for default(none) reduction(+:dam_pr) \
+            private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) \
+            shared(tmp_v0, tmp_v1)
+            for (j = 1; j <= i_max; j++) {
+              num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+              if (num1 != 0) { // for multply
+                tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
+                //dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
+              }/*if (num1 != 0)*/
+            }/*for (j = 1; j <= i_max; j++)*/
+            //X->Large.prdct += dam_pr;
+          //}/*for (ihermite = 0; ihermite<2; ihermite++)*/
+        }
+      }// sigma1 != sigma2          
+      else{ // sigma1 = sigma2
+        fprintf(stderr, "Error: Transverse_Diagonal component must be absorbed !");
+      }
+    }//isite1 = isite2
+    //else { // isite1 != isite2
+      // hopping is not allowed in localized spin system
+    //  return -1;
+    //}
+  //}/*for (i = 0; i < X->Def.EDNTransfer; i += 2)*/
+  StopTimer(510);
+}
+
 /**
 @brief Driver function for Spin 1/2 Hamiltonian (grandcanonical)
 @return error code
