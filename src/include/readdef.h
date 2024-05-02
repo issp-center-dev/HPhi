@@ -91,6 +91,17 @@ int CheckInterAllHermite
         const int iCalcModel
 );
 
+int CheckInterAllHermite_simple
+        (
+                int **InterAll,
+                double complex* ParaInterAll,
+                int **InterAllOffDiagonal,
+                double complex*ParaInterAllOffDiagonal,
+                const int NInterAllOffDiagonal,
+                const int iCalcModel
+        );
+
+
 /*
 int GetDiagonalInterAll
 (
@@ -113,6 +124,30 @@ int GetDiagonalInterAll
                                 unsigned int *NChemi,
                                 const int iCalcModel
                 );
+
+int GetDiagonalInterAll_simple
+        (
+                int **InterAll,
+                complex double *ParaInterAll,
+                const int NInterAll,
+                int **InterAllDiagonal,
+                double *ParaInterAllDiagonal,
+                int **InterAllOffDiagonal,
+                complex double *ParaInterAllOffDiagonal,
+                int *Chemi,
+                int *SpinChemi,
+                double *ParaChemi,
+                unsigned int *NChemi,
+                const int iCalcModel
+        );
+
+int ArrangeInterAllOffDiagonal
+(
+ const int NInterAllOffDiagonal,
+ int **InterAllOffDiagonal,
+ complex double *ParaInterAllOffDiagonal,
+ const int iCalcModel
+);
 
 int JudgeDefType
 (
