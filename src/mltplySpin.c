@@ -466,7 +466,6 @@ void mltplyGeneralSpinGC_mini(
             isite2    = site_j + 1;
             sigma1    = spin_i;
             sigma2    = spin_j;
-            tmp_trans = 1.0;
             // transverse magnetic field
             //dam_pr = 0.0;
             #pragma omp parallel for default(none) reduction(+:dam_pr) \
@@ -484,7 +483,17 @@ void mltplyGeneralSpinGC_mini(
         }
       }// sigma1 != sigma2          
       else{ // sigma1 = sigma2
-        fprintf(stderr, "Error: Transverse_Diagonal component must be absorbed !");
+        if (isite1 > X->Def.Nsite) {
+          dam_pr = child_GC_CisAis_GeneralSpin_MPIdouble(isite1 - 1, sigma1, tmp_trans, X, tmp_v0, tmp_v1);
+        }else{
+          // longitudinal magnetic field
+          #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, isite1, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
+          for (j = 1; j <= i_max; j++) {
+            num1       = BitCheckGeneral(j - 1, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
+            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+          }
+        }
+        //fprintf(stderr, "Error: Transverse_Diagonal component must be absorbed !");
       }
     }//isite1 = isite2
     //else { // isite1 != isite2
