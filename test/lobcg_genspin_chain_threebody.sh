@@ -5,7 +5,8 @@ cp  $1/test/GenSpinThreeBody.py ./lobcg_genspin_chain_threebody
 cd  ./lobcg_genspin_chain_threebody
   python3 GenSpinThreeBody.py generate
   ../../src/HPhi -sdry stan.in
-  ${MPIRUN} ../../src/HPhi -e open_namelist.def
+  # ${MPIRUN} ../../src/HPhi -e open_namelist.def
+  ../../src/HPhi -e open_namelist.def
   python3 GenSpinThreeBody.py aft
 
 cat > reference.dat <<EOF
