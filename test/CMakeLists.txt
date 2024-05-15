@@ -262,8 +262,8 @@ add_test(
 #three body for spin 1 Heisenberg chain
 #
 add_test(
-  NAME lobcg_genspin_chain_threebody
-  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_genspin_chain_threebody.sh ${CMAKE_SOURCE_DIR}
+  NAME lobcg_spinone_chain_threebody
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinone_chain_threebody.sh ${CMAKE_SOURCE_DIR}
 )
 
 
