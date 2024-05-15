@@ -836,7 +836,7 @@ int mltplyGeneralSpinGC(
     isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
     sigma1 = X->Def.EDGeneralTransfer[i][1];
     sigma2 = X->Def.EDGeneralTransfer[i][3];
-    tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+    tmp_trans = -X->Def.EDParaGeneralTransfer[i];
     dam_pr = 0.0;
     if (isite1 == isite2) {
       if (sigma1 != sigma2) {
