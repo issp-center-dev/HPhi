@@ -36,11 +36,13 @@ int output(struct BindStruct *X) {
       case Spin:
       case Hubbard:
       case Kondo:
+      case tJ:
         sprintf(sdt, cFileNamePhys_FullDiag, X->Def.CDataFileHead, X->Def.Nup, X->Def.Ndown);
         break;
       case SpinGC:
       case HubbardGC:
       case KondoGC:
+      case tJGC:
         sprintf(sdt, cFileNamePhys_FullDiag_GC, X->Def.CDataFileHead);
         break;
       default:

@@ -180,8 +180,6 @@ int expec_cisajscktaltdc
     fp_4 = fp;
   }
 
-
-
   switch(X->Def.iCalcModel){
   case HubbardGC:
       if(expec_cisajscktalt_HubbardGC(X, vec, &fp)!=0){
@@ -189,9 +187,11 @@ int expec_cisajscktaltdc
       }
     break;
  
-  case KondoGC:
   case Hubbard:
   case Kondo:
+  case KondoGC:
+  case tJ:
+  case tJGC:
       if(expec_cisajscktalt_Hubbard(X, vec, &fp)!=0){
           return -1;
       }
