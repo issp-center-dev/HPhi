@@ -35,6 +35,16 @@ void mltplyHalfSpinGC_mini(
   double complex *tmp_v1//!<[in] Input producted vector
 );
 
+void mltplyGeneralSpinGC_mini(
+  struct BindStruct *X,//!<[inout]
+  int site_i,
+  int spin_i,
+  int site_j,
+  int spin_j,
+  double complex *tmp_v0,//!<[inout] Result vector
+  double complex *tmp_v1//!<[in] Input producted vector
+);
+
 int mltplySpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
 
 int mltplyHalfSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);

@@ -772,6 +772,170 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
 }
 
 /**
+ * @brief Child function to calculate three-body green functions for general Spin GC model
+ *
+ * @param X [in] data list for calculation
+ * @param vec [in] eigenvectors
+ * @param _fp [in] output file name
+ * @retval 0 normally finished
+ * @retval -1 abnormally finished
+ *
+ */
+
+int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp){
+    long unsigned int i,j;
+    long unsigned int org_isite1,org_isite2,org_isite3,org_isite4,org_isite5,org_isite6;
+    long unsigned int org_sigma1,org_sigma2,org_sigma3,org_sigma4,org_sigma5,org_sigma6;
+    long unsigned int tmp_org_isite1,tmp_org_isite2,tmp_org_isite3,tmp_org_isite4,tmp_org_isite5,tmp_org_isite6;
+    long unsigned int tmp_org_sigma1,tmp_org_sigma2,tmp_org_sigma3,tmp_org_sigma4,tmp_org_sigma5,tmp_org_sigma6;
+    long unsigned int tmp_off=0;
+    long unsigned int tmp_off_2=0;
+    long unsigned int list1_off=0;
+    int num1;
+    double complex tmp_V;
+    double complex dam_pr;
+    long int i_max;
+    int tmp_Sz;
+    long unsigned int tmp_org=0;
+    double complex *vec_pr;
+    vec[0]=0;
+    i_max=X->Check.idim_max;
+    X->Large.mode=M_CORR;
+
+    vec_pr           = cd_1d_allocate(i_max + 1);
+    for(i=0;i<X->Def.NTBody;i++){
+        tmp_org_isite1   = X->Def.TBody[i][0]+1;
+        tmp_org_sigma1   = X->Def.TBody[i][1];
+        tmp_org_isite2   = X->Def.TBody[i][2]+1;
+        tmp_org_sigma2   = X->Def.TBody[i][3];
+        tmp_org_isite3   = X->Def.TBody[i][4]+1;
+        tmp_org_sigma3   = X->Def.TBody[i][5];
+        tmp_org_isite4   = X->Def.TBody[i][6]+1;
+        tmp_org_sigma4   = X->Def.TBody[i][7];
+
+        /*[s]For three body*/ 
+        tmp_org_isite5   = X->Def.TBody[i][8]+1;
+        tmp_org_sigma5   = X->Def.TBody[i][9];
+        tmp_org_isite6   = X->Def.TBody[i][10]+1;
+        tmp_org_sigma6   = X->Def.TBody[i][11];
+        /**/
+        org_isite5       = X->Def.TBody[i][8]+1;
+        org_sigma5       = X->Def.TBody[i][9];
+        org_isite6       = X->Def.TBody[i][10]+1;
+        org_sigma6       = X->Def.TBody[i][11];
+        dam_pr           = 0.0;
+
+	/*[s]initialized vec_pr*/
+	#pragma omp parallel for default(none) private(j) firstprivate(i_max) shared(vec_pr)
+        for(j=1;j<=i_max;j++){
+            vec_pr[j] = 0.0+0.0*I;
+        }
+	/*[e]initialized vec_pr*/
+        X->Large.mode = M_MLTPLY;
+        /* |vec_pr>= c5a6|phi>*/
+        mltplyGeneralSpinGC_mini(X,tmp_org_isite5-1,tmp_org_sigma5,tmp_org_isite6-1,tmp_org_sigma6,vec_pr,vec);
+        X->Large.mode = M_CORR;
+        /*[e]For three body*/ 
+
+        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,3)!=0){
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+            continue;
+        }
+        if(org_isite1 > X->Def.Nsite && org_isite3 > X->Def.Nsite){
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr=child_GC_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr=child_GC_CisAisCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr=child_GC_CisAitCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr=child_GC_CisAitCjuAjv_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec_pr);
+            }
+        }
+        else if(org_isite3 > X->Def.Nsite || org_isite1 > X->Def.Nsite){
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                dam_pr=child_GC_CisAisCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr=child_GC_CisAisCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, org_sigma4, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                dam_pr=child_GC_CisAitCjuAju_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, tmp_V, X, vec, vec_pr);
+            }
+            else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                dam_pr=child_GC_CisAitCjuAjv_GeneralSpin_MPIsingle(org_isite1-1, org_sigma1, org_sigma2, org_isite3-1, org_sigma3, org_sigma4,tmp_V, X, vec, vec_pr);
+            }
+        }
+        else{
+            if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V) shared(vec,vec_pr)
+                for(j=1;j<=i_max;j++){
+                    num1=BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+                    if(num1 != FALSE){
+                        num1=BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
+                        if(num1 != FALSE){
+                            dam_pr += tmp_V*conj(vec[j])*vec_pr[j];
+                        }
+                    }
+                }
+            }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, tmp_off, tmp_V) shared(vec,vec_pr)
+                for(j=1;j<=i_max;j++){
+                    num1 = GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                    if(num1 != FALSE){
+                        num1=BitCheckGeneral(tmp_off, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
+                        if(num1 != FALSE){
+                            dam_pr += tmp_V*conj(vec[tmp_off+1])*vec_pr[j];
+                        }
+                    }
+                }
+            }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3, tmp_off, tmp_V) shared(vec,vec_pr)
+                for(j=1;j<=i_max;j++){
+                    num1 = BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
+                    if(num1 != FALSE){
+                        num1 = GetOffCompGeneralSpin(j-1, org_isite1, org_sigma2, org_sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                        if(num1 != FALSE){
+                            dam_pr +=  tmp_V*conj(vec[tmp_off+1])*vec_pr[j];
+                        }
+                    }
+                }
+            }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, tmp_V) shared(vec,vec_pr)
+                for(j=1;j<=i_max;j++){
+                    num1 = GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
+                    if(num1 != FALSE){
+                        num1 = GetOffCompGeneralSpin(tmp_off, org_isite1, org_sigma2, org_sigma1, &tmp_off_2, X->Def.SiteToBit, X->Def.Tpow);
+                        if(num1 != FALSE){
+                            dam_pr +=  tmp_V*conj(vec[tmp_off_2+1])*vec_pr[j];
+                        }
+                    }
+
+                }
+            }
+        }
+        dam_pr = SumMPI_dc(dam_pr);
+        fprintf(*_fp, " %4ld %4ld %4ld %4ld "
+                      " %4ld %4ld %4ld %4ld " 
+                      " %4ld %4ld %4ld %4ld " 
+                      " %.10lf %.10lf \n",
+        tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2,
+        tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4, 
+        tmp_org_isite5-1, tmp_org_sigma5, tmp_org_isite6-1, tmp_org_sigma6, 
+        creal(dam_pr),cimag(dam_pr));
+    }
+    free_cd_1d_allocate(vec_pr);
+    return 0;
+}
+
+
+
+
+
+/**
  * @brief Child function to calculate two-body green's functions for General Spin model
  *
  * @param X [in] data list for calculation
@@ -1104,6 +1268,9 @@ int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_
         }
     } else {
         info=expec_cisajscktalt_SpinGCGeneral(X,vec, _fp);
+        if(X->Def.NTBody>0){
+          info = expec_Threebody_SpinGeneral(X,vec,_fp_2);
+        } 
     }
     return info;
 }
@@ -1546,8 +1713,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
     i_max=X->Check.idim_max;
     X->Large.mode=M_CORR;
 
-
-  for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
+    for(i=0;i<X->Def.NCisAjtCkuAlvDC;i++){
         tmp_org_isite1   = X->Def.CisAjtCkuAlvDC[i][0]+1;
         tmp_org_sigma1   = X->Def.CisAjtCkuAlvDC[i][1];
         tmp_org_isite2   = X->Def.CisAjtCkuAlvDC[i][2]+1;
@@ -1558,13 +1724,13 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
         dam_pr = 0.0;
 
-      if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
-          //error message will be added
-          fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
-          continue;
-      }
+        if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
+            //error message will be added
+            fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
+            continue;
+        }
 
-      if(org_isite1 > X->Def.Nsite && org_isite3 > X->Def.Nsite){
+        if(org_isite1 > X->Def.Nsite && org_isite3 > X->Def.Nsite){
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
                 dam_pr=child_GC_CisAisCjuAju_GeneralSpin_MPIdouble(org_isite1-1, org_sigma1, org_isite3-1, org_sigma3, tmp_V, X, vec, vec);
             }
@@ -1594,7 +1760,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
         }
         else{
             if(org_sigma1==org_sigma2 && org_sigma3==org_sigma4 ){ //diagonal
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V) shared(vec)
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X,org_isite1, org_sigma1,org_isite3, org_sigma3, tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
                     num1=BitCheckGeneral(j-1, org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
                     if(num1 != FALSE){
@@ -1605,7 +1771,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
                     }
                 }
             }else if(org_sigma1 == org_sigma2 && org_sigma3 != org_sigma4){
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, tmp_off, tmp_V) shared(vec)
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma3,org_sigma4, tmp_off, tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
                     num1 = GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
                     if(num1 != FALSE){
@@ -1616,7 +1782,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
                     }
                 }
             }else if(org_sigma1 != org_sigma2 && org_sigma3 == org_sigma4){
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3, tmp_off, tmp_V) shared(vec)
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1,org_sigma2, org_sigma3, tmp_off, tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
                     num1 = BitCheckGeneral(j-1, org_isite3, org_sigma3, X->Def.SiteToBit, X->Def.Tpow);
                     if(num1 != FALSE){
@@ -1627,7 +1793,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
                     }
                 }
             }else if(org_sigma1 != org_sigma2 && org_sigma3 != org_sigma4){
-#pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, tmp_V) shared(vec)
+                #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, num1) firstprivate(i_max,X, org_isite1, org_isite3, org_sigma1, org_sigma2, org_sigma3, org_sigma4, tmp_off, tmp_off_2, tmp_V) shared(vec)
                 for(j=1;j<=i_max;j++){
                     num1 = GetOffCompGeneralSpin(j-1, org_isite3, org_sigma4, org_sigma3, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
                     if(num1 != FALSE){
