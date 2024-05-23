@@ -802,8 +802,8 @@ int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE *
     i_max=X->Check.idim_max;
     X->Large.mode=M_CORR;
 
+    vec_pr           = cd_1d_allocate(i_max + 1);
     for(i=0;i<X->Def.NTBody;i++){
-        vec_pr           = cd_1d_allocate(i_max + 1);
         tmp_org_isite1   = X->Def.TBody[i][0]+1;
         tmp_org_sigma1   = X->Def.TBody[i][1];
         tmp_org_isite2   = X->Def.TBody[i][2]+1;
@@ -825,6 +825,12 @@ int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE *
         org_sigma6       = X->Def.TBody[i][11];
         dam_pr           = 0.0;
 
+	/*[s]initialized vec_pr*/
+	#pragma omp parallel for default(none) private(j) firstprivate(i_max) shared(vec_pr)
+        for(j=1;j<=i_max;j++){
+            vec_pr[j] = 0.0+0.0*I;
+        }
+	/*[e]initialized vec_pr*/
         X->Large.mode = M_MLTPLY;
         /* |vec_pr>= c5a6|phi>*/
         mltplyGeneralSpinGC_mini(X,tmp_org_isite5-1,tmp_org_sigma5,tmp_org_isite6-1,tmp_org_sigma6,vec_pr,vec);
@@ -921,6 +927,7 @@ int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE *
         tmp_org_isite5-1, tmp_org_sigma5, tmp_org_isite6-1, tmp_org_sigma6, 
         creal(dam_pr),cimag(dam_pr));
     }
+    free_cd_1d_allocate(vec_pr);
     return 0;
 }
 
