@@ -22,6 +22,7 @@ into ::vec
 #include "wrapperMPI.h"
 #include "common/setmemory.h"
 #include "xsetmem.h"
+#include "matrixlapack.h"
 /**
 @brief Diagonalize a tri-diagonal matrix and store eigenvectors 
 into ::vec

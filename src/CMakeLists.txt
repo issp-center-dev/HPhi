@@ -4,8 +4,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "Project")
   message(FATAL_ERROR "cmake should be executed not for 'src' subdirectory, but for the top directory of HPhi.")
 endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 
-add_subdirectory(komega)
-
 include_directories(include)
 include_directories(${STDFACE_DIR})
 add_definitions(-D_HPhi)
@@ -17,7 +15,7 @@ set(SOURCES_MLTPLY Multiply.c mltply.c mltplySpin.c mltplyHubbard.c mltplyMPIHub
 set(SOURCES_LANCZOS CalcByLanczos.c CG_EigenVector.c Lanczos_EigenValue.c Lanczos_EigenVector.c)
 set(SOURCES_CG CalcByLOBPCG.c )
 set(SOURCES_TPQ CalcByTPQ.c FirstMultiply.c CalcByCanonicalTPQ.c  MakeIniVec.c)
-set(SOURCES_DIAG CalcByFullDiag.c lapack_diag.c makeHam.c matrixlapack.c matrixlapack_magma.c matrixscalapack.c )
+set(SOURCES_DIAG CalcByFullDiag.c lapack_diag.c matrixlapack.c matrixlapack_magma.c matrixscalapack.c )
 set(SOURCES_SPECTRUM CalcSpectrum.c CalcSpectrumByBiCG.c CalcSpectrumByLanczos.c CalcSpectrumByTPQ.c CalcSpectrumByFullDiag.c SingleEx.c SingleExHubbard.c PairEx.c PairExHubbard.c PairExSpin.c )
 set(SOURCES_TEM CalcByTEM.c)
 set(SOURCES_PHYS expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c phys.c expec_energy_flct.c)
@@ -39,7 +37,7 @@ ${STDFACE_DIR}/src/TriangularLattice.c
 ${STDFACE_DIR}/src/Wannier90.c)
 
 add_executable(HPhi ${SOURCES} ${SOURCES_LANCZOS} ${SOURCES_CG} ${SOURCES_TPQ} ${SOURCES_SPECTRUM} ${SOURCES_TEM} ${SOURCES_MLTPLY} ${SOURCES_DIAG} ${SOURCES_PHYS} ${SOURCES_STDFACE} ${SOURCES_COMMON})
-target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
+target_link_libraries(HPhi ${LAPACK_LIBRARIES} m)
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)

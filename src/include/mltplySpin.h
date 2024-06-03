@@ -19,11 +19,11 @@
 
 #include "Common.h"
 
-int mltplySpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplySpin(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplyHalfSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyHalfSpin(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplyGeneralSpin(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyGeneralSpin(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
 void mltplyHalfSpinGC_mini(
   struct BindStruct *X,//!<[inout]
@@ -31,51 +31,52 @@ void mltplyHalfSpinGC_mini(
   int spin_i,
   int site_j,
   int spin_j,
-  double complex *tmp_v0,//!<[inout] Result vector
-  double complex *tmp_v1//!<[in] Input producted vector
+  int nstate,
+  double complex **tmp_v0,//!<[inout] Result vector
+  double complex **tmp_v1//!<[in] Input producted vector
 );
 
-int mltplySpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplySpinGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplyHalfSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyHalfSpinGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplyGeneralSpinGC(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplyGeneralSpinGC(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-int mltplySpinGCBoost(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltplySpinGCBoost(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
-double complex GC_general_int_spin
+void GC_general_int_spin
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex general_int_spin
+void general_int_spin
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
 
-double complex GC_exchange_spin
+void GC_exchange_spin
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex exchange_spin
+void exchange_spin
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 
-double complex GC_pairlift_spin
+void GC_pairlift_spin
 (
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  struct BindStruct *X
  );
 

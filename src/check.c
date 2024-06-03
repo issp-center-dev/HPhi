@@ -68,7 +68,7 @@ int check(struct BindStruct *X){
     X->Def.Ne=X->Def.Nup;
   }
 
-  int iAllup=X->Def.Ne;
+  unsigned int iAllup=X->Def.Ne;
 
   if(X->Def.iFlgScaLAPACK == 0) {
     /*
@@ -132,19 +132,6 @@ int check(struct BindStruct *X){
     break;
     
   case Kondo:
-    //idim_max
-    // calculation of dimension
-    // Nup      = u_loc+u_cond
-    // Ndown    = d_loc+d_cond
-    // NLocSpn  = u_loc+d_loc
-    // Ncond    = Nsite-NLocSpn
-    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
-    //              Binomial(NLocSpn,u_loc)
-    //             *Binomial(NCond,Nup-u_loc)
-    //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
-    //comb_1 = Binomial(NLocSpn,u_loc)
-    //comb_2 = Binomial(NCond,Nup-u_loc)
-    //comb_3 = Binomial(NCond,Ndown+u_loc-NLocSpn)
     Nup     = X->Def.Nup;
     Ndown   = X->Def.Ndown;
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
@@ -162,7 +149,7 @@ int check(struct BindStruct *X){
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
     NLocSpn = X->Def.NLocSpn;
     //4^Nc*2^Ns
-    for(i=0;i<(2*NCond+NLocSpn);i++){
+    for(u_loc=0;u_loc <(2*NCond+NLocSpn); u_loc++){
       comb_sum= 2*comb_sum;     
     }
     break;
@@ -210,17 +197,17 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcType) {
     case Lanczos:
       switch (X->Def.iCalcModel) {
-        case Hubbard:
-        case HubbardNConserved:
-        case Kondo:
-        case KondoGC:
-        case Spin:
-          X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
-          break;
-        case HubbardGC:
-        case SpinGC:
-          X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
-          break;
+      case Hubbard:
+      case HubbardNConserved:
+      case Kondo:
+      case KondoGC:
+      case Spin:
+        X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+        break;
+      case HubbardGC:
+      case SpinGC:
+        X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
+        break;
       }
       break;
     case CG:
@@ -230,11 +217,11 @@ int check(struct BindStruct *X){
         case Kondo:
         case KondoGC:
         case Spin:
-          X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (7 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
-          X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (7 * X->Def.k_exct + 1.0) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
       }
       break;
@@ -247,7 +234,7 @@ int check(struct BindStruct *X){
         case KondoGC:
         case Spin:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+            X->Check.max_mem = NumAve * 3 * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
             X->Check.max_mem = 4.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
           }
@@ -255,7 +242,7 @@ int check(struct BindStruct *X){
         case HubbardGC:
         case SpinGC:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
-            X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+            X->Check.max_mem = NumAve * 3 * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
             X->Check.max_mem = 3.5 * X->Check.idim_max * 16.0 / (pow(10, 9));
           }

@@ -41,32 +41,31 @@
  */
 int Multiply
 (
- struct BindStruct *X
- )
+  struct BindStruct *X
+)
 {
-  long int i,i_max;
-  double complex dnorm;
+  long int i, i_max;
   double Ns;
+  int rand_i;
 
-  i_max=X->Check.idim_max;      
+  i_max = X->Check.idim_max;
   Ns = 1.0*X->Def.NsiteMPI;
- // mltply is in expec_energy.c v0=H*v1
-  dnorm=0.0;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1) firstprivate(i_max, Ns, LargeValue)
-  for(i = 1; i <= i_max; i++){
-    v0[i]=LargeValue*v1[i]-v0[i]/Ns;  //v0=(l-H/Ns)*v1
-    dnorm += conj(v0[i])*v0[i];
+  // mltply is in expec_energy.c v0=H*v1
+#pragma omp parallel for default(none) private(i,rand_i)  \
+  shared(v0, v1,NumAve) firstprivate(i_max, Ns, LargeValue)
+  for (i = 1; i <= i_max; i++) {
+    for (rand_i = 0; rand_i < NumAve; rand_i++) {
+      v0[i][rand_i] = LargeValue * v1[i][rand_i] - v0[i][rand_i] / Ns;  //v0=(l-H/Ns)*v1
+    }
   }
-  dnorm=SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
-  global_norm = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
-  for(i=1;i<=i_max;i++){
-    v0[i] = v0[i]/dnorm;
-  }
+  NormMPI_dv(i_max, NumAve, v0, global_norm);
+#pragma omp parallel for default(none) private(i,rand_i) \
+shared(v0,NumAve,global_norm) firstprivate(i_max)
+  for (i = 1; i <= i_max; i++) 
+    for (rand_i = 0; rand_i < NumAve; rand_i++)
+      v0[i][rand_i] = v0[i][rand_i] / global_norm[rand_i];
   return 0;
 }
-
 /**
  * @brief  Function of multiplying Hamiltonian for Time Evolution.
  *
@@ -78,63 +77,66 @@ int Multiply
  */
 int MultiplyForTEM
 (
- struct BindStruct *X
- )
+  struct BindStruct *X,
+  double complex **v2
+)
 {
-
-  long int i,i_max;
+  long int i, i_max;
   int coef;
-  double complex dnorm=0.0;
+  double complex dnorm = 0.0;
   double complex tmp1 = 1.0;
-  double complex tmp2=0.0;
-  double dt=X->Def.Param.TimeSlice;
+  double complex tmp2 = 0.0;
+  double dt = X->Def.Param.TimeSlice;
 
   //Make |v0> = |psi(t+dt)> from |v1> = |psi(t)> and |v0> = H |psi(t)>
-  i_max=X->Check.idim_max;
+  i_max = X->Check.idim_max;
   // mltply is in expec_energy.c v0=H*v1
-  if(dt <pow(10.0, -14)){
+  if (dt < pow(10.0, -14)) {
 #pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp2)
-    for(i = 1; i <= i_max; i++){
-      tmp2 = v0[i];
-      v0[i]=v1[i];  //v0=(1-i*dt*H)*v1
-      v1[i]=tmp2;
-      v2[i]= 0.0 + I*0.0;
+    for (i = 1; i <= i_max; i++) {
+      tmp2 = v0[i][0];
+      v0[i][0] = v1[i][0];  //v0=(1-i*dt*H)*v1
+      v1[i][0] = tmp2;
+      v2[i][0] = 0.0 + I * 0.0;
     }
-    mltply(X, v2, v1);
+    mltply(X, 1, v2, v1);
   }
   else {
     tmp1 *= -I * dt;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp1, tmp2)
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) \
+shared(v0, v1, v2) firstprivate(i_max, dt, tmp1, tmp2)
     for (i = 1; i <= i_max; i++) {
-      tmp2 = v0[i];
-      v0[i] = v1[i] + tmp1 * tmp2;  //v0=(1-i*dt*H)*v1
-      v1[i] = tmp2;
-      v2[i] = 0.0 + I * 0.0;
+      tmp2 = v0[i][0];
+      v0[i][0] = v1[i][0] + tmp1 * tmp2;  //v0=(1-i*dt*H)*v1
+      v1[i][0] = tmp2;
+      v2[i][0] = 0.0 + I * 0.0;
     }
     for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
-      tmp1 *= -I * dt / (double complex) coef;
+      tmp1 *= -I * dt / (double complex)coef;
       //v2 = H*v1 = H^coef |psi(t)>
-      mltply(X, v2, v1);
+      mltply(X, 1, v2, v1);
 
-#pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
+#pragma omp parallel for default(none) private(i) shared(v0, v1, v2) \
+firstprivate(i_max, tmp1, myrank)
       for (i = 1; i <= i_max; i++) {
-        v0[i] += tmp1 * v2[i];
-        v1[i] = v2[i];
-        v2[i] = 0.0 + I * 0.0;
+        v0[i][0] += tmp1 * v2[i][0];
+        v1[i][0] = v2[i][0];
+        v2[i][0] = 0.0 + I * 0.0;
       }
     }
   }
-  dnorm=0.0;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) firstprivate(i_max, dt)
-  for(i = 1; i <= i_max; i++){
-    dnorm += conj(v0[i])*v0[i];
+  dnorm = 0.0;
+#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) \
+firstprivate(i_max, dt)
+  for (i = 1; i <= i_max; i++) {
+    dnorm += conj(v0[i][0])*v0[i][0];
   }
-  dnorm=SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
-  global_norm = dnorm;
+  dnorm = SumMPI_dc(dnorm);
+  dnorm = sqrt(dnorm);
+  global_norm[0] = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
-  for(i=1;i<=i_max;i++){
-    v0[i] = v0[i]/dnorm;
+  for (i = 1; i <= i_max; i++) {
+    v0[i][0] = v0[i][0] / dnorm;
   }
   return 0;
 }
@@ -155,9 +157,8 @@ int MultiplyForCanonicalTPQ
  )
 {
 
-  long int i,i_max;
+  long int i,i_max, rand_i;
   int coef;
-  double complex dnorm = 0.0;
   double complex tmp1  = 1.0;
   double complex tmp2  = 0.0;
   //double dt=X->Def.Param.TimeSlice;
@@ -166,12 +167,14 @@ int MultiplyForCanonicalTPQ
   i_max=X->Check.idim_max;
   // mltply is in expec_energy.c v0=H*v1
   tmp1 *= -0.5 * delta_tau;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, tmp2)
+#pragma omp parallel for default(none) private(i, rand_i) shared(v0, v1, v2) firstprivate(i_max, tmp1, tmp2, NumAve)
   for (i = 1; i <= i_max; i++) {
-      tmp2 =  v0[i];
-      v0[i] = v1[i] + tmp1 * tmp2;  //v0=[1+(-0.5*dt*H)]*v1
-      v1[i] = tmp2;
-      v2[i] = 0.0 + I * 0.0;
+    for (rand_i = 0; rand_i < NumAve; rand_i++) {
+      tmp2 = v0[i][rand_i];
+      v0[i][rand_i] = v1[i][rand_i] + tmp1 * tmp2;  //v0=[1+(-0.5*dt*H)]*v1
+      v1[i][rand_i] = tmp2;
+      v2[i][rand_i] = 0.0 + I * 0.0;
+    }
   }
   //printf("%d \n",X->Def.Param.ExpandCoef);
   //for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
@@ -179,25 +182,23 @@ int MultiplyForCanonicalTPQ
   for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
     tmp1 *= (-0.5 * delta_tau) / (double ) coef;
     //v2 = H*v1 = H^coef |psi(tau)>
-    mltply(X, v2, v1);
-#pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
+    mltply(X, NumAve, v2, v1);
+#pragma omp parallel for default(none) private(i, rand_i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank, NumAve)
     for (i = 1; i <= i_max; i++) {
-      v0[i] += tmp1 * v2[i];
-      v1[i] = v2[i];
-      v2[i] = 0.0 + I * 0.0;
+      for (rand_i = 0; rand_i < NumAve; rand_i++) {
+        v0[i][rand_i] += tmp1 * v2[i][rand_i];
+        v1[i][rand_i] = v2[i][rand_i];
+        v2[i][rand_i] = 0.0 + I * 0.0;
+      }
     }
   }
-  dnorm=0.0;
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0) firstprivate(i_max)
-  for(i = 1; i <= i_max; i++){
-    dnorm += conj(v0[i])*v0[i];
-  }
-  dnorm=SumMPI_dc(dnorm);
-  dnorm=sqrt(dnorm);
-  global_norm = dnorm;
-#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)
+  NormMPI_dv(i_max, NumAve, v0, global_norm);
+
+#pragma omp parallel for default(none) private(i, rand_i) shared(v0, global_norm) firstprivate(i_max, NumAve)
   for(i=1;i<=i_max;i++){
-    v0[i] = v0[i]/dnorm;
+    for (rand_i = 0; rand_i < NumAve; rand_i++) {
+      v0[i][rand_i] = v0[i][rand_i] / global_norm[rand_i];
+    }
   }
   return 0;
 }

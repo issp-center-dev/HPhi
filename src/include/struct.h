@@ -24,8 +24,8 @@
 */
 #ifndef HPHI_STRUCT_H
 #define HPHI_STRUCT_H
-
-#include "Common.h"
+#include <complex.h>
+#include <time.h>
 
 /*=================================================================================================*/
 //For TEM
@@ -109,7 +109,7 @@ struct DefineList {
                         malloc in setmem_def().\n
                         Data Format [DefineList::NTransfer][4]: 
                         0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
-  int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
+  unsigned int **EDGeneralTransfer;/**<@brief Index of transfer integrals for calculation. 
                           malloc in setmem_def().\n
                           Data Format [DefineList::NTransfer][4]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j. */
   double complex *ParaGeneralTransfer;/**<@brief Value of general transfer integrals by a def file. 
@@ -139,13 +139,13 @@ struct DefineList {
                            malloc in setmem_def().*/
 
   unsigned int NPairHopping;/**<@brief Number of pair-hopping term*/
-  int **PairHopping;/**<@brief [DefineList::NPairHopping][2] Index of pair-hopping.
+  unsigned int **PairHopping;/**<@brief [DefineList::NPairHopping][2] Index of pair-hopping.
                     malloc in setmem_def().*/
   double *ParaPairHopping;/**<@brief [DefineList::NPairHopping] Coupling constant of
                           pair-hopping term. malloc in setmem_def().*/
 
   unsigned int NExchangeCoupling;/**<@brief Number of exchange term*/
-  int **ExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling][2] Index of exchange term.
+  unsigned int **ExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling][2] Index of exchange term.
                          malloc in setmem_def().*/
   double *ParaExchangeCoupling;/**<@brief [DefineList::NExchangeCoupling] Coupling constant of
                                exchange term. malloc in setmem_def().*/
@@ -160,7 +160,7 @@ struct DefineList {
 
     //[s] For InterAll
   int **InterAll;/**<@brief [DefineList::NinterAll][8] Interacted quartet*/
-  int **InterAll_OffDiagonal;/**<@brief [DefineList::NinterAll_OffDiagonal][8] Interacted quartet*/
+  unsigned int **InterAll_OffDiagonal;/**<@brief [DefineList::NinterAll_OffDiagonal][8] Interacted quartet*/
   int **InterAll_Diagonal;/**<@brief [DefineList::NinterAll_Diagonal][4] Interacted quartet*/
   unsigned int NInterAll;/**<@brief Total Number of Interacted quartet*/
   unsigned int NInterAll_Diagonal;/**<@brief Number of interall term (diagonal)*/
@@ -188,16 +188,18 @@ struct DefineList {
   int **SBody;/**<@brief [DefineList::SBody][24] Indices of six-body correlation function. malloc in setmem_def().*/
   unsigned int NSBody;/**<@brief Number of indices of six-body correlation function.*/
 
-  int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
+  int ***SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
-  unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
-  double complex *ParaSingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator] 
+  unsigned int NNSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
+  unsigned int *NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
+  double complex **ParaSingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator] 
               Coefficient of single excitaion operator for spectrum. malloc in setmem_def().*/
 
-  int **PairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator][5] 
+  int ***PairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator][5] 
                                Indices of pair excitaion operator for spectrum. malloc in setmem_def().*/
-  unsigned int NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
-  double complex *ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
+  unsigned int NNPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
+  unsigned int *NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
+  double complex **ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
                            Coefficient of pair excitaion operator for spectrum. malloc in setmem_def().*/
   
   int iCalcType;/**<@brief Switch for calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
@@ -289,7 +291,7 @@ struct DefineList {
     int ***TEInterAll;      /**< Index of time-dependent InterAll for Time Evolution. \n
                Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
                4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
-    int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
+    unsigned int ***TEInterAllOffDiagonal;      /**< Index of off-diagonal part of time-dependent InterAll for Time Evolution. \n
                Data Format [NTE][NTEInterAll][8]: 0->site number i, 1-> spin index on i, 2-> site number j, 3-> spin index on j.
                4->site number k, 5-> spin index on k, 6-> site number l, 7-> spin index on l.*/
     int ***TEInterAllDiagonal;      /**< Index of diagonal part of time-dependent InterAll for Time Evolution. \n
@@ -323,7 +325,6 @@ struct CheckList {
 @brief For Matrix-Vector product
 */
 struct LargeList {
-  double complex prdct;/**<@brief The expectation value of the energy.*/
   int itr;/**<@brief Iteration number.*/
   long int iv;/**<@brief Used for initializing vector.*/
   long int i_max;/**<@brief Length of eigenvector*/
@@ -364,35 +365,19 @@ struct LargeList {
 */
 struct PhysList {
   //double energy,doublon;
-  double energy;/**<@brief Expectation value of the total energy.*/
-  double doublon;/**<@brief Expectation value of the Doublon*/
-  double doublon2;/**<@brief Expectation value of the Square of doublon*/
-  double num;/**<@brief Expectation value of the Number of electrons*/
-  double num2;/**<@brief Expectation value of the quare of the number of electrons*/
-  double Sz;/**<@brief Expectation value of the Total Sz*/
-  double Sz2;/**<@brief Expectation value of the Square of total Sz*/
+  double *energy;/**<@brief Expectation value of the total energy.*/
+  double *doublon;/**<@brief Expectation value of the Doublon*/
+  double *doublon2;/**<@brief Expectation value of the Square of doublon*/
+  double *num;/**<@brief Expectation value of the Number of electrons*/
+  double *num2;/**<@brief Expectation value of the quare of the number of electrons*/
+  double *Sz;/**<@brief Expectation value of the Total Sz*/
+  double *Sz2;/**<@brief Expectation value of the Square of total Sz*/
+  double *num_up;/**<@brief Expectation value of the number of up-spin electtrons*/
+  double *num_down;/**<@brief Expectation value of the number of down-spin electtrons*/
+  double *s2;/**<@brief Expectation value of the square of the total S.*/
     /*[s] For TPQ*/
-  double var;/**<@brief Expectation value of the Energy variance.*/
+  double *var;/**<@brief Expectation value of the Energy variance.*/
     /*[e] For TPQ*/
-
-    /*[s] For Full Diagonalization*/
-  int eigen_num;/**<@brief Index of eigenstate used for the file name of the correlation function.*/
-  double num_up;/**<@brief Expectation value of the number of up-spin electtrons*/
-  double num_down;/**<@brief Expectation value of the number of down-spin electtrons*/
-  double s2;/**<@brief Expectation value of the square of the total S.*/
-  double *all_energy;/**<@brief [CheckList::idim_max+1] Energy for FullDiag and LOBPCG.
-                     malloc in setmem_large().*/
-  double *all_doublon;/**<@brief [CheckList::idim_max+1] Doublon for FullDiag and LOBPCG.
-                      malloc in setmem_large().*/
-  double *all_sz;/**<@brief [CheckList::idim_max+1] @f$S_z@f$ for FullDiag and LOBPCG.
-                 malloc in setmem_large().*/
-  double *all_s2;/**<@brief [CheckList::idim_max+1] @f$S_z^2@f$ for FullDiag and LOBPCG.
-                 malloc in setmem_large().*/
-  double *all_num_up;/**<@brief [CheckList::idim_max+1] Number of spin-up electrons
-                     for FullDiag and LOBPCG. malloc in setmem_large().*/
-  double *all_num_down;/**<@brief[CheckList::idim_max+1] Number of spin-down electrons 
-                       for FullDiag and LOBPCG. malloc in setmem_large().*/
-    /*[e] For Full Diagonalization*/
 
   double *spin_real_cor;/**<@brief Malloc, but Not used ???*/
   double *charge_real_cor;/**<@brief Malloc, but Not used ???*/

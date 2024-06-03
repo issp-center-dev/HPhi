@@ -48,123 +48,78 @@
 void phys(struct BindStruct *X, //!<[inout]
           unsigned long int neig //!<[in]
 ) {
-  long unsigned int i, j, i_max;
+  long unsigned int i;
   double tmp_N;
-  i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
-  int ictxt, ierr, rank;
+  int rank;
+  long unsigned int j, i_max;
+
+  i_max = X->Check.idim_max;
+
   if(use_scalapack){
   fprintf(stdoutMPI, "In scalapack fulldiag, total spin is not calculated !\n");
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
-#endif
   for (i = 0; i < neig; i++) {
-#ifdef _SCALAPACK
-    for (j = 0; j < i_max; j++) {
-      v0[j + 1] = 0.0;
-    }
-    if(use_scalapack){
+    if (use_scalapack) {
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
       GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
-      if(rank == 0) {
+      if (rank == 0) {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = vec_tmp[j];
+          v0[j + 1][i] = vec_tmp[j];
         }
       }
-      else{
+      else {
         for (j = 0; j < i_max; j++) {
-          v0[j + 1] = 0.0;
+          v0[j + 1][i] = 0.0;
         }
       }
-    } else {
-        if (X->Def.iCalcType == FullDiag) {
-            if (myrank == 0) {
-                for (j = 0; j < i_max; j++) {
-                    v0[j + 1] = L_vec[i][j];
-                }
-            }
-        } else {
-            for (j = 0; j < i_max; j++) {
-                v0[j + 1] = L_vec[i][j];
-            }
-
-        }
     }
-#else
-    for (j = 0; j < i_max; j++) {
-      v0[j + 1] = L_vec[i][j];
-    }    
+    else {
+      if (X->Def.iCalcType == FullDiag) {
+        for (j = 0; j < i_max; j++) {
+          v0[j + 1][i] = v1[j][i];
+        }
+      }
+    }
+  }/*for (i = 0; i < neig; i++)*/
 #endif
 
-    X->Phys.eigen_num = i;
-    if (expec_energy_flct(X) != 0) {
-      fprintf(stderr, "Error: calc expec_energy.\n");
-      exitMPI(-1);
-    }
-    if (expec_cisajs(X, v1) != 0) {
-      fprintf(stderr, "Error: calc OneBodyG.\n");
-      exitMPI(-1);
-    }
-    if (expec_cisajscktaltdc(X, v1) != 0) {
-      fprintf(stderr, "Error: calc TwoBodyG.\n");
-      exitMPI(-1);
-    }
+  if (expec_energy_flct(X, neig, v0, v1) != 0) {
+    fprintf(stderr, "Error: calc expec_energy.\n");
+    exitMPI(-1);
+  }
+  if (expec_cisajs(X, neig, v0, v1) != 0) {
+    fprintf(stderr, "Error: calc OneBodyG.\n");
+    exitMPI(-1);
+  }
+  if (expec_cisajscktaltdc(X, neig, v0, v1) != 0) {
+    fprintf(stderr, "Error: calc TwoBodyG.\n");
+    exitMPI(-1);
+  }
     
-#ifdef _SCALAPACK
-    if(use_scalapack){
-      if (X->Def.iCalcType == FullDiag) {
-        X->Phys.s2=0.0;
-        X->Phys.Sz=0.0;
-      }
-    }else{
-      if (X->Def.iCalcType == FullDiag) {
-        if (expec_totalspin(X, v1) != 0) {
-          fprintf(stderr, "Error: calc TotalSpin.\n");
-          exitMPI(-1);
-        }
-      }
-    } 
-#else
-    if (X->Def.iCalcType == FullDiag) {
-      if (expec_totalspin(X, v1) != 0) {
-        fprintf(stderr, "Error: calc TotalSpin.\n");
-        exitMPI(-1);
-      }
+  if (X->Def.iCalcType == FullDiag) {
+    if (expec_totalspin(X, neig, v1) != 0) {
+      fprintf(stderr, "Error: calc TotalSpin.\n");
+      exitMPI(-1);
     }
-#endif
-    
+  }
+
+  for (i = 0; i < neig; i++) {
     if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
       tmp_N = X->Def.NsiteMPI;
-    } else {
-      tmp_N = X->Phys.num_up + X->Phys.num_down;
     }
-
-    if (X->Def.iCalcType == FullDiag){
-#ifdef _SCALAPACK
-      if (use_scalapack){
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-                X->Phys.Sz, X->Phys.doublon);
-      }
-      else{
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-                X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
-      }
-#else
-      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-              X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
-      
-#endif      
+    else {
+      tmp_N = X->Phys.num_up[i] + X->Phys.num_down[i];
+    }
+    if (X->Def.iCalcType == FullDiag) {
+      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n",
+        i, X->Phys.energy[i], tmp_N, X->Phys.Sz[i], X->Phys.s2[i], X->Phys.doublon[i]);
     }
     else if (X->Def.iCalcType == CG)
-      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-              X->Phys.Sz, X->Phys.doublon);
-    X->Phys.all_energy[i] = X->Phys.energy;
-    X->Phys.all_doublon[i] = X->Phys.doublon;
-    X->Phys.all_sz[i] = X->Phys.Sz;
-    X->Phys.all_s2[i] = X->Phys.s2;
-    X->Phys.all_num_up[i] = X->Phys.num_up;
-    X->Phys.all_num_down[i] = X->Phys.num_down;
+      fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n",
+        i, X->Phys.energy[i], tmp_N, X->Phys.Sz[i], X->Phys.doublon[i]);
   }
 #ifdef _SCALAPACK
   if(use_scalapack) free(vec_tmp);

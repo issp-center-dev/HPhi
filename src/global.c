@@ -51,7 +51,7 @@ const char* cFileNameTimeEV_CG="Time_EigenVector.dat";
 const char* cFileNameListModel="ListForModel_Ns%d_Nup%dNdown%d.dat";
 const char* cFileNameOutputEigen="%s_eigenvec_%d_rank_%d.dat";
 const char* cFileNameInputEigen="%s_eigenvec_%d_rank_%d.dat";
-const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen.dat";
+const char* cFileNameCalcDynamicalGreen="%s_DynamicalGreen_%d.dat";
 const char* cFileNameTridiagonalMatrixComponents="%s_TMComponents.dat";
 
 
@@ -95,12 +95,12 @@ const char* cFileNameOutputExcitedVec="%s_excitedvec_rank_%d.dat";
 //For Error
 const char* cFileNameErrorSz="Err_sz.dat";
 
-double complex *v0 = 0;
-double complex *v1 = 0;
-double complex *v2 = 0;
-double complex *v1buf = 0;
+double complex **v0 = 0;
+double complex **v1 = 0;
+double complex **v2 = 0;
+double complex **v1buf = 0;
 double complex *v1Org = 0;
-double complex *vg=0;
+double complex **vg=0;
 double *alpha = 0;
 double *beta = 0;
 double complex **vec = 0;
@@ -124,8 +124,8 @@ int initial_mode = 0;
 double LargeValue = 1.0e30;
 int NumAve = 1;
 int step_i = 1;
-double global_norm = 0.0;
-double global_1st_norm = 0.0;
+double *global_norm;
+double *global_1st_norm;
 int step_spin = 1;
 
 /* All Diagonalization */

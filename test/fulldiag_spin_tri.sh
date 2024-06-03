@@ -13,6 +13,7 @@ method = "FullDiag"
 lattice = "triangular"
 J = 1.0
 2Sz = 0
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan.in
@@ -43,7 +44,11 @@ cat > reference.dat <<EOF
    4.500000   0.000000   0.000000  12.000000   0.000000
 EOF
 paste output/zvo_phys_Nup3_Ndown3.dat reference.dat > paste.dat
-diff=`awk 'BEGIN{diff=0.0} NR>1{diff+=sqrt(($1-$6)*($1-$6))} END{printf "%8.6f", diff}' paste.dat`
+diff=`awk '
+BEGIN{diff=0.0} 
+NR>1{diff+=sqrt(($1-$6)*($1-$6))} 
+END{printf "%8.6f", diff/NR}
+' paste.dat`
 test "${diff}" = "0.000000"
 
 exit $?

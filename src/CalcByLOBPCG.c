@@ -28,7 +28,15 @@ localy optimal block (preconditioned) conjugate gradient method.
 #include "expec_energy_flct.h"
 #include "phys.h"
 #include <math.h>
+#include "mltplyCommon.h"
 #include "./common/setmemory.h"
+
+void debug_print(int num, double complex *var){
+  int i;
+  for (i=0;i<num;i++){
+    printf("debug %d %f %f\n", i, creal(var[i]), cimag(var[i]));
+  }
+}
 
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
 void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *alpha, double complex *a, int *lda, double complex *b, int *ldb, double complex *beta, double complex *c, int *ldc);
@@ -40,10 +48,10 @@ void zgemm_(char *transa, char *transb, int *m, int *n, int *k, double complex *
 with the Lowdin's orthogonalization
 @return the truncated dimension, nsub2
 */
-static int diag_ovrp(
+static int diag_ovrlp(
   int nsub,//!<[in] Original dimension of subspace
   double complex *hsub,//!<[inout] (nsub*nsub) subspace hamiltonian -> eigenvector
-  double complex *ovlp,//!<[inout] (nsub*nsub) Overrap matrix -> @f${\hat O}^{1/2}@f$
+  double complex *ovrlp,//!<[inout] (nsub*nsub) overlap matrix -> @f${\hat O}^{1/2}@f$
   double *eig//!<[out] (nsub) Eigenvalue
 )
 {
@@ -58,15 +66,20 @@ static int diag_ovrp(
   lwork = nsub*nsub + 2 * nsub;
   lrwork = 3 * nsub*nsub + (4 + (int)log2(nsub) + 1) * nsub + 1;
 
-  iwork = (int*)malloc(liwork * sizeof(int));
-  rwork = (double*)malloc(lrwork * sizeof(double));
-  work = (double complex*)malloc(lwork * sizeof(double complex));
-  mat = (double complex*)malloc(nsub*nsub * sizeof(double complex));
-  for (isub = 0; isub < nsub*nsub; isub++)mat[isub] = 0.0;
+  iwork = i_1d_allocate(liwork);
+  rwork = d_1d_allocate(lrwork);
+  mat = cd_1d_allocate(nsub*nsub);
+#ifdef FUJITSU
+  void *vptr;
+  posix_memalign(&vptr, 256, lwork * sizeof(double complex));
+  work = (double complex*)vptr;
+#else
+  work = cd_1d_allocate(lwork);
+#endif
   /**@brief
-  (1) Compute @f${\hat O}^{-1/2}@f$ with diagonalizing overrap matrix
+  (1) Compute @f${\hat O}^{-1/2}@f$ with diagonalizing overlap matrix
   */
-  zheevd_(&jobz, &uplo, &nsub, ovlp, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
+  zheevd_(&jobz, &uplo, &nsub, ovrlp, &nsub, eig, work, &lwork, rwork, &lrwork, iwork, &liwork, &info);
   /**@brief
   @f[
    {\hat O}^{-1/2} = \left(\frac{|O_1\rangle}{\sqrt{o_1}}, \frac{|O_2\rangle}{\sqrt{o_2}},
@@ -81,21 +94,21 @@ static int diag_ovrp(
   for (isub = 0; isub < nsub; isub++) {
     if (eig[isub] > 1.0e-10) { /*to be changed default 1.0e-14*/
       for (jsub = 0; jsub < nsub; jsub++)
-        ovlp[jsub + nsub*nsub2] = ovlp[jsub + nsub*isub] / sqrt(eig[isub]);
+        ovrlp[jsub + nsub*nsub2] = ovrlp[jsub + nsub*isub] / sqrt(eig[isub]);
       nsub2 += 1;
     }
   }
   for (isub = nsub2; isub < nsub; isub++) 
     for (jsub = 0; jsub < nsub; jsub++)
-      ovlp[jsub + nsub*isub] = 0.0;
+      ovrlp[jsub + nsub*isub] = 0.0;
   /**
   (2) Transform @f${\hat H}'\equiv {\hat O}^{-1/2 \dagger}{\hat H}{\hat O}^{-1/2}@f$.
   @f${\hat H}'@f$ is nsub2*nsub2 matrix.
   */
   transa = 'N';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, hsub, &nsub, ovlp, &nsub, &zero, mat, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, hsub, &nsub, ovrlp, &nsub, &zero, mat, &nsub);
   transa = 'C';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovlp, &nsub, mat, &nsub, &zero, hsub, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrlp, &nsub, mat, &nsub, &zero, hsub, &nsub);
   /**
   (3) Diagonalize @f${\hat H}'@f$. It is the standard eigenvalue problem.
   @f[
@@ -110,17 +123,20 @@ static int diag_ovrp(
   @f]
   */
   transa = 'N';
-  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovlp, &nsub, hsub, &nsub, &zero, mat, &nsub);
+  zgemm_(&transa, &transb, &nsub, &nsub, &nsub, &one, ovrlp, &nsub, hsub, &nsub, &zero, mat, &nsub);
  // printf("%d %d %15.5f %15.5f %15.5f\n", info, nsub2, eig[0], eig[1], eig[2]);
   for (isub = 0; isub < nsub*nsub; isub++)hsub[isub] = mat[isub];
 
-  free(mat);
-  free(work);
-  free(rwork);
-  free(iwork);
+  free_cd_1d_allocate(mat);
+  free_cd_1d_allocate(work);
+  free_d_1d_allocate(rwork);
+  free_i_1d_allocate(iwork);
 
-  return(nsub2);
-}/*void diag_ovrp*/
+  BcastMPI_cv(0, nsub * nsub, hsub);
+  BcastMPI_cv(0, nsub * nsub, ovrlp);
+  BcastMPI_dv(0, nsub, eig);
+  return(BcastMPI_i(0, nsub2));
+}/*void diag_ovrlp*/
 /**@brief
 Compute adaptively shifted preconditionar written in
 S. Yamada, et al., Transactions of JSCES, Paper No. 20060027 (2006).
@@ -152,18 +168,18 @@ If this is resuterting run, read from files.
 */
 static void Initialize_wave(
   struct BindStruct *X,//!<[inout]
-  double complex **wave//!<[out] [exct][CheckList::idim_max] initial eigenvector
+  double complex **wave//!<[out] [CheckList::idim_max][exct] initial eigenvector
 ) 
 {
   FILE *fp;
   char sdt[D_FileNameMax];
   size_t byte_size = 0;
-
+  double complex *vin;
   int iproc, ie, ierr;
   long int idim, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
   int mythread;
-  double dnorm;
+  double *dnorm;
   /*
   For DSFMT
   */
@@ -178,6 +194,7 @@ static void Initialize_wave(
     fprintf(stdoutMPI, "%s", cLogInputVecStart);
 
     ierr = 0;
+    vin = cd_1d_allocate(X->Check.idim_max + 1);
     for (ie = 0; ie < X->Def.k_exct; ie++) {
 
       sprintf(sdt, cFileNameInputVector, ie, myrank);
@@ -196,10 +213,12 @@ static void Initialize_wave(
           fprintf(stderr, "Error: Invalid restart file.\n");
           exitMPI(-1);
         }
-        byte_size = fread(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
+        byte_size = fread(vin, sizeof(complex double), X->Check.idim_max + 1, fp);
+        for (idim = 1; idim <= i_max; idim++) wave[idim][ie] = vin[idim];
         fclose(fp);
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+    free_cd_1d_allocate(vin);
 
     if (ierr == 0) {
       //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
@@ -227,7 +246,7 @@ static void Initialize_wave(
       fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d\n\n", 
         initial_mode, iv, i_max, X->Def.k_exct);
 #pragma omp parallel for default(none) private(idim) shared(wave,i_max,ie)
-      for (idim = 1; idim <= i_max; idim++) wave[ie][idim] = 0.0;
+      for (idim = 1; idim <= i_max; idim++) wave[idim][ie] = 0.0;
       
       sum_i_max = 0;
       for (iproc = 0; iproc < nproc; iproc++) {
@@ -236,10 +255,10 @@ static void Initialize_wave(
         if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
 
           if (myrank == iproc) {
-            wave[ie][iv - sum_i_max + 1] = 1.0;
+            wave[iv - sum_i_max + 1][ie] = 1.0;
             if (X->Def.iInitialVecType == 0) {
-              wave[ie][iv - sum_i_max + 1] += 1.0*I;
-              wave[ie][iv - sum_i_max + 1] /= sqrt(2.0);
+              wave[iv - sum_i_max + 1][ie] += 1.0*I;
+              wave[iv - sum_i_max + 1][ie] /= sqrt(2.0);
             }
           }/*if (myrank == iproc)*/
         }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -271,22 +290,23 @@ static void Initialize_wave(
         if (X->Def.iInitialVecType == 0) {
 #pragma omp for
           for (idim = 1; idim <= i_max; idim++)
-            wave[ie][idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
+            wave[idim][ie] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
         }
         else {
 #pragma omp for
           for (idim = 1; idim <= i_max; idim++)
-            wave[ie][idim] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
+            wave[idim][ie] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
         }
       }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
 
     }/*#pragma omp parallel*/
 
-    for (ie = 0; ie < X->Def.k_exct; ie++) {
-      dnorm = sqrt(creal(VecProdMPI(i_max, wave[ie], wave[ie])));
-#pragma omp parallel for default(none) shared(i_max,wave,dnorm,ie) private(idim)
-      for (idim = 1; idim <= i_max; idim++) wave[ie][idim] /= dnorm;
-    }
+    dnorm = d_1d_allocate(X->Def.k_exct);
+    NormMPI_dv(i_max, X->Def.k_exct, wave, dnorm);
+#pragma omp parallel for default(none) shared(i_max,wave,dnorm,X) private(idim,ie)
+    for (idim = 1; idim <= i_max; idim++) 
+      for (ie = 0; ie < X->Def.k_exct; ie++) wave[idim][ie] /= dnorm[ie];
+    free_d_1d_allocate(dnorm);
   }/*else if(initial_mode==1)*/
 }/*static void Initialize_wave*/
 /**
@@ -301,18 +321,24 @@ static void Output_restart(
   size_t byte_size = 0;
   char sdt[D_FileNameMax];
   int ie;
+  long unsigned int idim;
+  double complex *vout;
 
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecStart);
   
+  vout = cd_1d_allocate(X->Check.idim_max + 1);
   for (ie = 0; ie < X->Def.k_exct; ie++) {
     sprintf(sdt, cFileNameOutputVector, ie, myrank);
     if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
     byte_size = fwrite(&X->Large.itr, sizeof(X->Large.itr), 1, fp);
     byte_size = fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
-    byte_size = fwrite(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
+    for (idim = 1; idim <= X->Check.idim_max; idim++) vout[idim] = wave[idim][ie];
+    byte_size = fwrite(vout, sizeof(complex double), X->Check.idim_max + 1, fp);
     fclose(fp);
   }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+  free_cd_1d_allocate(vout);
+
   //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
   if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
@@ -331,31 +357,33 @@ int LOBPCG_Main(
 {
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   FILE *fp;
-  int iconv = -1;
+  int iconv = -1, i4_max;
   long int idim, i_max;
-  int ii, jj, ie, je, nsub, stp, mythread, nsub_cut;
-  double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/, 
+  int ii, jj, ie, nsub, stp, nsub_cut, nstate;
+  double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/,
     ***hwxp/*[0] h*w, [1] h*x, [2] h*p of Ref.1*/,
-    *hsub, *ovlp /*Subspace Hamiltonian and Overlap*/,
-    **work;
-  double *eig, dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
+    ****hsub, ****ovrlp; /*Subspace Hamiltonian and Overlap*/
+  double *eig, *dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
+  char tN = 'N', tC = 'C';
+  double complex one = 1.0, zero = 0.0;
 
   nsub = 3 * X->Def.k_exct;
+  nstate = X->Def.k_exct;
   eig_pos_shift = LargeValue * X->Def.NsiteMPI;
 
   eig = d_1d_allocate(X->Def.k_exct);
+  dnorm = d_1d_allocate(X->Def.k_exct);
   eigsub = d_1d_allocate(nsub);
-  hsub = cd_1d_allocate(nsub*nsub);
-  ovlp = cd_1d_allocate(nsub*nsub);
-  work = cd_2d_allocate(nthreads, nsub);
+  hsub = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
+  ovrlp = cd_4d_allocate(3, X->Def.k_exct, 3, X->Def.k_exct);
 
   i_max = X->Check.idim_max;
+  i4_max = (int)i_max;
 
-  free(v0);
-  free(v1);
-  free(vg);
-  wxp = cd_3d_allocate(3, X->Def.k_exct, X->Check.idim_max + 1);
-  hwxp = cd_3d_allocate(3, X->Def.k_exct, X->Check.idim_max + 1);
+  free_cd_2d_allocate(v0);
+  free_cd_2d_allocate(v1);
+  wxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
+  hwxp = cd_3d_allocate(3, X->Check.idim_max + 1, X->Def.k_exct);
   /**@brief
   <ul>
   <li>Set initial guess of wavefunction: 
@@ -365,19 +393,22 @@ int LOBPCG_Main(
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
 
-  for (ie = 0; ie < X->Def.k_exct; ie++)
-    for (idim = 1; idim <= i_max; idim++) hwxp[1][ie][idim] = 0.0;
-  for (ie = 0; ie < X->Def.k_exct; ie++) 
-    mltply(X, hwxp[1][ie], wxp[1][ie]);
+  zclear(i_max*X->Def.k_exct, &hwxp[1][1][0]);
+  mltply(X, X->Def.k_exct, hwxp[1], wxp[1]);
   stp = 1;
   TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", 0);
 
-  for (ie = 0; ie < X->Def.k_exct; ie++){
-    for (idim = 1; idim <= i_max; idim++) wxp[2][ie][idim] = 0.0;
-    for (idim = 1; idim <= i_max; idim++) hwxp[2][ie][idim] = 0.0;
-
-    eig[ie] = creal(VecProdMPI(i_max, wxp[1][ie], hwxp[1][ie]));
-  }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+  zclear(i_max*X->Def.k_exct, &wxp[2][1][0]);
+  zclear(i_max*X->Def.k_exct, &hwxp[2][1][0]);
+  for (ie = 0; ie < X->Def.k_exct; ie++) eig[ie] = 0.0;
+  for (idim = 1; idim <= i_max; idim++) {
+    for (ie = 0; ie < X->Def.k_exct; ie++) {
+      wxp[2][idim][ie] = 0.0;
+      hwxp[2][idim][ie] = 0.0;
+      eig[ie] += conj(wxp[1][idim][ie]) * hwxp[1][idim][ie];
+    }
+  }
+  SumMPI_dv(X->Def.k_exct, eig);
 
   sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
   childfopenMPI(sdt_2, "w", &fp);
@@ -404,38 +435,45 @@ int LOBPCG_Main(
     <li>@b DO each eigenvector</li>
     <ul>
     */
+    /**@brief
+     <li>Compute residual vectors: @f${\bf w}={\bf X}-\mu {\bf x}@f$</li>
+    */
+#pragma omp parallel for default(none) shared(i_max,wxp,hwxp,eig,X) private(idim,ie) 
+    for (idim = 1; idim <= i_max; idim++) {
+      for (ie = 0; ie < X->Def.k_exct; ie++) {
+        wxp[0][idim][ie] = hwxp[1][idim][ie] - eig[ie] * wxp[1][idim][ie];
+      }
+    }        
+    NormMPI_dv(i_max, X->Def.k_exct, wxp[0], dnorm);
+
     dnormmax = 0.0;
-    for (ie = 0; ie < X->Def.k_exct; ie++) {
-      /**@brief
-      <li>Compute residual vectors: @f${\bf w}={\bf X}-\mu {\bf x}@f$</li>
-      */
-#pragma omp parallel for default(none) shared(i_max,wxp,hwxp,eig,ie) private(idim)
-      for (idim = 1; idim <= i_max; idim++)
-        wxp[0][ie][idim] = hwxp[1][ie][idim] - eig[ie] * wxp[1][ie][idim];
-      dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
-      if (dnorm > dnormmax) dnormmax = dnorm;
-
-      if (stp != 1) {
-        /**@brief
-        <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
-        */
-        if (X->Def.PreCG == 1) {
-          preshift = calc_preshift(eig[ie]+ eig_pos_shift, dnorm, eps_LOBPCG) - eig_pos_shift;
-#pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
-          for (idim = 1; idim <= i_max; idim++) {
+    for (ie = 0; ie < X->Def.k_exct; ie++) 
+      if (dnorm[ie] > dnormmax) dnormmax = dnorm[ie];
+    /**@brief
+    <li>Preconditioning (Point Jacobi): @f${\bf w}={\hat T}^{-1} {\bf w}@f$</li>
+    */
+    if (stp != 1) {
+      if (X->Def.PreCG == 1) {
+        for (ie = 0; ie < X->Def.k_exct; ie++) 
+          preshift = calc_preshift(eig[ie] + eig_pos_shift, dnorm[ie], eps_LOBPCG) - eig_pos_shift;
+#pragma omp parallel for default(none) shared(wxp,list_Diagonal,preshift,i_max,eps_LOBPCG,X) \
+private(idim,precon,ie)
+        for (idim = 1; idim <= i_max; idim++) {
+          for (ie = 0; ie < X->Def.k_exct; ie++){
             precon = list_Diagonal[idim] - preshift;
-            if(fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
+            if (fabs(precon) > eps_LOBPCG) wxp[0][idim][ie] /= precon;
           }
-        }/*if(X->Def.PreCG == 1)*/
-        /**@brief
+        }
+      }/*if(X->Def.PreCG == 1)*/
+      /**@brief
         <li>Normalize residual vector: @f${\bf w}={\bf w}/|w|@f$
-        */
-        dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
-#pragma omp parallel for default(none) shared(i_max,wxp,dnorm,ie) private(idim)
-        for (idim = 1; idim <= i_max; idim++) wxp[0][ie][idim] /= dnorm;
-      }/*if (stp /= 1)*/
-
-    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+      */
+      NormMPI_dv(i_max, X->Def.k_exct, wxp[0], dnorm);
+#pragma omp parallel for default(none) shared(i_max,wxp,dnorm,X) private(idim,ie)
+      for (idim = 1; idim <= i_max; idim++)
+        for (ie = 0; ie < X->Def.k_exct; ie++)
+          wxp[0][idim][ie] /= dnorm[ie];
+    }/*if (stp /= 1)*/
     /**@brief
     </ul>
     <li>@b END @b DO each eigenvector</li>
@@ -460,119 +498,96 @@ int LOBPCG_Main(
     /**@brief
     <li>@f${\bf W}={\hat H}{\bf w}@f$</li>
     */
-#pragma omp parallel default(none) shared(hwxp,i_max,X) private(idim,ie)
-    {
-#pragma omp for nowait
-      for (ie = 0; ie < X->Def.k_exct; ie++)
-        for (idim = 1; idim <= i_max; idim++)  hwxp[0][ie][idim] = 0.0;
-    }
-    for (ie = 0; ie < X->Def.k_exct; ie++)
-      mltply(X, hwxp[0][ie], wxp[0][ie]);
+    zclear(i_max*X->Def.k_exct, &hwxp[0][1][0]);
+    mltply(X, X->Def.k_exct, hwxp[0], wxp[0]);
 
     TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
     /**@brief
-    <li>Compute subspace Hamiltonian and overrap matrix:
+    <li>Compute subspace Hamiltonian and overlap matrix:
     @f${\hat H}_{\rm sub}=\{{\bf w},{\bf x},{\bf p}\}^\dagger \{{\bf W},{\bf X},{\bf P}\}@f$, 
     @f${\hat O}=\{{\bf w},{\bf x},{\bf p}\}^\dagger \{{\bf w},{\bf x},{\bf p}\}@f$,
     </li>
     */
     for (ii = 0; ii < 3; ii++) {
-      for (ie = 0; ie < X->Def.k_exct; ie++){
-        for (jj = 0; jj < 3; jj++) {
-          for (je = 0; je < X->Def.k_exct; je++){
-            hsub[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
-              = VecProdMPI(i_max, wxp[jj][je], hwxp[ii][ie]);
-            ovlp[je + jj*X->Def.k_exct + ie * nsub + ii * nsub*X->Def.k_exct]
-              = VecProdMPI(i_max, wxp[jj][je], wxp[ii][ie]);
-          }/*for (je = 0; je < X->Def.k_exct; je++)*/
-        }/*for (jj = 0; jj < 3; jj++)*/
-      }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-    }/*for (ii = 0; ii < 3; ii++)*/
+      for (jj = 0; jj < 3; jj++) {
+        zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
+          &wxp[ii][1][0], &nstate, &wxp[jj][1][0], &nstate, &zero, &ovrlp[jj][0][ii][0], &nsub);
+        zgemm_(&tN, &tC, &nstate, &nstate, &i4_max, &one,
+          &wxp[ii][1][0], &nstate, &hwxp[jj][1][0], &nstate, &zero, &hsub[jj][0][ii][0], &nsub);
+      }
+    }
+    SumMPI_cv(nsub*nsub, &ovrlp[0][0][0][0]);
+    SumMPI_cv(nsub*nsub, &hsub[0][0][0][0]);
+
     for (ie = 0; ie < X->Def.k_exct; ie++)
-      eig[ie] =
-      creal(hsub[ie + 1 * X->Def.k_exct + ie * nsub + 1 * nsub*X->Def.k_exct]);
+      eig[ie] = creal(hsub[1][ie][1][ie]);
     /**@brief
     <li>Subspace diagonalization with the Lowdin's orthogonalization for
         generalized eigenvalue problem: @f${\hat H}_{\rm sub}{\bf v}={\hat O}\mu_{\rm sub}{\bf v}@f$,
         @f${\bf v}=(\alpha, \beta, \gamma)@f$</li>
     */
-    nsub_cut = diag_ovrp(nsub, hsub, ovlp, eigsub);
+    nsub_cut = diag_ovrlp(nsub, &hsub[0][0][0][0], &ovrlp[0][0][0][0], eigsub);
     /**@brief
     <li>Update @f$\mu=(\mu+\mu_{\rm sub})/2@f$</li>
     */
     for (ie = 0; ie < X->Def.k_exct; ie++)
       eig[ie] = 0.5 * (eig[ie] + eigsub[ie]);
-
-#pragma omp parallel default(none) shared(i_max,X,wxp,hwxp,hsub,nsub,work) private(idim,ie,je,jj,mythread)
-    {
-#if defined(_OPENMP)
-      mythread = omp_get_thread_num();
-#else
-      mythread = 0;
-#endif
-
-#pragma omp for
-      for (idim = 1; idim <= i_max; idim++) {
-        /**@brief
-        <li>@f${\bf x}=\alpha {\bf w}+\beta {\bf x}+\gamma {\bf p}@f$,
-        Normalize @f${\bf x}@f$</li>
-        */
-        for (ie = 0; ie < X->Def.k_exct; ie++) {
-          work[mythread][ie] = 0.0;
-          for (jj = 0; jj < 3; jj++)
-            for (je = 0; je < X->Def.k_exct; je++)
-              work[mythread][ie] += wxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
-        }
-        for (ie = 0; ie < X->Def.k_exct; ie++) wxp[1][ie][idim] = work[mythread][ie];
-        /**@brief
-        <li>@f${\bf X}=\alpha {\bf W}+\beta {\bf X}+\gamma {\bf P}@f$,
-        Normalize @f${\bf X}@f$</li>
-        */
-        for (ie = 0; ie < X->Def.k_exct; ie++) {
-          work[mythread][ie] = 0.0;
-          for (jj = 0; jj < 3; jj++)
-            for (je = 0; je < X->Def.k_exct; je++)
-              work[mythread][ie] += hwxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
-        }
-        for (ie = 0; ie < X->Def.k_exct; ie++) hwxp[1][ie][idim] = work[mythread][ie];
-        /**@brief
-        <li>@f${\bf p}=\alpha {\bf w}+\gamma {\bf p}@f$,
-        Normalize @f${\bf p}@f$</li>
-        */
-        for (ie = 0; ie < X->Def.k_exct; ie++) {
-          work[mythread][ie] = 0.0;
-          for (jj = 0; jj < 3; jj += 2) {
-            for (je = 0; je < X->Def.k_exct; je++)
-              work[mythread][ie] += wxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
-          }
-        }
-        for (ie = 0; ie < X->Def.k_exct; ie++) wxp[2][ie][idim] = work[mythread][ie];
-        /**@brief
-        <li>@f${\bf P}=\alpha {\bf W}+\gamma {\bf P}@f$,
-        Normalize @f${\bf P}@f$</li>
-        */
-        for (ie = 0; ie < X->Def.k_exct; ie++) {
-          work[mythread][ie] = 0.0;
-          for (jj = 0; jj < 3; jj += 2)
-            for (je = 0; je < X->Def.k_exct; je++)
-              work[mythread][ie] += hwxp[jj][je][idim] * hsub[je + jj *X->Def.k_exct + nsub*ie];
-        }
-        for (ie = 0; ie < X->Def.k_exct; ie++) hwxp[2][ie][idim] = work[mythread][ie];
-
-      }/*for (idim = 1; idim <= i_max; idim++)*/
-    }/*pragma omp parallel*/
+    /**@brief
+      <li>@f${\bf x}=\alpha {\bf w}+\beta {\bf x}+\gamma {\bf p}@f$,
+      Normalize @f${\bf x}@f$</li>
+    */
+    zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
+    for (ii = 0; ii < 3; ii++) {
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
+    }
+    for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
+      wxp[1][idim][ie] = v1buf[idim][ie];
+    /**@brief
+    <li>@f${\bf X}=\alpha {\bf W}+\beta {\bf X}+\gamma {\bf P}@f$,
+    Normalize @f${\bf X}@f$</li>
+    */
+    zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
+    for (ii = 0; ii < 3; ii++) {
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
+    }
+    for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
+      hwxp[1][idim][ie] = v1buf[idim][ie];
+    /**@brief
+    <li>@f${\bf p}=\alpha {\bf w}+\gamma {\bf p}@f$,
+    Normalize @f${\bf p}@f$</li>
+    */
+    zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
+    for (ii = 0; ii < 3; ii += 2) {
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &wxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
+    }
+    for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
+      wxp[2][idim][ie] = v1buf[idim][ie];
+    /**@brief
+    <li>@f${\bf P}=\alpha {\bf W}+\gamma {\bf P}@f$,
+    Normalize @f${\bf P}@f$</li>
+    */
+    zclear(i_max*X->Def.k_exct, &v1buf[1][0]);
+    for (ii = 0; ii < 3; ii += 2) {
+      zgemm_(&tC, &tN, &nstate, &i4_max, &nstate, &one,
+        &hsub[0][0][ii][0], &nsub, &hwxp[ii][1][0], &nstate, &one, &v1buf[1][0], &nstate);
+    }
+    for (idim = 1; idim <= i_max; idim++) for (ie = 0; ie < X->Def.k_exct; ie++)
+      hwxp[2][idim][ie] = v1buf[idim][ie];
     /**@brief
     <li>Normalize @f${\bf w}@f$ and @f${\bf W}@f$</li>
     */
     for (ii = 1; ii < 3; ii++) {
-      for (ie = 0; ie < X->Def.k_exct; ie++) {
-        dnorm = sqrt(creal(VecProdMPI(i_max, wxp[ii][ie], wxp[ii][ie])));
-#pragma omp parallel for default(none) shared(i_max,wxp,hwxp,dnorm,ie,ii) private(idim)
-        for (idim = 1; idim <= i_max; idim++) {
-          wxp[ii][ie][idim] /= dnorm;
-          hwxp[ii][ie][idim] /= dnorm;
-        }
-      }/* for (ie = 0; ie < X->Def.k_exct; ie++)*/
+      NormMPI_dv(i_max, X->Def.k_exct, wxp[ii], dnorm);
+#pragma omp parallel for default(none) shared(i_max,wxp,hwxp,dnorm,ii,X) private(idim,ie)
+      for (idim = 1; idim <= i_max; idim++) {
+        for (ie = 0; ie < X->Def.k_exct; ie++) {
+          wxp[ii][idim][ie] /= dnorm[ie];
+          hwxp[ii][idim][ie] /= dnorm[ie];
+        }/* for (ie = 0; ie < X->Def.k_exct; ie++)*/
+      }
     }/*for (ii = 1; ii < 3; ii++)*/
 
   }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
@@ -589,10 +604,10 @@ int LOBPCG_Main(
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
 
   free_d_1d_allocate(eig);
+  free_d_1d_allocate(dnorm);
   free_d_1d_allocate(eigsub);
-  free_cd_1d_allocate(hsub);
-  free_cd_1d_allocate(ovlp);
-  free_cd_2d_allocate(work);
+  free_cd_4d_allocate(hsub);
+  free_cd_4d_allocate(ovrlp);
   free_cd_3d_allocate(hwxp);
   /**@brief
   <li>Output resulting vectors for restart</li>
@@ -605,23 +620,17 @@ int LOBPCG_Main(
       }
   }
   /**@brief
-  <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
+  <li>Just Move wxp[1] into ::v1. The latter must be start from 0-index (the same as FullDiag)</li>
   </ul>
   */
-  L_vec = cd_2d_allocate(X->Def.k_exct, X->Check.idim_max + 1);
-#pragma omp parallel default(none) shared(i_max,wxp,L_vec,X) private(idim,ie)
-  {
-    for (ie = 0; ie < X->Def.k_exct; ie++) {
-#pragma omp for nowait
-      for (idim = 0; idim < i_max; idim++)
-        L_vec[ie][idim] = wxp[1][ie][idim + 1];
-    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-  }/*X->Def.k_exct, X->Check.idim_max + 1);*/
+  v0 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
+#pragma omp parallel for default(none) shared(i_max,wxp,v0,X) private(idim,ie)
+  for (idim = 1; idim <= i_max; idim++)
+    for (ie = 0; ie < X->Def.k_exct; ie++) 
+      v0[idim][ie] = wxp[1][idim][ie];
   free_cd_3d_allocate(wxp);
+  v1 = cd_2d_allocate(X->Check.idim_max + 1, X->Def.k_exct);
 
-  v0 = cd_1d_allocate(X->Check.idim_max + 1);
-  v1 = cd_1d_allocate(X->Check.idim_max + 1);
-  vg = cd_1d_allocate(X->Check.idim_max + 1);
   if (iconv != 0) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
     return -1;
@@ -641,6 +650,7 @@ int CalcByLOBPCG(
   size_t byte_size = 0;
   long int i_max = 0, ie, idim;
   FILE *fp;
+  double complex *vin;
 
   fprintf(stdoutMPI, "######  Eigenvalue with LOBPCG  #######\n\n");
 
@@ -691,9 +701,9 @@ int CalcByLOBPCG(
     and read from files.
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
-    L_vec = cd_2d_allocate(X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
+    vin = cd_1d_allocate(X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
       sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
@@ -706,13 +716,14 @@ int CalcByLOBPCG(
         fprintf(stderr, "Error: Invalid Inputvector file.\n");
         exitMPI(-1);
       }
-      byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-#pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
-      for (idim = 0; idim < i_max; idim++) {
-        L_vec[ie][idim] = v1[idim + 1];
+      byte_size = fread(vin, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+#pragma omp parallel for default(none) shared(v1,vin, i_max, ie), private(idim)
+      for (idim = 1; idim <= i_max; idim++) {
+        v1[idim][ie] = vin[idim];
       }
+      fclose(fp);
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-    fclose(fp);
+    free_cd_1d_allocate(vin);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 
     if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
@@ -739,12 +750,12 @@ int CalcByLOBPCG(
   for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
     //phys(&(X->Bind), ie);
     fprintf(fp, "State %ld\n", ie);
-    fprintf(fp, "  Energy  %.16lf \n", X->Bind.Phys.all_energy[ie]);
-    fprintf(fp, "  Doublon  %.16lf \n", X->Bind.Phys.all_doublon[ie]);
-    fprintf(fp, "  Sz  %.16lf \n", X->Bind.Phys.all_sz[ie]);
-    //fprintf(fp, "  S^2  %.16lf \n", X->Bind.Phys.all_s2[ie]);
-    //fprintf(fp, "  N_up  %.16lf \n", X->Bind.Phys.all_num_up[ie]);
-    //fprintf(fp, "  N_down  %.16lf \n", X->Bind.Phys.all_num_down[ie]);
+    fprintf(fp, "  Energy  %.16lf \n", X->Bind.Phys.energy[ie]);
+    fprintf(fp, "  Doublon  %.16lf \n", X->Bind.Phys.doublon[ie]);
+    fprintf(fp, "  Sz  %.16lf \n", X->Bind.Phys.Sz[ie]);
+    //fprintf(fp, "  S^2  %.16lf \n", X->Bind.Phys.s2[ie]);
+    //fprintf(fp, "  N_up  %.16lf \n", X->Bind.Phys.num_up[ie]);
+    //fprintf(fp, "  N_down  %.16lf \n", X->Bind.Phys.num_down[ie]);
     fprintf(fp, "\n");
   }
   fclose(fp);
@@ -754,19 +765,21 @@ int CalcByLOBPCG(
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
 
+    vin = cd_1d_allocate(X->Bind.Check.idim_max + 1);
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
 
-#pragma omp parallel for default(none) shared(X,v1,L_vec,ie) private(idim)
-      for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
-        v1[idim + 1] = L_vec[ie][idim];
+#pragma omp parallel for default(none) shared(X,v1,ie,vin) private(idim)
+      for (idim = 1; idim <= X->Bind.Check.idim_max; idim++)
+        vin[idim] = v1[idim][ie];
       
       sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
       byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
       byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-      byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      byte_size = fwrite(vin, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
       fclose(fp);
     }/*for (ie = 0; ie < X->Bind.Def.k_exct; ie++)*/
+    free_cd_1d_allocate(vin);
 
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cOutputEigenVecStart, "a");
   }/*if (X->Bind.Def.iOutputEigenVec == TRUE)*/

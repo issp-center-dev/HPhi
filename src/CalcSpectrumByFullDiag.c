@@ -22,11 +22,11 @@ full-diagonalization method.
 #include <time.h>
 #include "struct.h"
 #include "lapack_diag.h"
-#include "makeHam.h"
+#include "mltply.h"
+#include "mltplyCommon.h"
 #include "CalcTime.h"
-
-void zcopy_(int *n, double complex *x, int *incx, double complex *y, int *incy);
-void zdotc_(double complex *xy, int *n, double complex *x, int *incx, double complex *y, int *incy);
+#include "common/setmemory.h"
+#include "CalcSpectrum.h"
 /**
 @brief Compute the Green function with the Lehmann representation and FD
 @f[
@@ -37,27 +37,37 @@ G(z) = \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
 int CalcSpectrumByFullDiag(
   struct EDMainCalStruct *X,//!<[inout]
   int Nomega,//!<[in] Number of frequencies
-  double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
-  double complex *dcomega//!<[in] [Nomega] Frequency
+  int NdcSpectrum,
+  double complex ***dcSpectrum,//!<[out] [Nomega] Spectrum
+  double complex **dcomega,//!<[in] [Nomega] Frequency
+  double complex **v1Org
 )
 {
-  int idim, jdim, iomega;
-  int idim_max_int;
-  int incr=1;
+  int idim0, idim1, idim2, iomega;
+  int idim_max_int, idim_maxorg_int;
+  int idcSpectrum;
+  double complex **vR, **vL, **vRv, **vLv;
   /**
   <ul>
   <li>Generate fully stored Hamiltonian. Because ::v0 & ::v1 are overwritten,
   copy ::v0 into ::vg.</li>
   */
   idim_max_int = (int)X->Bind.Check.idim_max;
-  zcopy_(&idim_max_int, &v0[1], &incr, &vg[0], &incr);
+  idim_maxorg_int = (int)X->Bind.Check.idim_maxOrg;
+  vR = cd_2d_allocate(idim_max_int+1, idim_maxorg_int);
+  vL = cd_2d_allocate(idim_max_int+1, idim_maxorg_int);
+  vLv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
+  vRv = cd_2d_allocate(idim_max_int, idim_maxorg_int);
 
   StartTimer(6301);
-  makeHam(&(X->Bind));
+  zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v0[0][0]);
+  zclear((X->Bind.Check.idim_max + 1)*X->Bind.Check.idim_max, &v1[0][0]);
+  for (idim0 = 1; idim0 <= X->Bind.Check.idim_max; idim0++) v1[idim0][idim0-1] = 1.0;
+  mltply(&(X->Bind), idim_max_int, v0, v1);
   StopTimer(6301);
   /**
   <li>::v0 becomes eigenvalues in lapack_diag(), and
-   ::L_vec becomes eigenvectors</li>
+   ::v1 becomes eigenvectors</li>
   */
   StartTimer(6302);
   lapack_diag(&(X->Bind));
@@ -66,31 +76,46 @@ int CalcSpectrumByFullDiag(
   <li>Compute @f$|\langle n|c|0\rangle|^2@f$ for all @f$n@f$ and store them into ::v1,
   where @f$c|0\rangle@f$ is ::vg.</li>
   */
-  StartTimer(6303);
-
-  for (idim = 0; idim < idim_max_int; idim++) {
-    v1[idim] = 0.0;
-    for (jdim = 0; jdim < idim_max_int; jdim++) v1[idim] += conj(vg[jdim]) * L_vec[idim][jdim];
-    //zdotc_(&v1[idim], &idim_max_int, &vg[0], &incr, &L_vec[idim][0], &incr);
-    v1[idim] = conj(v1[idim]) * v1[idim];
-  }/*for (idim = 0; idim < idim_max_int; idim++)*/
-  StopTimer(6303);
-  /**
-  <li>Compute spectrum
-  @f[
-  \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
-  @f]
-  </li>
-  </ul>
-  */
-  StartTimer(6304);
-  for (iomega = 0; iomega < Nomega; iomega++) {
-    dcSpectrum[iomega] = 0.0;
-    for (idim = 0; idim < idim_max_int; idim++) {
-      dcSpectrum[iomega] += v1[idim] / (dcomega[iomega] - v0[idim]);
-    }/*for (idim = 0; idim < idim_max_int; idim++)*/
-  }/*for (iomega = 0; iomega < Nomega; iomega++)*/
-  StopTimer(6304);
+  zclear(idim_max_int * idim_maxorg_int, &vR[1][0]);
+  GetExcitedState(&(X->Bind), idim_maxorg_int, vR, v1Org, 0);
+  for (idim0 = 1; idim0 < idim_max_int+1; idim0++)
+    for (idim1 = 0; idim1 < idim_max_int; idim1++)
+      for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
+        vRv[idim1][idim2] += conj(v0[idim0][idim1]) * vR[idim0][idim2];
+  for (idcSpectrum = 0; idcSpectrum < NdcSpectrum; idcSpectrum++) {
+    StartTimer(6303);
+    zclear(idim_max_int * idim_maxorg_int, &vL[1][0]);
+    GetExcitedState(&(X->Bind), idim_maxorg_int, vL, v1Org, idcSpectrum + 1);
+    zclear(idim_max_int*idim_maxorg_int, &vLv[0][0]);
+    for (idim0 = 1; idim0 < idim_max_int + 1; idim0++)
+      for (idim1 = 0; idim1 < idim_max_int; idim1++)
+        for (idim2 = 0; idim2 < idim_maxorg_int; idim2++)
+          vLv[idim1][idim2] += conj(v0[idim0][idim1]) * vL[idim0][idim2];
+    StopTimer(6303);
+    /**
+    <li>Compute spectrum
+    @f[
+    \sum_n \frac{|\langle n|c|0\rangle|^2}{z - E_n}
+    @f]
+    </li>
+    </ul>
+    */
+    StartTimer(6304);
+    for (idim0 = 0; idim0 < idim_maxorg_int; idim0++) {
+      for (iomega = 0; iomega < Nomega; iomega++) {
+        dcSpectrum[idim0][iomega][idcSpectrum] = 0.0;
+        for (idim1 = 0; idim1 < idim_max_int; idim1++) {
+          dcSpectrum[idim0][iomega][idcSpectrum] += conj(vLv[idim1][idim0]) * vRv[idim1][idim0]
+            / (dcomega[idim0][iomega] - X->Bind.Phys.energy[idim1]);
+        }/*for (idim = 0; idim < idim_max_int; idim++)*/
+      }/*for (iomega = 0; iomega < Nomega; iomega++)*/
+    }
+    StopTimer(6304);
+  }/*for (idcSpectrum = 1; idcSpectrum < NdcSpectrum; idcSpectrum++)*/
+  free_cd_2d_allocate(vL);
+  free_cd_2d_allocate(vR);
+  free_cd_2d_allocate(vLv);
+  free_cd_2d_allocate(vRv);
   return TRUE;
 }/*CalcSpectrumByFullDiag*/
 

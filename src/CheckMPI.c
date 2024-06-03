@@ -26,7 +26,8 @@
 */
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
-  int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
+  unsigned int isite;
+  int NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
 
   /**@brief
   Branch for each model

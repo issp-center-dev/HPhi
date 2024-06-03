@@ -13,7 +13,7 @@ function. An example of the file format is as follows.
 File name
 ~~~~~~~~~
 
-*  ##_DynamicalGreen.dat
+*  ##_DynamicalGreen_*.dat
 
 ## indicates [string02] in a ModPara file.
 
@@ -25,6 +25,9 @@ File format
 *  Lines 1-:
    [double01]  [double02]  [double03]  [double04]
 
+NOmega (Specified in ModPara) lines are printed.
+Then, after a blank line, a block corresponds to the next :math:`\hat{O}_l` is printed.
+   
 .. _parameters_42:
 
 Parameters

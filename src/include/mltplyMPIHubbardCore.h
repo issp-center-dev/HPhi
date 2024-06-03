@@ -75,7 +75,7 @@ int GetSgnInterAll
  unsigned long int *offbit
  );
 
-double complex child_GC_CisAisCjtAjt_Hubbard_MPI
+void child_GC_CisAisCjtAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -83,11 +83,11 @@ double complex child_GC_CisAisCjtAjt_Hubbard_MPI
  int org_ispin3,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_CisAjtCkuAlv_Hubbard_MPI
+void child_GC_CisAjtCkuAlv_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -99,11 +99,11 @@ double complex child_GC_CisAjtCkuAlv_Hubbard_MPI
  int isigma4,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_CisAjtCkuAku_Hubbard_MPI
+void child_GC_CisAjtCkuAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -113,11 +113,11 @@ double complex child_GC_CisAjtCkuAku_Hubbard_MPI
  int isigma3,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_CisAisCjtAku_Hubbard_MPI
+void child_GC_CisAisCjtAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -127,21 +127,21 @@ double complex child_GC_CisAisCjtAku_Hubbard_MPI
  int isigma4,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_GC_CisAis_Hubbard_MPI
+void child_GC_CisAis_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
 );
 
-double complex child_GC_CisAjt_Hubbard_MPI
+void child_GC_CisAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -149,11 +149,11 @@ double complex child_GC_CisAjt_Hubbard_MPI
  int org_ispin2,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
 );
 
-double complex child_CisAisCjtAjt_Hubbard_MPI
+void child_CisAisCjtAjt_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
@@ -161,11 +161,11 @@ double complex child_CisAisCjtAjt_Hubbard_MPI
  int org_ispin3,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_CisAjtCkuAlv_Hubbard_MPI
+void child_CisAjtCkuAlv_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -177,11 +177,11 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI
  int isigma4,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_CisAjtCkuAku_Hubbard_MPI
+void child_CisAjtCkuAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -191,11 +191,11 @@ double complex child_CisAjtCkuAku_Hubbard_MPI
  int isigma3,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_CisAisCjtAku_Hubbard_MPI
+void child_CisAisCjtAku_Hubbard_MPI
 (
  int isite1,
  int isigma1,
@@ -205,21 +205,21 @@ double complex child_CisAisCjtAku_Hubbard_MPI
  int isigma4,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_CisAis_Hubbard_MPI
+void child_CisAis_Hubbard_MPI
 (
  int org_isite1,
  int org_ispin1,
  double complex tmp_V,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
 );
 
-double complex child_CisAjt_MPIdouble
+void child_CisAjt_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -227,16 +227,12 @@ double complex child_CisAjt_MPIdouble
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X,
- double complex *tmp_v0, 
- double complex *tmp_v1,
- double complex *v1buf,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target
+ int nstate, 
+  double complex **tmp_v0, 
+ double complex **tmp_v1
  );
 
-double complex child_CisAjt_MPIsingle
+void child_CisAjt_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -244,73 +240,57 @@ double complex child_CisAjt_MPIsingle
  int org_ispin2,
  double complex tmp_trans,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1,
- double complex *v1buf,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 
-double complex child_GC_Cis_MPI
+void child_GC_Cis_MPI
 (
  int org_isite,
  int org_ispin,
  double complex tmp_trans,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  unsigned long int idim_max,
- double complex *tmp_v1buf,
  unsigned long int *Tpow
  );
 
-double complex child_GC_Ajt_MPI
+void child_GC_Ajt_MPI
 (
  int org_isite,
  int org_ispin,
  double complex tmp_trans,
- double complex *tmp_v0,
- double complex *tmp_v1,
+ int nstate, 
+  double complex **tmp_v0,
+ double complex **tmp_v1,
  unsigned long int idim_max,
- double complex *tmp_v1buf,
  long unsigned int *Tpow
  );
 
-double complex child_Cis_MPI
+void child_Cis_MPI
 (
  int org_isite,
  unsigned int org_ispin,
  double complex tmp_trans,
- double complex *tmp_v0,
- double complex *tmp_v1,
- double complex *tmp_v1buf,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  unsigned long int idim_max,
  long unsigned int *Tpow,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target,
  long unsigned int _irght,
  long unsigned int _ilft,
  long unsigned int _ihfbit
  );
 
-double complex child_Ajt_MPI
+void child_Ajt_MPI
 (
  int org_isite,
  unsigned int org_ispin,
  double complex tmp_trans,
- double complex *tmp_v0,
- double complex *tmp_v1,
- double complex *tmp_v1buf,
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1,
  unsigned long int idim_max,
  long unsigned int *Tpow,
- long unsigned int *list_1_org,
- long unsigned int *list_1buf_org,
- long unsigned int *list_2_1_target,
- long unsigned int *list_2_2_target,
  long unsigned int _irght,
  long unsigned int _ilft,
  long unsigned int _ihfbit

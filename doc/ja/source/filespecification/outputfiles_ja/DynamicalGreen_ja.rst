@@ -10,7 +10,7 @@ DynamicalGreen.dat
 ファイル名
 ^^^^^^^^^^
 
--  ##\_DynamicalGreen.dat
+-  ##\_DynamicalGreen_*.dat
 
 ##はModParaファイル内の[string02]で指定されるヘッダを表します。
 
@@ -20,6 +20,8 @@ DynamicalGreen.dat
 -  1行目-:
    :math:`[`\ double01\ :math:`]`  :math:`[`\ double02\ :math:`]`  :math:`[`\ double03\ :math:`]`  :math:`[`\ double04\ :math:`]`
 
+以下ModParaで指定したNOmega個分出力されたのち、空行を挟んで次の\ :math:`\hat{O}_l`\ に対応するブロックが出力される。
+         
 パラメータ
 ^^^^^^^^^^
 

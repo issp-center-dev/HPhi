@@ -3,6 +3,7 @@ MODULE fourier_val
   IMPLICIT NONE
   !
   INTEGER,SAVE :: &
+  & ntemp, & ! Number of temperature
   & interval, &
   & numave, &
   & nkg(3), & ! k-grid for momentum ditribution
@@ -35,6 +36,8 @@ MODULE fourier_val
   & indx(:,:,:,:) ! (nr,8,norb,norb) Mapping index for each Correlation function
   !
   REAL(8),ALLOCATABLE,SAVE :: &
+  & temp(:), & ! (ntemp) Temperature
+  & energy(:), & ! (nwfc) energy eigenvalue
   & knode(:,:), & ! (3,nnode) Nodes of k path
   & phase(:,:), & ! (125,nr) Boundary phase 
   & kvec(:,:)     ! (3,nk) k-vector in the 1st BZ
@@ -95,7 +98,7 @@ END SUBROUTINE key2lower
 SUBROUTINE read_filename()
   !
   USE fourier_val, ONLY : file_one, file_two, filehead, nsite, nwfc, &
-  &                       filetail, calctype, numave, interval
+  &                       filetail, calctype, numave, interval, energy
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, lanczos_max, irun, istep, iwfc, idx_start
@@ -249,7 +252,7 @@ SUBROUTINE read_filename()
      ! FullDiag
      !
      OPEN(fi, file = "output/CHECK_Memory.dat")
-     READ(fi, '("  MAX DIMENSION idim_max=1", i16)') nwfc
+     READ(fi, '(25x, i16)') nwfc
      CLOSE(fi)
      ALLOCATE(filetail(nwfc))
      !
@@ -258,6 +261,15 @@ SUBROUTINE read_filename()
      END DO
      !
      WRITE(*,*) "    Method : Full Diagonalization"
+     !
+     ALLOCATE(energy(nwfc))
+     !
+     OPEN(fi,file = "output/Eigenvalue.dat")
+     DO iwfc = 1, nwfc
+        READ(fi,*) keyname, energy(iwfc)
+        WRITE(*,*) "    Energy ", iwfc, " : ", energy(iwfc)
+     END DO
+     CLOSE(fi)
      !
   ELSE IF (calctype == 3) THEN
      !
@@ -269,6 +281,16 @@ SUBROUTINE read_filename()
      END DO
      !
      WRITE(*,*) "    Method : LOBCG"
+     !
+     OPEN(fi,file = TRIM(filehead)//"_energy.dat")
+     DO iwfc = 1, nwfc
+        READ(fi,*) keyname
+        READ(fi,*) keyname, energy(iwfc)
+        READ(fi,*) keyname
+        READ(fi,*) keyname
+        WRITE(*,*) "    Energy ", iwfc, " : ", energy(iwfc)
+     END DO
+     CLOSE(fi)
      !
   ELSE
      !
@@ -293,8 +315,8 @@ END SUBROUTINE read_filename
 !
 SUBROUTINE read_geometry()
   !
-  USE fourier_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, &
-  &                       nr, nreq, norb, nnode, knode, nk_line, kname, nkg
+  USE fourier_val, ONLY : recipr, box, nsite, phase, irv, rindx, orb, ntemp, &
+  &                       nr, nreq, norb, nnode, knode, nk_line, kname, temp, nkg
   IMPLICIT NONE
   !
   INTEGER :: fi = 10, isite, ii, ir, ipiv(3), irv0(3), i1, i2, i3, inode
@@ -372,6 +394,16 @@ SUBROUTINE read_geometry()
   END DO
   READ(fi,*) nkg(1:3)
   WRITE(*,'(a,3i3)') "k-grid for momentum distribution :", nkg(1:3)
+  !
+  ! (Optional) Temperature
+  !
+  READ(fi,*,iostat=ii) ntemp
+  IF(ii == 0) THEN
+     ALLOCATE(temp(ntemp))
+     READ(fi,*) temp(1:ntemp)
+  ELSE
+     ntemp = 0
+  END IF
   !
   CLOSE(fi)
   !
@@ -819,12 +851,15 @@ END SUBROUTINE fourier_cor
 SUBROUTINE output_cor()
   !
   USE fourier_val, ONLY : cor_k, nk, nnode, knode, nk_line, kname, norb, interval, &
-  &                       nwfc, recipr, filehead, filetail, calctype, nkg, numave
+  &                       nwfc, recipr, filehead, filetail, calctype, nkg, numave, &
+  &                       nwfc, temp, ntemp, energy
   IMPLICIT NONE
   !
-  INTEGER :: fo = 20, ik, iwfc, inode, iorb, jorb, ii, ikk, iwfc1, iwfc2, istep
+  INTEGER :: fo = 20, ik, iwfc, inode, iorb, jorb, ii, ikk, iwfc1, iwfc2, istep, &
+  &          itemp, ndeg
   REAL(8) :: dk(3), dk_cart(3), xk(nk), &
-  &          xk_label(nnode), klength
+  &          xk_label(nnode), klength, Zpart
+  COMPLEX(8),ALLOCATABLE :: cor_t(:,:,:,:)
   CHARACTER(256) :: filename
   COMPLEX(8),ALLOCATABLE :: cor_ave(:,:,:,:), cor_err(:,:,:,:)
   !
@@ -958,6 +993,60 @@ SUBROUTINE output_cor()
         CLOSE(fo)
         !
      END DO
+     !
+     ! Output temperature dependent correlation function
+     !
+     ALLOCATE(cor_t(ikk,6,norb,norb))
+     !
+     DO itemp = 1, ntemp
+        !
+        IF(temp(itemp) < 1.0d-8) THEN
+          !
+          ! Zero temperature
+          !
+          ndeg = COUNT(energy(1:nwfc)-energy(1) < 1.0d-5)
+          cor_t(1:ikk,:,:,:) = SUM(cor_k(1:ikk,:,:,:,1:ndeg), 4) / dble(ndeg)
+          ! 
+        ELSE
+          !
+          Zpart = 1.0d0
+          cor_t(1:ikk,:,:,:) = cor_k(1:ikk,:,:,:,nwfc)
+          DO iwfc = nwfc, 2, -1
+            Zpart = 1.0d0 + exp(-(energy(iwfc)-energy(iwfc-1))/temp(itemp))*Zpart
+            cor_t(1:ikk,:,:,:) = cor_k(1:ikk,:,:,:,iwfc-1) &
+            &              + exp(-(energy(iwfc)-energy(iwfc-1))/temp(itemp))*cor_t(1:ikk,:,:,:)
+          END DO
+          cor_t(1:ikk,:,:,:) = cor_t(1:ikk,:,:,:) / Zpart
+          !
+        END IF
+        !
+        WRITE(filename,'(a,a,i0,a)') TRIM(filehead), "_corr_t", itemp, ".dat"
+        OPEN(fo, file = TRIM(filename))
+        !
+        WRITE(fo,'(a,e15.5)') "#Temperature: ", temp(itemp)
+        WRITE(fo,*) "# k-length[1]"
+        ii = 1
+        DO iorb = 1, norb
+           DO jorb = 1, norb
+              WRITE(fo,'(a,i3,a,i3)') "# Orbital", iorb, " to Orbital", jorb
+              WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a)') &
+              & "#  UpUp[", ii+1, ",", ii+2, "] (Re. Im.) DownDown[", ii+3, ",", ii+4, "]"
+              WRITE(fo,'(a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a,i4,a)') &
+              & "#  Density[", ii+5, ",", ii+6, "] SzSz[", ii+7, ",", ii+8, &
+              & "] S+S-[", ii+9, ",", ii+10, "] S.S[", ii+11, ",", ii+12, "]"
+              ii = ii+12
+           END DO
+        END DO
+        !
+        DO ik = 1, ikk
+           WRITE(fo,'(1000e15.5)') xk(ik), cor_t(ik, 1:6, 1:norb, 1:norb)
+        END DO
+        !
+        CLOSE(fo)
+       !
+     END DO !itemp = 1, ntemp
+     !
+     DEALLOCATE(cor_t)
      !
   END IF ! IF(calctype == 4)
   !

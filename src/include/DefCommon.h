@@ -61,6 +61,7 @@
 #define RECALC_OUTPUT_TMComponents_VEC 3
 #define RECALC_FROM_TMComponents_VEC 4
 #define RECALC_INOUT_TMComponents_VEC 5
+#define CALCSPEC_SCRATCH 6
 
 /*!< ReStartVector */
 #define NUM_RESTART 4

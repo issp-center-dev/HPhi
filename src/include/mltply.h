@@ -19,6 +19,6 @@
 
 #include "Common.h"
 
-int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1);
+int mltply(struct BindStruct *X, int nstate, double complex **tmp_v0,double complex **tmp_v1);
 
 #endif /* HPHI_MLTPLY_H */

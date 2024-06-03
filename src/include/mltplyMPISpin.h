@@ -25,11 +25,11 @@ void general_int_spin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_general_int_spin_MPIdouble
+void child_general_int_spin_MPIdouble
 (
  int org_isite1,
  int org_ispin1,
@@ -39,29 +39,31 @@ double complex child_general_int_spin_MPIdouble
  int org_ispin4,
  double complex tmp_J,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, 
+ double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 
-double complex child_general_int_spin_TotalS_MPIdouble
+void child_general_int_spin_TotalS_MPIdouble
 (
  int org_isite1,
  int org_isite3,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, 
+ double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void general_int_spin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
-double complex child_general_int_spin_MPIsingle
+void child_general_int_spin_MPIsingle
 (
  int org_isite1,
  int org_ispin1,
@@ -71,54 +73,55 @@ double complex child_general_int_spin_MPIsingle
  int org_ispin4,
  double complex tmp_J,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate,
+ double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_general_int_spin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_general_int_spin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_general_int_GeneralSpin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void GC_general_int_GeneralSpin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void general_int_GeneralSpin_MPIdouble
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );
 
 void general_int_GeneralSpin_MPIsingle
 (
  unsigned long int i_int,
  struct BindStruct *X,
- double complex *tmp_v0,
- double complex *tmp_v1
+ int nstate, double complex **tmp_v0,
+ double complex **tmp_v1
  );

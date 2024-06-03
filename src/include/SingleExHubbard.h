@@ -16,16 +16,7 @@
 #pragma once
 #include "Common.h"
 
-int GetSingleExcitedStateHubbard
-(
- struct BindStruct *X,
- double complex *tmp_v0, /**< [out] Result v0 = H v1*/
-  double complex *tmp_v1 /**< [in] v0 = H v1*/
-);
-
-int GetSingleExcitedStateHubbardGC
-        (
-                struct BindStruct *X,
-                double complex *tmp_v0, /**< [out] Result v0 = H v1*/
-                double complex *tmp_v1 /**< [in] v0 = H v1*/
-        );
+int GetSingleExcitedStateHubbard(struct BindStruct *X, int nstate,
+  double complex **tmp_v0, double complex **tmp_v1, int iEx);
+int GetSingleExcitedStateHubbardGC(struct BindStruct *X, int nstate,
+  double complex **tmp_v0, double complex **tmp_v1, int iEx);

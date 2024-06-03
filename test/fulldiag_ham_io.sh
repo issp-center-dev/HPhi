@@ -13,6 +13,7 @@ U = 4.0
 nelec = 4
 2Sz = 0
 HamIO = "out"
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan1.in
@@ -27,6 +28,7 @@ U = 4.0
 nelec = 4
 2Sz = 0
 HamIO = "in"
+ScaLAPACK = 1
 EOF
 
 ${MPIRUNFC} ../../src/HPhi -s stan2.in

@@ -24,6 +24,7 @@
 #include "Lanczos_EigenValue.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "matrixlapack.h"
 
 /**
  * @file   Lanczos_EigenValue.c
@@ -104,19 +105,19 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       //Eigenvalues by Lanczos method
       TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
       StartTimer(4101);
-      mltply(X, v0, v1);
+      mltply(X, 1, v0, v1);
       StopTimer(4101);
       stp = 1;
       TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
 
-      alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+      alpha1 = creal(VecProdMPI(i_max,&v1[0][0], &v0[0][0]));// alpha = v^{\dag}*H*v
 
       alpha[1] = alpha1;
       cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
       for (i = 1; i <= i_max; i++) {
-        cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+        cbeta1 += conj(v0[i][0] - alpha1 * v1[i][0]) * (v0[i][0] - alpha1 * v1[i][0]);
       }
       cbeta1 = SumMPI_dc(cbeta1);
       beta1 = creal(cbeta1);
@@ -153,23 +154,23 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   for (stp = X->Def.Lanczos_restart+1; stp <= liLanczosStp; stp++) {
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for (i = 1; i <= i_max; i++) {
-      temp1 = v1[i];
-      temp2 = (v0[i] - alpha1 * v1[i]) / beta1;
-      v0[i] = -beta1 * temp1;
-      v1[i] = temp2;
+      temp1 = v1[i][0];
+      temp2 = (v0[i][0] - alpha1 * v1[i][0]) / beta1;
+      v0[i][0] = -beta1 * temp1;
+      v1[i][0] = temp2;
     }
 
     StartTimer(4101);
-    mltply(X, v0, v1);
+    mltply(X, 1, v0, v1);
     StopTimer(4101);
     TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
-    alpha1 = creal(X->Large.prdct);
+    alpha1 = creal(VecProdMPI(i_max, &v1[0][0], &v0[0][0]));
     alpha[stp] = alpha1;
     cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
     for (i = 1; i <= i_max; i++) {
-      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+      cbeta1 += conj(v0[i][0] - alpha1 * v1[i][0]) * (v0[i][0] - alpha1 * v1[i][0]);
     }
     cbeta1 = SumMPI_dc(cbeta1);
     beta1 = creal(cbeta1);
@@ -325,7 +326,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
         struct BindStruct *X,
         double *_alpha,
         double *_beta,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         unsigned long int *liLanczos_step
  ) {
 
@@ -352,20 +353,20 @@ int Lanczos_GetTridiagonalMatrixComponents(
   if (X->Def.Lanczos_restart == 0) { // initial procedure (not restart)
 #pragma omp parallel for default(none) private(i) shared(v0, v1, tmp_v1) firstprivate(i_max)
     for (i = 1; i <= i_max; i++) {
-      v0[i] = 0.0;
-      v1[i] = tmp_v1[i];
+      v0[i][0] = 0.0;
+      v1[i][0] = tmp_v1[i][0];
     }
     stp = 0;
-    mltply(X, v0, tmp_v1);
+    mltply(X, 1, v0, tmp_v1);
     TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-    alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+    alpha1 = creal(VecProdMPI(i_max, &tmp_v1[0][0], &v0[0][0]));// alpha = v^{\dag}*H*v
     _alpha[1] = alpha1;
     cbeta1 = 0.0;
     fprintf(stdoutMPI, "  Step / Step_max alpha beta \n");
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
     for (i = 1; i <= i_max; i++) {
-      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+      cbeta1 += conj(v0[i][0] - alpha1 * v1[i][0]) * (v0[i][0] - alpha1 * v1[i][0]);
     }
     cbeta1 = SumMPI_dc(cbeta1);
     beta1 = creal(cbeta1);
@@ -386,21 +387,21 @@ int Lanczos_GetTridiagonalMatrixComponents(
 
 #pragma omp parallel for default(none) private(i, temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
     for (i = 1; i <= i_max; i++) {
-      temp1 = v1[i];
-      temp2 = (v0[i] - alpha1 * v1[i]) / beta1;
-      v0[i] = -beta1 * temp1;
-      v1[i] = temp2;
+      temp1 = v1[i][0];
+      temp2 = (v0[i][0] - alpha1 * v1[i][0]) / beta1;
+      v0[i][0] = -beta1 * temp1;
+      v1[i][0] = temp2;
     }
 
-    mltply(X, v0, v1);
+    mltply(X, 1, v0, v1);
     TimeKeeperWithStep(X, cFileNameTimeKeep, c_Lanczos_SpectrumStep, "a", stp);
-    alpha1 = creal(X->Large.prdct);
+    alpha1 = creal(VecProdMPI(i_max, &v1[0][0], &v0[0][0]));
     _alpha[stp] = alpha1;
     cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
     for (i = 1; i <= i_max; i++) {
-      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+      cbeta1 += conj(v0[i][0] - alpha1 * v1[i][0]) * (v0[i][0] - alpha1 * v1[i][0]);
     }
     cbeta1 = SumMPI_dc(cbeta1);
     beta1 = creal(cbeta1);
@@ -425,7 +426,7 @@ int Lanczos_GetTridiagonalMatrixComponents(
 /// \retval 0 Succeed to read the initial vector.
 /// \version 1.2
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
-int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex *_v1, unsigned long int *liLanczosStp_vec)
+int ReadInitialVector(struct BindStruct *X, double complex** _v0, double complex **_v1, unsigned long int *liLanczosStp_vec)
 {
   size_t byte_size;
   char sdt[D_FileNameMax];
@@ -444,8 +445,8 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
     fprintf(stderr, "Error: A size of Inputvector is incorrect.\n");
     return -1;
   }
-  byte_size = fread(_v0, sizeof(complex double), X->Check.idim_max + 1, fp);
-  byte_size = fread(_v1, sizeof(complex double), X->Check.idim_max + 1, fp);
+  byte_size = fread(&_v0[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
+  byte_size = fread(&_v1[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
   fclose(fp);
   fprintf(stdoutMPI, "  End:   Input vectors for recalculation.\n");
   TimeKeeper(X, cFileNameTimeKeep, c_InputSpectrumRecalcvecEnd, "a");
@@ -464,8 +465,8 @@ int ReadInitialVector(struct BindStruct *X, double complex* _v0, double complex 
 /// \version 2.0
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int OutputLanczosVector(struct BindStruct *X,
-                        double complex* tmp_v0,
-                        double complex *tmp_v1,
+                        double complex** tmp_v0,
+                        double complex **tmp_v1,
                         unsigned long int liLanczosStp_vec){
   char sdt[D_FileNameMax];
   FILE *fp;
@@ -479,8 +480,8 @@ int OutputLanczosVector(struct BindStruct *X,
   }
   fwrite(&liLanczosStp_vec, sizeof(liLanczosStp_vec),1,fp);
   fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max),1,fp);
-  fwrite(tmp_v0, sizeof(complex double),X->Check.idim_max+1, fp);
-  fwrite(tmp_v1, sizeof(complex double),X->Check.idim_max+1, fp);
+  fwrite(&tmp_v0[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
+  fwrite(&tmp_v1[0][0], sizeof(complex double), X->Check.idim_max + 1, fp);
   fclose(fp);
 
   fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
@@ -496,7 +497,7 @@ int OutputLanczosVector(struct BindStruct *X,
 /// Output: Large.iv.
 /// \param tmp_v0 [out] The initial vector whose components are zero.
 /// \param tmp_v1 [out] The initial vector whose components are randomly given when initial_mode=1, otherwise, iv-th component is only given.
-void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double complex *tmp_v1) {
+void SetInitialVector(struct BindStruct *X, double complex** tmp_v0, double complex **tmp_v1) {
   int iproc;
   long int i, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
@@ -522,8 +523,8 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
             X->Def.k_exct);
 #pragma omp parallel for default(none) private(i) shared(tmp_v0, tmp_v1) firstprivate(i_max)
     for (i = 1; i <= i_max; i++) {
-      tmp_v0[i] = 0.0;
-      tmp_v1[i] = 0.0;
+      tmp_v0[i][0] = 0.0;
+      tmp_v1[i][0] = 0.0;
     }
 
     sum_i_max = 0;
@@ -532,10 +533,10 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
         i_max_tmp = BcastMPI_li(iproc, i_max);
         if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp) {
           if (myrank == iproc) {
-            tmp_v1[iv - sum_i_max + 1] = 1.0;
+            tmp_v1[iv - sum_i_max + 1][0] = 1.0;
             if (X->Def.iInitialVecType == 0) {
-              tmp_v1[iv - sum_i_max + 1] += 1.0 * I;
-              tmp_v1[iv - sum_i_max + 1] /= sqrt(2.0);
+              tmp_v1[iv - sum_i_max + 1][0] += 1.0 * I;
+              tmp_v1[iv - sum_i_max + 1][0] /= sqrt(2.0);
             }
           }/*if (myrank == iproc)*/
         }/*if (sum_i_max <= iv && iv < sum_i_max + i_max_tmp)*/
@@ -545,10 +546,10 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
       }/*for (iproc = 0; iproc < nproc; iproc++)*/
     }
     else {
-      tmp_v1[iv + 1] = 1.0;
+      tmp_v1[iv + 1][0] = 1.0;
       if (X->Def.iInitialVecType == 0) {
-        tmp_v1[iv + 1] += 1.0 * I;
-        tmp_v1[iv + 1] /= sqrt(2.0);
+        tmp_v1[iv + 1][0] += 1.0 * I;
+        tmp_v1[iv + 1][0] /= sqrt(2.0);
       }
     }
   }/*if(initial_mode == 0)*/
@@ -562,7 +563,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
 
 #pragma omp for
       for (i = 1; i <= i_max; i++) {
-        tmp_v0[i] = 0.0;
+        tmp_v0[i][0] = 0.0;
       }
       /*
        Initialise MT
@@ -583,12 +584,12 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
       if (X->Def.iInitialVecType == 0) {
 #pragma omp for
         for (i = 1; i <= i_max; i++)
-          tmp_v1[i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) +
-                      2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) * I;
+          tmp_v1[i][0] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) +
+                         2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5) * I;
       } else {
 #pragma omp for
         for (i = 1; i <= i_max; i++)
-          tmp_v1[i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
+          tmp_v1[i][0] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
       }
 
     }/*#pragma omp parallel*/
@@ -596,7 +597,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
     cdnorm = 0.0;
 #pragma omp parallel for default(none) private(i) shared(tmp_v1, i_max) reduction(+: cdnorm)
     for (i = 1; i <= i_max; i++) {
-      cdnorm += conj(tmp_v1[i]) * tmp_v1[i];
+      cdnorm += conj(tmp_v1[i][0]) * tmp_v1[i][0];
     }
     if(X->Def.iFlgMPI==0) {
       cdnorm = SumMPI_dc(cdnorm);
@@ -605,7 +606,7 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
     dnorm = sqrt(dnorm);
 #pragma omp parallel for default(none) private(i) shared(tmp_v1) firstprivate(i_max, dnorm)
     for (i = 1; i <= i_max; i++) {
-      tmp_v1[i] = tmp_v1[i] / dnorm;
+      tmp_v1[i][0] = tmp_v1[i][0] / dnorm;
     }
   }/*else if(initial_mode==1)*/
 }

@@ -54,7 +54,7 @@ long int *GetMatElementInRank(long int i, long int j, long int nprow, long int n
 void DivMat(long int m, long int n, double complex Aorgmn, double complex *A, int *desca);
 void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, double complex *vec);
 int diag_scalapack_cmp(long int xNsize, double complex **A,
-                       double complex *r, double complex *Z, int *descZ);
+                       double *r, double complex *Z, int *descZ);
 
 extern int use_scalapack;
 #endif

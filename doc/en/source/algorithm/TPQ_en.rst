@@ -26,7 +26,7 @@ Details of implementation
 -------------------------
 
 **Construction of the micro canonical TPQ (mTPQ) state**
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Here, we explain how to construct the micro canonical TPQ (mTPQ) state [1]_,
 which offers the simplest method for calculating finite-temperature properties.
 
@@ -59,7 +59,7 @@ we perform some independent calculations by changing :math:`|\Phi_{\rm rand}\ran
 Since the temperature
 
 **Construction of the canonical TPQ (cTPQ) state**
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Here, we explain how to construct the canonical TPQ (cTPQ) state [2]_,
 which is another way to construct the TPQ state.
 In the cTPQ method, :math:`\exp[-\beta\hat{\mathcal H}/2]` is 

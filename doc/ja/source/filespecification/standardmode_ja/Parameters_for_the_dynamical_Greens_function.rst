@@ -5,7 +5,7 @@
 
    **形式 :** 文字列(\ ``"None"``, ``"Normal"``, ``"NoIteration"``,
    ``"Restart_out"``, ``"Restart_in"``,
-   ``"Restart"``\ 。デフォルトは\ ``"None"``)
+   ``"Restart"``, ``"Scratch"``\ 。デフォルトは\ ``"None"``)
 
    **説明 :** 動的グリーン関数の計算に関する設定を行う。
    ``"None"``\ では動的グリーン関数を計算しない。
@@ -18,6 +18,9 @@
    ``"Restart_in"``\ では再計算用のデータをファイルから受け取り途中から計算を始める。
    ``"Restart"``\ では再計算用のデータをファイルから受け取り途中から計算を始め、
    反復が終了した時点で再計算用のデータをファイル出力する。
+   ``"Scratch"``\ では、まず固有状態の計算が行われたのちに、
+   続けて動的グリーン関数の計算が行われる。この場合は波動関数のファイル入出力は
+   必要なくなる。
    スペクトル計算において使用される手法はパラメーター\ ``method``\ で指定されます。
    (``method="CG"``\ とした場合には
    付属している\ :math:`K\omega`\ ライブラリ [#]_ が呼び出され、
@@ -26,21 +29,35 @@
 -  ``SpectrumType``
 
    **形式 :** 文字列(\ ``"SzSz"``, ``"S+S-"``, ``"Density"``, ``"up"``,
-   ``"down"``\ のいずれか。デフォルトは\ ``"SzSz"``)
+   ``"down"``, ``"SzSz_R"``, ``"S+S-_R"``, ``"Density_R"``, ``"up_R"``,
+   ``"down_R"``\ のいずれか。デフォルトは\ ``"SzSz"``)
 
    **説明 :** 計算する動的グリーン関数の種類を指定する。
+   逆格子空間での相関関数を直接計算するに場合には次の値を使用する。
    ``"SzSz"``\ では\ :math:`\langle {S}^z_{- \bf q} {S}^z_{\bf q}\rangle`\ 、
    ``"S+S-"``\ では\ :math:`\langle S^{+}_{- \bf q} {S}^{-}_{\bf q}\rangle`\ 、
    ``"Density"``\ では\ :math:`\langle {n}_{- \bf q} {n}_{\bf q}\rangle`\ 、
    ``"up"``\ では\ :math:`\langle {c}^{\dagger}_{{\bf q} \uparrow} {c}_{{\bf q} \uparrow}\rangle`\ 、
    ``"down"``\ では\ :math:`\langle {c}^{\dagger}_{{\bf q} \downarrow} {c}_{{\bf q} \downarrow}\rangle`
    となる。
+   また、実空間での相関関数の計算では次の値を用いる。
+   ``"SzSz_R"``\ では\ :math:`\langle {\hat S}_{z R} {\hat S}_{z 0}\rangle`\ 、
+   ``"S+S-_R"``\ では\ :math:`\langle {\hat S}^{+}_{R} {\hat S}^{-}_{0}\rangle`\ 、
+   ``"Density_R"``\ では\ :math:`\langle {\hat n}_{R} {\hat n}_{0}\rangle`\ 、
+   ``"up_R"``\ では\ :math:`\langle {\hat c}^{\dagger}_{R \uparrow} {\hat c}_{0 \uparrow}\rangle`\ 、
+   ``"down_R"``\ では\ :math:`\langle {\hat c}^{\dagger}_{R \downarrow} {\hat c}_{0 \downarrow}\rangle` 、
+   ここで :math:`R` はすべてのサイト番号にわたる。
+   この実空間での動的相関関数をフーリエ変換して逆格子空間全体での
+   動的相関関数を得る方法については
+   :ref:`相関関数のFourier変換ユーティリティー <fourier>` を参照。
 
--  ``SpectrumQW``, ``SpectrumQL``
+-  ``SpectrumQW``, ``SpectrumQL``, ``SpectrumQH``
 
    **形式 :** 実数(デフォルトはともに\ ``0.0``)
 
-   **説明 :** 計算する動的グリーン関数の波数を Fractional
+   **説明 :** ``SpectrumType`` が ``"SzSz"``, ``"S+S-"``, ``"Density"``, ``"up"``,
+   ``"down"`` のときのみ使用。
+   計算する動的グリーン関数の波数を Fractional
    coordinateで指定する。 逆格子ベクトルは
    :numref:`fig_chap04_1_lattice`, :numref:`fig_chap04_1_honeycomb`,
    :numref:`fig_kagome`, :numref:`fig_ladder`

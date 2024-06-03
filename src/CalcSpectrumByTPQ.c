@@ -90,7 +90,7 @@ int ReadTPQData(
 /// \retval FALSE fail to calculate spectrum.
 /// \retval TRUE sucsceed to calculate spectrum.
 int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecificheat,
-                       double ene, double *tmp_E, int Nsite, int idim_max, double complex * dc_tmpSpec)
+                       double ene, double *tmp_E, int idim_max, double complex * dc_tmpSpec)
 {
     int l;
     double tmp_dcSpec;
@@ -129,7 +129,7 @@ int GetCalcSpectrumTPQ(double complex dcomega, double dtemp, double dspecifichea
 /// \author Kazuyoshi Yoshimi (The University of Tokyo)
 int CalcSpectrumByTPQ(
         struct EDMainCalStruct *X,
-        double complex *tmp_v1,
+        double complex **tmp_v1,
         double dnorm,
         int Nomega,
         double complex *dcSpectrum,
@@ -239,7 +239,7 @@ int CalcSpectrumByTPQ(
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumFromTridiagonalStart, "a");
     for( i = 0 ; i < Nomega; i++) {
         dctmp_Spectrum=0;
-        iret = GetCalcSpectrumTPQ(dcomega[i], dtemp, dspecificHeat, dene, tmp_E, X->Bind.Def.Nsite, stp, &dctmp_Spectrum);
+        iret = GetCalcSpectrumTPQ(dcomega[i], dtemp, dspecificHeat, dene, tmp_E, stp, &dctmp_Spectrum);
         if (iret != TRUE) {
             //ReAlloc alpha, beta and Set alpha_start and beta_start in Lanczos_EigenValue
             return FALSE;
