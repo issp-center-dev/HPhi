@@ -1974,7 +1974,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#0011f4;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow2Sstart8N);marker-end:url(#Arrow2SendM0)"
+       style="fill:none;stroke:#0011f4;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:12,6,3,6;stroke-opacity:1;marker-start:url(#Arrow2Sstart8N);marker-end:url(#Arrow2SendM0);stroke-dashoffset:0"
        d="M 55.54884,922.14712 C 36.01922,946.55915 41.7434,972.99147 54.03358,988.31211"
        id="path4229-2"
        inkscape:connector-curvature="0"
