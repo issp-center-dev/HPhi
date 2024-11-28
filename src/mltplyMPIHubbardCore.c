@@ -1600,6 +1600,7 @@ double complex child_Cis_MPI(
 
   if (state2 == mask2) {
     trans = 0;
+    return 0;
   }
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
@@ -1680,6 +1681,7 @@ double complex child_Ajt_MPI(
 
   if (state2 == 0) {
     trans = 0;
+    return 0;
   }
   else if (state2 == mask2) {
     trans = (double)Fsgn * tmp_trans;
