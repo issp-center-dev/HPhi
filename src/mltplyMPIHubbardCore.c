@@ -922,7 +922,7 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI(
   double complex dam_pr = 0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
-  int iCheck, ierr, Fsgn;
+  int iCheck, ierr, Fsgn, only_send = 0;
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
@@ -959,7 +959,7 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI(
       tmp_isite2 = X->Def.OrgTpow[2 * org_isite3 + org_ispin3];
       tmp_isite1 = X->Def.OrgTpow[2 * org_isite4 + org_ispin4];
       iFlgHermite = TRUE;
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;     
+      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
     }/*if (iCheck == TRUE)*/
     else return 0.0;
   }/*if (iCheck == FALSE)*/
@@ -1019,6 +1019,9 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
                         v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
+
+    if (only_send == 1) return 0;
+
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
      && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite)
     {
@@ -1135,7 +1138,7 @@ double complex child_CisAjtCkuAku_Hubbard_MPI(
   double complex dam_pr = 0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf, ioff;
-  int iCheck, ierr, Fsgn;
+  int iCheck, ierr, Fsgn, only_send = 0;
   unsigned long int isite1, isite2, isite3;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Asum, Adiff;
@@ -1169,13 +1172,15 @@ double complex child_CisAjtCkuAku_Hubbard_MPI(
       Asum = tmp_isite3 + tmp_isite4;
       if (tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3 * 2;
       else Adiff = tmp_isite3 - tmp_isite4 * 2;
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;
+      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
       //printf("tmp_isite1=%ld, tmp_isite2=%ld, Adiff=%ld\n", tmp_isite1, tmp_isite2, Adiff);
     }/*if (iCheck == TRUE)*/
     else return 0.0;   
   }/*if (iCheck == FALSE)*/
 
   if (myrank == origin) {// only k is in PE
+
+    if (only_send == 1) return 0;
     //for hermite
 #pragma omp parallel default(none) reduction(+:dam_pr) \
 firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp_v0, tmp_v1)
@@ -1206,6 +1211,8 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp
                         v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
+
+    if (only_send == 1) return 0;
 
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, ioff, tmp_off, Fsgn, Adiff) \
 firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, isite3) \
@@ -1593,6 +1600,7 @@ double complex child_Cis_MPI(
 
   if (state2 == mask2) {
     trans = 0;
+    return 0;
   }
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
@@ -1673,6 +1681,7 @@ double complex child_Ajt_MPI(
 
   if (state2 == 0) {
     trans = 0;
+    return 0;
   }
   else if (state2 == mask2) {
     trans = (double)Fsgn * tmp_trans;

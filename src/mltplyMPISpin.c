@@ -71,7 +71,7 @@ double complex child_general_int_spin_MPIdouble(
   double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin;
+  int mask1, mask2, state1, state2, ierr, origin, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
@@ -88,9 +88,7 @@ double complex child_general_int_spin_MPIdouble(
   }
   else if (state1 == org_ispin1 && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
-      Jint = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -103,6 +101,8 @@ double complex child_general_int_spin_MPIdouble(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                        v1buf,      idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1) return 0;
 
   dam_pr = 0.0;
   if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -232,7 +232,7 @@ double complex child_general_int_spin_MPIsingle(
   double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
-  int mask2, state2, ierr, origin;
+  int mask2, state2, ierr, origin, only_send = 0;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
@@ -250,9 +250,7 @@ double complex child_general_int_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
-      Jint = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -268,6 +266,8 @@ double complex child_general_int_spin_MPIsingle(
                       v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1) return 0;
   /*
   Index in the intra PE
   */
