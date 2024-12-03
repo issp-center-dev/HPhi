@@ -69,5 +69,6 @@ void expec_cisajscktaltdc_alldiag_spin(
                                   double complex *vec
                                   );
 
+int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_Threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
