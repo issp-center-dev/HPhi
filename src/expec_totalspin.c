@@ -61,12 +61,14 @@ int expec_totalspin
   case SpinGC:
      totalspin_SpinGC(X,vec);
      break;
-   case Hubbard:
-   case Kondo:
+  case Hubbard:
+  case Kondo:
+  case KondoGC:
+  case tJ:
+  case tJGC:
      totalspin_Hubbard(X,vec);
      break;
   case HubbardGC:
-  case KondoGC:
      totalspin_HubbardGC(X,vec);
      break;
   default:

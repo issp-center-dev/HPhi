@@ -51,7 +51,7 @@
 int check(struct BindStruct *X){
     
   FILE *fp;
-  long unsigned int i,tmp_sdim;
+  long unsigned int i,j,tmp_sdim;
   int NLocSpn,NCond,Nup,Ndown;
   long unsigned int u_tmp;
   long unsigned int tmp;
@@ -129,6 +129,39 @@ int check(struct BindStruct *X){
       comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
       comb_sum +=comb_up*comb_down;
     }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
+    break;
+
+  case tJ:
+    comb_up   = Binomial(Ns, X->Def.Nup, comb, Ns);
+    comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
+    comb_sum  = comb_up*comb_down;
+    break;
+
+  case tJNConserved:
+    comb_sum=0;
+    if(X->Def.Ne > X->Def.Nsite){
+      iMinup = X->Def.Ne-X->Def.Nsite;
+      iAllup = X->Def.Nsite;
+    }
+
+    for(i=iMinup; i<= iAllup; i++){
+      comb_up   = Binomial(Ns, i, comb, Ns);
+      comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
+      comb_sum += comb_up*comb_down;
+    }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
+    break;
+
+  case tJGC:
+    comb_sum=0;
+    for(i=0; i<= X->Def.Ne; i++){
+      comb_up   = Binomial(Ns, i, comb, Ns);
+      for(j=0; j<= X->Def.Ne; j++){
+        comb_down = Binomial(Ns-i, j, comb, Ns);
+        comb_sum += comb_up*comb_down;
+      }
+    }
     break;
     
   case Kondo:
@@ -157,6 +190,34 @@ int check(struct BindStruct *X){
       comb_sum  += comb_1*comb_2*comb_3;
     }
     break;
+  case KondoNConserved:
+    //idim_max
+    // calculation of dimension
+    // Nup      = u_loc+u_cond
+    // Ndown    = d_loc+d_cond
+    // NLocSpn  = u_loc+d_loc
+    // Ncond    = Nsite-NLocSpn
+    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
+    //              Binomial(NLocSpn,u_loc)
+    //             *Binomial(NCond,Nup-u_loc)
+    //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
+    //comb_1 = Binomial(NLocSpn,u_loc)
+    //comb_2 = Binomial(NCond,Nup-u_loc)
+    //comb_3 = Binomial(NCond,Ndown+u_loc-NLocSpn)
+    NLocSpn  = X->Def.NLocSpn;
+    NCond    = X->Def.Ne-NLocSpn;
+    int NsCond   = X->Def.Nsite-NLocSpn;
+    comb_1   = pow(2,NLocSpn);//Tpow is not defined
+    comb_sum = 0;
+    for(int tmp_Nup=0;tmp_Nup<=NCond;tmp_Nup++){
+      comb_2     = Binomial(NsCond,tmp_Nup,comb,NsCond);
+      comb_3     = Binomial(NsCond,NCond-tmp_Nup,comb,NsCond);
+      comb_sum  += comb_1*comb_2*comb_3;
+      //printf("tmp %ld %ld %ld\n",comb_sum,comb_2,comb_3);
+    }
+    //printf("Ne=%d NLocSpn=%d NsCond %d NCond=%d comb_1=%ld comb_2=%ld comb_3=%ld comb_sum=%ld\n",X->Def.Ne,NLocSpn,NsCond,NCond,comb_1,comb_2,comb_3,comb_sum);
+    break;
+ 
   case KondoGC:
     comb_sum = 1;
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
@@ -167,7 +228,6 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
-
     if(X->Def.iFlgGeneralSpin ==FALSE){
       if(X->Def.Nup+X->Def.Ndown != X->Def.Nsite){
         fprintf(stderr, " 2Sz is incorrect.\n");
@@ -213,7 +273,11 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
@@ -228,7 +292,11 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
@@ -244,7 +312,11 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
@@ -299,10 +371,14 @@ int check(struct BindStruct *X){
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-  case KondoGC:
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
+  case KondoNConserved:
+  case KondoGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
     while(tmp <= X->Def.Nsite){
       tmp_sdim=tmp_sdim*2;
       tmp+=1;
@@ -338,6 +414,10 @@ int check(struct BindStruct *X){
   case HubbardNConserved:
   case Hubbard:
   case Kondo:
+  case KondoNConserved:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
     //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
@@ -359,15 +439,19 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case tJGC:
     for(i=1;i<=2*X->Def.Nsite;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;
       fprintf(fp,"%ld %ld \n",i,u_tmp);
     }
     break;
-  case HubbardNConserved:
   case Hubbard:
+  case HubbardNConserved:
   case Kondo:
+  case KondoNConserved:
+  case tJ:
+  case tJNConserved:
     for(i=1;i<=2*X->Def.Nsite-1;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;

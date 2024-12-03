@@ -85,11 +85,15 @@ int GetSplitBitByModel(
 {
   int tmpNsite=Nsite;
   switch(iCalcModel){    
-  case HubbardGC:
-  case KondoGC:
-  case HubbardNConserved:
   case Hubbard:
+  case HubbardGC:
+  case HubbardNConserved:
   case Kondo:
+  case KondoNConserved:
+  case KondoGC:
+  case tJ:
+  case tJNConserved:
+  case tJGC:
     tmpNsite *= 2;
     break;
   case Spin:
