@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v4.x
@@ -30,7 +30,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.13
 
     - name: Install dependencies
       run: |
