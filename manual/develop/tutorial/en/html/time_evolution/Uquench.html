@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>3.1. U quench in Hubbard model &#8212; HΦ Tutorial  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -19,8 +20,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,10 +35,10 @@
           <div class="body" role="main">
             
   <section id="u-quench-in-hubbard-model">
-<h1><span class="section-number">3.1. </span>U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">3.1. </span>U quench in Hubbard model<a class="headerlink" href="#u-quench-in-hubbard-model" title="Link to this heading">¶</a></h1>
 <p>Let’s solve the following U quench in 2D Hubbard model at half filling.</p>
 <div class="math notranslate nohighlight" id="equation-time-evolution-uquench-0">
-<span class="eqno">(3.1)<a class="headerlink" href="#equation-time-evolution-uquench-0" title="Permalink to this equation">¶</a></span>\[H(\tau) = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})
+<span class="eqno">(3.1)<a class="headerlink" href="#equation-time-evolution-uquench-0" title="Link to this equation">¶</a></span>\[H(\tau) = -t \sum_{\langle i,j\rangle , \sigma}(c_{i\sigma}^{\dagger}c_{j\sigma}+{\rm H.c.})
   +U \sum_{i} n_{i\uparrow}n_{i\downarrow}
   +U_{\rm quench} h(\tau) \sum_{i} n_{i\uparrow}n_{i\downarrow}\]</div>
 <p><span class="math notranslate nohighlight">\(h(\tau)\)</span> means the step function.
@@ -83,7 +85,7 @@ HPhi -s stan2.in
 </pre></div>
 </div>
 <section id="check-norm-and-energy">
-<h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Link to this heading">¶</a></h2>
 <p>Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
 Using gnuplot, check the dynamics of the norm for this problem</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/Norm.dat&quot; u 1:2 w l
@@ -96,7 +98,7 @@ Using gnuplot, check whether the energy is conserved during the real-time evolut
 </div>
 </section>
 <section id="dynamics-of-double-occupation">
-<h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Link to this heading">¶</a></h2>
 <p>The double occupation <span class="math notranslate nohighlight">\(D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle\)</span> is not conserved because <span class="math notranslate nohighlight">\([D, H] \neq 0\)</span>.
 You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</span> by executing the following command on gnuplot</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:4 w l
@@ -110,11 +112,11 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -153,7 +155,7 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -161,7 +163,7 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -176,11 +178,11 @@ You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020-, The University of Tokyo.
+      &#169;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/time_evolution/Uquench.rst.txt"

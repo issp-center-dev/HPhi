@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>4.1.1. Parameters for the type of calculation &#8212; HΦ Documentation 3.5.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=70ccf2b2"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=52b624fa"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -19,8 +20,9 @@
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,7 +35,7 @@
           <div class="body" role="main">
             
   <section id="parameters-for-the-type-of-calculation">
-<h1><span class="section-number">4.1.1. </span>Parameters for the type of calculation<a class="headerlink" href="#parameters-for-the-type-of-calculation" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">4.1.1. </span>Parameters for the type of calculation<a class="headerlink" href="#parameters-for-the-type-of-calculation" title="Link to this heading">¶</a></h1>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p>
 <p><strong>Type :</strong> String (choose from <code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Spin&quot;</span></code>,
@@ -43,19 +45,19 @@
 the expressions above denote the canonical ensemble of the Fermion in
 the Hubbard model</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-hubbard">
-<span class="eqno">(4.1)<a class="headerlink" href="#equation-fml4-1-hubbard" title="Permalink to this equation">¶</a></span>\[\mathcal H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-fml4-1-hubbard" title="Link to this equation">¶</a></span>\[\mathcal H = -\mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 - \sum_{i \neq j, \sigma} t_{i j} c^\dagger_{i \sigma} c_{j \sigma}
 + \sum_{i} U n_{i \uparrow} n_{i \downarrow}
 + \sum_{i \neq j} V_{i j} n_{i} n_{j},\]</div>
 <p>the canonical ensemble in the Spin
 model(<span class="math notranslate nohighlight">\(\{\alpha, \beta\}=\{x, y, z\}\)</span>)</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-spin">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-fml4-1-spin" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S^z_{i} - \Gamma \sum_{i} S^x_{i} + D \sum_{i} S^z_{i} S^z_{i}
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-fml4-1-spin" title="Link to this equation">¶</a></span>\[\begin{split}\mathcal H &amp;= -h \sum_{i} S^z_{i} - \Gamma \sum_{i} S^x_{i} + D \sum_{i} S^z_{i} S^z_{i}
 \nonumber \\
 &amp;+ \sum_{i j, \alpha}J_{i j \alpha} S^\alpha_{i} S^\alpha_{j}+ \sum_{i j, \alpha \neq \beta} J_{i j \alpha \beta} S_{i}^\alpha S_{j}^\beta,\end{split}\]</div>
 <p>the canonical ensemble in the Kondo lattice model</p>
 <div class="math notranslate nohighlight" id="equation-fml4-1-kondo">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-fml4-1-kondo" title="Permalink to this equation">¶</a></span>\[\mathcal H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-fml4-1-kondo" title="Link to this equation">¶</a></span>\[\mathcal H = - \mu \sum_{i \sigma} c^\dagger_{i \sigma} c_{i \sigma}
 - t \sum_{\langle i j \rangle \sigma} c^\dagger_{i \sigma} c_{j \sigma}
 + \frac{J}{2} \sum_{i} \left\{
 S_{i}^{+} c_{i \downarrow}^\dagger c_{i \uparrow}
@@ -166,11 +168,11 @@ the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <sp
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../../index.html">
-    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -222,7 +224,7 @@ the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <sp
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
@@ -230,7 +232,7 @@ the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <sp
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -245,11 +247,11 @@ the condition <span class="math notranslate nohighlight">\(n\geq4\)</span>), <sp
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, The University of Tokyo.
+      &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../../_sources/filespecification/standardmode_en/Parameters_for_the_type_of_calculation_en.rst.txt"

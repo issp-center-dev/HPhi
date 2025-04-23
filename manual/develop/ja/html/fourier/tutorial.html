@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 
-<html lang="ja">
+<html lang="ja" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>7.2. チュートリアル &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=e9d6491c"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=cbac9f54"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
@@ -20,8 +21,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,10 +36,10 @@
           <div class="body" role="main">
             
   <section id="tutorial">
-<span id="id1"></span><h1><span class="section-number">7.2. </span>チュートリアル<a class="headerlink" href="#tutorial" title="この見出しへのパーマリンク">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">7.2. </span>チュートリアル<a class="headerlink" href="#tutorial" title="Link to this heading">¶</a></h1>
 <p>このチュートリアルでは, 正方格子ハバードモデル(8サイト)を例にとり説明する.</p>
 <section id="hphi-vmc-out">
-<h2><span class="section-number">7.2.1. </span>HPhi/vmc.out の実行<a class="headerlink" href="#hphi-vmc-out" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.1. </span>HPhi/vmc.out の実行<a class="headerlink" href="#hphi-vmc-out" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> の場合</p>
 <p>基底状態および相関関数の計算を行う.
@@ -98,7 +100,7 @@ nelec = 8
 </ul>
 </section>
 <section id="id2">
-<h2><span class="section-number">7.2.2. </span>相関関数のフーリエ変換<a class="headerlink" href="#id2" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.2. </span>相関関数のフーリエ変換<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p>ユーティリティプログラム <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code> を使って,
 相関関数をフーリエ変関する.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;4 20</span>
@@ -123,7 +125,7 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
 </ul>
 </section>
 <section id="id3">
-<h2><span class="section-number">7.2.3. </span>相関関数のプロット<a class="headerlink" href="#id3" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">7.2.3. </span>相関関数のプロット<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <p>gnuplotを使って,
 相関関数を <span class="math notranslate nohighlight">\(k\)</span> 空間でプロットする.</p>
 <div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span><span class="w"> </span><span class="s">&quot;kpath.gp&quot;</span>
@@ -134,7 +136,7 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
 <span id="corplotpng"></span><img alt="../_images/corplot.png" src="../_images/corplot.png" />
 <figcaption>
 <p><span class="caption-number">図 7.1 </span><span class="caption-text">相関関数 <span class="math notranslate nohighlight">\(\langle{\bf S}_{\bf k}\cdot{\bf S}_{\bf k}\rangle\)</span> (12列目)を
-プロットした図.</span><a class="headerlink" href="#id4" title="この画像へのパーマリンク">¶</a></p>
+プロットした図.</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>関連するファイル</p>
@@ -150,11 +152,11 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -201,7 +203,7 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -209,7 +211,7 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
       <input type="submit" value="検索" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -224,11 +226,11 @@ $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, The University of Tokyo.
+      &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/fourier/tutorial.rst.txt"

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>5.5. Real time evolution method &#8212; HΦ Documentation 3.5.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=70ccf2b2"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=52b624fa"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -19,8 +20,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,14 +35,14 @@
           <div class="body" role="main">
             
   <section id="real-time-evolution-method">
-<h1><span class="section-number">5.5. </span>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">5.5. </span>Real time evolution method<a class="headerlink" href="#real-time-evolution-method" title="Link to this heading">¶</a></h1>
 <p>In <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, real time evolution calculation is done by using the following relation</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-en-0">
-<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-en-0" title="Permalink to this equation">¶</a></span>\[|\Phi (t_n)\rangle = \exp (-i {\cal H}  \Delta t_n)|\Phi (t_{n-1})\rangle,\]</div>
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-en-0" title="Link to this equation">¶</a></span>\[|\Phi (t_n)\rangle = \exp (-i {\cal H}  \Delta t_n)|\Phi (t_{n-1})\rangle,\]</div>
 <p>where <span class="math notranslate nohighlight">\(|\Phi(t_0)\rangle\)</span> is an initial wave function and <span class="math notranslate nohighlight">\(t_n = \sum_{j=1}^n  \Delta t_j\)</span>.
 In calculation, we approximate <span class="math notranslate nohighlight">\(\exp (-i {\cal H}  \Delta t_n)\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-en-1">
-<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-en-1" title="Permalink to this equation">¶</a></span>\[\exp (-i {\cal H}  \Delta t_n) =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .\]</div>
+<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-en-1" title="Link to this equation">¶</a></span>\[\exp (-i {\cal H}  \Delta t_n) =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .\]</div>
 <p>Here, the cut-off integer <span class="math notranslate nohighlight">\(m\)</span> can be set by <cite>ExpandCoef</cite> in <cite>ModPara</cite>.
 We can judge whether the expansion order is enough or not by checking the norm conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span> and energy conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\hat{\cal H}|\Phi (t_n)\rangle=E\)</span>.</p>
 </section>
@@ -50,11 +52,11 @@ We can judge whether the expansion order is enough or not by checking the norm c
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -97,7 +99,7 @@ We can judge whether the expansion order is enough or not by checking the norm c
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -105,7 +107,7 @@ We can judge whether the expansion order is enough or not by checking the norm c
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -120,11 +122,11 @@ We can judge whether the expansion order is enough or not by checking the norm c
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, The University of Tokyo.
+      &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/algorithm/Realtime_en.rst.txt"
