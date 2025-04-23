@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 
-<html lang="ja">
+<html lang="ja" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>5.1. Lanczos法 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=e9d6491c"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=cbac9f54"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
@@ -20,8 +21,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,9 +36,9 @@
           <div class="body" role="main">
             
   <section id="lanczos">
-<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="この見出しへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">5.1. </span>Lanczos法<a class="headerlink" href="#lanczos" title="Link to this heading">¶</a></h1>
 <section id="id1">
-<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.1.1. </span>手法概要<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>Lanczos法の解説については TITPACK <a class="footnote-reference brackets" href="#id12" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> のマニュアルと 線形計算の数理 <a class="footnote-reference brackets" href="#id13" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参考にしています.</p>
 <p>Lanczos法はある初期ベクトルにハミルトニアン
 を作用させて最大・最小近傍の固有値・固有ベクトルを
@@ -54,14 +56,14 @@ Hamitonianを逐次的に作用させて, <span class="math notranslate nohighli
 初期ベクトルを<span class="math notranslate nohighlight">\({\mathcal H}\)</span>の固有ベクトル<span class="math notranslate nohighlight">\(\vec{e}_{i}\)</span>(対応する固有値を <span class="math notranslate nohighlight">\(E_{i}\)</span>とする)
 の重ね合わせで表すと</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-0">
-<span class="eqno">(5.1)<a class="headerlink" href="#equation-algorithm-lanczos-ja-0" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.1)<a class="headerlink" href="#equation-algorithm-lanczos-ja-0" title="Link to this equation">¶</a></span>\[\begin{aligned}
 \vec{x}_{0}=\sum_{i}a_{i}\vec{e}_{i}\end{aligned}\]</div>
 <p>となります。 ここで、<span class="math notranslate nohighlight">\(E_{0}\)</span>を絶対値最大の固有値としました。
 またハミルトニアンはエルミートであるため、
 固有値は全て実数であることに注意する必要があります。
 これにHamiltonianの<span class="math notranslate nohighlight">\({\mathcal H}^{n}\)</span>を作用させると、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-1">
-<span class="eqno">(5.2)<a class="headerlink" href="#equation-algorithm-lanczos-ja-1" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-algorithm-lanczos-ja-1" title="Link to this equation">¶</a></span>\[\begin{aligned}
 {\mathcal H}^{n}\vec{x}_{0}=E_{0}^{n}\Big[ a_{0}\vec{e}_{0}+\sum_{i\neq0}\left(\frac{E_{i}}{E_{0}}\right)^na_{i}\vec{e}_{i}\Big]\end{aligned}\]</div>
 <p>となり、絶対値最大固有値<span class="math notranslate nohighlight">\(E_{0}\)</span>に対応する固有ベクトルが支配的になります。
 適切な変換を行って、この固有ベクトルの成分を抽出するのが Lanczos法です。</p>
@@ -72,7 +74,7 @@ Hamitonianを逐次的に作用させて, <span class="math notranslate nohighli
 <span class="math notranslate nohighlight">\(\beta_{0}=0,\vec{x}_{-1}=0\)</span>
 とすると、正規直交基底は次の手続きによって逐次的に生成することができます。</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-2">
-<span class="eqno">(5.3)<a class="headerlink" href="#equation-algorithm-lanczos-ja-2" title="この数式へのパーマリンク">¶</a></span>\[\begin{split}\begin{aligned}
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-algorithm-lanczos-ja-2" title="Link to this equation">¶</a></span>\[\begin{split}\begin{aligned}
 \alpha_{k} &amp;= ({\mathcal H}\vec{v}_{k},\vec{v}_{k}) \\
 \vec{w}   &amp;= {\mathcal H}\vec{v}_{k}-\beta_{k}\vec{v}_{k-1}-\alpha_{k}\vec{v}_{k} \\
 \beta_{k+1} &amp;= |\vec{w}| \\
@@ -81,7 +83,7 @@ Hamitonianを逐次的に作用させて, <span class="math notranslate nohighli
 <p>これらの正規直交基底が成すKryrov部分空間の中で
 もとのハミルトニアンに対する固有値問題は、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-3">
-<span class="eqno">(5.4)<a class="headerlink" href="#equation-algorithm-lanczos-ja-3" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.4)<a class="headerlink" href="#equation-algorithm-lanczos-ja-3" title="Link to this equation">¶</a></span>\[\begin{aligned}
 T_{n}=V_{n}^{\dagger}{\mathcal H} V_{n}\end{aligned}\]</div>
 <p>と変形されます。 ここで、
 <span class="math notranslate nohighlight">\(V_{n}\)</span>は<span class="math notranslate nohighlight">\(\vec{v}_{i}(i=0,1,\dots,n-1)\)</span>を
@@ -110,7 +112,7 @@ Lanczosの反復回数に対して指数関数的に減少することが
 示されています(詳細はRef. <a class="footnote-reference brackets" href="#id13" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> を参照して下さい)。</p>
 </section>
 <section id="id7">
-<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.1.2. </span>逆反復法<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
 <p>固有値の近似値がわかっているときは
 適当なベクトル<span class="math notranslate nohighlight">\(\vec{y}_{0}\)</span>に対して
 <span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を 逐次的に作用させれば、
@@ -119,7 +121,7 @@ Lanczosの反復回数に対して指数関数的に減少することが
 <p><span class="math notranslate nohighlight">\(({\mathcal H}-E_{n})^{-1}\)</span>を作用させる方程式を書き換えると
 以下の連立方程式が得られます。</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-4">
-<span class="eqno">(5.5)<a class="headerlink" href="#equation-algorithm-lanczos-ja-4" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.5)<a class="headerlink" href="#equation-algorithm-lanczos-ja-4" title="Link to this equation">¶</a></span>\[\begin{aligned}
 \vec{y}_{k}&amp;=({\mathcal H}-E_{n})\vec{y}_{k+1}\end{aligned}\]</div>
 <p>この連立方程式を 共役勾配法(CG法)を用いて解くことで、
 固有ベクトルを求めることができます。 その固有ベクトルから
@@ -128,15 +130,15 @@ CG法の実行にはヒルベルト空間の次元のベクトル を4本確保�
 大規模系の計算を実行する際にはメモリが足りなくなる恐れがあるので注意が必要です。</p>
 </section>
 <section id="id8">
-<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="この見出しへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">5.1.3. </span>実際の実装について<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
 <section id="id9">
-<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="この見出しへのパーマリンク">¶</a></h3>
+<h3>初期ベクトルの設定について<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>Lanczos法では、スタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定する<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>(<span class="math notranslate nohighlight">\(\equiv r_s\)</span>)により初期ベクトルの設定方法を指定します。また、初期ベクトルはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>を用い、実数もしくは複素数の指定をすることができます。</p>
 <ul>
 <li><p>カノニカル集団かつ <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(\geq 0\)</span>の場合</p>
 <p>ヒルベルト空間のうち、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-5">
-<span class="eqno">(5.6)<a class="headerlink" href="#equation-algorithm-lanczos-ja-5" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.6)<a class="headerlink" href="#equation-algorithm-lanczos-ja-5" title="Link to this equation">¶</a></span>\[\begin{aligned}
 (N_{\rm dim}/2 + r_s ) \% N_{\rm dim}\end{aligned}\]</div>
 <p>の成分が与えられます。ここで、 <span class="math notranslate nohighlight">\(N_{\rm dim}\)</span> は対象となるヒルベルト空間の総数で、<span class="math notranslate nohighlight">\(N_{\rm dim}/2\)</span> はデフォルト値<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>
 <span class="math notranslate nohighlight">\(=1\)</span>で特殊なヒルベルト空間の選択をさけるために加えられています。なお、選択された成分の係数は実数の場合は<span class="math notranslate nohighlight">\(1\)</span>、複素数の場合には<span class="math notranslate nohighlight">\((1+i)/\sqrt{2}\)</span>が与えられます。</p>
@@ -144,7 +146,7 @@ CG法の実行にはヒルベルト空間の次元のベクトル を4本確保�
 <li><p>グランドカノニカル集団 もしくは <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> <span class="math notranslate nohighlight">\(&lt; 0\)</span>の場合</p>
 <p>初期ベクトルはランダムベクトルとして与えられます。乱数のシードは</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-lanczos-ja-6">
-<span class="eqno">(5.7)<a class="headerlink" href="#equation-algorithm-lanczos-ja-6" title="この数式へのパーマリンク">¶</a></span>\[\begin{aligned}
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-algorithm-lanczos-ja-6" title="Link to this equation">¶</a></span>\[\begin{aligned}
 123432+|r_s|\end{aligned}\]</div>
 <p>で指定します。ここで、<span class="math notranslate nohighlight">\(n_{\rm run}\)</span>はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、もしくはModParaで指定される入力ファイルの<code class="docutils literal notranslate"><span class="pre">NumAve</span></code>で指定します。<code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>は入力ファイルで指定します。乱数はSIMD-oriented
 Fast Mersenne Twister
@@ -153,7 +155,7 @@ Fast Mersenne Twister
 </ul>
 </section>
 <section id="id11">
-<h3>収束判定について<a class="headerlink" href="#id11" title="この見出しへのパーマリンク">¶</a></h3>
+<h3>収束判定について<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> では、<span class="math notranslate nohighlight">\(T_{n}\)</span>の対角化にlapackのルーチン
 <span class="math notranslate nohighlight">\(\rm dsyev\)</span>を使用しており、
 <span class="math notranslate nohighlight">\(T_{n}\)</span>の基底状態の次の固有値（第一励起状態のエネルギー）
@@ -208,11 +210,11 @@ Fast Mersenne Twister
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -260,7 +262,7 @@ Fast Mersenne Twister
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -268,7 +270,7 @@ Fast Mersenne Twister
       <input type="submit" value="検索" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -283,11 +285,11 @@ Fast Mersenne Twister
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, The University of Tokyo.
+      &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/algorithm/Lanczos_ja.rst.txt"

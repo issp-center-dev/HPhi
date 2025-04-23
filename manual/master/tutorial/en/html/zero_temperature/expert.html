@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>1.6. How to use Expert mode &#8212; HΦ Tutorial  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -19,8 +20,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,7 +35,7 @@
           <div class="body" role="main">
             
   <section id="how-to-use-expert-mode">
-<h1><span class="section-number">1.6. </span>How to use Expert mode<a class="headerlink" href="#how-to-use-expert-mode" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">1.6. </span>How to use Expert mode<a class="headerlink" href="#how-to-use-expert-mode" title="Link to this heading">¶</a></h1>
 <p>If you prepare input files, you can perform calculations for
 arbitrary Hamiltonians with any one-body potentials and the two-body interactions.
 By taking spin 1/2 system as an example,
@@ -41,7 +43,7 @@ we explain how to prepare input files.
 For spin 1/2 system, we prepare simple python scripts (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.6/MakeDef.py</span></code>)
 that can generate the input files for general Hamiltonians, which are defined as</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-expert-0">
-<span class="eqno">(1.9)<a class="headerlink" href="#equation-zero-temperature-expert-0" title="Permalink to this equation">¶</a></span>\[{\mathcal H}=\sum_{i,j} J_{i,j}^{\alpha,\beta} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}.\]</div>
+<span class="eqno">(1.9)<a class="headerlink" href="#equation-zero-temperature-expert-0" title="Link to this equation">¶</a></span>\[{\mathcal H}=\sum_{i,j} J_{i,j}^{\alpha,\beta} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}.\]</div>
 <p>Note tat <code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.6/read.py</span></code> and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.6/hphi_io.py</span></code> are necessary for <strong>MakeDef.py</strong>.
 To use <em>MakeDef.py</em>, it is necessary to prepare two input files,
 <strong>input.txt</strong> and <strong>pair.txt</strong> (examples of them are available in <code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.6</span></code> ).</p>
@@ -54,7 +56,7 @@ exct 2
 </div>
 <p>In <strong>pair.txt</strong>, one specify the interaction terms in the form</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-expert-1">
-<span class="eqno">(1.10)<a class="headerlink" href="#equation-zero-temperature-expert-1" title="Permalink to this equation">¶</a></span>\[i~~~~~j~~~~~\alpha~~~~~\beta~~~~~J_{i,j}^{\alpha,\beta}\]</div>
+<span class="eqno">(1.10)<a class="headerlink" href="#equation-zero-temperature-expert-1" title="Link to this equation">¶</a></span>\[i~~~~~j~~~~~\alpha~~~~~\beta~~~~~J_{i,j}^{\alpha,\beta}\]</div>
 <p>For diagonal interactions (<span class="math notranslate nohighlight">\(\alpha=\beta\)</span>), <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\alpha} {\bf S}_{i}^{\alpha} {\bf S}_{j}^{\alpha}\)</span> is added,
 and <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\beta} [{\bf S}_{i}^{\alpha} {\bf S}_{j}^{\beta}+{\bf S}_{j}^{\alpha} {\bf S}_{i}^{\beta} ]\)</span> is added
 for off-diagonal interactions (<span class="math notranslate nohighlight">\(\alpha\neq\beta\)</span>),</p>
@@ -76,7 +78,7 @@ for off-diagonal interactions (<span class="math notranslate nohighlight">\(\alp
 <p>Note that interaction <span class="math notranslate nohighlight">\((\alpha,\beta)\)</span> and <span class="math notranslate nohighlight">\((\beta,\alpha)\)</span> generate the same interaction
 since we assume <span class="math notranslate nohighlight">\(J_{i,j}^{\alpha,\beta}\)</span> is real.</p>
 <section id="exercise">
-<h2><span class="section-number">1.6.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.6.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">¶</a></h2>
 <p>As a simple exercise, for small system sizes (e.g. 2-site system),
 please try to
 confirm that
@@ -106,11 +108,11 @@ consistent with those by Standard mode.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -153,7 +155,7 @@ consistent with those by Standard mode.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -161,7 +163,7 @@ consistent with those by Standard mode.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -176,11 +178,11 @@ consistent with those by Standard mode.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020-, The University of Tokyo.
+      &#169;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/zero_temperature/expert.rst.txt"

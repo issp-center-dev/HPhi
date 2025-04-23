@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>1.4. Heisenberg chain (zero temperature) &#8212; HΦ Tutorial  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=66c3864b" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -19,8 +20,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,10 +35,10 @@
           <div class="body" role="main">
             
   <section id="heisenberg-chain-zero-temperature">
-<h1><span class="section-number">1.4. </span>Heisenberg chain (zero temperature)<a class="headerlink" href="#heisenberg-chain-zero-temperature" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">1.4. </span>Heisenberg chain (zero temperature)<a class="headerlink" href="#heisenberg-chain-zero-temperature" title="Link to this heading">¶</a></h1>
 <p>Let’s solve the following spin 1/2 Heisenberg model on the chain.</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-spin-chain-0">
-<span class="eqno">(1.4)<a class="headerlink" href="#equation-zero-temperature-spin-chain-0" title="Permalink to this equation">¶</a></span>\[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
+<span class="eqno">(1.4)<a class="headerlink" href="#equation-zero-temperature-spin-chain-0" title="Link to this equation">¶</a></span>\[H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}\]</div>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.4/stan1.in</span></code>) for 16-site Heisenberg model is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L       = 16
 model   = &quot;Spin&quot;
@@ -52,20 +54,20 @@ J = 1
 </pre></div>
 </div>
 <section id="check-the-energy">
-<h2><span class="section-number">1.4.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.4.1. </span>Check the energy<a class="headerlink" href="#check-the-energy" title="Link to this heading">¶</a></h2>
 <p>Please check whether the energies are given as follows.</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-spin-chain-1">
-<span class="eqno">(1.5)<a class="headerlink" href="#equation-zero-temperature-spin-chain-1" title="Permalink to this equation">¶</a></span>\[E_{0}= -7.142296\]</div>
+<span class="eqno">(1.5)<a class="headerlink" href="#equation-zero-temperature-spin-chain-1" title="Link to this equation">¶</a></span>\[E_{0}= -7.142296\]</div>
 </section>
 <section id="obtaining-the-excited-state">
-<h2><span class="section-number">1.4.2. </span>Obtaining the excited state<a class="headerlink" href="#obtaining-the-excited-state" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.4.2. </span>Obtaining the excited state<a class="headerlink" href="#obtaining-the-excited-state" title="Link to this heading">¶</a></h2>
 <p>By adding <strong>exct=2</strong>, you can obtain the 2 low-energy states (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.4/stan2.in</span></code>).
 Please check the energies.</p>
 <div class="math notranslate nohighlight" id="equation-zero-temperature-spin-chain-2">
-<span class="eqno">(1.6)<a class="headerlink" href="#equation-zero-temperature-spin-chain-2" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}E_{0}= -7.142296\\E_{1}= -6.872107\end{aligned}\end{align} \]</div>
+<span class="eqno">(1.6)<a class="headerlink" href="#equation-zero-temperature-spin-chain-2" title="Link to this equation">¶</a></span>\[ \begin{align}\begin{aligned}E_{0}= -7.142296\\E_{1}= -6.872107\end{aligned}\end{align} \]</div>
 </section>
 <section id="size-dependence-of-the-spin-gap">
-<h2><span class="section-number">1.4.3. </span>Size dependence of the spin gap<a class="headerlink" href="#size-dependence-of-the-spin-gap" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.4.3. </span>Size dependence of the spin gap<a class="headerlink" href="#size-dependence-of-the-spin-gap" title="Link to this heading">¶</a></h2>
 <p>The spin gap at finite system size is defined
 as <span class="math notranslate nohighlight">\(\Delta=E_{1}-E_{0}\)</span>. For 16-site,
 we obtain <span class="math notranslate nohighlight">\(\Delta\sim 0.2701\)</span>.</p>
@@ -74,7 +76,7 @@ as a function of system size L (<code class="docutils literal notranslate"><span
 (available system size on PC may be L=24)</p>
 </section>
 <section id="haldane-gap">
-<h2><span class="section-number">1.4.4. </span>Haldane gap<a class="headerlink" href="#haldane-gap" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.4.4. </span>Haldane gap<a class="headerlink" href="#haldane-gap" title="Link to this heading">¶</a></h2>
 <p>By performing a similar calculations for S=1 system,
 please examine  how <span class="math notranslate nohighlight">\(\Delta\)</span> behaves
 as a function of system size L (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.4/stan4.in</span></code>).
@@ -89,11 +91,11 @@ This spin gap is often called Haldane gap.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -139,7 +141,7 @@ This spin gap is often called Haldane gap.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -147,7 +149,7 @@ This spin gap is often called Haldane gap.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -162,11 +164,11 @@ This spin gap is often called Haldane gap.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020-, The University of Tokyo.
+      &#169;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/zero_temperature/spin_chain.rst.txt"
