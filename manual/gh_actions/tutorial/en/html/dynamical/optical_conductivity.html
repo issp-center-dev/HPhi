@@ -1,20 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>4.2. Hubbard chain (optical conductivity) &#8212; HΦ Tutorial  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -23,8 +20,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -37,21 +35,21 @@
           <div class="body" role="main">
             
   <section id="hubbard-chain-optical-conductivity">
-<h1><span class="section-number">4.2. </span>Hubbard chain (optical conductivity)<a class="headerlink" href="#hubbard-chain-optical-conductivity" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">4.2. </span>Hubbard chain (optical conductivity)<a class="headerlink" href="#hubbard-chain-optical-conductivity" title="Link to this heading">¶</a></h1>
 <p>Here, we calculate the optical conductivity
 for the one-dimensional Hubbard model.</p>
 <p>The optical conductivity <span class="math notranslate nohighlight">\(\sigma(\omega)\)</span> can be calculated from
 the current-current correlation
 <span class="math notranslate nohighlight">\(I(\omega,\eta)\)</span>, which is defined as</p>
 <div class="math notranslate nohighlight" id="equation-dynamical-optical-conductivity-0">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-dynamical-optical-conductivity-0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}j_{x}={i}\sum_{i,\sigma}(c_{{\bf r}_{i}+{\bf e}_{x},\sigma}^{\dagger}c_{{\bf r}_{i},\sigma}-c_{{\bf r}_{i},\sigma}^{\dagger}c_{{\bf r}_{i}+{\bf e}_{x},\sigma}),\\I(\omega,\eta)={\rm Im}\Big[\langle 0|j_{x}[H-(\omega-E_{0}-{i}\eta)I]^{-1}j_{x}|0\rangle\Big],\end{aligned}\end{align} \]</div>
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-dynamical-optical-conductivity-0" title="Link to this equation">¶</a></span>\[ \begin{align}\begin{aligned}j_{x}={i}\sum_{i,\sigma}(c_{{\bf r}_{i}+{\bf e}_{x},\sigma}^{\dagger}c_{{\bf r}_{i},\sigma}-c_{{\bf r}_{i},\sigma}^{\dagger}c_{{\bf r}_{i}+{\bf e}_{x},\sigma}),\\I(\omega,\eta)={\rm Im}\Big[\langle 0|j_{x}[H-(\omega-E_{0}-{i}\eta)I]^{-1}j_{x}|0\rangle\Big],\end{aligned}\end{align} \]</div>
 <p>where <span class="math notranslate nohighlight">\({\bf e}_{x}\)</span> is the unit translational vector
 in the x direction.
 From this
 the regular part of the optical conductivity
 is defined as</p>
 <div class="math notranslate nohighlight" id="equation-dynamical-optical-conductivity-1">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-dynamical-optical-conductivity-1" title="Permalink to this equation">¶</a></span>\[\sigma_{\rm reg}(\omega)=\frac{I(\omega,\eta)+I(-\omega,-\eta)}{\omega N_{s}},\]</div>
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-dynamical-optical-conductivity-1" title="Link to this equation">¶</a></span>\[\sigma_{\rm reg}(\omega)=\frac{I(\omega,\eta)+I(-\omega,-\eta)}{\omega N_{s}},\]</div>
 <p>where <span class="math notranslate nohighlight">\(N_{\rm s}\)</span> is the number of sites.</p>
 <p>An input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/stan1.in</span></code>) for 6-site Hubbard model is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
@@ -67,16 +65,16 @@ EigenVecIO  = &quot;out&quot;
 </pre></div>
 </div>
 <p>Scripts for calculating the optical conductivity are
-available at <strong>``samples/tutorial_4.2/``</strong>.</p>
-<p>By performing the all-in-one script (All.sh),</p>
+available at <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/</span></code>.</p>
+<p>By performing the all-in-one script (<code class="docutils literal notranslate"><span class="pre">All.sh</span></code>),</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sh ./All.sh
 </pre></div>
 </div>
-<p>you can obtain <strong>optical.dat</strong>.
-Note that <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/OpticalSpectrum.py</span></code>,``samples/tutorial_4.1/lattice.py``,
+<p>you can obtain <code class="docutils literal notranslate"><span class="pre">optical.dat</span></code>
+Note that <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/OpticalSpectrum.py</span></code>, <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.1/lattice.py</span></code>,
 <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/lattice.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_4.2/input.txt</span></code>
 are necessary.</p>
-<p>A way for plotting <strong>optical.dat</strong> is as follows</p>
+<p>A way for plotting <code class="docutils literal notranslate"><span class="pre">optical.dat</span></code> is as follows</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;optical.dat&quot; u 1:(-($4+$8)/$1) w l
 </pre></div>
 </div>
@@ -87,11 +85,11 @@ are necessary.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="../index.html">
-    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo"/>
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
     
   </a>
 </p>
@@ -127,7 +125,7 @@ are necessary.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -135,7 +133,7 @@ are necessary.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -150,11 +148,11 @@ are necessary.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2020-, The University of Tokyo.
+      &#169;2020-, The University of Tokyo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/dynamical/optical_conductivity.rst.txt"

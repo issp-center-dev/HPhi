@@ -9,24 +9,26 @@ properties of spin 1/2 Heisenberg model on the chain.
  H = J \sum_{\langle i,j\rangle}{\bf S}_{i}\cdot{\bf S}_{j}
 
 The input file (``samples/tutorial_2.1/stan1.in``) for 12-site Heisenberg model is as follows::
-
- L       = 12
- model   = "Spin" 
- method  = "FullDiag" 
- lattice = "chain"
- J = 1
- 2Sz = 0
- 2S  = 1
+ 
+ L  = 12
+ J  = 1
+ 2S = 1
+ model   = "SpinGC" 
+ method  = "cTPQ" 
+ lattice = "chain" 
+ lanczos_max = 2000
+ LargeValue  = 50
+ NumAve      = 10
 
 You can execute HPhi as follows ::
 
- HPhi -s stan.in
+ HPhi -s stan1.in
 
 Full diagonalization
 """""""""""""""""""""""""""""""
 After executing the full diagonalization,
-all the eigen energies are output in **output/Eiegenvalue.dat**.
-By using the python script **(``samples/tutorial_2.1/Finite.py``)**, 
+all the eigenvalues are output in **output/Eiegenvalue.dat**.
+By using the python script **(samples/tutorial_2.1/Finite.py)**, 
 you can obtain the temperature dependence of the energy and the specific heat.
 
 You can execute **Finite.py** as follows ::
@@ -45,12 +47,12 @@ The 1st row represents temperature, 2nd row represents the energy, and
 the 3rd row represents the specific heat defined 
 by :math:`C=(\langle E^2 \rangle-\langle E \rangle^2)/T^2`.
 
-TPQ method (Sz=0)
-"""""""""""""""""""""""""""""""
+Micro-canonical TPQ (mTPQ) method (Sz=0)
+"""""""""""""""""""""""""""""""""""""""""""""
 By selecting method as "TPQ",
-you can perform the finite-temperature calculations using the TPQ method.
+you can perform the finite-temperature calculations using the mTPQ method.
 
-The input file (``samples/tutorial_2.1/stan2.in``) for 12-site Heisenberg model is as follows::
+The input file (**samples/tutorial_2.1/stan2.in**) for 12-site Heisenberg model is as follows::
 
  L       = 12
  model   = "Spin" 
@@ -62,7 +64,7 @@ The input file (``samples/tutorial_2.1/stan2.in``) for 12-site Heisenberg model 
 
 After performing the TPQ calculations,
 results are output in **output/SS_rand*.dat**.
-By using the python script **(``samples/tutorial_2.1/AveSSrand.py``)**, 
+By using the python script **(samples/tutorial_2.1/AveSSrand.py)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the specific heat.
 
@@ -84,9 +86,9 @@ You can see the following output image.
 .. image:: ../../../figs/finiteT.*
    :align: center
 
-TPQ method (susceptibility)
+mTPQ method (susceptibility)
 """""""""""""""""""""""""""""""
-By using the TPQ method, it is also possible
+By using the mTPQ method, it is also possible
 to calculate the spin susceptibility by performing
 the calculations for all Sz sectors.
 
@@ -105,7 +107,7 @@ Here, note that "model = Spin" is changed to "model = SpinGC" and
 After performing the TPQ calculations,
 temperature dependence of several physical
 quantities such as number of particel N and total Sz are output in **output/Flct_rand*.dat**.
-By using the python script **(``samples/tutorial_2.1/AveFlct.py``)**, 
+By using the python script **(samples/tutorial_2.1/AveFlct.py)**, 
 you can obtain the temperature dependence of 
 physical quantities such as the energy and the spin susceptibility :math:`\chi`.
 Note that :math:`\chi` is defined as
@@ -138,3 +140,78 @@ You can see the following output image.
 .. image:: ../../../figs/chi.*
    :align: center
 
+Canonical TPQ (cTPQ) method (Advanced)
+"""""""""""""""""""""""""""""""""""""""""""
+In the cTPQ method, we generate the *k*\th TPQ state as 
+
+.. math::
+
+ &\ket{\Phi_{\rm cTPQ}(\beta_{k})}=[U_{\rm c}(\Delta \tau)]^{k}\ket{\Phi_{\rm rand}},\\
+ &U_{\rm c}(\Delta \tau) \equiv \exp[-\frac{\Delta\tau}{2}\hat{H}]\sim\sum_{n=0}^{n_{\rm max}}\frac{1}{n!}(-\frac{\Delta\tau}{2}\hat{H})^{n},\\
+ &\beta_{k}=k\Delta\tau,
+
+where :math:`n_{\rm max}` represents the order of the Taylor expansion and
+:math:`\Delta\tau` represents increment of the imaginary-time evolution. 
+An advantage of the cTPQ method is the inverse temperatures 
+do not depend on the initial states :math:`\ket{\Phi_{\rm rand}}`. 
+Because of this feature, it is possible to 
+estimate the errors originating from fluctuations of the initial states
+without ambiguity using the bootstarp method.
+
+A input file (``samples/tutorial_2.1/stan4.in``) for 12-site Heisenberg model is as follows::
+
+ L  = 12
+ J  = 1
+ 2S = 1
+ model   = "SpinGC"
+ method  = "cTPQ"
+ lattice = "chain"
+ lanczos_max = 2000
+ LargeValue  = 50
+ NumAve      = 10
+
+The increment of the imaginary-time evolution :math:`\Delta\tau` is given by
+:math:`\Delta\tau=1/{\rm LargeValue }=1/50=0.02`. The default value of :math:`n_{\rm max}=10` 
+is used in this calculation.
+Please note that this cTPQ calculation takes 2-3 minutes.
+
+After the calculation, by executing ``sh Aft_cTPQ.sh``,
+you can estimate the average values and errors by using the bootstrap method.
+In this example, we choose ``10`` samples from ``10`` samples with allowing
+duplications for ``5`` times in the bootstrap sampling.
+In ``BS_MaxBS5.dat``, the following physical quantities are output::
+ 
+ T E E_err C C_err S S_err Sz Sz_err chi_Sz chi_Sz_err Z  Z_err k 
+
+where 
+
+#. ``T`` : temperature (:math:`T=1/\beta=1/(k\Delta\tau)`), 
+#. ``E`` : average value of energy, 
+#. ``E_err`` : error of energy, 
+#. ``C``  : average value of specific heat,
+#. ``C_err`` : error of specific heat, 
+#. ``S``  : average value of entropy, 
+#. ``S_err`` : error of entropy, 
+#. ``Sz``  : average value of Sz, 
+#. ``Sz_err`` : error of Sz,  
+#. ``chi_Sz`` : average value of chi_Sz, 
+#. ``chi_Sz_err`` : error of chi_Sz,  
+#. ``Z`` : average value of norm the wave function, 
+#. ``Z_err`` : error of norm of the wave function, and
+#. ``k`` : number of the cTPQ state.
+
+For example, you can see the temperature dependence of the specific heat as::
+
+ se log x
+ se colors classic
+ se xlabel "T/J"
+ se ylabel "C"
+ plot    "BS_MaxBS5.dat"  u 1:4:5 w e lt 1 ps 1 pt 6
+
+We note that ``Ext_BS_MaxBS5.dat`` is a file with several temperatures omitted from
+``BS_MaxBS5.dat`` for clarity. To see overall temperature dependence, it is better to
+plot ``Ext_BS_MaxBS5.dat``.
+
+**More advanced exercise**:
+By increasing ``NumAve`` (e.g. ``NumAve=100``), 
+please examine how the error bars of the physical quantities decrease. 
