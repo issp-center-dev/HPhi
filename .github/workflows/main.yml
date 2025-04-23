@@ -8,24 +8,19 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04]
         mpisize: [1, 4, 16]
-        ompsize: [1, 3]
+        ompsize: [1]
         include:
+          - os: ubuntu-24.04
+            mpisize: 1
+            ompsize: 3
           - os: macos-13
             mpisize: 1
             ompsize: 1
           - os: macos-latest
             mpisize: 1
             ompsize: 1
-          - os: ubuntu-20.04
-            mpisize: 1
-            ompsize: 1
-        exclude:
-          - mpisize: 16
-            ompsize: 3
-          - mpisize: 4
-            ompsize: 3
       fail-fast: false
 
     env:
@@ -39,7 +34,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt update
-          sudo apt install liblapack-dev openmpi-bin libopenmpi-dev libscalapack-openmpi-dev
+          sudo apt install libblas-dev liblapack-dev openmpi-bin libopenmpi-dev libscalapack-openmpi-dev
 
       - name: brew
         if: ${{ runner.os == 'macOS' }}
