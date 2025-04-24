@@ -154,9 +154,10 @@ int expec_cisajscktaltdc
     sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
-
-  if(childfopenMPI(sdt, "w", &fp)!=0){
-    return -1;
+  if(X->Def.NCisAjtCkuAlvDC>0){
+    if(childfopenMPI(sdt, "w", &fp)!=0){
+      return -1;
+    }
   }
   if(X->Def.NTBody>0){
     if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
@@ -213,7 +214,9 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  fclose(fp);
+  if(X->Def.NCisAjtCkuAlvDC>0){
+    fclose(fp);
+  }
   if(X->Def.NTBody>0){
     fclose(fp_2);
   }
@@ -914,7 +917,6 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
     i_max=X->Check.idim_max;
 
     for(i=0;i<X->Def.NSBody;i++){
-        //printf("%d %d \n",i,X->Def.NSBody);
         vec_pr_0 = cd_1d_allocate(i_max + 1);
         vec_pr_1 = cd_1d_allocate(i_max + 1);
         vec_pr_2 = cd_1d_allocate(i_max + 1);
