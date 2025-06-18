@@ -2578,5 +2578,3 @@ void calculate_jb_tJGC(struct BindStruct *X,long unsigned int *list_jb, long uns
     free_li_2d_allocate(comb);
     /*[e] this part can not be parallelized*/
 }
-
->>>>>>> origin/develop
