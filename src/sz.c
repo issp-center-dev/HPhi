@@ -250,7 +250,7 @@ int sz(
                                 icnt += omp_sz_hacker(ib,ihfbit,X,list_1_, list_2_1_, list_2_2_, list_jb);
                             }
                         }else if(hacker==2){
-                            icnt = omp_sz_hacker_ForLargeSystems(ihfbit,X, list_1_, list_2_1_, list_2_2_,list_jb);
+                            icnt = sz_hacker_for_large_systems(ihfbit,X, list_1_, list_2_1_, list_2_2_,list_jb);
                         }else{
                             fprintf(stderr, "Error: CalcHS in ModPara file must be 0, 1, 2 for Hubbard model.");
                             return -1;
@@ -288,7 +288,7 @@ int sz(
                                 icnt+=omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
                             }
                         }else if(hacker==2){
-                            icnt = omp_sz_hacker_ForLargeSystems(ihfbit,X, list_1_, list_2_1_, list_2_2_,list_jb);
+                            icnt = sz_hacker_for_large_systems(ihfbit,X, list_1_, list_2_1_, list_2_2_,list_jb);
                         }else{
                             fprintf(stderr, "Error: CalcHS in ModPara file must be 0, 1, 2 for HubbardNConserved model.");
                             return -1;
@@ -1612,7 +1612,7 @@ int Read_sz
  * @return number of states i_cnt-1==X->Check.idim_max
  * @author Takahiro Misawa (The University of Tokyo)
  */
-unsigned long int omp_sz_hacker_ForLargeSystems(
+unsigned long int sz_hacker_for_large_systems(
                         long unsigned int ihfbit,
                         struct BindStruct *X,
                         long unsigned int *list_1_,

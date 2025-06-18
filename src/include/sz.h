@@ -144,7 +144,7 @@ int Read_sz
  long unsigned int *i_max
  );
 
-unsigned long int omp_sz_hacker_ForLargeSystems(
+unsigned long int sz_hacker_for_large_systems(
                         long unsigned int ihfbit,
                         struct BindStruct *X,
                         long unsigned int *list_1_,
