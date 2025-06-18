@@ -455,9 +455,12 @@ int MakeExcitedList(
             case HubbardGC:
                 break;
             case HubbardNConserved:
-            case KondoGC:
             case Hubbard:
             case Kondo:
+            case KondoGC:
+            case tJ:
+            case tJNConserved:
+            case tJGC:
                 *iFlgListModifed = TRUE;
                 break;
             case Spin:
@@ -466,13 +469,16 @@ int MakeExcitedList(
         }
     } else if (X->Def.NPairExcitationOperator > 0) {
         switch (X->Def.iCalcModel) {
-            case HubbardGC:
             case SpinGC:
             case HubbardNConserved:
-                break;
+            case HubbardGC:
             case KondoGC:
+            case tJNConserved:
+            case tJGC:
+                break;
             case Hubbard:
             case Kondo:
+            case tJ:
             case Spin:
                 if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                     *iFlgListModifed = TRUE;
@@ -519,6 +525,8 @@ int MakeExcitedList(
                 case HubbardGC:
                     break;
                 case HubbardNConserved:
+                case KondoNConserved:/*To be confirmed*/
+                case tJNConserved:/*To be confirmed*/
                     if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
                         X->Def.Ne = X->Def.NeMPI + 1;
                     }
@@ -526,9 +534,11 @@ int MakeExcitedList(
                         X->Def.Ne = X->Def.NeMPI - 1;
                     }
                     break;
-                case KondoGC:
                 case Hubbard:
                 case Kondo:
+                case KondoGC:
+                case tJ:
+                case tJGC:
                     if (X->Def.SingleExcitationOperator[0][2] == 1) { //cis
                         X->Def.Ne = X->Def.NeMPI + 1;
                         if (X->Def.SingleExcitationOperator[0][1] == 0) {//up
@@ -557,13 +567,17 @@ int MakeExcitedList(
         } else if (X->Def.NPairExcitationOperator > 0) {
             X->Def.Ne=X->Def.NeMPI;
             switch (X->Def.iCalcModel) {
-                case HubbardGC:
                 case SpinGC:
                 case HubbardNConserved:
+                case HubbardGC:
+                case KondoNConserved:/*To be confirmed*/
+                case tJNConserved:/*To be confirmed*/
                     break;
-                case KondoGC:
                 case Hubbard:
                 case Kondo:
+                case KondoGC:
+                case tJ:
+                case tJGC:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                       if (X->Def.PairExcitationOperator[0][1] == 0) {//up
                         X->Def.Nup = X->Def.NupOrg + 1;

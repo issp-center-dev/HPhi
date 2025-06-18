@@ -133,9 +133,11 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     }
     break;
     
-  case KondoGC:
   case Hubbard:
   case Kondo:
+  case KondoGC:
+  case tJ:
+  case tJGC:
       if(expec_cisajs_Hubbard(X, vec, &fp)!=0){
           return -1;
       }

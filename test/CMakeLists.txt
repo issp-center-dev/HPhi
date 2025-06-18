@@ -258,4 +258,14 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/ctpq_spin_kagome_randomsphere.sh ${CMAKE_SOURCE_DIR}
 )
 
+#
+#three body for spin 1 Heisenberg chain
+#
+add_test(
+  NAME lobcg_spinone_chain_threebody
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinone_chain_threebody.sh ${CMAKE_SOURCE_DIR}
+)
+
+
+
 
