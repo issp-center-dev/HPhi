@@ -188,6 +188,9 @@ struct DefineList {
   int **SBody;/**<@brief [DefineList::SBody][24] Indices of six-body correlation function. malloc in setmem_def().*/
   unsigned int NSBody;/**<@brief Number of indices of six-body correlation function.*/
 
+  int  flag_read_invtemp;
+  char file_invtemp[D_FileNameMax];
+
   int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
   unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/

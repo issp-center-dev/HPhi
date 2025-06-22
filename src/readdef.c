@@ -67,7 +67,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "TETwoBody",
   "ThreeBodyG",
   "FourBodyG",
-  "SixBodyG"
+  "SixBodyG",
+  "InvTemp"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -744,7 +745,12 @@ int ReadDefFileNInt(
             fgetsMPI(ctmp2, 256, fp);
             sscanf(ctmp2, "%s %d\n", ctmp, &(X->NSBody));
             break;
- 
+
+      case KWInvTemp:
+        X->flag_read_invtemp = 1;
+        strcpy(X->file_invtemp,defname);
+        break;
+
       case KWLaser:
         /* Read laser.def--------------------------------*/
         fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
@@ -1774,11 +1780,6 @@ int ReadDefFileIdxPara(
         }
       }
       break;
-
-
-
-
-
 
       case KWLaser:
         //printf("KWLaser\n");
@@ -3135,6 +3136,7 @@ void InitializeInteractionNum
   X->NTBody=0;
   X->NFBody=0;
   X->NSBody=0;
+  X->flag_read_invtemp=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
   //[s] Time Evolution
