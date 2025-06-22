@@ -258,4 +258,7 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/ctpq_spin_kagome_randomsphere.sh ${CMAKE_SOURCE_DIR}
 )
 
-
+add_test(
+  NAME  read_ctpq_spin_chain
+  COMMAND ${CMAKE_SOURCE_DIR}/test/read_ctpq_spin_chain.sh ${CMAKE_SOURCE_DIR}
+)
