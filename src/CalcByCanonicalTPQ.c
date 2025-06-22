@@ -79,7 +79,10 @@ int CalcByCanonicalTPQ(
     int step_spin = ExpecInterval;
 
     flag_read_invtemp = X->Bind.Def.flag_read_invtemp;
-    strcpy(file_name,X->Bind.Def.file_invtemp);
+    /*[s]Following copilot's suggestion, we use strncpy to avoid buffer overflow*/
+    strncpy(file_name, X->Bind.Def.file_invtemp, D_FileNameMax - 1);
+    file_name[D_FileNameMax - 1] = '\0'; // Ensure null termination
+    /*[e]Following copilot's suggestion, we use strncpy to avoid buffer overflow*/
     if (X->Bind.Def.flag_read_invtemp==1){
         if(myrank==0){
             num_lines      = count_file_lines(file_name); /*count lines of files*/
@@ -365,6 +368,14 @@ int CalcByCanonicalTPQ(
 
     tstruct.tend=time(NULL);
     fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
+    /*[s] Free memory for inverse temperature data if it was read from a file */
+    if (flag_read_invtemp == 1){
+        free(read_invtemp);
+        free(read_nmax);
+        free(read_physcal);
+        free(read_eigen);
+    }
+    /*[e] Free memory for inverse temperature data if it was read from a file */
     return TRUE;
 }
 

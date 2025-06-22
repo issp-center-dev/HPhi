@@ -749,7 +749,6 @@ int ReadDefFileNInt(
       case KWInvTemp:
         X->flag_read_invtemp = 1;
         strcpy(X->file_invtemp,defname);
-        printf("CCC %s %s \n", X->file_invtemp,defname);
         break;
 
       case KWLaser:
