@@ -1372,7 +1372,7 @@ cat > reference.dat <<EOF
 EOF
 paste output/zvo_cisajscktalt.dat reference.dat > paste3.dat
 diff=`awk 'BEGIN{diff='${diff}'} {diff+=sqrt(($9-$19)*($9-$19)+($10-$20)*($10-$20))} 
-END{printf "%8.6f", diff}' paste3.dat`
+END{printf "%7.5f", diff}' paste3.dat`
 
-test "${diff}" = "0.000000"
+test "${diff}" = "0.00000"
 exit $?

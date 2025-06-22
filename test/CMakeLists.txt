@@ -262,3 +262,10 @@ add_test(
   NAME  read_ctpq_spin_chain
   COMMAND ${CMAKE_SOURCE_DIR}/test/read_ctpq_spin_chain.sh ${CMAKE_SOURCE_DIR}
 )
+#
+#three body for spin 1 Heisenberg chain
+#
+add_test(
+  NAME lobcg_spinone_chain_threebody
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinone_chain_threebody.sh ${CMAKE_SOURCE_DIR}
+)

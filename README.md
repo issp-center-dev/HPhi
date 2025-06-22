@@ -31,7 +31,7 @@ The distribution of the program package and the source codes for HPhi follow GNU
 
 [“Quantum lattice model solver HΦ”, M. Kawamura, K. Yoshimi, T. Misawa, Y. Yamaji, S. Todo, and N. Kawashima, Computer Physics Communications 217, 180 (2017).](https://doi.org/10.1016/j.cpc.2017.04.006)
 
-[“Update of HΦ: Newly added functions and methods in versions 2 and 3”, K. Ido, M. Kawamura, Y. Motoyama, K. Yoshimi, Y. Yamaji, S. Todo, N. Kawashima, and T. Misawa, arXiv:2307.13222.](https://arxiv.org/abs/2307.13222)
+[“Update of HΦ: Newly added functions and methods in versions 2 and 3”, K. Ido, M. Kawamura, Y. Motoyama, K. Yoshimi, Y. Yamaji, S. Todo, N. Kawashima, and T. Misawa, Comput. Phys. Commun. 298, 109093 (2024).](https://doi.org/10.1016/j.cpc.2024.109093)
 
 Bibtex:
 
@@ -47,13 +47,16 @@ url = {https://www.sciencedirect.com/science/article/pii/S0010465517301200},
 author = {Mitsuaki Kawamura and Kazuyoshi Yoshimi and Takahiro Misawa and Youhei Yamaji and Synge Todo and Naoki Kawashima}
 }
 
-@misc{ido2023update,
-      title={Update of $\mathcal{H}\Phi$: Newly added functions and methods in versions 2 and 3},
-      author={Kota Ido and Mitsuaki Kawamura and Yuichi Motoyama and Kazuyoshi Yoshimi and Youhei Yamaji and Synge Todo and Naoki Kawashima and Takahiro Misawa},
-      year={2023},
-      eprint={2307.13222},
-      archivePrefix={arXiv},
-      primaryClass={cond-mat.str-el}
+@article{ido2024update,
+      title = {Update of $\mathcal{H}\Phi$: Newly added functions and methods in versions 2 and 3},
+      author = {Kota Ido and Mitsuaki Kawamura and Yuichi Motoyama and Kazuyoshi Yoshimi and Youhei Yamaji and Synge Todo and Naoki Kawashima and Takahiro Misawa},
+      journal = {Computer Physics Communications},
+      volume = {298},
+      pages = {109093},
+      year = {2024},
+      issn = {0010-4655},
+      doi = {https://doi.org/10.1016/j.cpc.2024.109093},
+      url = {https://www.sciencedirect.com/science/article/pii/S001046552400016X}  
 }
 
 

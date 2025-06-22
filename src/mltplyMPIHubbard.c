@@ -143,7 +143,7 @@ double complex child_CisAjt_MPIdouble(
   long unsigned int *list_2_2_target//!<[in]
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv;
@@ -164,9 +164,7 @@ double complex child_CisAjt_MPIdouble(
   }/*if (state1 == 0 && state2 == mask2)*/
   else if (state1 == mask1 && state2 == 0) {
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }/*if (state1 == mask1 && state2 == 0)*/
   else return 0;
 
@@ -184,6 +182,8 @@ double complex child_CisAjt_MPIdouble(
                       v1buf,          idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1)return 0;
   
   if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) private(j, dmv, ioff) \
@@ -363,7 +363,7 @@ double complex child_general_hopp_MPIdouble(
   double complex *tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
@@ -385,7 +385,7 @@ double complex child_general_hopp_MPIdouble(
   }
   else if (state1 == mask1 && state2 == 0) {
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
+    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -401,6 +401,8 @@ double complex child_general_hopp_MPIdouble(
                       v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1)return 0;
 
   dam_pr = 0.0;
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
@@ -506,9 +508,7 @@ double complex child_general_hopp_MPIsingle(
   else if (state2 == 0) {
     state1check = mask1;
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) return 0;
   }
   else return 0;
 

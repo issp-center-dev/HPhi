@@ -2,7 +2,7 @@
 
 mkdir -p te_kondo_chain_interall/
 cd te_kondo_chain_interall
-python "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -m "Kondo"
+python3 "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -m "Kondo"
 
 # Check value: flct
 cat > reference.dat <<EOF
