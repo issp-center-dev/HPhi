@@ -1,5 +1,6 @@
 # include guard
-cmake_minimum_required(VERSION 2.8)
+#cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 if(${CMAKE_PROJECT_NAME} STREQUAL "Project")
   message(FATAL_ERROR "cmake should be executed not for 'src' subdirectory, but for the top directory of HPhi.")
 endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")

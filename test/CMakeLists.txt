@@ -1,5 +1,6 @@
 # include guard
-cmake_minimum_required(VERSION 2.8.0 )
+#cmake_minimum_required(VERSION 2.8.0 )
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 #
 # Lanczos
