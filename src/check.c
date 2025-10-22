@@ -193,29 +193,18 @@ int check(struct BindStruct *X){
   case KondoNConserved:
     //idim_max
     // calculation of dimension
-    // Nup      = u_loc+u_cond
-    // Ndown    = d_loc+d_cond
-    // NLocSpn  = u_loc+d_loc
-    // Ncond    = Nsite-NLocSpn
-    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
-    //              Binomial(NLocSpn,u_loc)
-    //             *Binomial(NCond,Nup-u_loc)
-    //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
-    //comb_1 = Binomial(NLocSpn,u_loc)
-    //comb_2 = Binomial(NCond,Nup-u_loc)
-    //comb_3 = Binomial(NCond,Ndown+u_loc-NLocSpn)
-    NLocSpn  = X->Def.NLocSpn;
-    NCond    = X->Def.Ne-NLocSpn;
-    int NsCond   = X->Def.Nsite-NLocSpn;
-    comb_1   = pow(2,NLocSpn);//Tpow is not defined
-    comb_sum = 0;
-    for(int tmp_Nup=0;tmp_Nup<=NCond;tmp_Nup++){
-      comb_2     = Binomial(NsCond,tmp_Nup,comb,NsCond);
-      comb_3     = Binomial(NsCond,NCond-tmp_Nup,comb,NsCond);
-      comb_sum  += comb_1*comb_2*comb_3;
-      //printf("tmp %ld %ld %ld\n",comb_sum,comb_2,comb_3);
+    NCond   = X->Def.Nsite-X->Def.NLocSpn;
+    NLocSpn = X->Def.NLocSpn;
+      
+    comb_2 = 1;
+    for(i=0;i<X->Def.NLocSpn;i++){
+      comb_2= 2*comb_2;
     }
-    //printf("Ne=%d NLocSpn=%d NsCond %d NCond=%d comb_1=%ld comb_2=%ld comb_3=%ld comb_sum=%ld\n",X->Def.Ne,NLocSpn,NsCond,NCond,comb_1,comb_2,comb_3,comb_sum);
+    
+    comb_sum = 0;
+    comb_1     = Binomial(2*NCond, X->Def.Ne-NLocSpn,comb,Ns);
+    comb_sum  += comb_1*comb_2;
+    
     break;
  
   case KondoGC:
