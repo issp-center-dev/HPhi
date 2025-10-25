@@ -1,5 +1,7 @@
-# include guard
-cmake_minimum_required(VERSION 2.8.0 )
+# include guard for CMakeLists.txt
+if(${CMAKE_PROJECT_NAME} STREQUAL "Project")
+    message(FATAL_ERROR "cmake should not be executed directly in subdirectory.")
+endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 
 #
 # Lanczos
