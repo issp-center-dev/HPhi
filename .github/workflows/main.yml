@@ -15,9 +15,6 @@ jobs:
           - os: ubuntu-24.04
             mpisize: 1
             ompsize: 3
-          - os: macos-13
-            mpisize: 1
-            ompsize: 1
           - os: macos-latest
             mpisize: 1
             ompsize: 1
