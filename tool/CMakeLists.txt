@@ -1,9 +1,8 @@
-# include guard
-cmake_minimum_required(VERSION 2.8.0 )
-
 add_definitions(-D_HPhi)
+
+# include guard for CMakeLists.txt
 if(${CMAKE_PROJECT_NAME} STREQUAL "Project")
-  message(FATAL_ERROR "cmake should be executed not for 'src' subdirectory, but for the top directory of HPhi.")
+    message(FATAL_ERROR "cmake should not be executed directly in subdirectory.")
 endif(${CMAKE_PROJECT_NAME} STREQUAL "Project")
 
 add_executable(greenr2k greenr2k.F90)
