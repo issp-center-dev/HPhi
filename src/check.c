@@ -97,6 +97,10 @@ int check(struct BindStruct *X){
     }
     break;
   case tJGC:
+    if (X->Def.Nup < 0 || X->Def.Ndown < 0 || X->Def.Ne < 0) {
+      comb_sum = 0;
+      break;
+    }
     //comb_sum = 3^(Ns)
     comb_sum = 1;
     for(i=0;i<X->Def.Nsite;i++){
@@ -126,6 +130,12 @@ int check(struct BindStruct *X){
     break;
 
   case tJ:
+    if (X->Def.Nup < 0 || X->Def.Ndown < 0
+        || X->Def.Nup > (int)Ns || X->Def.Ndown > (int)Ns
+        || X->Def.Nup + X->Def.Ndown > (int)Ns) {
+      comb_sum = 0;
+      break;
+    }
     if (X->Def.Nup>= X->Def.Ndown){
         comb_up   = Binomial(Ns,X->Def.Nup, comb, Ns);
         comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
@@ -150,6 +160,11 @@ int check(struct BindStruct *X){
     break;
 
   case tJNConserved:
+    if (X->Def.Nup < 0 || X->Def.Ndown < 0 || X->Def.Ne < 0
+        || X->Def.Ne > (int)Ns) {
+      comb_sum = 0;
+      break;
+    }
     comb_sum=0;
     if(X->Def.Ne > X->Def.Nsite){
       iMinup = X->Def.Ne-X->Def.Nsite;

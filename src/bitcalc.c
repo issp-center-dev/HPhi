@@ -206,6 +206,10 @@ int GetOffComp(
 )
 {
   long unsigned int ia, ib;
+  if (_ihfbit == 0) {
+    *_ioffComp = 0;
+    return FALSE;
+  }
   SplitBit(_ibit, _irght, _ilft, _ihfbit, &ia, &ib);
 /*
   *_ioffComp =_list_2_1[ia];
@@ -214,6 +218,13 @@ int GetOffComp(
 
   //if(myrank==1)
   //printf( "DEGBUG:_ibit=%ld, _list_2_1=%ld, _list_2_2=%ld\n", _ibit, _list_2_1[ia], _list_2_2[ib]);
+
+  if (g_tj_odd_split_guard_enabled == TRUE &&
+      (_ibit & g_tj_odd_split_up_mask) != 0 &&
+      (_ibit & g_tj_odd_split_down_mask) != 0) {
+    *_ioffComp = 0;
+    return FALSE;
+  }
 
   if(_list_2_1[ia]*_list_2_2[ib]==0){
     *_ioffComp=0;

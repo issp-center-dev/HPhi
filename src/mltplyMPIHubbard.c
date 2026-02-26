@@ -190,9 +190,11 @@ double complex child_CisAjt_MPIdouble(
   firstprivate(idim_max_buf, trans, X, list_2_1_target, list_2_2_target, list_1buf_org) \
   shared(v1buf, tmp_v0)
     for (j = 1; j <= idim_max_buf; j++){
+      if (GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
+                     X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+        continue;
+      }
       dmv = trans * v1buf[j];
-      GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
-                 X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
       tmp_v0[ioff] += dmv;
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/
@@ -409,8 +411,10 @@ double complex child_general_hopp_MPIdouble(
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
 #pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1, list_2_2, list_1buf[j],
-          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+        if (GetOffComp(list_2_1, list_2_2, list_1buf[j],
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+          continue;
+        }
         dmv = trans * v1buf[j];
         tmp_v0[ioff] += dmv;
         dam_pr += conj(tmp_v1[ioff]) * dmv;
@@ -419,8 +423,10 @@ double complex child_general_hopp_MPIdouble(
     else {
 #pragma omp for
       for (j = 1; j <= idim_max_buf; j++) {
-        GetOffComp(list_2_1, list_2_2, list_1buf[j],
-          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+        if (GetOffComp(list_2_1, list_2_2, list_1buf[j],
+          X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+          continue;
+        }
         dmv = trans * v1buf[j];
         dam_pr += conj(tmp_v1[ioff]) * dmv;
       }/*for (j = 1; j <= idim_max_buf; j++)*/
@@ -527,8 +533,10 @@ double complex child_general_hopp_MPIsingle(
 
         if (state1 == state1check) {
           SgnBit(jreal & bit1diff, &Fsgn);
-          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+          if (GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+            continue;
+          }
 
           dmv = (double)Fsgn * trans * v1buf[j];
           tmp_v0[ioff] += dmv;
@@ -545,8 +553,10 @@ double complex child_general_hopp_MPIsingle(
 
         if (state1 == state1check) {
           SgnBit(jreal & bit1diff, &Fsgn);
-          GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
-            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
+          if (GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
+            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+            continue;
+          }
 /*
           if(X->Large.mode==M_CORR){
             printf("DEBUG: myrank=%d, org=%d, bit=%d, iexchg=%d, ioff=%d, list_1=%d\n", myrank, jreal, state1, jreal ^ mask1, ioff, list_1[ioff]);
@@ -636,12 +646,12 @@ double complex child_CisAjt_MPIsingle(
       state1 = jreal & mask1;
       if (state1 == state1check) {
         SgnBit(jreal & bit1diff, &Fsgn);
-        GetOffComp(list_2_1_target, list_2_2_target, jreal ^ mask1,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff);
-        if(ioff !=0){
-          dmv = (double) Fsgn * trans * v1buf[j];
-          tmp_v0[ioff] += dmv;
-        }/*if(ioff !=0)*/
+        if (GetOffComp(list_2_1_target, list_2_2_target, jreal ^ mask1,
+                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+          continue;
+        }
+        dmv = (double) Fsgn * trans * v1buf[j];
+        tmp_v0[ioff] += dmv;
       }/*if (state1 == state1check)*/
     }/*for (j = 1; j <= idim_max_buf; j++)*/
   }/*if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC)*/

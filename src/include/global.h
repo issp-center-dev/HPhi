@@ -169,6 +169,13 @@ extern double eps_Energy;/**> epsilon for energy*/
 extern double eps_CheckImag0;/**> epsilon for checking values of one-body and two-body interactions.*/
 
 /*
+ Guard for tJ odd-split invalid pair (split-site cross doublon).
+*/
+extern int g_tj_odd_split_guard_enabled;
+extern long unsigned int g_tj_odd_split_up_mask;
+extern long unsigned int g_tj_odd_split_down_mask;
+
+/*
  Variables for the MPI parallelism
 */
 extern int nproc;//!< Number of processors, defined in InitializeMPI()
@@ -190,4 +197,3 @@ func(&(X.Bind.Def))
 @endcode
 This C-structure is defined in struct.h.
 */
-

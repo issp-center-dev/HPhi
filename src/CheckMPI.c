@@ -27,6 +27,7 @@
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
+  int has_invalid_tj_rank;
 
   /**@brief
   Branch for each model
@@ -81,7 +82,6 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     switch (X->Def.iCalcModel) /*2 (inner)*/ {
 
     case Hubbard:
-    case tJ:
       /**@brief
       <li>For canonical Hubbard
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -108,9 +108,54 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 
       break;/*case Hubbard:*/
 
+    case tJ:
+      /**@brief
+      <li>For canonical tJ
+      Build sectors in 4-state inter-process representation,
+      but invalidate PE sectors including doublon state(11) or
+      over-subtracted spin counts.</li>
+      */
+      has_invalid_tj_rank = FALSE;
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 3 /*11*/) {
+          has_invalid_tj_rank = TRUE;
+          break;
+        }
+        else if (SpinNum == 1 /*01*/) {
+          X->Def.Nup -= 1;
+          X->Def.Ne -= 1;
+          if (X->Def.Nup < 0 || X->Def.Ne < 0) {
+            has_invalid_tj_rank = TRUE;
+            break;
+          }
+        }
+        else if (SpinNum == 2 /*10*/) {
+          X->Def.Ndown -= 1;
+          X->Def.Ne -= 1;
+          if (X->Def.Ndown < 0 || X->Def.Ne < 0) {
+            has_invalid_tj_rank = TRUE;
+            break;
+          }
+        }
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+
+      if (has_invalid_tj_rank == TRUE) {
+        /*
+         * Project out invalid tJ sectors.
+         * Use negative spin counts so all Binomial() calls immediately return
+         * zero in check.c (k < 0), avoiding out-of-range table access.
+         */
+        X->Def.Nup = -1;
+        X->Def.Ndown = -1;
+        X->Def.Ne = -2;
+      }
+
+      break;/*case tJ:*/
+
     case HubbardNConserved:
-    case tJNConserved:
-    case tJGC: /*is it correct?*/
       /**@brief
       <li>For N-conserved canonical Hubbard
       DefineList::Ne should be differerent in each PE.</li>
@@ -124,6 +169,64 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
       break; /*case HubbardNConserved:*/
+
+    case tJNConserved:
+      /**@brief
+      <li>For N-conserved canonical tJ
+      Build sectors in 4-state inter-process representation,
+      but invalidate PE sectors including doublon state(11) or
+      over-subtracted Ne.</li>
+      */
+      has_invalid_tj_rank = FALSE;
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 3 /*11*/) {
+          has_invalid_tj_rank = TRUE;
+          break;
+        }
+        else if (SpinNum == 1 /*01*/ || SpinNum == 2 /*10*/) {
+          X->Def.Ne -= 1;
+          if (X->Def.Ne < 0) {
+            has_invalid_tj_rank = TRUE;
+            break;
+          }
+        }
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+
+      if (has_invalid_tj_rank == TRUE) {
+        X->Def.Nup = -1;
+        X->Def.Ndown = -1;
+        X->Def.Ne = -1;
+      }
+
+      break; /*case tJNConserved:*/
+
+    case tJGC:
+      /**@brief
+      <li>For grand-canonical tJ
+      Build sectors in 4-state inter-process representation,
+      but invalidate PE sectors including doublon state(11).</li>
+      */
+      has_invalid_tj_rank = FALSE;
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 4;
+        SmallDim /= 4;
+        if (SpinNum == 3 /*11*/) {
+          has_invalid_tj_rank = TRUE;
+          break;
+        }
+      } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+
+      if (has_invalid_tj_rank == TRUE) {
+        X->Def.Nup = -1;
+        X->Def.Ndown = -1;
+        X->Def.Ne = -1;
+      }
+
+      break; /*case tJGC:*/
 
     case KondoGC:
     case Kondo:
@@ -316,6 +419,7 @@ Modify Definelist::Tpow in the inter process region
 void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
 
   int isite, iproc, SmallDim, SpinNum, Nelec;
+  int has_doublon_state;
   unsigned long int idimMPI;
 
   if(X->Def.iFlgScaLAPACK == 0) {
@@ -416,12 +520,31 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
        as a binary (excepting general spin) format.
       */
       switch (X->Def.iCalcModel) {
+        case tJNConserved:
+        case tJGC:
+        case tJ:
+          SmallDim = iproc;
+          has_doublon_state = FALSE;
+          for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+            SpinNum = SmallDim % 4;
+            SmallDim /= 4;
+            if (SpinNum == 0) fprintf(stdoutMPI, "00");
+            else if (SpinNum == 1) fprintf(stdoutMPI, "01");
+            else if (SpinNum == 2) fprintf(stdoutMPI, "10");
+            else if (SpinNum == 3) {
+              fprintf(stdoutMPI, "11");
+              has_doublon_state = TRUE;
+            }
+          } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+          if (has_doublon_state == TRUE) {
+            fprintf(stdoutMPI, " INVALID(tJ)");
+          }
+
+          break;
+
         case HubbardGC: /****************************************************/
         case Hubbard:
         case HubbardNConserved:
-        case tJGC: /****************************************************/
-        case tJ:
-        case tJNConserved:
         case Kondo:
         case KondoGC:
 
@@ -436,7 +559,6 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
               } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
               break;
-
         case Spin:
         case SpinGC:
 

@@ -62,6 +62,30 @@ void omp_make_list_jb(
     long unsigned int *list_jb
 );
 
+static void setup_tj_odd_split_guard(struct BindStruct *X)
+{
+    g_tj_odd_split_guard_enabled = 0;
+    g_tj_odd_split_up_mask = 0;
+    g_tj_odd_split_down_mask = 0;
+
+    if (X->Def.iCalcModel != tJ &&
+        X->Def.iCalcModel != tJNConserved &&
+        X->Def.iCalcModel != tJGC) {
+        return;
+    }
+
+    if (X->Def.Nsite % 2 == 0) {
+        return;
+    }
+
+    {
+        int split_site = X->Def.Nsite / 2;
+        g_tj_odd_split_up_mask = X->Def.Tpow[2 * split_site];
+        g_tj_odd_split_down_mask = X->Def.Tpow[2 * split_site + 1];
+        g_tj_odd_split_guard_enabled = 1;
+    }
+}
+
 
 /** 
  * 
@@ -148,6 +172,8 @@ int sz(
     fprintf(stdoutMPI, "%s", cProStartCalcSz);
     TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
     TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
+
+    setup_tj_odd_split_guard(X);
 
     if(X->Check.idim_max!=0){
         /*[s] get idim for each model*/
@@ -619,8 +645,9 @@ int omp_sz(
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
-  long unsigned int num_up,num_down,num_doublon;
+  long unsigned int num_up,num_down,num_doublon,num_doublon_total;
   long unsigned int tmp_num_up,tmp_num_down,tmp_num_doublon;
+  long unsigned int split_site, split_down_ib, split_up_ia;
     
   jb = list_jb_[ib];
   i  = ib*ihfbit;
@@ -642,6 +669,11 @@ int omp_sz(
   tmp_num_up      = num_up;
   tmp_num_down    = num_down;
   tmp_num_doublon = num_doublon;
+  split_site = X->Def.Nsite / 2;
+  split_down_ib = 0;
+  if (X->Def.Nsite % 2 == 1) {
+    split_down_ib = (i & X->Def.Tpow[2*split_site+1]) / X->Def.Tpow[2*split_site+1];
+  }
 
   if(X->Def.iCalcModel==Hubbard){
     for(ia=0;ia<X->Check.sdim;ia++){
@@ -702,7 +734,12 @@ int omp_sz(
         num_down += div_down;
         num_doublon += div_up*div_down;
       }
-      if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
+      num_doublon_total = num_doublon;
+      if (X->Def.Nsite % 2 == 1) {
+        split_up_ia = (i & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+        num_doublon_total += split_up_ia * split_down_ib;
+      }
+      if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon_total==0){
         list_1_[ja+jb]=ia+ib*ihfbit;
         list_2_1_[ia]=ja+1;
         list_2_2_[ib]=jb+1;
@@ -725,7 +762,12 @@ int omp_sz(
         num_down    += div_down;
         num_doublon += div_up*div_down;
       }
-      if( (num_up+num_down) == X->Def.Ne && num_doublon==0){
+      num_doublon_total = num_doublon;
+      if (X->Def.Nsite % 2 == 1) {
+        split_up_ia = (i & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+        num_doublon_total += split_up_ia * split_down_ib;
+      }
+      if( (num_up+num_down) == X->Def.Ne && num_doublon_total==0){
         list_1_[ja+jb]=ia+ib*ihfbit;
         list_2_1_[ia]=ja+1;
         list_2_2_[ib]=jb+1;
@@ -748,7 +790,12 @@ int omp_sz(
         num_down    += div_down;
         num_doublon += div_up*div_down;
       }
-      if(num_doublon==0){
+      num_doublon_total = num_doublon;
+      if (X->Def.Nsite % 2 == 1) {
+        split_up_ia = (i & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+        num_doublon_total += split_up_ia * split_down_ib;
+      }
+      if(num_doublon_total==0){
         list_1_[ja+jb]=ia+ib*ihfbit;
         list_2_1_[ia]=ja+1;
         list_2_2_[ib]=jb+1;
@@ -787,8 +834,9 @@ int omp_sz_hacker(long unsigned int ib,
   long unsigned int i,j; 
   long unsigned int ia,ja,jb;
   long unsigned int div_down, div_up;
-  long unsigned int num_up,num_down,num_doublon;
+  long unsigned int num_up,num_down,num_doublon,num_doublon_total;
   long unsigned int tmp_num_up,tmp_num_down,tmp_num_doublon;
+  long unsigned int split_site, split_down_ib, split_up_ia;
     
   jb = list_jb_[ib];
   i  = ib*ihfbit;
@@ -811,6 +859,11 @@ int omp_sz_hacker(long unsigned int ib,
   tmp_num_up      = num_up;
   tmp_num_down    = num_down;
   tmp_num_doublon = num_doublon;
+  split_site = X->Def.Nsite / 2;
+  split_down_ib = 0;
+  if (X->Def.Nsite % 2 == 1) {
+    split_down_ib = (i & X->Def.Tpow[2*split_site+1]) / X->Def.Tpow[2*split_site+1];
+  }
 
   if(X->Def.iCalcModel==Hubbard){
     if(tmp_num_up <= X->Def.Nup && tmp_num_down <= X->Def.Ndown){ //do not exceed Nup and Ndown
@@ -894,7 +947,12 @@ int omp_sz_hacker(long unsigned int ib,
           num_down    += div_down;
           num_doublon += div_up*div_down;
         }
-        if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
+        num_doublon_total = num_doublon;
+        if (X->Def.Nsite % 2 == 1) {
+          split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+          num_doublon_total += split_up_ia * split_down_ib;
+        }
+        if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon_total==0){
           list_1_[ja+jb]=ia+ib*ihfbit;
           list_2_1_[ia]=ja+1;
           list_2_2_[ib]=jb+1;
@@ -915,7 +973,12 @@ int omp_sz_hacker(long unsigned int ib,
               num_down    += div_down;
               num_doublon += div_up*div_down;
             }
-            if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon==0){
+            num_doublon_total = num_doublon;
+            if (X->Def.Nsite % 2 == 1) {
+              split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+              num_doublon_total += split_up_ia * split_down_ib;
+            }
+            if(num_up == X->Def.Nup && num_down == X->Def.Ndown && num_doublon_total==0){
               list_1_[ja+jb]=ia+ib*ihfbit;
               list_2_1_[ia]=ja+1;
               list_2_2_[ib]=jb+1;
@@ -944,7 +1007,12 @@ int omp_sz_hacker(long unsigned int ib,
           num_down    += div_down;
           num_doublon += div_up*div_down;
         }
-        if(num_up+num_down == X->Def.Ne && num_doublon==0){
+        num_doublon_total = num_doublon;
+        if (X->Def.Nsite % 2 == 1) {
+          split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+          num_doublon_total += split_up_ia * split_down_ib;
+        }
+        if(num_up+num_down == X->Def.Ne && num_doublon_total==0){
           list_1_[ja+jb]=ia+ib*ihfbit;
           list_2_1_[ia]=ja+1;
           list_2_2_[ib]=jb+1;
@@ -965,7 +1033,12 @@ int omp_sz_hacker(long unsigned int ib,
               num_down += div_down;
               num_doublon += div_up*div_down;
             }
-            if(num_up+num_down == X->Def.Ne && num_doublon==0){
+            num_doublon_total = num_doublon;
+            if (X->Def.Nsite % 2 == 1) {
+              split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+              num_doublon_total += split_up_ia * split_down_ib;
+            }
+            if(num_up+num_down == X->Def.Ne && num_doublon_total==0){
               list_1_[ja+jb]=ia+ib*ihfbit;
               list_2_1_[ia]=ja+1;
               list_2_2_[ib]=jb+1;
@@ -993,7 +1066,12 @@ int omp_sz_hacker(long unsigned int ib,
           num_down    += div_down;
           num_doublon += div_up*div_down;
         }
-        if(num_doublon==0){
+        num_doublon_total = num_doublon;
+        if (X->Def.Nsite % 2 == 1) {
+          split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+          num_doublon_total += split_up_ia * split_down_ib;
+        }
+        if(num_doublon_total==0){
           list_1_[ja+jb]=ia+ib*ihfbit;
           list_2_1_[ia]=ja+1;
           list_2_2_[ib]=jb+1;
@@ -1014,7 +1092,12 @@ int omp_sz_hacker(long unsigned int ib,
               num_down    += div_down;
               num_doublon += div_up*div_down;
             }
-            if(num_doublon==0){
+            num_doublon_total = num_doublon;
+            if (X->Def.Nsite % 2 == 1) {
+              split_up_ia = (ia & X->Def.Tpow[2*split_site]) / X->Def.Tpow[2*split_site];
+              num_doublon_total += split_up_ia * split_down_ib;
+            }
+            if(num_doublon_total==0){
               list_1_[ja+jb]=ia+ib*ihfbit;
               list_2_1_[ia]=ja+1;
               list_2_2_[ib]=jb+1;
@@ -1057,12 +1140,14 @@ void omp_make_list_jb(
 ){
 
     int iSpnup,iMinup,iAllup;
+    int rem_up, rem_down;
 
     long unsigned int jb,ib,i;
     long unsigned int div;
     long unsigned int num_up,num_down,num_doublon;
     long unsigned int div_up,div_down;
-    long unsigned int tmp_res,all_up,all_down,tmp_1,tmp_2;
+    long unsigned int tmp_res,all_up,all_down,tmp_1,tmp_2,tmp_3;
+    long unsigned int split_site, split_down_ib;
 
     long unsigned int *jbthread;
     int mythread;
@@ -1082,7 +1167,7 @@ void omp_make_list_jb(
     #pragma omp parallel default(none) \
     shared(X,iMinup,iAllup,iSpnup,list_jb,ihfbit,N2,nthreads,jbthread) \
     private(ib,i,j,num_up,num_down,num_doublon,div,div_up,div_down,tmp_res,tmp_1,tmp_2,jb,all_up,all_down, \
-    comb,mythread,sdim_div,sdim_rest,ib_start,ib_end)
+    tmp_3,split_site,split_down_ib,rem_up,rem_down,comb,mythread,sdim_div,sdim_rest,ib_start,ib_end)
     {
     jb = 0;
     #ifdef _OPENMP
@@ -1123,6 +1208,11 @@ void omp_make_list_jb(
         tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
         all_up   = (X->Def.Nsite+tmp_res)/2;
         all_down = (X->Def.Nsite-tmp_res)/2;
+        split_site = X->Def.Nsite / 2;
+        split_down_ib = 0;
+        if (X->Def.Nsite % 2 == 1) {
+            split_down_ib = (i & X->Def.Tpow[2*split_site+1]) / X->Def.Tpow[2*split_site+1];
+        }
 
         if(X->Def.iCalcModel==Hubbard){
             tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
@@ -1130,9 +1220,23 @@ void omp_make_list_jb(
             jb   += tmp_1*tmp_2;
         }else if(X->Def.iCalcModel==tJ){
             if(num_doublon==0){
-                tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-                tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);
-                jb   += tmp_1*tmp_2;
+                rem_up = X->Def.Nup - (int)num_up;
+                rem_down = X->Def.Ndown - (int)num_down;
+                if (X->Def.Nsite % 2 == 1) {
+                    tmp_1 = Binomial((int)all_down, rem_up, comb, (int)all_down);
+                    tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                    jb   += tmp_1*tmp_2;
+                    if (split_down_ib == 0) {
+                        tmp_1 = Binomial((int)all_down, rem_up-1, comb, (int)all_down);
+                        tmp_2 = Binomial((int)all_down-(rem_up-1), rem_down, comb, (int)all_down);
+                        jb   += tmp_1*tmp_2;
+                    }
+                }
+                else {
+                    tmp_1 = Binomial((int)all_up, rem_up, comb, (int)all_up);
+                    tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                    jb   += tmp_1*tmp_2;
+                }
             }
         }else if(X->Def.iCalcModel == HubbardNConserved){
             for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
@@ -1143,10 +1247,35 @@ void omp_make_list_jb(
         }else if(X->Def.iCalcModel == tJNConserved){
             for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
                 if(num_doublon==0){
-                    tmp_1 = Binomial(all_up,iSpnup-num_up,comb,all_up);
-                    tmp_2 = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-iSpnup-num_down,comb,all_down);
-                    jb   += tmp_1*tmp_2;
+                    rem_up = iSpnup - (int)num_up;
+                    rem_down = X->Def.Ne - iSpnup - (int)num_down;
+                    if (X->Def.Nsite % 2 == 1) {
+                        tmp_1 = Binomial((int)all_down, rem_up, comb, (int)all_down);
+                        tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                        jb   += tmp_1*tmp_2;
+                        if (split_down_ib == 0) {
+                            tmp_1 = Binomial((int)all_down, rem_up-1, comb, (int)all_down);
+                            tmp_2 = Binomial((int)all_down-(rem_up-1), rem_down, comb, (int)all_down);
+                            jb   += tmp_1*tmp_2;
+                        }
+                    }
+                    else {
+                        tmp_1 = Binomial((int)all_up, rem_up, comb, (int)all_up);
+                        tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                        jb   += tmp_1*tmp_2;
+                    }
                 }
+            }
+        }else if(X->Def.iCalcModel == tJGC){
+            if (num_doublon == 0) {
+                tmp_3 = 1;
+                for (div = 0; div < all_down; div++) {
+                    tmp_3 *= 3;
+                }
+                if (X->Def.Nsite % 2 == 1 && split_down_ib == 0) {
+                    tmp_3 *= 2;
+                }
+                jb += tmp_3;
             }
         }
     }
@@ -1193,9 +1322,11 @@ void make_list_jb(
     long unsigned int div;
     long unsigned int num_up,num_down,num_doublon;
     long unsigned int div_up,div_down;
-    long unsigned int tmp_res,all_up,all_down,tmp_1,tmp_2;
+    long unsigned int tmp_res,all_up,all_down,tmp_1,tmp_2,tmp_3;
+    long unsigned int split_site, split_down_ib;
     unsigned int N;
     int iSpnup,iMinup,iAllup;
+    int rem_up, rem_down;
 
 
     if (X->Def.iCalcModel == HubbardNConserved || X->Def.iCalcModel == tJNConserved){
@@ -1248,15 +1379,34 @@ void make_list_jb(
             tmp_res  = X->Def.Nsite%2; // even Ns-> 0, odd Ns -> 1
             all_up   = (X->Def.Nsite+tmp_res)/2;
             all_down = (X->Def.Nsite-tmp_res)/2;
+            split_site = X->Def.Nsite / 2;
+            split_down_ib = 0;
+            if (X->Def.Nsite % 2 == 1) {
+                split_down_ib = (i & X->Def.Tpow[2*split_site+1]) / X->Def.Tpow[2*split_site+1];
+            }
             if(X->Def.iCalcModel == Hubbard){
                 tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
                 tmp_2 = Binomial(all_down,X->Def.Ndown-num_down,comb,all_down);
                 jb   += tmp_1*tmp_2;
             }else if(X->Def.iCalcModel == tJ){
                 if(num_doublon==0){
-                    tmp_1 = Binomial(all_up,X->Def.Nup-num_up,comb,all_up);
-                    tmp_2 = Binomial(all_down-(X->Def.Nup-num_up),X->Def.Ndown-num_down,comb,all_down);
-                    jb   += tmp_1*tmp_2;
+                    rem_up = X->Def.Nup - (int)num_up;
+                    rem_down = X->Def.Ndown - (int)num_down;
+                    if (X->Def.Nsite % 2 == 1) {
+                        tmp_1 = Binomial((int)all_down, rem_up, comb, (int)all_down);
+                        tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                        jb   += tmp_1*tmp_2;
+                        if (split_down_ib == 0) {
+                            tmp_1 = Binomial((int)all_down, rem_up-1, comb, (int)all_down);
+                            tmp_2 = Binomial((int)all_down-(rem_up-1), rem_down, comb, (int)all_down);
+                            jb   += tmp_1*tmp_2;
+                        }
+                    }
+                    else {
+                        tmp_1 = Binomial((int)all_up, rem_up, comb, (int)all_up);
+                        tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                        jb   += tmp_1*tmp_2;
+                    }
                 }
             }else if(X->Def.iCalcModel == HubbardNConserved){
                 for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
@@ -1267,10 +1417,35 @@ void make_list_jb(
             }else if(X->Def.iCalcModel == tJNConserved){
                 for(iSpnup = iMinup; iSpnup <= iAllup; iSpnup++){
                     if(num_doublon==0){
-                        tmp_1 = Binomial(all_up,iSpnup-num_up,comb,all_up);
-                        tmp_2 = Binomial(all_down-(iSpnup-num_up),X->Def.Ne-iSpnup-num_down,comb,all_down);
-                        jb   += tmp_1*tmp_2;
+                        rem_up = iSpnup - (int)num_up;
+                        rem_down = X->Def.Ne - iSpnup - (int)num_down;
+                        if (X->Def.Nsite % 2 == 1) {
+                            tmp_1 = Binomial((int)all_down, rem_up, comb, (int)all_down);
+                            tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                            jb   += tmp_1*tmp_2;
+                            if (split_down_ib == 0) {
+                                tmp_1 = Binomial((int)all_down, rem_up-1, comb, (int)all_down);
+                                tmp_2 = Binomial((int)all_down-(rem_up-1), rem_down, comb, (int)all_down);
+                                jb   += tmp_1*tmp_2;
+                            }
+                        }
+                        else {
+                            tmp_1 = Binomial((int)all_up, rem_up, comb, (int)all_up);
+                            tmp_2 = Binomial((int)all_down-rem_up, rem_down, comb, (int)all_down);
+                            jb   += tmp_1*tmp_2;
+                        }
                     }
+                }
+            }else if(X->Def.iCalcModel == tJGC){
+                if (num_doublon == 0) {
+                    tmp_3 = 1;
+                    for (div = 0; div < all_down; div++) {
+                        tmp_3 *= 3;
+                    }
+                    if (X->Def.Nsite % 2 == 1 && split_down_ib == 0) {
+                        tmp_3 *= 2;
+                    }
+                    jb += tmp_3;
                 }
             }
         }
