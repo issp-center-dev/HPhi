@@ -9,3 +9,4 @@ How to use :math:`{\mathcal H}\Phi`
    installation_en
    directorystructure_en
    basicusage_en
+   troubleshooting_en
