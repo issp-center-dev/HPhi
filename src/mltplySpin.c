@@ -167,6 +167,16 @@ General on-site term
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIBoost.h"
+#include "mltplyMPIBatched.h"
+
+#ifdef MPI
+// Static storage for batched Spin Exchange (SpinGC)
+static MPIBatchedSpinExchange batched_exchange_SpinGC = {0, NULL, 0};
+static int batched_exchange_SpinGC_initialized = 0;
+// Static storage for batched Spin Exchange (canonical)
+static MPIBatchedSpinExchange batched_exchange_Spin = {0, NULL, 0};
+static int batched_exchange_Spin_initialized = 0;
+#endif
 /**
 @brief Driver function for Spin hamiltonian
 @return error code
@@ -248,43 +258,50 @@ int mltplyHalfSpin(
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(410);
   /**
-  Exchange 
+  Exchange
   */
-  StartTimer(420);   
+  StartTimer(420);
+#ifdef MPI
+  // MPIsingle Exchange - use batched communication
+  StartTimer(422);
+  if (!batched_exchange_Spin_initialized) {
+    if (InitializeMPIBatchedExchange_Spin(X, &batched_exchange_Spin) != 0) {
+      fprintf(stderr, "Error: Failed to initialize batched MPI Exchange for Spin\n");
+      return -1;
+    }
+    batched_exchange_Spin_initialized = 1;
+  }
+
+  for (int g = 0; g < batched_exchange_Spin.num_groups; g++) {
+    dam_pr = X_child_general_int_spin_MPIsingle_batched(
+        &batched_exchange_Spin.groups[g], X, tmp_v0, tmp_v1);
+    X->Large.prdct += dam_pr;
+  }
+  StopTimer(422);
+#endif
+
   for (i = 0; i < X->Def.NExchangeCoupling; i++) {
     sigma1=0; sigma2=1;
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(421);
       dam_pr = child_general_int_spin_MPIdouble(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
-        X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(421);
-    }
-    else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(422);
-      dam_pr = child_general_int_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
+        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(422);
+      StopTimer(421);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(423);
-      dam_pr = child_general_int_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(423);
-    }
-    else {
+    else if (X->Def.ExchangeCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.ExchangeCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(424);
       exchange_spin_GetInfo(i, X);
       dam_pr = exchange_spin(tmp_v0, tmp_v1, X);
       StopTimer(424);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+    // MPIsingle cases are handled by batched processing above
   }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
   StopTimer(420);
 
@@ -717,40 +734,47 @@ shared(tmp_v0, tmp_v1)
   Exchange
   */
   StartTimer(530);
+#ifdef MPI
+  // MPIsingle Exchange - use batched communication
+  StartTimer(532);
+  if (!batched_exchange_SpinGC_initialized) {
+    if (InitializeMPIBatchedExchange_SpinGC(X, &batched_exchange_SpinGC) != 0) {
+      fprintf(stderr, "Error: Failed to initialize batched MPI Exchange for SpinGC\n");
+      return -1;
+    }
+    batched_exchange_SpinGC_initialized = 1;
+  }
+
+  for (int g = 0; g < batched_exchange_SpinGC.num_groups; g++) {
+    dam_pr = X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched(
+        &batched_exchange_SpinGC.groups[g], X, tmp_v0, tmp_v1);
+    X->Large.prdct += dam_pr;
+  }
+  StopTimer(532);
+#endif
+
   for (i = 0; i < X->Def.NExchangeCoupling; i++) {
     sigma1=0; sigma2=1;
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
       StartTimer(531);
       dam_pr = child_GC_CisAitCiuAiv_spin_MPIdouble(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
+        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
       StopTimer(531);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(532);
-      dam_pr=child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
-        X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(532);
-    }
-    else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(532);
-      dam_pr=child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
-        conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(532);
-    }
-    else {
+    else if (X->Def.ExchangeCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.ExchangeCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(533);
       exchange_spin_GetInfo(i, X);
       dam_pr = GC_exchange_spin(tmp_v0, tmp_v1, X);
       StopTimer(533);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+    // MPIsingle cases are handled by batched processing above
   }/* for (i = 0; i < X->Def.NExchangeCoupling; i ++) */
   StopTimer(530);
   /**
