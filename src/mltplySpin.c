@@ -787,34 +787,22 @@ shared(tmp_v0, tmp_v1)
         X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(541);
       dam_pr = child_GC_CisAitCiuAiv_spin_MPIdouble(
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
+        X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
         X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
         X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
       StopTimer(541);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(542);
-      dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
-        X->Def.PairLiftCoupling[i][1], sigma1, sigma2, 
-        X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(542);
-    }
-    else if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(542);
-      dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
-        conj(X->Def.ParaPairLiftCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(542);
-    }
-    else {
+    else if (X->Def.PairLiftCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.PairLiftCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(543);
       pairlift_spin_GetInfo(i, X);
       dam_pr = GC_pairlift_spin(tmp_v0, tmp_v1, X);
       StopTimer(543);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+    // MPIsingle cases are handled by batched processing above
   }/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
   StopTimer(540);
 
