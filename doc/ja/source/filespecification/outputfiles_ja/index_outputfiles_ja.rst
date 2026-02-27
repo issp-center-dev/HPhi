@@ -15,22 +15,23 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - CHECK_Chemi.dat
+   * - :doc:`CHECK_Chemi.dat <CHECK_Chemi_ja>`
      - 化学ポテンシャル項
-   * - CHECK_InterAll.dat
+   * - :doc:`CHECK_InterAll.dat <CHECK_InterAll_ja>`
      - 一般二体相互作用
-   * - CHECK_CoulombIntra.dat
+   * - :doc:`CHECK_CoulombIntra.dat <CHECK_CoulombIntra_ja>`
      - オンサイトクーロン相互作用
-   * - CHECK_Hund.dat
+   * - :doc:`CHECK_Hund.dat <CHECK_Hund_ja>`
      - フント結合項
-   * - CHECK_INTER_Sr.dat
+   * - :doc:`CHECK_INTER_Sr.dat <CHECK_INTER_U_ja>`
      - サイト間相互作用
-   * - CHECK_Memory.dat
+   * - :doc:`CHECK_Memory.dat <CHECK_Memory_ja>`
      - メモリ使用量の見積もり
-   * - WarningOnTransfer.dat
+   * - :doc:`WarningOnTransfer.dat <WarningOnTransfer_ja>`
      - 転送積分に関する警告
 
 **計算時間・進捗ファイル**
@@ -38,16 +39,17 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - CalcTimer.dat
+   * - :doc:`CalcTimer.dat <CalcTimer_ja>`
      - 各計算ステップの詳細時間
-   * - TimeKeeper.dat
+   * - :doc:`TimeKeeper.dat <TimeKeeper_ja>`
      - 全体の計算時間ログ
-   * - sz_TimeKeeper.dat
+   * - :doc:`sz_TimeKeeper.dat <sz_TimeKeeper_ja>`
      - Sz計算の時間
-   * - Time_CG_EigenVector.dat
+   * - :doc:`Time_CG_EigenVector.dat <Time_CG_EigenVector_ja>`
      - CG固有ベクトル計算時間
 
 **Lanczos法出力**
@@ -55,12 +57,13 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - zvo_energy.dat
+   * - :doc:`zvo_energy.dat <energy_ja>`
      - Lanczos反復中のエネルギー収束
-   * - zvo_Lanczos_Step.dat
+   * - :doc:`zvo_Lanczos_Step.dat <Lanczos_Step_ja>`
      - Lanczosステップ情報
 
 **TPQ（有限温度）出力**
@@ -68,16 +71,17 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - Time_TPQ_Step.dat
+   * - :doc:`Time_TPQ_Step.dat <Time_TPQ_Step_ja>`
      - TPQステップ時間
-   * - Norm_rand*.dat
+   * - :doc:`Norm_rand*.dat <Norm_rand_ja>`
      - TPQ状態のノルム
-   * - SS_rand*.dat
+   * - :doc:`SS_rand*.dat <SS_rand_ja>`
      - TPQのスピン-スピン相関
-   * - Flct_rand*.dat
+   * - :doc:`Flct_rand*.dat <Flct_rand_ja>`
      - TPQの揺らぎ
 
 **時間発展出力**
@@ -85,16 +89,17 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - Time_TE_Step.dat
+   * - :doc:`Time_TE_Step.dat <Time_TE_Step_ja>`
      - 時間発展ステップ時間
-   * - Norm.dat
+   * - :doc:`Norm.dat <Norm_ja>`
      - 時間発展中のノルム
-   * - SS.dat
+   * - :doc:`SS.dat <SS_ja>`
      - 時間発展中のスピン-スピン相関
-   * - Flct.dat
+   * - :doc:`Flct.dat <Flct_ja>`
      - 時間発展中の揺らぎ
 
 **物理量**
@@ -102,16 +107,17 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - zvo_Eigenvalue.dat
+   * - :doc:`zvo_Eigenvalue.dat <Eigenvalue_ja>`
      - 固有値
-   * - zvo_phys*.dat
+   * - :doc:`zvo_phys*.dat <phys_ja>`
      - 物理量（エネルギー、ダブロン、Sz等）
-   * - zvo_cisajs*.dat
+   * - :doc:`zvo_cisajs*.dat <cisajs_ja>`
      - 一体グリーン関数
-   * - zvo_cisajscktalt*.dat
+   * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_ja>`
      - 二体グリーン関数
 
 **波動関数・ベクトル**
@@ -119,18 +125,19 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - zvo_Ham.dat
+   * - :doc:`zvo_Ham.dat <ham_ja>`
      - ハミルトニアン行列要素（小規模系）
-   * - zvo_eigenvec*.dat
+   * - :doc:`zvo_eigenvec*.dat <eigenvec_ja>`
      - 固有ベクトルデータ
-   * - zvo_tmpvec*.dat
+   * - :doc:`zvo_tmpvec*.dat <tmpvec_ja>`
      - リスタート用一時ベクトル
-   * - zvo_recalcvec*.dat
+   * - :doc:`zvo_recalcvec*.dat <recalcvec_ja>`
      - 再計算ベクトル
-   * - zvo_excited*.dat
+   * - :doc:`zvo_excited*.dat <excitedvec_ja>`
      - 励起状態ベクトル
 
 **動的グリーン関数**
@@ -138,14 +145,15 @@
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - ファイル
      - 説明
-   * - zvo_DynamicalGreen.dat
+   * - :doc:`zvo_DynamicalGreen.dat <DynamicalGreen_ja>`
      - 動的グリーン関数データ
-   * - zvo_TMcomponents.dat
+   * - :doc:`zvo_TMcomponents.dat <TMcomponents_ja>`
      - 三重対角行列成分
-   * - residual.dat
+   * - :doc:`residual.dat <residual_ja>`
      - スペクトル計算の残差
 
 ----

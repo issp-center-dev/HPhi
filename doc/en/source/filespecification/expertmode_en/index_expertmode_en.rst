@@ -17,20 +17,21 @@ The following table summarizes all input files for expert mode.
 .. list-table::
    :header-rows: 1
    :widths: 20 15 65
+   :align: left
 
    * - File
      - Required
      - Description
-   * - List
+   * - :doc:`List <List_file_for_the_input_files_en>`
      - Yes
      - List of input file names with keywords
-   * - CalcMod
+   * - :doc:`CalcMod <CalcMod_file_en>`
      - Yes
      - Calculation mode settings
-   * - ModPara
+   * - :doc:`ModPara <ModPara_file_en>`
      - Yes
      - Basic parameters (site number, electron number, Lanczos steps, etc.)
-   * - LocSpin
+   * - :doc:`LocSpin <LocSpin_file_en>`
      - Kondo only
      - Location of local spins
 
@@ -39,35 +40,36 @@ The following table summarizes all input files for expert mode.
 .. list-table::
    :header-rows: 1
    :widths: 20 15 65
+   :align: left
 
    * - File
      - Required
      - Description
-   * - Trans
+   * - :doc:`Trans <Trans_file_en>`
      - No
      - One-body terms: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}`
-   * - InterAll
+   * - :doc:`InterAll <InterAll_file_en>`
      - No
      - General two-body interactions: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}`
-   * - CoulombIntra
+   * - :doc:`CoulombIntra <CoulombIntra_file_en>`
      - No
      - On-site Coulomb: :math:`n_{i\uparrow}n_{i\downarrow}`
-   * - CoulombInter
+   * - :doc:`CoulombInter <CoulombInter_file_en>`
      - No
      - Off-site Coulomb: :math:`n_i n_j`
-   * - Hund
+   * - :doc:`Hund <Hund_file_en>`
      - No
      - Hund coupling: :math:`n_{i\uparrow}n_{j\uparrow}+n_{i\downarrow}n_{j\downarrow}`
-   * - PairHop
+   * - :doc:`PairHop <PairHop_file_en>`
      - No
      - Pair hopping: :math:`c_{i\uparrow}^{\dagger}c_{j\uparrow}c_{i\downarrow}^{\dagger}c_{j\downarrow}`
-   * - Exchange
+   * - :doc:`Exchange <Exchange_file_en>`
      - No
      - Exchange coupling: :math:`c_{i\uparrow}^{\dagger}c_{j\uparrow}c_{j\downarrow}^{\dagger}c_{i\downarrow}`
-   * - Ising
+   * - :doc:`Ising <Ising_file_en>`
      - No
      - Ising interaction: :math:`S_i^z S_j^z`
-   * - PairLift
+   * - :doc:`PairLift <PairLift_file_en>`
      - No
      - Pair lift: :math:`c_{i\uparrow}^{\dagger}c_{i\downarrow}c_{j\uparrow}^{\dagger}c_{j\downarrow}`
 
@@ -76,14 +78,15 @@ The following table summarizes all input files for expert mode.
 .. list-table::
    :header-rows: 1
    :widths: 20 15 65
+   :align: left
 
    * - File
      - Required
      - Description
-   * - OneBodyG
+   * - :doc:`OneBodyG <OneBodyG_file_en>`
      - No
      - One-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle`
-   * - TwoBodyG
+   * - :doc:`TwoBodyG <TwoBodyG_file_en>`
      - No
      - Two-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k\sigma_3}c_{l\sigma_4}\rangle`
 
@@ -92,23 +95,24 @@ The following table summarizes all input files for expert mode.
 .. list-table::
    :header-rows: 1
    :widths: 20 15 65
+   :align: left
 
    * - File
      - Required
      - Description
-   * - SingleExcitation
+   * - :doc:`SingleExcitation <SingleExcitation_file_en>`
      - Spectrum
      - Single excitation operator for dynamical Green's functions
-   * - PairExcitation
+   * - :doc:`PairExcitation <PairExcitation_file_en>`
      - Spectrum
      - Pair excitation operator for dynamical Green's functions
-   * - SpectrumVec
+   * - :doc:`SpectrumVec <SpectrumVec_File_en>`
      - Spectrum
      - Input vector for spectrum calculations
-   * - OneBodyTE
+   * - :doc:`OneBodyTE <OneBodyTE_File_en>`
      - Time evolution
      - Time-dependent one-body terms
-   * - TwoBodyTE
+   * - :doc:`TwoBodyTE <TwoBodyTE_File_en>`
      - Time evolution
      - Time-dependent two-body interactions
 

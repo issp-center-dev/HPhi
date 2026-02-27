@@ -15,22 +15,23 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - CHECK_Chemi.dat
+   * - :doc:`CHECK_Chemi.dat <CHECK_Chemi_en>`
      - Chemical potential terms
-   * - CHECK_InterAll.dat
+   * - :doc:`CHECK_InterAll.dat <CHECK_InterAll_en>`
      - General two-body interactions
-   * - CHECK_CoulombIntra.dat
+   * - :doc:`CHECK_CoulombIntra.dat <CHECK_CoulombIntra_en>`
      - On-site Coulomb interactions
-   * - CHECK_Hund.dat
+   * - :doc:`CHECK_Hund.dat <CHECK_Hund_en>`
      - Hund coupling terms
-   * - CHECK_INTER_Sr.dat
+   * - :doc:`CHECK_INTER_Sr.dat <CHECK_INTER_U_en>`
      - Inter-site interactions
-   * - CHECK_Memory.dat
+   * - :doc:`CHECK_Memory.dat <CHECK_Memory_en>`
      - Memory usage estimation
-   * - WarningOnTransfer.dat
+   * - :doc:`WarningOnTransfer.dat <WarningOnTransfer_en>`
      - Warnings about transfer integrals
 
 **Timing and Progress Files**
@@ -38,16 +39,17 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - CalcTimer.dat
+   * - :doc:`CalcTimer.dat <CalcTimer_en>`
      - Detailed timing for each calculation step
-   * - TimeKeeper.dat
+   * - :doc:`TimeKeeper.dat <TimeKeeper_en>`
      - Overall calculation time log
-   * - sz_TimeKeeper.dat
+   * - :doc:`sz_TimeKeeper.dat <sz_TimeKeeper_en>`
      - Timing for Sz calculation
-   * - Time_CG_EigenVector.dat
+   * - :doc:`Time_CG_EigenVector.dat <Time_CG_EigenVector_en>`
      - CG eigenvector calculation timing
 
 **Lanczos Method Output**
@@ -55,12 +57,13 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - zvo_energy.dat
+   * - :doc:`zvo_energy.dat <energy_en>`
      - Energy convergence during Lanczos iteration
-   * - zvo_Lanczos_Step.dat
+   * - :doc:`zvo_Lanczos_Step.dat <Lanczos_Step_en>`
      - Lanczos step information
 
 **TPQ (Finite Temperature) Output**
@@ -68,16 +71,17 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - Time_TPQ_Step.dat
+   * - :doc:`Time_TPQ_Step.dat <Time_TPQ_Step_en>`
      - TPQ step timing
-   * - Norm_rand*.dat
+   * - :doc:`Norm_rand*.dat <Norm_rand_en>`
      - Norm of TPQ states
-   * - SS_rand*.dat
+   * - :doc:`SS_rand*.dat <SS_rand_en>`
      - Spin-spin correlation for TPQ
-   * - Flct_rand*.dat
+   * - :doc:`Flct_rand*.dat <Flct_rand_en>`
      - Fluctuations for TPQ
 
 **Time Evolution Output**
@@ -85,16 +89,17 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - Time_TE_Step.dat
+   * - :doc:`Time_TE_Step.dat <Time_TE_Step_en>`
      - Time evolution step timing
-   * - Norm.dat
+   * - :doc:`Norm.dat <Norm_en>`
      - Norm during time evolution
-   * - SS.dat
+   * - :doc:`SS.dat <SS_en>`
      - Spin-spin correlation during time evolution
-   * - Flct.dat
+   * - :doc:`Flct.dat <Flct_en>`
      - Fluctuations during time evolution
 
 **Physical Quantities**
@@ -102,16 +107,17 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - zvo_Eigenvalue.dat
+   * - :doc:`zvo_Eigenvalue.dat <Eigenvalue_en>`
      - Eigenvalues
-   * - zvo_phys*.dat
+   * - :doc:`zvo_phys*.dat <phys_en>`
      - Physical quantities (energy, doublon, Sz, etc.)
-   * - zvo_cisajs*.dat
+   * - :doc:`zvo_cisajs*.dat <cisajs_en>`
      - One-body Green's functions
-   * - zvo_cisajscktalt*.dat
+   * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_en>`
      - Two-body Green's functions
 
 **Wave Functions and Vectors**
@@ -119,18 +125,19 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - zvo_Ham.dat
+   * - :doc:`zvo_Ham.dat <ham_en>`
      - Hamiltonian matrix elements (small systems)
-   * - zvo_eigenvec*.dat
+   * - :doc:`zvo_eigenvec*.dat <eigenvec_en>`
      - Eigenvector data
-   * - zvo_tmpvec*.dat
+   * - :doc:`zvo_tmpvec*.dat <tmpvec_en>`
      - Temporary vector for restart
-   * - zvo_recalcvec*.dat
+   * - :doc:`zvo_recalcvec*.dat <recalcvec_en>`
      - Recalculated vector
-   * - zvo_excited*.dat
+   * - :doc:`zvo_excited*.dat <excitedvec_en>`
      - Excited state vector
 
 **Dynamical Green's Functions**
@@ -138,14 +145,15 @@ Quick Reference
 .. list-table::
    :header-rows: 1
    :widths: 30 70
+   :align: left
 
    * - File
      - Description
-   * - zvo_DynamicalGreen.dat
+   * - :doc:`zvo_DynamicalGreen.dat <DynamicalGreen_en>`
      - Dynamical Green's function data
-   * - zvo_TMcomponents.dat
+   * - :doc:`zvo_TMcomponents.dat <TMcomponents_en>`
      - Tridiagonal matrix components
-   * - residual.dat
+   * - :doc:`residual.dat <residual_en>`
      - Residual for spectrum calculation
 
 ----
