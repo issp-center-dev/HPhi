@@ -10,13 +10,15 @@ License
 --------------
 This package is distributed under GNU General Public License version 3 (GPL v3) or later.
 
-We kindly ask you to cite the article
+We kindly ask you to cite the following articles in publications that include results obtained using this software.
 
 Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji, Synge Todo, and Naoki Kawashima
 
     `Comp. Phys. Commun. 217 (2017) 180-192 <http://www.sciencedirect.com/science/article/pii/S0010465517301200>`_.
 
-in publications that include results obtained using this software.
+Kota Ido, Mitsuaki Kawamura, Yuichi Motoyama, Kazuyoshi Yoshimi, Youhei Yamaji, Synge Todo, Naoki Kawashima, and Takahiro Misawa
+
+    `Comp. Phys. Commun. 298 (2024) 109093 <https://www.sciencedirect.com/science/article/pii/S001046552400016X>`_.
 
 
 Copyright
@@ -41,9 +43,9 @@ Contents
    tutorial/tu-index
    filespecification/fi-index
    algorithm/al-index
+   technical/index
+   related/index
    acknowledgement_en
-   fourier/index
-   wannier/index
 
 .. Indices and tables
 .. ==================

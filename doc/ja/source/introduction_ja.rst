@@ -43,6 +43,9 @@ What is :math:`{\mathcal H}\Phi`?
 | Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
   Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. **217** (2017)
   180-192.
+| Kota Ido, Mitsuaki Kawamura, Yuichi Motoyama, Kazuyoshi Yoshimi, Youhei Yamaji,
+  Synge Todo, Naoki Kawashima, and Takahiro Misawa, Comp. Phys. Commun. **298** (2024)
+  109093.
 
 コピーライト
 ~~~~~~~~~~~~

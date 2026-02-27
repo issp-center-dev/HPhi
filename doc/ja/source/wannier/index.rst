@@ -4,9 +4,14 @@
    contain the root `toctree` directive.
 
 .. _wannier:
-   
-Wannier関数を用いたダウンフォールディング
-=========================================
+
+RESPACKとの連携
+===============
+
+本節ではDFT計算から得られた有効模型を :math:`{\mathcal H}\Phi` で使用する方法を説明します。
+ダウンフォールディング計算は `RESPACK <https://sites.google.com/view/kazuma7k6r>`_ で行い、
+得られた格子模型パラメータを :math:`{\mathcal H}\Phi` の入力として使用します。
+
 .. toctree::
    :maxdepth: 3
 
