@@ -298,6 +298,8 @@ int SetDiagonalCoulombIntra
 
     case Spin:
     case SpinGC:
+    case SpinlessFermion:
+    case SpinlessFermionGC:
       /*
        They do not have the Coulomb term
       */
@@ -347,8 +349,10 @@ int SetDiagonalCoulombIntra
     
     case Spin:
     case SpinGC:
+    case SpinlessFermion:
+    case SpinlessFermionGC:
       break;
-      
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
@@ -439,6 +443,15 @@ firstprivate(i_max, dtmp_V) private(j)
       }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
       break;/*case SpinGC, Spin:*/
 
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      ibit1_up = ((unsigned long int)myrank & is1_up) / is1_up;
+#pragma omp parallel for default(none) shared(list_Diagonal) \
+firstprivate(i_max, dtmp_V, ibit1_up) private(j)
+      for (j = 1; j <= i_max; j++) list_Diagonal[j] += dtmp_V * ibit1_up;
+      break;/*case SpinlessFermion, SpinlessFermionGC:*/
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
@@ -526,6 +539,25 @@ firstprivate(i_max, dtmp_V) private(j)
     }
 
     break;
+
+  case SpinlessFermionGC:
+    is1_up = X->Def.Tpow[isite1 - 1];
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up) private(num1, ibit1_up)
+    for (j = 1; j <= i_max; j++) {
+      ibit1_up = ((j - 1) & is1_up) / is1_up;
+      list_Diagonal[j] += dtmp_V * ibit1_up;
+    }
+    break;
+
+  case SpinlessFermion:
+    is1_up = X->Def.Tpow[isite1 - 1];
+#pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up) private(num1, ibit1_up)
+    for (j = 1; j <= i_max; j++) {
+      ibit1_up = (list_1[j] & is1_up) / is1_up;
+      list_Diagonal[j] += dtmp_V * ibit1_up;
+    }
+    break;
+
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
@@ -535,7 +567,7 @@ firstprivate(i_max, dtmp_V) private(j)
 }
 
 /**
- * 
+ *
  * @brief Calculate the components for Coulombinter interaction, \f$ V_{ij} n_ {i}n_{j} \f$
  * @param isite1 [in] a site number \f$i \f$
  * @param isite2 [in] a site number \f$j \f$
@@ -625,6 +657,17 @@ int SetDiagonalCoulombInter
       }
       break;/*case Spin, SpinGC*/
 
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+      num1 = ((unsigned long int)myrank & is1_up) / is1_up;
+      num2 = ((unsigned long int)myrank & is2_up) / is2_up;
+#pragma omp parallel for default(none) shared(list_Diagonal) \
+      firstprivate(i_max, dtmp_V, num1, num2) private(j)
+      for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1 * num2 * dtmp_V;
+      break;/*case SpinlessFermion, SpinlessFermionGC*/
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
@@ -635,7 +678,7 @@ int SetDiagonalCoulombInter
 
   }/*if (isite1 > X->Def.Nsite)*/
   else if (isite2 > X->Def.Nsite /* => isite1 */) {
-    
+
     switch(X->Def.iCalcModel){
     case HubbardGC:
     case Hubbard:
@@ -658,11 +701,17 @@ int SetDiagonalCoulombInter
     case SpinGC:
       break;
 
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      is2_up = X->Def.Tpow[isite2 - 1];
+      num2 = ((unsigned long int)myrank & is2_up) / is2_up;
+      break;
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
     }
-    
+
     switch (X->Def.iCalcModel) {
 
     case HubbardGC:
@@ -709,6 +758,28 @@ private(num1, ibit1_up, ibit1_down, j)
         list_Diagonal[j] += dtmp_V;
       }
       break;/* case Spin, SpinGC:*/
+
+    case SpinlessFermionGC:
+      is1_up = X->Def.Tpow[isite1 - 1];
+#pragma omp parallel for default(none) shared(list_Diagonal) \
+firstprivate(i_max, dtmp_V, num2, is1_up) private(num1, ibit1_up, j)
+      for (j = 1; j <= i_max; j++) {
+        ibit1_up = (j - 1) & is1_up;
+        num1 = ibit1_up / is1_up;
+        list_Diagonal[j] += num1 * num2 * dtmp_V;
+      }
+      break;/*case SpinlessFermionGC*/
+
+    case SpinlessFermion:
+      is1_up = X->Def.Tpow[isite1 - 1];
+#pragma omp parallel for default(none) shared(list_1, list_Diagonal) \
+firstprivate(i_max, dtmp_V, is1_up, num2) private(num1, ibit1_up, j)
+      for (j = 1; j <= i_max; j++) {
+        ibit1_up = list_1[j] & is1_up;
+        num1 = ibit1_up / is1_up;
+        list_Diagonal[j] += num1 * num2 * dtmp_V;
+      }
+      break;/*case SpinlessFermion*/
 
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
@@ -776,14 +847,41 @@ private(num1, ibit1_up, ibit1_down, j)
 #pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V)
       for(j = 1;j <= i_max; j++){
         list_Diagonal[j] += dtmp_V;
-      } 
+      }
       break;
+
+    case SpinlessFermionGC:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up) private(num1, ibit1_up, num2, ibit2_up)
+      for (j = 1; j <= i_max; j++) {
+        ibit1_up = (j - 1) & is1_up;
+        num1 = ibit1_up / is1_up;
+        ibit2_up = (j - 1) & is2_up;
+        num2 = ibit2_up / is2_up;
+        list_Diagonal[j] += num1 * num2 * dtmp_V;
+      }
+      break;
+
+    case SpinlessFermion:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+#pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up) private(num1, ibit1_up, num2, ibit2_up)
+      for (j = 1; j <= i_max; j++) {
+        ibit1_up = list_1[j] & is1_up;
+        num1 = ibit1_up / is1_up;
+        ibit2_up = list_1[j] & is2_up;
+        num2 = ibit2_up / is2_up;
+        list_Diagonal[j] += num1 * num2 * dtmp_V;
+      }
+      break;
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
     }
   }
-  
+
   return 0;
 }
 

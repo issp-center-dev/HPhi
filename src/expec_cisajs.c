@@ -153,8 +153,52 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(expec_cisajs_SpinGC(X, vec, &fp)!=0){
           return -1;
       }
-          break;
-        
+      break;
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    // For spinless fermions, calculate diagonal one-body Green's function
+    {
+      long unsigned int i_sp, j_sp;
+      for(i_sp = 0; i_sp < X->Def.NCisAjt; i_sp++){
+        long unsigned int org_isite1_sp = X->Def.CisAjt[i_sp][0]+1;
+        long unsigned int org_isite2_sp = X->Def.CisAjt[i_sp][2]+1;
+        long unsigned int org_sigma1_sp = X->Def.CisAjt[i_sp][1];
+        long unsigned int org_sigma2_sp = X->Def.CisAjt[i_sp][3];
+        double complex dam_pr_sp = 0;
+
+        if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp){
+          // Diagonal case: <n_i>
+          long unsigned int is_sp = X->Def.Tpow[org_isite1_sp - 1];
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+            // Grand canonical - use (j_sp-1)
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max, is_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int ibit_sp = ((j_sp-1) & is_sp) / is_sp;
+              dam_pr_sp += ibit_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          } else {
+            // Canonical - use list_1[j_sp]
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max, is_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int ibit_sp = (list_1[j_sp] & is_sp) / is_sp;
+              dam_pr_sp += ibit_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          }
+        } else {
+          // Off-diagonal case: not yet implemented for spinless
+          dam_pr_sp = 0;
+        }
+        dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        fprintf(fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
+                org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
+                creal(dam_pr_sp), cimag(dam_pr_sp));
+      }
+    }
+    break;
+
   default:
     return -1;
   }

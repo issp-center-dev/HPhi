@@ -97,11 +97,12 @@ int check(struct BindStruct *X){
     }
     break;
   case SpinGC:
+  case SpinlessFermionGC:
     //comb_sum = 2^(Ns)
     comb_sum = 1;
     if(X->Def.iFlgGeneralSpin ==FALSE){
       for(i=0;i<X->Def.Nsite;i++){
-        comb_sum= 2*comb_sum;     
+        comb_sum= 2*comb_sum;
       }
     }
     else{
@@ -258,11 +259,16 @@ int check(struct BindStruct *X){
     }
     
     break;
+
+  case SpinlessFermion:
+    comb_sum = Binomial(Ns, X->Def.Ne, comb, Ns);
+    break;
+
   default:
     fprintf(stderr, cErrNoModel, X->Def.iCalcModel);
     free_li_2d_allocate(comb);
     return FALSE;
-  }  
+  }
 
   //fprintf(stdoutMPI, "Debug: comb_sum= %ld \n",comb_sum);
 
@@ -279,10 +285,12 @@ int check(struct BindStruct *X){
         case tJNConserved:
         case tJGC:
         case Spin:
+        case SpinlessFermion:
           X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
       }
@@ -298,10 +306,12 @@ int check(struct BindStruct *X){
         case tJNConserved:
         case tJGC:
         case Spin:
+        case SpinlessFermion:
           X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
       }
@@ -318,6 +328,7 @@ int check(struct BindStruct *X){
         case tJNConserved:
         case tJGC:
         case Spin:
+        case SpinlessFermion:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
@@ -326,6 +337,7 @@ int check(struct BindStruct *X){
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
@@ -386,7 +398,9 @@ int check(struct BindStruct *X){
     break;
   case Spin:
   case SpinGC:
-    if(X->Def.iFlgGeneralSpin==FALSE){ 
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    if(X->Def.iFlgGeneralSpin==FALSE){
       while(tmp <= X->Def.Nsite/2){
         tmp_sdim=tmp_sdim*2;
         tmp+=1;
@@ -400,7 +414,7 @@ int check(struct BindStruct *X){
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     free_li_2d_allocate(comb);
     return FALSE;
-  }  
+  }
   X->Check.sdim=tmp_sdim;
   
   if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
@@ -423,6 +437,8 @@ int check(struct BindStruct *X){
     break;
   case Spin:
   case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     if(X->Def.iFlgGeneralSpin==FALSE){
       //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
@@ -459,6 +475,7 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
+ case SpinlessFermionGC:
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite;i++){
        u_tmp=u_tmp*2;
@@ -477,6 +494,7 @@ int check(struct BindStruct *X){
    }
    break;
  case Spin:
+ case SpinlessFermion:
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite-1;i++){
        u_tmp=u_tmp*2;

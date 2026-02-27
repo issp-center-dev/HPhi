@@ -97,7 +97,9 @@ int GetSplitBitByModel(
     tmpNsite *= 2;
     break;
   case Spin:
-  case SpinGC:   
+  case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     break;
   default:
     fprintf(stderr, cErrNoModel, iCalcModel);

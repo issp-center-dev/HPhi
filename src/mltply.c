@@ -19,6 +19,7 @@
 #include "mltply.h"
 #include "mltplySpin.h"
 #include "mltplyHubbard.h"
+#include "mltplySpinless.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "mltplyCommon.h"
@@ -123,7 +124,12 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   case SpinGC:
     mltplySpinGC(X, tmp_v0, tmp_v1);
     break;
-      
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    mltplySpinlessFermion(X, tmp_v0, tmp_v1);
+    break;
+
   default:
     return -1;
   }

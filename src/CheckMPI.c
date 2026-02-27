@@ -338,6 +338,54 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
      /**@brief</ul>*/
     break; /*case SpinGC, Spin*/
 
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    <li> For SpinlessFermion
+    Define local dimension DefineList::Nsite (2 states per site)</li>
+    */
+    NDimInterPE = 1;
+    for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+      if (NDimInterPE == nproc) {
+        X->Def.Nsite = isite;
+        break;
+      }/*if (NDimInterPE == nproc)*/
+      NDimInterPE *= 2;
+    }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+
+    if (isite == 0) {
+      fprintf(stdoutMPI, "%s", cErrNProcNumberSpin);
+      fprintf(stdoutMPI, cErrNProcNumber, nproc);
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/2;
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= 2;
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      return FALSE;
+    }/*if (isite == 0)*/
+
+    if (X->Def.iCalcModel == SpinlessFermion) {
+      /* Ne should be different in each PE */
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 2;
+        SmallDim /= 2;
+        if (SpinNum == 1) {
+          X->Def.Ne -= 1;
+        }
+      }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+    }/*if (X->Def.iCalcModel == SpinlessFermion)*/
+
+    break; /*case SpinlessFermion, SpinlessFermionGC*/
+
   default:
     fprintf(stdoutMPI, "Error ! Wrong model !\n");
     return FALSE;
@@ -584,8 +632,20 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
       X->Def.Tpow[X->Def.Nsite] = 1;
       for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
         X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
- 
+
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+    break;
+
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    For SpinlessFermion, Tpow for inter-process sites starts at 1
+    (since each site has 2 states: occupied or empty)
+    */
+    X->Def.Tpow[X->Def.Nsite] = 1;
+    for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
+      X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
+
     break;
   } /*switch (X->Def.iCalcModel)*/
 }/*void CheckMPI_Summary*/

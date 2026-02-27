@@ -119,6 +119,18 @@ int expec_energy_flct(struct BindStruct *X){
       X->Phys.Sz        = 0.5 * (double)X->Def.Total2SzMPI;
       X->Phys.Sz2       = X->Phys.Sz * X->Phys.Sz;
     break;
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+      // For spinless fermions: no double occupancy, no spin
+      X->Phys.doublon   = 0.0;
+      X->Phys.doublon2  = 0.0;
+      X->Phys.num       = X->Def.Ne;  // Total number of electrons
+      X->Phys.num2      = X->Def.Ne * X->Def.Ne;
+      X->Phys.Sz        = 0.0;  // No spin for spinless fermions
+      X->Phys.Sz2       = 0.0;
+    break;
+
   default:
     return -1;
   }

@@ -209,6 +209,55 @@ int expec_cisajscktaltdc
       }
     break;
 
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    // For spinless fermions, calculate two-body Green's function <n_i n_j>
+    {
+      long unsigned int i_sp, j_sp;
+      long unsigned int i_max_sp = X->Check.idim_max;
+      for(i_sp = 0; i_sp < X->Def.NCisAjtCkuAlvDC; i_sp++){
+        long unsigned int org_isite1_sp = X->Def.CisAjtCkuAlvDC[i_sp][0] + 1;
+        long unsigned int org_isite2_sp = X->Def.CisAjtCkuAlvDC[i_sp][2] + 1;
+        long unsigned int org_isite3_sp = X->Def.CisAjtCkuAlvDC[i_sp][4] + 1;
+        long unsigned int org_isite4_sp = X->Def.CisAjtCkuAlvDC[i_sp][6] + 1;
+        long unsigned int org_sigma1_sp = X->Def.CisAjtCkuAlvDC[i_sp][1];
+        long unsigned int org_sigma2_sp = X->Def.CisAjtCkuAlvDC[i_sp][3];
+        long unsigned int org_sigma3_sp = X->Def.CisAjtCkuAlvDC[i_sp][5];
+        long unsigned int org_sigma4_sp = X->Def.CisAjtCkuAlvDC[i_sp][7];
+        double complex dam_pr_sp = 0;
+
+        // Only handle diagonal case: <n_i n_j> where i1==i2 and i3==i4
+        if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp &&
+           org_isite3_sp == org_isite4_sp && org_sigma3_sp == org_sigma4_sp){
+          long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];
+          long unsigned int is2_sp = X->Def.Tpow[org_isite3_sp - 1];
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+              long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
+              long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
+              dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          } else {
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+              long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
+              long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
+              dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          }
+        }
+        dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        fprintf(fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
+                org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
+                org_isite3_sp-1, org_sigma3_sp, org_isite4_sp-1, org_sigma4_sp,
+                creal(dam_pr_sp), cimag(dam_pr_sp));
+      }
+    }
+    break;
+
   default:
     return -1;
   }

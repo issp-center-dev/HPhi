@@ -146,6 +146,8 @@ int sz(
                 break;
             case SpinGC:
             case Spin:
+            case SpinlessFermion:
+            case SpinlessFermionGC:
                 N=X->Def.Nsite;
                 if(X->Def.iFlgGeneralSpin==FALSE){
                     idim = pow(2.0, N);
@@ -173,6 +175,8 @@ int sz(
             case Kondo:
             case KondoNConserved:
             case Spin:
+            case SpinlessFermion:
+            case SpinlessFermionGC:
                 if(X->Def.iFlgGeneralSpin==FALSE){
                     if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
                         exitMPI(-1);
@@ -218,6 +222,7 @@ int sz(
                     icnt = X->Def.Tpow[2*X->Def.Nsite-1]*2+0;/*Tpow[2*X->Def.Nsit]=1*/
                     break;
                 case SpinGC:
+                case SpinlessFermionGC:
                     if(X->Def.iFlgGeneralSpin==FALSE){
                         icnt = X->Def.Tpow[X->Def.Nsite-1]*2+0;/*Tpow[X->Def.Nsit]=1*/
                     }else{
@@ -365,6 +370,7 @@ int sz(
                       }
                       break;
                   case Spin:
+                  case SpinlessFermion:
                       if(X->Def.iFlgGeneralSpin==FALSE){
                           hacker = X->Def.read_hacker;
                           if(hacker        ==  -1){
@@ -385,7 +391,7 @@ int sz(
                               //#pragma omp barrier
                               TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                               TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-            
+
                               icnt = 0;
                               #pragma omp parallel for default(none) reduction(+:icnt)\
                               private(ib) firstprivate(ihfbit, N, X)\
@@ -402,7 +408,7 @@ int sz(
                           calculate_jb_GeneralSpin(X,list_jb,list_2_1_Sz,list_2_2_Sz,ihfbit,ilftdim,N);
                           TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                           TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-            
+
                           icnt = 0;
                           #pragma omp parallel for default(none)\
                           reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)\
@@ -1532,6 +1538,8 @@ int Read_sz
   case HubbardGC:
   case Spin:
   case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     sprintf(sdt,cFileNameListModel, X->Def.Nsite, X->Def.Nup, X->Def.Ndown);
     break;
   case Kondo:

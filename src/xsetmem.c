@@ -291,6 +291,7 @@ int setmem_large
 
     switch (X->Def.iCalcModel) {
       case Spin:
+      case SpinlessFermion:
       case Hubbard:
       case HubbardNConserved:
       case Kondo:
@@ -300,7 +301,7 @@ int setmem_large
       case tJNConserved:
       case tJGC:
         if (X->Def.iFlgGeneralSpin == FALSE) {
-          if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
+          if ((X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinlessFermion) && X->Def.Nsite % 2 == 1) {
             X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
           } else {
             X->Large.SizeOflist_2_1 = X->Check.sdim + 2;

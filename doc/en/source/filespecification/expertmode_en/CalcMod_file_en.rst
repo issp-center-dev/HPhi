@@ -88,13 +88,19 @@ The parameters correlated with the keywords are as follows.
      particles, the component of :math:`S_z`)
    | 3: Fermion Hubbard model (grand canonical ensemble)
    | 4: Spin model (grand canonical ensemble)
-   | 5: Kondo lattice model (grand canonical ensemble).
+   | 5: Kondo lattice model (grand canonical ensemble)
+   | 7: Spinless fermion model (canonical ensemble: conservation of particles)
+   | 8: Spinless fermion model (grand canonical ensemble).
 
    For the fermion Hubbard model, you can select the model under the
    conservation of the particles by setting ``NCond`` in the ModPara
    file. When you want to select the model under the conservation of
    particles and the component of :math:`S_z`, set both ``NCond`` and
    ``2Sz`` in the ModPara file.
+
+   For the spinless fermion model, only Trans (hopping) and CoulombInter
+   (inter-site interaction) terms are valid. CoulombIntra, Hund, Exchange,
+   and PairHop cannot be used since there are no spin degrees of freedom.
 
 *  ``CalcEigenVec``
 
