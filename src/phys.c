@@ -23,10 +23,10 @@
  *
  * Computed quantities (for each eigenstate i):
  * - Energy: E_i (from diagonalization)
- * - Number of particles: <n> (for Hubbard models)
- * - Total spin: <S^2>, <Sz>
- * - One-body Green's functions: <c†_i c_j>
- * - Two-body Green's functions: <c†_i c_j c†_k c_l>
+ * - Number of particles: \f$\langle n\rangle\f$ (for Hubbard models)
+ * - Total spin: \f$\langle S^2\rangle\f$, \f$\langle S_z\rangle\f$
+ * - One-body Green's functions: \f$\langle c^\dagger_i c_j\rangle\f$
+ * - Two-body Green's functions: \f$\langle c^\dagger_i c_j c^\dagger_k c_l\rangle\f$
  *
  * ScaLAPACK support:
  * - When _SCALAPACK is defined, eigenvectors are distributed across ranks
@@ -59,7 +59,7 @@
  * For each eigenstate:
  * 1. Copy eigenvector to v0 (working vector)
  * 2. Call expec_energy_flct() for energy (already known, but variance check)
- * 3. Call expec_totalspin() for <S^2>, <Sz>
+ * 3. Call expec_totalspin() for \f$\langle S^2\rangle\f$, \f$\langle S_z\rangle\f$
  * 4. Call expec_cisajs() for one-body Green's functions
  * 5. Call expec_cisajscktaltdc() for two-body Green's functions
  *

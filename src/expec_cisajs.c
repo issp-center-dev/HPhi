@@ -28,15 +28,15 @@
 /**
  * @file   expec_cisajs.c
  *
- * @brief  Compute one-body Green's functions <psi| c†_i c_j |psi>
+ * @brief  Compute one-body Green's functions \f$\langle\psi| c^\dagger_i c_j |\psi\rangle\f$
  *
  * Calculates expectation values of fermion bilinear operators for the given
  * eigenvector. Results are written to output files (zvo_cisajs*.dat).
  *
  * Operator types by model:
- * - Hubbard/HubbardGC: <c†_{i,sigma} c_{j,sigma}> (hopping correlation)
- * - Spin/SpinGC: <S+_i S-_j>, <Sz_i> (spin correlation/magnetization)
- * - SpinlessFermion: <c†_i c_j> (spinless hopping)
+ * - Hubbard/HubbardGC: \f$\langle c^\dagger_{i,\sigma} c_{j,\sigma}\rangle\f$ (hopping correlation)
+ * - Spin/SpinGC: \f$\langle S^+_i S^-_j\rangle\f$, \f$\langle S^z_i\rangle\f$ (spin correlation/magnetization)
+ * - SpinlessFermion: \f$\langle c^\dagger_i c_j\rangle\f$ (spinless hopping)
  *
  * Naming convention:
  * - "cisajs" = c†_{i,s} c_{j,s} where c = creation/annihilation, i,j = sites, s = spin
@@ -61,7 +61,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
 
 
 /**
- * @brief Compute one-body Green's functions <psi| c†_{i,s} c_{j,s} |psi>
+ * @brief Compute one-body Green's functions \f$\langle\psi| c^\dagger_{i,s} c_{j,s} |\psi\rangle\f$
  *
  * Main entry point for one-body correlation function calculation.
  * Iterates over all operator pairs defined in X->Def.CisAjt and computes
@@ -73,7 +73,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
  *
  * Output:
  * - Results written to zvo_cisajs_*.dat files
- * - Format: i sigma j sigma Re(<c†c>) Im(<c†c>)
+ * - Format: i sigma j sigma Re(correlation) Im(correlation)
  *
  * @param X Struct with operator definitions in X->Def.CisAjt [in]
  * @param vec Eigenvector to compute expectation values for [in]

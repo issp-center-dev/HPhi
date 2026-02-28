@@ -632,7 +632,7 @@ void child_GC_general_hopp_SpinlessFermion_MPIsingle_per_site(
 }
 
 /**
- * @brief Compute two-body Green's function <c†_i c_j c†_k c_l> for SpinlessFermionGC with MPI
+ * @brief Compute two-body Green's function \f$\langle c^\dagger_i c_j c^\dagger_k c_l\rangle\f$ for SpinlessFermionGC with MPI
  *
  * Computes off-diagonal two-body correlator where any sites may be inter-process.
  * Uses MPI_Sendrecv to exchange wavefunction data with partner rank when needed.

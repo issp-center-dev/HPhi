@@ -28,7 +28,7 @@
  * where l is a large constant (LargeValue) and Ns is the number of sites.
  *
  * Physical quantities:
- *   <O>_beta ≈ <psi_n|O|psi_n> / <psi_n|psi_n>
+ *   \f$\langle O \rangle_\beta \approx \langle\psi_n|O|\psi_n\rangle / \langle\psi_n|\psi_n\rangle\f$
  *
  * The inverse temperature beta at step n is related to norm:
  *   beta ≈ 2n / (Ns * l)
@@ -67,12 +67,12 @@
  * 2. Repeat for step = 0 to Lanczos_max:
  *    a. Apply (l - H/Ns) to |psi>
  *    b. Every ExpecInterval steps, compute observables:
- *       - Energy <H>, variance, inverse temperature
+ *       - Energy \f$\langle H\rangle\f$, variance, inverse temperature
  *       - Green's functions if requested
  *    c. Normalize |psi> to prevent overflow
  *
  * Output files (per sample):
- * - SS_rand*.dat: Energy, <S^2>, etc. vs step
+ * - SS_rand*.dat: Energy, \f$\langle S^2\rangle\f$, etc. vs step
  * - Norm_rand*.dat: Norm vs step (for beta calculation)
  * - Flct_rand*.dat: Fluctuations
  *
@@ -214,9 +214,7 @@ int CalcByTPQ(
       StopTimer(3400);
       if(iret !=0) return -1;
 
-      /**@brief
-      Compute v1=0, and compute v0 = H*v1
-      */
+      /** @brief Compute v1=0, and compute v0 = H*v1 */
       StartTimer(3200);
       iret=expec_energy_flct(&(X->Bind)); //v0 = H*v1
       StopTimer(3200);

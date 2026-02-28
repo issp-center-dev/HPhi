@@ -16,11 +16,11 @@
 /**
  * @file expec_totalspin.c
  *
- * @brief Compute total spin expectation values <S^2> and <Sz>
+ * @brief Compute total spin expectation values \f$\langle S^2 \rangle\f$ and \f$\langle S_z \rangle\f$
  *
  * Calculates:
- * - <S^2> = <psi|S_total^2|psi> where S_total = sum_i S_i
- * - <Sz> = <psi|Sz_total|psi>
+ * - \f$\langle S^2 \rangle = \langle\psi|S_{\rm total}^2|\psi\rangle\f$ where \f$S_{\rm total} = \sum_i S_i\f$
+ * - \f$\langle S_z \rangle = \langle\psi|S_{z,\rm total}|\psi\rangle\f$
  *
  * The total spin S^2 can be expressed as:
  *   S^2 = Sz^2 + (S+S- + S-S+)/2
@@ -49,7 +49,7 @@
 #include "expec_totalspin.h"
 
 /**
- * @brief Calculate total spin <S^2> and <Sz>
+ * @brief Calculate total spin \f$\langle S^2 \rangle\f$ and \f$\langle S_z \rangle\f$
  *
  * Dispatches to model-specific implementations:
  * - Spin: totalspin_Spin (uses fixed Sz from input)
@@ -58,8 +58,8 @@
  * - HubbardGC: totalspin_HubbardGC
  *
  * Results stored in:
- * - X->Phys.s2: Total spin <S^2>
- * - X->Phys.Sz: Total Sz <Sz>
+ * - X->Phys.s2: Total spin \f$\langle S^2 \rangle\f$
+ * - X->Phys.Sz: Total Sz \f$\langle S_z \rangle\f$
  *
  * Mode:
  * - Sets X->Large.mode = M_TOTALS

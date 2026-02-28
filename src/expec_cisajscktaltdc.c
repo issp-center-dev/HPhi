@@ -87,7 +87,7 @@ int Rearray_Interactions(
  * Model dispatch:
  * - HubbardGC/Hubbard: Full four-fermion operators with spin
  * - SpinGC/Spin: Spin operators (S+, S-, Sz products)
- * - SpinlessFermion/SpinlessFermionGC: Density-density <n_i n_j>
+ * - SpinlessFermion/SpinlessFermionGC: Density-density \f$\langle n_i n_j\rangle\f$
  *
  * MPI handling:
  * - Inter-process sites (site > Nsite) use MPI communication

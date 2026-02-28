@@ -155,11 +155,11 @@ int expec_energy_flct(struct BindStruct *X){
     break;
 
   case SpinlessFermion:
-      // Canonical ensemble: particle number is fixed
+      // Canonical ensemble: particle number is fixed (use total across MPI)
       X->Phys.doublon   = 0.0;
       X->Phys.doublon2  = 0.0;
-      X->Phys.num       = X->Def.Ne;
-      X->Phys.num2      = X->Def.Ne * X->Def.Ne;
+      X->Phys.num       = X->Def.NeMPI;
+      X->Phys.num2      = X->Def.NeMPI * X->Def.NeMPI;
       X->Phys.Sz        = 0.0;
       X->Phys.Sz2       = 0.0;
     break;
