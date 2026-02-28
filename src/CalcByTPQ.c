@@ -13,6 +13,39 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**
+ * @file CalcByTPQ.c
+ *
+ * @brief Thermal Pure Quantum (TPQ) state calculation
+ *
+ * TPQ is a method to compute finite-temperature properties without
+ * explicit thermal averaging. A single "thermal pure quantum state"
+ * |psi_beta> represents the thermal ensemble at inverse temperature beta.
+ *
+ * Algorithm:
+ * Starting from random state |psi_0>, apply imaginary time evolution:
+ *   |psi_n> = (l - H/Ns)^n |psi_0>
+ * where l is a large constant (LargeValue) and Ns is the number of sites.
+ *
+ * Physical quantities:
+ *   <O>_beta ≈ <psi_n|O|psi_n> / <psi_n|psi_n>
+ *
+ * The inverse temperature beta at step n is related to norm:
+ *   beta ≈ 2n / (Ns * l)
+ *
+ * Advantages:
+ * - No explicit diagonalization needed
+ * - Memory: O(N) vs O(N^2) for full diagonalization
+ * - Naturally parallelizable
+ *
+ * Statistical sampling:
+ * - Multiple random initial states (NumAve samples)
+ * - Average over samples for better statistics
+ *
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "FirstMultiply.h"
 #include "Multiply.h"
 #include "expec_energy_flct.h"
@@ -23,31 +56,34 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
-
 /**
- * @file   CalcByTPQ.c
- * @version 0.1, 0.2
+ * @brief Main driver for TPQ calculation
+ *
+ * Performs NumAve independent TPQ calculations with different random
+ * initial states, computing physical quantities at each step.
+ *
+ * For each random sample:
+ * 1. Generate random initial state |psi_0>
+ * 2. Repeat for step = 0 to Lanczos_max:
+ *    a. Apply (l - H/Ns) to |psi>
+ *    b. Every ExpecInterval steps, compute observables:
+ *       - Energy <H>, variance, inverse temperature
+ *       - Green's functions if requested
+ *    c. Normalize |psi> to prevent overflow
+ *
+ * Output files (per sample):
+ * - SS_rand*.dat: Energy, <S^2>, etc. vs step
+ * - Norm_rand*.dat: Norm vs step (for beta calculation)
+ * - Flct_rand*.dat: Fluctuations
+ *
+ * @param NumAve Number of random samples to average [in]
+ * @param ExpecInterval Steps between observable calculations [in]
+ * @param X Calculation parameters and results [in,out]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @brief  File for givinvg functions of TPQ method
- *
- *
- */
-
-/** 
- * 
- * @brief A main function to calculate physical quqntities by TPQ method
- *
- * @param [in] NumAve  Number of samples
- * @param [in] ExpecInterval interval steps between the steps to calculate physical quantities
- * @param [in,out] X CalcStruct list for getting and giving calculation information
- * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @retval 0 normally finished
- * @retval -1 unnormally finished
  */
 int CalcByTPQ(
       const int NumAve,

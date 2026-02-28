@@ -13,9 +13,38 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for Hubbard Hamiltonian + MPI
-*/
+/**
+ * @file mltplyMPIHubbard.c
+ *
+ * @brief MPI communication functions for Hubbard model Hamiltonian
+ *
+ * Handles inter-process hopping and interaction terms when sites are
+ * distributed across MPI ranks. Uses 2-bit-per-site representation:
+ *   bit[2*i] = down-spin occupation, bit[2*i+1] = up-spin occupation
+ *
+ * MPI decomposition for Hubbard:
+ * - Local sites: indices 1 to Nsite (enumerated in list_1)
+ * - Inter-process sites: indices > Nsite (encoded in myrank)
+ * - myrank encodes occupation of inter-process sites
+ *
+ * Hopping c†_{i,σ} c_{j,σ} between inter-process sites:
+ * - Requires state where site j is occupied, site i is empty
+ * - After hopping, the occupation pattern changes
+ * - New state may belong to different MPI rank
+ *
+ * Communication pattern:
+ * - origin = myrank XOR (mask_i + mask_j)
+ *   (XOR flips both occupation bits)
+ * - Validity check: site j must be occupied, site i empty
+ * - MPI_Sendrecv exchanges data with origin rank
+ *
+ * Fermion sign:
+ * - Computed from bits between sites i and j
+ * - bitdiff = |mask_i - 2*mask_j| or |mask_j - 2*mask_i|
+ * - sign = SgnBit(myrank & bitdiff) or SgnBit(origin & bitdiff)
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 #ifdef MPI
 #include "mpi.h"
 #endif
@@ -24,11 +53,20 @@
 #include "wrapperMPI.h"
 #include "mltplyCommon.h"
 #include "mltplyMPIHubbard.h"
+
 /**
-@brief Hopping term in Hubbard + GC
-When both site1 and site2 are in the inter process region.
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief GC hopping when both sites are inter-process (wrapper)
+ *
+ * Applies c†_{i1,σ1} c_{i2,σ2} where both sites are in inter-process
+ * region. Calls child function and accumulates energy contribution.
+ *
+ * @param itrans Transfer index in EDGeneralTransfer array [in]
+ * @param X BindStruct with transfer parameters [inout]
+ * @param tmp_v0 Output vector [out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void GC_general_hopp_MPIdouble
 (
  unsigned long int itrans,//!<[in] Transfer ID
