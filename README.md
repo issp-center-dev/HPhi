@@ -9,7 +9,8 @@
   <a href="https://github.com/issp-center-dev/HPhi/actions/workflows/main.yml"><img src="https://github.com/issp-center-dev/HPhi/actions/workflows/main.yml/badge.svg" alt="Build Status"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
   <a href="https://doi.org/10.1016/j.cpc.2017.04.006"><img src="https://img.shields.io/badge/DOI-10.1016%2Fj.cpc.2017.04.006-blue" alt="DOI"></a>
-  <a href="https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html"><img src="https://img.shields.io/badge/docs-online-brightgreen" alt="Documentation"></a>
+  <a href="https://www.pasums.issp.u-tokyo.ac.jp/hphi/en/doc/manual"><img src="https://img.shields.io/badge/docs-manual-brightgreen" alt="Manual"></a>
+  <a href="https://issp-center-dev.github.io/HPhi/manual/develop/api/html/index.html"><img src="https://img.shields.io/badge/docs-API-orange" alt="API Reference"></a>
 </p>
 
 A numerical solver package for a wide range of quantum lattice models including Hubbard-type itinerant electron hamiltonians, quantum spin models, and Kondo-type hamiltonians for itinerant electrons coupled with quantum spins.
@@ -82,6 +83,7 @@ HPhi -e namelist.def
 - [User Manual (English)](https://www.pasums.issp.u-tokyo.ac.jp/hphi/en/doc/manual)
 - [User Manual (Japanese)](https://www.pasums.issp.u-tokyo.ac.jp/hphi/ja/doc/manual)
 - [Tutorial](https://issp-center-dev.github.io/HPhi/manual/develop/tutorial/en/html/index.html)
+- [API Reference (Doxygen)](https://issp-center-dev.github.io/HPhi/manual/develop/api/html/index.html)
 - [HPhi Gallery](https://isspns-gitlab.issp.u-tokyo.ac.jp/hphi-dev/hphi-gallery)
 
 ## Pre-installed Systems
