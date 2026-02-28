@@ -21,6 +21,11 @@
  * This module groups multiple transfer terms that share the same MPI communication
  * partner (origin) to reduce the number of MPI_Sendrecv calls.
  *
+ * Indexing convention note:
+ * - Wavefunction buffers (`tmp_v*`, `v1buf`, `list_1*`) are 1-based in many legacy paths.
+ * - Bit-operation state ids (`jreal`, `ioff` before +1 adjustment) are 0-based.
+ * Preserve each function's existing `j` loop range and `+1` offsets when modifying loops.
+ *
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 
@@ -100,6 +105,8 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
         int inter_site = site1_local ? site2 : site1;
 
         mask2 = (int)X->Def.Tpow[inter_site];
+        // Partner rank differs by the PE-bit of the inter-process site.
+        // XOR flips exactly that bit to select the communication peer.
         origin = myrank ^ mask2;
 
         if (origin_count[origin] == 0) {
@@ -222,7 +229,10 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
                                           batched->groups[g].local_mask[t] * 2;
 
         // Determine state1check and coefficient based on origin state
-        // Store Fsgn and is_conj for dynamic coefficient computation during time evolution
+        // Store Fsgn/is_conj for dynamic coefficient computation during time evolution.
+        // NOTE: `coefficients[t]` is kept for compatibility/debug, but runtime paths
+        // intentionally re-read EDParaGeneralTransfer so time-dependent coefficients
+        // (e.g., in TE mode) are reflected without re-initializing batches.
         int state2 = origin & mask2;
         if (state2 == mask2) {
             // Inter-process site has electron, so local site should be empty
@@ -273,9 +283,10 @@ void FinalizeMPIBatchedTransfers(MPIBatchedTransfers *batched) {
 /**
  * @brief Perform batched MPI hopping for SpinlessFermionGC MPIsingle mode
  *
- * Optimized with loop fusion: OpenMP parallelization is applied to the outer
- * state loop (j), with transfer loop (t) inside. This reduces OpenMP overhead
- * from O(num_transfers) to O(1).
+ * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
+ * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
+ * Arithmetic-equivalence note: loop reorder only changes accumulation order
+ * (floating-point roundoff), not algebraic contributions.
  */
 double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
     MPITransferGroup *group,
@@ -304,32 +315,35 @@ double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Process all transfers using the received data with loop fusion
-    // Pre-compute transfer coefficients (read from EDParaGeneralTransfer for time evolution support)
+    // Process all transfers using the received data
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-        // Loop fusion: parallelize over states, iterate transfers inside
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t, Fsgn) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 1; j <= idim_max_buf; j++) {
-            unsigned long int jreal = j - 1;
+        // t-outer loop: each transfer processed sequentially to avoid tmp_v0 race
+        for (t = 0; t < num_transfers; t++) {
+            unsigned long int mask1 = group->local_mask[t];
+            unsigned long int state1check = group->state1check[t];
+            unsigned long int bit1diff = group->bit1diff[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
-            for (t = 0; t < num_transfers; t++) {
-                unsigned long int mask1 = group->local_mask[t];
-                unsigned long int state1check = group->state1check[t];
+            // Drop numerically negligible transfer amplitude (legacy threshold).
+            if (cabs(trans) < 1e-15) continue;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+    private(j, Fsgn) \
+    firstprivate(idim_max_buf, trans, mask1, state1check, bit1diff) \
+    shared(v1buf, tmp_v1, tmp_v0)
+            for (j = 1; j <= idim_max_buf; j++) {
+                // j: 1-based buffer index, jreal: 0-based bit-state id.
+                unsigned long int jreal = j - 1;
                 unsigned long int state1 = jreal & mask1;
 
                 if (state1 == state1check) {
-                    unsigned long int bit1diff = group->bit1diff[t];
-                    int trans_idx = group->transfer_indices[t];
-                    int trans_Fsgn = group->Fsgn[t];
-                    double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                    double complex trans = group->is_conj[t] ?
-                        -(double)trans_Fsgn * conj(trans_coeff) :
-                        -(double)trans_Fsgn * trans_coeff;
-
                     SgnBit((unsigned long int)(jreal & bit1diff), &Fsgn);
+                    // `jreal ^ mask1` is 0-based destination state; +1 for buffer index.
                     unsigned long int ioff = (jreal ^ mask1) + 1;
                     double complex dmv = (double)Fsgn * trans * v1buf[j];
                     tmp_v0[ioff] += dmv;
@@ -338,11 +352,11 @@ double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
             }
         }
     } else {
-        // M_CORR or other modes: only compute expectation value
+        // M_CORR: loop fusion safe (only dam_pr reduction, no tmp_v0 write)
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
     private(j, t, Fsgn) \
     firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
+    shared(v1buf, tmp_v1, group, X)
         for (j = 1; j <= idim_max_buf; j++) {
             unsigned long int jreal = j - 1;
 
@@ -390,7 +404,9 @@ int InitializeMPIBatchedTransfers_SpinlessFermion(
  * @brief Perform batched MPI hopping for SpinlessFermion (canonical) MPIsingle mode
  *
  * Unlike GC version, this requires list_1/list_1buf exchange and uses GetOffComp.
- * Optimized with loop fusion to reduce OpenMP overhead.
+ * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
+ * Arithmetic-equivalence note: loop reorder only changes accumulation order
+ * (floating-point roundoff), not algebraic contributions.
  */
 double complex X_child_general_hopp_Spinless_MPIsingle_batched(
     MPITransferGroup *group,
@@ -409,47 +425,48 @@ double complex X_child_general_hopp_Spinless_MPIsingle_batched(
     num_transfers = group->num_transfers;
 
     // Single MPI exchange for all transfers in this group
-    // Step 1: Exchange sizes
     ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, group->origin, 0,
                         &idim_max_buf, 1, MPI_UNSIGNED_LONG, group->origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Step 2: Exchange list_1 (basis state mapping)
     ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, group->origin, 0,
                         list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, group->origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Step 3: Exchange vector
     ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, group->origin, 0,
                         v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, group->origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Process all transfers using the received data with loop fusion
+    // Process all transfers using the received data
     if (X->Large.mode == M_MLTPLY) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t, Fsgn, ioff, jreal, state1) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 1; j <= idim_max_buf; j++) {
-            jreal = list_1buf[j];
+        // t-outer loop: each transfer processed sequentially to avoid tmp_v0 race
+        for (t = 0; t < num_transfers; t++) {
+            unsigned long int mask1 = group->local_mask[t];
+            unsigned long int state1check = group->state1check[t];
+            unsigned long int bit1diff = group->bit1diff[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
-            for (t = 0; t < num_transfers; t++) {
-                unsigned long int mask1 = group->local_mask[t];
-                unsigned long int state1check = group->state1check[t];
+            // Drop numerically negligible transfer amplitude (legacy threshold).
+            if (cabs(trans) < 1e-15) continue;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+    private(j, Fsgn, ioff, jreal, state1) \
+    firstprivate(idim_max_buf, trans, mask1, state1check, bit1diff) \
+    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, X)
+            for (j = 1; j <= idim_max_buf; j++) {
+                // j is 1-based basis index in exchanged list; jreal is bit-state id.
+                jreal = list_1buf[j];
                 state1 = jreal & mask1;
 
                 if (state1 == state1check) {
-                    unsigned long int bit1diff = group->bit1diff[t];
-                    int trans_idx = group->transfer_indices[t];
-                    int trans_Fsgn = group->Fsgn[t];
-                    double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                    double complex trans = group->is_conj[t] ?
-                        -(double)trans_Fsgn * conj(trans_coeff) :
-                        -(double)trans_Fsgn * trans_coeff;
-
                     SgnBit((unsigned long int)(jreal & bit1diff), &Fsgn);
                     if (GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
                                    X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) == FALSE) {
@@ -462,11 +479,11 @@ double complex X_child_general_hopp_Spinless_MPIsingle_batched(
             }
         }
     } else {
-        // M_CORR or other modes: only compute expectation value
+        // M_CORR: loop fusion safe (only dam_pr reduction, no tmp_v0 write)
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
     private(j, t, Fsgn, ioff, jreal, state1) \
     firstprivate(idim_max_buf, num_transfers) \
-    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, group, X)
+    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, group, X)
         for (j = 1; j <= idim_max_buf; j++) {
             jreal = list_1buf[j];
 
@@ -574,6 +591,7 @@ int InitializeMPIBatchedTransfers_HubbardGC(
         }
 
         mask2 = (int)X->Def.Tpow[2 * inter_site + inter_spin];
+        // Partner rank differs by the PE-bit of (site,spin); XOR selects the peer rank.
         origin = myrank ^ mask2;
 
         if (origin_count[origin] == 0) {
@@ -728,6 +746,11 @@ int InitializeMPIBatchedTransfers_HubbardGC(
 
 /**
  * @brief Perform batched MPI hopping for HubbardGC MPIsingle mode
+ *
+ * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
+ * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
+ * Arithmetic-equivalence note: loop reorder only changes accumulation order
+ * (floating-point roundoff), not algebraic contributions.
  */
 double complex X_child_GC_general_hopp_MPIsingle_batched(
     MPITransferGroup *group,
@@ -756,28 +779,32 @@ double complex X_child_GC_general_hopp_MPIsingle_batched(
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Process all transfers using the received data with loop fusion
-    // Optimized: parallelize over states, iterate transfers inside to reduce OpenMP overhead
+    // Process all transfers using the received data
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+        // t-outer loop: each transfer processed sequentially to avoid tmp_v0 race
+        for (t = 0; t < num_transfers; t++) {
+            unsigned long int mask1 = group->local_mask[t];
+            unsigned long int state1check = group->state1check[t];
+            unsigned long int bit1diff = group->bit1diff[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
+
+            // Drop numerically negligible transfer amplitude (legacy threshold).
+            if (cabs(trans) < 1e-15) continue;
+
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t, Fsgn) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 0; j < idim_max_buf; j++) {
-            for (t = 0; t < num_transfers; t++) {
-                unsigned long int mask1 = group->local_mask[t];
-                unsigned long int state1check = group->state1check[t];
+    private(j, Fsgn) \
+    firstprivate(idim_max_buf, trans, mask1, state1check, bit1diff) \
+    shared(v1buf, tmp_v1, tmp_v0)
+            // Here j is 0-based state id; v1buf/tmp_v* access remains 1-based (+1).
+            for (j = 0; j < idim_max_buf; j++) {
                 unsigned long int state1 = j & mask1;
 
                 if (state1 == state1check) {
-                    unsigned long int bit1diff = group->bit1diff[t];
-                    int trans_idx = group->transfer_indices[t];
-                    int trans_Fsgn = group->Fsgn[t];
-                    double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                    double complex trans = group->is_conj[t] ?
-                        -(double)trans_Fsgn * conj(trans_coeff) :
-                        -(double)trans_Fsgn * trans_coeff;
-
                     SgnBit(j & bit1diff, &Fsgn);
                     unsigned long int ioff = j ^ mask1;
                     double complex dmv = (double)Fsgn * trans * v1buf[j + 1];
@@ -787,10 +814,11 @@ double complex X_child_GC_general_hopp_MPIsingle_batched(
             }
         }
     } else {
+        // M_CORR: loop fusion safe (only dam_pr reduction, no tmp_v0 write)
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
     private(j, t, Fsgn) \
     firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
+    shared(v1buf, tmp_v1, group, X)
         for (j = 0; j < idim_max_buf; j++) {
             for (t = 0; t < num_transfers; t++) {
                 unsigned long int mask1 = group->local_mask[t];
@@ -836,7 +864,10 @@ int InitializeMPIBatchedTransfers_Hubbard(
 /**
  * @brief Perform batched MPI hopping for Hubbard (canonical) MPIsingle mode
  *
- * Optimized with loop fusion to reduce OpenMP overhead.
+ * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
+ * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
+ * Arithmetic-equivalence note: loop reorder only changes accumulation order
+ * (floating-point roundoff), not algebraic contributions.
  */
 double complex X_child_general_hopp_MPIsingle_batched(
     MPITransferGroup *group,
@@ -870,30 +901,33 @@ double complex X_child_general_hopp_MPIsingle_batched(
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Process all transfers using the received data with loop fusion
-    // Optimized: parallelize over states, iterate transfers inside to reduce OpenMP overhead
+    // Process all transfers using the received data
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t, Fsgn, ioff, jreal, state1) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 1; j <= idim_max_buf; j++) {
-            jreal = list_1buf[j];
+        // t-outer loop: each transfer processed sequentially to avoid tmp_v0 race
+        for (t = 0; t < num_transfers; t++) {
+            unsigned long int mask1 = group->local_mask[t];
+            unsigned long int state1check = group->state1check[t];
+            unsigned long int bit1diff = group->bit1diff[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
-            for (t = 0; t < num_transfers; t++) {
-                unsigned long int mask1 = group->local_mask[t];
-                unsigned long int state1check = group->state1check[t];
+            // Drop numerically negligible transfer amplitude (legacy threshold).
+            if (cabs(trans) < 1e-15) continue;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+    private(j, Fsgn, ioff, jreal, state1) \
+    firstprivate(idim_max_buf, trans, mask1, state1check, bit1diff) \
+    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, X)
+            for (j = 1; j <= idim_max_buf; j++) {
+                // j is 1-based basis index in exchanged list; jreal is bit-state id.
+                jreal = list_1buf[j];
                 state1 = jreal & mask1;
 
                 if (state1 == state1check) {
-                    unsigned long int bit1diff = group->bit1diff[t];
-                    int trans_idx = group->transfer_indices[t];
-                    int trans_Fsgn = group->Fsgn[t];
-                    double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                    double complex trans = group->is_conj[t] ?
-                        -(double)trans_Fsgn * conj(trans_coeff) :
-                        -(double)trans_Fsgn * trans_coeff;
-
                     SgnBit(jreal & bit1diff, &Fsgn);
                     if (GetOffComp(list_2_1, list_2_2, jreal ^ mask1,
                                    X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) == FALSE) {
@@ -906,10 +940,11 @@ double complex X_child_general_hopp_MPIsingle_batched(
             }
         }
     } else {
+        // M_CORR: loop fusion safe (only dam_pr reduction, no tmp_v0 write)
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
     private(j, t, Fsgn, ioff, jreal, state1) \
     firstprivate(idim_max_buf, num_transfers) \
-    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, tmp_v0, group, X)
+    shared(list_1buf, list_2_1, list_2_2, v1buf, tmp_v1, group, X)
         for (j = 1; j <= idim_max_buf; j++) {
             jreal = list_1buf[j];
 
@@ -1146,6 +1181,11 @@ void FinalizeMPIBatchedDoubleTransfers(MPIBatchedDoubleTransfers *batched) {
 
 /**
  * @brief Perform batched MPI hopping for HubbardGC MPIdouble mode
+ *
+ * For MPIdouble, tmp_v0[j] access is safe (each thread owns unique j).
+ * Uses t-outer/j-inner to compute trans once per transfer (efficiency).
+ * Arithmetic-equivalence note: loop reorder only changes accumulation order
+ * (floating-point roundoff), not algebraic contributions.
  */
 double complex X_child_GC_general_hopp_MPIdouble_batched(
     MPIDoubleTransferGroup *group,
@@ -1174,48 +1214,48 @@ double complex X_child_GC_general_hopp_MPIdouble_batched(
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
 
-    // Process all transfers using the received data with loop fusion
-    // Optimized: parallelize over states, iterate transfers inside to reduce OpenMP overhead
-    // For MPIdouble, processing is simple: just scale and add
+    // Process all transfers: t-outer to compute trans once per transfer
+    // For MPIdouble, all j indices map 1:1 (no state filtering), so j-inner is efficient
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+        for (t = 0; t < num_transfers; t++) {
+            int is_conj_flag = group->is_conj[t];
+            if (is_conj_flag == -1) continue;  // Invalid state for this rank
+
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = is_conj_flag ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
+
+            // Drop numerically negligible transfer amplitude (legacy threshold).
+            if (cabs(trans) < 1e-15) continue;
+
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 1; j <= idim_max_buf; j++) {
-            for (t = 0; t < num_transfers; t++) {
-                int is_conj_flag = group->is_conj[t];
-                if (is_conj_flag == -1) continue;  // Invalid state for this rank
-
-                int trans_idx = group->transfer_indices[t];
-                int trans_Fsgn = group->Fsgn[t];
-                double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                double complex trans = is_conj_flag ?
-                    -(double)trans_Fsgn * conj(trans_coeff) :
-                    -(double)trans_Fsgn * trans_coeff;
-
+    private(j) firstprivate(idim_max_buf, trans) shared(v1buf, tmp_v1, tmp_v0)
+            for (j = 1; j <= idim_max_buf; j++) {
                 double complex dmv = trans * v1buf[j];
                 tmp_v0[j] += dmv;
                 dam_pr += conj(tmp_v1[j]) * dmv;
             }
         }
     } else {
+        for (t = 0; t < num_transfers; t++) {
+            int is_conj_flag = group->is_conj[t];
+            if (is_conj_flag == -1) continue;  // Invalid state for this rank
+
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = is_conj_flag ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
+
+            if (cabs(trans) < 1e-15) continue;
+
 #pragma omp parallel for default(none) reduction(+:dam_pr) \
-    private(j, t) \
-    firstprivate(idim_max_buf, num_transfers) \
-    shared(v1buf, tmp_v1, tmp_v0, group, X)
-        for (j = 1; j <= idim_max_buf; j++) {
-            for (t = 0; t < num_transfers; t++) {
-                int is_conj_flag = group->is_conj[t];
-                if (is_conj_flag == -1) continue;  // Invalid state for this rank
-
-                int trans_idx = group->transfer_indices[t];
-                int trans_Fsgn = group->Fsgn[t];
-                double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
-                double complex trans = is_conj_flag ?
-                    -(double)trans_Fsgn * conj(trans_coeff) :
-                    -(double)trans_Fsgn * trans_coeff;
-
+    private(j) firstprivate(idim_max_buf, trans) shared(v1buf, tmp_v1)
+            for (j = 1; j <= idim_max_buf; j++) {
                 double complex dmv = trans * v1buf[j];
                 dam_pr += conj(tmp_v1[j]) * dmv;
             }
@@ -1250,6 +1290,10 @@ static int ComputeInterAllOrigin(
     int any_interPE = FALSE;
 
     // Check forward direction: c†_1 c_2 c†_3 c_4
+    // Return contract:
+    //   0  -> inter-process contribution exists; outputs {origin,is_hermite}
+    //  -1  -> all sites are local (no MPI communication needed)
+    //  -2  -> no valid occupancy path in either direction (zero contribution)
     tmp_org = (unsigned long int)myrank;
     tmp_off = 0;
 
