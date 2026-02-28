@@ -134,12 +134,16 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
         batched->groups[g].mask = 0;  // Will be set below
         batched->groups[g].transfer_indices = (int *)malloc(count * sizeof(int));
         batched->groups[g].coefficients = (double complex *)malloc(count * sizeof(double complex));
+        batched->groups[g].Fsgn = (int *)malloc(count * sizeof(int));
+        batched->groups[g].is_conj = (int *)malloc(count * sizeof(int));
         batched->groups[g].local_mask = (unsigned long int *)malloc(count * sizeof(unsigned long int));
         batched->groups[g].state1check = (unsigned long int *)malloc(count * sizeof(unsigned long int));
         batched->groups[g].bit1diff = (unsigned long int *)malloc(count * sizeof(unsigned long int));
 
         if (batched->groups[g].transfer_indices == NULL ||
             batched->groups[g].coefficients == NULL ||
+            batched->groups[g].Fsgn == NULL ||
+            batched->groups[g].is_conj == NULL ||
             batched->groups[g].local_mask == NULL ||
             batched->groups[g].state1check == NULL ||
             batched->groups[g].bit1diff == NULL) {
@@ -147,6 +151,8 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
             for (int j = 0; j <= g; j++) {
                 free(batched->groups[j].transfer_indices);
                 free(batched->groups[j].coefficients);
+                free(batched->groups[j].Fsgn);
+                free(batched->groups[j].is_conj);
                 free(batched->groups[j].local_mask);
                 free(batched->groups[j].state1check);
                 free(batched->groups[j].bit1diff);
@@ -216,14 +222,19 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
                                           batched->groups[g].local_mask[t] * 2;
 
         // Determine state1check and coefficient based on origin state
+        // Store Fsgn and is_conj for dynamic coefficient computation during time evolution
         int state2 = origin & mask2;
         if (state2 == mask2) {
             // Inter-process site has electron, so local site should be empty
             batched->groups[g].state1check[t] = 0;
+            batched->groups[g].Fsgn[t] = Fsgn;
+            batched->groups[g].is_conj[t] = 0;
             batched->groups[g].coefficients[t] = -(double)Fsgn * trans_coeff;
         } else {
             // Inter-process site is empty, so local site should have electron
             batched->groups[g].state1check[t] = batched->groups[g].local_mask[t];
+            batched->groups[g].Fsgn[t] = Fsgn;
+            batched->groups[g].is_conj[t] = 1;
             batched->groups[g].coefficients[t] = -(double)Fsgn * conj(trans_coeff);
         }
     }
@@ -287,12 +298,18 @@ double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
         for (t = 0; t < group->num_transfers; t++) {
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             // Skip if coefficient is zero (e.g., M_CORR mode filtering)
             if (cabs(trans) < 1e-15) continue;
@@ -320,7 +337,12 @@ double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 
@@ -397,12 +419,18 @@ double complex X_child_general_hopp_Spinless_MPIsingle_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     if (X->Large.mode == M_MLTPLY) {
         for (t = 0; t < group->num_transfers; t++) {
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             // Skip if coefficient is zero
             if (cabs(trans) < 1e-15) continue;
@@ -434,7 +462,12 @@ double complex X_child_general_hopp_Spinless_MPIsingle_batched(
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 

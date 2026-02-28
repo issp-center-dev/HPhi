@@ -203,6 +203,7 @@ add_test(
 
 #
 # Time evolution
+# Note: te_dc, te_pulse, te_quench depend on te_ac output directory
 #
 add_test(
   NAME te_ac_hubbard_square
@@ -212,14 +213,17 @@ add_test(
   NAME te_dc_hubbard_square
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_dc_hubbard_square.sh
 )
+set_tests_properties(te_dc_hubbard_square PROPERTIES DEPENDS te_ac_hubbard_square)
 add_test(
   NAME te_pulse_hubbard_square
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_pulse_hubbard_square.sh
 )
+set_tests_properties(te_pulse_hubbard_square PROPERTIES DEPENDS te_ac_hubbard_square)
 add_test(
   NAME te_quench_hubbard_square
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_quench_hubbard_square.sh
 )
+set_tests_properties(te_quench_hubbard_square PROPERTIES DEPENDS te_ac_hubbard_square)
 add_test(
   NAME te_hubbard_chain_interall
   COMMAND ${CMAKE_SOURCE_DIR}/test/te_hubbard_chain_interall.sh ${CMAKE_SOURCE_DIR}
