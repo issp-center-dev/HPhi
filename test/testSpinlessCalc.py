@@ -49,8 +49,11 @@ def generate_coulombintra(nsites, filename="coulombintra.def"):
         f.write("=============================================\n")
 
 
-def generate_modpara(nsites, nelec, model, filename="modpara.def"):
+def generate_modpara(nsites, nelec, model, method="Lanczos", filename="modpara.def"):
     """Generate modpara.def."""
+    # LOBCG calculates 5 eigenstates by default
+    exct = 5 if method == "LOBCG" else 1
+
     with open(filename, "w") as f:
         f.write("--------------------\n")
         f.write("Model_Parameters   0\n")
@@ -65,7 +68,7 @@ def generate_modpara(nsites, nelec, model, filename="modpara.def"):
             f.write("Ncond          {}\n".format(nelec))
         f.write("Lanczos_max    2000\n")
         f.write("initial_iv     -1\n")
-        f.write("exct           1\n")
+        f.write("exct           {}\n".format(exct))
         f.write("LanczosEps     14\n")
         f.write("LanczosTarget  2\n")
         f.write("LargeValue     12.0\n")
@@ -81,7 +84,7 @@ def generate_calcmod(model, method="Lanczos", filename="calcmod.def"):
     with open(filename, "w") as f:
         f.write("#CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG\n")
         f.write("#CalcModel = 0:Hubbard, 1:Spin, 2:Kondo, 3:HubbardGC, 4:SpinGC, 5:KondoGC\n")
-        f.write("#           6:SpinlessFermion, 7:SpinlessFermionGC\n")
+        f.write("#           6:HubbardNConserved, 7:SpinlessFermion, 8:SpinlessFermionGC\n")
         f.write("#ResrtVec = 0:not restart, 1:restart, 2:input first vector\n")
         f.write("#CalcSpec = 0:not calculate, 1:normal, 2:shifted Krylov\n")
         f.write("CalcType   {}\n".format(calc_type))
@@ -173,7 +176,7 @@ def main():
     # Generate input files
     generate_locspn(nsites)
     generate_trans(nsites, args.hopping)
-    generate_modpara(nsites, nelec, model)
+    generate_modpara(nsites, nelec, model, method)
     generate_calcmod(model, method)
     generate_greenone(nsites)
     generate_greentwo(nsites)

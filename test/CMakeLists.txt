@@ -322,11 +322,23 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_hubbard.sh
 )
 add_test(
+  NAME mpi_consistency_te_spin
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_spin.sh
+)
+add_test(
   NAME mpi_consistency_spinless
   COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spinless.sh ${CMAKE_SOURCE_DIR}
 )
 add_test(
   NAME mpi_consistency_spinless_GC
   COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spinless_GC.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME mpi_consistency_te_kondo
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_kondo.sh
+)
+add_test(
+  NAME mpi_consistency_te_spin
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_spin.sh
 )
 endif(MPI_FOUND)
