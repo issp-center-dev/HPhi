@@ -231,21 +231,85 @@ int expec_cisajscktaltdc
            org_isite3_sp == org_isite4_sp && org_sigma3_sp == org_sigma4_sp){
           long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];
           long unsigned int is2_sp = X->Def.Tpow[org_isite3_sp - 1];
+          // Check if sites are inter-process (MPI)
+          int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+          int site3_is_interPE = (org_isite3_sp > X->Def.Nsite) ? 1 : 0;
+#ifdef MPI
+          // For inter-process sites, check occupation using myrank
+          long unsigned int num1_interPE = site1_is_interPE ? ((myrank & is1_sp) / is1_sp) : 0;
+          long unsigned int num2_interPE = site3_is_interPE ? ((myrank & is2_sp) / is2_sp) : 0;
+#else
+          long unsigned int num1_interPE = 0;
+          long unsigned int num2_interPE = 0;
+#endif
           if(X->Def.iCalcModel == SpinlessFermionGC){
+            if(site1_is_interPE && site3_is_interPE){
+              // Both sites are inter-process: result is constant for all local states
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, num1_interPE, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                dam_pr_sp += num1_interPE * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site1_is_interPE){
+              // Site1 is inter-process, site3 is local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is2_sp, num1_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
+                dam_pr_sp += num1_interPE * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site3_is_interPE){
+              // Site1 is local, site3 is inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
+                dam_pr_sp += num1_sp * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else {
+              // Both sites are local
 #pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
   firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
-            for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
-              long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
-              long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
-              dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
+                long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
+                dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
             }
           } else {
+            // SpinlessFermion (canonical)
+            if(site1_is_interPE && site3_is_interPE){
+              // Both sites are inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, num1_interPE, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                dam_pr_sp += num1_interPE * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site1_is_interPE){
+              // Site1 is inter-process, site3 is local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is2_sp, num1_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
+                dam_pr_sp += num1_interPE * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site3_is_interPE){
+              // Site1 is local, site3 is inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is1_sp, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
+                dam_pr_sp += num1_sp * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else {
+              // Both sites are local
 #pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
   firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
-            for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
-              long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
-              long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
-              dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
+                long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
+                dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
             }
           }
         }
