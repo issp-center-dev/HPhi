@@ -1,5 +1,12 @@
 #!/bin/sh -e
 
+# Check MPIRUN - if not set, warn but continue (MPI is optional for this test)
+if [ -z "${MPIRUN}" ]; then
+    echo "Warning: MPIRUN is not set. Running in serial mode."
+    echo "For MPI testing, set MPIRUN (e.g., MPIRUN="mpirun -np 2")"
+fi
+
+
 mkdir -p lobcg_spingc_6body/
 cd lobcg_spingc_6body
 

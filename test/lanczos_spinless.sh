@@ -1,5 +1,12 @@
 #!/bin/sh -e
 
+# Check MPIRUN - if not set, warn but continue (MPI is optional for this test)
+if [ -z "${MPIRUN}" ]; then
+    echo "Warning: MPIRUN is not set. Running in serial mode."
+    echo "For MPI testing, set MPIRUN (e.g., MPIRUN="mpirun -np 2")"
+fi
+
+
 mkdir -p lanczos_spinless/
 cd lanczos_spinless
 # Use n=3 particles and V=0.5 to ensure non-degenerate ground state

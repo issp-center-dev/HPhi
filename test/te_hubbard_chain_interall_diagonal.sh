@@ -1,5 +1,12 @@
 #!/bin/sh -e
 
+# Check MPIRUN - if not set, warn but continue (MPI is optional for this test)
+if [ -z "${MPIRUN}" ]; then
+    echo "Warning: MPIRUN is not set. Running in serial mode."
+    echo "For MPI testing, set MPIRUN (e.g., MPIRUN="mpirun -np 2")"
+fi
+
+
 mkdir -p te_hubbard_chain_interall_diagonal/
 cd te_hubbard_chain_interall_diagonal
 python3 "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -t "Diagonal"

@@ -3,6 +3,17 @@
 # This test uses 16 MPI ranks with a 4-site chain to trigger MPIdouble transfers
 # (both sites in inter-process region)
 
+# Check that MPIRUN is set and non-empty
+if [ -z "${MPIRUN}" ]; then
+    echo "Error: MPIRUN is not set. Please set MPIRUN to run MPI tests."
+    echo "This test requires 16 MPI ranks to trigger MPIdouble transfers."
+    echo "Example: MPIRUN=\"mpirun -np 16\" ./lanczos_hubbard_mpidouble.sh"
+    exit 1
+fi
+
+# Note: This test requires 16 MPI ranks to properly test MPIdouble transfers.
+# If running with fewer ranks, MPIdouble code paths may not be exercised.
+
 mkdir -p lanczos_hubbard_mpidouble/
 cd lanczos_hubbard_mpidouble
 
