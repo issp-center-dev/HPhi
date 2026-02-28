@@ -68,15 +68,38 @@ int Rearray_Interactions(
         struct BindStruct *X,
         int type
 );
-/** 
- * @brief Parent function to calculate two-body green's functions
- * 
- * @param X [in] data list for calculation
- * @param vec [in] eigenvectors
- * 
- * @retval 0 normally finished
- * @retval -1 abnormally finished
- * @note The origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+/**
+ * @brief Compute two-body Green's functions <psi| c†_i c_j c†_k c_l |psi>
+ *
+ * Calculates expectation values of four-fermion operators for the given
+ * eigenvector. Results are written to output files (zvo_cisajscktalt*.dat).
+ *
+ * Operator naming convention:
+ * - "cisajscktalt" = c†_i,sigma c_j,sigma c†_k,tau c_l,tau
+ * - c = creation, a = annihilation
+ * - i,j,k,l = site indices (0-based in input, converted to 1-based internally)
+ * - s,t = spin indices (sigma, tau)
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_CORR (correlation function calculation)
+ * - No wavefunction update, only expectation values computed
+ *
+ * Model dispatch:
+ * - HubbardGC/Hubbard: Full four-fermion operators with spin
+ * - SpinGC/Spin: Spin operators (S+, S-, Sz products)
+ * - SpinlessFermion/SpinlessFermionGC: Density-density <n_i n_j>
+ *
+ * MPI handling:
+ * - Inter-process sites (site > Nsite) use MPI communication
+ * - All ranks participate in MPI_Sendrecv, then filter by validity
+ *
+ * @param X Struct with operator definitions in X->Def.CisAjtCkuAlvDC [in]
+ * @param vec Eigenvector to compute expectation values for [in]
+ *
+ * @return 0 on success, -1 on error
+ *
+ * @note Site indices in CisAjtCkuAlvDC are 0-based; converted to 1-based
+ *       internally (org_isite1 = CisAjtCkuAlvDC[i][0] + 1).
  *
  * @version 0.2
  * @details add function to treat the case of general spin

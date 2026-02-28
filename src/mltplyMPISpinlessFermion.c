@@ -361,11 +361,25 @@ void child_GC_general_hopp_SpinlessFermion_MPIdouble(
 }
 
 /**
- * @brief Hopping term in SpinlessFermionGC
- * When both site1 and site2 are in the inter process region.
- * (Core function)
+ * @brief Hopping term in SpinlessFermionGC: both sites inter-process (MPIdouble)
  *
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * Computes c†_i c_j where both i,j are in the inter-process region (site >= Nsite).
+ *
+ * MPI partner computation:
+ * - origin = myrank XOR (mask1 + mask2)
+ * - This XOR flips both site bits, locating the rank whose bit pattern
+ *   satisfies the complementary occupation requirements.
+ *
+ * Fermion sign:
+ * - bitdiff captures bits between the two sites for anticommutation counting
+ * - SgnBit counts set bits in (origin & bitdiff) to determine sign
+ *
+ * Mode behavior:
+ * - M_MLTPLY: Apply H to wavefunction (tmp_v0 updated)
+ * - M_CORR/M_CALCSPEC: Hermitian conjugate term (state1==mask1, state2==0) is
+ *   skipped (trans=0) to avoid double-counting in correlation measurements
+ *
+ * @return dam_pr = contribution to <tmp_v1|H|tmp_v1>; 0 if this rank has no contribution
  */
 double complex X_child_GC_general_hopp_SpinlessFermion_MPIdouble(
     int org_isite1,
@@ -464,11 +478,21 @@ void child_GC_general_hopp_SpinlessFermion_MPIsingle(
 }
 
 /**
- * @brief Hopping term in SpinlessFermionGC
- * When only site2 is in the inter process region.
- * (Core function)
+ * @brief Hopping term in SpinlessFermionGC: one site local, one inter-process (MPIsingle)
  *
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * Computes c†_i c_j where exactly one site is local (site < Nsite) and one is
+ * inter-process (site >= Nsite).
+ *
+ * MPI partner computation:
+ * - origin = myrank XOR mask2 (mask2 for the inter-process site)
+ * - XOR flips the inter-process site bit to find the partner rank
+ *
+ * Index convention:
+ * - j (loop var): 1-based index into v1buf (received wavefunction)
+ * - ioff: 1-based destination index in tmp_v0/tmp_v1
+ * - state1check/mask1: local site occupancy filter
+ *
+ * @return dam_pr = contribution to <tmp_v1|H|tmp_v1>
  */
 double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle(
     int org_isite1,
@@ -610,25 +634,31 @@ void child_GC_general_hopp_SpinlessFermion_MPIsingle_per_site(
 /**
  * @brief Compute two-body Green's function <c†_i c_j c†_k c_l> for SpinlessFermionGC with MPI
  *
- * This function handles the case where any of the sites i,j,k,l may be inter-process.
- * It computes the expectation value by iterating over all local states and determining
- * the contribution from each state.
+ * Computes off-diagonal two-body correlator where any sites may be inter-process.
+ * Uses MPI_Sendrecv to exchange wavefunction data with partner rank when needed.
  *
- * For SpinlessFermionGC with MPI:
- * - Sites 0 to Nsite-1 are local (stored in local index j-1)
- * - Sites Nsite to NsiteMPI-1 are inter-process (stored in myrank bits)
- * - Tpow[site] for site < Nsite gives 2^site (mask for local bits)
- * - Tpow[site] for site >= Nsite gives 2^(site-Nsite) (mask for myrank bits)
+ * Bit representation:
+ * - Sites 0..Nsite-1: local bits in state index (j-1)
+ * - Sites Nsite..NsiteMPI-1: encoded in myrank
+ * - Tpow[site<Nsite] = 2^site (local mask)
+ * - Tpow[site>=Nsite] = 2^(site-Nsite) (rank mask)
  *
- * @param org_isite1 Site i (creation operator c†_i)
- * @param org_isite2 Site j (annihilation operator c_j)
- * @param org_isite3 Site k (creation operator c†_k)
- * @param org_isite4 Site l (annihilation operator c_l)
- * @param X BindStruct with calculation parameters
- * @param vec Wavefunction vector
- * @return Expectation value contribution from this process
+ * MPI coordination:
+ * - rank_valid flag tracks whether inter-process site conditions are met
+ * - ALL ranks participate in MPI_Sendrecv (no early return before communication)
+ * - After communication, ranks with rank_valid=0 return 0 contribution
  *
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * Fermion sign:
+ * - Applied operator-by-operator using SgnBit on intermediate states
+ * - Order: c_l (if inter-PE) -> c†_k (if inter-PE) -> local operators
+ *
+ * @param org_isite1 Site i (creation c†_i)
+ * @param org_isite2 Site j (annihilation c_j)
+ * @param org_isite3 Site k (creation c†_k)
+ * @param org_isite4 Site l (annihilation c_l)
+ * @param X BindStruct
+ * @param vec Wavefunction
+ * @return Contribution to <vec| c†_i c_j c†_k c_l |vec> from this rank
  */
 double complex X_GC_CisAjtCkuAlv_SpinlessFermion_MPI(
     int org_isite1,

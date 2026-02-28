@@ -79,17 +79,35 @@ double complex CisAjt_Hermite(
 
 
 /**
- * @brief Parent function of multiplying the wavefunction by the Hamiltonian. @f$ H v_1@f$.\n
- * First, the calculation of diagonal term is done by using the list @f$ \verb|list_diaognal| @f$. \n
- * Next, the calculation of off-diagonal term is done.\n
- * @note If @f$ \verb|mode| @f$ in BindStruct X is @f$ \verb|M_CORR| @f$, the wave function is not updated. The expected values are only calculated.\n
- * Otherwise, the wavefunction @f$ v_0 @f$ is updated as @f$ v_0 += H v_1@f$.
+ * @brief Matrix-vector multiplication for SpinlessFermion/SpinlessFermionGC models
  *
- * @param X [in] Struct for getting the information of the operators.
- * @param tmp_v0 [in, out]
- * @param tmp_v1 [in]
+ * Computes tmp_v0 += H * tmp_v1, where H contains hopping (transfer) and
+ * interaction (CoulombInter, etc.) terms for spinless fermion systems.
  *
- * @return
+ * Mode branching (X->Large.mode):
+ * - M_MLTPLY: Full H|psi> calculation with batched MPI optimization
+ *   - Uses InitializeMPIBatchedTransfers to group transfers by MPI partner
+ *   - Calls batched functions to reduce MPI_Sendrecv overhead
+ * - M_CORR/M_CALCSPEC: Unbatched per-transfer processing
+ *   - Used when computing correlation functions or spectrum
+ *
+ * Transfer classification (site numbering is 1-based internally):
+ * - MPIdouble: Both sites > Nsite (both inter-process)
+ *   - Timer 611, requires full MPI exchange
+ * - MPIsingle: One site > Nsite (one local, one inter-process)
+ *   - Timer 612, partial MPI exchange
+ * - Local: Both sites <= Nsite
+ *   - Timer 613, no MPI communication
+ *
+ * Note: Transfers are stored in pairs (i, i+1) for Hermitian conjugates,
+ * so the loop increments by 2.
+ *
+ * @param X Struct containing Hamiltonian parameters and calculation mode [in]
+ * @param tmp_v0 Output vector: updated as v0 += H*v1 [in,out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -232,14 +250,32 @@ int mltplySpinlessFermion(struct BindStruct *X, double complex *tmp_v0, double c
 }
 
 /**
+ * @brief Apply local hopping term c†_i c_j to wavefunction for spinless fermions
  *
+ * Computes contribution from a single hopping term -t * c†_i c_j to H|psi>.
+ * Both sites i and j must be local (not inter-process).
  *
- * @param tmp_v0
- * @param tmp_v1
- * @param X
- * @param trans
+ * The hopping is applied using CisAjt_Hermite which handles:
+ * - Occupation check (site j must be occupied, site i must be empty)
+ * - Fermion sign from anticommutation (via SgnBit on intermediate bits)
+ * - Hermitian conjugate contribution
  *
- * @return
+ * Prerequisites:
+ * - X->Large.is1_spin, is2_spin, isA_spin, A_spin must be set via
+ *   child_general_hopp_GetInfo_Spinless before calling this function
+ *
+ * Parallel safety:
+ * - OpenMP parallel for with reduction on dam_pr
+ * - Each thread processes independent j indices
+ * - tmp_v0 updates are to distinct indices (no race condition)
+ *
+ * @param tmp_v0 Output vector (updated atomically per index) [in,out]
+ * @param tmp_v1 Input vector [in]
+ * @param X Struct with site masks in X->Large [in]
+ * @param trans Hopping coefficient -t [in]
+ *
+ * @return Diagonal contribution <v1|H|v1> for this hopping term
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */

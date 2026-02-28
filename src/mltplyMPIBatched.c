@@ -47,6 +47,18 @@
 
 /**
  * @brief Initialize batched transfers for SpinlessFermionGC MPIsingle mode
+ *
+ * Groups MPIsingle transfers (one site local, one inter-process) by their
+ * MPI communication partner (origin). Each group shares a single MPI_Sendrecv.
+ *
+ * MPI origin computation:
+ * - origin = myrank XOR mask2, where mask2 = Tpow[inter-process site]
+ * - XOR flips the bit corresponding to the inter-process site, giving the
+ *   rank that "owns" the complementary bit pattern.
+ *
+ * @param X       Bind structure with transfer definitions
+ * @param batched Output: populated MPIBatchedTransfers structure
+ * @return 0 on success, -1 on allocation failure
  */
 int InitializeMPIBatchedTransfers_SpinlessFermionGC(
     struct BindStruct *X,
@@ -283,10 +295,30 @@ void FinalizeMPIBatchedTransfers(MPIBatchedTransfers *batched) {
 /**
  * @brief Perform batched MPI hopping for SpinlessFermionGC MPIsingle mode
  *
- * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
- * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
- * Arithmetic-equivalence note: loop reorder only changes accumulation order
- * (floating-point roundoff), not algebraic contributions.
+ * Computes contribution from inter-process hopping terms to H|psi> (M_MLTPLY)
+ * or correlation functions (M_CORR). All transfers in `group` share the same
+ * MPI partner, so a single MPI_Sendrecv suffices.
+ *
+ * Parallel safety:
+ * - M_MLTPLY/M_CALCSPEC: t-outer loop ensures each OMP region processes one
+ *   transfer at a time; within that region, distinct j values map to distinct
+ *   ioff (since ioff = jreal ^ mask1 is bijective for fixed mask1), so no race.
+ * - M_CORR: No tmp_v0 write; dam_pr is OMP reduction. Loop fusion (j-outer)
+ *   is safe and reduces OMP overhead.
+ *
+ * Index convention:
+ * - j: 1-based buffer index (matches tmp_v1/v1buf layout)
+ * - jreal = j-1: 0-based bit-state id
+ * - ioff = (jreal ^ mask1) + 1: 1-based destination index
+ *
+ * Arithmetic equivalence: loop reorder changes only accumulation order
+ * (floating-point roundoff at ~1e-15 level), not algebraic contributions.
+ *
+ * @param group  Transfer group (all share same MPI origin)
+ * @param X      Bind structure
+ * @param tmp_v0 Output vector (updated in M_MLTPLY/M_CALCSPEC only)
+ * @param tmp_v1 Input vector
+ * @return dam_pr = sum of <tmp_v1|H|tmp_v1> contributions (always computed)
  */
 double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched(
     MPITransferGroup *group,
@@ -403,10 +435,24 @@ int InitializeMPIBatchedTransfers_SpinlessFermion(
 /**
  * @brief Perform batched MPI hopping for SpinlessFermion (canonical) MPIsingle mode
  *
- * Unlike GC version, this requires list_1/list_1buf exchange and uses GetOffComp.
- * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
- * Arithmetic-equivalence note: loop reorder only changes accumulation order
- * (floating-point roundoff), not algebraic contributions.
+ * Canonical version: Hilbert space is restricted by particle number, so basis
+ * states are enumerated in list_1. GetOffComp maps bit-state to list index.
+ *
+ * Parallel safety:
+ * - M_MLTPLY: t-outer ensures single transfer per OMP region; GetOffComp returns
+ *   unique ioff per valid jreal, so no race on tmp_v0.
+ * - M_CORR: No tmp_v0 write; loop fusion (j-outer) is safe.
+ *
+ * Index convention:
+ * - j: 1-based index into list_1buf (received basis states)
+ * - jreal = list_1buf[j]: actual bit-state id
+ * - ioff: 1-based index into tmp_v0/tmp_v1 (from GetOffComp)
+ *
+ * @param group  Transfer group (all share same MPI origin)
+ * @param X      Bind structure
+ * @param tmp_v0 Output vector (updated in M_MLTPLY only)
+ * @param tmp_v1 Input vector
+ * @return dam_pr = sum of <tmp_v1|H|tmp_v1> contributions
  */
 double complex X_child_general_hopp_Spinless_MPIsingle_batched(
     MPITransferGroup *group,
@@ -747,10 +793,18 @@ int InitializeMPIBatchedTransfers_HubbardGC(
 /**
  * @brief Perform batched MPI hopping for HubbardGC MPIsingle mode
  *
- * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
- * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
- * Arithmetic-equivalence note: loop reorder only changes accumulation order
- * (floating-point roundoff), not algebraic contributions.
+ * HubbardGC variant: Hilbert space dimension is 4^Nsite (up/down per site).
+ * Uses same parallel-safety strategy as SpinlessFermionGC version.
+ *
+ * Parallel safety:
+ * - M_MLTPLY/M_CALCSPEC: t-outer ensures no concurrent tmp_v0[ioff] writes.
+ * - M_CORR: dam_pr reduction only; loop fusion (j-outer) safe.
+ *
+ * Index convention:
+ * - j: 0-based bit-state index (GC direct indexing)
+ * - ioff = j ^ mask1: 0-based destination; +1 for 1-based buffer access
+ *
+ * @return dam_pr = sum of <tmp_v1|H|tmp_v1> contributions
  */
 double complex X_child_GC_general_hopp_MPIsingle_batched(
     MPITransferGroup *group,
@@ -864,10 +918,20 @@ int InitializeMPIBatchedTransfers_Hubbard(
 /**
  * @brief Perform batched MPI hopping for Hubbard (canonical) MPIsingle mode
  *
- * Uses t-outer/j-inner loop for M_MLTPLY (safe for tmp_v0 updates).
- * Uses j-outer/t-inner (loop fusion) for M_CORR (only dam_pr reduction, no race).
- * Arithmetic-equivalence note: loop reorder only changes accumulation order
- * (floating-point roundoff), not algebraic contributions.
+ * Canonical Hubbard: Hilbert space restricted by (Nup, Ndown). Uses list_1buf
+ * for basis state mapping and GetOffComp for index lookup.
+ *
+ * Parallel safety:
+ * - M_MLTPLY/M_CALCSPEC: t-outer ensures single transfer per OMP region;
+ *   GetOffComp returns unique ioff per valid state.
+ * - M_CORR: dam_pr reduction only; loop fusion safe.
+ *
+ * Index convention:
+ * - j: 1-based index into list_1buf
+ * - jreal = list_1buf[j]: actual bit-state
+ * - ioff: 1-based tmp_v0/tmp_v1 index from GetOffComp
+ *
+ * @return dam_pr = sum of <tmp_v1|H|tmp_v1> contributions
  */
 double complex X_child_general_hopp_MPIsingle_batched(
     MPITransferGroup *group,
@@ -1182,10 +1246,19 @@ void FinalizeMPIBatchedDoubleTransfers(MPIBatchedDoubleTransfers *batched) {
 /**
  * @brief Perform batched MPI hopping for HubbardGC MPIdouble mode
  *
- * For MPIdouble, tmp_v0[j] access is safe (each thread owns unique j).
- * Uses t-outer/j-inner to compute trans once per transfer (efficiency).
- * Arithmetic-equivalence note: loop reorder only changes accumulation order
- * (floating-point roundoff), not algebraic contributions.
+ * MPIdouble: Both hopping sites are inter-process, so destination index
+ * equals source index (j -> j). This means each thread owns unique tmp_v0[j].
+ *
+ * Parallel safety:
+ * - tmp_v0[j] += dmv: Each OMP thread owns distinct j, so no race.
+ * - t-outer/j-inner chosen for efficiency: trans computed once per transfer
+ *   (not O(idim_max_buf) times as in loop fusion).
+ *
+ * Threshold note:
+ * - cabs(trans) < 1e-15: Skip numerically negligible amplitudes to avoid
+ *   accumulating floating-point noise.
+ *
+ * @return dam_pr = sum of <tmp_v1|H|tmp_v1> contributions
  */
 double complex X_child_GC_general_hopp_MPIdouble_batched(
     MPIDoubleTransferGroup *group,
