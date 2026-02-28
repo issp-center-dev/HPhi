@@ -27,8 +27,8 @@
 /// \param X [in,out] define list to get and put information of calculation
 /// \param tmp_v0 [out] Result v0 = H v1
 /// \param tmp_v1 [in] v0 = H v1
-/// \returns TRUE: Normally finished
-/// \returns FALSE: Abnormally finished
+/// \returns 0: Normally finished
+/// \returns -1: Abnormally finished
 /// \author Kazuyoshi Yoshimi
 int GetPairExcitedState_SpinlessFermion(
     struct BindStruct *X,
