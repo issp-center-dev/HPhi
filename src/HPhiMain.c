@@ -102,22 +102,115 @@
 
 @page page_codingrule Coding rule
 
+@section sec_coding_general General Rules
+
 - Do not use TAB character. Use two spaces as an indent.
-- Use @c default(none) for scoping of OpenMP-parallel region. E.g.
+- Use C99 standard for compatibility.
+- All source files should include the GPL license header.
+- Use Doxygen-style comments for all public functions.
+
+@section sec_coding_naming Naming Conventions
+
+@subsection subsec_functions Function Names
+- Use CamelCase with descriptive prefixes:
+  - @c child_ : Internal functions called by main routines
+  - @c X_child_ : Internal functions with explicit struct parameter
+  - @c _GetInfo : Functions that retrieve information
+  - @c _MPI : MPI-specific implementations
+  - @c _MPIsingle / @c _MPIdouble : Single/double MPI communication patterns
+
+Example: @c X_child_GC_general_hopp_MPIsingle()
+
+@subsection subsec_variables Variable Names
+- Loop indices: @c i, @c j, @c idim, @c jdim
+- Site indices: @c isite1, @c isite2
+- Spin indices: @c sigma1, @c sigma2, @c ispin
+- Bit representations: @c ibit, @c ibitsite
+- Temporary values: @c tmp_v0, @c tmp_v1, @c tmp_trans
+- Damping/product: @c dam_pr (Hamiltonian matrix element)
+
+@subsection subsec_macros Macro Names
+- Use ALL_CAPS with @c D_ prefix for constants:
+  - @c D_FileNameMax
+  - @c D_CharTmpReadDef
+- Model types: @c Hubbard, @c Spin, @c HubbardGC, @c SpinGC, etc.
+- Calculation types: @c Lanczos, @c TPQCalc, @c FullDiag, @c CG
+
+@section sec_coding_openmp OpenMP Parallelization
+
+- Always use @c default(none) for scoping of OpenMP-parallel region:
   @dontinclude CalcByLOBPCG.c
   @skip pragma
   @until 0.0
-- Variable declared with @c const must not be included in @c firstprivate of OpenMP scoping.
-  Use @c shared.
-- For MPI parallelization, use the following functions for I/O and abortation:
-  - fgetsMPI() instead of @c fgets
-  - @c fprintf(::stdoutMPI,... instead of @c printf(...
-  - fopenMPI() instead of @c fopen
-  - exitMPI() instead of @c exit
-- When you add new features into HPhi, please run <tt>make test</tt>,
-  and check whether other features still work fine.
-  Also, try <tt>make test MPIRUN="mpiexec -np 4"</tt> to check MPI feature.
-.    
+- Classify all variables explicitly:
+  - @c private() : Thread-local variables (loop indices)
+  - @c shared() : Read-only shared data, const variables
+  - @c firstprivate() : Variables initialized from master thread
+  - @c reduction() : Variables for accumulation (+, *, max, min)
+- Variable declared with @c const must not be included in @c firstprivate.
+  Use @c shared instead.
+- Use conditional compilation for OpenMP headers:
+\code{c}
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+\endcode
+
+@section sec_coding_mpi MPI Parallelization
+
+For MPI parallelization, use the following wrapper functions:
+- fgetsMPI() instead of @c fgets
+- @c fprintf(::stdoutMPI,... instead of @c printf(...
+- fopenMPI() instead of @c fopen
+- exitMPI() instead of @c exit
+
+Additional MPI utilities in wrapperMPI.h:
+- MaxMPI_li(), MaxMPI_d() : Get maximum across processes
+- SumMPI_li(), SumMPI_dc() : Sum across processes
+- NormMPI_dc() : Compute vector norm
+- VecProdMPI() : Compute vector inner product
+
+Use conditional compilation for MPI-specific code:
+\code{c}
+#ifdef MPI
+// MPI-specific implementation
+#endif
+\endcode
+
+@section sec_coding_memory Memory Management
+
+- Use dedicated allocation functions from setmemory.c:
+  - @c i_1d_allocate(), @c i_2d_allocate() : int arrays
+  - @c d_1d_allocate(), @c d_2d_allocate() : double arrays
+  - @c cd_1d_allocate(), @c cd_2d_allocate() : complex double arrays
+  - @c lui_1d_allocate() : unsigned long int arrays
+- Always use @c calloc (not @c malloc) for automatic zero-initialization.
+- Check allocation results for critical allocations.
+
+@section sec_coding_error Error Handling
+
+- Return @c int for error codes: 0 = success, -1 = error
+- Use global error messages defined in ErrorMessage.h/c
+- Always check file operations:
+\code{c}
+fp = fopenMPI(filename, "r");
+if (fp == NULL) {
+  fprintf(stdoutMPI, cErrFIOpen, filename);
+  return -1;
+}
+\endcode
+
+@section sec_coding_testing Testing
+
+When you add new features into HPhi, please run:
+\code{bash}
+make test
+\endcode
+and check whether other features still work fine.
+Also, try MPI tests:
+\code{bash}
+make test MPIRUN="mpiexec -np 4"
+\endcode
 
 @page page_cmake Add new source-file, executable, scripts (handle CMake)
 
@@ -133,17 +226,20 @@ into the following part of @c src/CMakeLists.txt.
 set(SOURCES source1.c source2.c ...)
 \endcode
 
+If you also add a header file, place it in @c src/include/ directory.
+Header files are automatically found by CMake.
+
 @section sec_newexecutable New executable
 
 When we add a new executable ("myprog" in this case),
 we have to add following command in @c src/CMakeLists.txt.
 
-\code{CMake}
+\code{cmake}
 set(SOURCES_MYPROG source1.c source2.c ...)
 add_executable(myprog ${SOURCES_MYPROG})
 target_link_libraries(myprog ${LAPACK_LIBRARIES} m)
 if(MPI_FOUND)
-target_link_libraries(myprog ${MPI_C_LIBRARIES})
+  target_link_libraries(myprog ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
 install(TARGETS myprog RUNTIME DESTINATION bin)
 \endcode
@@ -153,11 +249,384 @@ install(TARGETS myprog RUNTIME DESTINATION bin)
 When we add a new script written in python, sh, etc. ("myscript.sh" in this case)
 into @c tool/, we have to add the following command in @c tool/CMakeLists.txt.
 
-\code{CMake}
+\code{cmake}
 configure_file(myscript.sh myscript.sh COPYONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/myscript.sh DESTINATION bin
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 \endcode
+
+@section sec_cmake_options CMake Build Options
+
+HPhi supports several CMake options:
+- @c -DUSE_SCALAPACK=ON : Enable ScaLAPACK for parallel full diagonalization
+- @c -DCMAKE_C_COMPILER=mpicc : Specify MPI compiler
+- @c -DCMAKE_BUILD_TYPE=Release : Build with optimizations
+
+Example build commands:
+\code{bash}
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j4
+make install
+\endcode
+
+@page page_variable Global variables and Data structure
+
+@section sec_global_vars Global Variables
+
+Global variables are defined in global.h and global.c.
+
+@subsection subsec_mpi_vars MPI-related Variables
+- @c nproc : Total number of MPI processes
+- @c myrank : Rank of current MPI process
+- @c nthreads : Number of OpenMP threads
+- @c stdoutMPI : MPI-safe stdout (only rank 0 writes)
+
+@subsection subsec_path_vars Path and File Variables
+- @c cParentOutputFolder : Output directory path ("output/")
+- @c cFileNameTimeKeep : Timer log filename
+
+@subsection subsec_wave_vars Wavefunction Vectors
+- @c v0, @c v1 : Main wavefunction vectors
+- @c v1buf : MPI communication buffer
+- @c list_1 : Hilbert space basis list
+- @c list_2_1, @c list_2_2 : Two-body basis lists
+
+@section sec_data_struct Main Data Structures
+
+@subsection subsec_bindstruct BindStruct (X)
+The main structure containing all calculation data:
+\code{c}
+struct BindStruct {
+  struct DefineList Def;   // Input parameters and definitions
+  struct CheckList Check;  // Dimension checks
+  struct LargeList Large;  // Large temporary data
+  struct PhysList Phys;    // Physical quantities
+  struct BoostList Boost;  // Boost optimization data
+};
+\endcode
+
+@subsection subsec_definelist DefineList (X->Def)
+Contains all input parameters:
+- @c Nsite : Number of sites
+- @c Ne, @c NeMPI : Number of electrons (local/total)
+- @c Nup, @c Ndown : Number of up/down spins
+- @c iCalcType : Calculation method (Lanczos, TPQ, etc.)
+- @c iCalcModel : Model type (Hubbard, Spin, etc.)
+- @c NTransfer : Number of transfer terms
+- @c NInterAll : Number of interaction terms
+- @c GeneralTransfer[][] : Transfer integral indices
+- @c ParaGeneralTransfer[] : Transfer integral values
+
+@subsection subsec_largelist LargeList (X->Large)
+Temporary data for Hamiltonian operations:
+- @c prdct : Inner product accumulator
+- @c is1_spin, @c is2_spin : Spin masks
+- @c isA_spin, @c isB_spin : Additional spin masks
+- @c tmp_trans : Current transfer value
+- @c mode : Operation mode flag
+
+@subsection subsec_physlist PhysList (X->Phys)
+Physical quantities:
+- @c energy : Ground state energy
+- @c var : Energy variance
+- @c doublon : Double occupancy
+- @c num : Particle number
+- @c Sz : Total \f$S_z\f$
+- @c s2 : Total \f$S^2\f$
+
+@page page_log Various kind of Logs
+
+@section sec_log_progress Progress Messages
+
+Progress messages are defined in ProgressMessage.h/c.
+Use these predefined strings for consistent output:
+\code{c}
+fprintf(stdoutMPI, "%s", cProFinishDefFiles);  // "Read definition files."
+fprintf(stdoutMPI, "%s", cProFinishDefCheck);  // "Check definition files."
+\endcode
+
+@section sec_log_error Error Messages
+
+Error messages are defined in ErrorMessage.h/c.
+Examples:
+- @c cErrNameList : Command line argument error
+- @c cErrDefFile : Definition file error
+- @c cErrOutput : Output directory creation error
+- @c cErrLargeMem : Memory allocation error
+
+@section sec_log_time Time Logging
+
+Use TimeKeeper() for elapsed time logging:
+\code{c}
+TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefStart, "w");
+// ... processing ...
+TimeKeeper(&(X.Bind), cFileNameTimeKeep, cReadDefFinish, "a");
+\endcode
+
+Output is written to @c output/Time_*.dat files.
+
+@section sec_log_debug Debug Output
+
+For debugging, use conditional output:
+\code{c}
+#ifdef DEBUG
+fprintf(stdoutMPI, "Debug: value = %d\n", value);
+#endif
+\endcode
+
+@page page_addexpert Add new input-file for Expert mode
+
+@section sec_expert_overview Overview
+
+Expert mode input files are processed in readdef.c.
+Each input file type is registered in the file list (namelist.def).
+
+@section sec_expert_steps Steps to Add New Input File
+
+@subsection subsec_expert_step1 Step 1: Define Keywords
+Add keywords to DefCommon.h:
+\code{c}
+#define KWMyNewFile 100  // Unique keyword ID
+\endcode
+
+@subsection subsec_expert_step2 Step 2: Add File Type
+In readdef.c, add to cKWListOfFileNameList[]:
+\code{c}
+cKWListOfFileNameList[KWMyNewFile] = "mynewfile";
+\endcode
+
+@subsection subsec_expert_step3 Step 3: Implement Reader
+Create a new reader function:
+\code{c}
+int ReadMyNewFile(const char* filename, struct DefineList *Def) {
+  FILE *fp = fopenMPI(filename, "r");
+  if (fp == NULL) return -1;
+  // Read and parse file contents
+  fclose(fp);
+  return 0;
+}
+\endcode
+
+@subsection subsec_expert_step4 Step 4: Register Reader
+Add call to ReadDefFileIdxPara() in readdef.c:
+\code{c}
+if (ReadMyNewFile(cFileNames[KWMyNewFile], &X->Def) != 0) {
+  return -1;
+}
+\endcode
+
+@section sec_expert_format File Format Guidelines
+- First line: Number of entries (header)
+- Comment lines start with @c #
+- Use space or tab as delimiters
+- Indices are 0-based
+
+@page page_addmodpara Add new parameter into modpara
+
+@section sec_modpara_overview Overview
+
+ModPara file contains calculation parameters.
+Parameters are read in readdef.c function ReadModPara().
+
+@section sec_modpara_steps Steps to Add New Parameter
+
+@subsection subsec_modpara_step1 Step 1: Add to DefineList
+In struct.h, add new member to DefineList:
+\code{c}
+struct DefineList {
+  // ... existing members ...
+  int MyNewParam;    // Description of new parameter
+};
+\endcode
+
+@subsection subsec_modpara_step2 Step 2: Add Keyword
+In readdef.c, add keyword handling:
+\code{c}
+else if (strcmp(ctmp, "mynewparam") == 0) {
+  fscanf(fp, "%d", &(Def->MyNewParam));
+}
+\endcode
+
+@subsection subsec_modpara_step3 Step 3: Set Default Value
+In setmem_def() (xsetmem.c), set default:
+\code{c}
+X->Def.MyNewParam = 0;  // Default value
+\endcode
+
+@subsection subsec_modpara_step4 Step 4: Validate
+Add validation in check.c if needed:
+\code{c}
+if (X->Def.MyNewParam < 0) {
+  fprintf(stdoutMPI, "Error: MyNewParam must be >= 0\n");
+  return MPIFALSE;
+}
+\endcode
+
+@page page_addcalcmod Add new calculation mode into calcmod
+
+@section sec_calcmod_overview Overview
+
+Calculation modes are selected by @c CalcMod parameter.
+Each mode has a dedicated CalcBy*.c file.
+
+@section sec_calcmod_steps Steps to Add New Calculation Mode
+
+@subsection subsec_calcmod_step1 Step 1: Define Mode Constant
+In DefCommon.h:
+\code{c}
+#define MyNewCalc 10  // New calculation mode ID
+\endcode
+
+@subsection subsec_calcmod_step2 Step 2: Create Implementation
+Create CalcByMyNew.c and CalcByMyNew.h:
+\code{c}
+// CalcByMyNew.h
+#pragma once
+#include "Common.h"
+int CalcByMyNew(struct EDMainCalStruct *X);
+
+// CalcByMyNew.c
+#include "CalcByMyNew.h"
+int CalcByMyNew(struct EDMainCalStruct *X) {
+  // Implementation
+  return TRUE;
+}
+\endcode
+
+@subsection subsec_calcmod_step3 Step 3: Add to Main Switch
+In HPhiMain.c, add case to switch statement:
+\code{c}
+case MyNewCalc:
+  if (CalcByMyNew(&X) != TRUE) {
+    exitMPI(-3);
+  }
+  break;
+\endcode
+
+@subsection subsec_calcmod_step4 Step 4: Register in CMake
+Add source file to src/CMakeLists.txt SOURCES list.
+
+@page page_time Compute elapsed time for new functions
+
+@section sec_time_overview Overview
+
+HPhi uses hierarchical timer IDs defined in CalcTime.h/c.
+Timer results are output to @c output/Time_*.dat.
+
+@section sec_time_usage Timer Usage
+
+@subsection subsec_time_basic Basic Usage
+\code{c}
+#include "CalcTime.h"
+
+StartTimer(MyTimerID);
+// ... code to measure ...
+StopTimer(MyTimerID);
+\endcode
+
+@subsection subsec_time_ids Timer ID Convention
+Timer IDs are hierarchical (3-digit numbers):
+- @c 0 : Total execution time
+- @c 1000 : sz() - Hilbert space construction
+- @c 2000 : diagonalcalc() - Diagonal elements
+- @c 3000 : TPQ calculation
+- @c 4000 : Lanczos calculation
+- @c 5000 : Full diagonalization
+- @c 6000 : Spectrum calculation
+
+Sub-timers use additional digits:
+- @c 300 : Transfer terms (total)
+- @c 310 : Local transfer
+- @c 311-313 : Local transfer details
+- @c 320 : InterAll terms
+- @c 321-322 : InterAll details
+
+@subsection subsec_time_new Adding New Timer
+
+Choose an unused ID following the hierarchy:
+\code{c}
+#define TimerMyNew 350  // Under 300 category
+
+StartTimer(TimerMyNew);
+// ... new code ...
+StopTimer(TimerMyNew);
+\endcode
+
+@section sec_time_output Timer Output
+
+Timer results are written by OutputTimer():
+- File: @c output/Time_*.dat
+- Format: Timer ID, elapsed time, description
+
+@page page_setmem Malloc vectors
+
+@section sec_setmem_overview Overview
+
+Memory allocation in HPhi uses dedicated functions in setmemory.c.
+Main allocation routines are in xsetmem.c.
+
+@section sec_setmem_functions Allocation Functions
+
+@subsection subsec_setmem_1d 1D Arrays
+\code{c}
+int *arr_i = i_1d_allocate(N);           // int[N]
+double *arr_d = d_1d_allocate(N);        // double[N]
+double complex *arr_c = cd_1d_allocate(N); // complex[N]
+unsigned long int *arr_l = lui_1d_allocate(N); // ulong[N]
+\endcode
+
+@subsection subsec_setmem_2d 2D Arrays
+\code{c}
+int **arr2d = i_2d_allocate(N, M);       // int[N][M]
+double **arr2d = d_2d_allocate(N, M);    // double[N][M]
+double complex **arr2d = cd_2d_allocate(N, M); // complex[N][M]
+\endcode
+
+2D arrays use contiguous memory allocation for cache efficiency.
+
+@subsection subsec_setmem_3d 3D Arrays
+\code{c}
+int ***arr3d = i_3d_allocate(N, M, L);   // int[N][M][L]
+double complex ***arr3d = cd_3d_allocate(N, M, L);
+\endcode
+
+@section sec_setmem_free Deallocation
+
+Use corresponding free functions:
+\code{c}
+free_i_1d_allocate(arr_i);
+free_cd_2d_allocate(arr2d);
+\endcode
+
+@section sec_setmem_routines Main Allocation Routines
+
+@subsection subsec_setmem_head setmem_HEAD()
+Allocates BindStruct and basic arrays.
+Called at program start.
+
+@subsection subsec_setmem_def setmem_def()
+Allocates DefineList arrays after reading input sizes:
+- Transfer arrays
+- Interaction arrays
+- Site information
+
+@subsection subsec_setmem_large setmem_large()
+Allocates large wavefunction vectors:
+- @c v0, @c v1 : Main vectors (size: idim_max)
+- @c v1buf : MPI buffer
+- @c list_1, @c list_2_1, @c list_2_2 : Basis lists
+
+This is the largest memory consumer.
+
+@section sec_setmem_estimate Memory Estimation
+
+Total memory scales as:
+\f[
+M \approx 3 \times D \times 16 \text{ bytes}
+\f]
+where \f$D\f$ is the Hilbert space dimension.
+For Hubbard model: \f$D = \binom{N_s}{N_\uparrow}\binom{N_s}{N_\downarrow}\f$
 */
 
 /** 
