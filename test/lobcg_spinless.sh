@@ -2,7 +2,7 @@
 
 mkdir -p lobcg_spinless/
 cd lobcg_spinless
-python "$1/test/testSpinlessCalc.py" -p "$2/src/HPhi" -mpi "${MPIRUN}" -m "SpinlessFermion" -s 8 -t "LOBCG"
+python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -m "SpinlessFermion" -s 8 -t "LOBCG"
 
 # Check value: flct
 cat > reference.dat <<EOF

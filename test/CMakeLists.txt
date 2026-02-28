@@ -48,6 +48,14 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspingc_ladder.sh
 )
 add_test(
+  NAME lanczos_spinless
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spinless.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME lanczos_spinless_GC
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_spinless_GC.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
   NAME lanczos_hubbard_square_restart
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square_restart.sh
 )
@@ -113,6 +121,14 @@ add_test(
 add_test(
   NAME lobcg_genspingc_ladder
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_genspingc_ladder.sh
+)
+add_test(
+  NAME lobcg_spinless
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinless.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME lobcg_spinless_GC
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinless_GC.sh ${CMAKE_SOURCE_DIR}
 )
 add_test(
   NAME lobcg_hubbard_square_restart
@@ -304,5 +320,13 @@ add_test(
 add_test(
   NAME mpi_consistency_te_hubbard
   COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_hubbard.sh
+)
+add_test(
+  NAME mpi_consistency_spinless
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spinless.sh ${CMAKE_SOURCE_DIR}
+)
+add_test(
+  NAME mpi_consistency_spinless_GC
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spinless_GC.sh ${CMAKE_SOURCE_DIR}
 )
 endif(MPI_FOUND)
