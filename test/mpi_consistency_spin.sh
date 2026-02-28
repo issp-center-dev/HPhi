@@ -4,6 +4,14 @@
 
 TOLERANCE="0.000001"
 
+# Check that MPIRUN is set and non-empty
+if [ -z "${MPIRUN}" ]; then
+    echo "Error: MPIRUN is not set. Please set MPIRUN to run MPI tests."
+    echo "Example: MPIRUN=\"mpirun -np 2\" make test"
+    exit 1
+fi
+
+
 mkdir -p mpi_consistency_spin/
 cd mpi_consistency_spin
 
