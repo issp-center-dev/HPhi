@@ -24,27 +24,54 @@
 
 /**
  * @file   check.c
+ *
+ * @brief  Calculate Hilbert space dimension for each model
+ *
+ * Determines the size of the restricted Hilbert space based on:
+ * - Model type (Hubbard, Spin, SpinlessFermion, Kondo, etc.)
+ * - Ensemble (canonical vs grand canonical)
+ * - Quantum number constraints (total Sz, particle number)
+ *
+ * Hilbert space dimensions:
+ * - HubbardGC: 4^Nsite (all possible occupations)
+ * - Hubbard: C(Nsite,Nup) * C(Nsite,Ndown) (fixed particle numbers)
+ * - SpinGC: 2^Nsite (all spin configurations)
+ * - Spin: C(Nsite, Nsite/2+Sz) (fixed total Sz)
+ * - SpinlessFermionGC: 2^Nsite
+ * - SpinlessFermion: C(Nsite, Ne)
+ *
  * @version 0.1, 0.2
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for giving a function of calculating size of Hilbert space.
- * 
  */
 
 
-/** 
- * @brief A program to check size of dimension for Hilbert-space.
- * 
- * @param[in,out] X  Common data set used in HPhi.
- * 
- * @retval TRUE normal termination
- * @retval FALSE abnormal termination
- * @retval MPIFALSE CheckMPI abnormal termination
- * @version 0.2
- * @details add function of calculating Hilbert space for canonical ensemble.
- *  
+/**
+ * @brief Calculate Hilbert space dimension and validate MPI decomposition
+ *
+ * This function:
+ * 1. Calls CheckMPI() to determine site distribution across MPI ranks
+ * 2. Computes total Hilbert space dimension (idim_max) using combinatorics
+ * 3. Validates that dimension fits within available memory
+ * 4. Sets X->Check.idim_max for later use
+ *
+ * MPI decomposition (via CheckMPI):
+ * - Nsite: Number of local sites (determines local Hilbert space)
+ * - NsiteMPI: Total sites including inter-process sites
+ * - Sites with index > Nsite require MPI communication
+ *
+ * Combinatorial calculation:
+ * Uses Pascal's triangle (comb[n][k] = C(n,k)) to efficiently compute
+ * binomial coefficients for canonical ensemble dimensions.
+ *
+ * @param X Common data set containing model parameters [in,out]
+ *          Sets X->Check.idim_max on success
+ *
+ * @return TRUE on success, FALSE on error, MPIFALSE on MPI setup failure
+ *
+ * @version 0.2 Added canonical ensemble support
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */

@@ -27,14 +27,24 @@
 
 /**
  * @file   expec_cisajs.c
- * 
- * @brief  File for calculation of one body green's function
+ *
+ * @brief  Compute one-body Green's functions <psi| c†_i c_j |psi>
+ *
+ * Calculates expectation values of fermion bilinear operators for the given
+ * eigenvector. Results are written to output files (zvo_cisajs*.dat).
+ *
+ * Operator types by model:
+ * - Hubbard/HubbardGC: <c†_{i,sigma} c_{j,sigma}> (hopping correlation)
+ * - Spin/SpinGC: <S+_i S-_j>, <Sz_i> (spin correlation/magnetization)
+ * - SpinlessFermion: <c†_i c_j> (spinless hopping)
+ *
+ * Naming convention:
+ * - "cisajs" = c†_{i,s} c_{j,s} where c = creation/annihilation, i,j = sites, s = spin
  *
  * @version 0.1, 0.2
  *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
  */
 
 
@@ -50,21 +60,31 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp
 int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
 
-
-/** 
- * @brief function of calculation for one body green's function
- * 
- * @param X [in] list for getting information to calculate one body green's function.
- * @param vec [in] eigenvectors.
- * 
- * @version 0.2
- * @details add calculation one body green's functions for general spin
+/**
+ * @brief Compute one-body Green's functions <psi| c†_{i,s} c_{j,s} |psi>
  *
+ * Main entry point for one-body correlation function calculation.
+ * Iterates over all operator pairs defined in X->Def.CisAjt and computes
+ * their expectation values.
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_CORR (correlation function mode)
+ * - No wavefunction update, only expectation values computed
+ *
+ * Output:
+ * - Results written to zvo_cisajs_*.dat files
+ * - Format: i sigma j sigma Re(<c†c>) Im(<c†c>)
+ *
+ * @param X Struct with operator definitions in X->Def.CisAjt [in]
+ * @param vec Eigenvector to compute expectation values for [in]
+ *
+ * @return 0 on success, -1 on error
+ *
+ * @version 0.2 Added support for general spin
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0 normally finished.
- * @retval -1 abnormally finished.
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 

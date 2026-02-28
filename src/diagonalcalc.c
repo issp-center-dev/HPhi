@@ -16,21 +16,33 @@
 
 /**
  * @file   diagonalcalc.c
- * @version 2.1
- * @details add functions to calculate diagonal components for Time evolution.
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
  *
- * @version 0.2
- * @details modify functions to calculate diagonal components for general spin.
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @brief  Pre-compute diagonal Hamiltonian elements into list_Diagonal[]
  *
+ * Diagonal elements are state-dependent energies that can be pre-computed
+ * once and reused in every H*v multiplication. This avoids redundant
+ * computation during iterative solvers like Lanczos.
+ *
+ * Diagonal contributions include:
+ * - Chemical potential: mu * n_i (Hubbard/SpinlessFermion)
+ * - On-site Coulomb: U * n_up * n_down (Hubbard)
+ * - Magnetic field: h * Sz_i (Spin)
+ * - Inter-site Coulomb: V * n_i * n_j (when i,j have same occupation)
+ * - Exchange (Ising part): J * Sz_i * Sz_j
+ *
+ * The result is stored in list_Diagonal[j] where j is the 1-based
+ * restricted Hilbert space index. During H*v computation:
+ *   v0[j] += list_Diagonal[j] * v1[j]
+ *
+ * For time evolution, SetDiagonalTE* functions apply exp(-i*H_d*dt)
+ * directly to the wavefunction.
+ *
+ * @version 2.1 Added time evolution diagonal terms
+ * @version 0.2 Added general spin support
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  Calculate diagonal components, i.e. @f$ H_d |\phi_0> = E_d |\phi_0> @f$.
- * 
- * 
  */
 
 #include <bitcalc.h>
