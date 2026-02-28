@@ -26,6 +26,7 @@
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIHubbardCore.h"
+#include "mltplyMPISpinlessFermion.h"
 #include "common/setmemory.h"
 
 /**
@@ -322,14 +323,25 @@ int expec_cisajscktaltdc
           int site4_is_interPE = (org_isite4_sp > X->Def.Nsite) ? 1 : 0;
 
           if (site1_is_interPE || site2_is_interPE || site3_is_interPE || site4_is_interPE) {
-            // MPI case: not yet implemented for off-diagonal
-            static int warned_mpi_offdiag = 0;
-            if (!warned_mpi_offdiag) {
-              fprintf(stdoutMPI, "Warning: Off-diagonal two-body Green's function <c^+_i c_j c^+_k c_l> "
-                      "with MPI inter-process sites is not yet implemented for SpinlessFermion. Output will be 0.\n");
-              warned_mpi_offdiag = 1;
+#ifdef MPI
+            // MPI case: use MPI function for inter-process sites
+            if (X->Def.iCalcModel == SpinlessFermionGC) {
+              dam_pr_sp = X_GC_CisAjtCkuAlv_SpinlessFermion_MPI(
+                  org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
+                  X, vec);
+            } else {
+              // Canonical case with MPI: not yet implemented
+              static int warned_mpi_canonical = 0;
+              if (!warned_mpi_canonical) {
+                fprintf(stdoutMPI, "Warning: Off-diagonal two-body Green's function with MPI "
+                        "is not yet implemented for canonical SpinlessFermion. Output will be 0.\n");
+                warned_mpi_canonical = 1;
+              }
+              dam_pr_sp = 0;
             }
+#else
             dam_pr_sp = 0;
+#endif
           } else {
             // Local case: all sites are intra-process
             long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];  // c^+_i

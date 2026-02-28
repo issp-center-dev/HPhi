@@ -75,3 +75,7 @@ double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle(int org_isite1,
 
 void child_GC_general_hopp_SpinlessFermion_MPIsingle_per_site(unsigned long int org_isite2, struct BindStruct *X,
                                                                double complex *tmp_v0, double complex *tmp_v1);
+
+// Two-body Green's function MPI functions for SpinlessFermionGC
+double complex X_GC_CisAjtCkuAlv_SpinlessFermion_MPI(int org_isite1, int org_isite2, int org_isite3, int org_isite4,
+                                                      struct BindStruct *X, double complex *vec);

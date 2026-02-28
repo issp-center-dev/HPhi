@@ -606,3 +606,247 @@ void child_GC_general_hopp_SpinlessFermion_MPIsingle_per_site(
   }
 #endif
 }
+
+/**
+ * @brief Compute two-body Green's function <c†_i c_j c†_k c_l> for SpinlessFermionGC with MPI
+ *
+ * This function handles the case where any of the sites i,j,k,l may be inter-process.
+ * It computes the expectation value by iterating over all local states and determining
+ * the contribution from each state.
+ *
+ * For SpinlessFermionGC with MPI:
+ * - Sites 0 to Nsite-1 are local (stored in local index j-1)
+ * - Sites Nsite to NsiteMPI-1 are inter-process (stored in myrank bits)
+ * - Tpow[site] for site < Nsite gives 2^site (mask for local bits)
+ * - Tpow[site] for site >= Nsite gives 2^(site-Nsite) (mask for myrank bits)
+ *
+ * @param org_isite1 Site i (creation operator c†_i)
+ * @param org_isite2 Site j (annihilation operator c_j)
+ * @param org_isite3 Site k (creation operator c†_k)
+ * @param org_isite4 Site l (annihilation operator c_l)
+ * @param X BindStruct with calculation parameters
+ * @param vec Wavefunction vector
+ * @return Expectation value contribution from this process
+ *
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+double complex X_GC_CisAjtCkuAlv_SpinlessFermion_MPI(
+    int org_isite1,
+    int org_isite2,
+    int org_isite3,
+    int org_isite4,
+    struct BindStruct *X,
+    double complex *vec) {
+#ifdef MPI
+  double complex dam_pr = 0.0;
+  unsigned long int j;
+  unsigned long int i_max = X->Check.idim_max;
+  int Nsite = X->Def.Nsite;
+
+  // Bit masks for each site
+  unsigned long int is1 = X->Def.Tpow[org_isite1];  // c†_i (create at i)
+  unsigned long int is2 = X->Def.Tpow[org_isite2];  // c_j (annihilate at j)
+  unsigned long int is3 = X->Def.Tpow[org_isite3];  // c†_k (create at k)
+  unsigned long int is4 = X->Def.Tpow[org_isite4];  // c_l (annihilate at l)
+
+  // Determine which sites are inter-process (site index >= Nsite)
+  int site1_interPE = (org_isite1 >= Nsite) ? 1 : 0;
+  int site2_interPE = (org_isite2 >= Nsite) ? 1 : 0;
+  int site3_interPE = (org_isite3 >= Nsite) ? 1 : 0;
+  int site4_interPE = (org_isite4 >= Nsite) ? 1 : 0;
+
+  // Compute the rank flip mask: XOR of inter-process site masks that flip
+  // The operator c†_i c_j c†_k c_l flips all four sites (assuming distinct sites)
+  unsigned long int rank_flip_mask = 0;
+  if (site1_interPE) rank_flip_mask ^= is1;
+  if (site2_interPE) rank_flip_mask ^= is2;
+  if (site3_interPE) rank_flip_mask ^= is3;
+  if (site4_interPE) rank_flip_mask ^= is4;
+
+  // The origin process (for MPI communication) is determined by which rank bits flip
+  int origin = myrank ^ (int)rank_flip_mask;
+
+  // Check if inter-process site conditions are satisfied for this rank
+  // For the operator c†_i c_j c†_k c_l applied to initial state:
+  // - site l must be occupied (to annihilate)
+  // - site k must be empty (to create) - checked after c_l
+  // - site j must be occupied (to annihilate) - checked after c†_k c_l
+  // - site i must be empty (to create) - checked after c_j c†_k c_l
+  //
+  // For inter-process sites, we need to check these conditions on myrank
+  // and track how the bits change through the operations
+  //
+  // IMPORTANT: Do NOT return early here because we need all processes to
+  // participate in MPI communication to avoid deadlock.
+
+  // Track the rank bits through the operator sequence
+  int tmp_rank = myrank;
+  int rank_sgn = 1;
+  int tmp_sgn;
+  int rank_valid = 1;  // Flag to track if inter-process conditions are met
+
+  // Apply c_l (if inter-process)
+  if (site4_interPE) {
+    if ((tmp_rank & (int)is4) == 0) {
+      rank_valid = 0;  // site l must be occupied, but it's not
+    } else {
+      tmp_rank ^= (int)is4;
+      SgnBit((unsigned long int)(tmp_rank & (is4 - 1)), &tmp_sgn);
+      rank_sgn *= tmp_sgn;
+    }
+  }
+
+  // Apply c†_k (if inter-process)
+  if (site3_interPE && rank_valid) {
+    if ((tmp_rank & (int)is3) != 0) {
+      rank_valid = 0;  // site k must be empty, but it's occupied
+    } else {
+      tmp_rank ^= (int)is3;
+      SgnBit((unsigned long int)(tmp_rank & (is3 - 1)), &tmp_sgn);
+      rank_sgn *= tmp_sgn;
+    }
+  }
+
+  // Apply c_j (if inter-process)
+  if (site2_interPE && rank_valid) {
+    if ((tmp_rank & (int)is2) == 0) {
+      rank_valid = 0;  // site j must be occupied, but it's not
+    } else {
+      tmp_rank ^= (int)is2;
+      SgnBit((unsigned long int)(tmp_rank & (is2 - 1)), &tmp_sgn);
+      rank_sgn *= tmp_sgn;
+    }
+  }
+
+  // Apply c†_i (if inter-process)
+  if (site1_interPE && rank_valid) {
+    if ((tmp_rank & (int)is1) != 0) {
+      rank_valid = 0;  // site i must be empty, but it's occupied
+    } else {
+      tmp_rank ^= (int)is1;
+      SgnBit((unsigned long int)(tmp_rank & (is1 - 1)), &tmp_sgn);
+      rank_sgn *= tmp_sgn;
+    }
+  }
+
+  // If origin == myrank, final states are local (no MPI exchange needed)
+  if (origin == myrank) {
+    // No MPI communication needed - can safely skip if rank_valid is false
+    if (!rank_valid) return 0.0;
+
+    // Iterate over local states and compute contributions
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec) \
+  firstprivate(i_max, is1, is2, is3, is4, site1_interPE, site2_interPE, site3_interPE, site4_interPE, rank_sgn, Nsite) private(j)
+    for (j = 1; j <= i_max; j++) {
+      unsigned long int local_bit = j - 1;
+      unsigned long int tmp_bit = local_bit;
+      int sgn = rank_sgn, tmp_sgn_local;
+
+      // Apply c_l (if local)
+      if (!site4_interPE) {
+        if ((tmp_bit & is4) == 0) continue;  // site l must be occupied
+        tmp_bit ^= is4;
+        SgnBit(tmp_bit & (is4 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c†_k (if local)
+      if (!site3_interPE) {
+        if ((tmp_bit & is3) != 0) continue;  // site k must be empty
+        tmp_bit ^= is3;
+        SgnBit(tmp_bit & (is3 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c_j (if local)
+      if (!site2_interPE) {
+        if ((tmp_bit & is2) == 0) continue;  // site j must be occupied
+        tmp_bit ^= is2;
+        SgnBit(tmp_bit & (is2 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c†_i (if local)
+      if (!site1_interPE) {
+        if ((tmp_bit & is1) != 0) continue;  // site i must be empty
+        tmp_bit ^= is1;
+        SgnBit(tmp_bit & (is1 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Final local state index
+      unsigned long int off_local = tmp_bit;
+      dam_pr += sgn * conj(vec[off_local + 1]) * vec[j];
+    }
+  } else {
+    // Need MPI communication - ALL processes must participate to avoid deadlock
+    unsigned long int idim_max_buf;
+    MPI_Status statusMPI;
+    int ierr;
+
+    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    // Skip computation if rank conditions are not met (but we still did the communication)
+    if (!rank_valid) return 0.0;
+
+    // Iterate over local states and compute contributions
+    // The final state's local bits are computed, and we get the bra vector from v1buf
+#pragma omp parallel for default(none) reduction(+:dam_pr) shared(vec, v1buf) \
+  firstprivate(i_max, idim_max_buf, is1, is2, is3, is4, site1_interPE, site2_interPE, site3_interPE, site4_interPE, rank_sgn, Nsite) private(j)
+    for (j = 1; j <= i_max; j++) {
+      unsigned long int local_bit = j - 1;
+      unsigned long int tmp_bit = local_bit;
+      int sgn = rank_sgn, tmp_sgn_local;
+
+      // Apply c_l (if local)
+      if (!site4_interPE) {
+        if ((tmp_bit & is4) == 0) continue;
+        tmp_bit ^= is4;
+        SgnBit(tmp_bit & (is4 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c†_k (if local)
+      if (!site3_interPE) {
+        if ((tmp_bit & is3) != 0) continue;
+        tmp_bit ^= is3;
+        SgnBit(tmp_bit & (is3 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c_j (if local)
+      if (!site2_interPE) {
+        if ((tmp_bit & is2) == 0) continue;
+        tmp_bit ^= is2;
+        SgnBit(tmp_bit & (is2 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Apply c†_i (if local)
+      if (!site1_interPE) {
+        if ((tmp_bit & is1) != 0) continue;
+        tmp_bit ^= is1;
+        SgnBit(tmp_bit & (is1 - 1), &tmp_sgn_local);
+        sgn *= tmp_sgn_local;
+      }
+
+      // Final local state index (on origin process)
+      unsigned long int off_local = tmp_bit;
+      if (off_local + 1 <= idim_max_buf) {
+        // vec[j] is ψ[n] on this process
+        // v1buf[off_local + 1] is ψ[m] from origin process
+        dam_pr += sgn * conj(v1buf[off_local + 1]) * vec[j];
+      }
+    }
+  }
+
+  return dam_pr;
+#else
+  return 0.0;
+#endif
+}
