@@ -1192,7 +1192,7 @@ int ReadDefFileIdxPara(
     case KWCoulombIntra:
       /*coulombintra.def----------------------------------*/
       if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
-        fprintf(stdoutMPI, "CoulombIntra is not active in SpinlessFermion.\n");
+        fprintf(stdoutMPI, "CoulombIntra is not active in SpinlessFermion/SpinlessFermionGC.\n");
         return(-1);
       }
       if(X->NCoulombIntra>0){
@@ -1243,7 +1243,7 @@ int ReadDefFileIdxPara(
     case KWHund:
       /*hund.def------------------------------------------*/
       if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
-        fprintf(stdoutMPI, "Hund is not active in SpinlessFermion.\n");
+        fprintf(stdoutMPI, "Hund is not active in SpinlessFermion/SpinlessFermionGC.\n");
         return(-1);
       }
       if(X->NHundCoupling>0){
@@ -1276,7 +1276,7 @@ int ReadDefFileIdxPara(
         return(-1);
       }
       if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
-        fprintf(stdoutMPI, "PairHop is not active in SpinlessFermion.\n");
+        fprintf(stdoutMPI, "PairHop is not active in SpinlessFermion/SpinlessFermionGC.\n");
         return(-1);
       }
       
@@ -1307,7 +1307,7 @@ int ReadDefFileIdxPara(
     case KWExchange:
       /*exchange.def--------------------------------------*/
       if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
-        fprintf(stdoutMPI, "Exchange is not active in SpinlessFermion.\n");
+        fprintf(stdoutMPI, "Exchange is not active in SpinlessFermion/SpinlessFermionGC.\n");
         return(-1);
       }
       if(X->NExchangeCoupling>0){

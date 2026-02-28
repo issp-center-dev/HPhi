@@ -54,7 +54,7 @@ echo "Running Time Evolution with MPI..."
 ${MPIRUN} ../../src/HPhi -s stan_te.in
 cp output/Flct.dat flct_mpi.dat
 
-# Compare Flct values (columns 2-5 contain physical quantities)
+# Compare Flct values (columns 2-3: Sz and Sz^2)
 paste flct_nompi.dat flct_mpi.dat > compare.dat
 diff=$(awk -v tol=${TOLERANCE} '
 BEGIN { maxdiff = 0.0 }
