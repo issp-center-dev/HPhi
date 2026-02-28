@@ -117,7 +117,7 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPITransferGroup *)malloc(num_unique * sizeof(MPITransferGroup));
+    batched->groups = (MPITransferGroup *)calloc(num_unique, sizeof(MPITransferGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -587,7 +587,7 @@ int InitializeMPIBatchedTransfers_HubbardGC(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPITransferGroup *)malloc(num_unique * sizeof(MPITransferGroup));
+    batched->groups = (MPITransferGroup *)calloc(num_unique, sizeof(MPITransferGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -1007,7 +1007,7 @@ int InitializeMPIBatchedDoubleTransfers_HubbardGC(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPIDoubleTransferGroup *)malloc(num_unique * sizeof(MPIDoubleTransferGroup));
+    batched->groups = (MPIDoubleTransferGroup *)calloc(num_unique, sizeof(MPIDoubleTransferGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -1401,7 +1401,7 @@ int InitializeMPIBatchedInterAll_HubbardGC(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPIInterAllGroup *)malloc(num_unique * sizeof(MPIInterAllGroup));
+    batched->groups = (MPIInterAllGroup *)calloc(num_unique, sizeof(MPIInterAllGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -1705,7 +1705,7 @@ int InitializeMPIBatchedDoubleTransfers_Hubbard(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPIDoubleTransferGroup *)malloc(num_unique * sizeof(MPIDoubleTransferGroup));
+    batched->groups = (MPIDoubleTransferGroup *)calloc(num_unique, sizeof(MPIDoubleTransferGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -2008,7 +2008,7 @@ int InitializeMPIBatchedExchange_SpinGC(
 
     // Allocate groups
     batched->num_groups = num_unique;
-    batched->groups = (MPISpinExchangeGroup *)malloc(num_unique * sizeof(MPISpinExchangeGroup));
+    batched->groups = (MPISpinExchangeGroup *)calloc(num_unique, sizeof(MPISpinExchangeGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
@@ -2370,7 +2370,7 @@ int InitializeMPIBatchedExchange_Spin(
 
     // Allocate and populate groups (similar to SpinGC)
     batched->num_groups = num_unique;
-    batched->groups = (MPISpinExchangeGroup *)malloc(num_unique * sizeof(MPISpinExchangeGroup));
+    batched->groups = (MPISpinExchangeGroup *)calloc(num_unique, sizeof(MPISpinExchangeGroup));
     if (batched->groups == NULL) {
         free(origin_count);
         free(unique_origins);
