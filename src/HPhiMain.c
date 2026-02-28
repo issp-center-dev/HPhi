@@ -74,8 +74,8 @@
   <HR>
   <H2>How to modify HPhi (Developer's note)</H2>
   - @ref page_codingrule
-  - @ref page_addstandard
-  - @ref page_addstandardval
+  - Add new lattice model into Standard mode (see StdFace documentation)
+  - Add new input variable into Standard mode (see StdFace documentation)
   - @ref page_variable
   - @ref page_setmem
   - @ref page_cmake
