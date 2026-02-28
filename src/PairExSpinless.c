@@ -39,7 +39,7 @@ int GetPairExcitedState_SpinlessFermion(
   int isite1, isite2;
   complex double dam_pr, tmp_trans;
   //Transfer
-  for (i = 0; i < X->Def.NPairExcitationOperator; i += 2) {
+  for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
     tmp_trans = X->Def.ParaPairExcitationOperator[i];
     if (X->Def.PairExcitationOperator[i][0] + 1 > X->Def.Nsite &&
         X->Def.PairExcitationOperator[i][2] + 1 > X->Def.Nsite) {
