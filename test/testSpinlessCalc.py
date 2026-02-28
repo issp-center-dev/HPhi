@@ -39,14 +39,30 @@ def generate_trans(nsites, t=1.0, filename="trans.def"):
             f.write("{} {} {} {} {:.10f} {:.10f}\n".format(*t_entry))
 
 
-def generate_coulombintra(nsites, filename="coulombintra.def"):
-    """Generate empty coulombintra.def (no on-site interaction for spinless)."""
-    with open(filename, "w") as f:
-        f.write("=============================================\n")
-        f.write("NCoulombIntra          0\n")
-        f.write("=============================================\n")
-        f.write("================CoulombIntra=================\n")
-        f.write("=============================================\n")
+def generate_coulombinter(nsites, V=0.0, filename="coulombinter.def"):
+    """Generate coulombinter.def for nearest-neighbor interaction."""
+    if V == 0.0:
+        # No interaction
+        with open(filename, "w") as f:
+            f.write("=============================================\n")
+            f.write("NCoulombInter          0\n")
+            f.write("=============================================\n")
+            f.write("================CoulombInter=================\n")
+            f.write("=============================================\n")
+    else:
+        interactions = []
+        for i in range(nsites):
+            j = (i + 1) % nsites
+            interactions.append((i, j, V))
+
+        with open(filename, "w") as f:
+            f.write("=============================================\n")
+            f.write("NCoulombInter          {}\n".format(len(interactions)))
+            f.write("=============================================\n")
+            f.write("================CoulombInter=================\n")
+            f.write("=============================================\n")
+            for entry in interactions:
+                f.write("   {}     {}  {:.10f}\n".format(*entry))
 
 
 def generate_modpara(nsites, nelec, model, method="Lanczos", filename="modpara.def"):
@@ -67,7 +83,7 @@ def generate_modpara(nsites, nelec, model, method="Lanczos", filename="modpara.d
         if model == "SpinlessFermion":
             f.write("Ncond          {}\n".format(nelec))
         f.write("Lanczos_max    2000\n")
-        f.write("initial_iv     -1\n")
+        f.write("initial_iv     1\n")
         f.write("exct           {}\n".format(exct))
         f.write("LanczosEps     14\n")
         f.write("LanczosTarget  2\n")
@@ -134,13 +150,15 @@ def generate_greentwo(nsites, filename="greentwo.def"):
             f.write("{}    {}    {}    {}    {}    {}    {}    {}\n".format(*e))
 
 
-def generate_namelist(filename="namelist.def"):
-    """Generate namelist.def for SpinlessFermion (no CoulombIntra needed)."""
+def generate_namelist(V=0.0, filename="namelist.def"):
+    """Generate namelist.def for SpinlessFermion."""
     with open(filename, "w") as f:
         f.write("         ModPara  modpara.def\n")
         f.write("         CalcMod  calcmod.def\n")
         f.write("         LocSpin  locspn.def\n")
         f.write("           Trans  trans.def\n")
+        if V != 0.0:
+            f.write("    CoulombInter  coulombinter.def\n")
         f.write("        OneBodyG  greenone.def\n")
         f.write("        TwoBodyG  greentwo.def\n")
 
@@ -163,6 +181,8 @@ def main():
                         help='Calculation method')
     parser.add_argument('--hopping', type=float, default=1.0,
                         help='Hopping parameter')
+    parser.add_argument('-V', '--V', type=float, default=0.0,
+                        help='Nearest-neighbor interaction')
     parser.add_argument('-mpi', '--mpi', default='',
                         help='MPI command')
 
@@ -172,15 +192,17 @@ def main():
     nelec = args.nelec if args.nelec else nsites // 2
     model = args.model
     method = args.method
+    V = args.V
 
     # Generate input files
     generate_locspn(nsites)
     generate_trans(nsites, args.hopping)
+    generate_coulombinter(nsites, V)
     generate_modpara(nsites, nelec, model, method)
     generate_calcmod(model, method)
     generate_greenone(nsites)
     generate_greentwo(nsites)
-    generate_namelist()
+    generate_namelist(V)
 
     # Run HPhi
     cmd = "{} {} -e namelist.def".format(args.mpi, args.path).strip()
