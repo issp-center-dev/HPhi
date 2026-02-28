@@ -133,12 +133,33 @@ def generate_greenone(nsites, filename="greenone.def"):
             f.write("{}    {}    {}    {}\n".format(*e))
 
 
-def generate_greentwo(nsites, filename="greentwo.def"):
-    """Generate greentwo.def (two-body Green's function)."""
+def generate_greentwo(nsites, include_offdiag=False, filename="greentwo.def"):
+    """Generate greentwo.def (two-body Green's function).
+
+    Args:
+        nsites: Number of sites
+        include_offdiag: If True, include off-diagonal entries <c^+_i c_j c^+_k c_l>
+        filename: Output filename
+    """
     entries = []
+    # Diagonal entries: <n_i n_j>
     for i in range(nsites):
         for j in range(i, nsites):
             entries.append((i, 0, i, 0, j, 0, j, 0))
+
+    if include_offdiag:
+        # Off-diagonal entries: <c^+_i c_j c^+_k c_l> with i!=j or k!=l
+        # Add some representative off-diagonal terms for testing
+        for i in range(nsites):
+            j = (i + 1) % nsites
+            k = (i + 2) % nsites
+            l = (i + 3) % nsites
+            # <c^+_i c_j n_k> = <c^+_i c_j c^+_k c_k>
+            entries.append((i, 0, j, 0, k, 0, k, 0))
+            # <n_i c^+_k c_l> = <c^+_i c_i c^+_k c_l>
+            entries.append((i, 0, i, 0, k, 0, l, 0))
+            # Full off-diagonal: <c^+_i c_j c^+_k c_l>
+            entries.append((i, 0, j, 0, k, 0, l, 0))
 
     with open(filename, "w") as f:
         f.write("=============================================\n")
@@ -185,6 +206,8 @@ def main():
                         help='Nearest-neighbor interaction')
     parser.add_argument('-mpi', '--mpi', default='',
                         help='MPI command')
+    parser.add_argument('--offdiag', action='store_true',
+                        help='Include off-diagonal two-body Green function entries')
 
     args = parser.parse_args()
 
@@ -201,7 +224,7 @@ def main():
     generate_modpara(nsites, nelec, model, method)
     generate_calcmod(model, method)
     generate_greenone(nsites)
-    generate_greentwo(nsites)
+    generate_greentwo(nsites, include_offdiag=args.offdiag)
     generate_namelist(V)
 
     # Run HPhi

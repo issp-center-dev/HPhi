@@ -189,6 +189,13 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
           }
         } else {
           // Off-diagonal case: not yet implemented for spinless
+          // Warn user on first occurrence
+          static int warned_offdiag = 0;
+          if (!warned_offdiag) {
+            fprintf(stdoutMPI, "Warning: Off-diagonal one-body Green's function <c^+_i c_j> (i!=j) "
+                    "is not implemented for SpinlessFermion. Output will be 0.\n");
+            warned_offdiag = 1;
+          }
           dam_pr_sp = 0;
         }
         dam_pr_sp = SumMPI_dc(dam_pr_sp);

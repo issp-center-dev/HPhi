@@ -312,6 +312,145 @@ int expec_cisajscktaltdc
               }
             }
           }
+        } else {
+          // Off-diagonal cases for SpinlessFermion
+          // <c^+_i c_j c^+_k c_l> = sum_n <psi|c^+_i c_j c^+_k c_l|n><n|psi>
+          // Note: Currently only implemented for local sites (all sites <= Nsite)
+          int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+          int site2_is_interPE = (org_isite2_sp > X->Def.Nsite) ? 1 : 0;
+          int site3_is_interPE = (org_isite3_sp > X->Def.Nsite) ? 1 : 0;
+          int site4_is_interPE = (org_isite4_sp > X->Def.Nsite) ? 1 : 0;
+
+          if (site1_is_interPE || site2_is_interPE || site3_is_interPE || site4_is_interPE) {
+            // MPI case: not yet implemented for off-diagonal
+            static int warned_mpi_offdiag = 0;
+            if (!warned_mpi_offdiag) {
+              fprintf(stdoutMPI, "Warning: Off-diagonal two-body Green's function <c^+_i c_j c^+_k c_l> "
+                      "with MPI inter-process sites is not yet implemented for SpinlessFermion. Output will be 0.\n");
+              warned_mpi_offdiag = 1;
+            }
+            dam_pr_sp = 0;
+          } else {
+            // Local case: all sites are intra-process
+            long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];  // c^+_i
+            long unsigned int is2_sp = X->Def.Tpow[org_isite2_sp - 1];  // c_j
+            long unsigned int is3_sp = X->Def.Tpow[org_isite3_sp - 1];  // c^+_k
+            long unsigned int is4_sp = X->Def.Tpow[org_isite4_sp - 1];  // c_l
+
+            if (X->Def.iCalcModel == SpinlessFermionGC) {
+              // Grand canonical: use (j_sp - 1) as bit representation
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, is2_sp, is3_sp, is4_sp, org_isite1_sp, org_isite2_sp, org_isite3_sp, org_isite4_sp, X) private(j_sp)
+              for (j_sp = 1; j_sp <= i_max_sp; j_sp++) {
+                long unsigned int org_bit = j_sp - 1;
+                long unsigned int tmp_bit, off_bit;
+                int sgn = 1, tmp_sgn;
+
+                // Apply c_l (annihilate at site l=isite4): must be occupied
+                if ((org_bit & is4_sp) == 0) continue;  // site l empty -> skip
+                tmp_bit = org_bit ^ is4_sp;  // flip bit l
+                // Fermion sign: count occupied sites between 0 and site l
+                {
+                  long unsigned int mask = is4_sp - 1;  // bits below site l
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_k (create at site k=isite3): must be empty
+                if ((tmp_bit & is3_sp) != 0) continue;  // site k occupied -> skip
+                tmp_bit = tmp_bit ^ is3_sp;  // flip bit k
+                // Fermion sign: count occupied sites between 0 and site k
+                {
+                  long unsigned int mask = is3_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c_j (annihilate at site j=isite2): must be occupied
+                if ((tmp_bit & is2_sp) == 0) continue;  // site j empty -> skip
+                tmp_bit = tmp_bit ^ is2_sp;  // flip bit j
+                // Fermion sign
+                {
+                  long unsigned int mask = is2_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_i (create at site i=isite1): must be empty
+                if ((tmp_bit & is1_sp) != 0) continue;  // site i occupied -> skip
+                off_bit = tmp_bit ^ is1_sp;  // flip bit i
+                // Fermion sign
+                {
+                  long unsigned int mask = is1_sp - 1;
+                  long unsigned int bit = off_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Contribution: sgn * <off_bit|psi>* <org_bit|psi>
+                dam_pr_sp += sgn * conj(vec[off_bit + 1]) * vec[j_sp];
+              }
+            } else {
+              // Canonical: use list_1[j_sp] as bit representation
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1, list_2_1, list_2_2) \
+  firstprivate(i_max_sp, is1_sp, is2_sp, is3_sp, is4_sp, org_isite1_sp, org_isite2_sp, org_isite3_sp, org_isite4_sp, X) private(j_sp)
+              for (j_sp = 1; j_sp <= i_max_sp; j_sp++) {
+                long unsigned int org_bit = list_1[j_sp];
+                long unsigned int tmp_bit, off_bit, off_idx;
+                int sgn = 1, tmp_sgn;
+
+                // Apply c_l (annihilate at site l=isite4)
+                if ((org_bit & is4_sp) == 0) continue;
+                tmp_bit = org_bit ^ is4_sp;
+                {
+                  long unsigned int mask = is4_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_k (create at site k=isite3)
+                if ((tmp_bit & is3_sp) != 0) continue;
+                tmp_bit = tmp_bit ^ is3_sp;
+                {
+                  long unsigned int mask = is3_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c_j (annihilate at site j=isite2)
+                if ((tmp_bit & is2_sp) == 0) continue;
+                tmp_bit = tmp_bit ^ is2_sp;
+                {
+                  long unsigned int mask = is2_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_i (create at site i=isite1)
+                if ((tmp_bit & is1_sp) != 0) continue;
+                off_bit = tmp_bit ^ is1_sp;
+                {
+                  long unsigned int mask = is1_sp - 1;
+                  long unsigned int bit = off_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Find index of off_bit in the canonical basis
+                if (GetOffComp(list_2_1, list_2_2, off_bit, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off_idx) != TRUE) {
+                  continue;  // off_bit not in basis
+                }
+
+                dam_pr_sp += sgn * conj(vec[off_idx]) * vec[j_sp];
+              }
+            }
+          }
         }
         dam_pr_sp = SumMPI_dc(dam_pr_sp);
         fprintf(fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
