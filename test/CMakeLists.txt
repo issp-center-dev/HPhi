@@ -271,3 +271,34 @@ add_test(
   NAME lobcg_spinone_chain_threebody
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinone_chain_threebody.sh ${CMAKE_SOURCE_DIR}
 )
+#
+# MPI consistency tests (verify MPI and non-MPI results match)
+# These tests require MPI and compare results between MPI and non-MPI runs
+# Run with: MPIRUN="mpirun -np 4" ctest -R mpi_consistency
+#
+if(MPI_FOUND)
+add_test(
+  NAME mpi_consistency_hubbard
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_hubbard.sh
+)
+add_test(
+  NAME mpi_consistency_hubbardgc
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_hubbardgc.sh
+)
+add_test(
+  NAME mpi_consistency_spin
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spin.sh
+)
+add_test(
+  NAME mpi_consistency_spingc
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_spingc.sh
+)
+add_test(
+  NAME mpi_consistency_kondo
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_kondo.sh
+)
+add_test(
+  NAME mpi_consistency_te_hubbard
+  COMMAND ${CMAKE_SOURCE_DIR}/test/mpi_consistency_te_hubbard.sh
+)
+endif(MPI_FOUND)
