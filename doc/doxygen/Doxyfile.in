@@ -64,7 +64,7 @@ EXCLUDE                = @CMAKE_SOURCE_DIR@/src/StdFace \
                          @CMAKE_SOURCE_DIR@/src/komega
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */StdFace/* */komega/*
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/src
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = @CMAKE_SOURCE_DIR@/doc/figs
