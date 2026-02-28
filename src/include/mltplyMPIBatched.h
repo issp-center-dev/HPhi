@@ -40,7 +40,9 @@ typedef struct {
     int mask;                        /**< Bit mask for this origin (Tpow[org_isite2]) */
     int num_transfers;               /**< Number of transfers in this group */
     int *transfer_indices;           /**< Indices into EDGeneralTransfer array */
-    double complex *coefficients;    /**< Pre-computed coefficients (Fsgn * trans) */
+    double complex *coefficients;    /**< Pre-computed coefficients (Fsgn * trans) - may be stale for time evolution */
+    int *Fsgn;                       /**< Fermion sign for each transfer */
+    int *is_conj;                    /**< Whether to conjugate the coefficient */
     unsigned long int *local_mask;   /**< Local site masks for each transfer */
     unsigned long int *state1check;  /**< Expected state of local site for each transfer */
     unsigned long int *bit1diff;     /**< Bit difference mask for fermion sign */
@@ -204,7 +206,9 @@ typedef struct {
     int origin;                      /**< MPI rank of communication partner */
     int num_transfers;               /**< Number of transfers in this group */
     int *transfer_indices;           /**< Indices into EDGeneralTransfer array */
-    double complex *coefficients;    /**< Pre-computed coefficients (Fsgn * trans) */
+    double complex *coefficients;    /**< Pre-computed coefficients (Fsgn * trans) - may be stale for time evolution */
+    int *Fsgn;                       /**< Fermion sign for each transfer */
+    int *is_conj;                    /**< Whether to conjugate the coefficient */
 } MPIDoubleTransferGroup;
 
 /**

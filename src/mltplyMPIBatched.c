@@ -246,6 +246,8 @@ void FinalizeMPIBatchedTransfers(MPIBatchedTransfers *batched) {
     for (g = 0; g < batched->num_groups; g++) {
         free(batched->groups[g].transfer_indices);
         free(batched->groups[g].coefficients);
+        free(batched->groups[g].Fsgn);
+        free(batched->groups[g].is_conj);
         free(batched->groups[g].local_mask);
         free(batched->groups[g].state1check);
         free(batched->groups[g].bit1diff);
@@ -569,18 +571,24 @@ int InitializeMPIBatchedTransfers_HubbardGC(
         batched->groups[g].mask = 0;
         batched->groups[g].transfer_indices = (int *)malloc(count * sizeof(int));
         batched->groups[g].coefficients = (double complex *)malloc(count * sizeof(double complex));
+        batched->groups[g].Fsgn = (int *)malloc(count * sizeof(int));
+        batched->groups[g].is_conj = (int *)malloc(count * sizeof(int));
         batched->groups[g].local_mask = (unsigned long int *)malloc(count * sizeof(unsigned long int));
         batched->groups[g].state1check = (unsigned long int *)malloc(count * sizeof(unsigned long int));
         batched->groups[g].bit1diff = (unsigned long int *)malloc(count * sizeof(unsigned long int));
 
         if (batched->groups[g].transfer_indices == NULL ||
             batched->groups[g].coefficients == NULL ||
+            batched->groups[g].Fsgn == NULL ||
+            batched->groups[g].is_conj == NULL ||
             batched->groups[g].local_mask == NULL ||
             batched->groups[g].state1check == NULL ||
             batched->groups[g].bit1diff == NULL) {
             for (int j = 0; j <= g; j++) {
                 free(batched->groups[j].transfer_indices);
                 free(batched->groups[j].coefficients);
+                free(batched->groups[j].Fsgn);
+                free(batched->groups[j].is_conj);
                 free(batched->groups[j].local_mask);
                 free(batched->groups[j].state1check);
                 free(batched->groups[j].bit1diff);
@@ -650,9 +658,13 @@ int InitializeMPIBatchedTransfers_HubbardGC(
         int state2 = origin & mask2;
         if (state2 == mask2) {
             batched->groups[g].state1check[t] = 0;
+            batched->groups[g].Fsgn[t] = Fsgn;
+            batched->groups[g].is_conj[t] = 0;
             batched->groups[g].coefficients[t] = -(double)Fsgn * trans_coeff;
         } else {
             batched->groups[g].state1check[t] = batched->groups[g].local_mask[t];
+            batched->groups[g].Fsgn[t] = Fsgn;
+            batched->groups[g].is_conj[t] = 1;
             batched->groups[g].coefficients[t] = -(double)Fsgn * conj(trans_coeff);
         }
     }
@@ -705,12 +717,18 @@ double complex X_child_GC_general_hopp_MPIsingle_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
         for (t = 0; t < group->num_transfers; t++) {
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 
@@ -735,7 +753,12 @@ double complex X_child_GC_general_hopp_MPIsingle_batched(
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 
@@ -807,12 +830,18 @@ double complex X_child_general_hopp_MPIsingle_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
         for (t = 0; t < group->num_transfers; t++) {
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 
@@ -842,7 +871,12 @@ double complex X_child_general_hopp_MPIsingle_batched(
             unsigned long int mask1 = group->local_mask[t];
             unsigned long int state1check = group->state1check[t];
             unsigned long int bit1diff = group->bit1diff[t];
-            double complex trans = group->coefficients[t];
+            int trans_idx = group->transfer_indices[t];
+            int trans_Fsgn = group->Fsgn[t];
+            double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+            double complex trans = group->is_conj[t] ?
+                -(double)trans_Fsgn * conj(trans_coeff) :
+                -(double)trans_Fsgn * trans_coeff;
 
             if (cabs(trans) < 1e-15) continue;
 
@@ -956,12 +990,18 @@ int InitializeMPIBatchedDoubleTransfers_HubbardGC(
         batched->groups[g].num_transfers = count;
         batched->groups[g].transfer_indices = (int *)malloc(count * sizeof(int));
         batched->groups[g].coefficients = (double complex *)malloc(count * sizeof(double complex));
+        batched->groups[g].Fsgn = (int *)malloc(count * sizeof(int));
+        batched->groups[g].is_conj = (int *)malloc(count * sizeof(int));
 
         if (batched->groups[g].transfer_indices == NULL ||
-            batched->groups[g].coefficients == NULL) {
+            batched->groups[g].coefficients == NULL ||
+            batched->groups[g].Fsgn == NULL ||
+            batched->groups[g].is_conj == NULL) {
             for (int j = 0; j <= g; j++) {
                 free(batched->groups[j].transfer_indices);
                 free(batched->groups[j].coefficients);
+                free(batched->groups[j].Fsgn);
+                free(batched->groups[j].is_conj);
             }
             free(batched->groups);
             free(origin_count);
@@ -998,15 +1038,19 @@ int InitializeMPIBatchedDoubleTransfers_HubbardGC(
         else bitdiff = mask1 - mask2 * 2;
         SgnBit((unsigned long int)(origin & bitdiff), &Fsgn);
 
+        int is_conj_flag;
         double complex trans;
         if (state1 == 0 && state2 == mask2) {
             trans = -(double)Fsgn * trans_coeff;
+            is_conj_flag = 0;
         } else if (state1 == mask1 && state2 == 0) {
             trans = -(double)Fsgn * conj(trans_coeff);
+            is_conj_flag = 1;
         } else {
             // Invalid state for this rank - set coefficient to 0
             // Communication still happens but no contribution
             trans = 0.0;
+            is_conj_flag = -1;  // Special flag for invalid state
         }
 
         // Find the group for this origin
@@ -1017,6 +1061,8 @@ int InitializeMPIBatchedDoubleTransfers_HubbardGC(
         t = origin_count[origin]++;
         batched->groups[g].transfer_indices[t] = i;
         batched->groups[g].coefficients[t] = trans;
+        batched->groups[g].Fsgn[t] = Fsgn;
+        batched->groups[g].is_conj[t] = is_conj_flag;
     }
 
     free(origin_count);
@@ -1050,6 +1096,8 @@ void FinalizeMPIBatchedDoubleTransfers(MPIBatchedDoubleTransfers *batched) {
     for (g = 0; g < batched->num_groups; g++) {
         free(batched->groups[g].transfer_indices);
         free(batched->groups[g].coefficients);
+        free(batched->groups[g].Fsgn);
+        free(batched->groups[g].is_conj);
     }
     free(batched->groups);
 
@@ -1086,9 +1134,18 @@ double complex X_child_GC_general_hopp_MPIdouble_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     // For MPIdouble, processing is simple: just scale and add
     for (t = 0; t < group->num_transfers; t++) {
-        double complex trans = group->coefficients[t];
+        int is_conj_flag = group->is_conj[t];
+        if (is_conj_flag == -1) continue;  // Invalid state for this rank
+
+        int trans_idx = group->transfer_indices[t];
+        int trans_Fsgn = group->Fsgn[t];
+        double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+        double complex trans = is_conj_flag ?
+            -(double)trans_Fsgn * conj(trans_coeff) :
+            -(double)trans_Fsgn * trans_coeff;
 
         if (cabs(trans) < 1e-15) continue;
 
@@ -1631,12 +1688,18 @@ int InitializeMPIBatchedDoubleTransfers_Hubbard(
         batched->groups[g].num_transfers = count;
         batched->groups[g].transfer_indices = (int *)malloc(count * sizeof(int));
         batched->groups[g].coefficients = (double complex *)malloc(count * sizeof(double complex));
+        batched->groups[g].Fsgn = (int *)malloc(count * sizeof(int));
+        batched->groups[g].is_conj = (int *)malloc(count * sizeof(int));
 
         if (batched->groups[g].transfer_indices == NULL ||
-            batched->groups[g].coefficients == NULL) {
+            batched->groups[g].coefficients == NULL ||
+            batched->groups[g].Fsgn == NULL ||
+            batched->groups[g].is_conj == NULL) {
             for (int j = 0; j <= g; j++) {
                 free(batched->groups[j].transfer_indices);
                 free(batched->groups[j].coefficients);
+                free(batched->groups[j].Fsgn);
+                free(batched->groups[j].is_conj);
             }
             free(batched->groups);
             free(origin_count);
@@ -1673,15 +1736,19 @@ int InitializeMPIBatchedDoubleTransfers_Hubbard(
         else bitdiff = mask1 - mask2 * 2;
         SgnBit((unsigned long int)(origin & bitdiff), &Fsgn);
 
+        int is_conj_flag;
         double complex trans;
         if (state1 == 0 && state2 == mask2) {
             trans = -(double)Fsgn * trans_coeff;
+            is_conj_flag = 0;
         } else if (state1 == mask1 && state2 == 0) {
             trans = -(double)Fsgn * conj(trans_coeff);
+            is_conj_flag = 1;
         } else {
             // Invalid state for this rank - set coefficient to 0
             // Communication still happens but no contribution
             trans = 0.0;
+            is_conj_flag = -1;  // Special flag for invalid state
         }
 
         // Find the group for this origin
@@ -1692,6 +1759,8 @@ int InitializeMPIBatchedDoubleTransfers_Hubbard(
         t = origin_count[origin]++;
         batched->groups[g].transfer_indices[t] = i;
         batched->groups[g].coefficients[t] = trans;
+        batched->groups[g].Fsgn[t] = Fsgn;
+        batched->groups[g].is_conj[t] = is_conj_flag;
     }
 
     free(origin_count);
@@ -1751,9 +1820,18 @@ double complex X_child_general_hopp_MPIdouble_batched(
     if (ierr != 0) exitMPI(-1);
 
     // Process all transfers using the received data
+    // Read coefficients from current EDParaGeneralTransfer to support time evolution
     // For canonical Hubbard, use list_1buf to find target index via GetOffComp
     for (t = 0; t < group->num_transfers; t++) {
-        double complex trans = group->coefficients[t];
+        int is_conj_flag = group->is_conj[t];
+        if (is_conj_flag == -1) continue;  // Invalid state for this rank
+
+        int trans_idx = group->transfer_indices[t];
+        int trans_Fsgn = group->Fsgn[t];
+        double complex trans_coeff = X->Def.EDParaGeneralTransfer[trans_idx];
+        double complex trans = is_conj_flag ?
+            -(double)trans_Fsgn * conj(trans_coeff) :
+            -(double)trans_Fsgn * trans_coeff;
 
         if (cabs(trans) < 1e-15) continue;
 
