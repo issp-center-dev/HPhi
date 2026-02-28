@@ -14,6 +14,26 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+ * @file expec_energy_flct.c
+ *
+ * @brief Compute energy expectation value and energy fluctuation (variance)
+ *
+ * Calculates:
+ * - Energy: E = <psi|H|psi>
+ * - Energy squared: E2 = <psi|H^2|psi>
+ * - Variance: Var(E) = E2 - E^2 (measures eigenstate quality)
+ *
+ * A small variance indicates the state is close to an eigenstate.
+ * For exact eigenstates, Var(E) = 0.
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_ENERGY
+ * - Full H|psi> computation followed by inner product
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "bitcalc.h"
 #include "mltplyCommon.h"
 #include "mltply.h"
@@ -21,15 +41,29 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
-/** 
- * @brief Parent function to calculate expected values of energy and physical quantities.
- * 
- * @param X [in,out] X Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
- * 
+/**
+ * @brief Calculate energy expectation value and variance
+ *
+ * Computes E = <psi|H|psi> and E2 = <psi|H^2|psi> to obtain energy and
+ * its fluctuation. The variance Var(E) = E2 - E^2 serves as an accuracy
+ * measure: smaller variance means better approximation to eigenstate.
+ *
+ * Calculation method:
+ * 1. Compute v0 = H*v1 using mltply()
+ * 2. E = <v1|v0> = <psi|H|psi>
+ * 3. E2 = <v0|v0> = <H*psi|H*psi> = <psi|H^2|psi>
+ * 4. Var = E2 - E^2
+ *
+ * Results stored in:
+ * - X->Phys.energy: Energy expectation value
+ * - X->Phys.var: Energy variance
+ *
+ * @param X Struct containing physical quantities [in,out]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * \retval 0 normally finished.
- * \retval -1 abnormally finished.
  */
 int expec_energy_flct(struct BindStruct *X){
 

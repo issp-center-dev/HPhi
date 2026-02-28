@@ -13,6 +13,33 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**
+ * @file expec_totalspin.c
+ *
+ * @brief Compute total spin expectation values <S^2> and <Sz>
+ *
+ * Calculates:
+ * - <S^2> = <psi|S_total^2|psi> where S_total = sum_i S_i
+ * - <Sz> = <psi|Sz_total|psi>
+ *
+ * The total spin S^2 can be expressed as:
+ *   S^2 = Sz^2 + (S+S- + S-S+)/2
+ *       = sum_i Sz_i^2 + sum_{i!=j} Sz_i Sz_j
+ *         + (1/2) sum_{i!=j} (S+_i S-_j + S-_i S+_j)
+ *
+ * For spin-1/2: S^2 eigenvalue is S(S+1) where S = 0, 1/2, 1, 3/2, ...
+ * Good quantum number in Hubbard model (but not SpinGC due to pair creation)
+ *
+ * Model dispatch:
+ * - Spin/SpinGC: Direct spin operator calculation
+ * - Hubbard/Kondo: Map to spin operators via n_up - n_down
+ *
+ * @version 0.2 Added general spin support
+ * @version 0.1
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include <bitcalc.h>
 #include "mltplyCommon.h"
 #include "mltplySpinCore.h"
@@ -22,29 +49,28 @@
 #include "expec_totalspin.h"
 
 /**
- * @file   expec_totalspin.c
+ * @brief Calculate total spin <S^2> and <Sz>
  *
- * @brief  File for calculating total spin
+ * Dispatches to model-specific implementations:
+ * - Spin: totalspin_Spin (uses fixed Sz from input)
+ * - SpinGC: totalspin_SpinGC (Sz not conserved)
+ * - Hubbard/Kondo: totalspin_Hubbard (maps to spin via fermion operators)
+ * - HubbardGC: totalspin_HubbardGC
  *
- * @version 0.2
- * @details modify to treat the case of general spin
+ * Results stored in:
+ * - X->Phys.s2: Total spin <S^2>
+ * - X->Phys.Sz: Total Sz <Sz>
  *
- * @version 0.1
+ * Mode:
+ * - Sets X->Large.mode = M_TOTALS
+ *
+ * @param X Data struct for calculation parameters [in,out]
+ * @param vec Eigenvector to compute expectation for [in]
+ *
+ * @return 0 (always succeeds)
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- */
-
-
-/**
- * @brief Parent function of calculation of total spin
- *
- * @param[in,out] X data list of calculation parameters
- * @param[in] vec eigenvector
- *
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0 calculation is normally finished
  */
 int expec_totalspin
 (

@@ -15,9 +15,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**@file
-@brief MPI wrapper for init, finalize, bcast, etc.
-*/
+/**
+ * @file wrapperMPI.c
+ *
+ * @brief MPI wrapper functions for portable parallel code
+ *
+ * Provides abstraction layer for MPI operations, allowing the same code
+ * to compile with or without MPI support. When MPI is disabled, these
+ * functions provide serial equivalents.
+ *
+ * Key global variables set by InitializeMPI():
+ * - myrank: MPI process ID (0 for serial)
+ * - nproc: Number of MPI processes (1 for serial)
+ * - nthreads: Number of OpenMP threads
+ * - stdoutMPI: Stdout for rank 0, /dev/null for others (avoids duplicate output)
+ *
+ * Communication patterns:
+ * - MPI_Sendrecv: Primary pattern for inter-process data exchange
+ * - Broadcasts: Parameters read by rank 0, broadcast to all
+ * - Reductions: Sum/Max across processes for global quantities
+ *
+ * File I/O wrappers (fopenMPI, fgetsMPI):
+ * - Ensure only rank 0 reads/writes parameter files
+ * - Broadcast file contents to other ranks
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 #ifdef MPI
 #include <mpi.h>
 #endif
