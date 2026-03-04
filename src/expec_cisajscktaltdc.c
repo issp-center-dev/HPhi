@@ -339,7 +339,6 @@ int expec_cisajscktaltdc
         } else {
           // Off-diagonal cases for SpinlessFermion
           // <c^+_i c_j c^+_k c_l> = sum_n <psi|c^+_i c_j c^+_k c_l|n><n|psi>
-          // Note: Currently only implemented for local sites (all sites <= Nsite)
           int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
           int site2_is_interPE = (org_isite2_sp > X->Def.Nsite) ? 1 : 0;
           int site3_is_interPE = (org_isite3_sp > X->Def.Nsite) ? 1 : 0;
@@ -353,10 +352,9 @@ int expec_cisajscktaltdc
                   org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
                   X, vec);
             } else {
-              fprintf(stdoutMPI,
-                      "Error: Off-diagonal two-body Green's function with MPI is not "
-                      "implemented for canonical SpinlessFermion.\n");
-              return -1;
+              dam_pr_sp = X_CisAjtCkuAlv_SpinlessFermion_MPI(
+                  org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
+                  X, vec);
             }
 #else
             dam_pr_sp = 0;

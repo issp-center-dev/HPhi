@@ -19,6 +19,33 @@ macro(add_hphi_test_with_srcdir test_name)
     )
 endmacro()
 
+# Macro for MPI tests requiring runtime MPIRUN precheck.
+# mode: min:<N> or exact:<N>
+macro(add_hphi_mpi_test test_name mode)
+    add_test(
+        NAME ${test_name}
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                ${mode} ${CMAKE_SOURCE_DIR}/test/${test_name}.sh
+    )
+    set_tests_properties(
+        ${test_name}
+        PROPERTIES SKIP_RETURN_CODE 77
+    )
+endmacro()
+
+# Macro for MPI tests with CMAKE_SOURCE_DIR argument and precheck.
+macro(add_hphi_mpi_test_with_srcdir test_name mode)
+    add_test(
+        NAME ${test_name}
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                ${mode} ${CMAKE_SOURCE_DIR}/test/${test_name}.sh ${CMAKE_SOURCE_DIR}
+    )
+    set_tests_properties(
+        ${test_name}
+        PROPERTIES SKIP_RETURN_CODE 77
+    )
+endmacro()
+
 #
 # Lanczos
 #
@@ -224,20 +251,45 @@ set_tests_properties(
 # Run with: MPIRUN="mpirun -np 4" ctest -R mpi_consistency
 #
 if(MPI_FOUND)
-    # MPI batching regression tests (MPIdouble path; script skips unless -np 16)
-    add_hphi_test(lanczos_hubbard_mpidouble)
-    add_hphi_test(lanczos_hubbardgc_mpidouble)
+    # Reason markers shown in "The following tests did not run:".
+    # They are intentionally skipped when MPI preconditions are not met.
+    add_test(
+        NAME reason_mpi_consistency_requires_MPIRUN_and_np_ge_2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${CMAKE_COMMAND} -E true
+    )
+    set_tests_properties(
+        reason_mpi_consistency_requires_MPIRUN_and_np_ge_2
+        PROPERTIES
+        SKIP_RETURN_CODE 77
+        LABELS "mpi;consistency"
+    )
+    add_test(
+        NAME reason_mpi_batching_requires_MPIRUN_and_np_eq_16
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:16 ${CMAKE_COMMAND} -E true
+    )
+    set_tests_properties(
+        reason_mpi_batching_requires_MPIRUN_and_np_eq_16
+        PROPERTIES
+        SKIP_RETURN_CODE 77
+        LABELS "mpi;batching"
+    )
 
-    add_hphi_test(mpi_consistency_hubbard)
-    add_hphi_test(mpi_consistency_hubbardgc)
-    add_hphi_test(mpi_consistency_spin)
-    add_hphi_test(mpi_consistency_spingc)
-    add_hphi_test(mpi_consistency_kondo)
-    add_hphi_test(mpi_consistency_te_hubbard)
-    add_hphi_test(mpi_consistency_te_spin)
-    add_hphi_test_with_srcdir(mpi_consistency_spinless)
-    add_hphi_test_with_srcdir(mpi_consistency_spinless_GC)
-    add_hphi_test(mpi_consistency_te_kondo)
+    # MPI batching regression tests (MPIdouble path; script skips unless -np 16)
+    add_hphi_mpi_test(lanczos_hubbard_mpidouble exact:16)
+    add_hphi_mpi_test(lanczos_hubbardgc_mpidouble exact:16)
+
+    add_hphi_mpi_test(mpi_consistency_hubbard min:2)
+    add_hphi_mpi_test(mpi_consistency_hubbardgc min:2)
+    add_hphi_mpi_test(mpi_consistency_spin min:2)
+    add_hphi_mpi_test(mpi_consistency_spingc min:2)
+    add_hphi_mpi_test(mpi_consistency_kondo min:2)
+    add_hphi_mpi_test(mpi_consistency_te_hubbard min:2)
+    add_hphi_mpi_test(mpi_consistency_te_spin min:2)
+    add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
+    add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless_GC min:2)
+    add_hphi_mpi_test(mpi_consistency_te_kondo min:2)
 
     # MPI consistency test labels
     set_tests_properties(
