@@ -270,7 +270,7 @@ def main():
         print("Usage: {} <HPhi_path>".format(sys.argv[0]))
         sys.exit(1)
 
-    hphi_path = sys.argv[1]
+    hphi_path = os.path.abspath(sys.argv[1])
     nsites = 4
     nelec = 2
     V = 0.5
@@ -281,11 +281,11 @@ def main():
 
         # Run SpinlessFermion
         generate_spinless_inputs(spinless_dir, nsites, nelec, V)
-        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True)
+        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
 
         # Run Hubbard
         generate_hubbard_inputs(hubbard_dir, nsites, nelec, V)
-        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True)
+        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
 
         # Compare results
         spinless_data = read_greentwo(os.path.join(spinless_dir, "output", "zvo_cisajscktalt.dat"))

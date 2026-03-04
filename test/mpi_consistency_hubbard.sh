@@ -11,6 +11,19 @@ if [ -z "${MPIRUN}" ]; then
     exit 1
 fi
 
+# Require multiple MPI ranks (-np/ -n > 1)
+MPI_NP=$(printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}')
+if ! printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$"; then
+    echo "Error: MPIRUN must include -np or -n with an integer > 1."
+    echo "Current MPIRUN: ${MPIRUN}"
+    exit 1
+fi
+if [ "${MPI_NP}" -le 1 ]; then
+    echo "Error: MPI consistency tests require more than one rank."
+    echo "Current MPIRUN: ${MPIRUN}"
+    exit 1
+fi
+
 
 mkdir -p mpi_consistency_hubbard/
 cd mpi_consistency_hubbard

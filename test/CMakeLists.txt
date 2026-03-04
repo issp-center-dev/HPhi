@@ -224,6 +224,10 @@ set_tests_properties(
 # Run with: MPIRUN="mpirun -np 4" ctest -R mpi_consistency
 #
 if(MPI_FOUND)
+    # MPI batching regression tests (MPIdouble path; script skips unless -np 16)
+    add_hphi_test(lanczos_hubbard_mpidouble)
+    add_hphi_test(lanczos_hubbardgc_mpidouble)
+
     add_hphi_test(mpi_consistency_hubbard)
     add_hphi_test(mpi_consistency_hubbardgc)
     add_hphi_test(mpi_consistency_spin)
@@ -248,4 +252,7 @@ if(MPI_FOUND)
     set_tests_properties(
         mpi_consistency_spinless mpi_consistency_spinless_GC
         PROPERTIES LABELS "mpi;consistency;spinless")
+    set_tests_properties(
+        lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
+        PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
 endif(MPI_FOUND)

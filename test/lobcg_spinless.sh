@@ -1,9 +1,8 @@
 #!/bin/sh -e
 
-# Check MPIRUN - if not set, skip this test
+# If MPIRUN is unset, run in serial mode.
 if [ -z "${MPIRUN}" ]; then
-    echo "MPIRUN is not set. Skipping MPI test."
-    exit 0
+    MPIRUN=""
 fi
 
 
