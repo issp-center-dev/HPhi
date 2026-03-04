@@ -236,8 +236,12 @@ int CalcByTEM(
 
 
     if (step_i % step_spin == 0) {
-      expec_cisajs(&(X->Bind), v1);
-      expec_cisajscktaltdc(&(X->Bind), v1);
+      if (expec_cisajs(&(X->Bind), v1) != 0) {
+        return -1;
+      }
+      if (expec_cisajscktaltdc(&(X->Bind), v1) != 0) {
+        return -1;
+      }
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
@@ -314,4 +318,3 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx) {
   }
   X->Def.NInterAll_OffDiagonal += X->Def.NTEInterAllOffDiagonal[timeidx];
 }
-

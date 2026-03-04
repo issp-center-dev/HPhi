@@ -16,8 +16,8 @@
 
 //Define Mode for mltply
 // complex version
-// Note: MPI support for SpinlessFermion is not yet implemented in this version.
-// The MPI functions are placeholder stubs.
+// MPI support for SpinlessFermion is implemented in this file.
+// This module provides MPIsingle/MPIdouble hopping and related helpers.
 
 #ifdef MPI
 #include "mpi.h"

@@ -353,14 +353,10 @@ int expec_cisajscktaltdc
                   org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
                   X, vec);
             } else {
-              // Canonical case with MPI: not yet implemented
-              static int warned_mpi_canonical = 0;
-              if (!warned_mpi_canonical) {
-                fprintf(stdoutMPI, "Warning: Off-diagonal two-body Green's function with MPI "
-                        "is not yet implemented for canonical SpinlessFermion. Output will be 0.\n");
-                warned_mpi_canonical = 1;
-              }
-              dam_pr_sp = 0;
+              fprintf(stdoutMPI,
+                      "Error: Off-diagonal two-body Green's function with MPI is not "
+                      "implemented for canonical SpinlessFermion.\n");
+              return -1;
             }
 #else
             dam_pr_sp = 0;
