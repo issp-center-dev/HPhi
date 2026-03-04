@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # Test MPI consistency for SpinlessFermionGC model
-# Compares eigenvalues from MPI run vs non-MPI run
+# Compares eigenvalues and one-body Green's function from MPI run vs non-MPI run
 
 TOLERANCE="0.000001"
 
@@ -29,12 +29,13 @@ mkdir -p mpi_consistency_spinless_GC/
 cd mpi_consistency_spinless_GC
 
 # Generate input files using Python script
-python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -m "SpinlessFermionGC" -s 8
+python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -m "SpinlessFermionGC" -s 8 -V 0.5 --onebody-offdiag
 
 # Run without MPI
 echo "Running without MPI..."
 ../../src/HPhi -e namelist.def
 cp output/zvo_energy.dat energy_nompi.dat
+cp output/zvo_cisajs.dat onebody_nompi.dat
 
 # Clean output for MPI run
 rm -rf output
@@ -43,28 +44,48 @@ rm -rf output
 echo "Running with MPI..."
 ${MPIRUN} ../../src/HPhi -e namelist.def
 cp output/zvo_energy.dat energy_mpi.dat
+cp output/zvo_cisajs.dat onebody_mpi.dat
 
 # Compare eigenvalues
-paste energy_nompi.dat energy_mpi.dat > compare.dat
-diff=$(awk -v tol=${TOLERANCE} '
+paste energy_nompi.dat energy_mpi.dat > compare_energy.dat
+energy_diff=$(awk -v tol=${TOLERANCE} '
 BEGIN { maxdiff = 0.0 }
 {
     d = sqrt(($2 - $4) * ($2 - $4))
     if (d > maxdiff) maxdiff = d
 }
 END { printf "%.10f", maxdiff }
-' compare.dat)
+' compare_energy.dat)
 
-echo "Max eigenvalue difference: ${diff}"
+echo "Max eigenvalue difference: ${energy_diff}"
 
-result=$(awk -v diff=${diff} -v tol=${TOLERANCE} 'BEGIN { print (diff < tol) ? "PASS" : "FAIL" }')
+# Compare one-body Green's function
+paste onebody_nompi.dat onebody_mpi.dat > compare_onebody.dat
+onebody_diff=$(awk '
+BEGIN { maxdiff = 0.0 }
+{
+    dre = ($5 - $11)
+    dim = ($6 - $12)
+    d = sqrt(dre * dre + dim * dim)
+    if (d > maxdiff) maxdiff = d
+}
+END { printf "%.10f", maxdiff }
+' compare_onebody.dat)
+
+echo "Max one-body Green function difference: ${onebody_diff}"
+
+result=$(awk -v de=${energy_diff} -v dg=${onebody_diff} -v tol=${TOLERANCE} \
+    'BEGIN { print (de < tol && dg < tol) ? "PASS" : "FAIL" }')
 
 if [ "${result}" = "PASS" ]; then
     echo "MPI consistency test PASSED for SpinlessFermionGC model"
     exit 0
 else
     echo "MPI consistency test FAILED for SpinlessFermionGC model"
-    echo "Expected difference < ${TOLERANCE}, got ${diff}"
-    cat compare.dat
+    echo "Expected both differences < ${TOLERANCE}"
+    echo "  Eigenvalue difference: ${energy_diff}"
+    echo "  One-body Green function difference: ${onebody_diff}"
+    cat compare_energy.dat
+    cat compare_onebody.dat
     exit 1
 fi

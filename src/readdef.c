@@ -1528,6 +1528,12 @@ int ReadDefFileIdxPara(
               X->NCisAjt--;
               continue;
             }
+          } else if (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC) {
+            if (isigma1 != 0 || isigma2 != 0) {
+              fprintf(stdoutMPI, "Error: OneBodyG spin index must be 0 for SpinlessFermion/SpinlessFermionGC.\n");
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
           }
 
           X->CisAjt[ idx ][0] = isite1;

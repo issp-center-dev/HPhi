@@ -88,6 +88,35 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 * Hubbardモデル（MPIsingle、MPIdouble、InterAll）
 * Spinモデル（Exchange相互作用）
 
+SpinlessFermionのoff-diagonal two-body Green関数
+-----------------------------------------------
+
+SpinlessFermionにおける
+:math:`\langle c^\dagger_i c_j c^\dagger_k c_l \rangle`
+のMPI経路は、グランドカノニカル（GC）に加えてカノニカルでも
+プロセス間サイトを含む場合に対応しています。
+
+この経路では、グローバルビット表現で演算子列を適用し、
+ランク間通信を伴う場合でもフェルミオン符号を一貫して評価します。
+
+MPI前提テストの挙動（ctest）
+----------------------------
+
+以下のテストはMPI実行環境を前提とします：
+
+* ``mpi_consistency_*`` （目安: ``-np >= 2``）
+* ``lanczos_*_mpidouble`` （目安: ``-np = 16``）
+
+``MPIRUN`` が未設定、または必要なMPIランク条件を満たさない場合、
+これらは ``ctest`` 上で ``Skipped`` として報告されます。
+
+例：
+
+.. code-block:: bash
+
+   MPIRUN='mpirun -np 4 --oversubscribe' ctest -L consistency
+   MPIRUN='mpirun -np 16 --oversubscribe' ctest -L batching
+
 フェルミオン符号
 ----------------
 

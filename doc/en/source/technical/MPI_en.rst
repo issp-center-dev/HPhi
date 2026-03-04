@@ -88,6 +88,35 @@ The batched communication is implemented for:
 * Hubbard models (MPIsingle, MPIdouble, InterAll)
 * Spin models (Exchange interactions)
 
+SpinlessFermion Off-diagonal Two-body Green's Function
+------------------------------------------------------
+
+For SpinlessFermion,
+:math:`\langle c^\dagger_i c_j c^\dagger_k c_l \rangle`
+with inter-process sites is supported in MPI paths for both
+grand-canonical (GC) and canonical calculations.
+
+This path applies the operator sequence on a global-bit representation and
+keeps fermion-sign evaluation consistent across rank communication.
+
+Behavior of MPI-required Tests (ctest)
+--------------------------------------
+
+The following tests require an MPI runtime environment:
+
+* ``mpi_consistency_*`` (typically ``-np >= 2``)
+* ``lanczos_*_mpidouble`` (typically ``-np = 16``)
+
+If ``MPIRUN`` is not set, or the MPI rank requirement is not met,
+these tests are reported as ``Skipped`` by ``ctest``.
+
+Example:
+
+.. code-block:: bash
+
+   MPIRUN='mpirun -np 4 --oversubscribe' ctest -L consistency
+   MPIRUN='mpirun -np 16 --oversubscribe' ctest -L batching
+
 Fermion Sign
 ------------
 

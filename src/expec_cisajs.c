@@ -24,6 +24,7 @@
 #include "mltplySpinCore.h"
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPISpinCore.h"
+#include "mltplyMPISpinlessFermion.h"
 
 /**
  * @file   expec_cisajs.c
@@ -177,7 +178,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
 
   case SpinlessFermion:
   case SpinlessFermionGC:
-    // For spinless fermions, calculate diagonal one-body Green's function
+    // For spinless fermions, calculate one-body Green's function
     {
       long unsigned int i_sp, j_sp;
       for(i_sp = 0; i_sp < X->Def.NCisAjt; i_sp++){
@@ -185,9 +186,24 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
         long unsigned int org_isite2_sp = X->Def.CisAjt[i_sp][2]+1;
         long unsigned int org_sigma1_sp = X->Def.CisAjt[i_sp][1];
         long unsigned int org_sigma2_sp = X->Def.CisAjt[i_sp][3];
+        int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+        int site2_is_interPE = (org_isite2_sp > X->Def.Nsite) ? 1 : 0;
         double complex dam_pr_sp = 0;
 
-        if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp){
+        if((site1_is_interPE || site2_is_interPE) &&
+           (org_sigma1_sp == org_sigma2_sp)){
+#ifdef MPI
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+            dam_pr_sp = X_GC_CisAjt_SpinlessFermion_MPI(
+                org_isite1_sp - 1, org_isite2_sp - 1, X, vec);
+          } else {
+            dam_pr_sp = X_CisAjt_SpinlessFermion_MPI(
+                org_isite1_sp - 1, org_isite2_sp - 1, X, vec);
+          }
+#else
+          dam_pr_sp = 0;
+#endif
+        } else if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp){
           // Diagonal case: <n_i>
           long unsigned int is_sp = X->Def.Tpow[org_isite1_sp - 1];
           if(X->Def.iCalcModel == SpinlessFermionGC){
@@ -208,15 +224,65 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
             }
           }
         } else {
-          // Off-diagonal case: not yet implemented for spinless
-          // Warn user on first occurrence
-          static int warned_offdiag = 0;
-          if (!warned_offdiag) {
-            fprintf(stdoutMPI, "Warning: Off-diagonal one-body Green's function <c^+_i c_j> (i!=j) "
-                    "is not implemented for SpinlessFermion. Output will be 0.\n");
-            warned_offdiag = 1;
+          // Local off-diagonal case: <c^+_i c_j>
+          long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];
+          long unsigned int is2_sp = X->Def.Tpow[org_isite2_sp - 1];
+
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max, is1_sp, is2_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int org_bit = j_sp - 1;
+              long unsigned int tmp_bit, off_bit;
+              unsigned long int mask, bit;
+              int sgn = 1, tmp_sgn;
+
+              if((org_bit & is2_sp) == 0) continue;
+              tmp_bit = org_bit ^ is2_sp;
+              mask = is2_sp - 1;
+              bit = tmp_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if((tmp_bit & is1_sp) != 0) continue;
+              off_bit = tmp_bit ^ is1_sp;
+              mask = is1_sp - 1;
+              bit = off_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              dam_pr_sp += (double)sgn * conj(vec[off_bit + 1]) * vec[j_sp];
+            }
+          } else {
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1, list_2_1, list_2_2) \
+  firstprivate(i_max, is1_sp, is2_sp, X) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int org_bit = list_1[j_sp];
+              long unsigned int tmp_bit, off_bit, off_idx;
+              unsigned long int mask, bit;
+              int sgn = 1, tmp_sgn;
+
+              if((org_bit & is2_sp) == 0) continue;
+              tmp_bit = org_bit ^ is2_sp;
+              mask = is2_sp - 1;
+              bit = tmp_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if((tmp_bit & is1_sp) != 0) continue;
+              off_bit = tmp_bit ^ is1_sp;
+              mask = is1_sp - 1;
+              bit = off_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if(GetOffComp(list_2_1, list_2_2, off_bit,
+                            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off_idx) != TRUE){
+                continue;
+              }
+              dam_pr_sp += (double)sgn * conj(vec[off_idx]) * vec[j_sp];
+            }
           }
-          dam_pr_sp = 0;
         }
         dam_pr_sp = SumMPI_dc(dam_pr_sp);
         fprintf(fp, " %4lu %4lu %4lu %4lu %.10lf %.10lf\n",

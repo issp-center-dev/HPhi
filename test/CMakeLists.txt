@@ -61,6 +61,8 @@ add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
+add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
 add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
@@ -87,6 +89,12 @@ set_tests_properties(
 set_tests_properties(
     lanczos_spinless lanczos_spinless_GC
     PROPERTIES LABELS "lanczos;spinless")
+set_tests_properties(
+    spinless_onebody_sigma_validation
+    PROPERTIES LABELS "spinless;validation")
+set_tests_properties(
+    spinless_onebody_offdiag_compare
+    PROPERTIES LABELS "spinless;validation;onebody")
 
 #
 # LOBCG

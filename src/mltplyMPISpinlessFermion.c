@@ -633,6 +633,231 @@ void child_GC_general_hopp_SpinlessFermion_MPIsingle_per_site(
 
 #ifdef MPI
 /**
+ * Apply c^\dagger_i c_j on a global bit-state.
+ * Returns TRUE if the operation is valid and outputs fermion sign/off-state.
+ */
+static int ApplyCisAjtGlobalSpinless(
+    unsigned long int org_global_bit,
+    unsigned long int global_is1,
+    unsigned long int global_is2,
+    int *sgn,
+    unsigned long int *off_global_bit) {
+  unsigned long int tmp_bit;
+  unsigned long int mask;
+  int tmp_sgn;
+  int tmp_sign;
+
+  tmp_bit = org_global_bit;
+  tmp_sign = 1;
+
+  // c_j
+  if ((tmp_bit & global_is2) == 0) return FALSE;
+  tmp_bit ^= global_is2;
+  mask = global_is2 - 1;
+  SgnBit(tmp_bit & mask, &tmp_sgn);
+  tmp_sign *= tmp_sgn;
+
+  // c^\dagger_i
+  if ((tmp_bit & global_is1) != 0) return FALSE;
+  tmp_bit ^= global_is1;
+  mask = global_is1 - 1;
+  SgnBit(tmp_bit & mask, &tmp_sgn);
+  tmp_sign *= tmp_sgn;
+
+  *sgn = tmp_sign;
+  *off_global_bit = tmp_bit;
+  return TRUE;
+}
+
+/**
+ * @brief Compute canonical SpinlessFermion one-body Green's function with MPI.
+ *
+ * This function evaluates <psi|c^\dagger_i c_j|psi> for SpinlessFermion
+ * when inter-process sites are present.
+ */
+double complex X_CisAjt_SpinlessFermion_MPI(
+    int org_isite1,
+    int org_isite2,
+    struct BindStruct *X,
+    double complex *vec) {
+#ifdef MPI
+  double complex dam_pr;
+  unsigned long int i_max;
+  unsigned long int idim_max_buf;
+  unsigned long int rank_flip_mask;
+  unsigned long int global_is1, global_is2;
+  unsigned long int j, src_local_bit, src_global_bit, off_global_bit, off_local_bit, ioff;
+  int origin, off_rank, ierr, sgn;
+  MPI_Status statusMPI;
+
+  dam_pr = 0.0;
+  i_max = X->Check.idim_max;
+  idim_max_buf = 0;
+
+  rank_flip_mask = 0;
+  if (org_isite1 >= X->Def.Nsite) rank_flip_mask ^= X->Def.Tpow[org_isite1];
+  if (org_isite2 >= X->Def.Nsite) rank_flip_mask ^= X->Def.Tpow[org_isite2];
+  origin = myrank ^ (int)rank_flip_mask;
+
+  global_is1 = (1UL << org_isite1);
+  global_is2 = (1UL << org_isite2);
+
+  if (origin != myrank) {
+    // ALL ranks in the pair must participate in communication.
+    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    for (j = 1; j <= idim_max_buf; j++) {
+      src_local_bit = list_1buf[j];
+      src_global_bit = src_local_bit + (((unsigned long int)origin) << X->Def.Nsite);
+
+      if (ApplyCisAjtGlobalSpinless(
+              src_global_bit, global_is1, global_is2,
+              &sgn, &off_global_bit) != TRUE) {
+        continue;
+      }
+
+      off_rank = (int)(off_global_bit >> X->Def.Nsite);
+      if (off_rank != myrank) continue;
+      off_local_bit = off_global_bit - (((unsigned long int)off_rank) << X->Def.Nsite);
+
+      if (GetOffComp(list_2_1, list_2_2, off_local_bit,
+                     X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+        continue;
+      }
+
+      dam_pr += (double)sgn * conj(vec[ioff]) * v1buf[j];
+    }
+  } else {
+    for (j = 1; j <= i_max; j++) {
+      src_local_bit = list_1[j];
+      src_global_bit = src_local_bit + (((unsigned long int)myrank) << X->Def.Nsite);
+
+      if (ApplyCisAjtGlobalSpinless(
+              src_global_bit, global_is1, global_is2,
+              &sgn, &off_global_bit) != TRUE) {
+        continue;
+      }
+
+      off_rank = (int)(off_global_bit >> X->Def.Nsite);
+      if (off_rank != myrank) continue;
+      off_local_bit = off_global_bit - (((unsigned long int)off_rank) << X->Def.Nsite);
+
+      if (GetOffComp(list_2_1, list_2_2, off_local_bit,
+                     X->Large.irght, X->Large.ilft, X->Large.ihfbit, &ioff) != TRUE) {
+        continue;
+      }
+
+      dam_pr += (double)sgn * conj(vec[ioff]) * vec[j];
+    }
+  }
+
+  return dam_pr;
+#else
+  return 0.0;
+#endif
+}
+
+/**
+ * @brief Compute grand-canonical SpinlessFermion one-body Green's function with MPI.
+ *
+ * This function evaluates <psi|c^\dagger_i c_j|psi> for SpinlessFermionGC
+ * when inter-process sites are present.
+ */
+double complex X_GC_CisAjt_SpinlessFermion_MPI(
+    int org_isite1,
+    int org_isite2,
+    struct BindStruct *X,
+    double complex *vec) {
+#ifdef MPI
+  double complex dam_pr;
+  unsigned long int i_max;
+  unsigned long int idim_max_buf;
+  unsigned long int rank_flip_mask;
+  unsigned long int global_is1, global_is2;
+  unsigned long int j, src_local_bit, src_global_bit, off_global_bit, off_local_bit, off_idx;
+  int origin, off_rank, ierr, sgn;
+  MPI_Status statusMPI;
+
+  dam_pr = 0.0;
+  i_max = X->Check.idim_max;
+  idim_max_buf = 0;
+
+  rank_flip_mask = 0;
+  if (org_isite1 >= X->Def.Nsite) rank_flip_mask ^= X->Def.Tpow[org_isite1];
+  if (org_isite2 >= X->Def.Nsite) rank_flip_mask ^= X->Def.Tpow[org_isite2];
+  origin = myrank ^ (int)rank_flip_mask;
+
+  global_is1 = (1UL << org_isite1);
+  global_is2 = (1UL << org_isite2);
+
+  if (origin != myrank) {
+    // ALL ranks in the pair must participate in communication.
+    ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        &idim_max_buf, 1, MPI_UNSIGNED_LONG, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+
+    for (j = 1; j <= idim_max_buf; j++) {
+      src_local_bit = j - 1;
+      src_global_bit = src_local_bit + (((unsigned long int)origin) << X->Def.Nsite);
+
+      if (ApplyCisAjtGlobalSpinless(
+              src_global_bit, global_is1, global_is2,
+              &sgn, &off_global_bit) != TRUE) {
+        continue;
+      }
+
+      off_rank = (int)(off_global_bit >> X->Def.Nsite);
+      if (off_rank != myrank) continue;
+      off_local_bit = off_global_bit - (((unsigned long int)off_rank) << X->Def.Nsite);
+      off_idx = off_local_bit + 1;
+      if (off_idx > i_max) continue;
+
+      dam_pr += (double)sgn * conj(vec[off_idx]) * v1buf[j];
+    }
+  } else {
+    for (j = 1; j <= i_max; j++) {
+      src_local_bit = j - 1;
+      src_global_bit = src_local_bit + (((unsigned long int)myrank) << X->Def.Nsite);
+
+      if (ApplyCisAjtGlobalSpinless(
+              src_global_bit, global_is1, global_is2,
+              &sgn, &off_global_bit) != TRUE) {
+        continue;
+      }
+
+      off_rank = (int)(off_global_bit >> X->Def.Nsite);
+      if (off_rank != myrank) continue;
+      off_local_bit = off_global_bit - (((unsigned long int)off_rank) << X->Def.Nsite);
+      off_idx = off_local_bit + 1;
+      if (off_idx > i_max) continue;
+
+      dam_pr += (double)sgn * conj(vec[off_idx]) * vec[j];
+    }
+  }
+
+  return dam_pr;
+#else
+  return 0.0;
+#endif
+}
+
+/**
  * Apply c^\dagger_i c_j c^\dagger_k c_l on a global bit-state.
  * Returns TRUE if the operation is valid and outputs fermion sign/off-state.
  */

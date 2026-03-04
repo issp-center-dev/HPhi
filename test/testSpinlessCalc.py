@@ -117,11 +117,17 @@ def generate_calcmod(model, method="Lanczos", filename="calcmod.def"):
         f.write("OutputEigenVec   0\n")
 
 
-def generate_greenone(nsites, filename="greenone.def"):
+def generate_greenone(nsites, include_offdiag=False, filename="greenone.def"):
     """Generate greenone.def (one-body Green's function)."""
     entries = []
     for i in range(nsites):
         entries.append((i, 0, i, 0))
+    if include_offdiag:
+        # Add nearest-neighbor off-diagonal terms <c^+_i c_j>.
+        for i in range(nsites):
+            j = (i + 1) % nsites
+            entries.append((i, 0, j, 0))
+            entries.append((j, 0, i, 0))
 
     with open(filename, "w") as f:
         f.write("===============================\n")
@@ -208,6 +214,8 @@ def main():
                         help='MPI command')
     parser.add_argument('--offdiag', action='store_true',
                         help='Include off-diagonal two-body Green function entries')
+    parser.add_argument('--onebody-offdiag', action='store_true',
+                        help='Include off-diagonal one-body Green function entries')
 
     args = parser.parse_args()
 
@@ -223,7 +231,7 @@ def main():
     generate_coulombinter(nsites, V)
     generate_modpara(nsites, nelec, model, method)
     generate_calcmod(model, method)
-    generate_greenone(nsites)
+    generate_greenone(nsites, include_offdiag=args.onebody_offdiag)
     generate_greentwo(nsites, include_offdiag=args.offdiag)
     generate_namelist(V)
 
