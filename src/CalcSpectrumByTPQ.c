@@ -49,10 +49,15 @@ int ReadTPQData(
     double dinv_temp;
     double dene, dHvar, dn, ddoublon;
     int istp;
-    sprintf(sdt, cFileNameSSRand, X->Bind.Def.irand);
+    if(X->Bind.Def.iOutputTPQDataHead==1){
+        int prefix_length = sprintf(sdt, "%s_", X->Bind.Def.CDataFileHead);
+        sprintf(sdt + prefix_length, cFileNameSSRand, X->Bind.Def.irand);
+    }else{
+        sprintf(sdt, cFileNameSSRand, X->Bind.Def.irand);
+    }
     childfopenMPI(sdt, "r", &fp);
     if(fp==NULL){
-        fprintf(stderr, "  Error:  SS_rand%d.dat does not exist.\n", X->Bind.Def.irand);
+        fprintf(stderr, "  Error:  %s does not exist.\n", sdt);
         fclose(fp);
         return FALSE;
     }
