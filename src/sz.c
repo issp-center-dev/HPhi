@@ -122,6 +122,45 @@ int sz(
     fprintf(stdoutMPI, "%s", cProStartCalcSz);
     TimeKeeper(X, cFileNameSzTimeKeep, cInitalSz, "w");
     TimeKeeper(X, cFileNameTimeKeep, cInitalSz, "a");
+    /* sz() entry guard: validate read_hacker (CalcHS) against the set */
+    /* of values supported by each model before dispatching to the     */
+    /* per-model enumeration routines. This keeps CalcHS validation    */
+    /* consistent across all models and avoids both failure modes that */
+    /* pre-date this PR:                                                */
+    /*   - silent ignore (e.g. KondoGC / KondoNConserved / tJ* used to  */
+    /*     accept any CalcHS value)                                     */
+    /*   - stale-icnt opaque abort (e.g. Kondo with CalcHS=3 or -1 used */
+    /*     to fall through with uninitialized icnt and surface as      */
+    /*     "imax=1, idim_max=...")                                      */
+    /*                                                                  */
+    /* Supported CalcHS values:                                         */
+    /*   Hubbard, HubbardNConserved:         0, 1, 2                    */
+    /*   Spin (iFlgGeneralSpin == FALSE):   -1, 0, 1                    */
+    /*   Everything else:                    0, 1                       */
+    {
+        int hs = X->Def.read_hacker;
+        int valid_hs;
+        if(X->Def.iCalcModel == Hubbard ||
+           X->Def.iCalcModel == HubbardNConserved){
+            valid_hs = (hs == 0 || hs == 1 || hs == 2);
+        }else if(X->Def.iCalcModel == Spin &&
+                 X->Def.iFlgGeneralSpin == FALSE){
+            valid_hs = (hs == -1 || hs == 0 || hs == 1);
+        }else{
+            valid_hs = (hs == 0 || hs == 1);
+        }
+        if(!valid_hs){
+            if(hs == 2){
+                fprintf(stderr,
+                        "Error: CalcHS=2 is only supported for Hubbard and HubbardNConserved models.\n");
+            }else{
+                fprintf(stderr,
+                        "Error: CalcHS=%d in ModPara file is not a valid value for this model.\n",
+                        hs);
+            }
+            return -1;
+        }
+    }
     if(X->Check.idim_max!=0){
         /*[s] calculating the maximum size of Hilbert dimensions*/
         switch(X->Def.iCalcModel){
@@ -283,7 +322,7 @@ int sz(
                             icnt = 0;
                             #pragma omp parallel for default(none) \
                             reduction(+:icnt) private(ib) firstprivate(ihfbit, N2, X) \
-                            shared(list_1_, list_2_1_, list_2_2_, list_jb) 
+                            shared(list_1_, list_2_1_, list_2_2_, list_jb)
                             for(ib=0;ib<X->Check.sdim;ib++){
                                 icnt+=omp_sz_hacker(ib,ihfbit, X,list_1_, list_2_1_, list_2_2_, list_jb);
                             }
@@ -331,6 +370,12 @@ int sz(
                       TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                       TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
             
+                      /* CalcHS=2 is rejected at the top of sz() by the */
+                      /* common guard; here we validate the remaining    */
+                      /* allowed values (0 and 1) explicitly so that     */
+                      /* e.g. CalcHS=3 or CalcHS=-1 also produces a      */
+                      /* clear error instead of falling through with a   */
+                      /* stale icnt.                                     */
                       hacker = X->Def.read_hacker;
                       if(hacker==0){
                           icnt = 0;
@@ -347,7 +392,10 @@ int sz(
                           shared(list_1_, list_2_1_, list_2_2_, list_jb)
                           for(ib=0;ib<X->Check.sdim;ib++){
                               icnt+=omp_sz_Kondo_hacker(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
-                          }     
+                          }
+                      }else{
+                          fprintf(stderr, "Error: CalcHS in ModPara file must be 0 or 1 for Kondo model.\n");
+                          return -1;
                       }
                       break;
                   case tJ:
@@ -1599,16 +1647,16 @@ int Read_sz
   return 0;
 }
 
-/** 
+/**
  * @brief calculating restricted Hilbert space for large systems
  *
- * @param[in] ihfbit 2^(Ns/2) 
+ * @param[in] ihfbit 2^(Ns/2)
  * @param[in] X
- * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia) 
- * @param[out] list_2_1_  list_2_1_[ib] = jb  
+ * @param[out] list_1_    list_1_[icnt] = i : i is divided into ia and ib (i=ib*ihfbit+ia)
+ * @param[out] list_2_1_  list_2_1_[ib] = jb
  * @param[out] list_2_2_  list_2_2_[ia] = ja  : icnt=jb+ja
- * @param[in] list_jb_   list_jb_[ib]  = jb  
- * 
+ * @param[in] list_jb_   list_jb_[ib]  = jb
+ *
  * @return number of states i_cnt-1==X->Check.idim_max
  * @author Takahiro Misawa (The University of Tokyo)
  */
@@ -1621,15 +1669,13 @@ unsigned long int sz_hacker_for_large_systems(
                         long unsigned int *list_jb_
                         )
 {
-  long unsigned int i,j; 
+  long unsigned int i,j;
   long unsigned int ia,ja,jb,ib;
-  long unsigned int div_down, div_up;
-  long unsigned int num_up,num_down;
-  long unsigned int tmp_num_up,tmp_num_down;
   long unsigned int i_up,i_down,tmp_i_max,ini_i_up,ini_i_down;
-  long unsigned int prev_i,prev_ib,i_max,tmp_i_up,tmp_i_down,cand_i_up,cand_i_down;
-  long unsigned int cnt,i_cnt;
-  
+  long unsigned int prev_ib,i_max,tmp_i_up,tmp_i_down;
+  long unsigned int cnt;
+  long unsigned int i_cnt = 0;
+
   tmp_i_max  = X->Def.Tpow[X->Def.Nsite];
 
   if(X->Def.iCalcModel==Hubbard){
@@ -1648,9 +1694,13 @@ unsigned long int sz_hacker_for_large_systems(
       /*[e]generate minimum bit*/
       i_cnt           = 1;
       list_1_[i_cnt]  = i;
-      //printf("ini_i_up=%lu ini_i_down=%lu tmp_i_up=%lu tmp_i_down=%lu ihfbit=%lu\n", ini_i_up, ini_i_down, tmp_i_up, tmp_i_down, ihfbit);
       if (ini_i_up==0 && ini_i_down==0) {
-          return 0; // no valid state
+          /* vacuum sector: single state i=0.                               */
+          /* Must not call snoob(0) here (divide-by-zero: SIGFPE on x86_64, */
+          /* returns 0 on arm64 which would cause an infinite loop).        */
+          list_2_1_[0] = 2;                /* ja+1 pattern, matches non-vacuum path */
+          list_2_2_[0] = list_jb_[0] + 1;  /* jb+1 pattern, matches non-vacuum path */
+          return 1;
       }
       if (ini_i_down !=0){
           while (tmp_i_down < tmp_i_max) {
@@ -1680,7 +1730,7 @@ unsigned long int sz_hacker_for_large_systems(
               tmp_i_up    = snoob(tmp_i_up);
               i           = tmp_i_up + tmp_i_down*ihfbit;
               i_cnt      += 1;
-              if (tmp_i_up > tmp_i_max ) {
+              if (tmp_i_up >= tmp_i_max ) {
                   break;
               }
               list_1_[i_cnt]          = i;
@@ -1690,13 +1740,12 @@ unsigned long int sz_hacker_for_large_systems(
           i                     = list_1_[cnt];
           tmp_i_up              = i & (ihfbit-1);
           tmp_i_down            = i >> (X->Def.Nsite);
-          i_up                  = make_true_spin(tmp_i_up,0,64);
-          i_down                = make_true_spin(tmp_i_down,1,64);
+          i_up                  = make_true_spin(tmp_i_up,  0, X->Def.Nsite);
+          i_down                = make_true_spin(tmp_i_down,1, X->Def.Nsite);
           list_1_[cnt]          = i_up + i_down;
-          //printf("i=%lu list_1_[%lu]=%lu tmp_i_up=%lu tmp_i_down=%lu\n", i, cnt, list_1_[cnt], tmp_i_up, tmp_i_down);
       }
       /*[s]sort*/
-      long unsigned int len_n = X->Check.idim_max + 1; 
+      long unsigned int len_n = X->Check.idim_max + 1;
       long unsigned int *tmp = malloc(len_n * sizeof(long unsigned int));
 
       for (cnt = 0;cnt < len_n; cnt++) {
@@ -1706,8 +1755,8 @@ unsigned long int sz_hacker_for_large_systems(
 
       cnt            = 1;
       ia             = tmp[1] & (ihfbit-1);
-      ib             = tmp[1] >> (X->Def.Nsite); 
-      ja             = 1; 
+      ib             = tmp[1] >> (X->Def.Nsite);
+      ja             = 1;
       jb             = list_jb_[ib];
       prev_ib        = ib;
       list_1_[ja+jb] = tmp[1];
@@ -1718,14 +1767,14 @@ unsigned long int sz_hacker_for_large_systems(
       for (cnt = 2; cnt < len_n; cnt++) {
           list_1_[cnt]     = tmp[cnt];
           ia             = tmp[cnt] & (ihfbit-1);
-          ib             = tmp[cnt] >> (X->Def.Nsite); 
+          ib             = tmp[cnt] >> (X->Def.Nsite);
           if(ib!=prev_ib){
               ja             = 1;
               jb             = list_jb_[ib];
               list_2_1_[ia]  = ja+1;
               list_2_2_[ib]  = jb+1;
               ja            += 1;
-              prev_ib        = ib;  
+              prev_ib        = ib;
           }else{
               list_2_1_[ia]  = ja+1;
               list_2_2_[ib]  = jb+1;
@@ -1734,13 +1783,7 @@ unsigned long int sz_hacker_for_large_systems(
       }
       free(tmp);
       /*[e]sort*/
-
-      for(cnt=0;cnt<=X->Check.idim_max;cnt++){
-          ia = list_1_[cnt]&(ihfbit-1);
-          ib = list_1_[cnt] >> (X->Def.Nsite);
-          //printf("cnt=%lu list_1_=%lu\n", cnt, list_1_[cnt]);  
-          //printf("cnt=%lu list_2_1_[%lu]=%lu list_2_2_[%lu]=%lu\n",cnt,ia, list_2_1_[ia],ib, list_2_2_[ib]);
-      }
+      return i_cnt-1;
   }else if(X->Def.iCalcModel==HubbardNConserved){
       /*[s]generate minimum bit*/
       i_max   = X->Def.Tpow[X->Def.Nsite*2-1]*2;
@@ -1751,30 +1794,32 @@ unsigned long int sz_hacker_for_large_systems(
       }
       /*[e]generate minimum bit*/
       ia             = i & (ihfbit-1);
-      ib             = i >> (X->Def.Nsite); 
-      ja             = 1; 
+      ib             = i >> (X->Def.Nsite);
+      ja             = 1;
       jb             = 0;
       prev_ib        = ib;
       list_1_[ja+jb] = i;
       list_2_1_[ia]  = ja+1;
       list_2_2_[ib]  = jb+1;
       i_cnt          = 1;
-      while (i < i_max) {
-          i      = snoob(i);
+      while (1) {
+          long unsigned int next = snoob(i);
+          if (next >= i_max) break;
+          i      = next;
           i_cnt += 1;
-          printf("i=%lu i_cnt=%lu\n", i, i_cnt);
           update_lists(i, ihfbit, list_1_, list_2_1_, list_2_2_, &ja, &jb, &prev_ib, X->Def.Nsite);
       }
+      return i_cnt;
   }
-  return i_cnt-1; //return icnt;
+  return 0;
 }
 
 /**
  * @brief Convert a spin representation to a true spin representation.
- * 
+ *
  * This function converts a spin representation (where each site has a single bit for up-spin and down-spin)
  * into a true spin representation (where each site has two bits: one for up-spin and one for down-spin).
- * 
+ *
  * @param spin The input spin representation.
  * @param shift_offset 0 for up-spin, 1 for down-spin.
  * @param Nsite The number of sites in the system.
@@ -1790,12 +1835,12 @@ long unsigned int make_true_spin(long unsigned int spin, int shift_offset, int N
     return true_spin;
 }
 
-/** 
+/**
  * @brief Update the lists of the restricted Hilbert space.
- * 
+ *
  * This function updates the lists of the restricted Hilbert space based on the current index `i`.
  * It increments the counters for `ja` and `jb`, and updates the lists accordingly.
- * 
+ *
  * @param i The current index in the Hilbert space.
  * @param ihfbit The half-bit value (2^(Nsite/2)).
  * @param list_1_ The first list to be updated.
@@ -1806,7 +1851,7 @@ long unsigned int make_true_spin(long unsigned int spin, int shift_offset, int N
  * @param prev_ib The previous value of `ib` to check if it has changed.
  * @param Nsite The number of sites in the system.
  * @return void
- * 
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  */
 void update_lists(

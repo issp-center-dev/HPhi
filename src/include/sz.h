@@ -135,15 +135,6 @@ int sz(
     long unsigned int *list_2_2_
 );
 
-int Read_sz
-(
- struct BindStruct *X,
- const long unsigned int irght,
- const long unsigned int ilft,
- const long unsigned int ihfbit,
- long unsigned int *i_max
- );
-
 unsigned long int sz_hacker_for_large_systems(
                         long unsigned int ihfbit,
                         struct BindStruct *X,
