@@ -154,11 +154,14 @@ int expec_cisajscktaltdc
     sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
-
-  if(childfopenMPI(sdt, "w", &fp)!=0){
-    return -1;
+  if(X->Def.NCisAjtCkuAlvDC>0){
+    // If the number of two-body interactions is zero, the file name is not used.
+    if(childfopenMPI(sdt, "w", &fp)!=0){
+      return -1;
+    }
   }
   if(X->Def.NTBody>0){
+    // If the number of three-body interactions is zero, the file name is not used.
     if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
       return -1;
     }
@@ -166,6 +169,7 @@ int expec_cisajscktaltdc
     fp_2 = fp;
   }
   if(X->Def.NFBody>0){
+    // If the number of four-body interactions is zero, the file name is not used.
     if(childfopenMPI(sdt_3, "w", &fp_3)!=0){
       return -1;
     }
@@ -173,6 +177,7 @@ int expec_cisajscktaltdc
     fp_3 = fp;
   }
   if(X->Def.NSBody>0){
+    // If the number of six-body interactions is zero, the file name is not used.
     if(childfopenMPI(sdt_4, "w", &fp_4)!=0){
       return -1;
     }
@@ -213,14 +218,20 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  fclose(fp);
+  if(X->Def.NCisAjtCkuAlvDC>0){
+    // If the number of two-body interactions is zero, the file name is not used.
+    fclose(fp);
+  }
   if(X->Def.NTBody>0){
+    // If the number of three-body interactions is zero, the file name is not used.
     fclose(fp_2);
   }
   if(X->Def.NFBody>0){
+    // If the number of four-body interactions is zero, the file name is not used.
     fclose(fp_3);
   }
   if(X->Def.NSBody>0){
+    // If the number of six-body interactions is zero, the file name is not used.
     fclose(fp_4);
   }
   
@@ -1078,7 +1089,6 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
     i_max=X->Check.idim_max;
 
     for(i=0;i<X->Def.NSBody;i++){
-        //printf("%d %d \n",i,X->Def.NSBody);
         vec_pr_0 = cd_1d_allocate(i_max + 1);
         vec_pr_1 = cd_1d_allocate(i_max + 1);
         vec_pr_2 = cd_1d_allocate(i_max + 1);
