@@ -9,6 +9,22 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square.sh
 )
 add_test(
+  NAME lanczos_hubbard_square_calchs2
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square_calchs2.sh
+)
+add_test(
+  NAME lanczos_hubbard_square_ncond_calchs2
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square_ncond_calchs2.sh
+)
+add_test(
+  NAME lanczos_hubbard_chain_polarized_calchs2
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_chain_polarized_calchs2.sh
+)
+add_test(
+  NAME calchs2_unsupported_reject
+  COMMAND ${CMAKE_SOURCE_DIR}/test/calchs2_unsupported_reject.sh
+)
+add_test(
   NAME lanczos_kondo_chain
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_kondo_chain.sh
 )
@@ -265,7 +281,3 @@ add_test(
   NAME lobcg_spinone_chain_threebody
   COMMAND ${CMAKE_SOURCE_DIR}/test/lobcg_spinone_chain_threebody.sh ${CMAKE_SOURCE_DIR}
 )
-
-
-
-
