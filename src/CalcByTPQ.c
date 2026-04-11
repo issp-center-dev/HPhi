@@ -74,7 +74,7 @@ int CalcByTPQ(
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-    if(X->Bind.Def.iOutputTPQDataHead==1){
+    if(X->Bind.Def.iOutputDataHead==1){
       int prefix_length;
       prefix_length = sprintf(sdt_phys, "%s_", X->Bind.Def.CDataFileHead);
       sprintf(sdt_phys + prefix_length, cFileNameSSRand, rand_i);

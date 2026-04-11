@@ -103,7 +103,7 @@ int CalcByTEM(
     }
   }
 
-  if(X->Bind.Def.iOutputTPQDataHead==1){
+  if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_phys, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameSS);
   }else{
     sprintf(sdt_phys, "%s", cFileNameSS);
@@ -114,7 +114,7 @@ int CalcByTEM(
   fprintf(fp, "%s",cLogSS);
   fclose(fp);
 
-  if(X->Bind.Def.iOutputTPQDataHead==1){
+  if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_norm, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameNorm);
   }else{
     sprintf(sdt_norm, "%s", cFileNameNorm);
@@ -125,7 +125,7 @@ int CalcByTEM(
   fprintf(fp, "%s",cLogNorm);
   fclose(fp);
 
-  if(X->Bind.Def.iOutputTPQDataHead==1){
+  if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_flct, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameFlct);
   }else{
     sprintf(sdt_flct, "%s", cFileNameFlct);

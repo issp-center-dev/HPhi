@@ -49,7 +49,7 @@ int ReadTPQData(
     double dinv_temp;
     double dene, dHvar, dn, ddoublon;
     int istp;
-    if(X->Bind.Def.iOutputTPQDataHead==1){
+    if(X->Bind.Def.iOutputDataHead==1){
         int prefix_length = sprintf(sdt, "%s_", X->Bind.Def.CDataFileHead);
         sprintf(sdt + prefix_length, cFileNameSSRand, X->Bind.Def.irand);
     }else{

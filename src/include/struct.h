@@ -218,7 +218,7 @@ struct DefineList {
   int iOutputHam;/**<brief Switch for outputting a Hamiltonian. 0: no output, 1:output*/
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
   int iOutputExVec; /**<brief Switch for outputting an excited vector. 0: no output, 1:output*/
-  int iOutputTPQDataHead; /**<brief Switch for using CDataFileHead in output
+  int iOutputDataHead; /**<brief Switch for using CDataFileHead in output
                           file names for TPQ/TE physical quantity files (SS,
                           Flct, Norm). 0: no header (default), 1: use header*/
 

@@ -177,7 +177,7 @@ CalcModファイル
    から選択することが出来ます。
 
    
--  ``OutputTPQDataHead``
+-  ``OutputDataHead``
 
    **形式 :** int型 (デフォルト値 0)
 

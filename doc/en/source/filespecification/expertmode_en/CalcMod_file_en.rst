@@ -179,7 +179,7 @@ The parameters correlated with the keywords are as follows.
    | 0: Not output an eigenvector
    | 1: Output an eigenvector.
    
-*  ``OutputTPQDataHead``
+*  ``OutputDataHead``
 
    **Type :** Int (default value: 0)
 
