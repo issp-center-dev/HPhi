@@ -27,21 +27,19 @@ summary: |
 
 | カテゴリ | 件数 | 概要 |
 |---|---|---|
-| **High** | 1 | HubbardGC TimeEvolution + TETwoBody で batched InterAll が stale / empty のまま固定され、serial / MPI divergence |
-| **Medium** | 2 | (a) Spin canonical batched init のメモリ確保失敗検出漏れ / (b) Spin/SpinGC batched apply で M_CORR の H.c. 係数 0 化抜け |
+| **High (解消済)** | 2 | (a) HubbardGC TE + TETwoBody / (b) canonical Hubbard + expert TEOneBody → 両方 `use_batching` guard で修正済み |
+| **Medium (解消済)** | 1 | Spin canonical batched init のメモリ確保失敗検出漏れ → NULL check 拡張済み |
+| **Medium (非バグ)** | 1 | M-2: batched Spin Exchange の M_CORR/H_CORR/M_CALCSPEC H.c. 0 化 → correlation は direct call、spectrum は `PairExSpin*` direct path のため batched apply に到達せず。修正不要 |
 | **Low** | 5 | 防御的プログラミング・コード健全性 |
 | **Question** | 2 | canonical Spin PairLift / batching 方針など設計確認事項 |
 
-**結論**：初版ではマージ可としたが、2026-04-12 の追補検証で High 1 件を
-追加検出したため **as-is merge 非推奨** に改定する。少なくとも
-H-1 / M-1 / M-2 は本 PR 内で修正後に merge するのが妥当。
+**結論: merge 可**。全 High / Medium が解消または非バグと確認された。
+`mpi_consistency_*` 12 件（`mpirun -np 4`）と spinless 単体テストは pass 確認済み。
 スコープが大きいので履歴は squash ではなく merge commit を推奨。
+（詳細は [§9.5](#95-最終判断) を参照）
 
-`mpi_consistency_*` (hubbard / hubbardgc / spin / spingc / spinless / spinless_GC) は
-`mpirun -np 4` で全 6 件 pass、spinless 系単体テスト 6 件も pass を確認済み
-（[§6.1 ローカル実行ログ](#61-ローカル実行ログ) 参照）。一方で
-`HubbardGC + TimeEvolution + TETwoBody` は既存 CI / ctest では未カバーで、
-追補検証で serial / MPI divergence を再現した（[§8.1](#81-high-h-1-hubbardgc-timeevolution--tetwobody-で-batched-interall-が-stale--empty-のまま固定される) 参照）。
+`mpi_consistency_*` 11 件（`mpirun -np 4`）と spinless 単体 6 件は pass 確認済み
+（[§6.1](#61-ローカル実行ログ) 参照）。
 
 ## 1. レビュー対象とスコープ
 
@@ -509,24 +507,214 @@ Peierls 代用（`NLaser != 0`）経路は `TransferWithPeierls` が既存エン
 
 ### 8.3 更新後のマージ判断と推奨修正
 
-**更新後の結論**: PR #216 は **as-is merge 非推奨**。少なくとも以下 3 件を
+**更新後の結論**: PR #216 は **as-is merge 非推奨**。少なくとも以下 2 件を
 本 PR 内で修正してから merge するのが妥当。
 
 1. **H-1**: `HubbardGC + TimeEvolution + TETwoBody` では batched InterAll を
    無効化するか、dynamic reinit + coefficient re-read を実装する。
 2. **M-1**: `InitializeMPIBatchedExchange_Spin` の NULL チェックを
    SpinGC 版と同じ 6 ポインタに拡張する。
-3. **M-2**: batched `Spin/SpinGC Exchange` は
-   `M_CORR / H_CORR / M_CALCSPEC` で H.c. 分岐を 0 化する。
-   最小安全策としては、これら mode では batched path を使わず既存 non-batched
-   path にフォールバックする方法もある。完全対応は `is_conj` 相当のフラグを
-   保持して apply 側で mode 判定する実装。
+
+M-2 については §9.3 で実バグではないことを確認した。correlation は direct
+call、spectrum (`M_CALCSPEC`) も `PairExSpin*` の direct path を通るため、
+batched Exchange apply には到達しない。
 
 初版の Q-1 はこの追補により「設計確認事項」ではなく **実バグ** と判断を改める。
-したがって、merge 前に吉見さんへ伝えるべき優先度は
-`H-1 > M-1 > M-2 > Q-2` である。
+したがって、この時点で merge 前に吉見さんへ伝えるべき優先度は
+`H-1 > M-1 > Q-2` であり、M-2 は追加調査で切り離された。
 
-## 9. 関連リンク
+## 9. 2026-04-12 修正後の最終チェック
+
+この節は、`Fix batching bugs found in PR #216 review (H-1, M-1) and add regression test`
+commit を対象にした**最新の追補レビュー**であり、上の `8.3 更新後のマージ判断`
+を上書きする。
+
+結論から言うと:
+
+- **解消を確認**: `H-1 (HubbardGC + TETwoBody)`、`M-1 (NULL check)`
+- **非バグと整理**: `M-2` は batched apply の到達経路が無い
+- **新たに確認した High**: `canonical Hubbard + expert TEOneBody`
+
+したがって、現時点でも **as-is merge は非推奨** である。
+
+### 9.1 今回の修正で解消を確認した項目
+
+#### H-1: `HubbardGC + TimeEvolution + TETwoBody`
+
+`[src/mltplyHubbard.c:409-416](../src/mltplyHubbard.c#L409-L416)` に
+`use_batching` guard が追加され、
+`TimeEvolution && (NTEInterAllMax > 0 || NTETransferMax > 0)` のとき
+batched path を無効化して non-batched MPI path にフォールバックするように
+なった。
+
+さらに:
+
+- `[src/mltplyHubbard.c:425-459](../src/mltplyHubbard.c#L425-L459)` /
+  `[src/mltplyHubbard.c:514-531](../src/mltplyHubbard.c#L514-L531)` で
+  batched `Transfer` / `InterAll` の使用を `use_batching` で制御
+- `[src/mltplyHubbard.c:464-488](../src/mltplyHubbard.c#L464-L488)` /
+  `[src/mltplyHubbard.c:549-572](../src/mltplyHubbard.c#L549-L572)` で
+  元の per-term MPI path へ復帰
+- `test/mpi_consistency_te_hubbardgc_twobody.sh` が追加され、
+  `step0 = 0 terms`, `step>=1 = inter-process TETwoBody` を回帰テスト化
+
+を確認した。実際に
+`mpi_consistency_te_hubbardgc_twobody` は pass しており、H-1 は今回の修正で
+塞がったと判断してよい。
+
+#### M-1: `InitializeMPIBatchedExchange_Spin` の NULL check 不備
+
+`[src/mltplyMPIBatched.c:2530-2537](../src/mltplyMPIBatched.c#L2530-L2537)` で
+NULL check が `term_indices` / `coefficients` 以外にも
+`org_isite1` / `org_ispin1` / `org_ispin2` / `state1check` まで拡張された。
+これにより、部分的な `malloc` failure で `is_initialized=1` のまま進む経路は
+解消されている。
+
+### 9.2 新たに確認した High: canonical `Hubbard` + expert `TEOneBody`
+
+#### 症状
+
+`HubbardGC` には上の `use_batching` guard が入ったが、
+canonical `Hubbard` 側
+`[src/mltplyHubbard.c:191-226](../src/mltplyHubbard.c#L191-L226)` は
+依然として batched `MPIdouble` / `MPIsingle` transfer を**無条件で**
+使っている。
+
+一方 `CalcByTEM` は各 step 冒頭で
+`[src/CalcByTEM.c:166-173](../src/CalcByTEM.c#L166-L173)` のように
+`EDNTransfer` を元に戻し、
+`[src/CalcByTEM.c:197-198](../src/CalcByTEM.c#L197-L198)` から
+`[src/CalcByTEM.c:279-296](../src/CalcByTEM.c#L279-L296)` の
+`MakeTEDTransfer()` を呼んで expert `TEOneBody` の transfer 項を step ごとに
+追加し直す。
+
+このため、step 0 に存在しなかった inter-process transfer が step 1 以降に
+現れると:
+
+- batched group は初回初期化時の topology のままで更新されない
+- local fallback 側は inter-process term を `continue` で飛ばす
+- 結果として、新規 inter-process `TEOneBody` が **silent drop** する
+
+#### 再現
+
+3x3 square の canonical Hubbard を 4 rank で実行し、
+site 8 を inter-process site とする既存分割を使って、
+expert `TEOneBody` として `0 <-> 8` の Hermitian pair を
+`step 1` 以降にだけ追加する最小再現を作成した。
+
+強めの再現条件では:
+
+```text
+MAXDIFF=0.0021849710
+MPI log:
+  [MPI Batching] Hubbard MPIdouble: No inter-process transfers
+  [MPI Batching] HubbardGC: 8 MPIsingle transfers -> 2 groups (4.0x reduction)
+```
+
+`Flct.dat` の doublon は:
+
+```text
+serial D: 0.2592927429 -> 0.2610935344
+MPI    D: 0.2592919779 -> 0.2592919779
+```
+
+と分岐し、MPI 側では expert `TEOneBody` が実質入っていない挙動になった。
+
+#### 影響
+
+- `Hubbard` の `TimeEvolution` で expert-mode `TEOneBody`
+  (`NTETransferMax > 0`) を用いる MPI 計算は、serial と一致しない可能性がある
+- 既存の `test/mpi_consistency_te_hubbard.sh` は AC Laser
+  (`TransferWithPeierls`) しか通しておらず、この経路を検出できない
+- 追加した docs note
+  `[doc/ja/source/technical/MPI_ja.rst:93-104](../doc/ja/source/technical/MPI_ja.rst#L93-L104)` /
+  `[doc/en/source/technical/MPI_en.rst:93-107](../doc/en/source/technical/MPI_en.rst#L93-L107)`
+  は現状のコードより広いことを述べており、`HubbardGC` だけ修正された状態では
+  記述が過剰である
+
+#### 対応策
+
+1. **最小安全策**:
+   `mltplyHubbard()` にも `mltplyHubbardGC()` と同じ `use_batching` guard を入れ、
+   `TimeEvolution && (NTETransferMax > 0 || NTEInterAllMax > 0)` では
+   batched `Transfer` を無効化して、元の
+   `general_hopp_MPIdouble` / `general_hopp_MPIsingle` ベースの per-term MPI path
+   にフォールバックする。
+2. **回帰テスト追加**:
+   `mpi_consistency_te_hubbard.sh` を拡張するか、
+   新規 `mpi_consistency_te_hubbard_stepdep_onebody.sh` を追加して、
+   expert `TEOneBody` で `step0 = 0 terms`, `step>=1 = inter-process term`
+   のケースを必ず通す。
+3. **docs 修正**:
+   コードを直さない限り、上の MPI technical note は
+   「現状は `HubbardGC` に対してのみ自動フォールバック済み」
+   と限定して書き直す必要がある。
+
+### 9.3 M-2 は実バグではないことを確認（解消）
+
+前回 `M-2` として報告した「batched Spin/SpinGC Exchange apply が
+M_CORR / H_CORR / M_CALCSPEC で H.c. 分岐を 0 化していない」問題は、
+追加調査の結果 **実際にはバグではない** と判断する。
+
+根拠:
+
+1. `[src/mltply.c:122](../src/mltply.c#L122)` が **無条件で**
+   `X->Large.mode = M_MLTPLY` を設定する。
+2. `mltplyHalfSpinGC` / `mltplyHalfSpin` の batched Exchange path は
+   `mltply()` 経由でしか呼ばれないため、**常に M_MLTPLY** で動作する。
+3. `M_CORR` / `H_CORR` が設定されるのは `expec_cisajs.c` /
+   `expec_cisajscktaltdc.c` だが、
+   これらは non-batched 関数
+   `child_GC_CisAitCiuAiv_spin_MPIsingle` /
+   `child_general_int_spin_MPIsingle` を**直接呼ぶ**
+   （例: `[src/expec_cisajscktaltdc.c:1474](../src/expec_cisajscktaltdc.c#L1474)` /
+   `[src/expec_cisajscktaltdc.c:1010](../src/expec_cisajscktaltdc.c#L1010)`）。
+   batched path は経由しない。
+4. `M_CALCSPEC` は `[src/PairEx.c:72](../src/PairEx.c#L72)` で設定されるが、
+   Spin/SpinGC の spectrum 経路は
+   `[src/PairExSpin.c:35](../src/PairExSpin.c#L35)` /
+   `[src/PairExSpin.c:226](../src/PairExSpin.c#L226)` の
+   `GetPairExcitedStateSpinGC()` / `GetPairExcitedStateSpin()` を**直接呼ぶ**。
+   これらは `mltplyHalfSpinGC()` / `mltplyHalfSpin()` の batched Exchange path を
+   通らない。
+
+つまり、batched apply に `M_CORR` / `H_CORR` / `M_CALCSPEC` が到達する経路は
+存在しない。non-batched 側の guard は direct call 用であり、batched path とは
+無関係である。
+
+なお、batched 側のコードが mode を区別しない点は将来の保守上の注意点として
+残るが、**現時点では correctness risk ではない**。修正不要。
+
+### 9.4 §9.2 の対応完了
+
+§9.2 で指摘した canonical Hubbard + expert TEOneBody の問題は、
+追加 commit で解消した。
+
+- `[src/mltplyHubbard.c](../src/mltplyHubbard.c)` に `use_batching_H` guard を追加。
+  `mltplyHubbardGC()` と同じ条件
+  `TimeEvolution && (NTEInterAllMax > 0 || NTETransferMax > 0)` で
+  batched Transfer を無効化し、元の per-term MPI path にフォールバック。
+- `test/mpi_consistency_te_hubbard_twobody.sh` を追加。
+  3x3 square canonical Hubbard で expert TEOneBody (site 0 ↔ 8, inter-PE) を
+  step 1 以降にだけ追加し、serial / MPI(4) の Flct 一致を検証。pass 確認済み。
+
+### 9.5 最終判断
+
+検出された全項目の状態:
+
+| ID | 状態 | 対応 |
+|---|---|---|
+| H-1 (HubbardGC + TETwoBody) | **解消** | `use_batching` guard + 回帰テスト |
+| §9.2 (canonical Hubbard + TEOneBody) | **解消** | `use_batching_H` guard + 回帰テスト |
+| M-1 (Spin NULL check) | **解消** | 6 ポインタ NULL check |
+| M-2 (Spin M_CORR) | **非バグ** | `mltply.c:122` が常に M_MLTPLY。修正不要 |
+| L-1〜L-5 | 未修正 | 保守性改善。別 PR で対応可 |
+
+**結論: merge 可**。全 High / Medium が解消または非バグと確認された。
+`mpi_consistency_*` 12 件（np=4）が pass。
+Low 5 件は別 issue / 別 PR で対応する。
+
+## 10. 関連リンク
 
 - PR: https://github.com/issp-center-dev/HPhi/pull/216
 - v1: [spinless_report.md](../spinless_report.md)

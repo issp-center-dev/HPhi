@@ -184,69 +184,103 @@ int mltplyHubbard(
   int idx=0;
 
   StartTimer(300);
+
+#ifdef MPI
+  // Disable batching for TimeEvolution with step-dependent interactions.
+  // Same guard as mltplyHubbardGC: batched groups are initialized once
+  // and cannot track terms added by MakeTEDTransfer/MakeTEDInterAll.
+  int use_batching_H = !(X->Def.iCalcType == TimeEvolution &&
+                         (X->Def.NTEInterAllMax > 0 || X->Def.NTETransferMax > 0));
+#endif
+
   /**
   Transfer
   */
   StartTimer(310);
-#ifdef MPI
-  // MPIdouble transfers - use batched communication
-  StartTimer(311);
-  if (!batched_double_Hubbard_initialized) {
-    if (InitializeMPIBatchedDoubleTransfers_Hubbard(X, &batched_double_Hubbard) != 0) {
-      fprintf(stderr, "Error: Failed to initialize batched MPI double transfers for Hubbard\n");
-      return -1;
-    }
-    batched_double_Hubbard_initialized = 1;
-  }
-
-  for (int g = 0; g < batched_double_Hubbard.num_groups; g++) {
-    dam_pr = X_child_general_hopp_MPIdouble_batched(
-        &batched_double_Hubbard.groups[g], X, tmp_v0, tmp_v1);
-    X->Large.prdct += dam_pr;
-  }
-  StopTimer(311);
-#endif
 
 #ifdef MPI
-  // MPIsingle transfers - use batched communication
-  StartTimer(312);
-  if (!batched_transfers_Hubbard_initialized) {
-    if (InitializeMPIBatchedTransfers_Hubbard(X, &batched_transfers_Hubbard) != 0) {
-      fprintf(stderr, "Error: Failed to initialize batched MPI transfers for Hubbard\n");
-      return -1;
-    }
-    batched_transfers_Hubbard_initialized = 1;
-  }
-
-  for (int g = 0; g < batched_transfers_Hubbard.num_groups; g++) {
-    dam_pr = X_child_general_hopp_MPIsingle_batched(
-        &batched_transfers_Hubbard.groups[g], X, tmp_v0, tmp_v1);
-    X->Large.prdct += dam_pr;
-  }
-  StopTimer(312);
-#endif
-
-  // Local transfers (both sites intra-process)
-  for (i = 0; i < X->Def.EDNTransfer; i+=2) {
-    if (X->Def.EDGeneralTransfer[i][0] + 1 <= X->Def.Nsite &&
-        X->Def.EDGeneralTransfer[i][2] + 1 <= X->Def.Nsite) {
-      StartTimer(313);
-      for (ihermite = 0; ihermite<2; ihermite++) {
-        idx = i + ihermite;
-        isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
-        isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
-        sigma1 = X->Def.EDGeneralTransfer[idx][1];
-        sigma2 = X->Def.EDGeneralTransfer[idx][3];
-        if (general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
-          return -1;
-        }
-        tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
-        X->Large.tmp_trans = tmp_trans;
-        dam_pr = general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
-        X->Large.prdct += dam_pr;
+  if (use_batching_H) {
+    // MPIdouble transfers - use batched communication
+    StartTimer(311);
+    if (!batched_double_Hubbard_initialized) {
+      if (InitializeMPIBatchedDoubleTransfers_Hubbard(X, &batched_double_Hubbard) != 0) {
+        fprintf(stderr, "Error: Failed to initialize batched MPI double transfers for Hubbard\n");
+        return -1;
       }
-      StopTimer(313);
+      batched_double_Hubbard_initialized = 1;
     }
+
+    for (int g = 0; g < batched_double_Hubbard.num_groups; g++) {
+      dam_pr = X_child_general_hopp_MPIdouble_batched(
+          &batched_double_Hubbard.groups[g], X, tmp_v0, tmp_v1);
+      X->Large.prdct += dam_pr;
+    }
+    StopTimer(311);
+
+    // MPIsingle transfers - use batched communication
+    StartTimer(312);
+    if (!batched_transfers_Hubbard_initialized) {
+      if (InitializeMPIBatchedTransfers_Hubbard(X, &batched_transfers_Hubbard) != 0) {
+        fprintf(stderr, "Error: Failed to initialize batched MPI transfers for Hubbard\n");
+        return -1;
+      }
+      batched_transfers_Hubbard_initialized = 1;
+    }
+
+    for (int g = 0; g < batched_transfers_Hubbard.num_groups; g++) {
+      dam_pr = X_child_general_hopp_MPIsingle_batched(
+          &batched_transfers_Hubbard.groups[g], X, tmp_v0, tmp_v1);
+      X->Large.prdct += dam_pr;
+    }
+    StopTimer(312);
+  }
+#endif
+
+  for (i = 0; i < X->Def.EDNTransfer; i+=2) {
+#ifdef MPI
+    if (!use_batching_H) {
+      // Non-batched per-term MPI path (original develop behavior)
+      if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
+          X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+        StartTimer(311);
+        general_hopp_MPIdouble(i, X, tmp_v0, tmp_v1);
+        StopTimer(311);
+        continue;
+      }
+      else if (X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+        StartTimer(312);
+        general_hopp_MPIsingle(i, X, tmp_v0, tmp_v1);
+        StopTimer(312);
+        continue;
+      }
+      else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite) {
+        StartTimer(312);
+        general_hopp_MPIsingle(i + 1, X, tmp_v0, tmp_v1);
+        StopTimer(312);
+        continue;
+      }
+    } else if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite ||
+               X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {
+      continue;  // inter-PE handled by batching above
+    }
+#endif
+    // Local transfers (both sites intra-process)
+    StartTimer(313);
+    for (ihermite = 0; ihermite<2; ihermite++) {
+      idx = i + ihermite;
+      isite1 = X->Def.EDGeneralTransfer[idx][0] + 1;
+      isite2 = X->Def.EDGeneralTransfer[idx][2] + 1;
+      sigma1 = X->Def.EDGeneralTransfer[idx][1];
+      sigma2 = X->Def.EDGeneralTransfer[idx][3];
+      if (general_hopp_GetInfo(X, isite1, isite2, sigma1, sigma2) != 0) {
+        return -1;
+      }
+      tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+      X->Large.tmp_trans = tmp_trans;
+      dam_pr = general_hopp(tmp_v0, tmp_v1, X, tmp_trans);
+      X->Large.prdct += dam_pr;
+    }
+    StopTimer(313);
   }
   StopTimer(310);
   /**
