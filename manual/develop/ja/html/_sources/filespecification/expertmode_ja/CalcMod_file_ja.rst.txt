@@ -177,6 +177,14 @@ CalcModファイル
    から選択することが出来ます。
 
    
+-  ``OutputDataHead``
+
+   **形式 :** int型 (デフォルト値 0)
+
+   | **説明 :** TPQ/TE計算の物理量出力ファイル (``SS``、``Norm``、``Flct``) のファイル名にModParaファイルの ``CDataFileHead`` で指定したヘッダ文字列をプレフィックスとして付与するかどうかを指定します。
+   | 0: プレフィックスを付与しない (例: ``SS_rand0.dat``)。
+   | 1: ``CDataFileHead`` のプレフィックスを付与する (例: ``zvo_SS_rand0.dat``)。
+
 -  ``Scalapack``
 
    **形式 :** int型 (デフォルト値 0)

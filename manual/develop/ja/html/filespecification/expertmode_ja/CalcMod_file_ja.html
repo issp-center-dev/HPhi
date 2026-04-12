@@ -187,6 +187,14 @@ Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S
 1: 出力あり
 から選択することが出来ます。</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputDataHead</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> TPQ/TE計算の物理量出力ファイル (<code class="docutils literal notranslate"><span class="pre">SS</span></code>、<code class="docutils literal notranslate"><span class="pre">Norm</span></code>、<code class="docutils literal notranslate"><span class="pre">Flct</span></code>) のファイル名にModParaファイルの <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> で指定したヘッダ文字列をプレフィックスとして付与するかどうかを指定します。</div>
+<div class="line">0: プレフィックスを付与しない (例: <code class="docutils literal notranslate"><span class="pre">SS_rand0.dat</span></code>)。</div>
+<div class="line">1: <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> のプレフィックスを付与する (例: <code class="docutils literal notranslate"><span class="pre">zvo_SS_rand0.dat</span></code>)。</div>
+</div>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">

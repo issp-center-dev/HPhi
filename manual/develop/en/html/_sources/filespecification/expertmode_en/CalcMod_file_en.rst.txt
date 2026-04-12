@@ -179,6 +179,14 @@ The parameters correlated with the keywords are as follows.
    | 0: Not output an eigenvector
    | 1: Output an eigenvector.
    
+*  ``OutputDataHead``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** Select whether to prefix TPQ/TE physical quantity output filenames (``SS``, ``Norm``, ``Flct``) with the header string defined by ``CDataFileHead`` in the ModPara file:
+   | 0: Do not add a prefix (e.g., ``SS_rand0.dat``).
+   | 1: Add the ``CDataFileHead`` prefix (e.g., ``zvo_SS_rand0.dat``).
+
 *  ``Scalapack``
 
    **Type :** Int (default value: 0)
