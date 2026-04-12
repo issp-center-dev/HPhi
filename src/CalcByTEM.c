@@ -141,21 +141,33 @@ int CalcByTEM(
     }
   }
 
-  sprintf(sdt_phys, "%s", cFileNameSS);
+  if(X->Bind.Def.iOutputDataHead==1){
+    sprintf(sdt_phys, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameSS);
+  }else{
+    sprintf(sdt_phys, "%s", cFileNameSS);
+  }
   if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
     return -1;
   }
   fprintf(fp, "%s",cLogSS);
   fclose(fp);
 
-  sprintf(sdt_norm, "%s", cFileNameNorm);
+  if(X->Bind.Def.iOutputDataHead==1){
+    sprintf(sdt_norm, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameNorm);
+  }else{
+    sprintf(sdt_norm, "%s", cFileNameNorm);
+  }
   if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
     return -1;
   }
   fprintf(fp, "%s",cLogNorm);
   fclose(fp);
 
-  sprintf(sdt_flct, "%s", cFileNameFlct);
+  if(X->Bind.Def.iOutputDataHead==1){
+    sprintf(sdt_flct, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameFlct);
+  }else{
+    sprintf(sdt_flct, "%s", cFileNameFlct);
+  }
   if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
     return -1;
   }
