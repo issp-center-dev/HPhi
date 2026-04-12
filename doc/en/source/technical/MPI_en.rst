@@ -88,6 +88,24 @@ The batched communication is implemented for:
 * Hubbard models (MPIsingle, MPIdouble, InterAll)
 * Spin models (Exchange interactions)
 
+.. note::
+
+   **Limitation in Time-Evolution (TimeEvolution) mode**
+
+   When using ``TETwoBody`` or step-dependent ``TEOneBody``
+   (expert mode with ``NTEInterAllMax > 0`` or ``NTETransferMax > 0``),
+   the MPI batched communication is automatically disabled and falls
+   back to conventional per-term MPI communication.
+
+   This is because the batched group structure is initialized once at
+   program startup and cannot track interaction terms that are
+   added or modified by ``MakeTEDTransfer``/``MakeTEDInterAll`` at each
+   time-evolution step.
+
+   Peierls substitution (AC Laser mode, ``PumpType = "AC Laser"``)
+   only updates coefficients of existing transfer entries and can
+   therefore benefit from batched communication.
+
 SpinlessFermion Off-diagonal Two-body Green's Function
 ------------------------------------------------------
 

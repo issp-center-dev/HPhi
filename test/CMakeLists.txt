@@ -298,10 +298,12 @@ if(MPI_FOUND)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless_GC min:2)
     add_hphi_mpi_test(mpi_consistency_te_kondo min:2)
+    add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody min:4)
 
     # MPI consistency test labels
     set_tests_properties(
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard
+        mpi_consistency_te_hubbardgc_twobody
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
         mpi_consistency_spin mpi_consistency_spingc mpi_consistency_te_spin

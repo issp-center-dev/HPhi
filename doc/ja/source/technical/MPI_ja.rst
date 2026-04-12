@@ -88,6 +88,21 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 * Hubbardモデル（MPIsingle、MPIdouble、InterAll）
 * Spinモデル（Exchange相互作用）
 
+.. note::
+
+   **時間発展（TimeEvolution）モードでのバッチ通信の制限**
+
+   ``TETwoBody`` または ``TEOneBody``（expert mode の step 依存型、
+   ``NTEInterAllMax > 0`` もしくは ``NTETransferMax > 0``）を使用する
+   時間発展計算では、MPI バッチ通信は自動的に無効化され、
+   従来の per-term MPI 通信にフォールバックします。
+
+   これは、バッチ通信のグループ構造がプロセス起動時に 1 回だけ初期化される
+   設計のため、step ごとに追加・変更される相互作用項を追従できないためです。
+
+   Peierls 代用（AC Laser モード、``PumpType = "AC Laser"``）は
+   既存の転送項の係数のみを変更するため、バッチ通信の恩恵を受けられます。
+
 SpinlessFermionのoff-diagonal two-body Green関数
 -----------------------------------------------
 

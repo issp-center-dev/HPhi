@@ -2530,7 +2530,11 @@ int InitializeMPIBatchedExchange_Spin(
         batched->groups[g].state1check = (int *)malloc(count * sizeof(int));
 
         if (batched->groups[g].term_indices == NULL ||
-            batched->groups[g].coefficients == NULL) {
+            batched->groups[g].coefficients == NULL ||
+            batched->groups[g].org_isite1 == NULL ||
+            batched->groups[g].org_ispin1 == NULL ||
+            batched->groups[g].org_ispin2 == NULL ||
+            batched->groups[g].state1check == NULL) {
             for (int j = 0; j <= g; j++) {
                 free(batched->groups[j].term_indices);
                 free(batched->groups[j].coefficients);
