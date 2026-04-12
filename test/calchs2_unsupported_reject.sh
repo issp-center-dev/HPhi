@@ -17,6 +17,13 @@
 #      0/1; historically any other value fell through with a stale
 #      icnt and produced the opaque "imax=1, idim_max=..." abort. The
 #      Kondo branch must reject unknown values with a parameter error.
+#
+# This script intentionally runs serially even in MPI CI jobs. Its goal
+# is to verify entry-guard validation and error messages, not MPI site
+# decomposition. Running these negative cases through mpiexec needlessly
+# exercises unrelated standard-mode setup paths; Kondo+ncond=2 at 16
+# ranks can hang during `HPhi -s`, blocking the whole CI job before the
+# CalcHS validation under test is even reached.
 
 mkdir -p calchs2_unsupported_reject/
 cd calchs2_unsupported_reject
@@ -32,13 +39,13 @@ run_reject_case () {
   (
     cd "${subdir}"
     printf "%s" "${stanfile}" > stan.in
-    ${MPIRUN} ../../../src/HPhi -s stan.in > gen.log 2>&1
+    ../../../src/HPhi -sdry stan.in > gen.log 2>&1
     echo "CalcHS         ${calchs_value}" >> modpara.def
     rm -rf output
     mkdir -p output
 
     set +e
-    ${MPIRUN} ../../../src/HPhi -e namelist.def > run.log 2>&1
+    ../../../src/HPhi -e namelist.def > run.log 2>&1
     rc=$?
     set -e
 
