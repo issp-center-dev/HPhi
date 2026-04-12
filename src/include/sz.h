@@ -135,6 +135,26 @@ int sz(
     long unsigned int *list_2_2_
 );
 
+unsigned long int sz_hacker_for_large_systems(
+                        long unsigned int ihfbit,
+                        struct BindStruct *X,
+                        long unsigned int *list_1_,
+                        long unsigned int *list_2_1_,
+                        long unsigned int *list_2_2_,
+                        long unsigned int *list_jb_
+);
+
+long unsigned int make_true_spin(long unsigned int spin, int shift_offset, int Nsite);
+
+void update_lists(
+    long unsigned int i, long unsigned int ihfbit,
+    long unsigned int *list_1_, long unsigned int *list_2_1_, long unsigned int *list_2_2_,
+    long unsigned int *ja, long unsigned int *jb,
+    long unsigned int *prev_ib, long unsigned int Nsite
+);
+
+int compare_ulong(const void *a, const void *b);
+
 int Read_sz(
     struct BindStruct *X,
     const long unsigned int irght,
