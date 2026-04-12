@@ -153,11 +153,22 @@ initial vector.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcHS</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> If <code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>, an efficient algorithm for generating
-the restricted Hilbert space with the specified quantum number is
-used (Details of algorithm is shown in
-<a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf</a> [in Japanese]). Default
-value is 1 and the efficient algorithm is used.</p>
+<p><strong>Description :</strong> Selects the algorithm used to enumerate the
+restricted Hilbert space with the specified quantum number.
+If <code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>, an efficient algorithm based on bit manipulation
+is used (details are given in
+<a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf</a> [in Japanese]).
+If <code class="docutils literal notranslate"><span class="pre">CalcHS=2</span></code>, an alternative enumeration path is taken that can
+be useful for some large-sector cases by avoiding the full
+<code class="docutils literal notranslate"><span class="pre">sdim</span> <span class="pre">=</span> <span class="pre">2^Nsite</span></code> outer loop of <code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>; note, however, that
+the current implementation still allocates the auxiliary index
+arrays (<code class="docutils literal notranslate"><span class="pre">list_2_1</span></code>, <code class="docutils literal notranslate"><span class="pre">list_2_2</span></code>, <code class="docutils literal notranslate"><span class="pre">list_jb</span></code>) at size <code class="docutils literal notranslate"><span class="pre">O(sdim)</span></code>
+and uses an additional <code class="docutils literal notranslate"><span class="pre">O(idim_max)</span></code> temporary sort buffer for
+the Hubbard branch, so it is not a memory-only large-system fix.
+<code class="docutils literal notranslate"><span class="pre">CalcHS=2</span></code> is currently available only for the <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> and
+<code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code> models; passing it with any other model
+(e.g. <code class="docutils literal notranslate"><span class="pre">Kondo</span></code>, <code class="docutils literal notranslate"><span class="pre">Spin</span></code>) results in an explicit error. Default
+value is 1.</p>
 </li>
 </ul>
 </section>

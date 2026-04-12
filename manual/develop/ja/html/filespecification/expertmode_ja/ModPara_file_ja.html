@@ -144,8 +144,16 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcHS</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong>
-<code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は <a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips</a>.pdfを参照)。
-デフォルトの値は1で、高速化アルゴリズムが使用されます。</p>
+<code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code>ではビット操作による高速化アルゴリズムを使用します
+(詳細は <a class="reference external" href="http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf">http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf</a> を参照)。
+<code class="docutils literal notranslate"><span class="pre">CalcHS=2</span></code>は <code class="docutils literal notranslate"><span class="pre">CalcHS=1</span></code> の <code class="docutils literal notranslate"><span class="pre">sdim</span> <span class="pre">=</span> <span class="pre">2^Nsite</span></code> 外側ループを回避する
+代替の列挙経路で、一部の大きな sector で有効です。ただし現在の実装では
+補助の index 配列 (<code class="docutils literal notranslate"><span class="pre">list_2_1</span></code> / <code class="docutils literal notranslate"><span class="pre">list_2_2</span></code> / <code class="docutils literal notranslate"><span class="pre">list_jb</span></code>) は依然 <code class="docutils literal notranslate"><span class="pre">O(sdim)</span></code> で
+確保され、Hubbard 分岐では <code class="docutils literal notranslate"><span class="pre">O(idim_max)</span></code> の一時 sort buffer も使用するため、
+メモリ面だけで大規模系を解決するものではありません。
+<code class="docutils literal notranslate"><span class="pre">CalcHS=2</span></code>は現時点で <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> と <code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code> モデルでのみ利用可能で、
+それ以外のモデル (例: <code class="docutils literal notranslate"><span class="pre">Kondo</span></code>, <code class="docutils literal notranslate"><span class="pre">Spin</span></code>) で指定した場合はエラーになります。
+デフォルト値は 1 です。</p>
 </li>
 </ul>
 </section>
