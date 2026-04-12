@@ -5,6 +5,7 @@
 
 TOLERANCE="0.000001"
 HPHI=../src/HPhi
+TE_STEPS=20
 
 if [ -z "${MPIRUN}" ]; then echo "Error: MPIRUN is not set."; exit 1; fi
 MPI_NP=$(printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}')
@@ -14,6 +15,24 @@ if [ "${MPI_NP}" -le 1 ]; then echo "Error: need >1 rank"; exit 1; fi
 TOPDIR=mpi_consistency_te_hubbardgc_twobody
 rm -rf ${TOPDIR}
 mkdir -p ${TOPDIR}
+
+write_tetwobody_def() {
+cat > tetwobody.def <<EOF
+========================
+NTimeSteps    ${TE_STEPS}
+========================
+========================
+========================
+EOF
+printf '%s\n' '0.00  0' >> tetwobody.def
+i=1
+while [ "${i}" -lt "${TE_STEPS}" ]; do
+    printf '0.%02d  2\n' "${i}" >> tetwobody.def
+    printf '%s\n' '0  0  1  0  1  1  0  1  0.5  0.0' >> tetwobody.def
+    printf '%s\n' '0  1  1  1  1  0  0  0  0.5  0.0' >> tetwobody.def
+    i=$((i + 1))
+done
+}
 
 # ---- Serial run ----
 mkdir -p ${TOPDIR}/serial
@@ -32,27 +51,14 @@ EOF
 echo "  [serial] Ground state..."
 ../../${HPHI} -s stan_gs.in > /dev/null 2>&1
 
-# Create TETwoBody: step 0 empty, step 1-2 with inter-PE InterAll
-cat > tetwobody.def <<'EOF'
-========================
-NTimeSteps    3
-========================
-========================
-========================
-0.00  0
-0.01  2
-0  0  1  0  1  1  0  1  0.5  0.0
-0  1  1  1  1  0  0  0  0.5  0.0
-0.02  2
-0  0  1  0  1  1  0  1  0.5  0.0
-0  1  1  1  1  0  0  0  0.5  0.0
-EOF
+# Create TETwoBody: step 0 empty, step 1-19 with inter-PE InterAll
+write_tetwobody_def
 
 # Patch for TE mode
 sed -e 's/^CalcType.*/CalcType   4/' \
     -e 's/^InputEigenVec.*/InputEigenVec   1/' \
     calcmod.def > _t && mv _t calcmod.def
-sed -e 's/^Lanczos_max.*/Lanczos_max    3/' \
+sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
 echo "   TETwoBody  tetwobody.def" >> namelist.def
 
@@ -77,25 +83,12 @@ EOF
 echo "  [mpi] Ground state..."
 ${MPIRUN} ../../${HPHI} -s stan_gs.in > /dev/null 2>&1
 
-cat > tetwobody.def <<'EOF'
-========================
-NTimeSteps    3
-========================
-========================
-========================
-0.00  0
-0.01  2
-0  0  1  0  1  1  0  1  0.5  0.0
-0  1  1  1  1  0  0  0  0.5  0.0
-0.02  2
-0  0  1  0  1  1  0  1  0.5  0.0
-0  1  1  1  1  0  0  0  0.5  0.0
-EOF
+write_tetwobody_def
 
 sed -e 's/^CalcType.*/CalcType   4/' \
     -e 's/^InputEigenVec.*/InputEigenVec   1/' \
     calcmod.def > _t && mv _t calcmod.def
-sed -e 's/^Lanczos_max.*/Lanczos_max    3/' \
+sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
 echo "   TETwoBody  tetwobody.def" >> namelist.def
 
