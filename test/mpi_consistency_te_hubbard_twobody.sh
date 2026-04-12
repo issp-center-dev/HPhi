@@ -8,6 +8,17 @@ TOLERANCE="0.000001"
 HPHI=../src/HPhi
 TE_STEPS=20
 
+run_hphi() {
+    label="$1"
+    logfile="$2"
+    shift 2
+    if ! "$@" > "${logfile}" 2>&1; then
+        echo "${label} failed"
+        cat "${logfile}"
+        exit 1
+    fi
+}
+
 if [ -z "${MPIRUN}" ]; then echo "Error: MPIRUN is not set."; exit 1; fi
 MPI_NP=$(printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}')
 if ! printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$"; then echo "Error: bad MPIRUN"; exit 1; fi
@@ -51,11 +62,15 @@ t = 1.0
 U = 4.0
 nelec = 8
 2Sz = 0
+initial_iv = 1
 EigenvecIO = "out"
 EOF
 
+echo "  [serial] Input generation..."
+run_hphi "  [serial] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+
 echo "  [serial] Ground state..."
-../../${HPHI} -s stan_gs.in > /dev/null 2>&1
+run_hphi "  [serial] Ground state" hphi_gs.log ../../${HPHI} -e namelist.def
 
 # TEOneBody: step 0 empty, step 1-19 add inter-PE transfer (site 0 <-> site 8)
 # With 4 MPI ranks on 9-site square, site 8 is inter-process.
@@ -63,13 +78,14 @@ write_teonebody_def
 
 sed -e 's/^CalcType.*/CalcType   4/' \
     -e 's/^InputEigenVec.*/InputEigenVec   1/' \
+    -e 's/^OutputEigenVec.*/OutputEigenVec   0/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
 echo "   TEOneBody  teonebody.def" >> namelist.def
 
 echo "  [serial] Time evolution..."
-../../${HPHI} -e namelist.def > /dev/null 2>&1
+run_hphi "  [serial] Time evolution" hphi_te.log ../../${HPHI} -e namelist.def
 cd ../..
 
 # ---- MPI run ----
@@ -88,23 +104,28 @@ t = 1.0
 U = 4.0
 nelec = 8
 2Sz = 0
+initial_iv = 1
 EigenvecIO = "out"
 EOF
 
+echo "  [mpi] Input generation..."
+run_hphi "  [mpi] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+
 echo "  [mpi] Ground state..."
-${MPIRUN} ../../${HPHI} -s stan_gs.in > /dev/null 2>&1
+run_hphi "  [mpi] Ground state" hphi_gs.log ${MPIRUN} ../../${HPHI} -e namelist.def
 
 write_teonebody_def
 
 sed -e 's/^CalcType.*/CalcType   4/' \
     -e 's/^InputEigenVec.*/InputEigenVec   1/' \
+    -e 's/^OutputEigenVec.*/OutputEigenVec   0/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
 echo "   TEOneBody  teonebody.def" >> namelist.def
 
 echo "  [mpi] Time evolution..."
-${MPIRUN} ../../${HPHI} -e namelist.def > /dev/null 2>&1
+run_hphi "  [mpi] Time evolution" hphi_te.log ${MPIRUN} ../../${HPHI} -e namelist.def
 cd ../..
 
 # ---- Compare ----
