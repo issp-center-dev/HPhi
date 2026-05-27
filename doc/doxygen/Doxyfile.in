@@ -115,7 +115,8 @@ GENERATE_HTMLHELP      = NO
 GENERATE_QHP           = NO
 GENERATE_ECLIPSEHELP   = NO
 GENERATE_TREEVIEW      = YES
-TREEVIEW_WIDTH         = 300
+# Must match --side-nav-fixed-width in doxygen-awesome-sidebar-only.css (335px).
+TREEVIEW_WIDTH         = 335
 ENUM_VALUES_PER_LINE   = 4
 USE_MATHJAX            = YES
 MATHJAX_VERSION        = MathJax_3
