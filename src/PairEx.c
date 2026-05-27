@@ -19,6 +19,7 @@
 #include "PairEx.h"
 #include "PairExHubbard.h"
 #include "PairExSpin.h"
+#include "PairExSpinless.h"
 
 /**
  * @file   PairEx.c
@@ -90,6 +91,13 @@ int GetPairExcitedState
 
     case SpinGC:
       iret=GetPairExcitedStateSpinGC(X,tmp_v0, tmp_v1);
+      break;
+
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      /* GetPairExcitedState_SpinlessFermion returns 0 on success / -1 on error;
+         convert to the TRUE/FALSE convention expected by the caller. */
+      iret = (GetPairExcitedState_SpinlessFermion(X, tmp_v0, tmp_v1) == 0) ? TRUE : FALSE;
       break;
 
     default:

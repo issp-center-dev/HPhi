@@ -474,7 +474,9 @@ double complex CisAjt_Hermite(
   }
 
   dmv = sgn * tmp_v1[j];
-  if (X->Large.mode == M_MLTPLY) {
+  // Build the output vector both for H|psi> (M_MLTPLY) and for the excited state
+  // in spectrum calculations (M_CALCSPEC); M_CORR only needs dam_pr.
+  if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
     tmp_v0[off] += *tmp_V * dmv;
   }
   dam_pr = dmv * conj(tmp_v1[off]);

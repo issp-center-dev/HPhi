@@ -189,6 +189,7 @@ add_hphi_test(spectrum_genspin_ladder)
 add_hphi_test(spectrum_hubbardgc_tri)
 add_hphi_test(spectrum_kondogc_chain)
 add_hphi_test(spectrum_spingc_honey)
+add_hphi_test_with_srcdir(spectrum_spinless_chain)
 
 # Spectrum test labels
 set_tests_properties(

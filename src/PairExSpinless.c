@@ -41,6 +41,35 @@ int GetPairExcitedState_SpinlessFermion(
   //Transfer
   for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
     tmp_trans = X->Def.ParaPairExcitationOperator[i];
+
+    // Diagonal operator c^+_i c_i = n_i (or 1 - n_i for itype 0): it is diagonal
+    // in the occupation basis, so it needs no MPI communication regardless of
+    // whether site i is held by this process. Apply it directly; the hopping
+    // kernels return 0 for creation and annihilation on the same site.
+    if (X->Def.PairExcitationOperator[i][0] == X->Def.PairExcitationOperator[i][2]) {
+      int isite0 = X->Def.PairExcitationOperator[i][0]; // 0-based site
+      int itype = X->Def.PairExcitationOperator[i][4];
+      double complex coef = (itype == 0) ? -tmp_trans : tmp_trans;
+      long unsigned int jj, i_max = X->Large.i_max;
+      if (isite0 + 1 > X->Def.Nsite) {
+        // Inter-process site: occupation is fixed by this process rank.
+        int occ = (myrank >> (isite0 - X->Def.Nsite)) & 1;
+        double complex num1 = (itype == 0) ? (double)(1 - occ) : (double)occ;
+        for (jj = 1; jj <= i_max; jj++) tmp_v0[jj] += coef * num1 * tmp_v1[jj];
+      } else {
+        // Local site: occupation read from the basis bit pattern.
+        long unsigned int is = X->Def.Tpow[isite0];
+        int isGC = (X->Def.iCalcModel == SpinlessFermionGC);
+        for (jj = 1; jj <= i_max; jj++) {
+          long unsigned int bitrep = isGC ? (jj - 1) : list_1[jj];
+          long unsigned int ibit = (bitrep & is) / is;
+          double complex num1 = (itype == 0) ? (double)(1 - ibit) : (double)ibit;
+          tmp_v0[jj] += coef * num1 * tmp_v1[jj];
+        }
+      }
+      continue;
+    }
+
     if (X->Def.PairExcitationOperator[i][0] + 1 > X->Def.Nsite &&
         X->Def.PairExcitationOperator[i][2] + 1 > X->Def.Nsite) {
       dam_pr = X_child_general_hopp_Spinless_MPIdouble(X->Def.PairExcitationOperator[i][0],
