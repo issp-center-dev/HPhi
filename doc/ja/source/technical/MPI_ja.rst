@@ -85,8 +85,8 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 バッチ通信は以下のモデルに実装済み：
 
 * SpinlessFermionモデル（MPIsingle）
-* Hubbardモデル（MPIsingle、MPIdouble、InterAll）
-* Spinモデル（Exchange相互作用）
+* Hubbardモデル（MPIsingle、MPIdouble；InterAllはHubbardGCのみ）
+* Spinモデル（Exchange MPIsingle；SpinGCはPairLiftも一括処理）
 
 .. note::
 

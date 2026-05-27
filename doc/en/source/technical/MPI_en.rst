@@ -85,8 +85,8 @@ This optimization is particularly effective for:
 The batched communication is implemented for:
 
 * SpinlessFermion models (MPIsingle)
-* Hubbard models (MPIsingle, MPIdouble, InterAll)
-* Spin models (Exchange interactions)
+* Hubbard models (MPIsingle, MPIdouble; InterAll for HubbardGC only)
+* Spin models (Exchange MPIsingle; SpinGC also batches PairLift)
 
 .. note::
 
