@@ -103,6 +103,20 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
    Peierls 代用（AC Laser モード、``PumpType = "AC Laser"``）は
    既存の転送項の係数のみを変更するため、バッチ通信の恩恵を受けられます。
 
+バッチ通信の無効化
+~~~~~~~~~~~~~~~~~~
+
+環境変数 ``HPHI_MPI_NOBATCH=1`` を設定すると、MPI通信のバッチ処理を全体で無効化し、
+バッチ化前の項ごとのMPI通信にフォールバックします。デバッグや、バッチ最適化が
+非バッチ時と同一の結果を再現することの検証に使用します::
+
+   export HPHI_MPI_NOBATCH=1
+   mpirun -np 4 ./HPhi -e namelist.def
+
+起動時に ``MPI batching : ON`` または ``MPI batching : OFF`` と表示されます。
+この値は rank 0 で読み込まれ全ランクにブロードキャストされるため、
+常に全プロセスで一致します。
+
 SpinlessFermionのoff-diagonal two-body Green関数
 -----------------------------------------------
 

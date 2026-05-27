@@ -152,4 +152,5 @@ double eps_CheckImag0 = 1e-10;
 int nproc = 1;
 int myrank = 0;
 int nthreads = 1;
+int iFlgMPIBatch = 1;
 FILE *stdoutMPI = 0;

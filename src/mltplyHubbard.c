@@ -189,7 +189,8 @@ int mltplyHubbard(
   // Disable batching for TimeEvolution with step-dependent interactions.
   // Same guard as mltplyHubbardGC: batched groups are initialized once
   // and cannot track terms added by MakeTEDTransfer/MakeTEDInterAll.
-  int use_batching_H = !(X->Def.iCalcType == TimeEvolution &&
+  int use_batching_H = MPIBatchingEnabled() &&
+                       !(X->Def.iCalcType == TimeEvolution &&
                          (X->Def.NTEInterAllMax > 0 || X->Def.NTETransferMax > 0));
 #endif
 
@@ -446,7 +447,8 @@ int mltplyHubbardGC(
   // that are added/removed by MakeTEDTransfer/MakeTEDInterAll each step.
   // Peierls substitution (NLaser > 0) is safe since it only modifies
   // existing coefficients, which the batched apply re-reads.
-  int use_batching = !(X->Def.iCalcType == TimeEvolution &&
+  int use_batching = MPIBatchingEnabled() &&
+                     !(X->Def.iCalcType == TimeEvolution &&
                        (X->Def.NTEInterAllMax > 0 || X->Def.NTETransferMax > 0));
 #endif
 

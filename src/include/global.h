@@ -175,6 +175,7 @@ extern double eps_CheckImag0;/**> epsilon for checking values of one-body and tw
 extern int nproc;//!< Number of processors, defined in InitializeMPI()
 extern int myrank;//!< Process ID, defined in InitializeMPI()
 extern int nthreads;//!< Number of Threads, defined in InitializeMPI()
+extern int iFlgMPIBatch;//!< 1: MPI communication batching ON (default), 0: OFF (HPHI_MPI_NOBATCH=1), set in InitializeMPI()
 extern FILE *stdoutMPI;/**<@brief File pointer to the standard output
                 defined in InitializeMPI()*/
 

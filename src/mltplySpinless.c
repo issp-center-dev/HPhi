@@ -124,7 +124,7 @@ int mltplySpinlessFermion(struct BindStruct *X, double complex *tmp_v0, double c
   dam_pr = 0.0;
 
   //Transfer
-  if (X->Large.mode == M_MLTPLY) {
+  if (X->Large.mode == M_MLTPLY && MPIBatchingEnabled()) {
     StartTimer(600);
     StartTimer(610);
     for (i = 0; i < X->Def.EDNTransfer; i += 2) {

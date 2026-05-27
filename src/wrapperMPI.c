@@ -71,9 +71,20 @@ void InitializeMPI(int argc, char *argv[]){
   ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   ierr = MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
   if(ierr != 0) exitMPI(ierr);
+  /* Parse HPHI_MPI_NOBATCH on rank 0 and broadcast so every rank agrees
+     (a per-rank divergence would deadlock the collective MPI_Sendrecv pattern). */
+  if (myrank == 0) {
+    const char *e = getenv("HPHI_MPI_NOBATCH");
+    iFlgMPIBatch = (e != NULL && atoi(e) != 0) ? 0 : 1;
+  }
+  MPI_Bcast(&iFlgMPIBatch, 1, MPI_INT, 0, MPI_COMM_WORLD);
 #else
   nproc = 1;
   myrank = 0;
+  {
+    const char *e = getenv("HPHI_MPI_NOBATCH");
+    iFlgMPIBatch = (e != NULL && atoi(e) != 0) ? 0 : 1;
+  }
 #endif
   if (myrank == 0) stdoutMPI = stdout;
   else stdoutMPI = fopen("/dev/null", "w");
@@ -89,6 +100,7 @@ void InitializeMPI(int argc, char *argv[]){
   fprintf(stdoutMPI, "\n\n#####  Parallelization Info.  #####\n\n");
   fprintf(stdoutMPI, "  OpenMP threads : %d\n", nthreads);
   fprintf(stdoutMPI, "  MPI PEs : %d \n\n", nproc);
+  fprintf(stdoutMPI, "  MPI batching : %s\n\n", iFlgMPIBatch ? "ON" : "OFF");
 }/*void InitializeMPI(int argc, char *argv[])*/
 /**
 @brief MPI Finitialization wrapper

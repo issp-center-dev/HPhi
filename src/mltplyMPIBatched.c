@@ -43,6 +43,12 @@
 #include "mltplyMPIHubbardCore.h"
 #include "mltplyMPIBatched.h"
 
+/* Returns 1 if MPI communication batching is enabled, 0 if disabled
+   (HPHI_MPI_NOBATCH=1). Available in both MPI and non-MPI builds. */
+int MPIBatchingEnabled(void) {
+    return iFlgMPIBatch;
+}
+
 #ifdef MPI
 
 /**

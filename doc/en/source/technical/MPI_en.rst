@@ -106,6 +106,21 @@ The batched communication is implemented for:
    only updates coefficients of existing transfer entries and can
    therefore benefit from batched communication.
 
+Disabling batched communication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set the environment variable ``HPHI_MPI_NOBATCH=1`` to disable MPI
+communication batching globally and fall back to the original per-term MPI
+exchanges. This is intended for debugging and for verifying that the batched
+optimization reproduces the unbatched result::
+
+   export HPHI_MPI_NOBATCH=1
+   mpirun -np 4 ./HPhi -e namelist.def
+
+The active setting is reported at startup as ``MPI batching : ON`` or
+``MPI batching : OFF``. The value is read on rank 0 and broadcast to all ranks,
+so all processes always agree.
+
 SpinlessFermion Off-diagonal Two-body Green's Function
 ------------------------------------------------------
 
