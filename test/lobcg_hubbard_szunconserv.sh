@@ -6,8 +6,8 @@ if [ -z "${MPIRUN}" ]; then
 fi
 
 
-mkdir -p lobcg_hubbard_szconserv/
-cd lobcg_hubbard_szconserv
+mkdir -p lobcg_hubbard_szunconserv/
+cd lobcg_hubbard_szunconserv
 
 cat > stan.in <<EOF
 W = 4
