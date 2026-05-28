@@ -59,7 +59,7 @@ typedef struct {
 
 /** @brief Returns 1 if MPI communication batching is enabled, 0 if disabled
  *  (HPHI_MPI_NOBATCH=1). Parsed on rank 0 and broadcast in InitializeMPI;
- *  declared outside #ifdef MPI so non-MPI builds can call it too. */
+ *  declared outside the `#ifdef MPI` guard so non-MPI builds can call it too. */
 int MPIBatchingEnabled(void);
 
 #ifdef MPI
