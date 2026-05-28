@@ -24,9 +24,11 @@
  * Key concepts:
  *
  * Bit representation (for Hubbard):
- * - Each site has 2 bits: bit[2*i] = down-spin, bit[2*i+1] = up-spin
+ * - Each site has 2 bits: bit[2*i] = up-spin, bit[2*i+1] = down-spin
+ *   (see CheckMPI.c: SpinNum==1 (binary 01) -> Nup; SpinNum==2 (binary 10) -> Ndown)
  * - Tpow[2*i+sigma] = 2^(2*i+sigma) is the bit mask for (site i, spin sigma)
  * - State |...n_{1,down} n_{1,up} n_{0,down} n_{0,up}> stored as integer
+ *   (left = MSB; so the rightmost pair (n_{0,down} n_{0,up}) is bits 1,0)
  *
  * Mask operations (set by GetInfo functions):
  * - is1_spin, is2_spin: Bit masks for checking occupations

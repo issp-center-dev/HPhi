@@ -34,7 +34,10 @@
  *   - list_Diagonal: Pre-computed diagonal elements
  *
  * Key arrays:
- * - Tpow[i]: = 2^i for Hubbard (2 bits/site) or 2^floor(i/2) for spin
+ * - Tpow[i]: bit mask for the i-th degree of freedom. = 2^i for Hubbard
+ *   (2 bits/site; i = 2*site + spin) and for Spin / SpinlessFermion
+ *   (1 bit/site; i = site). For general spin, Tpow is the running
+ *   product of preceding sites' local Hilbert dimensions.
  * - list_1[j]: Maps restricted index j to full bit representation
  * - list_Diagonal[j]: Diagonal Hamiltonian element for state j
  *

@@ -20,7 +20,8 @@
  *
  * Handles inter-process hopping and interaction terms when sites are
  * distributed across MPI ranks. Uses 2-bit-per-site representation:
- *   bit[2*i] = down-spin occupation, bit[2*i+1] = up-spin occupation
+ *   bit[2*i] = up-spin occupation, bit[2*i+1] = down-spin occupation
+ *   (see CheckMPI.c: SpinNum==1 (binary 01) -> Nup; SpinNum==2 (binary 10) -> Ndown)
  *
  * MPI decomposition for Hubbard:
  * - Local sites: indices 1 to Nsite (enumerated in list_1)
