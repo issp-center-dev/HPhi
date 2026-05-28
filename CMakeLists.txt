@@ -60,7 +60,10 @@ endif()
 
 # OpenMP detection
 find_package(OpenMP)
-if(OpenMP_C_FOUND)
+# OpenMP_C_FOUND is defined by FindOpenMP only since CMake 3.9; older CMake
+# (>= our 3.0 minimum) sets the uppercase OPENMP_FOUND instead. Check both so
+# OpenMP is not silently disabled for non-Intel compilers on CMake 3.0-3.8.
+if(OpenMP_C_FOUND OR OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
   # Fallback for older Intel compilers
