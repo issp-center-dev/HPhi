@@ -66,10 +66,11 @@ jobs:
             mkdir -p "gh-pages/manual/${TARGET_NAME}/${lang}"
             cp -r "main/build/doc/${lang}/source/html" "gh-pages/manual/${TARGET_NAME}/${lang}"
           done
-          # Deploy Doxygen API documentation
+          # Deploy Doxygen API documentation (publish the html/ contents
+          # directly under api/ so the root resolves at .../api/index.html)
           rm -rf "gh-pages/manual/${TARGET_NAME}/api"
           mkdir -p "gh-pages/manual/${TARGET_NAME}/api"
-          cp -r "main/build/doc/doxygen/html" "gh-pages/manual/${TARGET_NAME}/api/"
+          cp -r "main/build/doc/doxygen/html/." "gh-pages/manual/${TARGET_NAME}/api/"
           cd gh-pages
           git config --local user.name "${GIT_USER}"
           git config --local user.email "${GIT_EMAIL}"
