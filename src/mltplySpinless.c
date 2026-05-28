@@ -124,9 +124,19 @@ int mltplySpinlessFermion(struct BindStruct *X, double complex *tmp_v0, double c
   dam_pr = 0.0;
 
   //Transfer
-  if (X->Large.mode == M_MLTPLY && MPIBatchingEnabled()) {
-    StartTimer(600);
-    StartTimer(610);
+  // Disable batching for TimeEvolution with step-dependent transfers, since
+  // the cached batched groups (initialized once on the first call) become
+  // stale when MakeTEDTransfer updates the transfer list each step. The
+  // Hubbard path applies the same guard (mltplyHubbard.c).
+  int use_batching = MPIBatchingEnabled() &&
+                     !(X->Def.iCalcType == TimeEvolution &&
+                       X->Def.NTETransferMax > 0);
+  // Time the whole transfer block; the matching StopTimer calls are at the
+  // end of the function and run unconditionally for both the batched and
+  // the per-term branches below.
+  StartTimer(600);
+  StartTimer(610);
+  if (X->Large.mode == M_MLTPLY && use_batching) {
     for (i = 0; i < X->Def.EDNTransfer; i += 2) {
       if (X->Def.EDGeneralTransfer[i][0] + 1 > X->Def.Nsite &&
           X->Def.EDGeneralTransfer[i][2] + 1 > X->Def.Nsite) {

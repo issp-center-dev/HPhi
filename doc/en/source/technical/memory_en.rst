@@ -53,7 +53,7 @@ where:
 - :math:`N_l` is the number of list arrays (typically 1-3)
 
 **Example**
-  For a 16-site Hubbard model at half-filling with :math:`S_z = 0`:
+  For a 16-site Hubbard model with 4 up and 4 down electrons (:math:`S_z = 0`):
 
   - Hilbert space: :math:`D = \binom{16}{4}^2 = 1,820^2 = 3,312,400`
   - With 4 MPI processes: :math:`D/P = 828,100` states per process
