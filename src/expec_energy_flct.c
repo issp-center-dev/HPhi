@@ -14,6 +14,26 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+ * @file expec_energy_flct.c
+ *
+ * @brief Compute energy expectation value and energy fluctuation (variance)
+ *
+ * Calculates:
+ * - Energy: E = <psi|H|psi>
+ * - Energy squared: E2 = <psi|H^2|psi>
+ * - Variance: Var(E) = E2 - E^2 (measures eigenstate quality)
+ *
+ * A small variance indicates the state is close to an eigenstate.
+ * For exact eigenstates, Var(E) = 0.
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_ENERGY
+ * - Full H|psi> computation followed by inner product
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "bitcalc.h"
 #include "mltplyCommon.h"
 #include "mltply.h"
@@ -21,15 +41,29 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
-/** 
- * @brief Parent function to calculate expected values of energy and physical quantities.
- * 
- * @param X [in,out] X Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
- * 
+/**
+ * @brief Calculate energy expectation value and variance
+ *
+ * Computes E = <psi|H|psi> and E2 = <psi|H^2|psi> to obtain energy and
+ * its fluctuation. The variance Var(E) = E2 - E^2 serves as an accuracy
+ * measure: smaller variance means better approximation to eigenstate.
+ *
+ * Calculation method:
+ * 1. Compute v0 = H*v1 using mltply()
+ * 2. E = <v1|v0> = <psi|H|psi>
+ * 3. E2 = <v0|v0> = <H*psi|H*psi> = <psi|H^2|psi>
+ * 4. Var = E2 - E^2
+ *
+ * Results stored in:
+ * - X->Phys.energy: Energy expectation value
+ * - X->Phys.var: Energy variance
+ *
+ * @param X Struct containing physical quantities [in,out]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * \retval 0 normally finished.
- * \retval -1 abnormally finished.
  */
 int expec_energy_flct(struct BindStruct *X){
 
@@ -119,6 +153,22 @@ int expec_energy_flct(struct BindStruct *X){
       X->Phys.Sz        = 0.5 * (double)X->Def.Total2SzMPI;
       X->Phys.Sz2       = X->Phys.Sz * X->Phys.Sz;
     break;
+
+  case SpinlessFermion:
+      // Canonical ensemble: particle number is fixed (use total across MPI)
+      X->Phys.doublon   = 0.0;
+      X->Phys.doublon2  = 0.0;
+      X->Phys.num       = X->Def.NeMPI;
+      X->Phys.num2      = X->Def.NeMPI * X->Def.NeMPI;
+      X->Phys.Sz        = 0.0;
+      X->Phys.Sz2       = 0.0;
+    break;
+
+  case SpinlessFermionGC:
+      // Grand canonical: calculate particle number from wavefunction
+      expec_energy_flct_SpinlessFermionGC(X);
+    break;
+
   default:
     return -1;
   }
@@ -665,4 +715,77 @@ int expec_energy_flct_GeneralSpin(struct BindStruct *X){
   X->Phys.num_down  = 0.5*(X->Def.NsiteMPI-tmp_Sz);
 
   return 0;
+}
+
+///
+/// \brief Calculate expected values of particle number for SpinlessFermionGC model
+/// \param X [in, out] Struct to get information and output physical quantities.
+/// \retval 0 normally finished.
+int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X) {
+    long unsigned int j;
+    long unsigned int isite1;
+    long unsigned int is_a, is_b;
+    int bit_n;
+    long unsigned int ibit_n;
+    double N, tmp_N, tmp_N2;
+    double tmp_v02;
+    long unsigned int i_max;
+    unsigned int l_ibit1, u_ibit1, i_32;
+
+    i_max = X->Check.idim_max;
+    i_32 = 0xFFFFFFFF; //2^32 - 1
+
+    tmp_N  = 0.0;
+    tmp_N2 = 0.0;
+
+    // Separate sites into inter-process (a) and intra-process (b)
+    is_a = 0;
+    is_b = 0;
+    for (isite1 = 1; isite1 <= X->Def.NsiteMPI; isite1++) {
+        if (isite1 > X->Def.Nsite) {
+            is_a += X->Def.Tpow[isite1 - 1];  // Inter-process sites
+        } else {
+            is_b += X->Def.Tpow[isite1 - 1];  // Intra-process sites
+        }
+    }
+
+#pragma omp parallel for reduction(+:tmp_N,tmp_N2) default(none) shared(v0) \
+  firstprivate(i_max, X, myrank, is_a, is_b, i_32) \
+  private(j, tmp_v02, N, bit_n, u_ibit1, l_ibit1, ibit_n)
+    for (j = 1; j <= i_max; j++) {
+        tmp_v02 = conj(v0[j]) * v0[j];
+        bit_n = 0;
+
+        // Count occupied inter-process sites (from myrank)
+        ibit_n = (unsigned long int) myrank & is_a;
+        u_ibit1 = ibit_n >> 32;
+        l_ibit1 = ibit_n & i_32;
+        bit_n += pop(u_ibit1);
+        bit_n += pop(l_ibit1);
+
+        // Count occupied intra-process sites (from j-1)
+        ibit_n = (unsigned long int) (j - 1) & is_b;
+        u_ibit1 = ibit_n >> 32;
+        l_ibit1 = ibit_n & i_32;
+        bit_n += pop(u_ibit1);
+        bit_n += pop(l_ibit1);
+
+        N = bit_n;
+        tmp_N += tmp_v02 * N;
+        tmp_N2 += tmp_v02 * N * N;
+    }
+
+    tmp_N  = SumMPI_d(tmp_N);
+    tmp_N2 = SumMPI_d(tmp_N2);
+
+    X->Phys.doublon  = 0.0;  // No double occupancy for spinless
+    X->Phys.doublon2 = 0.0;
+    X->Phys.num      = tmp_N;
+    X->Phys.num2     = tmp_N2;
+    X->Phys.Sz       = 0.0;  // No spin for spinless
+    X->Phys.Sz2      = 0.0;
+    X->Phys.num_up   = 0.0;
+    X->Phys.num_down = 0.0;
+
+    return 0;
 }

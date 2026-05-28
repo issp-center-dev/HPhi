@@ -1,0 +1,557 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{Hiragino Mincho ProN}
+\setCJKsansfont{Hiragino Kaku Gothic ProN}
+\setCJKmonofont{Osaka-Mono}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[margin=2.5cm]{geometry}
+
+% Code listing style
+\lstset{
+  language=C,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  breaklines=true,
+  captionpos=b
+}
+
+\title{HPhi MPI通信バッチ処理最適化\\
+\large 技術レポート}
+\author{HPhi Development Team}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+本レポートでは、HPhi量子格子モデルシミュレータにおけるMPI通信の最適化手法について説明する。
+複数の転送項やInterAll相互作用項が同じMPI通信相手（origin）を持つ場合、
+これらをグループ化してMPI通信回数を削減するバッチ処理を実装した。
+本手法により、特に大規模系・多プロセス環境でのMPI通信オーバーヘッドを大幅に削減できる。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%==============================================================================
+\section{はじめに}
+%==============================================================================
+
+HPhiは量子格子モデルの厳密対角化を行うシミュレータである。
+大規模系の計算ではMPIによる並列化が必須であり、
+ハミルトニアンの行列ベクトル積 $\hat{H}|\psi\rangle$ の計算において
+プロセス間通信が発生する。
+
+本最適化では、以下の問題に対処する：
+\begin{itemize}
+  \item 各転送項が個別にMPI\_Sendrecvを呼び出すことによる通信オーバーヘッド
+  \item 同じ通信相手への複数回の重複した通信
+\end{itemize}
+
+%==============================================================================
+\section{問題の背景}
+%==============================================================================
+
+\subsection{HPhiにおけるMPI並列化}
+
+HPhiでは、ヒルベルト空間の基底状態を各MPIプロセスに分散して格納する。
+$N$サイト系で$N_{\rm proc}$プロセスを使用する場合、
+各プロセスは $N_{\rm site} = N - \log_2(N_{\rm proc})$ 個のサイトを
+「ローカルサイト」として管理し、残りを「プロセス間サイト」として扱う。
+
+\subsection{転送項のMPI通信}
+
+ホッピング項 $c^\dagger_i c_j$ において、サイト$i$がローカル、
+サイト$j$がプロセス間の場合（MPIsingle）、通信相手（origin）は
+以下で計算される：
+\begin{equation}
+  \text{origin} = \text{myrank} \oplus \text{mask}
+\end{equation}
+ここで $\oplus$ はXOR演算、mask は $T_{\rm pow}[j]$（サイト$j$のビットマスク）である。
+
+\subsection{従来実装の問題点}
+
+従来の実装では、各転送項が個別にMPI\_Sendrecvを呼び出していた：
+
+\begin{lstlisting}[caption=従来のMPIsingle処理（概念図）]
+for (i = 0; i < N_transfers; i++) {
+    origin = compute_origin(transfer[i]);
+    MPI_Sendrecv(v1, ..., origin, ...);  // 毎回通信
+    process_transfer(transfer[i], v1buf);
+}
+\end{lstlisting}
+
+例えば、同じoriginへの転送が$N$個ある場合、$N$回のMPI\_Sendrecvが発生する。
+これはMPI通信のレイテンシが支配的な場合に大きなオーバーヘッドとなる。
+
+%==============================================================================
+\section{最適化手法：バッチ処理}
+%==============================================================================
+
+\subsection{基本アイデア}
+
+同じoriginを持つ転送項をグループ化し、1回のMPI\_Sendrecvで
+必要なデータを取得した後、全ての転送項をローカルで処理する。
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+\textbf{最適化前} & \textbf{最適化後} \\
+\hline
+転送1 $\rightarrow$ MPI通信 & \\
+転送2 $\rightarrow$ MPI通信 & グループ化 $\rightarrow$ 1回のMPI通信 \\
+転送3 $\rightarrow$ MPI通信 & $\rightarrow$ 転送1,2,3をローカル処理 \\
+\end{tabular}
+\caption{バッチ処理の概念図（同じoriginへの3転送の場合）}
+\end{figure}
+
+\subsection{アルゴリズム}
+
+\begin{algorithm}
+\caption{MPIバッチ処理アルゴリズム}
+\begin{algorithmic}[1]
+\State \textbf{初期化フェーズ（1回のみ実行）:}
+\For{各転送項 $t$}
+    \State origin $\leftarrow$ myrank $\oplus$ mask[$t$]
+    \State 転送$t$をorigin別にグループ化
+    \State 係数・ローカルマスク等を事前計算
+\EndFor
+\State
+\State \textbf{実行フェーズ（毎イテレーション）:}
+\For{各グループ $g$}
+    \State MPI\_Sendrecv(v1, origin[$g$], v1buf) \Comment{1回の通信}
+    \For{グループ$g$内の各転送 $t$}
+        \State v1bufを使って転送$t$を計算 \Comment{ローカル処理}
+    \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+%==============================================================================
+\section{データ構造}
+%==============================================================================
+
+\subsection{転送項グループ（MPITransferGroup）}
+
+\begin{lstlisting}[caption=MPITransferGroup構造体]
+typedef struct {
+    int origin;                      // 通信相手のMPIランク
+    int mask;                        // ビットマスク
+    int num_transfers;               // このグループの転送数
+    int *transfer_indices;           // 転送インデックス配列
+    double complex *coefficients;    // 事前計算した係数
+    unsigned long int *local_mask;   // ローカルサイトマスク
+    unsigned long int *state1check;  // 状態チェック用マスク
+    unsigned long int *bit1diff;     // フェルミオン符号計算用
+} MPITransferGroup;
+\end{lstlisting}
+
+\subsection{バッチコンテナ（MPIBatchedTransfers）}
+
+\begin{lstlisting}[caption=MPIBatchedTransfers構造体]
+typedef struct {
+    int num_groups;                  // グループ数（ユニークorigin数）
+    MPITransferGroup *groups;        // グループ配列
+    int is_initialized;              // 初期化フラグ
+} MPIBatchedTransfers;
+\end{lstlisting}
+
+\subsection{MPIdouble用グループ（MPIDoubleTransferGroup）}
+
+MPIdoubleでは両サイトがプロセス間のため、ローカルサイト情報は不要：
+
+\begin{lstlisting}[caption=MPIDoubleTransferGroup構造体]
+typedef struct {
+    int origin;                      // 通信相手のMPIランク
+    int num_transfers;               // このグループの転送数
+    int *transfer_indices;           // 転送インデックス配列
+    double complex *coefficients;    // 事前計算した係数（符号含む）
+} MPIDoubleTransferGroup;
+
+typedef struct {
+    int num_groups;                  // グループ数
+    MPIDoubleTransferGroup *groups;  // グループ配列
+    int is_initialized;              // 初期化フラグ
+} MPIBatchedDoubleTransfers;
+\end{lstlisting}
+
+\subsection{InterAll用グループ（MPIInterAllGroup）}
+
+4体相互作用 $c^\dagger_i c_j c^\dagger_k c_l$ 用の構造体：
+
+\begin{lstlisting}[caption=MPIInterAllGroup構造体]
+typedef struct {
+    int origin;                      // 通信相手
+    int num_interall;                // InterAll項数
+    int *interall_indices;           // インデックス配列
+    double complex *coefficients;    // 係数
+    int *is_hermite;                 // エルミート共役フラグ
+    unsigned long int *tmp_isite1;   // 事前計算サイト情報
+    unsigned long int *tmp_isite2;
+    unsigned long int *tmp_isite3;
+    unsigned long int *tmp_isite4;
+    // ... (Tpow値も格納)
+} MPIInterAllGroup;
+\end{lstlisting}
+
+%==============================================================================
+\section{実装詳細}
+%==============================================================================
+
+\subsection{対応モデル}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+モデル & MPIsingleバッチ & MPIdoubleバッチ & InterAllバッチ \\
+\midrule
+SpinlessFermionGC & $\checkmark$ & -- & -- \\
+SpinlessFermion (canonical) & $\checkmark$ & -- & -- \\
+HubbardGC & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Hubbard (canonical) & $\checkmark$ & $\checkmark$ & -- \\
+SpinGC & $\checkmark$ (Exchange) & -- & -- \\
+Spin (canonical) & $\checkmark$ (Exchange) & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{バッチ処理対応状況}
+\end{table}
+
+\subsection{MPIsingle vs MPIdouble}
+
+\begin{itemize}
+  \item \textbf{MPIsingle}: 一方のサイトがローカル、他方がプロセス間
+  \item \textbf{MPIdouble}: 両方のサイトがプロセス間
+\end{itemize}
+
+MPIdoubleはMPIsingleよりも単純で、受信後の処理が単なるベクトルスケーリングになる：
+\begin{equation}
+  v_0[j] \mathrel{+}= \text{trans} \times v_{\rm buf}[j]
+\end{equation}
+
+\subsection{MPIdoubleバッチ処理の詳細}
+
+\subsubsection{origin計算（MPIdouble）}
+
+両サイトがプロセス間の場合、originは以下で計算される：
+\begin{equation}
+  \text{origin} = \text{myrank} \oplus (\text{mask}_1 + \text{mask}_2)
+\end{equation}
+ここで $\text{mask}_1 = T_{\rm pow}[2 \cdot \text{site}_1 + \sigma_1]$、
+$\text{mask}_2 = T_{\rm pow}[2 \cdot \text{site}_2 + \sigma_2]$ である。
+
+\subsubsection{フェルミオン符号（MPIdouble）}
+
+MPIdoubleでのフェルミオン符号は以下で計算される：
+\begin{lstlisting}[caption=MPIdoubleフェルミオン符号の計算]
+if (mask2 > mask1) bitdiff = mask2 - mask1 * 2;
+else bitdiff = mask1 - mask2 * 2;
+SgnBit((unsigned long int)(origin & bitdiff), &Fsgn);
+\end{lstlisting}
+
+\subsubsection{状態の有効性チェック}
+
+各プロセスで転送が有効かどうかは、originの状態で判定される：
+\begin{itemize}
+  \item $\text{state}_1 = 0$ かつ $\text{state}_2 = \text{mask}_2$:
+        順方向（$c^\dagger_1 c_2$）、係数 $= -F_{\rm sgn} \times t$
+  \item $\text{state}_1 = \text{mask}_1$ かつ $\text{state}_2 = 0$:
+        逆方向（$c^\dagger_2 c_1$）、係数 $= -F_{\rm sgn} \times t^*$
+  \item その他: 無効状態、係数 $= 0$
+\end{itemize}
+
+\textbf{重要}: 全プロセスが同じ通信パターンを持つ必要があるため、
+無効状態でもMPI通信は実行し、係数を0にすることで寄与をなくす。
+
+\subsubsection{HubbardGC vs Hubbard（canonical）}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+項目 & HubbardGC & Hubbard (canonical) \\
+\midrule
+list\_1交換 & 不要 & 必要 \\
+インデックス計算 & 直接 $j$ & GetOffComp(list\_1buf[$j$]) \\
+処理の複雑さ & 単純 & やや複雑 \\
+\bottomrule
+\end{tabular}
+\caption{HubbardGCとHubbard（canonical）のMPIdouble処理の違い}
+\end{table}
+
+Hubbard（canonical）では、粒子数保存のため状態空間が制限される。
+そのため、list\_1（状態インデックス配列）を交換し、
+GetOffComp関数でターゲットインデックスを計算する必要がある：
+
+\begin{lstlisting}[caption=Hubbard canonical MPIdoubleの処理]
+// list_1の交換
+MPI_Sendrecv(list_1, ..., list_1buf, ...);
+MPI_Sendrecv(tmp_v1, ..., v1buf, ...);
+
+// 各要素の処理
+for (j = 1; j <= idim_max_buf; j++) {
+    GetOffComp(list_2_1, list_2_2, list_1buf[j],
+               irght, ilft, ihfbit, &ioff);
+    tmp_v0[ioff] += trans * v1buf[j];
+}
+\end{lstlisting}
+
+\subsection{Spinモデルのバッチ処理}
+
+\subsubsection{SpinモデルのExchange相互作用}
+
+Spin 1/2モデルでは、Exchange相互作用 $J \mathbf{S}_i \cdot \mathbf{S}_j$
+のスピン反転項がMPI通信を必要とする。
+Hubbardモデルとの主な違いは、ビットマスクの計算方法である：
+
+\begin{itemize}
+  \item \textbf{Hubbard}: mask $= T_{\rm pow}[2 \cdot \text{site} + \sigma]$
+  \item \textbf{Spin}: mask $= T_{\rm pow}[\text{site}]$
+\end{itemize}
+
+Spinモデルではスピン自由度が1サイトあたり1ビットであるため、
+サイト番号がそのままビット位置に対応する。
+
+\subsubsection{Spinモデル用グループ構造体}
+
+\begin{lstlisting}[caption=MPISpinExchangeGroup構造体]
+typedef struct {
+    int origin;                      // 通信相手のMPIランク
+    int num_terms;                   // Exchange項数
+    int *term_indices;               // インデックス配列
+    double complex *coefficients;    // 係数
+    int *org_isite1;                 // ローカルサイト
+    int *org_ispin1;                 // フリップ前スピン
+    int *org_ispin2;                 // フリップ後スピン
+    int *state1check;                // 状態チェック値
+} MPISpinExchangeGroup;
+\end{lstlisting}
+
+\subsubsection{SpinGC vs Spin（canonical）}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+項目 & SpinGC & Spin (canonical) \\
+\midrule
+list\_1交換 & 不要 & 必要 \\
+処理関数 & X\_child\_GC\_CisAitCiuAiv\_spin\_MPIsingle\_batched &
+           X\_child\_general\_int\_spin\_MPIsingle\_batched \\
+インデックス計算 & 直接 & GetOffComp使用 \\
+\bottomrule
+\end{tabular}
+\caption{SpinGCとSpin（canonical）のMPIsingle処理の違い}
+\end{table}
+
+\subsubsection{Spinモデルテスト結果}
+
+8サイト鎖のHeisenbergモデル（4 MPIプロセス）でのテスト：
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+モデル & Exchange項数 & グループ数 & エネルギー \\
+\midrule
+SpinGC & 8 & 2 & $-3.6510934089$ \\
+Spin (canonical, $S_z=0$) & 8 & 2 & $-3.6510934089$ \\
+\bottomrule
+\end{tabular}
+\caption{Spinモデルバッチ処理のテスト結果}
+\end{table}
+
+両モデルで同じ基底状態エネルギーが得られ、バッチ処理の正確性を確認した。
+
+\subsection{origin計算}
+
+\subsubsection{転送項（Hubbard/SpinlessFermion）}
+
+サイト$i$（ローカル）からサイト$j$（プロセス間）への転送：
+\begin{equation}
+  \text{origin} = \text{myrank} \oplus T_{\rm pow}[2j + \sigma]
+\end{equation}
+ここで $\sigma$ はスピン（Hubbardモデル）、SpinlessFermionでは $\sigma=0$。
+
+\subsubsection{InterAll項}
+
+4サイト相互作用では、CheckBit\_InterAllPE関数により
+ビット操作を適用してoriginを計算：
+\begin{equation}
+  \text{origin} = A^\dagger_1 C_2 A^\dagger_3 C_4 |\text{myrank}\rangle
+\end{equation}
+
+\subsection{フェルミオン符号}
+
+フェルミオン系では、演算子の交換により符号が変化する。
+バッチ処理では初期化時に符号を事前計算：
+
+\begin{lstlisting}[caption=フェルミオン符号の事前計算]
+// プロセス間部分の符号
+int bit2diff = mask2 - 1;
+int Fsgn;
+SgnBit((unsigned long int)(origin & bit2diff), &Fsgn);
+
+// 係数に符号を含める
+coefficients[t] = -(double)Fsgn * trans_coeff;
+\end{lstlisting}
+
+%==============================================================================
+\section{性能評価}
+%==============================================================================
+
+\subsection{削減効果（MPIsingle）}
+
+4$\times$2格子のHubbardGCモデル（8サイト、4 MPIプロセス）での測定結果：
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+項目 & 最適化前 & 最適化後 \\
+\midrule
+MPIsingle転送数 & 6 & 6 \\
+MPI\_Sendrecv回数 & 6 & 2 \\
+削減率 & -- & \textbf{3.0倍} \\
+\bottomrule
+\end{tabular}
+\caption{MPI通信回数の削減（MPIsingle）}
+\end{table}
+
+\subsection{MPIdoubleテスト結果}
+
+4サイト鎖のHubbardモデル（16 MPIプロセス）でのMPIdoubleバッチ処理テスト：
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+モデル & MPIdouble転送数 & グループ数 & エネルギー \\
+\midrule
+HubbardGC & 2 & 2 & $-3.41855071887385$ \\
+Hubbard (canonical) & 2 & 2 & $-2.10274848346207$ \\
+\bottomrule
+\end{tabular}
+\caption{MPIdoubleバッチ処理のテスト結果}
+\end{table}
+
+16 MPIプロセスを使用することで、サイト2,3がプロセス間サイトとなり、
+これらのサイト間の転送がMPIdoubleとして処理される。
+
+\subsection{デバッグ出力}
+
+実行時に以下のようなバッチ処理統計が出力される：
+\begin{verbatim}
+[MPI Batching] HubbardGC MPIdouble: 2 transfers -> 2 groups (1.0x reduction)
+[MPI Batching] HubbardGC: 4 MPIsingle transfers -> 4 groups (1.0x reduction)
+[MPI Batching] HubbardGC InterAll: No off-diagonal terms
+\end{verbatim}
+
+Hubbard（canonical）の場合：
+\begin{verbatim}
+[MPI Batching] Hubbard MPIdouble: 2 transfers -> 2 groups (1.0x reduction)
+[MPI Batching] HubbardGC: 4 MPIsingle transfers -> 4 groups (1.0x reduction)
+\end{verbatim}
+
+\subsection{期待される効果}
+
+\begin{itemize}
+  \item \textbf{最良ケース}: 同じoriginへの$N$転送 $\rightarrow$ MPI呼び出し$N$回が1回に
+  \item \textbf{典型的改善}: 2D/3Dモデルで顕著（多くの転送が同じoriginを共有）
+  \item \textbf{オーバーヘッド}: 初期化時に1回のグループ化コスト（無視できる程度）
+\end{itemize}
+
+%==============================================================================
+\section{使用方法}
+%==============================================================================
+
+バッチ処理は自動的に有効化される。特別な設定は不要である。
+
+\subsection{ビルド}
+
+\begin{verbatim}
+mkdir build && cd build
+cmake .. -DUSE_MPI=ON
+make
+\end{verbatim}
+
+\subsection{実行}
+
+通常通りMPIで実行：
+\begin{verbatim}
+mpirun -np 4 ./HPhi -s stan.in
+\end{verbatim}
+
+%==============================================================================
+\section{ソースコード構成}
+%==============================================================================
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+ファイル & 内容 \\
+\midrule
+\texttt{src/include/mltplyMPIBatched.h} & データ構造・関数宣言 \\
+\texttt{src/mltplyMPIBatched.c} & バッチ処理実装 \\
+\texttt{src/mltplyHubbard.c} & Hubbardモデル（バッチ呼び出し） \\
+\texttt{src/mltplySpinless.c} & SpinlessFermionモデル（バッチ呼び出し） \\
+\texttt{src/mltplySpin.c} & Spinモデル（バッチ呼び出し） \\
+\bottomrule
+\end{tabular}
+\caption{関連ソースファイル}
+\end{table}
+
+%==============================================================================
+\section{まとめ}
+%==============================================================================
+
+本最適化により、HPhiのMPI通信効率を改善した。
+同じ通信相手を持つ複数の転送項やInterAll項をグループ化し、
+MPI\_Sendrecv呼び出し回数を削減することで、
+特に通信レイテンシが支配的な環境での性能向上が期待できる。
+
+\subsection{実装済み機能}
+
+\begin{itemize}
+  \item MPIsingleバッチ処理:
+    \begin{itemize}
+      \item SpinlessFermionGC, SpinlessFermion
+      \item HubbardGC, Hubbard
+      \item SpinGC, Spin（Exchange相互作用）
+    \end{itemize}
+  \item MPIdoubleバッチ処理: HubbardGC, Hubbard（canonical）
+  \item InterAllバッチ処理: HubbardGC
+\end{itemize}
+
+\subsection{今後の拡張}
+
+今後の拡張として以下が考えられる：
+\begin{itemize}
+  \item Hubbard (canonical) のInterAllバッチ処理
+  \item SpinモデルのMPIdoubleバッチ処理
+  \item SpinlessFermionのMPIdoubleバッチ処理
+  \item GeneralSpinモデルへの適用
+\end{itemize}
+
+%==============================================================================
+\section*{謝辞}
+%==============================================================================
+
+本実装はClaude Opus 4.5との協働により開発された。
+
+\end{document}

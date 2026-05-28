@@ -6,6 +6,11 @@ PairHop指定ファイル
 PairHopカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。付け加える項は以下で与えられます。
 
+.. note::
+   スピンレスフェルミオン模型(CalcModel=7, 8)では、スピン自由度がないため
+   PairHop相互作用は物理的に意味を持ちません。
+   スピンレスフェルミオン模型でこのファイルを指定した場合はエラー終了します。
+
 .. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{i \downarrow}^{\dagger}c_{j  \downarrow}+h.c.)
 
 以下にファイル例を記載します。

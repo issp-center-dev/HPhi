@@ -13,6 +13,38 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**
+ * @file CalcByTEM.c
+ *
+ * @brief Real-time evolution calculation using Suzuki-Trotter decomposition
+ *
+ * Implements time evolution of quantum states:
+ *   |psi(t+dt)> = exp(-i H dt) |psi(t)>
+ *
+ * Method:
+ * Uses Krylov subspace method (similar to Lanczos) for the matrix exponential.
+ * The time evolution operator is approximated using a polynomial expansion
+ * in the Krylov basis.
+ *
+ * Time-dependent Hamiltonian:
+ * - Supports time-dependent transfer integrals (laser pulses, etc.)
+ * - TETransfer and TEInterAll parameters read from input files
+ * - Hamiltonian updated at each time step via MakeTEDTransfer/MakeTEDInterAll
+ *
+ * Workflow:
+ * 1. Read initial state from file (must be provided)
+ * 2. For each time step:
+ *    a. Update time-dependent Hamiltonian if needed
+ *    b. Apply exp(-i H dt) via Krylov approximation
+ *    c. Every ExpecInterval steps, compute observables
+ *
+ * Output:
+ * - Time-dependent observables (energy, correlations)
+ * - Wavefunction at specified time points
+ *
+ * @author Kota Ido (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "Common.h"
 #include "readdef.h"
 #include "FirstMultiply.h"
@@ -29,23 +61,29 @@
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
-
 /**
- * @file   CalcByTEM.c
+ * @brief Main driver for real-time evolution calculation
  *
- * @brief  File to define functions to calculate expected values by Time evolution method.
+ * Evolves the initial state through NTETimeSteps time steps, computing
+ * physical observables at intervals.
  *
+ * Prerequisites:
+ * - Initial wavefunction must be provided (iInputEigenVec = TRUE)
+ * - NTETimeSteps must be larger than Lanczos_max
  *
- */
-
-
-/** 
- * @brief main function of time evolution calculation
- * 
- * @param ExpecInterval interval to output expected values
- * @param X struct to get information of calculations.
- * @return 0 normally finished
- * @return -1 unnormally finished
+ * Time evolution per step:
+ * 1. If time-dependent terms exist, update Hamiltonian
+ * 2. Apply exp(-i H dt) using Multiply() function
+ * 3. Normalize if needed
+ *
+ * Observable output:
+ * - SS_*.dat: Energy, spin correlations vs time
+ * - Norm_*.dat: Norm evolution (should remain ~1)
+ *
+ * @param ExpecInterval Steps between observable calculations [in]
+ * @param X Calculation parameters and state [in,out]
+ *
+ * @return 0 on success, -1 on error
  *
  * @author Kota Ido (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
@@ -210,8 +248,12 @@ int CalcByTEM(
 
 
     if (step_i % step_spin == 0) {
-      expec_cisajs(&(X->Bind), v1);
-      expec_cisajscktaltdc(&(X->Bind), v1);
+      if (expec_cisajs(&(X->Bind), v1) != 0) {
+        return -1;
+      }
+      if (expec_cisajscktaltdc(&(X->Bind), v1) != 0) {
+        return -1;
+      }
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
@@ -288,4 +330,3 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx) {
   }
   X->Def.NInterAll_OffDiagonal += X->Def.NTEInterAllOffDiagonal[timeidx];
 }
-

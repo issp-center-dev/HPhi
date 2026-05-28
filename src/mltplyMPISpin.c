@@ -13,9 +13,36 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for spin Hamiltonian + MPI
-*/
+/**
+ * @file mltplyMPISpin.c
+ *
+ * @brief MPI communication functions for spin model Hamiltonian
+ *
+ * Handles inter-process spin operations when interaction sites are
+ * distributed across MPI ranks. The spin state of inter-process sites
+ * is encoded in the MPI rank ID.
+ *
+ * Communication patterns:
+ * - MPIdouble: Both interacting sites are inter-process
+ *   - Only certain rank combinations have valid spin configurations
+ *   - origin = myrank XOR (mask1 XOR mask2) for valid transitions
+ * - MPIsingle: One site local, one inter-process
+ *   - origin = myrank XOR mask for the inter-process site
+ *
+ * Spin operations:
+ * - Exchange: S+_i S-_j flips spins at both sites
+ *   - Valid when sites have opposite spins (up-down or down-up)
+ *   - XOR with combined mask performs the flip
+ * - Ising: Sz_i Sz_j is diagonal (no communication needed for same rank)
+ *
+ * Communication protocol:
+ * 1. Compute origin (partner rank) from site masks
+ * 2. Check if spin configuration allows transition
+ * 3. MPI_Sendrecv to exchange vector data
+ * 4. Apply operator to received data
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 
 #ifdef MPI
 #include "mpi.h"
@@ -28,10 +55,28 @@
 #include "mltplyMPISpinCore.h"
 
 /**
-@brief Exchange term in Spin model
-  When both site1 and site2 are in the inter process region.
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief Apply exchange term when both sites are inter-process
+ *
+ * For S+_i S-_j + h.c. where both sites i,j are in the inter-process
+ * region (site index > Nsite). The spin state at these sites is
+ * determined by myrank bits.
+ *
+ * Valid transitions:
+ * - (up,down) at (i,j) -> (down,up): site i flips down, site j flips up
+ * - (down,up) at (i,j) -> (up,down): opposite direction
+ *
+ * Communication:
+ * - origin = myrank XOR mask1 XOR mask2 (both spins flip)
+ * - If origin == myrank (no net change), handle locally
+ * - Otherwise, exchange data with origin rank
+ *
+ * @param i_int Interaction ID in InterAll_OffDiagonal array [in]
+ * @param X Struct with interaction parameters [inout]
+ * @param tmp_v0 Result vector H|v1> [out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void general_int_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]

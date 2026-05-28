@@ -1195,6 +1195,11 @@ int ReadDefFileIdxPara(
       
     case KWCoulombIntra:
       /*coulombintra.def----------------------------------*/
+      if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
+        fprintf(stdoutMPI, "CoulombIntra is not active in SpinlessFermion/SpinlessFermionGC.\n");
+        fclose(fp);
+        return(-1);
+      }
       if(X->NCoulombIntra>0){
         while(fgetsMPI(ctmp2, 256, fp) != NULL){
           if(idx==X->NCoulombIntra){
@@ -1242,6 +1247,11 @@ int ReadDefFileIdxPara(
 
     case KWHund:
       /*hund.def------------------------------------------*/
+      if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
+        fprintf(stdoutMPI, "Hund is not active in SpinlessFermion/SpinlessFermionGC.\n");
+        fclose(fp);
+        return(-1);
+      }
       if(X->NHundCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL)
           {
@@ -1269,6 +1279,12 @@ int ReadDefFileIdxPara(
       /*pairhop.def---------------------------------------*/
       if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
         fprintf(stdoutMPI, "PairHop is not active in Spin and SpinGC.\n");
+        fclose(fp);
+        return(-1);
+      }
+      if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
+        fprintf(stdoutMPI, "PairHop is not active in SpinlessFermion/SpinlessFermionGC.\n");
+        fclose(fp);
         return(-1);
       }
       
@@ -1298,6 +1314,11 @@ int ReadDefFileIdxPara(
 
     case KWExchange:
       /*exchange.def--------------------------------------*/
+      if(X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC){
+        fprintf(stdoutMPI, "Exchange is not active in SpinlessFermion/SpinlessFermionGC.\n");
+        fclose(fp);
+        return(-1);
+      }
       if(X->NExchangeCoupling>0){
         while(fgetsMPI(ctmp2,256,fp) != NULL){
           if(idx==X->NExchangeCoupling){
@@ -1515,6 +1536,12 @@ int ReadDefFileIdxPara(
               fprintf(stdoutMPI, cWarningIncorrectFormatForSpin2, isite1, isite2);
               X->NCisAjt--;
               continue;
+            }
+          } else if (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC) {
+            if (isigma1 != 0 || isigma2 != 0) {
+              fprintf(stdoutMPI, "Error: OneBodyG spin index must be 0 for SpinlessFermion/SpinlessFermionGC.\n");
+              fclose(fp);
+              return ReadDefFileError(defname);
             }
           }
 

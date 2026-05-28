@@ -1,5 +1,11 @@
 #!/bin/sh -e
 
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
 mkdir -p lanczos_hubbardgc_tri/
 cd lanczos_hubbardgc_tri
 

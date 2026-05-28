@@ -1,7 +1,13 @@
 #!/bin/sh -e
 
-mkdir -p lobcg_hubbard_szconserv/
-cd lobcg_hubbard_szconserv
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
+mkdir -p lobcg_hubbard_szunconserv/
+cd lobcg_hubbard_szunconserv
 
 cat > stan.in <<EOF
 W = 4

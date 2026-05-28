@@ -4,7 +4,14 @@ Exchange file
 -------------
 
 This file determines the values of Exchange couplings
-:math:`J_{ij}^{\rm Ex}` (for :math:`S=1/2` system). For the fermion
+:math:`J_{ij}^{\rm Ex}` (for :math:`S=1/2` system).
+
+.. note::
+   For spinless fermion models (CalcModel=7, 8), Exchange interactions
+   have no physical meaning since there are no spin degrees of freedom.
+   Specifying this file for spinless fermion models will result in an error.
+
+For the fermion
 electronic system, the exchange terms are given as
 
 .. math::

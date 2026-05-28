@@ -14,6 +14,40 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+ * @file Lanczos_EigenVector.c
+ *
+ * @brief Reconstruct eigenvector from Lanczos tridiagonal matrix
+ *
+ * After Lanczos_EigenValue() finds eigenvalues and stores the tridiagonal
+ * matrix elements (alpha[], beta[]), this function reconstructs the
+ * corresponding eigenvector.
+ *
+ * Algorithm:
+ * The eigenvector |psi> in the original basis is:
+ *   |psi> = sum_j c_j |q_j>
+ * where |q_j> are Lanczos vectors and c_j are components of the
+ * eigenvector of the tridiagonal matrix T.
+ *
+ * Since storing all Lanczos vectors |q_j> would require O(N*M) memory
+ * (N = Hilbert space dim, M = Lanczos steps), we regenerate them:
+ *
+ * 1. Diagonalize tridiagonal matrix T to get eigenvector components c_j
+ * 2. Re-run Lanczos iteration with same initial vector
+ * 3. At each step j, accumulate: |psi> += c_j * |q_j>
+ *
+ * This requires O(N) memory but O(M) H*v multiplications.
+ *
+ * Initial vector:
+ * - initial_mode = 0: Deterministic (one element = 1)
+ * - initial_mode = 1: Random (for grand canonical ensembles)
+ *
+ * @version 0.2 Added real/complex initial vector option
+ * @version 0.1
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "Common.h"
 #include "mltply.h"
 #include "CalcTime.h"
@@ -21,27 +55,34 @@
 #include "wrapperMPI.h"
 
 /**
+ * @brief Reconstruct eigenvector by regenerating Lanczos vectors
  *
- * @file   Lanczos_EigenVector.c
- * @version 0.1, 0.2
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo) 
- * 
- * @brief  Calculate eigenvectors by the Lanczos method.
- * 
- */
-
-/** 
- * @brief Calculate eigenvectors by the Lanczos method. \n
- * The calculated tridiagonal matrix components @f$ \alpha_i, \beta_i@f$ are stored in each array @f$ \verb|alpha| @f$ and @f$\verb|beta|@f$\n
- * (@f$ i = 0\cdots N_c@f$, where @f$ N_c@f$ is the step where the calculated energy satisfies the convergence condition).
- * 
- * @param X [in,out] Struct for getting information to calculate eigenvectors.
- * @version 0.2
- * @details add an option to choose a type of initial vectors from complex or real types. 
+ * Computes the eigenvector corresponding to the k_exct-th eigenvalue
+ * found by Lanczos_EigenValue(). The eigenvector is stored in v0[].
+ *
+ * Process:
+ * 1. Diagonalize stored tridiagonal matrix (alpha[], beta[])
+ * 2. Extract eigenvector components vec_j for target eigenvalue
+ * 3. Initialize Lanczos iteration with same initial vector
+ * 4. For each step j = 0 to Lanczos_restart:
+ *    - vg[] += vec_j * (current Lanczos vector)
+ *    - Perform Lanczos step to get next vector
+ * 5. Normalize result: v0[] = vg[] / |vg|
+ *
+ * Memory usage:
+ * - v0, v1: Lanczos vectors (size idim_max each)
+ * - vg: Accumulated eigenvector (size idim_max)
+ * - vec: Tridiagonal eigenvector components (size Lanczos_restart)
+ *
+ * @param X Struct with Lanczos parameters and tridiagonal matrix [in,out]
+ *          Uses: alpha[], beta[], Lanczos_restart, k_exct
+ *          Sets: v0[] (final eigenvector)
+ *
+ * @version 0.2 Added real/complex initial vector option
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 void Lanczos_EigenVector(struct BindStruct *X){
 

@@ -1,5 +1,11 @@
 #!/bin/sh -e
 
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
 mkdir -p tpq_spin_kagome_randomsphere/
 cd tpq_spin_kagome_randomsphere
 

@@ -13,17 +13,59 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Compute total number of electrons, spins
-*/
+/**
+ * @file CheckMPI.c
+ *
+ * @brief Determine MPI decomposition of Hilbert space
+ *
+ * HPhi distributes the Hilbert space across MPI processes by assigning
+ * some sites to the "inter-process" region. The bit pattern for these
+ * sites determines which MPI rank owns a given state.
+ *
+ * Site classification:
+ * - Local sites (index <= Nsite): Enumerated within each MPI rank
+ * - Inter-process sites (index > Nsite): Bits fixed by myrank
+ *
+ * For example, with 4 MPI processes and 8 Hubbard sites:
+ * - Sites 1-6: Local (enumerated in list_1)
+ * - Sites 7-8: Inter-process (4 states for 2 sites = 2^2 = 4 ranks)
+ * - myrank determines the occupation of sites 7-8
+ *
+ * MPI rank determination:
+ *   myrank = (state >> (2*Nsite)) for Hubbard
+ *   (Inter-process bits shifted to form rank ID)
+ *
+ * Communication partner (origin) calculation:
+ *   origin = myrank XOR mask
+ *   where mask depends on which inter-process site is involved
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 #include "Common.h"
 #include "wrapperMPI.h"
+
 /**
-@brief Define the number of sites in each PE (DefineList.Nsite).
- Reduce the number of electrons (DefineList.Ne), 
- total Sz (DefineList.Total2Sz) by them in the inter process region 
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief Configure MPI decomposition based on number of processes
+ *
+ * Determines how many sites are local vs inter-process based on nproc.
+ * Also adjusts quantum numbers (Ne, Total2Sz) to account for the
+ * inter-process occupation encoded in myrank.
+ *
+ * Requirements:
+ * - nproc must be a power of 4 for Hubbard (2 bits per site)
+ * - nproc must be a power of 2 for Spin (1 bit per site)
+ *
+ * Sets:
+ * - X->Def.Nsite: Number of local sites
+ * - X->Def.NsiteMPI: Total sites including inter-process
+ * - Adjusted Ne, Total2Sz for this rank's inter-process occupation
+ *
+ * @param X BindStruct to configure [inout]
+ *
+ * @return TRUE on success, FALSE if nproc is incompatible
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
@@ -338,6 +380,54 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
      /**@brief</ul>*/
     break; /*case SpinGC, Spin*/
 
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    <li> For SpinlessFermion
+    Define local dimension DefineList::Nsite (2 states per site)</li>
+    */
+    NDimInterPE = 1;
+    for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+      if (NDimInterPE == nproc) {
+        X->Def.Nsite = isite;
+        break;
+      }/*if (NDimInterPE == nproc)*/
+      NDimInterPE *= 2;
+    }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+
+    if (isite == 0) {
+      fprintf(stdoutMPI, "%s", cErrNProcNumberSpin);
+      fprintf(stdoutMPI, cErrNProcNumber, nproc);
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/2;
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= 2;
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      return FALSE;
+    }/*if (isite == 0)*/
+
+    if (X->Def.iCalcModel == SpinlessFermion) {
+      /* Ne should be different in each PE */
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 2;
+        SmallDim /= 2;
+        if (SpinNum == 1) {
+          X->Def.Ne -= 1;
+        }
+      }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+    }/*if (X->Def.iCalcModel == SpinlessFermion)*/
+
+    break; /*case SpinlessFermion, SpinlessFermionGC*/
+
   default:
     fprintf(stdoutMPI, "Error ! Wrong model !\n");
     return FALSE;
@@ -584,8 +674,20 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
       X->Def.Tpow[X->Def.Nsite] = 1;
       for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
         X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
- 
+
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+    break;
+
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    For SpinlessFermion, Tpow for inter-process sites starts at 1
+    (since each site has 2 states: occupied or empty)
+    */
+    X->Def.Tpow[X->Def.Nsite] = 1;
+    for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
+      X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
+
     break;
   } /*switch (X->Def.iCalcModel)*/
 }/*void CheckMPI_Summary*/

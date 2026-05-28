@@ -23,30 +23,59 @@
 
 /**
  * @file   sz.c
- * 
- * @brief  Generating Hilbert spaces
- * 
- * @version 0.2
- * @details 
  *
+ * @brief  Generate restricted Hilbert space for canonical ensembles
+ *
+ * This module constructs the mapping between restricted Hilbert space indices
+ * (satisfying quantum number constraints like total Sz, particle number) and
+ * full Hilbert space bit representations.
+ *
+ * Key data structures filled by sz():
+ * - list_1[icnt]: Maps restricted index icnt -> full bit representation
+ * - list_2_1, list_2_2: Inverse mapping via split-index scheme
+ *
+ * The split-index scheme enables O(1) lookup of restricted index from bit:
+ *   icnt = list_2_1[bit & irght] + list_2_2[(bit >> half_shift) & mask]
+ *
+ * @version 0.2
  * @version 0.1
  *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
  */
 
 
-/** 
- * 
- * @brief generating Hilbert space
- * 
- * @param[inout] X 
- * @param[out] list_1_   list_1[icnt] = i (index of full Hilbert space) : icnt = index in the restricted Hilbert space 
- * @param[out] list_2_1_ icnt=list_2_1[]+list_2_2[] 
- * @param[out] list_2_2_ 
- * 
- * @return 
+/**
+ * @brief Generate restricted Hilbert space satisfying quantum number constraints
+ *
+ * Enumerates all bit patterns satisfying model-specific constraints:
+ * - Hubbard: Fixed total particle number (Ne) and total Sz
+ * - Spin: Fixed total Sz (canonical) or all states (grand canonical)
+ * - SpinlessFermion: Fixed particle number
+ *
+ * The function fills three arrays that enable bidirectional mapping:
+ *
+ * Forward mapping (restricted -> full):
+ *   list_1[icnt] = bit_representation
+ *   where icnt is the 1-based restricted Hilbert space index
+ *
+ * Inverse mapping (full -> restricted) via split-index:
+ *   For a given bit pattern, split into right and left halves:
+ *     right_part = bit & irght
+ *     left_part = (bit >> half_shift)
+ *   Then: icnt = list_2_1[right_part] + list_2_2[left_part]
+ *
+ * Index convention:
+ * - icnt is 1-based (icnt = 1, 2, ..., idim_max)
+ * - list_1[0] is unused; valid entries start at list_1[1]
+ *
+ * @param X Struct containing model parameters and constraints [inout]
+ * @param list_1_ Forward map: list_1[icnt] = full bit representation [out]
+ * @param list_2_1_ Inverse map component for right bits [out]
+ * @param list_2_2_ Inverse map component for left bits [out]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -185,6 +214,8 @@ int sz(
                 break;
             case SpinGC:
             case Spin:
+            case SpinlessFermion:
+            case SpinlessFermionGC:
                 N=X->Def.Nsite;
                 if(X->Def.iFlgGeneralSpin==FALSE){
                     idim = pow(2.0, N);
@@ -212,6 +243,8 @@ int sz(
             case Kondo:
             case KondoNConserved:
             case Spin:
+            case SpinlessFermion:
+            case SpinlessFermionGC:
                 if(X->Def.iFlgGeneralSpin==FALSE){
                     if(GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit)!=0){
                         exitMPI(-1);
@@ -257,6 +290,7 @@ int sz(
                     icnt = X->Def.Tpow[2*X->Def.Nsite-1]*2+0;/*Tpow[2*X->Def.Nsit]=1*/
                     break;
                 case SpinGC:
+                case SpinlessFermionGC:
                     if(X->Def.iFlgGeneralSpin==FALSE){
                         icnt = X->Def.Tpow[X->Def.Nsite-1]*2+0;/*Tpow[X->Def.Nsit]=1*/
                     }else{
@@ -426,6 +460,7 @@ int sz(
                       }
                       break;
                   case Spin:
+                  case SpinlessFermion:
                       if(X->Def.iFlgGeneralSpin==FALSE){
                           hacker = X->Def.read_hacker;
                           if(hacker        ==  -1){
@@ -446,7 +481,7 @@ int sz(
                               //#pragma omp barrier
                               TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                               TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-            
+
                               icnt = 0;
                               #pragma omp parallel for default(none) reduction(+:icnt)\
                               private(ib) firstprivate(ihfbit, N, X)\
@@ -463,7 +498,7 @@ int sz(
                           calculate_jb_GeneralSpin(X,list_jb,list_2_1_Sz,list_2_2_Sz,ihfbit,ilftdim,N);
                           TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
                           TimeKeeper(X, cFileNameTimeKeep, cOMPSzMid, "a");
-            
+
                           icnt = 0;
                           #pragma omp parallel for default(none)\
                           reduction(+:icnt) private(ib) firstprivate(ilftdim, ihfbit,  X)\
@@ -1593,6 +1628,8 @@ int Read_sz
   case HubbardGC:
   case Spin:
   case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     sprintf(sdt,cFileNameListModel, X->Def.Nsite, X->Def.Nup, X->Def.Ndown);
     break;
   case Kondo:

@@ -26,6 +26,7 @@
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIHubbardCore.h"
+#include "mltplyMPISpinlessFermion.h"
 #include "common/setmemory.h"
 
 /**
@@ -67,15 +68,38 @@ int Rearray_Interactions(
         struct BindStruct *X,
         int type
 );
-/** 
- * @brief Parent function to calculate two-body green's functions
- * 
- * @param X [in] data list for calculation
- * @param vec [in] eigenvectors
- * 
- * @retval 0 normally finished
- * @retval -1 abnormally finished
- * @note The origin of function's name cisajscktalt comes from c=creation, i=ith site, s=spin, a=annihiration, j=jth site and so on.
+/**
+ * @brief Compute two-body Green's functions <psi| c†_i c_j c†_k c_l |psi>
+ *
+ * Calculates expectation values of four-fermion operators for the given
+ * eigenvector. Results are written to output files (zvo_cisajscktalt*.dat).
+ *
+ * Operator naming convention:
+ * - "cisajscktalt" = c†_i,sigma c_j,sigma c†_k,tau c_l,tau
+ * - c = creation, a = annihilation
+ * - i,j,k,l = site indices (0-based in input, converted to 1-based internally)
+ * - s,t = spin indices (sigma, tau)
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_CORR (correlation function calculation)
+ * - No wavefunction update, only expectation values computed
+ *
+ * Model dispatch:
+ * - HubbardGC/Hubbard: Full four-fermion operators with spin
+ * - SpinGC/Spin: Spin operators (S+, S-, Sz products)
+ * - SpinlessFermion/SpinlessFermionGC: Density-density \f$\langle n_i n_j\rangle\f$
+ *
+ * MPI handling:
+ * - Inter-process sites (site > Nsite) use MPI communication
+ * - All ranks participate in MPI_Sendrecv, then filter by validity
+ *
+ * @param X Struct with operator definitions in X->Def.CisAjtCkuAlvDC [in]
+ * @param vec Eigenvector to compute expectation values for [in]
+ *
+ * @return 0 on success, -1 on error
+ *
+ * @note Site indices in CisAjtCkuAlvDC are 0-based; converted to 1-based
+ *       internally (org_isite1 = CisAjtCkuAlvDC[i][0] + 1).
  *
  * @version 0.2
  * @details add function to treat the case of general spin
@@ -212,6 +236,263 @@ int expec_cisajscktaltdc
       if(expec_cisajscktalt_SpinGC(X, vec, &fp,&fp_2,&fp_3,&fp_4)!=0){
           return -1;
       }
+    break;
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    // For spinless fermions, calculate two-body Green's function <n_i n_j>
+    {
+      long unsigned int i_sp, j_sp;
+      long unsigned int i_max_sp = X->Check.idim_max;
+      for(i_sp = 0; i_sp < X->Def.NCisAjtCkuAlvDC; i_sp++){
+        long unsigned int org_isite1_sp = X->Def.CisAjtCkuAlvDC[i_sp][0] + 1;
+        long unsigned int org_isite2_sp = X->Def.CisAjtCkuAlvDC[i_sp][2] + 1;
+        long unsigned int org_isite3_sp = X->Def.CisAjtCkuAlvDC[i_sp][4] + 1;
+        long unsigned int org_isite4_sp = X->Def.CisAjtCkuAlvDC[i_sp][6] + 1;
+        long unsigned int org_sigma1_sp = X->Def.CisAjtCkuAlvDC[i_sp][1];
+        long unsigned int org_sigma2_sp = X->Def.CisAjtCkuAlvDC[i_sp][3];
+        long unsigned int org_sigma3_sp = X->Def.CisAjtCkuAlvDC[i_sp][5];
+        long unsigned int org_sigma4_sp = X->Def.CisAjtCkuAlvDC[i_sp][7];
+        double complex dam_pr_sp = 0;
+
+        // Only handle diagonal case: <n_i n_j> where i1==i2 and i3==i4
+        if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp &&
+           org_isite3_sp == org_isite4_sp && org_sigma3_sp == org_sigma4_sp){
+          long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];
+          long unsigned int is2_sp = X->Def.Tpow[org_isite3_sp - 1];
+          // Check if sites are inter-process (MPI)
+          int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+          int site3_is_interPE = (org_isite3_sp > X->Def.Nsite) ? 1 : 0;
+#ifdef MPI
+          // For inter-process sites, check occupation using myrank
+          long unsigned int num1_interPE = site1_is_interPE ? ((myrank & is1_sp) / is1_sp) : 0;
+          long unsigned int num2_interPE = site3_is_interPE ? ((myrank & is2_sp) / is2_sp) : 0;
+#else
+          long unsigned int num1_interPE = 0;
+          long unsigned int num2_interPE = 0;
+#endif
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+            if(site1_is_interPE && site3_is_interPE){
+              // Both sites are inter-process: result is constant for all local states
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, num1_interPE, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                dam_pr_sp += num1_interPE * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site1_is_interPE){
+              // Site1 is inter-process, site3 is local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is2_sp, num1_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
+                dam_pr_sp += num1_interPE * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site3_is_interPE){
+              // Site1 is local, site3 is inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
+                dam_pr_sp += num1_sp * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else {
+              // Both sites are local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = ((j_sp-1) & is1_sp) / is1_sp;
+                long unsigned int num2_sp = ((j_sp-1) & is2_sp) / is2_sp;
+                dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            }
+          } else {
+            // SpinlessFermion (canonical)
+            if(site1_is_interPE && site3_is_interPE){
+              // Both sites are inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, num1_interPE, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                dam_pr_sp += num1_interPE * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site1_is_interPE){
+              // Site1 is inter-process, site3 is local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is2_sp, num1_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
+                dam_pr_sp += num1_interPE * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else if(site3_is_interPE){
+              // Site1 is local, site3 is inter-process
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is1_sp, num2_interPE) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
+                dam_pr_sp += num1_sp * num2_interPE * conj(vec[j_sp]) * vec[j_sp];
+              }
+            } else {
+              // Both sites are local
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max_sp, is1_sp, is2_sp) private(j_sp)
+              for(j_sp = 1; j_sp <= i_max_sp; j_sp++){
+                long unsigned int num1_sp = (list_1[j_sp] & is1_sp) / is1_sp;
+                long unsigned int num2_sp = (list_1[j_sp] & is2_sp) / is2_sp;
+                dam_pr_sp += num1_sp * num2_sp * conj(vec[j_sp]) * vec[j_sp];
+              }
+            }
+          }
+        } else {
+          // Off-diagonal cases for SpinlessFermion
+          // <c^+_i c_j c^+_k c_l> = sum_n <psi|c^+_i c_j c^+_k c_l|n><n|psi>
+          int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+          int site2_is_interPE = (org_isite2_sp > X->Def.Nsite) ? 1 : 0;
+          int site3_is_interPE = (org_isite3_sp > X->Def.Nsite) ? 1 : 0;
+          int site4_is_interPE = (org_isite4_sp > X->Def.Nsite) ? 1 : 0;
+
+          if (site1_is_interPE || site2_is_interPE || site3_is_interPE || site4_is_interPE) {
+#ifdef MPI
+            // MPI case: use MPI function for inter-process sites
+            if (X->Def.iCalcModel == SpinlessFermionGC) {
+              dam_pr_sp = X_GC_CisAjtCkuAlv_SpinlessFermion_MPI(
+                  org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
+                  X, vec);
+            } else {
+              dam_pr_sp = X_CisAjtCkuAlv_SpinlessFermion_MPI(
+                  org_isite1_sp - 1, org_isite2_sp - 1, org_isite3_sp - 1, org_isite4_sp - 1,
+                  X, vec);
+            }
+#else
+            dam_pr_sp = 0;
+#endif
+          } else {
+            // Local case: all sites are intra-process
+            long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];  // c^+_i
+            long unsigned int is2_sp = X->Def.Tpow[org_isite2_sp - 1];  // c_j
+            long unsigned int is3_sp = X->Def.Tpow[org_isite3_sp - 1];  // c^+_k
+            long unsigned int is4_sp = X->Def.Tpow[org_isite4_sp - 1];  // c_l
+
+            if (X->Def.iCalcModel == SpinlessFermionGC) {
+              // Grand canonical: use (j_sp - 1) as bit representation
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max_sp, is1_sp, is2_sp, is3_sp, is4_sp, org_isite1_sp, org_isite2_sp, org_isite3_sp, org_isite4_sp, X) private(j_sp)
+              for (j_sp = 1; j_sp <= i_max_sp; j_sp++) {
+                long unsigned int org_bit = j_sp - 1;
+                long unsigned int tmp_bit, off_bit;
+                int sgn = 1, tmp_sgn;
+
+                // Apply c_l (annihilate at site l=isite4): must be occupied
+                if ((org_bit & is4_sp) == 0) continue;  // site l empty -> skip
+                tmp_bit = org_bit ^ is4_sp;  // flip bit l
+                // Fermion sign: count occupied sites between 0 and site l
+                {
+                  long unsigned int mask = is4_sp - 1;  // bits below site l
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_k (create at site k=isite3): must be empty
+                if ((tmp_bit & is3_sp) != 0) continue;  // site k occupied -> skip
+                tmp_bit = tmp_bit ^ is3_sp;  // flip bit k
+                // Fermion sign: count occupied sites between 0 and site k
+                {
+                  long unsigned int mask = is3_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c_j (annihilate at site j=isite2): must be occupied
+                if ((tmp_bit & is2_sp) == 0) continue;  // site j empty -> skip
+                tmp_bit = tmp_bit ^ is2_sp;  // flip bit j
+                // Fermion sign
+                {
+                  long unsigned int mask = is2_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_i (create at site i=isite1): must be empty
+                if ((tmp_bit & is1_sp) != 0) continue;  // site i occupied -> skip
+                off_bit = tmp_bit ^ is1_sp;  // flip bit i
+                // Fermion sign
+                {
+                  long unsigned int mask = is1_sp - 1;
+                  long unsigned int bit = off_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Contribution: sgn * <off_bit|psi>* <org_bit|psi>
+                dam_pr_sp += sgn * conj(vec[off_bit + 1]) * vec[j_sp];
+              }
+            } else {
+              // Canonical: use list_1[j_sp] as bit representation
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1, list_2_1, list_2_2) \
+  firstprivate(i_max_sp, is1_sp, is2_sp, is3_sp, is4_sp, org_isite1_sp, org_isite2_sp, org_isite3_sp, org_isite4_sp, X) private(j_sp)
+              for (j_sp = 1; j_sp <= i_max_sp; j_sp++) {
+                long unsigned int org_bit = list_1[j_sp];
+                long unsigned int tmp_bit, off_bit, off_idx;
+                int sgn = 1, tmp_sgn;
+
+                // Apply c_l (annihilate at site l=isite4)
+                if ((org_bit & is4_sp) == 0) continue;
+                tmp_bit = org_bit ^ is4_sp;
+                {
+                  long unsigned int mask = is4_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_k (create at site k=isite3)
+                if ((tmp_bit & is3_sp) != 0) continue;
+                tmp_bit = tmp_bit ^ is3_sp;
+                {
+                  long unsigned int mask = is3_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c_j (annihilate at site j=isite2)
+                if ((tmp_bit & is2_sp) == 0) continue;
+                tmp_bit = tmp_bit ^ is2_sp;
+                {
+                  long unsigned int mask = is2_sp - 1;
+                  long unsigned int bit = tmp_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Apply c^+_i (create at site i=isite1)
+                if ((tmp_bit & is1_sp) != 0) continue;
+                off_bit = tmp_bit ^ is1_sp;
+                {
+                  long unsigned int mask = is1_sp - 1;
+                  long unsigned int bit = off_bit & mask;
+                  SgnBit(bit, &tmp_sgn);
+                  sgn *= tmp_sgn;
+                }
+
+                // Find index of off_bit in the canonical basis
+                if (GetOffComp(list_2_1, list_2_2, off_bit, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off_idx) != TRUE) {
+                  continue;  // off_bit not in basis
+                }
+
+                dam_pr_sp += sgn * conj(vec[off_idx]) * vec[j_sp];
+              }
+            }
+          }
+        }
+        dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        fprintf(fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
+                org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
+                org_isite3_sp-1, org_sigma3_sp, org_isite4_sp-1, org_sigma4_sp,
+                creal(dam_pr_sp), cimag(dam_pr_sp));
+      }
+    }
     break;
 
   default:

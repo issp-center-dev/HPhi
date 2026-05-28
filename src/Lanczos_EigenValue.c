@@ -28,22 +28,57 @@
 /**
  * @file   Lanczos_EigenValue.c
  *
- * @brief  Calculate eigenvalues by the Lanczos method.
+ * @brief  Lanczos algorithm for computing lowest eigenvalues
+ *
+ * Implements the Lanczos method for finding the lowest eigenvalues and
+ * eigenvectors of the Hamiltonian matrix. The algorithm builds a tridiagonal
+ * matrix T in the Krylov subspace, then diagonalizes T to obtain approximate
+ * eigenvalues.
+ *
+ * Algorithm outline:
+ * 1. Start with random vector v1, compute v0 = H*v1
+ * 2. Orthogonalize: alpha = <v1|H|v1>, v0 = v0 - alpha*v1
+ * 3. Normalize: beta = |v0|, v1_new = v0/beta
+ * 4. Repeat to build tridiagonal matrix T with alpha on diagonal, beta off-diagonal
+ * 5. Diagonalize T to get eigenvalue approximations
+ * 6. Check convergence: |E_new - E_old| < 10^(-LanczosEps)
+ *
  * @version 0.1
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 
-/** 
- * @brief Main function for calculating eigen values by Lanczos method.\n
- * The energy convergence is judged by the level of target energy determined by  @f$ \verb|k_exct| @f$.\n
+/**
+ * @brief Compute lowest eigenvalues using Lanczos iteration
  *
- * @param X [in] Struct to give the information for calculating the eigen values.
- * @retval -2 Fail to read the initial vectors or triangular matrix components.
- * @retval -1 Fail to obtain the eigen values with in the @f$ \verb| Lanczos_max |@f$ step
- * @retval 0 Succeed to calculate the eigen values.
+ * Performs Lanczos iterations until the k_exct-th eigenvalue converges.
+ * Stores tridiagonal matrix elements (alpha[], beta[]) for later eigenvector
+ * reconstruction.
+ *
+ * Convergence criterion:
+ * - Target eigenvalue change < 10^(-LanczosEps) for consecutive iterations
+ * - Default LanczosEps = 14 means convergence to ~10^-14
+ *
+ * Restart capability:
+ * - If iReStart == RESTART_IN or RESTART_INOUT, reads previous vectors
+ *   and tridiagonal components to continue from saved state
+ * - Useful for very large systems requiring multiple runs
+ *
+ * Key arrays:
+ * - alpha[stp]: Diagonal elements of tridiagonal matrix
+ * - beta[stp]: Off-diagonal elements
+ * - v0, v1: Lanczos vectors (only two needed due to three-term recurrence)
+ *
+ * @param X Struct containing Lanczos parameters and convergence settings [in]
+ *          - X->Def.Lanczos_max: Maximum iterations
+ *          - X->Def.k_exct: Target eigenvalue index (1 = ground state)
+ *          - X->Def.LanczosEps: Convergence threshold exponent
+ *
+ * @return 0 on successful convergence
+ * @return -1 if max iterations reached without convergence
+ * @return -2 if restart file read fails
+ *
  * @version 0.1
- *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
