@@ -91,6 +91,8 @@ Parameters
    | For Spin system, the index can be selected from
    | :math:`0, 1, \cdots, 2S+1` (corresponding to
      -:math:`S-0.5, -S+0.5, \cdots S+0.5`).
+   | For SpinlessFermion/SpinlessFermionGC, only 0 is allowed
+     (any non-zero index causes an error).
 
 .. _use_rules_13:
 
@@ -109,6 +111,11 @@ Use rules
 *  A program is terminated when
    [int02]-[int05] are outside
    the range of the defined values.
+
+*  For SpinlessFermion/SpinlessFermionGC,
+   off-diagonal one-body components
+   :math:`\langle c_i^{\dagger}c_j \rangle` with :math:`i \neq j`
+   can be specified and calculated.
 
 .. raw:: latex
 

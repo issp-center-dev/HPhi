@@ -4,7 +4,14 @@ Exchange指定ファイル
 ~~~~~~~~~~~~~~~~~~~~
 
 Exchangeカップリングをハミルトニアンに付け加えます
-(:math:`S=1/2`\ の系でのみ使用可能)。 電子系の場合には
+(:math:`S=1/2`\ の系でのみ使用可能)。
+
+.. note::
+   スピンレスフェルミオン模型(CalcModel=7, 8)では、スピン自由度がないため
+   Exchange相互作用は物理的に意味を持ちません。
+   スピンレスフェルミオン模型でこのファイルを指定した場合はエラー終了します。
+
+電子系の場合には
 
 .. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm Ex} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{j \downarrow}^{\dagger}c_{i  \downarrow}+c_ {i \downarrow}^{\dagger}c_{j\downarrow}c_{j \uparrow}^{\dagger}c_{i  \uparrow})
 

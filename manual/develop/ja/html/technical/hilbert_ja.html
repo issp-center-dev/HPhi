@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.1. ヒルベルト空間の構成 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=cbac9f54"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.2. MPI並列化" href="MPI_ja.html" />
+    <link rel="prev" title="6. 技術詳細" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">6.1. </span>ヒルベルト空間の構成<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> がヒルベルト空間を構成・管理する方法を説明します。</p>
+<section id="id2">
+<h2><span class="section-number">6.1.1. </span>ビット表現<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は量子状態を効率的に格納・操作するためにビット表現を使用します。</p>
+<dl class="simple">
+<dt><strong>Hubbardモデル（1サイトあたり4状態）</strong></dt><dd><p>各サイトには4つの状態があります：空、スピン上向き電子、スピン下向き電子、二重占有。
+これらは1サイトあたり2ビットでエンコードされます：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">00</span></code>: 空</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">01</span></code>: スピン上向き電子</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">10</span></code>: スピン下向き電子</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">11</span></code>: 二重占有</p></li>
+</ul>
+</dd>
+<dt><strong>Spin-1/2モデル（1サイトあたり2状態）</strong></dt><dd><p>各サイトにはスピン上向きとスピン下向きの2状態があります。
+1サイトあたり1ビットでエンコードされます：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: スピン下向き</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: スピン上向き</p></li>
+</ul>
+</dd>
+<dt><strong>SpinlessFermionモデル（1サイトあたり2状態）</strong></dt><dd><p>各サイトは空かフェルミオン1個で占有されています：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 空</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 占有</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.1.2. </span>状態インデックス<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>状態はビット表現を整数に変換することでインデックス化されます。
+<span class="math notranslate nohighlight">\(N\)</span> サイト系の全状態数は以下の通りです：</p>
+<ul class="simple">
+<li><p>Hubbard: <span class="math notranslate nohighlight">\(4^N\)</span></p></li>
+<li><p>Spin-1/2: <span class="math notranslate nohighlight">\(2^N\)</span></p></li>
+<li><p>SpinlessFermion: <span class="math notranslate nohighlight">\(2^N\)</span></p></li>
+</ul>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.1.3. </span>対称性による制限<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>計算コストを削減するため、 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は保存量子数を利用して
+ヒルベルト空間を制限することができます。</p>
+<dl class="simple">
+<dt><strong>粒子数保存</strong></dt><dd><p>カノニカルアンサンブルでは、電子の総数が固定されます。
+指定された粒子数を持つ状態のみが含まれます。</p>
+</dd>
+<dt><strong>Sz保存</strong></dt><dd><p>スピン系では、全 <span class="math notranslate nohighlight">\(S_z\)</span> を固定できます。
+これによりヒルベルト空間の次元が大幅に削減されます。</p>
+</dd>
+<dt><strong>例</strong></dt><dd><p><span class="math notranslate nohighlight">\(S_z = 0\)</span> の半充填8サイトHubbardモデルの場合：</p>
+<ul class="simple">
+<li><p>全ヒルベルト空間: <span class="math notranslate nohighlight">\(4^8 = 65,536\)</span> 状態</p></li>
+<li><p>粒子数保存あり（電子4個）: 削減</p></li>
+<li><p><span class="math notranslate nohighlight">\(S_z = 0`（上向き2個、下向き2個）: :math:\)</span>binom{8}{2}^2 = 784` 状態</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h2><span class="section-number">6.1.4. </span>リスト配列<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は状態インデックスとビット表現の間のマッピングにリスト配列を使用します：</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">list_1[i]</span></code></dt><dd><p>状態インデックス <span class="math notranslate nohighlight">\(i\)</span> をビット表現にマップします</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">list_2_1[b]</span></code>, <code class="docutils literal notranslate"><span class="pre">list_2_2[b]</span></code></dt><dd><p>ビット表現から状態インデックスへの逆マッピング
+（大規模系での効率のため分割）</p>
+</dd>
+</dl>
+<p>これらの配列は演算子の適用やMPI通信の実行に不可欠です。</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.1. ヒルベルト空間の構成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.1.1. ビット表現</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.1.2. 状態インデックス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.1.3. 対称性による制限</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.1.4. リスト配列</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_ja.html">6.2. MPI並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_ja.html">6.6. リスタート機構</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ"><span class="section-number">6. </span>技術詳細</a></li>
+      <li>Next: <a href="MPI_ja.html" title="次の章へ"><span class="section-number">6.2. </span>MPI並列化</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/hilbert_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

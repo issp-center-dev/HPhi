@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.2. MPI Parallelization &#8212; HΦ Documentation 3.5.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=52b624fa"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3. OpenMP Parallelization" href="openmp_en.html" />
+    <link rel="prev" title="6.1. Hilbert Space Construction" href="hilbert_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mpi-parallelization">
+<h1><span class="section-number">6.2. </span>MPI Parallelization<a class="headerlink" href="#mpi-parallelization" title="Link to this heading">¶</a></h1>
+<p>This section describes the MPI parallelization strategy used in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
+<section id="overview">
+<h2><span class="section-number">6.2.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> uses MPI to parallelize calculations across multiple processes.
+The Hilbert space basis states are distributed among MPI processes,
+and Hamiltonian matrix-vector multiplication <span class="math notranslate nohighlight">\(\hat{H}|\psi\rangle\)</span> is performed in parallel.</p>
+</section>
+<section id="site-classification">
+<h2><span class="section-number">6.2.2. </span>Site Classification<a class="headerlink" href="#site-classification" title="Link to this heading">¶</a></h2>
+<p>When using <span class="math notranslate nohighlight">\(N_{\rm proc}\)</span> MPI processes for an <span class="math notranslate nohighlight">\(N\)</span>-site system,
+sites are classified into two categories:</p>
+<dl class="simple">
+<dt><strong>Local sites</strong> (<span class="math notranslate nohighlight">\(N_{\rm local}\)</span> sites)</dt><dd><p>Sites whose quantum states are stored within each process.
+For these sites, basis state manipulations can be performed locally.</p>
+</dd>
+<dt><strong>Inter-process sites</strong> (<span class="math notranslate nohighlight">\(N_{\rm inter}\)</span> sites)</dt><dd><p>Sites whose quantum states span multiple processes.
+Operations on these sites require MPI communication.</p>
+</dd>
+</dl>
+<p>The relationship is:</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-en-0">
+<span class="eqno">(6.1)<a class="headerlink" href="#equation-technical-mpi-en-0" title="Link to this equation">¶</a></span>\[N_{\rm local} = N - \log_2(N_{\rm proc})\]</div>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-en-1">
+<span class="eqno">(6.2)<a class="headerlink" href="#equation-technical-mpi-en-1" title="Link to this equation">¶</a></span>\[N_{\rm inter} = \log_2(N_{\rm proc})\]</div>
+<p>For example, with 4 MPI processes (<span class="math notranslate nohighlight">\(N_{\rm proc}=4\)</span>) on an 8-site system,
+we have <span class="math notranslate nohighlight">\(N_{\rm local}=6\)</span> local sites and <span class="math notranslate nohighlight">\(N_{\rm inter}=2\)</span> inter-process sites.</p>
+</section>
+<section id="mpi-communication-patterns">
+<h2><span class="section-number">6.2.3. </span>MPI Communication Patterns<a class="headerlink" href="#mpi-communication-patterns" title="Link to this heading">¶</a></h2>
+<p>Operations in the Hamiltonian are classified by the MPI communication they require:</p>
+<dl>
+<dt><strong>Local operations</strong></dt><dd><p>Both sites involved in the operation are local sites.
+No MPI communication is needed.</p>
+</dd>
+<dt><strong>MPIsingle operations</strong></dt><dd><p>One site is local, one site is inter-process.
+Requires MPI communication with one partner process.
+The communication partner (origin) is determined by:</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-en-2">
+<span class="eqno">(6.3)<a class="headerlink" href="#equation-technical-mpi-en-2" title="Link to this equation">¶</a></span>\[\text{origin} = \text{myrank} \oplus T_{\rm pow}[\text{site}]\]</div>
+<p>where <span class="math notranslate nohighlight">\(\oplus\)</span> denotes XOR operation and <span class="math notranslate nohighlight">\(T_{\rm pow}\)</span> is the power of 2 for each site.</p>
+</dd>
+<dt><strong>MPIdouble operations</strong></dt><dd><p>Both sites are inter-process sites.
+Requires MPI communication, but the received data can be processed uniformly.
+The communication partner is:</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-en-3">
+<span class="eqno">(6.4)<a class="headerlink" href="#equation-technical-mpi-en-3" title="Link to this equation">¶</a></span>\[\text{origin} = \text{myrank} \oplus (T_{\rm pow}[\text{site}_1] + T_{\rm pow}[\text{site}_2])\]</div>
+</dd>
+</dl>
+</section>
+<section id="batched-mpi-communication">
+<h2><span class="section-number">6.2.4. </span>Batched MPI Communication<a class="headerlink" href="#batched-mpi-communication" title="Link to this heading">¶</a></h2>
+<p>To reduce MPI communication overhead, <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> groups multiple operations
+that share the same communication partner (origin) into batches:</p>
+<dl class="simple">
+<dt><strong>Before optimization:</strong></dt><dd><p>Each transfer/interaction term with inter-process sites calls <code class="docutils literal notranslate"><span class="pre">MPI_Sendrecv</span></code> individually.
+If <span class="math notranslate nohighlight">\(N\)</span> terms share the same origin, <span class="math notranslate nohighlight">\(N\)</span> separate communications occur.</p>
+</dd>
+<dt><strong>After optimization:</strong></dt><dd><p>Terms with the same origin are grouped together.
+A single <code class="docutils literal notranslate"><span class="pre">MPI_Sendrecv</span></code> retrieves the required data,
+then all <span class="math notranslate nohighlight">\(N\)</span> terms are processed locally.</p>
+</dd>
+</dl>
+<p>This optimization is particularly effective for:</p>
+<ul class="simple">
+<li><p>2D/3D lattice models where many hopping terms share the same communication partner</p></li>
+<li><p>Systems with many transfer terms between neighboring sites</p></li>
+</ul>
+<p>The batched communication is implemented for:</p>
+<ul class="simple">
+<li><p>SpinlessFermion models (MPIsingle)</p></li>
+<li><p>Hubbard models (MPIsingle, MPIdouble; InterAll for HubbardGC only)</p></li>
+<li><p>Spin models (Exchange MPIsingle; SpinGC also batches PairLift)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Limitation in Time-Evolution (TimeEvolution) mode</strong></p>
+<p>When using <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> or step-dependent <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>
+(expert mode with <code class="docutils literal notranslate"><span class="pre">NTEInterAllMax</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">NTETransferMax</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>),
+the MPI batched communication is automatically disabled and falls
+back to conventional per-term MPI communication.</p>
+<p>This is because the batched group structure is initialized once at
+program startup and cannot track interaction terms that are
+added or modified by <code class="docutils literal notranslate"><span class="pre">MakeTEDTransfer</span></code>/<code class="docutils literal notranslate"><span class="pre">MakeTEDInterAll</span></code> at each
+time-evolution step.</p>
+<p>Peierls substitution (AC Laser mode, <code class="docutils literal notranslate"><span class="pre">PumpType</span> <span class="pre">=</span> <span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>)
+only updates coefficients of existing transfer entries and can
+therefore benefit from batched communication.</p>
+</div>
+<section id="disabling-batched-communication">
+<h3>Disabling batched communication<a class="headerlink" href="#disabling-batched-communication" title="Link to this heading">¶</a></h3>
+<p>Set the environment variable <code class="docutils literal notranslate"><span class="pre">HPHI_MPI_NOBATCH=1</span></code> to disable MPI
+communication batching globally and fall back to the original per-term MPI
+exchanges. This is intended for debugging and for verifying that the batched
+optimization reproduces the unbatched result:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_MPI_NOBATCH=1
+mpirun -np 4 ./HPhi -e namelist.def
+</pre></div>
+</div>
+<p>The active setting is reported at startup as <code class="docutils literal notranslate"><span class="pre">MPI</span> <span class="pre">batching</span> <span class="pre">:</span> <span class="pre">ON</span></code> or
+<code class="docutils literal notranslate"><span class="pre">MPI</span> <span class="pre">batching</span> <span class="pre">:</span> <span class="pre">OFF</span></code>. The value is read on rank 0 and broadcast to all ranks,
+so all processes always agree.</p>
+</section>
+</section>
+<section id="spinlessfermion-off-diagonal-two-body-green-s-function">
+<h2><span class="section-number">6.2.5. </span>SpinlessFermion Off-diagonal Two-body Green’s Function<a class="headerlink" href="#spinlessfermion-off-diagonal-two-body-green-s-function" title="Link to this heading">¶</a></h2>
+<p>For SpinlessFermion,
+<span class="math notranslate nohighlight">\(\langle c^\dagger_i c_j c^\dagger_k c_l \rangle\)</span>
+with inter-process sites is supported in MPI paths for both
+grand-canonical (GC) and canonical calculations.</p>
+<p>This path applies the operator sequence on a global-bit representation and
+keeps fermion-sign evaluation consistent across rank communication.</p>
+</section>
+<section id="behavior-of-mpi-required-tests-ctest">
+<h2><span class="section-number">6.2.6. </span>Behavior of MPI-required Tests (ctest)<a class="headerlink" href="#behavior-of-mpi-required-tests-ctest" title="Link to this heading">¶</a></h2>
+<p>The following tests require an MPI runtime environment:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mpi_consistency_*</span></code> (typically <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lanczos_*_mpidouble</span></code> (typically <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">=</span> <span class="pre">16</span></code>)</p></li>
+</ul>
+<p>If <code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> is not set, or the MPI rank requirement is not met,
+these tests are reported as <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> by <code class="docutils literal notranslate"><span class="pre">ctest</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 4 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 16 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+</pre></div>
+</div>
+</section>
+<section id="fermion-sign">
+<h2><span class="section-number">6.2.7. </span>Fermion Sign<a class="headerlink" href="#fermion-sign" title="Link to this heading">¶</a></h2>
+<p>For fermionic systems (Hubbard, SpinlessFermion), the fermion sign arising from
+operator anticommutation must be carefully handled during MPI communication.</p>
+<p>The sign is computed using the <code class="docutils literal notranslate"><span class="pre">SgnBit</span></code> function, which counts the number of
+occupied states between the creation and annihilation operators.
+This sign is pre-computed during initialization and stored with each transfer group.</p>
+</section>
+<section id="process-number-requirements">
+<h2><span class="section-number">6.2.8. </span>Process Number Requirements<a class="headerlink" href="#process-number-requirements" title="Link to this heading">¶</a></h2>
+<p>The number of MPI processes must satisfy specific constraints:</p>
+<dl class="simple">
+<dt><strong>Hubbard/Kondo models:</strong></dt><dd><p>Process number = <span class="math notranslate nohighlight">\(4^n\)</span> (due to 4 states per site: empty, up, down, double)</p>
+</dd>
+<dt><strong>Spin-1/2 models:</strong></dt><dd><p>Process number = <span class="math notranslate nohighlight">\(2^n\)</span> (due to 2 states per site: up, down)</p>
+</dd>
+<dt><strong>General spin models:</strong></dt><dd><p>Process number = product of <span class="math notranslate nohighlight">\((2S_i+1)\)</span> for inter-process sites</p>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="../howtouse/basicusage_en.html#subsec-creatingexpert"><span class="std std-ref">Creating input files for Expert mode</span></a> for detailed instructions on setting process numbers.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. Technical Details</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_en.html">6.1. Hilbert Space Construction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. MPI Parallelization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">6.2.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#site-classification">6.2.2. Site Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi-communication-patterns">6.2.3. MPI Communication Patterns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#batched-mpi-communication">6.2.4. Batched MPI Communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spinlessfermion-off-diagonal-two-body-green-s-function">6.2.5. SpinlessFermion Off-diagonal Two-body Green’s Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#behavior-of-mpi-required-tests-ctest">6.2.6. Behavior of MPI-required Tests (ctest)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fermion-sign">6.2.7. Fermion Sign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#process-number-requirements">6.2.8. Process Number Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_en.html">6.6. Restart Mechanism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>Technical Details</a><ul>
+      <li>Previous: <a href="hilbert_en.html" title="previous chapter"><span class="section-number">6.1. </span>Hilbert Space Construction</a></li>
+      <li>Next: <a href="openmp_en.html" title="next chapter"><span class="section-number">6.3. </span>OpenMP Parallelization</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/MPI_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

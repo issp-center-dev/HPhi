@@ -135,11 +135,11 @@ For using MPI/hybrid parallelization, the process number must be set as follows.
   
    When the model is selected as the spin model by setting ``CalcModel`` in a **CalcMod** file, the process number is fixed by a **LocSpin** file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (``2S`` +1) in descending order by the site number. See :ref:`Subsec:locspn` for details of the **LocSpin** file.
    
-   For example, when a **LocSpin** file is given as follows, the process number must be equal to :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`. 
+   For example, when a **LocSpin** file is given as follows, the process number must be equal to :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`.
 
   ::
-  
-   ================================ 
+
+   ================================
    NlocalSpin     3
    ================================
    ========i_0IteElc_2S ======
@@ -147,6 +147,8 @@ For using MPI/hybrid parallelization, the process number must be set as follows.
        0      3
        1      2
        2      1
+
+For technical details about MPI parallelization (site classification, communication patterns, batched communication), see :ref:`Ch:Technical`.
 
 Printing version ID
 -------------------

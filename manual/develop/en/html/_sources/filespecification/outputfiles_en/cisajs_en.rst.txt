@@ -63,11 +63,14 @@ Parameters
 
    **Type :** Int
 
-   | **Description :** The integer of the spin index:
-   | 0: Up-spin
-   | 1: Down-spin.
+   | **Description :** The integer of the spin index.
    | [int02] and [int04] show
      :math:`\sigma_1` and :math:`\sigma_2`, respectively.
+   | For Hubbard/Kondo systems:
+   | 0: Up-spin
+   | 1: Down-spin.
+   | For SpinlessFermion/SpinlessFermionGC:
+   | only 0 is output.
 
 *  [double01], [double02]
 

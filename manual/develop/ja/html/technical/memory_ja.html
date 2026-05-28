@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.4. メモリ管理 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=cbac9f54"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.5. 数値精度" href="precision_ja.html" />
+    <link rel="prev" title="6.3. OpenMP並列化" href="openmp_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">6.4. </span>メモリ管理<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> が大規模計算でメモリを管理する方法を説明します。</p>
+<section id="id2">
+<h2><span class="section-number">6.4.1. </span>メモリ要件<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> の主要なメモリ使用量は状態ベクトルの格納に起因します。
+次元 <span class="math notranslate nohighlight">\(D\)</span> のヒルベルト空間を <span class="math notranslate nohighlight">\(P\)</span> 個のMPIプロセスに分散する場合、
+各プロセスに必要なメモリは：</p>
+<dl class="simple">
+<dt><strong>Lanczos法</strong></dt><dd><ul class="simple">
+<li><p>2つの状態ベクトル（<code class="docutils literal notranslate"><span class="pre">v0</span></code>, <code class="docutils literal notranslate"><span class="pre">v1</span></code>）: <span class="math notranslate nohighlight">\(2 \times D/P \times 16\)</span> バイト（complex double）</p></li>
+<li><p>MPI通信用バッファ1つ: <span class="math notranslate nohighlight">\(D/P \times 16\)</span> バイト</p></li>
+</ul>
+</dd>
+<dt><strong>LOBPCG法</strong></dt><dd><ul class="simple">
+<li><p>部分空間反復のための複数の状態ベクトル</p></li>
+<li><p>直交化のためのバッファ</p></li>
+</ul>
+</dd>
+<dt><strong>リスト配列</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list_1</span></code>: <span class="math notranslate nohighlight">\(D/P \times 8\)</span> バイト（unsigned long）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_2_1</span></code>, <code class="docutils literal notranslate"><span class="pre">list_2_2</span></code>: システムサイズに依存</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.4.2. </span>メモリ割り当て<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は <code class="docutils literal notranslate"><span class="pre">common/setmemory.c</span></code> で定義されたラッパー関数を使用して
+動的にメモリを割り当てます。これらの関数は様々なデータ型の割り当てを処理します：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">d_1d_allocate</span></code>: 1次元double配列</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd_1d_allocate</span></code>: 1次元complex double配列</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i_2d_allocate</span></code>: 2次元integer配列</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lui_1d_allocate</span></code>: 1次元unsigned long integer配列</p></li>
+</ul>
+<p>メモリは計算の開始時に <code class="docutils literal notranslate"><span class="pre">xsetmem.c</span></code> で割り当てられ、
+終了時に解放されます。</p>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.4.3. </span>メモリ使用量の推定<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>計算を実行する前に、必要なメモリを推定できます：</p>
+<div class="math notranslate nohighlight" id="equation-technical-memory-ja-0">
+<span class="eqno">(6.5)<a class="headerlink" href="#equation-technical-memory-ja-0" title="Link to this equation">¶</a></span>\[M_{\text{total}} \approx \frac{D}{P} \times (N_v \times 16 + N_l \times 8) \text{ バイト}\]</div>
+<p>ここで：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(D\)</span> はヒルベルト空間の次元</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span> はMPIプロセス数</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_v\)</span> は状態ベクトルの数（Lanczosでは通常3-4）</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_l\)</span> はリスト配列の数（通常1-3）</p></li>
+</ul>
+<dl class="simple">
+<dt><strong>例</strong></dt><dd><p>上向き4個・下向き4個（<span class="math notranslate nohighlight">\(S_z = 0\)</span>）の16サイトHubbardモデルの場合：</p>
+<ul class="simple">
+<li><p>ヒルベルト空間: <span class="math notranslate nohighlight">\(D = \binom{16}{4}^2 = 1,820^2 = 3,312,400\)</span></p></li>
+<li><p>4 MPIプロセスの場合: <span class="math notranslate nohighlight">\(D/P = 828,100\)</span> 状態/プロセス</p></li>
+<li><p>プロセスあたりのメモリ: 状態ベクトルで約50 MB</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h2><span class="section-number">6.4.4. </span>メモリ最適化戦略<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>MPIプロセス数の増加</strong></dt><dd><p>ヒルベルト空間をより多くのプロセスに分散することで、
+プロセスあたりのメモリ要件を削減できます。</p>
+</dd>
+<dt><strong>対称性の利用</strong></dt><dd><p>粒子数保存、 <span class="math notranslate nohighlight">\(S_z\)</span> 保存、その他の対称性により
+ヒルベルト空間の次元を削減できます。</p>
+</dd>
+<dt><strong>リスタート機能</strong></dt><dd><p>非常に大規模な計算では、リスタート機能により
+計算をより小さなチャンクに分割できます。</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2><span class="section-number">6.4.5. </span>よくあるメモリの問題<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>メモリ不足エラー</strong></dt><dd><p>計算でメモリ不足が発生した場合、以下を試してください：</p>
+<ol class="arabic simple">
+<li><p>MPIプロセス数を増やす</p></li>
+<li><p>対称性制限を使用する</p></li>
+<li><p>クラスタシステムでノードあたりのメモリを増やす</p></li>
+</ol>
+</dd>
+<dt><strong>メモリリーク</strong></dt><dd><p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はメモリリークを避けるように注意深くメモリを管理しています。
+メモリ使用量の増加が観察された場合は、バグとして報告してください。</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_ja.html">6.1. ヒルベルト空間の構成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_ja.html">6.2. MPI並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.4. メモリ管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.4.1. メモリ要件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.4.2. メモリ割り当て</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.4.3. メモリ使用量の推定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.4.4. メモリ最適化戦略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.4.5. よくあるメモリの問題</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_ja.html">6.6. リスタート機構</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="openmp_ja.html" title="前の章へ"><span class="section-number">6.3. </span>OpenMP並列化</a></li>
+      <li>Next: <a href="precision_ja.html" title="次の章へ"><span class="section-number">6.5. </span>数値精度</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/memory_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

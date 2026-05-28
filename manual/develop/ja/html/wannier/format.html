@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>8.4. ファイルフォーマット &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <title>7.2.4. ファイルフォーマット &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
@@ -15,8 +15,8 @@
     <script src="../_static/translations.js?v=4755f45a"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
-    <link rel="next" title="8.5. Contact" href="contact.html" />
-    <link rel="prev" title="8.3. スタンダードモードの入力パラメーター" href="parameter.html" />
+    <link rel="next" title="7.2.5. Contact" href="contact.html" />
+    <link rel="prev" title="7.2.3. スタンダードモードの入力パラメーター" href="parameter.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,12 +35,12 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1><span class="section-number">8.4. </span>ファイルフォーマット<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<h1><span class="section-number">7.2.4. </span>ファイルフォーマット<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
 <p>HPhi/mVMCのスタンダードモードでは以下のファイルを読み込む.
 これらのファイルはRESPACKのプログラムを実行すると,
 <code class="docutils literal notranslate"><span class="pre">dir-model</span></code> ディレクトリに <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]=zvo</span></code> として自動出力される.</p>
 <section id="id2">
-<h2><span class="section-number">8.4.1. </span>ジオメトリー<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<h2>ジオメトリー<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_geom.dat</span></code>.
 このファイルを必要に応じて修正することで取り扱う軌道数を変更できる.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-1.917800 1.917800 6.280100
@@ -68,7 +68,7 @@ Wannier関数の数よりも少なくすることも可能であり,
 </ul>
 </section>
 <section id="coulomb">
-<h2><span class="section-number">8.4.2. </span>ホッピング, Coulomb積分, 交換積分, 電荷密度<a class="headerlink" href="#coulomb" title="Link to this heading">¶</a></h2>
+<h2>ホッピング, Coulomb積分, 交換積分, 電荷密度<a class="headerlink" href="#coulomb" title="Link to this heading">¶</a></h2>
 <p>ファイル名は <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_hr.dat</span></code>, <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_ur.dat</span></code>,
 <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_jr.dat</span></code>,  <code class="docutils literal notranslate"><span class="pre">[CDataFileHead]_dr.dat</span></code>.
 Wannier90のホッピング積分の形式に従う(詳細はwannier90のuser_guideの <code class="docutils literal notranslate"><span class="pre">8.19</span> <span class="pre">seedname_hr.dat</span></code> を参照のこと).</p>
@@ -133,29 +133,31 @@ Wannier90のホッピング積分の形式に従う(詳細はwannier90のuser_gu
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. Wannier関数を用いたダウンフォールディング</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="overview.html">8.1. 概要</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html">8.2. チュートリアル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parameter.html">8.3. スタンダードモードの入力パラメーター</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">8.4. ファイルフォーマット</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">8.4.1. ジオメトリー</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#coulomb">8.4.2. ホッピング, Coulomb積分, 交換積分, 電荷密度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">6. 技術詳細</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../related/index.html">7. 関連ツール</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../fourier/index.html">7.1. 相関関数のFourier変換ユーティリティー</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">7.2. RESPACKとの連携</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview.html">7.2.1. 概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html">7.2.2. チュートリアル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameter.html">7.2.3. スタンダードモードの入力パラメーター</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">7.2.4. ファイルフォーマット</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contact.html">7.2.5. Contact</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="contact.html">8.5. Contact</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html"><span class="section-number">8. </span>Wannier関数を用いたダウンフォールディング</a><ul>
-      <li>Previous: <a href="parameter.html" title="前の章へ"><span class="section-number">8.3. </span>スタンダードモードの入力パラメーター</a></li>
-      <li>Next: <a href="contact.html" title="次の章へ"><span class="section-number">8.5. </span>Contact</a></li>
+  <li><a href="../related/index.html"><span class="section-number">7. </span>関連ツール</a><ul>
+  <li><a href="index.html"><span class="section-number">7.2. </span>RESPACKとの連携</a><ul>
+      <li>Previous: <a href="parameter.html" title="前の章へ"><span class="section-number">7.2.3. </span>スタンダードモードの入力パラメーター</a></li>
+      <li>Next: <a href="contact.html" title="次の章へ"><span class="section-number">7.2.5. </span>Contact</a></li>
+  </ul></li>
   </ul></li>
   </ul></li>
 </ul>
