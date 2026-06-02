@@ -858,7 +858,6 @@ int omp_sz_hacker(long unsigned int ib,
     num_up      += div_up;
     num_down    += div_down;
     num_doublon += div_up*div_down;
-    //printf("ib=%d jb=%d ihfbit=%d i=%d j=%d up=%d down=%d\n",ib,jb,ihfbit,i,j,div_up,div_down );
   }
   
   ja              = 1;
@@ -1000,7 +999,6 @@ int omp_sz_hacker(long unsigned int ib,
     if(tmp_num_up+tmp_num_down <= X->Def.Ne){
       ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
       if(ia < X->Check.sdim){
-        printf("Acheck: %d %d; %d %d; %d  \n",tmp_num_up,tmp_num_down,tmp_num_up+tmp_num_down,X->Def.Ne,ia);
         num_up      =  tmp_num_up;
         num_down    =  tmp_num_down;
         num_doublon =  tmp_num_doublon;

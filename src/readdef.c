@@ -136,7 +136,6 @@ int ValidateValue(
                   const int iHighestValue
                   ){
 
-  //printf("check: %d %d %d \n ", icheckValue,ilowestValue,iHighestValue);
   if(icheckValue < ilowestValue || icheckValue > iHighestValue){
     return(-1);
   }
@@ -889,7 +888,6 @@ int ReadDefFileNInt(
               return(-1);
             }
             X->iCalcModel=tJNConserved;
-            printf("Mode; %d %d \n",X->iCalcModel,tJNConserved);
           }
           else if(X->iCalcModel ==SpinlessFermion){
             X->Ne=X->NCond;  

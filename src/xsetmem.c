@@ -161,7 +161,6 @@ int setmem_large
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
 
   if (GetlistSize(X) == TRUE) {
-      printf("%d \n",X->Check.idim_max);
       list_1 = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
       list_1buf = lui_1d_allocate(idim_maxMPI + 1);
