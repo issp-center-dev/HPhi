@@ -320,6 +320,12 @@ int sz(
                 case tJNConserved:
                 case tJGC:
                     hacker = X->Def.read_hacker;
+                    /* The snoob-based "hacker" path enumerates a fixed particle
+                       number sector and cannot build the grand-canonical (variable
+                       particle number) Hilbert space of tJGC. Force the brute-force
+                       make_list_jb()/omp_sz() path, which filters by no-double-occupancy
+                       over all particle numbers. */
+                    if(X->Def.iCalcModel==tJGC) hacker = 0;
                     if(hacker==0){
                         make_list_jb(ihfbit,N2,comb,X,list_jb);
                        //#pragma omp barrier

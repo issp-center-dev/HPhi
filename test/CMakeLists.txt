@@ -46,6 +46,10 @@ add_test(
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_genspingc_ladder.sh
 )
 add_test(
+  NAME lanczos_tjgc_dimension
+  COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_tjgc_dimension.sh
+)
+add_test(
   NAME lanczos_hubbard_square_restart
   COMMAND ${CMAKE_SOURCE_DIR}/test/lanczos_hubbard_square_restart.sh
 )

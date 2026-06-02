@@ -255,6 +255,7 @@ int ReadcalcmodFile(
   X->iReStart=0;
   X->iFlgMPI=0;
   X->iFlgScaLAPACK=0;
+  X->iFlgInvalidProc=0;
 #ifdef _MAGMA
   X->iNGPU=2;
 #else
