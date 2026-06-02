@@ -47,7 +47,7 @@ char *cErrOutputHam="Error in %s\n OutputHam: \n 0: not output Hamiltonian,\n 1:
 char *cErrOutputHamForFullDiag="Error in %s\n OutputHam is only defined for FullDiag mode, CalcType=2.\n";
 char *cErrInputHam="Error in %s\n InputHam: \n 0: not input Hamiltonian,\n 1: input Hamiltonian.\n";
 char *cErrInputOutputHam="Error in %s\n OutputHam=1 and InputHam=1.\n";
-char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5: KondoGC, 9: tJ, 10: tJGC, 11: tJNConserved.\n";
+char *cErrCalcModel="Error in %s\n CalcModel: \n 0: Hubbard, 1: Spin, 2: Kondo, 3: HubbardGC, 4: SpinGC, 5: KondoGC, 9: tJ, 10: tJGC.\n";
 char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1: Zero Temperature.\n";
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
