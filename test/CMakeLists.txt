@@ -166,6 +166,7 @@ add_hphi_test(fulldiag_kondo_chain)
 add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
+add_hphi_test(fulldiag_tj_calchs1)
 add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_genspingc_ladder)
@@ -177,6 +178,9 @@ set_tests_properties(
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
+set_tests_properties(
+    fulldiag_tj_calchs1
+    PROPERTIES LABELS "fulldiag;tj")
 set_tests_properties(
     fulldiag_spin_tri fulldiag_spingc_tri
     PROPERTIES LABELS "fulldiag;spin")
