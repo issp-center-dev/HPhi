@@ -72,7 +72,7 @@ jobs:
         if: ${{ matrix.mpisize == 1 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -E lobcg_hubbard_szunconserv
+        run: ctest -V
 
       - name: ctest
         if: ${{ matrix.mpisize == 3 || matrix.mpisize == 9 }}
@@ -84,4 +84,4 @@ jobs:
         if: ${{ matrix.mpisize == 4 || matrix.mpisize == 16 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -E "spinone|lobcg_hubbard_szunconserv"
+        run: ctest -V -E spinone
