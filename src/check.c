@@ -97,7 +97,11 @@ int check(struct BindStruct *X){
     }
     break;
   case tJGC:
-    if (X->Def.Nup < 0 || X->Def.Ndown < 0 || X->Def.Ne < 0) {
+    /* Grand-canonical tJ has no fixed particle number, so the only way a process
+       can be empty is an invalid inter-process configuration (doublon "11").
+       That is flagged explicitly by CheckMPI(); the old "Nup < 0" test was dead
+       code because Nup/Ndown/Ne are unsigned and can never be negative. */
+    if (X->Def.iFlgInvalidProc == TRUE) {
       comb_sum = 0;
       break;
     }
@@ -130,7 +134,11 @@ int check(struct BindStruct *X){
     break;
 
   case tJ:
-    if (X->Def.Nup < 0 || X->Def.Ndown < 0
+    /* Invalid inter-process ranks (doublon / over-subtraction) are flagged by
+       CheckMPI(); genuinely out-of-range particle numbers are caught by the
+       "> Ns" tests. A "Nup < 0" test would be dead code (unsigned), so it is
+       intentionally omitted rather than cast. */
+    if (X->Def.iFlgInvalidProc == TRUE
         || X->Def.Nup > (int)Ns || X->Def.Ndown > (int)Ns
         || X->Def.Nup + X->Def.Ndown > (int)Ns) {
       comb_sum = 0;
@@ -160,7 +168,9 @@ int check(struct BindStruct *X){
     break;
 
   case tJNConserved:
-    if (X->Def.Nup < 0 || X->Def.Ndown < 0 || X->Def.Ne < 0
+    /* See the tJ case: invalid ranks via iFlgInvalidProc, bad input via "> Ns".
+       Unsigned "< 0" tests omitted (dead code). */
+    if (X->Def.iFlgInvalidProc == TRUE
         || X->Def.Ne > (int)Ns) {
       comb_sum = 0;
       break;
@@ -174,7 +184,6 @@ int check(struct BindStruct *X){
         comb_up   = Binomial(Ns, i, comb, Ns);
         comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
         comb_sum +=comb_up*comb_down;
-        printf("i=%d %d; Ns=%d i=%d, Ns-i=%d X->Def.Ne-i=%d  \n",i,comb_up*comb_down,Ns,i,Ns-i, X->Def.Ne-i);
     }
     break;
     

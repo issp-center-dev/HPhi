@@ -35,6 +35,11 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
   */
   X->Def.NsiteMPI = X->Def.Nsite;
   X->Def.Total2SzMPI = X->Def.Total2Sz;
+  /* Validity of this process is decided fresh on every CheckMPI() call
+     (check() may be invoked more than once on the same BindStruct, e.g. in
+     CalcSpectrum.c), so reset the flag here rather than relying on the
+     one-shot initialisation in readdef.c. */
+  X->Def.iFlgInvalidProc = FALSE;
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
@@ -125,20 +130,22 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           break;
         }
         else if (SpinNum == 1 /*01*/) {
+          /* Nup/Ne are unsigned, so test for over-subtraction BEFORE
+             decrementing. The old "Nup < 0" test was dead code. */
+          if (X->Def.Nup == 0 || X->Def.Ne == 0) {
+            has_invalid_tj_rank = TRUE;
+            break;
+          }
           X->Def.Nup -= 1;
           X->Def.Ne -= 1;
-          if (X->Def.Nup < 0 || X->Def.Ne < 0) {
-            has_invalid_tj_rank = TRUE;
-            break;
-          }
         }
         else if (SpinNum == 2 /*10*/) {
-          X->Def.Ndown -= 1;
-          X->Def.Ne -= 1;
-          if (X->Def.Ndown < 0 || X->Def.Ne < 0) {
+          if (X->Def.Ndown == 0 || X->Def.Ne == 0) {
             has_invalid_tj_rank = TRUE;
             break;
           }
+          X->Def.Ndown -= 1;
+          X->Def.Ne -= 1;
         }
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
@@ -151,6 +158,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
         X->Def.Nup = -1;
         X->Def.Ndown = -1;
         X->Def.Ne = -2;
+        X->Def.iFlgInvalidProc = 1;
       }
 
       break;/*case tJ:*/
@@ -187,11 +195,12 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           break;
         }
         else if (SpinNum == 1 /*01*/ || SpinNum == 2 /*10*/) {
-          X->Def.Ne -= 1;
-          if (X->Def.Ne < 0) {
+          /* Ne is unsigned: test before decrementing (old "Ne < 0" was dead). */
+          if (X->Def.Ne == 0) {
             has_invalid_tj_rank = TRUE;
             break;
           }
+          X->Def.Ne -= 1;
         }
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
@@ -199,6 +208,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
         X->Def.Nup = -1;
         X->Def.Ndown = -1;
         X->Def.Ne = -1;
+        X->Def.iFlgInvalidProc = 1;
       }
 
       break; /*case tJNConserved:*/
@@ -224,6 +234,7 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
         X->Def.Nup = -1;
         X->Def.Ndown = -1;
         X->Def.Ne = -1;
+        X->Def.iFlgInvalidProc = 1;
       }
 
       break; /*case tJGC:*/

@@ -136,7 +136,6 @@ int ValidateValue(
                   const int iHighestValue
                   ){
 
-  //printf("check: %d %d %d \n ", icheckValue,ilowestValue,iHighestValue);
   if(icheckValue < ilowestValue || icheckValue > iHighestValue){
     return(-1);
   }
@@ -255,6 +254,7 @@ int ReadcalcmodFile(
   X->iReStart=0;
   X->iFlgMPI=0;
   X->iFlgScaLAPACK=0;
+  X->iFlgInvalidProc=0;
 #ifdef _MAGMA
   X->iNGPU=2;
 #else
@@ -888,7 +888,6 @@ int ReadDefFileNInt(
               return(-1);
             }
             X->iCalcModel=tJNConserved;
-            printf("Mode; %d %d \n",X->iCalcModel,tJNConserved);
           }
           else if(X->iCalcModel ==SpinlessFermion){
             X->Ne=X->NCond;  
