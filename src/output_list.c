@@ -48,8 +48,8 @@ int output_list(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case Hubbard:
-  case tJ:
   case tJGC:
+  case tJ:
   case Spin:
   case SpinGC:
     sprintf(sdt, cFileNameListModel, X->Def.Nsite,X->Def.Nup,X->Def.Ndown);

@@ -137,8 +137,16 @@ ModParaファイル
    **形式 :** int型 (自然数)
 
    **説明 :**
-   ``CalcHS=1``\ で量子数を指定したときのヒルベルト空間生成が高速化されます(詳細は http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdfを参照)。
-   デフォルトの値は1で、高速化アルゴリズムが使用されます。
+   ``CalcHS=1``\ ではビット操作による高速化アルゴリズムを使用します
+   (詳細は http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf を参照)。
+   ``CalcHS=2``\ は ``CalcHS=1`` の ``sdim = 2^Nsite`` 外側ループを回避する
+   代替の列挙経路で、一部の大きな sector で有効です。ただし現在の実装では
+   補助の index 配列 (``list_2_1`` / ``list_2_2`` / ``list_jb``) は依然 ``O(sdim)`` で
+   確保され、Hubbard 分岐では ``O(idim_max)`` の一時 sort buffer も使用するため、
+   メモリ面だけで大規模系を解決するものではありません。
+   ``CalcHS=2``\ は現時点で ``Hubbard`` と ``HubbardNConserved`` モデルでのみ利用可能で、
+   それ以外のモデル (例: ``Kondo``, ``Spin``) で指定した場合はエラーになります。
+   デフォルト値は 1 です。
 
  
 

@@ -49,6 +49,7 @@ fail() { echo "FAILED (${testname}): $1"; exit 1; }
 gen_input() {
   n=$1
   jj=$2
+  jq=$(awk -v j="${jj}" 'BEGIN{printf "%.15f", j/4.0}')
   jh=$(awk -v j="${jj}" 'BEGIN{printf "%.15f", j/2.0}')
 
   cat > namelist.def <<EOF
@@ -79,11 +80,13 @@ EOF
       printf "    %d     %d     %d     %d    1.000000000000000    0.0\n" ${j} ${s} ${b} ${s} >> ${tt}
       nt=$((nt + 2))
     done
-    printf "    %d 0 %d 1 %d 1 %d 0    %s  0.0\n" ${b} ${b} ${j} ${j} "${jh}" >> ${ii}   # J/2 S+_i S-_j
-    printf "    %d 1 %d 0 %d 0 %d 1    %s  0.0\n" ${b} ${b} ${j} ${j} "${jh}" >> ${ii}   # J/2 S-_i S+_j
+    printf "    %d 0 %d 1 %d 1 %d 0    %s  0.0\n" ${b} ${b} ${j} ${j} "${jq}" >> ${ii}   # J/4 S+_i S-_j
+    printf "    %d 0 %d 1 %d 1 %d 0    %s  0.0\n" ${j} ${j} ${b} ${b} "${jq}" >> ${ii}   # Hermitian pair
+    printf "    %d 1 %d 0 %d 0 %d 1    %s  0.0\n" ${b} ${b} ${j} ${j} "${jq}" >> ${ii}   # J/4 S-_i S+_j
+    printf "    %d 1 %d 0 %d 0 %d 1    %s  0.0\n" ${j} ${j} ${b} ${b} "${jq}" >> ${ii}   # Hermitian pair
     printf "    %d 0 %d 0 %d 1 %d 1    -%s 0.0\n" ${b} ${b} ${j} ${j} "${jh}" >> ${ii}   # -J/2 n_iup n_jdn
     printf "    %d 1 %d 1 %d 0 %d 0    -%s 0.0\n" ${b} ${b} ${j} ${j} "${jh}" >> ${ii}   # -J/2 n_idn n_jup
-    ni=$((ni + 4)); b=$((b + 1))
+    ni=$((ni + 6)); b=$((b + 1))
   done
   { printf "========================\nNTransfer      %d\n========================\n========i_j_s_tijs======\n========================\n" ${nt}; cat ${tt}; } > trans.def
   { printf "======================\nNInterAll      %d\n======================\n========zInterAll=====\n======================\n" ${ni}; cat ${ii}; } > interall.def

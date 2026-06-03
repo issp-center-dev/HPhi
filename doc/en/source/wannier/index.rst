@@ -4,9 +4,14 @@
    contain the root `toctree` directive.
 
 .. _wannier:
-   
-Downfolding with Wannier functions
-==================================
+
+RESPACK Interface
+=================
+
+This section describes how to use DFT-derived effective models with :math:`{\mathcal H}\Phi`.
+The downfolding calculation is performed by `RESPACK <https://sites.google.com/view/kazuma7k6r>`_,
+and the resulting lattice model parameters are used as input for :math:`{\mathcal H}\Phi`.
+
 .. toctree::
    :maxdepth: 3
 

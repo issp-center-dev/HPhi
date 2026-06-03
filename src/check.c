@@ -24,34 +24,61 @@
 
 /**
  * @file   check.c
+ *
+ * @brief  Calculate Hilbert space dimension for each model
+ *
+ * Determines the size of the restricted Hilbert space based on:
+ * - Model type (Hubbard, Spin, SpinlessFermion, Kondo, etc.)
+ * - Ensemble (canonical vs grand canonical)
+ * - Quantum number constraints (total Sz, particle number)
+ *
+ * Hilbert space dimensions:
+ * - HubbardGC: 4^Nsite (all possible occupations)
+ * - Hubbard: C(Nsite,Nup) * C(Nsite,Ndown) (fixed particle numbers)
+ * - SpinGC: 2^Nsite (all spin configurations)
+ * - Spin: C(Nsite, Nsite/2+Sz) (fixed total Sz)
+ * - SpinlessFermionGC: 2^Nsite
+ * - SpinlessFermion: C(Nsite, Ne)
+ *
  * @version 0.1, 0.2
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for giving a function of calculating size of Hilbert space.
- * 
  */
 
 
-/** 
- * @brief A program to check size of dimension for Hilbert-space.
- * 
- * @param[in,out] X  Common data set used in HPhi.
- * 
- * @retval TRUE normal termination
- * @retval FALSE abnormal termination
- * @retval MPIFALSE CheckMPI abnormal termination
- * @version 0.2
- * @details add function of calculating Hilbert space for canonical ensemble.
- *  
+/**
+ * @brief Calculate Hilbert space dimension and validate MPI decomposition
+ *
+ * This function:
+ * 1. Calls CheckMPI() to determine site distribution across MPI ranks
+ * 2. Computes total Hilbert space dimension (idim_max) using combinatorics
+ * 3. Validates that dimension fits within available memory
+ * 4. Sets X->Check.idim_max for later use
+ *
+ * MPI decomposition (via CheckMPI):
+ * - Nsite: Number of local sites (determines local Hilbert space)
+ * - NsiteMPI: Total sites including inter-process sites
+ * - Sites with index > Nsite require MPI communication
+ *
+ * Combinatorial calculation:
+ * Uses Pascal's triangle (comb[n][k] = C(n,k)) to efficiently compute
+ * binomial coefficients for canonical ensemble dimensions.
+ *
+ * @param X Common data set containing model parameters [in,out]
+ *          Sets X->Check.idim_max on success
+ *
+ * @return TRUE on success, FALSE on error, MPIFALSE on MPI setup failure
+ *
+ * @version 0.2 Added canonical ensemble support
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int check(struct BindStruct *X){
     
   FILE *fp;
-  long unsigned int i,tmp_sdim;
+  long unsigned int i,j,tmp_sdim;
   int NLocSpn,NCond,Nup,Ndown;
   long unsigned int u_tmp;
   long unsigned int tmp;
@@ -96,28 +123,13 @@ int check(struct BindStruct *X){
       comb_sum= 2*comb_sum;     
     }
     break;
-  case tJGC:
-    /* Grand-canonical tJ has no fixed particle number, so the only way a process
-       can be empty is an invalid inter-process configuration (doublon "11").
-       That is flagged explicitly by CheckMPI(); the old "Nup < 0" test was dead
-       code because Nup/Ndown/Ne are unsigned and can never be negative. */
-    if (X->Def.iFlgInvalidProc == TRUE) {
-      comb_sum = 0;
-      break;
-    }
-    //comb_sum = 3^(Ns)
-    comb_sum = 1;
-    for(i=0;i<X->Def.Nsite;i++){
-      comb_sum= 3*comb_sum;     
-    }
-    break;
- 
   case SpinGC:
+  case SpinlessFermionGC:
     //comb_sum = 2^(Ns)
     comb_sum = 1;
     if(X->Def.iFlgGeneralSpin ==FALSE){
       for(i=0;i<X->Def.Nsite;i++){
-        comb_sum= 2*comb_sum;     
+        comb_sum= 2*comb_sum;
       }
     }
     else{
@@ -133,43 +145,40 @@ int check(struct BindStruct *X){
     comb_sum=comb_up*comb_down;
     break;
 
-  case tJ:
-    /* Invalid inter-process ranks (doublon / over-subtraction) are flagged by
-       CheckMPI(); genuinely out-of-range particle numbers are caught by the
-       "> Ns" tests. A "Nup < 0" test would be dead code (unsigned), so it is
-       intentionally omitted rather than cast. */
-    if (X->Def.iFlgInvalidProc == TRUE
-        || X->Def.Nup > (int)Ns || X->Def.Ndown > (int)Ns
-        || X->Def.Nup + X->Def.Ndown > (int)Ns) {
-      comb_sum = 0;
-      break;
-    }
-    if (X->Def.Nup>= X->Def.Ndown){
-        comb_up   = Binomial(Ns,X->Def.Nup, comb, Ns);
-        comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
-    }else{
-        comb_down = Binomial(Ns, X->Def.Ndown, comb, Ns);
-        comb_up   = Binomial(Ns-X->Def.Ndown,X->Def.Nup, comb, Ns);
-    }
-    comb_sum=comb_up*comb_down;
-    break;
-
   case HubbardNConserved:
     comb_sum=0;
     if(X->Def.Ne > X->Def.Nsite){
       iMinup = X->Def.Ne-X->Def.Nsite;
       iAllup = X->Def.Nsite;
     }
+
     for(i=iMinup; i<= iAllup; i++){
       comb_up= Binomial(Ns, i, comb, Ns);
       comb_down= Binomial(Ns, X->Def.Ne-i, comb, Ns);
       comb_sum +=comb_up*comb_down;
     }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
+    break;
+
+  case tJ:
+    if (X->Def.iFlgInvalidProc == TRUE
+        || X->Def.Nup > (int)Ns || X->Def.Ndown > (int)Ns
+        || X->Def.Nup + X->Def.Ndown > (int)Ns) {
+      comb_sum = 0;
+      break;
+    }
+    if (X->Def.Nup >= X->Def.Ndown) {
+      comb_up   = Binomial(Ns, X->Def.Nup, comb, Ns);
+      comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
+    }
+    else {
+      comb_down = Binomial(Ns, X->Def.Ndown, comb, Ns);
+      comb_up   = Binomial(Ns-X->Def.Ndown, X->Def.Nup, comb, Ns);
+    }
+    comb_sum = comb_up*comb_down;
     break;
 
   case tJNConserved:
-    /* See the tJ case: invalid ranks via iFlgInvalidProc, bad input via "> Ns".
-       Unsigned "< 0" tests omitted (dead code). */
     if (X->Def.iFlgInvalidProc == TRUE
         || X->Def.Ne > (int)Ns) {
       comb_sum = 0;
@@ -180,10 +189,23 @@ int check(struct BindStruct *X){
       iMinup = X->Def.Ne-X->Def.Nsite;
       iAllup = X->Def.Nsite;
     }
+
     for(i=iMinup; i<= iAllup; i++){
-        comb_up   = Binomial(Ns, i, comb, Ns);
-        comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
-        comb_sum +=comb_up*comb_down;
+      comb_up   = Binomial(Ns, i, comb, Ns);
+      comb_down = Binomial(Ns-i, X->Def.Ne-i, comb, Ns);
+      comb_sum += comb_up*comb_down;
+    }
+    //printf("Ns %ld iMinup %d iAllup %d Ne %d comb_sum %ld\n",Ns,iMinup,iAllup,X->Def.Ne,comb_sum);
+    break;
+
+  case tJGC:
+    if (X->Def.iFlgInvalidProc == TRUE) {
+      comb_sum = 0;
+      break;
+    }
+    comb_sum = 1;
+    for(i=0; i<X->Def.Nsite; i++){
+      comb_sum = 3*comb_sum;
     }
     break;
     
@@ -213,6 +235,34 @@ int check(struct BindStruct *X){
       comb_sum  += comb_1*comb_2*comb_3;
     }
     break;
+  case KondoNConserved:
+    //idim_max
+    // calculation of dimension
+    // Nup      = u_loc+u_cond
+    // Ndown    = d_loc+d_cond
+    // NLocSpn  = u_loc+d_loc
+    // Ncond    = Nsite-NLocSpn
+    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
+    //              Binomial(NLocSpn,u_loc)
+    //             *Binomial(NCond,Nup-u_loc)
+    //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
+    //comb_1 = Binomial(NLocSpn,u_loc)
+    //comb_2 = Binomial(NCond,Nup-u_loc)
+    //comb_3 = Binomial(NCond,Ndown+u_loc-NLocSpn)
+    NLocSpn  = X->Def.NLocSpn;
+    NCond    = X->Def.Ne-NLocSpn;
+    int NsCond   = X->Def.Nsite-NLocSpn;
+    comb_1   = pow(2,NLocSpn);//Tpow is not defined
+    comb_sum = 0;
+    for(int tmp_Nup=0;tmp_Nup<=NCond;tmp_Nup++){
+      comb_2     = Binomial(NsCond,tmp_Nup,comb,NsCond);
+      comb_3     = Binomial(NsCond,NCond-tmp_Nup,comb,NsCond);
+      comb_sum  += comb_1*comb_2*comb_3;
+      //printf("tmp %ld %ld %ld\n",comb_sum,comb_2,comb_3);
+    }
+    //printf("Ne=%d NLocSpn=%d NsCond %d NCond=%d comb_1=%ld comb_2=%ld comb_3=%ld comb_sum=%ld\n",X->Def.Ne,NLocSpn,NsCond,NCond,comb_1,comb_2,comb_3,comb_sum);
+    break;
+ 
   case KondoGC:
     comb_sum = 1;
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
@@ -223,7 +273,6 @@ int check(struct BindStruct *X){
     }
     break;
   case Spin:
-
     if(X->Def.iFlgGeneralSpin ==FALSE){
       if(X->Def.Nup+X->Def.Ndown != X->Def.Nsite){
         fprintf(stderr, " 2Sz is incorrect.\n");
@@ -254,11 +303,16 @@ int check(struct BindStruct *X){
     }
     
     break;
+
+  case SpinlessFermion:
+    comb_sum = Binomial(Ns, X->Def.Ne, comb, Ns);
+    break;
+
   default:
     fprintf(stderr, cErrNoModel, X->Def.iCalcModel);
     free_li_2d_allocate(comb);
     return FALSE;
-  }  
+  }
 
   //fprintf(stdoutMPI, "Debug: comb_sum= %ld \n",comb_sum);
 
@@ -269,14 +323,18 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
         case tJ:
+        case tJNConserved:
         case tJGC:
         case Spin:
+        case SpinlessFermion:
           X->Check.max_mem = 5.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           X->Check.max_mem = 4.5 * X->Check.idim_max * 8.0 / (pow(10, 9));
           break;
       }
@@ -285,15 +343,19 @@ int check(struct BindStruct *X){
       switch (X->Def.iCalcModel) {
         case Hubbard:
         case HubbardNConserved:
-        case tJ:
-        case tJGC:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
+        case tJ:
+        case tJNConserved:
+        case tJGC:
         case Spin:
+        case SpinlessFermion:
           X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
       }
@@ -304,10 +366,13 @@ int check(struct BindStruct *X){
         case Hubbard:
         case HubbardNConserved:
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
         case tJ:
+        case tJNConserved:
         case tJGC:
         case Spin:
+        case SpinlessFermion:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
@@ -316,6 +381,7 @@ int check(struct BindStruct *X){
           break;
         case HubbardGC:
         case SpinGC:
+        case SpinlessFermionGC:
           if (X->Def.iFlgCalcSpec != CALCSPEC_NOT) {
             X->Check.max_mem = (2) * X->Check.idim_max * 16.0 / (pow(10, 9));
           } else {
@@ -361,13 +427,14 @@ int check(struct BindStruct *X){
 
   switch(X->Def.iCalcModel){
   case HubbardGC:
-  case KondoGC:
   case HubbardNConserved:
   case Hubbard:
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC:
   case tJ:
   case tJNConserved:
   case tJGC:
-  case Kondo:
     while(tmp <= X->Def.Nsite){
       tmp_sdim=tmp_sdim*2;
       tmp+=1;
@@ -375,7 +442,9 @@ int check(struct BindStruct *X){
     break;
   case Spin:
   case SpinGC:
-    if(X->Def.iFlgGeneralSpin==FALSE){ 
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    if(X->Def.iFlgGeneralSpin==FALSE){
       while(tmp <= X->Def.Nsite/2){
         tmp_sdim=tmp_sdim*2;
         tmp+=1;
@@ -389,7 +458,7 @@ int check(struct BindStruct *X){
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     free_li_2d_allocate(comb);
     return FALSE;
-  }  
+  }
   X->Check.sdim=tmp_sdim;
   
   if(childfopenMPI(cFileNameCheckSdim,"w", &fp)!=0){
@@ -402,15 +471,18 @@ int check(struct BindStruct *X){
   case KondoGC:
   case HubbardNConserved:
   case Hubbard:
+  case Kondo:
+  case KondoNConserved:
   case tJ:
   case tJNConserved:
   case tJGC:
-  case Kondo:
     //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite);
     break;
   case Spin:
   case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     if(X->Def.iFlgGeneralSpin==FALSE){
       //fprintf(stdoutMPI, "sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
       fprintf(fp,"sdim=%ld =2^%d\n",X->Check.sdim,X->Def.Nsite/2);
@@ -427,18 +499,19 @@ int check(struct BindStruct *X){
   switch(X->Def.iCalcModel){
   case HubbardGC:
   case KondoGC:
+  case tJGC:
     for(i=1;i<=2*X->Def.Nsite;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;
       fprintf(fp,"%ld %ld \n",i,u_tmp);
     }
     break;
-  case tJNConserved:
-  case tJ:
-  case tJGC:/*is it correct?*/
-  case HubbardNConserved:
   case Hubbard:
+  case HubbardNConserved:
   case Kondo:
+  case KondoNConserved:
+  case tJ:
+  case tJNConserved:
     for(i=1;i<=2*X->Def.Nsite-1;i++){
       u_tmp=u_tmp*2;
       X->Def.Tpow[i]=u_tmp;
@@ -446,6 +519,7 @@ int check(struct BindStruct *X){
     }
     break;
  case SpinGC:
+ case SpinlessFermionGC:
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite;i++){
        u_tmp=u_tmp*2;
@@ -464,6 +538,7 @@ int check(struct BindStruct *X){
    }
    break;
  case Spin:
+ case SpinlessFermion:
    if(X->Def.iFlgGeneralSpin==FALSE){
      for(i=1;i<=X->Def.Nsite-1;i++){
        u_tmp=u_tmp*2;

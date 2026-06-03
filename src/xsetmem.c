@@ -14,26 +14,50 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+ * @file xsetmem.c
+ *
+ * @brief Memory allocation for HPhi data structures
+ *
+ * Allocates memory for all major data structures used in HPhi calculations.
+ * Memory allocation is organized by structure type:
+ *
+ * setmem_HEAD: File name headers
+ * setmem_def: Definition struct (Hamiltonian parameters)
+ *   - Tpow[]: Bit position powers (2^i for site i)
+ *   - Transfer, CoulombIntra/Inter, Exchange, etc.
+ *
+ * setmem_large: Large vectors and temporary buffers
+ *   - v0, v1: Lanczos vectors (size: idim_max)
+ *   - v1buf: MPI receive buffer
+ *   - list_1, list_2_1, list_2_2: Hilbert space indexing
+ *   - list_Diagonal: Pre-computed diagonal elements
+ *
+ * Key arrays:
+ * - Tpow[i]: bit mask for the i-th degree of freedom. = 2^i for Hubbard
+ *   (2 bits/site; i = 2*site + spin) and for Spin / SpinlessFermion
+ *   (1 bit/site; i = site). For general spin, Tpow is the running
+ *   product of preceding sites' local Hilbert dimensions.
+ * - list_1[j]: Maps restricted index j to full bit representation
+ * - list_Diagonal[j]: Diagonal Hamiltonian element for state j
+ *
+ * @version 2.0, 1.2, 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "Common.h"
 #include "common/setmemory.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
-/**
- * @file   xsetmem.c
- *
- * @brief  Set size of memories to be needed for calculation.
- * @version 2.0
- * @version 1.2
- * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- */
 
-///
-/// \brief Set size of memories headers of output files.
-/// \param X [out] BindStruct to get headers of files.\n
-/// Output: CDataFileHead, CParaFileHead
-/// \version 0.1
+/**
+ * @brief Allocate memory for output file name headers
+ *
+ * Allocates CDataFileHead and CParaFileHead strings used as
+ * prefixes for output file names (e.g., "zvo" -> "zvo_energy.dat").
+ *
+ * @param X BindStruct to receive allocated headers [out]
+ */
 void setmem_HEAD
 (
  struct BindStruct *X
@@ -291,15 +315,17 @@ int setmem_large
 
     switch (X->Def.iCalcModel) {
       case Spin:
+      case SpinlessFermion:
       case Hubbard:
       case HubbardNConserved:
-      case tJ:
-      case tJGC:
-      case tJNConserved:
       case Kondo:
+      case KondoNConserved:
       case KondoGC:
+      case tJ:
+      case tJNConserved:
+      case tJGC:
         if (X->Def.iFlgGeneralSpin == FALSE) {
-          if (X->Def.iCalcModel == Spin && X->Def.Nsite % 2 == 1) {
+          if ((X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinlessFermion) && X->Def.Nsite % 2 == 1) {
             X->Large.SizeOflist_2_1 = X->Check.sdim * 2 + 2;
           } else {
             X->Large.SizeOflist_2_1 = X->Check.sdim + 2;

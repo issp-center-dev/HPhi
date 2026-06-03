@@ -24,17 +24,28 @@
 #include "mltplySpinCore.h"
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPISpinCore.h"
+#include "mltplyMPISpinlessFermion.h"
 
 /**
  * @file   expec_cisajs.c
- * 
- * @brief  File for calculation of one body green's function
+ *
+ * @brief  Compute one-body Green's functions \f$\langle\psi| c^\dagger_i c_j |\psi\rangle\f$
+ *
+ * Calculates expectation values of fermion bilinear operators for the given
+ * eigenvector. Results are written to output files (zvo_cisajs*.dat).
+ *
+ * Operator types by model:
+ * - Hubbard/HubbardGC: \f$\langle c^\dagger_{i,\sigma} c_{j,\sigma}\rangle\f$ (hopping correlation)
+ * - Spin/SpinGC: \f$\langle S^+_i S^-_j\rangle\f$, \f$\langle S^z_i\rangle\f$ (spin correlation/magnetization)
+ * - SpinlessFermion: \f$\langle c^\dagger_i c_j\rangle\f$ (spinless hopping)
+ *
+ * Naming convention:
+ * - "cisajs" = c†_{i,s} c_{j,s} where c = creation/annihilation, i,j = sites, s = spin
  *
  * @version 0.1, 0.2
  *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
  */
 
 
@@ -50,21 +61,31 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp
 int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
 
-
-/** 
- * @brief function of calculation for one body green's function
- * 
- * @param X [in] list for getting information to calculate one body green's function.
- * @param vec [in] eigenvectors.
- * 
- * @version 0.2
- * @details add calculation one body green's functions for general spin
+/**
+ * @brief Compute one-body Green's functions \f$\langle\psi| c^\dagger_{i,s} c_{j,s} |\psi\rangle\f$
  *
+ * Main entry point for one-body correlation function calculation.
+ * Iterates over all operator pairs defined in X->Def.CisAjt and computes
+ * their expectation values.
+ *
+ * Mode:
+ * - Sets X->Large.mode = M_CORR (correlation function mode)
+ * - No wavefunction update, only expectation values computed
+ *
+ * Output:
+ * - Results written to zvo_cisajs_*.dat files
+ * - Format: i sigma j sigma Re(correlation) Im(correlation)
+ *
+ * @param X Struct with operator definitions in X->Def.CisAjt [in]
+ * @param vec Eigenvector to compute expectation values for [in]
+ *
+ * @return 0 on success, -1 on error
+ *
+ * @version 0.2 Added support for general spin
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @retval 0 normally finished.
- * @retval -1 abnormally finished.
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 
@@ -133,11 +154,11 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     }
     break;
     
-  case KondoGC:
   case Hubbard:
   case tJ:
   case tJGC:
   case Kondo:
+  case KondoGC:
       if(expec_cisajs_Hubbard(X, vec, &fp)!=0){
           return -1;
       }
@@ -153,8 +174,124 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
       if(expec_cisajs_SpinGC(X, vec, &fp)!=0){
           return -1;
       }
-          break;
-        
+      break;
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    // For spinless fermions, calculate one-body Green's function
+    {
+      long unsigned int i_sp, j_sp;
+      for(i_sp = 0; i_sp < X->Def.NCisAjt; i_sp++){
+        long unsigned int org_isite1_sp = X->Def.CisAjt[i_sp][0]+1;
+        long unsigned int org_isite2_sp = X->Def.CisAjt[i_sp][2]+1;
+        long unsigned int org_sigma1_sp = X->Def.CisAjt[i_sp][1];
+        long unsigned int org_sigma2_sp = X->Def.CisAjt[i_sp][3];
+        int site1_is_interPE = (org_isite1_sp > X->Def.Nsite) ? 1 : 0;
+        int site2_is_interPE = (org_isite2_sp > X->Def.Nsite) ? 1 : 0;
+        double complex dam_pr_sp = 0;
+
+        if((site1_is_interPE || site2_is_interPE) &&
+           (org_sigma1_sp == org_sigma2_sp)){
+#ifdef MPI
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+            dam_pr_sp = X_GC_CisAjt_SpinlessFermion_MPI(
+                org_isite1_sp - 1, org_isite2_sp - 1, X, vec);
+          } else {
+            dam_pr_sp = X_CisAjt_SpinlessFermion_MPI(
+                org_isite1_sp - 1, org_isite2_sp - 1, X, vec);
+          }
+#else
+          dam_pr_sp = 0;
+#endif
+        } else if(org_isite1_sp == org_isite2_sp && org_sigma1_sp == org_sigma2_sp){
+          // Diagonal case: <n_i>
+          long unsigned int is_sp = X->Def.Tpow[org_isite1_sp - 1];
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+            // Grand canonical - use (j_sp-1)
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max, is_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int ibit_sp = ((j_sp-1) & is_sp) / is_sp;
+              dam_pr_sp += ibit_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          } else {
+            // Canonical - use list_1[j_sp]
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1) \
+  firstprivate(i_max, is_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int ibit_sp = (list_1[j_sp] & is_sp) / is_sp;
+              dam_pr_sp += ibit_sp * conj(vec[j_sp]) * vec[j_sp];
+            }
+          }
+        } else {
+          // Local off-diagonal case: <c^+_i c_j>
+          long unsigned int is1_sp = X->Def.Tpow[org_isite1_sp - 1];
+          long unsigned int is2_sp = X->Def.Tpow[org_isite2_sp - 1];
+
+          if(X->Def.iCalcModel == SpinlessFermionGC){
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec) \
+  firstprivate(i_max, is1_sp, is2_sp) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int org_bit = j_sp - 1;
+              long unsigned int tmp_bit, off_bit;
+              unsigned long int mask, bit;
+              int sgn = 1, tmp_sgn;
+
+              if((org_bit & is2_sp) == 0) continue;
+              tmp_bit = org_bit ^ is2_sp;
+              mask = is2_sp - 1;
+              bit = tmp_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if((tmp_bit & is1_sp) != 0) continue;
+              off_bit = tmp_bit ^ is1_sp;
+              mask = is1_sp - 1;
+              bit = off_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              dam_pr_sp += (double)sgn * conj(vec[off_bit + 1]) * vec[j_sp];
+            }
+          } else {
+#pragma omp parallel for default(none) reduction(+:dam_pr_sp) shared(vec, list_1, list_2_1, list_2_2) \
+  firstprivate(i_max, is1_sp, is2_sp, X) private(j_sp)
+            for(j_sp = 1; j_sp <= i_max; j_sp++){
+              long unsigned int org_bit = list_1[j_sp];
+              long unsigned int tmp_bit, off_bit, off_idx;
+              unsigned long int mask, bit;
+              int sgn = 1, tmp_sgn;
+
+              if((org_bit & is2_sp) == 0) continue;
+              tmp_bit = org_bit ^ is2_sp;
+              mask = is2_sp - 1;
+              bit = tmp_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if((tmp_bit & is1_sp) != 0) continue;
+              off_bit = tmp_bit ^ is1_sp;
+              mask = is1_sp - 1;
+              bit = off_bit & mask;
+              SgnBit(bit, &tmp_sgn);
+              sgn *= tmp_sgn;
+
+              if(GetOffComp(list_2_1, list_2_2, off_bit,
+                            X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off_idx) != TRUE){
+                continue;
+              }
+              dam_pr_sp += (double)sgn * conj(vec[off_idx]) * vec[j_sp];
+            }
+          }
+        }
+        dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        fprintf(fp, " %4lu %4lu %4lu %4lu %.10lf %.10lf\n",
+                org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
+                creal(dam_pr_sp), cimag(dam_pr_sp));
+      }
+    }
+    break;
+
   default:
     return -1;
   }
@@ -242,7 +379,7 @@ int expec_cisajs_HubbardGC(struct BindStruct *X, double complex *vec, FILE **_fp
         }
 
         dam_pr= SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+        fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
 
     return 0;
@@ -278,7 +415,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         if(X->Def.iFlgSzConserved ==TRUE){
             if(org_sigma1 != org_sigma2){
                 dam_pr =0.0;
-                fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+                fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
                 continue;
             }
         }
@@ -289,7 +426,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
                   )
           {
             dam_pr =0.0;
-            fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+            fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
             continue;
           }
         }
@@ -341,7 +478,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         }
         dam_pr= SumMPI_dc(dam_pr);
       //fprintf(stdoutMPI, "rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
-      fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
+      fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
 }
@@ -420,7 +557,7 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
             dam_pr =0.0;
         }
         dam_pr = SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
+        fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
     }
     return 0;
 }
@@ -484,7 +621,7 @@ int expec_cisajs_SpinGeneral(struct BindStruct *X, double complex *vec, FILE **_
         }//org_isite1 != org_isite2
 
         dam_pr = SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
+        fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
 
     return 0;
@@ -570,7 +707,7 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_f
         }
 
         dam_pr = SumMPI_dc(dam_pr);
-        fprintf(*_fp," %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
+        fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
 }
@@ -636,7 +773,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X, double complex *vec, FILE *
             dam_pr = 0.0;
         }
         dam_pr = SumMPI_dc(dam_pr);
-        fprintf(*_fp, " %4ld %4ld %4ld %4ld %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
+        fprintf(*_fp, " %4lu %4lu %4lu %4lu %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
                 creal(dam_pr), cimag(dam_pr));
     }
     return 0;

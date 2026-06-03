@@ -12,9 +12,37 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for spin Hamiltonian (Core)
-*/
+/**
+ * @file mltplySpinCore.c
+ *
+ * @brief Core functions for spin model Hamiltonian operations
+ *
+ * This module provides building blocks for spin Hamiltonians including
+ * exchange, pair-lift, and general spin interactions.
+ *
+ * Bit representation (for S=1/2 spin):
+ * - Each site has 1 bit: bit[i] = spin state (0=down, 1=up)
+ * - Tpow[i] = 2^i is the bit mask for site i
+ * - State |...s_2 s_1 s_0> stored as integer where s_i in {0,1}
+ *
+ * For general spin S:
+ * - Each site has ceil(log2(2S+1)) bits
+ * - SiteToBit[i] gives bits needed for site i
+ * - State stored as product of local spin states
+ *
+ * Key operators:
+ * - Exchange: S+_i S-_j + S-_i S+_j (flip two antiparallel spins)
+ * - Pair-lift: S+_i S+_j (grand canonical only, changes total Sz)
+ * - Ising: Sz_i Sz_j (diagonal, no state change)
+ *
+ * Naming convention:
+ * - is1_up, is2_up: Bit masks for sites
+ * - isA_spin: Combined mask for two-site operations
+ * - tmp_J: Coupling constant for current term
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 
 #include <bitcalc.h>
 #include "xsetmem.h"
@@ -27,11 +55,27 @@
 /******************************************************************************/
 
 /**
-@brief Set parameters for the bit operation of spin-exchange term
-@return Always return 0
-@author Takahiro Misawa (The University of Tokyo)
-@author Kazuyoshi Yoshimi (The University of Tokyo)
-*/
+ * @brief Set up masks for spin exchange term J(S+_i S-_j + S-_i S+_j)
+ *
+ * The exchange interaction flips two antiparallel spins:
+ *   |...up_i...down_j...> <-> |...down_i...up_j...>
+ *
+ * Prepares X->Large with:
+ * - is1_up, is2_up: Bit masks for checking spin states at sites i,j
+ * - isA_spin: Combined mask for XOR operation (flips both spins)
+ * - tmp_J: Exchange coupling constant
+ *
+ * The exchange operation is: state' = state XOR isA_spin
+ * (valid only when exactly one of the two sites has spin up)
+ *
+ * @param iExchange Index into ExchangeCoupling array [in]
+ * @param X Struct to store computed masks [inout]
+ *
+ * @return 0 (always succeeds)
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 int exchange_spin_GetInfo(
   int iExchange,//!<[in] Counter of exchange interaction
   struct BindStruct *X//!<[inout]

@@ -8,7 +8,7 @@ with open("output/Eigenvalue.dat") as f:
      data      = f.read()
      data      = data.split("\n")
      max_eigen  = len(data)-1
-     Energy     = np.zeros([max_eigen],dtype=np.float)
+     Energy     = np.zeros([max_eigen],dtype=np.float64)
      print("max_eigen= ", max_eigen)
      #[s] count not empty elements
      cnt = 0

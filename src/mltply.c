@@ -19,6 +19,7 @@
 #include "mltply.h"
 #include "mltplySpin.h"
 #include "mltplyHubbard.h"
+#include "mltplySpinless.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "mltplyCommon.h"
@@ -27,29 +28,56 @@
 /**
  * @file   mltply.c
  *
- * @brief  Multiplying the wavefunction by the Hamiltonian. @f$ H v_1@f$.
+ * @brief  Main entry point for Hamiltonian-vector multiplication H|v1> -> |v0>
  *
- * @version 0.2
- * @details add function to treat the case of generalspin
+ * This is the central routine called by Lanczos, LOBPCG, and other iterative
+ * solvers. It dispatches to model-specific implementations:
+ * - Hubbard/HubbardGC: mltplyHubbard(), mltplyHubbardGC()
+ * - Spin/SpinGC: mltplySpin(), mltplySpinGC()
+ * - SpinlessFermion/SpinlessFermionGC: mltplySpinlessFermion()
+ * - Kondo: mltplyKondo(), mltplyKondoGC()
  *
+ * The computation proceeds in two phases:
+ * 1. Diagonal terms: list_Diagonal[j] * v1[j] (on-site energies, interactions)
+ * 2. Off-diagonal terms: Hopping, exchange, pair-hopping (model-specific)
+ *
+ * @version 0.2 Added general spin support
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 
 
 /**
- * @brief Parent function of multiplying the wavefunction by the Hamiltonian. @f$ H v_1@f$.\n
- * First, the calculation of diagonal term is done by using the list @f$ \verb|list_diaognal| @f$. \n
- * Next, the calculation of off-diagonal term is done.\n
- * @note If @f$ \verb|mode| @f$ in BindStruct X is @f$ \verb|M_CORR| @f$, the wave function is not updated. The expected values are only calculated.\n
- * Otherwise, the wavefunction @f$ v_0 @f$ is updated as @f$ v_0 += H v_1@f$.
+ * @brief Compute H|v1> and accumulate into |v0>
  *
- * @param X [in] Struct for getting the information of the operators.
- * @param tmp_v0 [in, out]
- * @param tmp_v1 [in]
+ * Main Hamiltonian application: tmp_v0 += H * tmp_v1
  *
- * @return
+ * Processing order:
+ * 1. Initialize bit masks (irght, ilft, ihfbit) for split-index scheme
+ * 2. Apply diagonal terms: tmp_v0[j] += list_Diagonal[j] * tmp_v1[j]
+ * 3. Dispatch to model-specific off-diagonal routine
+ *
+ * Mode branching (X->Large.mode):
+ * - M_MLTPLY: Full H|v> computation (used by Lanczos/LOBPCG)
+ *   - Updates tmp_v0 with H*tmp_v1
+ *   - Returns energy expectation <v1|H|v1> in X->Large.prdct
+ * - M_CORR: Correlation function mode
+ *   - Only computes expectation values, no tmp_v0 update
+ *   - Used by expec_cisajs, expec_cisajscktaltdc
+ *
+ * Timer IDs:
+ * - 1: Total mltply time
+ * - 100: Diagonal term
+ * - 200-600: Off-diagonal terms (model-dependent)
+ *
+ * @param X Struct containing Hamiltonian and model parameters [in]
+ * @param tmp_v0 Output vector: updated as v0 += H*v1 [in,out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
@@ -99,11 +127,11 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     mltplyHubbardGC(X, tmp_v0, tmp_v1);
     break;
       
-  case KondoGC:
   case Hubbard:
   case tJ:
   case tJGC:
   case Kondo:
+  case KondoGC:
     mltplyHubbard(X, tmp_v0, tmp_v1);
     break;
       
@@ -114,7 +142,12 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   case SpinGC:
     mltplySpinGC(X, tmp_v0, tmp_v1);
     break;
-      
+
+  case SpinlessFermion:
+  case SpinlessFermionGC:
+    mltplySpinlessFermion(X, tmp_v0, tmp_v1);
+    break;
+
   default:
     return -1;
   }

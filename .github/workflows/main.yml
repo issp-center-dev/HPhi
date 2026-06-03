@@ -68,20 +68,38 @@ jobs:
         shell: bash
         run: cmake --build ./ -j4
 
-      - name: ctest
+      - name: ctest (mpisize=1, exclude mpi consistency/batching)
         if: ${{ matrix.mpisize == 1 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V
+        run: ctest -V -LE "consistency|batching"
 
-      - name: ctest
+      - name: ctest (mpisize=3/9, spinone only)
         if: ${{ matrix.mpisize == 3 || matrix.mpisize == 9 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
         run: ctest -V -R spinone
 
-      - name: ctest
-        if: ${{ matrix.mpisize == 4 || matrix.mpisize == 16 }}
+      - name: ctest (mpisize=4, baseline)
+        if: ${{ matrix.mpisize == 4 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -E spinone
+        run: ctest -V -E spinone -LE "consistency|batching"
+
+      - name: ctest (mpisize=4, mpi consistency)
+        if: ${{ matrix.mpisize == 4 }}
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ctest -V -L consistency
+
+      - name: ctest (mpisize=16, baseline)
+        if: ${{ matrix.mpisize == 16 }}
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ctest -V -E spinone -LE "consistency|batching"
+
+      - name: ctest (mpisize=16, mpi batching)
+        if: ${{ matrix.mpisize == 16 }}
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ctest -V -L batching

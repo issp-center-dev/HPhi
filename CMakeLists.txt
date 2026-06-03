@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0...3.10)
 enable_testing()
 
 project(HPhi NONE)
@@ -21,10 +21,14 @@ option(ENABLE_SCALAPACK "Use Scalapack" ON)
 option(GIT_SUBMODULE_UPDATE "Execute `git submodule update --init` automatically" ON)
 enable_language(C Fortran)
 
+# Set C standard
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
 #set(CMAKE_C_FLAGS "-lscalapack -lgfortran -lm")
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_MACOSX_RPATH 1)
 
@@ -54,18 +58,20 @@ else()
   endif()
 endif()
 
-if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+# OpenMP detection
+find_package(OpenMP)
+# OpenMP_C_FOUND is defined by FindOpenMP only since CMake 3.9; older CMake
+# (>= our 3.0 minimum) sets the uppercase OPENMP_FOUND instead. Check both so
+# OpenMP is not silently disabled for non-Intel compilers on CMake 3.0-3.8.
+if(OpenMP_C_FOUND OR OPENMP_FOUND)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+  # Fallback for older Intel compilers
   if("${CMAKE_C_COMPILER_VERSION}" VERSION_LESS "15.0.0.20140528")
-     set(OMP_FLAG_Intel "-openmp")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -openmp")
   else()
-     set(OMP_FLAG_Intel "-qopenmp")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qopenmp")
   endif()
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OMP_FLAG_Intel}")
-else()
-  find_package(OpenMP)
-  if(OPENMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  endif(OPENMP_FOUND)
 endif()
 
 if(ENABLE_MPI)

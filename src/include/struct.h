@@ -193,6 +193,9 @@ struct DefineList {
   int **SBody;/**<@brief [DefineList::SBody][24] Indices of six-body correlation function. malloc in setmem_def().*/
   unsigned int NSBody;/**<@brief Number of indices of six-body correlation function.*/
 
+  int  flag_read_invtemp;
+  char file_invtemp[D_FileNameMax];
+
   int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
   unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
@@ -220,6 +223,9 @@ struct DefineList {
   int iOutputHam;/**<brief Switch for outputting a Hamiltonian. 0: no output, 1:output*/
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
   int iOutputExVec; /**<brief Switch for outputting an excited vector. 0: no output, 1:output*/
+  int iOutputDataHead; /**<brief Switch for using CDataFileHead in output
+                          file names for TPQ/TE physical quantity files (SS,
+                          Flct, Norm). 0: no header (default), 1: use header*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/

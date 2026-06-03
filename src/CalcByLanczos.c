@@ -28,29 +28,57 @@
 
 /**
  * @file   CalcByLanczos.c
+ *
+ * @brief  High-level driver for Lanczos eigenvalue/eigenvector calculation
+ *
+ * This module orchestrates the complete Lanczos calculation workflow:
+ * 1. Initialize random starting vector (or load from file)
+ * 2. Run Lanczos iterations to find eigenvalues (Lanczos_EigenValue)
+ * 3. Reconstruct eigenvector from Lanczos coefficients (Lanczos_EigenVector)
+ * 4. Compute physical observables (energy, Green's functions, etc.)
+ *
+ * The Lanczos method is an iterative algorithm for finding extremal
+ * eigenvalues of large sparse matrices without full diagonalization.
+ *
  * @version 0.1, 0.2
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for givinvg functions of calculating eigenvalues and eigenvectors by Lanczos method 
- * 
- * 
  */
 
 
-/** 
- * @brief A main function to calculate eigenvalues and eigenvectors by Lanczos method 
- * 
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
- * @retval 0 normally finished
- * @retval -1 unnormally finished
+/**
+ * @brief Main driver for Lanczos calculation
  *
- * @version 0.2
- * @date 2015/10/20 add function of using a flag of iCalcEigenVec
+ * Complete workflow:
+ * 1. Vector initialization:
+ *    - Grand canonical: Random initial vector
+ *    - Canonical: Initialize via sz() to satisfy quantum numbers
+ *    - Or load from file if iInputEigenVec is set
+ *
+ * 2. Eigenvalue calculation (Lanczos_EigenValue):
+ *    - Build tridiagonal matrix via Lanczos iterations
+ *    - Diagonalize to get eigenvalue approximations
+ *    - Iterate until convergence
+ *
+ * 3. Eigenvector calculation (Lanczos_EigenVector or CG_EigenVector):
+ *    - Reconstruct eigenvector from Lanczos coefficients
+ *    - CG refinement for better accuracy if enabled
+ *
+ * 4. Physical observables:
+ *    - Energy and variance (expec_energy_flct)
+ *    - One-body Green's functions (expec_cisajs)
+ *    - Two-body Green's functions (expec_cisajscktaltdc)
+ *    - Total spin (expec_totalspin)
+ *
+ * @param X Main calculation struct containing all parameters [in,out]
+ *
+ * @return 0 on success, -1 on error
+ *
+ * @version 0.2 Added iCalcEigenVec flag support
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
  */
 int CalcByLanczos(
                   struct EDMainCalStruct *X
@@ -70,13 +98,13 @@ int CalcByLanczos(
     case HubbardGC:
     case tJGC:
     case SpinGC:
-    case KondoGC:
     case SpinlessFermionGC:
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
     case tJ:
     case Kondo:
+    case KondoGC:
     case Spin:
     case SpinlessFermion:
 

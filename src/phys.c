@@ -13,6 +13,33 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**
+ * @file phys.c
+ *
+ * @brief Calculate physical quantities for full diagonalization method
+ *
+ * After full diagonalization obtains all eigenvalues and eigenvectors,
+ * this module computes physical observables for each eigenstate.
+ *
+ * Computed quantities (for each eigenstate i):
+ * - Energy: E_i (from diagonalization)
+ * - Number of particles: \f$\langle n\rangle\f$ (for Hubbard models)
+ * - Total spin: \f$\langle S^2\rangle\f$, \f$\langle S_z\rangle\f$
+ * - One-body Green's functions: \f$\langle c^\dagger_i c_j\rangle\f$
+ * - Two-body Green's functions: \f$\langle c^\dagger_i c_j c^\dagger_k c_l\rangle\f$
+ *
+ * ScaLAPACK support:
+ * - When _SCALAPACK is defined, eigenvectors are distributed across ranks
+ * - GetEigenVector() gathers eigenvector to rank 0 for observable calculation
+ *
+ * Output:
+ * - Results written to output files (one per eigenvalue)
+ * - Energy spectrum to zvo_energy.dat
+ *
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "phys.h"
 #include "expec_energy_flct.h"
 #include "expec_totalspin.h"
@@ -24,24 +51,24 @@
 #endif
 
 /**
- * @file   phys.c
- * @version 0.1, 0.2
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * 
- * @brief  File for giving a parent function to calculate physical quantities  by full diagonalization method 
- * 
- * 
- */
-
-/** 
- * 
- * @brief A main function to calculate physical quantities by full diagonalization method.
- * @param[in,out] X CalcStruct list for getting and pushing calculation information 
- * @param neig number of eigenvalues
- * @version 0.2
- * @details add output process of calculation results for general spin
+ * @brief Compute physical quantities for all eigenstates from full diagonalization
+ *
+ * Iterates over neig eigenstates and computes observables for each.
+ * For ScaLAPACK, eigenvectors are gathered to rank 0 before computation.
+ *
+ * For each eigenstate:
+ * 1. Copy eigenvector to v0 (working vector)
+ * 2. Call expec_energy_flct() for energy (already known, but variance check)
+ * 3. Call expec_totalspin() for \f$\langle S^2\rangle\f$, \f$\langle S_z\rangle\f$
+ * 4. Call expec_cisajs() for one-body Green's functions
+ * 5. Call expec_cisajscktaltdc() for two-body Green's functions
+ *
+ * @param X BindStruct with model and calculation parameters [inout]
+ * @param neig Number of eigenvalues/eigenvectors to process [in]
+ *
+ * @version 0.2 Added general spin output
  * @version 0.1
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */

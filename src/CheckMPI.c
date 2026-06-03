@@ -13,17 +13,59 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Compute total number of electrons, spins
-*/
+/**
+ * @file CheckMPI.c
+ *
+ * @brief Determine MPI decomposition of Hilbert space
+ *
+ * HPhi distributes the Hilbert space across MPI processes by assigning
+ * some sites to the "inter-process" region. The bit pattern for these
+ * sites determines which MPI rank owns a given state.
+ *
+ * Site classification:
+ * - Local sites (index <= Nsite): Enumerated within each MPI rank
+ * - Inter-process sites (index > Nsite): Bits fixed by myrank
+ *
+ * For example, with 4 MPI processes and 8 Hubbard sites:
+ * - Sites 1-6: Local (enumerated in list_1)
+ * - Sites 7-8: Inter-process (4 states for 2 sites = 2^2 = 4 ranks)
+ * - myrank determines the occupation of sites 7-8
+ *
+ * MPI rank determination:
+ *   myrank = (state >> (2*Nsite)) for Hubbard
+ *   (Inter-process bits shifted to form rank ID)
+ *
+ * Communication partner (origin) calculation:
+ *   origin = myrank XOR mask
+ *   where mask depends on which inter-process site is involved
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 #include "Common.h"
 #include "wrapperMPI.h"
+
 /**
-@brief Define the number of sites in each PE (DefineList.Nsite).
- Reduce the number of electrons (DefineList.Ne), 
- total Sz (DefineList.Total2Sz) by them in the inter process region 
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief Configure MPI decomposition based on number of processes
+ *
+ * Determines how many sites are local vs inter-process based on nproc.
+ * Also adjusts quantum numbers (Ne, Total2Sz) to account for the
+ * inter-process occupation encoded in myrank.
+ *
+ * Requirements:
+ * - nproc must be a power of 4 for Hubbard (2 bits per site)
+ * - nproc must be a power of 2 for Spin (1 bit per site)
+ *
+ * Sets:
+ * - X->Def.Nsite: Number of local sites
+ * - X->Def.NsiteMPI: Total sites including inter-process
+ * - Adjusted Ne, Total2Sz for this rank's inter-process occupation
+ *
+ * @param X BindStruct to configure [inout]
+ *
+ * @return TRUE on success, FALSE if nproc is incompatible
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 int CheckMPI(struct BindStruct *X/**< [inout] */)
 {
   int isite, NDimInterPE, SmallDim, SpinNum, ipivot, ishift, isiteMax, isiteMax0;
@@ -35,20 +77,18 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
   */
   X->Def.NsiteMPI = X->Def.Nsite;
   X->Def.Total2SzMPI = X->Def.Total2Sz;
-  /* Validity of this process is decided fresh on every CheckMPI() call
-     (check() may be invoked more than once on the same BindStruct, e.g. in
-     CalcSpectrum.c), so reset the flag here rather than relying on the
-     one-shot initialisation in readdef.c. */
+  /* check() can invoke CheckMPI() more than once on the same BindStruct. */
   X->Def.iFlgInvalidProc = FALSE;
   switch (X->Def.iCalcModel) {
   case HubbardGC: /****************************************************/
   case Hubbard:
   case HubbardNConserved:
-  case tJGC: 
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC:
   case tJ:
   case tJNConserved:
-  case Kondo:
-  case KondoGC:
+  case tJGC:
 
     /**@brief
      <li> For Hubbard & Kondo
@@ -116,9 +156,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     case tJ:
       /**@brief
       <li>For canonical tJ
-      Build sectors in 4-state inter-process representation,
-      but invalidate PE sectors including doublon state(11) or
-      over-subtracted spin counts.</li>
+      Build sectors in the Hubbard-like 4-state inter-process
+      representation, but invalidate sectors containing doublon state(11) or
+      over-subtracted particle counts.</li>
       */
       has_invalid_tj_rank = FALSE;
       SmallDim = myrank;
@@ -130,8 +170,6 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           break;
         }
         else if (SpinNum == 1 /*01*/) {
-          /* Nup/Ne are unsigned, so test for over-subtraction BEFORE
-             decrementing. The old "Nup < 0" test was dead code. */
           if (X->Def.Nup == 0 || X->Def.Ne == 0) {
             has_invalid_tj_rank = TRUE;
             break;
@@ -150,11 +188,6 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
       } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
       if (has_invalid_tj_rank == TRUE) {
-        /*
-         * Project out invalid tJ sectors.
-         * Use negative spin counts so all Binomial() calls immediately return
-         * zero in check.c (k < 0), avoiding out-of-range table access.
-         */
         X->Def.Nup = -1;
         X->Def.Ndown = -1;
         X->Def.Ne = -2;
@@ -181,9 +214,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     case tJNConserved:
       /**@brief
       <li>For N-conserved canonical tJ
-      Build sectors in 4-state inter-process representation,
-      but invalidate PE sectors including doublon state(11) or
-      over-subtracted Ne.</li>
+      Build sectors in the Hubbard-like 4-state inter-process
+      representation, but invalidate sectors containing doublon state(11) or
+      over-subtracted particle counts.</li>
       */
       has_invalid_tj_rank = FALSE;
       SmallDim = myrank;
@@ -195,7 +228,6 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           break;
         }
         else if (SpinNum == 1 /*01*/ || SpinNum == 2 /*10*/) {
-          /* Ne is unsigned: test before decrementing (old "Ne < 0" was dead). */
           if (X->Def.Ne == 0) {
             has_invalid_tj_rank = TRUE;
             break;
@@ -216,8 +248,8 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
     case tJGC:
       /**@brief
       <li>For grand-canonical tJ
-      Build sectors in 4-state inter-process representation,
-      but invalidate PE sectors including doublon state(11).</li>
+      Build sectors in the Hubbard-like 4-state inter-process
+      representation, but invalidate sectors containing doublon state(11).</li>
       */
       has_invalid_tj_rank = FALSE;
       SmallDim = myrank;
@@ -239,8 +271,9 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
 
       break; /*case tJGC:*/
 
-    case KondoGC:
     case Kondo:
+    case KondoNConserved:
+    case KondoGC:
       /**@brief
       <li>For canonical Kondo system
       DefineList::Nup, DefineList::Ndown, and DefineList::Ne should be
@@ -275,7 +308,32 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
       } /*if (X->Def.iCalcModel == Kondo)*/
-
+      else if(X->Def.iCalcModel == KondoNConserved){
+        SmallDim = myrank;
+        for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+          SpinNum = SmallDim % 4;
+          SmallDim /= 4;
+          if (X->Def.LocSpn[isite] == ITINERANT) {
+            if (SpinNum == 1 /*01*/) {
+              //X->Def.Nup -= 1;
+              X->Def.Ne -= 1;
+            }
+            else if (SpinNum == 2 /*10*/) {
+              //X->Def.Ndown -= 1;
+              X->Def.Ne -= 1;
+            }
+            else if (SpinNum == 3 /*11*/) {
+              //X->Def.Nup -= 1;
+              //X->Def.Ndown -= 1;
+              X->Def.Ne -= 2;
+            }
+          }
+          else {
+            fprintf(stdoutMPI, "\n Stop because local spin in the inter process region\n");
+            return FALSE;
+          }
+        }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+      }  
       break; /*case KondoGC, Kondo*/
 
     } /*switch (X->Def.iCalcModel) 2(inner)*/
@@ -387,6 +445,54 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
      /**@brief</ul>*/
     break; /*case SpinGC, Spin*/
 
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    <li> For SpinlessFermion
+    Define local dimension DefineList::Nsite (2 states per site)</li>
+    */
+    NDimInterPE = 1;
+    for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+      if (NDimInterPE == nproc) {
+        X->Def.Nsite = isite;
+        break;
+      }/*if (NDimInterPE == nproc)*/
+      NDimInterPE *= 2;
+    }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+
+    if (isite == 0) {
+      fprintf(stdoutMPI, "%s", cErrNProcNumberSpin);
+      fprintf(stdoutMPI, cErrNProcNumber, nproc);
+      NDimInterPE = 1;
+      int ismallNproc=1;
+      int ilargeNproc=1;
+      for (isite = X->Def.NsiteMPI; isite > 0; isite--) {
+        if (NDimInterPE > nproc) {
+          ilargeNproc = NDimInterPE;
+          if(isite >1)
+            ismallNproc = NDimInterPE/2;
+          break;
+        }/*if (NDimInterPE > nproc)*/
+        NDimInterPE *= 2;
+      }/*for (isite = X->Def.NsiteMPI; isite > 0; isite--)*/
+      fprintf(stdoutMPI, cErrNProcNumberSet,ismallNproc, ilargeNproc );
+      return FALSE;
+    }/*if (isite == 0)*/
+
+    if (X->Def.iCalcModel == SpinlessFermion) {
+      /* Ne should be different in each PE */
+      SmallDim = myrank;
+      for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+        SpinNum = SmallDim % 2;
+        SmallDim /= 2;
+        if (SpinNum == 1) {
+          X->Def.Ne -= 1;
+        }
+      }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
+    }/*if (X->Def.iCalcModel == SpinlessFermion)*/
+
+    break; /*case SpinlessFermion, SpinlessFermionGC*/
+
   default:
     fprintf(stdoutMPI, "Error ! Wrong model !\n");
     return FALSE;
@@ -439,14 +545,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     fprintf(stdoutMPI, "    Site    Bit\n");
     for (isite = 0; isite < X->Def.Nsite; isite++) {
       switch (X->Def.iCalcModel) {
-        case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
-        case tJGC:
+        case HubbardGC:
+        case Kondo:
+        case KondoNConserved:
+        case KondoGC:
         case tJ:
         case tJNConserved:
-        case Kondo:
-        case KondoGC:
+        case tJGC:
 
           fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
               break;
@@ -470,14 +577,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     fprintf(stdoutMPI, "    Site    Bit\n");
     for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
       switch (X->Def.iCalcModel) {
-        case HubbardGC:
         case Hubbard:
         case HubbardNConserved:
-        case tJGC:
+        case HubbardGC:
+        case Kondo:
+        case KondoNConserved:
+        case KondoGC:
         case tJ:
         case tJNConserved:
-        case Kondo:
-        case KondoGC:
+        case tJGC:
 
           fprintf(stdoutMPI, "    %4d    %4d\n", isite, 4);
               break;
@@ -531,9 +639,9 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
        as a binary (excepting general spin) format.
       */
       switch (X->Def.iCalcModel) {
+        case tJ:
         case tJNConserved:
         case tJGC:
-        case tJ:
           SmallDim = iproc;
           has_doublon_state = FALSE;
           for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
@@ -553,10 +661,11 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
 
           break;
 
-        case HubbardGC: /****************************************************/
         case Hubbard:
         case HubbardNConserved:
+        case HubbardGC: /****************************************************/
         case Kondo:
+        case KondoNConserved:
         case KondoGC:
 
           SmallDim = iproc;
@@ -570,6 +679,7 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
               } /*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
 
               break;
+
         case Spin:
         case SpinGC:
 
@@ -614,14 +724,15 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
     affected by the number of processes.
   */
   switch (X->Def.iCalcModel) {
-  case HubbardGC: /****************************************************/
   case Hubbard:
   case HubbardNConserved:
-  case tJGC: 
+  case HubbardGC: /****************************************************/
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC:
   case tJ:
   case tJNConserved:
-  case Kondo:
-  case KondoGC:
+  case tJGC:
 
     X->Def.Tpow[2 * X->Def.Nsite] = 1;
     for (isite = 2 * X->Def.Nsite + 1; isite < 2 * X->Def.NsiteMPI; isite++)
@@ -648,8 +759,20 @@ void CheckMPI_Summary(struct BindStruct *X/**< [inout] */) {
       X->Def.Tpow[X->Def.Nsite] = 1;
       for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
         X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * X->Def.SiteToBit[isite - 1];
- 
+
     }/*if (X->Def.iFlgGeneralSpin == TRUE)*/
+    break;
+
+  case SpinlessFermion:/********************************************************/
+  case SpinlessFermionGC:
+    /**@brief
+    For SpinlessFermion, Tpow for inter-process sites starts at 1
+    (since each site has 2 states: occupied or empty)
+    */
+    X->Def.Tpow[X->Def.Nsite] = 1;
+    for (isite = X->Def.Nsite + 1; isite < X->Def.NsiteMPI; isite++)
+      X->Def.Tpow[isite] = X->Def.Tpow[isite - 1] * 2;
+
     break;
   } /*switch (X->Def.iCalcModel)*/
 }/*void CheckMPI_Summary*/

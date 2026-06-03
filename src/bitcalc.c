@@ -28,19 +28,32 @@
  */
 
 
-/** 
- * 
- * @brief function of getting right, left and half bits corresponding to a original Hilbert space.
- }
- * @param Nsite a total number of sites
- * @param irght a bit to split original Hilbert space into right space @f$2^{(Ns+2)/2}-1@f$
- * @param ilft a bit to split original Hilbert space into left space 
- * @param ihfbit a half bit to split original Hilbert space @f$2^{(Ns+2)/2}@f$
- * 
+/**
+ * @brief Compute bit masks for splitting Hilbert space index into left/right halves
+ *
+ * This function prepares masks for the split-index scheme used in list_1/list_2_1/list_2_2
+ * data structures. A Hilbert space index can be decomposed as:
+ *
+ *   state_index = (left_bits << half_shift) | right_bits
+ *
+ * where:
+ *   - ihfbit = 2^((Nsite+1)/2): boundary between left and right halves
+ *   - irght = ihfbit - 1: mask for right bits (lower (Nsite+1)/2 bits)
+ *   - ilft: mask for left bits (upper Nsite - (Nsite+1)/2 bits)
+ *
+ * This splitting enables efficient index lookup via:
+ *   list_1[list_2_1[right_part] + list_2_2[left_part]]
+ *
+ * @param Nsite Total number of sites (must be >= 1) [in]
+ * @param irght Mask for right (lower) bits: 2^((Nsite+1)/2) - 1 [out]
+ * @param ilft Mask for left (upper) bits [out]
+ * @param ihfbit Half-bit boundary: 2^((Nsite+1)/2) [out]
+ *
+ * @return 0 on success, -1 if Nsite < 1
+ *
  * @version 0.1
- * @author Takahiro Misawa (The University of Tokyo) 
- * @author Kazuyoshi Yoshimi (The University of Tokyo) 
- * @return 
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int GetSplitBit(
                 const int Nsite, //!<[in]
@@ -85,18 +98,21 @@ int GetSplitBitByModel(
 {
   int tmpNsite=Nsite;
   switch(iCalcModel){    
-  case HubbardGC:
-  case KondoGC:
-  case HubbardNConserved:
   case Hubbard:
+  case HubbardGC:
+  case HubbardNConserved:
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC:
   case tJ:
   case tJNConserved:
   case tJGC:
-  case Kondo:
     tmpNsite *= 2;
     break;
   case Spin:
-  case SpinGC:   
+  case SpinGC:
+  case SpinlessFermion:
+  case SpinlessFermionGC:
     break;
   default:
     fprintf(stderr, cErrNoModel, iCalcModel);
@@ -338,18 +354,36 @@ void SgnBit_old(
 
 
 // for 64 bit
-/** 
- * 
- * @brief function of getting fermion sign (64 bit)
- * 
- * @param org_bit an original bit
- * @param sgn fermion sign 
- * @version 0.1
+/**
+ * @brief Compute fermion sign from popcount parity (64 bit)
  *
- * @author Takahiro Misawa (The University of Tokyo) 
- * @author Kazuyoshi Yoshimi (The University of Tokyo) 
+ * Computes sgn = (-1)^popcount(org_bit), i.e., +1 if org_bit has an even
+ * number of set bits, -1 if odd. This sign arises from fermion anticommutation:
+ * when a creation/annihilation operator c_i moves past occupied sites j < i,
+ * each occupied site contributes a factor of -1.
+ *
+ * Algorithm (XOR folding):
+ * The XOR-folding technique computes the parity of popcount without counting
+ * individual bits. After log2(64)=6 steps of XOR-ing with shifted versions,
+ * the parity of all 64 bits is accumulated in the least significant bit.
+ *
+ *   bit = org_bit ^ (org_bit >> 1)   // parity of adjacent pairs in bit 0,2,4,...
+ *   bit = bit ^ (bit >> 2)           // parity of 4-bit groups
+ *   ...                              // continue doubling
+ *   bit = bit ^ (bit >> 32)          // final parity in bit 0
+ *
+ * Usage:
+ * - org_bit typically contains bits below site i (i.e., org_bit & ((1UL << i) - 1))
+ * - The resulting sgn is applied when computing c†_i|state> or c_i|state>
+ *
+ * @param org_bit Bit pattern to compute sign from (bits below target site) [in]
+ * @param sgn Fermion sign: +1 (even popcount) or -1 (odd popcount) [out]
+ *
+ * @version 0.1
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-void SgnBit( 
+void SgnBit(
       const long unsigned int org_bit,  //!<[in]
                   int *sgn  //!<[out]
 )
@@ -362,7 +396,7 @@ void SgnBit(
    bit =  bit^(bit>>8);
    bit =  bit^(bit>>16);
    bit =  bit^(bit>>32);
-   *sgn    = 1-2*(bit & 1); // sgn = pm 1
+   *sgn    = 1-2*(bit & 1); // sgn = +1 (even parity) or -1 (odd parity)
 }
 
 /** 

@@ -8,10 +8,10 @@ def read_gs(*, index=0, rank=0):
     with open(filename, "rb") as f:
         f.read(4)
         nelems = unpack("L", f.read(8))[0]
-        ret = np.zeros(nelems, dtype=np.complex)
+        ret = np.zeros(nelems, dtype=np.complex128)
         f.read(16)
         for i in range(nelems):
             re = unpack("d", f.read(8))[0]
             im = unpack("d", f.read(8))[0]
-            ret[i] = np.complex(re, im)
+            ret[i] = complex(re, im)
         return ret

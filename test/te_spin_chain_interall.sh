@@ -1,8 +1,14 @@
 #!/bin/sh -e
 
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
 mkdir -p te_spin_chain_interall/
 cd te_spin_chain_interall
-python "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -m "Spin"
+python3 "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -m "Spin"
 
 # Check value: SS
 cat > reference.dat <<EOF

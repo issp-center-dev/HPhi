@@ -13,9 +13,39 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for Hubbard Hamiltonian + MPI
-*/
+/**
+ * @file mltplyMPIHubbard.c
+ *
+ * @brief MPI communication functions for Hubbard model Hamiltonian
+ *
+ * Handles inter-process hopping and interaction terms when sites are
+ * distributed across MPI ranks. Uses 2-bit-per-site representation:
+ *   bit[2*i] = up-spin occupation, bit[2*i+1] = down-spin occupation
+ *   (see CheckMPI.c: SpinNum==1 (binary 01) -> Nup; SpinNum==2 (binary 10) -> Ndown)
+ *
+ * MPI decomposition for Hubbard:
+ * - Local sites: indices 1 to Nsite (enumerated in list_1)
+ * - Inter-process sites: indices > Nsite (encoded in myrank)
+ * - myrank encodes occupation of inter-process sites
+ *
+ * Hopping c†_{i,σ} c_{j,σ} between inter-process sites:
+ * - Requires state where site j is occupied, site i is empty
+ * - After hopping, the occupation pattern changes
+ * - New state may belong to different MPI rank
+ *
+ * Communication pattern:
+ * - origin = myrank XOR (mask_i + mask_j)
+ *   (XOR flips both occupation bits)
+ * - Validity check: site j must be occupied, site i empty
+ * - MPI_Sendrecv exchanges data with origin rank
+ *
+ * Fermion sign:
+ * - Computed from bits between sites i and j
+ * - bitdiff = |mask_i - 2*mask_j| or |mask_j - 2*mask_i|
+ * - sign = SgnBit(myrank & bitdiff) or SgnBit(origin & bitdiff)
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 #ifdef MPI
 #include "mpi.h"
 #endif
@@ -24,11 +54,20 @@
 #include "wrapperMPI.h"
 #include "mltplyCommon.h"
 #include "mltplyMPIHubbard.h"
+
 /**
-@brief Hopping term in Hubbard + GC
-When both site1 and site2 are in the inter process region.
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief GC hopping when both sites are inter-process (wrapper)
+ *
+ * Applies c†_{i1,σ1} c_{i2,σ2} where both sites are in inter-process
+ * region. Calls child function and accumulates energy contribution.
+ *
+ * @param itrans Transfer index in EDGeneralTransfer array [in]
+ * @param X BindStruct with transfer parameters [inout]
+ * @param tmp_v0 Output vector [out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void GC_general_hopp_MPIdouble
 (
  unsigned long int itrans,//!<[in] Transfer ID
@@ -143,7 +182,7 @@ double complex child_CisAjt_MPIdouble(
   long unsigned int *list_2_2_target//!<[in]
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv;
@@ -164,9 +203,7 @@ double complex child_CisAjt_MPIdouble(
   }/*if (state1 == 0 && state2 == mask2)*/
   else if (state1 == mask1 && state2 == 0) {
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }/*if (state1 == mask1 && state2 == 0)*/
   else return 0;
 
@@ -184,6 +221,8 @@ double complex child_CisAjt_MPIdouble(
                       v1buf,          idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1)return 0;
   
   if (X->Large.mode == M_MLTPLY|| X->Large.mode == M_CALCSPEC) {
 #pragma omp parallel for default(none) private(j, dmv, ioff) \
@@ -365,7 +404,7 @@ double complex child_general_hopp_MPIdouble(
   double complex *tmp_v1//!<[in] v0 = H v1
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn;
+  int mask1, mask2, state1, state2, ierr, origin, bitdiff, Fsgn, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex trans, dmv, dam_pr;
@@ -387,7 +426,7 @@ double complex child_general_hopp_MPIdouble(
   }
   else if (state1 == mask1 && state2 == 0) {
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) trans = 0;
+    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -403,6 +442,8 @@ double complex child_general_hopp_MPIdouble(
                       v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, 
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1)return 0;
 
   dam_pr = 0.0;
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, Fsgn, ioff) \
@@ -512,9 +553,7 @@ double complex child_general_hopp_MPIsingle(
   else if (state2 == 0) {
     state1check = mask1;
     trans = -(double) Fsgn * conj(tmp_trans);
-    if (X->Large.mode == M_CORR|| X->Large.mode == M_CALCSPEC) {
-      trans = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) return 0;
   }
   else return 0;
 

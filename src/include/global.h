@@ -131,6 +131,7 @@ extern const char* cFileName3BGreen_TE;/**> Name of the file to output three-bod
 extern const char* cFileName4BGreen_TE;/**> Name of the file to output four-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName6BGreen_TE;/**> Name of the file to output six-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
+extern const char* cFileNameTPQVector;/**> Name of the file to output cTPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
 //For Time evolution
@@ -181,6 +182,7 @@ extern long unsigned int g_tj_odd_split_down_mask;
 extern int nproc;//!< Number of processors, defined in InitializeMPI()
 extern int myrank;//!< Process ID, defined in InitializeMPI()
 extern int nthreads;//!< Number of Threads, defined in InitializeMPI()
+extern int iFlgMPIBatch;//!< 1: MPI communication batching ON (default), 0: OFF (HPHI_MPI_NOBATCH=1), set in InitializeMPI()
 extern FILE *stdoutMPI;/**<@brief File pointer to the standard output
                 defined in InitializeMPI()*/
 

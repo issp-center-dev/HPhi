@@ -15,6 +15,11 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**@file
 @brief Functions for Hubbar + MPI (Core)
+
+Indexing convention note:
+- Bit-state ids are treated as 0-based integers.
+- Many wavefunction/list buffers are accessed with 1-based indices (`1..idim_max`).
+- Keep existing `+1`/`j-1` conversions when refactoring loops.
 */
 #ifdef MPI
 #include "mpi.h"
@@ -143,6 +148,7 @@ int CheckBit_InterAllPE(
     return FALSE;
   }
   
+  // `tmp_org` is the remote rank/state id reached after applying all PE operators.
   *offbit=tmp_org;
   return TRUE;
 }/*int CheckBit_InterAllPE*/
@@ -252,6 +258,7 @@ int GetSgnInterAll(
   }
   
   *Fsgn =tmp_sgn;
+  // Fold global-state id to the local basis block handled by this rank.
   *offbit = *offbit%X->Def.OrgTpow[2*X->Def.Nsite];
   return TRUE;
 }/*int GetSgnInterAll*/
@@ -922,7 +929,7 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI(
   double complex dam_pr = 0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf;
-  int iCheck, ierr, Fsgn;
+  int iCheck, ierr, Fsgn, only_send = 0;
   unsigned long int isite1, isite2, isite3, isite4;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Adiff, Bdiff;
@@ -959,7 +966,9 @@ double complex child_CisAjtCkuAlv_Hubbard_MPI(
       tmp_isite2 = X->Def.OrgTpow[2 * org_isite3 + org_ispin3];
       tmp_isite1 = X->Def.OrgTpow[2 * org_isite4 + org_ispin4];
       iFlgHermite = TRUE;
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;     
+      // In M_CORR/M_CALCSPEC for the hermitian branch, this rank participates
+      // in MPI exchange but contributes no local update term.
+      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
     }/*if (iCheck == TRUE)*/
     else return 0.0;
   }/*if (iCheck == FALSE)*/
@@ -1019,6 +1028,9 @@ firstprivate(i_max, tmp_V, X, isite1, isite4, Adiff) shared(tmp_v1, tmp_v0)
                         v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
+
+    if (only_send == 1) return 0;
+
     if (org_isite1 + 1 > X->Def.Nsite && org_isite2 + 1 > X->Def.Nsite
      && org_isite3 + 1 > X->Def.Nsite && org_isite4 + 1 > X->Def.Nsite)
     {
@@ -1135,7 +1147,7 @@ double complex child_CisAjtCkuAku_Hubbard_MPI(
   double complex dam_pr = 0.0;
   unsigned long int i_max = X->Check.idim_max;
   unsigned long int idim_max_buf, ioff;
-  int iCheck, ierr, Fsgn;
+  int iCheck, ierr, Fsgn, only_send = 0;
   unsigned long int isite1, isite2, isite3;
   unsigned long int tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4;
   unsigned long int j, Asum, Adiff;
@@ -1169,13 +1181,17 @@ double complex child_CisAjtCkuAku_Hubbard_MPI(
       Asum = tmp_isite3 + tmp_isite4;
       if (tmp_isite4 > tmp_isite3) Adiff = tmp_isite4 - tmp_isite3 * 2;
       else Adiff = tmp_isite3 - tmp_isite4 * 2;
-      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0;
+      // In M_CORR/M_CALCSPEC for the hermitian branch, this rank only exchanges
+      // data needed by its partner rank and has no local contribution.
+      if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
       //printf("tmp_isite1=%ld, tmp_isite2=%ld, Adiff=%ld\n", tmp_isite1, tmp_isite2, Adiff);
     }/*if (iCheck == TRUE)*/
     else return 0.0;   
   }/*if (iCheck == FALSE)*/
 
   if (myrank == origin) {// only k is in PE
+
+    if (only_send == 1) return 0;
     //for hermite
 #pragma omp parallel default(none) reduction(+:dam_pr) \
 firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp_v0, tmp_v1)
@@ -1206,6 +1222,8 @@ firstprivate(i_max, Asum, Adiff, isite1, isite2, tmp_V, X) private(j) shared(tmp
                         v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                         MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
+
+    if (only_send == 1) return 0;
 
 #pragma omp parallel default(none) reduction(+:dam_pr) private(j, dmv, ioff, tmp_off, Fsgn, Adiff) \
 firstprivate(idim_max_buf, tmp_V, X, tmp_isite1, tmp_isite2, tmp_isite3, tmp_isite4, org_rankbit, isite3) \
@@ -1427,11 +1445,12 @@ double complex child_GC_Cis_MPI(
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
 
+  // Communication partner differs by the PE-bit for this (site,spin).
   origin = myrank ^ mask2; // XOR
   state2 = origin & mask2;
 
-  //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
-  //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+  // If state2 == mask2, the remote state implies this rank already has occupancy
+  // pattern incompatible with c^\dagger_{is}; thus trans=0 for this rank.
 
   bit2diff = myrank - ((2 * mask2 - 1) & myrank);
 
@@ -1460,6 +1479,7 @@ double complex child_GC_Cis_MPI(
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
   firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
   for (j = 0; j < idim_max_buf; j++) {
+    // j is 0-based state id; wavefunction buffers are 1-based.
     dmv = trans * tmp_v1buf[j + 1];
     tmp_v0[j + 1] += dmv;
     dam_pr += conj(tmp_v1[j + 1]) * dmv;
@@ -1495,11 +1515,12 @@ double complex child_GC_Ajt_MPI(
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
 
+  // Communication partner differs by the PE-bit for this (site,spin).
   origin = myrank ^ mask2; // XOR
   state2 = origin & mask2;
 
-  //if state2 = mask2, the state (org_isite, org_ispin) is not occupied in myrank
-  //origin: if the state (org_isite, org_ispin) is occupied in myrank, the state is not occupied in origin.
+  // If state2 == 0, the remote state implies this rank has no annihilatable
+  // particle at (org_isite,org_ispin); thus trans=0 for this rank.
 
   bit2diff = myrank - ((2 * mask2 - 1) & myrank);
 
@@ -1524,6 +1545,7 @@ double complex child_GC_Ajt_MPI(
 #pragma omp parallel for default(none) reduction(+:dam_pr) private(j, dmv) \
 firstprivate(idim_max_buf, trans) shared(tmp_v1buf, tmp_v1, tmp_v0)
   for (j = 0; j < idim_max_buf; j++) {
+    // j is 0-based state id; wavefunction buffers are 1-based.
     dmv = trans * tmp_v1buf[j + 1];
     tmp_v0[j + 1] += dmv;
     dam_pr += conj(tmp_v1[j + 1]) * dmv;
@@ -1566,6 +1588,7 @@ double complex child_Cis_MPI(
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
 
+  // Communication partner differs by the PE-bit for this (site,spin).
   origin = myrank ^ mask2; // XOR
   state2 = origin & mask2;
 
@@ -1593,17 +1616,21 @@ double complex child_Cis_MPI(
 
   if (state2 == mask2) {
     trans = 0;
+    return 0;
   }
   else if (state2 == 0) {
     trans = (double)Fsgn * tmp_trans;
   }
   else return 0;
 
+  // This routine is used for vector update; expectation contribution is not
+  // accumulated here (dam_pr intentionally stays 0 in current design).
   dam_pr = 0.0;
 #pragma omp parallel for default(none) private(j, dmv) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
 shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {//idim_max_buf -> original
+    // j is 1-based index in exchanged basis list.
     GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);
     dmv = trans * tmp_v1buf[j];
@@ -1647,6 +1674,7 @@ double complex child_Ajt_MPI(
   // org_isite >= Nsite
   mask2 = (int)Tpow[2 * org_isite + org_ispin];
 
+  // Communication partner differs by the PE-bit for this (site,spin).
   origin = myrank ^ mask2; // XOR
   state2 = origin & mask2;
 
@@ -1673,17 +1701,21 @@ double complex child_Ajt_MPI(
 
   if (state2 == 0) {
     trans = 0;
+    return 0;
   }
   else if (state2 == mask2) {
     trans = (double)Fsgn * tmp_trans;
   }
   else return 0;
 
+  // This routine is used for vector update; expectation contribution is not
+  // accumulated here (dam_pr intentionally stays 0 in current design).
   dam_pr = 0.0;
 #pragma omp parallel for default(none) private(j, dmv) \
 firstprivate(idim_max_buf, trans, ioff, _irght, _ilft, _ihfbit, list_2_1_target, list_2_2_target) \
 shared(tmp_v1buf, tmp_v1, tmp_v0, list_1buf_org)
   for (j = 1; j <= idim_max_buf; j++) {
+    // j is 1-based index in exchanged basis list.
     GetOffComp(list_2_1_target, list_2_2_target, list_1buf_org[j],
       _irght, _ilft, _ihfbit, &ioff);
     dmv = trans * tmp_v1buf[j];
