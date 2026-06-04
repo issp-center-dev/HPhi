@@ -161,12 +161,29 @@ int check(struct BindStruct *X){
     break;
 
   case tJ:
-    comb_up   = Binomial(Ns, X->Def.Nup, comb, Ns);
-    comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
-    comb_sum  = comb_up*comb_down;
+    if (X->Def.iFlgInvalidProc == TRUE
+        || X->Def.Nup > (int)Ns || X->Def.Ndown > (int)Ns
+        || X->Def.Nup + X->Def.Ndown > (int)Ns) {
+      comb_sum = 0;
+      break;
+    }
+    if (X->Def.Nup >= X->Def.Ndown) {
+      comb_up   = Binomial(Ns, X->Def.Nup, comb, Ns);
+      comb_down = Binomial(Ns-X->Def.Nup, X->Def.Ndown, comb, Ns);
+    }
+    else {
+      comb_down = Binomial(Ns, X->Def.Ndown, comb, Ns);
+      comb_up   = Binomial(Ns-X->Def.Ndown, X->Def.Nup, comb, Ns);
+    }
+    comb_sum = comb_up*comb_down;
     break;
 
   case tJNConserved:
+    if (X->Def.iFlgInvalidProc == TRUE
+        || X->Def.Ne > (int)Ns) {
+      comb_sum = 0;
+      break;
+    }
     comb_sum=0;
     if(X->Def.Ne > X->Def.Nsite){
       iMinup = X->Def.Ne-X->Def.Nsite;
@@ -182,13 +199,13 @@ int check(struct BindStruct *X){
     break;
 
   case tJGC:
-    comb_sum=0;
-    for(i=0; i<= X->Def.Ne; i++){
-      comb_up   = Binomial(Ns, i, comb, Ns);
-      for(j=0; j<= X->Def.Ne; j++){
-        comb_down = Binomial(Ns-i, j, comb, Ns);
-        comb_sum += comb_up*comb_down;
-      }
+    if (X->Def.iFlgInvalidProc == TRUE) {
+      comb_sum = 0;
+      break;
+    }
+    comb_sum = 1;
+    for(i=0; i<X->Def.Nsite; i++){
+      comb_sum = 3*comb_sum;
     }
     break;
     

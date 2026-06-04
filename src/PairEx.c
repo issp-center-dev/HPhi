@@ -78,10 +78,10 @@ int GetPairExcitedState
     break;
 
   case Hubbard:
-  case Kondo:
-  case KondoGC:
   case tJ:
   case tJGC:
+  case Kondo:
+  case KondoGC:
       iret=GetPairExcitedStateHubbard(X, tmp_v0, tmp_v1);
     break;
 

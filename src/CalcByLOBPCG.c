@@ -675,14 +675,14 @@ int CalcByLOBPCG(
     switch (X->Bind.Def.iCalcModel) {
     case HubbardGC:
     case SpinGC:
+    case tJGC:
     case SpinlessFermionGC:
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
+    case tJ:
     case Kondo:
     case KondoGC:
-    case tJ:
-    case tJGC:
     case Spin:
     case SpinlessFermion:
 

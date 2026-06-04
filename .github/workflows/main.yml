@@ -61,7 +61,7 @@ jobs:
           if [ ${{ runner.os }} = "macOS" ] ; then
             export FC=gfortran-15
           fi
-          cmake -DCMAKE_VERBOSE_MAKEFILE=ON $GITHUB_WORKSPACE
+          cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 $GITHUB_WORKSPACE
 
       - name: build
         working-directory: ${{runner.workspace}}/build

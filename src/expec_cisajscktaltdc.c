@@ -217,10 +217,10 @@ int expec_cisajscktaltdc
     break;
  
   case Hubbard:
-  case Kondo:
-  case KondoGC:
   case tJ:
   case tJGC:
+  case Kondo:
+  case KondoGC:
       if(expec_cisajscktalt_Hubbard(X, vec, &fp)!=0){
           return -1;
       }

@@ -35,8 +35,8 @@ int output(struct BindStruct *X) {
     switch (X->Def.iCalcModel) {
       case Spin:
       case Hubbard:
-      case Kondo:
       case tJ:
+      case Kondo:
         sprintf(sdt, cFileNamePhys_FullDiag, X->Def.CDataFileHead, X->Def.Nup, X->Def.Ndown);
         break;
       case SpinGC:

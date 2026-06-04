@@ -52,6 +52,11 @@ struct DefineList {
   int LanczosTarget;/**<@brief Which eigenstate is used to check convergence.
                     Read from Calcmod in readdef.h.*/
   int read_hacker;/**<@brief Whether use an efficient method (=1) in sz.c or not (=0)*/
+  int iFlgInvalidProc;/**<@brief =1 if this MPI process has an invalid inter-process
+                      configuration (e.g. a tJ doublon "11"); its local Hilbert-space
+                      dimension must be 0. Set in CheckMPI(), read in check.c.
+                      Unsigned Nup/Ndown/Ne cannot carry a negative sentinel, so this
+                      explicit int flag is used instead.*/
   int READ;/**<@brief It is ALWAYS 0 ???*/
   int WRITE;/**<@brief It is ALWAYS 0 ???*/
 

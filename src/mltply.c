@@ -96,24 +96,15 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.prdct = 0.0;
   dam_pr = 0.0;
 
-  if(i_max!=0){
-    if (X->Def.iFlgGeneralSpin == FALSE) {
-      if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
-        return -1;
-      }
-    }
-    else{
-      if(X->Def.iCalcModel==Spin){
-        if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
-          return -1;
-        }
-      }
+  if (X->Def.iFlgGeneralSpin == FALSE) {
+    if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+      return -1;
     }
   }
-  else{
-    irght=0;
-    ilft=0;
-    ihfbit=0;
+  else if (i_max != 0 && X->Def.iCalcModel == Spin) {
+    if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+      return -1;
+    }
   }
   X->Large.i_max = i_max;
   X->Large.irght = irght;
@@ -137,10 +128,10 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     break;
       
   case Hubbard:
-  case Kondo:
-  case KondoGC:
   case tJ:
   case tJGC:
+  case Kondo:
+  case KondoGC:
     mltplyHubbard(X, tmp_v0, tmp_v1);
     break;
       

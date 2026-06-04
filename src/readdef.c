@@ -256,6 +256,7 @@ int ReadcalcmodFile(
   X->iReStart=0;
   X->iFlgMPI=0;
   X->iFlgScaLAPACK=0;
+  X->iFlgInvalidProc=0;
 #ifdef _MAGMA
   X->iNGPU=2;
 #else
@@ -329,7 +330,7 @@ int ReadcalcmodFile(
     
   /* Check values*/
   if(ValidateValue(X->iCalcModel, 0, NUM_CALCMODEL-1)){
-    fprintf(stdoutMPI, cErrCalcType, defname);
+    fprintf(stdoutMPI,cErrCalcModel, defname);
     return (-1);
   }
   if(ValidateValue(X->iCalcType, 0, NUM_CALCTYPE-1)){
@@ -2702,7 +2703,7 @@ int GetDiagonalInterAll
           }
           else{
             // Sz symmetry is assumed
-            if(iCalcModel==Hubbard || iCalcModel==Kondo){
+            if(iCalcModel==Hubbard || iCalcModel==Kondo || iCalcModel==tJ){
               fprintf(stdoutMPI, cErrNonConservedInterAll,
                       isite1,
                       isigma1,
@@ -2850,6 +2851,9 @@ int ArrangeInterAllOffDiagonal
             case KondoNConserved:
             case KondoGC:
             case HubbardGC:
+            case tJ:
+            case tJNConserved:
+            case tJGC:
                 if (isigma1 == isigma2 && isigma3 == isigma4) {
                     continue;
                 } else if (isigma1 == isigma4 && isigma2 == isigma3) {

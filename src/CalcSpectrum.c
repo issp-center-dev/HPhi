@@ -572,12 +572,12 @@ int MakeExcitedList(
                 case HubbardGC:
                 case KondoNConserved:/*To be confirmed*/
                 case tJNConserved:/*To be confirmed*/
+                case tJGC:
                     break;
                 case Hubbard:
                 case Kondo:
                 case KondoGC:
                 case tJ:
-                case tJGC:
                     if (X->Def.PairExcitationOperator[0][1] != X->Def.PairExcitationOperator[0][3]) {
                       if (X->Def.PairExcitationOperator[0][1] == 0) {//up
                         X->Def.Nup = X->Def.NupOrg + 1;
@@ -645,4 +645,3 @@ int MakeExcitedList(
 
     return TRUE;
 }
-

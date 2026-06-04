@@ -63,6 +63,8 @@ add_hphi_test(lanczos_kondogc_chain)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_genspingc_ladder)
+add_hphi_test(lanczos_tjgc_dimension)
+add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
@@ -95,6 +97,9 @@ set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
     lanczos_genspin_ladder_restart
     PROPERTIES LABELS "lanczos;genspin")
+set_tests_properties(
+    lanczos_tjgc_dimension lanczos_tjgc_exchange
+    PROPERTIES LABELS "lanczos;tjgc")
 set_tests_properties(
     lanczos_spinless lanczos_spinless_GC
     PROPERTIES LABELS "lanczos;spinless")
@@ -161,6 +166,7 @@ add_hphi_test(fulldiag_kondo_chain)
 add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
+add_hphi_test(fulldiag_tj_calchs1)
 add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_genspingc_ladder)
@@ -172,6 +178,9 @@ set_tests_properties(
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
+set_tests_properties(
+    fulldiag_tj_calchs1
+    PROPERTIES LABELS "fulldiag;tj")
 set_tests_properties(
     fulldiag_spin_tri fulldiag_spingc_tri
     PROPERTIES LABELS "fulldiag;spin")

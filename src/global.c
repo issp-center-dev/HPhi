@@ -148,6 +148,11 @@ double eps_Lanczos = 1e-10;
 double eps_Energy = 1e-10;
 double eps_CheckImag0 = 1e-10;
 
+/* tJ odd-split invalid-pair guard */
+int g_tj_odd_split_guard_enabled = 0;
+long unsigned int g_tj_odd_split_up_mask = 0;
+long unsigned int g_tj_odd_split_down_mask = 0;
+
 /* MPI */
 int nproc = 1;
 int myrank = 0;
