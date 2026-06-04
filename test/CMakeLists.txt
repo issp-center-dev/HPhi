@@ -220,6 +220,23 @@ set_tests_properties(
 set_tests_properties(
     spectrum_offdiag_invalid_reject
     PROPERTIES LABELS "spectrum;offdiag;validation")
+
+# Unit test: off-diagonal excitation sector-shift truth table
+add_executable(unittest_excitation_sector_shift
+    ${CMAKE_SOURCE_DIR}/test/unittest_excitation_sector_shift.c
+    ${CMAKE_SOURCE_DIR}/src/ExcitationSectorShift.c)
+target_include_directories(unittest_excitation_sector_shift
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_excitation_sector_shift PRIVATE DSFMT_MEXP=19937)
+add_test(NAME unittest_excitation_sector_shift
+    COMMAND unittest_excitation_sector_shift)
+set_tests_properties(unittest_excitation_sector_shift
+    PROPERTIES LABELS "unit;offdiag")
+
+# MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
+add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
+set_tests_properties(spectrum_hubbard_offdiag_single_mpi
+    PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
 set_tests_properties(
     spectrum_kondo_chain spectrum_kondogc_chain
     PROPERTIES LABELS "spectrum;kondo")
