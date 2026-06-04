@@ -46,7 +46,10 @@ int GetSingleExcitedState(
   case KondoGC:
   case tJ:
   case tJGC:
-    iret = GetSingleExcitedStateHubbard(X, tmp_v0, tmp_v1);
+    iret = GetSingleExcitedStateHubbard(X, X->Def.NSingleExcitationOperator,
+                                        X->Def.SingleExcitationOperator,
+                                        X->Def.ParaSingleExcitationOperator,
+                                        tmp_v0, tmp_v1);
     break;
 
   case Spin:
