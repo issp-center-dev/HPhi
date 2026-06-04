@@ -198,7 +198,11 @@ int CalcSpectrum(
 
     //Multiply Operator
     StartTimer(6102);
-    GetExcitedState(&(X->Bind), v0, v1Org);
+    ExcitationOperatorSet ketSet = {
+      X->Bind.Def.NSingleExcitationOperator, X->Bind.Def.SingleExcitationOperator,
+      X->Bind.Def.ParaSingleExcitationOperator, X->Bind.Def.NPairExcitationOperator,
+      X->Bind.Def.PairExcitationOperator, X->Bind.Def.ParaPairExcitationOperator};
+    GetExcitedState(&(X->Bind), &ketSet, v0, v1Org);
     StopTimer(6102);
 
     //calculate norm
@@ -322,21 +326,22 @@ int CalcSpectrum(
 int GetExcitedState
 (
  struct BindStruct *X,
+ const ExcitationOperatorSet *op,
  double complex *tmp_v0,
  double complex *tmp_v1
 ) {
-  if (X->Def.NSingleExcitationOperator > 0 && X->Def.NPairExcitationOperator > 0) {
+  if (op->NSingle > 0 && op->NPair > 0) {
     fprintf(stderr, "Error: Both single and pair excitation operators exist.\n");
     return FALSE;
   }
 
 
-  if (X->Def.NSingleExcitationOperator > 0) {
-    if (GetSingleExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+  if (op->NSingle > 0) {
+    if (GetSingleExcitedState(X, op->NSingle, op->Single, op->ParaSingle, tmp_v0, tmp_v1) != TRUE) {
       return FALSE;
     }
-  } else if (X->Def.NPairExcitationOperator > 0) {
-    if (GetPairExcitedState(X, tmp_v0, tmp_v1) != TRUE) {
+  } else if (op->NPair > 0) {
+    if (GetPairExcitedState(X, op->NPair, op->Pair, op->ParaPair, tmp_v0, tmp_v1) != TRUE) {
       return FALSE;
     }
   } else {

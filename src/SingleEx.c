@@ -29,12 +29,19 @@ Target System: Hubbard, Kondo
 */
 int GetSingleExcitedState(
   struct BindStruct *X,//!<define list to get and put information of calcuation
+  unsigned int NSingleExcitationOperator,//!<[in] number of single excitation operators
+  int **SingleExcitationOperator,//!<[in] [n][3] = {site, spin, type}
+  double complex *ParaSingleExcitationOperator,//!<[in] coefficient of each operator
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1//!<[in] v0 = H v1
 ) {
   int iret = 0;
   //tmp_v0
-  if (X->Def.NSingleExcitationOperator == 0) return TRUE;
+  /* NOTE: the GC leaf below is not operator-set parametrized and reads X->Def,
+     so the passed set must equal X->Def for that model. This holds for the
+     diagonal ket path; the bra path only reaches the parametrized Hubbard leaf
+     (Spin/SpinGC single excitation is rejected). */
+  if (NSingleExcitationOperator == 0) return TRUE;
 
   switch (X->Def.iCalcModel) {
   case HubbardGC:
@@ -46,9 +53,9 @@ int GetSingleExcitedState(
   case KondoGC:
   case tJ:
   case tJGC:
-    iret = GetSingleExcitedStateHubbard(X, X->Def.NSingleExcitationOperator,
-                                        X->Def.SingleExcitationOperator,
-                                        X->Def.ParaSingleExcitationOperator,
+    iret = GetSingleExcitedStateHubbard(X, NSingleExcitationOperator,
+                                        SingleExcitationOperator,
+                                        ParaSingleExcitationOperator,
                                         tmp_v0, tmp_v1);
     break;
 

@@ -20,8 +20,21 @@ int CalcSpectrum(
                  struct EDMainCalStruct *X
 );
 
+/** @brief A set of excitation operators (ket A or bra B) to apply to |phi>.
+    Lets GetExcitedState build either A|phi> (ket / X->Def fields) or B|phi>
+    (bra / X->Def *Bra fields) without mutating DefineList. */
+typedef struct {
+  unsigned int NSingle;       /**< number of single excitation operators */
+  int **Single;               /**< [NSingle][3] = {site, spin, type} */
+  double complex *ParaSingle; /**< [NSingle] coefficients */
+  unsigned int NPair;         /**< number of pair excitation operators */
+  int **Pair;                 /**< [NPair][5] = {site1, spin1, site2, spin2, type} */
+  double complex *ParaPair;   /**< [NPair] coefficients */
+} ExcitationOperatorSet;
+
 int GetExcitedState(
                 struct BindStruct *X,
+                const ExcitationOperatorSet *op,
                 double complex *tmp_v0,
                 double complex *tmp_v1
 );
