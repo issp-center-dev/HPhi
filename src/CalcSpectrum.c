@@ -136,6 +136,13 @@ int CalcSpectrum(
     fprintf(stderr, "Error: Any excitation operators are not defined.\n");
     exitMPI(-1);
   }
+  /* TODO(off-diagonal step 8/9): the bra excitation is not yet wired into the
+     BiCG projection, so accepting it here would silently return the diagonal
+     G_AA. Hard-reject until the off-diagonal call and its guards are added. */
+  if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
+    fprintf(stderr, "Error: SingleExcitationBra/PairExcitationBra (off-diagonal spectrum) is not yet supported in this build.\n");
+    exitMPI(-1);
+  }
   //Make New Lists
   if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
     return FALSE;
