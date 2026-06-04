@@ -152,6 +152,10 @@ int CalcSpectrum(
       fprintf(stderr, "Error: off-diagonal (bra) spectrum requires method=\"CG\".\n");
       exitMPI(-1);
     }
+    if (X->Bind.Def.iFlgCalcSpec != RECALC_NOT) {
+      fprintf(stderr, "Error: off-diagonal (bra) spectrum currently requires CalcSpec=\"Normal\" (no restart/save); saved BiCG components carry no bra-operator metadata.\n");
+      exitMPI(-1);
+    }
     if (braSingle && braPair) {
       fprintf(stderr, "Error: SingleExcitationBra and PairExcitationBra cannot be used together.\n");
       exitMPI(-1);
@@ -240,7 +244,10 @@ int CalcSpectrum(
       X->Bind.Def.NSingleExcitationOperator, X->Bind.Def.SingleExcitationOperator,
       X->Bind.Def.ParaSingleExcitationOperator, X->Bind.Def.NPairExcitationOperator,
       X->Bind.Def.PairExcitationOperator, X->Bind.Def.ParaPairExcitationOperator};
-    GetExcitedState(&(X->Bind), &ketSet, v0, v1Org);
+    if (GetExcitedState(&(X->Bind), &ketSet, v0, v1Org) != TRUE) {
+      fprintf(stderr, "Error: failed to build the ket excited state A|phi>.\n");
+      exitMPI(-1);
+    }
     StopTimer(6102);
 
     //calculate norm
@@ -271,7 +278,10 @@ int CalcSpectrum(
         X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.ParaPairExcitationOperatorBra};
       v0_Bra = cd_1d_allocate(X->Bind.Check.idim_max + 1);
       for (i = 0; i <= X->Bind.Check.idim_max; i++) v0_Bra[i] = 0;
-      GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org);
+      if (GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org) != TRUE) {
+        fprintf(stderr, "Error: failed to build the bra excited state B|phi>.\n");
+        exitMPI(-1);
+      }
     }
 
     //Output excited vector
@@ -323,6 +333,7 @@ int CalcSpectrum(
     case CG:
 
       iret = CalcSpectrumByBiCG(X, v0, (v0_Bra != NULL) ? v0_Bra : v0, v1, vg, Nomega, dcSpectrum, dcomega);
+      if (v0_Bra != NULL) { free_cd_1d_allocate(v0_Bra); v0_Bra = NULL; }
 
       if (iret != TRUE) {
         //Error Message will be added.
