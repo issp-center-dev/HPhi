@@ -82,7 +82,10 @@ int GetPairExcitedState
   case tJGC:
   case Kondo:
   case KondoGC:
-      iret=GetPairExcitedStateHubbard(X, tmp_v0, tmp_v1);
+      iret=GetPairExcitedStateHubbard(X, X->Def.NPairExcitationOperator,
+                                      X->Def.PairExcitationOperator,
+                                      X->Def.ParaPairExcitationOperator,
+                                      tmp_v0, tmp_v1);
     break;
 
     case Spin: // for the Sz-conserved spin system
