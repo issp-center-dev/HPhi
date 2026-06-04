@@ -203,6 +203,8 @@ add_hphi_test_with_srcdir(spectrum_spinless_chain)
 # Off-diagonal dynamical Green function (bra excitation)
 add_hphi_test(spectrum_hubbard_offdiag_single)
 add_hphi_test(spectrum_hubbard_offdiag_pair_density)
+add_hphi_test(spectrum_spin_offdiag_szsz)
+add_hphi_test(spectrum_spingc_offdiag_szsz)
 
 # Spectrum test labels
 set_tests_properties(
@@ -211,6 +213,9 @@ set_tests_properties(
 set_tests_properties(
     spectrum_hubbard_offdiag_single spectrum_hubbard_offdiag_pair_density
     PROPERTIES LABELS "spectrum;hubbard;offdiag")
+set_tests_properties(
+    spectrum_spin_offdiag_szsz spectrum_spingc_offdiag_szsz
+    PROPERTIES LABELS "spectrum;spin;offdiag")
 set_tests_properties(
     spectrum_kondo_chain spectrum_kondogc_chain
     PROPERTIES LABELS "spectrum;kondo")
