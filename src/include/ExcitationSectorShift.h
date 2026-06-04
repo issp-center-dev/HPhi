@@ -22,12 +22,20 @@
  *        sector. @c valid is FALSE when the (model, operator) excitation is not
  *        supported in the current (v1) off-diagonal allow-list.
  */
+/** @brief Why a SectorShift is invalid (for off-diagonal guard diagnostics). */
+typedef enum {
+  OFFDIAG_SHIFT_OK = 0,            /**< valid shift */
+  OFFDIAG_SHIFT_MODEL_NOT_ALLOWED, /**< model/operator not in the off-diagonal allow-list */
+  OFFDIAG_SHIFT_SET_INCONSISTENT   /**< rows in the operator set induce different shifts */
+} SectorShiftReason;
+
 typedef struct {
   int dNe;
   int dNup;
   int dNdown;
   int dTotal2Sz;
   int valid;
+  SectorShiftReason reason;
 } SectorShift;
 
 /**

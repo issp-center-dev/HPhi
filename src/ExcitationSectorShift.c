@@ -35,7 +35,7 @@
 #include "ExcitationSectorShift.h"
 
 SectorShift GetExcitationSectorShift(int iCalcModel, int isGeneralSpin, int isPair, const int *op) {
-  SectorShift s = {0, 0, 0, 0, TRUE};
+  SectorShift s = {0, 0, 0, 0, TRUE, OFFDIAG_SHIFT_OK};
 
   if (isPair == FALSE) {
     const int spin = op[1];                /* 0 = up, 1 = down */
@@ -107,12 +107,15 @@ SectorShift GetExcitationSectorShift(int iCalcModel, int isGeneralSpin, int isPa
       break;
     }
   }
+  /* A single operator row can only be invalid because the model/operator is
+     not in the allow-list (set-internal inconsistency needs >= 2 rows). */
+  s.reason = (s.valid == TRUE) ? OFFDIAG_SHIFT_OK : OFFDIAG_SHIFT_MODEL_NOT_ALLOWED;
   return s;
 }
 
 SectorShift GetExcitationOperatorSetShift(int iCalcModel, int isGeneralSpin, int isPair,
                                           int **op, int nOp) {
-  SectorShift acc = {0, 0, 0, 0, FALSE};
+  SectorShift acc = {0, 0, 0, 0, FALSE, OFFDIAG_SHIFT_MODEL_NOT_ALLOWED};
   int i;
 
   if (nOp <= 0) return acc; /* empty set: valid=FALSE */
@@ -121,6 +124,7 @@ SectorShift GetExcitationOperatorSetShift(int iCalcModel, int isGeneralSpin, int
     SectorShift cur = GetExcitationSectorShift(iCalcModel, isGeneralSpin, isPair, op[i]);
     if (cur.valid == FALSE) {
       acc.valid = FALSE;
+      acc.reason = cur.reason; /* model/operator not allowed */
       return acc;
     }
     if (i == 0) {
@@ -128,6 +132,7 @@ SectorShift GetExcitationOperatorSetShift(int iCalcModel, int isGeneralSpin, int
     } else if (acc.dNe != cur.dNe || acc.dNup != cur.dNup ||
                acc.dNdown != cur.dNdown || acc.dTotal2Sz != cur.dTotal2Sz) {
       acc.valid = FALSE; /* rows disagree on sector shift */
+      acc.reason = OFFDIAG_SHIFT_SET_INCONSISTENT;
       return acc;
     }
   }

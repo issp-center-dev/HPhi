@@ -175,8 +175,18 @@ int CalcSpectrum(
       braShift = GetExcitationOperatorSetShift(iCalcModel, isGeneralSpin, TRUE,
                    X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.NPairExcitationOperatorBra);
     }
-    if (ketShift.valid == FALSE || braShift.valid == FALSE) {
-      fprintf(stderr, "Error: off-diagonal spectrum is not supported for this model, or an excitation operator set mixes inconsistent sector shifts.\n");
+    if (ketShift.valid == FALSE) {
+      if (ketShift.reason == OFFDIAG_SHIFT_SET_INCONSISTENT)
+        fprintf(stderr, "Error: the ket excitation operator set mixes operators with different Hilbert-sector shifts.\n");
+      else
+        fprintf(stderr, "Error: off-diagonal spectrum is not supported for this model / ket excitation operator.\n");
+      exitMPI(-1);
+    }
+    if (braShift.valid == FALSE) {
+      if (braShift.reason == OFFDIAG_SHIFT_SET_INCONSISTENT)
+        fprintf(stderr, "Error: the bra excitation operator set mixes operators with different Hilbert-sector shifts.\n");
+      else
+        fprintf(stderr, "Error: off-diagonal spectrum is not supported for this model / bra excitation operator.\n");
       exitMPI(-1);
     }
     if (ketShift.dNe != braShift.dNe || ketShift.dNup != braShift.dNup ||
@@ -281,6 +291,9 @@ int CalcSpectrum(
       if (GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org) != TRUE) {
         fprintf(stderr, "Error: failed to build the bra excited state B|phi>.\n");
         exitMPI(-1);
+      }
+      if (NormMPI_dc(X->Bind.Check.idim_max, v0_Bra) < pow(10.0, -15)) {
+        fprintf(stderr, "Warning: Norm of the bra excited vector B|phi> is 0; the off-diagonal spectrum will be zero.\n");
       }
     }
 
