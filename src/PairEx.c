@@ -89,11 +89,17 @@ int GetPairExcitedState
     break;
 
     case Spin: // for the Sz-conserved spin system
-      iret =GetPairExcitedStateSpin(X, tmp_v0, tmp_v1);
+      iret =GetPairExcitedStateSpin(X, X->Def.NPairExcitationOperator,
+                                    X->Def.PairExcitationOperator,
+                                    X->Def.ParaPairExcitationOperator,
+                                    tmp_v0, tmp_v1);
       break;
 
     case SpinGC:
-      iret=GetPairExcitedStateSpinGC(X,tmp_v0, tmp_v1);
+      iret=GetPairExcitedStateSpinGC(X, X->Def.NPairExcitationOperator,
+                                     X->Def.PairExcitationOperator,
+                                     X->Def.ParaPairExcitationOperator,
+                                     tmp_v0, tmp_v1);
       break;
 
     case SpinlessFermion:

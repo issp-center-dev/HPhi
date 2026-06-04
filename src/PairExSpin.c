@@ -34,6 +34,9 @@
 /// \version 1.2
 int GetPairExcitedStateSpinGC(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -41,10 +44,12 @@ int GetPairExcitedStateSpinGC(
 
     int iret=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
-        iret=GetPairExcitedStateHalfSpinGC(X, tmp_v0, tmp_v1);
+        iret=GetPairExcitedStateHalfSpinGC(X, NPairExcitationOperator, PairExcitationOperator,
+                                           ParaPairExcitationOperator, tmp_v0, tmp_v1);
     }
     else{
-        iret=GetPairExcitedStateGeneralSpinGC(X, tmp_v0, tmp_v1);
+        iret=GetPairExcitedStateGeneralSpinGC(X, NPairExcitationOperator, PairExcitationOperator,
+                                              ParaPairExcitationOperator, tmp_v0, tmp_v1);
     }
     return iret;
 }
@@ -61,6 +66,9 @@ int GetPairExcitedStateSpinGC(
 /// \version 1.2
 int GetPairExcitedStateHalfSpinGC(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -75,16 +83,16 @@ int GetPairExcitedStateHalfSpinGC(
     int tmp_sgn;
     i_max = X->Check.idim_maxOrg;
 
-    for(i=0;i<X->Def.NPairExcitationOperator;i++){
-        org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
+    for(i=0;i<NPairExcitationOperator;i++){
+        org_isite1 = PairExcitationOperator[i][0]+1;
+        org_isite2 = PairExcitationOperator[i][2]+1;
+        org_sigma1 = PairExcitationOperator[i][1];
+        org_sigma2 = PairExcitationOperator[i][3];
+        tmp_trans = ParaPairExcitationOperator[i];
         if(org_isite1 == org_isite2){
             if(org_isite1 > X->Def.Nsite){
                 if(org_sigma1==org_sigma2){  // longitudinal magnetic field
-                    if(X->Def.PairExcitationOperator[i][4]==0) {
+                    if(PairExcitationOperator[i][4]==0) {
                         child_GC_AisCis_spin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
                     }
                     else{
@@ -98,7 +106,7 @@ int GetPairExcitedStateHalfSpinGC(
             }else{
                 isite1 = X->Def.Tpow[org_isite1-1];
                 if(org_sigma1==org_sigma2) {
-                    if (X->Def.PairExcitationOperator[i][4] == 0) {
+                    if (PairExcitationOperator[i][4] == 0) {
                         // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, tmp_sgn) firstprivate(i_max, isite1, org_sigma1, X,tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
@@ -143,6 +151,9 @@ int GetPairExcitedStateHalfSpinGC(
 /// \version 1.2
 int GetPairExcitedStateGeneralSpinGC(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -156,16 +167,16 @@ int GetPairExcitedStateGeneralSpinGC(
     long int i_max;
     i_max = X->Check.idim_maxOrg;
 
-    for(i=0;i<X->Def.NPairExcitationOperator;i++){
-        org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
+    for(i=0;i<NPairExcitationOperator;i++){
+        org_isite1 = PairExcitationOperator[i][0]+1;
+        org_isite2 = PairExcitationOperator[i][2]+1;
+        org_sigma1 = PairExcitationOperator[i][1];
+        org_sigma2 = PairExcitationOperator[i][3];
+        tmp_trans = ParaPairExcitationOperator[i];
         if(org_isite1 == org_isite2){
             if(org_isite1 > X->Def.Nsite){
                 if(org_sigma1==org_sigma2){
-                    if(X->Def.PairExcitationOperator[i][4]==0) {
+                    if(PairExcitationOperator[i][4]==0) {
                         // longitudinal magnetic field
                         child_GC_AisCis_GeneralSpin_MPIdouble(org_isite1 - 1, org_sigma1, -tmp_trans, X, tmp_v0, tmp_v1);
                     }
@@ -179,7 +190,7 @@ int GetPairExcitedStateGeneralSpinGC(
             }
             else{//org_isite1 <= X->Def.Nsite
                 if(org_sigma1==org_sigma2){
-                    if(X->Def.PairExcitationOperator[i][4]==0) {
+                    if(PairExcitationOperator[i][4]==0) {
                         // longitudinal magnetic field
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
@@ -225,16 +236,21 @@ int GetPairExcitedStateGeneralSpinGC(
 /// \version 1.2
 int GetPairExcitedStateSpin(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
 ){
     int iret=0;
     if (X->Def.iFlgGeneralSpin == FALSE) {
-        iret=GetPairExcitedStateHalfSpin(X, tmp_v0, tmp_v1);
+        iret=GetPairExcitedStateHalfSpin(X, NPairExcitationOperator, PairExcitationOperator,
+                                         ParaPairExcitationOperator, tmp_v0, tmp_v1);
     }
     else{
-        iret=GetPairExcitedStateGeneralSpin(X, tmp_v0, tmp_v1);
+        iret=GetPairExcitedStateGeneralSpin(X, NPairExcitationOperator, PairExcitationOperator,
+                                            ParaPairExcitationOperator, tmp_v0, tmp_v1);
     }
     return iret;
 }
@@ -250,6 +266,9 @@ int GetPairExcitedStateSpin(
 /// \version 1.2
 int GetPairExcitedStateHalfSpin(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -275,18 +294,18 @@ int GetPairExcitedStateHalfSpin(
     tmp_v1bufOrg=cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
-    for (i = 0; i < X->Def.NPairExcitationOperator; i++) {
-        org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
+    for (i = 0; i < NPairExcitationOperator; i++) {
+        org_isite1 = PairExcitationOperator[i][0] + 1;
+        org_isite2 = PairExcitationOperator[i][2] + 1;
+        org_sigma1 = PairExcitationOperator[i][1];
+        org_sigma2 = PairExcitationOperator[i][3];
+        tmp_trans = ParaPairExcitationOperator[i];
         if (org_sigma1 == org_sigma2) {
             if (org_isite1 == org_isite2) {
                 if (org_isite1 > X->Def.Nsite) {
                     is1_up = X->Def.Tpow[org_isite1 - 1];
                     ibit1 = child_SpinGC_CisAis((unsigned long int) myrank + 1, X, is1_up, org_sigma1);
-                    if (X->Def.PairExcitationOperator[i][4] == 0) {
+                    if (PairExcitationOperator[i][4] == 0) {
                         if (ibit1 == 0) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
@@ -303,7 +322,7 @@ int GetPairExcitedStateHalfSpin(
                 else {
                     isite1 = X->Def.Tpow[org_isite1 - 1];
                     if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2 &&
-                        X->Def.PairExcitationOperator[i][4] == 0) {
+                        PairExcitationOperator[i][4] == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
                         for (j = 1; j <= i_max; j++) {
                             tmp_v0[j] += (1.0 - child_Spin_CisAis(j, X, isite1, org_sigma1)) * tmp_v1[j] * (-tmp_trans);
@@ -352,6 +371,9 @@ int GetPairExcitedStateHalfSpin(
 /// \version 1.2
 int GetPairExcitedStateGeneralSpin(
         struct BindStruct *X,/**< [in,out] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -374,19 +396,19 @@ int GetPairExcitedStateGeneralSpin(
     tmp_v1bufOrg = cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
-    for(i=0;i<X->Def.NPairExcitationOperator;i++) {
-        org_isite1 = X->Def.PairExcitationOperator[i][0] + 1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2] + 1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
+    for(i=0;i<NPairExcitationOperator;i++) {
+        org_isite1 = PairExcitationOperator[i][0] + 1;
+        org_isite2 = PairExcitationOperator[i][2] + 1;
+        org_sigma1 = PairExcitationOperator[i][1];
+        org_sigma2 = PairExcitationOperator[i][3];
+        tmp_trans = ParaPairExcitationOperator[i];
         if (org_isite1 == org_isite2) {
             if (org_isite1 > X->Def.Nsite) {
                 if (org_sigma1 == org_sigma2) {
                     // longitudinal magnetic field
                     num1 = BitCheckGeneral((unsigned long int) myrank,
                                            org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
-                    if (X->Def.PairExcitationOperator[i][4] == 0) {
+                    if (PairExcitationOperator[i][4] == 0) {
                         if (num1 == 0) {
 #pragma omp parallel for default(none) private(j) firstprivate(i_max, tmp_trans) shared(tmp_v0, tmp_v1)
                             for (j = 1; j <= i_max; j++) {
@@ -410,7 +432,7 @@ int GetPairExcitedStateGeneralSpin(
             } else {//org_isite1 <= X->Def.Nsite
                 if (org_sigma1 == org_sigma2) {
                     // longitudinal magnetic field
-                    if (X->Def.PairExcitationOperator[i][4] == 0) {
+                    if (PairExcitationOperator[i][4] == 0) {
 #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, org_isite1, org_sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1, list_1)
                         for (j = 1; j <= i_max; j++) {
                             num1 = BitCheckGeneral(list_1[j], org_isite1, org_sigma1, X->Def.SiteToBit, X->Def.Tpow);
