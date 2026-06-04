@@ -22,6 +22,7 @@
 #include "CalcTime.h"
 #include "SingleEx.h"
 #include "PairEx.h"
+#include "ExcitationSectorShift.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
 #include "./common/setmemory.h"
@@ -98,6 +99,7 @@ int CalcSpectrum(
     int iFlagListModified = FALSE;
     FILE *fp;
     double dnorm = 0.0;
+    double complex *v0_Bra = NULL; //!< bra excited state B|phi> for off-diagonal spectrum (NULL = diagonal)
 
     //ToDo: Nomega should be given as a parameter
     int Nomega;
@@ -136,12 +138,48 @@ int CalcSpectrum(
     fprintf(stderr, "Error: Any excitation operators are not defined.\n");
     exitMPI(-1);
   }
-  /* TODO(off-diagonal step 8/9): the bra excitation is not yet wired into the
-     BiCG projection, so accepting it here would silently return the diagonal
-     G_AA. Hard-reject until the off-diagonal call and its guards are added. */
+  /* Off-diagonal (bra) excitation input validation. All checks are bra-gated:
+     with no *Bra input this block is skipped and the diagonal path is unchanged. */
   if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
-    fprintf(stderr, "Error: SingleExcitationBra/PairExcitationBra (off-diagonal spectrum) is not yet supported in this build.\n");
-    exitMPI(-1);
+    int ketSingle = (X->Bind.Def.NSingleExcitationOperator > 0);
+    int ketPair   = (X->Bind.Def.NPairExcitationOperator > 0);
+    int braSingle = (X->Bind.Def.NSingleExcitationOperatorBra > 0);
+    int braPair   = (X->Bind.Def.NPairExcitationOperatorBra > 0);
+    int isGeneralSpin = X->Bind.Def.iFlgGeneralSpin;
+    int iCalcModel = X->Bind.Def.iCalcModel;
+    SectorShift ketShift, braShift;
+    if (X->Bind.Def.iCalcType != CG) {
+      fprintf(stderr, "Error: off-diagonal (bra) spectrum requires method=\"CG\".\n");
+      exitMPI(-1);
+    }
+    if (braSingle && braPair) {
+      fprintf(stderr, "Error: SingleExcitationBra and PairExcitationBra cannot be used together.\n");
+      exitMPI(-1);
+    }
+    if (ketSingle != braSingle || ketPair != braPair) {
+      fprintf(stderr, "Error: ket and bra excitation operators must be the same type (both single or both pair).\n");
+      exitMPI(-1);
+    }
+    if (ketSingle) {
+      ketShift = GetExcitationOperatorSetShift(iCalcModel, isGeneralSpin, FALSE,
+                   X->Bind.Def.SingleExcitationOperator, X->Bind.Def.NSingleExcitationOperator);
+      braShift = GetExcitationOperatorSetShift(iCalcModel, isGeneralSpin, FALSE,
+                   X->Bind.Def.SingleExcitationOperatorBra, X->Bind.Def.NSingleExcitationOperatorBra);
+    } else {
+      ketShift = GetExcitationOperatorSetShift(iCalcModel, isGeneralSpin, TRUE,
+                   X->Bind.Def.PairExcitationOperator, X->Bind.Def.NPairExcitationOperator);
+      braShift = GetExcitationOperatorSetShift(iCalcModel, isGeneralSpin, TRUE,
+                   X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.NPairExcitationOperatorBra);
+    }
+    if (ketShift.valid == FALSE || braShift.valid == FALSE) {
+      fprintf(stderr, "Error: off-diagonal spectrum is not supported for this model, or an excitation operator set mixes inconsistent sector shifts.\n");
+      exitMPI(-1);
+    }
+    if (ketShift.dNe != braShift.dNe || ketShift.dNup != braShift.dNup ||
+        ketShift.dNdown != braShift.dNdown || ketShift.dTotal2Sz != braShift.dTotal2Sz) {
+      fprintf(stderr, "Error: ket and bra excitation operators map to different Hilbert sectors (sector mismatch).\n");
+      exitMPI(-1);
+    }
   }
   //Make New Lists
   if (MakeExcitedList(&(X->Bind), &iFlagListModified) == FALSE) {
@@ -225,6 +263,17 @@ int CalcSpectrum(
       v1[i] = v0[i] / dnorm;
     }
 
+    //Build the bra excited state B|phi> (un-normalized) for off-diagonal spectrum.
+    if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
+      ExcitationOperatorSet braSet = {
+        X->Bind.Def.NSingleExcitationOperatorBra, X->Bind.Def.SingleExcitationOperatorBra,
+        X->Bind.Def.ParaSingleExcitationOperatorBra, X->Bind.Def.NPairExcitationOperatorBra,
+        X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.ParaPairExcitationOperatorBra};
+      v0_Bra = cd_1d_allocate(X->Bind.Check.idim_max + 1);
+      for (i = 0; i <= X->Bind.Check.idim_max; i++) v0_Bra[i] = 0;
+      GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org);
+    }
+
     //Output excited vector
     if (X->Bind.Def.iOutputExVec == 1) {
       fprintf(stdoutMPI, "  Start:   Output an excited vector.\n\n");
@@ -273,7 +322,7 @@ int CalcSpectrum(
 
     case CG:
 
-      iret = CalcSpectrumByBiCG(X, v0, v0, v1, vg, Nomega, dcSpectrum, dcomega);
+      iret = CalcSpectrumByBiCG(X, v0, (v0_Bra != NULL) ? v0_Bra : v0, v1, vg, Nomega, dcSpectrum, dcomega);
 
       if (iret != TRUE) {
         //Error Message will be added.
@@ -301,6 +350,8 @@ int CalcSpectrum(
       break;
   }
   StopTimer(6200);
+
+  if (v0_Bra != NULL) free_cd_1d_allocate(v0_Bra);
 
   if (iret != TRUE) {
     fprintf(stderr, "  Error: The selected calculation type is not supported for calculating spectrum mode.\n");
