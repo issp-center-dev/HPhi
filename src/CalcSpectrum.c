@@ -262,7 +262,7 @@ int CalcSpectrum(
 
     case CG:
 
-      iret = CalcSpectrumByBiCG(X, v0, v1, vg, Nomega, dcSpectrum, dcomega);
+      iret = CalcSpectrumByBiCG(X, v0, v0, v1, vg, Nomega, dcSpectrum, dcomega);
 
       if (iret != TRUE) {
         //Error Message will be added.
