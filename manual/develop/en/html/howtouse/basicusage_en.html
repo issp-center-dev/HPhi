@@ -206,6 +206,12 @@ greenone.def  modpara.def   zInterAll.def zlocspn.def
 <div><p>When the model is selected as the Fermion Hubbard model or Kondo model by setting <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number must be equal to <span class="math notranslate nohighlight">\(4^n\)</span>. See <a class="reference internal" href="../filespecification/expertmode_en/CalcMod_file_en.html#subsec-calcmod"><span class="std std-ref">CalcMod file</span></a> for details of the <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> file.</p>
 </div></blockquote>
 <ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> model</p></li>
+</ul>
+<blockquote>
+<div><p>When the model is selected as the <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> model by setting <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> in a <strong>CalcMod</strong> file, the process number must be equal to <span class="math notranslate nohighlight">\(4^n\)</span>, the same as for the Fermion Hubbard model. Although a physical site of the <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> model has three states (empty, up, or down), the internal representation keeps four states per site, so the process number is a power of four (<strong>not</strong> three); a process whose inter-process site is doubly occupied simply has zero local dimension.</p>
+</div></blockquote>
+<ul class="simple">
 <li><p>Spin model</p></li>
 </ul>
 <blockquote>

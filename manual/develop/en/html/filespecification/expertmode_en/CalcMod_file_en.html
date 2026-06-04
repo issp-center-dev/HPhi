@@ -103,15 +103,29 @@ particles or conservation of particles and the component of
 particles, the component of <span class="math notranslate nohighlight">\(S_z\)</span>)</div>
 <div class="line">3: Fermion Hubbard model (grand canonical ensemble)</div>
 <div class="line">4: Spin model (grand canonical ensemble)</div>
-<div class="line">5: Kondo lattice model (grand canonical ensemble)</div>
+<div class="line">5: Kondo lattice model (grand canonical ensemble).</div>
 <div class="line">7: Spinless fermion model (canonical ensemble: conservation of particles)</div>
 <div class="line">8: Spinless fermion model (grand canonical ensemble).</div>
+<div class="line">9: <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> model (canonical ensemble: conservation of
+particles, or conservation of particles and the component of
+<span class="math notranslate nohighlight">\(S_z\)</span>)</div>
+<div class="line">10: <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> model (grand canonical ensemble)</div>
 </div>
 <p>For the fermion Hubbard model, you can select the model under the
 conservation of the particles by setting <code class="docutils literal notranslate"><span class="pre">NCond</span></code> in the ModPara
 file. When you want to select the model under the conservation of
 particles and the component of <span class="math notranslate nohighlight">\(S_z\)</span>, set both <code class="docutils literal notranslate"><span class="pre">NCond</span></code> and
 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> in the ModPara file.</p>
+<p>The <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span> models (9, 10) follow the same <code class="docutils literal notranslate"><span class="pre">NCond</span></code> /
+<code class="docutils literal notranslate"><span class="pre">2Sz</span></code> selection as the fermion Hubbard model: for the canonical model
+(9), setting only <code class="docutils literal notranslate"><span class="pre">NCond</span></code> conserves the total number of electrons,
+while setting both <code class="docutils literal notranslate"><span class="pre">NCond</span></code> and <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> also conserves <span class="math notranslate nohighlight">\(S_z\)</span>.
+Doubly-occupied sites are excluded from the Hilbert space (the local
+dimension per site is 3: empty, up, or down), and the models are
+available only in the expert mode. Note that for MPI runs the number of
+processes must nevertheless be a power of four, the same as for the
+Fermion Hubbard model (<strong>not</strong> a power of three), because the internal
+representation keeps four states per site.</p>
 <p>For the spinless fermion model, only Trans (hopping) and CoulombInter
 (inter-site interaction) terms are valid. CoulombIntra, Hund, Exchange,
 and PairHop cannot be used since there are no spin degrees of freedom.</p>

@@ -110,8 +110,12 @@ Hubbard模型(グランドカノニカル：粒子数・<span class="math notran
 <div class="line">5: 近藤模型(グランドカノニカル：粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>非保存)</div>
 <div class="line">7: スピンレスフェルミオン模型(カノニカル：粒子数保存)</div>
 <div class="line">8: スピンレスフェルミオン模型(グランドカノニカル：粒子数非保存)</div>
-<div class="line">を選択することが出来ます。
+<div class="line">9: <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型(カノニカル：粒子数保存、または粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>保存)</div>
+<div class="line">10: <span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型(グランドカノニカル)</div>
+<div class="line">を選択することが出来ます。 fermion
 Hubbard模型で粒子数保存・<span class="math notranslate nohighlight">\(S_z\)</span>非保存を選択する場合は、粒子数のみを指定することで計算が可能となります。</div>
+<div class="line"><span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型(9, 10)は fermion
+Hubbard模型と同じく <code class="docutils literal notranslate"><span class="pre">NCond</span></code> / <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> で保存量を選択します(カノニカル(9)で <code class="docutils literal notranslate"><span class="pre">NCond</span></code> のみを指定すると全電子数保存、<code class="docutils literal notranslate"><span class="pre">NCond</span></code> と <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> の両方を指定すると<span class="math notranslate nohighlight">\(S_z\)</span>も保存)。二重占有した状態はヒルベルト空間から除外されます(各サイトの局所次元は空・上・下の3)。これらはエキスパートモードでのみ利用可能です。なお MPI 並列のプロセス数は、局所次元が3であっても fermion Hubbard模型と同じく4のべき乗(<strong>3のべき乗ではありません</strong>)です。これは内部表現が1サイトあたり4状態を保持するためです。</div>
 <div class="line">スピンレスフェルミオン模型では、Trans(ホッピング項)とCoulombInter(サイト間相互作用)のみが有効です。
 CoulombIntra, Hund, Exchange, PairHopはスピン自由度がないため使用できません。</div>
 </div>

@@ -30,6 +30,7 @@ var structDefineList =
     [ "iFlgCalcSpec", "structDefineList.html#af68333a432a614152ea2a2f3b7caf843", null ],
     [ "iFlgFiniteTemperature", "structDefineList.html#a79c0f53b3caaed77582dc56b2fe6f5a5", null ],
     [ "iFlgGeneralSpin", "structDefineList.html#a854332d8078d94fd71f022a8a85fe972", null ],
+    [ "iFlgInvalidProc", "structDefineList.html#ab5028a10ac50d9323ffdd80be1af46bd", null ],
     [ "iFlgMPI", "structDefineList.html#a8b8b7095683e899f49ffe5746c019e4b", null ],
     [ "iFlgScaLAPACK", "structDefineList.html#a632bce9eee2252cb4a7f184a5bb749d5", null ],
     [ "iFlgSpecOmegaMax", "structDefineList.html#a1beb614fe91643dbf2d4c9a941973d91", null ],

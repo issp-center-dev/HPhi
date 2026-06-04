@@ -13,8 +13,10 @@ var sz_8c =
     [ "calculate_jb_Spin_m1", "sz_8c.html#aaa91aefd2da2e14271254585092befc4", null ],
     [ "calculate_jb_Spin_Old", "sz_8c.html#aad36d61706e569f5badaf05422c82e6a", null ],
     [ "calculate_jb_tJ", "sz_8c.html#aa5ac2ebd6fa5ea53d2a7a4810387625e", null ],
+    [ "calculate_jb_tJ_Hacker", "sz_8c.html#a48c67d4a851d6f3f5dc4350864d609b0", null ],
     [ "calculate_jb_tJGC", "sz_8c.html#a139c223f232ad3fadb20be4a66bf1160", null ],
     [ "calculate_jb_tJNConserved", "sz_8c.html#aef5b567f03c4aaf32f6aa641206832cb", null ],
+    [ "calculate_jb_tJNConserved_Hacker", "sz_8c.html#afb9601cc19834adb4f939998b598cca2", null ],
     [ "compare_ulong", "sz_8c.html#a6b08e0fd9e16a6ea84c201abe54ec187", null ],
     [ "count_localized_spins", "sz_8c.html#aa6a5be1419ef664749d7c2b2d4860631", null ],
     [ "make_true_spin", "sz_8c.html#a122da1770c708d6298f6939dedc542a3", null ],
@@ -29,6 +31,7 @@ var sz_8c =
     [ "omp_sz_spin_hacker", "sz_8c.html#a12b4255ef0dd052ca4fcf80dd45d8853", null ],
     [ "omp_sz_tJ", "sz_8c.html#a2b4e7fdb842deb784b3e536ec3db0ddd", null ],
     [ "Read_sz", "sz_8c.html#af01a29b319a21fbaeb2a099bedd86e77", null ],
+    [ "setup_tj_odd_split_guard", "sz_8c.html#a33aab3ddcf11d1105b6e92c9bdf90185", null ],
     [ "sz", "sz_8c.html#ac329cb57c6b95deb1189bad49505e9ba", null ],
     [ "sz_hacker_for_large_systems", "sz_8c.html#a3d5b0dc8fddb3173e1a79da43df165fd", null ],
     [ "update_lists", "sz_8c.html#aa7e0ac1848def68ae59b0e08141d1bb7", null ]

@@ -131,8 +131,12 @@ For using MPI/hybrid parallelization, the process number must be set as follows.
   
    When the model is selected as the Fermion Hubbard model or Kondo model by setting ``CalcModel`` in a **CalcMod** file, the process number must be equal to :math:`4^n`. See :ref:`Subsec:calcmod` for details of the ``CalcModel`` file. 
    
+  * :math:`t`-:math:`J` model
+
+   When the model is selected as the :math:`t`-:math:`J` model by setting ``CalcModel`` in a **CalcMod** file, the process number must be equal to :math:`4^n`, the same as for the Fermion Hubbard model. Although a physical site of the :math:`t`-:math:`J` model has three states (empty, up, or down), the internal representation keeps four states per site, so the process number is a power of four (**not** three); a process whose inter-process site is doubly occupied simply has zero local dimension.
+
   * Spin model
-  
+
    When the model is selected as the spin model by setting ``CalcModel`` in a **CalcMod** file, the process number is fixed by a **LocSpin** file. The process number must be equal to the number calculated by multiplying the state number of the localized spin (``2S`` +1) in descending order by the site number. See :ref:`Subsec:locspn` for details of the **LocSpin** file.
    
    For example, when a **LocSpin** file is given as follows, the process number must be equal to :math:`2=1+1,~6=2\times(2+1),~24=6\times(3+1)`.
