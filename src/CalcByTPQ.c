@@ -257,9 +257,11 @@ int CalcByTPQ(
       step_iO=0;
     }
 
+    int progress_interval = (X->Bind.Def.Lanczos_max - step_iO) / 10;
+    if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 for small (Lanczos_max - step_iO) */
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
-      if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
+      if(step_i % progress_interval == 0){
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;

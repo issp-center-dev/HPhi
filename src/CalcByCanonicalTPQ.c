@@ -273,12 +273,14 @@ int CalcByCanonicalTPQ(
             } 
             //printf("num_lines = %d  %d %d \n",num_lines,X->Bind.Def.istep,X->Bind.Def.Lanczos_max);
         }
+        int progress_interval = (X->Bind.Def.Lanczos_max - step_iO) / 10;
+        if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 for small (Lanczos_max - step_iO) */
         for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
             if (flag_read_invtemp == 1){
                 X->Bind.Def.Param.ExpandCoef = read_nmax[step_i-1];
                 delta_tau                    = read_invtemp[step_i]-read_invtemp[step_i-1];
             }
-            if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
+            if(step_i % progress_interval == 0){
                 fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
             }
             X->Bind.Def.istep=step_i;

@@ -177,6 +177,8 @@ int CalcByTEM(
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
+  int progress_interval = X->Bind.Def.Lanczos_max / 10;
+  if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 when Lanczos_max < 10 */
   for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
     X->Bind.Def.istep = step_i;
 
@@ -184,7 +186,7 @@ int CalcByTEM(
     X->Bind.Def.EDNTransfer = iTransfer_org;
     X->Bind.Def.NInterAll_OffDiagonal = iInterAllOffDiagonal_org;
 
-    if (step_i % (X->Bind.Def.Lanczos_max / 10) == 0) {
+    if (step_i % progress_interval == 0) {
       fprintf(stdoutMPI, cLogTEStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
