@@ -270,6 +270,21 @@ int InitializeMPIBatchedTransfers_SpinlessFermionGC(
     free(origin_count);
     free(unique_origins);
 
+    // Debug output: show batching statistics (parity with the Hubbard/Spin
+    // models, which already print this; lets tests confirm the batched
+    // Spinless MPIsingle path actually fired).
+    {
+        int total_transfers = 0, gg;
+        for (gg = 0; gg < batched->num_groups; gg++) {
+            total_transfers += batched->groups[gg].num_transfers;
+        }
+        if (myrank == 0) {
+            fprintf(stdout, "  [MPI Batching] Spinless: %d MPIsingle transfers -> %d groups (%.1fx reduction)\n",
+                    total_transfers, batched->num_groups,
+                    batched->num_groups > 0 ? (double)total_transfers / batched->num_groups : 0.0);
+        }
+    }
+
     batched->is_initialized = 1;
     return 0;
 }
