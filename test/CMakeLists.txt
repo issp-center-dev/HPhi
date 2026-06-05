@@ -229,6 +229,7 @@ add_hphi_test_with_srcdir(te_hubbard_chain_interall)
 add_hphi_test_with_srcdir(te_hubbard_chain_interall_diagonal)
 add_hphi_test_with_srcdir(te_spin_chain_interall)
 add_hphi_test_with_srcdir(te_kondo_chain_interall)
+add_hphi_test_with_srcdir(te_small_lanczos_max)
 
 # Time evolution test labels
 set_tests_properties(
@@ -242,16 +243,23 @@ set_tests_properties(
 set_tests_properties(
     te_kondo_chain_interall
     PROPERTIES LABELS "te;kondo")
+set_tests_properties(
+    te_small_lanczos_max
+    PROPERTIES LABELS "te;validation")
 
 #
 # mTPQ
 #
 add_hphi_test_with_srcdir(tpq_spin_kagome)
 add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
+add_hphi_test(tpq_small_lanczos_max)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
     PROPERTIES LABELS "tpq;spin")
+set_tests_properties(
+    tpq_small_lanczos_max
+    PROPERTIES LABELS "tpq;validation")
 
 #
 # cTPQ
