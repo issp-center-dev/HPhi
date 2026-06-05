@@ -28,8 +28,7 @@ with z = omega + OmegaOrg + i*OmegaIm, OmegaOrg = E0.  numpy.vdot conjugates its
 first argument, mirroring HPhi's VecProdMPI(<B phi|, .) projection.
 
 Run (requires numpy; see test/tools/README.md):
-    pyenv activate venv312
-    python test/tools/exact_diag_hubbard_offdiag.py
+    python3 test/tools/exact_diag_hubbard_offdiag.py
 
 The printed values agree with HPhi (BiCG) to ~1e-8 (single) / ~1e-6 (pair).
 """

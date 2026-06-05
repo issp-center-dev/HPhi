@@ -18,12 +18,11 @@ quantity by dense diagonalization.
 
 ## Requirements / how to run
 
-Only `numpy` is required. Activate the project Python environment first:
+Only `numpy` is required. Run with any Python 3 interpreter that has it:
 
 ```sh
-pyenv activate venv312
-python test/tools/exact_diag_hubbard_offdiag.py
-python test/tools/exact_diag_spin_offdiag.py
+python3 test/tools/exact_diag_hubbard_offdiag.py
+python3 test/tools/exact_diag_spin_offdiag.py
 ```
 
 Each script prints the ground-state energy `E0` (which equals the `OmegaOrg`

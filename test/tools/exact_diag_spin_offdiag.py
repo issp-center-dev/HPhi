@@ -29,8 +29,7 @@ SpinGC results coincide (the two HPhi tests exercise different leaves but expect
 the same values).  Works for any spin via twoS = 2S.
 
 Run (requires numpy; see test/tools/README.md):
-    pyenv activate venv312
-    python test/tools/exact_diag_spin_offdiag.py
+    python3 test/tools/exact_diag_spin_offdiag.py
 
 The printed values agree with HPhi (BiCG) to ~1e-8.
 """
