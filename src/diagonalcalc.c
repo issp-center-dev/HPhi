@@ -218,12 +218,27 @@ int diagonalcalcForTE
   long unsigned int A_spin, B_spin;
   double tmp_V;
 
+  /* The diagonal time-evolution handlers (SetDiagonalTE{Transfer,Chemi,InterAll})
+     do not implement SpinlessFermion / SpinlessFermionGC. A diagonal TE term on a
+     spinless model would otherwise be silently dropped, giving wrong dynamics, so
+     reject it here with a clear message. Spinless TE with only off-diagonal terms
+     has no diagonal TE term at this step and is unaffected. */
+  if ((X->Def.iCalcModel == SpinlessFermion || X->Def.iCalcModel == SpinlessFermionGC)
+      && (X->Def.NTETransferDiagonal[_istep] > 0 || X->Def.NTEInterAllDiagonal[_istep] > 0)) {
+    fprintf(stdoutMPI,
+            "Error: time evolution with diagonal one-body / two-body terms is not "
+            "supported for SpinlessFermion / SpinlessFermionGC.\n");
+    exitMPI(-1);
+  }
+
   if (X->Def.NTETransferDiagonal[_istep] > 0) {
     for (i = 0; i < X->Def.NTETransferDiagonal[_istep]; i++) {
       isite1 = X->Def.TETransferDiagonal[_istep][i][0] + 1;
       A_spin = X->Def.TETransferDiagonal[_istep][i][1];
       tmp_V = -X->Def.ParaTETransferDiagonal[_istep][i];
-      SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1);
+      if (SetDiagonalTETransfer(isite1, tmp_V, A_spin, X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
     }
   }
   else if (X->Def.NTEInterAllDiagonal[_istep] >0) {

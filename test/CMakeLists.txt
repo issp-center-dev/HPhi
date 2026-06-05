@@ -67,6 +67,7 @@ add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
 add_hphi_test(lanczos_hubbard_square_restart)
@@ -101,7 +102,7 @@ set_tests_properties(
     lanczos_tjgc_dimension lanczos_tjgc_exchange
     PROPERTIES LABELS "lanczos;tjgc")
 set_tests_properties(
-    lanczos_spinless lanczos_spinless_GC
+    lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
 set_tests_properties(
     spinless_onebody_sigma_validation
@@ -230,6 +231,7 @@ add_hphi_test_with_srcdir(te_hubbard_chain_interall_diagonal)
 add_hphi_test_with_srcdir(te_spin_chain_interall)
 add_hphi_test_with_srcdir(te_kondo_chain_interall)
 add_hphi_test_with_srcdir(te_small_lanczos_max)
+add_hphi_test_with_srcdir(te_spinless_diagonal_reject)
 
 # Time evolution test labels
 set_tests_properties(
@@ -246,6 +248,9 @@ set_tests_properties(
 set_tests_properties(
     te_small_lanczos_max
     PROPERTIES LABELS "te;validation")
+set_tests_properties(
+    te_spinless_diagonal_reject
+    PROPERTIES LABELS "te;spinless;validation")
 
 #
 # mTPQ
@@ -328,10 +333,20 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody min:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard_twobody min:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence min:4)
+    # batched-vs-nobatch equivalence for the paths the base test does not reach:
+    # MPIdouble (np=16), HubbardGC off-diagonal InterAll, SpinGC PairLift, Spinless.
+    add_hphi_mpi_test(mpi_nobatch_equivalence_mpidouble exact:16)
+    add_hphi_mpi_test(mpi_nobatch_equivalence_interall exact:4)
+    add_hphi_mpi_test(mpi_nobatch_equivalence_pairlift exact:4)
+    add_hphi_mpi_test_with_srcdir(mpi_nobatch_equivalence_spinless exact:4)
 
     # MPI consistency test labels
     set_tests_properties(
         mpi_nobatch_equivalence
+        mpi_nobatch_equivalence_mpidouble
+        mpi_nobatch_equivalence_interall
+        mpi_nobatch_equivalence_pairlift
+        mpi_nobatch_equivalence_spinless
         PROPERTIES LABELS "mpi;nobatch")
     set_tests_properties(
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard

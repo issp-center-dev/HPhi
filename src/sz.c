@@ -2242,6 +2242,7 @@ void calculate_jb_Spin_Old(struct BindStruct *X, long unsigned int *list_jb, lon
     int num_up,all_up;
     long int **comb;
     comb = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
+    jb   = 0;
     for(ib=0;ib<X->Check.sdim;ib++){
         list_jb[ib] = jb;
         i           = ib*ihfbit;
