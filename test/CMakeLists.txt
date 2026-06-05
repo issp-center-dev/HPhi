@@ -67,6 +67,7 @@ add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
 add_hphi_test(lanczos_hubbard_square_restart)
@@ -101,7 +102,7 @@ set_tests_properties(
     lanczos_tjgc_dimension lanczos_tjgc_exchange
     PROPERTIES LABELS "lanczos;tjgc")
 set_tests_properties(
-    lanczos_spinless lanczos_spinless_GC
+    lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
 set_tests_properties(
     spinless_onebody_sigma_validation
@@ -229,6 +230,7 @@ add_hphi_test_with_srcdir(te_hubbard_chain_interall)
 add_hphi_test_with_srcdir(te_hubbard_chain_interall_diagonal)
 add_hphi_test_with_srcdir(te_spin_chain_interall)
 add_hphi_test_with_srcdir(te_kondo_chain_interall)
+add_hphi_test_with_srcdir(te_spinless_diagonal_reject)
 
 # Time evolution test labels
 set_tests_properties(
@@ -242,6 +244,9 @@ set_tests_properties(
 set_tests_properties(
     te_kondo_chain_interall
     PROPERTIES LABELS "te;kondo")
+set_tests_properties(
+    te_spinless_diagonal_reject
+    PROPERTIES LABELS "te;spinless;validation")
 
 #
 # mTPQ
