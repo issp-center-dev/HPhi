@@ -88,6 +88,11 @@ The batched communication is implemented for:
 * Hubbard models (MPIsingle, MPIdouble; InterAll for HubbardGC only)
 * Spin models (Exchange MPIsingle; SpinGC also batches PairLift)
 
+In MPI builds, batched communication is enabled by default. No input-file
+option is required. The optimization changes the communication/apply path for
+supported inter-process terms, but it is designed to reproduce the same
+numerical result as the conventional per-term MPI path.
+
 .. note::
 
    **Limitation in Time-Evolution (TimeEvolution) mode**
@@ -112,7 +117,8 @@ Disabling batched communication
 Set the environment variable ``HPHI_MPI_NOBATCH=1`` to disable MPI
 communication batching globally and fall back to the original per-term MPI
 exchanges. This is intended for debugging and for verifying that the batched
-optimization reproduces the unbatched result::
+optimization reproduces the unbatched result. It can also be used to compare
+performance with the conventional path on a particular machine and input::
 
    export HPHI_MPI_NOBATCH=1
    mpirun -np 4 ./HPhi -e namelist.def
