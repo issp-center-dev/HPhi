@@ -115,6 +115,20 @@ void setmem_def
   X->Def.InterAll = i_2d_allocate(X->Def.NInterAll, 8);
   X->Def.ParaInterAll = cd_1d_allocate(X->Def.NInterAll);
 
+  {
+    const unsigned int nbody_terms = X->Def.NNBodyInterAll > 0 ? X->Def.NNBodyInterAll : 1;
+    const unsigned int nbody_factors = X->Def.NBodyInterAll_TotalFactors > 0 ? X->Def.NBodyInterAll_TotalFactors : 1;
+    X->Def.NBodyInterAll_N = ui_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_Offset = ui_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_Factors = i_2d_allocate(nbody_factors, 4);
+    X->Def.ParaNBodyInterAll = cd_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_CanonicalN = ui_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_CanonicalOffset = ui_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_CanonicalFactors = i_2d_allocate(nbody_factors, 4);
+    X->Def.NBodyInterAll_DiagonalIndex = ui_1d_allocate(nbody_terms);
+    X->Def.NBodyInterAll_OffDiagonalIndex = ui_1d_allocate(nbody_terms);
+  }
+
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 

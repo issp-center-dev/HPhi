@@ -1,0 +1,510 @@
+/* HPhi  -  Quantum Lattice Model Simulator */
+/* Copyright (C) 2015 The University of Tokyo */
+
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+
+#ifdef MPI
+#include <mpi.h>
+#endif
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include "nbody_interall.h"
+#include "mltplyCommon.h"
+#include "wrapperMPI.h"
+
+static int parse_unsigned_token(const char **pp, unsigned int *value)
+{
+  char *end = NULL;
+  unsigned long v;
+  const char *p = *pp;
+  while (isspace((unsigned char)*p)) p++;
+  if (*p == '\0' || *p == '-' || *p == '+') return -1;
+  errno = 0;
+  v = strtoul(p, &end, 10);
+  if (errno != 0 || end == p || v > UINT_MAX) return -1;
+  *value = (unsigned int)v;
+  *pp = end;
+  return 0;
+}
+
+static int parse_int_token(const char **pp, int *value)
+{
+  char *end = NULL;
+  long v;
+  const char *p = *pp;
+  while (isspace((unsigned char)*p)) p++;
+  if (*p == '\0') return -1;
+  errno = 0;
+  v = strtol(p, &end, 10);
+  if (errno != 0 || end == p || v < INT_MIN || v > INT_MAX) return -1;
+  *value = (int)v;
+  *pp = end;
+  return 0;
+}
+
+static int parse_double_token(const char **pp, double *value)
+{
+  char *end = NULL;
+  double v;
+  const char *p = *pp;
+  while (isspace((unsigned char)*p)) p++;
+  if (*p == '\0') return -1;
+  errno = 0;
+  v = strtod(p, &end);
+  if (errno != 0 || end == p || !isfinite(v)) return -1;
+  *value = v;
+  *pp = end;
+  return 0;
+}
+
+int ParseNBodyInterAllLine(
+  const char *line,
+  unsigned int *N,
+  int **factors,
+  double *re,
+  double *im
+) {
+  const char *p = line;
+  unsigned int n;
+  unsigned int k;
+  int *buf;
+  size_t nints;
+
+  if (parse_unsigned_token(&p, &n) != 0 || n == 0) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll line has an invalid factor count.\n");
+    return -1;
+  }
+  if (n > UINT_MAX / 4) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll line is too large.\n");
+    return -1;
+  }
+#if SIZE_MAX < UINT_MAX
+  if ((size_t)n > SIZE_MAX / 4 / sizeof(int)) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll line is too large.\n");
+    return -1;
+  }
+#endif
+  nints = (size_t)4 * n;
+  buf = (int *)malloc(nints * sizeof(int));
+  if (buf == NULL) {
+    fprintf(stdoutMPI, "Error: Failed to allocate NBodyInterAll parser buffer.\n");
+    return -1;
+  }
+  for (k = 0; k < 4 * n; k++) {
+    if (parse_int_token(&p, &buf[k]) != 0) {
+      fprintf(stdoutMPI, "Error: NBodyInterAll line has too few integer fields.\n");
+      free(buf);
+      return -1;
+    }
+  }
+  if (parse_double_token(&p, re) != 0 || parse_double_token(&p, im) != 0) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll line has invalid coefficient fields.\n");
+    free(buf);
+    return -1;
+  }
+  while (isspace((unsigned char)*p)) p++;
+  if (*p != '\0') {
+    fprintf(stdoutMPI, "Error: NBodyInterAll line has extra fields.\n");
+    free(buf);
+    return -1;
+  }
+
+  *N = n;
+  *factors = buf;
+  return 0;
+}
+
+int ValidateNBodyInterAllScope(const struct DefineList *D)
+{
+  unsigned int t, k;
+  if (D->NNBodyInterAll == 0) return 0;
+  if (D->iCalcModel != SpinGC) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC.\n");
+    return -1;
+  }
+  if (D->iFlgGeneralSpin != FALSE) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for spin-1/2 SpinGC.\n");
+    return -1;
+  }
+  if (D->iCalcType == TimeEvolution) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in TimeEvolution.\n");
+    return -1;
+  }
+  for (t = 0; t < D->NNBodyInterAll; t++) {
+    const unsigned int off = D->NBodyInterAll_Offset[t];
+    for (k = 0; k < D->NBodyInterAll_N[t]; k++) {
+      const int *f = D->NBodyInterAll_Factors[off + k];
+      if (f[0] < 0 || f[0] >= (int)D->Nsite || f[2] < 0 || f[2] >= (int)D->Nsite) {
+        fprintf(stdoutMPI, "Error: Site index of NBodyInterAll is incorrect.\n");
+        return -1;
+      }
+      if (f[0] != f[2]) {
+        fprintf(stdoutMPI, "Error: NBodyInterAll currently requires site_out == site_in for every factor.\n");
+        return -1;
+      }
+      if (f[1] < 0 || f[1] > 1 || f[3] < 0 || f[3] > 1) {
+        fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+static int find_site(const int *sites, unsigned int n, int site)
+{
+  unsigned int i;
+  for (i = 0; i < n; i++) {
+    if (sites[i] == site) return (int)i;
+  }
+  return -1;
+}
+
+static void sort_canonical(int *sites, int *outs, int *ins, unsigned int n)
+{
+  unsigned int i, j;
+  for (i = 0; i < n; i++) {
+    for (j = i + 1; j < n; j++) {
+      if (sites[j] < sites[i]) {
+        int ts = sites[i], to = outs[i], ti = ins[i];
+        sites[i] = sites[j];
+        outs[i] = outs[j];
+        ins[i] = ins[j];
+        sites[j] = ts;
+        outs[j] = to;
+        ins[j] = ti;
+      }
+    }
+  }
+}
+
+int NormalizeNBodyInterAllTerms(struct DefineList *D)
+{
+  unsigned int t, k;
+  unsigned int total = 0;
+
+  D->NBodyInterAll_TotalCanonicalFactors = 0;
+  for (t = 0; t < D->NNBodyInterAll; t++) {
+    const unsigned int nraw = D->NBodyInterAll_N[t];
+    const unsigned int off = D->NBodyInterAll_Offset[t];
+    int *sites = (int *)malloc(nraw * sizeof(int));
+    int *outs = (int *)malloc(nraw * sizeof(int));
+    int *ins = (int *)malloc(nraw * sizeof(int));
+    unsigned int ncanon = 0;
+    if (sites == NULL || outs == NULL || ins == NULL) {
+      fprintf(stdoutMPI, "Error: Failed to allocate NBodyInterAll normalization buffer.\n");
+      free(sites);
+      free(outs);
+      free(ins);
+      return -1;
+    }
+
+    for (k = 0; k < nraw; k++) {
+      const int *f = D->NBodyInterAll_Factors[off + k];
+      const int site = f[0];
+      const int spin_out = f[1];
+      const int spin_in = f[3];
+      const int pos = find_site(sites, ncanon, site);
+      if (pos < 0) {
+        sites[ncanon] = site;
+        outs[ncanon] = spin_out;
+        ins[ncanon] = spin_in;
+        ncanon++;
+      }
+      else {
+        if (ins[pos] != spin_out) {
+          fprintf(stdoutMPI, "Error: NBodyInterAll contains a zero same-site operator product.\n");
+          free(sites);
+          free(outs);
+          free(ins);
+          return -1;
+        }
+        ins[pos] = spin_in;
+      }
+    }
+
+    sort_canonical(sites, outs, ins, ncanon);
+    D->NBodyInterAll_CanonicalOffset[t] = total;
+    D->NBodyInterAll_CanonicalN[t] = ncanon;
+    for (k = 0; k < ncanon; k++) {
+      D->NBodyInterAll_CanonicalFactors[total + k][0] = sites[k];
+      D->NBodyInterAll_CanonicalFactors[total + k][1] = outs[k];
+      D->NBodyInterAll_CanonicalFactors[total + k][2] = sites[k];
+      D->NBodyInterAll_CanonicalFactors[total + k][3] = ins[k];
+    }
+    total += ncanon;
+    free(sites);
+    free(outs);
+    free(ins);
+  }
+  D->NBodyInterAll_TotalCanonicalFactors = total;
+  return 0;
+}
+
+int ClassifyNBodyInterAllTerms(struct DefineList *D)
+{
+  unsigned int t, k;
+  D->NNBodyInterAll_Diagonal = 0;
+  D->NNBodyInterAll_OffDiagonal = 0;
+  for (t = 0; t < D->NNBodyInterAll; t++) {
+    const unsigned int n = D->NBodyInterAll_CanonicalN[t];
+    const unsigned int off = D->NBodyInterAll_CanonicalOffset[t];
+    int diagonal = TRUE;
+    for (k = 0; k < n; k++) {
+      const int *f = D->NBodyInterAll_CanonicalFactors[off + k];
+      if (f[1] != f[3]) {
+        diagonal = FALSE;
+        break;
+      }
+    }
+    if (diagonal == TRUE) {
+      if (fabs(cimag(D->ParaNBodyInterAll[t])) > eps_CheckImag0) {
+        fprintf(stdoutMPI, "Error: Diagonal NBodyInterAll term has a finite imaginary part.\n");
+        return -1;
+      }
+      D->NBodyInterAll_DiagonalIndex[D->NNBodyInterAll_Diagonal++] = t;
+    }
+    else {
+      D->NBodyInterAll_OffDiagonalIndex[D->NNBodyInterAll_OffDiagonal++] = t;
+    }
+  }
+  return 0;
+}
+
+int CheckNBodyInterAllHermitePairs(const struct DefineList *D)
+{
+  unsigned int p, k;
+  if (D->NNBodyInterAll_OffDiagonal % 2 != 0) {
+    fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll terms must appear as adjacent Hermite pairs.\n");
+    return -1;
+  }
+  for (p = 0; p < D->NNBodyInterAll_OffDiagonal; p += 2) {
+    const unsigned int t0 = D->NBodyInterAll_OffDiagonalIndex[p];
+    const unsigned int t1 = D->NBodyInterAll_OffDiagonalIndex[p + 1];
+    const unsigned int n0 = D->NBodyInterAll_CanonicalN[t0];
+    const unsigned int n1 = D->NBodyInterAll_CanonicalN[t1];
+    const unsigned int off0 = D->NBodyInterAll_CanonicalOffset[t0];
+    const unsigned int off1 = D->NBodyInterAll_CanonicalOffset[t1];
+    if (t1 != t0 + 1 || n0 != n1) {
+      fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll terms must appear as adjacent Hermite pairs.\n");
+      return -1;
+    }
+    for (k = 0; k < n0; k++) {
+      const int *f0 = D->NBodyInterAll_CanonicalFactors[off0 + k];
+      const int *f1 = D->NBodyInterAll_CanonicalFactors[off1 + k];
+      if (f0[0] != f1[0] || f0[1] != f1[3] || f0[3] != f1[1]) {
+        fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll Hermite pair has inconsistent factors.\n");
+        return -1;
+      }
+    }
+    if (cabs(D->ParaNBodyInterAll[t1] - conj(D->ParaNBodyInterAll[t0])) > eps_CheckImag0) {
+      fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll Hermite pair has inconsistent coefficients.\n");
+      return -1;
+    }
+  }
+  return 0;
+}
+
+int ApplyNBodyInterAllSpinGC(
+  const struct BindStruct *X,
+  unsigned int term_index,
+  unsigned long int local_in,
+  int rank_in,
+  unsigned long int *local_out,
+  int *rank_out,
+  double complex *matrix_element
+) {
+  const struct DefineList *D = &X->Def;
+  unsigned int k;
+  unsigned long int lo = local_in;
+  int ro = rank_in;
+  const unsigned int n = D->NBodyInterAll_CanonicalN[term_index];
+  const unsigned int off = D->NBodyInterAll_CanonicalOffset[term_index];
+
+  for (k = 0; k < n; k++) {
+    const int *f = D->NBodyInterAll_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    const int spin_out = f[1];
+    const int spin_in = f[3];
+    const unsigned long int mask = D->Tpow[site];
+    int bit;
+
+    if (site < D->Nsite) {
+      bit = (lo & mask) ? 1 : 0;
+      if (bit != spin_in) return 0;
+      if (spin_out != spin_in) {
+        if (spin_out == 1) lo |= mask;
+        else lo &= ~mask;
+      }
+    }
+    else {
+      bit = (ro & (int)mask) ? 1 : 0;
+      if (bit != spin_in) return 0;
+      if (spin_out != spin_in) {
+        if (spin_out == 1) ro |= (int)mask;
+        else ro &= ~((int)mask);
+      }
+    }
+  }
+
+  *local_out = lo;
+  *rank_out = ro;
+  *matrix_element = D->ParaNBodyInterAll[term_index];
+  return 1;
+}
+
+int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X)
+{
+  unsigned int i;
+  if (X->Def.NNBodyInterAll_Diagonal == 0) return 0;
+  if (X->Def.iCalcModel != SpinGC || X->Def.iFlgGeneralSpin != FALSE) return -1;
+
+  for (i = 0; i < X->Def.NNBodyInterAll_Diagonal; i++) {
+    const unsigned int term = X->Def.NBodyInterAll_DiagonalIndex[i];
+    const double coeff = creal(X->Def.ParaNBodyInterAll[term]);
+    const unsigned long int i_max = X->Check.idim_max;
+    unsigned long int j;
+#pragma omp parallel for default(none) shared(list_Diagonal, X) firstprivate(i_max, term, coeff, myrank) private(j)
+    for (j = 1; j <= i_max; j++) {
+      unsigned long int local_out = 0;
+      int rank_out = 0;
+      double complex me = 0.0;
+      int ret = ApplyNBodyInterAllSpinGC(X, term, j - 1, myrank, &local_out, &rank_out, &me);
+      if (ret == 1 && local_out == j - 1 && rank_out == myrank) {
+        list_Diagonal[j] += coeff;
+      }
+    }
+  }
+  return 0;
+}
+
+static int nbody_rank_flip_mask(const struct BindStruct *X, unsigned int term, int *mask)
+{
+  unsigned int k;
+  int m = 0;
+  const unsigned int n = X->Def.NBodyInterAll_CanonicalN[term];
+  const unsigned int off = X->Def.NBodyInterAll_CanonicalOffset[term];
+  for (k = 0; k < n; k++) {
+    const int *f = X->Def.NBodyInterAll_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    if (site >= X->Def.Nsite && f[1] != f[3]) {
+      m ^= (int)X->Def.Tpow[site];
+    }
+  }
+  *mask = m;
+  return 0;
+}
+
+static double complex apply_nbody_term_to_rank(
+  struct BindStruct *X,
+  unsigned int term,
+  double complex *tmp_v0,
+  const double complex *src_v1,
+  double complex *cur_v1,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+  const unsigned long int i_max = X->Check.idim_max;
+  const int do_update = (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC);
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, tmp_v0, src_v1, cur_v1) firstprivate(i_max, term, rank_in, do_update, myrank) private(j)
+  for (j = 1; j <= i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    double complex me = 0.0;
+    int ret = ApplyNBodyInterAllSpinGC(X, term, j - 1, rank_in, &local_out, &rank_out, &me);
+    if (ret == 1 && rank_out == myrank) {
+      const double complex dmv = me * src_v1[j];
+      if (do_update) tmp_v0[local_out + 1] += dmv;
+      dam_pr += conj(cur_v1[local_out + 1]) * dmv;
+    }
+  }
+  return dam_pr;
+}
+
+static double complex multiply_nbody_pair(
+  struct BindStruct *X,
+  unsigned int offdiag_pair_pos,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  const unsigned int term0 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos];
+  const unsigned int term1 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos + 1];
+  int mask = 0;
+  int origin;
+  double complex dam_pr = 0.0;
+
+  nbody_rank_flip_mask(X, term0, &mask);
+  origin = myrank ^ mask;
+  if (origin == myrank) {
+    dam_pr += apply_nbody_term_to_rank(X, term0, tmp_v0, tmp_v1, tmp_v1, myrank);
+    dam_pr += apply_nbody_term_to_rank(X, term1, tmp_v0, tmp_v1, tmp_v1, myrank);
+    return dam_pr;
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    int ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            v1buf,  X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr += apply_nbody_term_to_rank(X, term0, tmp_v0, v1buf, tmp_v1, origin);
+    dam_pr += apply_nbody_term_to_rank(X, term1, tmp_v0, v1buf, tmp_v1, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyInterAll reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
+  return dam_pr;
+}
+
+int MultiplyNBodyInterAllSpinGC(
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  unsigned int p;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != SpinGC || X->Def.iFlgGeneralSpin != FALSE) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p += 2) {
+    X->Large.prdct += multiply_nbody_pair(X, p, tmp_v0, tmp_v1);
+  }
+  return 0;
+}
+
+int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
+{
+  unsigned int p;
+  unsigned long int j;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != SpinGC || X->Def.iFlgGeneralSpin != FALSE) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
+    const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
+    for (j = 1; j <= X->Check.idim_max; j++) {
+      unsigned long int local_out = 0;
+      int rank_out = 0;
+      double complex me = 0.0;
+      int ret = ApplyNBodyInterAllSpinGC(X, term, j - 1, myrank, &local_out, &rank_out, &me);
+      if (ret == 1) {
+        if (rank_out != myrank) {
+          fprintf(stdoutMPI, "Error: FullDiag NBodyInterAll cannot handle inter-process output.\n");
+          return -1;
+        }
+        Ham[local_out + 1][j] += me;
+      }
+    }
+  }
+  return 0;
+}

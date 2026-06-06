@@ -55,6 +55,7 @@ mltplyMPISpin.o \
 mltplyMPISpinCore.o \
 mltplyMPIBoost.o \
 mltplySpin.o \
+nbody_interall.o \
 output.o \
 output_list.o \
 phys.o \
@@ -127,6 +128,7 @@ include/mltplyMPIHubbard.h \
 include/mltplyMPIHubbardCore.h \
 include/mltplyMPISpin.h \
 include/mltplyMPISpinCore.h \
+include/nbody_interall.h \
 include/output.h \
 include/output_list.h \
 include/phys.h \
@@ -210,6 +212,7 @@ mltplySpinCore.o:$(HEADERS)
 mltplyMPI.o:$(HEADERS)
 mltplyMPIBoost.o:$(HEADERS)
 mltplySpin.o:$(HEADERS)
+nbody_interall.o:$(HEADERS)
 output.o:$(HEADERS)
 output_list.o:$(HEADERS)
 phys.o:$(HEADERS)

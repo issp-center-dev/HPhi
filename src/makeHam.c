@@ -20,6 +20,7 @@
 #include "mltplySpinCore.h"
 #include "makeHam.h"
 #include "wrapperMPI.h"
+#include "nbody_interall.h"
 
 /**
  * @file   makeHam.c
@@ -410,6 +411,11 @@ int makeHam(struct BindStruct *X) {
                 Ham[tmp_off_2 + 1][j] += dmv;
               }
             }
+          }
+        }
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
           }
         }
         //Exchange
