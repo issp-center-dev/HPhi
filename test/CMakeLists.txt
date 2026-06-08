@@ -63,11 +63,13 @@ add_hphi_test(lanczos_kondogc_chain)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_spingc_nbody_interall)
+add_hphi_test(lanczos_spingc_nbody_interall_n1)
 add_hphi_test(lanczos_spingc_nbodyg)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test(nbody_interall_validation)
+add_hphi_test(nbodyg_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
@@ -108,6 +110,9 @@ set_tests_properties(
 set_tests_properties(
     lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
+set_tests_properties(
+    nbodyg_validation
+    PROPERTIES LABELS "spin;validation;nbody")
 set_tests_properties(
     spinless_onebody_sigma_validation
     PROPERTIES LABELS "spinless;validation")

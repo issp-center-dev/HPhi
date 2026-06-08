@@ -33,7 +33,7 @@ run_hphi log_sdry.txt "${hphi}" -sdry stan.in
 printf '    NBodyG  nbodyg.def\n' >> namelist.def
 cat > nbodyg.def <<EOF
 ========================
-NNBodyG 4
+NNBodyG 5
 ========================
 ========NBodyG==========
 ========================
@@ -41,6 +41,7 @@ NNBodyG 4
 1 2 1 2 0
 2 2 1 2 0 3 0 3 1
 3 0 1 0 1 2 1 2 0 3 0 3 1
+1 3 1 3 1
 EOF
 run_hphi log_serial.txt "${hphi}" -e namelist.def
 cp output/zvo_NBodyG.dat ../nbodyg_serial.dat
@@ -84,6 +85,21 @@ awk -v t="${tol}" '
 grep -q "INTER process site" mpi/log_mpi.txt || {
   echo "MPI run did not print an inter-process site summary"
   cat mpi/log_mpi.txt
+  exit 1
+}
+
+# A diagonal (mask=0) operator on an inter-process site (site 3 lives in the
+# distributed high bits for L=4, np=4) must still produce its non-zero local
+# occupation <n_{3 up}>, not a silently dropped zero.
+awk -v t="${tol}" '
+  $1 == 1 && $2 == 3 && $3 == 1 && $4 == 3 && $5 == 1 {
+    re = $6; if (re < 0) re = -re;
+    found = (re > t);
+  }
+  END { exit found ? 0 : 1; }
+' nbodyg_mpi.dat || {
+  echo "Inter-process diagonal NBodyG operator <n_{3 up}> was zero or missing"
+  cat nbodyg_mpi.dat
   exit 1
 }
 

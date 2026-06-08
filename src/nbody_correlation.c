@@ -16,7 +16,6 @@
 #include <stdlib.h>
 #include "nbody_correlation.h"
 #include "FileIO.h"
-#include "mltplyCommon.h"
 #include "wrapperMPI.h"
 
 static int parse_unsigned_token(const char **pp, unsigned int *value)
@@ -397,7 +396,6 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
   if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
 
-  X->Large.mode = M_CORR;
   for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
