@@ -69,7 +69,7 @@ target_sources(HPhi PRIVATE
 # Physical quantities
 target_sources(HPhi PRIVATE
   expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c
-  phys.c expec_energy_flct.c
+  nbody_correlation.c phys.c expec_energy_flct.c
 )
 
 # Common utilities

@@ -45,6 +45,7 @@
 #include "expec_totalspin.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
 #include "wrapperMPI.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
@@ -135,6 +136,10 @@ void phys(struct BindStruct *X, //!<[inout]
     }
     if (expec_cisajscktaltdc(X, v1) != 0) {
       fprintf(stderr, "Error: calc TwoBodyG.\n");
+      exitMPI(-1);
+    }
+    if (expec_nbodyg(X, v1) != 0) {
+      fprintf(stderr, "Error: calc NBodyG.\n");
       exitMPI(-1);
     }
     

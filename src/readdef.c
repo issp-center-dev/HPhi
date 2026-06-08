@@ -35,6 +35,7 @@
 #include "Common.h"
 #include "readdef.h"
 #include "nbody_interall.h"
+#include "nbody_correlation.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -74,7 +75,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "FourBodyG",
   "SixBodyG",
   "InvTemp",
-  "NBodyInterAll"
+  "NBodyInterAll",
+  "NBodyG"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -483,7 +485,7 @@ static char *ReadNBodyLineMPI(FILE *fp, size_t *len)
         cap = 256;
         line = (char *)malloc(cap);
         if (line == NULL) {
-          fprintf(stdoutMPI, "Error: Failed to allocate NBodyInterAll line buffer.\n");
+          fprintf(stdoutMPI, "Error: Failed to allocate NBody line buffer.\n");
           exitMPI(-1);
         }
       }
@@ -493,7 +495,7 @@ static char *ReadNBodyLineMPI(FILE *fp, size_t *len)
           cap *= 2;
           tmp = (char *)realloc(line, cap);
           if (tmp == NULL) {
-            fprintf(stdoutMPI, "Error: Failed to grow NBodyInterAll line buffer.\n");
+            fprintf(stdoutMPI, "Error: Failed to grow NBody line buffer.\n");
             free(line);
             exitMPI(-1);
           }
@@ -517,7 +519,7 @@ static char *ReadNBodyLineMPI(FILE *fp, size_t *len)
 
 #ifdef MPI
   if (blen > (unsigned long)INT_MAX) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll line is too long for MPI broadcast.\n");
+    fprintf(stdoutMPI, "Error: NBody line is too long for MPI broadcast.\n");
     free(line);
     exitMPI(-1);
   }
@@ -847,6 +849,46 @@ int ReadDefFileNInt(
           free(nbody_line);
         }
         if (nbody_count != X->NNBodyInterAll) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+        break;
+      case KWNBodyG:
+        /* Read NBodyG.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2, "%s %u\n", ctmp, &(X->NNBodyG));
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        X->NBodyG_TotalFactors = 0;
+        X->NBodyG_MaxN = 0;
+        nbody_count = 0;
+        while ((nbody_line = ReadNBodyLineMPI(fp, NULL)) != NULL) {
+          if (nbody_count == X->NNBodyG) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (ParseNBodyGLine(nbody_line, &nbody_N, &nbody_factors) != 0) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (X->NBodyG_TotalFactors > UINT_MAX - nbody_N) {
+            fprintf(stdoutMPI, "Error: NBodyG factor count overflow.\n");
+            free(nbody_factors);
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          X->NBodyG_TotalFactors += nbody_N;
+          if (X->NBodyG_MaxN < nbody_N) X->NBodyG_MaxN = nbody_N;
+          nbody_count++;
+          free(nbody_factors);
+          free(nbody_line);
+        }
+        if (nbody_count != X->NNBodyG) {
           fclose(fp);
           return ReadDefFileError(defname);
         }
@@ -1708,6 +1750,56 @@ int ReadDefFileIdxPara(
       }
       break;
       
+    case KWNBodyG:
+      /*nbodyg.def---------------------------------------*/
+      if (X->NNBodyG > 0) {
+        nbody_count = 0;
+        nbody_offset = 0;
+        while ((nbody_line = ReadNBodyLineMPI(fp, NULL)) != NULL) {
+          unsigned int k;
+          if (nbody_count == X->NNBodyG) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (ParseNBodyGLine(nbody_line, &nbody_N, &nbody_factors) != 0) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (nbody_offset + nbody_N > X->NBodyG_TotalFactors) {
+            fprintf(stdoutMPI, "Error: NBodyG factor count mismatch.\n");
+            free(nbody_factors);
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          X->NBodyG_N[nbody_count] = nbody_N;
+          X->NBodyG_Offset[nbody_count] = nbody_offset;
+          for (k = 0; k < nbody_N; k++) {
+            X->NBodyG_Factors[nbody_offset + k][0] = nbody_factors[4 * k + 0];
+            X->NBodyG_Factors[nbody_offset + k][1] = nbody_factors[4 * k + 1];
+            X->NBodyG_Factors[nbody_offset + k][2] = nbody_factors[4 * k + 2];
+            X->NBodyG_Factors[nbody_offset + k][3] = nbody_factors[4 * k + 3];
+          }
+          nbody_offset += nbody_N;
+          nbody_count++;
+          free(nbody_factors);
+          free(nbody_line);
+        }
+        if (nbody_count != X->NNBodyG || nbody_offset != X->NBodyG_TotalFactors) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+      }
+
+      if (ValidateNBodyGScope(X) != 0 ||
+          NormalizeNBodyGTerms(X) != 0) {
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
+      break;
+
     case KWOneBodyG:
       /*cisajs.def----------------------------------------*/
       if(X->NCisAjt>0){
@@ -3362,6 +3454,10 @@ void InitializeInteractionNum
   X->NBodyInterAll_TotalFactors=0;
   X->NBodyInterAll_TotalCanonicalFactors=0;
   X->NBodyInterAll_MaxN=0;
+  X->NNBodyG=0;
+  X->NBodyG_TotalFactors=0;
+  X->NBodyG_TotalCanonicalFactors=0;
+  X->NBodyG_MaxN=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
   X->NTBody=0;

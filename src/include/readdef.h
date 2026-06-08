@@ -56,6 +56,7 @@
 #define KWSixBodyG 23
 #define KWInvTemp 24
 #define KWNBodyInterAll 25
+#define KWNBodyG 26
 
 int CheckSite(
           const int iListToSite,

@@ -194,6 +194,18 @@ struct DefineList {
   unsigned int *NBodyInterAll_DiagonalIndex;/**<@brief [DefineList::NNBodyInterAll_Diagonal] Diagonal raw term indices*/
   unsigned int *NBodyInterAll_OffDiagonalIndex;/**<@brief [DefineList::NNBodyInterAll_OffDiagonal] Off-diagonal raw term indices*/
 
+  unsigned int NNBodyG;/**<@brief Total number of generic N-body correlation terms*/
+  unsigned int NBodyG_TotalFactors;/**<@brief Total number of raw NBodyG factors*/
+  unsigned int NBodyG_TotalCanonicalFactors;/**<@brief Total number of canonical NBodyG factors*/
+  unsigned int NBodyG_MaxN;/**<@brief Maximum factor count in one NBodyG term*/
+  unsigned int *NBodyG_N;/**<@brief [DefineList::NNBodyG] Raw factor counts*/
+  unsigned int *NBodyG_Offset;/**<@brief [DefineList::NNBodyG] Raw factor offsets*/
+  int **NBodyG_Factors;/**<@brief [DefineList::NBodyG_TotalFactors][4] Raw factors: site_out, spin_out, site_in, spin_in*/
+  int *NBodyG_IsZero;/**<@brief [DefineList::NNBodyG] TRUE if the canonical same-site product is zero*/
+  unsigned int *NBodyG_CanonicalN;/**<@brief [DefineList::NNBodyG] Canonical factor counts*/
+  unsigned int *NBodyG_CanonicalOffset;/**<@brief [DefineList::NNBodyG] Canonical factor offsets*/
+  int **NBodyG_CanonicalFactors;/**<@brief [DefineList::NBodyG_TotalFactors][4] Canonical factors*/
+
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
 

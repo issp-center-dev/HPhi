@@ -18,6 +18,7 @@
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
 #include "MakeIniVec.h"
 #include "CalcByCanonicalTPQ.h"
 #include "FileIO.h"
@@ -231,6 +232,8 @@ int CalcByCanonicalTPQ(
             iret=expec_cisajscktaltdc(&(X->Bind), v1);
             StopTimer(3400);
             if(iret !=0) return -1;
+            iret=expec_nbodyg(&(X->Bind), v1);
+            if(iret !=0) return -1;
         
             StartTimer(3200);
             iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
@@ -332,6 +335,8 @@ int CalcByCanonicalTPQ(
                     iret=expec_cisajscktaltdc(&(X->Bind), v1);
                     StopTimer(3400);
                     if(iret !=0) return -1;
+                    iret=expec_nbodyg(&(X->Bind), v1);
+                    if(iret !=0) return -1;
                 }
             }else{  
                 if (step_i%step_spin == 0){
@@ -343,6 +348,8 @@ int CalcByCanonicalTPQ(
                     StartTimer(3400);
                     iret=expec_cisajscktaltdc(&(X->Bind), v1);
                     StopTimer(3400);
+                    if(iret !=0) return -1;
+                    iret=expec_nbodyg(&(X->Bind), v1);
                     if(iret !=0) return -1;
                 }
             }
