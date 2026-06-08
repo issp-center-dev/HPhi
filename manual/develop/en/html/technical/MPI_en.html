@@ -109,6 +109,10 @@ then all <span class="math notranslate nohighlight">\(N\)</span> terms are proce
 <li><p>Hubbard models (MPIsingle, MPIdouble; InterAll for HubbardGC only)</p></li>
 <li><p>Spin models (Exchange MPIsingle; SpinGC also batches PairLift)</p></li>
 </ul>
+<p>In MPI builds, batched communication is enabled by default. No input-file
+option is required. The optimization changes the communication/apply path for
+supported inter-process terms, but it is designed to reproduce the same
+numerical result as the conventional per-term MPI path.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>Limitation in Time-Evolution (TimeEvolution) mode</strong></p>
@@ -129,7 +133,8 @@ therefore benefit from batched communication.</p>
 <p>Set the environment variable <code class="docutils literal notranslate"><span class="pre">HPHI_MPI_NOBATCH=1</span></code> to disable MPI
 communication batching globally and fall back to the original per-term MPI
 exchanges. This is intended for debugging and for verifying that the batched
-optimization reproduces the unbatched result:</p>
+optimization reproduces the unbatched result. It can also be used to compare
+performance with the conventional path on a particular machine and input:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_MPI_NOBATCH=1
 mpirun -np 4 ./HPhi -e namelist.def
 </pre></div>

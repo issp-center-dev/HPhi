@@ -88,6 +88,10 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 * Hubbardモデル（MPIsingle、MPIdouble；InterAllはHubbardGCのみ）
 * Spinモデル（Exchange MPIsingle；SpinGCはPairLiftも一括処理）
 
+MPIビルドでは、バッチ通信はデフォルトで有効です。入力ファイルでの指定は不要です。
+この最適化は、対応しているプロセス間項の通信・適用経路を変更しますが、
+従来の項ごとのMPI通信経路と同じ数値結果を再現するよう設計されています。
+
 .. note::
 
    **時間発展（TimeEvolution）モードでのバッチ通信の制限**
@@ -108,7 +112,8 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 
 環境変数 ``HPHI_MPI_NOBATCH=1`` を設定すると、MPI通信のバッチ処理を全体で無効化し、
 バッチ化前の項ごとのMPI通信にフォールバックします。デバッグや、バッチ最適化が
-非バッチ時と同一の結果を再現することの検証に使用します::
+非バッチ時と同一の結果を再現することの検証に使用します。また、特定の計算機・入力で
+従来経路との性能比較を行う場合にも使用できます::
 
    export HPHI_MPI_NOBATCH=1
    mpirun -np 4 ./HPhi -e namelist.def
@@ -118,7 +123,7 @@ MPI通信オーバーヘッドを削減するため、:math:`{\mathcal H}\Phi` �
 常に全プロセスで一致します。
 
 SpinlessFermionのoff-diagonal two-body Green関数
------------------------------------------------
+--------------------------------------------------------
 
 SpinlessFermionにおける
 :math:`\langle c^\dagger_i c_j c^\dagger_k c_l \rangle`

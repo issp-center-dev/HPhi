@@ -110,6 +110,9 @@ MPI通信が必要だが、受信データは一様に処理可能。
 <li><p>Hubbardモデル（MPIsingle、MPIdouble；InterAllはHubbardGCのみ）</p></li>
 <li><p>Spinモデル（Exchange MPIsingle；SpinGCはPairLiftも一括処理）</p></li>
 </ul>
+<p>MPIビルドでは、バッチ通信はデフォルトで有効です。入力ファイルでの指定は不要です。
+この最適化は、対応しているプロセス間項の通信・適用経路を変更しますが、
+従来の項ごとのMPI通信経路と同じ数値結果を再現するよう設計されています。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
 <p><strong>時間発展（TimeEvolution）モードでのバッチ通信の制限</strong></p>
@@ -126,7 +129,8 @@ MPI通信が必要だが、受信データは一様に処理可能。
 <h3>バッチ通信の無効化<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>環境変数 <code class="docutils literal notranslate"><span class="pre">HPHI_MPI_NOBATCH=1</span></code> を設定すると、MPI通信のバッチ処理を全体で無効化し、
 バッチ化前の項ごとのMPI通信にフォールバックします。デバッグや、バッチ最適化が
-非バッチ時と同一の結果を再現することの検証に使用します:</p>
+非バッチ時と同一の結果を再現することの検証に使用します。また、特定の計算機・入力で
+従来経路との性能比較を行う場合にも使用できます:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_MPI_NOBATCH=1
 mpirun -np 4 ./HPhi -e namelist.def
 </pre></div>
