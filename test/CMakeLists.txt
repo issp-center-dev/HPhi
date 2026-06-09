@@ -65,6 +65,7 @@ add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_spingc_nbody_interall)
 add_hphi_test(lanczos_spingc_nbody_interall_n1)
 add_hphi_test(lanczos_spingc_nbodyg)
+add_hphi_test(lanczos_spin_nbody_interall)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
@@ -98,6 +99,7 @@ set_tests_properties(
     lanczos_spin_kagome lanczos_spin_ladder_DM
     lanczos_spingc_honey lanczos_spingc_hcor
     lanczos_spingc_nbodyg
+    lanczos_spin_nbody_interall
     lanczos_spin_kagome_restart
     PROPERTIES LABELS "lanczos;spin")
 set_tests_properties(
@@ -351,6 +353,8 @@ if(MPI_FOUND)
     add_hphi_mpi_test_with_srcdir(mpi_nobatch_equivalence_spinless exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spingc exact:4)
     add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_spin exact:4)
 
     # MPI consistency test labels
     set_tests_properties(
@@ -369,6 +373,7 @@ if(MPI_FOUND)
         PROPERTIES LABELS "mpi;consistency;spin")
     set_tests_properties(
         mpi_nbody_interall_spingc mpi_nbodyg_spingc
+        mpi_nbody_interall_spin mpi_nbodyg_spin
         PROPERTIES LABELS "mpi;consistency;spin;nbody")
     set_tests_properties(
         mpi_consistency_kondo mpi_consistency_te_kondo

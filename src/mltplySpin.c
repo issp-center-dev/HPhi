@@ -258,6 +258,11 @@ int mltplyHalfSpin(
     }
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(410);
+  if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+    if (MultiplyNBodyInterAllSpinGC(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
   /**
   Exchange
   */

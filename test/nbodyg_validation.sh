@@ -52,7 +52,7 @@ EOF
   cd ..
 }
 
-rm -rf bad_spin bad_site cross_site too_few unsupported
+rm -rf bad_spin bad_site cross_site too_few nonconserved
 make_spingc_base bad_spin
 make_spingc_base bad_site
 make_spingc_base cross_site
@@ -98,9 +98,9 @@ NNBodyG 1
 1 0 1 0
 EOF
 
-# NBodyG is currently restricted to spin-1/2 SpinGC; canonical Spin is rejected.
-mkdir -p unsupported
-cd unsupported
+# canonical Spin NBodyG rejects operators that do not conserve total Sz.
+mkdir -p nonconserved
+cd nonconserved
 cat > stan.in <<EOF
 model = "Spin"
 method = "Lanczos"
@@ -120,7 +120,7 @@ NNBodyG 1
 ========================
 ========NBodyG==========
 ========================
-1 0 1 0 1
+1 0 1 0 0
 EOF
 cd ..
 
@@ -128,6 +128,6 @@ expect_fail bad_spin "Spin index of NBodyG is incorrect"
 expect_fail bad_site "Site index of NBodyG is incorrect"
 expect_fail cross_site "requires site_out == site_in"
 expect_fail too_few "too few integer fields"
-expect_fail unsupported "supported only for SpinGC"
+expect_fail nonconserved "does not conserve total Sz: delta2Sz=2"
 
-echo "NBodyG validation rejects unsupported and malformed inputs."
+echo "NBodyG validation rejects malformed and Sz-nonconserving inputs."
