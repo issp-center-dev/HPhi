@@ -99,16 +99,29 @@ int ParseNBodyGLine(
   return 0;
 }
 
+static int nbodyg_is_supported_spin_model(const struct DefineList *D)
+{
+  if (D->iCalcModel == SpinGC) return TRUE;
+  if (D->iCalcModel == Spin && D->iFlgGeneralSpin == FALSE) return TRUE;
+  return FALSE;
+}
+
+static int nbodyg_is_spingc_general_spin(const struct DefineList *D)
+{
+  return D->iCalcModel == SpinGC && D->iFlgGeneralSpin == TRUE;
+}
+
 int ValidateNBodyGScope(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
-  if (D->iCalcModel != SpinGC && D->iCalcModel != Spin) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
-    return -1;
-  }
-  if (D->iFlgGeneralSpin != FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
+  if (nbodyg_is_supported_spin_model(D) == FALSE) {
+    if (D->iCalcModel == Spin && D->iFlgGeneralSpin == TRUE) {
+      fprintf(stdoutMPI, "Error: NBodyG is not supported for canonical Spin general spin.\n");
+    }
+    else {
+      fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
+    }
     return -1;
   }
   for (t = 0; t < D->NNBodyG; t++) {
@@ -123,9 +136,12 @@ int ValidateNBodyGScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: NBodyG currently requires site_out == site_in for every factor.\n");
         return -1;
       }
-      if (f[1] < 0 || f[1] > 1 || f[3] < 0 || f[3] > 1) {
-        fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
-        return -1;
+      {
+        const int max_spin = nbodyg_is_spingc_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
+          fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
+          return -1;
+        }
       }
     }
   }
@@ -484,9 +500,8 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   unsigned int t;
 
   if (X->Def.NNBodyG < 1) return 0;
-  if ((X->Def.iCalcModel != SpinGC && X->Def.iCalcModel != Spin) ||
-      X->Def.iFlgGeneralSpin != FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
+  if (nbodyg_is_supported_spin_model(&X->Def) == FALSE) {
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
