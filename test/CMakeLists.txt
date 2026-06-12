@@ -367,6 +367,8 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
     add_hphi_mpi_test(mpi_nbodyg_spin exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone_np9 exact:9)
 
     # MPI consistency test labels
     set_tests_properties(
@@ -387,6 +389,10 @@ if(MPI_FOUND)
         mpi_nbody_interall_spingc mpi_nbodyg_spingc
         mpi_nbody_interall_spin mpi_nbodyg_spin
         PROPERTIES LABELS "mpi;consistency;spin;nbody")
+    set_tests_properties(
+        mpi_nbody_interall_spingc_spinone
+        mpi_nbody_interall_spingc_spinone_np9
+        PROPERTIES LABELS "mpi;consistency;genspin;spinone;nbody")
     set_tests_properties(
         mpi_consistency_kondo mpi_consistency_te_kondo
         PROPERTIES LABELS "mpi;consistency;kondo")
