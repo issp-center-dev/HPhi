@@ -376,6 +376,68 @@ static int nbodyg_rank_flip_mask(const struct BindStruct *X, unsigned int term, 
   return 0;
 }
 
+static int nbodyg_general_spin_partner_rank(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int *partner_rank,
+  int *active
+) {
+  unsigned int k;
+  unsigned long int partner = (unsigned long int)current_rank;
+  int side = 0;
+  const unsigned int n = X->Def.NBodyG_CanonicalN[term];
+  const unsigned int off = X->Def.NBodyG_CanonicalOffset[term];
+
+  *active = TRUE;
+  for (k = 0; k < n; k++) {
+    const int *f = X->Def.NBodyG_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    const int spin_out = f[1];
+    const int spin_in = f[3];
+    int digit;
+    int this_side;
+
+    if (site < X->Def.Nsite) continue;
+
+    digit = GetBitGeneral(site + 1, (unsigned long int)current_rank,
+                          X->Def.SiteToBit, X->Def.Tpow);
+    if (spin_out == spin_in) {
+      if (digit != spin_out) {
+        *active = FALSE;
+        *partner_rank = current_rank;
+        return 0;
+      }
+      continue;
+    }
+
+    if (digit == spin_out) this_side = 1;
+    else if (digit == spin_in) this_side = -1;
+    else {
+      *active = FALSE;
+      *partner_rank = current_rank;
+      return 0;
+    }
+
+    if (side == 0) side = this_side;
+    else if (side != this_side) {
+      *active = FALSE;
+      *partner_rank = current_rank;
+      return 0;
+    }
+
+    if (this_side == 1) {
+      partner += ((long int)spin_in - (long int)spin_out) * X->Def.Tpow[site];
+    }
+    else {
+      partner += ((long int)spin_out - (long int)spin_in) * X->Def.Tpow[site];
+    }
+  }
+
+  *partner_rank = (int)partner;
+  return 0;
+}
+
 static double complex expec_nbodyg_term_to_rank(
   struct BindStruct *X,
   unsigned int term,
@@ -455,7 +517,34 @@ static double complex expec_nbodyg_term_to_rank_spin(
 
 static double complex calc_nbodyg_term_general_spin_gc(struct BindStruct *X, unsigned int term, double complex *vec)
 {
-  double complex dam_pr = expec_nbodyg_term_to_rank_general_spin_gc(X, term, vec, vec, myrank);
+  int origin = myrank;
+  int active = TRUE;
+  double complex dam_pr = 0.0;
+
+  if (nbodyg_general_spin_partner_rank(X, term, myrank, &origin, &active) != 0) {
+    return SumMPI_dc(0.0);
+  }
+  if (active == FALSE) {
+    return SumMPI_dc(0.0);
+  }
+  if (origin == myrank) {
+    dam_pr = expec_nbodyg_term_to_rank_general_spin_gc(X, term, vec, vec, myrank);
+    return SumMPI_dc(dam_pr);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    int ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            v1buf, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr = expec_nbodyg_term_to_rank_general_spin_gc(X, term, v1buf, vec, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
   return SumMPI_dc(dam_pr);
 }
 
