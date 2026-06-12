@@ -66,6 +66,7 @@ add_hphi_test(lanczos_spingc_nbody_interall)
 add_hphi_test(lanczos_spingc_nbody_interall_n1)
 add_hphi_test(lanczos_spingc_nbodyg)
 add_hphi_test(lanczos_spin_nbody_interall)
+add_hphi_test(nbody_spingc_spinone_validation)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
@@ -115,6 +116,9 @@ set_tests_properties(
 set_tests_properties(
     nbodyg_validation
     PROPERTIES LABELS "spin;validation;nbody")
+set_tests_properties(
+    nbody_spingc_spinone_validation
+    PROPERTIES LABELS "spinone;genspin;validation;nbody")
 set_tests_properties(
     spinless_onebody_sigma_validation
     PROPERTIES LABELS "spinless;validation")
