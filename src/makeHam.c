@@ -485,6 +485,12 @@ int makeHam(struct BindStruct *X) {
             }
           }
         }
+
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
+          }
+        }
       }
       break;
 
