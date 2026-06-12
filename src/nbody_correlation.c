@@ -316,6 +316,49 @@ static int apply_nbodyg_spingc(
   return 1;
 }
 
+static int apply_nbodyg_general_spin_gc(
+  const struct BindStruct *X,
+  unsigned int term,
+  unsigned long int local_in,
+  int rank_in,
+  unsigned long int *local_out,
+  int *rank_out
+) {
+  const struct DefineList *D = &X->Def;
+  unsigned int k;
+  unsigned long int lo = local_in;
+  unsigned long int ro = (unsigned long int)rank_in;
+  const unsigned int n = D->NBodyG_CanonicalN[term];
+  const unsigned int off = D->NBodyG_CanonicalOffset[term];
+
+  for (k = 0; k < n; k++) {
+    const int *f = D->NBodyG_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    const int spin_out = f[1];
+    const int spin_in = f[3];
+    unsigned long int next = 0;
+
+    if (site < D->Nsite) {
+      if (GetOffCompGeneralSpin(lo, (int)site + 1, spin_in, spin_out,
+                                &next, D->SiteToBit, D->Tpow) == FALSE) {
+        return 0;
+      }
+      lo = next;
+    }
+    else {
+      if (GetOffCompGeneralSpin(ro, (int)site + 1, spin_in, spin_out,
+                                &next, D->SiteToBit, D->Tpow) == FALSE) {
+        return 0;
+      }
+      ro = next;
+    }
+  }
+
+  *local_out = lo;
+  *rank_out = (int)ro;
+  return 1;
+}
+
 static int nbodyg_rank_flip_mask(const struct BindStruct *X, unsigned int term, int *mask)
 {
   unsigned int k;
@@ -357,6 +400,30 @@ static double complex expec_nbodyg_term_to_rank(
   return dam_pr;
 }
 
+static double complex expec_nbodyg_term_to_rank_general_spin_gc(
+  struct BindStruct *X,
+  unsigned int term,
+  const double complex *src_vec,
+  const double complex *bra_vec,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+  const unsigned long int i_max = X->Check.idim_max;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, src_vec, bra_vec) firstprivate(i_max, term, rank_in, myrank) private(j)
+  for (j = 1; j <= i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    int ret = apply_nbodyg_general_spin_gc(X, term, j - 1, rank_in, &local_out, &rank_out);
+    if (ret == 1 && rank_out == myrank) {
+      dam_pr += conj(bra_vec[local_out + 1]) * src_vec[j];
+    }
+  }
+  return dam_pr;
+}
+
 static double complex expec_nbodyg_term_to_rank_spin(
   struct BindStruct *X,
   unsigned int term,
@@ -384,6 +451,12 @@ static double complex expec_nbodyg_term_to_rank_spin(
     }
   }
   return dam_pr;
+}
+
+static double complex calc_nbodyg_term_general_spin_gc(struct BindStruct *X, unsigned int term, double complex *vec)
+{
+  double complex dam_pr = expec_nbodyg_term_to_rank_general_spin_gc(X, term, vec, vec, myrank);
+  return SumMPI_dc(dam_pr);
 }
 
 static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, double complex *vec)
@@ -511,6 +584,9 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
       if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
+      else if (nbodyg_is_spingc_general_spin(&X->Def) == TRUE) {
+        value = calc_nbodyg_term_general_spin_gc(X, t, vec);
+      }
       else value = calc_nbodyg_term(X, t, vec);
     }
     write_nbodyg_line(fp, &X->Def, t, value);
