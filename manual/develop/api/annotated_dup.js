@@ -6,6 +6,7 @@ var annotated_dup =
     [ "DefineList", "structDefineList.html", "structDefineList" ],
     [ "DSFMT_T", "structDSFMT__T.html", "structDSFMT__T" ],
     [ "EDMainCalStruct", "structEDMainCalStruct.html", "structEDMainCalStruct" ],
+    [ "ExcitationOperatorSet", "structExcitationOperatorSet.html", "structExcitationOperatorSet" ],
     [ "LargeList", "structLargeList.html", "structLargeList" ],
     [ "MPIBatchedDoubleTransfers", "structMPIBatchedDoubleTransfers.html", "structMPIBatchedDoubleTransfers" ],
     [ "MPIBatchedInterAll", "structMPIBatchedInterAll.html", "structMPIBatchedInterAll" ],
@@ -17,6 +18,7 @@ var annotated_dup =
     [ "MPITransferGroup", "structMPITransferGroup.html", "structMPITransferGroup" ],
     [ "ParamList", "structParamList.html", "structParamList" ],
     [ "PhysList", "structPhysList.html", "structPhysList" ],
+    [ "SectorShift", "structSectorShift.html", "structSectorShift" ],
     [ "TimeKeepStruct", "structTimeKeepStruct.html", "structTimeKeepStruct" ],
     [ "W128_T", "unionW128__T.html", "unionW128__T" ]
 ];

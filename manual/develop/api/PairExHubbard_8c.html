@@ -137,12 +137,12 @@ $(document).ready(function(){initNavTree('PairExHubbard_8c.html',''); initResiza
 Functions</h2></td></tr>
 <tr class="memitem:aab52ec15363468b5cc7dd30215d889fe" id="r_aab52ec15363468b5cc7dd30215d889fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PairExHubbard_8c.html#aab52ec15363468b5cc7dd30215d889fe">GetPairExcitedStateHubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="separator:aab52ec15363468b5cc7dd30215d889fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6ea48aa669d72fd8cc85162bae8b834" id="r_ad6ea48aa669d72fd8cc85162bae8b834"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PairExHubbard_8c.html#ad6ea48aa669d72fd8cc85162bae8b834">GetPairExcitedStateHubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
-<tr class="separator:ad6ea48aa669d72fd8cc85162bae8b834"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f41b3b5d180c11a7b55ac73c5b66661" id="r_a3f41b3b5d180c11a7b55ac73c5b66661"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PairExHubbard_8c.html#a3f41b3b5d180c11a7b55ac73c5b66661">GetPairExcitedStateHubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int NPairExcitationOperator, int **PairExcitationOperator, double complex *ParaPairExcitationOperator, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="separator:a3f41b3b5d180c11a7b55ac73c5b66661"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ad6ea48aa669d72fd8cc85162bae8b834" name="ad6ea48aa669d72fd8cc85162bae8b834"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6ea48aa669d72fd8cc85162bae8b834">&#9670;&#160;</a></span>GetPairExcitedStateHubbard()</h2>
+<a id="a3f41b3b5d180c11a7b55ac73c5b66661" name="a3f41b3b5d180c11a7b55ac73c5b66661"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f41b3b5d180c11a7b55ac73c5b66661">&#9670;&#160;</a></span>GetPairExcitedStateHubbard()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,6 +152,24 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>NPairExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>PairExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>ParaPairExcitationOperator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -188,6 +206,9 @@ FALSE: Abnormally finished </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">X</td><td>define list to get and put information of calculation  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NPairExcitationOperator</td><td>number of pair excitation operators  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">PairExcitationOperator</td><td>[n][5] = {site1, spin1, site2, spin2, type}  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ParaPairExcitationOperator</td><td>coefficient of each operator  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tmp_v0</td><td>Result v0 = H v1  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>v0 = H v1 </td></tr>
   </table>

@@ -106,6 +106,12 @@ The following table summarizes all input files for expert mode.
    * - :doc:`PairExcitation <PairExcitation_file_en>`
      - Spectrum
      - Pair excitation operator for dynamical Green's functions
+   * - :doc:`SingleExcitationBra <SingleExcitationBra_file_en>`
+     - Optional
+     - Bra single excitation operator for off-diagonal Green's functions
+   * - :doc:`PairExcitationBra <PairExcitationBra_file_en>`
+     - Optional
+     - Bra pair excitation operator for off-diagonal Green's functions
    * - :doc:`SpectrumVec <SpectrumVec_File_en>`
      - Spectrum
      - Input vector for spectrum calculations
@@ -181,6 +187,8 @@ These files are used for dynamical Green's function calculations and time evolut
 
    SingleExcitation_file_en
    PairExcitation_file_en
+   SingleExcitationBra_file_en
+   PairExcitationBra_file_en
    SpectrumVec_File_en
    OneBodyTE_File_en
    TwoBodyTE_File_en

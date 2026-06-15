@@ -141,6 +141,8 @@ var menudata={children:[
 {text:"v",url:"globals_vars_v.html#index_v"},
 {text:"x",url:"globals_vars_x.html#index_x"}]},
 {text:"Typedefs",url:"globals_type.html"},
+{text:"Enumerations",url:"globals_enum.html"},
+{text:"Enumerator",url:"globals_eval.html"},
 {text:"Macros",url:"globals_defs.html",children:[
 {text:"a",url:"globals_defs.html#index_a"},
 {text:"c",url:"globals_defs.html#index_c"},

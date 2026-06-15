@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['timekeepstruct_0',['TimeKeepStruct',['../structTimeKeepStruct.html',1,'']]]
+  ['sectorshift_0',['SectorShift',['../structSectorShift.html',1,'']]]
 ];

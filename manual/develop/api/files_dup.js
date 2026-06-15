@@ -21,6 +21,7 @@ var files_dup =
     [ "dSFMT.c", "dSFMT_8c.html", "dSFMT_8c" ],
     [ "eigenIO.c", "eigenIO_8c.html", "eigenIO_8c" ],
     [ "ErrorMessage.c", "ErrorMessage_8c.html", "ErrorMessage_8c" ],
+    [ "ExcitationSectorShift.c", "ExcitationSectorShift_8c.html", "ExcitationSectorShift_8c" ],
     [ "expec_cisajs.c", "expec__cisajs_8c.html", "expec__cisajs_8c" ],
     [ "expec_cisajscktaltdc.c", "expec__cisajscktaltdc_8c.html", "expec__cisajscktaltdc_8c" ],
     [ "expec_energy_flct.c", "expec__energy__flct_8c.html", "expec__energy__flct_8c" ],

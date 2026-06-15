@@ -128,16 +128,16 @@ $(document).ready(function(){initNavTree('SingleExHubbard_8h.html',''); initResi
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5c47554603676d2da6345b76e562cd4f" id="r_a5c47554603676d2da6345b76e562cd4f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8h.html#a5c47554603676d2da6345b76e562cd4f">GetSingleExcitedStateHubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
-<tr class="memdesc:a5c47554603676d2da6345b76e562cd4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard canonical system.  <br /></td></tr>
-<tr class="separator:a5c47554603676d2da6345b76e562cd4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a532bba8a658ddfd3ad26c22f20121676" id="r_a532bba8a658ddfd3ad26c22f20121676"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8h.html#a532bba8a658ddfd3ad26c22f20121676">GetSingleExcitedStateHubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int NSingleExcitationOperator, int **SingleExcitationOperator, double complex *ParaSingleExcitationOperator, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="memdesc:a532bba8a658ddfd3ad26c22f20121676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard canonical system.  <br /></td></tr>
+<tr class="separator:a532bba8a658ddfd3ad26c22f20121676"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1402ad7c646461af3781c428888db645" id="r_a1402ad7c646461af3781c428888db645"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8h.html#a1402ad7c646461af3781c428888db645">GetSingleExcitedStateHubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a1402ad7c646461af3781c428888db645"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard Grand canonical system.  <br /></td></tr>
 <tr class="separator:a1402ad7c646461af3781c428888db645"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a5c47554603676d2da6345b76e562cd4f" name="a5c47554603676d2da6345b76e562cd4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c47554603676d2da6345b76e562cd4f">&#9670;&#160;</a></span>GetSingleExcitedStateHubbard()</h2>
+<a id="a532bba8a658ddfd3ad26c22f20121676" name="a532bba8a658ddfd3ad26c22f20121676"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a532bba8a658ddfd3ad26c22f20121676">&#9670;&#160;</a></span>GetSingleExcitedStateHubbard()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,6 +147,24 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>NSingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>SingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>ParaSingleExcitationOperator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -177,6 +195,9 @@ FALSE: Abnormally finished </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">X</td><td>define list to get and put information of calculation  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NSingleExcitationOperator</td><td>number of single excitation operators  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">SingleExcitationOperator</td><td>[n][3] = {site, spin, type}  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ParaSingleExcitationOperator</td><td>coefficient of each operator  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tmp_v0</td><td>Result v0 = H v1  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>v0 = H v1 </td></tr>
   </table>
@@ -238,7 +259,7 @@ FALSE: Abnormally finished </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SingleExHubbard_8c_source.html#l00107">107</a> of file <a class="el" href="SingleExHubbard_8c_source.html">SingleExHubbard.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SingleExHubbard_8c_source.html#l00110">110</a> of file <a class="el" href="SingleExHubbard_8c_source.html">SingleExHubbard.c</a>.</p>
 
 <p class="reference">References <a class="el" href="setmemory_8c_source.html#l00232">cd_1d_allocate()</a>, <a class="el" href="mltplyMPIHubbardCore_8h.html#a70d6e1c992ec878c2c8ec3e8128e21ed">child_GC_Ajt_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l01429">child_GC_Cis_MPI()</a>, <a class="el" href="setmemory_8c_source.html#l00240">free_cd_1d_allocate()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01080">GC_Ajt()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01029">GC_Cis()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00206">MaxMPI_li()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 

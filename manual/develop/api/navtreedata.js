@@ -130,6 +130,8 @@ var NAVTREE =
         [ "Functions", "globals_func.html", "globals_func" ],
         [ "Variables", "globals_vars.html", "globals_vars" ],
         [ "Typedefs", "globals_type.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -140,15 +142,15 @@ var NAVTREEINDEX =
 [
 "CG__EigenVector_8c.html",
 "ErrorMessage_8h.html#a2c7bc54de98f4c6e60a07fb8653e435d",
-"LogMessage_8h.html#a7519659e9f2c455440ff713b688cc682",
-"dSFMT-params19937_8h.html#a5b7690571e7c4fa0d62e27cb4126c20c",
-"functions_vars_d.html",
-"globals_func_h.html",
-"mltplyMPIBatched_8h.html#a641423f7dc8a4c155b9d7872d3eb41b7",
-"mltplySpinCore_8h.html#a51041879d0e2877713d258bdb75a4a3a",
-"readdef_8h.html#ac5a8a45ecec5aa4484c187a2ba130f5f",
-"structLargeList.html#a3383562f01be9dad6983b25c206439cf",
-"xsetmem_8c.html"
+"LogMessage_8h.html#a5f50e27856478095225c8a74bce69b4b",
+"check_8h.html",
+"functions_n.html",
+"globals_d.html",
+"mltplyMPIBatched_8c.html#ae75430e963f9c905755bb977dbc99e7e",
+"mltplySpinCore_8c.html#acdf3cb4929eee3b1879224a708802486",
+"readdef_8h.html#a56c951021b5d6f68319a0e1df652b347",
+"structDefineList.html#ae9009bd2c278f1b56118280c0d65cc0e",
+"version__patch_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

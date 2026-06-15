@@ -133,17 +133,17 @@ $(document).ready(function(){initNavTree('SingleEx_8c.html',''); initResizable()
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a43797ff504ab9bf349fdf9f7561d2038" id="r_a43797ff504ab9bf349fdf9f7561d2038"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleEx_8c.html#a43797ff504ab9bf349fdf9f7561d2038">GetSingleExcitedState</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
-<tr class="memdesc:a43797ff504ab9bf349fdf9f7561d2038"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of single excited state Target System: Hubbard, Kondo.  <br /></td></tr>
-<tr class="separator:a43797ff504ab9bf349fdf9f7561d2038"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90595f039a04c89aa570cad1a15db0b7" id="r_a90595f039a04c89aa570cad1a15db0b7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleEx_8c.html#a90595f039a04c89aa570cad1a15db0b7">GetSingleExcitedState</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int NSingleExcitationOperator, int **SingleExcitationOperator, double complex *ParaSingleExcitationOperator, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="memdesc:a90595f039a04c89aa570cad1a15db0b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of single excited state Target System: Hubbard, Kondo.  <br /></td></tr>
+<tr class="separator:a90595f039a04c89aa570cad1a15db0b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functions to compute singly excited state. </p>
 
 <p class="definition">Definition in file <a class="el" href="SingleEx_8c_source.html">SingleEx.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a43797ff504ab9bf349fdf9f7561d2038" name="a43797ff504ab9bf349fdf9f7561d2038"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43797ff504ab9bf349fdf9f7561d2038">&#9670;&#160;</a></span>GetSingleExcitedState()</h2>
+<a id="a90595f039a04c89aa570cad1a15db0b7" name="a90595f039a04c89aa570cad1a15db0b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90595f039a04c89aa570cad1a15db0b7">&#9670;&#160;</a></span>GetSingleExcitedState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -153,6 +153,24 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>NSingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>SingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>ParaSingleExcitationOperator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -183,6 +201,9 @@ FALSE: Abnormally finished </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">X</td><td>define list to get and put information of calcuation  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NSingleExcitationOperator</td><td>number of single excitation operators  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">SingleExcitationOperator</td><td>[n][3] = {site, spin, type}  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ParaSingleExcitationOperator</td><td>coefficient of each operator  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tmp_v0</td><td>Result v0 = H v1  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>v0 = H v1 </td></tr>
   </table>
@@ -191,9 +212,9 @@ FALSE: Abnormally finished </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="SingleEx_8c_source.html#l00030">30</a> of file <a class="el" href="SingleEx_8c_source.html">SingleEx.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="SingleExHubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, <a class="el" href="SingleExHubbard_8c_source.html#l00107">GetSingleExcitedStateHubbardGC()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="SingleExHubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>, <a class="el" href="SingleExHubbard_8c_source.html#l00110">GetSingleExcitedStateHubbardGC()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00316">GetExcitedState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00402">GetExcitedState()</a>.</p>
 
 </div>
 </div>

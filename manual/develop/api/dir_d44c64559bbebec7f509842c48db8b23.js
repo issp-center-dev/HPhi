@@ -26,6 +26,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "dSFMT.h", "dSFMT_8h.html", "dSFMT_8h" ],
     [ "eigenIO.h", "eigenIO_8h.html", "eigenIO_8h" ],
     [ "ErrorMessage.h", "ErrorMessage_8h.html", "ErrorMessage_8h" ],
+    [ "ExcitationSectorShift.h", "ExcitationSectorShift_8h.html", "ExcitationSectorShift_8h" ],
     [ "expec_cisajs.h", "expec__cisajs_8h.html", "expec__cisajs_8h" ],
     [ "expec_cisajscktaltdc.h", "expec__cisajscktaltdc_8h.html", "expec__cisajscktaltdc_8h" ],
     [ "expec_energy_flct.h", "expec__energy__flct_8h.html", "expec__energy__flct_8h" ],

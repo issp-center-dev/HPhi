@@ -1,9 +1,9 @@
 var PairExSpin_8c =
 [
-    [ "GetPairExcitedStateGeneralSpin", "PairExSpin_8c.html#a51a79357da3abe458601c1a01ccdf781", null ],
-    [ "GetPairExcitedStateGeneralSpinGC", "PairExSpin_8c.html#a49f7334f2e47aee8e04645c509e0bf67", null ],
-    [ "GetPairExcitedStateHalfSpin", "PairExSpin_8c.html#a61950043cc9ec8ca800510d959af0359", null ],
-    [ "GetPairExcitedStateHalfSpinGC", "PairExSpin_8c.html#af7d49c3443e674c3e095dd37cb62470c", null ],
-    [ "GetPairExcitedStateSpin", "PairExSpin_8c.html#acc9ece067d6f261fd9865c9e7ca38c28", null ],
-    [ "GetPairExcitedStateSpinGC", "PairExSpin_8c.html#a1629a16cc6e353c96f1626bdb0db8eed", null ]
+    [ "GetPairExcitedStateGeneralSpin", "PairExSpin_8c.html#a28b301cc3e07efa55f0ab143908b6946", null ],
+    [ "GetPairExcitedStateGeneralSpinGC", "PairExSpin_8c.html#ac928c810712c4300446fd2090d157da5", null ],
+    [ "GetPairExcitedStateHalfSpin", "PairExSpin_8c.html#a9051b58432cf200801188d9ef809f265", null ],
+    [ "GetPairExcitedStateHalfSpinGC", "PairExSpin_8c.html#a3e54767c6f9258275838d33d137bbd56", null ],
+    [ "GetPairExcitedStateSpin", "PairExSpin_8c.html#adfbf91d1895da0ee5e59632cba8d357c", null ],
+    [ "GetPairExcitedStateSpinGC", "PairExSpin_8c.html#a2f6b55fdcb27cf896b57002ebcab4372", null ]
 ];
