@@ -10,7 +10,7 @@ var sz_8h =
     [ "calculate_jb_KondoGC", "sz_8h.html#a2fa21cbf09237d6848f4a146b69d9ca8", null ],
     [ "calculate_jb_KondoNConserved", "sz_8h.html#ae48eb1271d7016f1c79703bd6a9e62e6", null ],
     [ "calculate_jb_Spin_Hacker", "sz_8h.html#ade23db71091fdafc55b38cdd5c7d01f4", null ],
-    [ "calculate_jb_Spin_m1", "sz_8h.html#a1a27985a4f08a3b05bd6340bf7d720df", null ],
+    [ "calculate_jb_Spin_m1", "sz_8h.html#a27f4a47d8abd8b88c1f3637240a13f42", null ],
     [ "calculate_jb_Spin_Old", "sz_8h.html#aad36d61706e569f5badaf05422c82e6a", null ],
     [ "calculate_jb_tJ", "sz_8h.html#aa5ac2ebd6fa5ea53d2a7a4810387625e", null ],
     [ "calculate_jb_tJGC", "sz_8h.html#a139c223f232ad3fadb20be4a66bf1160", null ],
