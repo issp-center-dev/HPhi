@@ -166,7 +166,7 @@ int Read_sz(
 /*[s] func. for refactoring */
 int count_localized_spins(struct BindStruct *X);
 void calculate_jb_GeneralSpin(struct BindStruct *X, long unsigned int *list_jb, long int *list_2_1_Sz,long int *list_2_2_Sz, long unsigned int ihfbit,long unsigned int ilftdim,unsigned int N);
-void calculate_jb_Spin_m1(struct BindStruct *X, long unsigned int *list_jb, long unsigned int *list_1_, long unsigned int *list_2_1,long unsigned int *list_2_2,\
+long unsigned int calculate_jb_Spin_m1(struct BindStruct *X, long unsigned int *list_jb, long unsigned int *list_1_, long unsigned int *list_2_1,long unsigned int *list_2_2,\
 long unsigned int ihfbit,long unsigned int irght,long unsigned int ilft,long unsigned int ibpatn, unsigned int N);
 void calculate_jb_Spin_Old(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N);
 void calculate_jb_Spin_Hacker(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N);
