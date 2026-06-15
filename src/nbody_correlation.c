@@ -663,7 +663,12 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
 
   if (X->Def.NNBodyG < 1) return 0;
   if (nbodyg_is_supported_spin_model(&X->Def) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
+    if (X->Def.iCalcModel == Spin && X->Def.iFlgGeneralSpin == TRUE) {
+      fprintf(stdoutMPI, "Error: NBodyG is not supported for canonical Spin general spin.\n");
+    }
+    else {
+      fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
+    }
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
