@@ -584,8 +584,26 @@ int mltplyHubbardGC(
     {
 #ifdef MPI
       if (use_batching) {
-        // Inter-PE terms are handled by batched processing above
-        continue;
+        // Inter-PE terms are normally handled by the batched groups above.
+        // But the batched initializer drops terms whose communication partner
+        // is the local rank (origin==myrank) -- e.g. an off-diagonal InterAll
+        // whose inter-process factor is a number operator, which leaves the
+        // rank bit unchanged. Those terms still contribute and would otherwise
+        // be lost (skipped both here and in batching), silently corrupting H.
+        // Recompute the partner with the same routine the batched initializer
+        // uses, and only skip terms the batched groups actually cover
+        // (origin != myrank). Self-partner / non-contributing terms fall
+        // through to the per-term path below, whose child_GC_*_Hubbard_MPI
+        // routines apply the myrank==origin branch locally.
+        unsigned long int origin_chk;
+        int is_hermite_chk;
+        int ret_chk = ComputeInterAllOrigin(
+            isite1 - 1, sigma1, isite2 - 1, sigma2,
+            isite3 - 1, sigma3, isite4 - 1, sigma4,
+            X, &origin_chk, &is_hermite_chk);
+        if (ret_chk == 0 && (int)origin_chk != myrank) {
+          continue;
+        }
       }
       // Non-batched per-term MPI path (original develop behavior)
       StartTimer(221);

@@ -339,6 +339,30 @@ int InitializeMPIBatchedInterAll_HubbardGC(
 );
 
 /**
+ * @brief Compute the MPI communication partner (origin) of an off-diagonal
+ *        InterAll term, using the same logic as the HubbardGC batched
+ *        initializer. Exposed so the per-term dispatch can tell which terms
+ *        the batched groups actually cover.
+ *
+ * @return 0 if an inter-process contribution exists (origin/is_hermite set);
+ *        -1 if all four sites are local (no MPI needed);
+ *        -2 if the term does not contribute (no valid occupancy path).
+ *         Note: a return of 0 with *origin == myrank denotes a contributing
+ *         term whose partner is the local rank (e.g. an inter-process number
+ *         operator); the batched groups deliberately exclude these, so they
+ *         must be applied via the per-term path.
+ */
+int ComputeInterAllOrigin(
+    int org_isite1, int org_ispin1,
+    int org_isite2, int org_ispin2,
+    int org_isite3, int org_ispin3,
+    int org_isite4, int org_ispin4,
+    struct BindStruct *X,
+    unsigned long int *origin,
+    int *is_hermite
+);
+
+/**
  * @brief Free memory allocated for batched InterAll
  *
  * @param batched Pointer to MPIBatchedInterAll to finalize
