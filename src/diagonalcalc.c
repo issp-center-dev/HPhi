@@ -188,8 +188,11 @@ int diagonalcalc
       B_spin=X->Def.InterAll_Diagonal[i][3];
       tmp_V =  X->Def.ParaInterAll_Diagonal[i];
       fprintf(fp,"i=%ld isite1=%ld A_spin=%ld isite2=%ld B_spin=%ld tmp_V=%lf \n", i, isite1, A_spin, isite2, B_spin, tmp_V);
-      SetDiagonalInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X);
-    }      
+      if(SetDiagonalInterAll(isite1, isite2, A_spin, B_spin, tmp_V, X) !=0){
+        fclose(fp);
+        return -1;
+      }
+    }
      fclose(fp);   
     }
   
@@ -1352,6 +1355,20 @@ firstprivate(i_max, dtmp_V, num1, X) private(j)
 
       break;/*case SpinGC, Spin:*/
 
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+      num1 = ((unsigned long int)myrank & is1_up) / is1_up;
+      num2 = ((unsigned long int)myrank & is2_up) / is2_up;
+
+#pragma omp parallel for default(none) shared(list_Diagonal) \
+firstprivate(i_max, dtmp_V, num1, num2) private(j)
+      for (j = 1; j <= i_max; j++) list_Diagonal[j] += num1*num2*dtmp_V;
+
+      break;/*case SpinlessFermion, SpinlessFermionGC*/
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
@@ -1465,6 +1482,30 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
 
       break;/*case Spin:*/
 
+    case SpinlessFermionGC:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+      num2 = ((unsigned long int)myrank & is2_up) / is2_up;
+#pragma omp parallel for default(none) shared(list_Diagonal) \
+firstprivate(i_max, dtmp_V, is1_up, num2) private(num1, j)
+      for (j = 1; j <= i_max; j++) {
+        num1 = ((j - 1) & is1_up) / is1_up;
+        list_Diagonal[j] += num1*num2*dtmp_V;
+      }
+      break;/*case SpinlessFermionGC*/
+
+    case SpinlessFermion:
+      is1_up = X->Def.Tpow[isite1 - 1];
+      is2_up = X->Def.Tpow[isite2 - 1];
+      num2 = ((unsigned long int)myrank & is2_up) / is2_up;
+#pragma omp parallel for default(none) shared(list_1, list_Diagonal) \
+firstprivate(i_max, dtmp_V, is1_up, num2) private(num1, j)
+      for (j = 1; j <= i_max; j++) {
+        num1 = (list_1[j] & is1_up) / is1_up;
+        list_Diagonal[j] += num1*num2*dtmp_V;
+      }
+      break;/*case SpinlessFermion*/
+
     default:
       fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
       return -1;
@@ -1557,12 +1598,34 @@ firstprivate(i_max, dtmp_V, isite1, isigma1, X) private(j, num1)
      }
    }
    break;
-    
+
+  case SpinlessFermionGC:
+    is1_up = X->Def.Tpow[isite1 - 1];
+    is2_up = X->Def.Tpow[isite2 - 1];
+#pragma omp parallel for default(none) shared(list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up) private(j, num1, num2)
+    for (j = 1; j <= i_max; j++) {
+      num1 = ((j - 1) & is1_up) / is1_up;
+      num2 = ((j - 1) & is2_up) / is2_up;
+      list_Diagonal[j] += num1*num2*dtmp_V;
+    }
+    break;
+
+  case SpinlessFermion:
+    is1_up = X->Def.Tpow[isite1 - 1];
+    is2_up = X->Def.Tpow[isite2 - 1];
+#pragma omp parallel for default(none) shared(list_1, list_Diagonal) firstprivate(i_max, dtmp_V, is1_up, is2_up) private(j, num1, num2)
+    for (j = 1; j <= i_max; j++) {
+      num1 = (list_1[j] & is1_up) / is1_up;
+      num2 = (list_1[j] & is2_up) / is2_up;
+      list_Diagonal[j] += num1*num2*dtmp_V;
+    }
+    break;
+
   default:
     fprintf(stdoutMPI, cErrNoModel, X->Def.iCalcModel);
     return -1;
   }
-   
+
   return 0;
 
 }
