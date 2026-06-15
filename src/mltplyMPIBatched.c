@@ -1369,7 +1369,7 @@ double complex X_child_GC_general_hopp_MPIdouble_batched(
  *
  * This is similar to CheckBit_InterAllPE but simplified for origin computation.
  */
-static int ComputeInterAllOrigin(
+int ComputeInterAllOrigin(
     int org_isite1, int org_ispin1,
     int org_isite2, int org_ispin2,
     int org_isite3, int org_ispin3,

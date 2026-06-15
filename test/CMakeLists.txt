@@ -370,6 +370,7 @@ if(MPI_FOUND)
     # MPIdouble (np=16), HubbardGC off-diagonal InterAll, SpinGC PairLift, Spinless.
     add_hphi_mpi_test(mpi_nobatch_equivalence_mpidouble exact:16)
     add_hphi_mpi_test(mpi_nobatch_equivalence_interall exact:4)
+    add_hphi_mpi_test(mpi_nobatch_equivalence_interall_selfterm exact:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence_pairlift exact:4)
     add_hphi_mpi_test_with_srcdir(mpi_nobatch_equivalence_spinless exact:4)
 
@@ -378,6 +379,7 @@ if(MPI_FOUND)
         mpi_nobatch_equivalence
         mpi_nobatch_equivalence_mpidouble
         mpi_nobatch_equivalence_interall
+        mpi_nobatch_equivalence_interall_selfterm
         mpi_nobatch_equivalence_pairlift
         mpi_nobatch_equivalence_spinless
         PROPERTIES LABELS "mpi;nobatch")
