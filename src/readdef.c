@@ -335,6 +335,15 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI,cErrCalcModel, defname);
     return (-1);
   }
+  if(X->iCalcModel == HubbardNConserved ||
+     X->iCalcModel == tJNConserved ||
+     X->iCalcModel == KondoNConserved){
+    fprintf(stdoutMPI,
+            "Error in %s\n CalcModel %d is reserved for internal use. "
+            "Specify the base model and let HPhi choose the number-conserved variant from the conserved quantities.\n",
+            defname, X->iCalcModel);
+    return (-1);
+  }
   if(ValidateValue(X->iCalcType, 0, NUM_CALCTYPE-1)){
     fprintf(stdoutMPI, cErrCalcType, defname);
     return (-1);
@@ -1647,15 +1656,24 @@ int ReadDefFileIdxPara(
                  &isite6,
                  &isigma6
                  );
-          /*
+          if(CheckQuadSite(isite1, isite2, isite3, isite4, X->Nsite) !=0 ||
+             CheckPairSite(isite5, isite6, X->Nsite) !=0){
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
           if(X->iCalcModel == Spin || X->iCalcModel == SpinGC){
             if(CheckFormatForSpinInt(isite1, isite2, isite3, isite4)!=0){
-                exitMPI(-1);
-              //X->NCisAjtCkuAlvDC--;
-              //continue;
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
+            if(isite5 != isite6){
+              fprintf(stdoutMPI,
+                      "Error: ThreeBodyG for Spin/SpinGC requires the 5th and 6th operators to be on the same site.\n");
+              fclose(fp);
+              return ReadDefFileError(defname);
             }
           }
-          */
 
           X->TBody[idx][0]  = isite1;
           X->TBody[idx][1]  = isigma1;
@@ -1670,12 +1688,6 @@ int ReadDefFileIdxPara(
           X->TBody[idx][10] = isite6;
           X->TBody[idx][11] = isigma6;
 
-          /*
-          if(CheckQuadSite(isite1, isite2, isite3, isite4,X->Nsite) !=0){
-            fclose(fp);
-            return ReadDefFileError(defname);
-          }
-          */
           idx++;
         }
       }
