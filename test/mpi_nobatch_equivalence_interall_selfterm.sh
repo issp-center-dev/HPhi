@@ -42,9 +42,14 @@ EOF
 # operator n_3. Each pair is the term and its Hermitian conjugate (operator
 # order reversed). Encoding: i1 s1 i2 s2 i3 s3 i4 s4 = c^dag_{i1,s1} c_{i2,s2}
 # c^dag_{i3,s3} c_{i4,s4}.
+# The first four pairs put the number operator LAST (c^dag_i c_j n_k ->
+# child_GC_CisAjtCkuAku_Hubbard_MPI); the last pair puts it FIRST
+# (n_k c^dag_i c_j -> child_GC_CisAisCjtAku_Hubbard_MPI, which delegates to the
+# former), so both off-diagonal dispatch targets that route origin==myrank
+# terms are exercised.
 cat > interall.def <<EOF
 ========================
-NInterAll 8
+NInterAll 10
 ========================
 ========zInterAll=======
 ========================
@@ -56,6 +61,8 @@ NInterAll 8
     3 0 3 0 1 1 0 1 1.0000000000000000 0.0000000000000000
     0 0 2 0 3 1 3 1 1.0000000000000000 0.0000000000000000
     3 1 3 1 2 0 0 0 1.0000000000000000 0.0000000000000000
+    3 0 3 0 0 0 2 0 1.0000000000000000 0.0000000000000000
+    2 0 0 0 3 0 3 0 1.0000000000000000 0.0000000000000000
 EOF
 # Register the InterAll file in the StdFace-generated namelist.
 printf '    InterAll  interall.def\n' >> namelist.def
