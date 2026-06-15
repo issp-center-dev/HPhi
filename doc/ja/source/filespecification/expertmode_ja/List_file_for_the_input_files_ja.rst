@@ -79,6 +79,8 @@
     "TwoBodyG", "出力する二体グリーン関数 :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle`\ に関する設定をします。"
     "SingleExcitation", "一体励起状態の生成演算子に関する指定をします。"
     "PairExcitation", "二体励起状態の生成演算子に関する指定をします。"
+    "SingleExcitationBra", "非対角グリーン関数用のブラ側一体励起演算子を指定します。"
+    "PairExcitationBra", "非対角グリーン関数用のブラ側二体励起演算子を指定します。"
     "SpectrumVec", "スペクトル関数を計算するためのリスタート用の入力ベクトルを指定します。"                                                               
     "OneBodyTE", "各時刻で付加される一体型の演算子に関する設定をします。"
     "TwoBodyTE", "各時刻で付加される二体型の演算子に関する設定をします。"

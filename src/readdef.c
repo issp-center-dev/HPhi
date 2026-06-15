@@ -68,7 +68,9 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "ThreeBodyG",
   "FourBodyG",
   "SixBodyG",
-  "InvTemp"
+  "InvTemp",
+  "SingleExcitationBra",
+  "PairExcitationBra"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -844,6 +846,20 @@ int ReadDefFileNInt(
       fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
       fgetsMPI(ctmp2, 256, fp);
       sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairExcitationOperator));
+      break;
+
+    case KWSingleExcitationBra:
+      /* Read singleexcitationbra.def-----------------------------------*/
+      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NSingleExcitationOperatorBra));
+      break;
+
+    case KWPairExcitationBra:
+      /* Read pairexcitationbra.def-------------------------------------*/
+      fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
+      fgetsMPI(ctmp2, 256, fp);
+      sscanf(ctmp2,"%s %d\n", ctmp, &(X->NPairExcitationOperatorBra));
       break;
 
     default:
@@ -2129,6 +2145,85 @@ int ReadDefFileIdxPara(
       }
       break;
 
+    case KWSingleExcitationBra:
+      /*singleexcitationbra.def-------------------------------------*/
+      if(X->NSingleExcitationOperatorBra>0) {
+        if(X->iCalcModel == Spin || X->iCalcModel == SpinGC) {
+          fprintf(stderr, "SingleExcitationBra is not allowed for spin system.\n");
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+        while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+          sscanf(ctmp2, "%d %d %d %lf %lf\n",
+                 &isite1,
+                 &isigma1,
+                 &itype,
+                 &dvalue_re,
+                 &dvalue_im
+                 );
+
+          if (CheckSite(isite1, X->Nsite) != 0) {
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          X->SingleExcitationOperatorBra[idx][0] = isite1;
+          X->SingleExcitationOperatorBra[idx][1] = isigma1;
+          X->SingleExcitationOperatorBra[idx][2] = itype;
+          X->ParaSingleExcitationOperatorBra[idx] = dvalue_re + I * dvalue_im;
+          idx++;
+        }
+        if (idx != X->NSingleExcitationOperatorBra) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+      }
+      break;
+
+    case KWPairExcitationBra:
+      /*pairexcitationbra.def-------------------------------------*/
+      if(X->NPairExcitationOperatorBra>0) {
+        while (fgetsMPI(ctmp2, 256, fp) != NULL) {
+          sscanf(ctmp2, "%d %d %d %d %d %lf %lf\n",
+                 &isite1,
+                 &isigma1,
+                 &isite2,
+                 &isigma2,
+                 &itype,
+                 &dvalue_re,
+                 &dvalue_im
+                 );
+          if (CheckPairSite(isite1, isite2, X->Nsite) != 0) {
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+
+          if(itype==1){
+            X->PairExcitationOperatorBra[idx][0] = isite1;
+            X->PairExcitationOperatorBra[idx][1] = isigma1;
+            X->PairExcitationOperatorBra[idx][2] = isite2;
+            X->PairExcitationOperatorBra[idx][3] = isigma2;
+            X->PairExcitationOperatorBra[idx][4] = itype;
+            X->ParaPairExcitationOperatorBra[idx] = dvalue_re + I * dvalue_im;
+          }
+          else{
+            X->PairExcitationOperatorBra[idx][0] = isite2;
+            X->PairExcitationOperatorBra[idx][1] = isigma2;
+            X->PairExcitationOperatorBra[idx][2] = isite1;
+            X->PairExcitationOperatorBra[idx][3] = isigma1;
+            X->PairExcitationOperatorBra[idx][4] = itype;
+            X->ParaPairExcitationOperatorBra[idx] = -(dvalue_re + I * dvalue_im);
+          }
+
+          idx++;
+        }
+        if (idx != X->NPairExcitationOperatorBra) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+      }
+      break;
+
     default:
       break;
     }
@@ -3174,6 +3269,8 @@ void InitializeInteractionNum
   X->flag_read_invtemp=0;
   X->NSingleExcitationOperator=0;
   X->NPairExcitationOperator=0;
+  X->NSingleExcitationOperatorBra=0;
+  X->NPairExcitationOperatorBra=0;
   //[s] Time Evolution
   X->NTETimeSteps=0;
   X->NLaser=0;
