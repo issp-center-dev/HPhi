@@ -363,6 +363,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless_GC min:2)
     add_hphi_mpi_test(mpi_consistency_te_kondo min:2)
+    add_hphi_mpi_test_with_srcdir(mpi_consistency_threebody_generalspin exact:3)
     add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody min:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard_twobody min:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence min:4)
@@ -389,6 +390,7 @@ if(MPI_FOUND)
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
         mpi_consistency_spin mpi_consistency_spingc mpi_consistency_te_spin
+        mpi_consistency_threebody_generalspin
         PROPERTIES LABELS "mpi;consistency;spin")
     set_tests_properties(
         mpi_consistency_kondo mpi_consistency_te_kondo

@@ -495,7 +495,14 @@ void mltplyGeneralSpinGC_mini(
     if (isite1 == isite2) {
       if (sigma1 != sigma2) {
         if (isite1 > X->Def.Nsite) {
+          // Apply the one-directional operator c5 a6 only. As in the S=1/2
+          // path (mltplyHalfSpinGC_mini), switch to M_MLTPLY2 so the inter-
+          // process MPI routine zeroes the Hermitian-conjugate branch; under
+          // plain M_MLTPLY it would also add the conjugate, corrupting the
+          // three-body Green function (prerelease finding H-2).
+          X->Large.mode = M_MLTPLY2;
           dam_pr = child_GC_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+          X->Large.mode = M_MLTPLY;
           //X->Large.prdct += dam_pr;
         }/*if (isite1 > X->Def.Nsite)*/
         else {
