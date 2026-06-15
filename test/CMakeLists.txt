@@ -312,10 +312,14 @@ set_tests_properties(
 add_hphi_test_with_srcdir(ctpq_spin_kagome)
 add_hphi_test_with_srcdir(ctpq_spin_kagome_randomsphere)
 add_hphi_test_with_srcdir(read_ctpq_spin_chain)
+add_hphi_test(ctpq_invtemp_validation)
 
 set_tests_properties(
     ctpq_spin_kagome ctpq_spin_kagome_randomsphere read_ctpq_spin_chain
     PROPERTIES LABELS "ctpq;spin")
+set_tests_properties(
+    ctpq_invtemp_validation
+    PROPERTIES LABELS "ctpq;validation")
 
 #
 # Three body for spin 1 Heisenberg chain
