@@ -56,6 +56,7 @@ add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
+add_hphi_test(lanczos_spin_calchs_minus1)
 add_hphi_test(lanczos_spin_ladder_DM)
 add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
@@ -92,6 +93,7 @@ set_tests_properties(
     PROPERTIES LABELS "lanczos;kondo")
 set_tests_properties(
     lanczos_spin_kagome lanczos_spin_ladder_DM
+    lanczos_spin_calchs_minus1
     lanczos_spingc_honey lanczos_spingc_hcor
     lanczos_spin_kagome_restart
     PROPERTIES LABELS "lanczos;spin")
