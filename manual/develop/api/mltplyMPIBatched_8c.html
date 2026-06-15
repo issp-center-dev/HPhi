@@ -18,7 +18,6 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script type="text/javascript">
 window.MathJax = {
   options: {
@@ -179,9 +178,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0c6382fced1d9cccf45baadaeb832879" id="r_a0c6382fced1d9cccf45baadaeb832879"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a0c6382fced1d9cccf45baadaeb832879">X_child_GC_general_hopp_MPIdouble_batched</a> (<a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a0c6382fced1d9cccf45baadaeb832879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for HubbardGC MPIdouble mode.  <br /></td></tr>
 <tr class="separator:a0c6382fced1d9cccf45baadaeb832879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad107da17536b5d935650aa561b9802af" id="r_ad107da17536b5d935650aa561b9802af"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ad107da17536b5d935650aa561b9802af">ComputeInterAllOrigin</a> (int org_isite1, int org_ispin1, int org_isite2, int org_ispin2, int org_isite3, int org_ispin3, int org_isite4, int org_ispin4, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int *origin, int *is_hermite)</td></tr>
-<tr class="memdesc:ad107da17536b5d935650aa561b9802af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if InterAll term requires inter-process communication and compute the origin (communication partner)  <br /></td></tr>
-<tr class="separator:ad107da17536b5d935650aa561b9802af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4875e93815be871ef21aaa3f74402284" id="r_a4875e93815be871ef21aaa3f74402284"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a4875e93815be871ef21aaa3f74402284">ComputeInterAllOrigin</a> (int org_isite1, int org_ispin1, int org_isite2, int org_ispin2, int org_isite3, int org_ispin3, int org_isite4, int org_ispin4, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int *origin, int *is_hermite)</td></tr>
+<tr class="memdesc:a4875e93815be871ef21aaa3f74402284"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if InterAll term requires inter-process communication and compute the origin (communication partner)  <br /></td></tr>
+<tr class="separator:a4875e93815be871ef21aaa3f74402284"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05a6a1ebed541119bc9ae066214a75d3" id="r_a05a6a1ebed541119bc9ae066214a75d3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a05a6a1ebed541119bc9ae066214a75d3">InitializeMPIBatchedInterAll_HubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *batched)</td></tr>
 <tr class="memdesc:a05a6a1ebed541119bc9ae066214a75d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched InterAll for HubbardGC.  <br /></td></tr>
 <tr class="separator:a05a6a1ebed541119bc9ae066214a75d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -224,17 +223,14 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ad107da17536b5d935650aa561b9802af" name="ad107da17536b5d935650aa561b9802af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad107da17536b5d935650aa561b9802af">&#9670;&#160;</a></span>ComputeInterAllOrigin()</h2>
+<a id="a4875e93815be871ef21aaa3f74402284" name="a4875e93815be871ef21aaa3f74402284"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4875e93815be871ef21aaa3f74402284">&#9670;&#160;</a></span>ComputeInterAllOrigin()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static int ComputeInterAllOrigin </td>
+          <td class="memname">int ComputeInterAllOrigin </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_isite1</em>, </td>
@@ -305,21 +301,17 @@ Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Check if InterAll term requires inter-process communication and compute the origin (communication partner) </p>
+<p>Compute the MPI communication partner (origin) of an off-diagonal InterAll term, using the same logic as the HubbardGC batched initializer. Exposed so the per-term dispatch can tell which terms the batched groups actually cover.</p>
 <p>This is similar to CheckBit_InterAllPE but simplified for origin computation. </p>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l01372">1372</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00075">CheckBit_Ajt()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00055">CheckBit_Cis()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00038">CheckPE()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyMPIBatched_8c_source.html#l01490">InitializeMPIBatchedInterAll_HubbardGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyMPIBatched_8c_source.html#l01490">InitializeMPIBatchedInterAll_HubbardGC()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00423">mltplyHubbardGC()</a>.</p>
 
 </div>
 </div>
@@ -409,7 +401,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l02361">2361</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00380">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00392">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00393">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00391">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00381">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00382">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00383">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00384">MPISpinExchangeGroup::state1check</a>, and <a class="el" href="mltplyMPIBatched_8h_source.html#l00379">MPISpinExchangeGroup::term_indices</a>.</p>
+<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00404">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00416">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00417">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00415">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00405">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00406">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00407">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00408">MPISpinExchangeGroup::state1check</a>, and <a class="el" href="mltplyMPIBatched_8h_source.html#l00403">MPISpinExchangeGroup::term_indices</a>.</p>
 
 </div>
 </div>
@@ -562,7 +554,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l02465">2465</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00380">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00392">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00393">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="global_8c_source.html#l00157">nproc</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00391">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00378">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00381">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00382">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00383">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00377">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00384">MPISpinExchangeGroup::state1check</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00379">MPISpinExchangeGroup::term_indices</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00404">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00416">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00417">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="global_8c_source.html#l00157">nproc</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00415">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00402">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00405">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00406">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00407">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00401">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00408">MPISpinExchangeGroup::state1check</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00403">MPISpinExchangeGroup::term_indices</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00202">mltplyHalfSpin()</a>.</p>
 
@@ -599,7 +591,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l02066">2066</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00380">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00392">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00393">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="global_8c_source.html#l00157">nproc</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00391">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00378">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00381">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00382">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00383">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00377">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00384">MPISpinExchangeGroup::state1check</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00379">MPISpinExchangeGroup::term_indices</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00404">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00416">MPIBatchedSpinExchange::groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00417">MPIBatchedSpinExchange::is_initialized</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="global_8c_source.html#l00157">nproc</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00415">MPIBatchedSpinExchange::num_groups</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00402">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00405">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00406">MPISpinExchangeGroup::org_ispin1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00407">MPISpinExchangeGroup::org_ispin2</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00401">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00408">MPISpinExchangeGroup::state1check</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00403">MPISpinExchangeGroup::term_indices</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00636">mltplyHalfSpinGC()</a>.</p>
 
@@ -896,7 +888,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l02384">2384</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00380">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00378">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00381">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00377">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00384">MPISpinExchangeGroup::state1check</a>, <a class="el" href="global_8c_source.html#l00102">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00404">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00402">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00405">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00401">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00408">MPISpinExchangeGroup::state1check</a>, <a class="el" href="global_8c_source.html#l00102">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00636">mltplyHalfSpinGC()</a>.</p>
 
@@ -1364,7 +1356,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="mltplyMPIBatched_8c_source.html#l02652">2652</a> of file <a class="el" href="mltplyMPIBatched_8c_source.html">mltplyMPIBatched.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00380">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00109">list_1</a>, <a class="el" href="global_8c_source.html#l00110">list_1buf</a>, <a class="el" href="global_8c_source.html#l00112">list_2_1</a>, <a class="el" href="global_8c_source.html#l00113">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00378">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00381">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00377">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00384">MPISpinExchangeGroup::state1check</a>, <a class="el" href="global_8c_source.html#l00102">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyMPIBatched_8h_source.html#l00404">MPISpinExchangeGroup::coefficients</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00109">list_1</a>, <a class="el" href="global_8c_source.html#l00110">list_1buf</a>, <a class="el" href="global_8c_source.html#l00112">list_2_1</a>, <a class="el" href="global_8c_source.html#l00113">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00402">MPISpinExchangeGroup::num_terms</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00405">MPISpinExchangeGroup::org_isite1</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00401">MPISpinExchangeGroup::origin</a>, <a class="el" href="mltplyMPIBatched_8h_source.html#l00408">MPISpinExchangeGroup::state1check</a>, <a class="el" href="global_8c_source.html#l00102">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00202">mltplyHalfSpin()</a>.</p>
 

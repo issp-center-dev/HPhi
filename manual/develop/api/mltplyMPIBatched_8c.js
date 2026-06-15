@@ -1,6 +1,6 @@
 var mltplyMPIBatched_8c =
 [
-    [ "ComputeInterAllOrigin", "mltplyMPIBatched_8c.html#ad107da17536b5d935650aa561b9802af", null ],
+    [ "ComputeInterAllOrigin", "mltplyMPIBatched_8c.html#a4875e93815be871ef21aaa3f74402284", null ],
     [ "FinalizeMPIBatchedDoubleTransfers", "mltplyMPIBatched_8c.html#a9cc628effd5f8e3dbd527bf88103d2e0", null ],
     [ "FinalizeMPIBatchedInterAll", "mltplyMPIBatched_8c.html#a22d51c7fd62201de633917bde74a7bc2", null ],
     [ "FinalizeMPIBatchedSpinExchange", "mltplyMPIBatched_8c.html#ab7e08263a22bfcda19dadaa0abdea9b1", null ],
