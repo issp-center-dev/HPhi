@@ -504,6 +504,13 @@ static int apply_hubbardgc_create_mask(
   return 1;
 }
 
+static unsigned long int get_hubbardgc_local_block(
+  const struct DefineList *D
+) {
+  if (D->Nsite == 0) return 1;
+  return D->OrgTpow[2 * D->Nsite - 1] * 2;
+}
+
 static int apply_nbody_interall_hubbardgc_full(
   const struct BindStruct *X,
   unsigned int term_index,
@@ -516,7 +523,7 @@ static int apply_nbody_interall_hubbardgc_full(
   const struct DefineList *D = &X->Def;
   unsigned int k;
   unsigned long int state;
-  const unsigned long int block = D->OrgTpow[2 * D->Nsite];
+  const unsigned long int block = get_hubbardgc_local_block(D);
   const unsigned int n = D->NBodyInterAll_CanonicalN[term_index];
   const unsigned int off = D->NBodyInterAll_CanonicalOffset[term_index];
 
