@@ -6,6 +6,11 @@ CoulombIntra file
 This file determines the values of the on-site interactions :math:`U_i`
 (for :math:`S=1/2` system),
 
+.. note::
+   For spinless fermion models (CalcModel=7, 8), on-site Coulomb interactions
+   have no physical meaning since there are no spin degrees of freedom.
+   Specifying this file for spinless fermion models will result in an error.
+
 .. math::
 
    {\mathcal H}+=\sum_{i}U_i n_ {i \uparrow}n_{i \downarrow}.

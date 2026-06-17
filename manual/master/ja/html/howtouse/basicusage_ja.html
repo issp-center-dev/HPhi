@@ -5,18 +5,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>2.4. 基本的な使い方 &#8212; HΦ マニュアル 3.5.2 ドキュメント</title>
+    <title>2.4. 基本的な使い方 &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
-    <script src="../_static/documentation_options.js?v=cbac9f54"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/translations.js?v=4755f45a"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
-    <link rel="next" title="3. チュートリアル" href="../tutorial/tu-index.html" />
+    <link rel="next" title="2.5. トラブルシューティング" href="troubleshooting_ja.html" />
     <link rel="prev" title="2.3. ディレクトリ構成" href="directorystructure_ja.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -207,6 +207,12 @@
 Hubbard模型、近藤模型を選択した場合は、プロセス数が<span class="math notranslate nohighlight">\(4^n\)</span>となるように設定してください。</p>
 </div></blockquote>
 <ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型</p></li>
+</ul>
+<blockquote>
+<div><p><a class="reference internal" href="../filespecification/expertmode_ja/CalcMod_file_ja.html#subsec-calcmod"><span class="std std-ref">CalcModファイル</span></a> の <strong>CalcMod</strong>ファイルで、<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code>として<span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型を選択した場合は、プロセス数が<span class="math notranslate nohighlight">\(4^n\)</span>となるように設定してください(fermion Hubbard模型と同じ)。<span class="math notranslate nohighlight">\(t\)</span>-<span class="math notranslate nohighlight">\(J\)</span>模型の物理的な1サイトは3状態(空・上・下)ですが、内部表現では1サイトあたり4状態を保持するため、プロセス数は4のべき乗(<strong>3のべき乗ではありません</strong>)です。二重占有した inter-process サイトを持つプロセスは局所次元0となります。</p>
+</div></blockquote>
+<ul class="simple">
 <li><p>スピン系</p></li>
 </ul>
 <blockquote>
@@ -228,6 +234,7 @@ NlocalSpin     3
 <p>で与えられる場合、許容されるプロセス数は<span class="math notranslate nohighlight">\(2=1+1,~6=2\times(2+1),~24=6\times(3+1)\)</span>となります。</p>
 </div></blockquote>
 </div></blockquote>
+<p>MPI並列化の技術的詳細（サイト分類、通信パターン、バッチ通信）については <a class="reference internal" href="../technical/index.html#ch-technical"><span class="std std-ref">技術詳細</span></a> を参照してください。</p>
 </section>
 <section id="id5">
 <h2><span class="section-number">2.4.4. </span>バージョン番号の確認<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
@@ -274,14 +281,15 @@ NlocalSpin     3
 <li class="toctree-l3"><a class="reference internal" href="#id5">2.4.4. バージョン番号の確認</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting_ja.html">2.5. トラブルシューティング</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">6. 謝辞</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../fourier/index.html">7. 相関関数のFourier変換ユーティリティー</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../wannier/index.html">8. Wannier関数を用いたダウンフォールディング</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">6. 技術詳細</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
 </ul>
 
 <div class="relations">
@@ -290,7 +298,7 @@ NlocalSpin     3
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="ho-index.html"><span class="section-number">2. </span>How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
       <li>Previous: <a href="directorystructure_ja.html" title="前の章へ"><span class="section-number">2.3. </span>ディレクトリ構成</a></li>
-      <li>Next: <a href="../tutorial/tu-index.html" title="次の章へ"><span class="section-number">3. </span>チュートリアル</a></li>
+      <li>Next: <a href="troubleshooting_ja.html" title="次の章へ"><span class="section-number">2.5. </span>トラブルシューティング</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -321,7 +329,7 @@ NlocalSpin     3
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

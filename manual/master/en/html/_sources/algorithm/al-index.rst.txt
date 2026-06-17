@@ -4,7 +4,7 @@ Algorithm
 *********
 .. toctree::
    :maxdepth: 2
-   
+
    Lanczos_en
    FullDiagonalization_en
    TPQ_en

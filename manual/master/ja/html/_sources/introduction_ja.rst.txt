@@ -1,5 +1,7 @@
 .. highlight:: none
 
+.. _Introduction:
+
 *********************************
 What is :math:`{\mathcal H}\Phi`?
 *********************************
@@ -43,6 +45,9 @@ What is :math:`{\mathcal H}\Phi`?
 | Mitsuaki Kawamura, Kazuyoshi Yoshimi, Takahiro Misawa, Youhei Yamaji,
   Synge Todo, and Naoki Kawashima, Comp. Phys. Commun. **217** (2017)
   180-192.
+| Kota Ido, Mitsuaki Kawamura, Yuichi Motoyama, Kazuyoshi Yoshimi, Youhei Yamaji,
+  Synge Todo, Naoki Kawashima, and Takahiro Misawa, Comp. Phys. Commun. **298** (2024)
+  109093.
 
 コピーライト
 ~~~~~~~~~~~~
@@ -56,6 +61,8 @@ What is :math:`{\mathcal H}\Phi`?
 ~~~~~~~~~~
 
 本ソフトウェアは以下の開発貢献者により開発されています。
+
+-  ver.3.6.0 (2026/6/16 リリース)
 
 -  ver.3.5.2 (2024/3/7 リリース)
 

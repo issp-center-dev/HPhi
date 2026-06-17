@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.6. Restart Mechanism &#8212; HΦ Documentation 3.6.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=5349f462"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7. Related Tools" href="../related/index.html" />
+    <link rel="prev" title="6.5. Numerical Precision" href="precision_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="restart-mechanism">
+<h1><span class="section-number">6.6. </span>Restart Mechanism<a class="headerlink" href="#restart-mechanism" title="Link to this heading">¶</a></h1>
+<p>This section describes the restart mechanism in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
+<section id="overview">
+<h2><span class="section-number">6.6.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> supports checkpoint/restart functionality, allowing:</p>
+<ul class="simple">
+<li><p>Resumption of interrupted calculations</p></li>
+<li><p>Breaking large calculations into smaller jobs</p></li>
+<li><p>Iterative refinement of eigenvectors</p></li>
+</ul>
+</section>
+<section id="restart-files">
+<h2><span class="section-number">6.6.2. </span>Restart Files<a class="headerlink" href="#restart-files" title="Link to this heading">¶</a></h2>
+<p>The following files are used for restart:</p>
+<dl class="simple">
+<dt><strong>Eigenvector files</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">zvo_eigenvec_{rank}_set{set}.dat</span></code></dt><dd><p>Stores the eigenvector for each MPI rank.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>Restart vector files</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">restart_{rank}.dat</span></code></dt><dd><p>Contains the Lanczos vectors needed to resume iteration.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>Tri-diagonal matrix</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">zvo_Lanczos_Step.dat</span></code></dt><dd><p>Stores the Lanczos coefficients.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="input-output-settings">
+<h2><span class="section-number">6.6.3. </span>Input/Output Settings<a class="headerlink" href="#input-output-settings" title="Link to this heading">¶</a></h2>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> input file:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span></code></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Start from random or specified initial vector (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Read eigenvector from file and recalculate</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: Read eigenvector from file</p></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span></code></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Do not output eigenvector (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Output eigenvector to file</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="usage-examples">
+<h2><span class="section-number">6.6.4. </span>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading">¶</a></h2>
+<p><strong>Initial calculation with eigenvector output</strong></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> in the CalcMod file.
+After the calculation completes, eigenvector files will be written.</p>
+<p><strong>Restart from eigenvector</strong></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code>.
+The calculation will read the eigenvector from the previous run
+and refine it.</p>
+<p><strong>Calculate expectation values only</strong></p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">2</span></code>.
+The eigenvector will be read and used to compute observables
+without further diagonalization.</p>
+</section>
+<section id="file-format">
+<h2><span class="section-number">6.6.5. </span>File Format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<p>Eigenvector files are stored in binary format for efficiency.
+Each file contains:</p>
+<ol class="arabic simple">
+<li><p>Header information (system size, etc.)</p></li>
+<li><p>Complex double array of eigenvector components</p></li>
+</ol>
+<p>The files are platform-dependent due to binary format.
+Ensure restart files are used on the same architecture.</p>
+</section>
+<section id="mpi-considerations">
+<h2><span class="section-number">6.6.6. </span>MPI Considerations<a class="headerlink" href="#mpi-considerations" title="Link to this heading">¶</a></h2>
+<p>When using MPI, each process writes and reads its own restart files.
+The number of MPI processes must match between the original and restart runs.</p>
+<p>If you need to change the process count, you must:</p>
+<ol class="arabic simple">
+<li><p>Gather all eigenvector files</p></li>
+<li><p>Redistribute the data</p></li>
+<li><p>Split into new per-process files</p></li>
+</ol>
+</section>
+<section id="common-issues">
+<h2><span class="section-number">6.6.7. </span>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>File not found</strong></dt><dd><p>Ensure restart files are in the working directory with correct names.</p>
+</dd>
+<dt><strong>Process count mismatch</strong></dt><dd><p>The number of MPI processes must match the original calculation.</p>
+</dd>
+<dt><strong>File corruption</strong></dt><dd><p>If calculations produce unexpected results after restart,
+the restart files may be corrupted. Delete them and start fresh.</p>
+</dd>
+</dl>
+</section>
+<section id="best-practices">
+<h2><span class="section-number">6.6.8. </span>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Regularly save eigenvector files during long calculations</p></li>
+<li><p>Keep backup copies of restart files</p></li>
+<li><p>Verify results after restart by checking conserved quantities</p></li>
+<li><p>Document the calculation parameters used with each restart file</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. Technical Details</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_en.html">6.1. Hilbert Space Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_en.html">6.2. MPI Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart Mechanism</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">6.6.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restart-files">6.6.2. Restart Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-output-settings">6.6.3. Input/Output Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-examples">6.6.4. Usage Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-format">6.6.5. File Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi-considerations">6.6.6. MPI Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-issues">6.6.7. Common Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#best-practices">6.6.8. Best Practices</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>Technical Details</a><ul>
+      <li>Previous: <a href="precision_en.html" title="previous chapter"><span class="section-number">6.5. </span>Numerical Precision</a></li>
+      <li>Next: <a href="../related/index.html" title="next chapter"><span class="section-number">7. </span>Related Tools</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/restart_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

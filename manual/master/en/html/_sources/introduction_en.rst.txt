@@ -1,5 +1,7 @@
 .. highlight:: none
 
+.. _Introduction:
+
 *********************************
 What is :math:`{\mathcal H}\Phi`?
 *********************************
@@ -18,7 +20,10 @@ In contrast, the recent and rapid development of a parallel computing infrastruc
 License
 -------
 
-The distribution of the program package and the source codes for :math:`{\mathcal H}\Phi` follow GNU General Public License version 3 (GPL v3) or later. We hope that you cite the reference, `Comp. Phys. Commun. 217 (2017) 180-192 <https://www.sciencedirect.com/science/article/pii/S0010465517301200?via%3Dihub>`_ , when you publish the results using :math:`{\mathcal H}\Phi` (hphi).
+The distribution of the program package and the source codes for :math:`{\mathcal H}\Phi` follow GNU General Public License version 3 (GPL v3) or later. We hope that you cite the following references when you publish the results using :math:`{\mathcal H}\Phi` (hphi):
+
+* `Comp. Phys. Commun. 217 (2017) 180-192 <https://www.sciencedirect.com/science/article/pii/S0010465517301200>`_
+* `Comp. Phys. Commun. 298 (2024) 109093 <https://www.sciencedirect.com/science/article/pii/S001046552400016X>`_
 
 Copyright
 ---------
@@ -30,6 +35,8 @@ Contributors
 ------------
 
 This software was developed by the following contributors.
+
+* ver.3.6.0 (released on 2026/6/16)
 
 * ver.3.5.2 (released on 2024/3/07)
 

@@ -1,0 +1,24 @@
+var annotated_dup =
+[
+    [ "BindStruct", "structBindStruct.html", "structBindStruct" ],
+    [ "BoostList", "structBoostList.html", "structBoostList" ],
+    [ "CheckList", "structCheckList.html", "structCheckList" ],
+    [ "DefineList", "structDefineList.html", "structDefineList" ],
+    [ "DSFMT_T", "structDSFMT__T.html", "structDSFMT__T" ],
+    [ "EDMainCalStruct", "structEDMainCalStruct.html", "structEDMainCalStruct" ],
+    [ "ExcitationOperatorSet", "structExcitationOperatorSet.html", "structExcitationOperatorSet" ],
+    [ "LargeList", "structLargeList.html", "structLargeList" ],
+    [ "MPIBatchedDoubleTransfers", "structMPIBatchedDoubleTransfers.html", "structMPIBatchedDoubleTransfers" ],
+    [ "MPIBatchedInterAll", "structMPIBatchedInterAll.html", "structMPIBatchedInterAll" ],
+    [ "MPIBatchedSpinExchange", "structMPIBatchedSpinExchange.html", "structMPIBatchedSpinExchange" ],
+    [ "MPIBatchedTransfers", "structMPIBatchedTransfers.html", "structMPIBatchedTransfers" ],
+    [ "MPIDoubleTransferGroup", "structMPIDoubleTransferGroup.html", "structMPIDoubleTransferGroup" ],
+    [ "MPIInterAllGroup", "structMPIInterAllGroup.html", "structMPIInterAllGroup" ],
+    [ "MPISpinExchangeGroup", "structMPISpinExchangeGroup.html", "structMPISpinExchangeGroup" ],
+    [ "MPITransferGroup", "structMPITransferGroup.html", "structMPITransferGroup" ],
+    [ "ParamList", "structParamList.html", "structParamList" ],
+    [ "PhysList", "structPhysList.html", "structPhysList" ],
+    [ "SectorShift", "structSectorShift.html", "structSectorShift" ],
+    [ "TimeKeepStruct", "structTimeKeepStruct.html", "structTimeKeepStruct" ],
+    [ "W128_T", "unionW128__T.html", "unionW128__T" ]
+];

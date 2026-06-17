@@ -153,11 +153,22 @@ Common parameters
 
    **Type :** Int (positive integer)
 
-   **Description :** If ``CalcHS=1``, an efficient algorithm for generating
-   the restricted Hilbert space with the specified quantum number is
-   used (Details of algorithm is shown in 
-   http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf [in Japanese]). Default
-   value is 1 and the efficient algorithm is used.
+   **Description :** Selects the algorithm used to enumerate the
+   restricted Hilbert space with the specified quantum number.
+   If ``CalcHS=1``, an efficient algorithm based on bit manipulation
+   is used (details are given in
+   http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf [in Japanese]).
+   If ``CalcHS=2``, an alternative enumeration path is taken that can
+   be useful for some large-sector cases by avoiding the full
+   ``sdim = 2^Nsite`` outer loop of ``CalcHS=1``; note, however, that
+   the current implementation still allocates the auxiliary index
+   arrays (``list_2_1``, ``list_2_2``, ``list_jb``) at size ``O(sdim)``
+   and uses an additional ``O(idim_max)`` temporary sort buffer for
+   the Hubbard branch, so it is not a memory-only large-system fix.
+   ``CalcHS=2`` is currently available only for the ``Hubbard`` and
+   ``HubbardNConserved`` models; passing it with any other model
+   (e.g. ``Kondo``, ``Spin``) results in an explicit error. Default
+   value is 1.
 
  
 

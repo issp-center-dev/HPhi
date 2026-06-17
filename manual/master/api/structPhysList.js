@@ -1,0 +1,26 @@
+var structPhysList =
+[
+    [ "all_doublon", "structPhysList.html#a09a06032478edecb43f2bfe8cc3a9ec6", null ],
+    [ "all_energy", "structPhysList.html#abf178a2544d5fc80ddd317d29d627594", null ],
+    [ "all_num_down", "structPhysList.html#a85aef3e3c38cd22681423f84ff604624", null ],
+    [ "all_num_up", "structPhysList.html#a7a9ee0adb634ad8053c55d49789a1afe", null ],
+    [ "all_s2", "structPhysList.html#a22003d95aa953051e7395a262c988d06", null ],
+    [ "all_sz", "structPhysList.html#a0d2434c6801254e1d11773b7df487c64", null ],
+    [ "charge_real_cor", "structPhysList.html#a517fc1ab30be5ea001cd891be913aabc", null ],
+    [ "doublon", "structPhysList.html#a39b5e349b2c3e4bd893491956698d299", null ],
+    [ "doublon2", "structPhysList.html#ad5d3ebba16dafc8b6afa8f94e6c1c789", null ],
+    [ "eigen_num", "structPhysList.html#a5616dcf1777ecef24f4883835541a375", null ],
+    [ "energy", "structPhysList.html#a0ead805fab300ad3b7423dddd8c5cd4a", null ],
+    [ "loc_spin_z", "structPhysList.html#ace4ebae9008c5da6157a2d70888a12dd", null ],
+    [ "num", "structPhysList.html#a43fc38665ed0be17ddee6074470ae7f7", null ],
+    [ "num2", "structPhysList.html#ad115257ac4166dea18e4380c2f3aefad", null ],
+    [ "num_down", "structPhysList.html#a8afa4ed6caf9eceb34f63afa1f2a83db", null ],
+    [ "num_up", "structPhysList.html#ad23f6224e25e8e6fb9ee498debf55482", null ],
+    [ "s2", "structPhysList.html#a42edbfd81a3b895ebdd81e70757a0a7d", null ],
+    [ "spin_real_cor", "structPhysList.html#affa7b2dc9c283f5e020a3a8790fe9241", null ],
+    [ "Sz", "structPhysList.html#ac5dca3d91e341e135c764e3200537b67", null ],
+    [ "Sz2", "structPhysList.html#aee62149eadb7414fc444f5b03d1dd20f", null ],
+    [ "Target_CG_energy", "structPhysList.html#a40e86de11143f54df7a3bf8a4344eb0b", null ],
+    [ "Target_energy", "structPhysList.html#ac645797a0a2163227c055f2d3cb612d3", null ],
+    [ "var", "structPhysList.html#a23cddf509dfd42977aeee31d7df527d0", null ]
+];

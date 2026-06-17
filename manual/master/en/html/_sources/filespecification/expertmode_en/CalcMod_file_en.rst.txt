@@ -89,12 +89,33 @@ The parameters correlated with the keywords are as follows.
    | 3: Fermion Hubbard model (grand canonical ensemble)
    | 4: Spin model (grand canonical ensemble)
    | 5: Kondo lattice model (grand canonical ensemble).
+   | 7: Spinless fermion model (canonical ensemble: conservation of particles)
+   | 8: Spinless fermion model (grand canonical ensemble).
+   | 9: :math:`t`-:math:`J` model (canonical ensemble: conservation of
+     particles, or conservation of particles and the component of
+     :math:`S_z`)
+   | 10: :math:`t`-:math:`J` model (grand canonical ensemble)
 
    For the fermion Hubbard model, you can select the model under the
    conservation of the particles by setting ``NCond`` in the ModPara
    file. When you want to select the model under the conservation of
    particles and the component of :math:`S_z`, set both ``NCond`` and
    ``2Sz`` in the ModPara file.
+
+   The :math:`t`-:math:`J` models (9, 10) follow the same ``NCond`` /
+   ``2Sz`` selection as the fermion Hubbard model: for the canonical model
+   (9), setting only ``NCond`` conserves the total number of electrons,
+   while setting both ``NCond`` and ``2Sz`` also conserves :math:`S_z`.
+   Doubly-occupied sites are excluded from the Hilbert space (the local
+   dimension per site is 3: empty, up, or down), and the models are
+   available only in the expert mode. Note that for MPI runs the number of
+   processes must nevertheless be a power of four, the same as for the
+   Fermion Hubbard model (**not** a power of three), because the internal
+   representation keeps four states per site.
+
+   For the spinless fermion model, only Trans (hopping) and CoulombInter
+   (inter-site interaction) terms are valid. CoulombIntra, Hund, Exchange,
+   and PairHop cannot be used since there are no spin degrees of freedom.
 
 *  ``CalcEigenVec``
 
@@ -179,6 +200,14 @@ The parameters correlated with the keywords are as follows.
    | 0: Not output an eigenvector
    | 1: Output an eigenvector.
    
+*  ``OutputDataHead``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** Select whether to prefix TPQ/TE physical quantity output filenames (``SS``, ``Norm``, ``Flct``) with the header string defined by ``CDataFileHead`` in the ModPara file:
+   | 0: Do not add a prefix (e.g., ``SS_rand0.dat``).
+   | 1: Add the ``CDataFileHead`` prefix (e.g., ``zvo_SS_rand0.dat``).
+
 *  ``Scalapack``
 
    **Type :** Int (default value: 0)
