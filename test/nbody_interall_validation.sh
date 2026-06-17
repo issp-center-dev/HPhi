@@ -52,7 +52,7 @@ EOF
   cd ..
 }
 
-rm -rf diag_im unpaired zero_product unsupported
+rm -rf diag_im unpaired zero_product nonconserved
 make_spingc_base diag_im
 make_spingc_base unpaired
 make_spingc_base zero_product
@@ -84,8 +84,8 @@ NNBodyInterAll 1
 2 0 1 0 0 0 1 0 0 1.0000000000000000 0.0000000000000000
 EOF
 
-mkdir -p unsupported
-cd unsupported
+mkdir -p nonconserved
+cd nonconserved
 cat > stan.in <<EOF
 model = "Spin"
 method = "Lanczos"
@@ -105,13 +105,13 @@ NNBodyInterAll 1
 ========================
 ========NBodyInterAll===
 ========================
-1 0 1 0 1 0.1000000000000000 0.0000000000000000
+1 0 1 0 0 0.1000000000000000 0.0000000000000000
 EOF
 cd ..
 
 expect_fail diag_im "finite imaginary"
 expect_fail unpaired "adjacent Hermite"
 expect_fail zero_product "zero same-site operator product"
-expect_fail unsupported "supported only for SpinGC"
+expect_fail nonconserved "does not conserve total Sz: delta2Sz=2"
 
-echo "NBodyInterAll validation rejects unsupported and ambiguous inputs."
+echo "NBodyInterAll validation rejects malformed and Sz-nonconserving inputs."

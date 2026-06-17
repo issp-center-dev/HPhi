@@ -14,6 +14,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "bitcalc.h"
 #include "nbody_correlation.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -102,12 +103,12 @@ int ValidateNBodyGScope(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
-  if (D->iCalcModel != SpinGC) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC.\n");
+  if (D->iCalcModel != SpinGC && D->iCalcModel != Spin) {
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
     return -1;
   }
   if (D->iFlgGeneralSpin != FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC.\n");
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
     return -1;
   }
   for (t = 0; t < D->NNBodyG; t++) {
@@ -228,6 +229,31 @@ int NormalizeNBodyGTerms(struct DefineList *D)
   return 0;
 }
 
+int CheckNBodyGSpinConservation(const struct DefineList *D)
+{
+  unsigned int t, k;
+  if (D->NNBodyG == 0) return 0;
+  if (D->iCalcModel != Spin || D->iFlgGeneralSpin != FALSE) return 0;
+
+  for (t = 0; t < D->NNBodyG; t++) {
+    const unsigned int n = D->NBodyG_CanonicalN[t];
+    const unsigned int off = D->NBodyG_CanonicalOffset[t];
+    int delta_nup = 0;
+    if (D->NBodyG_IsZero[t] == TRUE) continue;
+    for (k = 0; k < n; k++) {
+      const int *f = D->NBodyG_CanonicalFactors[off + k];
+      delta_nup += f[1] - f[3];
+    }
+    if (delta_nup != 0) {
+      fprintf(stdoutMPI,
+              "Error: NBodyG term %u does not conserve total Sz: delta2Sz=%d.\n",
+              t + 1, 2 * delta_nup);
+      return -1;
+    }
+  }
+  return 0;
+}
+
 static int apply_nbodyg_spingc(
   const struct BindStruct *X,
   unsigned int term,
@@ -315,6 +341,35 @@ static double complex expec_nbodyg_term_to_rank(
   return dam_pr;
 }
 
+static double complex expec_nbodyg_term_to_rank_spin(
+  struct BindStruct *X,
+  unsigned int term,
+  const unsigned long int *src_list_1,
+  const double complex *src_vec,
+  const double complex *bra_vec,
+  unsigned long int src_i_max,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, src_list_1, src_vec, bra_vec, list_2_1, list_2_2) \
+  firstprivate(src_i_max, term, rank_in, myrank) private(j)
+  for (j = 1; j <= src_i_max; j++) {
+    unsigned long int local_out = 0;
+    unsigned long int j_out = 0;
+    int rank_out = 0;
+    int ret = apply_nbodyg_spingc(X, term, src_list_1[j], rank_in, &local_out, &rank_out);
+    if (ret == 1 && rank_out == myrank &&
+        GetOffComp(list_2_1, list_2_2, local_out,
+                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out) == TRUE) {
+      dam_pr += conj(bra_vec[j_out]) * src_vec[j];
+    }
+  }
+  return dam_pr;
+}
+
 static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, double complex *vec)
 {
   int mask = 0;
@@ -336,6 +391,46 @@ static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, 
                             MPI_COMM_WORLD, &statusMPI);
     if (ierr != 0) exitMPI(-1);
     dam_pr = expec_nbodyg_term_to_rank(X, term, v1buf, vec, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
+  return SumMPI_dc(dam_pr);
+}
+
+static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int term, double complex *vec)
+{
+  int mask = 0;
+  int origin;
+  double complex dam_pr = 0.0;
+
+  nbodyg_rank_flip_mask(X, term, &mask);
+  origin = myrank ^ mask;
+  if (origin == myrank) {
+    dam_pr = expec_nbodyg_term_to_rank_spin(
+      X, term, list_1, vec, vec, X->Check.idim_max, myrank);
+    return SumMPI_dc(dam_pr);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr = expec_nbodyg_term_to_rank_spin(
+      X, term, list_1buf, v1buf, vec, idim_max_buf, origin);
   }
 #else
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
@@ -389,8 +484,9 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   unsigned int t;
 
   if (X->Def.NNBodyG < 1) return 0;
-  if (X->Def.iCalcModel != SpinGC || X->Def.iFlgGeneralSpin != FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC.\n");
+  if ((X->Def.iCalcModel != SpinGC && X->Def.iCalcModel != Spin) ||
+      X->Def.iFlgGeneralSpin != FALSE) {
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for spin-1/2 SpinGC/Spin.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
@@ -399,7 +495,8 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
-      value = calc_nbodyg_term(X, t, vec);
+      if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
+      else value = calc_nbodyg_term(X, t, vec);
     }
     write_nbodyg_line(fp, &X->Def, t, value);
   }

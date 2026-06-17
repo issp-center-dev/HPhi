@@ -516,6 +516,12 @@ int makeHam(struct BindStruct *X) {
           }
         }
 
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
+          }
+        }
+
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           exchange_spin_GetInfo(i, X);

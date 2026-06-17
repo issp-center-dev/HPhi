@@ -19,6 +19,7 @@ int ParseNBodyInterAllLine(
 
 int ValidateNBodyInterAllScope(const struct DefineList *D);
 int NormalizeNBodyInterAllTerms(struct DefineList *D);
+int CheckNBodyInterAllSpinConservation(const struct DefineList *D);
 int ClassifyNBodyInterAllTerms(struct DefineList *D);
 int CheckNBodyInterAllHermitePairs(const struct DefineList *D);
 
