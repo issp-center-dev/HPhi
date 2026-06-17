@@ -2,8 +2,11 @@ var nbody__correlation_8c =
 [
     [ "apply_nbodyg_spingc", "nbody__correlation_8c.html#a79f5d1bcf62a08a796c3004a7a7e8b34", null ],
     [ "calc_nbodyg_term", "nbody__correlation_8c.html#a1603c41f709eb6c928f09a971d97370c", null ],
+    [ "calc_nbodyg_term_spin", "nbody__correlation_8c.html#a4ee0ba78b8b6e98ac636b24208fc7cbe", null ],
+    [ "CheckNBodyGSpinConservation", "nbody__correlation_8c.html#ac6c411ed57668056ca998b7de38d0eac", null ],
     [ "expec_nbodyg", "nbody__correlation_8c.html#a2a5aba86fb93a6b7d9513be6f13cc0e2", null ],
     [ "expec_nbodyg_term_to_rank", "nbody__correlation_8c.html#a6917d76b1bd8c0016843329663f0fd8c", null ],
+    [ "expec_nbodyg_term_to_rank_spin", "nbody__correlation_8c.html#a9ffff116c289856947c1655e0db5fce8", null ],
     [ "find_site", "nbody__correlation_8c.html#aea5776ccdfaaced857139e29f927c50a", null ],
     [ "get_nbodyg_filename", "nbody__correlation_8c.html#abe6f76d25ae77e7f732f1fe4ba98dac8", null ],
     [ "nbodyg_rank_flip_mask", "nbody__correlation_8c.html#ae7635417d235cd286d377b67cf15fe54", null ],

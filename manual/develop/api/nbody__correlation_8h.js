@@ -1,5 +1,6 @@
 var nbody__correlation_8h =
 [
+    [ "CheckNBodyGSpinConservation", "nbody__correlation_8h.html#ac6c411ed57668056ca998b7de38d0eac", null ],
     [ "expec_nbodyg", "nbody__correlation_8h.html#a2a5aba86fb93a6b7d9513be6f13cc0e2", null ],
     [ "NormalizeNBodyGTerms", "nbody__correlation_8h.html#abc1d3af5e3fba97bca45b5ee6dafaf8b", null ],
     [ "ParseNBodyGLine", "nbody__correlation_8h.html#ae0c8f65863cdc3b76fcdede76a83a14f", null ],
