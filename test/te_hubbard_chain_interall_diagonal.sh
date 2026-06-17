@@ -1,5 +1,11 @@
 #!/bin/sh -e
 
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
 mkdir -p te_hubbard_chain_interall_diagonal/
 cd te_hubbard_chain_interall_diagonal
 python3 "$1/test/testTECalc.py" -p "../../src/HPhi" -mpi "${MPIRUN}" -t "Diagonal"

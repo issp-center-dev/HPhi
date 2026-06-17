@@ -13,6 +13,39 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/**
+ * @file CalcByTPQ.c
+ *
+ * @brief Thermal Pure Quantum (TPQ) state calculation
+ *
+ * TPQ is a method to compute finite-temperature properties without
+ * explicit thermal averaging. A single "thermal pure quantum state"
+ * |psi_beta> represents the thermal ensemble at inverse temperature beta.
+ *
+ * Algorithm:
+ * Starting from random state |psi_0>, apply imaginary time evolution:
+ *   |psi_n> = (l - H/Ns)^n |psi_0>
+ * where l is a large constant (LargeValue) and Ns is the number of sites.
+ *
+ * Physical quantities:
+ *   \f$\langle O \rangle_\beta \approx \langle\psi_n|O|\psi_n\rangle / \langle\psi_n|\psi_n\rangle\f$
+ *
+ * The inverse temperature beta at step n is related to norm:
+ *   beta ≈ 2n / (Ns * l)
+ *
+ * Advantages:
+ * - No explicit diagonalization needed
+ * - Memory: O(N) vs O(N^2) for full diagonalization
+ * - Naturally parallelizable
+ *
+ * Statistical sampling:
+ * - Multiple random initial states (NumAve samples)
+ * - Average over samples for better statistics
+ *
+ * @version 0.1, 0.2
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "FirstMultiply.h"
 #include "Multiply.h"
 #include "expec_energy_flct.h"
@@ -23,31 +56,34 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
-
 /**
- * @file   CalcByTPQ.c
- * @version 0.1, 0.2
+ * @brief Main driver for TPQ calculation
+ *
+ * Performs NumAve independent TPQ calculations with different random
+ * initial states, computing physical quantities at each step.
+ *
+ * For each random sample:
+ * 1. Generate random initial state |psi_0>
+ * 2. Repeat for step = 0 to Lanczos_max:
+ *    a. Apply (l - H/Ns) to |psi>
+ *    b. Every ExpecInterval steps, compute observables:
+ *       - Energy \f$\langle H\rangle\f$, variance, inverse temperature
+ *       - Green's functions if requested
+ *    c. Normalize |psi> to prevent overflow
+ *
+ * Output files (per sample):
+ * - SS_rand*.dat: Energy, \f$\langle S^2\rangle\f$, etc. vs step
+ * - Norm_rand*.dat: Norm vs step (for beta calculation)
+ * - Flct_rand*.dat: Fluctuations
+ *
+ * @param NumAve Number of random samples to average [in]
+ * @param ExpecInterval Steps between observable calculations [in]
+ * @param X Calculation parameters and results [in,out]
+ *
+ * @return 0 on success, -1 on error
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @brief  File for givinvg functions of TPQ method
- *
- *
- */
-
-/** 
- * 
- * @brief A main function to calculate physical quqntities by TPQ method
- *
- * @param [in] NumAve  Number of samples
- * @param [in] ExpecInterval interval steps between the steps to calculate physical quantities
- * @param [in,out] X CalcStruct list for getting and giving calculation information
- * 
- * @author Takahiro Misawa (The University of Tokyo)
- * @author Kazuyoshi Yoshimi (The University of Tokyo)
- *
- * @retval 0 normally finished
- * @retval -1 unnormally finished
  */
 int CalcByTPQ(
       const int NumAve,
@@ -74,9 +110,19 @@ int CalcByTPQ(
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-    sprintf(sdt_phys, cFileNameSSRand, rand_i);      
-    sprintf(sdt_norm, cFileNameNormRand, rand_i);
-    sprintf(sdt_flct, cFileNameFlctRand, rand_i);
+    if(X->Bind.Def.iOutputDataHead==1){
+      int prefix_length;
+      prefix_length = sprintf(sdt_phys, "%s_", X->Bind.Def.CDataFileHead);
+      sprintf(sdt_phys + prefix_length, cFileNameSSRand, rand_i);
+      prefix_length = sprintf(sdt_norm, "%s_", X->Bind.Def.CDataFileHead);
+      sprintf(sdt_norm + prefix_length, cFileNameNormRand, rand_i);
+      prefix_length = sprintf(sdt_flct, "%s_", X->Bind.Def.CDataFileHead);
+      sprintf(sdt_flct + prefix_length, cFileNameFlctRand, rand_i);
+    }else{
+      sprintf(sdt_phys, cFileNameSSRand, rand_i);
+      sprintf(sdt_norm, cFileNameNormRand, rand_i);
+      sprintf(sdt_flct, cFileNameFlctRand, rand_i);
+    }
     Ns = 1.0 * X->Bind.Def.NsiteMPI;
     fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
     iret=0;
@@ -178,9 +224,7 @@ int CalcByTPQ(
       StopTimer(3400);
       if(iret !=0) return -1;
 
-      /**@brief
-      Compute v1=0, and compute v0 = H*v1
-      */
+      /** @brief Compute v1=0, and compute v0 = H*v1 */
       StartTimer(3200);
       iret=expec_energy_flct(&(X->Bind)); //v0 = H*v1
       StopTimer(3200);
@@ -213,9 +257,11 @@ int CalcByTPQ(
       step_iO=0;
     }
 
+    int progress_interval = (X->Bind.Def.Lanczos_max - step_iO) / 10;
+    if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 for small (Lanczos_max - step_iO) */
     for (step_i = X->Bind.Def.istep; step_i<X->Bind.Def.Lanczos_max; step_i++){
       X->Bind.Def.istep=step_i;
-      if(step_i %((X->Bind.Def.Lanczos_max-step_iO)/10)==0){
+      if(step_i % progress_interval == 0){
         fprintf(stdoutMPI, cLogTPQStep, step_i, X->Bind.Def.Lanczos_max);
       }
       X->Bind.Def.istep=step_i;

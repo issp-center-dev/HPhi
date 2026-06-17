@@ -71,6 +71,7 @@ const char* cFileName3BGreen_TE="%s_ThreeBody_step%d.dat";
 const char* cFileName4BGreen_TE="%s_FourBody_step%d.dat";
 const char* cFileName6BGreen_TE="%s_SixBody_step%d.dat";
 const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";
+const char* cFileNameTPQVector="tpqvec_set%d_rank%d_step%d.dat";
 const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
 
 //Fot Time evolution
@@ -147,8 +148,14 @@ double eps_Lanczos = 1e-10;
 double eps_Energy = 1e-10;
 double eps_CheckImag0 = 1e-10;
 
+/* tJ odd-split invalid-pair guard */
+int g_tj_odd_split_guard_enabled = 0;
+long unsigned int g_tj_odd_split_up_mask = 0;
+long unsigned int g_tj_odd_split_down_mask = 0;
+
 /* MPI */
 int nproc = 1;
 int myrank = 0;
 int nthreads = 1;
+int iFlgMPIBatch = 1;
 FILE *stdoutMPI = 0;

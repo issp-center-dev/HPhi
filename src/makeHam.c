@@ -210,9 +210,11 @@ int makeHam(struct BindStruct *X) {
         }
       }
       break;
-    case KondoGC:
     case Hubbard:
+    case tJ:
+    case tJGC:
     case Kondo:
+    case KondoGC:
       //Transfer
       for (i = 0; i < X->Def.EDNTransfer / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {

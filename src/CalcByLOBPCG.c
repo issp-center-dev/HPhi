@@ -13,10 +13,35 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions to perform calculations with the
-localy optimal block (preconditioned) conjugate gradient method.
-*/
+/**
+ * @file CalcByLOBPCG.c
+ *
+ * @brief LOBPCG (Locally Optimal Block Preconditioned Conjugate Gradient)
+ *
+ * Alternative to Lanczos for finding lowest eigenvalues. LOBPCG can compute
+ * multiple eigenpairs simultaneously and has better parallelization properties.
+ *
+ * Algorithm outline:
+ * 1. Start with block of k random vectors X = [x_1, ..., x_k]
+ * 2. Compute residuals R = H*X - X*diag(ritz_values)
+ * 3. Apply preconditioner (optional): W = M^{-1} R
+ * 4. Form search space S = [X, W, P] (current, residual, previous direction)
+ * 5. Project H onto S: H_sub = S^H * H * S
+ * 6. Solve small eigenvalue problem to get new X
+ * 7. Repeat until convergence
+ *
+ * Advantages over Lanczos:
+ * - Can find multiple eigenvalues in one run
+ * - Better suited for parallel computation
+ * - Can use preconditioning
+ *
+ * Disadvantages:
+ * - Requires more memory (3*k vectors vs 2 for Lanczos)
+ * - May converge slower for single eigenvalue
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include "Common.h"
 #include "xsetmem.h"
 #include "mltply.h"
@@ -650,12 +675,14 @@ int CalcByLOBPCG(
     switch (X->Bind.Def.iCalcModel) {
     case HubbardGC:
     case SpinGC:
-    case KondoGC:
+    case tJGC:
     case SpinlessFermionGC:
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
+    case tJ:
     case Kondo:
+    case KondoGC:
     case Spin:
     case SpinlessFermion:
 

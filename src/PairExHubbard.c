@@ -136,6 +136,9 @@ int GetPairExcitedStateHubbardGC(
 /// \version 1.2
 int GetPairExcitedStateHubbard(
         struct BindStruct *X,/**< [inout] define list to get and put information of calculation*/
+        unsigned int NPairExcitationOperator,/**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator,/**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator,/**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 ){
@@ -170,12 +173,12 @@ int GetPairExcitedStateHubbard(
     tmp_v1bufOrg= cd_1d_allocate(idim_maxMPI + 1);
 #endif // MPI
 
-    for(i=0;i<X->Def.NPairExcitationOperator;i++){
-        org_isite1 = X->Def.PairExcitationOperator[i][0]+1;
-        org_isite2 = X->Def.PairExcitationOperator[i][2]+1;
-        org_sigma1 = X->Def.PairExcitationOperator[i][1];
-        org_sigma2 = X->Def.PairExcitationOperator[i][3];
-        tmp_trans = X->Def.ParaPairExcitationOperator[i];
+    for(i=0;i<NPairExcitationOperator;i++){
+        org_isite1 = PairExcitationOperator[i][0]+1;
+        org_isite2 = PairExcitationOperator[i][2]+1;
+        org_sigma1 = PairExcitationOperator[i][1];
+        org_sigma2 = PairExcitationOperator[i][3];
+        tmp_trans = ParaPairExcitationOperator[i];
         ibitsite1 = X->Def.OrgTpow[2*org_isite1-2+org_sigma1] ;
         ibitsite2 = X->Def.OrgTpow[2*org_isite2-2+org_sigma2] ;
         general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
@@ -215,7 +218,7 @@ int GetPairExcitedStateHubbard(
                 if(org_isite1==org_isite2 && org_sigma1==org_sigma2){//diagonal
                     is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
                     ibit = (unsigned long int) myrank & is;
-                    if( X->Def.PairExcitationOperator[i][4]==0) {
+                    if( PairExcitationOperator[i][4]==0) {
                         if (ibit != is) {
 #pragma omp parallel for default(none) shared(tmp_v0, tmp_v1)	\
   firstprivate(i_max, tmp_trans) private(j)
@@ -248,7 +251,7 @@ int GetPairExcitedStateHubbard(
                 }
                 if(org_isite1==org_isite2 && org_sigma1==org_sigma2){
                     is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
-                    if( X->Def.PairExcitationOperator[i][4]==0) {
+                    if( PairExcitationOperator[i][4]==0) {
 #pragma omp parallel for default(none) shared(list_1, tmp_v0, tmp_v1) firstprivate(i_max, is, tmp_trans) private(num1, ibit)
                         for (j = 1; j <= i_max; j++) {
                             ibit = list_1[j] & is;

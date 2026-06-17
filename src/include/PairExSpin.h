@@ -18,6 +18,9 @@
 
 int GetPairExcitedStateSpinGC(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -25,6 +28,9 @@ int GetPairExcitedStateSpinGC(
 
 int GetPairExcitedStateHalfSpinGC(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -33,6 +39,9 @@ int GetPairExcitedStateHalfSpinGC(
 
 int GetPairExcitedStateGeneralSpinGC(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -40,12 +49,18 @@ int GetPairExcitedStateGeneralSpinGC(
 
 int GetPairExcitedStateSpin(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 );
 
 int GetPairExcitedStateHalfSpin(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 
@@ -54,6 +69,9 @@ int GetPairExcitedStateHalfSpin(
 
 int GetPairExcitedStateGeneralSpin(
         struct BindStruct *X,
+        unsigned int NPairExcitationOperator, /**< [in] number of pair excitation operators*/
+        int **PairExcitationOperator, /**< [in] [n][5] = {site1, spin1, site2, spin2, type}*/
+        double complex *ParaPairExcitationOperator, /**< [in] coefficient of each operator*/
         double complex *tmp_v0, /**< [out] Result v0 = H v1*/
         double complex *tmp_v1 /**< [in] v0 = H v1*/
 

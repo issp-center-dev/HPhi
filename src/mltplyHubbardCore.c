@@ -12,9 +12,41 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for Hubbard hamiltonian (Core)
-*/
+/**
+ * @file mltplyHubbardCore.c
+ *
+ * @brief Core functions for Hubbard model Hamiltonian operations
+ *
+ * This module provides the fundamental building blocks for Hubbard-type
+ * Hamiltonians, including hopping, on-site interaction, exchange, and
+ * pair-hopping terms.
+ *
+ * Key concepts:
+ *
+ * Bit representation (for Hubbard):
+ * - Each site has 2 bits: bit[2*i] = up-spin, bit[2*i+1] = down-spin
+ *   (see CheckMPI.c: SpinNum==1 (binary 01) -> Nup; SpinNum==2 (binary 10) -> Ndown)
+ * - Tpow[2*i+sigma] = 2^(2*i+sigma) is the bit mask for (site i, spin sigma)
+ * - State |...n_{1,down} n_{1,up} n_{0,down} n_{0,up}> stored as integer
+ *   (left = MSB; so the rightmost pair (n_{0,down} n_{0,up}) is bits 1,0)
+ *
+ * Mask operations (set by GetInfo functions):
+ * - is1_spin, is2_spin: Bit masks for checking occupations
+ * - A_spin: Mask for computing fermion sign (bits between sites)
+ * - isA_spin = is1_spin + is2_spin: Combined mask for hopping
+ *
+ * Fermion sign:
+ * - When c†_i c_j acts, sign = (-1)^(number of particles between i and j)
+ * - Computed via SgnBit(state & A_spin)
+ *
+ * Naming convention:
+ * - Cis = c†_{i,sigma} (creation)
+ * - Ajt = c_{j,tau} (annihilation)
+ * - CisAis = n_{i,sigma} = c†_{i,sigma} c_{i,sigma} (number operator)
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 #include <bitcalc.h>
 #include "xsetmem.h"
 #include "wrapperMPI.h"
@@ -26,11 +58,28 @@
 /******************************************************************************/
 
 /**
-@brief Compute mask for bit operation of hopping term.
-@return Error-code, always return 0
-@author Takahiro Misawa (The University of Tokyo)
-@author Kazuyoshi Yoshimi (The University of Tokyo)
-*/
+ * @brief Set up bit masks for hopping term c†_{i1,s1} c_{i2,s2}
+ *
+ * Prepares X->Large with masks needed for hopping operations:
+ * - is1_spin: Mask for site i1, spin s1 (= Tpow[2*i1-2+s1])
+ * - is2_spin: Mask for site i2, spin s2 (= Tpow[2*i2-2+s2])
+ * - A_spin: Mask for bits between (i1,s1) and (i2,s2), used for fermion sign
+ * - isA_spin: Combined mask = is1_spin + is2_spin
+ *
+ * The fermion sign for hopping from (i2,s2) to (i1,s1) is:
+ *   sign = SgnBit(state & A_spin)
+ *
+ * @param X Struct to store computed masks [inout]
+ * @param isite1 Site index (1-based) [in]
+ * @param isite2 Site index (1-based) [in]
+ * @param sigma1 Spin index (0=down, 1=up) [in]
+ * @param sigma2 Spin index (0=down, 1=up) [in]
+ *
+ * @return 0 (always succeeds)
+ *
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
 int general_hopp_GetInfo(
   struct BindStruct *X,//!<[inout]
   unsigned long int isite1,//!<[in] Site index

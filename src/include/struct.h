@@ -52,6 +52,11 @@ struct DefineList {
   int LanczosTarget;/**<@brief Which eigenstate is used to check convergence.
                     Read from Calcmod in readdef.h.*/
   int read_hacker;/**<@brief Whether use an efficient method (=1) in sz.c or not (=0)*/
+  int iFlgInvalidProc;/**<@brief =1 if this MPI process has an invalid inter-process
+                      configuration (e.g. a tJ doublon "11"); its local Hilbert-space
+                      dimension must be 0. Set in CheckMPI(), read in check.c.
+                      Unsigned Nup/Ndown/Ne cannot carry a negative sentinel, so this
+                      explicit int flag is used instead.*/
   int READ;/**<@brief It is ALWAYS 0 ???*/
   int WRITE;/**<@brief It is ALWAYS 0 ???*/
 
@@ -188,6 +193,9 @@ struct DefineList {
   int **SBody;/**<@brief [DefineList::SBody][24] Indices of six-body correlation function. malloc in setmem_def().*/
   unsigned int NSBody;/**<@brief Number of indices of six-body correlation function.*/
 
+  int  flag_read_invtemp;
+  char file_invtemp[D_FileNameMax];
+
   int **SingleExcitationOperator;/**<@brief [DefineList::NSingleExcitationOperator][3] 
                                  Indices of single excitaion operator for spectrum. malloc in setmem_def().*/
   unsigned int NSingleExcitationOperator;/**<@brief Number of single excitaion operator for spectrum.*/
@@ -199,6 +207,18 @@ struct DefineList {
   unsigned int NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
   double complex *ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
                            Coefficient of pair excitaion operator for spectrum. malloc in setmem_def().*/
+
+  int **SingleExcitationOperatorBra;/**<@brief [DefineList::NSingleExcitationOperatorBra][3]
+                                    Bra-side single excitation operator for off-diagonal spectrum. malloc in setmem_def().*/
+  unsigned int NSingleExcitationOperatorBra;/**<@brief Number of bra-side single excitation operators.*/
+  double complex *ParaSingleExcitationOperatorBra;/**<@brief [DefineList::NSingleExcitationOperatorBra]
+              Coefficient of bra-side single excitation operator. malloc in setmem_def().*/
+
+  int **PairExcitationOperatorBra;/**<@brief [DefineList::NPairExcitationOperatorBra][5]
+                                  Bra-side pair excitation operator for off-diagonal spectrum. malloc in setmem_def().*/
+  unsigned int NPairExcitationOperatorBra;/**<@brief Number of bra-side pair excitation operators.*/
+  double complex *ParaPairExcitationOperatorBra;/**<@brief [DefineList::NPairExcitationOperatorBra]
+                           Coefficient of bra-side pair excitation operator. malloc in setmem_def().*/
   
   int iCalcType;/**<@brief Switch for calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
   int iCalcEigenVec;/**<@brief Switch for method to calculate eigenvectors. 
@@ -215,6 +235,9 @@ struct DefineList {
   int iOutputHam;/**<brief Switch for outputting a Hamiltonian. 0: no output, 1:output*/
   int iInputHam;/**<brief Switch for reading a Hamiltonian. 0: no input, 1:input*/
   int iOutputExVec; /**<brief Switch for outputting an excited vector. 0: no output, 1:output*/
+  int iOutputDataHead; /**<brief Switch for using CDataFileHead in output
+                          file names for TPQ/TE physical quantity files (SS,
+                          Flct, Norm). 0: no header (default), 1: use header*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/

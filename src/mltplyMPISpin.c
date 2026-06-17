@@ -13,9 +13,36 @@
 
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/**@file
-@brief Functions for spin Hamiltonian + MPI
-*/
+/**
+ * @file mltplyMPISpin.c
+ *
+ * @brief MPI communication functions for spin model Hamiltonian
+ *
+ * Handles inter-process spin operations when interaction sites are
+ * distributed across MPI ranks. The spin state of inter-process sites
+ * is encoded in the MPI rank ID.
+ *
+ * Communication patterns:
+ * - MPIdouble: Both interacting sites are inter-process
+ *   - Only certain rank combinations have valid spin configurations
+ *   - origin = myrank XOR (mask1 XOR mask2) for valid transitions
+ * - MPIsingle: One site local, one inter-process
+ *   - origin = myrank XOR mask for the inter-process site
+ *
+ * Spin operations:
+ * - Exchange: S+_i S-_j flips spins at both sites
+ *   - Valid when sites have opposite spins (up-down or down-up)
+ *   - XOR with combined mask performs the flip
+ * - Ising: Sz_i Sz_j is diagonal (no communication needed for same rank)
+ *
+ * Communication protocol:
+ * 1. Compute origin (partner rank) from site masks
+ * 2. Check if spin configuration allows transition
+ * 3. MPI_Sendrecv to exchange vector data
+ * 4. Apply operator to received data
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 
 #ifdef MPI
 #include "mpi.h"
@@ -28,10 +55,28 @@
 #include "mltplyMPISpinCore.h"
 
 /**
-@brief Exchange term in Spin model
-  When both site1 and site2 are in the inter process region.
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
+ * @brief Apply exchange term when both sites are inter-process
+ *
+ * For S+_i S-_j + h.c. where both sites i,j are in the inter-process
+ * region (site index > Nsite). The spin state at these sites is
+ * determined by myrank bits.
+ *
+ * Valid transitions:
+ * - (up,down) at (i,j) -> (down,up): site i flips down, site j flips up
+ * - (down,up) at (i,j) -> (up,down): opposite direction
+ *
+ * Communication:
+ * - origin = myrank XOR mask1 XOR mask2 (both spins flip)
+ * - If origin == myrank (no net change), handle locally
+ * - Otherwise, exchange data with origin rank
+ *
+ * @param i_int Interaction ID in InterAll_OffDiagonal array [in]
+ * @param X Struct with interaction parameters [inout]
+ * @param tmp_v0 Result vector H|v1> [out]
+ * @param tmp_v1 Input vector [in]
+ *
+ * @author Mitsuaki Kawamura (The University of Tokyo)
+ */
 void general_int_spin_MPIdouble(
   unsigned long int i_int,//!<[in] Interaction ID
   struct BindStruct *X,//!<[inout]
@@ -71,7 +116,7 @@ double complex child_general_int_spin_MPIdouble(
   double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
-  int mask1, mask2, state1, state2, ierr, origin;
+  int mask1, mask2, state1, state2, ierr, origin, only_send = 0;
   unsigned long int idim_max_buf, j, ioff;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
@@ -88,9 +133,7 @@ double complex child_general_int_spin_MPIdouble(
   }
   else if (state1 == org_ispin1 && state2 == org_ispin3) {
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
-      Jint = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -103,6 +146,8 @@ double complex child_general_int_spin_MPIdouble(
   ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                        v1buf,      idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0, MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1) return 0;
 
   dam_pr = 0.0;
   if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
@@ -232,7 +277,7 @@ double complex child_general_int_spin_MPIsingle(
   double complex *tmp_v1//!<[in] Vector to be producted
 ) {
 #ifdef MPI
-  int mask2, state2, ierr, origin;
+  int mask2, state2, ierr, origin, only_send = 0;
   unsigned long int mask1, idim_max_buf, j, ioff, state1, jreal, state1check;
   MPI_Status statusMPI;
   double complex Jint, dmv, dam_pr;
@@ -250,9 +295,7 @@ double complex child_general_int_spin_MPIsingle(
   else if (state2 == org_ispin3) {
     state1check = (unsigned long int) org_ispin1;
     Jint = conj(tmp_J);
-    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) {
-      Jint = 0;
-    }
+    if (X->Large.mode == M_CORR || X->Large.mode == M_CALCSPEC) only_send = 1;
   }
   else return 0;
 
@@ -268,6 +311,8 @@ double complex child_general_int_spin_MPIsingle(
                       v1buf,       idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
                       MPI_COMM_WORLD, &statusMPI);
   if (ierr != 0) exitMPI(-1);
+
+  if (only_send == 1) return 0;
   /*
   Index in the intra PE
   */

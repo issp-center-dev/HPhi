@@ -131,6 +131,7 @@ extern const char* cFileName3BGreen_TE;/**> Name of the file to output three-bod
 extern const char* cFileName4BGreen_TE;/**> Name of the file to output four-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName6BGreen_TE;/**> Name of the file to output six-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
+extern const char* cFileNameTPQVector;/**> Name of the file to output cTPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
 
 //For Time evolution
@@ -169,11 +170,19 @@ extern double eps_Energy;/**> epsilon for energy*/
 extern double eps_CheckImag0;/**> epsilon for checking values of one-body and two-body interactions.*/
 
 /*
+ Guard for tJ odd-split invalid pair (split-site cross doublon).
+*/
+extern int g_tj_odd_split_guard_enabled;
+extern long unsigned int g_tj_odd_split_up_mask;
+extern long unsigned int g_tj_odd_split_down_mask;
+
+/*
  Variables for the MPI parallelism
 */
 extern int nproc;//!< Number of processors, defined in InitializeMPI()
 extern int myrank;//!< Process ID, defined in InitializeMPI()
 extern int nthreads;//!< Number of Threads, defined in InitializeMPI()
+extern int iFlgMPIBatch;//!< 1: MPI communication batching ON (default), 0: OFF (HPHI_MPI_NOBATCH=1), set in InitializeMPI()
 extern FILE *stdoutMPI;/**<@brief File pointer to the standard output
                 defined in InitializeMPI()*/
 
@@ -190,4 +199,3 @@ func(&(X.Bind.Def))
 @endcode
 This C-structure is defined in struct.h.
 */
-

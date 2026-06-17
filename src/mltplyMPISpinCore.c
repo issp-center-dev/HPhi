@@ -1203,7 +1203,7 @@ double complex child_GC_CisAit_GeneralSpin_MPIdouble(
     org_isite1 + 1, org_ispin2, org_ispin1, &off,
     X->Def.SiteToBit, X->Def.Tpow) == TRUE) {
     tmp_V = conj(tmp_trans);
-    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC) tmp_V = 0.0;
+    if (X->Large.mode == M_CORR || X->Large.mode == H_CORR || X->Large.mode == M_CALCSPEC || X->Large.mode == M_MLTPLY2) tmp_V = 0.0;
   }
   else return 0.0;
 
@@ -1218,7 +1218,7 @@ double complex child_GC_CisAit_GeneralSpin_MPIdouble(
 #pragma omp parallel default(none) reduction(+:dam_pr) firstprivate(X, tmp_V) private(j, dmv) \
 shared (tmp_v0, tmp_v1, v1buf)
   {
-    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC || X->Large.mode == M_MLTPLY2) {
 #pragma omp for
       for (j = 1; j <= X->Check.idim_max; j++) {
         dmv = v1buf[j] * tmp_V;

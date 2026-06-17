@@ -6,6 +6,11 @@ PairHop file
 This file determines the values of PairHop couplings
 :math:`J_{ij}^{\rm Pair}` (for :math:`S=1/2` system),
 
+.. note::
+   For spinless fermion models (CalcModel=7, 8), PairHop interactions
+   have no physical meaning since there are no spin degrees of freedom.
+   Specifying this file for spinless fermion models will result in an error.
+
 .. math::
 
    {\mathcal H}+=\sum_{i,j}J_{ij}^{\rm Pair} (c_ {i \uparrow}^{\dagger}c_{j\uparrow}c_{i \downarrow}^{\dagger}c_{j  \downarrow}+h.c.).

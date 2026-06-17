@@ -1,5 +1,11 @@
 #!/bin/sh -e
 
+# If MPIRUN is unset, run in serial mode.
+if [ -z "${MPIRUN}" ]; then
+    MPIRUN=""
+fi
+
+
 mkdir -p te_pulse_hubbard_square/
 cd te_pulse_hubbard_square
 cp -rf ../te_ac_hubbard_square/output .

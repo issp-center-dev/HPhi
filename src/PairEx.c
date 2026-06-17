@@ -19,6 +19,7 @@
 #include "PairEx.h"
 #include "PairExHubbard.h"
 #include "PairExSpin.h"
+#include "PairExSpinless.h"
 
 /**
  * @file   PairEx.c
@@ -46,6 +47,9 @@
 int GetPairExcitedState
 (
  struct BindStruct *X,
+ unsigned int NPairExcitationOperator,
+ int **PairExcitationOperator,
+ double complex *ParaPairExcitationOperator,
  double complex *tmp_v0,
  double complex *tmp_v1
  )
@@ -76,18 +80,36 @@ int GetPairExcitedState
       iret=GetPairExcitedStateHubbardGC(X, tmp_v0, tmp_v1);
     break;
 
-  case KondoGC:
   case Hubbard:
+  case tJ:
+  case tJGC:
   case Kondo:
-      iret=GetPairExcitedStateHubbard(X, tmp_v0, tmp_v1);
+  case KondoGC:
+      iret=GetPairExcitedStateHubbard(X, NPairExcitationOperator,
+                                      PairExcitationOperator,
+                                      ParaPairExcitationOperator,
+                                      tmp_v0, tmp_v1);
     break;
 
     case Spin: // for the Sz-conserved spin system
-      iret =GetPairExcitedStateSpin(X, tmp_v0, tmp_v1);
+      iret =GetPairExcitedStateSpin(X, NPairExcitationOperator,
+                                    PairExcitationOperator,
+                                    ParaPairExcitationOperator,
+                                    tmp_v0, tmp_v1);
       break;
 
     case SpinGC:
-      iret=GetPairExcitedStateSpinGC(X,tmp_v0, tmp_v1);
+      iret=GetPairExcitedStateSpinGC(X, NPairExcitationOperator,
+                                     PairExcitationOperator,
+                                     ParaPairExcitationOperator,
+                                     tmp_v0, tmp_v1);
+      break;
+
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      /* GetPairExcitedState_SpinlessFermion returns 0 on success / -1 on error;
+         convert to the TRUE/FALSE convention expected by the caller. */
+      iret = (GetPairExcitedState_SpinlessFermion(X, tmp_v0, tmp_v1) == 0) ? TRUE : FALSE;
       break;
 
     default:

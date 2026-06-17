@@ -167,6 +167,16 @@ General on-site term
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPIBoost.h"
+#include "mltplyMPIBatched.h"
+
+#ifdef MPI
+// Static storage for batched Spin Exchange (SpinGC)
+static MPIBatchedSpinExchange batched_exchange_SpinGC = {0, NULL, 0};
+static int batched_exchange_SpinGC_initialized = 0;
+// Static storage for batched Spin Exchange (canonical)
+static MPIBatchedSpinExchange batched_exchange_Spin = {0, NULL, 0};
+static int batched_exchange_Spin_initialized = 0;
+#endif
 /**
 @brief Driver function for Spin hamiltonian
 @return error code
@@ -248,43 +258,73 @@ int mltplyHalfSpin(
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(410);
   /**
-  Exchange 
+  Exchange
   */
-  StartTimer(420);   
+  StartTimer(420);
+#ifdef MPI
+  // MPIsingle Exchange - use batched communication (unless HPHI_MPI_NOBATCH)
+  if (MPIBatchingEnabled()) {
+    StartTimer(422);
+    if (!batched_exchange_Spin_initialized) {
+      if (InitializeMPIBatchedExchange_Spin(X, &batched_exchange_Spin) != 0) {
+        fprintf(stderr, "Error: Failed to initialize batched MPI Exchange for Spin\n");
+        return -1;
+      }
+      batched_exchange_Spin_initialized = 1;
+    }
+
+    for (int g = 0; g < batched_exchange_Spin.num_groups; g++) {
+      dam_pr = X_child_general_int_spin_MPIsingle_batched(
+          &batched_exchange_Spin.groups[g], X, tmp_v0, tmp_v1);
+      X->Large.prdct += dam_pr;
+    }
+    StopTimer(422);
+  }
+#endif
+
   for (i = 0; i < X->Def.NExchangeCoupling; i++) {
     sigma1=0; sigma2=1;
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(421);
       dam_pr = child_general_int_spin_MPIdouble(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
-        X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(421);
-    }
-    else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(422);
-      dam_pr = child_general_int_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
+        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
         X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(422);
+      StopTimer(421);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(423);
-      dam_pr = child_general_int_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(423);
-    }
-    else {
+    else if (X->Def.ExchangeCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.ExchangeCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(424);
       exchange_spin_GetInfo(i, X);
       dam_pr = exchange_spin(tmp_v0, tmp_v1, X);
       StopTimer(424);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+#ifdef MPI
+    else if (!MPIBatchingEnabled()) {
+      // HPHI_MPI_NOBATCH: process MPIsingle Exchange per-term (one site inter-process)
+      if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+        StartTimer(422);
+        dam_pr = child_general_int_spin_MPIsingle(
+          X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+          X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
+          X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
+        StopTimer(422);
+      } else {
+        StartTimer(423);
+        dam_pr = child_general_int_spin_MPIsingle(
+          X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
+          X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+          conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
+        StopTimer(423);
+      }
+      X->Large.prdct += dam_pr;
+    }
+#endif
+    // MPIsingle cases (batched mode) are handled by batched processing above
   }/*for (i = 0; i < X->Def.NExchangeCoupling; i += 2)*/
   StopTimer(420);
 
@@ -408,6 +448,109 @@ int mltplySpinGC(
 
   return iret;
 }/*int mltplySpinGC*/
+
+/**
+@brief Driver function for General Spin Hamiltonian (grandcanonical)
+@return error code
+@author Takahiro Misawa (The University of Tokyo)
+*/
+void mltplyGeneralSpinGC_mini(
+  struct BindStruct *X,//!<[inout]
+  int site_i,
+  int spin_i,
+  int site_j,
+  int spin_j,
+  double complex *tmp_v0,//!<[inout] Result vector
+  double complex *tmp_v1//!<[in] Input producted vector
+) {
+  long unsigned int j;
+  long unsigned int i;
+  long unsigned int off = 0;
+  long unsigned int tmp_off = 0;
+  long unsigned int isite1, isite2, sigma1, sigma2;
+  long unsigned int sigma3, sigma4;
+  double complex dam_pr;
+  double complex tmp_trans;
+  long int tmp_sgn;
+  double num1 = 0;
+  /*[s] For InterAll */
+  double complex tmp_V;
+  double complex dmv=0;
+  /*[e] For InterAll */
+
+  long unsigned int i_max;
+  i_max = X->Check.idim_max;
+
+  int ihermite=0;
+  int idx=0;
+
+  StartTimer(510);
+  //for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+    isite1    = site_i + 1;
+    isite2    = site_j + 1;
+    sigma1    = spin_i;
+    sigma2    = spin_j;
+    tmp_trans = 1.0;
+    dam_pr    = 0.0;
+    if (isite1 == isite2) {
+      if (sigma1 != sigma2) {
+        if (isite1 > X->Def.Nsite) {
+          // Apply the one-directional operator c5 a6 only. As in the S=1/2
+          // path (mltplyHalfSpinGC_mini), switch to M_MLTPLY2 so the inter-
+          // process MPI routine zeroes the Hermitian-conjugate branch; under
+          // plain M_MLTPLY it would also add the conjugate, corrupting the
+          // three-body Green function (prerelease finding H-2).
+          X->Large.mode = M_MLTPLY2;
+          dam_pr = child_GC_CisAit_GeneralSpin_MPIdouble(isite1 - 1, sigma1, sigma2, tmp_trans, X, tmp_v0, tmp_v1);
+          X->Large.mode = M_MLTPLY;
+          //X->Large.prdct += dam_pr;
+        }/*if (isite1 > X->Def.Nsite)*/
+        else {
+          //for (ihermite = 0; ihermite<2; ihermite++) {
+            idx = i + ihermite;
+
+            isite1    = site_i + 1;
+            isite2    = site_j + 1;
+            sigma1    = spin_i;
+            sigma2    = spin_j;
+            // transverse magnetic field
+            //dam_pr = 0.0;
+            #pragma omp parallel for default(none) reduction(+:dam_pr) \
+            private(j, tmp_sgn, num1) firstprivate(i_max, isite1, sigma1, sigma2, X, off, tmp_trans) \
+            shared(tmp_v0, tmp_v1)
+            for (j = 1; j <= i_max; j++) {
+              num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
+              if (num1 != 0) { // for multply
+                tmp_v0[off + 1] += tmp_v1[j] * tmp_trans;
+                //dam_pr += conj(tmp_v1[off + 1]) * tmp_v1[j] * tmp_trans;
+              }/*if (num1 != 0)*/
+            }/*for (j = 1; j <= i_max; j++)*/
+            //X->Large.prdct += dam_pr;
+          //}/*for (ihermite = 0; ihermite<2; ihermite++)*/
+        }
+      }// sigma1 != sigma2          
+      else{ // sigma1 = sigma2
+        if (isite1 > X->Def.Nsite) {
+          dam_pr = child_GC_CisAis_GeneralSpin_MPIdouble(isite1 - 1, sigma1, tmp_trans, X, tmp_v0, tmp_v1);
+        }else{
+          // longitudinal magnetic field
+          #pragma omp parallel for default(none) private(j, num1) firstprivate(i_max, isite1, sigma1, X, tmp_trans) shared(tmp_v0, tmp_v1)
+          for (j = 1; j <= i_max; j++) {
+            num1       = BitCheckGeneral(j - 1, isite1, sigma1, X->Def.SiteToBit, X->Def.Tpow);
+            tmp_v0[j] += tmp_trans * tmp_v1[j] * num1;
+          }
+        }
+        //fprintf(stderr, "Error: Transverse_Diagonal component must be absorbed !");
+      }
+    }//isite1 = isite2
+    //else { // isite1 != isite2
+      // hopping is not allowed in localized spin system
+    //  return -1;
+    //}
+  //}/*for (i = 0; i < X->Def.EDNTransfer; i += 2)*/
+  StopTimer(510);
+}
+
 /**
 @brief Driver function for Spin 1/2 Hamiltonian (grandcanonical)
 @return error code
@@ -621,40 +764,70 @@ shared(tmp_v0, tmp_v1)
   Exchange
   */
   StartTimer(530);
+#ifdef MPI
+  // MPIsingle Exchange/PairLift - use batched communication (unless HPHI_MPI_NOBATCH)
+  if (MPIBatchingEnabled()) {
+    StartTimer(532);
+    if (!batched_exchange_SpinGC_initialized) {
+      if (InitializeMPIBatchedExchange_SpinGC(X, &batched_exchange_SpinGC) != 0) {
+        fprintf(stderr, "Error: Failed to initialize batched MPI Exchange for SpinGC\n");
+        return -1;
+      }
+      batched_exchange_SpinGC_initialized = 1;
+    }
+
+    for (int g = 0; g < batched_exchange_SpinGC.num_groups; g++) {
+      dam_pr = X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched(
+          &batched_exchange_SpinGC.groups[g], X, tmp_v0, tmp_v1);
+      X->Large.prdct += dam_pr;
+    }
+    StopTimer(532);
+  }
+#endif
+
   for (i = 0; i < X->Def.NExchangeCoupling; i++) {
     sigma1=0; sigma2=1;
     if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite &&
         X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite){
       StartTimer(531);
       dam_pr = child_GC_CisAitCiuAiv_spin_MPIdouble(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2, 
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1, 
+        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
         X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
       StopTimer(531);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(532);
-      dam_pr=child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
-        X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(532);
-    }
-    else if (X->Def.ExchangeCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(532);
-      dam_pr=child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
-        X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
-        conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(532);
-    }
-    else {
+    else if (X->Def.ExchangeCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.ExchangeCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(533);
       exchange_spin_GetInfo(i, X);
       dam_pr = GC_exchange_spin(tmp_v0, tmp_v1, X);
       StopTimer(533);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+#ifdef MPI
+    else if (!MPIBatchingEnabled()) {
+      // HPHI_MPI_NOBATCH: process MPIsingle Exchange per-term
+      if (X->Def.ExchangeCoupling[i][1] + 1 > X->Def.Nsite) {
+        StartTimer(532);
+        dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
+          X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+          X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
+          X->Def.ParaExchangeCoupling[i], X, tmp_v0, tmp_v1);
+        StopTimer(532);
+      } else {
+        StartTimer(532);
+        dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
+          X->Def.ExchangeCoupling[i][1], sigma2, sigma1,
+          X->Def.ExchangeCoupling[i][0], sigma1, sigma2,
+          conj(X->Def.ParaExchangeCoupling[i]), X, tmp_v0, tmp_v1);
+        StopTimer(532);
+      }
+      X->Large.prdct += dam_pr;
+    }
+#endif
+    // MPIsingle cases (batched mode) are handled by batched processing above
   }/* for (i = 0; i < X->Def.NExchangeCoupling; i ++) */
   StopTimer(530);
   /**
@@ -667,34 +840,43 @@ shared(tmp_v0, tmp_v1)
         X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
       StartTimer(541);
       dam_pr = child_GC_CisAitCiuAiv_spin_MPIdouble(
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
+        X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
         X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
         X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
       StopTimer(541);
+      X->Large.prdct += dam_pr;
     }
-    else if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
-      StartTimer(542);
-      dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2, 
-        X->Def.PairLiftCoupling[i][1], sigma1, sigma2, 
-        X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
-      StopTimer(542);
-    }
-    else if (X->Def.PairLiftCoupling[i][0] + 1 > X->Def.Nsite) {
-      StartTimer(542);
-      dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
-        X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
-        X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
-        conj(X->Def.ParaPairLiftCoupling[i]), X, tmp_v0, tmp_v1);
-      StopTimer(542);
-    }
-    else {
+    else if (X->Def.PairLiftCoupling[i][1] + 1 <= X->Def.Nsite &&
+             X->Def.PairLiftCoupling[i][0] + 1 <= X->Def.Nsite) {
+      // Both sites local - process directly
       StartTimer(543);
       pairlift_spin_GetInfo(i, X);
       dam_pr = GC_pairlift_spin(tmp_v0, tmp_v1, X);
       StopTimer(543);
+      X->Large.prdct += dam_pr;
     }
-    X->Large.prdct += dam_pr;
+#ifdef MPI
+    else if (!MPIBatchingEnabled()) {
+      // HPHI_MPI_NOBATCH: process MPIsingle PairLift per-term
+      if (X->Def.PairLiftCoupling[i][1] + 1 > X->Def.Nsite) {
+        StartTimer(542);
+        dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
+          X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
+          X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
+          X->Def.ParaPairLiftCoupling[i], X, tmp_v0, tmp_v1);
+        StopTimer(542);
+      } else {
+        StartTimer(542);
+        dam_pr = child_GC_CisAitCiuAiv_spin_MPIsingle(
+          X->Def.PairLiftCoupling[i][1], sigma1, sigma2,
+          X->Def.PairLiftCoupling[i][0], sigma1, sigma2,
+          conj(X->Def.ParaPairLiftCoupling[i]), X, tmp_v0, tmp_v1);
+        StopTimer(542);
+      }
+      X->Large.prdct += dam_pr;
+    }
+#endif
+    // MPIsingle cases (batched mode) are handled by batched processing above
   }/*for (i = 0; i < X->Def.NPairLiftCoupling; i += 2)*/
   StopTimer(540);
 
@@ -740,7 +922,7 @@ int mltplyGeneralSpinGC(
     isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
     sigma1 = X->Def.EDGeneralTransfer[i][1];
     sigma2 = X->Def.EDGeneralTransfer[i][3];
-    tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
+    tmp_trans = -X->Def.EDParaGeneralTransfer[i];
     dam_pr = 0.0;
     if (isite1 == isite2) {
       if (sigma1 != sigma2) {

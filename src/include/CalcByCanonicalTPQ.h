@@ -16,6 +16,10 @@
 #pragma once
 #include "Common.h"
 
+
+int func_read_invtemp(double *read_invtemp, int *read_nmax, int *read_physcal, int *read_eigen, const char *file_name, int max_lines); 
+int count_file_lines(const char *file_name);
+
 int CalcByCanonicalTPQ(
               const int NumAve,
               const int ExpecInterval,

@@ -29,3 +29,5 @@ int expec_energy_flct_GeneralSpinGC(struct BindStruct *X);
 int expec_energy_flct_HalfSpin(struct BindStruct *X);
 
 int expec_energy_flct_GeneralSpin(struct BindStruct *X);
+
+int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X);

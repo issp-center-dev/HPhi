@@ -52,10 +52,12 @@ TPQ法: ##\_cisajs\_set??step%%.dat
    **形式 :** int型
 
    | **説明 :**
-     スピンを指定する整数。\ :math:`[`\ int02\ :math:`]`\ が\ :math:`\sigma_1`\ 、\ :math:`[`\ int03\ :math:`]`\ が\ :math:`\sigma_2`\ に対応します。
+     スピンを指定する整数。\ :math:`[`\ int02\ :math:`]`\ が\ :math:`\sigma_1`\ 、\ :math:`[`\ int04\ :math:`]`\ が\ :math:`\sigma_2`\ に対応します。
+   | 電子系・近藤格子系では
    | 0: アップスピン
    | 1: ダウンスピン
    | を表します。
+   | SpinlessFermion/SpinlessFermionGC では 0 のみ出力されます。
 
 -  :math:`[`\ double01\ :math:`]`, :math:`[`\ double02\ :math:`]`
 
