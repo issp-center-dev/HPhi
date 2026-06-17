@@ -62,6 +62,8 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "mltplySpinCore.h", "mltplySpinCore_8h.html", "mltplySpinCore_8h" ],
     [ "mltplySpinless.h", "mltplySpinless_8h.html", "mltplySpinless_8h" ],
     [ "Multiply.h", "Multiply_8h.html", "Multiply_8h" ],
+    [ "nbody_correlation.h", "nbody__correlation_8h.html", "nbody__correlation_8h" ],
+    [ "nbody_interall.h", "nbody__interall_8h.html", "nbody__interall_8h" ],
     [ "output.h", "output_8h.html", "output_8h" ],
     [ "output_list.h", "output__list_8h.html", "output__list_8h" ],
     [ "PairEx.h", "PairEx_8h.html", "PairEx_8h" ],

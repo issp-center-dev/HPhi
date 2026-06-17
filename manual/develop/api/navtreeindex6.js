@@ -1,5 +1,14 @@
 var NAVTREEINDEX6 =
 {
+"mltplyMPIBatched_8c.html#a729d4d12be5404b5148c84ba03123f71":[10,0,45,12],
+"mltplyMPIBatched_8c.html#a7d15a052749852d4fa9f9c6eb1ae6019":[10,0,45,17],
+"mltplyMPIBatched_8c.html#a9cc628effd5f8e3dbd527bf88103d2e0":[10,0,45,1],
+"mltplyMPIBatched_8c.html#a9ee4050cdafbc9d1816a398e08e86bf7":[10,0,45,7],
+"mltplyMPIBatched_8c.html#aa14de2090f9b31b82534a2b426cadb72":[10,0,45,5],
+"mltplyMPIBatched_8c.html#aa79073d57a52953050379bd00da22984":[10,0,45,14],
+"mltplyMPIBatched_8c.html#ab7e08263a22bfcda19dadaa0abdea9b1":[10,0,45,3],
+"mltplyMPIBatched_8c.html#ac1b66a8e0607685f5c2c014f6301e880":[10,0,45,22],
+"mltplyMPIBatched_8c.html#ad06ecbb627cf0f321740e07b15d67377":[10,0,45,8],
 "mltplyMPIBatched_8c.html#ae75430e963f9c905755bb977dbc99e7e":[10,0,45,18],
 "mltplyMPIBatched_8c.html#afc5319c3b4567168bf45df6aaf35205f":[10,0,45,11],
 "mltplyMPIBatched_8c_source.html":[10,0,45],
@@ -240,14 +249,5 @@ var NAVTREEINDEX6 =
 "mltplyMPISpinlessFermion_8h.html#ab6664825c6a18292fc84fbeeeebb78e6":[10,0,1,57,6],
 "mltplyMPISpinlessFermion_8h.html#acdc88d9ae76cc9a7462c7fd1271f5340":[10,0,1,57,0],
 "mltplyMPISpinlessFermion_8h_source.html":[10,0,1,57],
-"mltplySpinCore_8c.html":[10,0,53],
-"mltplySpinCore_8c.html#a34add9562270d08b67c2f8479d02e5e4":[10,0,53,8],
-"mltplySpinCore_8c.html#a36740b19457d534ed5accece1cb7191e":[10,0,53,13],
-"mltplySpinCore_8c.html#a41916bf1a6d03cf600325cff1761e93b":[10,0,53,4],
-"mltplySpinCore_8c.html#a4618456b39b189651e59e53b36d03bdc":[10,0,53,12],
-"mltplySpinCore_8c.html#a4a8d0dd431bf41ac40dea976ff35d505":[10,0,53,10],
-"mltplySpinCore_8c.html#a4feba938bc2bbe410ee848a831c24032":[10,0,53,3],
-"mltplySpinCore_8c.html#a6d41c914d10cce5245cb92569306d085":[10,0,53,14],
-"mltplySpinCore_8c.html#a6ea766b5cd17095b6d820a6ed40aa3fb":[10,0,53,2],
-"mltplySpinCore_8c.html#a71ab37f19c6244a83c3d2d6c275452a8":[10,0,53,5]
+"mltplySpinCore_8c.html":[10,0,53]
 };

@@ -18,6 +18,8 @@ var readdef_8h =
     [ "KWLaser", "readdef_8h.html#a738eff4f3774d0f17083ecbcdd32b9e2", null ],
     [ "KWLocSpin", "readdef_8h.html#a7194275c5d09c1d6df2bea0c605608a4", null ],
     [ "KWModPara", "readdef_8h.html#aaba51a82968ba9baf1dac58a92ccb762", null ],
+    [ "KWNBodyG", "readdef_8h.html#a492a8af28b5ecd98b02b5a5df39aec71", null ],
+    [ "KWNBodyInterAll", "readdef_8h.html#abe9790e599de08ebeac3ea8ca587ef62", null ],
     [ "KWOneBodyG", "readdef_8h.html#a984c0fbff653564baa1d36fddbe9a843", null ],
     [ "KWPairExcitation", "readdef_8h.html#ad3604af8a34a144e4c687c34fbb82268", null ],
     [ "KWPairExcitationBra", "readdef_8h.html#a486e3fad74466d85db42257078acd31d", null ],

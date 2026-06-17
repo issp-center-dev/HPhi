@@ -56,6 +56,8 @@ var files_dup =
     [ "mltplySpinCore.c", "mltplySpinCore_8c.html", "mltplySpinCore_8c" ],
     [ "mltplySpinless.c", "mltplySpinless_8c.html", "mltplySpinless_8c" ],
     [ "Multiply.c", "Multiply_8c.html", "Multiply_8c" ],
+    [ "nbody_correlation.c", "nbody__correlation_8c.html", "nbody__correlation_8c" ],
+    [ "nbody_interall.c", "nbody__interall_8c.html", "nbody__interall_8c" ],
     [ "output.c", "output_8c.html", "output_8c" ],
     [ "output_list.c", "output__list_8c.html", "output__list_8c" ],
     [ "PairEx.c", "PairEx_8c.html", "PairEx_8c" ],

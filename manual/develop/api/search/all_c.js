@@ -94,16 +94,17 @@ var searchData=
   ['is4_5fspin_91',['is4_spin',['../structLargeList.html#a7e059f6e6cebf78ce4cb390c03aaee60',1,'LargeList']]],
   ['is_5fconj_92',['is_conj',['../structMPITransferGroup.html#a88ef1965890ab4d31f030c4a22a39273',1,'MPITransferGroup::is_conj'],['../structMPIDoubleTransferGroup.html#aeb990d79cdc8055f1df30211a6a89105',1,'MPIDoubleTransferGroup::is_conj']]],
   ['is_5fhermite_93',['is_hermite',['../structMPIInterAllGroup.html#a5d4862e7f1873657faf9caede997d078',1,'MPIInterAllGroup']]],
-  ['is_5finitialized_94',['is_initialized',['../structMPIBatchedSpinExchange.html#a59be6cc4e2bbb945e36dfbc5762b7240',1,'MPIBatchedSpinExchange::is_initialized'],['../structMPIBatchedInterAll.html#ab638ad4a4126fa7ac1c19bb9cbe167e0',1,'MPIBatchedInterAll::is_initialized'],['../structMPIBatchedDoubleTransfers.html#a5b47146c48d156e4f5b0dfbfbb54e629',1,'MPIBatchedDoubleTransfers::is_initialized'],['../structMPIBatchedTransfers.html#a73d229a8bce54f04c1e59483676fe3f4',1,'MPIBatchedTransfers::is_initialized']]],
+  ['is_5finitialized_94',['is_initialized',['../structMPIBatchedSpinExchange.html#a59be6cc4e2bbb945e36dfbc5762b7240',1,'MPIBatchedSpinExchange::is_initialized'],['../structMPIBatchedInterAll.html#ab638ad4a4126fa7ac1c19bb9cbe167e0',1,'MPIBatchedInterAll::is_initialized'],['../structMPIBatchedTransfers.html#a73d229a8bce54f04c1e59483676fe3f4',1,'MPIBatchedTransfers::is_initialized'],['../structMPIBatchedDoubleTransfers.html#a5b47146c48d156e4f5b0dfbfbb54e629',1,'MPIBatchedDoubleTransfers::is_initialized']]],
   ['isa_5fspin_95',['isA_spin',['../structLargeList.html#a8bd46afee09b313f7f938418c32a301f',1,'LargeList']]],
   ['isb_5fspin_96',['isB_spin',['../structLargeList.html#a726d63842067e1bbfd2a06d6b37f4476',1,'LargeList']]],
   ['ishift_5fnspin_97',['ishift_nspin',['../structBoostList.html#a42855e6de6d16c1790243a49141b91aa',1,'BoostList']]],
   ['isite1_98',['isite1',['../structMPIInterAllGroup.html#a84f80bb97832a7d3f808c9c6d9df6010',1,'MPIInterAllGroup::isite1'],['../structLargeList.html#ae17d138429da3b0e55e106e9599c499b',1,'LargeList::isite1']]],
   ['isite2_99',['isite2',['../structMPIInterAllGroup.html#a560b457fed36fa0e371e09773217b2d5',1,'MPIInterAllGroup::isite2'],['../structLargeList.html#a523438b712f4d79554b6331505e70e14',1,'LargeList::isite2']]],
   ['isite3_100',['isite3',['../structMPIInterAllGroup.html#a34498ca73cd26c511bae2c3b1246d695',1,'MPIInterAllGroup::isite3'],['../structLargeList.html#a9bfe297ac2953656469df4531a9bdd0b',1,'LargeList::isite3']]],
-  ['isite4_101',['isite4',['../structMPIInterAllGroup.html#a0615b287419b5428b9b7c07d0f35f16a',1,'MPIInterAllGroup::isite4'],['../structLargeList.html#a29034b413fdc5c9ff20e38ba94f72bc7',1,'LargeList::isite4']]],
-  ['istep_102',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
-  ['itinerant_103',['ITINERANT',['../global_8h.html#ad5a0dad7a43a196be356d61ecee976ef',1,'global.h']]],
-  ['itr_104',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
-  ['iv_105',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
+  ['isite4_101',['isite4',['../structLargeList.html#a29034b413fdc5c9ff20e38ba94f72bc7',1,'LargeList::isite4'],['../structMPIInterAllGroup.html#a0615b287419b5428b9b7c07d0f35f16a',1,'MPIInterAllGroup::isite4']]],
+  ['isskippablenbodyline_102',['IsSkippableNBodyLine',['../readdef_8c.html#a607817fb08b8e5ca6450e9dfb14c46a1',1,'readdef.c']]],
+  ['istep_103',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
+  ['itinerant_104',['ITINERANT',['../global_8h.html#ad5a0dad7a43a196be356d61ecee976ef',1,'global.h']]],
+  ['itr_105',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
+  ['iv_106',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
 ];

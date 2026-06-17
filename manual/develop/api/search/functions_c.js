@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['normmpi_5fdc_0',['normmpi_dc',['../wrapperMPI_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2',1,'NormMPI_dc(unsigned long int idim, double complex *_v1):&#160;wrapperMPI.c'],['../wrapperMPI_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2',1,'NormMPI_dc(unsigned long int idim, double complex *_v1):&#160;wrapperMPI.c']]]
+  ['nbody_5frank_5fflip_5fmask_0',['nbody_rank_flip_mask',['../nbody__interall_8c.html#ab8c04f62f582fd9e340fb24f80aa50e6',1,'nbody_interall.c']]],
+  ['nbodyg_5frank_5fflip_5fmask_1',['nbodyg_rank_flip_mask',['../nbody__correlation_8c.html#ae7635417d235cd286d377b67cf15fe54',1,'nbody_correlation.c']]],
+  ['normalizenbodygterms_2',['normalizenbodygterms',['../nbody__correlation_8h.html#abc1d3af5e3fba97bca45b5ee6dafaf8b',1,'NormalizeNBodyGTerms(struct DefineList *D):&#160;nbody_correlation.c'],['../nbody__correlation_8c.html#abc1d3af5e3fba97bca45b5ee6dafaf8b',1,'NormalizeNBodyGTerms(struct DefineList *D):&#160;nbody_correlation.c']]],
+  ['normalizenbodyinterallterms_3',['normalizenbodyinterallterms',['../nbody__interall_8h.html#ad6740df54518a20e38a5a0ee5914b97c',1,'NormalizeNBodyInterAllTerms(struct DefineList *D):&#160;nbody_interall.c'],['../nbody__interall_8c.html#ad6740df54518a20e38a5a0ee5914b97c',1,'NormalizeNBodyInterAllTerms(struct DefineList *D):&#160;nbody_interall.c']]],
+  ['normmpi_5fdc_4',['normmpi_dc',['../wrapperMPI_8h.html#a26d9f2a4d2828fca2b8d6d45cea697a2',1,'NormMPI_dc(unsigned long int idim, double complex *_v1):&#160;wrapperMPI.c'],['../wrapperMPI_8c.html#a26d9f2a4d2828fca2b8d6d45cea697a2',1,'NormMPI_dc(unsigned long int idim, double complex *_v1):&#160;wrapperMPI.c']]]
 ];
