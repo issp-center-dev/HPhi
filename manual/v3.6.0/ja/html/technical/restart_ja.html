@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.6. リスタート機構 &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="7. 関連ツール" href="../related/index.html" />
+    <link rel="prev" title="6.5. 数値精度" href="precision_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">6.6. </span>リスタート機構<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のリスタート機構を説明します。</p>
+<section id="id2">
+<h2><span class="section-number">6.6.1. </span>概要<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はチェックポイント/リスタート機能をサポートしており、以下が可能です：</p>
+<ul class="simple">
+<li><p>中断された計算の再開</p></li>
+<li><p>大規模計算を小さなジョブに分割</p></li>
+<li><p>固有ベクトルの反復的な改善</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.6.2. </span>リスタートファイル<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>以下のファイルがリスタートに使用されます：</p>
+<dl class="simple">
+<dt><strong>固有ベクトルファイル</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">zvo_eigenvec_{rank}_set{set}.dat</span></code></dt><dd><p>各MPIランクの固有ベクトルを格納。</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>リスタートベクトルファイル</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">restart_{rank}.dat</span></code></dt><dd><p>反復を再開するために必要なLanczosベクトルを含む。</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>三重対角行列</strong></dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">zvo_Lanczos_Step.dat</span></code></dt><dd><p>Lanczos係数を格納。</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.6.3. </span>入出力設定<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> 入力ファイルで設定：</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span></code></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: ランダムまたは指定された初期ベクトルから開始（デフォルト）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: ファイルから固有ベクトルを読み込み再計算</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: ファイルから固有ベクトルを読み込む</p></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span></code></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 固有ベクトルを出力しない（デフォルト）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 固有ベクトルをファイルに出力</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h2><span class="section-number">6.6.4. </span>使用例<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p><strong>固有ベクトル出力ありの初回計算</strong></p>
+<p>CalcModファイルで <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> を設定。
+計算完了後、固有ベクトルファイルが書き込まれます。</p>
+<p><strong>固有ベクトルからのリスタート</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> と <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> を設定。
+計算は前回の実行から固有ベクトルを読み込み、
+それを改善します。</p>
+<p><strong>期待値のみの計算</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">2</span></code> を設定。
+固有ベクトルが読み込まれ、追加の対角化なしに
+物理量の計算に使用されます。</p>
+</section>
+<section id="id6">
+<h2><span class="section-number">6.6.5. </span>ファイル形式<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>固有ベクトルファイルは効率のためにバイナリ形式で格納されます。
+各ファイルには以下が含まれます：</p>
+<ol class="arabic simple">
+<li><p>ヘッダー情報（システムサイズなど）</p></li>
+<li><p>固有ベクトル成分のcomplex double配列</p></li>
+</ol>
+<p>ファイルはバイナリ形式のためプラットフォーム依存です。
+リスタートファイルは同じアーキテクチャで使用してください。</p>
+</section>
+<section id="mpi">
+<h2><span class="section-number">6.6.6. </span>MPIに関する考慮事項<a class="headerlink" href="#mpi" title="Link to this heading">¶</a></h2>
+<p>MPIを使用する場合、各プロセスは独自のリスタートファイルを
+読み書きします。
+MPIプロセス数は元の実行とリスタート実行で一致する必要があります。</p>
+<p>プロセス数を変更する必要がある場合は：</p>
+<ol class="arabic simple">
+<li><p>全ての固有ベクトルファイルを収集</p></li>
+<li><p>データを再分配</p></li>
+<li><p>新しいプロセスごとのファイルに分割</p></li>
+</ol>
+</section>
+<section id="id7">
+<h2><span class="section-number">6.6.7. </span>よくある問題<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>ファイルが見つからない</strong></dt><dd><p>リスタートファイルが正しい名前で作業ディレクトリにあることを確認。</p>
+</dd>
+<dt><strong>プロセス数の不一致</strong></dt><dd><p>MPIプロセス数は元の計算と一致する必要があります。</p>
+</dd>
+<dt><strong>ファイルの破損</strong></dt><dd><p>リスタート後に計算が予期しない結果を生成する場合、
+リスタートファイルが破損している可能性があります。
+ファイルを削除して最初からやり直してください。</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h2><span class="section-number">6.6.8. </span>ベストプラクティス<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>長時間計算中は定期的に固有ベクトルファイルを保存</p></li>
+<li><p>リスタートファイルのバックアップコピーを保持</p></li>
+<li><p>リスタート後は保存量をチェックして結果を検証</p></li>
+<li><p>各リスタートファイルで使用した計算パラメータを文書化</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_ja.html">6.1. ヒルベルト空間の構成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_ja.html">6.2. MPI並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. リスタート機構</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.6.1. 概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.6.2. リスタートファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.6.3. 入出力設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.6.4. 使用例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.6.5. ファイル形式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi">6.6.6. MPIに関する考慮事項</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.6.7. よくある問題</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">6.6.8. ベストプラクティス</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="precision_ja.html" title="前の章へ"><span class="section-number">6.5. </span>数値精度</a></li>
+      <li>Next: <a href="../related/index.html" title="次の章へ"><span class="section-number">7. </span>関連ツール</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/restart_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

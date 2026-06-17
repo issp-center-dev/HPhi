@@ -1,0 +1,80 @@
+J1-J2 Heisenberg model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Here, we solve the :math:`J_{1}-J_{2}` Heisenberg model on the square lattice, 
+which is a canonical example of the frustrated magnets.
+Its Hamiltonian is defined as
+
+.. math::
+
+  {\mathcal H}=J_{1}\sum_{\langle i,j\rangle }{\bf S}_{i}\cdot{\bf S}_{j}+J_{2}\sum_{\langle\langle i,j\rangle\rangle }{\bf S}_{i}\cdot{\bf S}_{j},
+
+where :math:`J_{1}` (:math:`J_{2}`) represents the nearest (next-nearest) neighbor interactions.
+
+An input file (``samples/tutorial_1.5/stan1.in``) for treating :math:`J_{1}-J_{2}` Heisenberg model is given as ::
+
+ model = "Spin" 
+ method = "CG" 
+ lattice = "square" 
+ L = 4
+ W = 4
+ J = 1
+ J' = 1
+ 2S = 1
+ 2Sz = 0
+ exct = 4
+
+Here, J (J') represents :math:`J_{1}` (:math:`J_{2}`).
+
+Calculations of spin structure factors for ground state
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+First, we calculate the spin structure factors, which are defined as
+
+.. math::
+
+  S({\bf q})=\frac{1}{N_{\rm s}}\sum_{i,j} {\bf S}_{i}\cdot{\bf S}_{j}
+
+To calculate :math:`S({\bf q})`, it is necessary to prepare
+a proper input file for two-body Green functions.
+By using a python script **MakeGreen.py** (``samples/tutorial_1.5/MakeGreen.py``),
+you can generate **greentwo.def** for calculating :math:`S({\bf q})`.
+To use  **MakeGreen.py** , an input file for specifying lattice geometry (**input.txt**, ``samples/tutorial_1.5/input.txt``) is necessary,
+whose form is given as follows ::
+
+ Lx 4
+ Ly 4
+ Lz 1
+ orb_num 1
+
+Here, Lx (orb_num) represents the length of the x direction (number of orbitals).
+
+By using a python script **CalcSq.py** (``samples/tutorial_1.5/CalcSq.py``),
+you can calculate :math:`S({\bf q})` from **output/zvo_cisajscktalt_eigen0.dat**.
+
+Procedure for calculating and visualizing :math:`S({\bf q})` is given as follows ::
+ 1. HPhi -sdry stan.in
+ 2. python3 MakeGreen.py (input.txt is necessary)
+ 3. HPhi -e namelist.def 
+ 4. python3 CalcSq.py (input.txt is necessary)
+ 5. You can obtain **Sq_eigen0.dat** !!
+ 6. splot "Sq_eigen0.dat" u 1:2:3 (using gnuplot)
+
+Following the procedure, please see how :math:`S({\bf q})` changes
+by changing J'.
+As an example, we show :math:`S({\bf q})` for J1/J2=0 and 1 below.
+
+.. image:: ../../../figs/J1J2_Sq.*
+   :align: center
+
+Calculations of spin structure factors for excited states
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+By changing exct in stan.in, you can obtain several excited states.
+For those excited states, by changing **max_num=1** in CalcSq.py as,
+for example, **max_num=4**,
+you can obtain  :math:`S({\bf q})` for the excited states.
+As a practice for editing file, please try to edit CalcSq.py manually 
+(open CalcSq.py, finding variable max_num =1, and changing max_num = 4).
+
+Please see how :math:`S({\bf q})` in the excited states 
+changes by changing J'. For example, please check 
+what is the nature of the
+first excited state J'=0,0.5, and 1.
