@@ -178,6 +178,12 @@ int expec_cisajscktaltdc
     sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
+  if(X->Def.iCalcModel == Spin &&
+     (X->Def.NTBody>0 || X->Def.NFBody>0 || X->Def.NSBody>0)){
+    fprintf(stdoutMPI,
+            "Error: ThreeBodyG/FourBodyG/SixBodyG for canonical Spin is not supported. Use SpinGC or remove the N-body Green function request.\n");
+    return -1;
+  }
   if(X->Def.NCisAjtCkuAlvDC>0){
     // If the number of two-body interactions is zero, the file name is not used.
     if(childfopenMPI(sdt, "w", &fp)!=0){

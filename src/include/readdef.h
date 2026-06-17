@@ -55,8 +55,10 @@
 #define KWFourBodyG 22
 #define KWSixBodyG 23
 #define KWInvTemp 24
-#define KWNBodyInterAll 25
-#define KWNBodyG 26
+#define KWSingleExcitationBra 25
+#define KWPairExcitationBra 26
+#define KWNBodyInterAll 27
+#define KWNBodyG 28
 
 int CheckSite(
           const int iListToSite,

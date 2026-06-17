@@ -351,12 +351,16 @@ int check(struct BindStruct *X){
         case tJGC:
         case Spin:
         case SpinlessFermion:
-          X->Check.max_mem = (6 * X->Def.k_exct + 2) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (6 * X->Def.k_exct + 2
+            + ((X->Def.NSingleExcitationOperatorBra > 0 || X->Def.NPairExcitationOperatorBra > 0) ? 1.0 : 0.0))
+            * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
         case HubbardGC:
         case SpinGC:
         case SpinlessFermionGC:
-          X->Check.max_mem = (6 * X->Def.k_exct + 1.5) * X->Check.idim_max * 16.0 / (pow(10, 9));
+          X->Check.max_mem = (6 * X->Def.k_exct + 1.5
+            + ((X->Def.NSingleExcitationOperatorBra > 0 || X->Def.NPairExcitationOperatorBra > 0) ? 1.0 : 0.0))
+            * X->Check.idim_max * 16.0 / (pow(10, 9));
           break;
       }
       break;

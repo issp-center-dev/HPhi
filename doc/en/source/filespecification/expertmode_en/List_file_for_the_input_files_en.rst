@@ -76,6 +76,8 @@ Use rules
     "TwoBodyG", "Output components for two-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle`"
     "SingleExcitation", "Operators for generating a single excited state"
     "PairExcitation", "Operators for generating a pair excited state"
+    "SingleExcitationBra", "Bra single excitation operators for the off-diagonal Green's function"
+    "PairExcitationBra", "Bra pair excitation operators for the off-diagonal Green's function"
     "SpectrumVec", "An input vector to calculate a restart vector"
     "OneBodyTE", "Time-dependent transfer integrals"
     "TwoBodyTE", "Time-dependent two-body interactions"

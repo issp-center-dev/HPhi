@@ -153,6 +153,11 @@ void setmem_def
   X->Def.PairExcitationOperator = i_2d_allocate(X->Def.NPairExcitationOperator, 5);
   X->Def.ParaPairExcitationOperator = cd_1d_allocate(X->Def.NPairExcitationOperator);
 
+  X->Def.SingleExcitationOperatorBra = i_2d_allocate(X->Def.NSingleExcitationOperatorBra, 3);
+  X->Def.ParaSingleExcitationOperatorBra = cd_1d_allocate(X->Def.NSingleExcitationOperatorBra);
+  X->Def.PairExcitationOperatorBra = i_2d_allocate(X->Def.NPairExcitationOperatorBra, 5);
+  X->Def.ParaPairExcitationOperatorBra = cd_1d_allocate(X->Def.NPairExcitationOperatorBra);
+
   X->Def.ParaLaser = d_1d_allocate(X->Def.NLaser);
 
   xBoost->list_6spin_star = i_2d_allocate(xBoost->R0 * xBoost->num_pivot, 7);

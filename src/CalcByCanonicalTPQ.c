@@ -24,6 +24,7 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include <ctype.h>
 #ifdef MPI
     #include <mpi.h>
 #endif
@@ -71,7 +72,7 @@ int CalcByCanonicalTPQ(
     double *read_invtemp=NULL;
     int    *read_nmax=NULL,*read_physcal=NULL,*read_eigen=NULL; 
     int    flag_read_invtemp;
-    int    num_lines,read_lines;
+    int    num_lines=0, read_lines=0, invtemp_status=0;
     /*[e] for inverse temperatures*/
 
     tstruct.tstart=time(NULL);
@@ -85,30 +86,88 @@ int CalcByCanonicalTPQ(
     file_name[D_FileNameMax - 1] = '\0'; // Ensure null termination
     /*[e]Following copilot's suggestion, we use strncpy to avoid buffer overflow*/
     if (X->Bind.Def.flag_read_invtemp==1){
+        if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN){
+            fprintf(stdoutMPI,
+                    "Error: InvTemp input cannot be combined with Restart=2 or Restart=3 in cTPQ.\n");
+            return -1;
+        }
         if(myrank==0){
             num_lines      = count_file_lines(file_name); /*count lines of files*/
-            //[s] allocate
-            read_invtemp   = (double*)calloc(num_lines,sizeof(double));
-            read_nmax      = (int *)calloc(num_lines, sizeof(int));
-            read_physcal   = (int *)calloc(num_lines, sizeof(int));
-            read_eigen     = (int *)calloc(num_lines, sizeof(int));
-            //[e] allocate
-            read_lines     = func_read_invtemp(read_invtemp,read_nmax,read_physcal,read_eigen,file_name,num_lines); /*read files*/
-            //printf("DEBUG: myrank = %d: flag_read_invtemp = %d file_name = %s num_lines = %d read_lines = %d \n", 
-            //       myrank,X->Bind.Def.flag_read_invtemp, file_name, num_lines, read_lines);
+            if(num_lines <= 0){
+                fprintf(stdoutMPI,
+                        "Error: InvTemp file '%s' must contain at least one complete row.\n",
+                        file_name);
+                invtemp_status = -1;
+            }else{
+                //[s] allocate
+                read_invtemp   = (double*)calloc(num_lines,sizeof(double));
+                read_nmax      = (int *)calloc(num_lines, sizeof(int));
+                read_physcal   = (int *)calloc(num_lines, sizeof(int));
+                read_eigen     = (int *)calloc(num_lines, sizeof(int));
+                //[e] allocate
+                if(read_invtemp == NULL || read_nmax == NULL ||
+                   read_physcal == NULL || read_eigen == NULL){
+                    fprintf(stdoutMPI,
+                            "Error: failed to allocate InvTemp arrays for %d rows.\n",
+                            num_lines);
+                    invtemp_status = -1;
+                }else{
+                    read_lines = func_read_invtemp(read_invtemp,read_nmax,read_physcal,read_eigen,file_name,num_lines); /*read files*/
+                    if(read_lines < 0){
+                        fprintf(stdoutMPI,
+                                "Error: InvTemp file '%s' has an invalid row. Each non-empty row must contain exactly: beta nmax physcal eigen.\n",
+                                file_name);
+                        invtemp_status = -1;
+                    }else if(read_lines == 0){
+                        fprintf(stdoutMPI,
+                                "Error: InvTemp file '%s' must contain at least one complete row.\n",
+                                file_name);
+                        invtemp_status = -1;
+                    }else{
+                        num_lines = read_lines;
+                    }
+                }
+            }
         }
         #ifdef MPI
+            MPI_Bcast(&invtemp_status, 1, MPI_INT, 0, MPI_COMM_WORLD);
             // Broadcast the number of lines to all ranks
             MPI_Bcast(&num_lines, 1, MPI_INT, 0, MPI_COMM_WORLD);
             //printf("DEBUG: myrank = %d: flag_read_invtemp = %d file_name = %s num_lines = %d \n", 
             //       myrank,X->Bind.Def.flag_read_invtemp, file_name, num_lines);
+        #endif
 
+        if(invtemp_status != 0){
+            free(read_invtemp);
+            free(read_nmax);
+            free(read_physcal);
+            free(read_eigen);
+            return -1;
+        }
+
+        #ifdef MPI
+            int local_invtemp_status = 0;
             // Allocate memory on non-root ranks
             if (myrank != 0) {
                 read_invtemp = (double*)calloc(num_lines, sizeof(double));
                 read_nmax    = (int*)calloc(num_lines, sizeof(int));
                 read_physcal = (int*)calloc(num_lines, sizeof(int));
                 read_eigen   = (int*)calloc(num_lines, sizeof(int));
+                if(read_invtemp == NULL || read_nmax == NULL ||
+                   read_physcal == NULL || read_eigen == NULL){
+                    fprintf(stdoutMPI,
+                            "Error: failed to allocate InvTemp arrays for %d rows.\n",
+                            num_lines);
+                    local_invtemp_status = -1;
+                }
+            }
+            MPI_Allreduce(&local_invtemp_status, &invtemp_status, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+            if(invtemp_status != 0){
+                free(read_invtemp);
+                free(read_nmax);
+                free(read_physcal);
+                free(read_eigen);
+                return -1;
             }
 
             // Broadcast data arrays to all ranks
@@ -447,18 +506,48 @@ int count_file_lines(const char *file_name) {
 int func_read_invtemp(double *read_invtemp, int *read_nmax, int *read_physcal, int *read_eigen, const char *file_name, int max_lines) {
 
     FILE *file = fopen(file_name, "r");
+    char line[1024];
     if (file == NULL) {
         fprintf(stderr, "could not open file: %s\n", file_name);
         return -1;
     }
 
     int i = 0;
-    while (fscanf(file, "%lf %d %d %d", &read_invtemp[i], &read_nmax[i], &read_physcal[i], &read_eigen[i]) == 4) {
+    int line_no = 0;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        double invtemp_tmp;
+        int nmax_tmp, physcal_tmp, eigen_tmp;
+        int nread = 0;
+        char *cursor = line;
+        line_no++;
+
+        while (isspace((unsigned char)*cursor)) cursor++;
+        if (*cursor == '\0') continue;
+
         if (i >= max_lines) {
             fprintf(stderr, "Error: number of lines in file exceeds expected %d\n", max_lines);
             fclose(file);
             return -2;
         }
+
+        if (sscanf(cursor, "%lf %d %d %d %n",
+                   &invtemp_tmp, &nmax_tmp, &physcal_tmp, &eigen_tmp, &nread) != 4) {
+            fprintf(stderr, "Error: invalid InvTemp row %d in file: %s\n", line_no, file_name);
+            fclose(file);
+            return -3;
+        }
+        cursor += nread;
+        while (isspace((unsigned char)*cursor)) cursor++;
+        if (*cursor != '\0') {
+            fprintf(stderr, "Error: invalid InvTemp row %d in file: %s\n", line_no, file_name);
+            fclose(file);
+            return -3;
+        }
+
+        read_invtemp[i] = invtemp_tmp;
+        read_nmax[i] = nmax_tmp;
+        read_physcal[i] = physcal_tmp;
+        read_eigen[i] = eigen_tmp;
         i++;
     }
 

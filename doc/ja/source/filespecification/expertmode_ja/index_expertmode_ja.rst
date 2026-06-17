@@ -106,6 +106,12 @@
    * - :doc:`PairExcitation <PairExcitation_file_ja>`
      - スペクトル
      - 動的グリーン関数用のペア励起演算子
+   * - :doc:`SingleExcitationBra <SingleExcitationBra_file_ja>`
+     - オプション
+     - 非対角グリーン関数用のブラ側一粒子励起演算子
+   * - :doc:`PairExcitationBra <PairExcitationBra_file_ja>`
+     - オプション
+     - 非対角グリーン関数用のブラ側ペア励起演算子
    * - :doc:`SpectrumVec <SpectrumVec_File_ja>`
      - スペクトル
      - スペクトル計算用入力ベクトル
@@ -181,6 +187,8 @@
 
    SingleExcitation_file_ja
    PairExcitation_file_ja
+   SingleExcitationBra_file_ja
+   PairExcitationBra_file_ja
    SpectrumVec_File_ja
    OneBodyTE_File_ja
    TwoBodyTE_File_ja

@@ -54,8 +54,10 @@ add_hphi_test(lanczos_hubbard_square_calchs2)
 add_hphi_test(lanczos_hubbard_square_ncond_calchs2)
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test(calchs2_unsupported_reject)
+add_hphi_test(threebody_calcmodel_validation)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
+add_hphi_test(lanczos_spin_calchs_minus1)
 add_hphi_test(lanczos_spin_ladder_DM)
 add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
@@ -72,6 +74,7 @@ add_hphi_test(nbody_interall_validation)
 add_hphi_test(nbodyg_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(spinless_interall_diagonal)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
@@ -91,11 +94,15 @@ set_tests_properties(
     calchs2_unsupported_reject
     PROPERTIES LABELS "lanczos;hubbard;validation")
 set_tests_properties(
+    threebody_calcmodel_validation
+    PROPERTIES LABELS "lanczos;spin;validation")
+set_tests_properties(
     lanczos_kondo_chain lanczos_kondogc_chain
     lanczos_kondo_chain_restart
     PROPERTIES LABELS "lanczos;kondo")
 set_tests_properties(
     lanczos_spin_kagome lanczos_spin_ladder_DM
+    lanczos_spin_calchs_minus1
     lanczos_spingc_honey lanczos_spingc_hcor
     lanczos_spingc_nbodyg
     lanczos_spin_kagome_restart
@@ -211,10 +218,43 @@ add_hphi_test(spectrum_kondogc_chain)
 add_hphi_test(spectrum_spingc_honey)
 add_hphi_test_with_srcdir(spectrum_spinless_chain)
 
+# Off-diagonal dynamical Green function (bra excitation)
+add_hphi_test(spectrum_hubbard_offdiag_single)
+add_hphi_test(spectrum_hubbard_offdiag_pair_density)
+add_hphi_test(spectrum_spin_offdiag_szsz)
+add_hphi_test(spectrum_spingc_offdiag_szsz)
+add_hphi_test(spectrum_offdiag_invalid_reject)
+
 # Spectrum test labels
 set_tests_properties(
     spectrum_hubbard_square spectrum_hubbardgc_tri
     PROPERTIES LABELS "spectrum;hubbard")
+set_tests_properties(
+    spectrum_hubbard_offdiag_single spectrum_hubbard_offdiag_pair_density
+    PROPERTIES LABELS "spectrum;hubbard;offdiag")
+set_tests_properties(
+    spectrum_spin_offdiag_szsz spectrum_spingc_offdiag_szsz
+    PROPERTIES LABELS "spectrum;spin;offdiag")
+set_tests_properties(
+    spectrum_offdiag_invalid_reject
+    PROPERTIES LABELS "spectrum;offdiag;validation")
+
+# Unit test: off-diagonal excitation sector-shift truth table
+add_executable(unittest_excitation_sector_shift
+    ${CMAKE_SOURCE_DIR}/test/unittest_excitation_sector_shift.c
+    ${CMAKE_SOURCE_DIR}/src/ExcitationSectorShift.c)
+target_include_directories(unittest_excitation_sector_shift
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_excitation_sector_shift PRIVATE DSFMT_MEXP=19937)
+add_test(NAME unittest_excitation_sector_shift
+    COMMAND unittest_excitation_sector_shift)
+set_tests_properties(unittest_excitation_sector_shift
+    PROPERTIES LABELS "unit;offdiag")
+
+# MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
+add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
+set_tests_properties(spectrum_hubbard_offdiag_single_mpi
+    PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
 set_tests_properties(
     spectrum_kondo_chain spectrum_kondogc_chain
     PROPERTIES LABELS "spectrum;kondo")
@@ -282,10 +322,14 @@ set_tests_properties(
 add_hphi_test_with_srcdir(ctpq_spin_kagome)
 add_hphi_test_with_srcdir(ctpq_spin_kagome_randomsphere)
 add_hphi_test_with_srcdir(read_ctpq_spin_chain)
+add_hphi_test(ctpq_invtemp_validation)
 
 set_tests_properties(
     ctpq_spin_kagome ctpq_spin_kagome_randomsphere read_ctpq_spin_chain
     PROPERTIES LABELS "ctpq;spin")
+set_tests_properties(
+    ctpq_invtemp_validation
+    PROPERTIES LABELS "ctpq;validation")
 
 #
 # Three body for spin 1 Heisenberg chain
@@ -340,6 +384,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless_GC min:2)
     add_hphi_mpi_test(mpi_consistency_te_kondo min:2)
+    add_hphi_mpi_test_with_srcdir(mpi_consistency_threebody_generalspin exact:3)
     add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody min:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard_twobody min:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence min:4)
@@ -347,6 +392,7 @@ if(MPI_FOUND)
     # MPIdouble (np=16), HubbardGC off-diagonal InterAll, SpinGC PairLift, Spinless.
     add_hphi_mpi_test(mpi_nobatch_equivalence_mpidouble exact:16)
     add_hphi_mpi_test(mpi_nobatch_equivalence_interall exact:4)
+    add_hphi_mpi_test(mpi_nobatch_equivalence_interall_selfterm exact:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence_pairlift exact:4)
     add_hphi_mpi_test_with_srcdir(mpi_nobatch_equivalence_spinless exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spingc exact:4)
@@ -357,6 +403,7 @@ if(MPI_FOUND)
         mpi_nobatch_equivalence
         mpi_nobatch_equivalence_mpidouble
         mpi_nobatch_equivalence_interall
+        mpi_nobatch_equivalence_interall_selfterm
         mpi_nobatch_equivalence_pairlift
         mpi_nobatch_equivalence_spinless
         PROPERTIES LABELS "mpi;nobatch")
@@ -366,6 +413,7 @@ if(MPI_FOUND)
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
         mpi_consistency_spin mpi_consistency_spingc mpi_consistency_te_spin
+        mpi_consistency_threebody_generalspin
         PROPERTIES LABELS "mpi;consistency;spin")
     set_tests_properties(
         mpi_nbody_interall_spingc mpi_nbodyg_spingc

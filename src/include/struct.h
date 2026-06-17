@@ -235,6 +235,18 @@ struct DefineList {
   unsigned int NPairExcitationOperator;/**<@brief Number of pair excitaion operator for spectrum.*/
   double complex *ParaPairExcitationOperator;/**<@brief [DefineList::NPairExcitationOperator]
                            Coefficient of pair excitaion operator for spectrum. malloc in setmem_def().*/
+
+  int **SingleExcitationOperatorBra;/**<@brief [DefineList::NSingleExcitationOperatorBra][3]
+                                    Bra-side single excitation operator for off-diagonal spectrum. malloc in setmem_def().*/
+  unsigned int NSingleExcitationOperatorBra;/**<@brief Number of bra-side single excitation operators.*/
+  double complex *ParaSingleExcitationOperatorBra;/**<@brief [DefineList::NSingleExcitationOperatorBra]
+              Coefficient of bra-side single excitation operator. malloc in setmem_def().*/
+
+  int **PairExcitationOperatorBra;/**<@brief [DefineList::NPairExcitationOperatorBra][5]
+                                  Bra-side pair excitation operator for off-diagonal spectrum. malloc in setmem_def().*/
+  unsigned int NPairExcitationOperatorBra;/**<@brief Number of bra-side pair excitation operators.*/
+  double complex *ParaPairExcitationOperatorBra;/**<@brief [DefineList::NPairExcitationOperatorBra]
+                           Coefficient of bra-side pair excitation operator. malloc in setmem_def().*/
   
   int iCalcType;/**<@brief Switch for calculation type. 0:Lanczos, 1:TPQCalc, 2:FullDiag.*/
   int iCalcEigenVec;/**<@brief Switch for method to calculate eigenvectors. 

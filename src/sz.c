@@ -526,7 +526,7 @@ int sz(
                       if(X->Def.iFlgGeneralSpin==FALSE){
                           hacker = X->Def.read_hacker;
                           if(hacker        ==  -1){
-                              calculate_jb_Spin_m1(X,list_jb,list_1_,list_2_1_,list_2_2_,ihfbit,irght,ilft,ibpatn, N);
+                              icnt = calculate_jb_Spin_m1(X,list_jb,list_1_,list_2_1_,list_2_2_,ihfbit,irght,ilft,ibpatn, N);
                           }else if(hacker  ==  1){
                               calculate_jb_Spin_Hacker(X,list_jb,ihfbit,N);
                               TimeKeeper(X, cFileNameSzTimeKeep, cOMPSzMid, "a");
@@ -2171,7 +2171,7 @@ void calculate_jb_GeneralSpin(struct BindStruct *X, long unsigned int *list_jb, 
     free_lui_1d_allocate(HilbertNumToSz);
 }
 
-void calculate_jb_Spin_m1(struct BindStruct *X, long unsigned int *list_jb, long unsigned int *list_1_, long unsigned int *list_2_1_,long unsigned int *list_2_2_,\
+long unsigned int calculate_jb_Spin_m1(struct BindStruct *X, long unsigned int *list_jb, long unsigned int *list_1_, long unsigned int *list_2_1_,long unsigned int *list_2_2_,\
 long unsigned int ihfbit,long unsigned int irght,long unsigned int ilft,long unsigned int ibpatn, unsigned int N){
     long unsigned int ia,ja,ib,jb,div_up,i,j,tmp_1;
     long unsigned int tmp_pow,tmp_i,tmp_j,icnt,max_tmp_i;
@@ -2211,8 +2211,8 @@ long unsigned int ihfbit,long unsigned int irght,long unsigned int ilft,long uns
         tmp_i         = tmp_j;
         icnt         += 1;
     }
-    icnt = icnt-1;
     // old version + hacker's delight
+    return icnt-1;
 }
 
 void calculate_jb_Spin_Hacker(struct BindStruct *X, long unsigned int *list_jb, long unsigned int ihfbit,unsigned int N){

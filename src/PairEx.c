@@ -47,6 +47,9 @@
 int GetPairExcitedState
 (
  struct BindStruct *X,
+ unsigned int NPairExcitationOperator,
+ int **PairExcitationOperator,
+ double complex *ParaPairExcitationOperator,
  double complex *tmp_v0,
  double complex *tmp_v1
  )
@@ -82,15 +85,24 @@ int GetPairExcitedState
   case tJGC:
   case Kondo:
   case KondoGC:
-      iret=GetPairExcitedStateHubbard(X, tmp_v0, tmp_v1);
+      iret=GetPairExcitedStateHubbard(X, NPairExcitationOperator,
+                                      PairExcitationOperator,
+                                      ParaPairExcitationOperator,
+                                      tmp_v0, tmp_v1);
     break;
 
     case Spin: // for the Sz-conserved spin system
-      iret =GetPairExcitedStateSpin(X, tmp_v0, tmp_v1);
+      iret =GetPairExcitedStateSpin(X, NPairExcitationOperator,
+                                    PairExcitationOperator,
+                                    ParaPairExcitationOperator,
+                                    tmp_v0, tmp_v1);
       break;
 
     case SpinGC:
-      iret=GetPairExcitedStateSpinGC(X,tmp_v0, tmp_v1);
+      iret=GetPairExcitedStateSpinGC(X, NPairExcitationOperator,
+                                     PairExcitationOperator,
+                                     ParaPairExcitationOperator,
+                                     tmp_v0, tmp_v1);
       break;
 
     case SpinlessFermion:

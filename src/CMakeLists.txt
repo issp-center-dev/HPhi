@@ -59,6 +59,7 @@ target_sources(HPhi PRIVATE
   CalcSpectrumByTPQ.c CalcSpectrumByFullDiag.c
   SingleEx.c SingleExHubbard.c
   PairEx.c PairExHubbard.c PairExSpin.c PairExSpinless.c
+  ExcitationSectorShift.c
 )
 
 # Time evolution
