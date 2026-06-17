@@ -68,6 +68,9 @@ add_hphi_test(lanczos_spingc_nbodyg)
 add_hphi_test(lanczos_spin_nbody_interall)
 add_hphi_test(lanczos_spingc_spinone_nbody_interall)
 add_hphi_test(lanczos_spingc_spinone_nbodyg)
+add_hphi_test(lanczos_spin_spinone_nbody_interall)
+add_hphi_test(lanczos_spin_spinone_nbodyg)
+add_hphi_test(fulldiag_spin_spinone_nbodyg)
 add_hphi_test(nbody_spingc_spinone_validation)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test(lanczos_tjgc_dimension)
@@ -123,10 +126,15 @@ set_tests_properties(
     PROPERTIES LABELS "spinone;genspin;validation;nbody")
 set_tests_properties(
     lanczos_spingc_spinone_nbody_interall
+    lanczos_spin_spinone_nbody_interall
     PROPERTIES LABELS "lanczos;genspin;spinone;nbody")
 set_tests_properties(
     lanczos_spingc_spinone_nbodyg
+    lanczos_spin_spinone_nbodyg
     PROPERTIES LABELS "lanczos;genspin;spinone;nbody")
+set_tests_properties(
+    fulldiag_spin_spinone_nbodyg
+    PROPERTIES LABELS "fulldiag;genspin;spinone;nbody")
 set_tests_properties(
     spinless_onebody_sigma_validation
     PROPERTIES LABELS "spinless;validation")
@@ -371,6 +379,10 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone_np9 exact:9)
     add_hphi_mpi_test(mpi_nbodyg_spingc_spinone exact:3)
     add_hphi_mpi_test(mpi_nbodyg_spingc_spinone_np9 exact:9)
+    add_hphi_mpi_test(mpi_nbody_interall_spin_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbody_interall_spin_spinone_np9 exact:9)
+    add_hphi_mpi_test(mpi_nbodyg_spin_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbodyg_spin_spinone_np9 exact:9)
 
     # MPI consistency test labels
     set_tests_properties(
@@ -396,6 +408,10 @@ if(MPI_FOUND)
         mpi_nbody_interall_spingc_spinone_np9
         mpi_nbodyg_spingc_spinone
         mpi_nbodyg_spingc_spinone_np9
+        mpi_nbody_interall_spin_spinone
+        mpi_nbody_interall_spin_spinone_np9
+        mpi_nbodyg_spin_spinone
+        mpi_nbodyg_spin_spinone_np9
         PROPERTIES LABELS "mpi;consistency;genspin;spinone;nbody")
     set_tests_properties(
         mpi_consistency_kondo mpi_consistency_te_kondo

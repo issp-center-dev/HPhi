@@ -102,13 +102,14 @@ int ParseNBodyGLine(
 static int nbodyg_is_supported_spin_model(const struct DefineList *D)
 {
   if (D->iCalcModel == SpinGC) return TRUE;
-  if (D->iCalcModel == Spin && D->iFlgGeneralSpin == FALSE) return TRUE;
+  if (D->iCalcModel == Spin) return TRUE;
   return FALSE;
 }
 
-static int nbodyg_is_spingc_general_spin(const struct DefineList *D)
+static int nbodyg_is_general_spin(const struct DefineList *D)
 {
-  return D->iCalcModel == SpinGC && D->iFlgGeneralSpin == TRUE;
+  return D->iFlgGeneralSpin == TRUE &&
+         (D->iCalcModel == Spin || D->iCalcModel == SpinGC);
 }
 
 int ValidateNBodyGScope(const struct DefineList *D)
@@ -116,12 +117,7 @@ int ValidateNBodyGScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
   if (nbodyg_is_supported_spin_model(D) == FALSE) {
-    if (D->iCalcModel == Spin && D->iFlgGeneralSpin == TRUE) {
-      fprintf(stdoutMPI, "Error: NBodyG is not supported for canonical Spin general spin.\n");
-    }
-    else {
-      fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
-    }
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and Spin.\n");
     return -1;
   }
   for (t = 0; t < D->NNBodyG; t++) {
@@ -137,7 +133,7 @@ int ValidateNBodyGScope(const struct DefineList *D)
         return -1;
       }
       {
-        const int max_spin = nbodyg_is_spingc_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        const int max_spin = nbodyg_is_general_spin(D) ? D->LocSpn[f[0]] : 1;
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
           return -1;
@@ -249,7 +245,7 @@ int CheckNBodyGSpinConservation(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
-  if (D->iCalcModel != Spin || D->iFlgGeneralSpin != FALSE) return 0;
+  if (D->iCalcModel != Spin) return 0;
 
   for (t = 0; t < D->NNBodyG; t++) {
     const unsigned int n = D->NBodyG_CanonicalN[t];
@@ -357,6 +353,14 @@ static int apply_nbodyg_general_spin_gc(
   *local_out = lo;
   *rank_out = (int)ro;
   return 1;
+}
+
+static int convert_nbodyg_general_spin_to_list1(
+  const struct BindStruct *X,
+  unsigned long int local_out,
+  unsigned long int *j_out
+) {
+  return ConvertToList1GeneralSpin(local_out, X->Check.sdim, j_out);
 }
 
 static int nbodyg_rank_flip_mask(const struct BindStruct *X, unsigned int term, int *mask)
@@ -505,10 +509,17 @@ static double complex expec_nbodyg_term_to_rank_spin(
     unsigned long int local_out = 0;
     unsigned long int j_out = 0;
     int rank_out = 0;
-    int ret = apply_nbodyg_spingc(X, term, src_list_1[j], rank_in, &local_out, &rank_out);
-    if (ret == 1 && rank_out == myrank &&
+    int ret = (X->Def.iFlgGeneralSpin == TRUE) ?
+      apply_nbodyg_general_spin_gc(X, term, src_list_1[j], rank_in, &local_out, &rank_out) :
+      apply_nbodyg_spingc(X, term, src_list_1[j], rank_in, &local_out, &rank_out);
+    int in_sector = FALSE;
+    if (ret == 1 && rank_out == myrank) {
+      in_sector = (X->Def.iFlgGeneralSpin == TRUE) ?
+        convert_nbodyg_general_spin_to_list1(X, local_out, &j_out) :
         GetOffComp(list_2_1, list_2_2, local_out,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out) == TRUE) {
+                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out);
+    }
+    if (in_sector == TRUE) {
       dam_pr += conj(bra_vec[j_out]) * src_vec[j];
     }
   }
@@ -580,8 +591,48 @@ static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, 
 static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int term, double complex *vec)
 {
   int mask = 0;
-  int origin;
+  int origin = myrank;
+  int active = TRUE;
   double complex dam_pr = 0.0;
+
+  if (X->Def.iFlgGeneralSpin == TRUE) {
+    if (nbodyg_general_spin_partner_rank(X, term, myrank, &origin, &active) != 0) {
+      return SumMPI_dc(0.0);
+    }
+    if (active == FALSE) {
+      return SumMPI_dc(0.0);
+    }
+    if (origin == myrank) {
+      dam_pr = expec_nbodyg_term_to_rank_spin(
+        X, term, list_1, vec, vec, X->Check.idim_max, myrank);
+      return SumMPI_dc(dam_pr);
+    }
+
+#ifdef MPI
+    {
+      MPI_Status statusMPI;
+      unsigned long int idim_max_buf = 0;
+      int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                              &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                              MPI_COMM_WORLD, &statusMPI);
+      if (ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                          list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                          MPI_COMM_WORLD, &statusMPI);
+      if (ierr != 0) exitMPI(-1);
+      ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                          v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                          MPI_COMM_WORLD, &statusMPI);
+      if (ierr != 0) exitMPI(-1);
+      dam_pr = expec_nbodyg_term_to_rank_spin(
+        X, term, list_1buf, v1buf, vec, idim_max_buf, origin);
+    }
+#else
+    fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
+    return 0.0;
+#endif
+    return SumMPI_dc(dam_pr);
+  }
 
   nbodyg_rank_flip_mask(X, term, &mask);
   origin = myrank ^ mask;
@@ -663,12 +714,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
 
   if (X->Def.NNBodyG < 1) return 0;
   if (nbodyg_is_supported_spin_model(&X->Def) == FALSE) {
-    if (X->Def.iCalcModel == Spin && X->Def.iFlgGeneralSpin == TRUE) {
-      fprintf(stdoutMPI, "Error: NBodyG is not supported for canonical Spin general spin.\n");
-    }
-    else {
-      fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and spin-1/2 Spin.\n");
-    }
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and Spin.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
@@ -678,7 +724,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
       if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
-      else if (nbodyg_is_spingc_general_spin(&X->Def) == TRUE) {
+      else if (nbodyg_is_general_spin(&X->Def) == TRUE) {
         value = calc_nbodyg_term_general_spin_gc(X, t, vec);
       }
       else value = calc_nbodyg_term(X, t, vec);

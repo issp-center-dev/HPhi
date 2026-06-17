@@ -125,13 +125,14 @@ int ParseNBodyInterAllLine(
 static int nbody_is_supported_spin_model(const struct DefineList *D)
 {
   if (D->iCalcModel == SpinGC) return TRUE;
-  if (D->iCalcModel == Spin && D->iFlgGeneralSpin == FALSE) return TRUE;
+  if (D->iCalcModel == Spin) return TRUE;
   return FALSE;
 }
 
-static int nbody_is_spingc_general_spin(const struct DefineList *D)
+static int nbody_is_general_spin(const struct DefineList *D)
 {
-  return D->iCalcModel == SpinGC && D->iFlgGeneralSpin == TRUE;
+  return D->iFlgGeneralSpin == TRUE &&
+         (D->iCalcModel == Spin || D->iCalcModel == SpinGC);
 }
 
 int ValidateNBodyInterAllScope(const struct DefineList *D)
@@ -139,12 +140,7 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
   if (nbody_is_supported_spin_model(D) == FALSE) {
-    if (D->iCalcModel == Spin && D->iFlgGeneralSpin == TRUE) {
-      fprintf(stdoutMPI, "Error: NBodyInterAll is not supported for canonical Spin general spin.\n");
-    }
-    else {
-      fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC and spin-1/2 Spin.\n");
-    }
+    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC and Spin.\n");
     return -1;
   }
   if (D->iCalcType == TimeEvolution) {
@@ -164,7 +160,7 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
         return -1;
       }
       {
-        const int max_spin = nbody_is_spingc_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        const int max_spin = nbody_is_general_spin(D) ? D->LocSpn[f[0]] : 1;
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
           return -1;
@@ -269,7 +265,7 @@ int CheckNBodyInterAllSpinConservation(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
-  if (D->iCalcModel != Spin || D->iFlgGeneralSpin != FALSE) return 0;
+  if (D->iCalcModel != Spin) return 0;
 
   for (t = 0; t < D->NNBodyInterAll; t++) {
     const unsigned int n = D->NBodyInterAll_CanonicalN[t];
@@ -399,6 +395,14 @@ static int apply_nbody_interall_bits(
   return 1;
 }
 
+static int convert_nbody_general_spin_to_list1(
+  const struct BindStruct *X,
+  unsigned long int local_out,
+  unsigned long int *j_out
+) {
+  return ConvertToList1GeneralSpin(local_out, X->Check.sdim, j_out);
+}
+
 static int apply_nbody_interall_general_spin_gc(
   const struct BindStruct *X,
   unsigned int term_index,
@@ -452,7 +456,7 @@ int ApplyNBodyInterAllSpinGC(
   double complex *matrix_element
 ) {
   int ret;
-  if (nbody_is_spingc_general_spin(&X->Def) == TRUE) {
+  if (nbody_is_general_spin(&X->Def) == TRUE) {
     ret = apply_nbody_interall_general_spin_gc(X, term_index, local_in, rank_in, local_out, rank_out);
   }
   else {
@@ -478,7 +482,9 @@ int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X)
       for (j = 1; j <= i_max; j++) {
         unsigned long int local_out = 0;
         int rank_out = 0;
-        int ret = apply_nbody_interall_bits(X, term, list_1[j], myrank, &local_out, &rank_out);
+        int ret = (X->Def.iFlgGeneralSpin == TRUE) ?
+          apply_nbody_interall_general_spin_gc(X, term, list_1[j], myrank, &local_out, &rank_out) :
+          apply_nbody_interall_bits(X, term, list_1[j], myrank, &local_out, &rank_out);
         if (ret == 1 && local_out == list_1[j] && rank_out == myrank) {
           list_Diagonal[j] += coeff;
         }
@@ -629,15 +635,73 @@ static double complex apply_nbody_term_to_rank_spin(
     unsigned long int j_out = 0;
     int rank_out = 0;
     double complex me = X->Def.ParaNBodyInterAll[term];
-    int ret = apply_nbody_interall_bits(X, term, src_list_1[j], rank_in, &intra_out, &rank_out);
-    if (ret == 1 && rank_out == myrank &&
+    int ret = (X->Def.iFlgGeneralSpin == TRUE) ?
+      apply_nbody_interall_general_spin_gc(X, term, src_list_1[j], rank_in, &intra_out, &rank_out) :
+      apply_nbody_interall_bits(X, term, src_list_1[j], rank_in, &intra_out, &rank_out);
+    int in_sector = FALSE;
+    if (ret == 1 && rank_out == myrank) {
+      in_sector = (X->Def.iFlgGeneralSpin == TRUE) ?
+        convert_nbody_general_spin_to_list1(X, intra_out, &j_out) :
         GetOffComp(list_2_1, list_2_2, intra_out,
-                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out) == TRUE) {
+                   X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out);
+    }
+    if (in_sector == TRUE) {
       const double complex dmv = me * src_v1[j];
       if (do_update) tmp_v0[j_out] += dmv;
       dam_pr += conj(cur_v1[j_out]) * dmv;
     }
   }
+  return dam_pr;
+}
+
+static double complex multiply_nbody_pair_spin_general_spin(
+  struct BindStruct *X,
+  unsigned int offdiag_pair_pos,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  const unsigned int term0 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos];
+  const unsigned int term1 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos + 1];
+  int origin = myrank;
+  int active = TRUE;
+  double complex dam_pr = 0.0;
+
+  if (nbody_interall_general_spin_partner_rank(X, term0, myrank, &origin, &active) != 0) {
+    return 0.0;
+  }
+  if (active == FALSE || origin == myrank) {
+    dam_pr += apply_nbody_term_to_rank_spin(
+      X, term0, tmp_v0, list_1, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
+    dam_pr += apply_nbody_term_to_rank_spin(
+      X, term1, tmp_v0, list_1, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
+    return dam_pr;
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(list_1, X->Check.idim_max + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        list_1buf, idim_max_buf + 1, MPI_UNSIGNED_LONG, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf,  idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr += apply_nbody_term_to_rank_spin(
+      X, term0, tmp_v0, list_1buf, v1buf, tmp_v1, idim_max_buf, origin);
+    dam_pr += apply_nbody_term_to_rank_spin(
+      X, term1, tmp_v0, list_1buf, v1buf, tmp_v1, idim_max_buf, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyInterAll reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
   return dam_pr;
 }
 
@@ -777,9 +841,14 @@ int MultiplyNBodyInterAllSpinGC(
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p += 2) {
     if (X->Def.iCalcModel == Spin) {
-      X->Large.prdct += multiply_nbody_pair_spin(X, p, tmp_v0, tmp_v1);
+      if (X->Def.iFlgGeneralSpin == TRUE) {
+        X->Large.prdct += multiply_nbody_pair_spin_general_spin(X, p, tmp_v0, tmp_v1);
+      }
+      else {
+        X->Large.prdct += multiply_nbody_pair_spin(X, p, tmp_v0, tmp_v1);
+      }
     }
-    else if (nbody_is_spingc_general_spin(&X->Def) == TRUE) {
+    else if (nbody_is_general_spin(&X->Def) == TRUE) {
       X->Large.prdct += multiply_nbody_pair_general_spin_gc(X, p, tmp_v0, tmp_v1);
     }
     else {
@@ -811,8 +880,11 @@ int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
         }
         if (X->Def.iCalcModel == Spin) {
           unsigned long int j_out = 0;
-          if (GetOffComp(list_2_1, list_2_2, local_out,
-                         X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out) == TRUE) {
+          const int in_sector = (X->Def.iFlgGeneralSpin == TRUE) ?
+            convert_nbody_general_spin_to_list1(X, local_out, &j_out) :
+            GetOffComp(list_2_1, list_2_2, local_out,
+                       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out);
+          if (in_sector == TRUE) {
             Ham[j_out][j] += me;
           }
         }
