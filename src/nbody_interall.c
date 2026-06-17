@@ -122,16 +122,29 @@ int ParseNBodyInterAllLine(
   return 0;
 }
 
+static int nbody_is_supported_spin_model(const struct DefineList *D)
+{
+  if (D->iCalcModel == SpinGC) return TRUE;
+  if (D->iCalcModel == Spin && D->iFlgGeneralSpin == FALSE) return TRUE;
+  return FALSE;
+}
+
+static int nbody_is_spingc_general_spin(const struct DefineList *D)
+{
+  return D->iCalcModel == SpinGC && D->iFlgGeneralSpin == TRUE;
+}
+
 int ValidateNBodyInterAllScope(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
-  if (D->iCalcModel != SpinGC && D->iCalcModel != Spin) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for spin-1/2 SpinGC/Spin.\n");
-    return -1;
-  }
-  if (D->iFlgGeneralSpin != FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for spin-1/2 SpinGC/Spin.\n");
+  if (nbody_is_supported_spin_model(D) == FALSE) {
+    if (D->iCalcModel == Spin && D->iFlgGeneralSpin == TRUE) {
+      fprintf(stdoutMPI, "Error: NBodyInterAll is not supported for canonical Spin general spin.\n");
+    }
+    else {
+      fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC and spin-1/2 Spin.\n");
+    }
     return -1;
   }
   if (D->iCalcType == TimeEvolution) {
@@ -150,9 +163,12 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: NBodyInterAll currently requires site_out == site_in for every factor.\n");
         return -1;
       }
-      if (f[1] < 0 || f[1] > 1 || f[3] < 0 || f[3] > 1) {
-        fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
-        return -1;
+      {
+        const int max_spin = nbody_is_spingc_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
+          fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
+          return -1;
+        }
       }
     }
   }
@@ -383,6 +399,49 @@ static int apply_nbody_interall_bits(
   return 1;
 }
 
+static int apply_nbody_interall_general_spin_gc(
+  const struct BindStruct *X,
+  unsigned int term_index,
+  unsigned long int local_in,
+  int rank_in,
+  unsigned long int *local_out,
+  int *rank_out
+) {
+  const struct DefineList *D = &X->Def;
+  unsigned int k;
+  unsigned long int lo = local_in;
+  unsigned long int ro = (unsigned long int)rank_in;
+  const unsigned int n = D->NBodyInterAll_CanonicalN[term_index];
+  const unsigned int off = D->NBodyInterAll_CanonicalOffset[term_index];
+
+  for (k = 0; k < n; k++) {
+    const int *f = D->NBodyInterAll_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    const int spin_out = f[1];
+    const int spin_in = f[3];
+    unsigned long int next = 0;
+
+    if (site < D->Nsite) {
+      if (GetOffCompGeneralSpin(lo, (int)site + 1, spin_in, spin_out,
+                                &next, D->SiteToBit, D->Tpow) == FALSE) {
+        return 0;
+      }
+      lo = next;
+    }
+    else {
+      if (GetOffCompGeneralSpin(ro, (int)site + 1, spin_in, spin_out,
+                                &next, D->SiteToBit, D->Tpow) == FALSE) {
+        return 0;
+      }
+      ro = next;
+    }
+  }
+
+  *local_out = lo;
+  *rank_out = (int)ro;
+  return 1;
+}
+
 int ApplyNBodyInterAllSpinGC(
   const struct BindStruct *X,
   unsigned int term_index,
@@ -392,7 +451,13 @@ int ApplyNBodyInterAllSpinGC(
   int *rank_out,
   double complex *matrix_element
 ) {
-  int ret = apply_nbody_interall_bits(X, term_index, local_in, rank_in, local_out, rank_out);
+  int ret;
+  if (nbody_is_spingc_general_spin(&X->Def) == TRUE) {
+    ret = apply_nbody_interall_general_spin_gc(X, term_index, local_in, rank_in, local_out, rank_out);
+  }
+  else {
+    ret = apply_nbody_interall_bits(X, term_index, local_in, rank_in, local_out, rank_out);
+  }
   if (ret == 1) *matrix_element = X->Def.ParaNBodyInterAll[term_index];
   return ret;
 }
@@ -401,8 +466,7 @@ int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X)
 {
   unsigned int i;
   if (X->Def.NNBodyInterAll_Diagonal == 0) return 0;
-  if ((X->Def.iCalcModel != SpinGC && X->Def.iCalcModel != Spin) ||
-      X->Def.iFlgGeneralSpin != FALSE) return -1;
+  if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
 
   for (i = 0; i < X->Def.NNBodyInterAll_Diagonal; i++) {
     const unsigned int term = X->Def.NBodyInterAll_DiagonalIndex[i];
@@ -449,6 +513,68 @@ static int nbody_rank_flip_mask(const struct BindStruct *X, unsigned int term, i
     }
   }
   *mask = m;
+  return 0;
+}
+
+static int nbody_interall_general_spin_partner_rank(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int *partner_rank,
+  int *active
+) {
+  unsigned int k;
+  unsigned long int partner = (unsigned long int)current_rank;
+  int side = 0;
+  const unsigned int n = X->Def.NBodyInterAll_CanonicalN[term];
+  const unsigned int off = X->Def.NBodyInterAll_CanonicalOffset[term];
+
+  *active = TRUE;
+  for (k = 0; k < n; k++) {
+    const int *f = X->Def.NBodyInterAll_CanonicalFactors[off + k];
+    const unsigned int site = (unsigned int)f[0];
+    const int spin_out = f[1];
+    const int spin_in = f[3];
+    int digit;
+    int this_side;
+
+    if (site < X->Def.Nsite) continue;
+
+    digit = GetBitGeneral(site + 1, (unsigned long int)current_rank,
+                          X->Def.SiteToBit, X->Def.Tpow);
+    if (spin_out == spin_in) {
+      if (digit != spin_out) {
+        *active = FALSE;
+        *partner_rank = current_rank;
+        return 0;
+      }
+      continue;
+    }
+
+    if (digit == spin_out) this_side = 1;
+    else if (digit == spin_in) this_side = -1;
+    else {
+      *active = FALSE;
+      *partner_rank = current_rank;
+      return 0;
+    }
+
+    if (side == 0) side = this_side;
+    else if (side != this_side) {
+      *active = FALSE;
+      *partner_rank = current_rank;
+      return 0;
+    }
+
+    if (this_side == 1) {
+      partner += ((long int)spin_in - (long int)spin_out) * X->Def.Tpow[site];
+    }
+    else {
+      partner += ((long int)spin_out - (long int)spin_in) * X->Def.Tpow[site];
+    }
+  }
+
+  *partner_rank = (int)partner;
   return 0;
 }
 
@@ -552,6 +678,44 @@ static double complex multiply_nbody_pair(
   return dam_pr;
 }
 
+static double complex multiply_nbody_pair_general_spin_gc(
+  struct BindStruct *X,
+  unsigned int offdiag_pair_pos,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  const unsigned int term0 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos];
+  const unsigned int term1 = X->Def.NBodyInterAll_OffDiagonalIndex[offdiag_pair_pos + 1];
+  int origin = myrank;
+  int active = TRUE;
+  double complex dam_pr = 0.0;
+
+  if (nbody_interall_general_spin_partner_rank(X, term0, myrank, &origin, &active) != 0) {
+    return 0.0;
+  }
+  if (active == FALSE || origin == myrank) {
+    dam_pr += apply_nbody_term_to_rank(X, term0, tmp_v0, tmp_v1, tmp_v1, myrank);
+    dam_pr += apply_nbody_term_to_rank(X, term1, tmp_v0, tmp_v1, tmp_v1, myrank);
+    return dam_pr;
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    int ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            v1buf,  X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr += apply_nbody_term_to_rank(X, term0, tmp_v0, v1buf, tmp_v1, origin);
+    dam_pr += apply_nbody_term_to_rank(X, term1, tmp_v0, v1buf, tmp_v1, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyInterAll reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
+  return dam_pr;
+}
+
 static double complex multiply_nbody_pair_spin(
   struct BindStruct *X,
   unsigned int offdiag_pair_pos,
@@ -609,12 +773,14 @@ int MultiplyNBodyInterAllSpinGC(
 ) {
   unsigned int p;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
-  if ((X->Def.iCalcModel != SpinGC && X->Def.iCalcModel != Spin) ||
-      X->Def.iFlgGeneralSpin != FALSE) return -1;
+  if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p += 2) {
     if (X->Def.iCalcModel == Spin) {
       X->Large.prdct += multiply_nbody_pair_spin(X, p, tmp_v0, tmp_v1);
+    }
+    else if (nbody_is_spingc_general_spin(&X->Def) == TRUE) {
+      X->Large.prdct += multiply_nbody_pair_general_spin_gc(X, p, tmp_v0, tmp_v1);
     }
     else {
       X->Large.prdct += multiply_nbody_pair(X, p, tmp_v0, tmp_v1);
@@ -628,8 +794,7 @@ int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
   unsigned int p;
   unsigned long int j;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
-  if ((X->Def.iCalcModel != SpinGC && X->Def.iCalcModel != Spin) ||
-      X->Def.iFlgGeneralSpin != FALSE) return -1;
+  if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
