@@ -126,6 +126,7 @@ static int nbody_is_supported_spin_model(const struct DefineList *D)
 {
   if (D->iCalcModel == SpinGC) return TRUE;
   if (D->iCalcModel == Spin) return TRUE;
+  if (D->iCalcModel == HubbardGC) return TRUE;
   return FALSE;
 }
 
@@ -140,7 +141,7 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
   if (nbody_is_supported_spin_model(D) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC and Spin.\n");
+    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC, Spin, and HubbardGC.\n");
     return -1;
   }
   if (D->iCalcType == TimeEvolution) {
@@ -155,12 +156,13 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: Site index of NBodyInterAll is incorrect.\n");
         return -1;
       }
-      if (f[0] != f[2]) {
+      if (D->iCalcModel != HubbardGC && f[0] != f[2]) {
         fprintf(stdoutMPI, "Error: NBodyInterAll currently requires site_out == site_in for every factor.\n");
         return -1;
       }
       {
-        const int max_spin = nbody_is_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        const int max_spin = (D->iCalcModel == HubbardGC) ? 1 :
+          (nbody_is_general_spin(D) ? D->LocSpn[f[0]] : 1);
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
           return -1;
@@ -207,6 +209,20 @@ int NormalizeNBodyInterAllTerms(struct DefineList *D)
   for (t = 0; t < D->NNBodyInterAll; t++) {
     const unsigned int nraw = D->NBodyInterAll_N[t];
     const unsigned int off = D->NBodyInterAll_Offset[t];
+    if (D->iCalcModel == HubbardGC) {
+      D->NBodyInterAll_CanonicalOffset[t] = total;
+      D->NBodyInterAll_CanonicalN[t] = nraw;
+      for (k = 0; k < nraw; k++) {
+        const int *f = D->NBodyInterAll_Factors[off + k];
+        D->NBodyInterAll_CanonicalFactors[total + k][0] = f[0];
+        D->NBodyInterAll_CanonicalFactors[total + k][1] = f[1];
+        D->NBodyInterAll_CanonicalFactors[total + k][2] = f[2];
+        D->NBodyInterAll_CanonicalFactors[total + k][3] = f[3];
+      }
+      total += nraw;
+      continue;
+    }
+
     int *sites = (int *)malloc(nraw * sizeof(int));
     int *outs = (int *)malloc(nraw * sizeof(int));
     int *ins = (int *)malloc(nraw * sizeof(int));
@@ -296,7 +312,13 @@ int ClassifyNBodyInterAllTerms(struct DefineList *D)
     int diagonal = TRUE;
     for (k = 0; k < n; k++) {
       const int *f = D->NBodyInterAll_CanonicalFactors[off + k];
-      if (f[1] != f[3]) {
+      if (D->iCalcModel == HubbardGC) {
+        if (f[0] != f[2] || f[1] != f[3]) {
+          diagonal = FALSE;
+          break;
+        }
+      }
+      else if (f[1] != f[3]) {
         diagonal = FALSE;
         break;
       }
@@ -335,10 +357,20 @@ int CheckNBodyInterAllHermitePairs(const struct DefineList *D)
     }
     for (k = 0; k < n0; k++) {
       const int *f0 = D->NBodyInterAll_CanonicalFactors[off0 + k];
-      const int *f1 = D->NBodyInterAll_CanonicalFactors[off1 + k];
-      if (f0[0] != f1[0] || f0[1] != f1[3] || f0[3] != f1[1]) {
-        fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll Hermite pair has inconsistent factors.\n");
-        return -1;
+      const int *f1 = (D->iCalcModel == HubbardGC) ?
+        D->NBodyInterAll_CanonicalFactors[off1 + n0 - 1 - k] :
+        D->NBodyInterAll_CanonicalFactors[off1 + k];
+      if (D->iCalcModel == HubbardGC) {
+        if (f0[0] != f1[2] || f0[1] != f1[3] || f0[2] != f1[0] || f0[3] != f1[1]) {
+          fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll Hermite pair has inconsistent factors.\n");
+          return -1;
+        }
+      }
+      else {
+        if (f0[0] != f1[0] || f0[1] != f1[3] || f0[3] != f1[1]) {
+          fprintf(stdoutMPI, "Error: Off-diagonal NBodyInterAll Hermite pair has inconsistent factors.\n");
+          return -1;
+        }
       }
     }
     if (cabs(D->ParaNBodyInterAll[t1] - conj(D->ParaNBodyInterAll[t0])) > eps_CheckImag0) {
@@ -446,6 +478,173 @@ static int apply_nbody_interall_general_spin_gc(
   return 1;
 }
 
+static int apply_hubbardgc_annihilate_mask(
+  unsigned long int mask,
+  unsigned long int *state,
+  int *sign
+) {
+  int sgn = 1;
+  if ((*state & mask) == 0) return 0;
+  SgnBit(*state & (mask - 1), &sgn);
+  *sign *= sgn;
+  *state &= ~mask;
+  return 1;
+}
+
+static int apply_hubbardgc_create_mask(
+  unsigned long int mask,
+  unsigned long int *state,
+  int *sign
+) {
+  int sgn = 1;
+  if ((*state & mask) != 0) return 0;
+  SgnBit(*state & (mask - 1), &sgn);
+  *sign *= sgn;
+  *state |= mask;
+  return 1;
+}
+
+static int apply_nbody_interall_hubbardgc_full(
+  const struct BindStruct *X,
+  unsigned int term_index,
+  unsigned long int local_in,
+  int rank_in,
+  unsigned long int *local_out,
+  int *rank_out,
+  int *sign
+) {
+  const struct DefineList *D = &X->Def;
+  unsigned int k;
+  unsigned long int state;
+  const unsigned long int block = D->OrgTpow[2 * D->Nsite];
+  const unsigned int n = D->NBodyInterAll_CanonicalN[term_index];
+  const unsigned int off = D->NBodyInterAll_CanonicalOffset[term_index];
+
+  state = local_in + block * (unsigned long int)rank_in;
+  *sign = 1;
+
+  for (k = n; k > 0; k--) {
+    const int *f = D->NBodyInterAll_CanonicalFactors[off + k - 1];
+    const unsigned int site_out = (unsigned int)f[0];
+    const unsigned int spin_out = (unsigned int)f[1];
+    const unsigned int site_in = (unsigned int)f[2];
+    const unsigned int spin_in = (unsigned int)f[3];
+    const unsigned long int mask_in = D->OrgTpow[2 * site_in + spin_in];
+    const unsigned long int mask_out = D->OrgTpow[2 * site_out + spin_out];
+
+    if (apply_hubbardgc_annihilate_mask(mask_in, &state, sign) == 0) return 0;
+    if (apply_hubbardgc_create_mask(mask_out, &state, sign) == 0) return 0;
+  }
+
+  *local_out = state % block;
+  *rank_out = (int)(state / block);
+  return 1;
+}
+
+static int apply_hubbardgc_rank_annihilate(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) == 0) return 0;
+  *rank_state &= ~mask;
+  return 1;
+}
+
+static int apply_hubbardgc_rank_create(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) != 0) return 0;
+  *rank_state |= mask;
+  return 1;
+}
+
+static int apply_hubbardgc_rank_factor(
+  const struct DefineList *D,
+  const int *f,
+  int dagger,
+  unsigned long int *rank_state
+) {
+  const unsigned int site_out = (unsigned int)f[0];
+  const unsigned int spin_out = (unsigned int)f[1];
+  const unsigned int site_in = (unsigned int)f[2];
+  const unsigned int spin_in = (unsigned int)f[3];
+
+  if (dagger == FALSE) {
+    if (apply_hubbardgc_rank_annihilate(D, site_in, spin_in, rank_state) == 0) return 0;
+    if (apply_hubbardgc_rank_create(D, site_out, spin_out, rank_state) == 0) return 0;
+  }
+  else {
+    if (apply_hubbardgc_rank_annihilate(D, site_out, spin_out, rank_state) == 0) return 0;
+    if (apply_hubbardgc_rank_create(D, site_in, spin_in, rank_state) == 0) return 0;
+  }
+  return 1;
+}
+
+static int apply_hubbardgc_rank_part(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int dagger,
+  int *partner_rank
+) {
+  const struct DefineList *D = &X->Def;
+  const unsigned int n = D->NBodyInterAll_CanonicalN[term];
+  const unsigned int off = D->NBodyInterAll_CanonicalOffset[term];
+  unsigned int k;
+  unsigned long int rank_state = (unsigned long int)current_rank;
+
+  if (dagger == FALSE) {
+    for (k = n; k > 0; k--) {
+      if (apply_hubbardgc_rank_factor(D, D->NBodyInterAll_CanonicalFactors[off + k - 1],
+                                      FALSE, &rank_state) == 0) {
+        return 0;
+      }
+    }
+  }
+  else {
+    for (k = 0; k < n; k++) {
+      if (apply_hubbardgc_rank_factor(D, D->NBodyInterAll_CanonicalFactors[off + k],
+                                      TRUE, &rank_state) == 0) {
+        return 0;
+      }
+    }
+  }
+
+  *partner_rank = (int)rank_state;
+  return 1;
+}
+
+static int nbody_interall_hubbardgc_partner_rank(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int *partner_rank,
+  int *active
+) {
+  if (apply_hubbardgc_rank_part(X, term, current_rank, FALSE, partner_rank) == 1) {
+    *active = TRUE;
+    return 0;
+  }
+  if (apply_hubbardgc_rank_part(X, term, current_rank, TRUE, partner_rank) == 1) {
+    *active = TRUE;
+    return 0;
+  }
+  *active = FALSE;
+  *partner_rank = current_rank;
+  return 0;
+}
+
 int ApplyNBodyInterAllSpinGC(
   const struct BindStruct *X,
   unsigned int term_index,
@@ -471,6 +670,7 @@ int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X)
   unsigned int i;
   if (X->Def.NNBodyInterAll_Diagonal == 0) return 0;
   if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
+  if (X->Def.iCalcModel == HubbardGC) return -1;
 
   for (i = 0; i < X->Def.NNBodyInterAll_Diagonal; i++) {
     const unsigned int term = X->Def.NBodyInterAll_DiagonalIndex[i];
@@ -499,6 +699,33 @@ int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X)
       int ret = ApplyNBodyInterAllSpinGC(X, term, j - 1, myrank, &local_out, &rank_out, &me);
       if (ret == 1 && local_out == j - 1 && rank_out == myrank) {
         list_Diagonal[j] += coeff;
+      }
+    }
+  }
+  return 0;
+}
+
+int SetDiagonalNBodyInterAllHubbardGC(struct BindStruct *X)
+{
+  unsigned int i;
+  if (X->Def.NNBodyInterAll_Diagonal == 0) return 0;
+  if (X->Def.iCalcModel != HubbardGC) return -1;
+
+  for (i = 0; i < X->Def.NNBodyInterAll_Diagonal; i++) {
+    const unsigned int term = X->Def.NBodyInterAll_DiagonalIndex[i];
+    const double coeff = creal(X->Def.ParaNBodyInterAll[term]);
+    const unsigned long int i_max = X->Check.idim_max;
+    unsigned long int j;
+
+#pragma omp parallel for default(none) shared(list_Diagonal, X) firstprivate(i_max, term, coeff, myrank) private(j)
+    for (j = 1; j <= i_max; j++) {
+      unsigned long int local_out = 0;
+      int rank_out = 0;
+      int sign = 1;
+      int ret = apply_nbody_interall_hubbardgc_full(
+        X, term, j - 1, myrank, &local_out, &rank_out, &sign);
+      if (ret == 1 && local_out == j - 1 && rank_out == myrank) {
+        list_Diagonal[j] += coeff * sign;
       }
     }
   }
@@ -830,6 +1057,93 @@ static double complex multiply_nbody_pair_spin(
   return dam_pr;
 }
 
+static double complex apply_nbody_hubbardgc_term_to_rank(
+  struct BindStruct *X,
+  unsigned int term,
+  double complex *tmp_v0,
+  const double complex *src_v1,
+  double complex *cur_v1,
+  unsigned long int src_i_max,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+  const int do_update = (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC);
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, tmp_v0, src_v1, cur_v1) firstprivate(src_i_max, term, rank_in, do_update, myrank) private(j)
+  for (j = 1; j <= src_i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    int sign = 1;
+    int ret = apply_nbody_interall_hubbardgc_full(
+      X, term, j - 1, rank_in, &local_out, &rank_out, &sign);
+    if (ret == 1 && rank_out == myrank) {
+      const double complex dmv = X->Def.ParaNBodyInterAll[term] * sign * src_v1[j];
+      if (do_update) tmp_v0[local_out + 1] += dmv;
+      dam_pr += conj(cur_v1[local_out + 1]) * dmv;
+    }
+  }
+  return dam_pr;
+}
+
+static double complex multiply_nbody_hubbardgc_term(
+  struct BindStruct *X,
+  unsigned int term,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  int origin = myrank;
+  int active = TRUE;
+  double complex dam_pr = 0.0;
+
+  if (nbody_interall_hubbardgc_partner_rank(X, term, myrank, &origin, &active) != 0) {
+    return 0.0;
+  }
+  if (active == FALSE) return 0.0;
+  if (origin == myrank) {
+    return apply_nbody_hubbardgc_term_to_rank(
+      X, term, tmp_v0, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf,  idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr = apply_nbody_hubbardgc_term_to_rank(
+      X, term, tmp_v0, v1buf, tmp_v1, idim_max_buf, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyInterAll reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
+  return dam_pr;
+}
+
+int MultiplyNBodyInterAllHubbardGC(
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+) {
+  unsigned int p;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != HubbardGC) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
+    const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
+    X->Large.prdct += multiply_nbody_hubbardgc_term(X, term, tmp_v0, tmp_v1);
+  }
+  return 0;
+}
+
 int MultiplyNBodyInterAllSpinGC(
   struct BindStruct *X,
   double complex *tmp_v0,
@@ -853,6 +1167,33 @@ int MultiplyNBodyInterAllSpinGC(
     }
     else {
       X->Large.prdct += multiply_nbody_pair(X, p, tmp_v0, tmp_v1);
+    }
+  }
+  return 0;
+}
+
+int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X)
+{
+  unsigned int p;
+  unsigned long int j;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != HubbardGC) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
+    const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
+    for (j = 1; j <= X->Check.idim_max; j++) {
+      unsigned long int local_out = 0;
+      int rank_out = 0;
+      int sign = 1;
+      int ret = apply_nbody_interall_hubbardgc_full(
+        X, term, j - 1, myrank, &local_out, &rank_out, &sign);
+      if (ret == 1) {
+        if (rank_out != myrank) {
+          fprintf(stdoutMPI, "Error: FullDiag NBodyInterAll cannot handle inter-process output.\n");
+          return -1;
+        }
+        Ham[local_out + 1][j] += X->Def.ParaNBodyInterAll[term] * sign;
+      }
     }
   }
   return 0;

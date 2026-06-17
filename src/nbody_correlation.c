@@ -103,6 +103,7 @@ static int nbodyg_is_supported_spin_model(const struct DefineList *D)
 {
   if (D->iCalcModel == SpinGC) return TRUE;
   if (D->iCalcModel == Spin) return TRUE;
+  if (D->iCalcModel == HubbardGC) return TRUE;
   return FALSE;
 }
 
@@ -117,7 +118,7 @@ int ValidateNBodyGScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
   if (nbodyg_is_supported_spin_model(D) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and Spin.\n");
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC, Spin, and HubbardGC.\n");
     return -1;
   }
   for (t = 0; t < D->NNBodyG; t++) {
@@ -128,12 +129,13 @@ int ValidateNBodyGScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: Site index of NBodyG is incorrect.\n");
         return -1;
       }
-      if (f[0] != f[2]) {
+      if (D->iCalcModel != HubbardGC && f[0] != f[2]) {
         fprintf(stdoutMPI, "Error: NBodyG currently requires site_out == site_in for every factor.\n");
         return -1;
       }
       {
-        const int max_spin = nbodyg_is_general_spin(D) ? D->LocSpn[f[0]] : 1;
+        const int max_spin = (D->iCalcModel == HubbardGC) ? 1 :
+          (nbodyg_is_general_spin(D) ? D->LocSpn[f[0]] : 1);
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
           return -1;
@@ -180,6 +182,21 @@ int NormalizeNBodyGTerms(struct DefineList *D)
   for (t = 0; t < D->NNBodyG; t++) {
     const unsigned int nraw = D->NBodyG_N[t];
     const unsigned int off = D->NBodyG_Offset[t];
+    if (D->iCalcModel == HubbardGC) {
+      D->NBodyG_IsZero[t] = FALSE;
+      D->NBodyG_CanonicalOffset[t] = total;
+      D->NBodyG_CanonicalN[t] = nraw;
+      for (k = 0; k < nraw; k++) {
+        const int *f = D->NBodyG_Factors[off + k];
+        D->NBodyG_CanonicalFactors[total + k][0] = f[0];
+        D->NBodyG_CanonicalFactors[total + k][1] = f[1];
+        D->NBodyG_CanonicalFactors[total + k][2] = f[2];
+        D->NBodyG_CanonicalFactors[total + k][3] = f[3];
+      }
+      total += nraw;
+      continue;
+    }
+
     int *sites = (int *)malloc(nraw * sizeof(int));
     int *outs = (int *)malloc(nraw * sizeof(int));
     int *ins = (int *)malloc(nraw * sizeof(int));
@@ -355,6 +372,173 @@ static int apply_nbodyg_general_spin_gc(
   return 1;
 }
 
+static int apply_hubbardgc_annihilate_mask(
+  unsigned long int mask,
+  unsigned long int *state,
+  int *sign
+) {
+  int sgn = 1;
+  if ((*state & mask) == 0) return 0;
+  SgnBit(*state & (mask - 1), &sgn);
+  *sign *= sgn;
+  *state &= ~mask;
+  return 1;
+}
+
+static int apply_hubbardgc_create_mask(
+  unsigned long int mask,
+  unsigned long int *state,
+  int *sign
+) {
+  int sgn = 1;
+  if ((*state & mask) != 0) return 0;
+  SgnBit(*state & (mask - 1), &sgn);
+  *sign *= sgn;
+  *state |= mask;
+  return 1;
+}
+
+static int apply_nbodyg_hubbardgc_full(
+  const struct BindStruct *X,
+  unsigned int term,
+  unsigned long int local_in,
+  int rank_in,
+  unsigned long int *local_out,
+  int *rank_out,
+  int *sign
+) {
+  const struct DefineList *D = &X->Def;
+  unsigned int k;
+  unsigned long int state;
+  const unsigned long int block = D->OrgTpow[2 * D->Nsite];
+  const unsigned int n = D->NBodyG_CanonicalN[term];
+  const unsigned int off = D->NBodyG_CanonicalOffset[term];
+
+  state = local_in + block * (unsigned long int)rank_in;
+  *sign = 1;
+
+  for (k = n; k > 0; k--) {
+    const int *f = D->NBodyG_CanonicalFactors[off + k - 1];
+    const unsigned int site_out = (unsigned int)f[0];
+    const unsigned int spin_out = (unsigned int)f[1];
+    const unsigned int site_in = (unsigned int)f[2];
+    const unsigned int spin_in = (unsigned int)f[3];
+    const unsigned long int mask_in = D->OrgTpow[2 * site_in + spin_in];
+    const unsigned long int mask_out = D->OrgTpow[2 * site_out + spin_out];
+
+    if (apply_hubbardgc_annihilate_mask(mask_in, &state, sign) == 0) return 0;
+    if (apply_hubbardgc_create_mask(mask_out, &state, sign) == 0) return 0;
+  }
+
+  *local_out = state % block;
+  *rank_out = (int)(state / block);
+  return 1;
+}
+
+static int apply_hubbardgc_rank_annihilate(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) == 0) return 0;
+  *rank_state &= ~mask;
+  return 1;
+}
+
+static int apply_hubbardgc_rank_create(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) != 0) return 0;
+  *rank_state |= mask;
+  return 1;
+}
+
+static int apply_hubbardgc_rank_factor(
+  const struct DefineList *D,
+  const int *f,
+  int dagger,
+  unsigned long int *rank_state
+) {
+  const unsigned int site_out = (unsigned int)f[0];
+  const unsigned int spin_out = (unsigned int)f[1];
+  const unsigned int site_in = (unsigned int)f[2];
+  const unsigned int spin_in = (unsigned int)f[3];
+
+  if (dagger == FALSE) {
+    if (apply_hubbardgc_rank_annihilate(D, site_in, spin_in, rank_state) == 0) return 0;
+    if (apply_hubbardgc_rank_create(D, site_out, spin_out, rank_state) == 0) return 0;
+  }
+  else {
+    if (apply_hubbardgc_rank_annihilate(D, site_out, spin_out, rank_state) == 0) return 0;
+    if (apply_hubbardgc_rank_create(D, site_in, spin_in, rank_state) == 0) return 0;
+  }
+  return 1;
+}
+
+static int apply_hubbardgc_rank_part(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int dagger,
+  int *partner_rank
+) {
+  const struct DefineList *D = &X->Def;
+  const unsigned int n = D->NBodyG_CanonicalN[term];
+  const unsigned int off = D->NBodyG_CanonicalOffset[term];
+  unsigned int k;
+  unsigned long int rank_state = (unsigned long int)current_rank;
+
+  if (dagger == FALSE) {
+    for (k = n; k > 0; k--) {
+      if (apply_hubbardgc_rank_factor(D, D->NBodyG_CanonicalFactors[off + k - 1],
+                                      FALSE, &rank_state) == 0) {
+        return 0;
+      }
+    }
+  }
+  else {
+    for (k = 0; k < n; k++) {
+      if (apply_hubbardgc_rank_factor(D, D->NBodyG_CanonicalFactors[off + k],
+                                      TRUE, &rank_state) == 0) {
+        return 0;
+      }
+    }
+  }
+
+  *partner_rank = (int)rank_state;
+  return 1;
+}
+
+static int nbodyg_hubbardgc_partner_rank(
+  const struct BindStruct *X,
+  unsigned int term,
+  int current_rank,
+  int *partner_rank,
+  int *active
+) {
+  if (apply_hubbardgc_rank_part(X, term, current_rank, FALSE, partner_rank) == 1) {
+    *active = TRUE;
+    return 0;
+  }
+  if (apply_hubbardgc_rank_part(X, term, current_rank, TRUE, partner_rank) == 1) {
+    *active = TRUE;
+    return 0;
+  }
+  *active = FALSE;
+  *partner_rank = current_rank;
+  return 0;
+}
+
 static int convert_nbodyg_general_spin_to_list1(
   const struct BindStruct *X,
   unsigned long int local_out,
@@ -524,6 +708,71 @@ static double complex expec_nbodyg_term_to_rank_spin(
     }
   }
   return dam_pr;
+}
+
+static double complex expec_nbodyg_term_to_rank_hubbardgc(
+  struct BindStruct *X,
+  unsigned int term,
+  const double complex *src_vec,
+  const double complex *bra_vec,
+  unsigned long int src_i_max,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, src_vec, bra_vec) firstprivate(src_i_max, term, rank_in, myrank) private(j)
+  for (j = 1; j <= src_i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    int sign = 1;
+    int ret = apply_nbodyg_hubbardgc_full(X, term, j - 1, rank_in, &local_out, &rank_out, &sign);
+    if (ret == 1 && rank_out == myrank) {
+      dam_pr += conj(bra_vec[local_out + 1]) * sign * src_vec[j];
+    }
+  }
+  return dam_pr;
+}
+
+static double complex calc_nbodyg_term_hubbardgc(struct BindStruct *X, unsigned int term, double complex *vec)
+{
+  int origin = myrank;
+  int active = TRUE;
+  double complex dam_pr = 0.0;
+
+  if (nbodyg_hubbardgc_partner_rank(X, term, myrank, &origin, &active) != 0) {
+    return SumMPI_dc(0.0);
+  }
+  if (active == FALSE) {
+    return SumMPI_dc(0.0);
+  }
+  if (origin == myrank) {
+    dam_pr = expec_nbodyg_term_to_rank_hubbardgc(
+      X, term, vec, vec, X->Check.idim_max, myrank);
+    return SumMPI_dc(dam_pr);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, origin, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, origin, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, origin, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr = expec_nbodyg_term_to_rank_hubbardgc(
+      X, term, v1buf, vec, idim_max_buf, origin);
+  }
+#else
+  fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
+  return SumMPI_dc(dam_pr);
 }
 
 static double complex calc_nbodyg_term_general_spin_gc(struct BindStruct *X, unsigned int term, double complex *vec)
@@ -714,7 +963,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
 
   if (X->Def.NNBodyG < 1) return 0;
   if (nbodyg_is_supported_spin_model(&X->Def) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC and Spin.\n");
+    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC, Spin, and HubbardGC.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
@@ -724,6 +973,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
       if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
+      else if (X->Def.iCalcModel == HubbardGC) value = calc_nbodyg_term_hubbardgc(X, t, vec);
       else if (nbodyg_is_general_spin(&X->Def) == TRUE) {
         value = calc_nbodyg_term_general_spin_gc(X, t, vec);
       }

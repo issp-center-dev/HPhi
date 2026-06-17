@@ -191,6 +191,11 @@ int makeHam(struct BindStruct *X) {
           }
         }
       }
+      if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+        if (AddNBodyInterAllToHamHubbardGC(X) != 0) {
+          return -1;
+        }
+      }
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
