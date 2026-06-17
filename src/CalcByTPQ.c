@@ -51,6 +51,7 @@
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
 #include "CalcByTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -223,6 +224,8 @@ int CalcByTPQ(
       iret=expec_cisajscktaltdc(&(X->Bind), v1);
       StopTimer(3400);
       if(iret !=0) return -1;
+      iret=expec_nbodyg(&(X->Bind), v1);
+      if(iret !=0) return -1;
 
       /** @brief Compute v1=0, and compute v0 = H*v1 */
       StartTimer(3200);
@@ -313,6 +316,8 @@ int CalcByTPQ(
         StartTimer(3400);
         iret=expec_cisajscktaltdc(&(X->Bind), v1);
         StopTimer(3400);
+        if(iret !=0) return -1;
+        iret=expec_nbodyg(&(X->Bind), v1);
         if(iret !=0) return -1;
       }
     }

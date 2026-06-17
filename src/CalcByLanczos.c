@@ -15,6 +15,7 @@
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
 #include "expec_totalspin.h"
 #include "CG_EigenVector.h"
 #include "expec_energy_flct.h"
@@ -267,6 +268,10 @@ int CalcByLanczos(
     exitMPI(-1);
   }
   StopTimer(4600);
+  if(expec_nbodyg(&(X->Bind), v1)!=0){
+    fprintf(stderr, "Error: calc NBodyG.\n");
+    exitMPI(-1);
+  }
 
   if(expec_totalSz(&(X->Bind), v1)!=0){
     fprintf(stderr, "Error: calc TotalSz.\n");

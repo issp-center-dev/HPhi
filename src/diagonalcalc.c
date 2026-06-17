@@ -50,6 +50,7 @@
 #include "diagonalcalc.h"
 #include "mltplySpinCore.h"
 #include "wrapperMPI.h"
+#include "nbody_interall.h"
 
 
 int SetDiagonalTETransfer(
@@ -195,6 +196,12 @@ int diagonalcalc
     }
      fclose(fp);   
     }
+
+  if (X->Def.NNBodyInterAll_Diagonal > 0) {
+    if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
+      return -1;
+    }
+  }
   
   TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "a");
   fprintf(stdoutMPI, "%s", cProEndCalcDiag);
