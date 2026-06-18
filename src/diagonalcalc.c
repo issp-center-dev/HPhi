@@ -200,6 +200,11 @@ int diagonalcalc
         return -1;
       }
     }
+    else if (X->Def.iCalcModel == Hubbard) {
+      if (SetDiagonalNBodyInterAllHubbard(X) != 0) {
+        return -1;
+      }
+    }
     else if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
       return -1;
     }

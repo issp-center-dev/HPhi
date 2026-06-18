@@ -61,6 +61,8 @@ add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
 add_hphi_test(lanczos_hubbardgc_nbody_interall)
 add_hphi_test(lanczos_hubbardgc_nbodyg)
+add_hphi_test(lanczos_hubbard_nbody_interall)
+add_hphi_test(lanczos_hubbard_nbodyg)
 add_hphi_test(lanczos_kondogc_chain)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
@@ -80,6 +82,7 @@ add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test(nbody_interall_validation)
 add_hphi_test(nbodyg_validation)
 add_hphi_test(nbody_hubbardgc_validation)
+add_hphi_test(nbody_hubbard_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
@@ -94,6 +97,7 @@ add_hphi_test(lanczos_genspin_ladder_restart)
 set_tests_properties(
     lanczos_hubbard_square lanczos_hubbardgc_tri
     lanczos_hubbardgc_nbody_interall lanczos_hubbardgc_nbodyg
+    lanczos_hubbard_nbody_interall lanczos_hubbard_nbodyg
     lanczos_hubbard_square_restart
     lanczos_hubbard_square_calchs2 lanczos_hubbard_square_ncond_calchs2
     lanczos_hubbard_chain_polarized_calchs2
@@ -129,7 +133,7 @@ set_tests_properties(
     nbody_spingc_spinone_validation
     PROPERTIES LABELS "spinone;genspin;validation;nbody")
 set_tests_properties(
-    nbody_hubbardgc_validation
+    nbody_hubbardgc_validation nbody_hubbard_validation
     PROPERTIES LABELS "hubbard;validation;nbody")
 set_tests_properties(
     lanczos_spingc_spinone_nbody_interall
@@ -206,6 +210,7 @@ add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
 add_hphi_test(fulldiag_hubbardgc_nbody_interall)
+add_hphi_test(fulldiag_hubbard_nbody_interall)
 add_hphi_test(fulldiag_tj_calchs1)
 add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
@@ -216,6 +221,7 @@ add_hphi_test(fulldiag_genspingc_ladder)
 set_tests_properties(
     fulldiag_hubbard_chain fulldiag_hubbardgc_tri fulldiag_Hamiltonian_IO
     fulldiag_hubbardgc_nbody_interall
+    fulldiag_hubbard_nbody_interall
     PROPERTIES LABELS "fulldiag;hubbard")
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
@@ -384,6 +390,8 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
     add_hphi_mpi_test(mpi_nbodyg_spin exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone exact:3)
@@ -407,6 +415,7 @@ if(MPI_FOUND)
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard
         mpi_consistency_te_hubbardgc_twobody mpi_consistency_te_hubbard_twobody
         mpi_nbody_interall_hubbardgc mpi_nbodyg_hubbardgc
+        mpi_nbody_interall_hubbard mpi_nbodyg_hubbard
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
         mpi_consistency_spin mpi_consistency_spingc mpi_consistency_te_spin

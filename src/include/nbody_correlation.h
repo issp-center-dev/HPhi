@@ -18,4 +18,5 @@ int ParseNBodyGLine(
 int ValidateNBodyGScope(const struct DefineList *D);
 int NormalizeNBodyGTerms(struct DefineList *D);
 int CheckNBodyGSpinConservation(const struct DefineList *D);
+int CheckNBodyGHubbardConservation(const struct DefineList *D);
 int expec_nbodyg(struct BindStruct *X, double complex *vec);

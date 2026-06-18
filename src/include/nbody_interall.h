@@ -20,6 +20,7 @@ int ParseNBodyInterAllLine(
 int ValidateNBodyInterAllScope(const struct DefineList *D);
 int NormalizeNBodyInterAllTerms(struct DefineList *D);
 int CheckNBodyInterAllSpinConservation(const struct DefineList *D);
+int CheckNBodyInterAllHubbardConservation(const struct DefineList *D);
 int ClassifyNBodyInterAllTerms(struct DefineList *D);
 int CheckNBodyInterAllHermitePairs(const struct DefineList *D);
 
@@ -35,6 +36,7 @@ int ApplyNBodyInterAllSpinGC(
 
 int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X);
 int SetDiagonalNBodyInterAllHubbardGC(struct BindStruct *X);
+int SetDiagonalNBodyInterAllHubbard(struct BindStruct *X);
 int MultiplyNBodyInterAllSpinGC(
   struct BindStruct *X,
   double complex *tmp_v0,
@@ -45,5 +47,11 @@ int MultiplyNBodyInterAllHubbardGC(
   double complex *tmp_v0,
   double complex *tmp_v1
 );
+int MultiplyNBodyInterAllHubbard(
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+);
 int AddNBodyInterAllToHamSpinGC(struct BindStruct *X);
 int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X);
+int AddNBodyInterAllToHamHubbard(struct BindStruct *X);
