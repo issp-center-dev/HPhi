@@ -198,7 +198,12 @@ int diagonalcalc
     }
 
   if (X->Def.NNBodyInterAll_Diagonal > 0) {
-    if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
+    if (X->Def.iCalcModel == HubbardGC) {
+      if (SetDiagonalNBodyInterAllHubbardGC(X) != 0) {
+        return -1;
+      }
+    }
+    else if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
       return -1;
     }
   }
