@@ -353,6 +353,12 @@ int mltplyHubbard(
     X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(320);
+
+  if (X->Def.iCalcModel == Hubbard && X->Def.NNBodyInterAll_OffDiagonal > 0) {
+    if (MultiplyNBodyInterAllHubbard(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
   /**
   Pair hopping
   */

@@ -1769,6 +1769,7 @@ int ReadDefFileIdxPara(
       if (ValidateNBodyInterAllScope(X) != 0 ||
           NormalizeNBodyInterAllTerms(X) != 0 ||
           CheckNBodyInterAllSpinConservation(X) != 0 ||
+          CheckNBodyInterAllHubbardConservation(X) != 0 ||
           ClassifyNBodyInterAllTerms(X) != 0 ||
           CheckNBodyInterAllHermitePairs(X) != 0) {
         fclose(fp);
@@ -1821,7 +1822,8 @@ int ReadDefFileIdxPara(
 
       if (ValidateNBodyGScope(X) != 0 ||
           NormalizeNBodyGTerms(X) != 0 ||
-          CheckNBodyGSpinConservation(X) != 0) {
+          CheckNBodyGSpinConservation(X) != 0 ||
+          CheckNBodyGHubbardConservation(X) != 0) {
         fclose(fp);
         return ReadDefFileError(defname);
       }
