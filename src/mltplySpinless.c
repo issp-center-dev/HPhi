@@ -24,6 +24,7 @@
 #include "CalcTime.h"
 #include "mltplyCommon.h"
 #include "DefCommon.h"
+#include "nbody_interall.h"
 
 #ifdef MPI
 // Static storage for batched transfers (initialized once per calculation)
@@ -255,6 +256,19 @@ int mltplySpinlessFermion(struct BindStruct *X, double complex *tmp_v0, double c
   }
   StopTimer(610);
   StopTimer(600);
+
+  if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+    if (isGC) {
+      if (MultiplyNBodyInterAllSpinlessGC(X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
+    }
+    else {
+      if (MultiplyNBodyInterAllSpinless(X, tmp_v0, tmp_v1) != 0) {
+        return -1;
+      }
+    }
+  }
 
   return 0;
 }

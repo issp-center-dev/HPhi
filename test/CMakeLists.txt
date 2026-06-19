@@ -87,6 +87,9 @@ add_hphi_test(nbody_hubbardgc_validation)
 add_hphi_test(nbody_hubbard_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
+add_hphi_test_with_srcdir(lanczos_spinless_nbodyg)
+add_hphi_test_with_srcdir(nbody_spinless_validation)
 add_hphi_test_with_srcdir(spinless_interall_diagonal)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
@@ -134,6 +137,9 @@ set_tests_properties(
     lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
 set_tests_properties(
+    lanczos_spinless_nbody_interall lanczos_spinless_nbodyg
+    PROPERTIES LABELS "lanczos;spinless;nbody")
+set_tests_properties(
     nbodyg_validation
     PROPERTIES LABELS "spin;validation;nbody")
 set_tests_properties(
@@ -142,6 +148,9 @@ set_tests_properties(
 set_tests_properties(
     nbody_hubbardgc_validation nbody_hubbard_validation
     PROPERTIES LABELS "hubbard;validation;nbody")
+set_tests_properties(
+    nbody_spinless_validation
+    PROPERTIES LABELS "spinless;validation;nbody")
 set_tests_properties(
     lanczos_spingc_spinone_nbody_interall
     lanczos_spin_spinone_nbody_interall
@@ -438,6 +447,8 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
+    add_hphi_mpi_test_with_srcdir(mpi_nbody_interall_spinless exact:4)
+    add_hphi_mpi_test_with_srcdir(mpi_nbodyg_spinless exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
     add_hphi_mpi_test(mpi_nbodyg_spin exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone exact:3)
@@ -488,6 +499,9 @@ if(MPI_FOUND)
     set_tests_properties(
         mpi_consistency_spinless mpi_consistency_spinless_GC
         PROPERTIES LABELS "mpi;consistency;spinless")
+    set_tests_properties(
+        mpi_nbody_interall_spinless mpi_nbodyg_spinless
+        PROPERTIES LABELS "mpi;consistency;spinless;nbody")
     set_tests_properties(
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
