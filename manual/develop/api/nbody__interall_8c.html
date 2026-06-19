@@ -145,6 +145,10 @@ Functions</h2></td></tr>
 <tr class="separator:a75bfd2da359e5c0791c9fa9cc075c41f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99172b55b2d479dc2a1a2fdde546656a" id="r_a99172b55b2d479dc2a1a2fdde546656a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a99172b55b2d479dc2a1a2fdde546656a">ParseNBodyInterAllLine</a> (const char *line, unsigned int *N, int **factors, double *re, double *im)</td></tr>
 <tr class="separator:a99172b55b2d479dc2a1a2fdde546656a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b294ffb9af3b5c960cbca32cefe3731" id="r_a7b294ffb9af3b5c960cbca32cefe3731"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a7b294ffb9af3b5c960cbca32cefe3731">nbody_is_supported_spin_model</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *D)</td></tr>
+<tr class="separator:a7b294ffb9af3b5c960cbca32cefe3731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af322662f8b8ea7c160f57825af34ca4d" id="r_af322662f8b8ea7c160f57825af34ca4d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#af322662f8b8ea7c160f57825af34ca4d">nbody_is_general_spin</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *D)</td></tr>
+<tr class="separator:af322662f8b8ea7c160f57825af34ca4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2fd89bc2da06b94f6c17e00a7b963d6" id="r_aa2fd89bc2da06b94f6c17e00a7b963d6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#aa2fd89bc2da06b94f6c17e00a7b963d6">ValidateNBodyInterAllScope</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *D)</td></tr>
 <tr class="separator:aa2fd89bc2da06b94f6c17e00a7b963d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea5776ccdfaaced857139e29f927c50a" id="r_aea5776ccdfaaced857139e29f927c50a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#aea5776ccdfaaced857139e29f927c50a">find_site</a> (const int *sites, unsigned int n, int site)</td></tr>
@@ -161,18 +165,28 @@ Functions</h2></td></tr>
 <tr class="separator:a2e58f420a94e4851cdeacd9141892d38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a237288bb88a7e1ae873e8f0a76d1dacb" id="r_a237288bb88a7e1ae873e8f0a76d1dacb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a237288bb88a7e1ae873e8f0a76d1dacb">apply_nbody_interall_bits</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term_index, unsigned long int intra_in, int rank_in, unsigned long int *intra_out, int *rank_out)</td></tr>
 <tr class="separator:a237288bb88a7e1ae873e8f0a76d1dacb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a591c0bcd4dbd43a95b13101251a4e3f0" id="r_a591c0bcd4dbd43a95b13101251a4e3f0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a591c0bcd4dbd43a95b13101251a4e3f0">convert_nbody_general_spin_to_list1</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int local_out, unsigned long int *j_out)</td></tr>
+<tr class="separator:a591c0bcd4dbd43a95b13101251a4e3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dae4cb4ef31c5a1e354753b4581e564" id="r_a8dae4cb4ef31c5a1e354753b4581e564"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a8dae4cb4ef31c5a1e354753b4581e564">apply_nbody_interall_general_spin_gc</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term_index, unsigned long int local_in, int rank_in, unsigned long int *local_out, int *rank_out)</td></tr>
+<tr class="separator:a8dae4cb4ef31c5a1e354753b4581e564"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43959f8ddcfac4b77c4268fd220caf06" id="r_a43959f8ddcfac4b77c4268fd220caf06"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a43959f8ddcfac4b77c4268fd220caf06">ApplyNBodyInterAllSpinGC</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term_index, unsigned long int local_in, int rank_in, unsigned long int *local_out, int *rank_out, double complex *matrix_element)</td></tr>
 <tr class="separator:a43959f8ddcfac4b77c4268fd220caf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a781b6943ee9ea59f8fc902d5db5e35cd" id="r_a781b6943ee9ea59f8fc902d5db5e35cd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a781b6943ee9ea59f8fc902d5db5e35cd">SetDiagonalNBodyInterAllSpinGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="separator:a781b6943ee9ea59f8fc902d5db5e35cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8c04f62f582fd9e340fb24f80aa50e6" id="r_ab8c04f62f582fd9e340fb24f80aa50e6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#ab8c04f62f582fd9e340fb24f80aa50e6">nbody_rank_flip_mask</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term, int *mask)</td></tr>
 <tr class="separator:ab8c04f62f582fd9e340fb24f80aa50e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a673d20db56b47ef6aaaa56a24e41339a" id="r_a673d20db56b47ef6aaaa56a24e41339a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a673d20db56b47ef6aaaa56a24e41339a">nbody_interall_general_spin_partner_rank</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term, int current_rank, int *partner_rank, int *active)</td></tr>
+<tr class="separator:a673d20db56b47ef6aaaa56a24e41339a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b7aefa304385d0f39a4829e109e6dd5" id="r_a1b7aefa304385d0f39a4829e109e6dd5"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a1b7aefa304385d0f39a4829e109e6dd5">apply_nbody_term_to_rank</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term, double complex *tmp_v0, const double complex *src_v1, double complex *cur_v1, int rank_in)</td></tr>
 <tr class="separator:a1b7aefa304385d0f39a4829e109e6dd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a340c593a3eab7dbc71fcaf9e44eb706e" id="r_a340c593a3eab7dbc71fcaf9e44eb706e"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a340c593a3eab7dbc71fcaf9e44eb706e">apply_nbody_term_to_rank_spin</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int term, double complex *tmp_v0, const unsigned long int *src_list_1, const double complex *src_v1, double complex *cur_v1, unsigned long int src_i_max, int rank_in)</td></tr>
 <tr class="separator:a340c593a3eab7dbc71fcaf9e44eb706e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ae97b33b4a37a17ecaa396103464a20" id="r_a5ae97b33b4a37a17ecaa396103464a20"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a5ae97b33b4a37a17ecaa396103464a20">multiply_nbody_pair_spin_general_spin</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int offdiag_pair_pos, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="separator:a5ae97b33b4a37a17ecaa396103464a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bb031daa8cf5efa34fe6c29bf76b4b3" id="r_a5bb031daa8cf5efa34fe6c29bf76b4b3"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a5bb031daa8cf5efa34fe6c29bf76b4b3">multiply_nbody_pair</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int offdiag_pair_pos, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="separator:a5bb031daa8cf5efa34fe6c29bf76b4b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24bfbc7327b2db689aff7ff10eda8d42" id="r_a24bfbc7327b2db689aff7ff10eda8d42"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a24bfbc7327b2db689aff7ff10eda8d42">multiply_nbody_pair_general_spin_gc</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int offdiag_pair_pos, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="separator:a24bfbc7327b2db689aff7ff10eda8d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40481b132faecbed3bb0e6ea67fc31aa" id="r_a40481b132faecbed3bb0e6ea67fc31aa"><td class="memItemLeft" align="right" valign="top">static double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a40481b132faecbed3bb0e6ea67fc31aa">multiply_nbody_pair_spin</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int offdiag_pair_pos, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="separator:a40481b132faecbed3bb0e6ea67fc31aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60329423c36e350c0635e9fc4a9b132f" id="r_a60329423c36e350c0635e9fc4a9b132f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nbody__interall_8c.html#a60329423c36e350c0635e9fc4a9b132f">MultiplyNBodyInterAllSpinGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
@@ -197,9 +211,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00626">626</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00861">861</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00386">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00137">Ham</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00116">list_2_1</a>, <a class="el" href="global_8c_source.html#l00117">list_2_2</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00398">convert_nbody_general_spin_to_list1()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00137">Ham</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00116">list_2_1</a>, <a class="el" href="global_8c_source.html#l00117">list_2_2</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00056">makeHam()</a>.</p>
 
@@ -263,11 +277,77 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00340">340</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00352">352</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00097">DefineList::Tpow</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00484">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00386">ApplyNBodyInterAllSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00400">SetDiagonalNBodyInterAllSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00616">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00469">SetDiagonalNBodyInterAllSpinGC()</a>.</p>
+
+</div>
+</div>
+<a id="a8dae4cb4ef31c5a1e354753b4581e564" name="a8dae4cb4ef31c5a1e354753b4581e564"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dae4cb4ef31c5a1e354753b4581e564">&#9670;&#160;</a></span>apply_nbody_interall_general_spin_gc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int apply_nbody_interall_general_spin_gc </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>term_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>local_in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rank_in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int *&#160;</td>
+          <td class="paramname"><em>local_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>rank_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00406">406</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00273">GetOffCompGeneralSpin()</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00101">DefineList::SiteToBit</a>, <a class="el" href="struct_8h_source.html#l00097">DefineList::Tpow</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00616">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00469">SetDiagonalNBodyInterAllSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -329,11 +409,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00455">455</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00587">587</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00386">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00518">multiply_nbody_pair()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00708">multiply_nbody_pair()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00745">multiply_nbody_pair_general_spin_gc()</a>.</p>
 
 </div>
 </div>
@@ -407,11 +487,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00484">484</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00616">616</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00340">apply_nbody_interall_bits()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00116">list_2_1</a>, <a class="el" href="global_8c_source.html#l00117">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00352">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00406">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00398">convert_nbody_general_spin_to_list1()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00116">list_2_1</a>, <a class="el" href="global_8c_source.html#l00117">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00555">multiply_nbody_pair_spin()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00783">multiply_nbody_pair_spin()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00657">multiply_nbody_pair_spin_general_spin()</a>.</p>
 
 </div>
 </div>
@@ -471,11 +551,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00386">386</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00449">449</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00340">apply_nbody_interall_bits()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00352">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00406">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00132">nbody_is_general_spin()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00626">AddNBodyInterAllToHamSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00455">apply_nbody_term_to_rank()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00400">SetDiagonalNBodyInterAllSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00861">AddNBodyInterAllToHamSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00587">apply_nbody_term_to_rank()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00469">SetDiagonalNBodyInterAllSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -495,7 +575,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00306">306</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00318">318</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00153">eps_CheckImag0</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00195">DefineList::NBodyInterAll_OffDiagonalIndex</a>, <a class="el" href="struct_8h_source.html#l00183">DefineList::NNBodyInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00190">DefineList::ParaNBodyInterAll</a>, and <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>.</p>
 
@@ -519,9 +599,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00252">252</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00264">264</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, and <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, and <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01229">ReadDefFileIdxPara()</a>.</p>
 
@@ -543,11 +623,59 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00276">276</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00288">288</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00153">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00194">DefineList::NBodyInterAll_DiagonalIndex</a>, <a class="el" href="struct_8h_source.html#l00195">DefineList::NBodyInterAll_OffDiagonalIndex</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="struct_8h_source.html#l00182">DefineList::NNBodyInterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00183">DefineList::NNBodyInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00190">DefineList::ParaNBodyInterAll</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01229">ReadDefFileIdxPara()</a>.</p>
+
+</div>
+</div>
+<a id="a591c0bcd4dbd43a95b13101251a4e3f0" name="a591c0bcd4dbd43a95b13101251a4e3f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a591c0bcd4dbd43a95b13101251a4e3f0">&#9670;&#160;</a></span>convert_nbody_general_spin_to_list1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int convert_nbody_general_spin_to_list1 </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>local_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int *&#160;</td>
+          <td class="paramname"><em>j_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00398">398</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00315">ConvertToList1GeneralSpin()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00861">AddNBodyInterAllToHamSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00616">apply_nbody_term_to_rank_spin()</a>.</p>
 
 </div>
 </div>
@@ -591,9 +719,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00162">162</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00174">174</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00189">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00201">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -643,11 +771,65 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00518">518</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00708">708</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00455">apply_nbody_term_to_rank()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00438">nbody_rank_flip_mask()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00587">apply_nbody_term_to_rank()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00508">nbody_rank_flip_mask()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00605">MultiplyNBodyInterAllSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>.</p>
+
+</div>
+</div>
+<a id="a24bfbc7327b2db689aff7ff10eda8d42" name="a24bfbc7327b2db689aff7ff10eda8d42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24bfbc7327b2db689aff7ff10eda8d42">&#9670;&#160;</a></span>multiply_nbody_pair_general_spin_gc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static double complex multiply_nbody_pair_general_spin_gc </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>offdiag_pair_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>tmp_v0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>tmp_v1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00745">745</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00587">apply_nbody_term_to_rank()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00525">nbody_interall_general_spin_partner_rank()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -697,11 +879,65 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00555">555</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00783">783</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00484">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00114">list_1buf</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00438">nbody_rank_flip_mask()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00616">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00114">list_1buf</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00508">nbody_rank_flip_mask()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00605">MultiplyNBodyInterAllSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>.</p>
+
+</div>
+</div>
+<a id="a5ae97b33b4a37a17ecaa396103464a20" name="a5ae97b33b4a37a17ecaa396103464a20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ae97b33b4a37a17ecaa396103464a20">&#9670;&#160;</a></span>multiply_nbody_pair_spin_general_spin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static double complex multiply_nbody_pair_spin_general_spin </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>offdiag_pair_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>tmp_v0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>tmp_v1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00657">657</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00616">apply_nbody_term_to_rank_spin()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00114">list_1buf</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00525">nbody_interall_general_spin_partner_rank()</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00106">v1buf</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -737,11 +973,135 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00605">605</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00833">833</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="nbody__interall_8c_source.html#l00518">multiply_nbody_pair()</a>, <a class="el" href="nbody__interall_8c_source.html#l00555">multiply_nbody_pair_spin()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="nbody__interall_8c_source.html#l00708">multiply_nbody_pair()</a>, <a class="el" href="nbody__interall_8c_source.html#l00745">multiply_nbody_pair_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00783">multiply_nbody_pair_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00657">multiply_nbody_pair_spin_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00132">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00649">mltplyHalfSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l00345">mltplyGeneralSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00907">mltplyGeneralSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
+
+</div>
+</div>
+<a id="a673d20db56b47ef6aaaa56a24e41339a" name="a673d20db56b47ef6aaaa56a24e41339a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a673d20db56b47ef6aaaa56a24e41339a">&#9670;&#160;</a></span>nbody_interall_general_spin_partner_rank()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int nbody_interall_general_spin_partner_rank </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>term</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>current_rank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>partner_rank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>active</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00525">525</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00469">GetBitGeneral()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00745">multiply_nbody_pair_general_spin_gc()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00657">multiply_nbody_pair_spin_general_spin()</a>.</p>
+
+</div>
+</div>
+<a id="af322662f8b8ea7c160f57825af34ca4d" name="af322662f8b8ea7c160f57825af34ca4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af322662f8b8ea7c160f57825af34ca4d">&#9670;&#160;</a></span>nbody_is_general_spin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int nbody_is_general_spin </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>D</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00132">132</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00138">ValidateNBodyInterAllScope()</a>.</p>
+
+</div>
+</div>
+<a id="a7b294ffb9af3b5c960cbca32cefe3731" name="a7b294ffb9af3b5c960cbca32cefe3731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b294ffb9af3b5c960cbca32cefe3731">&#9670;&#160;</a></span>nbody_is_supported_spin_model()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int nbody_is_supported_spin_model </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>D</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00125">125</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcModel</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00861">AddNBodyInterAllToHamSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00833">MultiplyNBodyInterAllSpinGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l00469">SetDiagonalNBodyInterAllSpinGC()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00138">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -785,11 +1145,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00438">438</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00508">508</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00518">multiply_nbody_pair()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00555">multiply_nbody_pair_spin()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00708">multiply_nbody_pair()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00783">multiply_nbody_pair_spin()</a>.</p>
 
 </div>
 </div>
@@ -809,9 +1169,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00189">189</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00201">201</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00162">find_site()</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00189">DefineList::NBodyInterAll_Factors</a>, <a class="el" href="struct_8h_source.html#l00187">DefineList::NBodyInterAll_N</a>, <a class="el" href="struct_8h_source.html#l00188">DefineList::NBodyInterAll_Offset</a>, <a class="el" href="struct_8h_source.html#l00185">DefineList::NBodyInterAll_TotalCanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="nbody__interall_8c_source.html#l00171">sort_canonical()</a>, and <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00174">find_site()</a>, <a class="el" href="struct_8h_source.html#l00193">DefineList::NBodyInterAll_CanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00191">DefineList::NBodyInterAll_CanonicalN</a>, <a class="el" href="struct_8h_source.html#l00192">DefineList::NBodyInterAll_CanonicalOffset</a>, <a class="el" href="struct_8h_source.html#l00189">DefineList::NBodyInterAll_Factors</a>, <a class="el" href="struct_8h_source.html#l00187">DefineList::NBodyInterAll_N</a>, <a class="el" href="struct_8h_source.html#l00188">DefineList::NBodyInterAll_Offset</a>, <a class="el" href="struct_8h_source.html#l00185">DefineList::NBodyInterAll_TotalCanonicalFactors</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="nbody__interall_8c_source.html#l00183">sort_canonical()</a>, and <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01229">ReadDefFileIdxPara()</a>.</p>
 
@@ -1005,9 +1365,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00400">400</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00469">469</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00340">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00386">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00112">list_Diagonal</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="nbody__interall_8c_source.html#l00352">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00406">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00449">ApplyNBodyInterAllSpinGC()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00113">list_1</a>, <a class="el" href="global_8c_source.html#l00112">list_Diagonal</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>.</p>
 
@@ -1059,9 +1419,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00171">171</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00183">183</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00189">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00201">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -1081,9 +1441,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00125">125</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nbody__interall_8c_source.html#l00138">138</a> of file <a class="el" href="nbody__interall_8c_source.html">nbody_interall.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00251">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00189">DefineList::NBodyInterAll_Factors</a>, <a class="el" href="struct_8h_source.html#l00187">DefineList::NBodyInterAll_N</a>, <a class="el" href="struct_8h_source.html#l00188">DefineList::NBodyInterAll_Offset</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::Nsite</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, and <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00251">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::LocSpn</a>, <a class="el" href="nbody__interall_8c_source.html#l00132">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="struct_8h_source.html#l00189">DefineList::NBodyInterAll_Factors</a>, <a class="el" href="struct_8h_source.html#l00187">DefineList::NBodyInterAll_N</a>, <a class="el" href="struct_8h_source.html#l00188">DefineList::NBodyInterAll_Offset</a>, <a class="el" href="struct_8h_source.html#l00181">DefineList::NNBodyInterAll</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::Nsite</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, and <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01229">ReadDefFileIdxPara()</a>.</p>
 

@@ -581,85 +581,97 @@ $(document).ready(function(){initNavTree('makeHam_8c_source.html',''); initResiz
 <div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>            }</div>
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>          }</div>
 <div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        }</div>
-<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>      }</div>
-<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>      <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span> </div>
-<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>    <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ad2bf5a74a6b8ccd9b93ff923d904d3e6">Spin</a>:</div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgGeneralSpin == <a class="code hl_define" href="global_8h.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>) {</div>
-<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>        <span class="comment">//Transfer is abosrbed in diagonal term.</span></div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>        <span class="comment">//InterAll</span></div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NInterAll_OffDiagonal / 2; i++) {</div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>          <span class="keywordflow">for</span> (ihermite = 0; ihermite &lt; 2; ihermite++) {</div>
-<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>            idx = 2 * i + ihermite;</div>
-<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span> </div>
-<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>            isite1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][0] + 1;</div>
-<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>            isite2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][4] + 1;</div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>            sigma1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][1];</div>
-<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>            sigma2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][3];</div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>            sigma3 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][5];</div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>            sigma4 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][7];</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>            tmp_V = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.ParaInterAll_OffDiagonal[idx];</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>            <a class="code hl_function" href="mltplySpinCore_8h.html#a6d41c914d10cce5245cb92569306d085">general_int_spin_GetInfo</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>            isA_up = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.is1_up;</div>
-<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>            isB_up = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.is2_up;</div>
-<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span> </div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>            <span class="keywordflow">for</span> (j = 1; j &lt;= i_max; j++) {</div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>              tmp_sgn = <a class="code hl_function" href="mltplySpinCore_8h.html#af8d9ff66fbba2ea1e0292ed3513eb5a2">child_exchange_spin_element</a>(j, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, isA_up, isB_up, sigma2, sigma4, &amp;tmp_off);</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>              dmv = tmp_sgn * tmp_V;</div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>              <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += dmv;</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>            }</div>
-<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>          }</div>
-<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>        }</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span> </div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NNBodyInterAll_OffDiagonal &gt; 0) {</div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>          <span class="keywordflow">if</span> (<a class="code hl_function" href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != 0) {</div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span> </div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NNBodyInterAll_OffDiagonal &gt; 0) {</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>          <span class="keywordflow">if</span> (<a class="code hl_function" href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != 0) {</div>
+<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>          }</div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>        }</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>      }</div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>      <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span> </div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>    <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ad2bf5a74a6b8ccd9b93ff923d904d3e6">Spin</a>:</div>
+<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgGeneralSpin == <a class="code hl_define" href="global_8h.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>) {</div>
+<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>        <span class="comment">//Transfer is abosrbed in diagonal term.</span></div>
+<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>        <span class="comment">//InterAll</span></div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NInterAll_OffDiagonal / 2; i++) {</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>          <span class="keywordflow">for</span> (ihermite = 0; ihermite &lt; 2; ihermite++) {</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>            idx = 2 * i + ihermite;</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span> </div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>            isite1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][0] + 1;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>            isite2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][4] + 1;</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>            sigma1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][1];</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>            sigma2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][3];</div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>            sigma3 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][5];</div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>            sigma4 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][7];</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>            tmp_V = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.ParaInterAll_OffDiagonal[idx];</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span> </div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>            <a class="code hl_function" href="mltplySpinCore_8h.html#a6d41c914d10cce5245cb92569306d085">general_int_spin_GetInfo</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, isite1, isite2, sigma1, sigma2, sigma3, sigma4, tmp_V);</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>            isA_up = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.is1_up;</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>            isB_up = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.is2_up;</div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span> </div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>            <span class="keywordflow">for</span> (j = 1; j &lt;= i_max; j++) {</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>              tmp_sgn = <a class="code hl_function" href="mltplySpinCore_8h.html#af8d9ff66fbba2ea1e0292ed3513eb5a2">child_exchange_spin_element</a>(j, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, isA_up, isB_up, sigma2, sigma4, &amp;tmp_off);</div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>              dmv = tmp_sgn * tmp_V;</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>              <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += dmv;</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>            }</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>          }</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>        }</div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span> </div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>        <span class="comment">//Exchange</span></div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NExchangeCoupling; i++) {</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>          <a class="code hl_function" href="mltplySpinCore_8h.html#aed08fb8fab3890cb5b5f3cac897f64e6">exchange_spin_GetInfo</a>(i, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>);</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>          <span class="keywordflow">for</span> (j = 1; j &lt;= <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.i_max; j++) {</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>            dmv = <a class="code hl_function" href="mltplySpinCore_8h.html#acdf3cb4929eee3b1879224a708802486">exchange_spin_element</a>(j, <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>, <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, &amp;tmp_off);</div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>            <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += dmv;</div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>          }</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        }</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span> </div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>      } <span class="keywordflow">else</span> { <span class="comment">//For General spin</span></div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>        <span class="comment">//Transfer absorbed in Diagonal term.</span></div>
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span> </div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>        <span class="comment">//InterAll</span></div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NInterAll_OffDiagonal / 2; i++) {</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>          <span class="keywordflow">for</span> (ihermite = 0; ihermite &lt; 2; ihermite++) {</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>            idx = 2 * i + ihermite;</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>            isite1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][0] + 1;</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>            isite2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][4] + 1;</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>            sigma1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][1];</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>            sigma2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][3];</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>            sigma3 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][5];</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>            sigma4 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][7];</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>            tmp_V = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.ParaInterAll_OffDiagonal[idx];</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span> </div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>            <span class="keywordflow">for</span> (j = 1; j &lt;= i_max; j++) {</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>              num1 = <a class="code hl_function" href="bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d">GetOffCompGeneralSpin</a>(<a class="code hl_variable" href="global_8c.html#ac189678ecde40ac11f263e1b98ac5969">list_1</a>[j], isite1, sigma2, sigma1, &amp;tmp_off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.SiteToBit, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.Tpow);</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>              <span class="keywordflow">if</span> (num1 != 0) {</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>                num1 = <a class="code hl_function" href="bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d">GetOffCompGeneralSpin</a>(tmp_off, isite2, sigma4, sigma3, &amp;off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.SiteToBit, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.Tpow);</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>                <span class="keywordflow">if</span> (num1 != 0) {</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>                  <a class="code hl_function" href="bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f">ConvertToList1GeneralSpin</a>(off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Check.sdim, &amp;tmp_off);</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                  <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += tmp_V;</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>                }</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>              }</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>            }</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>          }</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>        }</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>      }</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>      <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>  }</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>}</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NNBodyInterAll_OffDiagonal &gt; 0) {</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>          <span class="keywordflow">if</span> (<a class="code hl_function" href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != 0) {</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>          }</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        }</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span> </div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>        <span class="comment">//Exchange</span></div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NExchangeCoupling; i++) {</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>          <a class="code hl_function" href="mltplySpinCore_8h.html#aed08fb8fab3890cb5b5f3cac897f64e6">exchange_spin_GetInfo</a>(i, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>);</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>          <span class="keywordflow">for</span> (j = 1; j &lt;= <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Large.i_max; j++) {</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>            dmv = <a class="code hl_function" href="mltplySpinCore_8h.html#acdf3cb4929eee3b1879224a708802486">exchange_spin_element</a>(j, <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>, <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, &amp;tmp_off);</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>            <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += dmv;</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>          }</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        }</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span> </div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>      } <span class="keywordflow">else</span> { <span class="comment">//For General spin</span></div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        <span class="comment">//Transfer absorbed in Diagonal term.</span></div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>        <span class="comment">//InterAll</span></div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NInterAll_OffDiagonal / 2; i++) {</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>          <span class="keywordflow">for</span> (ihermite = 0; ihermite &lt; 2; ihermite++) {</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>            idx = 2 * i + ihermite;</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>            isite1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][0] + 1;</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>            isite2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][4] + 1;</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>            sigma1 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][1];</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>            sigma2 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][3];</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>            sigma3 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][5];</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>            sigma4 = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.InterAll_OffDiagonal[idx][7];</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>            tmp_V = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.ParaInterAll_OffDiagonal[idx];</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>            <span class="keywordflow">for</span> (j = 1; j &lt;= i_max; j++) {</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>              num1 = <a class="code hl_function" href="bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d">GetOffCompGeneralSpin</a>(<a class="code hl_variable" href="global_8c.html#ac189678ecde40ac11f263e1b98ac5969">list_1</a>[j], isite1, sigma2, sigma1, &amp;tmp_off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.SiteToBit, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.Tpow);</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>              <span class="keywordflow">if</span> (num1 != 0) {</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>                num1 = <a class="code hl_function" href="bitcalc_8c.html#ab4222507f3f98dfa3fd72e6187deb78d">GetOffCompGeneralSpin</a>(tmp_off, isite2, sigma4, sigma3, &amp;off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.SiteToBit, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.Tpow);</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                <span class="keywordflow">if</span> (num1 != 0) {</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>                  <a class="code hl_function" href="bitcalc_8c.html#a3713f8b19de9694c630c5ca182933b5f">ConvertToList1GeneralSpin</a>(off, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Check.sdim, &amp;tmp_off);</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>                  <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>[tmp_off][j] += tmp_V;</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>                }</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>              }</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>            }</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>          }</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>        }</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span> </div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NNBodyInterAll_OffDiagonal &gt; 0) {</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>          <span class="keywordflow">if</span> (<a class="code hl_function" href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != 0) {</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>          }</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>        }</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>      }</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span> </div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>  }</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>}</div>
 </div>
 <div class="ttc" id="aDefCommon_8h_html_a1518a9996ad08009b6ea9a6de5198b65"><div class="ttname"><a href="DefCommon_8h.html#a1518a9996ad08009b6ea9a6de5198b65">Hubbard</a></div><div class="ttdeci">#define Hubbard</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00031">DefCommon.h:31</a></div></div>
 <div class="ttc" id="aDefCommon_8h_html_a531ba444bc15b6711c05fd95874f205d"><div class="ttname"><a href="DefCommon_8h.html#a531ba444bc15b6711c05fd95874f205d">Kondo</a></div><div class="ttdeci">#define Kondo</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00033">DefCommon.h:33</a></div></div>
@@ -717,7 +729,7 @@ $(document).ready(function(){initNavTree('makeHam_8c_source.html',''); initResiz
 <div class="ttc" id="amltplySpinCore_8h_html_afa391aad3a8b7239d8feb010f2e51724"><div class="ttname"><a href="mltplySpinCore_8h.html#afa391aad3a8b7239d8feb010f2e51724">child_Spin_CisAis</a></div><div class="ttdeci">int child_Spin_CisAis(long unsigned int j, struct BindStruct *X, long unsigned int is1_spin, long unsigned int sigma1)</div><div class="ttdoc">Compute the spin state with bit mask is1_spin.</div><div class="ttdef"><b>Definition</b> <a href="mltplySpinCore_8c_source.html#l00210">mltplySpinCore.c:210</a></div></div>
 <div class="ttc" id="amltplySpinCore_8h_html_afeccd8254cb5ee2bd7deb27f134daa98"><div class="ttname"><a href="mltplySpinCore_8h.html#afeccd8254cb5ee2bd7deb27f134daa98">pairlift_spin_GetInfo</a></div><div class="ttdeci">int pairlift_spin_GetInfo(int iPairLift, struct BindStruct *X)</div><div class="ttdoc">Set parameters for the bit operation of spin-pairlift term.</div><div class="ttdef"><b>Definition</b> <a href="mltplySpinCore_8c_source.html#l00107">mltplySpinCore.c:107</a></div></div>
 <div class="ttc" id="anbody__interall_8h_html"><div class="ttname"><a href="nbody__interall_8h.html">nbody_interall.h</a></div></div>
-<div class="ttc" id="anbody__interall_8h_html_a792e02152c230b226b0a6f60c9747664"><div class="ttname"><a href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a></div><div class="ttdeci">int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)</div><div class="ttdef"><b>Definition</b> <a href="nbody__interall_8c_source.html#l00626">nbody_interall.c:626</a></div></div>
+<div class="ttc" id="anbody__interall_8h_html_a792e02152c230b226b0a6f60c9747664"><div class="ttname"><a href="nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664">AddNBodyInterAllToHamSpinGC</a></div><div class="ttdeci">int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)</div><div class="ttdef"><b>Definition</b> <a href="nbody__interall_8c_source.html#l00861">nbody_interall.c:861</a></div></div>
 <div class="ttc" id="astructBindStruct_html"><div class="ttname"><a href="structBindStruct.html">BindStruct</a></div><div class="ttdoc">Bind.</div><div class="ttdef"><b>Definition</b> <a href="struct_8h_source.html#l00472">struct.h:472</a></div></div>
 <div class="ttc" id="astruct_8h_html_a2e5276e30c3a9c9155e407ab3e645567"><div class="ttname"><a href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a></div><div class="ttdeci">struct EDMainCalStruct X</div><div class="ttdef"><b>Definition</b> <a href="struct_8c_source.html#l00020">struct.c:20</a></div></div>
 <div class="ttc" id="awrapperMPI_8h_html"><div class="ttname"><a href="wrapperMPI_8h.html">wrapperMPI.h</a></div><div class="ttdoc">Global variables related to MPI and OpenMP.</div></div>
