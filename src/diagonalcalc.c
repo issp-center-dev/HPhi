@@ -208,6 +208,16 @@ int diagonalcalc
         return -1;
       }
     }
+    else if (X->Def.iCalcModel == SpinlessFermionGC) {
+      if (SetDiagonalNBodyInterAllSpinlessGC(X) != 0) {
+        return -1;
+      }
+    }
+    else if (X->Def.iCalcModel == SpinlessFermion) {
+      if (SetDiagonalNBodyInterAllSpinless(X) != 0) {
+        return -1;
+      }
+    }
     else if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
       return -1;
     }

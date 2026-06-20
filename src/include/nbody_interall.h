@@ -37,6 +37,8 @@ int ApplyNBodyInterAllSpinGC(
 int SetDiagonalNBodyInterAllSpinGC(struct BindStruct *X);
 int SetDiagonalNBodyInterAllHubbardGC(struct BindStruct *X);
 int SetDiagonalNBodyInterAllHubbard(struct BindStruct *X);
+int SetDiagonalNBodyInterAllSpinlessGC(struct BindStruct *X);
+int SetDiagonalNBodyInterAllSpinless(struct BindStruct *X);
 int MultiplyNBodyInterAllSpinGC(
   struct BindStruct *X,
   double complex *tmp_v0,
@@ -48,6 +50,16 @@ int MultiplyNBodyInterAllHubbardGC(
   double complex *tmp_v1
 );
 int MultiplyNBodyInterAllHubbard(
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+);
+int MultiplyNBodyInterAllSpinlessGC(
+  struct BindStruct *X,
+  double complex *tmp_v0,
+  double complex *tmp_v1
+);
+int MultiplyNBodyInterAllSpinless(
   struct BindStruct *X,
   double complex *tmp_v0,
   double complex *tmp_v1
