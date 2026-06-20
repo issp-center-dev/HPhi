@@ -66,6 +66,7 @@ add_hphi_test(lanczos_hubbardgc_nbodyg)
 add_hphi_test(lanczos_hubbard_nbody_interall)
 add_hphi_test(lanczos_hubbard_nbodyg)
 add_hphi_test(lanczos_kondogc_chain)
+add_hphi_test(lanczos_tj_kondo_nbody_interall)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_spingc_nbody_interall)
@@ -85,6 +86,7 @@ add_hphi_test(nbody_interall_validation)
 add_hphi_test(nbodyg_validation)
 add_hphi_test(nbody_hubbardgc_validation)
 add_hphi_test(nbody_hubbard_validation)
+add_hphi_test(nbody_tj_kondo_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
 add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
@@ -134,6 +136,9 @@ set_tests_properties(
     lanczos_tjgc_dimension lanczos_tjgc_exchange
     PROPERTIES LABELS "lanczos;tjgc")
 set_tests_properties(
+    lanczos_tj_kondo_nbody_interall
+    PROPERTIES LABELS "lanczos;tj;tjgc;kondo;nbody")
+set_tests_properties(
     lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
 set_tests_properties(
@@ -148,6 +153,9 @@ set_tests_properties(
 set_tests_properties(
     nbody_hubbardgc_validation nbody_hubbard_validation
     PROPERTIES LABELS "hubbard;validation;nbody")
+set_tests_properties(
+    nbody_tj_kondo_validation
+    PROPERTIES LABELS "tj;tjgc;kondo;validation;nbody")
 set_tests_properties(
     nbody_spinless_validation
     PROPERTIES LABELS "spinless;validation;nbody")
@@ -228,6 +236,7 @@ add_hphi_test(fulldiag_hubbardgc_tri)
 add_hphi_test(fulldiag_hubbardgc_nbody_interall)
 add_hphi_test(fulldiag_hubbard_nbody_interall)
 add_hphi_test(fulldiag_tj_calchs1)
+add_hphi_test(fulldiag_tj_kondo_nbody_interall)
 add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_spingc_nbody_interall_compare)
@@ -245,6 +254,9 @@ set_tests_properties(
 set_tests_properties(
     fulldiag_tj_calchs1
     PROPERTIES LABELS "fulldiag;tj")
+set_tests_properties(
+    fulldiag_tj_kondo_nbody_interall
+    PROPERTIES LABELS "fulldiag;tj;tjgc;kondo;nbody")
 set_tests_properties(
     fulldiag_spin_tri fulldiag_spingc_tri
     PROPERTIES LABELS "fulldiag;spin")
