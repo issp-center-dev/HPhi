@@ -11,10 +11,14 @@ var nbody__interall_8h =
     [ "MultiplyNBodyInterAllHubbard", "nbody__interall_8h.html#ac4e7a02c4a9fd0726f34dc73ed7cd7ce", null ],
     [ "MultiplyNBodyInterAllHubbardGC", "nbody__interall_8h.html#a3b46d23abca147529162d9c63807bb5a", null ],
     [ "MultiplyNBodyInterAllSpinGC", "nbody__interall_8h.html#a60329423c36e350c0635e9fc4a9b132f", null ],
+    [ "MultiplyNBodyInterAllSpinless", "nbody__interall_8h.html#a86d6d768a1423d9688ada308c3291345", null ],
+    [ "MultiplyNBodyInterAllSpinlessGC", "nbody__interall_8h.html#a5496a016b624030a3ec6f06e7087c311", null ],
     [ "NormalizeNBodyInterAllTerms", "nbody__interall_8h.html#ad6740df54518a20e38a5a0ee5914b97c", null ],
     [ "ParseNBodyInterAllLine", "nbody__interall_8h.html#a99172b55b2d479dc2a1a2fdde546656a", null ],
     [ "SetDiagonalNBodyInterAllHubbard", "nbody__interall_8h.html#a72ce8d20f8e71582b6a3989dad0bd8d7", null ],
     [ "SetDiagonalNBodyInterAllHubbardGC", "nbody__interall_8h.html#a38d9758905af6a83d5a9df36225e9c7f", null ],
     [ "SetDiagonalNBodyInterAllSpinGC", "nbody__interall_8h.html#a781b6943ee9ea59f8fc902d5db5e35cd", null ],
+    [ "SetDiagonalNBodyInterAllSpinless", "nbody__interall_8h.html#aedbfc055fc60d78a182fbdbe1370642d", null ],
+    [ "SetDiagonalNBodyInterAllSpinlessGC", "nbody__interall_8h.html#a38d9c5b989367a19d0332cf827357ce5", null ],
     [ "ValidateNBodyInterAllScope", "nbody__interall_8h.html#aa2fd89bc2da06b94f6c17e00a7b963d6", null ]
 ];
