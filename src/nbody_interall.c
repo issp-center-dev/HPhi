@@ -224,6 +224,10 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
     fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in TimeEvolution.\n");
     return -1;
   }
+  if (D->iCalcModel == KondoNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll does not support KondoNConserved with CalcSpec.\n");
+    return -1;
+  }
   if (nbody_is_spinless_model(D) == TRUE && D->iCalcType == FullDiag) {
     fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in FullDiag for SpinlessFermion / SpinlessFermionGC.\n");
     return -1;

@@ -188,6 +188,10 @@ int ValidateNBodyGScope(const struct DefineList *D)
     }
     return -1;
   }
+  if (D->iCalcModel == KondoNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: NBodyG does not support KondoNConserved with CalcSpec.\n");
+    return -1;
+  }
   if (nbodyg_is_kondo_model(D) == TRUE) {
     unsigned int site;
     for (site = 0; site < D->Nsite; site++) {

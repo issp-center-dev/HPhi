@@ -163,8 +163,22 @@ EOF
   cd ..
 }
 
+set_calcspec() {
+  dir="$1"
+  value="$2"
+  awk -v value="${value}" '
+    $1 == "CalcSpec" {
+      printf "CalcSpec        %s\n", value
+      next
+    }
+    { print }
+  ' "${dir}/calcmod.def" > "${dir}/calcmod.def.tmp"
+  mv "${dir}/calcmod.def.tmp" "${dir}/calcmod.def"
+}
+
 rm -rf accept_tj accept_tjgc accept_kondo accept_kondogc accept_kondon \
-  bad_tj_particle bad_kondo_nbodyg_particle bad_tjn bad_kondo_local_cross
+  bad_tj_particle bad_kondo_nbodyg_particle bad_tjn bad_kondo_local_cross \
+  bad_kondon_spectrum_interall bad_kondon_spectrum_nbodyg
 
 make_tj_base accept_tj 9 yes
 cat > accept_tj/nbodyinterall.def <<EOF
@@ -327,6 +341,42 @@ NNBodyG 0
 ========================
 EOF
 
+make_kondo_base bad_kondon_spectrum_interall Kondo ncond
+set_calcspec bad_kondon_spectrum_interall 1
+cat > bad_kondon_spectrum_interall/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 1
+========================
+========NBodyInterAll===
+========================
+1 0 0 0 1 0.1000000000000000 0.0200000000000000
+EOF
+cat > bad_kondon_spectrum_interall/nbodyg.def <<EOF
+========================
+NNBodyG 0
+========================
+========NBodyG==========
+========================
+EOF
+
+make_kondo_base bad_kondon_spectrum_nbodyg Kondo ncond
+set_calcspec bad_kondon_spectrum_nbodyg 1
+cat > bad_kondon_spectrum_nbodyg/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 0
+========================
+========NBodyInterAll===
+========================
+EOF
+cat > bad_kondon_spectrum_nbodyg/nbodyg.def <<EOF
+========================
+NNBodyG 1
+========================
+========NBodyG==========
+========================
+1 0 0 0 1
+EOF
+
 cd accept_tj
 run_hphi log_accept.txt "${hphi}" -e namelist.def
 cd ..
@@ -352,5 +402,7 @@ expect_fail bad_tj_particle "does not conserve particle numbers"
 expect_fail bad_kondo_nbodyg_particle "does not conserve particle numbers"
 expect_fail bad_tjn "NBodyInterAll does not support tJNConserved"
 expect_fail bad_kondo_local_cross "Kondo local-spin NBodyInterAll factors require site_out == site_in"
+expect_fail bad_kondon_spectrum_interall "NBodyInterAll does not support KondoNConserved with CalcSpec"
+expect_fail bad_kondon_spectrum_nbodyg "NBodyG does not support KondoNConserved with CalcSpec"
 
-echo "tJ/Kondo NBody validation accepts supported sectors and rejects unsupported tJ N-conserved/local-spin cases."
+echo "tJ/Kondo NBody validation accepts supported sectors and rejects unsupported tJ N-conserved/local-spin/CalcSpec cases."
