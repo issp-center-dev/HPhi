@@ -108,7 +108,9 @@ static int nbodyg_is_hubbard_model(const struct DefineList *D)
 
 static int nbodyg_is_tj_model(const struct DefineList *D)
 {
-  return D->iCalcModel == tJ || D->iCalcModel == tJGC;
+  return D->iCalcModel == tJ ||
+         D->iCalcModel == tJGC ||
+         D->iCalcModel == tJNConserved;
 }
 
 static int nbodyg_is_kondo_model(const struct DefineList *D)
@@ -150,6 +152,7 @@ static int nbodyg_uses_hubbard_list_path(const struct DefineList *D)
          D->iCalcModel == HubbardNConserved ||
          D->iCalcModel == tJ ||
          D->iCalcModel == tJGC ||
+         D->iCalcModel == tJNConserved ||
          D->iCalcModel == Kondo ||
          D->iCalcModel == KondoGC ||
          D->iCalcModel == KondoNConserved;
@@ -160,11 +163,6 @@ static int nbodyg_requires_spinful_conservation(const struct DefineList *D)
   return D->iCalcModel == Hubbard ||
          D->iCalcModel == tJ ||
          D->iCalcModel == Kondo;
-}
-
-static int nbodyg_is_unsupported_nconserved_model(const struct DefineList *D)
-{
-  return D->iCalcModel == tJNConserved;
 }
 
 static int nbodyg_is_general_spin(const struct DefineList *D)
@@ -178,17 +176,10 @@ int ValidateNBodyGScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
   if (nbodyg_is_supported_model(D) == FALSE) {
-    if (nbodyg_is_unsupported_nconserved_model(D) == TRUE) {
-      fprintf(stdoutMPI,
-              "Error: NBodyG does not support tJNConserved. "
-              "For tJ standard input, define 2Sz to use the Sz-conserved model.\n");
-    }
-    else {
-      fprintf(stdoutMPI,
-              "Error: NBodyG is currently supported only for SpinGC, Spin, "
-              "HubbardGC, Hubbard, HubbardNConserved, SpinlessFermionGC, SpinlessFermion, "
-              "tJGC, tJ, KondoGC, Kondo, and KondoNConserved.\n");
-    }
+    fprintf(stdoutMPI,
+            "Error: NBodyG is currently supported only for SpinGC, Spin, "
+            "HubbardGC, Hubbard, HubbardNConserved, SpinlessFermionGC, SpinlessFermion, "
+            "tJGC, tJ, tJNConserved, KondoGC, Kondo, and KondoNConserved.\n");
     return -1;
   }
   if (D->iCalcModel == KondoNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
@@ -197,6 +188,10 @@ int ValidateNBodyGScope(const struct DefineList *D)
   }
   if (D->iCalcModel == HubbardNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
     fprintf(stdoutMPI, "Error: NBodyG does not support HubbardNConserved with CalcSpec.\n");
+    return -1;
+  }
+  if (D->iCalcModel == tJNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: NBodyG does not support tJNConserved with CalcSpec.\n");
     return -1;
   }
   if (nbodyg_is_kondo_model(D) == TRUE) {
@@ -1464,7 +1459,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     fprintf(stdoutMPI,
             "Error: NBodyG is currently supported only for SpinGC, Spin, "
             "HubbardGC, Hubbard, HubbardNConserved, SpinlessFermionGC, SpinlessFermion, "
-            "tJGC, tJ, KondoGC, Kondo, and KondoNConserved.\n");
+            "tJGC, tJ, tJNConserved, KondoGC, Kondo, and KondoNConserved.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;

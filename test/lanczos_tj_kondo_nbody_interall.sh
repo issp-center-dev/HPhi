@@ -17,6 +17,7 @@ run_hphi() {
 make_tj_base() {
   dir="$1"
   calcmodel="$2"
+  write_2sz="${3:-yes}"
 
   mkdir -p "${dir}"
   cd "${dir}"
@@ -48,7 +49,10 @@ EOF
     printf "CDataFileHead  zvo\nCParaFileHead  zqp\n--------------------\n"
     printf "Nsite             4\n"
     if [ "${calcmodel}" = "9" ]; then
-      printf "Ncond             2\n2Sz               0\n"
+      printf "Ncond             2\n"
+      if [ "${write_2sz}" = "yes" ]; then
+        printf "2Sz               0\n"
+      fi
     fi
     printf "Lanczos_max       2000\ninitial_iv        1\nexct              1\n"
     printf "LanczosEps        14\nLanczosTarget     2\nLargeValue        20.0\n"
@@ -167,6 +171,33 @@ NNBodyInterAll 2
 EOF
 }
 
+write_tjn_nbody() {
+  cat > nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 2
+========================
+========NBodyInterAll===
+========================
+1 2 0 2 1 0.1300000000000000 0.0200000000000000
+1 2 1 2 0 0.1300000000000000 -0.0200000000000000
+EOF
+}
+
+append_tjn_transfer() {
+  awk '
+    $1 == "NTransfer" {
+      printf "%s      %d\n", $1, $2 + 2
+      next
+    }
+    { print }
+    END {
+      printf "2 0 2 1 0.1300000000000000 0.0200000000000000\n"
+      printf "2 1 2 0 0.1300000000000000 -0.0200000000000000\n"
+    }
+  ' trans.def > trans.def.tmp
+  mv trans.def.tmp trans.def
+}
+
 write_kondo_interall() {
   cat > interall.def <<EOF
 ======================
@@ -269,6 +300,32 @@ run_kondo_case() {
   cd ..
 }
 
+run_tjn_case() {
+  label="$1"
+
+  rm -rf "${label}"
+  mkdir -p "${label}"
+  cd "${label}"
+  make_tj_base nbody 9 no
+  make_tj_base legacy 9 no
+
+  cd nbody
+  printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
+  write_tjn_nbody
+  run_hphi log_nbody.txt ${MPIRUN} "${hphi}" -e namelist.def
+  cp output/zvo_energy.dat "../${label}_nbody_energy.dat"
+  cd ..
+
+  cd legacy
+  append_tjn_transfer
+  run_hphi log_legacy.txt ${MPIRUN} "${hphi}" -e namelist.def
+  cp output/zvo_energy.dat "../${label}_legacy_energy.dat"
+  cd ..
+
+  compare_case "${label}"
+  cd ..
+}
+
 run_kondon_case() {
   label="$1"
 
@@ -296,9 +353,10 @@ run_kondon_case() {
 }
 
 run_tj_case tj 9
+run_tjn_case tjn
 run_tj_case tjgc 10
 run_kondo_case kondo Kondo
 run_kondo_case kondogc KondoGC
 run_kondon_case kondon
 
-echo "tJ/tJGC/Kondo/KondoGC/KondoNConserved NBodyInterAll mltply terms match legacy operators in Lanczos."
+echo "tJ/tJNConserved/tJGC/Kondo/KondoGC/KondoNConserved NBodyInterAll mltply terms match legacy operators in Lanczos."

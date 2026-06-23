@@ -176,8 +176,9 @@ set_calcspec() {
   mv "${dir}/calcmod.def.tmp" "${dir}/calcmod.def"
 }
 
-rm -rf accept_tj accept_tjgc accept_kondo accept_kondogc accept_kondon \
-  bad_tj_particle bad_kondo_nbodyg_particle bad_tjn bad_kondo_local_cross \
+rm -rf accept_tj accept_tjgc accept_tjn accept_kondo accept_kondogc accept_kondon \
+  bad_tj_particle bad_kondo_nbodyg_particle bad_kondo_local_cross \
+  bad_tjn_spectrum_interall bad_tjn_spectrum_nbodyg \
   bad_kondon_spectrum_interall bad_kondon_spectrum_nbodyg
 
 make_tj_base accept_tj 9 yes
@@ -215,6 +216,25 @@ NNBodyG 1
 ========NBodyG==========
 ========================
 1 1 0 0 1
+EOF
+
+make_tj_base accept_tjn 9 no
+cat > accept_tjn/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 2
+========================
+========NBodyInterAll===
+========================
+1 2 0 2 1 0.1000000000000000 0.0200000000000000
+1 2 1 2 0 0.1000000000000000 -0.0200000000000000
+EOF
+cat > accept_tjn/nbodyg.def <<EOF
+========================
+NNBodyG 1
+========================
+========NBodyG==========
+========================
+1 2 0 2 1
 EOF
 
 make_kondo_base accept_kondo Kondo yes
@@ -307,8 +327,9 @@ NNBodyG 1
 1 0 1 0 0
 EOF
 
-make_tj_base bad_tjn 9 no
-cat > bad_tjn/nbodyinterall.def <<EOF
+make_tj_base bad_tjn_spectrum_interall 9 no
+set_calcspec bad_tjn_spectrum_interall 1
+cat > bad_tjn_spectrum_interall/nbodyinterall.def <<EOF
 ========================
 NNBodyInterAll 1
 ========================
@@ -316,12 +337,30 @@ NNBodyInterAll 1
 ========================
 1 0 0 0 0 0.1000000000000000 0.0000000000000000
 EOF
-cat > bad_tjn/nbodyg.def <<EOF
+cat > bad_tjn_spectrum_interall/nbodyg.def <<EOF
 ========================
 NNBodyG 0
 ========================
 ========NBodyG==========
 ========================
+EOF
+
+make_tj_base bad_tjn_spectrum_nbodyg 9 no
+set_calcspec bad_tjn_spectrum_nbodyg 1
+cat > bad_tjn_spectrum_nbodyg/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 0
+========================
+========NBodyInterAll===
+========================
+EOF
+cat > bad_tjn_spectrum_nbodyg/nbodyg.def <<EOF
+========================
+NNBodyG 1
+========================
+========NBodyG==========
+========================
+1 0 0 0 0
 EOF
 
 make_kondo_base bad_kondo_local_cross KondoGC no
@@ -385,6 +424,10 @@ cd accept_tjgc
 run_hphi log_accept.txt "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_tjgc
+cd accept_tjn
+run_hphi log_accept.txt "${hphi}" -e namelist.def
+cd ..
+check_nbodyg_output accept_tjn
 cd accept_kondo
 run_hphi log_accept.txt "${hphi}" -e namelist.def
 cd ..
@@ -400,9 +443,10 @@ check_nbodyg_output accept_kondon
 
 expect_fail bad_tj_particle "does not conserve particle numbers"
 expect_fail bad_kondo_nbodyg_particle "does not conserve particle numbers"
-expect_fail bad_tjn "NBodyInterAll does not support tJNConserved"
 expect_fail bad_kondo_local_cross "Kondo local-spin NBodyInterAll factors require site_out == site_in"
+expect_fail bad_tjn_spectrum_interall "NBodyInterAll does not support tJNConserved with CalcSpec"
+expect_fail bad_tjn_spectrum_nbodyg "NBodyG does not support tJNConserved with CalcSpec"
 expect_fail bad_kondon_spectrum_interall "NBodyInterAll does not support KondoNConserved with CalcSpec"
 expect_fail bad_kondon_spectrum_nbodyg "NBodyG does not support KondoNConserved with CalcSpec"
 
-echo "tJ/Kondo NBody validation accepts supported sectors and rejects unsupported tJ N-conserved/local-spin/CalcSpec cases."
+echo "tJ/tJNConserved/Kondo NBody validation accepts supported sectors and rejects unsupported local-spin/CalcSpec cases."

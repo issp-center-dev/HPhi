@@ -17,6 +17,7 @@ run_hphi() {
 make_tj_base() {
   dir="$1"
   calcmodel="$2"
+  write_2sz="${3:-yes}"
 
   mkdir -p "${dir}"
   cd "${dir}"
@@ -56,7 +57,9 @@ EOF
     printf "Nsite             4\n"
     if [ "${calcmodel}" = "9" ]; then
       printf "Ncond             2\n"
-      printf "2Sz               0\n"
+      if [ "${write_2sz}" = "yes" ]; then
+        printf "2Sz               0\n"
+      fi
     fi
     printf "Lanczos_max       120\n"
     printf "initial_iv        1\n"
@@ -181,6 +184,33 @@ NNBodyInterAll 3
 2 0 0 0 1 2 1 2 0 0.2500000000000000 -0.0700000000000000
 1 2 0 2 0 0.1900000000000000 0.0000000000000000
 EOF
+}
+
+write_tjn_nbody() {
+  cat > nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 2
+========================
+========NBodyInterAll===
+========================
+1 2 0 2 1 0.2300000000000000 0.0500000000000000
+1 2 1 2 0 0.2300000000000000 -0.0500000000000000
+EOF
+}
+
+append_tjn_transfer() {
+  awk '
+    $1 == "NTransfer" {
+      printf "%s      %d\n", $1, $2 + 2
+      next
+    }
+    { print }
+    END {
+      printf "2 0 2 1 0.2300000000000000 0.0500000000000000\n"
+      printf "2 1 2 0 0.2300000000000000 -0.0500000000000000\n"
+    }
+  ' trans.def > trans.def.tmp
+  mv trans.def.tmp trans.def
 }
 
 write_kondo_interall() {
@@ -315,6 +345,32 @@ run_kondo_case() {
   cd ..
 }
 
+run_tjn_case() {
+  label="$1"
+
+  rm -rf "${label}"
+  mkdir -p "${label}"
+  cd "${label}"
+  make_tj_base nbody 9 no
+  make_tj_base legacy 9 no
+
+  cd nbody
+  printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
+  write_tjn_nbody
+  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  save_ground_energy "../${label}_nbody_energy.dat"
+  cd ..
+
+  cd legacy
+  append_tjn_transfer
+  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  save_ground_energy "../${label}_legacy_energy.dat"
+  cd ..
+
+  compare_case "${label}"
+  cd ..
+}
+
 run_kondon_case() {
   label="$1"
 
@@ -342,9 +398,10 @@ run_kondon_case() {
 }
 
 run_tj_case tj 9
+run_tjn_case tjn
 run_tj_case tjgc 10
 run_kondo_case kondo Kondo
 run_kondo_case kondogc KondoGC
 run_kondon_case kondon
 
-echo "tJ/tJGC/Kondo/KondoGC/KondoNConserved NBodyInterAll terms match legacy operators in FullDiag."
+echo "tJ/tJNConserved/tJGC/Kondo/KondoGC/KondoNConserved NBodyInterAll terms match legacy operators in FullDiag."
