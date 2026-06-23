@@ -104,14 +104,32 @@ static int nbodyg_is_hubbard_model(const struct DefineList *D)
   return D->iCalcModel == Hubbard || D->iCalcModel == HubbardGC;
 }
 
+static int nbodyg_is_tj_model(const struct DefineList *D)
+{
+  return D->iCalcModel == tJ || D->iCalcModel == tJGC;
+}
+
+static int nbodyg_is_kondo_model(const struct DefineList *D)
+{
+  return D->iCalcModel == Kondo || D->iCalcModel == KondoGC;
+}
+
 static int nbodyg_is_spinless_model(const struct DefineList *D)
 {
   return D->iCalcModel == SpinlessFermion || D->iCalcModel == SpinlessFermionGC;
 }
 
+static int nbodyg_is_spinful_raw_fermion_model(const struct DefineList *D)
+{
+  return nbodyg_is_hubbard_model(D) == TRUE ||
+         nbodyg_is_tj_model(D) == TRUE ||
+         nbodyg_is_kondo_model(D) == TRUE;
+}
+
 static int nbodyg_is_raw_fermion_model(const struct DefineList *D)
 {
-  return nbodyg_is_hubbard_model(D) == TRUE || nbodyg_is_spinless_model(D) == TRUE;
+  return nbodyg_is_spinful_raw_fermion_model(D) == TRUE ||
+         nbodyg_is_spinless_model(D) == TRUE;
 }
 
 static int nbodyg_is_supported_model(const struct DefineList *D)
@@ -120,6 +138,27 @@ static int nbodyg_is_supported_model(const struct DefineList *D)
   if (D->iCalcModel == Spin) return TRUE;
   if (nbodyg_is_raw_fermion_model(D) == TRUE) return TRUE;
   return FALSE;
+}
+
+static int nbodyg_uses_hubbard_list_path(const struct DefineList *D)
+{
+  return D->iCalcModel == Hubbard ||
+         D->iCalcModel == tJ ||
+         D->iCalcModel == tJGC ||
+         D->iCalcModel == Kondo ||
+         D->iCalcModel == KondoGC;
+}
+
+static int nbodyg_requires_spinful_conservation(const struct DefineList *D)
+{
+  return D->iCalcModel == Hubbard ||
+         D->iCalcModel == tJ ||
+         D->iCalcModel == Kondo;
+}
+
+static int nbodyg_is_unsupported_nconserved_model(const struct DefineList *D)
+{
+  return D->iCalcModel == tJNConserved || D->iCalcModel == KondoNConserved;
 }
 
 static int nbodyg_is_general_spin(const struct DefineList *D)
@@ -133,8 +172,27 @@ int ValidateNBodyGScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
   if (nbodyg_is_supported_model(D) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC, Spin, HubbardGC, Hubbard, SpinlessFermionGC, and SpinlessFermion.\n");
+    if (nbodyg_is_unsupported_nconserved_model(D) == TRUE) {
+      fprintf(stdoutMPI,
+              "Error: NBodyG does not support tJNConserved or KondoNConserved. "
+              "For tJ/Kondo standard input, define 2Sz to use the Sz-conserved model.\n");
+    }
+    else {
+      fprintf(stdoutMPI,
+              "Error: NBodyG is currently supported only for SpinGC, Spin, "
+              "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
+              "tJGC, tJ, KondoGC, and Kondo.\n");
+    }
     return -1;
+  }
+  if (nbodyg_is_kondo_model(D) == TRUE) {
+    unsigned int site;
+    for (site = 0; site < D->Nsite; site++) {
+      if (D->LocSpn[site] > LOCSPIN) {
+        fprintf(stdoutMPI, "Error: NBodyG does not support general-spin Kondo local spins.\n");
+        return -1;
+      }
+    }
   }
   for (t = 0; t < D->NNBodyG; t++) {
     const unsigned int off = D->NBodyG_Offset[t];
@@ -148,6 +206,12 @@ int ValidateNBodyGScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: NBodyG currently requires site_out == site_in for every factor.\n");
         return -1;
       }
+      if (nbodyg_is_kondo_model(D) == TRUE &&
+          (D->LocSpn[f[0]] != ITINERANT || D->LocSpn[f[2]] != ITINERANT) &&
+          f[0] != f[2]) {
+        fprintf(stdoutMPI, "Error: Kondo local-spin NBodyG factors require site_out == site_in.\n");
+        return -1;
+      }
       if (nbodyg_is_spinless_model(D) == TRUE) {
         if (f[1] != 0 || f[3] != 0) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
@@ -155,7 +219,7 @@ int ValidateNBodyGScope(const struct DefineList *D)
         }
       }
       else {
-        const int max_spin = (nbodyg_is_hubbard_model(D) == TRUE) ? 1 :
+        const int max_spin = (nbodyg_is_spinful_raw_fermion_model(D) == TRUE) ? 1 :
           (nbodyg_is_general_spin(D) ? D->LocSpn[f[0]] : 1);
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyG is incorrect.\n");
@@ -308,7 +372,7 @@ int CheckNBodyGHubbardConservation(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyG == 0) return 0;
-  if (D->iCalcModel != Hubbard) return 0;
+  if (nbodyg_requires_spinful_conservation(D) == FALSE) return 0;
 
   for (t = 0; t < D->NNBodyG; t++) {
     const unsigned int n = D->NBodyG_CanonicalN[t];
@@ -1383,7 +1447,10 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
 
   if (X->Def.NNBodyG < 1) return 0;
   if (nbodyg_is_supported_model(&X->Def) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyG is currently supported only for SpinGC, Spin, HubbardGC, Hubbard, SpinlessFermionGC, and SpinlessFermion.\n");
+    fprintf(stdoutMPI,
+            "Error: NBodyG is currently supported only for SpinGC, Spin, "
+            "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
+            "tJGC, tJ, KondoGC, and Kondo.\n");
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
@@ -1393,8 +1460,8 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
       if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
-      else if (X->Def.iCalcModel == Hubbard) value = calc_nbodyg_term_hubbard(X, t, vec);
       else if (X->Def.iCalcModel == HubbardGC) value = calc_nbodyg_term_hubbardgc(X, t, vec);
+      else if (nbodyg_uses_hubbard_list_path(&X->Def) == TRUE) value = calc_nbodyg_term_hubbard(X, t, vec);
       else if (X->Def.iCalcModel == SpinlessFermion) value = calc_nbodyg_term_spinless(X, t, vec);
       else if (X->Def.iCalcModel == SpinlessFermionGC) value = calc_nbodyg_term_spinlessgc(X, t, vec);
       else if (nbodyg_is_general_spin(&X->Def) == TRUE) {

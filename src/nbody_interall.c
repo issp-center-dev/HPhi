@@ -136,14 +136,32 @@ static int nbody_is_hubbard_model(const struct DefineList *D)
   return D->iCalcModel == Hubbard || D->iCalcModel == HubbardGC;
 }
 
+static int nbody_is_tj_model(const struct DefineList *D)
+{
+  return D->iCalcModel == tJ || D->iCalcModel == tJGC;
+}
+
+static int nbody_is_kondo_model(const struct DefineList *D)
+{
+  return D->iCalcModel == Kondo || D->iCalcModel == KondoGC;
+}
+
 static int nbody_is_spinless_model(const struct DefineList *D)
 {
   return D->iCalcModel == SpinlessFermion || D->iCalcModel == SpinlessFermionGC;
 }
 
+static int nbody_is_spinful_raw_fermion_model(const struct DefineList *D)
+{
+  return nbody_is_hubbard_model(D) == TRUE ||
+         nbody_is_tj_model(D) == TRUE ||
+         nbody_is_kondo_model(D) == TRUE;
+}
+
 static int nbody_is_raw_fermion_model(const struct DefineList *D)
 {
-  return nbody_is_hubbard_model(D) == TRUE || nbody_is_spinless_model(D) == TRUE;
+  return nbody_is_spinful_raw_fermion_model(D) == TRUE ||
+         nbody_is_spinless_model(D) == TRUE;
 }
 
 static int nbody_is_supported_model(const struct DefineList *D)
@@ -152,6 +170,27 @@ static int nbody_is_supported_model(const struct DefineList *D)
   if (D->iCalcModel == Spin) return TRUE;
   if (nbody_is_raw_fermion_model(D) == TRUE) return TRUE;
   return FALSE;
+}
+
+static int nbody_uses_hubbard_list_path(const struct DefineList *D)
+{
+  return D->iCalcModel == Hubbard ||
+         D->iCalcModel == tJ ||
+         D->iCalcModel == tJGC ||
+         D->iCalcModel == Kondo ||
+         D->iCalcModel == KondoGC;
+}
+
+static int nbody_requires_spinful_conservation(const struct DefineList *D)
+{
+  return D->iCalcModel == Hubbard ||
+         D->iCalcModel == tJ ||
+         D->iCalcModel == Kondo;
+}
+
+static int nbody_is_unsupported_nconserved_model(const struct DefineList *D)
+{
+  return D->iCalcModel == tJNConserved || D->iCalcModel == KondoNConserved;
 }
 
 static int nbody_is_general_spin(const struct DefineList *D)
@@ -165,7 +204,17 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
   if (nbody_is_supported_model(D) == FALSE) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll is currently supported only for SpinGC, Spin, HubbardGC, Hubbard, SpinlessFermionGC, and SpinlessFermion.\n");
+    if (nbody_is_unsupported_nconserved_model(D) == TRUE) {
+      fprintf(stdoutMPI,
+              "Error: NBodyInterAll does not support tJNConserved or KondoNConserved. "
+              "For tJ/Kondo standard input, define 2Sz to use the Sz-conserved model.\n");
+    }
+    else {
+      fprintf(stdoutMPI,
+              "Error: NBodyInterAll is currently supported only for SpinGC, Spin, "
+              "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
+              "tJGC, tJ, KondoGC, and Kondo.\n");
+    }
     return -1;
   }
   if (D->iCalcType == TimeEvolution) {
@@ -175,6 +224,15 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
   if (nbody_is_spinless_model(D) == TRUE && D->iCalcType == FullDiag) {
     fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in FullDiag for SpinlessFermion / SpinlessFermionGC.\n");
     return -1;
+  }
+  if (nbody_is_kondo_model(D) == TRUE) {
+    unsigned int site;
+    for (site = 0; site < D->Nsite; site++) {
+      if (D->LocSpn[site] > LOCSPIN) {
+        fprintf(stdoutMPI, "Error: NBodyInterAll does not support general-spin Kondo local spins.\n");
+        return -1;
+      }
+    }
   }
   for (t = 0; t < D->NNBodyInterAll; t++) {
     const unsigned int off = D->NBodyInterAll_Offset[t];
@@ -188,6 +246,12 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
         fprintf(stdoutMPI, "Error: NBodyInterAll currently requires site_out == site_in for every factor.\n");
         return -1;
       }
+      if (nbody_is_kondo_model(D) == TRUE &&
+          (D->LocSpn[f[0]] != ITINERANT || D->LocSpn[f[2]] != ITINERANT) &&
+          f[0] != f[2]) {
+        fprintf(stdoutMPI, "Error: Kondo local-spin NBodyInterAll factors require site_out == site_in.\n");
+        return -1;
+      }
       if (nbody_is_spinless_model(D) == TRUE) {
         if (f[1] != 0 || f[3] != 0) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
@@ -195,7 +259,7 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
         }
       }
       else {
-        const int max_spin = (nbody_is_hubbard_model(D) == TRUE) ? 1 :
+        const int max_spin = (nbody_is_spinful_raw_fermion_model(D) == TRUE) ? 1 :
           (nbody_is_general_spin(D) ? D->LocSpn[f[0]] : 1);
         if (max_spin < 1 || f[1] < 0 || f[1] > max_spin || f[3] < 0 || f[3] > max_spin) {
           fprintf(stdoutMPI, "Error: Spin index of NBodyInterAll is incorrect.\n");
@@ -339,7 +403,7 @@ int CheckNBodyInterAllHubbardConservation(const struct DefineList *D)
 {
   unsigned int t, k;
   if (D->NNBodyInterAll == 0) return 0;
-  if (D->iCalcModel != Hubbard) return 0;
+  if (nbody_requires_spinful_conservation(D) == FALSE) return 0;
 
   for (t = 0; t < D->NNBodyInterAll; t++) {
     const unsigned int n = D->NBodyInterAll_CanonicalN[t];
@@ -947,7 +1011,7 @@ int SetDiagonalNBodyInterAllHubbard(struct BindStruct *X)
 {
   unsigned int i;
   if (X->Def.NNBodyInterAll_Diagonal == 0) return 0;
-  if (X->Def.iCalcModel != Hubbard) return -1;
+  if (nbody_uses_hubbard_list_path(&X->Def) == FALSE) return -1;
 
   for (i = 0; i < X->Def.NNBodyInterAll_Diagonal; i++) {
     const unsigned int term = X->Def.NBodyInterAll_DiagonalIndex[i];
@@ -1680,7 +1744,7 @@ int MultiplyNBodyInterAllHubbard(
 ) {
   unsigned int p;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
-  if (X->Def.iCalcModel != Hubbard) return -1;
+  if (nbody_uses_hubbard_list_path(&X->Def) == FALSE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
@@ -1755,7 +1819,7 @@ int AddNBodyInterAllToHamHubbard(struct BindStruct *X)
   unsigned int p;
   unsigned long int j;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
-  if (X->Def.iCalcModel != Hubbard) return -1;
+  if (nbody_uses_hubbard_list_path(&X->Def) == FALSE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];

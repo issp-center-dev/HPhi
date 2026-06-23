@@ -203,7 +203,11 @@ int diagonalcalc
         return -1;
       }
     }
-    else if (X->Def.iCalcModel == Hubbard) {
+    else if (X->Def.iCalcModel == Hubbard ||
+             X->Def.iCalcModel == tJ ||
+             X->Def.iCalcModel == tJGC ||
+             X->Def.iCalcModel == Kondo ||
+             X->Def.iCalcModel == KondoGC) {
       if (SetDiagonalNBodyInterAllHubbard(X) != 0) {
         return -1;
       }

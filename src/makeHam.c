@@ -319,7 +319,12 @@ int makeHam(struct BindStruct *X) {
         }
       }
 
-      if (X->Def.iCalcModel == Hubbard && X->Def.NNBodyInterAll_OffDiagonal > 0) {
+      if ((X->Def.iCalcModel == Hubbard ||
+           X->Def.iCalcModel == tJ ||
+           X->Def.iCalcModel == tJGC ||
+           X->Def.iCalcModel == Kondo ||
+           X->Def.iCalcModel == KondoGC) &&
+          X->Def.NNBodyInterAll_OffDiagonal > 0) {
         if (AddNBodyInterAllToHamHubbard(X) != 0) {
           return -1;
         }

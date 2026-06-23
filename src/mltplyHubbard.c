@@ -354,7 +354,12 @@ int mltplyHubbard(
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(320);
 
-  if (X->Def.iCalcModel == Hubbard && X->Def.NNBodyInterAll_OffDiagonal > 0) {
+  if ((X->Def.iCalcModel == Hubbard ||
+       X->Def.iCalcModel == tJ ||
+       X->Def.iCalcModel == tJGC ||
+       X->Def.iCalcModel == Kondo ||
+       X->Def.iCalcModel == KondoGC) &&
+      X->Def.NNBodyInterAll_OffDiagonal > 0) {
     if (MultiplyNBodyInterAllHubbard(X, tmp_v0, tmp_v1) != 0) {
       return -1;
     }
