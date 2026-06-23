@@ -67,6 +67,7 @@ add_hphi_test(lanczos_hubbard_nbody_interall)
 add_hphi_test(lanczos_hubbard_nbodyg)
 add_hphi_test(lanczos_kondogc_chain)
 add_hphi_test(lanczos_tj_kondo_nbody_interall)
+add_hphi_test(lanczos_tj_nconserved_nbodyg)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
 add_hphi_test(lanczos_spingc_nbody_interall)
@@ -138,6 +139,9 @@ set_tests_properties(
 set_tests_properties(
     lanczos_tj_kondo_nbody_interall
     PROPERTIES LABELS "lanczos;tj;tjgc;kondo;nbody")
+set_tests_properties(
+    lanczos_tj_nconserved_nbodyg
+    PROPERTIES LABELS "lanczos;tj;nbody")
 set_tests_properties(
     lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
