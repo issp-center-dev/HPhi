@@ -119,6 +119,8 @@ Quick Reference
      - One-body Green's functions
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_en>`
      - Two-body Green's functions
+   * - :doc:`zvo_NBodyG*.dat <NBodyG_en>`
+     - Generic N-body Green's functions
 
 **Wave Functions and Vectors**
 
@@ -239,6 +241,7 @@ Files containing calculated physical quantities.
    phys_en
    cisajs_en
    cisajscktalt_en
+   NBodyG_en
 
 Wave Functions and Vectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

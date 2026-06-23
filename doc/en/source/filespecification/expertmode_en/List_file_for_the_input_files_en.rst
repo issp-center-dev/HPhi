@@ -14,8 +14,10 @@ This file determines the input filenames, which are correlated with the keywords
     LocSpin  zlocspn.def
     Trans    ztransfer.def
     InterAll zinterall.def
+    NBodyInterAll znbodyinterall.def
     OneBodyG zcisajs.def
     TwoBodyG zcisajscktaltdc.def
+    NBodyG znbodyg.def
 
 File format
 ~~~~~~~~~~~
@@ -65,6 +67,7 @@ Use rules
     "LocSpin", "Configurations of the local spins for Hamiltonian"
     "Trans", "Transfer and chemical potential for Hamiltonian"
     "InterAll", "Two-body interactions for Hamiltonian"
+    "NBodyInterAll", "Generic N-body interactions for Hamiltonian"
     "CoulombIntra", "CoulombIntra interactions"
     "CoulombInter", "CoulombInter interactions"
     "Hund", "Hund couplings"
@@ -74,6 +77,7 @@ Use rules
     "PairLift", "Pair lift couplings"
     "OneBodyG", "Output components for one-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle`"
     "TwoBodyG", "Output components for two-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle`"
+    "NBodyG", "Output components for generic N-body Green's functions"
     "SingleExcitation", "Operators for generating a single excited state"
     "PairExcitation", "Operators for generating a pair excited state"
     "SingleExcitationBra", "Bra single excitation operators for the off-diagonal Green's function"

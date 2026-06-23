@@ -119,6 +119,8 @@
      - 一体グリーン関数
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_ja>`
      - 二体グリーン関数
+   * - :doc:`zvo_NBodyG*.dat <NBodyG_ja>`
+     - N体グリーン関数
 
 **波動関数・ベクトル**
 
@@ -239,6 +241,7 @@ TPQ（有限温度）出力
    phys_ja
    cisajs_ja
    cisajscktalt_ja
+   NBodyG_ja
 
 波動関数・ベクトル
 ^^^^^^^^^^^^^^^^^^
