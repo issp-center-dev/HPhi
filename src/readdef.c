@@ -36,6 +36,7 @@
 #include "readdef.h"
 #include "nbody_interall.h"
 #include "nbody_correlation.h"
+#include "anomalous_pair.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -78,7 +79,9 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "SingleExcitationBra",
   "PairExcitationBra",
   "NBodyInterAll",
-  "NBodyG"
+  "NBodyG",
+  "AnomalousTerm",
+  "AnomalousG"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -904,6 +907,18 @@ int ReadDefFileNInt(
           return ReadDefFileError(defname);
         }
         break;
+      case KWAnomalousTerm:
+        /* Read anomalousterm.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2, "%s %u\n", ctmp, &(X->NAnomalousTerm));
+        break;
+      case KWAnomalousG:
+        /* Read anomalousg.def--------------------------------------*/
+        fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
+        fgetsMPI(ctmp2, 256, fp);
+        sscanf(ctmp2, "%s %u\n", ctmp, &(X->NAnomalousG));
+        break;
       case KWOneBodyG:
         /* Read cisajs.def----------------------------------------*/
         fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
@@ -1259,6 +1274,7 @@ int ReadDefFileIdxPara(
   unsigned int nbody_count=0;
   unsigned int nbody_offset=0;
   double nbody_re=0.0, nbody_im=0.0;
+  int anomalous_pair[5];
 
   unsigned int iloop=0;
 
@@ -1824,6 +1840,78 @@ int ReadDefFileIdxPara(
           NormalizeNBodyGTerms(X) != 0 ||
           CheckNBodyGSpinConservation(X) != 0 ||
           CheckNBodyGHubbardConservation(X) != 0) {
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
+      break;
+
+    case KWAnomalousTerm:
+      /*anomalousterm.def---------------------------------------*/
+      if (X->NAnomalousTerm > 0) {
+        nbody_count = 0;
+        while ((nbody_line = ReadNBodyLineMPI(fp, NULL)) != NULL) {
+          if (nbody_count == X->NAnomalousTerm) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (ParseAnomalousTermLine(nbody_line, anomalous_pair, &nbody_re, &nbody_im) != 0) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          X->AnomalousTerm[nbody_count][0] = anomalous_pair[0];
+          X->AnomalousTerm[nbody_count][1] = anomalous_pair[1];
+          X->AnomalousTerm[nbody_count][2] = anomalous_pair[2];
+          X->AnomalousTerm[nbody_count][3] = anomalous_pair[3];
+          X->AnomalousTerm[nbody_count][4] = anomalous_pair[4];
+          X->ParaAnomalousTerm[nbody_count] = nbody_re + I * nbody_im;
+          nbody_count++;
+          free(nbody_line);
+        }
+        if (nbody_count != X->NAnomalousTerm) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+      }
+
+      if (ValidateAnomalousTermScope(X) != 0 ||
+          CheckAnomalousTermHermitePairs(X) != 0) {
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
+      break;
+
+    case KWAnomalousG:
+      /*anomalousg.def---------------------------------------*/
+      if (X->NAnomalousG > 0) {
+        nbody_count = 0;
+        while ((nbody_line = ReadNBodyLineMPI(fp, NULL)) != NULL) {
+          if (nbody_count == X->NAnomalousG) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          if (ParseAnomalousGLine(nbody_line, anomalous_pair) != 0) {
+            free(nbody_line);
+            fclose(fp);
+            return ReadDefFileError(defname);
+          }
+          X->AnomalousG[nbody_count][0] = anomalous_pair[0];
+          X->AnomalousG[nbody_count][1] = anomalous_pair[1];
+          X->AnomalousG[nbody_count][2] = anomalous_pair[2];
+          X->AnomalousG[nbody_count][3] = anomalous_pair[3];
+          X->AnomalousG[nbody_count][4] = anomalous_pair[4];
+          nbody_count++;
+          free(nbody_line);
+        }
+        if (nbody_count != X->NAnomalousG) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+      }
+
+      if (ValidateAnomalousGScope(X) != 0) {
         fclose(fp);
         return ReadDefFileError(defname);
       }
@@ -3569,6 +3657,8 @@ void InitializeInteractionNum
   X->NBodyG_TotalFactors=0;
   X->NBodyG_TotalCanonicalFactors=0;
   X->NBodyG_MaxN=0;
+  X->NAnomalousTerm=0;
+  X->NAnomalousG=0;
   X->NCisAjt=0;
   X->NCisAjtCkuAlvDC=0;
   X->NTBody=0;

@@ -143,6 +143,7 @@ Other
 #include "mltplyHubbardCore.h"
 #include "mltplyMPIHubbardCore.h"
 #include "nbody_interall.h"
+#include "anomalous_pair.h"
 
 #ifdef MPI
 // Static storage for batched transfers (MPIsingle)
@@ -665,6 +666,12 @@ int mltplyHubbardGC(
 
   if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
     if (MultiplyNBodyInterAllHubbardGC(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
+
+  if (X->Def.NAnomalousTerm > 0) {
+    if (MultiplyAnomalousTermHubbardGC(X, tmp_v0, tmp_v1) != 0) {
       return -1;
     }
   }

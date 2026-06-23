@@ -206,6 +206,12 @@ struct DefineList {
   unsigned int *NBodyG_CanonicalOffset;/**<@brief [DefineList::NNBodyG] Canonical factor offsets*/
   int **NBodyG_CanonicalFactors;/**<@brief [DefineList::NBodyG_TotalFactors][4] Canonical factors*/
 
+  unsigned int NAnomalousTerm;/**<@brief Number of HubbardGC anomalous pair Hamiltonian terms*/
+  int **AnomalousTerm;/**<@brief [DefineList::NAnomalousTerm][5]: type, site1, spin1, site2, spin2*/
+  double complex *ParaAnomalousTerm;/**<@brief [DefineList::NAnomalousTerm] Coupling constants*/
+  unsigned int NAnomalousG;/**<@brief Number of HubbardGC anomalous pair correlation terms*/
+  int **AnomalousG;/**<@brief [DefineList::NAnomalousG][5]: type, site1, spin1, site2, spin2*/
+
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
 

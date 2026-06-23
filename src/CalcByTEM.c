@@ -54,6 +54,7 @@
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
+#include "anomalous_pair.h"
 #include "CalcByTEM.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -258,6 +259,9 @@ int CalcByTEM(
         return -1;
       }
       if (expec_nbodyg(&(X->Bind), v1) != 0) {
+        return -1;
+      }
+      if (expec_anomalousg(&(X->Bind), v1) != 0) {
         return -1;
       }
     }

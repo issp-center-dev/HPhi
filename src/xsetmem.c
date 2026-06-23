@@ -141,6 +141,10 @@ void setmem_def
     X->Def.NBodyG_CanonicalFactors = i_2d_allocate(nbodyg_factors, 4);
   }
 
+  X->Def.AnomalousTerm = i_2d_allocate(X->Def.NAnomalousTerm, 5);
+  X->Def.ParaAnomalousTerm = cd_1d_allocate(X->Def.NAnomalousTerm);
+  X->Def.AnomalousG = i_2d_allocate(X->Def.NAnomalousG, 5);
+
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 
