@@ -230,6 +230,7 @@ add_test(
     COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh
 )
 add_hphi_test(fulldiag_kondo_chain)
+add_hphi_test(kondo_nconserved_dimension)
 add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
@@ -251,6 +252,9 @@ set_tests_properties(
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
+set_tests_properties(
+    kondo_nconserved_dimension
+    PROPERTIES LABELS "fulldiag;kondo;validation")
 set_tests_properties(
     fulldiag_tj_calchs1
     PROPERTIES LABELS "fulldiag;tj")
@@ -437,6 +441,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_consistency_spin min:2)
     add_hphi_mpi_test(mpi_consistency_spingc min:2)
     add_hphi_mpi_test(mpi_consistency_kondo min:2)
+    add_hphi_mpi_test(mpi_consistency_kondo_nconserved_cg exact:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard min:2)
     add_hphi_mpi_test(mpi_consistency_te_spin min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
@@ -506,7 +511,8 @@ if(MPI_FOUND)
         mpi_nbodyg_spin_spinone_np9
         PROPERTIES LABELS "mpi;consistency;genspin;spinone;nbody")
     set_tests_properties(
-        mpi_consistency_kondo mpi_consistency_te_kondo
+        mpi_consistency_kondo mpi_consistency_kondo_nconserved_cg
+        mpi_consistency_te_kondo
         PROPERTIES LABELS "mpi;consistency;kondo")
     set_tests_properties(
         mpi_consistency_spinless mpi_consistency_spinless_GC
