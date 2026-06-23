@@ -101,7 +101,9 @@ int ParseNBodyGLine(
 
 static int nbodyg_is_hubbard_model(const struct DefineList *D)
 {
-  return D->iCalcModel == Hubbard || D->iCalcModel == HubbardGC;
+  return D->iCalcModel == Hubbard ||
+         D->iCalcModel == HubbardGC ||
+         D->iCalcModel == HubbardNConserved;
 }
 
 static int nbodyg_is_tj_model(const struct DefineList *D)
@@ -145,6 +147,7 @@ static int nbodyg_is_supported_model(const struct DefineList *D)
 static int nbodyg_uses_hubbard_list_path(const struct DefineList *D)
 {
   return D->iCalcModel == Hubbard ||
+         D->iCalcModel == HubbardNConserved ||
          D->iCalcModel == tJ ||
          D->iCalcModel == tJGC ||
          D->iCalcModel == Kondo ||
@@ -183,13 +186,17 @@ int ValidateNBodyGScope(const struct DefineList *D)
     else {
       fprintf(stdoutMPI,
               "Error: NBodyG is currently supported only for SpinGC, Spin, "
-              "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
+              "HubbardGC, Hubbard, HubbardNConserved, SpinlessFermionGC, SpinlessFermion, "
               "tJGC, tJ, KondoGC, Kondo, and KondoNConserved.\n");
     }
     return -1;
   }
   if (D->iCalcModel == KondoNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
     fprintf(stdoutMPI, "Error: NBodyG does not support KondoNConserved with CalcSpec.\n");
+    return -1;
+  }
+  if (D->iCalcModel == HubbardNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: NBodyG does not support HubbardNConserved with CalcSpec.\n");
     return -1;
   }
   if (nbodyg_is_kondo_model(D) == TRUE) {
@@ -1456,7 +1463,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   if (nbodyg_is_supported_model(&X->Def) == FALSE) {
     fprintf(stdoutMPI,
             "Error: NBodyG is currently supported only for SpinGC, Spin, "
-            "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
+            "HubbardGC, Hubbard, HubbardNConserved, SpinlessFermionGC, SpinlessFermion, "
             "tJGC, tJ, KondoGC, Kondo, and KondoNConserved.\n");
     return -1;
   }
