@@ -125,6 +125,26 @@ EOF
   cd ..
 }
 
+make_kondon_base() {
+  dir="$1"
+
+  mkdir -p "${dir}"
+  cd "${dir}"
+  cat > stan.in <<EOF
+model = "Kondo"
+method = "FullDiag"
+lattice = "chain"
+L = 2
+t = 0.0
+J = 0.0
+ncond = 2
+Lanczos_max = 120
+initial_iv = 1
+EOF
+  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  cd ..
+}
+
 write_tj_nbody() {
   cat > nbodyinterall.def <<EOF
 ========================
@@ -172,6 +192,30 @@ NInterAll      2
 ======================
 2 0 2 1 0 1 0 0 0.2500000000000000 0.0700000000000000
 0 0 0 1 2 1 2 0 0.2500000000000000 -0.0700000000000000
+EOF
+}
+
+write_kondon_nbody() {
+  cat > nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 2
+========================
+========NBodyInterAll===
+========================
+1 0 0 0 1 0.2300000000000000 0.0500000000000000
+1 0 1 0 0 0.2300000000000000 -0.0500000000000000
+EOF
+}
+
+write_kondon_transfer() {
+  cat > trans.def <<EOF
+========================
+NTransfer      2
+========================
+========i_j_s_tijs======
+========================
+0 0 0 1 0.2300000000000000 0.0500000000000000
+0 1 0 0 0.2300000000000000 -0.0500000000000000
 EOF
 }
 
@@ -271,9 +315,36 @@ run_kondo_case() {
   cd ..
 }
 
+run_kondon_case() {
+  label="$1"
+
+  rm -rf "${label}"
+  mkdir -p "${label}"
+  cd "${label}"
+  make_kondon_base nbody
+  make_kondon_base legacy
+
+  cd nbody
+  printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
+  write_kondon_nbody
+  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  save_ground_energy "../${label}_nbody_energy.dat"
+  cd ..
+
+  cd legacy
+  write_kondon_transfer
+  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  save_ground_energy "../${label}_legacy_energy.dat"
+  cd ..
+
+  compare_case "${label}"
+  cd ..
+}
+
 run_tj_case tj 9
 run_tj_case tjgc 10
 run_kondo_case kondo Kondo
 run_kondo_case kondogc KondoGC
+run_kondon_case kondon
 
-echo "tJ/tJGC/Kondo/KondoGC NBodyInterAll N=2 terms match legacy InterAll in FullDiag."
+echo "tJ/tJGC/Kondo/KondoGC/KondoNConserved NBodyInterAll terms match legacy operators in FullDiag."

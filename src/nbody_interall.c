@@ -143,7 +143,9 @@ static int nbody_is_tj_model(const struct DefineList *D)
 
 static int nbody_is_kondo_model(const struct DefineList *D)
 {
-  return D->iCalcModel == Kondo || D->iCalcModel == KondoGC;
+  return D->iCalcModel == Kondo ||
+         D->iCalcModel == KondoGC ||
+         D->iCalcModel == KondoNConserved;
 }
 
 static int nbody_is_spinless_model(const struct DefineList *D)
@@ -178,7 +180,8 @@ static int nbody_uses_hubbard_list_path(const struct DefineList *D)
          D->iCalcModel == tJ ||
          D->iCalcModel == tJGC ||
          D->iCalcModel == Kondo ||
-         D->iCalcModel == KondoGC;
+         D->iCalcModel == KondoGC ||
+         D->iCalcModel == KondoNConserved;
 }
 
 static int nbody_requires_spinful_conservation(const struct DefineList *D)
@@ -190,7 +193,7 @@ static int nbody_requires_spinful_conservation(const struct DefineList *D)
 
 static int nbody_is_unsupported_nconserved_model(const struct DefineList *D)
 {
-  return D->iCalcModel == tJNConserved || D->iCalcModel == KondoNConserved;
+  return D->iCalcModel == tJNConserved;
 }
 
 static int nbody_is_general_spin(const struct DefineList *D)
@@ -206,19 +209,23 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
   if (nbody_is_supported_model(D) == FALSE) {
     if (nbody_is_unsupported_nconserved_model(D) == TRUE) {
       fprintf(stdoutMPI,
-              "Error: NBodyInterAll does not support tJNConserved or KondoNConserved. "
-              "For tJ/Kondo standard input, define 2Sz to use the Sz-conserved model.\n");
+              "Error: NBodyInterAll does not support tJNConserved. "
+              "For tJ standard input, define 2Sz to use the Sz-conserved model.\n");
     }
     else {
       fprintf(stdoutMPI,
               "Error: NBodyInterAll is currently supported only for SpinGC, Spin, "
               "HubbardGC, Hubbard, SpinlessFermionGC, SpinlessFermion, "
-              "tJGC, tJ, KondoGC, and Kondo.\n");
+              "tJGC, tJ, KondoGC, Kondo, and KondoNConserved.\n");
     }
     return -1;
   }
   if (D->iCalcType == TimeEvolution) {
     fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in TimeEvolution.\n");
+    return -1;
+  }
+  if (D->iCalcModel == KondoNConserved && D->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: NBodyInterAll does not support KondoNConserved with CalcSpec.\n");
     return -1;
   }
   if (nbody_is_spinless_model(D) == TRUE && D->iCalcType == FullDiag) {

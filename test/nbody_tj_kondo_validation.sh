@@ -155,7 +155,7 @@ EOF
       printf "2Sz = 0\n"
     } >> stan.in
   elif [ "${write_sector}" = "ncond" ]; then
-    printf "nelec = 2\n" >> stan.in
+    printf "ncond = 2\n" >> stan.in
   fi
   run_hphi log_sdry.txt "${hphi}" -sdry stan.in
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
@@ -163,8 +163,22 @@ EOF
   cd ..
 }
 
-rm -rf accept_tj accept_tjgc accept_kondo accept_kondogc \
-  bad_tj_particle bad_kondo_nbodyg_particle bad_tjn bad_kondon bad_kondo_local_cross
+set_calcspec() {
+  dir="$1"
+  value="$2"
+  awk -v value="${value}" '
+    $1 == "CalcSpec" {
+      printf "CalcSpec        %s\n", value
+      next
+    }
+    { print }
+  ' "${dir}/calcmod.def" > "${dir}/calcmod.def.tmp"
+  mv "${dir}/calcmod.def.tmp" "${dir}/calcmod.def"
+}
+
+rm -rf accept_tj accept_tjgc accept_kondo accept_kondogc accept_kondon \
+  bad_tj_particle bad_kondo_nbodyg_particle bad_tjn bad_kondo_local_cross \
+  bad_kondon_spectrum_interall bad_kondon_spectrum_nbodyg
 
 make_tj_base accept_tj 9 yes
 cat > accept_tj/nbodyinterall.def <<EOF
@@ -240,6 +254,25 @@ NNBodyG 1
 1 0 1 0 0
 EOF
 
+make_kondo_base accept_kondon Kondo ncond
+cat > accept_kondon/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 2
+========================
+========NBodyInterAll===
+========================
+1 0 0 0 1 0.1000000000000000 0.0200000000000000
+1 0 1 0 0 0.1000000000000000 -0.0200000000000000
+EOF
+cat > accept_kondon/nbodyg.def <<EOF
+========================
+NNBodyG 1
+========================
+========NBodyG==========
+========================
+1 0 0 0 1
+EOF
+
 make_tj_base bad_tj_particle 9 yes
 cat > bad_tj_particle/nbodyinterall.def <<EOF
 ========================
@@ -291,23 +324,6 @@ NNBodyG 0
 ========================
 EOF
 
-make_kondo_base bad_kondon Kondo ncond
-cat > bad_kondon/nbodyinterall.def <<EOF
-========================
-NNBodyInterAll 1
-========================
-========NBodyInterAll===
-========================
-1 0 0 0 0 0.1000000000000000 0.0000000000000000
-EOF
-cat > bad_kondon/nbodyg.def <<EOF
-========================
-NNBodyG 0
-========================
-========NBodyG==========
-========================
-EOF
-
 make_kondo_base bad_kondo_local_cross KondoGC no
 cat > bad_kondo_local_cross/nbodyinterall.def <<EOF
 ========================
@@ -323,6 +339,42 @@ NNBodyG 0
 ========================
 ========NBodyG==========
 ========================
+EOF
+
+make_kondo_base bad_kondon_spectrum_interall Kondo ncond
+set_calcspec bad_kondon_spectrum_interall 1
+cat > bad_kondon_spectrum_interall/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 1
+========================
+========NBodyInterAll===
+========================
+1 0 0 0 1 0.1000000000000000 0.0200000000000000
+EOF
+cat > bad_kondon_spectrum_interall/nbodyg.def <<EOF
+========================
+NNBodyG 0
+========================
+========NBodyG==========
+========================
+EOF
+
+make_kondo_base bad_kondon_spectrum_nbodyg Kondo ncond
+set_calcspec bad_kondon_spectrum_nbodyg 1
+cat > bad_kondon_spectrum_nbodyg/nbodyinterall.def <<EOF
+========================
+NNBodyInterAll 0
+========================
+========NBodyInterAll===
+========================
+EOF
+cat > bad_kondon_spectrum_nbodyg/nbodyg.def <<EOF
+========================
+NNBodyG 1
+========================
+========NBodyG==========
+========================
+1 0 0 0 1
 EOF
 
 cd accept_tj
@@ -341,11 +393,16 @@ cd accept_kondogc
 run_hphi log_accept.txt "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_kondogc
+cd accept_kondon
+run_hphi log_accept.txt "${hphi}" -e namelist.def
+cd ..
+check_nbodyg_output accept_kondon
 
 expect_fail bad_tj_particle "does not conserve particle numbers"
 expect_fail bad_kondo_nbodyg_particle "does not conserve particle numbers"
 expect_fail bad_tjn "NBodyInterAll does not support tJNConserved"
-expect_fail bad_kondon "NBodyInterAll does not support tJNConserved or KondoNConserved"
 expect_fail bad_kondo_local_cross "Kondo local-spin NBodyInterAll factors require site_out == site_in"
+expect_fail bad_kondon_spectrum_interall "NBodyInterAll does not support KondoNConserved with CalcSpec"
+expect_fail bad_kondon_spectrum_nbodyg "NBodyG does not support KondoNConserved with CalcSpec"
 
-echo "tJ/Kondo NBody validation accepts supported sectors and rejects unsupported N-conserved/local-spin cases."
+echo "tJ/Kondo NBody validation accepts supported sectors and rejects unsupported tJ N-conserved/local-spin/CalcSpec cases."

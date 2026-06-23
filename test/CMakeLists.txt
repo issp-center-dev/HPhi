@@ -464,6 +464,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_kondo_nconserved exact:4)
     add_hphi_mpi_test_with_srcdir(mpi_nbody_interall_spinless exact:4)
     add_hphi_mpi_test_with_srcdir(mpi_nbodyg_spinless exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
@@ -514,6 +515,9 @@ if(MPI_FOUND)
         mpi_consistency_kondo mpi_consistency_kondo_nconserved_cg
         mpi_consistency_te_kondo
         PROPERTIES LABELS "mpi;consistency;kondo")
+    set_tests_properties(
+        mpi_nbody_interall_kondo_nconserved
+        PROPERTIES LABELS "mpi;consistency;kondo;nbody")
     set_tests_properties(
         mpi_consistency_spinless mpi_consistency_spinless_GC
         PROPERTIES LABELS "mpi;consistency;spinless")
