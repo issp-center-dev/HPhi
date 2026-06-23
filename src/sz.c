@@ -424,7 +424,6 @@ int sz(
                       for(ib=0;ib<X->Check.sdim;ib++){
                           icnt+=omp_sz_KondoNConserved(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
-                      BarrierMPI();
                       //printf("AAA icnt=%ld\n",icnt);
                       break;
                   case Kondo:
