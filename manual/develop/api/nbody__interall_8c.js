@@ -57,7 +57,6 @@ var nbody__interall_8c =
     [ "nbody_is_supported_model", "nbody__interall_8c.html#ab420b058079187ea49bb5e3de4e1ac5d", null ],
     [ "nbody_is_supported_spin_model", "nbody__interall_8c.html#a7b294ffb9af3b5c960cbca32cefe3731", null ],
     [ "nbody_is_tj_model", "nbody__interall_8c.html#a10864ae7391037eaa8cd447192318453", null ],
-    [ "nbody_is_unsupported_nconserved_model", "nbody__interall_8c.html#a196cd8ddbf992310e4f13cbc708b47e5", null ],
     [ "nbody_rank_flip_mask", "nbody__interall_8c.html#ab8c04f62f582fd9e340fb24f80aa50e6", null ],
     [ "nbody_requires_spinful_conservation", "nbody__interall_8c.html#aad698783d3524e1c1c249dac0f276062", null ],
     [ "nbody_uses_hubbard_list_path", "nbody__interall_8c.html#a2a508d967311d0833de2a3eb07af745c", null ],

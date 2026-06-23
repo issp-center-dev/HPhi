@@ -46,7 +46,6 @@ var nbody__correlation_8c =
     [ "nbodyg_is_spinless_model", "nbody__correlation_8c.html#ae2557392e5763994de98290590564188", null ],
     [ "nbodyg_is_supported_model", "nbody__correlation_8c.html#a085477f16b01e881ea2a5f9bba5e4c09", null ],
     [ "nbodyg_is_tj_model", "nbody__correlation_8c.html#a69e1f96014a2cdc0104b40880f287de9", null ],
-    [ "nbodyg_is_unsupported_nconserved_model", "nbody__correlation_8c.html#a2d793b742212f8845e031ea12af83535", null ],
     [ "nbodyg_rank_flip_mask", "nbody__correlation_8c.html#ae7635417d235cd286d377b67cf15fe54", null ],
     [ "nbodyg_requires_spinful_conservation", "nbody__correlation_8c.html#ad7ec9680fabf3734e75ee62c900ebc95", null ],
     [ "nbodyg_spinless_partner_rank", "nbody__correlation_8c.html#a590e2ab0099df0329de6821ea5c71390", null ],
