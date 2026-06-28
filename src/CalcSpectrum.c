@@ -333,22 +333,28 @@ static int ReadEigenEnergy(
   return FALSE;
 }/*int ReadEigenEnergy*/
 
-/// \brief Write the spectrum for eigenstate idx to "<CDataFileHead>_DynamicalGreen_<idx>.dat".
+/// \brief Write the spectrum for eigenstate idx (and operator op) to a per-state output file.
 ///
-/// Same format as OutputSpectrum, but with the per-eigenstate "_<idx>" suffix consumed by the
-/// DCore finite-T reader (CalcSpectrumCore._read_spectrum).
+/// With a single operator set (useOp == FALSE) the name is the Stage-1a
+/// "<CDataFileHead>_DynamicalGreen_<idx>.dat"; with multiple operator sets (useOp == TRUE)
+/// it is "<CDataFileHead>_DynamicalGreen_<idx>_<op>.dat". Same column format as OutputSpectrum;
+/// consumed by the DCore finite-T reader (CalcSpectrumCore._read_spectrum).
 static int OutputSpectrumIdx(
   struct EDMainCalStruct *X,
   int idx,
+  int op,
+  int useOp,
   int Nomega,
   double complex *dcSpectrum,
   double complex *dcomega)
 {
   FILE *fp;
   char sdt[D_FileNameMax];
-  int i;
+  int i, nfn;
 
-  if (snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx) >= (int)sizeof(sdt)) {
+  nfn = useOp ? snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d_%d.dat", X->Bind.Def.CDataFileHead, idx, op)
+              : snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx);
+  if (nfn >= (int)sizeof(sdt)) {
     fprintf(stderr, "Error: DynamicalGreen file name is too long for the file-name buffer.\n");
     return FALSE;
   }
@@ -363,6 +369,197 @@ static int OutputSpectrumIdx(
   fclose(fp);
   return TRUE;
 }/*int OutputSpectrumIdx*/
+
+/// \brief Read one single-excitation operator set from an HPhi single_ex-format def file.
+///
+/// File layout (as written by the DCore driver): 5 header lines, the 2nd being "NSingle <N>",
+/// followed by N lines "<site> <spin> <type> <re> <im>". Operators in one file are summed into
+/// one excited state (e.g. c_i + i c_j). Allocates *pOps ([N][3]) and *pPara ([N]); the caller
+/// frees them with free_i_2d_allocate / free_cd_1d_allocate. Used to load the operator sets
+/// op=1.. for the multi-operator finite-T loop (set 0 comes from the namelist SingleExcitation).
+///
+/// \retval TRUE  success.
+/// \retval FALSE file missing or malformed.
+static int ReadSingleExcitationSet(
+  const char *fname,
+  unsigned int maxN,
+  unsigned int *pN,
+  int ***pOps,
+  double complex **pPara)
+{
+  FILE *fp;
+  char ctmp[256], kw[256];
+  unsigned int N = 0, k;
+  int site, spin, type;
+  double re, im;
+  int **ops;
+  double complex *para;
+
+  fp = fopenMPI(fname, "r");
+  if (fp == NULL) {
+    fprintf(stderr, "Error: single-excitation file (%s) does not exist.\n", fname);
+    return FALSE;
+  }
+  /* Validate the full 5-line header. fgetsMPI returns NULL at EOF while leaving the
+     previous buffer contents in place, so an unchecked read on a truncated file would
+     silently reuse the prior line; require every header line to be present. */
+  if (fgetsMPI(ctmp, 256, fp) == NULL) {                       /* line 1: separator */
+    fprintf(stderr, "Error: %s is truncated (missing header).\n", fname);
+    fclose(fp); return FALSE;
+  }
+  if (fgetsMPI(ctmp, 256, fp) == NULL ||                       /* line 2: "NSingle <N>" */
+      sscanf(ctmp, "%255s %u", kw, &N) != 2 || strcmp(kw, "NSingle") != 0) {
+    fprintf(stderr, "Error: malformed \"NSingle <N>\" header in %s.\n", fname);
+    fclose(fp); return FALSE;
+  }
+  if (fgetsMPI(ctmp, 256, fp) == NULL ||                       /* lines 3-5: separators */
+      fgetsMPI(ctmp, 256, fp) == NULL ||
+      fgetsMPI(ctmp, 256, fp) == NULL) {
+    fprintf(stderr, "Error: %s is truncated (incomplete header).\n", fname);
+    fclose(fp); return FALSE;
+  }
+  if (N == 0) { fclose(fp); *pN = 0; *pOps = NULL; *pPara = NULL; return TRUE; }
+  /* Bound NSingle (read from an external file) before allocating: a single-excitation set
+     cannot have more than 2*Nsite distinct (site, spin) operators, so a larger value is a
+     corrupt file. The codebase allocators abort on a failed malloc rather than returning a
+     checkable status, so an absurd NSingle must be rejected here, not after allocation. */
+  if (maxN > 0 && N > maxN) {
+    fprintf(stderr, "Error: NSingle=%u in %s exceeds the maximum of %u operators.\n", N, fname, maxN);
+    fclose(fp); return FALSE;
+  }
+
+  ops = i_2d_allocate(N, 3);
+  para = cd_1d_allocate(N);
+  for (k = 0; k < N; k++) {
+    if (fgetsMPI(ctmp, 256, fp) == NULL ||
+        sscanf(ctmp, "%d %d %d %lf %lf", &site, &spin, &type, &re, &im) != 5) {
+      fprintf(stderr, "Error: malformed operator line %u in %s.\n", k, fname);
+      fclose(fp);
+      free_i_2d_allocate(ops);
+      free_cd_1d_allocate(para);
+      return FALSE;
+    }
+    ops[k][0] = site; ops[k][1] = spin; ops[k][2] = type;
+    para[k] = re + I * im;
+  }
+  fclose(fp);
+  *pN = N; *pOps = ops; *pPara = para;
+  return TRUE;
+}/*int ReadSingleExcitationSet*/
+
+/// \brief Finite-temperature spectrum loop: eigenstates idx-outer, operator sets op-inner.
+///
+/// For each of the iSpectrumLoopExct eigenstates it reads the eigenvector ONCE and reuses it
+/// across all iSpectrumNumOp operator sets (op-inner), so the eigenvector reads drop from
+/// exct*nop to exct. Operator set 0 is the namelist SingleExcitation (already in X->Def);
+/// sets 1.. are loaded from single_ex_<op>.def and must map to set 0's Hilbert sector (the
+/// shared sector for which MakeExcitedList already built the excited lists). The per-state
+/// spectral shift is E_idx (real) plus any configured imaginary broadening. Writes one
+/// DynamicalGreen_<idx>[_<op>].dat per (eigenstate, operator). X->Def's single-excitation
+/// pointers are always restored before return, and the operator sets loaded here (1..) are
+/// freed; the caller still owns v1Org/dcSpectrum/dcomega and the excitation lists.
+///
+/// \retval TRUE  success.
+/// \retval FALSE allocation, file-read, eigenstate-count, or sector-mismatch failure.
+static int RunMultiOpFiniteTLoop(
+  struct EDMainCalStruct *X,
+  double complex *v1Org,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega)
+{
+  int idx, op, useOp, iret = TRUE;
+  int nloop = X->Bind.Def.iSpectrumLoopExct;
+  int nop = X->Bind.Def.iSpectrumNumOp;
+  /* Set 0 aliases the X->Def originals (owned by readdef); only sets 1.. are freed here. */
+  unsigned int op0_N = X->Bind.Def.NSingleExcitationOperator;
+  int **op0_ops = X->Bind.Def.SingleExcitationOperator;
+  double complex *op0_para = X->Bind.Def.ParaSingleExcitationOperator;
+  unsigned int *set_N;
+  int ***set_ops;
+  double complex **set_para;
+  /* Only the REAL part of the spectral shift is state-dependent (= E_idx). Preserve any
+     configured imaginary broadening in dcOmegaOrg so the loop matches the single-state path;
+     with the DCore driver this imaginary part is 0, so the two are identical. */
+  double dOmegaOrgIm = cimag(X->Bind.Def.dcOmegaOrg);
+  double Elast = 0.0;
+
+  if (nop < 1) nop = 1;
+  useOp = (nop > 1);
+
+  set_N    = (unsigned int *)    malloc(sizeof(unsigned int)     * nop);
+  set_ops  = (int ***)           malloc(sizeof(int **)           * nop);
+  set_para = (double complex **) malloc(sizeof(double complex *) * nop);
+  if (set_N == NULL || set_ops == NULL || set_para == NULL) {
+    fprintf(stderr, "Error: out of memory allocating operator-set tables (SpectrumNumOp=%d).\n", nop);
+    free(set_N); free(set_ops); free(set_para);
+    return FALSE;
+  }
+  set_N[0] = op0_N; set_ops[0] = op0_ops; set_para[0] = op0_para;
+  for (op = 1; op < nop; op++) { set_N[op] = 0; set_ops[op] = NULL; set_para[op] = NULL; }
+
+  /* Load operator sets 1.. and require every set to map to set 0's Hilbert sector. */
+  if (nop > 1) {
+    SectorShift sh0 = GetExcitationOperatorSetShift(
+      X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, op0_ops, op0_N);
+    if (sh0.valid == FALSE) {
+      fprintf(stderr, "Error: operator set 0 maps to an undefined Hilbert sector for SpectrumNumOp>1.\n");
+      iret = FALSE;
+    }
+    for (op = 1; iret == TRUE && op < nop; op++) {
+      char opfn[D_FileNameMax];
+      SectorShift sh;
+      /* A single-excitation set has at most 2*Nsite distinct (site, spin) operators. */
+      unsigned int maxN = 2u * (unsigned int) X->Bind.Def.Nsite;
+      snprintf(opfn, sizeof(opfn), "single_ex_%d.def", op);
+      if (ReadSingleExcitationSet(opfn, maxN, &set_N[op], &set_ops[op], &set_para[op]) != TRUE) {
+        iret = FALSE; break;
+      }
+      sh = GetExcitationOperatorSetShift(
+        X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, set_ops[op], set_N[op]);
+      if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
+          sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+        fprintf(stderr, "Error: operator set %d maps to a different Hilbert sector than set 0; "
+                        "all operators in one SpectrumNumOp run must share the sector.\n", op);
+        iret = FALSE; break;
+      }
+    }
+  }
+
+  /* Fail before writing any spectrum if SpectrumLoopExct exceeds the number of computed
+     eigenstates (the energy file has one entry per eigenstate, matching the eigenvector
+     files), so no partial DynamicalGreen output is left behind. */
+  if (iret == TRUE && ReadEigenEnergy(X, nloop - 1, &Elast) != TRUE) {
+    fprintf(stderr, "Error: SpectrumLoopExct=%d exceeds the number of computed eigenstates.\n", nloop);
+    iret = FALSE;
+  }
+
+  for (idx = 0; iret == TRUE && idx < nloop; idx++) {
+    double Eidx = 0.0;
+    if (ReadEigenVector(X, idx, TRUE, v1Org) != TRUE) { iret = FALSE; break; } /* read ONCE per eigenstate */
+    if (ReadEigenEnergy(X, idx, &Eidx) != TRUE)        { iret = FALSE; break; }
+    for (op = 0; op < nop; op++) {
+      /* Point X->Def at this operator set; CalcOneSpectrum builds the ket from X->Def. */
+      X->Bind.Def.NSingleExcitationOperator    = set_N[op];
+      X->Bind.Def.SingleExcitationOperator     = set_ops[op];
+      X->Bind.Def.ParaSingleExcitationOperator = set_para[op];
+      iret = CalcOneSpectrum(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega, dcSpectrum, dcomega);
+      if (iret != TRUE) break;
+      if (OutputSpectrumIdx(X, idx, op, useOp, Nomega, dcSpectrum, dcomega) != TRUE) { iret = FALSE; break; }
+    }
+  }
+
+  /* Restore set 0 so the caller's teardown frees the original arrays, and release sets 1.. */
+  X->Bind.Def.NSingleExcitationOperator    = op0_N;
+  X->Bind.Def.SingleExcitationOperator     = op0_ops;
+  X->Bind.Def.ParaSingleExcitationOperator = op0_para;
+  for (op = 1; op < nop; op++) {
+    if (set_ops[op]  != NULL) free_i_2d_allocate(set_ops[op]);
+    if (set_para[op] != NULL) free_cd_1d_allocate(set_para[op]);
+  }
+  free(set_N); free(set_ops); free(set_para);
+  return iret;
+}/*int RunMultiOpFiniteTLoop*/
 
 /**
  * @brief A main function to calculate spectrum.
@@ -437,6 +634,28 @@ int CalcSpectrum(
     fprintf(stderr, "Error: SpectrumLoopExct>0 requires CalcSpec=\"Normal\" "
                     "(restart/save modes would overwrite the per-state TMComponents/recalcvec files).\n");
     exitMPI(-1);
+  }
+  /* Multiple operator sets per run (SpectrumNumOp>1) only take effect inside the finite-T
+     eigenstate loop (op-inner reuse of the eigenvector). It swaps only the ket single
+     -excitation set per operator, so it is incompatible with the bra (direct off-diagonal)
+     path, which is not swapped. */
+  if (X->Bind.Def.iSpectrumNumOp > 1) {
+    if (X->Bind.Def.iSpectrumLoopExct == 0) {
+      fprintf(stderr, "Error: SpectrumNumOp>1 requires SpectrumLoopExct>0 "
+                      "(multiple operator sets are processed only inside the finite-T loop).\n");
+      exitMPI(-1);
+    }
+    /* The multi-operator loop seeds set 0 from SingleExcitation and loads single_ex_<op>.def;
+       it is single-excitation-specific (pair excitation is not handled). */
+    if (X->Bind.Def.NSingleExcitationOperator == 0 || X->Bind.Def.NPairExcitationOperator > 0) {
+      fprintf(stderr, "Error: SpectrumNumOp>1 is only supported with SingleExcitation operators "
+                      "(not PairExcitation).\n");
+      exitMPI(-1);
+    }
+    if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
+      fprintf(stderr, "Error: SpectrumNumOp>1 is not supported with bra excitation operators.\n");
+      exitMPI(-1);
+    }
   }
   /* Off-diagonal (bra) excitation input validation. All checks are bra-gated:
      with no *Bra input this block is skipped and the diagonal path is unchanged. */
@@ -515,40 +734,18 @@ int CalcSpectrum(
         //input eigen vector
       StartTimer(6101);
       if (X->Bind.Def.iSpectrumLoopExct > 0) {
-        /* Finite-temperature eigenstate loop. One HPhi launch covers all the
-           thermally-relevant eigenstates: for each idx we read eigenvec_{idx} ONCE,
-           build the excited state from it, solve with the per-state spectral shift
-           OmegaOrg = E_idx, and write DynamicalGreen_{idx}.dat. This replaces DCore's
-           per-(idx) relaunch, eliminating the per-state process-startup overhead. */
-        int idx;
-        int nloop = X->Bind.Def.iSpectrumLoopExct;
-        /* Only the REAL part of the spectral shift is state-dependent (= E_idx).
-           Preserve any configured imaginary broadening in dcOmegaOrg (OmegaIm /
-           complex OmegaOrg) so the loop path matches the single-state path; with
-           the DCore driver this imaginary part is 0, so the two are identical. */
-        double dOmegaOrgIm = cimag(X->Bind.Def.dcOmegaOrg);
-        double Elast = 0.0;
-        fprintf(stdoutMPI, "  Start: finite-T spectrum loop over %d eigenstate(s).\n", nloop);
+        /* Finite-temperature loop: one HPhi launch covers all the thermally-relevant
+           eigenstates (idx-outer) and, for each, all operator sets (op-inner), reading
+           every eigenvector once. Replaces DCore's per-(idx, operator) relaunch. */
+        int nop_print = X->Bind.Def.iSpectrumNumOp < 1 ? 1 : X->Bind.Def.iSpectrumNumOp;
+        fprintf(stdoutMPI, "  Start: finite-T spectrum loop over %d eigenstate(s) x %d operator(s).\n",
+                X->Bind.Def.iSpectrumLoopExct, nop_print);
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
         StopTimer(6100);
-        /* Fail before writing any spectrum if SpectrumLoopExct exceeds the number of
-           computed eigenstates (the energy file has one entry per eigenstate, matching
-           the eigenvector files), so no partial DynamicalGreen_{idx}.dat is left behind. */
-        if (ReadEigenEnergy(X, nloop - 1, &Elast) != TRUE) {
-          fprintf(stderr, "Error: SpectrumLoopExct=%d exceeds the number of computed eigenstates.\n", nloop);
-          iret = FALSE;
-        }
-        for (idx = 0; iret == TRUE && idx < nloop; idx++) {
-          double Eidx = 0.0;
-          if (ReadEigenVector(X, idx, TRUE, v1Org) != TRUE) { iret = FALSE; break; }
-          if (ReadEigenEnergy(X, idx, &Eidx) != TRUE)        { iret = FALSE; break; }
-          iret = CalcOneSpectrum(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega, dcSpectrum, dcomega);
-          if (iret != TRUE) break;
-          if (OutputSpectrumIdx(X, idx, Nomega, dcSpectrum, dcomega) != TRUE) { iret = FALSE; break; }
-        }
+        iret = RunMultiOpFiniteTLoop(X, v1Org, Nomega, dcSpectrum, dcomega);
         StopTimer(6101);
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
-        bAlreadyOutput = TRUE; /* the loop wrote one file per eigenstate; skip the single output below */
+        bAlreadyOutput = TRUE; /* the loop wrote one file per (eigenstate, operator); skip the single output below */
       } else {
         fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");

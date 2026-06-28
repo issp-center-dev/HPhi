@@ -359,6 +359,27 @@ Calculating dynamical Green’s functions
    is incompatible with ``OutputExVec=1`` (the per-state excited vectors
    would overwrite one another).
 
+*  ``SpectrumNumOp``
+
+   **Type :** Int (default value: 1)
+
+   **Description :** The number of single-excitation operator sets evaluated
+   in one ``SpectrumLoopExct`` run. When this value is :math:`M>1`, each
+   eigenvector is read only once per eigenstate and the spectra for all
+   :math:`M` operator sets are computed from it (operators looped inside the
+   eigenstate loop), which avoids re-reading the eigenvectors for every
+   operator. Operator set ``0`` is taken from the ``SingleExcitation`` file in
+   the namelist; sets ``1`` ... :math:`(M-1)` are read from
+   ``single_ex_1.def`` ... ``single_ex_``\ :math:`(M-1)`\ ``.def`` in the run
+   directory. All sets must map to the **same** Hilbert sector (same change of
+   electron number / spin), which is checked at run time. The output for set
+   :math:`m` and eigenstate :math:`n` is written to
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``.dat``. This option
+   is only effective together with ``SpectrumLoopExct``\ :math:`>0`, requires
+   ``SingleExcitation`` (not ``PairExcitation``), and is incompatible with the
+   bra (off-diagonal) excitation operators. The default :math:`1` keeps the
+   single-operator behavior.
+
 Real time evolution method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -281,6 +281,13 @@ struct DefineList {
                           spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate.
                           The value is the count (= exct_cut), so it can be <= k_exct. Default 0
                           keeps the legacy single-eigenvector behavior.*/
+  int iSpectrumNumOp;/**<@brief Number of single-excitation operator sets processed in one run.
+                       When > 1 (together with iSpectrumLoopExct > 0), the finite-T loop reads each
+                       eigenvector ONCE and, for that eigenstate, builds and solves the spectrum for
+                       every operator set op=0..iSpectrumNumOp-1 (set 0 from the namelist
+                       SingleExcitation, sets 1.. from single_ex_<op>.def), writing
+                       DynamicalGreen_<idx>_<op>.dat. All sets must map to the same Hilbert sector.
+                       Default 0/1 keeps the single-operator behavior.*/
   int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
   int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 
