@@ -498,30 +498,33 @@ static int RunMultiOpFiniteTLoop(
   set_N[0] = op0_N; set_ops[0] = op0_ops; set_para[0] = op0_para;
   for (op = 1; op < nop; op++) { set_N[op] = 0; set_ops[op] = NULL; set_para[op] = NULL; }
 
-  /* Load operator sets 1.. and require every set to map to set 0's Hilbert sector. */
+  /* Load operator sets 1..; for canonical models require every set to map to set 0's
+     Hilbert sector. When sh0 is not valid the model has no particle-number sector for
+     this excitation (grand canonical): every single-excitation operator stays in the
+     same Hilbert space, so there is no cross-operator sector constraint to enforce and
+     the sets are simply loaded. For canonical models sh0 is well defined and
+     MakeExcitedList already built the excited lists for that single shared sector. */
   if (nop > 1) {
     SectorShift sh0 = GetExcitationOperatorSetShift(
       X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, op0_ops, op0_N);
-    if (sh0.valid == FALSE) {
-      fprintf(stderr, "Error: operator set 0 maps to an undefined Hilbert sector for SpectrumNumOp>1.\n");
-      iret = FALSE;
-    }
+    int enforceSector = (sh0.valid == TRUE);
     for (op = 1; iret == TRUE && op < nop; op++) {
       char opfn[D_FileNameMax];
-      SectorShift sh;
       /* A single-excitation set has at most 2*Nsite distinct (site, spin) operators. */
       unsigned int maxN = 2u * (unsigned int) X->Bind.Def.Nsite;
       snprintf(opfn, sizeof(opfn), "single_ex_%d.def", op);
       if (ReadSingleExcitationSet(opfn, maxN, &set_N[op], &set_ops[op], &set_para[op]) != TRUE) {
         iret = FALSE; break;
       }
-      sh = GetExcitationOperatorSetShift(
-        X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, set_ops[op], set_N[op]);
-      if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
-          sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
-        fprintf(stderr, "Error: operator set %d maps to a different Hilbert sector than set 0; "
-                        "all operators in one SpectrumNumOp run must share the sector.\n", op);
-        iret = FALSE; break;
+      if (enforceSector) {
+        SectorShift sh = GetExcitationOperatorSetShift(
+          X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, set_ops[op], set_N[op]);
+        if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
+            sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+          fprintf(stderr, "Error: operator set %d maps to a different Hilbert sector than set 0; "
+                          "all operators in one SpectrumNumOp run must share the sector.\n", op);
+          iret = FALSE; break;
+        }
       }
     }
   }
