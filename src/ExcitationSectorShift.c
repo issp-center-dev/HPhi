@@ -54,11 +54,16 @@ SectorShift GetExcitationSectorShift(int iCalcModel, int isGeneralSpin, int isPa
     case SpinGC: /* single excitation N/A for spin (CalcSpectrum.c:563-565, SingleEx.c:54) */
       s.valid = FALSE;
       break;
+    case HubbardGC:
+      /* Grand canonical: the full Fock space is one Hilbert space, so a single c/c^dag
+         excitation stays in it -- no sector shift (the doc's "single: HubbardGC -> none").
+         s keeps the default {0,0,0,0, valid=TRUE}. This lets the bra/ket off-diagonal path
+         (SpectrumNumBra) project ket and bra -- of either spin -- in the shared GC space. */
+      break;
     case Kondo:
     case KondoGC:
     case tJ:
     case tJGC:
-    case HubbardGC:
     case HubbardNConserved:
     case tJNConserved:
     case KondoNConserved:
