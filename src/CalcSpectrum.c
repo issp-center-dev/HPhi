@@ -73,6 +73,281 @@ int OutputSpectrum(
   return TRUE;
 }/*int OutputSpectrum*/
 
+/// \brief Compute ONE dynamical spectrum from a single input eigenvector
+///        |v1Org> at spectral shift OmegaOrg (= E_n).
+///
+/// Reentrant building block for the finite-temperature loop. It rebuilds the
+/// frequency grid from OmegaOrg every call (so both the resolvent shift
+/// (z-(H-E_n))^{-1} and the output frequency axis stay consistent with the
+/// per-launch path), builds the ket (and optional bra) excited state from
+/// v1Org, dispatches the solver, and returns the spectrum in dcSpectrum.
+/// It does NOT write any output file; the caller is responsible for I/O and
+/// for the excitation-list / sector setup (MakeExcitedList) and its teardown.
+///
+/// \param X          [in,out] Calculation struct. dcOmegaOrg is set to OmegaOrg.
+/// \param v1Org      [in]  Input eigenvector in the original (pre-excitation) sector.
+/// \param OmegaOrg   [in]  Spectral shift E_n for this eigenstate.
+/// \param Nomega     [in]  Number of frequencies.
+/// \param dcSpectrum [out] Spectrum array (Nomega).
+/// \param dcomega    [out] Frequency grid (Nomega), rebuilt here from OmegaOrg.
+/// \retval TRUE  success (including the zero-norm case, which returns a zero spectrum).
+/// \retval FALSE solver failure.
+static int CalcOneSpectrum(
+  struct EDMainCalStruct *X,
+  double complex *v1Org,
+  double complex OmegaOrg,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega)
+{
+  unsigned long int i;
+  double dnorm = 0.0;
+  double complex *v0_Bra = NULL;
+  double complex OmegaMax, OmegaMin;
+  char sdt[D_FileNameMax];
+  FILE *fp;
+  int iret = TRUE;
+
+  /* Rebuild the frequency grid from THIS eigenstate's shift so the resolvent
+     shift and the written frequency axis match the per-launch behavior. */
+  X->Bind.Def.dcOmegaOrg = OmegaOrg;
+  OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+  OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
+  for (i = 0; i < Nomega; i++) {
+    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+  }
+  fprintf(stdoutMPI, "\nFrequency range:\n");
+  fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
+  fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
+  fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
+
+  for (i = 0; i <= X->Bind.Check.idim_max; i++) v0[i] = 0;
+
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
+  fprintf(stdoutMPI, "  Start: Calculating an excited vector.\n");
+  StartTimer(6102);
+  {
+    ExcitationOperatorSet ketSet = {
+      X->Bind.Def.NSingleExcitationOperator, X->Bind.Def.SingleExcitationOperator,
+      X->Bind.Def.ParaSingleExcitationOperator, X->Bind.Def.NPairExcitationOperator,
+      X->Bind.Def.PairExcitationOperator, X->Bind.Def.ParaPairExcitationOperator};
+    if (GetExcitedState(&(X->Bind), &ketSet, v0, v1Org) != TRUE) {
+      fprintf(stderr, "Error: failed to build the ket excited state A|phi>.\n");
+      exitMPI(-1);
+    }
+  }
+  StopTimer(6102);
+
+  dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
+  if (fabs(dnorm) < pow(10.0, -15)) {
+    fprintf(stderr, "Warning: Norm of an excited vector becomes 0.\n");
+    for (i = 0; i < Nomega; i++) dcSpectrum[i] = 0;
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+    return TRUE;
+  }
+#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(dnorm, X)
+  for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+    v1[i] = v0[i] / dnorm;
+  }
+
+  /* Build the bra excited state B|phi> (un-normalized) for off-diagonal spectrum. */
+  if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
+    ExcitationOperatorSet braSet = {
+      X->Bind.Def.NSingleExcitationOperatorBra, X->Bind.Def.SingleExcitationOperatorBra,
+      X->Bind.Def.ParaSingleExcitationOperatorBra, X->Bind.Def.NPairExcitationOperatorBra,
+      X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.ParaPairExcitationOperatorBra};
+    v0_Bra = cd_1d_allocate(X->Bind.Check.idim_max + 1);
+    for (i = 0; i <= X->Bind.Check.idim_max; i++) v0_Bra[i] = 0;
+    if (GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org) != TRUE) {
+      fprintf(stderr, "Error: failed to build the bra excited state B|phi>.\n");
+      exitMPI(-1);
+    }
+    if (NormMPI_dc(X->Bind.Check.idim_max, v0_Bra) < pow(10.0, -15)) {
+      fprintf(stderr, "Warning: Norm of the bra excited vector B|phi> is 0; the off-diagonal spectrum will be zero.\n");
+    }
+  }
+
+  if (X->Bind.Def.iOutputExVec == 1) {
+    sprintf(sdt, cFileNameOutputExcitedVec, X->Bind.Def.CDataFileHead, myrank);
+    if (childfopenALL(sdt, "w", &fp) != 0) {
+      if (v0_Bra != NULL) free_cd_1d_allocate(v0_Bra);
+      return -1;
+    }
+    fprintf(fp, "%ld\n", X->Bind.Check.idim_max);
+    for (i = 1; i <= X->Bind.Check.idim_max; i++) {
+      fprintf(fp, "%.10lf, %.10lf\n", creal(v0[i]), cimag(v0[i]));
+    }
+    fclose(fp);
+  }
+  fprintf(stdoutMPI, "  End:   Calculating an excited vector.\n\n");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+
+  diagonalcalc(&(X->Bind));
+
+  fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
+  StartTimer(6200);
+  switch (X->Bind.Def.iCalcType) {
+    case Lanczos:
+      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+      break;
+    case CG:
+      iret = CalcSpectrumByBiCG(X, v0, (v0_Bra != NULL) ? v0_Bra : v0, v1, vg, Nomega, dcSpectrum, dcomega);
+      break;
+    case TPQCalc:
+      fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
+      iret = FALSE;
+      break;
+    case FullDiag:
+      iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);
+      break;
+    default:
+      break;
+  }
+  StopTimer(6200);
+  if (v0_Bra != NULL) free_cd_1d_allocate(v0_Bra);
+  /* c_CalcSpectrumEnd is logged once by the caller after the spectrum is written. */
+  return iret;
+}/*int CalcOneSpectrum*/
+
+/// \brief Read one MPI-distributed eigenvector into v1Org (original, pre-excitation sector).
+///
+/// Reads the SpectrumVec file for the local MPI rank. When useIdxSuffix is TRUE the file name
+/// is "<SpectrumVec>_<idx>_rank_<myrank>.dat" (used by the finite-T eigenstate loop, where
+/// SpectrumVec is the common base, e.g. ".../zvo_eigenvec"); when FALSE it is the legacy
+/// "<SpectrumVec>_rank_<myrank>.dat". GetFileNameByKW returns a pointer into a shared global
+/// buffer, so we strcpy it to a local before appending (the loop calls this repeatedly).
+///
+/// \param X            [in,out] Calculation struct (Large.itr is set from the stored step).
+/// \param idx          [in] Eigenstate index (used only when useIdxSuffix is TRUE).
+/// \param useIdxSuffix [in] Whether to insert the "_<idx>" eigenstate suffix.
+/// \param v1Org        [out] Eigenvector (length idim_maxOrg+1).
+/// \retval TRUE  success.
+/// \retval FALSE file missing or dimension mismatch.
+static int ReadEigenVector(
+  struct EDMainCalStruct *X,
+  int idx,
+  int useIdxSuffix,
+  double complex *v1Org)
+{
+  char sdt[D_FileNameMax], base[D_FileNameMax];
+  char *kw;
+  FILE *fp;
+  unsigned long int i_max = 0;
+  int i_stp;
+  size_t byte_size;
+
+  GetFileNameByKW(KWSpectrumVec, &kw);
+  strcpy(base, kw); /* local copy: do NOT mutate the shared global file-name buffer */
+  if (useIdxSuffix) sprintf(sdt, "%s_%d_rank_%d.dat", base, idx, myrank);
+  else              sprintf(sdt, "%s_rank_%d.dat", base, myrank);
+
+  childfopenALL(sdt, "rb", &fp);
+  if (fp == NULL) {
+    fprintf(stderr, "Error: A file of Input vector (%s) does not exist.\n", sdt);
+    return FALSE;
+  }
+  /* Validate every fread count. v1Org is reused across eigenstates in loop mode, so a
+     truncated file must hard-fail here; otherwise the buffer would keep the previous
+     state's tail and silently produce a mixed-state spectrum. */
+  if (fread(&i_stp, sizeof(i_stp), 1, fp) != 1) {
+    fprintf(stderr, "Error: failed to read the step header from Input vector (%s).\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  X->Bind.Large.itr = i_stp; /* For TPQ */
+  if (fread(&i_max, sizeof(i_max), 1, fp) != 1) {
+    fprintf(stderr, "Error: failed to read the dimension header from Input vector (%s).\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  if (i_max != X->Bind.Check.idim_maxOrg) {
+    fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
+    fprintf(stderr, "Error: A file of Input vector (%s) is incorrect.\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  byte_size = fread(v1Org, sizeof(complex double), i_max + 1, fp);
+  fclose(fp);
+  if (byte_size != (size_t)(i_max + 1)) {
+    fprintf(stderr, "Error: truncated Input vector (%s): read %zu of %lu elements.\n",
+            sdt, byte_size, (unsigned long)(i_max + 1));
+    return FALSE;
+  }
+  return TRUE;
+}/*int ReadEigenVector*/
+
+/// \brief Read the idx-th eigen-energy E_idx from "<CDataFileHead>_energy.dat".
+///
+/// The energy file holds one "Energy <value>" line per computed eigenstate, in eigenstate
+/// order; this returns the (idx)-th of them. Used as the per-state spectral shift OmegaOrg
+/// in the finite-T loop (the same value DCore would otherwise pass as OmegaOrg per launch).
+///
+/// \param X   [in] Calculation struct (for CDataFileHead).
+/// \param idx [in] Eigenstate index.
+/// \param Ene [out] E_idx.
+/// \retval TRUE  success.
+/// \retval FALSE file missing or index not found.
+static int ReadEigenEnergy(
+  struct EDMainCalStruct *X,
+  int idx,
+  double *Ene)
+{
+  FILE *fp;
+  char sdt[D_FileNameMax], ctmp[256], key[256];
+  int count = 0;
+  double val;
+
+  sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
+  childfopenMPI(sdt, "r", &fp);
+  if (fp == NULL) {
+    fprintf(stdoutMPI, "Error: %s does not exist.\n", sdt);
+    return FALSE;
+  }
+  while (fgetsMPI(ctmp, 256, fp) != NULL) {
+    if (sscanf(ctmp, "%255s %lf", key, &val) == 2 && strcmp(key, "Energy") == 0) {
+      if (count == idx) {
+        *Ene = val;
+        fclose(fp);
+        return TRUE;
+      }
+      count++;
+    }
+  }
+  fclose(fp);
+  fprintf(stdoutMPI, "Error: eigen-energy index %d not found in %s (found %d energies).\n",
+          idx, sdt, count);
+  return FALSE;
+}/*int ReadEigenEnergy*/
+
+/// \brief Write the spectrum for eigenstate idx to "<CDataFileHead>_DynamicalGreen_<idx>.dat".
+///
+/// Same format as OutputSpectrum, but with the per-eigenstate "_<idx>" suffix consumed by the
+/// DCore finite-T reader (CalcSpectrumCore._read_spectrum).
+static int OutputSpectrumIdx(
+  struct EDMainCalStruct *X,
+  int idx,
+  int Nomega,
+  double complex *dcSpectrum,
+  double complex *dcomega)
+{
+  FILE *fp;
+  char sdt[D_FileNameMax];
+  int i;
+
+  sprintf(sdt, "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx);
+  if (childfopenMPI(sdt, "w", &fp) != 0) {
+    return FALSE;
+  }
+  for (i = 0; i < Nomega; i++) {
+    fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
+      creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
+      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+  }
+  fclose(fp);
+  return TRUE;
+}/*int OutputSpectrumIdx*/
+
 /**
  * @brief A main function to calculate spectrum.
  *
@@ -91,22 +366,17 @@ int OutputSpectrum(
 int CalcSpectrum(
                  struct EDMainCalStruct *X
                  ) {
-    char sdt[D_FileNameMax];
-    char *defname;
     unsigned long int i;
-    unsigned long int i_max = 0;
-    int i_stp;
     int iFlagListModified = FALSE;
-    FILE *fp;
     double dnorm = 0.0;
-    double complex *v0_Bra = NULL; //!< bra excited state B|phi> for off-diagonal spectrum (NULL = diagonal)
+    int iret = TRUE;
+    int bAlreadyOutput = FALSE; /* TRUE once the eigenstate loop has written its own per-idx output */
 
     //ToDo: Nomega should be given as a parameter
     int Nomega;
     double complex OmegaMax, OmegaMin;
     double complex *dcSpectrum;
     double complex *dcomega;
-    size_t byte_size;
 
     //set omega
     if (SetOmega(&(X->Bind.Def)) != TRUE) {
@@ -128,14 +398,28 @@ int CalcSpectrum(
     for (i = 0; i < Nomega; i++) {
         dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
     }
-
-  fprintf(stdoutMPI, "\nFrequency range:\n");
-  fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
-  fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
-  fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
+    /* The frequency-range banner is printed inside CalcOneSpectrum, where the
+       per-eigenstate OmegaOrg (and hence the actual grid) is known. */
 
   if (X->Bind.Def.NSingleExcitationOperator == 0 && X->Bind.Def.NPairExcitationOperator == 0) {
     fprintf(stderr, "Error: Any excitation operators are not defined.\n");
+    exitMPI(-1);
+  }
+  /* The finite-T loop reuses one excited-vector buffer per eigenstate, so the
+     single OutputExVec filename would be overwritten each iteration (only the last
+     state would survive). Reject the combination until a per-state convention exists. */
+  if (X->Bind.Def.iSpectrumLoopExct > 0 && X->Bind.Def.iOutputExVec == 1) {
+    fprintf(stderr, "Error: OutputExVec=1 is not supported together with SpectrumLoopExct>0 "
+                    "(the per-state excited vectors would overwrite each other).\n");
+    exitMPI(-1);
+  }
+  /* The finite-T loop solves each eigenstate fresh (CalcSpec=Normal). The restart/save
+     CalcSpec modes write single-state artifacts (TMComponents / recalcvec) to one fixed
+     name, which the per-idx loop would overwrite, leaving only the last state's data.
+     Require Normal until per-eigenstate restart filenames exist. */
+  if (X->Bind.Def.iSpectrumLoopExct > 0 && X->Bind.Def.iFlgCalcSpec != RECALC_NOT) {
+    fprintf(stderr, "Error: SpectrumLoopExct>0 requires CalcSpec=\"Normal\" "
+                    "(restart/save modes would overwrite the per-state TMComponents/recalcvec files).\n");
     exitMPI(-1);
   }
   /* Off-diagonal (bra) excitation input validation. All checks are bra-gated:
@@ -214,180 +498,111 @@ int CalcSpectrum(
        (X->Bind.Def.iFlgCalcSpec == RECALC_INOUT_TMComponents_VEC && X->Bind.Def.iCalcType == CG)) {
         //input eigen vector
       StartTimer(6101);
+      if (X->Bind.Def.iSpectrumLoopExct > 0) {
+        /* Finite-temperature eigenstate loop. One HPhi launch covers all the
+           thermally-relevant eigenstates: for each idx we read eigenvec_{idx} ONCE,
+           build the excited state from it, solve with the per-state spectral shift
+           OmegaOrg = E_idx, and write DynamicalGreen_{idx}.dat. This replaces DCore's
+           per-(idx) relaunch, eliminating the per-state process-startup overhead. */
+        int idx;
+        int nloop = X->Bind.Def.iSpectrumLoopExct;
+        /* Only the REAL part of the spectral shift is state-dependent (= E_idx).
+           Preserve any configured imaginary broadening in dcOmegaOrg (OmegaIm /
+           complex OmegaOrg) so the loop path matches the single-state path; with
+           the DCore driver this imaginary part is 0, so the two are identical. */
+        double dOmegaOrgIm = cimag(X->Bind.Def.dcOmegaOrg);
+        double Elast = 0.0;
+        fprintf(stdoutMPI, "  Start: finite-T spectrum loop over %d eigenstate(s).\n", nloop);
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
+        StopTimer(6100);
+        /* Fail before writing any spectrum if SpectrumLoopExct exceeds the number of
+           computed eigenstates (the energy file has one entry per eigenstate, matching
+           the eigenvector files), so no partial DynamicalGreen_{idx}.dat is left behind. */
+        if (ReadEigenEnergy(X, nloop - 1, &Elast) != TRUE) {
+          fprintf(stderr, "Error: SpectrumLoopExct=%d exceeds the number of computed eigenstates.\n", nloop);
+          iret = FALSE;
+        }
+        for (idx = 0; iret == TRUE && idx < nloop; idx++) {
+          double Eidx = 0.0;
+          if (ReadEigenVector(X, idx, TRUE, v1Org) != TRUE) { iret = FALSE; break; }
+          if (ReadEigenEnergy(X, idx, &Eidx) != TRUE)        { iret = FALSE; break; }
+          iret = CalcOneSpectrum(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega, dcSpectrum, dcomega);
+          if (iret != TRUE) break;
+          if (OutputSpectrumIdx(X, idx, Nomega, dcSpectrum, dcomega) != TRUE) { iret = FALSE; break; }
+        }
+        StopTimer(6101);
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
+        bAlreadyOutput = TRUE; /* the loop wrote one file per eigenstate; skip the single output below */
+      } else {
         fprintf(stdoutMPI, "  Start: An Eigenvector is inputted in CalcSpectrum.\n");
         TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-        GetFileNameByKW(KWSpectrumVec, &defname);
-        strcat(defname, "_rank_%d.dat");
-//    sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, X->Bind.Def.k_exct - 1, myrank);
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Input vector does not exist.\n");
-      return -1;
-    }
-
-    byte_size = fread(&i_stp, sizeof(i_stp), 1, fp);
-    X->Bind.Large.itr = i_stp; //For TPQ
-    byte_size = fread(&i_max, sizeof(i_max), 1, fp);
-    if (i_max != X->Bind.Check.idim_maxOrg) {
-      fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
-      fprintf(stderr, "Error: A file of Input vector is incorrect.\n");
-      return -1;
-    }
-    byte_size = fread(v1Org, sizeof(complex double), i_max + 1, fp);
-    fclose(fp);
-    StopTimer(6101);
-    if (byte_size == 0) printf("byte_size: %d \n", (int) byte_size);
-
-    for (i = 0; i <= X->Bind.Check.idim_max; i++) {
-      v0[i] = 0;
-    }
-    fprintf(stdoutMPI, "  End:   An Input vector is inputted in CalcSpectrum.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
-    fprintf(stdoutMPI, "  Start: Calculating an excited vector.\n");
-
-    //Multiply Operator
-    StartTimer(6102);
-    ExcitationOperatorSet ketSet = {
-      X->Bind.Def.NSingleExcitationOperator, X->Bind.Def.SingleExcitationOperator,
-      X->Bind.Def.ParaSingleExcitationOperator, X->Bind.Def.NPairExcitationOperator,
-      X->Bind.Def.PairExcitationOperator, X->Bind.Def.ParaPairExcitationOperator};
-    if (GetExcitedState(&(X->Bind), &ketSet, v0, v1Org) != TRUE) {
-      fprintf(stderr, "Error: failed to build the ket excited state A|phi>.\n");
-      exitMPI(-1);
-    }
-    StopTimer(6102);
-
-    //calculate norm
-    dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
-    if (fabs(dnorm) < pow(10.0, -15)) {
-      fprintf(stderr, "Warning: Norm of an excited vector becomes 0.\n");
-      fprintf(stdoutMPI, "  End:   Calculating an excited vector.\n\n");
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
-      fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
-      TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-      for (i = 0; i < Nomega; i++) {
-        dcSpectrum[i] = 0;
+        if (ReadEigenVector(X, 0, FALSE, v1Org) != TRUE) {
+          return -1;
+        }
+        StopTimer(6101);
+        fprintf(stdoutMPI, "  End:   An Input vector is inputted in CalcSpectrum.\n\n");
+        TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorEnd, "a");
+        StopTimer(6100);
+        /* Build the excited state from v1Org and solve, in one reentrant call. */
+        iret = CalcOneSpectrum(X, v1Org, X->Bind.Def.dcOmegaOrg, Nomega, dcSpectrum, dcomega);
       }
-      OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
-      return TRUE;
-    }
-    //normalize vector
-#pragma omp parallel for default(none) private(i) shared(v1, v0) firstprivate(i_max, dnorm, X)
-    for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-      v1[i] = v0[i] / dnorm;
-    }
-
-    //Build the bra excited state B|phi> (un-normalized) for off-diagonal spectrum.
-    if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
-      ExcitationOperatorSet braSet = {
-        X->Bind.Def.NSingleExcitationOperatorBra, X->Bind.Def.SingleExcitationOperatorBra,
-        X->Bind.Def.ParaSingleExcitationOperatorBra, X->Bind.Def.NPairExcitationOperatorBra,
-        X->Bind.Def.PairExcitationOperatorBra, X->Bind.Def.ParaPairExcitationOperatorBra};
-      v0_Bra = cd_1d_allocate(X->Bind.Check.idim_max + 1);
-      for (i = 0; i <= X->Bind.Check.idim_max; i++) v0_Bra[i] = 0;
-      if (GetExcitedState(&(X->Bind), &braSet, v0_Bra, v1Org) != TRUE) {
-        fprintf(stderr, "Error: failed to build the bra excited state B|phi>.\n");
-        exitMPI(-1);
-      }
-      if (NormMPI_dc(X->Bind.Check.idim_max, v0_Bra) < pow(10.0, -15)) {
-        fprintf(stderr, "Warning: Norm of the bra excited vector B|phi> is 0; the off-diagonal spectrum will be zero.\n");
-      }
-    }
-
-    //Output excited vector
-    if (X->Bind.Def.iOutputExVec == 1) {
-      fprintf(stdoutMPI, "  Start:   Output an excited vector.\n\n");
-      sprintf(sdt, cFileNameOutputExcitedVec, X->Bind.Def.CDataFileHead, myrank);
-      if(childfopenALL(sdt, "w", &fp)!=0){
-        return -1;
-      }
-      fprintf(fp, "%ld\n", X->Bind.Check.idim_max);
-      for (i = 1; i <= X->Bind.Check.idim_max; i++) {
-        fprintf(fp, "%.10lf, %.10lf\n", creal(v0[i]), cimag(v0[i]));
-      }
-      fclose(fp);
-      fprintf(stdoutMPI, "  End:   Output an excited vector.\n\n");
-    }
-
-    fprintf(stdoutMPI, "  End:   Calculating an excited vector.\n\n");
-    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
   }
-  StopTimer(6100);
-  //Reset list_1, list_2_1, list_2_2
+  else {
+    /* Restart path (recalc from saved BiCG data): the excited state is NOT rebuilt
+       and off-diagonal (bra) is unsupported here; solve directly. */
+    StopTimer(6100);
+    diagonalcalc(&(X->Bind));
+    fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
+    StartTimer(6200);
+    switch (X->Bind.Def.iCalcType) {
+      case Lanczos:
+        iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
+        break;
+      case CG:
+        iret = CalcSpectrumByBiCG(X, v0, v0, v1, vg, Nomega, dcSpectrum, dcomega);
+        break;
+      case TPQCalc:
+        fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
+        iret = FALSE;
+        break;
+      case FullDiag:
+        iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);
+        break;
+      default:
+        break;
+    }
+    StopTimer(6200);
+  }
+
+  /* Free the original-sector lists and the input eigenvector. */
   if (iFlagListModified == TRUE) {
     free(v1Org);
     free(list_1_org);
     free(list_2_1_org);
     free(list_2_2_org);
   }
-  //calculate Diagonal term
-  diagonalcalc(&(X->Bind));
-
-
-  int iret = TRUE;
-  fprintf(stdoutMPI, "  Start: Calculating a spectrum.\n\n");
-  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumStart, "a");
-  StartTimer(6200);
-  switch (X->Bind.Def.iCalcType) {
-    case Lanczos:
-
-      iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-
-      if (iret != TRUE) {
-        //Error Message will be added.
-        return FALSE;
-      }
-
-      break;//Lanczos Spectrum
-
-    case CG:
-
-      iret = CalcSpectrumByBiCG(X, v0, (v0_Bra != NULL) ? v0_Bra : v0, v1, vg, Nomega, dcSpectrum, dcomega);
-      if (v0_Bra != NULL) { free_cd_1d_allocate(v0_Bra); v0_Bra = NULL; }
-
-      if (iret != TRUE) {
-        //Error Message will be added.
-        return FALSE;
-      }
-
-      break;//Lanczos Spectrum
-
-    case TPQCalc:
-      fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
-      return FALSE;//TPQ is not supprted.
-#ifdef _CALCSPEC_TPQ
-    iret = CalcSpectrumByTPQ(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
-        if (iret != TRUE) {
-          //Error Message will be added.
-          return FALSE;
-        }
-#endif
-
-    case FullDiag:
-      iret = CalcSpectrumByFullDiag(X, Nomega, dcSpectrum, dcomega);
-      break;
-
-    default:
-      break;
-  }
-  StopTimer(6200);
-
-  if (v0_Bra != NULL) free_cd_1d_allocate(v0_Bra);
 
   if (iret != TRUE) {
-    fprintf(stderr, "  Error: The selected calculation type is not supported for calculating spectrum mode.\n");
+    /* The specific cause (unsupported solver type, failed read, etc.) was already
+       reported where it occurred; keep this message neutral so it does not mask it. */
+    fprintf(stderr, "  Error: spectrum calculation failed.\n");
+    free_cd_1d_allocate(dcSpectrum);
+    free_cd_1d_allocate(dcomega);
     return FALSE;
   }
 
   fprintf(stdoutMPI, "  End:  Calculating a spectrum.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcSpectrumEnd, "a");
-  iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+  /* The eigenstate loop already wrote one DynamicalGreen_{idx}.dat per state;
+     only the single-eigenvector path needs the single OutputSpectrum here. */
+  if (bAlreadyOutput == FALSE) {
+    iret = OutputSpectrum(X, Nomega, dcSpectrum, dcomega);
+  }
   free_cd_1d_allocate(dcSpectrum);
   free_cd_1d_allocate(dcomega);
-  return TRUE;
+  /* Mirror the loop path: report a failed write to the caller instead of success. */
+  return (iret == TRUE) ? TRUE : FALSE;
 
 }/*int CalcSpectrum*/
 

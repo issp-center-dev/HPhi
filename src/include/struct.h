@@ -275,6 +275,12 @@ struct DefineList {
   int iFlgSpecOmegaMax;/**<@brief Whether DefineList::dcOmegaMax is input or not.*/
   int iFlgSpecOmegaMin;/**<@brief Whether DefineList::dcOmegaMin is input or not.*/
   int iFlgSpecOmegaOrg;/**<@brief Whether DefineList::dcOmegaOrg is input or not.*/
+  int iSpectrumLoopExct;/**<@brief Number of eigenstates the spectrum calculation loops over
+                          internally. When > 0, CalcSpectrum loops idx=0..iSpectrumLoopExct-1,
+                          reading eigenvec_{idx}, using E_idx (from xx_energy.dat) as the per-state
+                          spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate.
+                          The value is the count (= exct_cut), so it can be <= k_exct. Default 0
+                          keeps the legacy single-eigenvector behavior.*/
   int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
   int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 
