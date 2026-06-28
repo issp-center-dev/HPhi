@@ -585,7 +585,7 @@ int ReadDefFileNInt(
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
   X->iFlgSpecOmegaOrg=FALSE;
-  X->iSpectrumLoopExct=FALSE;
+  X->iSpectrumLoopExct=0;
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;

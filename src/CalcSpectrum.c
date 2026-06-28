@@ -237,10 +237,20 @@ static int ReadEigenVector(
   int i_stp;
   size_t byte_size;
 
+  int nfn;
   GetFileNameByKW(KWSpectrumVec, &kw);
-  strcpy(base, kw); /* local copy: do NOT mutate the shared global file-name buffer */
-  if (useIdxSuffix) sprintf(sdt, "%s_%d_rank_%d.dat", base, idx, myrank);
-  else              sprintf(sdt, "%s_rank_%d.dat", base, myrank);
+  /* local copy (bounded): do NOT mutate the shared global file-name buffer.
+     Fail explicitly on truncation rather than silently opening a different file. */
+  if (snprintf(base, sizeof(base), "%s", kw) >= (int)sizeof(base)) {
+    fprintf(stderr, "Error: SpectrumVec base name is too long for the file-name buffer.\n");
+    return FALSE;
+  }
+  nfn = useIdxSuffix ? snprintf(sdt, sizeof(sdt), "%s_%d_rank_%d.dat", base, idx, myrank)
+                     : snprintf(sdt, sizeof(sdt), "%s_rank_%d.dat", base, myrank);
+  if (nfn >= (int)sizeof(sdt)) {
+    fprintf(stderr, "Error: eigenvector file name is too long (base=%s).\n", base);
+    return FALSE;
+  }
 
   childfopenALL(sdt, "rb", &fp);
   if (fp == NULL) {
@@ -298,7 +308,10 @@ static int ReadEigenEnergy(
   int count = 0;
   double val;
 
-  sprintf(sdt, cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead);
+  if (snprintf(sdt, sizeof(sdt), cFileNameEnergy_Lanczos, X->Bind.Def.CDataFileHead) >= (int)sizeof(sdt)) {
+    fprintf(stdoutMPI, "Error: energy file name is too long for the file-name buffer.\n");
+    return FALSE;
+  }
   childfopenMPI(sdt, "r", &fp);
   if (fp == NULL) {
     fprintf(stdoutMPI, "Error: %s does not exist.\n", sdt);
@@ -335,7 +348,10 @@ static int OutputSpectrumIdx(
   char sdt[D_FileNameMax];
   int i;
 
-  sprintf(sdt, "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx);
+  if (snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx) >= (int)sizeof(sdt)) {
+    fprintf(stderr, "Error: DynamicalGreen file name is too long for the file-name buffer.\n");
+    return FALSE;
+  }
   if (childfopenMPI(sdt, "w", &fp) != 0) {
     return FALSE;
   }

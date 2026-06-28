@@ -332,10 +332,32 @@ Calculating dynamical Green’s functions
 
    **Type :** Int
 
-   **Description :** The integer for defining the step size of the 
-   frequency :math:`\Delta \omega = (` ``OmegaMax`` - 
+   **Description :** The integer for defining the step size of the
+   frequency :math:`\Delta \omega = (` ``OmegaMax`` -
    ``OmegaMin`` :math:`)/N_{\omega}`. The frequency is given by
    :math:`z_n=` ``OmegaOrg``\ :math:`+`\ ``OmegaMin``\ :math:`+ \Delta \omega \times n`.
+
+*  ``SpectrumLoopExct``
+
+   **Type :** Int (default value: 0)
+
+   **Description :** The number of eigenstates over which the dynamical
+   Green's function calculation loops internally. When this value is
+   :math:`N>0`, the spectrum calculation reads the eigenvectors
+   ``eigenvec_0`` ... ``eigenvec_``\ :math:`(N-1)` in turn (so the
+   ``SpectrumVec`` keyword must give the *base* name shared by all of
+   them, e.g. ``zvo_eigenvec``), uses each eigen-energy :math:`E_n`
+   (read from ``**_energy.dat``) as the spectral shift ``OmegaOrg`` for
+   that state, and writes one ``**_DynamicalGreen_``\ :math:`n`\ ``.dat``
+   per eigenstate. This computes the spectra of the
+   :math:`N` lowest eigenstates in a single run (typically used to
+   assemble a finite-temperature, Boltzmann-weighted spectrum) instead
+   of one run per eigenstate. :math:`N` must not exceed the number of
+   computed eigenstates ``exct``. The value :math:`0` (default) keeps
+   the conventional behavior in which a single eigenvector specified by
+   ``SpectrumVec`` is used. This mode requires ``CalcSpec=Normal`` and
+   is incompatible with ``OutputExVec=1`` (the per-state excited vectors
+   would overwrite one another).
 
 Real time evolution method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
