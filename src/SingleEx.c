@@ -37,15 +37,18 @@ int GetSingleExcitedState(
 ) {
   int iret = 0;
   //tmp_v0
-  /* NOTE: the GC leaf below is not operator-set parametrized and reads X->Def,
-     so the passed set must equal X->Def for that model. This holds for the
-     diagonal ket path; the bra path only reaches the parametrized Hubbard leaf
-     (Spin/SpinGC single excitation is rejected). */
+  /* Both the canonical and grand-canonical Hubbard leaves take the operator set
+     explicitly, so the ket (X->Def) and the bra (SingleExcitationBra /
+     single_ex_bra_*.def) sets are built independently. Spin/SpinGC single
+     excitation is rejected below. */
   if (NSingleExcitationOperator == 0) return TRUE;
 
   switch (X->Def.iCalcModel) {
   case HubbardGC:
-    iret = GetSingleExcitedStateHubbardGC(X, tmp_v0, tmp_v1);
+    iret = GetSingleExcitedStateHubbardGC(X, NSingleExcitationOperator,
+                                          SingleExcitationOperator,
+                                          ParaSingleExcitationOperator,
+                                          tmp_v0, tmp_v1);
     break;
 
   case Hubbard:

@@ -825,6 +825,21 @@ int CalcSpectrum(
     fprintf(stderr, "Error: Any excitation operators are not defined.\n");
     exitMPI(-1);
   }
+  /* Reject out-of-range Spectrum* keywords up front rather than silently normalizing them
+     (later code clamps SpectrumNumOp/Bra<1 to 1 and treats SpectrumLoopExct<0 as legacy),
+     so a misconfigured input fails loudly instead of running a different calculation. */
+  if (X->Bind.Def.iSpectrumLoopExct < 0) {
+    fprintf(stderr, "Error: SpectrumLoopExct must be >= 0 (got %d).\n", X->Bind.Def.iSpectrumLoopExct);
+    exitMPI(-1);
+  }
+  if (X->Bind.Def.iSpectrumNumOp < 1) {
+    fprintf(stderr, "Error: SpectrumNumOp must be >= 1 (got %d).\n", X->Bind.Def.iSpectrumNumOp);
+    exitMPI(-1);
+  }
+  if (X->Bind.Def.iSpectrumNumBra < 1) {
+    fprintf(stderr, "Error: SpectrumNumBra must be >= 1 (got %d).\n", X->Bind.Def.iSpectrumNumBra);
+    exitMPI(-1);
+  }
   /* The finite-T loop reuses one excited-vector buffer per eigenstate, so the
      single OutputExVec filename would be overwritten each iteration (only the last
      state would survive). Reject the combination until a per-state convention exists. */
