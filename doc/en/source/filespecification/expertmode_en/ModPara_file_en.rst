@@ -375,10 +375,35 @@ Calculating dynamical Green’s functions
    electron number / spin), which is checked at run time. The output for set
    :math:`m` and eigenstate :math:`n` is written to
    ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``.dat``. This option
-   is only effective together with ``SpectrumLoopExct``\ :math:`>0`, requires
-   ``SingleExcitation`` (not ``PairExcitation``), and is incompatible with the
-   bra (off-diagonal) excitation operators. The default :math:`1` keeps the
-   single-operator behavior.
+   is only effective together with ``SpectrumLoopExct``\ :math:`>0` and requires
+   ``SingleExcitation`` (not ``PairExcitation``). On its own (single bra) it
+   produces diagonal spectra; to combine the operator sets with off-diagonal
+   (bra) operators, enable ``SpectrumNumBra``\ :math:`>1` so that the ket and bra
+   sets compose. The default :math:`1` keeps the single-operator behavior.
+
+*  ``SpectrumNumBra``
+
+   **Type :** Int (default value: 1)
+
+   **Description :** The number of **left** (bra) single-excitation operator sets
+   onto which a single shifted-BiCG solve is projected (via the Komega
+   multiple-vector ``nl`` feature). When this value is :math:`B>1`, each
+   ``(eigenstate, ket-operator)`` BiCG solve is reused and projected onto all
+   :math:`B` bra sets, so the number of BiCG solves needed for the off-diagonal
+   Green's functions drops from :math:`n_{\rm orb}^2` to :math:`n_{\rm orb}`. Bra
+   set ``0`` is taken from the ``SingleExcitationBra`` file in the namelist; sets
+   ``1`` ... :math:`(B-1)` are read from ``single_ex_bra_1.def`` ...
+   ``single_ex_bra_``\ :math:`(B-1)`\ ``.def`` in the run directory. All bra sets
+   must map to the **same** excited Hilbert sector as the ket. The output for ket
+   operator :math:`m`, bra set :math:`b` and eigenstate :math:`n` is written to
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``_``\ :math:`b`\ ``.dat``
+   (the operator field is always present in multi-bra mode). This option is only
+   effective together with ``SpectrumLoopExct``\ :math:`>0`, and requires the
+   shifted-BiCG solver (``CalcType=CG``), ``CalcSpec=Normal``, ``SingleExcitation``
+   kets and a namelist ``SingleExcitationBra`` (bra set ``0``); ``PairExcitation``
+   is not supported. It composes with ``SpectrumNumOp`` (the full
+   ket :math:`\times` bra grid is evaluated in one run). The default :math:`1`
+   keeps the single-bra behavior.
 
 Real time evolution method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

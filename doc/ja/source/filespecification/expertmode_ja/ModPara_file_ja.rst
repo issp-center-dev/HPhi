@@ -343,8 +343,35 @@ TPQ法で使用するパラメータ
    あり、実行時に検査されます。セット\ :math:`m`\ ・固有状態\ :math:`n`\ の出力は
    ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``.dat``\ に書き出されます。
    本オプションは\ ``SpectrumLoopExct``\ :math:`>0`\ と併用したときのみ有効で、
-   ``SingleExcitation``\ (\ ``PairExcitation``\ 不可)が必要であり、bra(非対角)
-   励起演算子とは併用できません。デフォルト\ :math:`1`\ では単一演算子の動作になります。
+   ``SingleExcitation``\ (\ ``PairExcitation``\ 不可)が必要です。単独で(単一の
+   bra と組み合わせて)用いると対角スペクトルを計算します。演算子セットを bra
+   (非対角)励起演算子と組み合わせる場合は、\ ``SpectrumNumBra``\ :math:`>1`\ を
+   有効にして ket と bra のセットを組み合わせます。デフォルト\ :math:`1`\ では
+   単一演算子の動作になります。
+
+-  ``SpectrumNumBra``
+
+   **形式 :** int型 (デフォルト値: 1)
+
+   **説明 :**
+   1回のシフト型 BiCG 解を射影する\ **bra(左側)**\ 単一励起演算子セットの数を
+   指定します(Komega の多ベクトル射影機能 ``nl`` を利用)。値を\ :math:`B>1`\ と
+   すると、各\ ``(固有状態, ket 演算子)``\ の BiCG 解を再利用して\ :math:`B`\ 個の
+   bra セットすべてに射影します。これにより非対角グリーン関数に必要な BiCG 解の
+   数が\ :math:`n_{\rm orb}^2`\ から\ :math:`n_{\rm orb}`\ に減ります。bra セット
+   ``0``\ は namelist の\ ``SingleExcitationBra``\ ファイルから、セット\ ``1``\ ...
+   :math:`(B-1)`\ は実行ディレクトリの\ ``single_ex_bra_1.def``\ ...
+   ``single_ex_bra_``\ :math:`(B-1)`\ ``.def``\ から読み込みます。すべての bra
+   セットは ket と\ **同一**\ の励起 Hilbert セクターに写像される必要があります。
+   ket 演算子\ :math:`m`\ ・bra セット\ :math:`b`\ ・固有状態\ :math:`n`\ の出力は
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``_``\ :math:`b`\ ``.dat``\ に
+   書き出されます(multi-bra モードでは演算子フィールドが常に付与されます)。
+   本オプションは\ ``SpectrumLoopExct``\ :math:`>0`\ と併用したときのみ有効で、
+   シフト型 BiCG ソルバ(\ ``CalcType=CG``\ )、\ ``CalcSpec=Normal``\ 、
+   ``SingleExcitation``\ ket、namelist の\ ``SingleExcitationBra``\ (bra セット
+   ``0``\ )が必要です(\ ``PairExcitation``\ は非対応)。\ ``SpectrumNumOp``\ と
+   組み合わせ可能です(ket :math:`\times` bra のグリッド全体を1回の実行で評価)。
+   デフォルト\ :math:`1`\ では単一 bra の動作になります。
 
  
 
