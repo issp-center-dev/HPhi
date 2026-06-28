@@ -288,6 +288,14 @@ struct DefineList {
                        SingleExcitation, sets 1.. from single_ex_<op>.def), writing
                        DynamicalGreen_<idx>_<op>.dat. All sets must map to the same Hilbert sector.
                        Default 0/1 keeps the single-operator behavior.*/
+  int iSpectrumNumBra;/**<@brief Number of left (bra) single-excitation operator sets projected from
+                        ONE BiCG solve (Komega nl). When > 1 (together with iSpectrumLoopExct > 0),
+                        each (eigenstate, ket-op) solve is projected onto every bra set b=0..nBra-1
+                        (set 0 from the namelist SingleExcitationBra, sets 1.. from single_ex_bra_<b>.def),
+                        writing DynamicalGreen_<idx>_<op>_<b>.dat. This reuses one ket solve for all
+                        bras, cutting the BiCG count from n_orb^2 to n_orb for off-diagonal Green's
+                        functions. All bra sets must map to the same excited sector as the ket.
+                        Default 0/1 keeps the single-bra behavior.*/
   int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
   int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 

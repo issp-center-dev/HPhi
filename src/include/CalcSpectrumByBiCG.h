@@ -19,7 +19,8 @@
 int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,
   double complex *vrhs,
-  double complex *vlhs_Bra,
+  double complex **vlhs_Bra,
+  int nBra,
   double complex *v2,
   double complex *v4,
   int Nomega,

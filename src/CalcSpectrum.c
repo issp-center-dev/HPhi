@@ -191,9 +191,12 @@ static int CalcOneSpectrum(
     case Lanczos:
       iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
       break;
-    case CG:
-      iret = CalcSpectrumByBiCG(X, v0, (v0_Bra != NULL) ? v0_Bra : v0, v1, vg, Nomega, dcSpectrum, dcomega);
+    case CG: {
+      /* Single bra: the namelist B|phi> if present, else the ket itself (diagonal G_AA). */
+      double complex *braList[1] = { (v0_Bra != NULL) ? v0_Bra : v0 };
+      iret = CalcSpectrumByBiCG(X, v0, braList, 1, v1, vg, Nomega, dcSpectrum, dcomega);
       break;
+    }
     case TPQCalc:
       fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
       iret = FALSE;
@@ -333,17 +336,23 @@ static int ReadEigenEnergy(
   return FALSE;
 }/*int ReadEigenEnergy*/
 
-/// \brief Write the spectrum for eigenstate idx (and operator op) to a per-state output file.
+/// \brief Write the spectrum for eigenstate idx (operator op, bra b) to a per-state output file.
 ///
-/// With a single operator set (useOp == FALSE) the name is the Stage-1a
-/// "<CDataFileHead>_DynamicalGreen_<idx>.dat"; with multiple operator sets (useOp == TRUE)
-/// it is "<CDataFileHead>_DynamicalGreen_<idx>_<op>.dat". Same column format as OutputSpectrum;
+/// Naming, by what is active:
+///  - single operator, single bra (useOp==FALSE):   "<head>_DynamicalGreen_<idx>.dat" (Stage 1a).
+///  - multiple operators (useOp==TRUE, useBra==FALSE): "<head>_DynamicalGreen_<idx>_<op>.dat".
+///  - multiple bras (useBra==TRUE, op field forced on): "<head>_DynamicalGreen_<idx>_<op>_<bra>.dat".
+/// The spectrum for bra b lives at dcSpectrum[i*stride + bra] (stride == nBra; Komega x(nBra,Nomega)
+/// column-major layout), so this reads a strided slice. Same column format as OutputSpectrum;
 /// consumed by the DCore finite-T reader (CalcSpectrumCore._read_spectrum).
 static int OutputSpectrumIdx(
   struct EDMainCalStruct *X,
   int idx,
   int op,
   int useOp,
+  int bra,
+  int useBra,
+  int stride,
   int Nomega,
   double complex *dcSpectrum,
   double complex *dcomega)
@@ -352,8 +361,12 @@ static int OutputSpectrumIdx(
   char sdt[D_FileNameMax];
   int i, nfn;
 
-  nfn = useOp ? snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d_%d.dat", X->Bind.Def.CDataFileHead, idx, op)
-              : snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx);
+  if (useBra)
+    nfn = snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d_%d_%d.dat", X->Bind.Def.CDataFileHead, idx, op, bra);
+  else if (useOp)
+    nfn = snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d_%d.dat", X->Bind.Def.CDataFileHead, idx, op);
+  else
+    nfn = snprintf(sdt, sizeof(sdt), "%s_DynamicalGreen_%d.dat", X->Bind.Def.CDataFileHead, idx);
   if (nfn >= (int)sizeof(sdt)) {
     fprintf(stderr, "Error: DynamicalGreen file name is too long for the file-name buffer.\n");
     return FALSE;
@@ -364,7 +377,7 @@ static int OutputSpectrumIdx(
   for (i = 0; i < Nomega; i++) {
     fprintf(fp, "%.10lf %.10lf %.10lf %.10lf \n",
       creal(dcomega[i]-X->Bind.Def.dcOmegaOrg), cimag(dcomega[i]-X->Bind.Def.dcOmegaOrg),
-      creal(dcSpectrum[i]), cimag(dcSpectrum[i]));
+      creal(dcSpectrum[i*stride + bra]), cimag(dcSpectrum[i*stride + bra]));
   }
   fclose(fp);
   return TRUE;
@@ -447,6 +460,114 @@ static int ReadSingleExcitationSet(
   return TRUE;
 }/*int ReadSingleExcitationSet*/
 
+/// \brief Compute nBra dynamical spectra that share ONE ket BiCG solve (Stage 3 bra/ket reuse).
+///
+/// Generalises CalcOneSpectrum: the ket A|phi> is built from X->Def's single-excitation operator
+/// (the current op set) and the resolvent (z-(H-E))^{-1}|A phi> is solved ONCE; it is then
+/// projected onto nBra bras B_b|phi> via Komega's nl projections, giving
+/// G_b(z) = <B_b phi|(z-(H-E))^{-1}|A phi> for every b in one solve. This cuts the BiCG count for
+/// off-diagonal Green's functions from n_orb^2 to n_orb. The bras are un-normalized (the ket
+/// carries the norm on both sides, as in the single-bra path) and live in the same excited sector
+/// as the ket (one-body c_i/c_j on one spin), so the shared MakeExcitedList lists apply to both.
+/// Writes nBra spectra into dcSpectrum with Komega's column-major layout dcSpectrum[i*nBra + b].
+/// Does NOT write output; the caller does I/O and owns the excitation lists and v1Org/dcSpectrum.
+///
+/// \retval TRUE  success (including the zero-ket-norm case, which zeroes every spectrum).
+/// \retval FALSE allocation or solver failure.
+static int CalcSpectrumMultiBra(
+  struct EDMainCalStruct *X,
+  double complex *v1Org,
+  double complex OmegaOrg,
+  int Nomega,
+  double complex *dcSpectrum,     /* [nBra*Nomega], column-major x(nBra,Nomega) */
+  double complex *dcomega,
+  int nBra,
+  unsigned int *braSet_N,
+  int ***braSet_ops,
+  double complex **braSet_para)
+{
+  unsigned long int i;
+  int b, iret = TRUE;
+  double dnorm;
+  double complex **braVecs, **braList;
+  double complex OmegaMax, OmegaMin;
+
+  /* Rebuild the frequency grid from THIS eigenstate's shift (same as CalcOneSpectrum). */
+  X->Bind.Def.dcOmegaOrg = OmegaOrg;
+  OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
+  OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
+  for (i = 0; i < (unsigned long int)Nomega; i++)
+    dcomega[i] = (OmegaMax - OmegaMin) / Nomega * i + OmegaMin;
+  fprintf(stdoutMPI, "\nFrequency range:\n");
+  fprintf(stdoutMPI, "  Omega Max. : %15.5e %15.5e\n", creal(OmegaMax), cimag(OmegaMax));
+  fprintf(stdoutMPI, "  Omega Min. : %15.5e %15.5e\n", creal(OmegaMin), cimag(OmegaMin));
+  fprintf(stdoutMPI, "  Num. of Omega : %d\n", Nomega);
+
+  /* Build the ket A|phi> from the current single-excitation op set (X->Def). */
+  for (i = 0; i <= X->Bind.Check.idim_max; i++) v0[i] = 0;
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateStart, "a");
+  {
+    ExcitationOperatorSet ketSet = {
+      X->Bind.Def.NSingleExcitationOperator, X->Bind.Def.SingleExcitationOperator,
+      X->Bind.Def.ParaSingleExcitationOperator, X->Bind.Def.NPairExcitationOperator,
+      X->Bind.Def.PairExcitationOperator, X->Bind.Def.ParaPairExcitationOperator};
+    if (GetExcitedState(&(X->Bind), &ketSet, v0, v1Org) != TRUE) {
+      fprintf(stderr, "Error: failed to build the ket excited state A|phi>.\n");
+      exitMPI(-1);
+    }
+  }
+  dnorm = NormMPI_dc(X->Bind.Check.idim_max, v0);
+  if (fabs(dnorm) < pow(10.0, -15)) {
+    fprintf(stderr, "Warning: Norm of an excited (ket) vector becomes 0.\n");
+    for (i = 0; i < (unsigned long int)nBra * Nomega; i++) dcSpectrum[i] = 0;
+    TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+    return TRUE;
+  }
+
+  /* Build the nBra bras B_b|phi> (un-normalized, single-excitation only). */
+  braVecs = (double complex **)malloc(nBra * sizeof(double complex *));
+  braList = (double complex **)malloc(nBra * sizeof(double complex *));
+  if (braVecs == NULL || braList == NULL) {
+    fprintf(stderr, "Error: out of memory allocating bra vector tables (nBra=%d).\n", nBra);
+    free(braVecs); free(braList);
+    return FALSE;
+  }
+  for (b = 0; b < nBra; b++) { braVecs[b] = NULL; braList[b] = NULL; }
+  for (b = 0; b < nBra; b++) {
+    braVecs[b] = cd_1d_allocate(X->Bind.Check.idim_max + 1);
+    for (i = 0; i <= X->Bind.Check.idim_max; i++) braVecs[b][i] = 0;
+    {
+      ExcitationOperatorSet braSet = {
+        braSet_N[b], braSet_ops[b], braSet_para[b], 0, NULL, NULL};
+      if (GetExcitedState(&(X->Bind), &braSet, braVecs[b], v1Org) != TRUE) {
+        fprintf(stderr, "Error: failed to build bra excited state %d.\n", b);
+        iret = FALSE; break;
+      }
+    }
+    if (NormMPI_dc(X->Bind.Check.idim_max, braVecs[b]) < pow(10.0, -15))
+      fprintf(stderr, "Warning: Norm of bra excited vector %d is 0; its spectrum will be zero.\n", b);
+    braList[b] = braVecs[b];
+  }
+  TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_CalcExcitedStateEnd, "a");
+
+  if (iret == TRUE) {
+    diagonalcalc(&(X->Bind));
+    StartTimer(6200);
+    if (X->Bind.Def.iCalcType == CG) {
+      iret = CalcSpectrumByBiCG(X, v0, braList, nBra, v1, vg, Nomega, dcSpectrum, dcomega);
+    }
+    else {
+      fprintf(stderr, "Error: multi-bra spectrum (SpectrumNumBra>1) requires CalcType=CG (BiCG).\n");
+      iret = FALSE;
+    }
+    StopTimer(6200);
+  }
+
+  for (b = 0; b < nBra; b++) if (braVecs[b] != NULL) free_cd_1d_allocate(braVecs[b]);
+  free(braVecs); free(braList);
+  return iret;
+}/*int CalcSpectrumMultiBra*/
+
 /// \brief Finite-temperature spectrum loop: eigenstates idx-outer, operator sets op-inner.
 ///
 /// For each of the iSpectrumLoopExct eigenstates it reads the eigenvector ONCE and reuses it
@@ -468,9 +589,10 @@ static int RunMultiOpFiniteTLoop(
   double complex *dcSpectrum,
   double complex *dcomega)
 {
-  int idx, op, useOp, iret = TRUE;
+  int idx, op, b, useOp, iret = TRUE;
   int nloop = X->Bind.Def.iSpectrumLoopExct;
   int nop = X->Bind.Def.iSpectrumNumOp;
+  int nBra = X->Bind.Def.iSpectrumNumBra;
   /* Set 0 aliases the X->Def originals (owned by readdef); only sets 1.. are freed here. */
   unsigned int op0_N = X->Bind.Def.NSingleExcitationOperator;
   int **op0_ops = X->Bind.Def.SingleExcitationOperator;
@@ -478,6 +600,11 @@ static int RunMultiOpFiniteTLoop(
   unsigned int *set_N;
   int ***set_ops;
   double complex **set_para;
+  /* Bra operator sets (Stage 3 multi-bra). Set 0 is the namelist SingleExcitationBra; sets 1..
+     are loaded from single_ex_bra_<b>.def. Only allocated/used when nBra > 1. */
+  unsigned int *bra_N = NULL;
+  int ***bra_ops = NULL;
+  double complex **bra_para = NULL;
   /* Only the REAL part of the spectral shift is state-dependent (= E_idx). Preserve any
      configured imaginary broadening in dcOmegaOrg so the loop matches the single-state path;
      with the DCore driver this imaginary part is 0, so the two are identical. */
@@ -485,7 +612,9 @@ static int RunMultiOpFiniteTLoop(
   double Elast = 0.0;
 
   if (nop < 1) nop = 1;
-  useOp = (nop > 1);
+  if (nBra < 1) nBra = 1;
+  /* Multi-bra always carries the <op> field in the output name so file names stay unambiguous. */
+  useOp = (nop > 1) || (nBra > 1);
 
   set_N    = (unsigned int *)    malloc(sizeof(unsigned int)     * nop);
   set_ops  = (int ***)           malloc(sizeof(int **)           * nop);
@@ -529,6 +658,54 @@ static int RunMultiOpFiniteTLoop(
     }
   }
 
+  /* Load the bra operator sets for Stage-3 multi-bra (one ket solve projected onto nBra bras).
+     Set 0 is the namelist SingleExcitationBra; sets 1.. come from single_ex_bra_<b>.def. Every
+     bra must map to the SAME excited sector as ket set 0 (one-body c_i/c_j on the same spin) —
+     the single sector MakeExcitedList built the excited lists for. The check is skipped for
+     grand-canonical models, where the shift is not well defined (as for the op sets). */
+  if (iret == TRUE && nBra > 1) {
+    bra_N    = (unsigned int *)    malloc(sizeof(unsigned int)     * nBra);
+    bra_ops  = (int ***)           malloc(sizeof(int **)           * nBra);
+    bra_para = (double complex **) malloc(sizeof(double complex *) * nBra);
+    if (bra_N == NULL || bra_ops == NULL || bra_para == NULL) {
+      fprintf(stderr, "Error: out of memory allocating bra-set tables (SpectrumNumBra=%d).\n", nBra);
+      iret = FALSE;
+    }
+    else {
+      SectorShift sh0 = GetExcitationOperatorSetShift(
+        X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, op0_ops, op0_N);
+      int enforceSector = (sh0.valid == TRUE);
+      unsigned int maxN = 2u * (unsigned int) X->Bind.Def.Nsite;
+      bra_N[0]    = X->Bind.Def.NSingleExcitationOperatorBra;
+      bra_ops[0]  = X->Bind.Def.SingleExcitationOperatorBra;
+      bra_para[0] = X->Bind.Def.ParaSingleExcitationOperatorBra;
+      for (b = 1; b < nBra; b++) { bra_N[b] = 0; bra_ops[b] = NULL; bra_para[b] = NULL; }
+      if (bra_N[0] == 0) {
+        fprintf(stderr, "Error: SpectrumNumBra>1 requires a namelist SingleExcitationBra (bra set 0).\n");
+        iret = FALSE;
+      }
+      for (b = 0; iret == TRUE && b < nBra; b++) {
+        if (b > 0) {
+          char brafn[D_FileNameMax];
+          snprintf(brafn, sizeof(brafn), "single_ex_bra_%d.def", b);
+          if (ReadSingleExcitationSet(brafn, maxN, &bra_N[b], &bra_ops[b], &bra_para[b]) != TRUE) {
+            iret = FALSE; break;
+          }
+        }
+        if (enforceSector) {
+          SectorShift sh = GetExcitationOperatorSetShift(
+            X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, bra_ops[b], bra_N[b]);
+          if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
+              sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+            fprintf(stderr, "Error: bra set %d maps to a different excited sector than ket set 0; "
+                            "all bras must share the ket's sector.\n", b);
+            iret = FALSE; break;
+          }
+        }
+      }
+    }
+  }
+
   /* Fail before writing any spectrum if SpectrumLoopExct exceeds the number of computed
      eigenstates (the energy file has one entry per eigenstate, matching the eigenvector
      files), so no partial DynamicalGreen output is left behind. */
@@ -542,13 +719,27 @@ static int RunMultiOpFiniteTLoop(
     if (ReadEigenVector(X, idx, TRUE, v1Org) != TRUE) { iret = FALSE; break; } /* read ONCE per eigenstate */
     if (ReadEigenEnergy(X, idx, &Eidx) != TRUE)        { iret = FALSE; break; }
     for (op = 0; op < nop; op++) {
-      /* Point X->Def at this operator set; CalcOneSpectrum builds the ket from X->Def. */
+      /* Point X->Def at this operator set; the ket is built from X->Def. */
       X->Bind.Def.NSingleExcitationOperator    = set_N[op];
       X->Bind.Def.SingleExcitationOperator     = set_ops[op];
       X->Bind.Def.ParaSingleExcitationOperator = set_para[op];
-      iret = CalcOneSpectrum(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega, dcSpectrum, dcomega);
-      if (iret != TRUE) break;
-      if (OutputSpectrumIdx(X, idx, op, useOp, Nomega, dcSpectrum, dcomega) != TRUE) { iret = FALSE; break; }
+      if (nBra > 1) {
+        /* One ket solve, nBra bra projections (Stage 3). dcSpectrum holds x(nBra,Nomega). */
+        iret = CalcSpectrumMultiBra(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega,
+                                    dcSpectrum, dcomega, nBra, bra_N, bra_ops, bra_para);
+        if (iret != TRUE) break;
+        for (b = 0; b < nBra; b++) {
+          if (OutputSpectrumIdx(X, idx, op, useOp, b, TRUE, nBra, Nomega, dcSpectrum, dcomega) != TRUE) {
+            iret = FALSE; break;
+          }
+        }
+        if (iret != TRUE) break;
+      }
+      else {
+        iret = CalcOneSpectrum(X, v1Org, Eidx + dOmegaOrgIm * I, Nomega, dcSpectrum, dcomega);
+        if (iret != TRUE) break;
+        if (OutputSpectrumIdx(X, idx, op, useOp, 0, FALSE, 1, Nomega, dcSpectrum, dcomega) != TRUE) { iret = FALSE; break; }
+      }
     }
   }
 
@@ -561,6 +752,14 @@ static int RunMultiOpFiniteTLoop(
     if (set_para[op] != NULL) free_cd_1d_allocate(set_para[op]);
   }
   free(set_N); free(set_ops); free(set_para);
+  /* Release bra sets 1.. (set 0 aliases the X->Def namelist arrays, owned by readdef). */
+  if (bra_N != NULL) {
+    for (b = 1; b < nBra; b++) {
+      if (bra_ops != NULL && bra_ops[b]  != NULL) free_i_2d_allocate(bra_ops[b]);
+      if (bra_para != NULL && bra_para[b] != NULL) free_cd_1d_allocate(bra_para[b]);
+    }
+  }
+  free(bra_N); free(bra_ops); free(bra_para);
   return iret;
 }/*int RunMultiOpFiniteTLoop*/
 
@@ -607,7 +806,12 @@ int CalcSpectrum(
      Set & malloc omega grid
     */
     Nomega = X->Bind.Def.iNOmega;
-    dcSpectrum = cd_1d_allocate(Nomega);
+    /* Multi-bra mode fills nBra spectra per BiCG solve (Komega x(nBra,Nomega)); size the
+       buffer accordingly. Single-bra / single-state paths use the leading Nomega slice. */
+    {
+      int nBraAlloc = (X->Bind.Def.iSpectrumNumBra > 1) ? X->Bind.Def.iSpectrumNumBra : 1;
+      dcSpectrum = cd_1d_allocate((unsigned long)nBraAlloc * Nomega);
+    }
     dcomega = cd_1d_allocate(Nomega);
     OmegaMax = X->Bind.Def.dcOmegaMax + X->Bind.Def.dcOmegaOrg;
     OmegaMin = X->Bind.Def.dcOmegaMin + X->Bind.Def.dcOmegaOrg;
@@ -655,8 +859,38 @@ int CalcSpectrum(
                       "(not PairExcitation).\n");
       exitMPI(-1);
     }
-    if (X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
-      fprintf(stderr, "Error: SpectrumNumOp>1 is not supported with bra excitation operators.\n");
+    /* The single-bra off-diagonal path is not swapped per ket-op, so it is incompatible with
+       SpectrumNumOp>1 — UNLESS multi-bra mode (SpectrumNumBra>1) is active, in which case the
+       bras are handled per ket-op by the multi-bra projection and ket x bra compose. */
+    if ((X->Bind.Def.NSingleExcitationOperatorBra > 0 || X->Bind.Def.NPairExcitationOperatorBra > 0)
+        && X->Bind.Def.iSpectrumNumBra <= 1) {
+      fprintf(stderr, "Error: SpectrumNumOp>1 is not supported with a single bra excitation operator "
+                      "(use SpectrumNumBra>1 to project one ket solve onto multiple bras).\n");
+      exitMPI(-1);
+    }
+  }
+  /* Multi-bra (SpectrumNumBra>1): one ket BiCG solve projected onto nBra bras via Komega nl.
+     Like SpectrumNumOp it only runs inside the finite-T loop, needs BiCG (CalcType CG), a
+     single-excitation ket, and a namelist SingleExcitationBra as bra set 0. It composes with
+     SpectrumNumOp (the full ket x bra grid is processed in one run). */
+  if (X->Bind.Def.iSpectrumNumBra > 1) {
+    if (X->Bind.Def.iSpectrumLoopExct == 0) {
+      fprintf(stderr, "Error: SpectrumNumBra>1 requires SpectrumLoopExct>0 "
+                      "(multiple bras are projected only inside the finite-T loop).\n");
+      exitMPI(-1);
+    }
+    if (X->Bind.Def.iCalcType != CG) {
+      fprintf(stderr, "Error: SpectrumNumBra>1 requires the BiCG solver (CalcType=CG).\n");
+      exitMPI(-1);
+    }
+    if (X->Bind.Def.NSingleExcitationOperator == 0 || X->Bind.Def.NPairExcitationOperator > 0) {
+      fprintf(stderr, "Error: SpectrumNumBra>1 is only supported with SingleExcitation kets "
+                      "(not PairExcitation).\n");
+      exitMPI(-1);
+    }
+    if (X->Bind.Def.NSingleExcitationOperatorBra == 0 || X->Bind.Def.NPairExcitationOperatorBra > 0) {
+      fprintf(stderr, "Error: SpectrumNumBra>1 requires a namelist SingleExcitationBra (bra set 0) "
+                      "and does not support PairExcitationBra.\n");
       exitMPI(-1);
     }
   }
@@ -775,9 +1009,12 @@ int CalcSpectrum(
       case Lanczos:
         iret = CalcSpectrumByLanczos(X, v1, dnorm, Nomega, dcSpectrum, dcomega);
         break;
-      case CG:
-        iret = CalcSpectrumByBiCG(X, v0, v0, v1, vg, Nomega, dcSpectrum, dcomega);
+      case CG: {
+        /* Restart path: diagonal only (bra == ket). */
+        double complex *braList[1] = { v0 };
+        iret = CalcSpectrumByBiCG(X, v0, braList, 1, v1, vg, Nomega, dcSpectrum, dcomega);
         break;
+      }
       case TPQCalc:
         fprintf(stderr, "  Error: TPQ is not supported for calculating spectrum mode.\n");
         iret = FALSE;

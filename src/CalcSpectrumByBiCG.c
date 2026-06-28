@@ -37,14 +37,15 @@ void ReadTMComponents_BiCG(
   double complex *v4,//!<[inout] [CheckList::idim_max] Shadow esidual vector
   double complex *v12,//!<[inout] [CheckList::idim_max] Old residual vector
   double complex *v14,//!<[inout] [CheckList::idim_max] Old shadow residual vector
+  int nBra,//!<[in] Number of left (bra) vectors (Komega nl). Restart paths only ever run with nBra==1.
   int Nomega,//!<[in] Number of frequencies
-  double complex *dcSpectrum,//!<[inout] [Nomega] Projected result vector, spectrum
+  double complex *dcSpectrum,//!<[inout] [nBra*Nomega] Projected result vector, spectrum
   double complex *dcomega//!<[in] [Nomega] Frequency
 ) {
   char sdt[D_FileNameMax];
   char ctmp[256];
 
-  int one = 1, status[3], idim_max2int, max_step, iter_old;
+  int status[3], idim_max2int, max_step, iter_old;
   unsigned long int idx;
   double complex *alphaCG, *betaCG, *res_save, z_seed;
   double z_seed_r, z_seed_i, alpha_r, alpha_i, beta_r, beta_i, res_r, res_i;
@@ -66,7 +67,7 @@ void ReadTMComponents_BiCG(
       fprintf(stdoutMPI, "INFO: File for the restart is not found.\n");
       fprintf(stdoutMPI, "      Start from SCRATCH.\n");
       max_step = (int)X->Bind.Def.Lanczos_max;
-      komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
+      komega_bicg_init(&idim_max2int, &nBra, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
     }
     else {
       fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
@@ -99,7 +100,7 @@ void ReadTMComponents_BiCG(
       if (X->Bind.Def.iFlgCalcSpec == RECALC_FROM_TMComponents) X->Bind.Def.Lanczos_max = 0;
       max_step = (int)(iter_old + X->Bind.Def.Lanczos_max);
 
-      komega_bicg_restart(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
+      komega_bicg_restart(&idim_max2int, &nBra, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, status,
         &iter_old, &v2[1], &v12[1], &v4[1], &v14[1], alphaCG, betaCG, &z_seed, res_save, &comm);
       free(alphaCG);
       free(betaCG);
@@ -108,7 +109,7 @@ void ReadTMComponents_BiCG(
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_NOT)*/
   else {
     max_step = (int)X->Bind.Def.Lanczos_max;
-    komega_bicg_init(&idim_max2int, &one, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
+    komega_bicg_init(&idim_max2int, &nBra, &Nomega, dcSpectrum, dcomega, &max_step, &eps_Lanczos, &comm);
   }
 
 }/*int ReadTMComponents_BiCG*/
@@ -208,11 +209,12 @@ void InitShadowRes(
 int CalcSpectrumByBiCG(
   struct EDMainCalStruct *X,//!<[inout]
   double complex *vrhs,//!<[in] [CheckList::idim_max] Right hand side vector, excited (ket) state A|phi>.
-  double complex *vlhs_Bra,//!<[in] [CheckList::idim_max] Left (bra) state B|phi> used for the projection <B phi|r>. Pass vrhs for the diagonal G_AA.
+  double complex **vlhs_Bra,//!<[in] [nBra][CheckList::idim_max] Left (bra) states B_b|phi>, projection <B_b phi|r>. Pass {vrhs} for the diagonal G_AA.
+  int nBra,//!<[in] Number of left (bra) vectors. One BiCG solve yields the spectrum for every bra (Komega nl projections).
   double complex *v2,//!<[inout] [CheckList::idim_max] Work space for residual vector @f${\bf r}@f$
   double complex *v4,//!<[inout] [CheckList::idim_max] Work space for shadow residual vector @f${\bf {\tilde r}}@f$
   int Nomega,//!<[in] Number of Frequencies
-  double complex *dcSpectrum,//!<[out] [Nomega] Spectrum
+  double complex *dcSpectrum,//!<[out] [nBra*Nomega] Spectrum, Fortran layout x(nBra, Nomega): dcSpectrum[iomega*nBra + ibra]
   double complex *dcomega//!<[in] [Nomega] Frequency
 )
 {
@@ -220,13 +222,22 @@ int CalcSpectrumByBiCG(
   unsigned long int idim, i_max;
   FILE *fp;
   size_t byte_size;
-  int iret;
+  int iret, ibra;
   unsigned long int liLanczosStp_vec = 0;
-  double complex *v12, *v14, res_proj;
+  double complex *v12, *v14, *res_proj;
   int stp, status[3], iomega;
   double *resz;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
+  /* Defense in depth (independent of the top-level SpectrumNumBra validation): the
+     tridiagonal-component restart format stores ONE projected residual stream per BiCG step,
+     so multi-bra (nBra>1) is only valid for CalcSpec=Normal. Fail hard before touching any
+     restart buffer or file rather than under-allocating res_save by a factor of nBra. */
+  if (nBra > 1 && X->Bind.Def.iFlgCalcSpec != RECALC_NOT) {
+    fprintf(stderr, "Error: multi-bra BiCG (SpectrumNumBra>1) supports only CalcSpec=\"Normal\" "
+                    "(no restart/recalc); the restart format carries one residual stream per step.\n");
+    return FALSE;
+  }
   /**
   <ul>
   <li>Malloc vector for old residual vector (@f${\bf r}_{\rm old}@f$)
@@ -235,6 +246,13 @@ int CalcSpectrumByBiCG(
   v12 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   v14 = (double complex*)malloc((X->Bind.Check.idim_max + 1) * sizeof(double complex));
   resz = (double*)malloc(Nomega * sizeof(double));
+  /* One projected residual per bra; Komega advances all nBra spectra from a single solve. */
+  res_proj = (double complex*)malloc(nBra * sizeof(double complex));
+  if (v12 == NULL || v14 == NULL || resz == NULL || res_proj == NULL) {
+    fprintf(stderr, "Error: out of memory in CalcSpectrumByBiCG (nBra=%d, Nomega=%d).\n", nBra, Nomega);
+    free(v12); free(v14); free(resz); free(res_proj);
+    return FALSE;
+  }
   /**
   <li>Set initial result vector(+shadow result vector)
   Read residual vectors if restart</li>
@@ -284,7 +302,7 @@ int CalcSpectrumByBiCG(
   /**
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
-  ReadTMComponents_BiCG(X, v2, v4, v12, v14, Nomega, dcSpectrum, dcomega);
+  ReadTMComponents_BiCG(X, v2, v4, v12, v14, nBra, Nomega, dcSpectrum, dcomega);
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -311,12 +329,13 @@ int CalcSpectrumByBiCG(
     iret = mltply(&X->Bind, v14, v4);
     if (iret == -1) return FALSE;
 
-    res_proj = VecProdMPI(X->Bind.Check.idim_max, vlhs_Bra, v2);
+    for (ibra = 0; ibra < nBra; ibra++)
+      res_proj[ibra] = VecProdMPI(X->Bind.Check.idim_max, vlhs_Bra[ibra], v2);
     /**
-    <li>Update projected result vector dcSpectrum.</li>
+    <li>Update projected result vector dcSpectrum (all nBra spectra at once).</li>
     */
 
-    komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, &res_proj, status);
+    komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, res_proj, status);
 
     /**
     <li>Output residuals at each frequency for some analysis</li>
@@ -325,9 +344,10 @@ int CalcSpectrumByBiCG(
       komega_bicg_getresidual(resz);
 
       for (iomega = 0; iomega < Nomega; iomega++) {
-        fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n", 
-          stp, creal(dcomega[iomega]), 
-          creal(dcSpectrum[iomega]), cimag(dcSpectrum[iomega]),
+        /* Report the first bra's spectrum as a representative trace; resz is per-frequency. */
+        fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n",
+          stp, creal(dcomega[iomega]),
+          creal(dcSpectrum[iomega*nBra]), cimag(dcSpectrum[iomega*nBra]),
           resz[iomega]);
       }
       fprintf(fp, "\n");
@@ -346,7 +366,11 @@ int CalcSpectrumByBiCG(
   /**
   <li>Save @f$\alpha, \beta@f$, projected residual</li>
   */
-  if (X->Bind.Def.iFlgCalcSpec != RECALC_FROM_TMComponents)
+  /* The tridiagonal-component restart file stores ONE projected residual per step
+     (komega_bicg_getcoef copies r_l_save(nl,step)); its writer is hard-coded to nl=1.
+     Multi-bra (nBra>1) is Normal-only and does not support restart/recalc, so skip it
+     rather than overrun the nl=1-sized buffer. */
+  if (X->Bind.Def.iFlgCalcSpec != RECALC_FROM_TMComponents && nBra == 1)
     OutputTMComponents_BiCG(X, abs(status[0]));
   /**
   <li>output vectors for recalculation</li>
@@ -378,6 +402,7 @@ int CalcSpectrumByBiCG(
   komega_bicg_finalize();
 
   free(resz);
+  free(res_proj);
   free(v12);
   free(v14);
   return TRUE;
