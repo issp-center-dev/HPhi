@@ -168,29 +168,34 @@ $(document).ready(function(){initNavTree('SingleEx_8c_source.html',''); initResi
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a1518a9996ad08009b6ea9a6de5198b65">Hubbard</a>:</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a531ba444bc15b6711c05fd95874f205d">Kondo</a>:</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a84a2a0896f6c0300a068925d7b299515">KondoGC</a>:</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ab97219b3c2c7c6a6e7094e4714789b69">tJ</a>:</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a7971a38c01ecd8832f5f7c16400b5173">tJGC</a>:</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    iret = <a class="code hl_function" href="SingleExHubbard_8h.html#a532bba8a658ddfd3ad26c22f20121676">GetSingleExcitedStateHubbard</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, NSingleExcitationOperator,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                                        SingleExcitationOperator,</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                                        ParaSingleExcitationOperator,</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                                        tmp_v0, tmp_v1);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ad2bf5a74a6b8ccd9b93ff923d904d3e6">Spin</a>:</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#aa7314d1157770374b63f2a07076e1cdb">SpinGC</a>:</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    iret = <a class="code hl_define" href="global_8h.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a289bd2a5931c1b42f8f07d1fb60fe97c">HubbardNConserved</a>:</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a531ba444bc15b6711c05fd95874f205d">Kondo</a>:</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a84a2a0896f6c0300a068925d7b299515">KondoGC</a>:</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ab97219b3c2c7c6a6e7094e4714789b69">tJ</a>:</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a7971a38c01ecd8832f5f7c16400b5173">tJGC</a>:</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">/* HubbardNConserved (Ne fixed, 2Sz free) uses the same list-based leaf: MakeExcitedList</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">       builds the Ne+-1 excited list (all 2Sz) and the leaf maps c/c^dag through it, so the</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">       bra and ket -- of either spin -- are built in the shared Ne+-1 space. */</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    iret = <a class="code hl_function" href="SingleExHubbard_8h.html#a532bba8a658ddfd3ad26c22f20121676">GetSingleExcitedStateHubbard</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, NSingleExcitationOperator,</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                                        SingleExcitationOperator,</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                                        ParaSingleExcitationOperator,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                                        tmp_v0, tmp_v1);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#ad2bf5a74a6b8ccd9b93ff923d904d3e6">Spin</a>:</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#aa7314d1157770374b63f2a07076e1cdb">SpinGC</a>:</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    iret = <a class="code hl_define" href="global_8h.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  }<span class="comment">/*switch (X-&gt;Def.iCalcModel)*/</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keywordflow">return</span> iret;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}<span class="comment">/*int GetSingleExcitedState*/</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    iret = <a class="code hl_define" href="global_8h.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  }<span class="comment">/*switch (X-&gt;Def.iCalcModel)*/</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keywordflow">return</span> iret;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}<span class="comment">/*int GetSingleExcitedState*/</span></div>
 </div>
 <div class="ttc" id="aDefCommon_8h_html_a1518a9996ad08009b6ea9a6de5198b65"><div class="ttname"><a href="DefCommon_8h.html#a1518a9996ad08009b6ea9a6de5198b65">Hubbard</a></div><div class="ttdeci">#define Hubbard</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00031">DefCommon.h:31</a></div></div>
+<div class="ttc" id="aDefCommon_8h_html_a289bd2a5931c1b42f8f07d1fb60fe97c"><div class="ttname"><a href="DefCommon_8h.html#a289bd2a5931c1b42f8f07d1fb60fe97c">HubbardNConserved</a></div><div class="ttdeci">#define HubbardNConserved</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00037">DefCommon.h:37</a></div></div>
 <div class="ttc" id="aDefCommon_8h_html_a531ba444bc15b6711c05fd95874f205d"><div class="ttname"><a href="DefCommon_8h.html#a531ba444bc15b6711c05fd95874f205d">Kondo</a></div><div class="ttdeci">#define Kondo</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00033">DefCommon.h:33</a></div></div>
 <div class="ttc" id="aDefCommon_8h_html_a5e2c64674c783f9e961ac5f05f653e2a"><div class="ttname"><a href="DefCommon_8h.html#a5e2c64674c783f9e961ac5f05f653e2a">HubbardGC</a></div><div class="ttdeci">#define HubbardGC</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00034">DefCommon.h:34</a></div></div>
 <div class="ttc" id="aDefCommon_8h_html_a7971a38c01ecd8832f5f7c16400b5173"><div class="ttname"><a href="DefCommon_8h.html#a7971a38c01ecd8832f5f7c16400b5173">tJGC</a></div><div class="ttdeci">#define tJGC</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00041">DefCommon.h:41</a></div></div>

@@ -62,10 +62,23 @@ NSingleExcitationBra    1
 <li><p>非対角グリーン関数はシフト型 BiCG 法（<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>）かつ <code class="docutils literal notranslate"><span class="pre">CalcSpec=&quot;Normal&quot;</span></code> のときのみ利用可能です
 （ブラ演算子を指定した場合、リスタート・保存系のスペクトルモードは利用できません）。</p></li>
 <li><p>ケット（<a class="reference internal" href="SingleExcitation_file_ja.html"><span class="doc">SingleExcitation</span></a>）とブラの演算子は、<span class="math notranslate nohighlight">\(|\phi\rangle\)</span>を
-<strong>同一</strong>の励起ヒルベルト空間（粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>の変化が同じ）へ写す必要があります。
-1 つのファイル内の全演算子も同一のセクター変化をもつ必要があります。これを満たさない場合はプログラムが終了します。</p></li>
-<li><p>対応モデル：Hubbard 模型および HubbardGC 模型（グランドカノニカル）。（一体励起はスピン系では定義されず、
-その他の模型は非対角グリーン関数に未対応のため、これらの場合はプログラムが終了します。）</p></li>
+<strong>同一</strong>の励起ヒルベルト空間へ写す必要があり、1 つのファイル内の全演算子も同一のセクター変化をもつ必要があります
+（これを満たさない場合はプログラムが終了します）。「同一セクター」の意味は模型によって異なります。</p>
+<ul>
+<li><p>Hubbard 模型（カノニカル）：粒子数<strong>および</strong><span class="math notranslate nohighlight">\(S_z\)</span>の変化が同じであること。</p></li>
+<li><p>HubbardGC 模型（グランドカノニカル）：一体励起はセクター変化を伴わず、全 Fock 空間が
+1 つのヒルベルト空間となるため、ケットとブラは（どちらのスピンでも）常に同一空間を共有します。</p></li>
+<li><p>HubbardNConserved 模型（<span class="math notranslate nohighlight">\(S_z\)</span>自由）：粒子数の変化のみが同じであればよく、<span class="math notranslate nohighlight">\(S_z\)</span>の変化は異なってもよい。</p></li>
+</ul>
+</li>
+<li><p>対応モデル：Hubbard 模型、HubbardGC 模型（グランドカノニカル）、および
+HubbardNConserved 模型（カノニカル、電子数固定で<span class="math notranslate nohighlight">\(S_z\)</span>は自由）。
+（一体励起はスピン系では定義されず、その他の模型は非対角グリーン関数に未対応のため、
+これらの場合はプログラムが終了します。）</p></li>
+<li><p>HubbardNConserved 模型は Hubbard 模型（<code class="docutils literal notranslate"><span class="pre">CalcModel=0</span></code>）において<a class="reference internal" href="ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModPara</span></a>ファイルで
+<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>を指定せず<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>（電子数）のみを与えることで選択されます。このとき<span class="math notranslate nohighlight">\(S_z\)</span>は自由となるため、
+スピン交差（2Sz 非保存）の非対角ルート（例えばスピン軌道結合をもつ不純物に用いる）が有効になります。励起ヒルベルト空間は電子数のみで決まり、
+ケットとブラは粒子数の変化が同じであればよく、スピン交差の<span class="math notranslate nohighlight">\(G_{BA}\)</span>を 1 回の求解で得られます。</p></li>
 <li><p><a class="reference internal" href="ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModPara</span></a>ファイルで<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code><span class="math notranslate nohighlight">\(&gt;1\)</span>を
 指定した場合、追加の bra 演算子セット<code class="docutils literal notranslate"><span class="pre">1</span></code>...<span class="math notranslate nohighlight">\((B-1)\)</span>は実行
 ディレクトリの<code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code>...<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code>から

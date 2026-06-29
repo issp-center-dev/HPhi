@@ -118,7 +118,7 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">2Sz</span></code></p>
 <p><strong>形式 :</strong> int型 (非負整数)</p>
 <p><strong>説明 :</strong>
-<span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。</p>
+<span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0（電子系 Hubbard 模型）において<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>を指定せず<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>のみを与えると、電子数を固定しつつ<span class="math notranslate nohighlight">\(S_z\)</span>を自由とする<code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code>模型が選択されます。これは 2Sz 非保存（スピン交差）系の一体励起非対角（ブラ・ケット）動的グリーン関数で用いるセクターです。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>形式 :</strong> int型 (整数)</p>

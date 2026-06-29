@@ -125,7 +125,11 @@ grand canonical ensemble).</p>
 <p><strong>Description :</strong> The total value of <span class="math notranslate nohighlight">\(2S_z\)</span> (not used in grand
 canonical ensemble). For conservation of <span class="math notranslate nohighlight">\(S_z\)</span> in the case of
 <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
-set <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>.</p>
+set <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>. For <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0, giving <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> <strong>without</strong> <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>
+selects the <code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code> model, which fixes the electron number
+while leaving <span class="math notranslate nohighlight">\(S_z\)</span> free; this is the sector used by the
+single-excitation off-diagonal (bra-ket) dynamical Green’s function for
+2Sz-nonconserving (cross-spin) systems.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>Type :</strong> Int</p>
