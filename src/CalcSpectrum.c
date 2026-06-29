@@ -30,6 +30,9 @@
 #include "sz.h"
 #include "check.h"
 #include "diagonalcalc.h"
+#ifdef MPI
+#include <mpi.h>
+#endif
 /**
  * @file   CalcSpectrum.c
  * @version 1.1
@@ -213,13 +216,39 @@ static int CalcOneSpectrum(
   return iret;
 }/*int CalcOneSpectrum*/
 
+/// \brief Build the local-rank eigenvector file name for ReadEigenVector and preflight checks.
+static int BuildEigenVectorFileName(
+  int idx,
+  int useIdxSuffix,
+  char *sdt,
+  size_t sdtSize)
+{
+  char base[D_FileNameMax];
+  char *kw;
+  int nfn;
+
+  GetFileNameByKW(KWSpectrumVec, &kw);
+  /* local copy (bounded): do NOT mutate the shared global file-name buffer.
+     Fail explicitly on truncation rather than silently opening a different file. */
+  if (snprintf(base, sizeof(base), "%s", kw) >= (int)sizeof(base)) {
+    fprintf(stderr, "Error: SpectrumVec base name is too long for the file-name buffer.\n");
+    return FALSE;
+  }
+  nfn = useIdxSuffix ? snprintf(sdt, sdtSize, "%s_%d_rank_%d.dat", base, idx, myrank)
+                     : snprintf(sdt, sdtSize, "%s_rank_%d.dat", base, myrank);
+  if (nfn < 0 || nfn >= (int)sdtSize) {
+    fprintf(stderr, "Error: eigenvector file name is too long (base=%s).\n", base);
+    return FALSE;
+  }
+  return TRUE;
+}/*int BuildEigenVectorFileName*/
+
 /// \brief Read one MPI-distributed eigenvector into v1Org (original, pre-excitation sector).
 ///
 /// Reads the SpectrumVec file for the local MPI rank. When useIdxSuffix is TRUE the file name
 /// is "<SpectrumVec>_<idx>_rank_<myrank>.dat" (used by the finite-T eigenstate loop, where
 /// SpectrumVec is the common base, e.g. ".../zvo_eigenvec"); when FALSE it is the legacy
-/// "<SpectrumVec>_rank_<myrank>.dat". GetFileNameByKW returns a pointer into a shared global
-/// buffer, so we strcpy it to a local before appending (the loop calls this repeatedly).
+/// "<SpectrumVec>_rank_<myrank>.dat".
 ///
 /// \param X            [in,out] Calculation struct (Large.itr is set from the stored step).
 /// \param idx          [in] Eigenstate index (used only when useIdxSuffix is TRUE).
@@ -233,25 +262,13 @@ static int ReadEigenVector(
   int useIdxSuffix,
   double complex *v1Org)
 {
-  char sdt[D_FileNameMax], base[D_FileNameMax];
-  char *kw;
+  char sdt[D_FileNameMax];
   FILE *fp;
   unsigned long int i_max = 0;
   int i_stp;
   size_t byte_size;
 
-  int nfn;
-  GetFileNameByKW(KWSpectrumVec, &kw);
-  /* local copy (bounded): do NOT mutate the shared global file-name buffer.
-     Fail explicitly on truncation rather than silently opening a different file. */
-  if (snprintf(base, sizeof(base), "%s", kw) >= (int)sizeof(base)) {
-    fprintf(stderr, "Error: SpectrumVec base name is too long for the file-name buffer.\n");
-    return FALSE;
-  }
-  nfn = useIdxSuffix ? snprintf(sdt, sizeof(sdt), "%s_%d_rank_%d.dat", base, idx, myrank)
-                     : snprintf(sdt, sizeof(sdt), "%s_rank_%d.dat", base, myrank);
-  if (nfn >= (int)sizeof(sdt)) {
-    fprintf(stderr, "Error: eigenvector file name is too long (base=%s).\n", base);
+  if (BuildEigenVectorFileName(idx, useIdxSuffix, sdt, sizeof(sdt)) != TRUE) {
     return FALSE;
   }
 
@@ -289,6 +306,84 @@ static int ReadEigenVector(
   }
   return TRUE;
 }/*int ReadEigenVector*/
+
+/// \brief Preflight one eigenvector file without filling the work vector.
+static int CheckEigenVectorFile(
+  struct EDMainCalStruct *X,
+  int idx,
+  int useIdxSuffix)
+{
+  char sdt[D_FileNameMax];
+  FILE *fp;
+  unsigned long int i_max = 0;
+  int i_stp;
+  long data_offset, file_end;
+  size_t expected_bytes;
+
+  if (BuildEigenVectorFileName(idx, useIdxSuffix, sdt, sizeof(sdt)) != TRUE) {
+    return FALSE;
+  }
+  childfopenALL(sdt, "rb", &fp);
+  if (fp == NULL) {
+    fprintf(stderr, "Error: A file of Input vector (%s) does not exist.\n", sdt);
+    return FALSE;
+  }
+  if (fread(&i_stp, sizeof(i_stp), 1, fp) != 1) {
+    fprintf(stderr, "Error: failed to read the step header from Input vector (%s).\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  if (fread(&i_max, sizeof(i_max), 1, fp) != 1) {
+    fprintf(stderr, "Error: failed to read the dimension header from Input vector (%s).\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  if (i_max != X->Bind.Check.idim_maxOrg) {
+    fprintf(stderr, "Error: myrank=%d, i_max=%ld\n", myrank, i_max);
+    fprintf(stderr, "Error: A file of Input vector (%s) is incorrect.\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  data_offset = ftell(fp);
+  if (data_offset < 0 || fseek(fp, 0, SEEK_END) != 0) {
+    fprintf(stderr, "Error: failed to check the size of Input vector (%s).\n", sdt);
+    fclose(fp);
+    return FALSE;
+  }
+  file_end = ftell(fp);
+  fclose(fp);
+  if (file_end < data_offset) {
+    fprintf(stderr, "Error: failed to check the size of Input vector (%s).\n", sdt);
+    return FALSE;
+  }
+  expected_bytes = (size_t)(i_max + 1) * sizeof(complex double);
+  if ((unsigned long)(file_end - data_offset) < (unsigned long)expected_bytes) {
+    fprintf(stderr, "Error: truncated Input vector (%s): file has %lu of %lu vector bytes.\n",
+            sdt, (unsigned long)(file_end - data_offset), (unsigned long)expected_bytes);
+    return FALSE;
+  }
+  return TRUE;
+}/*int CheckEigenVectorFile*/
+
+/// \brief Check all finite-T loop eigenvector files before writing any spectrum.
+static int CheckFiniteTLoopEigenVectors(
+  struct EDMainCalStruct *X,
+  int nloop)
+{
+  int idx;
+  for (idx = 0; idx < nloop; idx++) {
+    int local_ok = (CheckEigenVectorFile(X, idx, TRUE) == TRUE) ? 1 : 0;
+    int global_ok = local_ok;
+#ifdef MPI
+    MPI_Allreduce(&local_ok, &global_ok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+#endif
+    if (global_ok != 1) {
+      fprintf(stderr, "Error: SpectrumLoopExct input eigenvector preflight failed at index %d.\n", idx);
+      return FALSE;
+    }
+  }
+  return TRUE;
+}/*int CheckFiniteTLoopEigenVectors*/
 
 /// \brief Read the idx-th eigen-energy E_idx from "<CDataFileHead>_energy.dat".
 ///
@@ -383,9 +478,53 @@ static int OutputSpectrumIdx(
   return TRUE;
 }/*int OutputSpectrumIdx*/
 
+static int ValidateSingleExcitationRow(
+  const char *fname,
+  unsigned int row,
+  unsigned int nSiteTotal,
+  int site,
+  int spin,
+  int type)
+{
+  if (site < 0 || CheckSite(site, (int)nSiteTotal) != 0) {
+    if (myrank == 0)
+      fprintf(stderr, "Error: invalid site index %d in %s line %u (Nsite=%u).\n",
+              site, fname, row, nSiteTotal);
+    return FALSE;
+  }
+  if (spin < 0 || spin > 1) {
+    if (myrank == 0)
+      fprintf(stderr, "Error: invalid spin index %d in %s line %u (expected 0 or 1).\n",
+              spin, fname, row);
+    return FALSE;
+  }
+  if (type != 0 && type != 1) {
+    if (myrank == 0)
+      fprintf(stderr, "Error: invalid single-excitation type %d in %s line %u (expected 0 or 1).\n",
+              type, fname, row);
+    return FALSE;
+  }
+  return TRUE;
+}/*int ValidateSingleExcitationRow*/
+
+static int ValidateSingleExcitationSet(
+  const char *fname,
+  unsigned int nSiteTotal,
+  unsigned int N,
+  int **ops)
+{
+  unsigned int k;
+  for (k = 0; k < N; k++) {
+    if (ValidateSingleExcitationRow(fname, k, nSiteTotal, ops[k][0], ops[k][1], ops[k][2]) != TRUE) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}/*int ValidateSingleExcitationSet*/
+
 /// \brief Read one single-excitation operator set from an HPhi single_ex-format def file.
 ///
-/// File layout (as written by the DCore driver): 5 header lines, the 2nd being "NSingle <N>",
+/// File layout: 5 header lines, the 2nd being "<keyword> <N>",
 /// followed by N lines "<site> <spin> <type> <re> <im>". Operators in one file are summed into
 /// one excited state (e.g. c_i + i c_j). Allocates *pOps ([N][3]) and *pPara ([N]); the caller
 /// frees them with free_i_2d_allocate / free_cd_1d_allocate. Used to load the operator sets
@@ -395,40 +534,48 @@ static int OutputSpectrumIdx(
 /// \retval FALSE file missing or malformed.
 static int ReadSingleExcitationSet(
   const char *fname,
-  unsigned int maxN,
+  unsigned int nSiteTotal,
   unsigned int *pN,
   int ***pOps,
   double complex **pPara)
 {
   FILE *fp;
-  char ctmp[256], kw[256];
-  unsigned int N = 0, k;
+  char ctmp[256];
+  unsigned int N = 0, k, maxN;
   int site, spin, type;
+  int fopen_ok;
   double re, im;
   int **ops;
   double complex *para;
 
   fp = fopenMPI(fname, "r");
-  if (fp == NULL) {
-    fprintf(stderr, "Error: single-excitation file (%s) does not exist.\n", fname);
+  fopen_ok = (fp != NULL) ? 1 : 0;
+#ifdef MPI
+  MPI_Bcast(&fopen_ok, 1, MPI_INT, 0, MPI_COMM_WORLD);
+#endif
+  if (fopen_ok != 1) {
+    if (fp != NULL) fclose(fp);
+    if (myrank == 0)
+      fprintf(stderr, "Error: single-excitation file (%s) does not exist.\n", fname);
     return FALSE;
   }
   /* Validate the full 5-line header. fgetsMPI returns NULL at EOF while leaving the
      previous buffer contents in place, so an unchecked read on a truncated file would
      silently reuse the prior line; require every header line to be present. */
   if (fgetsMPI(ctmp, 256, fp) == NULL) {                       /* line 1: separator */
-    fprintf(stderr, "Error: %s is truncated (missing header).\n", fname);
+    if (myrank == 0) fprintf(stderr, "Error: %s is truncated (missing header).\n", fname);
     fclose(fp); return FALSE;
   }
-  if (fgetsMPI(ctmp, 256, fp) == NULL ||                       /* line 2: "NSingle <N>" */
-      sscanf(ctmp, "%255s %u", kw, &N) != 2 || strcmp(kw, "NSingle") != 0) {
-    fprintf(stderr, "Error: malformed \"NSingle <N>\" header in %s.\n", fname);
+  if (fgetsMPI(ctmp, 256, fp) == NULL ||                       /* line 2: "<keyword> <N>" */
+      sscanf(ctmp, "%*255s %u", &N) != 1) {
+    if (myrank == 0)
+      fprintf(stderr, "Error: malformed single-excitation count header in %s.\n", fname);
     fclose(fp); return FALSE;
   }
   if (fgetsMPI(ctmp, 256, fp) == NULL ||                       /* lines 3-5: separators */
       fgetsMPI(ctmp, 256, fp) == NULL ||
       fgetsMPI(ctmp, 256, fp) == NULL) {
-    fprintf(stderr, "Error: %s is truncated (incomplete header).\n", fname);
+    if (myrank == 0) fprintf(stderr, "Error: %s is truncated (incomplete header).\n", fname);
     fclose(fp); return FALSE;
   }
   if (N == 0) { fclose(fp); *pN = 0; *pOps = NULL; *pPara = NULL; return TRUE; }
@@ -436,8 +583,10 @@ static int ReadSingleExcitationSet(
      cannot have more than 2*Nsite distinct (site, spin) operators, so a larger value is a
      corrupt file. The codebase allocators abort on a failed malloc rather than returning a
      checkable status, so an absurd NSingle must be rejected here, not after allocation. */
+  maxN = 2u * nSiteTotal;
   if (maxN > 0 && N > maxN) {
-    fprintf(stderr, "Error: NSingle=%u in %s exceeds the maximum of %u operators.\n", N, fname, maxN);
+    if (myrank == 0)
+      fprintf(stderr, "Error: NSingle=%u in %s exceeds the maximum of %u operators.\n", N, fname, maxN);
     fclose(fp); return FALSE;
   }
 
@@ -446,7 +595,13 @@ static int ReadSingleExcitationSet(
   for (k = 0; k < N; k++) {
     if (fgetsMPI(ctmp, 256, fp) == NULL ||
         sscanf(ctmp, "%d %d %d %lf %lf", &site, &spin, &type, &re, &im) != 5) {
-      fprintf(stderr, "Error: malformed operator line %u in %s.\n", k, fname);
+      if (myrank == 0) fprintf(stderr, "Error: malformed operator line %u in %s.\n", k, fname);
+      fclose(fp);
+      free_i_2d_allocate(ops);
+      free_cd_1d_allocate(para);
+      return FALSE;
+    }
+    if (ValidateSingleExcitationRow(fname, k, nSiteTotal, site, spin, type) != TRUE) {
       fclose(fp);
       free_i_2d_allocate(ops);
       free_cd_1d_allocate(para);
@@ -605,6 +760,7 @@ static int RunMultiOpFiniteTLoop(
   unsigned int *bra_N = NULL;
   int ***bra_ops = NULL;
   double complex **bra_para = NULL;
+  unsigned int nSiteTotal = (X->Bind.Def.NsiteMPI > 0) ? X->Bind.Def.NsiteMPI : X->Bind.Def.Nsite;
   /* Only the REAL part of the spectral shift is state-dependent (= E_idx). Preserve any
      configured imaginary broadening in dcOmegaOrg so the loop matches the single-state path;
      with the DCore driver this imaginary part is 0, so the two are identical. */
@@ -626,26 +782,30 @@ static int RunMultiOpFiniteTLoop(
   }
   set_N[0] = op0_N; set_ops[0] = op0_ops; set_para[0] = op0_para;
   for (op = 1; op < nop; op++) { set_N[op] = 0; set_ops[op] = NULL; set_para[op] = NULL; }
+  if (ValidateSingleExcitationSet("SingleExcitation", nSiteTotal, op0_N, op0_ops) != TRUE) {
+    free(set_N); free(set_ops); free(set_para);
+    return FALSE;
+  }
 
   /* Load operator sets 1..; for canonical models require every set to map to set 0's
-     Hilbert sector. When sh0 is not valid the model has no particle-number sector for
-     this excitation (grand canonical): every single-excitation operator stays in the
-     same Hilbert space, so there is no cross-operator sector constraint to enforce and
-     the sets are simply loaded. For canonical models sh0 is well defined and
-     MakeExcitedList already built the excited lists for that single shared sector. */
+     Hilbert sector. If the sector shift cannot be computed, do not guess: MakeExcitedList
+     built exactly one excited-list sector from set 0, so set 1.. cannot be safely reused
+     without a known matching shift. HubbardGC is safe because its shift is valid and zero. */
   if (nop > 1) {
     SectorShift sh0 = GetExcitationOperatorSetShift(
       X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, op0_ops, op0_N);
-    int enforceSector = (sh0.valid == TRUE);
-    for (op = 1; iret == TRUE && op < nop; op++) {
-      char opfn[D_FileNameMax];
-      /* A single-excitation set has at most 2*Nsite distinct (site, spin) operators. */
-      unsigned int maxN = 2u * (unsigned int) X->Bind.Def.Nsite;
-      snprintf(opfn, sizeof(opfn), "single_ex_%d.def", op);
-      if (ReadSingleExcitationSet(opfn, maxN, &set_N[op], &set_ops[op], &set_para[op]) != TRUE) {
-        iret = FALSE; break;
-      }
-      if (enforceSector) {
+    if (sh0.valid != TRUE) {
+      fprintf(stderr, "Error: SpectrumNumOp>1 cannot validate the excited Hilbert sector "
+                      "for this model/operator set.\n");
+      iret = FALSE;
+    }
+    else {
+      for (op = 1; iret == TRUE && op < nop; op++) {
+        char opfn[D_FileNameMax];
+        snprintf(opfn, sizeof(opfn), "single_ex_%d.def", op);
+        if (ReadSingleExcitationSet(opfn, nSiteTotal, &set_N[op], &set_ops[op], &set_para[op]) != TRUE) {
+          iret = FALSE; break;
+        }
         SectorShift sh = GetExcitationOperatorSetShift(
           X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, set_ops[op], set_N[op]);
         if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
@@ -661,8 +821,7 @@ static int RunMultiOpFiniteTLoop(
   /* Load the bra operator sets for Stage-3 multi-bra (one ket solve projected onto nBra bras).
      Set 0 is the namelist SingleExcitationBra; sets 1.. come from single_ex_bra_<b>.def. Every
      bra must map to the SAME excited sector as ket set 0 (one-body c_i/c_j on the same spin) —
-     the single sector MakeExcitedList built the excited lists for. The check is skipped for
-     grand-canonical models, where the shift is not well defined (as for the op sets). */
+     the single sector MakeExcitedList built the excited lists for. */
   if (iret == TRUE && nBra > 1) {
     bra_N    = (unsigned int *)    malloc(sizeof(unsigned int)     * nBra);
     bra_ops  = (int ***)           malloc(sizeof(int **)           * nBra);
@@ -674,8 +833,6 @@ static int RunMultiOpFiniteTLoop(
     else {
       SectorShift sh0 = GetExcitationOperatorSetShift(
         X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, op0_ops, op0_N);
-      int enforceSector = (sh0.valid == TRUE);
-      unsigned int maxN = 2u * (unsigned int) X->Bind.Def.Nsite;
       bra_N[0]    = X->Bind.Def.NSingleExcitationOperatorBra;
       bra_ops[0]  = X->Bind.Def.SingleExcitationOperatorBra;
       bra_para[0] = X->Bind.Def.ParaSingleExcitationOperatorBra;
@@ -684,23 +841,30 @@ static int RunMultiOpFiniteTLoop(
         fprintf(stderr, "Error: SpectrumNumBra>1 requires a namelist SingleExcitationBra (bra set 0).\n");
         iret = FALSE;
       }
+      if (iret == TRUE && sh0.valid != TRUE) {
+        fprintf(stderr, "Error: SpectrumNumBra>1 cannot validate the excited Hilbert sector "
+                        "for this model/operator set.\n");
+        iret = FALSE;
+      }
+      if (iret == TRUE &&
+          ValidateSingleExcitationSet("SingleExcitationBra", nSiteTotal, bra_N[0], bra_ops[0]) != TRUE) {
+        iret = FALSE;
+      }
       for (b = 0; iret == TRUE && b < nBra; b++) {
         if (b > 0) {
           char brafn[D_FileNameMax];
           snprintf(brafn, sizeof(brafn), "single_ex_bra_%d.def", b);
-          if (ReadSingleExcitationSet(brafn, maxN, &bra_N[b], &bra_ops[b], &bra_para[b]) != TRUE) {
+          if (ReadSingleExcitationSet(brafn, nSiteTotal, &bra_N[b], &bra_ops[b], &bra_para[b]) != TRUE) {
             iret = FALSE; break;
           }
         }
-        if (enforceSector) {
-          SectorShift sh = GetExcitationOperatorSetShift(
-            X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, bra_ops[b], bra_N[b]);
-          if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
-              sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
-            fprintf(stderr, "Error: bra set %d maps to a different excited sector than ket set 0; "
-                            "all bras must share the ket's sector.\n", b);
-            iret = FALSE; break;
-          }
+        SectorShift sh = GetExcitationOperatorSetShift(
+          X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, bra_ops[b], bra_N[b]);
+        if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
+            sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+          fprintf(stderr, "Error: bra set %d maps to a different excited sector than ket set 0; "
+                          "all bras must share the ket's sector.\n", b);
+          iret = FALSE; break;
         }
       }
     }
@@ -711,6 +875,9 @@ static int RunMultiOpFiniteTLoop(
      files), so no partial DynamicalGreen output is left behind. */
   if (iret == TRUE && ReadEigenEnergy(X, nloop - 1, &Elast) != TRUE) {
     fprintf(stderr, "Error: SpectrumLoopExct=%d exceeds the number of computed eigenstates.\n", nloop);
+    iret = FALSE;
+  }
+  if (iret == TRUE && CheckFiniteTLoopEigenVectors(X, nloop) != TRUE) {
     iret = FALSE;
   }
 
