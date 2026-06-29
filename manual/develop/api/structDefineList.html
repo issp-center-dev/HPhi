@@ -555,6 +555,15 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <tr class="memitem:a6ecb73c1ae2dcfc8597e46fa34569ecf" id="r_a6ecb73c1ae2dcfc8597e46fa34569ecf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a6ecb73c1ae2dcfc8597e46fa34569ecf">iFlgSpecOmegaOrg</a></td></tr>
 <tr class="memdesc:a6ecb73c1ae2dcfc8597e46fa34569ecf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="structDefineList.html#a1f44ba4fcb830965aa80dc95a8affe31" title="Origin limit of the frequency for the spectrum.">DefineList::dcOmegaOrg</a> is input or not.  <br /></td></tr>
 <tr class="separator:a6ecb73c1ae2dcfc8597e46fa34569ecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc11ba7b2a9ff6d545205ff2621dca36" id="r_adc11ba7b2a9ff6d545205ff2621dca36"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#adc11ba7b2a9ff6d545205ff2621dca36">iSpectrumLoopExct</a></td></tr>
+<tr class="memdesc:adc11ba7b2a9ff6d545205ff2621dca36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of eigenstates the spectrum calculation loops over internally. When &gt; 0, CalcSpectrum loops idx=0..iSpectrumLoopExct-1, reading eigenvec_{idx}, using E_idx (from xx_energy.dat) as the per-state spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate. The value is the count (= exct_cut), so it can be &lt;= k_exct. Default 0 keeps the legacy single-eigenvector behavior.  <br /></td></tr>
+<tr class="separator:adc11ba7b2a9ff6d545205ff2621dca36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f4ad0abed9db0ff5946fef5ce910d0" id="r_a32f4ad0abed9db0ff5946fef5ce910d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a32f4ad0abed9db0ff5946fef5ce910d0">iSpectrumNumOp</a></td></tr>
+<tr class="memdesc:a32f4ad0abed9db0ff5946fef5ce910d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of single-excitation operator sets processed in one run. When &gt; 1 (together with iSpectrumLoopExct &gt; 0), the finite-T loop reads each eigenvector ONCE and, for that eigenstate, builds and solves the spectrum for every operator set op=0..iSpectrumNumOp-1 (set 0 from the namelist SingleExcitation, sets 1.. from single_ex_&lt;op&gt;.def), writing DynamicalGreen_&lt;idx&gt;_&lt;op&gt;.dat. All sets must map to the same Hilbert sector. Default 0/1 keeps the single-operator behavior.  <br /></td></tr>
+<tr class="separator:a32f4ad0abed9db0ff5946fef5ce910d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9e1e769951b8b9fc84a1d4dc0e95f85" id="r_aa9e1e769951b8b9fc84a1d4dc0e95f85"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#aa9e1e769951b8b9fc84a1d4dc0e95f85">iSpectrumNumBra</a></td></tr>
+<tr class="memdesc:aa9e1e769951b8b9fc84a1d4dc0e95f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of left (bra) single-excitation operator sets projected from ONE BiCG solve (Komega nl). When &gt; 1 (together with iSpectrumLoopExct &gt; 0), each (eigenstate, ket-op) solve is projected onto every bra set b=0..nBra-1 (set 0 from the namelist SingleExcitationBra, sets 1.. from single_ex_bra_&lt;b&gt;.def), writing DynamicalGreen_&lt;idx&gt;_&lt;op&gt;_&lt;b&gt;.dat. This reuses one ket solve for all bras, cutting the BiCG count from n_orb^2 to n_orb for off-diagonal Green's functions. All bra sets must map to the same excited sector as the ket. Default 0/1 keeps the single-bra behavior.  <br /></td></tr>
+<tr class="separator:aa9e1e769951b8b9fc84a1d4dc0e95f85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af68333a432a614152ea2a2f3b7caf843" id="r_af68333a432a614152ea2a2f3b7caf843"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#af68333a432a614152ea2a2f3b7caf843">iFlgCalcSpec</a></td></tr>
 <tr class="memdesc:af68333a432a614152ea2a2f3b7caf843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input parameter CalcSpec in teh CalcMod file.  <br /></td></tr>
 <tr class="separator:af68333a432a614152ea2a2f3b7caf843"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -648,7 +657,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00044">44</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00050">OutputSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, and <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00040">ReadTPQData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00053">OutputSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00443">OutputSpectrumIdx()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00119">OutputTMComponents_BiCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00399">ReadEigenEnergy()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, and <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00040">ReadTPQData()</a>.</p>
 
 </div>
 </div>
@@ -756,7 +765,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00271">271</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -776,7 +785,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00272">272</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -796,7 +805,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00273">273</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00050">OutputSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00053">OutputSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00443">OutputSpectrumIdx()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -1093,7 +1102,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00257">257</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00355">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00134">nbody_is_hubbard_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00148">nbody_is_kondo_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00155">nbody_is_spinless_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00173">nbody_is_supported_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00141">nbody_is_tj_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00193">nbody_requires_spinful_conservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00181">nbody_uses_hubbard_list_path()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00168">nbodyg_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00102">nbodyg_is_hubbard_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00116">nbodyg_is_kondo_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00123">nbodyg_is_spinless_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00141">nbodyg_is_supported_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00109">nbodyg_is_tj_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00161">nbodyg_requires_spinful_conservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00149">nbodyg_uses_hubbard_list_path()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00355">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00134">nbody_is_hubbard_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00148">nbody_is_kondo_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00155">nbody_is_spinless_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00173">nbody_is_supported_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00141">nbody_is_tj_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00193">nbody_requires_spinful_conservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00181">nbody_uses_hubbard_list_path()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00168">nbodyg_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00102">nbodyg_is_hubbard_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00116">nbodyg_is_kondo_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00123">nbodyg_is_spinless_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00141">nbodyg_is_supported_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00109">nbodyg_is_tj_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00161">nbodyg_requires_spinful_conservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00149">nbodyg_uses_hubbard_list_path()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -1113,7 +1122,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00251">251</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -1131,9 +1140,9 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p>When the Hilbert space of excited state differs from the original one. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00279">279</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00300">300</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -1151,9 +1160,9 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p>Input parameter CalcSpec in teh CalcMod file. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00278">278</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00299">299</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -1191,7 +1200,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00093">93</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l00168">nbodyg_is_general_spin()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00168">nbodyg_is_general_spin()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -1231,7 +1240,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <li>1: Parallel Interaction [to be supported] </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00287">287</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00308">308</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1262,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <li>1: Use ScaLAPACK </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00297">297</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00318">318</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
 
@@ -1311,7 +1320,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00277">277</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1376,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00262">262</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1408,7 +1417,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <li>&gt;0: Use GPU </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00292">292</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00313">313</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -1428,7 +1437,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00083">83</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, and <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, and <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>.</p>
 
 </div>
 </div>
@@ -1448,7 +1457,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00274">274</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -1541,7 +1550,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00261">261</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -1560,7 +1569,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00265">265</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -1638,9 +1647,69 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <li>2: restart (input and output restart vector) </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00283">283</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00304">304</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>.</p>
+
+</div>
+</div>
+<a id="adc11ba7b2a9ff6d545205ff2621dca36" name="adc11ba7b2a9ff6d545205ff2621dca36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc11ba7b2a9ff6d545205ff2621dca36">&#9670;&#160;</a></span>iSpectrumLoopExct</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a> DefineList::iSpectrumLoopExct</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of eigenstates the spectrum calculation loops over internally. When &gt; 0, CalcSpectrum loops idx=0..iSpectrumLoopExct-1, reading eigenvec_{idx}, using E_idx (from xx_energy.dat) as the per-state spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate. The value is the count (= exct_cut), so it can be &lt;= k_exct. Default 0 keeps the legacy single-eigenvector behavior. </p>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00278">278</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="aa9e1e769951b8b9fc84a1d4dc0e95f85" name="aa9e1e769951b8b9fc84a1d4dc0e95f85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9e1e769951b8b9fc84a1d4dc0e95f85">&#9670;&#160;</a></span>iSpectrumNumBra</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a> DefineList::iSpectrumNumBra</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of left (bra) single-excitation operator sets projected from ONE BiCG solve (Komega nl). When &gt; 1 (together with iSpectrumLoopExct &gt; 0), each (eigenstate, ket-op) solve is projected onto every bra set b=0..nBra-1 (set 0 from the namelist SingleExcitationBra, sets 1.. from single_ex_bra_&lt;b&gt;.def), writing DynamicalGreen_&lt;idx&gt;_&lt;op&gt;_&lt;b&gt;.dat. This reuses one ket solve for all bras, cutting the BiCG count from n_orb^2 to n_orb for off-diagonal Green's functions. All bra sets must map to the same excited sector as the ket. Default 0/1 keeps the single-bra behavior. </p>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00291">291</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a32f4ad0abed9db0ff5946fef5ce910d0" name="a32f4ad0abed9db0ff5946fef5ce910d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32f4ad0abed9db0ff5946fef5ce910d0">&#9670;&#160;</a></span>iSpectrumNumOp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93">int</a> DefineList::iSpectrumNumOp</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of single-excitation operator sets processed in one run. When &gt; 1 (together with iSpectrumLoopExct &gt; 0), the finite-T loop reads each eigenvector ONCE and, for that eigenstate, builds and solves the spectrum for every operator set op=0..iSpectrumNumOp-1 (set 0 from the namelist SingleExcitation, sets 1.. from single_ex_&lt;op&gt;.def), writing DynamicalGreen_&lt;idx&gt;_&lt;op&gt;.dat. All sets must map to the same Hilbert sector. Default 0/1 keeps the single-operator behavior. </p>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00284">284</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -1680,7 +1749,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00049">49</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
 
 </div>
 </div>
@@ -1700,7 +1769,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00081">81</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, and <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, and <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>.</p>
 
 </div>
 </div>
@@ -2511,7 +2580,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00312">312</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00333">333</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
@@ -2631,7 +2700,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00235">235</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -2651,7 +2720,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00247">247</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -2725,7 +2794,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00229">229</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -2745,7 +2814,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00241">241</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -2765,7 +2834,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00063">63</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00568">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00686">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00582">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00700">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00455">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00409">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00714">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00832">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00727">apply_spinless_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00845">apply_spinless_rank_create()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00524">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00642">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00672">get_spinless_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00790">get_spinless_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00568">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00686">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00582">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00700">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00455">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00409">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00714">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00832">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00727">apply_spinless_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00845">apply_spinless_rank_create()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00524">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00642">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00672">get_spinless_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00790">get_spinless_local_block()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00174">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -2785,7 +2854,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00064">64</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -2820,7 +2889,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 </div><div class="memdoc">
 <p>[NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00356">356</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00377">377</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2838,7 +2907,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <p>Number of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00333">333</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00354">354</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2856,7 +2925,7 @@ Data Format [NTE] </p>
 <p>Number of diagonal part of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00338">338</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00359">359</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2872,7 +2941,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00332">332</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00353">353</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
@@ -2892,7 +2961,7 @@ Data Format [NTE] </p>
 <p>Number of off-diagonal part of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00335">335</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00356">356</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2908,7 +2977,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00308">308</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00329">329</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
@@ -2928,7 +2997,7 @@ Data Format [NTE] </p>
 <p>Number of time-dependent transfer integrals for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00318">318</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00339">339</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2946,7 +3015,7 @@ Data Format [NTE] </p>
 <p>Number of time-dependent transfer integrals for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00320">320</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00341">341</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -2962,7 +3031,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00317">317</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00338">338</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
@@ -3096,7 +3165,7 @@ Data Format [NTE] </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00233">233</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -3116,7 +3185,7 @@ Data Format [NTE] </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00245">245</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -3312,7 +3381,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00313">313</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00334">334</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3328,7 +3397,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00303">303</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00324">324</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
 
@@ -3370,7 +3439,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00236">236</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -3390,7 +3459,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00248">248</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -3446,7 +3515,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00230">230</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -3466,7 +3535,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00242">242</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -3483,7 +3552,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00358">358</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00379">379</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3501,7 +3570,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <p>Value of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00348">348</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00369">369</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3519,7 +3588,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00353">353</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00374">374</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3537,7 +3606,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of off-diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00350">350</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00371">371</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3555,7 +3624,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00326">326</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00347">347</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3573,7 +3642,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00328">328</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00349">349</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3590,7 +3659,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>1: Use preconditioning in LOBPCG </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00360">360</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00381">381</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3664,7 +3733,7 @@ Data Format [NTE][Ntransfer]. </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00227">227</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -3684,7 +3753,7 @@ Data Format [NTE][Ntransfer]. </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00239">239</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -3721,7 +3790,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00357">357</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00378">378</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3741,7 +3810,7 @@ Data Format [NTE][Ntransfer]. </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00087">87</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00661">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00053">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00084">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00703">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00089">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -3776,7 +3845,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00355">355</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00376">376</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3794,7 +3863,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Index of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. 4-&gt;site number k, 5-&gt; spin index on k, 6-&gt; site number l, 7-&gt; spin index on l. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00340">340</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00361">361</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3812,7 +3881,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00346">346</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00367">367</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3830,7 +3899,7 @@ Data Format [NTE][NTEInterAll][4]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of off-diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. 4-&gt;site number k, 5-&gt; spin index on k, 6-&gt; site number l, 7-&gt; spin index on l. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00343">343</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00364">364</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3846,7 +3915,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00309">309</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00330">330</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00092">CalcByTEM()</a>.</p>
 
@@ -3866,7 +3935,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00322">322</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00343">343</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3884,7 +3953,7 @@ Data Format [NTE][Ntransfer][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-
 <p>Index of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer][2]: 0-&gt;site number i, 1-&gt; spin index on i. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00324">324</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00345">345</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>

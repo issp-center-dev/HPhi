@@ -44,6 +44,19 @@
 <li><p>##_DynamicalGreen.dat</p></li>
 </ul>
 <p>##はModParaファイル内の[string02]で指定されるヘッダを表します。</p>
+<p>有限温度の固有状態ループおよび multiple-operator / multiple-bra モード
+(<a class="reference internal" href="../expertmode_ja/ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModPara</span></a>ファイルの<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>、
+<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>、<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code>)を有効にすると、
+<code class="docutils literal notranslate"><span class="pre">(固有状態,</span> <span class="pre">ket</span> <span class="pre">演算子,</span> <span class="pre">bra)</span></code>の組み合わせごとに1つのファイルが出力され、
+0始まりの添字がファイル名に付与されます。</p>
+<ul class="simple">
+<li><p>##_DynamicalGreen_<em>idx</em>.dat — 固有状態 <em>idx</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>)。</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>.dat — 固有状態 <em>idx</em>、ket 演算子セット
+<em>op</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>)。</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>_<em>bra</em>.dat — 固有状態 <em>idx</em>、
+ket 演算子セット <em>op</em>、bra 演算子セット <em>bra</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code>)。</p></li>
+</ul>
+<p>以下のファイル形式はこれらすべての変種で共通です。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>

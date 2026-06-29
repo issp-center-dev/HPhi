@@ -14,6 +14,22 @@ DynamicalGreen.dat
 
 ##はModParaファイル内の[string02]で指定されるヘッダを表します。
 
+有限温度の固有状態ループおよび multiple-operator / multiple-bra モード
+(\ :ref:`ModPara <Subsec:modpara>`\ ファイルの\ ``SpectrumLoopExct``\ 、
+``SpectrumNumOp``\ 、\ ``SpectrumNumBra``\ )を有効にすると、
+``(固有状態, ket 演算子, bra)``\ の組み合わせごとに1つのファイルが出力され、
+0始まりの添字がファイル名に付与されます。
+
+-  ##\_DynamicalGreen\_\ *idx*\ .dat — 固有状態 *idx*\ (\ ``SpectrumLoopExct``\ )。
+
+-  ##\_DynamicalGreen\_\ *idx*\ \_\ *op*\ .dat — 固有状態 *idx*\ 、ket 演算子セット
+   *op*\ (\ ``SpectrumNumOp``\ )。
+
+-  ##\_DynamicalGreen\_\ *idx*\ \_\ *op*\ \_\ *bra*\ .dat — 固有状態 *idx*\ 、
+   ket 演算子セット *op*\ 、bra 演算子セット *bra*\ (\ ``SpectrumNumBra``\ )。
+
+以下のファイル形式はこれらすべての変種で共通です。
+
 ファイル形式
 ^^^^^^^^^^^^
 

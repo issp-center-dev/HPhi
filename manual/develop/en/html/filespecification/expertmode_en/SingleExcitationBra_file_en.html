@@ -70,9 +70,16 @@ must map <span class="math notranslate nohighlight">\(|\phi\rangle\)</span> into
 same change of particle number and <span class="math notranslate nohighlight">\(S_z\)</span>). All operators within one
 file must also share the same sector change. Otherwise the program is
 terminated.</p></li>
-<li><p>Supported model: Hubbard. (A single excitation is not defined for spin
-systems, and other models are not yet supported for the off-diagonal Green’s
-function; the program is terminated for them.)</p></li>
+<li><p>Supported models: Hubbard and HubbardGC (grand canonical). (A single
+excitation is not defined for spin systems, and other models are not yet
+supported for the off-diagonal Green’s function; the program is terminated
+for them.)</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code> <span class="math notranslate nohighlight">\(&gt;1\)</span> is set in the
+<a class="reference internal" href="ModPara_file_en.html#subsec-modpara"><span class="std std-ref">ModPara</span></a> file, the additional bra operator sets
+<code class="docutils literal notranslate"><span class="pre">1</span></code> … <span class="math notranslate nohighlight">\((B-1)\)</span> are read from files named <code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code> …
+<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code> in the run directory, using the
+same format as this file; bra set <code class="docutils literal notranslate"><span class="pre">0</span></code> is this <code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code> file
+given in the namelist.</p></li>
 </ul>
 </section>
 </section>

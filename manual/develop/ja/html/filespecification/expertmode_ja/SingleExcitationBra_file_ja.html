@@ -64,8 +64,13 @@ NSingleExcitationBra    1
 <li><p>ケット（<a class="reference internal" href="SingleExcitation_file_ja.html"><span class="doc">SingleExcitation</span></a>）とブラの演算子は、<span class="math notranslate nohighlight">\(|\phi\rangle\)</span>を
 <strong>同一</strong>の励起ヒルベルト空間（粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>の変化が同じ）へ写す必要があります。
 1 つのファイル内の全演算子も同一のセクター変化をもつ必要があります。これを満たさない場合はプログラムが終了します。</p></li>
-<li><p>対応モデル：Hubbard 模型。（一体励起はスピン系では定義されず、その他の模型は非対角グリーン関数に未対応のため、
-これらの場合はプログラムが終了します。）</p></li>
+<li><p>対応モデル：Hubbard 模型および HubbardGC 模型（グランドカノニカル）。（一体励起はスピン系では定義されず、
+その他の模型は非対角グリーン関数に未対応のため、これらの場合はプログラムが終了します。）</p></li>
+<li><p><a class="reference internal" href="ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModPara</span></a>ファイルで<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code><span class="math notranslate nohighlight">\(&gt;1\)</span>を
+指定した場合、追加の bra 演算子セット<code class="docutils literal notranslate"><span class="pre">1</span></code>...<span class="math notranslate nohighlight">\((B-1)\)</span>は実行
+ディレクトリの<code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code>...<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code>から
+本ファイルと同じ形式で読み込まれます(bra セット<code class="docutils literal notranslate"><span class="pre">0</span></code>は namelist で指定する
+本<code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code>ファイルです)。</p></li>
 </ul>
 </section>
 </section>

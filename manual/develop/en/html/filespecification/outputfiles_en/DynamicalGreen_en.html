@@ -44,6 +44,20 @@ function. An example of the file format is as follows.</p>
 <li><p>##_DynamicalGreen.dat</p></li>
 </ul>
 <p>## indicates [string02] in a ModPara file.</p>
+<p>When the finite-temperature eigenstate loop and the multiple-operator /
+multiple-bra modes are enabled (<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>, <code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code> in the <a class="reference internal" href="../expertmode_en/ModPara_file_en.html#subsec-modpara"><span class="std std-ref">ModPara</span></a> file), one file is
+written per <code class="docutils literal notranslate"><span class="pre">(eigenstate,</span> <span class="pre">ket</span> <span class="pre">operator,</span> <span class="pre">bra)</span></code> combination and the
+zero-based indices are appended to the file name:</p>
+<ul class="simple">
+<li><p>##_DynamicalGreen_<em>idx</em>.dat — eigenstate <em>idx</em>
+(<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>).</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>.dat — eigenstate <em>idx</em>, ket operator
+set <em>op</em> (<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>).</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>_<em>bra</em>.dat — eigenstate <em>idx</em>,
+ket operator set <em>op</em>, bra operator set <em>bra</em> (<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code>).</p></li>
+</ul>
+<p>The file format described below is identical for all of these variants.</p>
 </section>
 <section id="file-format">
 <span id="file-format-44"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>

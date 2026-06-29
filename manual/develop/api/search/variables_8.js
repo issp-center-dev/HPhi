@@ -61,7 +61,10 @@ var searchData=
   ['isite2_58',['isite2',['../structLargeList.html#a523438b712f4d79554b6331505e70e14',1,'LargeList::isite2'],['../structMPIInterAllGroup.html#a560b457fed36fa0e371e09773217b2d5',1,'MPIInterAllGroup::isite2']]],
   ['isite3_59',['isite3',['../structLargeList.html#a9bfe297ac2953656469df4531a9bdd0b',1,'LargeList::isite3'],['../structMPIInterAllGroup.html#a34498ca73cd26c511bae2c3b1246d695',1,'MPIInterAllGroup::isite3']]],
   ['isite4_60',['isite4',['../structLargeList.html#a29034b413fdc5c9ff20e38ba94f72bc7',1,'LargeList::isite4'],['../structMPIInterAllGroup.html#a0615b287419b5428b9b7c07d0f35f16a',1,'MPIInterAllGroup::isite4']]],
-  ['istep_61',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
-  ['itr_62',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
-  ['iv_63',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
+  ['ispectrumloopexct_61',['iSpectrumLoopExct',['../structDefineList.html#adc11ba7b2a9ff6d545205ff2621dca36',1,'DefineList']]],
+  ['ispectrumnumbra_62',['iSpectrumNumBra',['../structDefineList.html#aa9e1e769951b8b9fc84a1d4dc0e95f85',1,'DefineList']]],
+  ['ispectrumnumop_63',['iSpectrumNumOp',['../structDefineList.html#a32f4ad0abed9db0ff5946fef5ce910d0',1,'DefineList']]],
+  ['istep_64',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
+  ['itr_65',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
+  ['iv_66',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
 ];

@@ -1,5 +1,17 @@
 var NAVTREEINDEX3 =
 {
+"bitcalc_8h.html#a88834e90fe5b5ac0529f715c5d3c3a78":[10,0,1,1,9],
+"bitcalc_8h.html#a905386b27688a05bac61d1c330f3b989":[10,0,1,1,11],
+"bitcalc_8h.html#aad1c56b80bc8bc2d997771487e0de37c":[10,0,1,1,6],
+"bitcalc_8h.html#ab40eb71d64770d5a59334e8c0aed3d50":[10,0,1,1,14],
+"bitcalc_8h.html#abb04551086c9b8080596b1f439cb6fb8":[10,0,1,1,10],
+"bitcalc_8h.html#ac837cfea40f6ee80848d2f087e24d205":[10,0,1,1,13],
+"bitcalc_8h.html#aeb8c8955d53b457a69b8f6e1086d7360":[10,0,1,1,12],
+"bitcalc_8h.html#af5a13bcff4925b10b27ecba6079fbb5a":[10,0,1,1,4],
+"bitcalc_8h_source.html":[10,0,1,1],
+"check_8c.html":[10,0,15],
+"check_8c.html#a5b7fbf486ba8e11cfc972c2af0611193":[10,0,15,0],
+"check_8c_source.html":[10,0,15],
 "check_8h.html":[10,0,1,15],
 "check_8h.html#a5b7fbf486ba8e11cfc972c2af0611193":[10,0,1,15,0],
 "check_8h_source.html":[10,0,1,15],
@@ -237,17 +249,5 @@ var NAVTREEINDEX3 =
 "expec__totalspin_8h.html#adb43b14df5064ba7ac4e6963df681b0e":[10,0,1,30,1],
 "expec__totalspin_8h_source.html":[10,0,1,30],
 "files.html":[10,0],
-"functions.html":[9,2,0],
-"functions.html":[9,2,0,0],
-"functions_b.html":[9,2,0,1],
-"functions_c.html":[9,2,0,2],
-"functions_d.html":[9,2,0,3],
-"functions_e.html":[9,2,0,4],
-"functions_f.html":[9,2,0,5],
-"functions_g.html":[9,2,0,6],
-"functions_h.html":[9,2,0,7],
-"functions_i.html":[9,2,0,8],
-"functions_k.html":[9,2,0,9],
-"functions_l.html":[9,2,0,10],
-"functions_m.html":[9,2,0,11]
+"functions.html":[9,2,0,0]
 };

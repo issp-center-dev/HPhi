@@ -138,9 +138,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a532bba8a658ddfd3ad26c22f20121676" id="r_a532bba8a658ddfd3ad26c22f20121676"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8c.html#a532bba8a658ddfd3ad26c22f20121676">GetSingleExcitedStateHubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int NSingleExcitationOperator, int **SingleExcitationOperator, double complex *ParaSingleExcitationOperator, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a532bba8a658ddfd3ad26c22f20121676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard canonical system.  <br /></td></tr>
 <tr class="separator:a532bba8a658ddfd3ad26c22f20121676"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1402ad7c646461af3781c428888db645" id="r_a1402ad7c646461af3781c428888db645"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8c.html#a1402ad7c646461af3781c428888db645">GetSingleExcitedStateHubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
-<tr class="memdesc:a1402ad7c646461af3781c428888db645"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard Grand canonical system.  <br /></td></tr>
-<tr class="separator:a1402ad7c646461af3781c428888db645"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37d000c87f48e311014c513230f82801" id="r_a37d000c87f48e311014c513230f82801"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SingleExHubbard_8c.html#a37d000c87f48e311014c513230f82801">GetSingleExcitedStateHubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned int NSingleExcitationOperator, int **SingleExcitationOperator, double complex *ParaSingleExcitationOperator, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
+<tr class="memdesc:a37d000c87f48e311014c513230f82801"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculation of Single excited state for Hubbard Grand canonical system.  <br /></td></tr>
+<tr class="separator:a37d000c87f48e311014c513230f82801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functions to compute singly excited state in Hubbard model. </p>
@@ -223,8 +223,8 @@ FALSE: Abnormally finished </dd></dl>
 
 </div>
 </div>
-<a id="a1402ad7c646461af3781c428888db645" name="a1402ad7c646461af3781c428888db645"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1402ad7c646461af3781c428888db645">&#9670;&#160;</a></span>GetSingleExcitedStateHubbardGC()</h2>
+<a id="a37d000c87f48e311014c513230f82801" name="a37d000c87f48e311014c513230f82801"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37d000c87f48e311014c513230f82801">&#9670;&#160;</a></span>GetSingleExcitedStateHubbardGC()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -234,6 +234,24 @@ FALSE: Abnormally finished </dd></dl>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>NSingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>SingleExcitationOperator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>ParaSingleExcitationOperator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -264,6 +282,9 @@ FALSE: Abnormally finished </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">X</td><td>define list to get and put information of calculation  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NSingleExcitationOperator</td><td>number of single excitation operators  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">SingleExcitationOperator</td><td>[n][3] = {site, spin, type}  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ParaSingleExcitationOperator</td><td>coefficient of each operator  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tmp_v0</td><td>Result v0 = H v1  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>v0 = H v1 </td></tr>
   </table>

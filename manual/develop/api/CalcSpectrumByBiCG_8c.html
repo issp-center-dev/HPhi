@@ -138,18 +138,18 @@ $(document).ready(function(){initNavTree('CalcSpectrumByBiCG_8c.html',''); initR
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abe23fa27a17d58cc467a6cca4ae26c17" id="r_abe23fa27a17d58cc467a6cca4ae26c17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#abe23fa27a17d58cc467a6cca4ae26c17">ReadTMComponents_BiCG</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *<a class="el" href="global_8c.html#a97fbc83d45f0e9674962f580b99ce67d">v2</a>, double complex *v4, double complex *v12, double complex *v14, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
-<tr class="memdesc:abe23fa27a17d58cc467a6cca4ae26c17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read \(\alpha, \beta\), projected residual for restart.  <br /></td></tr>
-<tr class="separator:abe23fa27a17d58cc467a6cca4ae26c17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a03d2def0e0600c4e9bfc9f0c79dd70" id="r_a4a03d2def0e0600c4e9bfc9f0c79dd70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#a4a03d2def0e0600c4e9bfc9f0c79dd70">ReadTMComponents_BiCG</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *<a class="el" href="global_8c.html#a97fbc83d45f0e9674962f580b99ce67d">v2</a>, double complex *v4, double complex *v12, double complex *v14, int nBra, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
+<tr class="memdesc:a4a03d2def0e0600c4e9bfc9f0c79dd70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read \(\alpha, \beta\), projected residual for restart.  <br /></td></tr>
+<tr class="separator:a4a03d2def0e0600c4e9bfc9f0c79dd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff7084decdcdad72ca2dfa626e62ca8c" id="r_aff7084decdcdad72ca2dfa626e62ca8c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#aff7084decdcdad72ca2dfa626e62ca8c">OutputTMComponents_BiCG</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int liLanczosStp)</td></tr>
 <tr class="memdesc:aff7084decdcdad72ca2dfa626e62ca8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">write \(\alpha, \beta\), projected residual for restart  <br /></td></tr>
 <tr class="separator:aff7084decdcdad72ca2dfa626e62ca8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1927d2e76ab856a12ac639417c4c99f" id="r_ad1927d2e76ab856a12ac639417c4c99f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#ad1927d2e76ab856a12ac639417c4c99f">InitShadowRes</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *v4)</td></tr>
 <tr class="memdesc:ad1927d2e76ab856a12ac639417c4c99f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize Shadow Residual as a random vector (Experimental)  <br /></td></tr>
 <tr class="separator:ad1927d2e76ab856a12ac639417c4c99f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9ad4ef6a6d24aa2ad88b2a9c0531793" id="r_ac9ad4ef6a6d24aa2ad88b2a9c0531793"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#ac9ad4ef6a6d24aa2ad88b2a9c0531793">CalcSpectrumByBiCG</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *vrhs, double complex *vlhs_Bra, double complex *<a class="el" href="global_8c.html#a97fbc83d45f0e9674962f580b99ce67d">v2</a>, double complex *v4, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
-<tr class="memdesc:ac9ad4ef6a6d24aa2ad88b2a9c0531793"><td class="mdescLeft">&#160;</td><td class="mdescRight">A main function to calculate spectrum by BiCG method In this function, the \(K\omega\) library is used. The detailed procedure is written in the document of \(K\omega\). <a href="https://issp-center-dev.github.io/Komega/library/en/_build/html/komega_workflow_en.html#the-schematic-workflow-of-shifted-bicg-library">https://issp-center-dev.github.io/Komega/library/en/_build/html/komega_workflow_en.html#the-schematic-workflow-of-shifted-bicg-library</a>.  <br /></td></tr>
-<tr class="separator:ac9ad4ef6a6d24aa2ad88b2a9c0531793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8292fb5edd74e0b5462dd5672b640e48" id="r_a8292fb5edd74e0b5462dd5672b640e48"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrumByBiCG_8c.html#a8292fb5edd74e0b5462dd5672b640e48">CalcSpectrumByBiCG</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *vrhs, double complex **vlhs_Bra, int nBra, double complex *<a class="el" href="global_8c.html#a97fbc83d45f0e9674962f580b99ce67d">v2</a>, double complex *v4, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
+<tr class="memdesc:a8292fb5edd74e0b5462dd5672b640e48"><td class="mdescLeft">&#160;</td><td class="mdescRight">A main function to calculate spectrum by BiCG method In this function, the \(K\omega\) library is used. The detailed procedure is written in the document of \(K\omega\). <a href="https://issp-center-dev.github.io/Komega/library/en/_build/html/komega_workflow_en.html#the-schematic-workflow-of-shifted-bicg-library">https://issp-center-dev.github.io/Komega/library/en/_build/html/komega_workflow_en.html#the-schematic-workflow-of-shifted-bicg-library</a>.  <br /></td></tr>
+<tr class="separator:a8292fb5edd74e0b5462dd5672b640e48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>File for givinvg functions of calculating spectrum by Lanczos. </p>
@@ -157,8 +157,8 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ac9ad4ef6a6d24aa2ad88b2a9c0531793" name="ac9ad4ef6a6d24aa2ad88b2a9c0531793"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9ad4ef6a6d24aa2ad88b2a9c0531793">&#9670;&#160;</a></span>CalcSpectrumByBiCG()</h2>
+<a id="a8292fb5edd74e0b5462dd5672b640e48" name="a8292fb5edd74e0b5462dd5672b640e48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8292fb5edd74e0b5462dd5672b640e48">&#9670;&#160;</a></span>CalcSpectrumByBiCG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,8 +178,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramtype">double complex **&#160;</td>
           <td class="paramname"><em>vlhs_Bra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBra</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -246,13 +252,13 @@ Functions</h2></td></tr>
 <li>
 </li>
 </ul>
-299  </li>
+317  </li>
 <li>
 <p class="startli">\({\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}\), where \({\bf v}_{12}, {\bf v}_{14}\) are old (shadow) residual vector.</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">Update projected result vector dcSpectrum.</p>
+<p class="startli">Update projected result vector dcSpectrum (all nBra spectra at once).</p>
 <p class="endli"></p>
 </li>
 <li>
@@ -267,21 +273,22 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">X</td><td></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">vrhs</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Right hand side vector, excited (ket) state A|phi&gt;.  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vlhs_Bra</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Left (bra) state B|phi&gt; used for the projection &lt;B phi|r&gt;. Pass vrhs for the diagonal G_AA.  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">vlhs_Bra</td><td>[nBra][<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Left (bra) states B_b|phi&gt;, projection &lt;B_b phi|r&gt;. Pass {vrhs} for the diagonal G_AA.  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBra</td><td>Number of left (bra) vectors. One BiCG solve yields the spectrum for every bra (Komega nl projections).  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">v2</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Work space for residual vector \({\bf r}\)  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">v4</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Work space for shadow residual vector \({\bf {\tilde r}}\)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nomega</td><td>Number of Frequencies  </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">dcSpectrum</td><td>[Nomega] Spectrum  </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dcSpectrum</td><td>[nBra*Nomega] Spectrum, Fortran layout x(nBra, Nomega): dcSpectrum[iomega*nBra + ibra]  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dcomega</td><td>[Nomega] Frequency </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">208</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">209</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00483">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00067">c_GetTridiagonalEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00066">c_GetTridiagonalStart</a>, <a class="el" href="LogMessage_8c_source.html#l00073">c_InputSpectrumRecalcvecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00072">c_InputSpectrumRecalcvecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00071">c_OutputSpectrumRecalcvecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00070">c_OutputSpectrumRecalcvecStart</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00098">cFileNameOutputRestartVec</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00474">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00473">BindStruct::Def</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00366">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00278">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00081">DefineList::Lanczos_max</a>, <a class="el" href="mltply_8c_source.html#l00084">mltply()</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00118">OutputTMComponents_BiCG()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="DefCommon_8h_source.html#l00064">RECALC_FROM_TMComponents</a>, <a class="el" href="DefCommon_8h_source.html#l00066">RECALC_FROM_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00067">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00065">RECALC_OUTPUT_TMComponents_VEC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00105">v2</a>, <a class="el" href="wrapperMPI_8c_source.html#l00349">VecProdMPI()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00504">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00067">c_GetTridiagonalEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00066">c_GetTridiagonalStart</a>, <a class="el" href="LogMessage_8c_source.html#l00073">c_InputSpectrumRecalcvecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00072">c_InputSpectrumRecalcvecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00071">c_OutputSpectrumRecalcvecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00070">c_OutputSpectrumRecalcvecStart</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00098">cFileNameOutputRestartVec</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00495">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00494">BindStruct::Def</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00387">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00299">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00081">DefineList::Lanczos_max</a>, <a class="el" href="mltply_8c_source.html#l00084">mltply()</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00119">OutputTMComponents_BiCG()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">ReadTMComponents_BiCG()</a>, <a class="el" href="DefCommon_8h_source.html#l00064">RECALC_FROM_TMComponents</a>, <a class="el" href="DefCommon_8h_source.html#l00066">RECALC_FROM_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00067">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00063">RECALC_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00065">RECALC_OUTPUT_TMComponents_VEC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00105">v2</a>, <a class="el" href="wrapperMPI_8c_source.html#l00349">VecProdMPI()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00948">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -320,7 +327,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00154">154</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00155">155</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
 
 <p class="reference">References <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="dSFMT_8h_source.html#l00437">dsfmt_init_gen_rand()</a>, <a class="el" href="global_8c_source.html#l00162">myrank</a>, <a class="el" href="global_8c_source.html#l00163">nthreads</a>, <a class="el" href="wrapperMPI_8c_source.html#l00349">VecProdMPI()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
@@ -361,16 +368,16 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00118">118</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00119">119</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00483">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00056">cFileNameTridiagonalMatrixComponents</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00473">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00504">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00056">cFileNameTridiagonalMatrixComponents</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00494">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">CalcSpectrumByBiCG()</a>.</p>
 
 </div>
 </div>
-<a id="abe23fa27a17d58cc467a6cca4ae26c17" name="abe23fa27a17d58cc467a6cca4ae26c17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe23fa27a17d58cc467a6cca4ae26c17">&#9670;&#160;</a></span>ReadTMComponents_BiCG()</h2>
+<a id="a4a03d2def0e0600c4e9bfc9f0c79dd70" name="a4a03d2def0e0600c4e9bfc9f0c79dd70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a03d2def0e0600c4e9bfc9f0c79dd70">&#9670;&#160;</a></span>ReadTMComponents_BiCG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -409,6 +416,12 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>Nomega</em>, </td>
         </tr>
         <tr>
@@ -439,8 +452,9 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">v4</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Shadow esidual vector  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">v12</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Old residual vector  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">v14</td><td>[<a class="el" href="structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11" title="The dimension of the Hilbert space of this process.">CheckList::idim_max</a>] Old shadow residual vector  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBra</td><td>Number of left (bra) vectors (Komega nl). Restart paths only ever run with nBra==1.  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nomega</td><td>Number of frequencies  </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">dcSpectrum</td><td>[Nomega] Projected result vector, spectrum  </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">dcSpectrum</td><td>[nBra*Nomega] Projected result vector, spectrum  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dcomega</td><td>[Nomega] Frequency </td></tr>
   </table>
   </dd>
@@ -448,9 +462,9 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00034">34</a> of file <a class="el" href="CalcSpectrumByBiCG_8c_source.html">CalcSpectrumByBiCG.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00483">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00056">cFileNameTridiagonalMatrixComponents</a>, <a class="el" href="struct_8h_source.html#l00474">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00473">BindStruct::Def</a>, <a class="el" href="global_8c_source.html#l00151">eps_Lanczos</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="struct_8h_source.html#l00366">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00278">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00081">DefineList::Lanczos_max</a>, <a class="el" href="DefCommon_8h_source.html#l00064">RECALC_FROM_TMComponents</a>, <a class="el" href="DefCommon_8h_source.html#l00066">RECALC_FROM_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00067">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00105">v2</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00504">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00056">cFileNameTridiagonalMatrixComponents</a>, <a class="el" href="struct_8h_source.html#l00495">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00494">BindStruct::Def</a>, <a class="el" href="global_8c_source.html#l00151">eps_Lanczos</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="struct_8h_source.html#l00387">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00299">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00081">DefineList::Lanczos_max</a>, <a class="el" href="DefCommon_8h_source.html#l00064">RECALC_FROM_TMComponents</a>, <a class="el" href="DefCommon_8h_source.html#l00066">RECALC_FROM_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00067">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="global_8c_source.html#l00165">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00105">v2</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00209">CalcSpectrumByBiCG()</a>.</p>
 
 </div>
 </div>

@@ -113,6 +113,13 @@ Use rules
    [int02]-[int04] are outside
    the range of the defined values.
 
+*  When ``SpectrumNumOp`` :math:`>1` is set in the
+   :ref:`ModPara <Subsec:modpara>` file, the additional ket operator sets
+   ``1`` ... :math:`(M-1)` are read from files named ``single_ex_1.def`` ...
+   ``single_ex_``\ :math:`(M-1)`\ ``.def`` in the run directory. These files use
+   exactly the format described here; set ``0`` is this ``SingleExcitation`` file
+   given in the namelist.
+
 .. raw:: latex
 
    \newpage

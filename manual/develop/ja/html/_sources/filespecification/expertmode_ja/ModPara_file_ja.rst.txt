@@ -304,6 +304,75 @@ TPQ法で使用するパラメータ
    ``OmegaMax``-
    ``OmegaMin``\ :math:`)/N_{\omega}`\ を与えるための整数。振動数は\ :math:`z_n=`\ ``OmegaOrg``\ :math:`+`\ ``OmegaMin``\ :math:`+ \Delta \omega \times n`\ で与えられます。
 
+-  ``SpectrumLoopExct``
+
+   **形式 :** int型 (デフォルト値: 0)
+
+   **説明 :**
+   動的グリーン関数の計算を、内部で複数の固有状態についてループさせる際の
+   固有状態数を指定します。値を\ :math:`N>0`\ とすると、スペクトル計算は
+   固有ベクトル\ ``eigenvec_0`` ... ``eigenvec_``\ :math:`(N-1)`\ を順番に
+   読み込み(このため\ ``SpectrumVec``\ にはそれらが共有する\ *ベース名*\ 、
+   例えば\ ``zvo_eigenvec``\ を指定します)、各固有エネルギー
+   :math:`E_n`\ (\ ``**_energy.dat``\ から読み込み)をその状態のスペクトルシフト
+   ``OmegaOrg``\ として用い、固有状態ごとに
+   ``**_DynamicalGreen_``\ :math:`n`\ ``.dat``\ を1つずつ出力します。
+   これにより、エネルギーの低い方から\ :math:`N`\ 個の固有状態の
+   スペクトルを1回の実行でまとめて計算できます(典型的には有限温度の
+   ボルツマン重み付きスペクトルを構成するために用います)。
+   :math:`N`\ は計算済みの固有状態数\ ``exct``\ 以下である必要があります。
+   値\ :math:`0`\ (デフォルト)では、\ ``SpectrumVec``\ で指定した
+   単一の固有ベクトルを用いる従来の動作になります。本モードは
+   ``CalcSpec=Normal``\ が必須で、\ ``OutputExVec=1``\ とは併用できません
+   (固有状態ごとの励起ベクトルが互いに上書きされるため)。
+
+-  ``SpectrumNumOp``
+
+   **形式 :** int型 (デフォルト値: 1)
+
+   **説明 :**
+   1回の\ ``SpectrumLoopExct``\ 実行でまとめて評価する単一励起演算子セットの
+   数を指定します。値を\ :math:`M>1`\ とすると、各固有ベクトルは固有状態ごとに
+   1回だけ読み込まれ、その固有ベクトルから\ :math:`M`\ 個の演算子セットすべての
+   スペクトルを計算します(固有状態ループの内側で演算子をループ)。これにより
+   演算子ごとに固有ベクトルを読み直す必要がなくなります。演算子セット\ ``0``\ は
+   namelist の\ ``SingleExcitation``\ ファイルから、セット\ ``1``\ ...
+   :math:`(M-1)`\ は実行ディレクトリの\ ``single_ex_1.def``\ ...
+   ``single_ex_``\ :math:`(M-1)`\ ``.def``\ から読み込みます。すべてのセットは
+   **同一**\ の Hilbert セクター(電子数・スピンの変化が同じ)に写像される必要が
+   あり、実行時に検査されます。セット\ :math:`m`\ ・固有状態\ :math:`n`\ の出力は
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``.dat``\ に書き出されます。
+   本オプションは\ ``SpectrumLoopExct``\ :math:`>0`\ と併用したときのみ有効で、
+   ``SingleExcitation``\ (\ ``PairExcitation``\ 不可)が必要です。単独で(単一の
+   bra と組み合わせて)用いると対角スペクトルを計算します。演算子セットを bra
+   (非対角)励起演算子と組み合わせる場合は、\ ``SpectrumNumBra``\ :math:`>1`\ を
+   有効にして ket と bra のセットを組み合わせます。デフォルト\ :math:`1`\ では
+   単一演算子の動作になります。
+
+-  ``SpectrumNumBra``
+
+   **形式 :** int型 (デフォルト値: 1)
+
+   **説明 :**
+   1回のシフト型 BiCG 解を射影する\ **bra(左側)**\ 単一励起演算子セットの数を
+   指定します(Komega の多ベクトル射影機能 ``nl`` を利用)。値を\ :math:`B>1`\ と
+   すると、各\ ``(固有状態, ket 演算子)``\ の BiCG 解を再利用して\ :math:`B`\ 個の
+   bra セットすべてに射影します。これにより非対角グリーン関数に必要な BiCG 解の
+   数が\ :math:`n_{\rm orb}^2`\ から\ :math:`n_{\rm orb}`\ に減ります。bra セット
+   ``0``\ は namelist の\ ``SingleExcitationBra``\ ファイルから、セット\ ``1``\ ...
+   :math:`(B-1)`\ は実行ディレクトリの\ ``single_ex_bra_1.def``\ ...
+   ``single_ex_bra_``\ :math:`(B-1)`\ ``.def``\ から読み込みます。すべての bra
+   セットは ket と\ **同一**\ の励起 Hilbert セクターに写像される必要があります。
+   ket 演算子\ :math:`m`\ ・bra セット\ :math:`b`\ ・固有状態\ :math:`n`\ の出力は
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``_``\ :math:`b`\ ``.dat``\ に
+   書き出されます(multi-bra モードでは演算子フィールドが常に付与されます)。
+   本オプションは\ ``SpectrumLoopExct``\ :math:`>0`\ と併用したときのみ有効で、
+   シフト型 BiCG ソルバ(\ ``CalcType=CG``\ )、\ ``CalcSpec=Normal``\ 、
+   ``SingleExcitation``\ ket、namelist の\ ``SingleExcitationBra``\ (bra セット
+   ``0``\ )が必要です(\ ``PairExcitation``\ は非対応)。\ ``SpectrumNumOp``\ と
+   組み合わせ可能です(ket :math:`\times` bra のグリッド全体を1回の実行で評価)。
+   デフォルト\ :math:`1`\ では単一 bra の動作になります。
+
  
 
 実時間発展法で使用するパラメータ

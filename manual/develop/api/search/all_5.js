@@ -36,5 +36,6 @@ var searchData=
   ['bitcheckgeneral_33',['bitcheckgeneral',['../bitcalc_8c.html#aa28fdedad7cf9d8eb0dc6fa5ead0635f',1,'BitCheckGeneral(const long unsigned int org_bit, const unsigned int org_isite, const unsigned int target_ispin, const long int *SiteToBit, const long unsigned int *Tpow):&#160;bitcalc.c'],['../bitcalc_8h.html#a615783c3514c52ee14f736eb099e5316',1,'BitCheckGeneral(const long unsigned int org_bit, const unsigned int org_isite, const unsigned int target_ispin, const long int *SiteToBit, const long unsigned int *TPow):&#160;bitcalc.c']]],
   ['boost_34',['Boost',['../structBindStruct.html#ad957788ed202e9244b96c1a6e531ff15',1,'BindStruct']]],
   ['boostlist_35',['BoostList',['../structBoostList.html',1,'']]],
-  ['build_20options_36',['CMake Build Options',['../page_cmake.html#sec_cmake_options',1,'']]]
+  ['build_20options_36',['CMake Build Options',['../page_cmake.html#sec_cmake_options',1,'']]],
+  ['buildeigenvectorfilename_37',['BuildEigenVectorFileName',['../CalcSpectrum_8c.html#a1b215f38f5ddbfdc501c327344403702',1,'CalcSpectrum.c']]]
 ];
