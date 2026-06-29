@@ -60,11 +60,18 @@ SectorShift GetExcitationSectorShift(int iCalcModel, int isGeneralSpin, int isPa
          s keeps the default {0,0,0,0, valid=TRUE}. This lets the bra/ket off-diagonal path
          (SpectrumNumBra) project ket and bra -- of either spin -- in the shared GC space. */
       break;
+    case HubbardNConserved:
+      /* Ne conserved, 2Sz free: c/c^dag shifts the sector by +-1 in Ne ONLY (the excited list
+         is Ne+-1 with all 2Sz). Track dNe alone and leave the Sz components zero, so the
+         bra/ket and cross-operator sector checks match same- AND cross-spin operators (both
+         spins land in the same Ne+-1 space) -- the spin-orbit-capable off-diagonal route. */
+      if (isCreation) s.dNe = +1;
+      else            s.dNe = -1;
+      break;
     case Kondo:
     case KondoGC:
     case tJ:
     case tJGC:
-    case HubbardNConserved:
     case tJNConserved:
     case KondoNConserved:
       /* deferred: not in v1 allow-list (rejected upstream by the allow-list guard) */

@@ -648,8 +648,13 @@ static int RunMultiOpFiniteTLoop(
       if (enforceSector) {
         SectorShift sh = GetExcitationOperatorSetShift(
           X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, set_ops[op], set_N[op]);
-        if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
-            sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+        /* When 2Sz is not conserved (HubbardNConserved -- MakeExcitedList has reset iCalcModel
+           back to Hubbard, but iFlgSzConserved stays FALSE), the sector is labelled by Ne only;
+           operators of either spin land in the same Ne+-1 space, so compare dNe alone. */
+        int sz_free = (X->Bind.Def.iFlgSzConserved == FALSE);
+        if (sh.valid == FALSE || sh.dNe != sh0.dNe ||
+            (!sz_free && (sh.dNup != sh0.dNup ||
+                          sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz))) {
           fprintf(stderr, "Error: operator set %d maps to a different Hilbert sector than set 0; "
                           "all operators in one SpectrumNumOp run must share the sector.\n", op);
           iret = FALSE; break;
@@ -695,8 +700,12 @@ static int RunMultiOpFiniteTLoop(
         if (enforceSector) {
           SectorShift sh = GetExcitationOperatorSetShift(
             X->Bind.Def.iCalcModel, X->Bind.Def.iFlgGeneralSpin, FALSE, bra_ops[b], bra_N[b]);
-          if (sh.valid == FALSE || sh.dNe != sh0.dNe || sh.dNup != sh0.dNup ||
-              sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz) {
+          /* 2Sz-free (HubbardNConserved): the sector is Ne-only, so both spins share it; compare
+             dNe alone (see the matching ket cross-operator check above). */
+          int sz_free = (X->Bind.Def.iFlgSzConserved == FALSE);
+          if (sh.valid == FALSE || sh.dNe != sh0.dNe ||
+              (!sz_free && (sh.dNup != sh0.dNup ||
+                            sh.dNdown != sh0.dNdown || sh.dTotal2Sz != sh0.dTotal2Sz))) {
             fprintf(stderr, "Error: bra set %d maps to a different excited sector than ket set 0; "
                             "all bras must share the ket's sector.\n", b);
             iret = FALSE; break;

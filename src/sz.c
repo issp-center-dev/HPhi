@@ -1023,8 +1023,10 @@ int omp_sz_hacker(long unsigned int ib,
     }
   }
   else if(X->Def.iCalcModel==HubbardNConserved){
-    if(tmp_num_up+tmp_num_down <= X->Def.Ne){ //do not exceed Ne
-      ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
+    long unsigned int rem_electrons = X->Def.Ne-tmp_num_up-tmp_num_down;
+    if(tmp_num_up+tmp_num_down <= X->Def.Ne &&
+       rem_electrons <= X->Def.Nsite){ // remaining electrons must fit in the right half (max Nsite)
+      ia = X->Def.Tpow[rem_electrons]-1;
       if(ia < X->Check.sdim){
         list_1_[ja+jb]=ia+ib*ihfbit;
         list_2_1_[ia]=ja+1;

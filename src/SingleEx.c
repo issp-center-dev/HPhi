@@ -52,10 +52,14 @@ int GetSingleExcitedState(
     break;
 
   case Hubbard:
+  case HubbardNConserved:
   case Kondo:
   case KondoGC:
   case tJ:
   case tJGC:
+    /* HubbardNConserved (Ne fixed, 2Sz free) uses the same list-based leaf: MakeExcitedList
+       builds the Ne+-1 excited list (all 2Sz) and the leaf maps c/c^dag through it, so the
+       bra and ket -- of either spin -- are built in the shared Ne+-1 space. */
     iret = GetSingleExcitedStateHubbard(X, NSingleExcitationOperator,
                                         SingleExcitationOperator,
                                         ParaSingleExcitationOperator,
