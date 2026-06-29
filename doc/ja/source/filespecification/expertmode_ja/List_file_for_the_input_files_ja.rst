@@ -14,8 +14,10 @@
     ModPara  modpara.def
     LocSpin  zlocspn.def
     Trans    ztransfer.def
+    AnomalousTerm zanomalousterm.def
     InterAll zinterall.def
     OneBodyG zcisajs.def
+    AnomalousG zanomalousg.def
     TwoBodyG zcisajscktaltdc.def
 
 | 
@@ -67,6 +69,7 @@
     "ModPara","計算で用いるパラメータの指定をします。"
     "LocSpin","各サイトに対して遍歴電子もしくは局在スピンの指定をします。"
     "Trans","一般的一体相互作用に関する設定をします。"
+    "AnomalousTerm", "HubbardGCの異常ペアハミルトニアン項に関する設定をします。"
     "InterAll", "一般的二体相互作用に関する設定をします。"
     "CoulombIntra", "内部クーロン相互作用に関する設定をします。"
     "CoulombInter", "サイト間クーロン相互作用に関する設定をします。"
@@ -76,6 +79,7 @@
     "Ising", "イジング相互作用に関する設定をします。"
     "PairLift", "ペアリフト相互作用に関する設定をします。"
     "OneBodyG", "出力する一体グリーン関数 \ :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle` に関する設定をします。"
+    "AnomalousG", "出力する異常ペアグリーン関数 :math:`\langle c_{i\sigma_1}c_{j\sigma_2}\rangle` および :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle` に関する設定をします。"
     "TwoBodyG", "出力する二体グリーン関数 :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle`\ に関する設定をします。"
     "SingleExcitation", "一体励起状態の生成演算子に関する指定をします。"
     "PairExcitation", "二体励起状態の生成演算子に関する指定をします。"

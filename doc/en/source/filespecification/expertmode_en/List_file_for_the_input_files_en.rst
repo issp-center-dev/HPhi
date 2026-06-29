@@ -13,8 +13,10 @@ This file determines the input filenames, which are correlated with the keywords
     ModPara  modpara.def
     LocSpin  zlocspn.def
     Trans    ztransfer.def
+    AnomalousTerm zanomalousterm.def
     InterAll zinterall.def
     OneBodyG zcisajs.def
+    AnomalousG zanomalousg.def
     TwoBodyG zcisajscktaltdc.def
 
 File format
@@ -64,6 +66,7 @@ Use rules
     "ModPara", "Parameters for calculation"
     "LocSpin", "Configurations of the local spins for Hamiltonian"
     "Trans", "Transfer and chemical potential for Hamiltonian"
+    "AnomalousTerm", "Anomalous pair Hamiltonian terms for HubbardGC"
     "InterAll", "Two-body interactions for Hamiltonian"
     "CoulombIntra", "CoulombIntra interactions"
     "CoulombInter", "CoulombInter interactions"
@@ -73,6 +76,7 @@ Use rules
     "Ising", "Ising interactions"
     "PairLift", "Pair lift couplings"
     "OneBodyG", "Output components for one-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle`"
+    "AnomalousG", "Output components for anomalous pair Green’s functions :math:`\langle c_{i\sigma}c_{j\tau}\rangle` and :math:`\langle c_{i\sigma}^{\dagger}c_{j\tau}^{\dagger}\rangle`"
     "TwoBodyG", "Output components for two-body Green’s functions :math:`\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle`"
     "SingleExcitation", "Operators for generating a single excited state"
     "PairExcitation", "Operators for generating a pair excited state"
