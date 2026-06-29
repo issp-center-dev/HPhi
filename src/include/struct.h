@@ -275,6 +275,27 @@ struct DefineList {
   int iFlgSpecOmegaMax;/**<@brief Whether DefineList::dcOmegaMax is input or not.*/
   int iFlgSpecOmegaMin;/**<@brief Whether DefineList::dcOmegaMin is input or not.*/
   int iFlgSpecOmegaOrg;/**<@brief Whether DefineList::dcOmegaOrg is input or not.*/
+  int iSpectrumLoopExct;/**<@brief Number of eigenstates the spectrum calculation loops over
+                          internally. When > 0, CalcSpectrum loops idx=0..iSpectrumLoopExct-1,
+                          reading eigenvec_{idx}, using E_idx (from xx_energy.dat) as the per-state
+                          spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate.
+                          The value is the count (= exct_cut), so it can be <= k_exct. Default 0
+                          keeps the legacy single-eigenvector behavior.*/
+  int iSpectrumNumOp;/**<@brief Number of single-excitation operator sets processed in one run.
+                       When > 1 (together with iSpectrumLoopExct > 0), the finite-T loop reads each
+                       eigenvector ONCE and, for that eigenstate, builds and solves the spectrum for
+                       every operator set op=0..iSpectrumNumOp-1 (set 0 from the namelist
+                       SingleExcitation, sets 1.. from single_ex_<op>.def), writing
+                       DynamicalGreen_<idx>_<op>.dat. All sets must map to the same Hilbert sector.
+                       Default 0/1 keeps the single-operator behavior.*/
+  int iSpectrumNumBra;/**<@brief Number of left (bra) single-excitation operator sets projected from
+                        ONE BiCG solve (Komega nl). When > 1 (together with iSpectrumLoopExct > 0),
+                        each (eigenstate, ket-op) solve is projected onto every bra set b=0..nBra-1
+                        (set 0 from the namelist SingleExcitationBra, sets 1.. from single_ex_bra_<b>.def),
+                        writing DynamicalGreen_<idx>_<op>_<b>.dat. This reuses one ket solve for all
+                        bras, cutting the BiCG count from n_orb^2 to n_orb for off-diagonal Green's
+                        functions. All bra sets must map to the same excited sector as the ket.
+                        Default 0/1 keeps the single-bra behavior.*/
   int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
   int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 

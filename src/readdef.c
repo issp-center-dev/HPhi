@@ -585,6 +585,9 @@ int ReadDefFileNInt(
   X->iFlgSpecOmegaMax=FALSE;
   X->iFlgSpecOmegaMin=FALSE;
   X->iFlgSpecOmegaOrg=FALSE;
+  X->iSpectrumLoopExct=0;
+  X->iSpectrumNumOp=1;
+  X->iSpectrumNumBra=1;
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
@@ -749,6 +752,15 @@ int ReadDefFileNInt(
               }
               else if(CheckWords(ctmp, "NOmega")==0){
                 X->iNOmega=(int)dtmp;
+              }
+              else if(CheckWords(ctmp, "SpectrumLoopExct")==0){
+                X->iSpectrumLoopExct=(int)dtmp;
+              }
+              else if(CheckWords(ctmp, "SpectrumNumOp")==0){
+                X->iSpectrumNumOp=(int)dtmp;
+              }
+              else if(CheckWords(ctmp, "SpectrumNumBra")==0){
+                X->iSpectrumNumBra=(int)dtmp;
               }
               else if(CheckWords(ctmp, "TargetTPQRand")==0) {
                 X->irand=(int)dtmp;

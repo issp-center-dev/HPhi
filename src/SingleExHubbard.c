@@ -109,6 +109,9 @@ int GetSingleExcitedStateHubbard(
 */
 int GetSingleExcitedStateHubbardGC(
   struct BindStruct *X,//!<define list to get and put information of calculation
+  unsigned int NSingleExcitationOperator,//!<[in] number of single excitation operators
+  int **SingleExcitationOperator,//!<[in] [n][3] = {site, spin, type}
+  double complex *ParaSingleExcitationOperator,//!<[in] coefficient of each operator
   double complex *tmp_v0,//!<[out] Result v0 = H v1
   double complex *tmp_v1//!<[in] v0 = H v1
 ){
@@ -121,7 +124,7 @@ int GetSingleExcitedStateHubbardGC(
   //idim_max = X->Check.idim_max;
   idim_max = X->Check.idim_maxOrg;
   //tmp_v0
-  if (X->Def.NSingleExcitationOperator == 0) {
+  if (NSingleExcitationOperator == 0) {
     return TRUE;
   }
   double complex *tmp_v1bufOrg;
@@ -132,11 +135,11 @@ int GetSingleExcitedStateHubbardGC(
 #endif // MPI
 
   // SingleEx
-  for (i = 0; i < X->Def.NSingleExcitationOperator; i++) {
-    org_isite = X->Def.SingleExcitationOperator[i][0];
-    ispin = X->Def.SingleExcitationOperator[i][1];
-    itype = X->Def.SingleExcitationOperator[i][2];
-    tmpphi = X->Def.ParaSingleExcitationOperator[i];
+  for (i = 0; i < NSingleExcitationOperator; i++) {
+    org_isite = SingleExcitationOperator[i][0];
+    ispin = SingleExcitationOperator[i][1];
+    itype = SingleExcitationOperator[i][2];
+    tmpphi = ParaSingleExcitationOperator[i];
     if (itype == 1) {
       if (org_isite >= X->Def.Nsite) {
         child_GC_Cis_MPI(org_isite, ispin, tmpphi, tmp_v0, tmp_v1, idim_max, tmp_v1bufOrg, X->Def.Tpow);

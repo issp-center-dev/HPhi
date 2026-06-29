@@ -49,9 +49,17 @@ Use rules
    file must also share the same sector change. Otherwise the program is
    terminated.
 
-*  Supported model: Hubbard. (A single excitation is not defined for spin
-   systems, and other models are not yet supported for the off-diagonal Green's
-   function; the program is terminated for them.)
+*  Supported models: Hubbard and HubbardGC (grand canonical). (A single
+   excitation is not defined for spin systems, and other models are not yet
+   supported for the off-diagonal Green's function; the program is terminated
+   for them.)
+
+*  When ``SpectrumNumBra`` :math:`>1` is set in the
+   :ref:`ModPara <Subsec:modpara>` file, the additional bra operator sets
+   ``1`` ... :math:`(B-1)` are read from files named ``single_ex_bra_1.def`` ...
+   ``single_ex_bra_``\ :math:`(B-1)`\ ``.def`` in the run directory, using the
+   same format as this file; bra set ``0`` is this ``SingleExcitationBra`` file
+   given in the namelist.
 
 .. raw:: latex
 

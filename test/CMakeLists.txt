@@ -290,6 +290,7 @@ add_hphi_test(spectrum_hubbard_offdiag_pair_density)
 add_hphi_test(spectrum_spin_offdiag_szsz)
 add_hphi_test(spectrum_spingc_offdiag_szsz)
 add_hphi_test(spectrum_offdiag_invalid_reject)
+add_hphi_test(spectrum_loop_multiop_reader_validation)
 
 # Spectrum test labels
 set_tests_properties(
@@ -304,6 +305,9 @@ set_tests_properties(
 set_tests_properties(
     spectrum_offdiag_invalid_reject
     PROPERTIES LABELS "spectrum;offdiag;validation")
+set_tests_properties(
+    spectrum_loop_multiop_reader_validation
+    PROPERTIES LABELS "spectrum;hubbard;validation")
 
 # Unit test: off-diagonal excitation sector-shift truth table
 add_executable(unittest_excitation_sector_shift
