@@ -56,6 +56,29 @@ int main(void) {
   check_single("Hubbard single c_dn^dag (cis)", Hubbard, 0, 0, 1, 1, TRUE, +1, 0, +1, 0);
   check_single("Hubbard single c_dn (ajt)",     Hubbard, 0, 0, 1, 0, TRUE, -1, 0, -1, 0);
 
+  /* --- HubbardNConserved single (Ne fixed, 2Sz free): shift tracks dNe ONLY; the Sz components
+     are zero for BOTH spins, so a c_up and a c_dn of the same creation/annihilation sense share
+     the Ne+-1 sector (this is what lets the cross-spin bra/ket projection work). --- */
+  check_single("NConserved single c_up^dag", HubbardNConserved, 0, 0, 0, 1, TRUE, +1, 0, 0, 0);
+  check_single("NConserved single c_up",     HubbardNConserved, 0, 0, 0, 0, TRUE, -1, 0, 0, 0);
+  check_single("NConserved single c_dn^dag", HubbardNConserved, 0, 0, 1, 1, TRUE, +1, 0, 0, 0);
+  check_single("NConserved single c_dn",     HubbardNConserved, 0, 0, 1, 0, TRUE, -1, 0, 0, 0);
+
+  /* --- HubbardNConserved operator-set consistency: cross-spin same-sense operators agree on the
+     Ne-only sector (valid), while creation+annihilation mix is rejected. --- */
+  { /* up-annih + down-annih (cross spin, same sense) -> consistent, dNe=-1 */
+    int r0[3] = {0, 0, 0}, r1[3] = {0, 1, 0}; int *op[2] = {(int*)r0, (int*)r1};
+    SectorShift s = GetExcitationOperatorSetShift(HubbardNConserved, 0, FALSE, op, 2);
+    int ok = (s.valid == TRUE && s.dNe == -1 && s.dNup == 0 && s.dNdown == 0 && s.dTotal2Sz == 0);
+    printf("%-40s : %s\n", "NConserved set cross-spin (consistent)", ok ? "OK" : "FAIL");
+    if (!ok) { printf("   got valid=%d dNe=%d dNup=%d dNdown=%d\n", s.valid, s.dNe, s.dNup, s.dNdown); g_fail = 1; }
+  }
+  { /* up-annih + down-creation (mixed sense) -> SET_INCONSISTENT */
+    int r0[3] = {0, 0, 0}, r1[3] = {0, 1, 1}; int *op[2] = {(int*)r0, (int*)r1};
+    check_reason("NConserved set mixed sense (inconsistent)", HubbardNConserved, 0, FALSE,
+                 OFFDIAG_SHIFT_SET_INCONSISTENT, op, 2);
+  }
+
   /* --- Hubbard pair: off-diagonal spin flips Nup/Ndown; diagonal -> no shift --- */
   check_pair("Hubbard pair n_up (diag)",        Hubbard, 0, 0, 0, 0, 0, 1, TRUE, 0, 0, 0, 0);
   check_pair("Hubbard pair c_up^dag c_dn",      Hubbard, 0, 0, 0, 0, 1, 1, TRUE, 0, +1, -1, 0);
