@@ -44,15 +44,34 @@ Use rules
    modes are not supported together with a bra operator).
 
 *  The ket (:doc:`SingleExcitation <SingleExcitation_file_en>`) and bra operators
-   must map :math:`|\phi\rangle` into the **same** excited Hilbert sector (the
-   same change of particle number and :math:`S_z`). All operators within one
-   file must also share the same sector change. Otherwise the program is
-   terminated.
+   must map :math:`|\phi\rangle` into the **same** excited Hilbert sector, and all
+   operators within one file must share the same sector change; otherwise the
+   program is terminated. What "same sector" means depends on the model:
 
-*  Supported models: Hubbard and HubbardGC (grand canonical). (A single
-   excitation is not defined for spin systems, and other models are not yet
-   supported for the off-diagonal Green's function; the program is terminated
-   for them.)
+   *  Hubbard (canonical): the same change of particle number **and**
+      :math:`S_z`.
+
+   *  HubbardGC (grand canonical): a single excitation carries no sector shift,
+      so the whole Fock space is one Hilbert space and the ket and bra (of either
+      spin) always share it.
+
+   *  HubbardNConserved (:math:`S_z` free): only the same change of particle
+      number is required; the :math:`S_z` change may differ.
+
+*  Supported models: Hubbard, HubbardGC (grand canonical), and
+   HubbardNConserved (canonical, fixed electron number with free :math:`S_z`).
+   (A single excitation is not defined for spin systems, and other models are
+   not yet supported for the off-diagonal Green's function; the program is
+   terminated for them.)
+
+*  HubbardNConserved is selected from the Hubbard model (``CalcModel=0``) by
+   giving ``Ncond`` (the electron number) without ``2Sz`` in the
+   :ref:`ModPara <Subsec:modpara>` file. Because :math:`S_z` is then free, this
+   enables the cross-spin (2Sz-free) off-diagonal route (used, for example, for
+   spin-orbit-coupled impurities): the excited Hilbert
+   sector is fixed by the electron number alone, so the ket and bra need only
+   share the same change of particle number, and a cross-spin :math:`G_{BA}` is
+   obtained from a single solve.
 
 *  When ``SpectrumNumBra`` :math:`>1` is set in the
    :ref:`ModPara <Subsec:modpara>` file, the additional bra operator sets

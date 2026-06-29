@@ -121,7 +121,11 @@ Common parameters
    **Description :** The total value of :math:`2S_z` (not used in grand
    canonical ensemble). For conservation of :math:`S_z` in the case of
    ``CalcModel`` = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
-   set ``Ncond``.
+   set ``Ncond``. For ``CalcModel`` = 0, giving ``Ncond`` **without** ``2Sz``
+   selects the ``HubbardNConserved`` model, which fixes the electron number
+   while leaving :math:`S_z` free; this is the sector used by the
+   single-excitation off-diagonal (bra-ket) dynamical Green's function for
+   2Sz-nonconserving (cross-spin) systems.
 
 *  ``initial_iv``
 
