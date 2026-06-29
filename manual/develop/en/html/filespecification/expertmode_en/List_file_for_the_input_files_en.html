@@ -42,8 +42,10 @@ ModPara  modpara.def
 LocSpin  zlocspn.def
 Trans    ztransfer.def
 InterAll zinterall.def
+NBodyInterAll znbodyinterall.def
 OneBodyG zcisajs.def
 TwoBodyG zcisajscktaltdc.def
+NBodyG znbodyg.def
 </pre></div>
 </div>
 <section id="file-format">
@@ -103,32 +105,38 @@ terminated.</p></li>
 <tr class="row-even"><td><p>InterAll</p></td>
 <td><p>Two-body interactions for Hamiltonian</p></td>
 </tr>
-<tr class="row-odd"><td><p>CoulombIntra</p></td>
+<tr class="row-odd"><td><p>NBodyInterAll</p></td>
+<td><p>Generic N-body interactions for Hamiltonian</p></td>
+</tr>
+<tr class="row-even"><td><p>CoulombIntra</p></td>
 <td><p>CoulombIntra interactions</p></td>
 </tr>
-<tr class="row-even"><td><p>CoulombInter</p></td>
+<tr class="row-odd"><td><p>CoulombInter</p></td>
 <td><p>CoulombInter interactions</p></td>
 </tr>
-<tr class="row-odd"><td><p>Hund</p></td>
+<tr class="row-even"><td><p>Hund</p></td>
 <td><p>Hund couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>PairHop</p></td>
+<tr class="row-odd"><td><p>PairHop</p></td>
 <td><p>Pair hopping couplings</p></td>
 </tr>
-<tr class="row-odd"><td><p>Exchange</p></td>
+<tr class="row-even"><td><p>Exchange</p></td>
 <td><p>Exchange couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>Ising</p></td>
+<tr class="row-odd"><td><p>Ising</p></td>
 <td><p>Ising interactions</p></td>
 </tr>
-<tr class="row-odd"><td><p>PairLift</p></td>
+<tr class="row-even"><td><p>PairLift</p></td>
 <td><p>Pair lift couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>OneBodyG</p></td>
+<tr class="row-odd"><td><p>OneBodyG</p></td>
 <td><p>Output components for one-body Green’s functions <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>TwoBodyG</p></td>
+<tr class="row-even"><td><p>TwoBodyG</p></td>
 <td><p>Output components for two-body Green’s functions <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>NBodyG</p></td>
+<td><p>Output components for generic N-body Green’s functions</p></td>
 </tr>
 <tr class="row-even"><td><p>SingleExcitation</p></td>
 <td><p>Operators for generating a single excited state</p></td>

@@ -45,8 +45,10 @@ ModPara  modpara.def
 LocSpin  zlocspn.def
 Trans    ztransfer.def
 InterAll zinterall.def
+NBodyInterAll znbodyinterall.def
 OneBodyG zcisajs.def
 TwoBodyG zcisajscktaltdc.def
+NBodyG znbodyg.def
 </pre></div>
 </div>
 <div class="line-block">
@@ -108,32 +110,38 @@ LocSpinです。</p></li>
 <tr class="row-even"><td><p>InterAll</p></td>
 <td><p>一般的二体相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>CoulombIntra</p></td>
+<tr class="row-odd"><td><p>NBodyInterAll</p></td>
+<td><p>一般的N体相互作用に関する設定をします。</p></td>
+</tr>
+<tr class="row-even"><td><p>CoulombIntra</p></td>
 <td><p>内部クーロン相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td><p>CoulombInter</p></td>
+<tr class="row-odd"><td><p>CoulombInter</p></td>
 <td><p>サイト間クーロン相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>Hund</p></td>
+<tr class="row-even"><td><p>Hund</p></td>
 <td><p>フント結合に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td><p>PairHop</p></td>
+<tr class="row-odd"><td><p>PairHop</p></td>
 <td><p>ペアホッピングに関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>Exchange</p></td>
+<tr class="row-even"><td><p>Exchange</p></td>
 <td><p>交換相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td><p>Ising</p></td>
+<tr class="row-odd"><td><p>Ising</p></td>
 <td><p>イジング相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>PairLift</p></td>
+<tr class="row-even"><td><p>PairLift</p></td>
 <td><p>ペアリフト相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td><p>OneBodyG</p></td>
+<tr class="row-odd"><td><p>OneBodyG</p></td>
 <td><p>出力する一体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle\)</span> に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>TwoBodyG</p></td>
+<tr class="row-even"><td><p>TwoBodyG</p></td>
 <td><p>出力する二体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle\)</span>に関する設定をします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>NBodyG</p></td>
+<td><p>出力するN体グリーン関数に関する設定をします。</p></td>
 </tr>
 <tr class="row-even"><td><p>SingleExcitation</p></td>
 <td><p>一体励起状態の生成演算子に関する指定をします。</p></td>

@@ -51,6 +51,9 @@
    * - :doc:`InterAll <InterAll_file_ja>`
      - No
      - 一般二体相互作用: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}`
+   * - :doc:`NBodyInterAll <NBodyInterAll_file_ja>`
+     - No
+     - 一般N体相互作用: :math:`\prod_p c_{i_p\sigma'_p}^{\dagger}c_{j_p\sigma_p}`
    * - :doc:`CoulombIntra <CoulombIntra_file_ja>`
      - No
      - オンサイトクーロン: :math:`n_{i\uparrow}n_{i\downarrow}`
@@ -89,6 +92,9 @@
    * - :doc:`TwoBodyG <TwoBodyG_file_ja>`
      - No
      - 二体グリーン関数: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k\sigma_3}c_{l\sigma_4}\rangle`
+   * - :doc:`NBodyG <NBodyG_file_ja>`
+     - No
+     - N体グリーン関数: :math:`\left\langle \prod_p c^{\dagger}_{i_p\sigma'_p}c_{j_p\sigma_p}\right\rangle`
 
 **スペクトル・時間発展**
 
@@ -158,6 +164,7 @@
    :maxdepth: 1
 
    InterAll_file_ja
+   NBodyInterAll_file_ja
    CoulombIntra_file_ja
    CoulombInter_file_ja
    Hund_file_ja
@@ -176,6 +183,7 @@
 
    OneBodyG_file_ja
    TwoBodyG_file_ja
+   NBodyG_file_ja
 
 スペクトル・時間発展
 ^^^^^^^^^^^^^^^^^^^^
