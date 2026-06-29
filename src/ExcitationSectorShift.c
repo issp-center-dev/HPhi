@@ -20,16 +20,14 @@
  * The shift returned here mirrors the *net* sector change applied by
  * MakeExcitedList() (src/CalcSpectrum.c). Note that MakeExcitedList's second
  * switch runs only when iFlgListModifed==TRUE, so several GC/NConserved
- * branches inside it are dead code. The net behavior is:
- *   - single: HubbardGC -> none; Spin/SpinGC -> N/A;
- *             Hubbard/Kondo/KondoGC/tJ/tJGC/(Hubbard|tJ)NConserved -> shift.
- *   - pair:   all GC (incl. KondoGC/tJGC) + NConserved -> none;
- *             Hubbard/Kondo/tJ -> off-diagonal-spin shift; Spin -> shift.
+ * branches inside it are dead code. Supported off-diagonal behavior is:
+ *   - single: Hubbard -> dNe/dNup/dNdown shift; HubbardGC -> no shift;
+ *             HubbardNConserved -> dNe-only shift; Spin/SpinGC -> N/A.
+ *   - pair:   Hubbard/Spin -> off-diagonal-spin shift; SpinGC -> no shift.
  *
- * v1 off-diagonal allow-list = {Hubbard, Spin, SpinGC}. Models outside the
- * allow-list return valid=FALSE here (the allow-list guard rejects them); their
- * exact shift is encoded together with a dedicated test when a model is
- * promoted into the allow-list.
+ * Models outside these supported paths return valid=FALSE here; their exact
+ * shift should be encoded with a dedicated test when a model is promoted into
+ * the off-diagonal spectrum allow-list.
  */
 #include "Common.h"
 #include "ExcitationSectorShift.h"

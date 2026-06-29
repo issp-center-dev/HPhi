@@ -2033,6 +2033,11 @@ unsigned long int sz_hacker_for_large_systems(
       list_2_1_[ia]  = ja+1;
       list_2_2_[ib]  = jb+1;
       i_cnt          = 1;
+      if (i == 0) {
+          /* vacuum sector: the single state is already registered above.
+             Do not call snoob(0). */
+          return i_cnt;
+      }
       while (1) {
           long unsigned int next = snoob(i);
           if (next >= i_max) break;
