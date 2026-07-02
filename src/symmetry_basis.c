@@ -1,4 +1,5 @@
 #include <math.h>
+#include <bitcalc.h>
 #include "symmetry_basis.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -141,11 +142,134 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
   return 0;
 }
 
+static int ensure_basis_capacity(struct SymmetryBasisRuntime *sym,
+                                 unsigned long int needed)
+{
+  struct SymmetryBasisVector *next;
+  next = (struct SymmetryBasisVector *)realloc(sym->basis,
+      sizeof(struct SymmetryBasisVector) * (needed + 1));
+  if (next == NULL) return -1;
+  sym->basis = next;
+  return 0;
+}
+
+static int raw_index_from_state(const struct BindStruct *X,
+                                unsigned long int state,
+                                unsigned long int *raw_index)
+{
+  return GetOffComp(list_2_1, list_2_2, state,
+                    X->Large.irght, X->Large.ilft, X->Large.ihfbit,
+                    raw_index);
+}
+
+static int store_basis_vector(struct SymmetryBasisRuntime *sym,
+                              unsigned long int basis_id,
+                              unsigned long int rep_state,
+                              double complex *raw_coeff,
+                              unsigned long int full_dim,
+                              double norm)
+{
+  unsigned long int raw;
+  unsigned int count = 0;
+  unsigned int pos = 0;
+  sym->basis[basis_id].rep_state = rep_state;
+  for (raw = 1; raw <= full_dim; raw++) {
+    if (cabs(raw_coeff[raw]) > 1.0e-12) count++;
+  }
+  sym->basis[basis_id].count = count;
+  sym->basis[basis_id].raw_index = (unsigned long int *)malloc(sizeof(unsigned long int) * count);
+  sym->basis[basis_id].coeff = (double complex *)malloc(sizeof(double complex) * count);
+  if (sym->basis[basis_id].raw_index == NULL || sym->basis[basis_id].coeff == NULL) return -1;
+  for (raw = 1; raw <= full_dim; raw++) {
+    if (cabs(raw_coeff[raw]) > 1.0e-12) {
+      double complex c = raw_coeff[raw] / norm;
+      sym->basis[basis_id].raw_index[pos] = raw;
+      sym->basis[basis_id].coeff[pos] = c;
+      sym->raw_to_sym[raw] = basis_id;
+      sym->raw_to_coeff[raw] = c;
+      pos++;
+    }
+  }
+  return 0;
+}
+
 int BuildSymmetryBasis(struct BindStruct *X)
 {
-  (void)X;
-  fprintf(stdoutMPI, "Error: internal symmetry basis builder is not wired yet.\n");
-  return -1;
+  unsigned long int raw, full_dim;
+  int *visited;
+  double complex *acc;
+  struct SymmetryBasisRuntime *sym;
+
+  if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
+  full_dim = X->Check.idim_max;
+  sym = (struct SymmetryBasisRuntime *)calloc(1, sizeof(*sym));
+  visited = (int *)calloc(full_dim + 1, sizeof(int));
+  acc = (double complex *)calloc(full_dim + 1, sizeof(double complex));
+  if (sym == NULL || visited == NULL || acc == NULL) return -1;
+
+  sym->enabled = TRUE;
+  sym->nsite = X->Def.Nsite;
+  sym->group_order = X->Def.NSymTrans;
+  sym->full_dim = full_dim;
+  sym->raw_to_sym = (unsigned long int *)calloc(full_dim + 1, sizeof(unsigned long int));
+  sym->raw_to_coeff = (double complex *)calloc(full_dim + 1, sizeof(double complex));
+  if (sym->raw_to_sym == NULL || sym->raw_to_coeff == NULL) return -1;
+
+  for (raw = 1; raw <= full_dim; raw++) {
+    unsigned int g;
+    double norm2 = 0.0;
+    if (visited[raw] != 0) continue;
+    memset(acc, 0, sizeof(double complex) * (full_dim + 1));
+    for (g = 0; g < X->Def.NSymTrans; g++) {
+      unsigned long int moved_state = SymmetryApplyToSpinBits(list_1[raw], X->Def.SymTrans[g], X->Def.Nsite);
+      unsigned long int moved_raw = 0;
+      if (raw_index_from_state(X, moved_state, &moved_raw) != TRUE) {
+        fprintf(stdoutMPI, "Error: TransSym maps a fixed-Sz state outside the fixed-Sz basis.\n");
+        return -1;
+      }
+      acc[moved_raw] += conj(X->Def.SymTransChar[g]);
+    }
+    for (g = 0; g < X->Def.NSymTrans; g++) {
+      unsigned long int moved_state = SymmetryApplyToSpinBits(list_1[raw], X->Def.SymTrans[g], X->Def.Nsite);
+      unsigned long int moved_raw = 0;
+      if (raw_index_from_state(X, moved_state, &moved_raw) != TRUE) {
+        fprintf(stdoutMPI, "Error: TransSym maps a fixed-Sz state outside the fixed-Sz basis.\n");
+        return -1;
+      }
+      if (visited[moved_raw] == 0) {
+        visited[moved_raw] = 1;
+      }
+    }
+    {
+      unsigned long int idx;
+      for (idx = 1; idx <= full_dim; idx++) norm2 += creal(conj(acc[idx]) * acc[idx]);
+    }
+    if (norm2 <= 1.0e-20) continue;
+    sym->dim++;
+    if (ensure_basis_capacity(sym, sym->dim) != 0) return -1;
+    if (store_basis_vector(sym, sym->dim, list_1[raw], acc, full_dim, sqrt(norm2)) != 0) return -1;
+  }
+
+  sym->sym_diagonal = (double *)calloc(sym->dim + 1, sizeof(double));
+  if (sym->sym_diagonal == NULL) return -1;
+  for (raw = 1; raw <= full_dim; raw++) {
+    unsigned long int b = sym->raw_to_sym[raw];
+    if (b != 0) {
+      double weight = creal(conj(sym->raw_to_coeff[raw]) * sym->raw_to_coeff[raw]);
+      sym->sym_diagonal[b] += weight * list_Diagonal[raw];
+    }
+  }
+
+  X->Sym = sym;
+  free(visited);
+  free(acc);
+  fprintf(stdoutMPI, "Symmetry basis: raw_dim=%lu sector_dim=%lu group_order=%u\n",
+          sym->full_dim, sym->dim, sym->group_order);
+  if (sym->dim == 0) {
+    fprintf(stdoutMPI, "Error: TransSym sector has zero basis dimension.\n");
+    return -1;
+  }
+  return 0;
 }
 
 void ActivateSymmetryBasisDimension(struct BindStruct *X)
@@ -158,6 +282,17 @@ void ActivateSymmetryBasisDimension(struct BindStruct *X)
 
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
 {
+  unsigned long int b;
   if (sym == NULL) return;
+  if (sym->basis != NULL) {
+    for (b = 1; b <= sym->dim; b++) {
+      free(sym->basis[b].raw_index);
+      free(sym->basis[b].coeff);
+    }
+  }
+  free(sym->basis);
+  free(sym->raw_to_sym);
+  free(sym->raw_to_coeff);
+  free(sym->sym_diagonal);
   free(sym);
 }

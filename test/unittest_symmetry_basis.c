@@ -42,6 +42,19 @@ static void setup_c4_def(struct DefineList *def)
   }
 }
 
+static double complex orbit_coeff_sum_for_state(unsigned long int raw_state,
+                                                const struct DefineList *def,
+                                                unsigned long int target_state)
+{
+  unsigned int g;
+  double complex sum = 0.0;
+  for (g = 0; g < def->NSymTrans; g++) {
+    unsigned long int moved = SymmetryApplyToSpinBits(raw_state, def->SymTrans[g], def->Nsite);
+    if (moved == target_state) sum += conj(def->SymTransChar[g]);
+  }
+  return sum;
+}
+
 static void assert_ulong_eq(unsigned long int got,
                             unsigned long int expected,
                             const char *label)
@@ -84,6 +97,14 @@ int main(void)
     setup_c4_def(&def);
     def.SymTransAnti[1][0] = -1;
     assert_int_eq(ValidateSymmetryGroupInput(&def), -1, "anti boundary rejects");
+  }
+  {
+    struct DefineList def;
+    setup_c4_def(&def);
+    assert_int_eq(cabs(orbit_coeff_sum_for_state(0x3UL, &def, 0x3UL) - 1.0) < 1.0e-12, 1,
+                  "orbit coeff identity");
+    assert_int_eq(cabs(orbit_coeff_sum_for_state(0x3UL, &def, 0x6UL) - 1.0) < 1.0e-12, 1,
+                  "orbit coeff shifted state");
   }
   return 0;
 }
