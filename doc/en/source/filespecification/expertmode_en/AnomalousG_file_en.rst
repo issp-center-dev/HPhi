@@ -80,7 +80,9 @@ Use rules
 
 *  This file is currently supported only for HubbardGC calculations.
 
-*  MPI execution is not supported for ``AnomalousG``.
+*  MPI execution is supported for Lanczos, CG, TPQ, cTPQ, and time evolution
+   calculations. MPI execution with the FullDiag method is not supported for
+   ``AnomalousG``.
 
 *  ``AnomalousG`` is not supported for ``CalcSpec`` calculations.
 

@@ -138,29 +138,38 @@ int CalcByTPQ(
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
-        fprintf(stdout, "A file of Inputvector does not exist.\n");
-        fprintf(stdout, "Start to calculate in normal procedure.\n");
+        fprintf(stderr, "A file of Inputvector does not exist (rank %d).\n", myrank);
         iret=1;
       }
-      byte_size = fread(&step_i, sizeof(step_i), 1, fp);
-      byte_size = fread(&i_max, sizeof(long int), 1, fp);
-      if(i_max != X->Bind.Check.idim_max){
-        fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-        exitMPI(-1);
-      }
-      byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
-      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-      fclose(fp);
-      StopTimer(3600);
-      X->Bind.Def.istep=step_i;
-      StartTimer(3200);
-      iret=expec_energy_flct(&(X->Bind));
-      StopTimer(3200);
-      if(iret != 0) return -1;
+      /* All ranks must agree on the fallback: tmpvec files are per-rank and a
+         partially missing set would otherwise split ranks across the restart
+         and fresh-start branches, whose MPI collectives do not match. */
+      iret = (int)MaxMPI_li((unsigned long int)iret);
+      if(iret==1){
+        if(fp != NULL) fclose(fp);
+        fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
+        StopTimer(3600);
+      }else{
+        byte_size = fread(&step_i, sizeof(step_i), 1, fp);
+        byte_size = fread(&i_max, sizeof(long int), 1, fp);
+        if(i_max != X->Bind.Check.idim_max){
+          fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+          exitMPI(-1);
+        }
+        byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
+        fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+        fclose(fp);
+        StopTimer(3600);
+        X->Bind.Def.istep=step_i;
+        StartTimer(3200);
+        iret=expec_energy_flct(&(X->Bind));
+        StopTimer(3200);
+        if(iret != 0) return -1;
 
-      step_iO=step_i-1;
-      if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+        step_iO=step_i-1;
+        if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+      }
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {

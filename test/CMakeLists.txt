@@ -394,6 +394,7 @@ set_tests_properties(
 add_hphi_test_with_srcdir(tpq_spin_kagome)
 add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
 add_hphi_test(tpq_small_lanczos_max)
+add_hphi_test(tpq_restart_missing_vector_fallback)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
@@ -401,6 +402,9 @@ set_tests_properties(
 set_tests_properties(
     tpq_small_lanczos_max
     PROPERTIES LABELS "tpq;validation")
+set_tests_properties(
+    tpq_restart_missing_vector_fallback
+    PROPERTIES LABELS "tpq;ctpq;validation")
 
 #
 # cTPQ
@@ -486,6 +490,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_anomalous_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_kondo_nconserved exact:4)
@@ -515,6 +520,7 @@ if(MPI_FOUND)
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard
         mpi_consistency_te_hubbardgc_twobody mpi_consistency_te_hubbard_twobody
         mpi_nbody_interall_hubbardgc mpi_nbodyg_hubbardgc
+        mpi_anomalous_hubbardgc
         mpi_nbody_interall_hubbard mpi_nbodyg_hubbard
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(

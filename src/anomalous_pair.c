@@ -6,6 +6,9 @@
 /* the Free Software Foundation, either version 3 of the License, or */
 /* (at your option) any later version. */
 
+#ifdef MPI
+#include <mpi.h>
+#endif
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -138,8 +141,8 @@ static int validate_anomalous_scope_common(const struct DefineList *D, unsigned 
     fprintf(stdoutMPI, "Error: %s does not support CalcSpec.\n", name);
     return -1;
   }
-  if (nproc > 1) {
-    fprintf(stdoutMPI, "Error: %s MPI support is not yet implemented.\n", name);
+  if (nproc > 1 && D->iCalcType == FullDiag) {
+    fprintf(stdoutMPI, "Error: %s does not support MPI FullDiag.\n", name);
     return -1;
   }
   for (t = 0; t < n; t++) {
@@ -214,6 +217,89 @@ static unsigned long int get_hubbardgc_local_block(const struct DefineList *D)
   return D->OrgTpow[2 * D->Nsite - 1] * 2;
 }
 
+static int apply_anomalous_rank_annihilate(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) == 0) return 0;
+  *rank_state &= ~mask;
+  return 1;
+}
+
+static int apply_anomalous_rank_create(
+  const struct DefineList *D,
+  unsigned int site,
+  unsigned int spin,
+  unsigned long int *rank_state
+) {
+  unsigned long int mask;
+  if (site < D->Nsite) return 1;
+  mask = D->Tpow[2 * site + spin];
+  if ((*rank_state & mask) != 0) return 0;
+  *rank_state |= mask;
+  return 1;
+}
+
+static int apply_anomalous_rank_term(
+  const struct DefineList *D,
+  const int term[5],
+  unsigned long int *rank_state
+) {
+  const int type = term[0];
+  const unsigned int site1 = (unsigned int)term[1];
+  const unsigned int spin1 = (unsigned int)term[2];
+  const unsigned int site2 = (unsigned int)term[3];
+  const unsigned int spin2 = (unsigned int)term[4];
+
+  if (type == 1) {
+    if (apply_anomalous_rank_create(D, site2, spin2, rank_state) == 0) return 0;
+    if (apply_anomalous_rank_create(D, site1, spin1, rank_state) == 0) return 0;
+  }
+  else {
+    if (apply_anomalous_rank_annihilate(D, site2, spin2, rank_state) == 0) return 0;
+    if (apply_anomalous_rank_annihilate(D, site1, spin1, rank_state) == 0) return 0;
+  }
+  return 1;
+}
+
+static int anomalous_hubbardgc_partner_rank(
+  const struct DefineList *D,
+  const int term[5],
+  int current_rank,
+  int *partner_rank,
+  int *active
+) {
+  int dagger_term[5];
+  unsigned long int rank_state = (unsigned long int)current_rank;
+
+  if (apply_anomalous_rank_term(D, term, &rank_state) == 1) {
+    *active = TRUE;
+    *partner_rank = (int)rank_state;
+    return 0;
+  }
+
+  dagger_term[0] = 1 - term[0];
+  dagger_term[1] = term[3];
+  dagger_term[2] = term[4];
+  dagger_term[3] = term[1];
+  dagger_term[4] = term[2];
+  rank_state = (unsigned long int)current_rank;
+  if (apply_anomalous_rank_term(D, dagger_term, &rank_state) == 1) {
+    *active = TRUE;
+    *partner_rank = (int)rank_state;
+    return 0;
+  }
+
+  *active = FALSE;
+  *partner_rank = current_rank;
+  return 0;
+}
+
 int ApplyAnomalousPairHubbardGC(
   const struct DefineList *D,
   const int term[5],
@@ -248,31 +334,76 @@ int ApplyAnomalousPairHubbardGC(
   return 1;
 }
 
+static double complex apply_anomalous_term_to_rank(
+  struct BindStruct *X,
+  unsigned int term,
+  double complex *tmp_v0,
+  const double complex *src_v1,
+  double complex *cur_v1,
+  unsigned long int src_i_max,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex dam_pr = 0.0;
+  const int do_update = (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC);
+
+#pragma omp parallel for default(none) reduction(+:dam_pr) \
+  shared(X, tmp_v0, src_v1, cur_v1) \
+  firstprivate(src_i_max, term, rank_in, do_update, myrank) private(j)
+  for (j = 1; j <= src_i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    int sign = 1;
+    int ret = ApplyAnomalousPairHubbardGC(
+      &X->Def, X->Def.AnomalousTerm[term], j - 1, rank_in, &local_out, &rank_out, &sign);
+    if (ret == 1 && rank_out == myrank) {
+      const double complex dmv = X->Def.ParaAnomalousTerm[term] * sign * src_v1[j];
+      if (do_update) tmp_v0[local_out + 1] += dmv;
+      dam_pr += conj(cur_v1[local_out + 1]) * dmv;
+    }
+  }
+  return dam_pr;
+}
+
 static double complex multiply_anomalous_term(
   struct BindStruct *X,
   unsigned int term,
   double complex *tmp_v0,
   double complex *tmp_v1
 ) {
-  unsigned long int j;
+  int partner = myrank;
+  int active = TRUE;
   double complex dam_pr = 0.0;
-  const unsigned long int i_max = X->Check.idim_max;
-  const int do_update = (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC);
 
-#pragma omp parallel for default(none) reduction(+:dam_pr) \
-  shared(X, tmp_v0, tmp_v1) firstprivate(i_max, term, do_update, myrank) private(j)
-  for (j = 1; j <= i_max; j++) {
-    unsigned long int local_out = 0;
-    int rank_out = 0;
-    int sign = 1;
-    int ret = ApplyAnomalousPairHubbardGC(
-      &X->Def, X->Def.AnomalousTerm[term], j - 1, myrank, &local_out, &rank_out, &sign);
-    if (ret == 1 && rank_out == myrank) {
-      const double complex dmv = X->Def.ParaAnomalousTerm[term] * sign * tmp_v1[j];
-      if (do_update) tmp_v0[local_out + 1] += dmv;
-      dam_pr += conj(tmp_v1[local_out + 1]) * dmv;
-    }
+  if (anomalous_hubbardgc_partner_rank(&X->Def, X->Def.AnomalousTerm[term],
+                                       myrank, &partner, &active) != 0) {
+    return 0.0;
   }
+  if (active == FALSE) return 0.0;
+  if (partner == myrank) {
+    return apply_anomalous_term_to_rank(
+      X, term, tmp_v0, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, partner, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, partner, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(tmp_v1, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, partner, 0,
+                        v1buf,  idim_max_buf + 1, MPI_DOUBLE_COMPLEX, partner, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    dam_pr = apply_anomalous_term_to_rank(
+      X, term, tmp_v0, v1buf, tmp_v1, idim_max_buf, partner);
+  }
+#else
+  fprintf(stdoutMPI, "Error: AnomalousTerm reached an MPI-only rank flip path without MPI.\n");
+  return 0.0;
+#endif
   return dam_pr;
 }
 
@@ -317,27 +448,73 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
   return 0;
 }
 
+static double complex calc_anomalousg_term_hubbardgc_rank(
+  struct BindStruct *X,
+  unsigned int term,
+  const double complex *src_vec,
+  const double complex *cur_vec,
+  unsigned long int src_i_max,
+  int rank_in
+) {
+  unsigned long int j;
+  double complex value = 0.0;
+
+#pragma omp parallel for default(none) reduction(+:value) \
+  shared(X, src_vec, cur_vec) firstprivate(src_i_max, term, rank_in, myrank) private(j)
+  for (j = 1; j <= src_i_max; j++) {
+    unsigned long int local_out = 0;
+    int rank_out = 0;
+    int sign = 1;
+    int ret = ApplyAnomalousPairHubbardGC(
+      &X->Def, X->Def.AnomalousG[term], j - 1, rank_in, &local_out, &rank_out, &sign);
+    if (ret == 1 && rank_out == myrank) {
+      value += conj(cur_vec[local_out + 1]) * sign * src_vec[j];
+    }
+  }
+  return value;
+}
+
 static double complex calc_anomalousg_term_hubbardgc(
   struct BindStruct *X,
   unsigned int term,
   double complex *vec
 ) {
-  unsigned long int j;
+  int partner = myrank;
+  int active = TRUE;
   double complex value = 0.0;
-  const unsigned long int i_max = X->Check.idim_max;
 
-#pragma omp parallel for default(none) reduction(+:value) \
-  shared(X, vec) firstprivate(i_max, term, myrank) private(j)
-  for (j = 1; j <= i_max; j++) {
-    unsigned long int local_out = 0;
-    int rank_out = 0;
-    int sign = 1;
-    int ret = ApplyAnomalousPairHubbardGC(
-      &X->Def, X->Def.AnomalousG[term], j - 1, myrank, &local_out, &rank_out, &sign);
-    if (ret == 1 && rank_out == myrank) {
-      value += conj(vec[local_out + 1]) * sign * vec[j];
-    }
+  if (anomalous_hubbardgc_partner_rank(&X->Def, X->Def.AnomalousG[term],
+                                       myrank, &partner, &active) != 0) {
+    return SumMPI_dc(0.0);
   }
+  if (active == FALSE) {
+    return SumMPI_dc(0.0);
+  }
+  if (partner == myrank) {
+    value = calc_anomalousg_term_hubbardgc_rank(
+      X, term, vec, vec, X->Check.idim_max, myrank);
+    return SumMPI_dc(value);
+  }
+
+#ifdef MPI
+  {
+    MPI_Status statusMPI;
+    unsigned long int idim_max_buf = 0;
+    int ierr = MPI_Sendrecv(&X->Check.idim_max, 1, MPI_UNSIGNED_LONG, partner, 0,
+                            &idim_max_buf,      1, MPI_UNSIGNED_LONG, partner, 0,
+                            MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    ierr = MPI_Sendrecv(vec, X->Check.idim_max + 1, MPI_DOUBLE_COMPLEX, partner, 0,
+                        v1buf, idim_max_buf + 1, MPI_DOUBLE_COMPLEX, partner, 0,
+                        MPI_COMM_WORLD, &statusMPI);
+    if (ierr != 0) exitMPI(-1);
+    value = calc_anomalousg_term_hubbardgc_rank(
+      X, term, v1buf, vec, idim_max_buf, partner);
+  }
+#else
+  fprintf(stdoutMPI, "Error: AnomalousG reached an MPI-only rank flip path without MPI.\n");
+  return SumMPI_dc(0.0);
+#endif
   return SumMPI_dc(value);
 }
 

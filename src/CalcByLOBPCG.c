@@ -208,8 +208,7 @@ static void Initialize_wave(
       sprintf(sdt, cFileNameInputVector, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
-        fprintf(stdout, "Restart file is not found.\n");
-        fprintf(stdout, "Start from scratch.\n");
+        fprintf(stderr, "Restart file is not found (rank %d).\n", myrank);
         ierr = 1;
         break;
       }
@@ -225,6 +224,12 @@ static void Initialize_wave(
         fclose(fp);
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+
+    /* All ranks must agree on the fallback: restart files are per-rank and a
+       partially missing set would otherwise let some ranks return early while
+       others enter the scratch path, whose MPI collectives do not match. */
+    ierr = (int)MaxMPI_li((unsigned long int)ierr);
+    if (ierr != 0) fprintf(stdoutMPI, "Start from scratch.\n");
 
     if (ierr == 0) {
       //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
