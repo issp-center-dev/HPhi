@@ -139,4 +139,94 @@ if ../../src/HPhi -e namelist.def > duplicate.log 2>&1; then
 fi
 grep -q "duplicate TransSym permutation entry" duplicate.log
 
+write_common_defs
+write_valid_transsym
+perl -0pi -e 's/CalcType 0/CalcType 2/' calcmod.def
+if ../../src/HPhi -e namelist.def > fulldiag.log 2>&1; then
+    cat fulldiag.log
+    exit 1
+fi
+grep -q "does not support FullDiag" fulldiag.log
+
+for calc_type in 1 4 5; do
+    write_common_defs
+    write_valid_transsym
+    perl -0pi -e "s/CalcType 0/CalcType ${calc_type}/" calcmod.def
+    log="unsupported_calctype_${calc_type}.log"
+    if ../../src/HPhi -e namelist.def > "${log}" 2>&1; then
+        cat "${log}"
+        exit 1
+    fi
+    grep -q "supports only Lanczos and CG" "${log}"
+done
+
+write_common_defs
+write_valid_transsym
+perl -0pi -e 's/2 3 1.0/2 3 0.75/' exchange.def
+if ../../src/HPhi -e namelist.def > noninvariant.log 2>&1; then
+    cat noninvariant.log
+    exit 1
+fi
+grep -q "Hamiltonian invariance failed" noninvariant.log
+
+write_common_defs
+write_valid_transsym
+perl -ni -e 'print unless /^2Sz[[:space:]]/' modpara.def
+if ../../src/HPhi -e namelist.def > nosz.log 2>&1; then
+    cat nosz.log
+    exit 1
+fi
+grep -Eq "2Sz is not defined|requires fixed 2Sz" nosz.log
+
+write_common_defs
+write_valid_transsym
+cat > interall.def <<EOF
+================
+NInterAll 1
+================
+========zInterAll ======
+================
+0 0 0 0 1 0 1 0 1.0 0.0
+EOF
+cat > namelist.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+InterAll interall.def
+TransSym qptransidx.def
+EOF
+if ../../src/HPhi -e namelist.def > interall.log 2>&1; then
+    cat interall.log
+    exit 1
+fi
+grep -q "Exchange terms only" interall.log
+
+write_common_defs
+write_valid_transsym
+cat > ising.def <<EOF
+================
+NIsing 4
+================
+========i_j_J ======
+================
+0 1 1.0
+1 2 1.0
+2 3 1.0
+3 0 1.0
+EOF
+cat > namelist.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+Ising ising.def
+TransSym qptransidx.def
+EOF
+if ../../src/HPhi -e namelist.def > ising.log 2>&1; then
+    cat ising.log
+    exit 1
+fi
+grep -q "Exchange terms only" ising.log
+
 exit 0
