@@ -37,6 +37,7 @@
 #include "nbody_interall.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "symmetry_basis_io.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -81,7 +82,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "NBodyInterAll",
   "NBodyG",
   "AnomalousTerm",
-  "AnomalousG"
+  "AnomalousG",
+  "TransSym"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -602,6 +604,8 @@ int ReadDefFileNInt(
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
+  X->iFlgSymmetryBasis=FALSE;
+  X->NSymTrans=0;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   xBoost->flgBoost=FALSE;
@@ -938,6 +942,12 @@ int ReadDefFileNInt(
         fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
         fgetsMPI(ctmp2, 256, fp);
         sscanf(ctmp2, "%s %u\n", ctmp, &(X->NAnomalousG));
+        break;
+      case KWTransSym:
+        if (ReadTransSymNInt(defname, X) != 0) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
         break;
       case KWOneBodyG:
         /* Read cisajs.def----------------------------------------*/
@@ -1932,6 +1942,13 @@ int ReadDefFileIdxPara(
       }
 
       if (ValidateAnomalousGScope(X) != 0) {
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
+      break;
+
+    case KWTransSym:
+      if (ReadTransSymFile(defname, X) != 0) {
         fclose(fp);
         return ReadDefFileError(defname);
       }

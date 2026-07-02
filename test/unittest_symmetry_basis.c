@@ -21,6 +21,14 @@ static void assert_ulong_eq(unsigned long int got,
   }
 }
 
+static void assert_int_eq(int got, int expected, const char *label)
+{
+  if (got != expected) {
+    fprintf(stderr, "%s: got %d expected %d\n", label, got, expected);
+    exit(1);
+  }
+}
+
 int main(void)
 {
   int shift4[4] = {1, 2, 3, 0};
@@ -28,5 +36,6 @@ int main(void)
   assert_ulong_eq(SymmetryApplyToSpinBits(0x1UL, shift4, 4), 0x2UL, "single bit shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x9UL, shift4, 4), 0x3UL, "wrap shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x6UL, shift4, 4), 0xcUL, "two bit shift");
+  assert_int_eq(1, 1, "unit harness still running");
   return 0;
 }

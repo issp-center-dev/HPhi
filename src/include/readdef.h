@@ -61,6 +61,9 @@
 #define KWNBodyG 28
 #define KWAnomalousTerm 29
 #define KWAnomalousG 30
+#define KWTransSym 31
+
+int ReadDefFileError(const char *defname);
 
 int CheckSite(
           const int iListToSite,
