@@ -208,8 +208,8 @@ static void Initialize_wave(
       sprintf(sdt, cFileNameInputVector, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
-        fprintf(stdout, "Restart file is not found.\n");
-        fprintf(stdout, "Start from scratch.\n");
+        fprintf(stdoutMPI, "Restart file is not found.\n");
+        fprintf(stdoutMPI, "Start from scratch.\n");
         ierr = 1;
         break;
       }

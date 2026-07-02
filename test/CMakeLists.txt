@@ -390,6 +390,7 @@ set_tests_properties(
 add_hphi_test_with_srcdir(tpq_spin_kagome)
 add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
 add_hphi_test(tpq_small_lanczos_max)
+add_hphi_test(tpq_restart_missing_vector_fallback)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
@@ -397,6 +398,9 @@ set_tests_properties(
 set_tests_properties(
     tpq_small_lanczos_max
     PROPERTIES LABELS "tpq;validation")
+set_tests_properties(
+    tpq_restart_missing_vector_fallback
+    PROPERTIES LABELS "tpq;ctpq;validation")
 
 #
 # cTPQ

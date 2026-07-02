@@ -180,9 +180,9 @@ int CalcByCanonicalTPQ(
     }else{
         if (X->Bind.Def.Param.ExpandCoef==0){
             X->Bind.Def.Param.ExpandCoef=10;   
-            fprintf(stdout, "In cTPQ calc., the default value of ExpandCoef (=10) is used. \n");
+            fprintf(stdoutMPI, "In cTPQ calc., the default value of ExpandCoef (=10) is used. \n");
         }else{
-            fprintf(stdout, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
+            fprintf(stdoutMPI, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
         }
     }
     X->Bind.Def.St=0;
@@ -214,28 +214,30 @@ int CalcByCanonicalTPQ(
             sprintf(sdt, cFileNameInputVector, rand_i, myrank);
             childfopenALL(sdt, "rb", &fp);
             if(fp==NULL){
-                fprintf(stdout, "A file of Inputvector does not exist.\n");
-                fprintf(stdout, "Start to calculate in normal procedure.\n");
+                fprintf(stdoutMPI, "A file of Inputvector does not exist.\n");
+                fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
                 iret=1;
+                StopTimer(3600);
+            }else{
+                byte_size = fread(&step_i, sizeof(step_i), 1, fp);
+                byte_size = fread(&i_max, sizeof(long int), 1, fp);
+                if(i_max != X->Bind.Check.idim_max){
+                    fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+                    exitMPI(-1);
+                }
+                byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+                TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
+                fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+                fclose(fp);
+                StopTimer(3600);
+                X->Bind.Def.istep=step_i;
+                StartTimer(3200);
+                iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
+                StopTimer(3200);
+                if(iret != 0) return -1;
+                step_iO = step_i-1;
+                if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
             }
-            byte_size = fread(&step_i, sizeof(step_i), 1, fp);
-            byte_size = fread(&i_max, sizeof(long int), 1, fp);
-            if(i_max != X->Bind.Check.idim_max){
-                fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-                exitMPI(-1);
-            }
-            byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
-            TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-            fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-            fclose(fp);
-            StopTimer(3600);
-            X->Bind.Def.istep=step_i;
-            StartTimer(3200);
-            iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
-            StopTimer(3200);
-            if(iret != 0) return -1;
-            step_iO = step_i-1;
-            if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
         }
         if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
             StartTimer(3600);
