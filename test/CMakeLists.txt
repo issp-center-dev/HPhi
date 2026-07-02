@@ -482,6 +482,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_anomalous_hubbardgc exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
     add_hphi_mpi_test(mpi_nbody_interall_kondo_nconserved exact:4)
@@ -511,6 +512,7 @@ if(MPI_FOUND)
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard
         mpi_consistency_te_hubbardgc_twobody mpi_consistency_te_hubbard_twobody
         mpi_nbody_interall_hubbardgc mpi_nbodyg_hubbardgc
+        mpi_anomalous_hubbardgc
         mpi_nbody_interall_hubbard mpi_nbodyg_hubbard
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
