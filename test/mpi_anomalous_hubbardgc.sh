@@ -173,4 +173,4 @@ mv fulldiag_g/calcmod.tmp fulldiag_g/calcmod.def
 expect_mpi_fail fulldiag_term "AnomalousTerm does not support MPI FullDiag"
 expect_mpi_fail fulldiag_g "AnomalousG does not support MPI FullDiag"
 
-echo "HubbardGC AnomalousTerm/AnomalousG MPI np=4 matches serial and rejects MPI FullDiag."
+echo "HubbardGC AnomalousTerm/AnomalousG MPI run matches serial and rejects MPI FullDiag."
