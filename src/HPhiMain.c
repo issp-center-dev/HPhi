@@ -771,6 +771,9 @@ int main(int argc, char* argv[]){
         exitMPI(-1);
       }
       ActivateSymmetryBasisDimension(&(X.Bind));
+      if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
+        exitMPI(-1);
+      }
     }
       
     switch (X.Bind.Def.iCalcType) {

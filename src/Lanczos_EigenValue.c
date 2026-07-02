@@ -249,6 +249,18 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       }
 
       fclose(fp);
+      if ((unsigned long int)stp == i_max_tmp && Target < stp) {
+        tmp_E = d_1d_allocate(stp+1);
+        StartTimer(4102);
+        vec12(alpha, beta, stp, tmp_E, X);
+        StopTimer(4102);
+        X->Large.itr = stp;
+        X->Phys.Target_energy = E_target;
+        X->Phys.Target_CG_energy = tmp_E[k_exct];
+        iconv = 0;
+        free_d_1d_allocate(tmp_E);
+        break;
+      }
     }
 
     //if (stp > 2 && stp % 2 == 0) {
@@ -315,6 +327,18 @@ int Lanczos_EigenValue(struct BindStruct *X) {
           break;
         }
         ebefor = E_target;
+      }
+      if (iconv != 0 && (unsigned long int)stp == i_max_tmp && stp > Target) {
+        tmp_E = d_1d_allocate(stp+1);
+        StartTimer(4102);
+        vec12(alpha, beta, stp, tmp_E, X);
+        StopTimer(4102);
+        X->Large.itr = stp;
+        X->Phys.Target_energy = E_target;
+        X->Phys.Target_CG_energy = tmp_E[k_exct];
+        iconv = 0;
+        free_d_1d_allocate(tmp_E);
+        break;
       }
 
     }

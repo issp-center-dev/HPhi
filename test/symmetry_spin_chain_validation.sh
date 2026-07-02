@@ -29,10 +29,10 @@ CParaFileHead zqp
 Nsite 4
 2Sz 0
 Lanczos_max 8
-initial_iv 1
+initial_iv -1
 exct 1
 LanczosEps 12
-LanczosTarget 2
+LanczosTarget 1
 LargeValue 50
 EOF
 cat > locspn.def <<EOF
@@ -89,8 +89,37 @@ NQPTrans          4
 EOF
 }
 
-write_common_defs
-write_valid_transsym
+write_c4_kpi2_transsym() {
+cat > qptransidx.def <<EOF
+=============================================
+NQPTrans          4
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0 1.0 0.0
+1 0.0 -1.0
+2 -1.0 0.0
+3 0.0 1.0
+0 0 0 1
+0 1 1 1
+0 2 2 1
+0 3 3 1
+1 0 1 1
+1 1 2 1
+1 2 3 1
+1 3 0 1
+2 0 2 1
+2 1 3 1
+2 2 0 1
+2 3 1 1
+3 0 3 1
+3 1 0 1
+3 2 1 1
+3 3 2 1
+EOF
+}
+
+write_base_namelist() {
 cat > namelist.def <<EOF
 CalcMod calcmod.def
 ModPara modpara.def
@@ -98,6 +127,11 @@ LocSpin locspn.def
 Exchange exchange.def
 TransSym qptransidx.def
 EOF
+}
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
 
 cat > qptransidx.def <<EOF
 =============================================
@@ -228,5 +262,112 @@ if ../../src/HPhi -e namelist.def > ising.log 2>&1; then
     exit 1
 fi
 grep -q "Exchange terms only" ising.log
+
+write_common_defs
+cat > qptransidx.def <<EOF
+=============================================
+NQPTrans          4
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0 1.0
+1 1.0
+2 1.0
+3 1.0
+0 0 0 1
+0 1 1 1
+0 2 2 1
+0 3 3 1
+1 0 1 1
+1 1 2 1
+1 2 3 1
+1 3 0 1
+2 0 2 1
+2 1 3 1
+2 2 0 1
+2 3 1 1
+3 0 1 1
+3 1 2 1
+3 2 3 1
+3 3 0 1
+EOF
+write_base_namelist
+if ../../src/HPhi -e namelist.def > duplicate_operation.log 2>&1; then
+    cat duplicate_operation.log
+    exit 1
+fi
+grep -q "duplicate TransSym operation" duplicate_operation.log
+
+write_common_defs
+write_valid_transsym
+cat > exchange.def <<EOF
+================
+NExchange 5
+================
+========i_j_J ======
+================
+0 1 1.0
+0 1 1.0
+1 2 1.0
+2 3 1.0
+3 0 1.0
+EOF
+write_base_namelist
+if ../../src/HPhi -e namelist.def > duplicate_bond.log 2>&1; then
+    cat duplicate_bond.log
+    exit 1
+fi
+grep -q "Hamiltonian invariance failed" duplicate_bond.log
+
+for flag in OutputEigenVec InputEigenVec ReStart; do
+    write_common_defs
+    write_valid_transsym
+    write_base_namelist
+    perl -0pi -e "s/${flag} 0/${flag} 1/" calcmod.def
+    log="unsupported_${flag}.log"
+    if ../../src/HPhi -e namelist.def > "${log}" 2>&1; then
+        cat "${log}"
+        exit 1
+    fi
+    grep -q "EigenVec/ReStart" "${log}"
+done
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^1 1\.0$/1 nan/m' qptransidx.def
+if ../../src/HPhi -e namelist.def > nan_character.log 2>&1; then
+    cat nan_character.log
+    exit 1
+fi
+grep -q "character must be finite" nan_character.log
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^2Sz 0$/Nup 2\nNdown 2/m' modpara.def
+../../src/HPhi -e namelist.def > nup_ndown.log 2>&1
+grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" nup_ndown.log
+
+write_common_defs
+write_c4_kpi2_transsym
+write_base_namelist
+perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
+perl -0pi -e 's/^exct 1$/exct 2/m' modpara.def
+if ../../src/HPhi -e namelist.def > exct_too_large.log 2>&1; then
+    cat exct_too_large.log
+    exit 1
+fi
+grep -q "smaller than exct" exct_too_large.log
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^LanczosTarget 1$/LanczosTarget 2/m' modpara.def
+if ../../src/HPhi -e namelist.def > target_too_large.log 2>&1; then
+    cat target_too_large.log
+    exit 1
+fi
+grep -q "LanczosTarget" target_too_large.log
 
 exit 0

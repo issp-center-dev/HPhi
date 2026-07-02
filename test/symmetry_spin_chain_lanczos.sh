@@ -95,6 +95,33 @@ done
 } > qptransidx.def
 }
 
+write_kpi_over_3_transsym_l6() {
+{
+cat <<EOF
+=============================================
+NQPTrans          6
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0 1.0 0.0
+1 0.5 -0.8660254037844386
+2 -0.5 -0.8660254037844386
+3 -1.0 0.0
+4 -0.5 0.8660254037844386
+5 0.5 0.8660254037844386
+EOF
+op=0
+while [ "${op}" -lt 6 ]; do
+    site=0
+    while [ "${site}" -lt 6 ]; do
+        printf "%d %d %d 1\n" "${op}" "${site}" "$(((site + op) % 6))"
+        site=$((site + 1))
+    done
+    op=$((op + 1))
+done
+} > qptransidx.def
+}
+
 write_kpi_transsym_l6
 
 cat > namelist_ref.def <<EOF
@@ -124,5 +151,14 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
+
+rm -rf output
+write_kpi_over_3_transsym_l6
+../../src/HPhi -e namelist.def > symmetry_complex.log 2>&1
+complex_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+test -n "${complex_energy}"
+complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "%8.6f", d}'`
+test "${complex_diff}" = "0.000000"
+grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
 
 exit $?

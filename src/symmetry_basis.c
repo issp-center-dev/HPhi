@@ -1,5 +1,6 @@
 #include <math.h>
 #include <bitcalc.h>
+#include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -92,11 +93,24 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
   if (validate_bijection_and_anti(def) != 0) return -1;
 
   for (g = 0; g < def->NSymTrans; g++) {
+    unsigned int prev;
     double norm = cabs(def->SymTransChar[g]);
+    if (!isfinite(creal(def->SymTransChar[g])) ||
+        !isfinite(cimag(def->SymTransChar[g]))) {
+      fprintf(stdoutMPI, "Error: TransSym character must be finite; op=%u.\n", g);
+      return -1;
+    }
     if (fabs(norm - 1.0) > eps_ch) {
       fprintf(stdoutMPI, "Error: TransSym character must have unit norm; op=%u abs=% .16e.\n",
               g, norm);
       return -1;
+    }
+    for (prev = 0; prev < g; prev++) {
+      if (same_perm(def->SymTrans[g], def->SymTrans[prev], def->Nsite) == TRUE) {
+        fprintf(stdoutMPI, "Error: duplicate TransSym operation: op %u and op %u are identical.\n",
+                prev, g);
+        return -1;
+      }
     }
     if (is_identity_perm(def->SymTrans[g], def->Nsite) == TRUE) {
       if (identity >= 0) {
@@ -278,6 +292,27 @@ void ActivateSymmetryBasisDimension(struct BindStruct *X)
     X->Check.idim_max = X->Sym->dim;
     X->Check.idim_maxMPI = X->Sym->dim;
   }
+}
+
+int ValidateSymmetrySectorOptions(const struct BindStruct *X)
+{
+  if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
+  if (X->Sym == NULL || X->Sym->enabled != TRUE) return 0;
+  if (X->Def.k_exct > X->Sym->dim) {
+    fprintf(stdoutMPI,
+            "Error: TransSym sector dimension %lu is smaller than exct=%u.\n",
+            X->Sym->dim, X->Def.k_exct);
+    return -1;
+  }
+  if (X->Def.iCalcType == Lanczos &&
+      X->Sym->dim > 1 &&
+      X->Def.LanczosTarget >= (int)X->Sym->dim) {
+    fprintf(stdoutMPI,
+            "Error: TransSym sector dimension %lu requires LanczosTarget < %lu.\n",
+            X->Sym->dim, X->Sym->dim);
+    return -1;
+  }
+  return 0;
 }
 
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)

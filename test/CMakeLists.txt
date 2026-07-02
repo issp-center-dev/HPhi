@@ -54,6 +54,7 @@ add_executable(unittest_symmetry_basis
 target_include_directories(unittest_symmetry_basis
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(unittest_symmetry_basis PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_basis m)
 add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis

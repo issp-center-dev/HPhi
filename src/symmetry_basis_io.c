@@ -50,6 +50,7 @@ static int parse_character_line(const char *line,
   int nread = sscanf(line, "%d %lf %lf", &iop, &re, &im);
   if (nread != 2 && nread != 3) return -1;
   if (iop < 0 || (unsigned int)iop >= ntrans) return -1;
+  if (!isfinite(re) || !isfinite(im)) return -2;
   *op = (unsigned int)iop;
   *ch = re + im * I;
   return 0;
@@ -109,10 +110,16 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
       fclose(fp);
       return ReadDefFileError(defname);
     }
-    if (parse_character_line(line, def->NSymTrans, &op, &ch) != 0) {
-      free(seen_char);
-      fclose(fp);
-      return ReadDefFileError(defname);
+    {
+      int parse_status = parse_character_line(line, def->NSymTrans, &op, &ch);
+      if (parse_status != 0) {
+        if (parse_status == -2) {
+          fprintf(stdoutMPI, "Error: TransSym character must be finite.\n");
+        }
+        free(seen_char);
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
     }
     if (seen_char[op] != 0) {
       fprintf(stdoutMPI, "Error: duplicate TransSym character entry op=%u.\n", op);
@@ -176,6 +183,17 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
   return ValidateSymmetryGroupInput(def);
 }
 
+static int has_fixed_spin_sector(const struct DefineList *def)
+{
+  if (def->iFlgSzConserved == TRUE) return TRUE;
+  if (def->iCalcModel == Spin &&
+      def->Nsite > 0 &&
+      def->Nup + def->Ndown == def->Nsite) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
 int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
@@ -192,12 +210,15 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
     return -1;
   }
-  if (def->iFlgSzConserved != TRUE) {
+  if (has_fixed_spin_sector(def) != TRUE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis requires fixed 2Sz.\n");
     return -1;
   }
-  if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 does not support FullDiag/InputHam/OutputHam.\n");
+  if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE ||
+      def->iOutputEigenVec != FALSE || def->iInputEigenVec != FALSE ||
+      def->iReStart != RESTART_NOT) {
+    fprintf(stdoutMPI,
+            "Error: TransSym symmetry basis v1 does not support FullDiag/InputHam/OutputHam/EigenVec/ReStart.\n");
     return -1;
   }
   if (def->iCalcType != Lanczos && def->iCalcType != CG) {
@@ -233,16 +254,16 @@ static int same_unordered_pair(int a0, int a1, int b0, int b1)
   return (a0 == b0 && a1 == b1) || (a0 == b1 && a1 == b0);
 }
 
-static int find_exchange_pair(const struct DefineList *def, int site0, int site1, double value)
+static double sum_exchange_pair(const struct DefineList *def, int site0, int site1)
 {
   unsigned int i;
+  double sum = 0.0;
   for (i = 0; i < def->NExchangeCoupling; i++) {
-    if (same_unordered_pair(def->ExchangeCoupling[i][0], def->ExchangeCoupling[i][1], site0, site1) &&
-        fabs(def->ParaExchangeCoupling[i] - value) < 1.0e-10) {
-      return TRUE;
+    if (same_unordered_pair(def->ExchangeCoupling[i][0], def->ExchangeCoupling[i][1], site0, site1)) {
+      sum += def->ParaExchangeCoupling[i];
     }
   }
-  return FALSE;
+  return sum;
 }
 
 static int validate_exchange_invariance(const struct DefineList *def)
@@ -250,9 +271,13 @@ static int validate_exchange_invariance(const struct DefineList *def)
   unsigned int g, i;
   for (g = 0; g < def->NSymTrans; g++) {
     for (i = 0; i < def->NExchangeCoupling; i++) {
-      int a = def->SymTrans[g][def->ExchangeCoupling[i][0]];
-      int b = def->SymTrans[g][def->ExchangeCoupling[i][1]];
-      if (find_exchange_pair(def, a, b, def->ParaExchangeCoupling[i]) != TRUE) {
+      int src0 = def->ExchangeCoupling[i][0];
+      int src1 = def->ExchangeCoupling[i][1];
+      int a = def->SymTrans[g][src0];
+      int b = def->SymTrans[g][src1];
+      double src_sum = sum_exchange_pair(def, src0, src1);
+      double mapped_sum = sum_exchange_pair(def, a, b);
+      if (fabs(mapped_sum - src_sum) > 1.0e-10) {
         fprintf(stdoutMPI,
                 "Error: TransSym Hamiltonian invariance failed for Exchange term %u under op %u.\n",
                 i, g);

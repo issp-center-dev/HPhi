@@ -31,6 +31,7 @@ unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           unsigned int nsite);
 int BuildSymmetryBasis(struct BindStruct *X);
 void ActivateSymmetryBasisDimension(struct BindStruct *X);
+int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
 
 #endif /* HPHI_SYMMETRY_BASIS_H */
