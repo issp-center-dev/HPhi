@@ -48,6 +48,9 @@ The following table summarizes all input files for expert mode.
    * - :doc:`Trans <Trans_file_en>`
      - No
      - One-body terms: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}`
+   * - :doc:`AnomalousTerm <AnomalousTerm_file_en>`
+     - No
+     - HubbardGC anomalous pair terms: :math:`c_{i\sigma_1}c_{j\sigma_2}` and :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}`
    * - :doc:`InterAll <InterAll_file_en>`
      - No
      - General two-body interactions: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}`
@@ -89,6 +92,9 @@ The following table summarizes all input files for expert mode.
    * - :doc:`OneBodyG <OneBodyG_file_en>`
      - No
      - One-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle`
+   * - :doc:`AnomalousG <AnomalousG_file_en>`
+     - No
+     - HubbardGC anomalous pair Green's functions: :math:`\langle c_{i\sigma_1}c_{j\sigma_2}\rangle` and :math:`\langle c^{\dagger}_{i\sigma_1}c^{\dagger}_{j\sigma_2}\rangle`
    * - :doc:`TwoBodyG <TwoBodyG_file_en>`
      - No
      - Two-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k\sigma_3}c_{l\sigma_4}\rangle`
@@ -158,6 +164,13 @@ These files specify the terms in the Hamiltonian.
 
    Trans_file_en
 
+**Anomalous pair terms:**
+
+.. toctree::
+   :maxdepth: 1
+
+   AnomalousTerm_file_en
+
 **Two-body interactions:**
 
 .. toctree::
@@ -182,6 +195,7 @@ These files specify which physical quantities to calculate and output.
    :maxdepth: 1
 
    OneBodyG_file_en
+   AnomalousG_file_en
    TwoBodyG_file_en
    NBodyG_file_en
 

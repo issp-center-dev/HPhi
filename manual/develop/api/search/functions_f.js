@@ -14,7 +14,8 @@ var searchData=
   ['readtmcomponents_5fbicg_11',['ReadTMComponents_BiCG',['../CalcSpectrumByBiCG_8c.html#a4a03d2def0e0600c4e9bfc9f0c79dd70',1,'CalcSpectrumByBiCG.c']]],
   ['readtpqdata_12',['readtpqdata',['../CalcSpectrumByTPQ_8c.html#ac0bce0e9486a9babd5f85cf8e59ae817',1,'ReadTPQData(struct EDMainCalStruct *X, double *ene, double *temp, double *specificHeat):&#160;CalcSpectrumByTPQ.c'],['../CalcSpectrumByTPQ_8h.html#ac0bce0e9486a9babd5f85cf8e59ae817',1,'ReadTPQData(struct EDMainCalStruct *X, double *ene, double *temp, double *specificHeat):&#160;CalcSpectrumByTPQ.c']]],
   ['rearray_5finteractions_13',['Rearray_Interactions',['../expec__cisajscktaltdc_8c.html#a61f26ff579afa28d9473ae5827a41b34',1,'expec_cisajscktaltdc.c']]],
-  ['resetinteractionnum_14',['resetinteractionnum',['../readdef_8h.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c'],['../readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c']]],
-  ['resetlist_15',['ReSetList',['../CalcSpectrum_8h.html#a42ebcd60956ea624f0e49558ba692dae',1,'CalcSpectrum.h']]],
-  ['runmultiopfinitetloop_16',['RunMultiOpFiniteTLoop',['../CalcSpectrum_8c.html#a86eb240ab99d02a8efd39e9814b45d62',1,'CalcSpectrum.c']]]
+  ['require_5fline_5fend_14',['require_line_end',['../anomalous__pair_8c.html#a67c427c262bc5e386eade404801d6649',1,'anomalous_pair.c']]],
+  ['resetinteractionnum_15',['resetinteractionnum',['../readdef_8h.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c'],['../readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da',1,'ResetInteractionNum(struct DefineList *X):&#160;readdef.c']]],
+  ['resetlist_16',['ReSetList',['../CalcSpectrum_8h.html#a42ebcd60956ea624f0e49558ba692dae',1,'CalcSpectrum.h']]],
+  ['runmultiopfinitetloop_17',['RunMultiOpFiniteTLoop',['../CalcSpectrum_8c.html#a86eb240ab99d02a8efd39e9814b45d62',1,'CalcSpectrum.c']]]
 ];

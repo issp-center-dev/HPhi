@@ -1,5 +1,7 @@
 var structDefineList =
 [
+    [ "AnomalousG", "structDefineList.html#abf5ca772d5ceb7fb4ba4008b82daa621", null ],
+    [ "AnomalousTerm", "structDefineList.html#a683c792054b999fd59cb67876521b4a5", null ],
     [ "CDataFileHead", "structDefineList.html#aa769a551105160efd6f8dc36040c1289", null ],
     [ "CisAjt", "structDefineList.html#aded1b0a137d7306c603a10e4cb648b5d", null ],
     [ "CisAjtCkuAlvDC", "structDefineList.html#ac22e3ff4e833d0018210a68bee2ed816", null ],
@@ -63,6 +65,8 @@ var structDefineList =
     [ "LanczosEps", "structDefineList.html#a2926cdc4f91050cb1ccd136b2863868d", null ],
     [ "LanczosTarget", "structDefineList.html#ad244caff2c73bc01c95b139cf5f1f6ec", null ],
     [ "LocSpn", "structDefineList.html#a37288a1682503fcf1d0e8c1916b55827", null ],
+    [ "NAnomalousG", "structDefineList.html#a2a19d343b0e5f7896e0f49e52840c120", null ],
+    [ "NAnomalousTerm", "structDefineList.html#a60d1f5bc6713165a568fb8ac4bfe7c69", null ],
     [ "NBodyG_CanonicalFactors", "structDefineList.html#a427811c8bb2729b3d6ebf69993f4dbf5", null ],
     [ "NBodyG_CanonicalN", "structDefineList.html#a94ad0b1e64eeea863aebad74116c5982", null ],
     [ "NBodyG_CanonicalOffset", "structDefineList.html#ae69bae146eb8fe6ce61467c870aec869", null ],
@@ -136,6 +140,7 @@ var structDefineList =
     [ "PairExcitationOperatorBra", "structDefineList.html#aedd26ad1dce84fa4686c2c83a9802320", null ],
     [ "PairHopping", "structDefineList.html#ad60b3e75def64fc7dbdcd484236419eb", null ],
     [ "PairLiftCoupling", "structDefineList.html#a943addfb585d11f62dc712d6e1662bb0", null ],
+    [ "ParaAnomalousTerm", "structDefineList.html#a6a7b2df398d7ec065196ea688261f7a1", null ],
     [ "ParaCoulombInter", "structDefineList.html#a4c48f0799d8efb637c6a0e245dfd9aab", null ],
     [ "ParaCoulombIntra", "structDefineList.html#a9d908d6f501c08dbb0e02a107cc9b070", null ],
     [ "ParaExchangeCoupling", "structDefineList.html#a854ba3669106f1f557d0c021c44430b6", null ],

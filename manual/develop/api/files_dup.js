@@ -2,6 +2,7 @@ var files_dup =
 [
     [ "common", "dir_bdd9a5d540de89e9fe90efdfc6973a4f.html", "dir_bdd9a5d540de89e9fe90efdfc6973a4f" ],
     [ "include", "dir_d44c64559bbebec7f509842c48db8b23.html", "dir_d44c64559bbebec7f509842c48db8b23" ],
+    [ "anomalous_pair.c", "anomalous__pair_8c.html", "anomalous__pair_8c" ],
     [ "bitcalc.c", "bitcalc_8c.html", "bitcalc_8c" ],
     [ "CalcByCanonicalTPQ.c", "CalcByCanonicalTPQ_8c.html", "CalcByCanonicalTPQ_8c" ],
     [ "CalcByFullDiag.c", "CalcByFullDiag_8c.html", "CalcByFullDiag_8c" ],

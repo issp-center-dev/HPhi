@@ -117,6 +117,8 @@ Quick Reference
      - Physical quantities (energy, doublon, Sz, etc.)
    * - :doc:`zvo_cisajs*.dat <cisajs_en>`
      - One-body Green's functions
+   * - :doc:`zvo_AnomalousG*.dat <AnomalousG_en>`
+     - Anomalous pair Green's functions
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_en>`
      - Two-body Green's functions
    * - :doc:`zvo_NBodyG*.dat <NBodyG_en>`
@@ -240,6 +242,7 @@ Files containing calculated physical quantities.
    Eigenvalue_en
    phys_en
    cisajs_en
+   AnomalousG_en
    cisajscktalt_en
    NBodyG_en
 

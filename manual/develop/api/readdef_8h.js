@@ -5,6 +5,8 @@ var readdef_8h =
     [ "D_FileNameMaxReadDef", "readdef_8h.html#a9919ecaa1b5e3d7c19cd7c03ade1b144", null ],
     [ "EXPERT_MODE", "readdef_8h.html#a56c951021b5d6f68319a0e1df652b347", null ],
     [ "IgnoreLinesInDef", "readdef_8h.html#af4e749fd385253edddbbb3a051534670", null ],
+    [ "KWAnomalousG", "readdef_8h.html#ae9cb2ccbbee00f29080384922cd5bb9a", null ],
+    [ "KWAnomalousTerm", "readdef_8h.html#a0254df59bdd6f432235bbb0f14c3a497", null ],
     [ "KWBoost", "readdef_8h.html#ad31d6db0ca70c16857ecccf56ba028d0", null ],
     [ "KWCalcMod", "readdef_8h.html#a3de740e0481888089ee68a0180ad418e", null ],
     [ "KWCoulombInter", "readdef_8h.html#a7a49ed5b3aee4432a9c696ee1b3f13f7", null ],

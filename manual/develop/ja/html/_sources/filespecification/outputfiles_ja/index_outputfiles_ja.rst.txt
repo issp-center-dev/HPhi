@@ -117,6 +117,8 @@
      - 物理量（エネルギー、ダブロン、Sz等）
    * - :doc:`zvo_cisajs*.dat <cisajs_ja>`
      - 一体グリーン関数
+   * - :doc:`zvo_AnomalousG*.dat <AnomalousG_ja>`
+     - 異常ペアグリーン関数
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_ja>`
      - 二体グリーン関数
    * - :doc:`zvo_NBodyG*.dat <NBodyG_ja>`
@@ -240,6 +242,7 @@ TPQ（有限温度）出力
    Eigenvalue_ja
    phys_ja
    cisajs_ja
+   AnomalousG_ja
    cisajscktalt_ja
    NBodyG_ja
 
