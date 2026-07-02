@@ -87,7 +87,8 @@ HubbardGC計算で用いる異常ペアのハミルトニアン項を指定し�
 
 -  現在はHubbardGC計算でのみ使用できます。
 
--  ``AnomalousTerm`` はMPI実行では使用できません。
+-  ``AnomalousTerm`` はLanczos法、CG法、TPQ法、cTPQ法のMPI実行で使用できます。
+   FullDiag法のMPI実行では使用できません。
 
 -  ``AnomalousTerm`` は時間発展計算および ``CalcSpec`` 計算では使用できません。
 
