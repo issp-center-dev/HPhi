@@ -138,9 +138,16 @@ int CalcByTPQ(
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
-        fprintf(stdoutMPI, "A file of Inputvector does not exist.\n");
-        fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
+        fprintf(stderr, "A file of Inputvector does not exist (rank %d).\n", myrank);
         iret=1;
+      }
+      /* All ranks must agree on the fallback: tmpvec files are per-rank and a
+         partially missing set would otherwise split ranks across the restart
+         and fresh-start branches, whose MPI collectives do not match. */
+      iret = (int)MaxMPI_li((unsigned long int)iret);
+      if(iret==1){
+        if(fp != NULL) fclose(fp);
+        fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
         StopTimer(3600);
       }else{
         byte_size = fread(&step_i, sizeof(step_i), 1, fp);
