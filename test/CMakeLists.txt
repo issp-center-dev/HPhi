@@ -217,6 +217,7 @@ add_hphi_test(lobcg_hubbard_square)
 add_hphi_test(lobcg_hubbard_szunconserv)
 add_hphi_test(lobcg_kondo_chain)
 add_hphi_test(lobcg_spin_kagome)
+add_hphi_test(symmetry_spin_chain_lobcg)
 add_hphi_test(lobcg_genspin_ladder)
 add_hphi_test(lobcg_hubbardgc_tri)
 add_hphi_test(lobcg_kondogc_chain)
@@ -246,6 +247,9 @@ set_tests_properties(
     lobcg_spingc_hcor lobcg_spingc_6body
     lobcg_spin_kagome_restart
     PROPERTIES LABELS "lobcg;spin")
+set_tests_properties(
+    symmetry_spin_chain_lobcg
+    PROPERTIES LABELS "symmetry;spin;lobcg")
 set_tests_properties(
     lobcg_genspin_ladder lobcg_genspingc_ladder
     lobcg_genspin_ladder_restart
