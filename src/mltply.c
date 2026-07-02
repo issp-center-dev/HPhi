@@ -18,12 +18,14 @@
 #include <bitcalc.h>
 #include "mltply.h"
 #include "mltplySpin.h"
+#include "mltplySpinSym.h"
 #include "mltplyHubbard.h"
 #include "mltplySpinless.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "mltplyCommon.h"
 #include "diagonalcalc.h"
+#include "symmetry_basis.h"
 
 /**
  * @file   mltply.c
@@ -111,6 +113,21 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   X->Large.ilft = ilft;
   X->Large.ihfbit = ihfbit;
   X->Large.mode = M_MLTPLY;
+
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    if (X->Sym == NULL || X->Sym->enabled != TRUE) {
+      fprintf(stdoutMPI, "Error: symmetry basis is requested but not built.\n");
+      return -1;
+    }
+    if (X->Def.iCalcModel != Spin) {
+      fprintf(stdoutMPI, "Error: symmetry basis mltply supports only Spin in v1.\n");
+      return -1;
+    }
+    if (mltplySpinSym(X, tmp_v0, tmp_v1) != 0) return -1;
+    X->Large.prdct = SumMPI_dc(X->Large.prdct);
+    StopTimer(1);
+    return 0;
+  }
 
   StartTimer(100);
 #pragma omp parallel for default(none) reduction(+:dam_pr) firstprivate(i_max) shared(tmp_v0, tmp_v1, list_Diagonal)

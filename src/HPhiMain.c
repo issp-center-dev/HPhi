@@ -765,6 +765,13 @@ int main(int argc, char* argv[]){
     StartTimer(2000);
     diagonalcalc(&(X.Bind));
     StopTimer(2000);
+
+    if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
+      if (BuildSymmetryBasis(&(X.Bind)) != 0) {
+        exitMPI(-1);
+      }
+      ActivateSymmetryBasisDimension(&(X.Bind));
+    }
       
     switch (X.Bind.Def.iCalcType) {
     case Lanczos:

@@ -29,6 +29,7 @@ target_sources(HPhi PRIVATE
   mltplyHubbardCore.c mltplySpinCore.c
   mltplyMPIHubbardCore.c mltplyMPISpinCore.c
   mltplySpinless.c mltplyMPISpinlessFermion.c mltplyMPIBatched.c
+  mltplySpinSym.c
 )
 
 # Lanczos solver
