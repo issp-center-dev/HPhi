@@ -72,6 +72,7 @@ add_hphi_test(symmetry_spin_chain_validation)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
+add_hphi_test(symmetry_spin_chain_lanczos)
 add_hphi_test(lanczos_spin_ladder_DM)
 add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
@@ -152,6 +153,9 @@ set_tests_properties(
     lanczos_spin_nbody_interall
     lanczos_spin_kagome_restart
     PROPERTIES LABELS "lanczos;spin")
+set_tests_properties(
+    symmetry_spin_chain_lanczos
+    PROPERTIES LABELS "symmetry;spin;lanczos")
 set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
     lanczos_genspin_ladder_restart
