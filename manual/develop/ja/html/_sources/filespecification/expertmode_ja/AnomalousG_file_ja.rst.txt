@@ -80,7 +80,8 @@ HubbardGC計算で出力する異常ペアグリーン関数を指定します�
 
 -  現在はHubbardGC計算でのみ使用できます。
 
--  ``AnomalousG`` はMPI実行では使用できません。
+-  ``AnomalousG`` はLanczos法、CG法、TPQ法、cTPQ法、実時間発展法のMPI実行で使用できます。
+   FullDiag法のMPI実行では使用できません。
 
 -  ``AnomalousG`` は ``CalcSpec`` 計算では使用できません。
 

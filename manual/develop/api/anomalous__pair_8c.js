@@ -1,10 +1,16 @@
 var anomalous__pair_8c =
 [
     [ "AddAnomalousTermToHamHubbardGC", "anomalous__pair_8c.html#a1cc48cdad93b364ffb182a9e97e4fe96", null ],
+    [ "anomalous_hubbardgc_partner_rank", "anomalous__pair_8c.html#a684c78d0a4d0af4ca32aa16998c52bdd", null ],
     [ "apply_annihilate_mask", "anomalous__pair_8c.html#a554352de6619d8d7d94465a0f0ba6f4e", null ],
+    [ "apply_anomalous_rank_annihilate", "anomalous__pair_8c.html#ad29fba132bd9b50b0283a753e2d03215", null ],
+    [ "apply_anomalous_rank_create", "anomalous__pair_8c.html#a5a922429dfa58c830f5b839c2c9cd94a", null ],
+    [ "apply_anomalous_rank_term", "anomalous__pair_8c.html#a204b8324b04a5758ad34500e46c84f78", null ],
+    [ "apply_anomalous_term_to_rank", "anomalous__pair_8c.html#a9394b95222581aaeafdff23cbe7921d2", null ],
     [ "apply_create_mask", "anomalous__pair_8c.html#a878e193cd4457a7e2bad5d79c85026d4", null ],
     [ "ApplyAnomalousPairHubbardGC", "anomalous__pair_8c.html#a58a7efe832894b51d67abd4f75abfd61", null ],
     [ "calc_anomalousg_term_hubbardgc", "anomalous__pair_8c.html#a6c9cf43815384e348df09c22b11a53ed", null ],
+    [ "calc_anomalousg_term_hubbardgc_rank", "anomalous__pair_8c.html#a85f320b75951ec169be0635e72148199", null ],
     [ "CheckAnomalousTermHermitePairs", "anomalous__pair_8c.html#ae5e0f8fda4601a47880796543b05dc58", null ],
     [ "expec_anomalousg", "anomalous__pair_8c.html#ac0d0df258c4468ba7da50d478dbe33bf", null ],
     [ "get_anomalousg_filename", "anomalous__pair_8c.html#ae4a794883f1dbd7ea4c215bd7ab354c0", null ],

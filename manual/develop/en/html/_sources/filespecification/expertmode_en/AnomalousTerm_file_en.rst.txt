@@ -88,7 +88,9 @@ Use rules
 
 *  This file is currently supported only for HubbardGC calculations.
 
-*  MPI execution is not supported for ``AnomalousTerm``.
+*  MPI execution is supported for Lanczos, CG, TPQ, and cTPQ calculations.
+   MPI execution with the FullDiag method is not supported for
+   ``AnomalousTerm``.
 
 *  ``AnomalousTerm`` is not supported for time evolution calculations or
    ``CalcSpec`` calculations.

@@ -100,7 +100,8 @@ NAnomalousG 2
 <ul class="simple">
 <li><p>行数固定で読み込みを行う為、ヘッダの省略はできません。</p></li>
 <li><p>現在はHubbardGC計算でのみ使用できます。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> はMPI実行では使用できません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> はLanczos法、CG法、TPQ法、cTPQ法、実時間発展法のMPI実行で使用できます。
+FullDiag法のMPI実行では使用できません。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 計算では使用できません。</p></li>
 <li><p>同じフェルミオン演算子を1つのペア内で2回指定することはできません。</p></li>
 <li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>と定義されている異常ペアグリーン関数成分の総数が異なる場合はエラー終了します。</p></li>
