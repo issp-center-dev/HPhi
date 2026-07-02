@@ -227,6 +227,9 @@ int CalcSpectrumByBiCG(
   double complex *v12, *v14, *res_proj;
   int stp, status[3], iomega;
   double *resz;
+  int ran_bicg_loop = FALSE;
+  int bicg_failed = FALSE;
+  double max_residual = 0.0;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
   /* Defense in depth (independent of the top-level SpectrumNumBra validation): the
@@ -313,6 +316,7 @@ int CalcSpectrumByBiCG(
   childfopenMPI("residual.dat", "w", &fp);
 
   for (stp = 1; stp <= X->Bind.Def.Lanczos_max; stp++) {
+    ran_bicg_loop = TRUE;
     /**
     <li>@f${\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}@f$,
     where @f${\bf v}_{12}, {\bf v}_{14}@f$ are old (shadow) residual vector.</li>
@@ -357,6 +361,14 @@ int CalcSpectrumByBiCG(
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
   fclose(fp);
+  if (ran_bicg_loop == TRUE && (status[0] >= 0 || status[1] != 0)) {
+    bicg_failed = TRUE;
+    max_residual = 0.0;
+    komega_bicg_getresidual(resz);
+    for (iomega = 0; iomega < Nomega; iomega++) {
+      if (resz[iomega] > max_residual) max_residual = resz[iomega];
+    }
+  }
   /**
   </ul>
   <li>@b END @b DO BiCG loop</li>
@@ -398,6 +410,19 @@ int CalcSpectrumByBiCG(
     fprintf(stdoutMPI, "    End:   Output vectors for recalculation.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_OutputSpectrumRecalcvecEnd, "a");
   }/*if (X->Bind.Def.iFlgCalcSpec > RECALC_FROM_TMComponents)*/
+
+  if (bicg_failed == TRUE) {
+    fprintf(stderr,
+      "Error: BiCG spectrum did not finish successfully within Lanczos_max=%u "
+      "(last iteration=%d, status=%d, seed=%d, max residual=%25.15e).\n",
+      X->Bind.Def.Lanczos_max, abs(status[0]), status[1], status[2], max_residual);
+    komega_bicg_finalize();
+    free(resz);
+    free(res_proj);
+    free(v12);
+    free(v14);
+    return FALSE;
+  }
 
   komega_bicg_finalize();
 
