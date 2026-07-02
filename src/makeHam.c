@@ -21,6 +21,7 @@
 #include "makeHam.h"
 #include "wrapperMPI.h"
 #include "nbody_interall.h"
+#include "anomalous_pair.h"
 
 /**
  * @file   makeHam.c
@@ -193,6 +194,11 @@ int makeHam(struct BindStruct *X) {
       }
       if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
         if (AddNBodyInterAllToHamHubbardGC(X) != 0) {
+          return -1;
+        }
+      }
+      if (X->Def.NAnomalousTerm > 0) {
+        if (AddAnomalousTermToHamHubbardGC(X) != 0) {
           return -1;
         }
       }

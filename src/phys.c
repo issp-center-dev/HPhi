@@ -46,6 +46,7 @@
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
+#include "anomalous_pair.h"
 #include "wrapperMPI.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
@@ -140,6 +141,10 @@ void phys(struct BindStruct *X, //!<[inout]
     }
     if (expec_nbodyg(X, v1) != 0) {
       fprintf(stderr, "Error: calc NBodyG.\n");
+      exitMPI(-1);
+    }
+    if (expec_anomalousg(X, v1) != 0) {
+      fprintf(stderr, "Error: calc AnomalousG.\n");
       exitMPI(-1);
     }
     

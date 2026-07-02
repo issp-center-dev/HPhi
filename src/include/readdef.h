@@ -59,6 +59,8 @@
 #define KWPairExcitationBra 26
 #define KWNBodyInterAll 27
 #define KWNBodyG 28
+#define KWAnomalousTerm 29
+#define KWAnomalousG 30
 
 int CheckSite(
           const int iListToSite,

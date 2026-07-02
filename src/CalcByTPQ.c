@@ -52,6 +52,7 @@
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
+#include "anomalous_pair.h"
 #include "CalcByTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -226,6 +227,8 @@ int CalcByTPQ(
       if(iret !=0) return -1;
       iret=expec_nbodyg(&(X->Bind), v1);
       if(iret !=0) return -1;
+      iret=expec_anomalousg(&(X->Bind), v1);
+      if(iret !=0) return -1;
 
       /** @brief Compute v1=0, and compute v0 = H*v1 */
       StartTimer(3200);
@@ -318,6 +321,8 @@ int CalcByTPQ(
         StopTimer(3400);
         if(iret !=0) return -1;
         iret=expec_nbodyg(&(X->Bind), v1);
+        if(iret !=0) return -1;
+        iret=expec_anomalousg(&(X->Bind), v1);
         if(iret !=0) return -1;
       }
     }

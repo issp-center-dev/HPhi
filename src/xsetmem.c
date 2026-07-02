@@ -141,6 +141,14 @@ void setmem_def
     X->Def.NBodyG_CanonicalFactors = i_2d_allocate(nbodyg_factors, 4);
   }
 
+  {
+    const unsigned int anomalous_terms = X->Def.NAnomalousTerm > 0 ? X->Def.NAnomalousTerm : 1;
+    const unsigned int anomalousg_terms = X->Def.NAnomalousG > 0 ? X->Def.NAnomalousG : 1;
+    X->Def.AnomalousTerm = i_2d_allocate(anomalous_terms, 5);
+    X->Def.ParaAnomalousTerm = cd_1d_allocate(anomalous_terms);
+    X->Def.AnomalousG = i_2d_allocate(anomalousg_terms, 5);
+  }
+
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 

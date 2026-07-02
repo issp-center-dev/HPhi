@@ -63,6 +63,7 @@ add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
 add_hphi_test(lanczos_hubbardgc_nbody_interall)
 add_hphi_test(lanczos_hubbardgc_nbodyg)
+add_hphi_test(lanczos_hubbardgc_anomalous_pair)
 add_hphi_test(lanczos_hubbard_nbody_interall)
 add_hphi_test(lanczos_hubbard_nbodyg)
 add_hphi_test(lanczos_kondogc_chain)
@@ -86,6 +87,7 @@ add_hphi_test(lanczos_tjgc_exchange)
 add_hphi_test(nbody_interall_validation)
 add_hphi_test(nbodyg_validation)
 add_hphi_test(nbody_hubbardgc_validation)
+add_hphi_test(anomalous_hubbardgc_validation)
 add_hphi_test(nbody_hubbard_validation)
 add_hphi_test(nbody_tj_kondo_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
@@ -111,6 +113,9 @@ set_tests_properties(
     lanczos_hubbard_square_calchs2 lanczos_hubbard_square_ncond_calchs2
     lanczos_hubbard_chain_polarized_calchs2
     PROPERTIES LABELS "lanczos;hubbard")
+set_tests_properties(
+    lanczos_hubbardgc_anomalous_pair
+    PROPERTIES LABELS "lanczos;fulldiag;te;hubbard;anomalous")
 set_tests_properties(
     calchs2_unsupported_reject
     PROPERTIES LABELS "lanczos;hubbard;validation")
@@ -157,6 +162,9 @@ set_tests_properties(
 set_tests_properties(
     nbody_hubbardgc_validation nbody_hubbard_validation
     PROPERTIES LABELS "hubbard;validation;nbody")
+set_tests_properties(
+    anomalous_hubbardgc_validation
+    PROPERTIES LABELS "hubbard;validation;anomalous")
 set_tests_properties(
     nbody_tj_kondo_validation
     PROPERTIES LABELS "tj;tjgc;kondo;validation;nbody")
