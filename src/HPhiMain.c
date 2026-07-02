@@ -32,6 +32,8 @@
 #include "wrapperMPI.h"
 #include "splash.h"
 #include "CalcTime.h"
+#include "symmetry_basis.h"
+#include "symmetry_basis_io.h"
 
 /*!
   @mainpage
@@ -717,6 +719,10 @@ int main(int argc, char* argv[]){
   /*Set convergence Factor*/
   SetConvergenceFactor(&(X.Bind.Def));
 
+  if (ValidateSymmetryRuntimeOptions(&(X.Bind)) != 0) {
+    exitMPI(-1);
+  }
+
   if (X.Bind.Def.iCalcType == FullDiag
       && X.Bind.Def.iFlgScaLAPACK ==0
       && nproc != 1) {
@@ -727,6 +733,9 @@ int main(int argc, char* argv[]){
 
   /*---------------------------*/
   if(HPhiTrans(&(X.Bind))!=0) {
+    exitMPI(-1);
+  }
+  if (ValidateSymmetryHamiltonian(&(X.Bind)) != 0) {
     exitMPI(-1);
   }
 

@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include "symmetry_basis.h"
 #include "symmetry_basis_io.h"
@@ -177,12 +178,95 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
 
 int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
 {
-  (void)X;
+  const struct DefineList *def = &X->Def;
+  if (def->iFlgSymmetryBasis == FALSE) return 0;
+  if (nproc != 1) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis is serial-only in v1.\n");
+    return -1;
+  }
+  if (def->iCalcModel != Spin) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin canonical model.\n");
+    return -1;
+  }
+  if (def->iFlgGeneralSpin != FALSE) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
+    return -1;
+  }
+  if (def->iFlgSzConserved != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis requires fixed 2Sz.\n");
+    return -1;
+  }
+  if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 does not support FullDiag/InputHam/OutputHam.\n");
+    return -1;
+  }
+  if (def->iCalcType != Lanczos && def->iCalcType != CG) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Lanczos and CG.\n");
+    return -1;
+  }
+  if (def->iFlgCalcSpec != CALCSPEC_NOT) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 does not support spectrum calculations.\n");
+    return -1;
+  }
+  if (def->NCisAjt > 0 || def->NCisAjtCkuAlvDC > 0 ||
+      def->NTBody > 0 || def->NFBody > 0 || def->NSBody > 0 ||
+      def->NNBodyG > 0) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 outputs energy/norm/convergence only.\n");
+    return -1;
+  }
+  if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
+      def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
+    return -1;
+  }
+  if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NCoulombInter > 0 ||
+      def->NHundCoupling > 0 || def->NIsingCoupling > 0 ||
+      def->NInterAll > 0) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 initially supports Exchange terms only.\n");
+    return -1;
+  }
+  return 0;
+}
+
+static int same_unordered_pair(int a0, int a1, int b0, int b1)
+{
+  return (a0 == b0 && a1 == b1) || (a0 == b1 && a1 == b0);
+}
+
+static int find_exchange_pair(const struct DefineList *def, int site0, int site1, double value)
+{
+  unsigned int i;
+  for (i = 0; i < def->NExchangeCoupling; i++) {
+    if (same_unordered_pair(def->ExchangeCoupling[i][0], def->ExchangeCoupling[i][1], site0, site1) &&
+        fabs(def->ParaExchangeCoupling[i] - value) < 1.0e-10) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+static int validate_exchange_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NExchangeCoupling; i++) {
+      int a = def->SymTrans[g][def->ExchangeCoupling[i][0]];
+      int b = def->SymTrans[g][def->ExchangeCoupling[i][1]];
+      if (find_exchange_pair(def, a, b, def->ParaExchangeCoupling[i]) != TRUE) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hamiltonian invariance failed for Exchange term %u under op %u.\n",
+                i, g);
+        return -1;
+      }
+    }
+  }
   return 0;
 }
 
 int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
-  (void)X;
+  const struct DefineList *def = &X->Def;
+  if (def->iFlgSymmetryBasis == FALSE) return 0;
+  if (validate_exchange_invariance(def) != 0) return -1;
   return 0;
 }
