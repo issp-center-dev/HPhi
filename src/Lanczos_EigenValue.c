@@ -25,6 +25,58 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 
+static int normalize_lanczos_beta(double norm2, double *beta_value)
+{
+  if (!isfinite(norm2)) return -1;
+  if (norm2 < 0.0) {
+    if (norm2 < -1.0e-12) return -1;
+    norm2 = 0.0;
+  }
+  *beta_value = sqrt(norm2);
+  return isfinite(*beta_value) ? 0 : -1;
+}
+
+static int is_lanczos_breakdown(double beta_value)
+{
+  return isfinite(beta_value) && fabs(beta_value) < 1.0e-14;
+}
+
+static int finalize_lanczos_ritz(struct BindStruct *X,
+                                 int stp,
+                                 int k_exct,
+                                 const char *reason)
+{
+  double *tmp_E;
+  int target_slot;
+  if (stp < k_exct) {
+    fprintf(stdoutMPI,
+            "  Error: Lanczos Krylov dimension %d is smaller than exct=%d.\n",
+            stp, k_exct);
+    return -1;
+  }
+  tmp_E = d_1d_allocate(stp + 1);
+  StartTimer(4102);
+  vec12(alpha, beta, (unsigned int)stp, tmp_E, X);
+  StopTimer(4102);
+  target_slot = X->Def.LanczosTarget + 1;
+  X->Large.itr = stp;
+  if (target_slot >= 1 && target_slot <= stp) {
+    X->Phys.Target_energy = tmp_E[target_slot];
+  } else {
+    fprintf(stdoutMPI,
+            "  Warning: LanczosTarget=%d is unreachable from this initial vector "
+            "(Krylov dim=%d); reporting E[%d].\n",
+            X->Def.LanczosTarget, stp, k_exct);
+    X->Phys.Target_energy = tmp_E[k_exct];
+  }
+  X->Phys.Target_CG_energy = tmp_E[k_exct];
+  if (reason != NULL) {
+    fprintf(stdoutMPI, "  %s at Lanczos step %d.\n", reason, stp);
+  }
+  free_d_1d_allocate(tmp_E);
+  return 0;
+}
+
 /**
  * @file   Lanczos_EigenValue.c
  *
@@ -92,6 +144,7 @@ int Lanczos_EigenValue(struct BindStruct *X) {
   unsigned long int i_max_tmp;
   int k_exct, Target;
   int iconv = -1;
+  int skip_restart_output = FALSE;
   double beta1, alpha1; //beta,alpha1 should be real
   double complex temp1, temp2;
   double complex cbeta1;
@@ -133,6 +186,10 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       liLanczosStp = liLanczosStp+X->Def.Lanczos_max;
       alpha1=alpha[X->Def.Lanczos_restart];
       beta1=beta[X->Def.Lanczos_restart];
+      if (!isfinite(alpha1) || !isfinite(beta1)) {
+        fprintf(stdoutMPI, "  Error: Restarted Lanczos tridiagonal components are not finite.\n");
+        return -2;
+      }
     }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
     else {
       SetInitialVector(X, v0, v1);
@@ -145,6 +202,10 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
 
       alpha1 = creal(X->Large.prdct);// alpha = v^{\dag}*H*v
+      if (!isfinite(alpha1)) {
+        fprintf(stdoutMPI, "  Error: Lanczos alpha is not finite.\n");
+        return -1;
+      }
 
       alpha[1] = alpha1;
       cbeta1 = 0.0;
@@ -154,8 +215,10 @@ int Lanczos_EigenValue(struct BindStruct *X) {
         cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
       }
       cbeta1 = SumMPI_dc(cbeta1);
-      beta1 = creal(cbeta1);
-      beta1 = sqrt(beta1);
+      if (normalize_lanczos_beta(creal(cbeta1), &beta1) != 0) {
+        fprintf(stdoutMPI, "  Error: Lanczos beta is not finite.\n");
+        return -1;
+      }
       beta[1] = beta1;
       ebefor = 0;
       liLanczosStp = X->Def.Lanczos_max;
@@ -166,56 +229,87 @@ int Lanczos_EigenValue(struct BindStruct *X) {
    * Set Maximum number of loop to the dimention of the Wavefunction
    */
   i_max_tmp = SumMPI_li(i_max);
+  if (i_max_tmp < (unsigned long int)k_exct) {
+    fprintf(stdoutMPI,
+            "  Error: Hilbert dimension %lu is smaller than exct=%d.\n",
+            i_max_tmp, k_exct);
+    return -1;
+  }
+  if (X->Def.LanczosTarget < 0) {
+    fprintf(stdoutMPI,
+            "  Error: LanczosTarget=%d must be non-negative.\n",
+            X->Def.LanczosTarget);
+    return -1;
+  }
+  if (i_max_tmp > 0 &&
+      (unsigned long int)X->Def.LanczosTarget >= i_max_tmp) {
+    fprintf(stdoutMPI,
+            "  Warning: LanczosTarget=%d is outside Hilbert dimension %lu; use %lu.\n",
+            X->Def.LanczosTarget, i_max_tmp, i_max_tmp - 1);
+    X->Def.LanczosTarget = (int)(i_max_tmp - 1);
+  }
   if (i_max_tmp < liLanczosStp) {
     liLanczosStp = i_max_tmp;
   }
-  if (i_max_tmp < X->Def.LanczosTarget) {
-    liLanczosStp = i_max_tmp;
-  }
   if (i_max_tmp == 1) {
-    E[1] = alpha[1];
-    StartTimer(4102);
-    vec12(alpha, beta, stp, E, X);
-    StopTimer(4102);
-    X->Large.itr = stp;
-    X->Phys.Target_energy = E[k_exct];
+    stp = 1;
+    if (finalize_lanczos_ritz(X, stp, k_exct, "Lanczos Hilbert space exhausted") != 0) return -1;
     iconv = 0;
+    skip_restart_output = TRUE;
     fprintf(stdoutMPI, "  LanczosStep  E[1] \n");
-    fprintf(stdoutMPI, "  stp=%d %.10lf \n", stp, E[1]);
+    fprintf(stdoutMPI, "  stp=%d %.10lf \n", stp, X->Phys.Target_CG_energy);
+  } else if (iconv != 0 && is_lanczos_breakdown(beta1)) {
+    stp = X->Def.Lanczos_restart;
+    if (finalize_lanczos_ritz(X, stp, k_exct, "Lanczos Krylov space exhausted") != 0) return -1;
+    iconv = 0;
+    skip_restart_output = TRUE;
   }
 
-  fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", X->Def.LanczosTarget + 1);
-  for (stp = X->Def.Lanczos_restart+1; stp <= liLanczosStp; stp++) {
+  if (iconv != 0) {
+    fprintf(stdoutMPI, "  LanczosStep  E[1] E[2] E[3] E[4] Target:E[%d] E_Max/Nsite\n", X->Def.LanczosTarget + 1);
+    for (stp = X->Def.Lanczos_restart+1; stp <= liLanczosStp; stp++) {
+      if (!isfinite(beta1) || is_lanczos_breakdown(beta1)) {
+        if (finalize_lanczos_ritz(X, stp - 1, k_exct, "Lanczos Krylov space exhausted") != 0) return -1;
+        iconv = 0;
+        skip_restart_output = TRUE;
+        break;
+      }
 #pragma omp parallel for default(none) private(i,temp1, temp2) shared(v0, v1) firstprivate(i_max, alpha1, beta1)
-    for (i = 1; i <= i_max; i++) {
-      temp1 = v1[i];
-      temp2 = (v0[i] - alpha1 * v1[i]) / beta1;
-      v0[i] = -beta1 * temp1;
-      v1[i] = temp2;
-    }
+      for (i = 1; i <= i_max; i++) {
+        temp1 = v1[i];
+        temp2 = (v0[i] - alpha1 * v1[i]) / beta1;
+        v0[i] = -beta1 * temp1;
+        v1[i] = temp2;
+      }
 
-    StartTimer(4101);
-    mltply(X, v0, v1);
-    StopTimer(4101);
-    TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
-    alpha1 = creal(X->Large.prdct);
-    alpha[stp] = alpha1;
-    cbeta1 = 0.0;
+      StartTimer(4101);
+      mltply(X, v0, v1);
+      StopTimer(4101);
+      TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp);
+      alpha1 = creal(X->Large.prdct);
+      if (!isfinite(alpha1)) {
+        fprintf(stdoutMPI, "  Error: Lanczos alpha is not finite.\n");
+        return -1;
+      }
+      alpha[stp] = alpha1;
+      cbeta1 = 0.0;
 
 #pragma omp parallel for reduction(+:cbeta1) default(none) private(i) shared(v0, v1) firstprivate(i_max, alpha1)
-    for (i = 1; i <= i_max; i++) {
-      cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
-    }
-    cbeta1 = SumMPI_dc(cbeta1);
-    beta1 = creal(cbeta1);
-    beta1 = sqrt(beta1);
-    beta[stp] = beta1;
+      for (i = 1; i <= i_max; i++) {
+        cbeta1 += conj(v0[i] - alpha1 * v1[i]) * (v0[i] - alpha1 * v1[i]);
+      }
+      cbeta1 = SumMPI_dc(cbeta1);
+      if (normalize_lanczos_beta(creal(cbeta1), &beta1) != 0) {
+        fprintf(stdoutMPI, "  Error: Lanczos beta is not finite.\n");
+        return -1;
+      }
+      beta[stp] = beta1;
 
-    Target = X->Def.LanczosTarget;
+      Target = X->Def.LanczosTarget;
 
-    if (stp == 2) {
-        tmp_mat = d_2d_allocate(stp,stp);
-        tmp_E =  d_1d_allocate(stp+1);
+      if (stp == 2) {
+          tmp_mat = d_2d_allocate(stp,stp);
+          tmp_E =  d_1d_allocate(stp+1);
 
       for (int_i = 0; int_i < stp; int_i++) {
         for (int_j = 0; int_j < stp; int_j++) {
@@ -249,22 +343,22 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       }
 
       fclose(fp);
-      if ((unsigned long int)stp == i_max_tmp && Target < stp) {
-        tmp_E = d_1d_allocate(stp+1);
-        StartTimer(4102);
-        vec12(alpha, beta, stp, tmp_E, X);
-        StopTimer(4102);
-        X->Large.itr = stp;
-        X->Phys.Target_energy = E_target;
-        X->Phys.Target_CG_energy = tmp_E[k_exct];
+      if (is_lanczos_breakdown(beta[stp])) {
+        if (finalize_lanczos_ritz(X, stp, k_exct, "Lanczos Krylov space exhausted") != 0) return -1;
         iconv = 0;
-        free_d_1d_allocate(tmp_E);
+        skip_restart_output = TRUE;
         break;
       }
-    }
+      if ((unsigned long int)stp == i_max_tmp && Target < stp) {
+        if (finalize_lanczos_ritz(X, stp, k_exct, "Lanczos Hilbert space exhausted") != 0) return -1;
+        iconv = 0;
+        skip_restart_output = TRUE;
+        break;
+      }
+      }
 
-    //if (stp > 2 && stp % 2 == 0) {
-    if (stp > 2) {
+      //if (stp > 2 && stp % 2 == 0) {
+      if (stp > 2) {
       childfopenMPI(sdt_2, "a", &fp);
       tmp_mat = d_2d_allocate(stp,stp);
       tmp_E =  d_1d_allocate(stp+1);
@@ -309,42 +403,37 @@ int Lanczos_EigenValue(struct BindStruct *X) {
       }
       fclose(fp);
       if (stp > Target) {
-        if (fabs((E_target - ebefor) / E_target) < eps_Lanczos || fabs(beta[stp]) < pow(10.0, -14)) {
+        double diff = fabs(E_target - ebefor);
+        double denom = fabs(E_target);
+        double rel_diff = denom > 0.0 ? diff / denom : diff;
+        if ((isfinite(E_target) && isfinite(ebefor) && rel_diff < eps_Lanczos) ||
+            is_lanczos_breakdown(beta[stp])) {
           /*
           if(X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT){
             break;
           }
            */
-          tmp_E = d_1d_allocate(stp+1);
-          StartTimer(4102);
-          vec12(alpha, beta, stp, tmp_E, X);
-          StopTimer(4102);
-          X->Large.itr = stp;
-          X->Phys.Target_energy = E_target;
-          X->Phys.Target_CG_energy = tmp_E[k_exct]; //for CG
+          if (finalize_lanczos_ritz(X, stp, k_exct,
+                                    is_lanczos_breakdown(beta[stp]) ?
+                                    "Lanczos Krylov space exhausted" : NULL) != 0) return -1;
           iconv = 0;
-          free_d_1d_allocate(tmp_E);
+          if (is_lanczos_breakdown(beta[stp])) skip_restart_output = TRUE;
           break;
         }
         ebefor = E_target;
       }
       if (iconv != 0 && (unsigned long int)stp == i_max_tmp && stp > Target) {
-        tmp_E = d_1d_allocate(stp+1);
-        StartTimer(4102);
-        vec12(alpha, beta, stp, tmp_E, X);
-        StopTimer(4102);
-        X->Large.itr = stp;
-        X->Phys.Target_energy = E_target;
-        X->Phys.Target_CG_energy = tmp_E[k_exct];
+        if (finalize_lanczos_ritz(X, stp, k_exct, "Lanczos Hilbert space exhausted") != 0) return -1;
         iconv = 0;
-        free_d_1d_allocate(tmp_E);
+        skip_restart_output = TRUE;
         break;
       }
 
+      }
     }
   }
   if (X->Def.iReStart == RESTART_INOUT ||X->Def.iReStart == RESTART_OUT ){
-    if(stp != X->Def.Lanczos_restart+2) { // 2 steps are needed to get the value: E[stp+2]-E[stp+1]
+    if(!skip_restart_output && stp != X->Def.Lanczos_restart+2) { // 2 steps are needed to get the value: E[stp+2]-E[stp+1]
       OutputTMComponents(X, alpha, beta, dnorm, stp - 1);
       OutputLanczosVector(X, v0, v1, stp - 1);
     }

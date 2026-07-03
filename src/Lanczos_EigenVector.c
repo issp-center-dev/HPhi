@@ -188,20 +188,24 @@ void Lanczos_EigenVector(struct BindStruct *X){
       vg[i] = v1[i]*conj(vec[k_exct][1]);
     }
   }/*else if(initial_mode==1)*/
-  StartTimer(4201);
-  mltply(X, v0, v1);
-  StopTimer(4201);
+  if (X->Large.itr > 1) {
+    StartTimer(4201);
+    mltply(X, v0, v1);
+    StopTimer(4201);
 
-  alpha1=alpha[1];
-  beta1=beta[1];
-
+    alpha1=alpha[1];
+    beta1=beta[1];
+    if (!isfinite(beta1) || fabs(beta1) < 1.0e-14) {
+      fprintf(stdoutMPI, "  Error: Lanczos beta is zero while reconstructing the eigenvector.\n");
+      exitMPI(-1);
+    }
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct)
-  for(j=1;j<=i_max;j++){
-    vg[j]+=conj(vec[k_exct][2])*(v0[j]-alpha1*v1[j])/beta1;
-  }
+    for(j=1;j<=i_max;j++){
+      vg[j]+=conj(vec[k_exct][2])*(v0[j]-alpha1*v1[j])/beta1;
+    }
 
-  //iteration
-  for(i=2;i<=X->Large.itr-1;i++) {
+    //iteration
+    for(i=2;i<=X->Large.itr-1;i++) {
       /*
     if (abs(beta[i]) < pow(10.0, -15)) {
       break;
@@ -219,9 +223,14 @@ void Lanczos_EigenVector(struct BindStruct *X){
     StopTimer(4201);
     alpha1 = alpha[i];
     beta1 = beta[i];
+    if (!isfinite(beta1) || fabs(beta1) < 1.0e-14) {
+      fprintf(stdoutMPI, "  Error: Lanczos beta is zero while reconstructing the eigenvector.\n");
+      exitMPI(-1);
+    }
 #pragma omp parallel for default(none) private(j) shared(vec, v0, v1, vg) firstprivate(alpha1, beta1, i_max, k_exct, i)
     for (j = 1; j <= i_max; j++) {
       vg[j] += conj(vec[k_exct][i + 1]) * (v0[j] - alpha1 * v1[j]) / beta1;
+    }
     }
   }
 

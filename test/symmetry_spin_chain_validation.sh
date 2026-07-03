@@ -3,6 +3,21 @@
 mkdir -p symmetry_spin_chain_validation
 cd symmetry_spin_chain_validation
 
+run_hphi() {
+    log="$1"
+    shift
+    "$@" > "${log}" 2>&1 || { cat "${log}"; exit 1; }
+}
+
+expect_fail() {
+    log="$1"
+    shift
+    if "$@" > "${log}" 2>&1; then
+        cat "${log}"
+        exit 1
+    fi
+}
+
 write_common_defs() {
 cat > calcmod.def <<EOF
 CalcType 0
@@ -346,8 +361,35 @@ write_common_defs
 write_valid_transsym
 write_base_namelist
 perl -0pi -e 's/^2Sz 0$/Nup 2\nNdown 2/m' modpara.def
-../../src/HPhi -e namelist.def > nup_ndown.log 2>&1
+rm -rf output
+run_hphi nup_ndown.log ../../src/HPhi -e namelist.def
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" nup_ndown.log
+awk '$1 == "Sz" {found=1; d=$2; if(d<0)d=-d; ok=(d < 0.000001)} END{exit found && ok ? 0 : 1}' output/zvo_energy.dat
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^2Sz 0$/Ndown 2\nNup 2/m' modpara.def
+rm -rf output
+run_hphi ndown_nup.log ../../src/HPhi -e namelist.def
+grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" ndown_nup.log
+awk '$1 == "Sz" {found=1; d=$2; if(d<0)d=-d; ok=(d < 0.000001)} END{exit found && ok ? 0 : 1}' output/zvo_energy.dat
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^2Sz 0$/Nup 3\nNdown 1\n2Sz 0/m' modpara.def
+rm -rf output
+expect_fail nup_ndown_2sz_conflict.log ../../src/HPhi -e namelist.def
+grep -q "conflicts with Nup-Ndown" nup_ndown_2sz_conflict.log
+
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/^2Sz 0$/Ndown 4/m' modpara.def
+rm -rf output
+expect_fail ndown_without_nup.log ../../src/HPhi -e namelist.def
+grep -q "Nup and Ndown must be specified together" ndown_without_nup.log
 
 write_common_defs
 write_c4_kpi2_transsym
@@ -364,10 +406,9 @@ write_common_defs
 write_valid_transsym
 write_base_namelist
 perl -0pi -e 's/^LanczosTarget 1$/LanczosTarget 2/m' modpara.def
-if ../../src/HPhi -e namelist.def > target_too_large.log 2>&1; then
-    cat target_too_large.log
-    exit 1
-fi
-grep -q "LanczosTarget" target_too_large.log
+rm -rf output
+run_hphi target_clamped.log ../../src/HPhi -e namelist.def
+grep -q "LanczosTarget=2 is outside Hilbert dimension 2; use 1" target_clamped.log
+awk '$1 == "Sz" {found=1; d=$2; if(d<0)d=-d; ok=(d < 0.000001)} END{exit found && ok ? 0 : 1}' output/zvo_energy.dat
 
 exit 0

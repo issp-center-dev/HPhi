@@ -304,14 +304,6 @@ int ValidateSymmetrySectorOptions(const struct BindStruct *X)
             X->Sym->dim, X->Def.k_exct);
     return -1;
   }
-  if (X->Def.iCalcType == Lanczos &&
-      X->Sym->dim > 1 &&
-      X->Def.LanczosTarget >= (int)X->Sym->dim) {
-    fprintf(stdoutMPI,
-            "Error: TransSym sector dimension %lu requires LanczosTarget < %lu.\n",
-            X->Sym->dim, X->Sym->dim);
-    return -1;
-  }
   return 0;
 }
 

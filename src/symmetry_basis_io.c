@@ -258,7 +258,9 @@ static double sum_exchange_pair(const struct DefineList *def, int site0, int sit
 {
   unsigned int i;
   double sum = 0.0;
+  if (site0 == site1) return 0.0;
   for (i = 0; i < def->NExchangeCoupling; i++) {
+    if (def->ExchangeCoupling[i][0] == def->ExchangeCoupling[i][1]) continue;
     if (same_unordered_pair(def->ExchangeCoupling[i][0], def->ExchangeCoupling[i][1], site0, site1)) {
       sum += def->ParaExchangeCoupling[i];
     }
@@ -273,6 +275,15 @@ static int validate_exchange_invariance(const struct DefineList *def)
     for (i = 0; i < def->NExchangeCoupling; i++) {
       int src0 = def->ExchangeCoupling[i][0];
       int src1 = def->ExchangeCoupling[i][1];
+      if (src0 < 0 || src1 < 0 ||
+          (unsigned int)src0 >= def->Nsite ||
+          (unsigned int)src1 >= def->Nsite) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Exchange term %u has a site outside [0, Nsite).\n",
+                i);
+        return -1;
+      }
+      if (src0 == src1) continue;
       int a = def->SymTrans[g][src0];
       int b = def->SymTrans[g][src1];
       double src_sum = sum_exchange_pair(def, src0, src1);

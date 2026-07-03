@@ -53,7 +53,7 @@ void vec12(
     for(j=1;j<=ndim;j++) vec[k][j]=0.0;
 
 #pragma omp parallel for default(none) firstprivate(ndim, alpha, beta) private(j) shared(tmpA)
-  for(j=0;j<=ndim-2;j++){
+  for(j=0;j+1<ndim;j++){
     tmpA[j][j]=alpha[j+1];
     tmpA[j][j+1]=beta[j+1];
     tmpA[j+1][j]=beta[j+1];
@@ -64,19 +64,22 @@ void vec12(
   if(X->Def.iCalcType==Lanczos && X->Def.iFlgCalcSpec == 0)
     fprintf(stdoutMPI, "  Lanczos EigenValue in vec12 = %.10lf \n ",tmpr[0]);
  
+  for(k=1;k<=ndim;k++){
+    tmp_E[k]=tmpr[k-1];
+  }
+
   if (nvec <= ndim) {
     if (nvec < X->Def.LanczosTarget) nvec = X->Def.LanczosTarget;
-    
+    if (nvec > ndim) nvec = ndim;
+
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=nvec;k++){
-      tmp_E[k]=tmpr[k-1];
       for (j = 1; j <= ndim; j++) vec[k][j] = tmpvec[k - 1][j - 1];
     }/*for(k=1;k<=nvec;k++)*/
   }/*if(nvec<=ndim)*/
   else{
 #pragma omp parallel for default(none) firstprivate(ndim, nvec) private(j,k) shared(tmpvec, vec, tmp_E, tmpr)
     for(k=1;k<=ndim;k++){
-      tmp_E[k]=tmpr[k-1];
       for (j = 1; j <= ndim; j++) vec[k][j] = tmpvec[k - 1][j - 1];
     }/*for(k=1;k<=ndim;k++)*/
   }/*if(nvec>ndim)*/

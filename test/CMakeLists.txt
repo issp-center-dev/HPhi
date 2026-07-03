@@ -69,6 +69,7 @@ add_hphi_test(lanczos_hubbard_square_ncond_calchs2)
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)
+add_hphi_test(lanczos_small_dimension_regression)
 add_hphi_test(symmetry_spin_chain_validation)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
@@ -138,6 +139,9 @@ set_tests_properties(
     PROPERTIES LABELS "lanczos;hubbard;validation")
 set_tests_properties(
     threebody_calcmodel_validation
+    PROPERTIES LABELS "lanczos;spin;validation")
+set_tests_properties(
+    lanczos_small_dimension_regression
     PROPERTIES LABELS "lanczos;spin;validation")
 set_tests_properties(
     symmetry_spin_chain_validation
