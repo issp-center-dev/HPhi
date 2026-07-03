@@ -25,6 +25,7 @@
 #include "mltplyMPIHubbard.h"
 #include "mltplyMPISpinCore.h"
 #include "mltplyMPISpinlessFermion.h"
+#include "green_output.h"
 
 /**
  * @file   expec_cisajs.c
@@ -143,8 +144,12 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     //vec=v0;
     break;
   }
+  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody) &&
+      GreenOutputFileName(X, GreenOutputOneBody, sdt) != 0) {
+    return -1;
+  }
   
-  if(childfopenMPI(sdt, "w", &fp)!=0){
+  if(childfopenMPI(sdt, GreenOutputOpenMode(X), &fp)!=0){
     return -1;
   } 
   switch(X->Def.iCalcModel){
@@ -285,6 +290,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
           }
         }
         dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        GreenOutputWriteIndexPrefix(fp, X);
         fprintf(fp, " %4lu %4lu %4lu %4lu %.10lf %.10lf\n",
                 org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
                 creal(dam_pr_sp), cimag(dam_pr_sp));
@@ -379,6 +385,7 @@ int expec_cisajs_HubbardGC(struct BindStruct *X, double complex *vec, FILE **_fp
         }
 
         dam_pr= SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
 
@@ -415,6 +422,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         if(X->Def.iFlgSzConserved ==TRUE){
             if(org_sigma1 != org_sigma2){
                 dam_pr =0.0;
+                GreenOutputWriteIndexPrefix(*_fp, X);
                 fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
                 continue;
             }
@@ -426,6 +434,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
                   )
           {
             dam_pr =0.0;
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
             continue;
           }
@@ -478,6 +487,7 @@ int expec_cisajs_Hubbard(struct BindStruct *X, double complex *vec, FILE **_fp) 
         }
         dam_pr= SumMPI_dc(dam_pr);
       //fprintf(stdoutMPI, "rank=%d, dam_pr=%lf\n", myrank, creal(dam_pr));
+      GreenOutputWriteIndexPrefix(*_fp, X);
       fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1,org_sigma1,org_isite2-1,org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
@@ -557,6 +567,7 @@ int expec_cisajs_SpinHalf(struct BindStruct *X, double complex *vec, FILE **_fp)
             dam_pr =0.0;
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, creal(dam_pr), cimag(dam_pr));
     }
     return 0;
@@ -621,6 +632,7 @@ int expec_cisajs_SpinGeneral(struct BindStruct *X, double complex *vec, FILE **_
         }//org_isite1 != org_isite2
 
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
 
@@ -707,6 +719,7 @@ int expec_cisajs_SpinGCHalf(struct BindStruct *X, double complex *vec, FILE **_f
         }
 
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4lu %4lu %4lu %4lu %.10lf %.10lf\n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
@@ -773,6 +786,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X, double complex *vec, FILE *
             dam_pr = 0.0;
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp, " %4lu %4lu %4lu %4lu %.10lf %.10lf\n", org_isite1 - 1, org_sigma1, org_isite2 - 1, org_sigma2,
                 creal(dam_pr), cimag(dam_pr));
     }

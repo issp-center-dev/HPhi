@@ -53,6 +53,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "green_output.h"
 #include "CalcByTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -104,6 +105,7 @@ int CalcByTPQ(
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   size_t byte_size;
+  int green_output_initialized = 0;
 
   tstruct.tstart=time(NULL);
   
@@ -174,6 +176,12 @@ int CalcByTPQ(
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
       StartTimer(3600);
+      if (green_output_initialized == 0) {
+        if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
+          return -1;
+        }
+        green_output_initialized = 1;
+      }
       if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
         return -1;
       }

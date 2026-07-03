@@ -193,6 +193,16 @@ CalcModファイル
    | 0: プレフィックスを付与しない (例: ``SS_rand0.dat``)。
    | 1: ``CDataFileHead`` のプレフィックスを付与する (例: ``zvo_SS_rand0.dat``)。
 
+-  ``OutputGreenFormat``
+
+   **形式 :** int型 (デフォルト値 0)
+
+   | **説明 :** Green関数出力ファイルの形式を指定します。
+   | 0: 従来の分割ファイル形式。
+   | 1: TPQ/cTPQ、実時間発展、全対角化、LOBCGで、index列付きの集約ファイル形式。
+   | 集約形式では、TPQ/cTPQの各行の先頭に ``set`` と ``step``、実時間発展の各行の先頭に ``step``、全対角化/LOBCGの各行の先頭に ``eigen`` が追加されます。
+   | LOBCGの ``AnomalousG`` は既存出力が eigen 番号別ではないため、従来形式のまま出力されます。
+
 -  ``Scalapack``
 
    **形式 :** int型 (デフォルト値 0)

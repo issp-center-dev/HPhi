@@ -208,6 +208,16 @@ The parameters correlated with the keywords are as follows.
    | 0: Do not add a prefix (e.g., ``SS_rand0.dat``).
    | 1: Add the ``CDataFileHead`` prefix (e.g., ``zvo_SS_rand0.dat``).
 
+*  ``OutputGreenFormat``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** Select the output format for Green function files:
+   | 0: Existing split files.
+   | 1: Aggregate indexed files for TPQ/cTPQ, real-time evolution, Full diagonalization, and LOBCG.
+   | In aggregate mode, TPQ/cTPQ rows start with ``set`` and ``step``, real-time evolution rows start with ``step``, and Full diagonalization/LOBCG rows start with ``eigen``.
+   | ``AnomalousG`` in LOBCG keeps the existing non-aggregate output because the existing output is not split by eigen index.
+
 *  ``Scalapack``
 
    **Type :** Int (default value: 0)

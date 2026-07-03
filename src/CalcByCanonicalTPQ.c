@@ -20,6 +20,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "green_output.h"
 #include "MakeIniVec.h"
 #include "CalcByCanonicalTPQ.h"
 #include "FileIO.h"
@@ -69,6 +70,7 @@ int CalcByCanonicalTPQ(
     double inv_temp,Ns,delta_tau;
     struct TimeKeepStruct tstruct;
     size_t byte_size;
+    int green_output_initialized = 0;
     /*[s] for inverse temperatures*/
     double *read_invtemp=NULL;
     int    *read_nmax=NULL,*read_physcal=NULL,*read_eigen=NULL; 
@@ -248,6 +250,12 @@ int CalcByCanonicalTPQ(
         }
         if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
             StartTimer(3600);
+            if (green_output_initialized == 0) {
+                if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
+                    return -1;
+                }
+                green_output_initialized = 1;
+            }
             if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
                 return -1;
             }
