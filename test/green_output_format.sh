@@ -70,6 +70,24 @@ check_tpq_nbody_rows() {
   ' "${file}" || fail "TPQ NBodyG aggregate rows must have set, step, and n columns: ${file}"
 }
 
+check_tpq_data_rows() {
+  file="$1"
+  label="$2"
+  fields="$3"
+  awk -v fields="${fields}" '
+    $1 == "#" { next }
+    NF != fields { exit 1 }
+    $1 !~ /^[0-9]+$/ { exit 1 }
+    $2 !~ /^[0-9]+$/ { exit 1 }
+    { seen_set[$1] = 1; seen_pair[$1 ":" $2] = 1 }
+    END {
+      for (key in seen_set) sets++
+      for (key in seen_pair) pairs++
+      if (sets < 2 || pairs < 4) exit 1
+    }
+  ' "${file}" || fail "${label} TPQ data aggregate rows must have set and step columns: ${file}"
+}
+
 check_single_index_rows() {
   file="$1"
   label="$2"
@@ -95,7 +113,7 @@ J = 1.0
 2Sz = 0
 Lanczos_max = 4
 LargeValue = 5
-NumAve = 1
+NumAve = 2
 ExpecInterval = 1
 outputmode = "correlation"
 EOF
@@ -114,11 +132,51 @@ EOF
   assert_file output/zvo_cisajs_tpq.dat
   assert_file output/zvo_cisajscktalt_tpq.dat
   assert_file output/zvo_NBodyG_tpq.dat
+  assert_file output/SS_tpq.dat
+  assert_file output/Norm_tpq.dat
+  assert_file output/Flct_tpq.dat
   assert_no_match "output/zvo_cisajs_set*step*.dat"
   assert_no_match "output/zvo_cisajscktalt_set*step*.dat"
   assert_no_match "output/zvo_NBodyG_set*step*.dat"
+  assert_no_match "output/SS_rand*.dat"
+  assert_no_match "output/Norm_rand*.dat"
+  assert_no_match "output/Flct_rand*.dat"
   check_tpq_rows output/zvo_cisajs_tpq.dat
   check_tpq_nbody_rows output/zvo_NBodyG_tpq.dat
+  check_tpq_data_rows output/SS_tpq.dat "SS" 7
+  check_tpq_data_rows output/Norm_tpq.dat "Norm" 5
+  check_tpq_data_rows output/Flct_tpq.dat "Flct" 9
+)
+
+mkdir ctpq
+(
+  cd ctpq
+  cat > stan.in <<EOF
+L = 4
+model = "SpinGC"
+method = "TPQ"
+lattice = "chain"
+J = 1.0
+Lanczos_max = 4
+LargeValue = 5
+NumAve = 2
+ExpecInterval = 1
+outputmode = "None"
+EOF
+  run_hphi sdry.log "${hphi}" -sdry stan.in
+  sed -e 's/^CalcType.*/CalcType   5/' calcmod.def > calcmod.tmp
+  mv calcmod.tmp calcmod.def
+  append_aggregate_mode calcmod.def
+  run_hphi run.log "${hphi}" -e namelist.def
+  assert_file output/SS_tpq.dat
+  assert_file output/Norm_tpq.dat
+  assert_file output/Flct_tpq.dat
+  assert_no_match "output/SS_rand*.dat"
+  assert_no_match "output/Norm_rand*.dat"
+  assert_no_match "output/Flct_rand*.dat"
+  check_tpq_data_rows output/SS_tpq.dat "cTPQ SS" 7
+  check_tpq_data_rows output/Norm_tpq.dat "cTPQ Norm" 5
+  check_tpq_data_rows output/Flct_tpq.dat "cTPQ Flct" 9
 )
 
 mkdir te
@@ -189,4 +247,4 @@ EOF
   }
 )
 
-echo "OutputGreenFormat aggregate output creates indexed aggregate files and rejects invalid mode: OK"
+echo "OutputGreenFormat aggregate output creates indexed Green and TPQ data files and rejects invalid mode: OK"

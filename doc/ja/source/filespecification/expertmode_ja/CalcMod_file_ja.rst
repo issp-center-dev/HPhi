@@ -192,15 +192,17 @@ CalcModファイル
    | **説明 :** TPQ/TE計算の物理量出力ファイル (``SS``、``Norm``、``Flct``) のファイル名にModParaファイルの ``CDataFileHead`` で指定したヘッダ文字列をプレフィックスとして付与するかどうかを指定します。
    | 0: プレフィックスを付与しない (例: ``SS_rand0.dat``)。
    | 1: ``CDataFileHead`` のプレフィックスを付与する (例: ``zvo_SS_rand0.dat``)。
+   | TPQ/cTPQで ``OutputGreenFormat=1`` を指定した場合、集約された物理量出力ファイル名は ``SS_tpq.dat``、``Norm_tpq.dat``、``Flct_tpq.dat`` になります。``OutputDataHead=1`` の場合は同様にこれらの名前へプレフィックスが付与されます。
 
 -  ``OutputGreenFormat``
 
    **形式 :** int型 (デフォルト値 0)
 
-   | **説明 :** Green関数出力ファイルの形式を指定します。
+   | **説明 :** Green関数出力ファイル、およびTPQ/cTPQの物理量出力ファイルの形式を指定します。
    | 0: 従来の分割ファイル形式。
    | 1: TPQ/cTPQ、実時間発展、全対角化、LOBCGで、index列付きの集約ファイル形式。
-   | 集約形式では、TPQ/cTPQの各行の先頭に ``set`` と ``step``、実時間発展の各行の先頭に ``step``、全対角化/LOBCGの各行の先頭に ``eigen`` が追加されます。
+   | 集約形式では、TPQ/cTPQのGreen関数出力と物理量出力の各行の先頭に ``set`` と ``step``、実時間発展の各行の先頭に ``step``、全対角化/LOBCGの各行の先頭に ``eigen`` が追加されます。
+   | TPQ/cTPQの物理量は ``SS_rand*.dat``、``Norm_rand*.dat``、``Flct_rand*.dat`` ではなく、``SS_tpq.dat``、``Norm_tpq.dat``、``Flct_tpq.dat`` に出力されます。
    | LOBCGの ``AnomalousG`` は既存出力が eigen 番号別ではないため、従来形式のまま出力されます。
 
 -  ``Scalapack``

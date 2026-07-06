@@ -50,7 +50,7 @@
 /*!< OutputGreenFormat */
 #define NUM_OUTPUTGREENFORMAT 2 /*!< Number of Green function output formats.*/
 #define OUTPUTGREENFORMAT_SPLIT 0 /*!< Existing split Green function files.*/
-#define OUTPUTGREENFORMAT_AGGREGATE 1 /*!< Indexed aggregate Green function files.*/
+#define OUTPUTGREENFORMAT_AGGREGATE 1 /*!< Indexed aggregate Green function and TPQ/cTPQ data files.*/
 
 #define NUM_OUTPUTHAM 2 /*!< Number of output Hamiltonian mode */
 

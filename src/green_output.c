@@ -136,3 +136,107 @@ int GreenOutputInitializeAggregateFiles(struct BindStruct *X)
       GreenOutputTruncateFile(X, GreenOutputAnomalous) != 0) return -1;
   return 0;
 }
+
+int GreenOutputUsesTPQDataAggregate(const struct BindStruct *X)
+{
+  if (X->Def.iOutputGreenFormat != OUTPUTGREENFORMAT_AGGREGATE) return 0;
+  return (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ);
+}
+
+static const char *GreenOutputTPQDataBaseName(GreenOutputTPQDataKind kind)
+{
+  switch (kind) {
+  case GreenOutputTPQDataSS: return cFileNameSS_TPQ_Aggregate;
+  case GreenOutputTPQDataNorm: return cFileNameNorm_TPQ_Aggregate;
+  case GreenOutputTPQDataFlct: return cFileNameFlct_TPQ_Aggregate;
+  }
+  return NULL;
+}
+
+int GreenOutputTPQDataFileName(const struct BindStruct *X, GreenOutputTPQDataKind kind, char *sdt)
+{
+  const char *base = NULL;
+  if (!GreenOutputUsesTPQDataAggregate(X)) return -1;
+  base = GreenOutputTPQDataBaseName(kind);
+  if (base == NULL) return -1;
+  if (X->Def.iOutputDataHead == 1) {
+    sprintf(sdt, "%s_%s", X->Def.CDataFileHead, base);
+  } else {
+    sprintf(sdt, "%s", base);
+  }
+  return 0;
+}
+
+static const char *GreenOutputTPQDataHeader(GreenOutputTPQDataKind kind)
+{
+  switch (kind) {
+  case GreenOutputTPQDataSS:
+    return " # set, step, inv_tmp, energy, phys_var, phys_doublon, phys_num\n";
+  case GreenOutputTPQDataNorm:
+    return " # set, step, inv_temp, global_norm, global_1st_norm\n";
+  case GreenOutputTPQDataFlct:
+    return " # set, step, inv_temp, N, N^2, D, D^2, Sz, Sz^2\n";
+  }
+  return NULL;
+}
+
+static int GreenOutputInitializeTPQDataFile(struct BindStruct *X, GreenOutputTPQDataKind kind)
+{
+  FILE *fp = NULL;
+  char sdt[D_FileNameMax];
+  const char *header = NULL;
+  if (!GreenOutputUsesTPQDataAggregate(X)) return 0;
+  if (GreenOutputTPQDataFileName(X, kind, sdt) != 0) return -1;
+  header = GreenOutputTPQDataHeader(kind);
+  if (header == NULL) return -1;
+  if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  fprintf(fp, "%s", header);
+  fclose(fp);
+  return 0;
+}
+
+int GreenOutputInitializeTPQDataAggregateFiles(struct BindStruct *X)
+{
+  if (!GreenOutputUsesTPQDataAggregate(X)) return 0;
+  if (GreenOutputInitializeTPQDataFile(X, GreenOutputTPQDataSS) != 0) return -1;
+  if (GreenOutputInitializeTPQDataFile(X, GreenOutputTPQDataNorm) != 0) return -1;
+  if (GreenOutputInitializeTPQDataFile(X, GreenOutputTPQDataFlct) != 0) return -1;
+  return 0;
+}
+
+void GreenOutputWriteTPQSSRow(FILE *fp, const struct BindStruct *X, int step, double inv_temp)
+{
+  if (GreenOutputUsesTPQDataAggregate(X)) {
+    fprintf(fp, " %4d %4d %.16lf  %.16lf %.16lf %.16lf %.16lf\n",
+            X->Def.irand, step, inv_temp, X->Phys.energy, X->Phys.var,
+            X->Phys.doublon, X->Phys.num);
+  } else {
+    fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n",
+            inv_temp, X->Phys.energy, X->Phys.var, X->Phys.doublon,
+            X->Phys.num, step);
+  }
+}
+
+void GreenOutputWriteTPQNormRow(FILE *fp, const struct BindStruct *X, int step, double inv_temp,
+                                double norm, double first_norm)
+{
+  if (GreenOutputUsesTPQDataAggregate(X)) {
+    fprintf(fp, " %4d %4d %.16lf %.16lf %.16lf\n",
+            X->Def.irand, step, inv_temp, norm, first_norm);
+  } else {
+    fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, norm, first_norm, step);
+  }
+}
+
+void GreenOutputWriteTPQFlctRow(FILE *fp, const struct BindStruct *X, int step, double inv_temp)
+{
+  if (GreenOutputUsesTPQDataAggregate(X)) {
+    fprintf(fp, " %4d %4d %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf\n",
+            X->Def.irand, step, inv_temp, X->Phys.num, X->Phys.num2,
+            X->Phys.doublon, X->Phys.doublon2, X->Phys.Sz, X->Phys.Sz2);
+  } else {
+    fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n",
+            inv_temp, X->Phys.num, X->Phys.num2, X->Phys.doublon,
+            X->Phys.doublon2, X->Phys.Sz, X->Phys.Sz2, step);
+  }
+}

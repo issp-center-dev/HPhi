@@ -122,6 +122,9 @@ extern const char* cFileNameSSRand;/**> Name of the SS_rand file.*/
 extern const char* cFileNameTPQStep;/**> Name of the Time_TPQ_Step file.*/
 extern const char* cFileNameNormRand;/**> Name of the NormRand file.*/
 extern const char* cFileNameFlctRand;/**> Name of the Flct file.*/
+extern const char* cFileNameSS_TPQ_Aggregate;/**> Name of the aggregate SS file for TPQ/cTPQ calculation.*/
+extern const char* cFileNameNorm_TPQ_Aggregate;/**> Name of the aggregate Norm file for TPQ/cTPQ calculation.*/
+extern const char* cFileNameFlct_TPQ_Aggregate;/**> Name of the aggregate Flct file for TPQ/cTPQ calculation.*/
 extern const char* cFileName1BGreen_TPQ;/**> Name of the file to output one-body Green's functions for TPQ calculation.*/
 extern const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
 extern const char* cFileName3BGreen_TPQ;/**> Name of the file to output three-body Green's functions for TPQ calculation.*/

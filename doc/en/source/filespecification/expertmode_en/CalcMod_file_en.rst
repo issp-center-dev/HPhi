@@ -207,15 +207,17 @@ The parameters correlated with the keywords are as follows.
    | **Description :** Select whether to prefix TPQ/TE physical quantity output filenames (``SS``, ``Norm``, ``Flct``) with the header string defined by ``CDataFileHead`` in the ModPara file:
    | 0: Do not add a prefix (e.g., ``SS_rand0.dat``).
    | 1: Add the ``CDataFileHead`` prefix (e.g., ``zvo_SS_rand0.dat``).
+   | When ``OutputGreenFormat=1`` is used for TPQ/cTPQ, the aggregate physical quantity filenames are ``SS_tpq.dat``, ``Norm_tpq.dat``, and ``Flct_tpq.dat``; ``OutputDataHead=1`` prefixes these names in the same way.
 
 *  ``OutputGreenFormat``
 
    **Type :** Int (default value: 0)
 
-   | **Description :** Select the output format for Green function files:
+   | **Description :** Select the output format for Green function files and TPQ/cTPQ physical quantity files:
    | 0: Existing split files.
    | 1: Aggregate indexed files for TPQ/cTPQ, real-time evolution, Full diagonalization, and LOBCG.
-   | In aggregate mode, TPQ/cTPQ rows start with ``set`` and ``step``, real-time evolution rows start with ``step``, and Full diagonalization/LOBCG rows start with ``eigen``.
+   | In aggregate mode, TPQ/cTPQ Green function rows and TPQ/cTPQ physical quantity rows start with ``set`` and ``step``, real-time evolution rows start with ``step``, and Full diagonalization/LOBCG rows start with ``eigen``.
+   | TPQ/cTPQ physical quantities are written to ``SS_tpq.dat``, ``Norm_tpq.dat``, and ``Flct_tpq.dat`` instead of ``SS_rand*.dat``, ``Norm_rand*.dat``, and ``Flct_rand*.dat``.
    | ``AnomalousG`` in LOBCG keeps the existing non-aggregate output because the existing output is not split by eigen index.
 
 *  ``Scalapack``
