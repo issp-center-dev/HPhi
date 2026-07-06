@@ -21,6 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setmemory.h"
 
+static long unsigned int nonzero_count(const long unsigned int n) {
+    return n > 0 ? n : 1;
+}
+
 ///
 /// \brief Allocation for A[N]
 /// \param N [in] The size of the array A
@@ -87,8 +91,8 @@ void free_li_1d_allocate(long int *A){
 long int **li_2d_allocate(const long unsigned int N, const long unsigned int M) {
     long int **A;
     long unsigned int int_i;
-    A = (long int **) calloc((N) , sizeof(long int *));
-    A[0] = (long int *) calloc((M * N) ,sizeof(long int));
+    A = (long int **) calloc(nonzero_count(N) , sizeof(long int *));
+    A[0] = (long int *) calloc(nonzero_count(M * N) ,sizeof(long int));
     for (int_i = 0; int_i < N; int_i++) {
         A[int_i] = A[0] + int_i * M;
     }
@@ -134,8 +138,8 @@ void free_i_1d_allocate(int *A){
 int **i_2d_allocate(const long unsigned int N, const long unsigned int M) {
     int **A;
     long unsigned int int_i;
-    A = (int **) calloc((N) , sizeof(int *));
-    A[0] = (int *) calloc((M * N) , sizeof(int));
+    A = (int **) calloc(nonzero_count(N) , sizeof(int *));
+    A[0] = (int *) calloc(nonzero_count(M * N) , sizeof(int));
     for (int_i = 0; int_i < N; int_i++) {
         A[int_i] = A[0] + int_i * M;
     }
@@ -158,9 +162,9 @@ void free_i_2d_allocate(int **A){
 int***i_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L){
     long unsigned int int_i, int_j;
     int*** A;
-    A     = (int***)calloc((N),sizeof(int**));
-    A[0]  = (int**)calloc((M*N),sizeof(int*));
-    A[0][0] = (int*)calloc((L*M*N),sizeof(int));
+    A     = (int***)calloc(nonzero_count(N),sizeof(int**));
+    A[0]  = (int**)calloc(nonzero_count(M*N),sizeof(int*));
+    A[0][0] = (int*)calloc(nonzero_count(L*M*N),sizeof(int));
     for(int_i=0;int_i<N; int_i++) {
         A[int_i] = A[0] + int_i*M;
         for(int_j = 0; int_j<M; int_j++){
@@ -207,8 +211,8 @@ void free_d_1d_allocate(double *A){
 double **d_2d_allocate(const long unsigned int N, const long unsigned int M){
     long unsigned int int_i;
     double **A;
-    A     = (double**)calloc((N),sizeof(double*));
-    A[0]  = (double*)calloc((M*N),sizeof(double));
+    A     = (double**)calloc(nonzero_count(N),sizeof(double*));
+    A[0]  = (double*)calloc(nonzero_count(M*N),sizeof(double));
     for(int_i=0;int_i<N;int_i++){
         A[int_i] = A[0] + int_i*M;
     }
@@ -251,8 +255,8 @@ void free_cd_1d_allocate(double complex *A){
 complex double **cd_2d_allocate(const long unsigned int N, const long unsigned int M){
     long unsigned int int_i;
     complex double **A;
-    A     = (complex double**)calloc((N),sizeof(complex double));
-    A[0]  = (complex double*)calloc((M*N),sizeof(complex double));
+    A     = (complex double**)calloc(nonzero_count(N),sizeof(complex double*));
+    A[0]  = (complex double*)calloc(nonzero_count(M*N),sizeof(complex double));
     for(int_i=0;int_i<N;int_i++){
         A[int_i] = A[0]+int_i*M;
     }
@@ -275,9 +279,9 @@ void free_cd_2d_allocate(double complex**A){
 double complex***cd_3d_allocate(const long unsigned int N, const long unsigned int M, const long unsigned int L){
     long unsigned int int_i, int_j;
     double complex***A;
-    A     = (double complex***)calloc((N),sizeof(double complex**));
-    A[0]  = (double complex**)calloc((M*N),sizeof(double complex*));
-    A[0][0] = (double complex*)calloc((L*M*N),sizeof(double complex));
+    A     = (double complex***)calloc(nonzero_count(N),sizeof(double complex**));
+    A[0]  = (double complex**)calloc(nonzero_count(M*N),sizeof(double complex*));
+    A[0][0] = (double complex*)calloc(nonzero_count(L*M*N),sizeof(double complex));
     for(int_i=0;int_i<N; int_i++) {
         A[int_i] = A[0] + int_i*M;
         for(int_j = 0; int_j<M; int_j++){
