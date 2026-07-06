@@ -348,6 +348,20 @@ add_test(NAME unittest_setmemory_zero_size_common
 set_tests_properties(unittest_setmemory_zero_size_common
     PROPERTIES LABELS "unit;setmemory")
 
+# Unit test: komega BiCG non-finite guard
+add_executable(unittest_komega_bicg_nonfinite
+    ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)
+target_include_directories(unittest_komega_bicg_nonfinite
+    PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(unittest_komega_bicg_nonfinite komega)
+if(MPI_FOUND)
+    target_link_libraries(unittest_komega_bicg_nonfinite ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
+add_test(NAME unittest_komega_bicg_nonfinite
+    COMMAND unittest_komega_bicg_nonfinite)
+set_tests_properties(unittest_komega_bicg_nonfinite
+    PROPERTIES LABELS "unit;spectrum")
+
 # MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
 add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
 set_tests_properties(spectrum_hubbard_offdiag_single_mpi

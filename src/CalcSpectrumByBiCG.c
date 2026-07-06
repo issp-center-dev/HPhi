@@ -25,9 +25,87 @@
 #include "common/setmemory.h"
 #include "komega/komega.h"
 #include "mltply.h"
+#include <math.h>
 #ifdef MPI
 #include <mpi.h>
 #endif
+
+#define BICG_STATUS_NONFINITE 5
+#define BICG_DIAG_SAMPLES 3
+
+typedef struct {
+  double sum2;
+  unsigned long nbad;
+  int nsample;
+  unsigned long sample_index[BICG_DIAG_SAMPLES];
+  double sample_real[BICG_DIAG_SAMPLES];
+  double sample_imag[BICG_DIAG_SAMPLES];
+} BiCGVectorDiag;
+
+static int IsFiniteComplex(double complex z) {
+  return isfinite(creal(z)) && isfinite(cimag(z));
+}
+
+static void AnalyzeBiCGVector(const double complex *v, unsigned long n, BiCGVectorDiag *diag) {
+  unsigned long i;
+  diag->sum2 = 0.0;
+  diag->nbad = 0;
+  diag->nsample = 0;
+  for (i = 0; i < n; i++) {
+    const double real = creal(v[i]);
+    const double imag = cimag(v[i]);
+    if (IsFiniteComplex(v[i])) {
+      diag->sum2 += real * real + imag * imag;
+    } else {
+      if (diag->nsample < BICG_DIAG_SAMPLES) {
+        diag->sample_index[diag->nsample] = i + 1;
+        diag->sample_real[diag->nsample] = real;
+        diag->sample_imag[diag->nsample] = imag;
+        diag->nsample++;
+      }
+      diag->nbad++;
+    }
+  }
+}
+
+static void PrintBiCGVectorDiag(const char *name, const BiCGVectorDiag *diag) {
+  int i;
+  fprintf(stderr, "%s_sum2=%25.17e %s_nbad=%lu", name, diag->sum2, name, diag->nbad);
+  for (i = 0; i < diag->nsample; i++) {
+    fprintf(stderr, " %s_bad[%d]=(idx=%lu,value=%25.17e,%25.17e)",
+            name, i, diag->sample_index[i], diag->sample_real[i], diag->sample_imag[i]);
+  }
+}
+
+static const char *BiCGStatusReason(int status) {
+  switch (status) {
+    case 0: return "converged";
+    case 1: return "not converged";
+    case 2: return "alpha breakdown";
+    case 3: return "pi breakdown";
+    case 4: return "rho breakdown";
+    case BICG_STATUS_NONFINITE: return "non-finite detected";
+    default: return "unknown";
+  }
+}
+
+static void PrintBiCGIteration1Diag(
+  const BiCGVectorDiag *v2_diag,
+  const BiCGVectorDiag *v12_diag,
+  int status0,
+  int status1,
+  int status2,
+  double residual
+) {
+  fprintf(stderr,
+          "BiCG iteration-1 diagnostic: rank=%d status=(%d,%d,%d) residual=%25.17e ",
+          myrank, status0, status1, status2, residual);
+  PrintBiCGVectorDiag("v2", v2_diag);
+  fprintf(stderr, " ");
+  PrintBiCGVectorDiag("Hv2", v12_diag);
+  fprintf(stderr, "\n");
+  fflush(stderr);
+}
 /**@brief
 Read @f$\alpha, \beta@f$, projected residual for restart
 */
@@ -230,8 +308,13 @@ int CalcSpectrumByBiCG(
   int ran_bicg_loop = FALSE;
   int bicg_failed = FALSE;
   double max_residual = 0.0;
+  BiCGVectorDiag iter1_v2_diag, iter1_v12_diag;
+  int have_iter1_diag = FALSE;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
+  status[0] = 0;
+  status[1] = 0;
+  status[2] = 0;
   /* Defense in depth (independent of the top-level SpectrumNumBra validation): the
      tridiagonal-component restart format stores ONE projected residual stream per BiCG step,
      so multi-bra (nBra>1) is only valid for CalcSpec=Normal. Fail hard before touching any
@@ -333,6 +416,12 @@ int CalcSpectrumByBiCG(
     iret = mltply(&X->Bind, v14, v4);
     if (iret == -1) return FALSE;
 
+    if (stp == 1) {
+      AnalyzeBiCGVector(&v2[1], X->Bind.Check.idim_max, &iter1_v2_diag);
+      AnalyzeBiCGVector(&v12[1], X->Bind.Check.idim_max, &iter1_v12_diag);
+      have_iter1_diag = TRUE;
+    }
+
     for (ibra = 0; ibra < nBra; ibra++)
       res_proj[ibra] = VecProdMPI(X->Bind.Check.idim_max, vlhs_Bra[ibra], v2);
     /**
@@ -340,6 +429,14 @@ int CalcSpectrumByBiCG(
     */
 
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, res_proj, status);
+
+    if (stp == 1 && have_iter1_diag == TRUE &&
+        (status[1] == BICG_STATUS_NONFINITE || IsFiniteComplex(v12[1]) == FALSE)) {
+      if (status[0] >= 0) status[0] = -stp;
+      if (status[1] == 0) status[1] = BICG_STATUS_NONFINITE;
+      PrintBiCGIteration1Diag(&iter1_v2_diag, &iter1_v12_diag,
+        status[0], status[1], status[2], creal(v12[1]));
+    }
 
     /**
     <li>Output residuals at each frequency for some analysis</li>
@@ -363,10 +460,18 @@ int CalcSpectrumByBiCG(
   fclose(fp);
   if (ran_bicg_loop == TRUE && (status[0] >= 0 || status[1] != 0)) {
     bicg_failed = TRUE;
-    max_residual = 0.0;
-    komega_bicg_getresidual(resz);
-    for (iomega = 0; iomega < Nomega; iomega++) {
-      if (resz[iomega] > max_residual) max_residual = resz[iomega];
+    if (status[1] >= 2) {
+      max_residual = NAN;
+    } else {
+      max_residual = 0.0;
+      komega_bicg_getresidual(resz);
+      for (iomega = 0; iomega < Nomega; iomega++) {
+        if (isfinite(resz[iomega]) == FALSE) {
+          max_residual = resz[iomega];
+          break;
+        }
+        if (resz[iomega] > max_residual) max_residual = resz[iomega];
+      }
     }
   }
   /**
@@ -375,6 +480,21 @@ int CalcSpectrumByBiCG(
   */
   fprintf(stdoutMPI, "    End:   Calculate tridiagonal matrix components.\n\n");
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalEnd, "a");
+
+  if (bicg_failed == TRUE && status[1] >= 2) {
+    fprintf(stderr,
+      "Error: BiCG spectrum did not finish successfully within Lanczos_max=%u "
+      "(last iteration=%d, status=%d [%s], seed=%d, max residual=%25.15e).\n",
+      X->Bind.Def.Lanczos_max, abs(status[0]), status[1],
+      BiCGStatusReason(status[1]), status[2], max_residual);
+    komega_bicg_finalize();
+    free(resz);
+    free(res_proj);
+    free(v12);
+    free(v14);
+    return FALSE;
+  }
+
   /**
   <li>Save @f$\alpha, \beta@f$, projected residual</li>
   */
@@ -414,8 +534,9 @@ int CalcSpectrumByBiCG(
   if (bicg_failed == TRUE) {
     fprintf(stderr,
       "Error: BiCG spectrum did not finish successfully within Lanczos_max=%u "
-      "(last iteration=%d, status=%d, seed=%d, max residual=%25.15e).\n",
-      X->Bind.Def.Lanczos_max, abs(status[0]), status[1], status[2], max_residual);
+      "(last iteration=%d, status=%d [%s], seed=%d, max residual=%25.15e).\n",
+      X->Bind.Def.Lanczos_max, abs(status[0]), status[1],
+      BiCGStatusReason(status[1]), status[2], max_residual);
     komega_bicg_finalize();
     free(resz);
     free(res_proj);
