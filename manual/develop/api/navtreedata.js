@@ -150,8 +150,8 @@ var NAVTREEINDEX =
 "mltplyMPISpin_8c.html#a466c6c14908fe2f584c96ab8af61f4dd",
 "nbody__interall_8c.html#a5ae97b33b4a37a17ecaa396103464a20",
 "readdef_8h.html#aa4e8f146b8dd6fcee32e353974e948c2",
-"structDefineList.html#ad5072954406b0a593fcd63274f2f7fac",
-"sz_8h.html#af01a29b319a21fbaeb2a099bedd86e77"
+"structDefineList.html#ad4a5b703754c42b775d2d4c83af3cf5f",
+"sz_8h.html#aef5b567f03c4aaf32f6aa641206832cb"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

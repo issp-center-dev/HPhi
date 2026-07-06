@@ -23,5 +23,6 @@ var setmemory_8c =
     [ "li_1d_allocate", "setmemory_8c.html#a1d3db8dc3975c9439a7945dcbb2c324e", null ],
     [ "li_2d_allocate", "setmemory_8c.html#ac0357c4725bd7fd94c76acde19f4cc57", null ],
     [ "lui_1d_allocate", "setmemory_8c.html#a541c7f55b58e28698f1f5a378c721650", null ],
+    [ "nonzero_count", "setmemory_8c.html#ae28fc8a736b189bf957ca69944b9e352", null ],
     [ "ui_1d_allocate", "setmemory_8c.html#ae40f1176b0f9f5412f87f6b1c9271368", null ]
 ];

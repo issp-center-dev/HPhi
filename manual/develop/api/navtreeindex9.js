@@ -37,7 +37,8 @@ var NAVTREEINDEX9 =
 "setmemory_8c.html#abb6b0e7ccd4b527661e67019cc54ccb1":[10,0,0,0,5],
 "setmemory_8c.html#ac0357c4725bd7fd94c76acde19f4cc57":[10,0,0,0,21],
 "setmemory_8c.html#ad49b04025ade85664d265bd65ca39dd3":[10,0,0,0,7],
-"setmemory_8c.html#ae40f1176b0f9f5412f87f6b1c9271368":[10,0,0,0,23],
+"setmemory_8c.html#ae28fc8a736b189bf957ca69944b9e352":[10,0,0,0,23],
+"setmemory_8c.html#ae40f1176b0f9f5412f87f6b1c9271368":[10,0,0,0,24],
 "setmemory_8c.html#ae78ded082c496561aca7e33786d45d4f":[10,0,0,0,11],
 "setmemory_8c.html#afb51645be8b40a4ad7c063e13957d19d":[10,0,0,0,4],
 "setmemory_8c.html#afda0f3c6fffda58cf539d3742ff93aaa":[10,0,0,0,12],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "structDefineList.html#ad244caff2c73bc01c95b139cf5f1f6ec":[9,0,3,63],
 "structDefineList.html#ad24f1bfbfee260ac0073fea3a064e38d":[9,0,3,78],
 "structDefineList.html#ad3139436290b45f996399b9d139c2dd4":[9,0,3,12],
-"structDefineList.html#ad421ffc955d617b7f34eaa034b090e67":[9,0,3,95],
-"structDefineList.html#ad4a5b703754c42b775d2d4c83af3cf5f":[9,0,3,60]
+"structDefineList.html#ad421ffc955d617b7f34eaa034b090e67":[9,0,3,95]
 };
