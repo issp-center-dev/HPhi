@@ -337,6 +337,17 @@ add_test(NAME unittest_excitation_sector_shift
 set_tests_properties(unittest_excitation_sector_shift
     PROPERTIES LABELS "unit;offdiag")
 
+# Unit test: zero-size 2d/3d setmemory allocations
+add_executable(unittest_setmemory_zero_size_common
+    ${CMAKE_SOURCE_DIR}/test/unittest_setmemory_zero_size.c
+    ${CMAKE_SOURCE_DIR}/src/common/setmemory.c)
+target_include_directories(unittest_setmemory_zero_size_common
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/common)
+add_test(NAME unittest_setmemory_zero_size_common
+    COMMAND unittest_setmemory_zero_size_common)
+set_tests_properties(unittest_setmemory_zero_size_common
+    PROPERTIES LABELS "unit;setmemory")
+
 # MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
 add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
 set_tests_properties(spectrum_hubbard_offdiag_single_mpi
