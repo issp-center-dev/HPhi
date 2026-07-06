@@ -30,14 +30,24 @@ File name
 
 *  TPQ method: ##_NBodyG_set??step%%.dat
 
+*  TPQ/cTPQ method with ``OutputGreenFormat=1``: ##_NBodyG_tpq.dat
+
 *  Full diagonalization method, LOBCG method: ##_NBodyG_eigen&&.dat
 
+*  Full diagonalization method, LOBCG method with ``OutputGreenFormat=1``:
+   ##_NBodyG_eigen.dat
+
 *  Real time evolution method: ##_NBodyG_step%%.dat
+
+*  Real time evolution method with ``OutputGreenFormat=1``:
+   ##_NBodyG_te.dat
 
 ##, ??, %%, and && indicate [string02] in a ModPara file, the number of
 runs in calculation in the TPQ method, the number of steps in the TPQ or
 real-time evolution method, and the index of the eigenvalues,
-respectively.
+respectively. In aggregate files, each data row has leading index
+columns: ``set step`` for TPQ/cTPQ, ``step`` for real-time evolution, and
+``eigen`` for Full diagonalization/LOBCG.
 
 .. _file_format_nbodygdat:
 
@@ -46,6 +56,10 @@ File format
 
 *  [int01] ([int02] [int03] [int04] [int05]) ... [double01] [double02].
    The group in parentheses is repeated [int01] times.
+
+For aggregate files generated with ``OutputGreenFormat=1``, the same
+columns are preceded by ``set step``, ``step``, or ``eigen`` according to
+the calculation method.
 
 .. _parameters_nbodygdat:
 

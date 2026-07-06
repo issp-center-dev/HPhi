@@ -30,7 +30,6 @@ int GreenOutputUsesAggregate(const struct BindStruct *X)
 int GreenOutputKindUsesAggregate(const struct BindStruct *X, GreenOutputKind kind)
 {
   if (!GreenOutputUsesAggregate(X)) return FALSE;
-  if (kind == GreenOutputAnomalous && X->Def.iCalcType == CG) return FALSE;
   return TRUE;
 }
 

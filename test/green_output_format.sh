@@ -97,6 +97,20 @@ check_single_index_rows() {
   ' "${file}" || fail "${label} aggregate rows must have one leading index column: ${file}"
 }
 
+check_single_index_anomalous_rows() {
+  file="$1"
+  label="$2"
+  awk '
+    NF != 8 { exit 1 }
+    $1 !~ /^[0-9]+$/ { exit 1 }
+    { seen[$1] = 1 }
+    END {
+      for (key in seen) count++
+      if (count < 2) exit 1
+    }
+  ' "${file}" || fail "${label} aggregate rows must have one leading index column: ${file}"
+}
+
 rm -rf "${testname}"
 mkdir -p "${testname}"
 cd "${testname}"
@@ -218,6 +232,49 @@ EOF
   assert_no_match "output/zvo_cisajs_eigen[0-9]*.dat"
   assert_no_match "output/zvo_cisajscktalt_eigen[0-9]*.dat"
   check_single_index_rows output/zvo_cisajs_eigen.dat "FullDiag"
+)
+
+mkdir lobcg_anomalous
+(
+  cd lobcg_anomalous
+  cat > stan.in <<EOF
+model = "HubbardGC"
+method = "CG"
+lattice = "chain"
+L = 1
+t = 0.0
+U = 0.0
+Lanczos_max = 20
+initial_iv = 1
+exct = 2
+outputmode = "None"
+EOF
+  run_hphi sdry.log "${hphi}" -sdry stan.in
+  append_aggregate_mode calcmod.def
+  printf '    AnomalousTerm  anomalousterm.def\n' >> namelist.def
+  printf '    AnomalousG     anomalousg.def\n' >> namelist.def
+  cat > anomalousterm.def <<EOF
+========================
+NAnomalousTerm 2
+========================
+========AnomalousTerm===
+========================
+0 0 0 0 1 0.3000000000000000 0.0000000000000000
+1 0 1 0 0 0.3000000000000000 0.0000000000000000
+EOF
+  cat > anomalousg.def <<EOF
+========================
+NAnomalousG 2
+========================
+========AnomalousG=======
+========================
+0 0 0 0 1
+1 0 1 0 0
+EOF
+  run_hphi run.log "${hphi}" -e namelist.def
+  assert_file output/zvo_AnomalousG_eigen.dat
+  assert_no_match "output/zvo_AnomalousG.dat"
+  check_single_index_anomalous_rows output/zvo_AnomalousG_eigen.dat "LOBCG AnomalousG"
 )
 
 mkdir invalid
