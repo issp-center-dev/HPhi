@@ -108,4 +108,20 @@ if ../../src/HPhi -sdry stan.in > boundary_phase.log 2>&1; then
 fi
 grep -q "MomentumIndex does not support boundary phase" boundary_phase.log
 
+cat > stan.in <<EOF
+L = 6
+model = Spin
+method = Lanczos
+lattice = chain
+outputmode = none
+J = 1.0
+2Sz = 0
+MomentumIndex = 1
+EOF
+if ../../src/HPhi -sdry stan.in > jz_reject.log 2>&1; then
+    cat jz_reject.log
+    exit 1
+fi
+grep -q "MomentumIndex currently supports only exchange-only" jz_reject.log
+
 exit 0
