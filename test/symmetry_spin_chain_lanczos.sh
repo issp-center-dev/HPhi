@@ -64,6 +64,20 @@ NExchange 6
 5 0 1.0
 EOF
 
+cat > ising.def <<EOF
+================
+NIsing 6
+================
+========i_j_J ======
+================
+0 1 1.0
+1 2 1.0
+2 3 1.0
+3 4 1.0
+4 5 1.0
+5 0 1.0
+EOF
+
 write_kpi_transsym_l6() {
 {
 cat <<EOF
@@ -151,6 +165,37 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
+
+cat > namelist_heisenberg_ref.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+Ising ising.def
+EOF
+
+rm -rf output
+../../src/HPhi -e namelist_heisenberg_ref.def > reference_heisenberg.log 2>&1
+ref_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+rm -rf output
+
+write_kpi_transsym_l6
+cat > namelist_heisenberg.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+Ising ising.def
+TransSym qptransidx.def
+EOF
+
+../../src/HPhi -e namelist_heisenberg.def > symmetry_heisenberg.log 2>&1
+sym_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+test -n "${ref_heisenberg_energy}"
+test -n "${sym_heisenberg_energy}"
+heisenberg_diff=`awk -v a="${sym_heisenberg_energy}" -v b="${ref_heisenberg_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+test "${heisenberg_diff}" = "0.000000"
+grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
 
 rm -rf output
 write_kpi_over_3_transsym_l6

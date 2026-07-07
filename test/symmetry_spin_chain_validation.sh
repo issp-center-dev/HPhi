@@ -249,7 +249,7 @@ if ../../src/HPhi -e namelist.def > interall.log 2>&1; then
     cat interall.log
     exit 1
 fi
-grep -q "Exchange terms only" interall.log
+grep -q "Exchange and Ising terms only" interall.log
 
 write_common_defs
 write_valid_transsym
@@ -272,11 +272,84 @@ Exchange exchange.def
 Ising ising.def
 TransSym qptransidx.def
 EOF
-if ../../src/HPhi -e namelist.def > ising.log 2>&1; then
-    cat ising.log
+rm -rf output
+run_hphi ising.log ../../src/HPhi -e namelist.def
+grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" ising.log
+
+write_common_defs
+write_valid_transsym
+cat > ising.def <<EOF
+================
+NIsing 4
+================
+========i_j_J ======
+================
+0 1 1.0
+1 2 1.0
+2 3 0.75
+3 0 1.0
+EOF
+cat > namelist.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+Ising ising.def
+TransSym qptransidx.def
+EOF
+if ../../src/HPhi -e namelist.def > noninvariant_ising.log 2>&1; then
+    cat noninvariant_ising.log
     exit 1
 fi
-grep -q "Exchange terms only" ising.log
+grep -q "TransSym Ising" noninvariant_ising.log
+
+write_common_defs
+write_valid_transsym
+cat > coulombinter.def <<EOF
+================
+NCoulombInter 1
+================
+========i_j_V ======
+================
+0 1 -0.25
+EOF
+cat > namelist.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+CoulombInter coulombinter.def
+TransSym qptransidx.def
+EOF
+if ../../src/HPhi -e namelist.def > direct_coulombinter.log 2>&1; then
+    cat direct_coulombinter.log
+    exit 1
+fi
+grep -q "direct CoulombInter/Hund terms are not supported" direct_coulombinter.log
+
+write_common_defs
+write_valid_transsym
+cat > hund.def <<EOF
+================
+NHund 1
+================
+========i_j_H ======
+================
+0 1 -0.5
+EOF
+cat > namelist.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+Hund hund.def
+TransSym qptransidx.def
+EOF
+if ../../src/HPhi -e namelist.def > direct_hund.log 2>&1; then
+    cat direct_hund.log
+    exit 1
+fi
+grep -q "direct CoulombInter/Hund terms are not supported" direct_hund.log
 
 write_common_defs
 cat > qptransidx.def <<EOF
