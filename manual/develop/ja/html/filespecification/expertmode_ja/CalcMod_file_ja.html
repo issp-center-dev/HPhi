@@ -201,6 +201,18 @@ CoulombIntra, Hund, Exchange, PairHopはスピン自由度がないため使用�
 <div class="line"><strong>説明 :</strong> TPQ/TE計算の物理量出力ファイル (<code class="docutils literal notranslate"><span class="pre">SS</span></code>、<code class="docutils literal notranslate"><span class="pre">Norm</span></code>、<code class="docutils literal notranslate"><span class="pre">Flct</span></code>) のファイル名にModParaファイルの <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> で指定したヘッダ文字列をプレフィックスとして付与するかどうかを指定します。</div>
 <div class="line">0: プレフィックスを付与しない (例: <code class="docutils literal notranslate"><span class="pre">SS_rand0.dat</span></code>)。</div>
 <div class="line">1: <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> のプレフィックスを付与する (例: <code class="docutils literal notranslate"><span class="pre">zvo_SS_rand0.dat</span></code>)。</div>
+<div class="line">TPQ/cTPQで <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> を指定した場合、集約された物理量出力ファイル名は <code class="docutils literal notranslate"><span class="pre">SS_tpq.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Norm_tpq.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Flct_tpq.dat</span></code> になります。<code class="docutils literal notranslate"><span class="pre">OutputDataHead=1</span></code> の場合は同様にこれらの名前へプレフィックスが付与されます。</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> Green関数出力ファイル、およびTPQ/cTPQの物理量出力ファイルの形式を指定します。</div>
+<div class="line">0: 従来の分割ファイル形式。</div>
+<div class="line">1: TPQ/cTPQ、実時間発展、全対角化、LOBCGで、index列付きの集約ファイル形式。</div>
+<div class="line">集約形式では、TPQ/cTPQのGreen関数出力と物理量出力の各行の先頭に <code class="docutils literal notranslate"><span class="pre">set</span></code> と <code class="docutils literal notranslate"><span class="pre">step</span></code>、実時間発展の各行の先頭に <code class="docutils literal notranslate"><span class="pre">step</span></code>、全対角化/LOBCGの各行の先頭に <code class="docutils literal notranslate"><span class="pre">eigen</span></code> が追加されます。</div>
+<div class="line">TPQ/cTPQの物理量は <code class="docutils literal notranslate"><span class="pre">SS_rand*.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Norm_rand*.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Flct_rand*.dat</span></code> ではなく、<code class="docutils literal notranslate"><span class="pre">SS_tpq.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Norm_tpq.dat</span></code>、<code class="docutils literal notranslate"><span class="pre">Flct_tpq.dat</span></code> に出力されます。</div>
+<div class="line">LOBCGの <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は既存出力が eigen 番号別ではないため、従来形式のまま出力されます。</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>

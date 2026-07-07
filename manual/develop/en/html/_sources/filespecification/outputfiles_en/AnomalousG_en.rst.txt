@@ -24,18 +24,34 @@ File name
 
 *  TPQ method, cTPQ method: ##_AnomalousG_set??step%%.dat
 
+*  TPQ/cTPQ method with ``OutputGreenFormat=1``:
+   ##_AnomalousG_tpq.dat
+
 *  Full diagonalization method: ##_AnomalousG_eigen&&.dat
 
+*  Full diagonalization method, LOBCG method with ``OutputGreenFormat=1``:
+   ##_AnomalousG_eigen.dat
+
 *  Real time evolution method: ##_AnomalousG_step%%.dat
+
+*  Real time evolution method with ``OutputGreenFormat=1``:
+   ##_AnomalousG_te.dat
 
 ##, ??, %%, and && indicate [string02] in a ModPara file, the number of
 runs in calculation in the TPQ method, the number of steps in the TPQ or
 time evolution method, and the index of the eigenvalues, respectively.
+In aggregate files, each data row has leading index columns: ``set step``
+for TPQ/cTPQ, ``step`` for real-time evolution, and ``eigen`` for Full
+diagonalization/LOBCG.
 
 File format
 ~~~~~~~~~~~
 
 *  [int01] [int02] [int03] [int04] [int05] [double01] [double02].
+
+For aggregate files generated with ``OutputGreenFormat=1``, the same
+columns are preceded by ``set step``, ``step``, or ``eigen`` according to
+the calculation method.
 
 Parameters
 ~~~~~~~~~~

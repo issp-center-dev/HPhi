@@ -29,6 +29,12 @@ File name
 
 ?? indicates the number of runs in the calculation of the TPQ method.
 
+When ``OutputGreenFormat=1`` is specified for TPQ/cTPQ, this quantity is
+written to ``SS_tpq.dat`` instead. The aggregate file contains all runs,
+and each data row starts with ``set`` and ``step``:
+``set step inv_tmp energy phys_var phys_doublon phys_num``.
+The split ``SS_rand??.dat`` files are not created in this mode.
+
 .. _file_format_31:
 
 File format

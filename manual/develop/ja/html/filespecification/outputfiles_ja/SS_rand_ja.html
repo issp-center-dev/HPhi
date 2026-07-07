@@ -56,6 +56,10 @@
 <li><p>SS_rand??.dat</p></li>
 </ul>
 <p>??はTPQ法計算時のrunの番号を表します。</p>
+<p>TPQ/cTPQで <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> を指定した場合、この物理量は
+<code class="docutils literal notranslate"><span class="pre">SS_tpq.dat</span></code> に出力されます。この集約ファイルには全runが含まれ、
+各データ行は <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span> <span class="pre">inv_tmp</span> <span class="pre">energy</span> <span class="pre">phys_var</span> <span class="pre">phys_doublon</span> <span class="pre">phys_num</span></code>
+の順になります。このモードでは <code class="docutils literal notranslate"><span class="pre">SS_rand??.dat</span></code> は作成されません。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>

@@ -55,6 +55,7 @@ var ErrorMessage_8c =
     [ "cErrnvec", "ErrorMessage_8c.html#a87f37da29984cb3b1b645b5c482f412f", null ],
     [ "cErrnvecShow", "ErrorMessage_8c.html#a5993595d810270fa5628df259631e842", null ],
     [ "cErrOutput", "ErrorMessage_8c.html#aac81c10706437b43e268b0ee6158d982", null ],
+    [ "cErrOutputGreenFormat", "ErrorMessage_8c.html#a9710ebc651a3382d8b1b019da42cfb5e", null ],
     [ "cErrOutputHam", "ErrorMessage_8c.html#ad8a5ae88b64ee0075988c5580e88f83d", null ],
     [ "cErrOutputHamForFullDiag", "ErrorMessage_8c.html#a2fbbdfa47f05098b69458e3e634468b8", null ],
     [ "cErrOutputMode", "ErrorMessage_8c.html#aa94f43835abdab2a83b28c62c801ca98", null ],

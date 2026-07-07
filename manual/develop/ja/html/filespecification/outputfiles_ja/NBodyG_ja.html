@@ -52,9 +52,12 @@ c_{i_p\sigma'_p}^{\dagger} c_{j_p\sigma_p} \right\rangle\]</div>
 <h2>ファイル名<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>Lanczos法: ##_NBodyG.dat</p>
 <p>TPQ法: ##_NBodyG_set??step%%.dat</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> のTPQ/cTPQ法: ##_NBodyG_tpq.dat</p>
 <p>全対角化法、LOBCG法: ##_NBodyG_eigen&amp;&amp;.dat</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の全対角化法、LOBCG法: ##_NBodyG_eigen.dat</p>
 <p>実時間発展法: ##_NBodyG_step%%.dat</p>
-<p>##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法または実時間発展法でのステップ数、&amp;&amp;は固有値の番号を表します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の実時間発展法: ##_NBodyG_te.dat</p>
+<p>##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法または実時間発展法でのステップ数、&amp;&amp;は固有値の番号を表します。集約形式では、各行の先頭にTPQ/cTPQでは <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>、実時間発展では <code class="docutils literal notranslate"><span class="pre">step</span></code>、全対角化/LOBCGでは <code class="docutils literal notranslate"><span class="pre">eigen</span></code> が追加されます。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
@@ -63,6 +66,7 @@ c_{i_p\sigma'_p}^{\dagger} c_{j_p\sigma_p} \right\rangle\]</div>
 <p>括弧で示した4整数の組を <span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span> 回繰り返します。</p>
 </li>
 </ul>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の集約ファイルでは、上記の列の前に計算手法に応じた <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>、<code class="docutils literal notranslate"><span class="pre">step</span></code>、または <code class="docutils literal notranslate"><span class="pre">eigen</span></code> のindex列が追加されます。</p>
 </section>
 <section id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>

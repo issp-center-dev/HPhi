@@ -57,6 +57,11 @@ follows.</div>
 <li><p>SS_rand??.dat</p></li>
 </ul>
 <p>?? indicates the number of runs in the calculation of the TPQ method.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> is specified for TPQ/cTPQ, this quantity is
+written to <code class="docutils literal notranslate"><span class="pre">SS_tpq.dat</span></code> instead. The aggregate file contains all runs,
+and each data row starts with <code class="docutils literal notranslate"><span class="pre">set</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code>:
+<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span> <span class="pre">inv_tmp</span> <span class="pre">energy</span> <span class="pre">phys_var</span> <span class="pre">phys_doublon</span> <span class="pre">phys_num</span></code>.
+The split <code class="docutils literal notranslate"><span class="pre">SS_rand??.dat</span></code> files are not created in this mode.</p>
 </section>
 <section id="file-format">
 <span id="file-format-31"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>

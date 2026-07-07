@@ -28,11 +28,17 @@ Lanczos法: ##\_NBodyG.dat
 
 TPQ法: ##\_NBodyG\_set??step%%.dat
 
+``OutputGreenFormat=1`` のTPQ/cTPQ法: ##\_NBodyG\_tpq.dat
+
 全対角化法、LOBCG法: ##\_NBodyG\_eigen&&.dat
+
+``OutputGreenFormat=1`` の全対角化法、LOBCG法: ##\_NBodyG\_eigen.dat
 
 実時間発展法: ##\_NBodyG\_step%%.dat
 
-##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法または実時間発展法でのステップ数、&&は固有値の番号を表します。
+``OutputGreenFormat=1`` の実時間発展法: ##\_NBodyG\_te.dat
+
+##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法または実時間発展法でのステップ数、&&は固有値の番号を表します。集約形式では、各行の先頭にTPQ/cTPQでは ``set step``、実時間発展では ``step``、全対角化/LOBCGでは ``eigen`` が追加されます。
 
 ファイル形式
 ^^^^^^^^^^^^
@@ -40,6 +46,8 @@ TPQ法: ##\_NBodyG\_set??step%%.dat
 -  :math:`[`\ int01\ :math:`]` (:math:`[`\ int02\ :math:`]` :math:`[`\ int03\ :math:`]` :math:`[`\ int04\ :math:`]` :math:`[`\ int05\ :math:`]`) ... :math:`[`\ double01\ :math:`]` :math:`[`\ double02\ :math:`]`
 
    括弧で示した4整数の組を :math:`[`\ int01\ :math:`]` 回繰り返します。
+
+``OutputGreenFormat=1`` の集約ファイルでは、上記の列の前に計算手法に応じた ``set step``、``step``、または ``eigen`` のindex列が追加されます。
 
 パラメータ
 ^^^^^^^^^^

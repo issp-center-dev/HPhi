@@ -25,6 +25,11 @@ Norm\_rand.dat
 
 ??はTPQ法計算時のrunの番号を表します。
 
+TPQ/cTPQで ``OutputGreenFormat=1`` を指定した場合、この物理量は
+``Norm_tpq.dat`` に出力されます。この集約ファイルには全runが含まれ、
+各データ行は ``set step inv_temp global_norm global_1st_norm`` の順に
+なります。このモードでは ``Norm_rand??.dat`` は作成されません。
+
 ファイル形式
 ^^^^^^^^^^^^
 

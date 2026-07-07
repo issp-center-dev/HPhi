@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['priu64_0',['PRIu64',['../dSFMT_8h.html#ac582131d7a7c8ee57e73180d1714f9d5',1,'dSFMT.h']]],
-  ['prix64_1',['PRIx64',['../dSFMT_8h.html#aba38357387a474f439428dee1984fc5a',1,'dSFMT.h']]]
+  ['outputgreenformat_5faggregate_0',['OUTPUTGREENFORMAT_AGGREGATE',['../DefCommon_8h.html#aefb47ab2958266a6ad8cf58d769bb631',1,'DefCommon.h']]],
+  ['outputgreenformat_5fsplit_1',['OUTPUTGREENFORMAT_SPLIT',['../DefCommon_8h.html#a66b43f296ed092937d321450d6ec868a',1,'DefCommon.h']]]
 ];

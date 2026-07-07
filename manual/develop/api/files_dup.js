@@ -30,6 +30,7 @@ var files_dup =
     [ "FileIO.c", "FileIO_8c.html", "FileIO_8c" ],
     [ "FirstMultiply.c", "FirstMultiply_8c.html", "FirstMultiply_8c" ],
     [ "global.c", "global_8c.html", "global_8c" ],
+    [ "green_output.c", "green__output_8c.html", "green__output_8c" ],
     [ "HPhiMain.c", "HPhiMain_8c.html", "HPhiMain_8c" ],
     [ "HPhiTrans.c", "HPhiTrans_8c.html", "HPhiTrans_8c" ],
     [ "input.c", "input_8c.html", "input_8c" ],

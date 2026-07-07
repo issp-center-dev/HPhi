@@ -51,6 +51,7 @@ var structDefineList =
     [ "iOutputDataHead", "structDefineList.html#afef310367a7f3e42dc885d267ff4eb2c", null ],
     [ "iOutputEigenVec", "structDefineList.html#a443df63a4da4626785f42a159d1e93be", null ],
     [ "iOutputExVec", "structDefineList.html#ab989389b2fffe37a0ab80726912c34ec", null ],
+    [ "iOutputGreenFormat", "structDefineList.html#a36904ad709645675dd1d21dac97acc1d", null ],
     [ "iOutputHam", "structDefineList.html#aa6191742550a4166495131646fd44547", null ],
     [ "iOutputMode", "structDefineList.html#a52ec31f6fd2f4a1ba202bba98eddaed7", null ],
     [ "irand", "structDefineList.html#af1a607bc77f32d6efe6a799ee78a9456", null ],

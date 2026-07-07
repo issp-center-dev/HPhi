@@ -51,18 +51,30 @@ file format is as follows.</p>
 <ul class="simple">
 <li><p>Lanczos method, LOBCG method: ##_AnomalousG.dat</p></li>
 <li><p>TPQ method, cTPQ method: ##_AnomalousG_set??step%%.dat</p></li>
+<li><p>TPQ/cTPQ method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_tpq.dat</p></li>
 <li><p>Full diagonalization method: ##_AnomalousG_eigen&amp;&amp;.dat</p></li>
+<li><p>Full diagonalization method, LOBCG method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_eigen.dat</p></li>
 <li><p>Real time evolution method: ##_AnomalousG_step%%.dat</p></li>
+<li><p>Real time evolution method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_te.dat</p></li>
 </ul>
 <p>##, ??, %%, and &amp;&amp; indicate [string02] in a ModPara file, the number of
 runs in calculation in the TPQ method, the number of steps in the TPQ or
-time evolution method, and the index of the eigenvalues, respectively.</p>
+time evolution method, and the index of the eigenvalues, respectively.
+In aggregate files, each data row has leading index columns: <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>
+for TPQ/cTPQ, <code class="docutils literal notranslate"><span class="pre">step</span></code> for real-time evolution, and <code class="docutils literal notranslate"><span class="pre">eigen</span></code> for Full
+diagonalization/LOBCG.</p>
 </section>
 <section id="file-format">
 <h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>[int01] [int02] [int03] [int04] [int05] [double01] [double02].</p></li>
 </ul>
+<p>For aggregate files generated with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>, the same
+columns are preceded by <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code>, or <code class="docutils literal notranslate"><span class="pre">eigen</span></code> according to
+the calculation method.</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
