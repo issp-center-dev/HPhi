@@ -6,6 +6,8 @@
 #include "struct.h"
 
 FILE *stdoutMPI = NULL;
+int nproc = 1;
+int myrank = 0;
 long unsigned int *list_1 = NULL;
 long unsigned int *list_2_1 = NULL;
 long unsigned int *list_2_2 = NULL;

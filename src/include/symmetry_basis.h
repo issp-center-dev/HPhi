@@ -34,6 +34,11 @@ struct SymmetryBasisRuntime {
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;
+  unsigned long int local_offset;
+  unsigned long int local_dim;
+  int *mpi_recvcounts;
+  int *mpi_displs;
+  double complex *mpi_full_v1;
 };
 
 int ValidateSymmetryGroupInput(const struct DefineList *def);
@@ -44,7 +49,10 @@ int BuildSymmetryBasis(struct BindStruct *X);
 int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
                                   unsigned long int state,
                                   struct SymmetryCanonicalResult *result);
-void ActivateSymmetryBasisDimension(struct BindStruct *X);
+int ActivateSymmetryBasisDimension(struct BindStruct *X);
+int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
+                               unsigned long int global_index,
+                               unsigned long int *local_index);
 int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
 

@@ -770,7 +770,9 @@ int main(int argc, char* argv[]){
       if (BuildSymmetryBasis(&(X.Bind)) != 0) {
         exitMPI(-1);
       }
-      ActivateSymmetryBasisDimension(&(X.Bind));
+      if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
+        exitMPI(-1);
+      }
       if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
         exitMPI(-1);
       }
