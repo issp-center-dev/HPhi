@@ -36,6 +36,7 @@ void vec12(
   struct BindStruct *X
 ) {
   unsigned int j,k,nvec;
+  const unsigned int offdiag_dim = (ndim > 1) ? ndim - 1 : 0;
 
   double **tmpA, **tmpvec;
   double *tmpr;
@@ -52,8 +53,8 @@ void vec12(
   for(k=1;k<=nvec;k++)
     for(j=1;j<=ndim;j++) vec[k][j]=0.0;
 
-#pragma omp parallel for default(none) firstprivate(ndim, alpha, beta) private(j) shared(tmpA)
-  for(j=0;j+1<ndim;j++){
+#pragma omp parallel for default(none) firstprivate(offdiag_dim, alpha, beta) private(j) shared(tmpA)
+  for(j=0;j<offdiag_dim;j++){
     tmpA[j][j]=alpha[j+1];
     tmpA[j][j+1]=beta[j+1];
     tmpA[j+1][j]=beta[j+1];
