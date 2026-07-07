@@ -22,6 +22,11 @@ struct SymmetryCanonicalResult {
   double complex phase;
 };
 
+struct SymmetryTransformResult {
+  unsigned long int state;
+  double complex amplitude;
+};
+
 struct SymmetryBasisRuntime {
   int enabled;
   unsigned int nsite;
@@ -45,7 +50,14 @@ int ValidateSymmetryGroupInput(const struct DefineList *def);
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite);
+int SymmetryApplyToState(const struct DefineList *def,
+                         unsigned long int state,
+                         unsigned int op,
+                         struct SymmetryTransformResult *result);
 int BuildSymmetryBasis(struct BindStruct *X);
+int SymmetryCanonicalizeState(const struct BindStruct *X,
+                              unsigned long int state,
+                              struct SymmetryCanonicalResult *result);
 int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
                                   unsigned long int state,
                                   struct SymmetryCanonicalResult *result);

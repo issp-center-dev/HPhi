@@ -2,6 +2,8 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
+#include "DefCommon.h"
+#include "bitcalc.h"
 #include "global.h"
 #include "symmetry_basis.h"
 #include "struct.h"
@@ -19,6 +21,41 @@ static int apply_exchange_halfspin(unsigned long int state,
   return TRUE;
 }
 
+static unsigned long int mask_between_sites(unsigned int site0, unsigned int site1)
+{
+  unsigned int lo = site0 < site1 ? site0 : site1;
+  unsigned int hi = site0 < site1 ? site1 : site0;
+  if (hi <= lo + 1U) return 0UL;
+  return (1UL << hi) - (1UL << (lo + 1U));
+}
+
+static int apply_spinless_hopping_hermite(unsigned long int state,
+                                          unsigned int site1,
+                                          unsigned int site2,
+                                          double complex trans,
+                                          unsigned long int *out_state,
+                                          double complex *hval)
+{
+  unsigned long int mask1 = 1UL << site1;
+  unsigned long int mask2 = 1UL << site2;
+  unsigned long int occupied1 = state & mask1;
+  unsigned long int occupied2 = state & mask2;
+  int sgn = 1;
+  if (site1 == site2) return FALSE;
+  if ((occupied1 == 0UL && occupied2 == 0UL) ||
+      (occupied1 != 0UL && occupied2 != 0UL)) {
+    return FALSE;
+  }
+  SgnBit(state & mask_between_sites(site1, site2), &sgn);
+  *out_state = state ^ mask1 ^ mask2;
+  if (occupied1 != 0UL && occupied2 == 0UL) {
+    *hval = (double)sgn * conj(trans);
+  } else {
+    *hval = (double)sgn * trans;
+  }
+  return TRUE;
+}
+
 static int add_canonicalized_transition(struct BindStruct *X,
                                         double complex *tmp_v0,
                                         const double complex *full_v1,
@@ -33,7 +70,7 @@ static int add_canonicalized_transition(struct BindStruct *X,
   double norm_factor;
   double complex contribution;
   struct SymmetryCanonicalResult result;
-  if (SymmetryCanonicalizeSpinState(X, to_state, &result) != 0) return -1;
+  if (SymmetryCanonicalizeState(X, to_state, &result) != 0) return -1;
   if (result.found != TRUE) return 0;
   alpha = result.basis_index;
   if (SymmetryBasisGlobalToLocal(X->Sym, alpha, &local_alpha) != TRUE) return 0;
@@ -90,15 +127,33 @@ int mltplySpinSym(struct BindStruct *X,
       }
     }
 
-    for (p = 0; p < X->Def.NExchangeCoupling; p++) {
-      unsigned long int out_state;
-      if (apply_exchange_halfspin(X->Sym->basis[beta].rep_state,
-                                  X->Def.ExchangeCoupling[p][0],
-                                  X->Def.ExchangeCoupling[p][1],
-                                  &out_state) == TRUE) {
-        if (add_canonicalized_transition(X, tmp_v0, full_v1, &prdct, beta, out_state,
-                                         X->Def.ParaExchangeCoupling[p], vin) != 0) {
-          return -1;
+    if (X->Def.iCalcModel == Spin) {
+      for (p = 0; p < X->Def.NExchangeCoupling; p++) {
+        unsigned long int out_state;
+        if (apply_exchange_halfspin(X->Sym->basis[beta].rep_state,
+                                    X->Def.ExchangeCoupling[p][0],
+                                    X->Def.ExchangeCoupling[p][1],
+                                    &out_state) == TRUE) {
+          if (add_canonicalized_transition(X, tmp_v0, full_v1, &prdct, beta, out_state,
+                                           X->Def.ParaExchangeCoupling[p], vin) != 0) {
+            return -1;
+          }
+        }
+      }
+    } else if (X->Def.iCalcModel == SpinlessFermion) {
+      for (p = 0; p < X->Def.EDNTransfer; p += 2U) {
+        unsigned long int out_state;
+        double complex hval;
+        double complex trans = -X->Def.EDParaGeneralTransfer[p];
+        unsigned int site1 = (unsigned int)X->Def.EDGeneralTransfer[p][0];
+        unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
+        if (apply_spinless_hopping_hermite(X->Sym->basis[beta].rep_state,
+                                           site1, site2, trans,
+                                           &out_state, &hval) == TRUE) {
+          if (add_canonicalized_transition(X, tmp_v0, full_v1, &prdct, beta, out_state,
+                                           hval, vin) != 0) {
+            return -1;
+          }
         }
       }
     }

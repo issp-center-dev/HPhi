@@ -194,20 +194,29 @@ static int has_fixed_spin_sector(const struct DefineList *def)
   return FALSE;
 }
 
+static int has_fixed_spinless_sector(const struct DefineList *def)
+{
+  return def->iCalcModel == SpinlessFermion && def->Ne <= def->Nsite;
+}
+
 int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
-  if (def->iCalcModel != Spin) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin canonical model.\n");
+  if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin and SpinlessFermion canonical models.\n");
     return -1;
   }
-  if (def->iFlgGeneralSpin != FALSE) {
+  if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
     return -1;
   }
-  if (has_fixed_spin_sector(def) != TRUE) {
+  if (def->iCalcModel == Spin && has_fixed_spin_sector(def) != TRUE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis requires fixed 2Sz.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinlessFermion && has_fixed_spinless_sector(def) != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis requires fixed Ncond/Ne.\n");
     return -1;
   }
   if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE ||
@@ -231,21 +240,35 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 outputs energy/norm/convergence only.\n");
     return -1;
   }
-  if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
-      def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
-    return -1;
-  }
-  if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NInterAll > 0) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only.\n");
-    return -1;
-  }
-  if (def->NCoulombInter != def->NIsingCoupling ||
-      def->NHundCoupling != def->NIsingCoupling) {
-    fprintf(stdoutMPI,
-            "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only; "
-            "direct CoulombInter/Hund terms are not supported.\n");
-    return -1;
+  if (def->iCalcModel == Spin) {
+    if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
+        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
+      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
+      return -1;
+    }
+    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NInterAll > 0) {
+      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only.\n");
+      return -1;
+    }
+    if (def->NCoulombInter != def->NIsingCoupling ||
+        def->NHundCoupling != def->NIsingCoupling) {
+      fprintf(stdoutMPI,
+              "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only; "
+              "direct CoulombInter/Hund terms are not supported.\n");
+      return -1;
+    }
+  } else if (def->iCalcModel == SpinlessFermion) {
+    if (nproc > 1) {
+      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis is serial-only in this version.\n");
+      return -1;
+    }
+    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NCoulombInter > 0 ||
+        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
+        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
+        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
+      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer terms only.\n");
+      return -1;
+    }
   }
   return 0;
 }
@@ -442,11 +465,65 @@ static int validate_ising_diagonal_invariance(const struct DefineList *def)
   return 0;
 }
 
+static double complex sum_spinless_transfer(const struct DefineList *def,
+                                            int src,
+                                            int dst)
+{
+  unsigned int i;
+  double complex sum = 0.0;
+  for (i = 0; i < def->NTransfer; i++) {
+    if (def->GeneralTransfer[i][0] == src &&
+        def->GeneralTransfer[i][1] == 0 &&
+        def->GeneralTransfer[i][2] == dst &&
+        def->GeneralTransfer[i][3] == 0) {
+      sum += def->ParaGeneralTransfer[i];
+    }
+  }
+  return sum;
+}
+
+static int validate_spinless_transfer_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NTransfer; i++) {
+      int src = def->GeneralTransfer[i][0];
+      int src_spin = def->GeneralTransfer[i][1];
+      int dst = def->GeneralTransfer[i][2];
+      int dst_spin = def->GeneralTransfer[i][3];
+      double complex src_sum;
+      double complex mapped_sum;
+      if (src < 0 || dst < 0 ||
+          (unsigned int)src >= def->Nsite ||
+          (unsigned int)dst >= def->Nsite ||
+          src_spin != 0 || dst_spin != 0) {
+        fprintf(stdoutMPI,
+                "Error: TransSym SpinlessFermion Transfer term %u is outside the supported spinless site range.\n",
+                i);
+        return -1;
+      }
+      src_sum = sum_spinless_transfer(def, src, dst);
+      mapped_sum = sum_spinless_transfer(def, def->SymTrans[g][src], def->SymTrans[g][dst]);
+      if (cabs(mapped_sum - src_sum) > 1.0e-10) {
+        fprintf(stdoutMPI,
+                "Error: TransSym SpinlessFermion Transfer invariance failed for term %u under op %u.\n",
+                i, g);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
 int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
-  if (validate_exchange_invariance(def) != 0) return -1;
-  if (validate_ising_diagonal_invariance(def) != 0) return -1;
+  if (def->iCalcModel == Spin) {
+    if (validate_exchange_invariance(def) != 0) return -1;
+    if (validate_ising_diagonal_invariance(def) != 0) return -1;
+  } else if (def->iCalcModel == SpinlessFermion) {
+    if (validate_spinless_transfer_invariance(def) != 0) return -1;
+  }
   return 0;
 }
