@@ -17,6 +17,7 @@
 #include "anomalous_pair.h"
 #include "bitcalc.h"
 #include "FileIO.h"
+#include "green_output.h"
 #include "mltplyCommon.h"
 #include "wrapperMPI.h"
 
@@ -555,6 +556,7 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
   FILE *fp;
   char sdt[D_FileNameMax];
   unsigned int t;
+  int use_aggregate;
 
   if (X->Def.NAnomalousG < 1) return 0;
   if (X->Def.iCalcModel != HubbardGC) {
@@ -562,10 +564,14 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
     return -1;
   }
   if (get_anomalousg_filename(X, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  use_aggregate = GreenOutputKindUsesAggregate(X, GreenOutputAnomalous);
+  if (use_aggregate &&
+      GreenOutputFileName(X, GreenOutputAnomalous, sdt) != 0) return -1;
+  if (childfopenMPI(sdt, use_aggregate ? "a" : "w", &fp) != 0) return -1;
 
   for (t = 0; t < X->Def.NAnomalousG; t++) {
     const double complex value = calc_anomalousg_term_hubbardgc(X, t, vec);
+    if (use_aggregate) GreenOutputWriteIndexPrefix(fp, X);
     write_anomalousg_line(fp, &X->Def, t, value);
   }
 

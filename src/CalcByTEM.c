@@ -55,6 +55,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "green_output.h"
 #include "CalcByTEM.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -176,6 +177,11 @@ int CalcByTEM(
   fprintf(fp, "%s",cLogFlct);
   fclose(fp);
 
+  if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT) {
+    if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
+      return -1;
+    }
+  }
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;

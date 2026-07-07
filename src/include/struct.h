@@ -272,6 +272,9 @@ struct DefineList {
   int iOutputDataHead; /**<brief Switch for using CDataFileHead in output
                           file names for TPQ/TE physical quantity files (SS,
                           Flct, Norm). 0: no header (default), 1: use header*/
+  int iOutputGreenFormat; /**<brief Switch for Green function and TPQ/cTPQ data
+                            output format. 0: split files (default),
+                            1: aggregate indexed files*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/

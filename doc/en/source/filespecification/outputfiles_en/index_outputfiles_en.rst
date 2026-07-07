@@ -77,11 +77,11 @@ Quick Reference
      - Description
    * - :doc:`Time_TPQ_Step.dat <Time_TPQ_Step_en>`
      - TPQ step timing
-   * - :doc:`Norm_rand*.dat <Norm_rand_en>`
+   * - :doc:`Norm_rand*.dat / Norm_tpq.dat <Norm_rand_en>`
      - Norm of TPQ states
-   * - :doc:`SS_rand*.dat <SS_rand_en>`
+   * - :doc:`SS_rand*.dat / SS_tpq.dat <SS_rand_en>`
      - Spin-spin correlation for TPQ
-   * - :doc:`Flct_rand*.dat <Flct_rand_en>`
+   * - :doc:`Flct_rand*.dat / Flct_tpq.dat <Flct_rand_en>`
      - Fluctuations for TPQ
 
 **Time Evolution Output**

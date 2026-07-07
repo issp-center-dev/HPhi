@@ -29,6 +29,12 @@ File name
 
 ?? indicates the number of runs in the calculation of the TPQ method.
 
+When ``OutputGreenFormat=1`` is specified for TPQ/cTPQ, this quantity is
+written to ``Norm_tpq.dat`` instead. The aggregate file contains all
+runs, and each data row starts with ``set`` and ``step``:
+``set step inv_temp global_norm global_1st_norm``. The split
+``Norm_rand??.dat`` files are not created in this mode.
+
 .. _file_format_30:
 
 File format

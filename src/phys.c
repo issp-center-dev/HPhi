@@ -47,6 +47,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "green_output.h"
 #include "wrapperMPI.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
@@ -88,6 +89,10 @@ void phys(struct BindStruct *X, //!<[inout]
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
 #endif
+  if (GreenOutputInitializeAggregateFiles(X) != 0) {
+    fprintf(stderr, "Error: initialize aggregate Green output files.\n");
+    exitMPI(-1);
+  }
   for (i = 0; i < neig; i++) {
 #ifdef _SCALAPACK
     for (j = 0; j < i_max; j++) {

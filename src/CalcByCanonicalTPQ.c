@@ -20,6 +20,7 @@
 #include "expec_cisajscktaltdc.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "green_output.h"
 #include "MakeIniVec.h"
 #include "CalcByCanonicalTPQ.h"
 #include "FileIO.h"
@@ -69,6 +70,9 @@ int CalcByCanonicalTPQ(
     double inv_temp,Ns,delta_tau;
     struct TimeKeepStruct tstruct;
     size_t byte_size;
+    int green_output_initialized = 0;
+    int tpq_data_output_initialized = 0;
+    int tpq_data_output_aggregate = 0;
     /*[s] for inverse temperatures*/
     double *read_invtemp=NULL;
     int    *read_nmax=NULL,*read_physcal=NULL,*read_eigen=NULL; 
@@ -187,8 +191,19 @@ int CalcByCanonicalTPQ(
     }
     X->Bind.Def.St=0;
     fprintf(stdoutMPI, "%s", cLogTPQ_Start);
+    tpq_data_output_aggregate = GreenOutputUsesTPQDataAggregate(&(X->Bind));
     for (rand_i = 0; rand_i<rand_max; rand_i++){
-        if(X->Bind.Def.iOutputDataHead==1){
+        if(tpq_data_output_aggregate){
+            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataSS, sdt_phys) != 0) {
+                return -1;
+            }
+            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataNorm, sdt_norm) != 0) {
+                return -1;
+            }
+            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataFlct, sdt_flct) != 0) {
+                return -1;
+            }
+        }else if(X->Bind.Def.iOutputDataHead==1){
             int prefix_length;
             prefix_length = sprintf(sdt_phys, "%s_", X->Bind.Def.CDataFileHead);
             sprintf(sdt_phys + prefix_length, cFileNameSSRand, rand_i);
@@ -248,23 +263,38 @@ int CalcByCanonicalTPQ(
         }
         if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
             StartTimer(3600);
-            if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
-                return -1;
+            if (green_output_initialized == 0) {
+                if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
+                    return -1;
+                }
+                green_output_initialized = 1;
             }
-            fprintf(fp, "%s", cLogSSRand);
-            fclose(fp);
-            // for norm
-            if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
-                return -1;
+            if (tpq_data_output_aggregate) {
+                if (tpq_data_output_initialized == 0) {
+                    if (GreenOutputInitializeTPQDataAggregateFiles(&(X->Bind)) != 0) {
+                        return -1;
+                    }
+                    tpq_data_output_initialized = 1;
+                }
+            } else {
+                if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
+                    return -1;
+                }
+                fprintf(fp, "%s", cLogSSRand);
+                fclose(fp);
+                // for norm
+                if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
+                    return -1;
+                }
+                fprintf(fp, "%s", cLogNormRand);
+                fclose(fp);
+                // for fluctuations
+                if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
+                    return -1;
+                }
+                fprintf(fp, "%s", cLogFlctRand);
+                fclose(fp);
             }
-            fprintf(fp, "%s", cLogNormRand);
-            fclose(fp);
-            // for fluctuations
-            if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
-                return -1;
-            }
-            fprintf(fp, "%s", cLogFlctRand);
-            fclose(fp);
             StopTimer(3600);
             step_i = 0;
             StartTimer(3100);
@@ -286,7 +316,7 @@ int CalcByCanonicalTPQ(
             if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
                 return -1;
             }
-            fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_1st_norm, global_1st_norm, step_i);
+            GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_1st_norm, global_1st_norm);
             fclose(fp);
             /**@brief
              Compute expectation value at infinite temperature
@@ -314,15 +344,14 @@ int CalcByCanonicalTPQ(
             if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
                 return -1;
             }
-            fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
-            X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+            GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
             fclose(fp);
             StartTimer(3600);
             // for fluctuations
             if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
                 return -1;
             }
-            fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+            GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
             fclose(fp);
             StopTimer(3600);
             step_i += 1;
@@ -378,20 +407,20 @@ int CalcByCanonicalTPQ(
             if(childfopenMPI(sdt_phys, "a", &fp)!=0){
                 return FALSE;
             }
-            fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
+            GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
             fclose(fp);
 
             if(childfopenMPI(sdt_norm, "a", &fp)!=0){
                 return FALSE;
             }
-            fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+            GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_norm, global_1st_norm);
             fclose(fp);
 
             // for fluctuations
             if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
                 return -1;
             }
-            fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+            GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
             fclose(fp);
             StopTimer(3600);
 

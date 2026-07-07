@@ -17,6 +17,7 @@
 #include "bitcalc.h"
 #include "nbody_correlation.h"
 #include "FileIO.h"
+#include "green_output.h"
 #include "wrapperMPI.h"
 
 static int parse_unsigned_token(const char **pp, unsigned int *value)
@@ -1463,7 +1464,9 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody) &&
+      GreenOutputFileName(X, GreenOutputNBody, sdt) != 0) return -1;
+  if (childfopenMPI(sdt, GreenOutputOpenMode(X), &fp) != 0) return -1;
 
   for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
@@ -1478,6 +1481,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
       }
       else value = calc_nbodyg_term(X, t, vec);
     }
+    GreenOutputWriteIndexPrefix(fp, X);
     write_nbodyg_line(fp, &X->Def, t, value);
   }
 

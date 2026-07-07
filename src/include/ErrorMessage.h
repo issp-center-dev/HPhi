@@ -43,6 +43,7 @@ extern char *cErrNLoc;
 extern char *cErrDefFileParam;
 extern char *cErrCalcType;
 extern char *cErrOutputMode;
+extern char *cErrOutputGreenFormat;
 extern char *cErrCalcModel;
 extern char *cErrCalcEigenVec;
 extern char *cErrSetIniVec;

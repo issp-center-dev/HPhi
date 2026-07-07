@@ -265,6 +265,7 @@ int ReadcalcmodFile(
   X->iInputHam=0;
   X->iOutputExVec = 0;
   X->iOutputDataHead=0;
+  X->iOutputGreenFormat=OUTPUTGREENFORMAT_SPLIT;
   X->iFlgCalcSpec=0;
   X->iReStart=0;
   X->iFlgMPI=0;
@@ -320,6 +321,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "OutputDataHead")==0){
       X->iOutputDataHead=itmp;
     }
+    else if(CheckWords(ctmp, "OutputGreenFormat")==0){
+      X->iOutputGreenFormat=itmp;
+    }
     else if(CheckWords(ctmp, "CalcSpec")==0 || CheckWords(ctmp, "CalcSpectrum")==0){
       X->iFlgCalcSpec=itmp;
     }
@@ -361,6 +365,10 @@ int ReadcalcmodFile(
   }
   if(ValidateValue(X->iOutputMode, 0, NUM_OUTPUTMODE-1)){
     fprintf(stdoutMPI, cErrOutputMode, defname);
+    return (-1);
+  }
+  if(ValidateValue(X->iOutputGreenFormat, 0, NUM_OUTPUTGREENFORMAT-1)){
+    fprintf(stdoutMPI, cErrOutputGreenFormat, defname);
     return (-1);
   }
   

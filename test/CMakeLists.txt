@@ -99,6 +99,7 @@ add_hphi_test_with_srcdir(spinless_interall_diagonal)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
+add_hphi_test_with_srcdir(green_output_format)
 add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
@@ -188,6 +189,9 @@ set_tests_properties(
 set_tests_properties(
     spinless_onebody_offdiag_compare
     PROPERTIES LABELS "spinless;validation;onebody")
+set_tests_properties(
+    green_output_format
+    PROPERTIES LABELS "tpq;te;fulldiag;green;validation")
 
 #
 # LOBCG
