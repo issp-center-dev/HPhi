@@ -1,5 +1,6 @@
 var annotated_dup =
 [
+    [ "BiCGVectorDiag", "structBiCGVectorDiag.html", "structBiCGVectorDiag" ],
     [ "BindStruct", "structBindStruct.html", "structBindStruct" ],
     [ "BoostList", "structBoostList.html", "structBoostList" ],
     [ "CheckList", "structCheckList.html", "structCheckList" ],

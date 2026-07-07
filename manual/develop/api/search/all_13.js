@@ -11,7 +11,7 @@ var searchData=
   ['pairexspin_2eh_8',['PairExSpin.h',['../PairExSpin_8h.html',1,'']]],
   ['pairexspinless_2ec_9',['PairExSpinless.c',['../PairExSpinless_8c.html',1,'']]],
   ['pairexspinless_2eh_10',['PairExSpinless.h',['../PairExSpinless_8h.html',1,'']]],
-  ['pairhopp_11',['pairhopp',['../mltplyHubbard_8h.html#ab9b8a89640107187620d0edca2484ead',1,'pairhopp(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c'],['../mltplyHubbard_8c.html#ab9b8a89640107187620d0edca2484ead',1,'pairhopp(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c']]],
+  ['pairhopp_11',['pairhopp',['../mltplyHubbard_8c.html#ab9b8a89640107187620d0edca2484ead',1,'pairhopp(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c'],['../mltplyHubbard_8h.html#ab9b8a89640107187620d0edca2484ead',1,'pairhopp(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c']]],
   ['pairhopp_5felement_12',['pairhopp_element',['../mltplyHubbardCore_8h.html#a11b758e9d0eab9df7806407caa7502f7',1,'pairhopp_element(long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X, long unsigned int *tmp_off):&#160;mltplyHubbardCore.c'],['../mltplyHubbardCore_8c.html#a11b758e9d0eab9df7806407caa7502f7',1,'pairhopp_element(long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X, long unsigned int *tmp_off):&#160;mltplyHubbardCore.c']]],
   ['pairhopp_5fgetinfo_13',['pairhopp_getinfo',['../mltplyHubbardCore_8h.html#ac3154b913b9f69c010ceb62bbb6b3949',1,'pairhopp_GetInfo(int iPairHopp, struct BindStruct *X):&#160;mltplyHubbardCore.c'],['../mltplyHubbardCore_8c.html#ac3154b913b9f69c010ceb62bbb6b3949',1,'pairhopp_GetInfo(int iPairHopp, struct BindStruct *X):&#160;mltplyHubbardCore.c']]],
   ['pairhopping_14',['PairHopping',['../structDefineList.html#ad60b3e75def64fc7dbdcd484236419eb',1,'DefineList']]],
@@ -67,9 +67,11 @@ var searchData=
   ['powerlanczos_2eh_64',['PowerLanczos.h',['../PowerLanczos_8h.html',1,'']]],
   ['prdct_65',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList']]],
   ['precg_66',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]],
-  ['priu64_67',['PRIu64',['../dSFMT_8h.html#ac582131d7a7c8ee57e73180d1714f9d5',1,'dSFMT.h']]],
-  ['prix64_68',['PRIx64',['../dSFMT_8h.html#aba38357387a474f439428dee1984fc5a',1,'dSFMT.h']]],
-  ['progress_20messages_69',['Progress Messages',['../page_log.html#sec_log_progress',1,'']]],
-  ['progressmessage_2ec_70',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
-  ['progressmessage_2eh_71',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
+  ['printbicgiteration1diag_67',['PrintBiCGIteration1Diag',['../CalcSpectrumByBiCG_8c.html#a8c87f206e095b7427010db8a3e96ddc4',1,'CalcSpectrumByBiCG.c']]],
+  ['printbicgvectordiag_68',['PrintBiCGVectorDiag',['../CalcSpectrumByBiCG_8c.html#a08ad4ec794decd59ec696dfaf8304426',1,'CalcSpectrumByBiCG.c']]],
+  ['priu64_69',['PRIu64',['../dSFMT_8h.html#ac582131d7a7c8ee57e73180d1714f9d5',1,'dSFMT.h']]],
+  ['prix64_70',['PRIx64',['../dSFMT_8h.html#aba38357387a474f439428dee1984fc5a',1,'dSFMT.h']]],
+  ['progress_20messages_71',['Progress Messages',['../page_log.html#sec_log_progress',1,'']]],
+  ['progressmessage_2ec_72',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
+  ['progressmessage_2eh_73',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
 ];

@@ -29,5 +29,6 @@ var searchData=
   ['inputinterallinfo_26',['InputInterAllInfo',['../readdef_8c.html#a25894f16253990c29ea8fa87cc1360fc',1,'readdef.c']]],
   ['inputrealeigenvalue_27',['inputrealeigenvalue',['../eigenIO_8c.html#ae1ffe2e84ac89023d9eafeb0115328fe',1,'InputRealEigenValue(int xNsize, double *ene, char *filename):&#160;eigenIO.c'],['../eigenIO_8h.html#ae1ffe2e84ac89023d9eafeb0115328fe',1,'InputRealEigenValue(int xNsize, double *ene, char *filename):&#160;eigenIO.c']]],
   ['inputrealeigenvec_28',['inputrealeigenvec',['../eigenIO_8c.html#a6702f15ae2b4be2edf97ae116a67b951',1,'InputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc, char *filename):&#160;eigenIO.c'],['../eigenIO_8h.html#a6702f15ae2b4be2edf97ae116a67b951',1,'InputRealEigenVec(int xNsize, const int nene, double **vec, const int nproc, char *filename):&#160;eigenIO.c']]],
-  ['isskippablenbodyline_29',['IsSkippableNBodyLine',['../readdef_8c.html#a607817fb08b8e5ca6450e9dfb14c46a1',1,'readdef.c']]]
+  ['isfinitecomplex_29',['IsFiniteComplex',['../CalcSpectrumByBiCG_8c.html#a4e1228841c27f81510971b5550f7b814',1,'CalcSpectrumByBiCG.c']]],
+  ['isskippablenbodyline_30',['IsSkippableNBodyLine',['../readdef_8c.html#a607817fb08b8e5ca6450e9dfb14c46a1',1,'readdef.c']]]
 ];
