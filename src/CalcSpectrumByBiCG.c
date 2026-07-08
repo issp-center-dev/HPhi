@@ -32,6 +32,7 @@
 
 #define BICG_STATUS_NONFINITE 5
 #define BICG_DIAG_SAMPLES 3
+#define BICG_SPIKE_RATIO_WARN 1.0e3
 
 typedef struct {
   double sum2;
@@ -105,6 +106,89 @@ static void PrintBiCGIteration1Diag(
   PrintBiCGVectorDiag("Hv2", v12_diag);
   fprintf(stderr, "\n");
   fflush(stderr);
+}
+
+static double BiCGResidualRatio(double residual, double initial_residual) {
+  if (isfinite(residual) == FALSE || isfinite(initial_residual) == FALSE ||
+      initial_residual <= 0.0) {
+    return NAN;
+  }
+  return residual / initial_residual;
+}
+
+static void PrintBiCGStatusHeader(
+  FILE *fp,
+  const struct EDMainCalStruct *X,
+  int nBra,
+  int Nomega,
+  const double complex *dcomega,
+  double initial_residual
+) {
+  fprintf(fp, "# HPhi BiCG residual diagnostics\n");
+  fprintf(fp, "# nproc=%d nthreads=%d mpi_batching=%s nBra=%d Nomega=%d idim_max=%lu Lanczos_max=%u threshold=%25.17e\n",
+          nproc, nthreads, iFlgMPIBatch ? "ON" : "OFF", nBra, Nomega,
+          X->Bind.Check.idim_max, X->Bind.Def.Lanczos_max, eps_Lanczos);
+  fprintf(fp, "# omega_org=(%25.17e,%25.17e) omega_first=(%25.17e,%25.17e) omega_last=(%25.17e,%25.17e)\n",
+          creal(X->Bind.Def.dcOmegaOrg), cimag(X->Bind.Def.dcOmegaOrg),
+          creal(dcomega[0]), cimag(dcomega[0]),
+          creal(dcomega[Nomega - 1]), cimag(dcomega[Nomega - 1]));
+  fprintf(fp, "# initial_residual_2_norm=%25.17e spike_warning_ratio=%25.17e\n",
+          initial_residual, BICG_SPIKE_RATIO_WARN);
+  fprintf(fp, "# columns: iter status seed unshifted_resnorm initial_resnorm max_unshifted_resnorm ratio_to_initial first_spike_iter shifted_residual_max shifted_residual_min shifted_below_threshold shifted_nonfinite\n");
+}
+
+static void PrintBiCGStatusTrace(
+  FILE *fp,
+  int stp,
+  const int status[3],
+  double unshifted_residual,
+  double initial_residual,
+  double max_unshifted_residual,
+  int first_spike_iter,
+  int Nomega,
+  const double *shifted_residual
+) {
+  int iomega;
+  double ratio = BiCGResidualRatio(max_unshifted_residual, initial_residual);
+  double shifted_max = NAN;
+  double shifted_min = NAN;
+  int n_below_threshold = 0;
+  int n_nonfinite = 0;
+  for (iomega = 0; iomega < Nomega; iomega++) {
+    const double res = shifted_residual == NULL ? NAN : shifted_residual[iomega];
+    if (isfinite(res) == FALSE) {
+      n_nonfinite++;
+      continue;
+    }
+    if (isfinite(shifted_max) == FALSE || res > shifted_max) shifted_max = res;
+    if (isfinite(shifted_min) == FALSE || res < shifted_min) shifted_min = res;
+    if (res < eps_Lanczos) n_below_threshold++;
+  }
+  fprintf(fp,
+          "%7d %7d %7d %25.17e %25.17e %25.17e %25.17e %7d "
+          "%25.17e %25.17e %7d %7d\n",
+          stp, status[1], status[2], unshifted_residual,
+          initial_residual, max_unshifted_residual, ratio, first_spike_iter,
+          shifted_max, shifted_min, n_below_threshold, n_nonfinite);
+}
+
+static void PrintBiCGResidualSummary(
+  FILE *stream,
+  const char *prefix,
+  int last_iter,
+  const int status[3],
+  double initial_residual,
+  double max_unshifted_residual,
+  int first_spike_iter
+) {
+  const double ratio = BiCGResidualRatio(max_unshifted_residual, initial_residual);
+  fprintf(stream,
+          "%sBiCG residual summary: last_iter=%d status=%d [%s] seed=%d "
+          "initial_resnorm=%25.17e max_resnorm=%25.17e max_over_initial=%25.17e "
+          "first_spike_iter=%d spike_warning_ratio=%25.17e\n",
+          prefix, last_iter, status[1], BiCGStatusReason(status[1]), status[2],
+          initial_residual, max_unshifted_residual, ratio, first_spike_iter,
+          BICG_SPIKE_RATIO_WARN);
 }
 /**@brief
 Read @f$\alpha, \beta@f$, projected residual for restart
@@ -298,16 +382,20 @@ int CalcSpectrumByBiCG(
 {
   char sdt[D_FileNameMax];
   unsigned long int idim, i_max;
-  FILE *fp;
+  FILE *fp, *fp_status;
   size_t byte_size;
   int iret, ibra;
   unsigned long int liLanczosStp_vec = 0;
   double complex *v12, *v14, *res_proj;
   int stp, status[3], iomega;
   double *resz;
+  double initial_residual_sq;
   int ran_bicg_loop = FALSE;
   int bicg_failed = FALSE;
-  double max_residual = 0.0;
+  double final_shifted_max_residual = 0.0;
+  double initial_residual = 0.0;
+  double max_unshifted_residual = 0.0;
+  int first_spike_iter = 0;
   BiCGVectorDiag iter1_v2_diag, iter1_v12_diag;
   int have_iter1_diag = FALSE;
 
@@ -389,6 +477,13 @@ int CalcSpectrumByBiCG(
   <li>Input @f$\alpha, \beta@f$, projected residual, or start from scratch</li>
   */
   ReadTMComponents_BiCG(X, v2, v4, v12, v14, nBra, Nomega, dcSpectrum, dcomega);
+  initial_residual_sq = creal(VecProdMPI(X->Bind.Check.idim_max, v2, v2));
+  if (isfinite(initial_residual_sq) == TRUE && initial_residual_sq >= 0.0) {
+    initial_residual = sqrt(initial_residual_sq);
+  } else {
+    initial_residual = NAN;
+  }
+  max_unshifted_residual = initial_residual;
   /**
   <li>@b DO BiCG loop</li>
   <ul>
@@ -397,6 +492,9 @@ int CalcSpectrumByBiCG(
   TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_GetTridiagonalStart, "a");
   fprintf(stdoutMPI, "\n  Iteration     Status     Seed     Residual-2-Norm\n");
   childfopenMPI("residual.dat", "w", &fp);
+  childfopenMPI("bicg_status.dat", "w", &fp_status);
+  PrintBiCGStatusHeader(fp_status, X, nBra, Nomega, dcomega, initial_residual);
+  fflush(fp_status);
 
   for (stp = 1; stp <= X->Bind.Def.Lanczos_max; stp++) {
     ran_bicg_loop = TRUE;
@@ -438,12 +536,33 @@ int CalcSpectrumByBiCG(
         status[0], status[1], status[2], creal(v12[1]));
     }
 
-    /**
-    <li>Output residuals at each frequency for some analysis</li>
-    */
-    if (stp % 10 == 0) {
+    if (status[1] < 2) {
       komega_bicg_getresidual(resz);
+    } else {
+      for (iomega = 0; iomega < Nomega; iomega++) resz[iomega] = NAN;
+    }
 
+    if (isfinite(creal(v12[1])) == TRUE) {
+      if (isfinite(max_unshifted_residual) == FALSE ||
+          creal(v12[1]) > max_unshifted_residual) {
+        max_unshifted_residual = creal(v12[1]);
+      }
+      if (first_spike_iter == 0 &&
+          BiCGResidualRatio(creal(v12[1]), initial_residual) > BICG_SPIKE_RATIO_WARN) {
+        first_spike_iter = stp;
+      }
+    }
+    PrintBiCGStatusTrace(fp_status, stp, status, creal(v12[1]), initial_residual,
+                         max_unshifted_residual, first_spike_iter, Nomega, resz);
+    fflush(fp_status);
+
+    /**
+    <li>Output residuals at each frequency for some analysis.  Keep the
+    historical 10-step cadence, and add the first spike/final iteration so
+    rare failures carry the decisive per-frequency values without making
+    large production spectrum runs write Lanczos_max*Nomega lines.</li>
+    */
+    if (stp % 10 == 0 || status[0] < 0 || first_spike_iter == stp) {
       for (iomega = 0; iomega < Nomega; iomega++) {
         /* Report the first bra's spectrum as a representative trace; resz is per-frequency. */
         fprintf(fp, "%7i %20.10e %20.10e %20.10e %20.10e\n",
@@ -452,25 +571,41 @@ int CalcSpectrumByBiCG(
           resz[iomega]);
       }
       fprintf(fp, "\n");
+      fflush(fp);
     }
 
     fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1]));
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
+  if (ran_bicg_loop == TRUE) {
+    PrintBiCGResidualSummary(fp_status, "# ", abs(status[0]), status, initial_residual,
+                             max_unshifted_residual, first_spike_iter);
+  }
   fclose(fp);
+  fclose(fp_status);
+  if (ran_bicg_loop == TRUE) {
+    PrintBiCGResidualSummary(stdoutMPI, "  ", abs(status[0]), status, initial_residual,
+                             max_unshifted_residual, first_spike_iter);
+    if (first_spike_iter > 0) {
+      fprintf(stdoutMPI,
+              "  WARNING: BiCG residual spike exceeded %.1e times the initial residual "
+              "at iteration %d. See bicg_status.dat and residual.dat for diagnostics.\n",
+              BICG_SPIKE_RATIO_WARN, first_spike_iter);
+    }
+  }
   if (ran_bicg_loop == TRUE && (status[0] >= 0 || status[1] != 0)) {
     bicg_failed = TRUE;
     if (status[1] >= 2) {
-      max_residual = NAN;
+      final_shifted_max_residual = NAN;
     } else {
-      max_residual = 0.0;
+      final_shifted_max_residual = 0.0;
       komega_bicg_getresidual(resz);
       for (iomega = 0; iomega < Nomega; iomega++) {
         if (isfinite(resz[iomega]) == FALSE) {
-          max_residual = resz[iomega];
+          final_shifted_max_residual = resz[iomega];
           break;
         }
-        if (resz[iomega] > max_residual) max_residual = resz[iomega];
+        if (resz[iomega] > final_shifted_max_residual) final_shifted_max_residual = resz[iomega];
       }
     }
   }
@@ -486,7 +621,7 @@ int CalcSpectrumByBiCG(
       "Error: BiCG spectrum did not finish successfully within Lanczos_max=%u "
       "(last iteration=%d, status=%d [%s], seed=%d, max residual=%25.15e).\n",
       X->Bind.Def.Lanczos_max, abs(status[0]), status[1],
-      BiCGStatusReason(status[1]), status[2], max_residual);
+      BiCGStatusReason(status[1]), status[2], final_shifted_max_residual);
     komega_bicg_finalize();
     free(resz);
     free(res_proj);
@@ -536,7 +671,7 @@ int CalcSpectrumByBiCG(
       "Error: BiCG spectrum did not finish successfully within Lanczos_max=%u "
       "(last iteration=%d, status=%d [%s], seed=%d, max residual=%25.15e).\n",
       X->Bind.Def.Lanczos_max, abs(status[0]), status[1],
-      BiCGStatusReason(status[1]), status[2], max_residual);
+      BiCGStatusReason(status[1]), status[2], final_shifted_max_residual);
     komega_bicg_finalize();
     free(resz);
     free(res_proj);
