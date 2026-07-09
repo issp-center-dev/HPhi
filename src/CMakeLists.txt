@@ -50,7 +50,7 @@ target_sources(HPhi PRIVATE
 # Full diagonalization
 target_sources(HPhi PRIVATE
   CalcByFullDiag.c lapack_diag.c makeHam.c
-  matrixlapack.c matrixlapack_magma.c matrixscalapack.c
+  matrixlapack.c matrixlapack_magma.c matrixlapack_elpa.c matrixscalapack.c
 )
 
 # Spectrum calculations
