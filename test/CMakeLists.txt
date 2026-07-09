@@ -241,6 +241,7 @@ set_tests_properties(
 # Full Diag
 #
 add_hphi_test(fulldiag_hubbard_chain)
+add_hphi_test(fulldiag_solver_keyword)
 add_test(
     NAME fulldiag_Hamiltonian_IO
     COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh

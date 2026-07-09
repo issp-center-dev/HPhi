@@ -53,6 +53,11 @@ char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1:
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
+char *cErrSolver="Error in %s\n Solver: must be one of 0 (LAPACK), 1 (ScaLAPACK), 2 (MAGMA), 3 (ELPA).\n";
+char *cErrSolverBuild="Error in %s\n Solver %d requires HPhi built with %s.\n";
+char *cErrElpaGPUBuild="Error in %s\n Solver 3 with NGPU >= 1 requires ELPA >= 2023.11.001 (elpa_setup_gpu).\n Rebuild HPhi against a newer ELPA, or set \"NGPU 0\" for CPU execution.\n";
+char *cWarnScaLAPACKDep="Warning in %s\n The \"ScaLAPACK\" keyword is deprecated. Use \"Solver 1\" instead.\n";
+char *cWarnSolverConflict="Warning in %s\n Legacy keyword \"%s\" conflicts with the explicit Solver value and is ignored.\n";
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";

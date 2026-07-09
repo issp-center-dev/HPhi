@@ -329,6 +329,17 @@ struct DefineList {
     - 1: Use ScaLAPACK
     */
 
+    int iSolver;/**<@brief FullDiag solver backend (CalcMod keyword "Solver")
+    - 0: LAPACK zheev (serial)
+    - 1: ScaLAPACK pzheev
+    - 2: MAGMA (single node multi-GPU)
+    - 3: ELPA (multi-node CPU/GPU)
+    Resolved from legacy keywords when not explicitly given. */
+
+    int iFlgSolverSpec;/**<@brief 1 if the Solver keyword was explicitly given */
+
+    int iFlgNGPUSpec;/**<@brief 1 if the NGPU keyword was explicitly given */
+
 
     struct ParamList Param;
 

@@ -54,6 +54,11 @@ extern char *cErrOutputHamForFullDiag;
 extern char *cErrRestart;
 extern char *cErrFiniteTemp;
 extern char *cErrCUDA;
+extern char *cErrSolver;
+extern char *cErrSolverBuild;
+extern char *cErrElpaGPUBuild;
+extern char *cWarnScaLAPACKDep;
+extern char *cWarnSolverConflict;
 extern char *cErrScaLAPACK;
 
 extern char *cErrKW;

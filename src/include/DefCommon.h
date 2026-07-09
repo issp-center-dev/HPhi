@@ -26,6 +26,13 @@
 #define TimeEvolution 4 /*!< CalcType is Time Evolution method*/
 #define cTPQ 5 /*!< CalcType is canonical TPQ*/
 
+/*!< FullDiag solver backend (CalcMod keyword "Solver") */
+#define NUM_SOLVER 4
+#define SOLVER_LAPACK 0
+#define SOLVER_SCALAPACK 1
+#define SOLVER_MAGMA 2
+#define SOLVER_ELPA 3
+
 /*!< CalcModel */
 #define NUM_CALCMODEL     12 /*!< Number of model values accepted from CalcModel. Number-conserved variants are internal and selected from conserved quantities. */
 #define Hubbard           0  /*!< CalcModel is Hubbard model.*/

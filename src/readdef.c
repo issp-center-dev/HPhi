@@ -235,6 +235,73 @@ int GetKWWithIdx(
 }
 
 /**
+ * @brief Resolve the FullDiag solver backend from the Solver keyword and
+ * legacy keywords (ScaLAPACK, NGPU), following the precedence table in
+ * docs/superpowers/specs/2026-07-10-elpa-fulldiag-design.md section 2.
+ * On return X->iSolver is one of SOLVER_*, and X->iNGPU has its
+ * solver-dependent default applied when NGPU was not explicitly given.
+ */
+static int ResolveSolver(struct DefineList *X, const char *defname) {
+  if (X->iFlgSolverSpec == 0) {
+    /* Legacy resolution: preserve current behavior exactly.
+       Compile-time NGPU default (2 on _MAGMA builds) applies here. */
+    if (X->iNGPU > 0) {
+#ifdef _MAGMA
+      X->iSolver = SOLVER_MAGMA;
+#else
+      fprintf(stdoutMPI, "Warning: MAGMA is not used in this calculation.");
+      X->iSolver = SOLVER_LAPACK;
+#endif
+    }
+    else if (X->iFlgScaLAPACK == 1) {
+      X->iSolver = SOLVER_SCALAPACK;
+    }
+    else {
+      X->iSolver = SOLVER_LAPACK;
+    }
+    return 0;
+  }
+
+  /* Explicit Solver always wins; warn about conflicting legacy keywords. */
+  if (ValidateValue(X->iSolver, 0, NUM_SOLVER - 1)) {
+    fprintf(stdoutMPI, cErrSolver, defname);
+    return -1;
+  }
+  if (X->iFlgScaLAPACK == 1 && X->iSolver != SOLVER_SCALAPACK) {
+    fprintf(stdoutMPI, cWarnSolverConflict, defname, "ScaLAPACK");
+    X->iFlgScaLAPACK = 0;
+  }
+  if (X->iFlgNGPUSpec == 0) {
+    X->iNGPU = (X->iSolver == SOLVER_MAGMA) ? 2 : 0;
+  }
+#ifndef _SCALAPACK
+  if (X->iSolver == SOLVER_SCALAPACK) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "ScaLAPACK");
+    return -1;
+  }
+#endif
+#ifndef _MAGMA
+  if (X->iSolver == SOLVER_MAGMA) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "MAGMA");
+    return -1;
+  }
+#endif
+#ifndef _ELPA
+  if (X->iSolver == SOLVER_ELPA) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "ELPA (USE_ELPA=ON)");
+    return -1;
+  }
+#endif
+#ifndef _ELPA_GPU
+  if (X->iSolver == SOLVER_ELPA && X->iNGPU >= 1) {
+    fprintf(stdoutMPI, cErrElpaGPUBuild, defname);
+    return -1;
+  }
+#endif
+  return 0;
+}
+
+/**
  * @brief Function of Reading calcmod file.
  * @param[in] defname file name to read.
  * @param[out] X Define List for getting flags of calc-mode.
@@ -276,6 +343,9 @@ int ReadcalcmodFile(
 #else
   X->iNGPU=0;
 #endif
+  X->iSolver = -1;      /* unresolved; fixed up by ResolveSolver() below */
+  X->iFlgSolverSpec = 0;
+  X->iFlgNGPUSpec = 0;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -332,8 +402,14 @@ int ReadcalcmodFile(
     }
     else if(CheckWords(ctmp, "NGPU")==0){
         X->iNGPU=itmp;
+        X->iFlgNGPUSpec=1;
+    }
+    else if(CheckWords(ctmp, "Solver")==0){
+        X->iSolver=itmp;
+        X->iFlgSolverSpec=1;
     }
     else if(CheckWords(ctmp, "ScaLAPACK")==0){
+      fprintf(stdoutMPI, cWarnScaLAPACKDep, defname);
 #ifdef _SCALAPACK
       X->iFlgScaLAPACK=itmp;
 #endif
@@ -396,6 +472,9 @@ int ReadcalcmodFile(
   }
   if(ValidateValue(X->iReStart, 0, NUM_RESTART-1)){
     fprintf(stdoutMPI, cErrRestart, defname);
+    return (-1);
+  }
+  if (ResolveSolver(X, defname) != 0) {
     return (-1);
   }
   if(X->iNGPU < 0){
