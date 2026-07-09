@@ -80,6 +80,45 @@ NCoulombInter 1
 EOF
 }
 
+write_coulombinter_onsite() {
+cat > coulombinter.def <<EOF
+================
+NCoulombInter 1
+================
+========i_j_V ======
+================
+0 0 0.50
+EOF
+}
+
+write_coulombinter_ring() {
+cat > coulombinter.def <<EOF
+================
+NCoulombInter 4
+================
+========i_j_V ======
+================
+0 1 0.25
+1 2 0.25
+2 3 0.25
+3 0 0.25
+EOF
+}
+
+write_coulombinter_nonuniform_ring() {
+cat > coulombinter.def <<EOF
+================
+NCoulombInter 4
+================
+========i_j_V ======
+================
+0 1 0.25
+1 2 0.50
+2 3 0.25
+3 0 0.25
+EOF
+}
+
 write_k0_transsym() {
 cat > qptransidx.def <<EOF
 =============================================
@@ -257,16 +296,36 @@ expect_failure "supports only Lanczos and CG" \
     unsupported_method.log ../../src/HPhi -e namelist.def
 
 write_calcmod
-write_coulombinter
+write_coulombinter_ring
 cat >> namelist.def <<EOF
 CoulombInter coulombinter.def
 EOF
-expect_failure "SpinlessFermion symmetry basis supports Transfer terms only" \
-    unsupported_term.log ../../src/HPhi -e namelist.def
+rm -rf output
+../../src/HPhi -e namelist.def > spinless_coulombinter.log 2>&1
+assert_energy "0.25" spinless_coulombinter.log
+grep -q "Symmetry basis: raw_dim=6 sector_dim=1 group_order=4" spinless_coulombinter.log
+test -s output/zvo_energy.dat
+run_mpi_if_available coulombinter "0.25" 1
+write_coulombinter
+expect_failure "SpinlessFermion CoulombInter term 0 maps to a missing pair" \
+    missing_coulombinter.log ../../src/HPhi -e namelist.def
+write_coulombinter_onsite
+expect_failure "SpinlessFermion CoulombInter term 0 is on-site" \
+    onsite_coulombinter.log ../../src/HPhi -e namelist.def
+write_coulombinter_nonuniform_ring
+expect_failure "SpinlessFermion CoulombInter invariance failed" \
+    noninvariant_coulombinter.log ../../src/HPhi -e namelist.def
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
-        expect_failure "SpinlessFermion symmetry basis supports Transfer terms only" \
-            unsupported_term_mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
+        write_coulombinter
+        expect_failure "SpinlessFermion CoulombInter term 0 maps to a missing pair" \
+            missing_coulombinter_mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
+        write_coulombinter_onsite
+        expect_failure "SpinlessFermion CoulombInter term 0 is on-site" \
+            onsite_coulombinter_mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
+        write_coulombinter_nonuniform_ring
+        expect_failure "SpinlessFermion CoulombInter invariance failed" \
+            noninvariant_coulombinter_mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
     fi
 fi

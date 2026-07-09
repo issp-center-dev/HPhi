@@ -29,6 +29,9 @@ static double exchange_params[6];
 static int transfer_storage[12][4];
 static int *transfer_rows[12];
 static double complex transfer_params[12];
+static int coulomb_storage[12][2];
+static int *coulomb_rows[12];
+static double coulomb_params[12];
 
 static int popcount_ulong(unsigned long int x)
 {
@@ -98,6 +101,29 @@ static void set_ising_ring_diagonal(unsigned int nsite, double coupling)
     double diagonal = 0.0;
     for (site = 0; site < nsite; site++) {
       diagonal += spin_ising_pair_energy(list_1[raw], site, (site + 1U) % nsite, coupling);
+    }
+    list_Diagonal[raw] = diagonal;
+  }
+}
+
+static double spinless_coulomb_pair_energy(unsigned long int state,
+                                           unsigned int site0,
+                                           unsigned int site1,
+                                           double coupling)
+{
+  unsigned long int bit0 = (state >> site0) & 1UL;
+  unsigned long int bit1 = (state >> site1) & 1UL;
+  return (bit0 != 0UL && bit1 != 0UL) ? coupling : 0.0;
+}
+
+static void set_spinless_coulomb_ring_diagonal(unsigned int nsite, double coupling)
+{
+  unsigned long int raw;
+  for (raw = 1; raw <= test_raw_dim; raw++) {
+    unsigned int site;
+    double diagonal = 0.0;
+    for (site = 0; site < nsite; site++) {
+      diagonal += spinless_coulomb_pair_energy(list_1[raw], site, (site + 1U) % nsite, coupling);
     }
     list_Diagonal[raw] = diagonal;
   }
@@ -197,6 +223,20 @@ static void setup_spinless_transfer_ring(struct DefineList *def, unsigned int ns
     transfer_storage[reverse][2] = (int)site;
     transfer_storage[reverse][3] = 0;
     transfer_params[reverse] = 1.0;
+  }
+}
+
+static void setup_spinless_coulomb_ring(struct DefineList *def, unsigned int nsite, double coupling)
+{
+  unsigned int site;
+  def->NCoulombInter = nsite;
+  def->CoulombInter = coulomb_rows;
+  def->ParaCoulombInter = coulomb_params;
+  for (site = 0; site < nsite; site++) {
+    coulomb_rows[site] = coulomb_storage[site];
+    coulomb_storage[site][0] = (int)site;
+    coulomb_storage[site][1] = (int)((site + 1U) % nsite);
+    coulomb_params[site] = coupling;
   }
 }
 
@@ -473,12 +513,17 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
 static void assert_spinless_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                              unsigned int ne,
                                                              unsigned int momentum_index,
+                                                             double density_coupling,
                                                              const char *label)
 {
   struct BindStruct X;
   unsigned long int alpha, beta;
   setup_spinless_bind(&X, nsite, ne, momentum_index);
   setup_spinless_transfer_ring(&X.Def, nsite);
+  if (density_coupling != 0.0) {
+    setup_spinless_coulomb_ring(&X.Def, nsite, density_coupling);
+    set_spinless_coulomb_ring_diagonal(nsite, density_coupling);
+  }
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -791,8 +836,10 @@ int main(void)
                                           "C4 k=0 canonicalized matrix matches raw reference");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 0.0,
                                           "C6 k=pi/3 canonicalized matrix matches raw reference");
-  assert_spinless_canonicalized_matrix_matches_raw(4, 2, 1,
+  assert_spinless_canonicalized_matrix_matches_raw(4, 2, 1, 0.0,
                                                    "SpinlessFermion C4 k=pi/2 matrix matches raw reference");
+  assert_spinless_canonicalized_matrix_matches_raw(4, 2, 1, 0.25,
+                                                   "SpinlessFermion C4 k=pi/2 CoulombInter matrix matches raw reference");
   assert_orbit_diagonal_is_representative(6, 3, 1, 1.0,
                                           "C6 k=pi/3 Ising diagonal is orbit-invariant");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,
