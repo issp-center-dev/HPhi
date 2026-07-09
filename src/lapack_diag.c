@@ -86,7 +86,6 @@ struct BindStruct *X//!<[inout]
       }
     }
 #else
-    fprintf(stdoutMPI, "Warning: MAGMA is not used in this calculation.");
     ZHEEVall(xMsize, Ham, v0, L_vec);
 #endif
   }
