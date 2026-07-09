@@ -2,6 +2,7 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
+#include <limits.h>
 #include "DefCommon.h"
 #include "bitcalc.h"
 #include "global.h"
@@ -54,6 +55,30 @@ static int apply_spinless_hopping_hermite(unsigned long int state,
     *hval = (double)sgn * trans;
   }
   return TRUE;
+}
+
+static int apply_hubbard_hopping_hermite(unsigned long int state,
+                                         unsigned int site1,
+                                         unsigned int spin1,
+                                         unsigned int site2,
+                                         unsigned int spin2,
+                                         double complex trans,
+                                         unsigned long int *out_state,
+                                         double complex *hval)
+{
+  const unsigned int max_bits = (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  unsigned int orbital1;
+  unsigned int orbital2;
+  if (spin1 > 1U || spin2 > 1U) return FALSE;
+  if (site1 > (max_bits - spin1) / 2U ||
+      site2 > (max_bits - spin2) / 2U) {
+    return FALSE;
+  }
+  orbital1 = 2U * site1 + spin1;
+  orbital2 = 2U * site2 + spin2;
+  if (orbital1 >= max_bits || orbital2 >= max_bits) return FALSE;
+  return apply_spinless_hopping_hermite(state, orbital1, orbital2, trans,
+                                        out_state, hval);
 }
 
 static int add_canonicalized_transition(struct BindStruct *X,
@@ -150,6 +175,24 @@ int mltplySpinSym(struct BindStruct *X,
         if (apply_spinless_hopping_hermite(X->Sym->basis[beta].rep_state,
                                            site1, site2, trans,
                                            &out_state, &hval) == TRUE) {
+          if (add_canonicalized_transition(X, tmp_v0, full_v1, &prdct, beta, out_state,
+                                           hval, vin) != 0) {
+            return -1;
+          }
+        }
+      }
+    } else if (X->Def.iCalcModel == Hubbard) {
+      for (p = 0; p < X->Def.EDNTransfer; p += 2U) {
+        unsigned long int out_state;
+        double complex hval;
+        double complex trans = -X->Def.EDParaGeneralTransfer[p];
+        unsigned int site1 = (unsigned int)X->Def.EDGeneralTransfer[p][0];
+        unsigned int spin1 = (unsigned int)X->Def.EDGeneralTransfer[p][1];
+        unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
+        unsigned int spin2 = (unsigned int)X->Def.EDGeneralTransfer[p][3];
+        if (apply_hubbard_hopping_hermite(X->Sym->basis[beta].rep_state,
+                                          site1, spin1, site2, spin2, trans,
+                                          &out_state, &hval) == TRUE) {
           if (add_canonicalized_transition(X, tmp_v0, full_v1, &prdct, beta, out_state,
                                            hval, vin) != 0) {
             return -1;
