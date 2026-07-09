@@ -3,6 +3,7 @@ enable_testing()
 
 project(HPhi NONE)
 option(USE_SCALAPACK "Use Scalapack" OFF)
+option(USE_ELPA "Use ELPA for FullDiag" OFF)
 
 set(CMAKE_C_FLAGS "-Wall")
 
@@ -91,6 +92,16 @@ if(USE_SCALAPACK MATCHES OFF)
 else()
   add_definitions(-D_SCALAPACK)
 endif()
+
+if(USE_ELPA)
+  if(USE_SCALAPACK MATCHES OFF)
+    message(STATUS "USE_ELPA=ON requires ScaLAPACK: enabling USE_SCALAPACK.")
+    set(USE_SCALAPACK ON CACHE BOOL "Use Scalapack" FORCE)
+    add_definitions(-D_SCALAPACK)
+  endif()
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+  find_package(ELPA REQUIRED)
+endif(USE_ELPA)
 
 add_subdirectory(src)
 add_subdirectory(tool)
