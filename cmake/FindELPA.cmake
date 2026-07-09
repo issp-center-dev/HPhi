@@ -13,6 +13,12 @@
 set(ELPA_FOUND FALSE)
 
 if(ELPA_INCLUDE_DIR AND ELPA_LIBRARY)
+  if(ELPA_LIBRARY MATCHES "elpa_openmp")
+    message(FATAL_ERROR
+      "ELPA_LIBRARY points to the threaded ELPA variant (${ELPA_LIBRARY}). "
+      "HPhi requires the non-threaded ELPA (MPI_THREAD_SINGLE); "
+      "build ELPA without --enable-openmp.")
+  endif()
   set(ELPA_INCLUDE_DIRS ${ELPA_INCLUDE_DIR})
   set(ELPA_LIBRARIES ${ELPA_LIBRARY})
   set(ELPA_FOUND TRUE)

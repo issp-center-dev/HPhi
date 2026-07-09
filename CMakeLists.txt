@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.0...3.10)
 enable_testing()
 
 project(HPhi NONE)
+# Capture whether the user explicitly requested USE_SCALAPACK=OFF (as opposed to
+# the default OFF). -D cache vars are defined before option() runs, so this
+# distinguishes an explicit -DUSE_SCALAPACK=OFF from the unset default.
+if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)
+  set(_USE_SCALAPACK_EXPLICIT_OFF TRUE)
+endif()
 option(USE_SCALAPACK "Use Scalapack" OFF)
 option(USE_ELPA "Use ELPA for FullDiag" OFF)
 
@@ -84,6 +90,20 @@ if(ENABLE_MPI)
   endif(MPI_FOUND)
 endif(ENABLE_MPI)
 
+# ELPA requires ScaLAPACK. Resolve USE_SCALAPACK BEFORE the LAPACK block below,
+# so that block emits exactly one of -D_lapack / -D_SCALAPACK (never both).
+if(USE_ELPA)
+  if(_USE_SCALAPACK_EXPLICIT_OFF)
+    message(FATAL_ERROR "USE_ELPA=ON requires ScaLAPACK, but USE_SCALAPACK=OFF was set explicitly.")
+  endif()
+  if(NOT USE_SCALAPACK)
+    message(STATUS "USE_ELPA=ON requires ScaLAPACK: enabling USE_SCALAPACK.")
+    set(USE_SCALAPACK ON CACHE BOOL "Use Scalapack" FORCE)
+  endif()
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+  find_package(ELPA REQUIRED)
+endif(USE_ELPA)
+
 find_package(LAPACK)
 if(USE_SCALAPACK MATCHES OFF)
   if(LAPACK_FOUND)
@@ -92,16 +112,6 @@ if(USE_SCALAPACK MATCHES OFF)
 else()
   add_definitions(-D_SCALAPACK)
 endif()
-
-if(USE_ELPA)
-  if(USE_SCALAPACK MATCHES OFF)
-    message(STATUS "USE_ELPA=ON requires ScaLAPACK: enabling USE_SCALAPACK.")
-    set(USE_SCALAPACK ON CACHE BOOL "Use Scalapack" FORCE)
-    add_definitions(-D_SCALAPACK)
-  endif()
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-  find_package(ELPA REQUIRED)
-endif(USE_ELPA)
 
 add_subdirectory(src)
 add_subdirectory(tool)
