@@ -91,6 +91,17 @@ NCoulombIntra 4
 EOF
 }
 
+write_coulombinter() {
+cat > coulombinter.def <<EOF
+================
+NCoulombInter 1
+================
+========i_j_V ======
+================
+0 1 0.25
+EOF
+}
+
 write_k0_transsym() {
 cat > qptransidx.def <<EOF
 =============================================
@@ -257,6 +268,14 @@ expect_failure "Hubbard CoulombIntra invariance failed" \
     noninvariant_coulombintra.log ../../src/HPhi -e namelist.def
 
 write_coulombintra
+write_coulombinter
+cat >> namelist.def <<EOF
+CoulombInter coulombinter.def
+EOF
+expect_failure "Hubbard symmetry basis supports Transfer and CoulombIntra terms only" \
+    unsupported_term.log ../../src/HPhi -e namelist.def
+
+write_sym_namelist yes
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then

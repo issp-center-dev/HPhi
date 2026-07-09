@@ -623,11 +623,12 @@ static void assert_spinless_symmetry_dim(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
-static void assert_hubbard_symmetry_nonempty(unsigned int nsite,
-                                             unsigned int nup,
-                                             unsigned int ndown,
-                                             unsigned int momentum_index,
-                                             const char *label)
+static void assert_hubbard_symmetry_dim(unsigned int nsite,
+                                        unsigned int nup,
+                                        unsigned int ndown,
+                                        unsigned int momentum_index,
+                                        unsigned long int expected_dim,
+                                        const char *label)
 {
   struct BindStruct X;
   setup_hubbard_bind(&X, nsite, nup, ndown, momentum_index);
@@ -635,7 +636,7 @@ static void assert_hubbard_symmetry_nonempty(unsigned int nsite,
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
   }
-  assert_int_eq(X.Sym->dim > 0UL, 1, label);
+  assert_ulong_eq(X.Sym->dim, expected_dim, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -946,10 +947,10 @@ int main(void)
                                "SpinlessFermion C4 k=0 sector dimension");
   assert_spinless_symmetry_dim(4, 2, 1, 2,
                                "SpinlessFermion C4 k=pi/2 sector dimension");
-  assert_hubbard_symmetry_nonempty(4, 1, 1, 0,
-                                   "Hubbard C4 k=0 sector is nonempty");
-  assert_hubbard_symmetry_nonempty(4, 1, 1, 1,
-                                   "Hubbard C4 k=pi/2 sector is nonempty");
+  assert_hubbard_symmetry_dim(4, 1, 1, 0, 4,
+                              "Hubbard C4 k=0 sector dimension");
+  assert_hubbard_symmetry_dim(4, 1, 1, 1, 4,
+                              "Hubbard C4 k=pi/2 sector dimension");
   {
     struct BindStruct X;
     unsigned long int raw;
