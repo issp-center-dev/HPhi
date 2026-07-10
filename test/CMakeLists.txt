@@ -604,8 +604,13 @@ if(USE_ELPA)
     target_include_directories(elpa_eigen_check PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
     target_compile_definitions(elpa_eigen_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # SCALAPACK_LIBRARIES may be a single space-separated flag string from
+    # config/*.cmake; normalize it into a list the same way src/CMakeLists.txt
+    # does for the HPhi target, or the test target gets one malformed link arg.
+    string(REGEX REPLACE "-L[ ]+" "-L" _ec_sc_libs "${SCALAPACK_LIBRARIES}")
+    string(REGEX REPLACE "[ ]+" ";" _ec_sc_libs "${_ec_sc_libs}")
     target_link_libraries(elpa_eigen_check ${ELPA_LIBRARIES}
-        ${SCALAPACK_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
     # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
     # convention as the other MPI tests in this file (see add_hphi_mpi_test),
     # rather than a bare add_test(mpiexec ...): on hosts without a usable
