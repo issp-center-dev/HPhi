@@ -97,9 +97,21 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
   w = malloc(xMsize * sizeof(double));
 
-  for (i = 0; i < xMsize; i++) {
-    for (j = 0; j < xMsize; j++) {
-      DivMat(i, j, Ham[i][j], A_distr, descA);
+  if (iHamPanelActive) {
+    /* Distributed generation (phase 2): redistribute the 1D panel and
+       free it before ELPA to lower the memory peak. */
+    RedistPanelToBlockCyclic(xMsize, HamColBegin,
+                             (HamColEnd >= HamColBegin)
+                               ? (HamColEnd - HamColBegin + 1) : 0,
+                             HamPanelLd, Ham_local, A_distr, descA);
+    free(Ham_local);
+    Ham_local = NULL;
+    iHamPanelActive = 0; /* panel consumed; phys.c uses Z_vec only */
+  } else {
+    for (i = 0; i < xMsize; i++) {
+      for (j = 0; j < xMsize; j++) {
+        DivMat(i, j, Ham[i][j], A_distr, descA);
+      }
     }
   }
 
@@ -145,9 +157,14 @@ struct BindStruct *X//!<[inout]
 #endif
 
   i_max = X->Check.idim_max;
-  for (i = 0; i < i_max; i++) {
-    for (j = 0; j < i_max; j++) {
-      Ham[i][j] = Ham[i + 1][j + 1];
+  if (!iHamPanelActive) {
+    /* Distributed-panel mode (phase 2): Ham is NULL and the panel is
+       already 0-based-packed by rows / start-packed by columns at
+       generation time (Task 4), so this shift must be skipped. */
+    for (i = 0; i < i_max; i++) {
+      for (j = 0; j < i_max; j++) {
+        Ham[i][j] = Ham[i + 1][j + 1];
+      }
     }
   }
   xMsize = i_max;

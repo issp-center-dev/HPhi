@@ -14,6 +14,7 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "matrixscalapack.h"
+#include <assert.h>
 /**
  * @file matrixscalapack.c
  * @version 3.1
@@ -354,6 +355,67 @@ void FreeEigenVectorGatherContext(void) {
     blacs_gridexit_(&ictxt_gather);
   }
   ictxt_gather = -100;
+}
+
+/**
+ * @brief Redistribute a 1D column-block panel into an existing 2D
+ * block-cyclic matrix with a single pzgemr2d_ call (design doc sec. 3
+ * phase 2). The 1D source: a 1 x P grid ('R'), MB = N (all rows in one
+ * block), NB = NC = ceil(N/P) (one column block per rank), RSRC=CSRC=0,
+ * LLD = panel_ld. Ranks owning zero columns still participate (their
+ * local part is an unused 1-element buffer); pzgemr2d_ only touches the
+ * columns numroc() assigns to that rank, so the buffer is never read.
+ * @param[in] xNsize global matrix dimension N
+ * @param[in] jbegin first owned column, 1-based (unused directly here;
+ * kept for interface symmetry with the panel globals)
+ * @param[in] ncols_panel number of columns owned by this rank (unused
+ * directly here; ownership is re-derived from the 1D grid/NB so it must
+ * match jbegin/ncols_panel by construction -- see xsetmem.c)
+ * @param[in] panel_ld leading dimension of panel (= xNsize)
+ * @param[in, out] panel this rank's 1D column-panel buffer
+ * @param[in, out] A_distr destination 2D block-cyclic matrix
+ * @param[in] descA_2d descriptor of A_distr
+ * @return 0
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
+                             long int ncols_panel, long int panel_ld,
+                             double complex *panel,
+                             double complex *A_distr, int *descA_2d) {
+  int i_negone = -1, i_zero_i = 0, info;
+  int ictxt_1d, nprow_1, npcol_1, myrow_1, mycol_1;
+  int desc1d[9];
+  int lld;
+  long int NC, mb1, nb1;
+  const long int i_one = 1;
+  int size;
+
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  NC = (xNsize + size - 1) / size;
+
+  blacs_get_(&i_negone, &i_zero_i, &ictxt_1d);
+  nprow_1 = 1; npcol_1 = size;
+  blacs_gridinit_(&ictxt_1d, "R", &nprow_1, &npcol_1);
+  blacs_gridinfo_(&ictxt_1d, &nprow_1, &npcol_1, &myrow_1, &mycol_1);
+
+  /* The 1x P 'R' grid must map mycol to this rank 1:1, matching
+     xsetmem's panel ownership (jb = myrank*NC + 1). */
+  assert(mycol_1 == myrank);
+
+  lld = (panel_ld > 0) ? (int)panel_ld : 1;
+  mb1 = xNsize;
+  nb1 = NC;
+  descinit_(desc1d, &xNsize, &xNsize, &mb1, &nb1, &i_zero_i, &i_zero_i,
+            &ictxt_1d, &lld, &info);
+
+  pzgemr2d_(&xNsize, &xNsize,
+           panel, (long int *)&i_one, (long int *)&i_one, desc1d,
+           A_distr, (long int *)&i_one, (long int *)&i_one, descA_2d,
+           &descA_2d[1]);
+
+  blacs_gridexit_(&ictxt_1d);
+  (void)jbegin; (void)ncols_panel;
+  return 0;
 }
 
 #endif
