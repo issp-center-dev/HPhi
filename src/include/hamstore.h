@@ -38,9 +38,10 @@
  * before that.
  */
 
-#define HAM_OWNED_COL(jcol)                                            \
-  (!iHamPanelActive ||                                                 \
-   ((long int)(jcol) >= HamColBegin && (long int)(jcol) <= HamColEnd))
+static inline int HamOwnedCol(long int jcol) {
+  return !iHamPanelActive || (jcol >= HamColBegin && jcol <= HamColEnd);
+}
+#define HAM_OWNED_COL(jcol) HamOwnedCol((long int)(jcol))
 
 #define AddHamElem(irow, jcol, val)                                    \
   do {                                                                 \

@@ -20,6 +20,7 @@
 #include "green_output.h"
 #include "mltplyCommon.h"
 #include "wrapperMPI.h"
+#include "hamstore.h"
 
 static int parse_int_token(const char **pp, int *value)
 {
@@ -427,11 +428,16 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
 {
   unsigned int t;
   unsigned long int j;
+  /* Only invoked from makeHam() (M_Ham / FullDiag path); MultiplyAnomalousTermHubbardGC
+     above is the separate Lanczos/TPQ matvec entry point, so the owned-column
+     restriction here is safe unconditionally on iHamPanelActive. */
+  long int hs_jb = iHamPanelActive ? HamColBegin : 1;
+  long int hs_je = iHamPanelActive ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NAnomalousTerm == 0) return 0;
   if (X->Def.iCalcModel != HubbardGC) return -1;
 
   for (t = 0; t < X->Def.NAnomalousTerm; t++) {
-    for (j = 1; j <= X->Check.idim_max; j++) {
+    for (j = hs_jb; j <= hs_je; j++) {
       unsigned long int local_out = 0;
       int rank_out = 0;
       int sign = 1;
@@ -442,7 +448,7 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
           fprintf(stdoutMPI, "Error: FullDiag AnomalousTerm cannot handle inter-process output.\n");
           return -1;
         }
-        Ham[local_out + 1][j] += X->Def.ParaAnomalousTerm[t] * sign;
+        AddHamElem(local_out + 1, j, X->Def.ParaAnomalousTerm[t] * sign);
       }
     }
   }
