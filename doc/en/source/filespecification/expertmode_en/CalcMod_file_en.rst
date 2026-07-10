@@ -192,6 +192,11 @@ The parameters correlated with the keywords are as follows.
    | 0: not input Hamiltonian.
    | 1: input Hamiltonian.
 
+   | Note: with ``Solver 3`` (ELPA) and more than one MPI process, the
+     Hamiltonian is generated in distributed form, so ``OutputHam``/``InputHam``
+     are rejected at startup. To output or input the Hamiltonian, run with
+     1 MPI process or use a different ``Solver``.
+
 *  ``OutputExcitedVec``
 
    **Type :** Int (default value: 0)
@@ -262,6 +267,10 @@ The parameters correlated with the keywords are as follows.
    | For ``Solver 3``, the Hilbert-space dimension (matrix size) must be at least
      as large as the largest dimension of the MPI process grid (max of nprow, npcol);
      otherwise HPhi exits at startup with an error asking to reduce the number of MPI ranks.
+   | With ``Solver 3`` and more than one MPI process, the Hamiltonian is generated
+     and stored in distributed (block-cyclic) form, so peak memory per rank scales
+     roughly as O(N²/P) rather than O(N²) — larger Hilbert-space dimensions become
+     feasible by increasing the process count.
 
 .. raw:: latex
 

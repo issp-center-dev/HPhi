@@ -19,6 +19,15 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
 5. Failure-path check: run with `NGPU 1` against a CPU-only ELPA build;
    expect a clear error mentioning NGPU 0 fallback instruction, no silent
    CPU execution.
+6. `ctest -R elpa_redist_check` ... expect PASS (phase 2: panel
+   redistribution correctness, any np >= 2).
+7. `ctest -R fulldiag_spingc_gamma` ... expect PASS (phase 2: transverse-field
+   regression, serial).
+8. Startup rejection: `Solver 3` + `OutputHam 1` with nproc > 1 must abort
+   at startup with the OutputHam/InputHam error (no run).
+9. Memory spot check (phase 2): for a fixed N (e.g. 8-site Hubbard, N=4900),
+   compare MaxRSS (`/usr/bin/time -v`) between np=1 and np=P; per-rank memory
+   must drop roughly as 1/P.
 Record results (date, host, ELPA version, commit) at the bottom of this file.
 
 ---
