@@ -93,21 +93,54 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   descinit_(descA, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
   descinit_(descZ_vec, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
 
-  A_distr = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
-  Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
-  w = malloc(xMsize * sizeof(double));
-
   if (iHamPanelActive) {
-    /* Distributed generation (phase 2): redistribute the 1D panel and
-       free it before ELPA to lower the memory peak. */
-    int rerr = RedistPanelToBlockCyclic(xMsize, HamColBegin,
-                                        (HamColEnd >= HamColBegin)
-                                          ? (HamColEnd - HamColBegin + 1) : 0,
-                                        HamPanelLd, Ham_local, A_distr, descA);
+    /* Distributed generation (phase 2): allocate only A_distr + w first,
+       redistribute the 1D panel into A_distr, then free the panel and
+       only THEN allocate Z_vec. This keeps the redistribution-time peak
+       at 2 coexisting matrices (design doc sec. 3), not 3. Every
+       rank-local malloc (including failure) is synced with
+       MPI_Allreduce(MIN) before any collective touches the buffer
+       (design doc sec. 4), same pattern as SyncError in
+       matrixlapack_elpa.c / the ownership guard in
+       RedistPanelToBlockCyclic. */
+    int rerr, ok, gok;
+
+    A_distr = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+    w = malloc(xMsize * sizeof(double));
+    ok = (A_distr != NULL && w != NULL) ? 0 : -1;
+    if (ok != 0) {
+      fprintf(stdout, "  Error: malloc failed for A_distr/w (rank %d).\n", myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      free(A_distr);
+      free(w);
+      free(Ham_local);
+      Ham_local = NULL;
+      iHamPanelActive = 0;
+      return -1;
+    }
+
+    rerr = RedistPanelToBlockCyclic(xMsize, HamColBegin,
+                                    (HamColEnd >= HamColBegin)
+                                      ? (HamColEnd - HamColBegin + 1) : 0,
+                                    HamPanelLd, Ham_local, A_distr, descA);
     free(Ham_local);
     Ham_local = NULL;
     iHamPanelActive = 0; /* panel consumed; phys.c uses Z_vec only */
     if (rerr != 0) {
+      free(A_distr);
+      free(w);
+      return -1;
+    }
+
+    Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+    ok = (Z_vec != NULL) ? 0 : -1;
+    if (ok != 0) {
+      fprintf(stdout, "  Error: malloc failed for Z_vec (rank %d).\n", myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
       free(A_distr);
       free(Z_vec);
       Z_vec = NULL;
@@ -115,6 +148,24 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
       return -1;
     }
   } else {
+    int ok, gok;
+
+    A_distr = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+    Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+    w = malloc(xMsize * sizeof(double));
+    ok = (A_distr != NULL && Z_vec != NULL && w != NULL) ? 0 : -1;
+    if (ok != 0) {
+      fprintf(stdout, "  Error: malloc failed for A_distr/Z_vec/w (rank %d).\n", myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      free(A_distr);
+      free(Z_vec);
+      Z_vec = NULL;
+      free(w);
+      return -1;
+    }
+
     for (i = 0; i < xMsize; i++) {
       for (j = 0; j < xMsize; j++) {
         DivMat(i, j, Ham[i][j], A_distr, descA);

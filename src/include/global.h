@@ -73,7 +73,9 @@ extern int step_spin;/**< output step for TE calculation.*/
 extern double complex**Ham; /**> Hamiltonian for full diagonalization. */
 extern double complex **L_vec;/**> eigen vectors*/
 extern double complex *Ham_local; /* 1D column panel (distributed mode) */
-extern long int HamColBegin;      /* first owned column, 1-based (0 = panel inactive) */
+extern long int HamColBegin;      /* first owned column, 1-based; panel activity is
+                                      signaled by iHamPanelActive, not by this value
+                                      (a zero-column active rank holds jb=1, je=0) */
 extern long int HamColEnd;        /* last owned column, 1-based inclusive */
 extern long int HamPanelLd;       /* leading dimension = idim_max */
 extern int iHamPanelActive;       /* 1: distributed panel mode */

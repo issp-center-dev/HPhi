@@ -99,8 +99,18 @@ int makeHam(struct BindStruct *X) {
         Ham[i][j] = 0;
       }
     }
+  } else {
+    /* Ham_local is zero-initialized at allocation (xsetmem), but that
+       only covers the first call. Zero it here too so a hypothetical
+       second makeHam() call (e.g. future re-entrant use) cannot
+       accumulate onto stale values from a previous call. */
+    if (HamColEnd >= HamColBegin) {
+      long int hs_ncols = HamColEnd - HamColBegin + 1;
+      long int hs_nelem = HamPanelLd * hs_ncols;
+      long int hs_k;
+      for (hs_k = 0; hs_k < hs_nelem; hs_k++) Ham_local[hs_k] = 0;
+    }
   }
-  /* panel mode: Ham_local was zero-initialized at allocation (xsetmem) */
 #pragma omp parallel for default(none) firstprivate(i_max) private(j) shared(Ham, list_Diagonal, v0, v1, iHamPanelActive, HamColBegin, HamColEnd, HamPanelLd, Ham_local)
   for (j = 1; j <= i_max; j++) {
     if (HAM_OWNED_COL(j)) AddHamElem(j, j, list_Diagonal[j]);

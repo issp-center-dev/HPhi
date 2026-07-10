@@ -401,14 +401,32 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
      xsetmem's panel ownership (jb = myrank*NC + 1). A mismatch would
      silently scramble columns, so check at runtime (survives NDEBUG)
      and synchronize the verdict so no rank enters the collective
-     pzgemr2d_ alone (same pattern as SyncError in matrixlapack_elpa.c). */
+     pzgemr2d_ alone (same pattern as SyncError in matrixlapack_elpa.c).
+     Also verify that the caller-supplied ownership parameters
+     (jbegin, ncols_panel) agree with the ownership derived internally
+     from mycol_1/NC/xNsize -- this is what jbegin/ncols_panel are for,
+     rather than being unused (void)-discarded. */
   {
     int ok = (mycol_1 == myrank) ? 0 : -1, gok;
+    long int nc_expect = (mycol_1 < (int)((xNsize + NC - 1) / NC))
+                           ? (((long int)mycol_1 + 1) * NC <= xNsize
+                                ? NC : xNsize - (long int)mycol_1 * NC)
+                           : 0;
+    long int jb_expect = (long int)mycol_1 * NC + 1;
     if (ok != 0) {
       fprintf(stdout,
               "  Error: BLACS 1D grid column (%d) does not match MPI rank (%d):\n"
               "         panel ownership is inconsistent; aborting redistribution.\n",
               mycol_1, myrank);
+    }
+    if (ncols_panel != nc_expect ||
+        (ncols_panel > 0 && jbegin != jb_expect)) {
+      ok = -1;
+      fprintf(stdout,
+              "  Error: caller-supplied panel ownership (jbegin=%ld, ncols=%ld) does\n"
+              "         not match the internally derived ownership (jbegin=%ld, ncols=%ld)\n"
+              "         for rank %d: panel ownership is inconsistent; aborting redistribution.\n",
+              jbegin, ncols_panel, jb_expect, nc_expect, myrank);
     }
     MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
     if (gok != 0) {
@@ -429,7 +447,6 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
            &descA_2d[1]);
 
   blacs_gridexit_(&ictxt_1d);
-  (void)jbegin; (void)ncols_panel;
   return 0;
 }
 
