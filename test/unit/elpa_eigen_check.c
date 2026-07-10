@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
   int i_negone = -1, i_zero = 0;
   int rank, size, ictxt, iam, nprocs, info, ok = 1;
   int nprow, npcol, myrow, mycol;
-  long int n = NDIM, mb = ELPA_NBLK, mp, nq, i, j, k;
+  long int n = NDIM, mb, mp, nq, i, j, k;
   int lld, dims[2] = {0, 0};
   int descA[9], descZ[9];
   double complex *A_distr, *Z_distr, *vecs, *vec_tmp;
@@ -61,6 +61,9 @@ int main(int argc, char **argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Dims_create(size, 2, dims);
   nprow = dims[0]; npcol = dims[1];
+  /* Cap the block size so every process row/column owns a block
+     (e.g. np=3 -> 3x1 grid needs nblk <= 32 for N=97). */
+  mb = ElpaBlockSize(n, nprow, npcol);
   blacs_pinfo_(&iam, &nprocs);
   blacs_get_(&i_negone, &i_zero, &ictxt);
   blacs_gridinit_(&ictxt, "R", &nprow, &npcol);
@@ -88,7 +91,7 @@ int main(int argc, char **argv) {
   }
 
   if (diag_elpa_cmp((int)n, A_distr, Z_distr, w,
-                    (int)mp, (int)nq, myrow, mycol, 0) != 0) {
+                    (int)mp, (int)nq, myrow, mycol, (int)mb, 0) != 0) {
     if (rank == 0) fprintf(stderr, "diag_elpa_cmp failed\n");
     MPI_Abort(MPI_COMM_WORLD, 1);
   }

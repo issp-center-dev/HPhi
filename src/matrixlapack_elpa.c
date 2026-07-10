@@ -55,7 +55,7 @@ static int SetElpaInt(elpa_t handle, const char *name, int value) {
 int diag_elpa_cmp(int xNsize, double complex *A_distr,
                   double complex *Z_distr, double *w,
                   int local_nrows, int local_ncols,
-                  int myrow, int mycol, int ngpu) {
+                  int myrow, int mycol, int nblk, int ngpu) {
   elpa_t handle = NULL;
   int error = ELPA_OK;
   int ierr = 0;
@@ -78,7 +78,7 @@ int diag_elpa_cmp(int xNsize, double complex *A_distr,
         SetElpaInt(handle, "nev", xNsize) != 0 ||
         SetElpaInt(handle, "local_nrows", local_nrows) != 0 ||
         SetElpaInt(handle, "local_ncols", local_ncols) != 0 ||
-        SetElpaInt(handle, "nblk", ELPA_NBLK) != 0 ||
+        SetElpaInt(handle, "nblk", nblk) != 0 ||
         SetElpaInt(handle, "mpi_comm_parent",
                    (int)MPI_Comm_c2f(MPI_COMM_WORLD)) != 0 ||
         SetElpaInt(handle, "process_row", myrow) != 0 ||
@@ -106,7 +106,14 @@ int diag_elpa_cmp(int xNsize, double complex *A_distr,
       ierr = -1;
     }
   } else {
-    if (SetElpaInt(handle, "solver", ELPA_SOLVER_2STAGE) != 0) ierr = -1;
+    /* 2stage is preferred on CPU, but ELPA's 2stage solver returned
+       deterministically inaccurate eigenvectors (residual ~1e-6) for
+       capped block sizes (observed with nblk=24 on a 4x2 grid, ELPA
+       2025.06.001). Capping only happens for matrices small relative to
+       the process grid, where 1stage is safe and fast enough, so fall
+       back to 1stage whenever the block size was capped below ELPA_NBLK. */
+    int solver = (nblk < ELPA_NBLK) ? ELPA_SOLVER_1STAGE : ELPA_SOLVER_2STAGE;
+    if (SetElpaInt(handle, "solver", solver) != 0) ierr = -1;
   }
   if (SyncError(ierr) != 0) goto cleanup_fail;
 

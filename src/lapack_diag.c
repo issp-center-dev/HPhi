@@ -38,7 +38,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   int size;
   int nprow, npcol, myrow, mycol;
   int ictxt;
-  long int mb = ELPA_NBLK, mp, nq, i, j;
+  long int mb, mp, nq, i, j;
   int lld, dims[2] = {0, 0};
   int iam, nprocs, info;
   double complex *A_distr;
@@ -52,6 +52,15 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Dims_create(size, 2, dims);
   nprow = dims[0]; npcol = dims[1];
+
+  if (xMsize < ((nprow > npcol) ? nprow : npcol)) {
+    fprintf(stdoutMPI,
+            "Error: matrix dimension (%ld) is smaller than the process grid (%d x %d).\n"
+            "       Reduce the number of MPI ranks for this problem size.\n",
+            xMsize, nprow, npcol);
+    return -1;
+  }
+  mb = ElpaBlockSize(xMsize, nprow, npcol);
 
 #ifdef _ELPA_GPU
   /* Startup consistency warning (design doc sec. 2): ranks per node
@@ -96,7 +105,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
 
   ierr = diag_elpa_cmp((int)xMsize, A_distr, Z_vec, w,
                        (int)mp, (int)nq, (int)myrow, (int)mycol,
-                       X->Def.iNGPU);
+                       (int)mb, X->Def.iNGPU);
   free(A_distr);
   if (ierr != 0) {
     free(w);

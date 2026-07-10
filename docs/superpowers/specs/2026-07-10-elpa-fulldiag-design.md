@@ -180,6 +180,11 @@ ELPA マニュアル §2（Fortran/C 使用例）および §「GPU usage」の�
        `ELPA_SOLVER_2STAGE`（マニュアル: "ELPA1 is usually the better
        choice than ELPA2 for the performance on GPU"。局所行列が小さい場合の
        2stage 逆転はチューニング課題としてドキュメントに記載）。
+       **例外（clavius 実機で確認）**: nblk がキャップされた構成（§フェーズ1
+       手順 2 参照）では ELPA 2stage が決定論的に不正確な固有ベクトル
+       （残差 ~1e-6）を返すことがある（nblk=24, 4x2 グリッド, ELPA
+       2025.06.001 で観測）。このため CPU でも `nblk < 64` にキャップされた
+       場合は 1stage を使う。キャップは小行列でのみ起きるため性能影響はない。
      - GPU 実行時のみ: `elpa_set(handle, "nvidia-gpu", 1, &error)` —
        error が `ELPA_OK` でなければ「ELPA が CUDA 対応でビルドされて
        いない」と診断して停止（ELPA は未対応オプションにエラーを返す）。
@@ -230,9 +235,12 @@ ELPA マニュアル §2（Fortran/C 使用例）および §「GPU usage」の�
 - `lapack_diag.c` に `Solver == 3` 分岐を追加:
   1. BLACS グリッド生成（既存 ScaLAPACK 経路と同様、`MPI_Dims_create` で
      nprow × npcol）。
-  2. ブロックサイズは **固定値 64**（ELPA 推奨域。現行 `GetBlockSize` は
-     使わない。`pzgemr2d`/ELPA とも N が 64 で割り切れない場合を扱えるため
-     制約はない）。
+  2. ブロックサイズは **既定値 64**（ELPA 推奨域。現行 `GetBlockSize` は
+     使わない）。ただし ELPA は「ブロックを 1 つも所有しないプロセス行/列」
+     を `ELPA_ERROR_SETUP` で拒否するため（clavius 実機で確認）、
+     `ceil(N/nblk) >= max(nprow, npcol)` を満たすよう nblk を
+     `ElpaBlockSize()` でキャップする。さらに N < max(nprow, npcol) の場合は
+     「ランク数を減らせ」という明示エラーで起動時に停止する。
   3. 全複製 `Ham` から `pzelset_`（既存 `DivMat`）で 2D ブロックサイクリック
      分散行列 `A_distr` を構成（フェーズ 1 のみの暫定経路）。
      注意: フェーズ 1 では全複製 `Ham`（16N²/ランク）に加えて

@@ -19,14 +19,29 @@
 #ifdef _ELPA
 #include <complex.h>
 
-/* ELPA block size used for all 2D block-cyclic descriptors on the ELPA
+/* Preferred ELPA block size for the 2D block-cyclic descriptors on the ELPA
    path (design doc section 3). */
 #define ELPA_NBLK 64
+
+/* Effective block size for an n x n matrix on an nprow x npcol grid.
+   ELPA rejects setups where a process row/column owns no block
+   (ELPA_ERROR_SETUP), so the preferred ELPA_NBLK is capped such that
+   ceil(n/nblk) >= max(nprow, npcol). Must be used consistently for the
+   descriptors, numroc_, and the value passed to diag_elpa_cmp. */
+static inline long int ElpaBlockSize(long int n, int nprow, int npcol) {
+  long int maxdim = (nprow > npcol) ? nprow : npcol;
+  long int nblk = ELPA_NBLK;
+  if (maxdim > 0 && nblk * maxdim > n) {
+    nblk = n / maxdim;
+    if (nblk < 1) nblk = 1;
+  }
+  return nblk;
+}
 
 int diag_elpa_cmp(int xNsize, double complex *A_distr,
                   double complex *Z_distr, double *w,
                   int local_nrows, int local_ncols,
-                  int myrow, int mycol, int ngpu);
+                  int myrow, int mycol, int nblk, int ngpu);
 #endif /* _ELPA */
 
 #endif /* HPHI_MATRIXLAPACK_ELPA_H */
