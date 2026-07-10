@@ -55,6 +55,6 @@ if ${MPIRUN} ../../src/HPhi -e namelist.def > reject.log 2>&1; then
   echo "ERROR: Solver 3 + OutputHam + nproc>1 must fail at startup"
   exit 1
 fi
-grep -qi "OutputHam\|InputHam" reject.log
+grep -Eqi "OutputHam|InputHam" reject.log
 
 echo "fulldiag_elpa_hubbard_chain: OK"

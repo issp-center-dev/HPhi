@@ -265,6 +265,7 @@ add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_spingc_nbody_interall_compare)
 add_hphi_test(fulldiag_genspingc_ladder)
+add_hphi_test(fulldiag_spingc_gamma)
 
 # Full diag test labels
 set_tests_properties(
@@ -285,7 +286,7 @@ set_tests_properties(
     fulldiag_tj_kondo_nbody_interall
     PROPERTIES LABELS "fulldiag;tj;tjgc;kondo;nbody")
 set_tests_properties(
-    fulldiag_spin_tri fulldiag_spingc_tri
+    fulldiag_spin_tri fulldiag_spingc_tri fulldiag_spingc_gamma
     PROPERTIES LABELS "fulldiag;spin")
 set_tests_properties(
     fulldiag_genspin_ladder fulldiag_genspingc_ladder
