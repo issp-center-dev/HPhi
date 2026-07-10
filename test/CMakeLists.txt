@@ -628,4 +628,31 @@ if(USE_ELPA)
         elpa_eigen_check
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
     )
+
+    add_executable(elpa_redist_check unit/elpa_redist_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_redist_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_definitions(elpa_redist_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
+    # for elpa_eigen_check; reuse it here for the same reason.
+    target_link_libraries(elpa_redist_check ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+    # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
+    # convention as elpa_eigen_check above. Unlike elpa_eigen_check,
+    # unit/elpa_redist_check.c builds its BLACS grid from MPI_Dims_create
+    # and works with any process count, so "min:2" (rather than
+    # "exact:3") is enough; launch with 2 ranks to exercise the
+    # non-divisible-N redistribution path with more than one owner.
+    add_test(
+        NAME elpa_redist_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                $<TARGET_FILE:elpa_redist_check>
+    )
+    set_tests_properties(
+        elpa_redist_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
 endif(USE_ELPA)

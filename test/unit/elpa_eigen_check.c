@@ -35,6 +35,15 @@ extern void zheev_(char *jobz, char *uplo, int *n, double complex *a,
                    int *lda, double *w, double complex *work, int *lwork,
                    double *rwork, int *info);
 
+/* matrixscalapack.c's RedistPanelToBlockCyclic (Task 5, added after this
+   file) references the process-global `myrank` (extern in global.h,
+   defined in src/global.c) for an ownership-consistency check. This test
+   links only matrixscalapack.c + matrixlapack_elpa.c (no global.c), so
+   without this definition the link fails even though this test never
+   calls that function -- the whole matrixscalapack.o translation unit's
+   undefined reference must still be resolved. */
+int myrank = 0;
+
 static double complex MatElem(int i, int j) {
   double re = 1.0 / (1.0 + fabs((double)(i - j)));
   double im = (double)(i - j) / (double)(NDIM * NDIM);
