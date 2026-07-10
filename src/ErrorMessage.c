@@ -59,6 +59,7 @@ char *cErrElpaGPUBuild="Error in %s\n Solver 3 with NGPU >= 1 requires ELPA >= 2
 char *cWarnScaLAPACKDep="Warning in %s\n The \"ScaLAPACK\" keyword is deprecated. Use \"Solver 1\" instead.\n";
 char *cWarnSolverConflict="Warning in %s\n Legacy keyword \"%s\" conflicts with the explicit Solver value and is ignored.\n";
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";
+char *cErrSpectrumFullDiagSolver="Error in %s\n CalcSpec (spectrum calculation) with FullDiag is requested together with Solver %d,\n but CalcSpectrumByFullDiag() reads eigenvectors from L_vec, which this solver does not fill\n (eigenvectors stay distributed). Use \"Solver 0\" (LAPACK), or \"Solver 1\" (ScaLAPACK) with nproc==1.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";

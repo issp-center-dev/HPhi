@@ -244,10 +244,15 @@ The parameters correlated with the keywords are as follows.
 
 *  ``NGPU``
 
-   **Type :** Int (default value: 2)
+   **Type :** Int (default value: see below)
 
    | **Description :** (FullDiag)
      Number of GPU devices per node for full diagonalization.
+   | Default value: when ``Solver`` is not given explicitly, 2 on
+     MAGMA-enabled builds and 0 otherwise (legacy behavior, unchanged).
+     When ``Solver`` is given explicitly, the default is 2 only for
+     ``Solver 2`` (MAGMA); it is 0 for ``Solver 0/1/3`` (ELPA defaults to
+     CPU execution; GPU use must be opted into explicitly).
    | For ``Solver 2`` (MAGMA), this specifies the number of GPUs used by a single process.
    | For ``Solver 3`` (ELPA), 0 runs on CPU, and a value >= 1 runs on GPU with automatic GPU assignment (1 process per GPU).
    | It is recommended to match the number of MPI processes per node to the number of GPUs.

@@ -35,7 +35,7 @@
  */
 static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   int i_negone = -1, i_zero = 0;
-  int rank, size;
+  int size;
   int nprow, npcol, myrow, mycol;
   int ictxt;
   long int mb = ELPA_NBLK, mp, nq, i, j;
@@ -49,7 +49,6 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   fprintf(stdoutMPI, "Using ELPA (%s)\n\n",
           X->Def.iNGPU >= 1 ? "GPU" : "CPU");
 
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Dims_create(size, 2, dims);
   nprow = dims[0]; npcol = dims[1];

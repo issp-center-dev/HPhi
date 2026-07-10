@@ -129,6 +129,15 @@ FullDiag をマルチノード GPU 対応にする。
   （`MPI_Comm_split_type(MPI_COMM_TYPE_SHARED)` で取得）が `NGPU` の
   整数倍でない場合は rank 0 から警告（GPU 遊休または GPU あたりランク数
   不均一が起きる旨）。実行は継続する（テスト構成の柔軟性を優先）。
+- `Solver 1`/`Solver 3` は、マルチプロセス FullDiag に関する既存の
+  起動時ゲート — `src/HPhiMain.c`（`iCalcType==FullDiag && iFlgScaLAPACK==0
+  && nproc!=1` でエラー終了）、`src/check.c`、`src/CheckMPI.c`
+  （`iFlgScaLAPACK` でヒルベルト空間のサイト分割 vs 全複製を分岐）—
+  を内部フラグ `iFlgScaLAPACK` 経由で通過しなければならない。
+  ユーザー向けキーワードとしては非推奨だが、`ResolveSolver()` は
+  `iSolver`（`Solver 1` または `Solver 3`）から `iFlgScaLAPACK=1` を
+  導出し、これら 3 箇所のゲートに「分散固有ベクトル方式の FullDiag
+  （サイト分割なし）」であることを伝える（レビュー FIX 1 で追加）。
 
 ## 3. アーキテクチャ
 

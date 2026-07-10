@@ -60,6 +60,7 @@ extern char *cErrElpaGPUBuild;
 extern char *cWarnScaLAPACKDep;
 extern char *cWarnSolverConflict;
 extern char *cErrScaLAPACK;
+extern char *cErrSpectrumFullDiagSolver;
 
 extern char *cErrKW;
 extern char *cErrKW_ShowList;

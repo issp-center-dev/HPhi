@@ -17,7 +17,14 @@ EOF
 ../../src/HPhi -sdry stan.in
 echo "Solver  3" >> calcmod.def
 echo "NGPU    0" >> calcmod.def
-${MPIRUNFC} ../../src/HPhi -e namelist.def
+# NOTE: this test is registered via add_hphi_mpi_test(... min:2), whose
+# run_with_mpi_precheck.sh precheck validates and parses -np/-n out of the
+# ${MPIRUN} env var (not ${MPIRUNFC}, which the plain add_hphi_test-registered
+# fulldiag_*.sh scripts use and which is normally unset/empty, i.e. serial).
+# Launching with ${MPIRUNFC} here would silently run serially even when the
+# precheck confirmed MPIRUN has >=2 ranks, defeating the multi-rank gate this
+# test exists to exercise. Use the same variable the precheck validated.
+${MPIRUN} ../../src/HPhi -e namelist.def
 
 # エネルギーと二重占有率のみ比較する（ELPA 経路は use_scalapack 扱いで
 # S2/Sz を計算しないため、既存 fulldiag_hubbard_chain の参照から

@@ -298,6 +298,18 @@ static int ResolveSolver(struct DefineList *X, const char *defname) {
     return -1;
   }
 #endif
+  /* iFlgScaLAPACK now doubles as the internal "distributed-eigenvector
+     FullDiag" flag consumed by the multi-process gates in HPhiMain.c
+     (iCalcType==FullDiag && iFlgScaLAPACK==0 && nproc!=1 -> error),
+     check.c, and CheckMPI.c (iFlgScaLAPACK==1 -> replicated Hilbert-space
+     treatment, NsiteMPI=Nsite, no site separation). The user-facing
+     ScaLAPACK keyword is deprecated in favor of Solver, but this flag must
+     still be derived from the resolved solver so Solver 1 (ScaLAPACK) and
+     Solver 3 (ELPA) reach those gates the same way the legacy ScaLAPACK
+     keyword did. This assignment runs after the conflict-normalization
+     branch above, so an explicit conflicting legacy ScaLAPACK keyword does
+     not survive into the final value. */
+  X->iFlgScaLAPACK = (X->iSolver == SOLVER_SCALAPACK || X->iSolver == SOLVER_ELPA) ? 1 : 0;
   return 0;
 }
 
@@ -495,6 +507,22 @@ int ReadcalcmodFile(
   if(X->iCalcType !=2 && X->iOutputHam ==TRUE) {
     fprintf(stdoutMPI, cErrOutputHamForFullDiag, defname);
     return (-1);
+  }
+
+  /* CalcSpectrumByFullDiag() (src/CalcSpectrumByFullDiag.c) reads eigenvectors
+     out of L_vec after calling lapack_diag(). SOLVER_ELPA never fills L_vec
+     (eigenvectors stay distributed in Z_vec; see lapack_diag_elpa()), and
+     SOLVER_SCALAPACK with nproc>1 takes the same distributed-Z_vec path
+     (diag_scalapack_cmp() in lapack_diag()), so both would silently read
+     stale/garbage L_vec. Reject at startup rather than compute wrong spectra.
+     SOLVER_SCALAPACK with nproc==1 is fine: lapack_diag() falls back to the
+     replicated ZHEEVall()/L_vec path in that case. */
+  if (X->iCalcType == FullDiag && X->iFlgCalcSpec != CALCSPEC_NOT) {
+    if (X->iSolver == SOLVER_ELPA ||
+        (X->iSolver == SOLVER_SCALAPACK && nproc > 1)) {
+      fprintf(stdoutMPI, cErrSpectrumFullDiagSolver, defname, X->iSolver);
+      return (-1);
+    }
   }
 
   return 0;

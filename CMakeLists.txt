@@ -3,10 +3,25 @@ enable_testing()
 
 project(HPhi NONE)
 # Capture whether the user explicitly requested USE_SCALAPACK=OFF (as opposed to
-# the default OFF). -D cache vars are defined before option() runs, so this
-# distinguishes an explicit -DUSE_SCALAPACK=OFF from the unset default.
-if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)
-  set(_USE_SCALAPACK_EXPLICIT_OFF TRUE)
+# the default OFF). -D cache vars are defined before option() runs, so a plain
+# `if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)` would look identical for
+# (a) a fresh `-DUSE_SCALAPACK=OFF` and (b) a *cached* OFF left over from a
+# previous configure in the same build dir (e.g. the default from option()
+# below, written to CMakeCache.txt on the prior run). Re-running cmake with
+# just `-DUSE_ELPA=ON` in an existing build dir would then hit case (b) and
+# misreport it as an explicit conflicting USE_SCALAPACK=OFF.
+#
+# Distinguish them via the cache entry's HELPSTRING: -D command-line cache
+# vars get CMake's fixed helpstring "No help, variable specified on the
+# command line."; the option() default below carries our own helpstring
+# ("Use Scalapack"). Only the command-line form counts as "explicitly set
+# OFF" for the USE_ELPA conflict check further down.
+set(_USE_SCALAPACK_EXPLICIT_OFF FALSE)
+if(DEFINED CACHE{USE_SCALAPACK} AND NOT USE_SCALAPACK)
+  get_property(_us_help CACHE USE_SCALAPACK PROPERTY HELPSTRING)
+  if(_us_help STREQUAL "No help, variable specified on the command line.")
+    set(_USE_SCALAPACK_EXPLICIT_OFF TRUE)
+  endif()
 endif()
 option(USE_SCALAPACK "Use Scalapack" OFF)
 option(USE_ELPA "Use ELPA for FullDiag" OFF)

@@ -600,7 +600,21 @@ if(USE_ELPA)
     target_compile_definitions(elpa_eigen_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
     target_link_libraries(elpa_eigen_check ${ELPA_LIBRARIES}
         ${SCALAPACK_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
-    add_test(NAME elpa_eigen_check
-        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
-                $<TARGET_FILE:elpa_eigen_check>)
+    # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
+    # convention as the other MPI tests in this file (see add_hphi_mpi_test),
+    # rather than a bare add_test(mpiexec ...): on hosts without a usable
+    # MPIRUN (or with too few ranks configured), this now skips cleanly
+    # (exit 77) instead of failing/hanging trying to launch mpiexec directly.
+    # Requires exactly 3 ranks (the grid assumed by unit/elpa_eigen_check.c),
+    # hence mode "exact:3" like the other exact-rank-count MPI tests above.
+    add_test(
+        NAME elpa_eigen_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
+                $<TARGET_FILE:elpa_eigen_check>
+    )
+    set_tests_properties(
+        elpa_eigen_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
 endif(USE_ELPA)
