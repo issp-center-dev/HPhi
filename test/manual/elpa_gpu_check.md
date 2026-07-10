@@ -40,3 +40,10 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - Checklist 4 (multi-rank GPU): np=2, `NGPU 2`, both RTX 6000 Ada visible. Two distinct GPU UUIDs active during the run (ELPA round-robin = 1 rank per GPU as designed); exit 0; eigenvalues again match exactly.
 - Checklist 5 (second variant): with the CPU conda libelpa shadowing the CUDA one via RPATH, the run aborted cleanly with "the linked ELPA has no NVIDIA GPU support / Set NGPU 0" — no silent CPU execution. **Troubleshooting note:** if a CPU-only libelpa with the same soname is on the loader path (e.g. conda env), it can shadow the CUDA build; ensure the CUDA ELPA lib dir wins (LD_LIBRARY_PATH/rpath) or remove the CPU copy.
 - Protocol deviation: smoke sizes used 8-site Hubbard (N=4900) instead of the 12/14-site sizes originally written in this checklist (those Hilbert dimensions are impractical for FullDiag); checklist text kept for history.
+
+### Benchmark gate (phase 1, N=4900, np=2, LapackDiag step from CalcTimer.dat)
+| Backend | Diag time |
+|---|---|
+| Solver 1 ScaLAPACK pzheev (2 CPU ranks) | 149.8 s |
+| Solver 3 ELPA CPU 2stage (2 CPU ranks) | 25.8 s (5.8x vs pzheev) |
+| Solver 3 ELPA GPU 1stage (2 ranks x 2 RTX 6000 Ada) | 4.2 s (35x vs pzheev) |
