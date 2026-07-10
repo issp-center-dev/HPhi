@@ -220,6 +220,17 @@ The parameters correlated with the keywords are as follows.
    | TPQ/cTPQ physical quantities are written to ``SS_tpq.dat``, ``Norm_tpq.dat``, and ``Flct_tpq.dat`` instead of ``SS_rand*.dat``, ``Norm_rand*.dat``, and ``Flct_rand*.dat``.
    | ``AnomalousG`` in LOBCG keeps the existing non-aggregate output because the existing output is not split by eigen index.
 
+*  ``Solver``
+
+   **Type :** int (default: resolved from legacy keywords)
+
+   | **Description :** (FullDiag)
+     Diagonalization backend for the full diagonalization method:
+   | 0 (LAPACK, serial), 1 (ScaLAPACK), 2 (MAGMA, single-node multi-GPU),
+     3 (ELPA, multi-node CPU/GPU; requires a build with ``USE_ELPA=ON``).
+   | When omitted, the backend is resolved from the legacy ``Scalapack``
+     and ``NGPU`` keywords so that existing inputs behave as before.
+
 *  ``Scalapack``
 
    **Type :** Int (default value: 0)
@@ -227,14 +238,22 @@ The parameters correlated with the keywords are as follows.
    | **Description :** (Full Diag)Select to use ScaLAPACK library for full diagonalization:
    | 0: not to use ScaLAPACK.
    | 1: use ScaLAPACK.
+   | (Deprecated) This keyword is retained for backward compatibility.
+     Please use ``Solver 1`` for new inputs.
 
 
 *  ``NGPU``
 
    **Type :** Int (default value: 2)
 
-   | **Description :** (Full Diag)Select the number of GPU devices for full diagonalization:
-   | :math:`{\mathcal H} \Phi` does not support to use GPU devices at multi-nodes. 
+   | **Description :** (FullDiag)
+     Number of GPU devices per node for full diagonalization.
+   | For ``Solver 2`` (MAGMA), this specifies the number of GPUs used by a single process.
+   | For ``Solver 3`` (ELPA), 0 runs on CPU, and a value >= 1 runs on GPU with automatic GPU assignment (1 process per GPU).
+   | It is recommended to match the number of MPI processes per node to the number of GPUs.
+   | Note that ``NGPU`` does not physically limit the number of GPU devices.
+     To strictly limit GPU count, use the job scheduler (``CUDA_VISIBLE_DEVICES``, etc.).
+   | GPU execution with ELPA requires ELPA version >= 2023.11.001. 
 
 .. raw:: latex
 

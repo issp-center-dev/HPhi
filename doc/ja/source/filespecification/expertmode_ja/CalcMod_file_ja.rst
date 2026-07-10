@@ -205,6 +205,20 @@ CalcModファイル
    | TPQ/cTPQの物理量は ``SS_rand*.dat``、``Norm_rand*.dat``、``Flct_rand*.dat`` ではなく、``SS_tpq.dat``、``Norm_tpq.dat``、``Flct_tpq.dat`` に出力されます。
    | LOBCGの ``AnomalousG`` は既存出力が eigen 番号別ではないため、従来形式のまま出力されます。
 
+-  ``Solver``
+
+   **形式 :** int型 (デフォルト値: 旧キーワードから自動決定)
+
+   | **説明 :** (FullDiag)
+     全対角化計算の対角化バックエンドを指定します。
+   | 0: LAPACK (逐次)
+   | 1: ScaLAPACK
+   | 2: MAGMA (シングルノード・マルチGPU)
+   | 3: ELPA (マルチノード対応、CPU/GPU)
+   | 未指定の場合は従来の ``Scalapack``/``NGPU`` キーワードから
+     従来どおりの動作になるよう自動決定されます。
+     ``Solver 3`` は ELPA を有効にしたビルド (``USE_ELPA=ON``) が必要です。
+
 -  ``Scalapack``
 
    **形式 :** int型 (デフォルト値 0)
@@ -214,14 +228,22 @@ CalcModファイル
    | 0: ScaLAPACKを使用しない。
    | 1: ScaLAPACKを使用する。
    | で選択することが出来ます。
+   | (非推奨) 本キーワードは後方互換のために残されています。
+     今後は ``Solver 1`` を使用してください。
 
 -  ``NGPU``
 
    **形式 :** int型 (デフォルト値 2)
 
-   **説明 :** (FullDiag)
-   全対角化計算でのMAGMAライブラリを使用する場合のGPU数を指定します。
-   なお、 :math:`{\mathcal H}\Phi` ではマルチノードでのGPU計算には対応していません。
+   | **説明 :** (FullDiag)
+     ノードあたりの使用 GPU 枚数を指定します。
+   | ``Solver 2`` (MAGMA) では単一プロセスから使う GPU 枚数です。
+   | ``Solver 3`` (ELPA) では 0 で CPU 実行、1 以上で GPU 実行となり、
+     プロセスと GPU の対応は ELPA が自動割当します (1 プロセス 1 GPU)。
+   | ノードあたりの MPI プロセス数を GPU 枚数に合わせる実行を推奨します。
+   | なお ``NGPU`` は使用 GPU 枚数を物理的には制限しません。枚数を厳密に
+     制限する場合はジョブスケジューラ側 (``CUDA_VISIBLE_DEVICES`` 等) で
+     行ってください。GPU 実行には ELPA 2023.11.001 以降が必要です。
 
 .. raw:: latex
 
