@@ -16,21 +16,111 @@
 #include "lapack_diag.h"
 #include "matrixlapack.h"
 #include "FileIO.h"
+#include "DefCommon.h"
 #ifdef _MAGMA
 #include "matrixlapack_magma.h"
 #endif
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
+#ifdef _ELPA
+#include "matrixlapack_elpa.h"
 
-/** 
- * 
+/**
+ * @brief FullDiag via ELPA (phase 1: fill the 2D block-cyclic matrix from
+ * the replicated Ham with pzelset, then call diag_elpa_cmp).
+ * Eigenvalues land in v0 on all ranks; eigenvectors stay in Z_vec.
+ * NOTE (phase 1): the replicated Ham plus A_distr plus Z_vec coexist in
+ * memory, so verification runs must stay at small N (design doc sec. 3).
+ */
+static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
+  int i_negone = -1, i_zero = 0;
+  int rank, size;
+  int nprow, npcol, myrow, mycol;
+  int ictxt;
+  long int mb = ELPA_NBLK, mp, nq, i, j;
+  int lld, dims[2] = {0, 0};
+  int iam, nprocs, info;
+  double complex *A_distr;
+  double *w;
+  int descA[9];
+  int ierr;
+
+  fprintf(stdoutMPI, "Using ELPA (%s)\n\n",
+          X->Def.iNGPU >= 1 ? "GPU" : "CPU");
+
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Dims_create(size, 2, dims);
+  nprow = dims[0]; npcol = dims[1];
+
+#ifdef _ELPA_GPU
+  /* Startup consistency warning (design doc sec. 2): ranks per node
+     should be a multiple of NGPU (ideally equal: 1 rank per GPU). */
+  if (X->Def.iNGPU >= 1) {
+    MPI_Comm comm_node;
+    int nrank_node;
+    MPI_Comm_split_type(MPI_COMM_WORLD, MPI_COMM_TYPE_SHARED, 0,
+                        MPI_INFO_NULL, &comm_node);
+    MPI_Comm_size(comm_node, &nrank_node);
+    MPI_Comm_free(&comm_node);
+    if (nrank_node % X->Def.iNGPU != 0) {
+      fprintf(stdoutMPI,
+              "Warning: ranks per node (%d) is not a multiple of NGPU (%d):\n"
+              "         GPUs may idle or be shared unevenly. Recommended: 1 rank per GPU.\n",
+              nrank_node, X->Def.iNGPU);
+    }
+  }
+#endif
+
+  blacs_pinfo_(&iam, &nprocs);
+  blacs_get_(&i_negone, &i_zero, &ictxt);
+  blacs_gridinit_(&ictxt, "R", &nprow, &npcol);
+  blacs_gridinfo_(&ictxt, &nprow, &npcol, &myrow, &mycol);
+
+  mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
+  nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
+  lld = (mp > 0) ? mp : 1;
+
+  descinit_(descA, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
+  descinit_(descZ_vec, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
+
+  A_distr = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+  Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(double complex));
+  w = malloc(xMsize * sizeof(double));
+
+  for (i = 0; i < xMsize; i++) {
+    for (j = 0; j < xMsize; j++) {
+      DivMat(i, j, Ham[i][j], A_distr, descA);
+    }
+  }
+
+  ierr = diag_elpa_cmp((int)xMsize, A_distr, Z_vec, w,
+                       (int)mp, (int)nq, (int)myrow, (int)mycol,
+                       X->Def.iNGPU);
+  free(A_distr);
+  if (ierr != 0) {
+    free(w);
+    return -1;
+  }
+
+  for (i = 0; i < xMsize; i++) {
+    v0[i] = w[i];
+  }
+  free(w);
+  use_scalapack = 1;
+  return 0;
+}
+#endif /* _ELPA */
+
+/**
+ *
  * @brief performing full diagonalization using lapack
- * @param[in,out] X 
- * 
+ * @param[in,out] X
+ *
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
- * @return 
+ * @return
  */
 int lapack_diag(
 struct BindStruct *X//!<[inout]
@@ -53,41 +143,53 @@ struct BindStruct *X//!<[inout]
     }
   }
   xMsize = i_max;
-  if (X->Def.iNGPU == 0) {
+  switch (X->Def.iSolver) {
+  case SOLVER_SCALAPACK:
 #ifdef _SCALAPACK
-    if(nproc >1) {
+    if (nproc > 1) {
       fprintf(stdoutMPI, "Using SCALAPACK\n\n");
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
       MPI_Comm_size(MPI_COMM_WORLD, &size);
-      MPI_Dims_create(size,2,dims);
-      nprow=dims[0]; npcol=dims[1];
+      MPI_Dims_create(size, 2, dims);
+      nprow = dims[0]; npcol = dims[1];
 
       blacs_pinfo_(&iam, &nprocs);
       blacs_get_(&i_negone, &i_zero, &ictxt);
       blacs_gridinit_(&ictxt, "R", &nprow, &npcol);
       blacs_gridinfo_(&ictxt, &nprow, &npcol, &myrow, &mycol);
-      
+
       mb = GetBlockSize(xMsize, size);
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
-      Z_vec = malloc(mp*nq*sizeof(complex double));
+      Z_vec = malloc(mp * nq * sizeof(complex double));
       diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
     } else {
       ZHEEVall(xMsize, Ham, v0, L_vec);
     }
-#else
-    ZHEEVall(xMsize, Ham, v0, L_vec);
 #endif
-  } else {
+    break;
+
+  case SOLVER_MAGMA:
 #ifdef _MAGMA
-    if(myrank==0){
-      if(diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
+    if (myrank == 0) {
+      if (diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
         return -1;
       }
     }
-#else
-    ZHEEVall(xMsize, Ham, v0, L_vec);
 #endif
+    break;
+
+  case SOLVER_ELPA:
+#ifdef _ELPA
+    if (lapack_diag_elpa(X, xMsize) != 0) {
+      return -1;
+    }
+#endif
+    break;
+
+  default: /* SOLVER_LAPACK */
+    ZHEEVall(xMsize, Ham, v0, L_vec);
+    break;
   }
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
   if (childfopenMPI(sdt, "w", &fp) != 0) {

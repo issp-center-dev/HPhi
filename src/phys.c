@@ -49,6 +49,7 @@
 #include "anomalous_pair.h"
 #include "green_output.h"
 #include "wrapperMPI.h"
+#include "DefCommon.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
@@ -100,7 +101,15 @@ void phys(struct BindStruct *X, //!<[inout]
     }
     if(use_scalapack){
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#ifdef _ELPA
+      if (X->Def.iSolver == SOLVER_ELPA) {
+        GetEigenVectorBlock(i, i_max, Z_vec, descZ_vec, vec_tmp);
+      } else {
+        GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
+      }
+#else
       GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
+#endif
       if(rank == 0) {
         for (j = 0; j < i_max; j++) {
           v0[j + 1] = vec_tmp[j];
@@ -210,5 +219,10 @@ void phys(struct BindStruct *X, //!<[inout]
   }
 #ifdef _SCALAPACK
   if(use_scalapack) free(vec_tmp);
-#endif  
+#ifdef _ELPA
+  if (use_scalapack && X->Def.iSolver == SOLVER_ELPA) {
+    FreeEigenVectorGatherContext();
+  }
+#endif
+#endif
 }

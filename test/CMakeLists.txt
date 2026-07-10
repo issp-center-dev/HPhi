@@ -588,3 +588,7 @@ if(MPI_FOUND)
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
 endif(MPI_FOUND)
+
+if(USE_ELPA)
+    add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
+endif(USE_ELPA)
