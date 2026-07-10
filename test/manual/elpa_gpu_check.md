@@ -48,3 +48,11 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 | Solver 1 ScaLAPACK pzheev (2 CPU ranks) | 149.8 s |
 | Solver 3 ELPA CPU 2stage (2 CPU ranks) | 25.8 s (5.8x vs pzheev) |
 | Solver 3 ELPA GPU 1stage (2 ranks x 2 RTX 6000 Ada) | 4.2 s (35x vs pzheev) |
+
+### 2026-07-11 — clavius (s76), Phase 2 (distributed Hamiltonian generation) — PASSED
+- Commit under test: a87c3e2f (phase-2 complete). Build: fresh `-DUSE_ELPA=ON -DELPA_ROOT=~/opt/elpa-2025.06-cuda` (CUDA ELPA 2025.06.001).
+- `elpa_redist_check` (panel vs replicated fill, element-wise): PASS at np=1,2,3,4,6,8.
+- `elpa_eigen_check`: PASS at np=1,2,3,4,8. ctest: `fulldiag_elpa_hubbard_chain` (incl. new OutputHam-rejection case), `elpa_redist_check`, `fulldiag_solver_keyword`, `fulldiag_spingc_gamma` all PASS.
+- Distributed-generation physics (Solver 3 CPU, panel path) vs Solver 0, all eigenvalues at printed precision: Hubbard L=6 (N=400) np=4 maxdiff 0.0; Hubbard L=8 (N=4900) np=2 and np=4 maxdiff 0.0; SpinGC L=8 Gamma=0.5 (N=256, covers the reworked transverse-field hunk) np=2 maxdiff 0.0.
+- Memory scaling (L=8, N=4900, MaxRSS of largest rank via /usr/bin/time -v): replicated np=1 = 1.93 GB -> distributed np=4 = 0.63 GB per rank (O(N^2/P) confirmed).
+- GPU distributed generation: np=2 x 2 GPUs (`NGPU 2`, both RTX 6000 Ada free and used — 2 distinct GPU UUIDs observed), exit 0, all 4900 eigenvalues match Solver 0 exactly.
