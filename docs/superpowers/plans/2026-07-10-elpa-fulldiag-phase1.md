@@ -14,7 +14,7 @@
 - ELPA 最低バージョン: CPU = API 20211125（`elpa_init(20211125)`）、GPU = 2023.11.001（`elpa_setup_gpu` の存在で判定、CMake マクロ `_ELPA_GPU`）
 - スレッド版 `elpa_openmp` はサポートしない（検出したら configure エラー）
 - GPU 要求（`NGPU >= 1`）失敗時に黙って CPU にフォールバックしない（明示エラーで停止）
-- 全ての ELPA 集団操作（`elpa_setup` / `elpa_setup_gpu` / `elpa_eigenvectors` / `elpa_deallocate`）の直前に `MPI_Allreduce(MAX)` エラー同期
+- 全ての ELPA 集団操作（`elpa_setup` / `elpa_setup_gpu` / `elpa_eigenvectors`）の直前に `MPI_Allreduce` エラー同期（0=成功/-1=失敗 の符号化では `MPI_MIN` を使い、いずれかのランクの -1 を全ランクに伝播させる。`MPI_MAX` は失敗を隠すため不可）
 - 警告・エラー表示は rank 0 のみ（`stdoutMPI` 慣例）
 - 既存経路 `Solver 0/1/2` の挙動・出力を一切変えない（`Solver 1` の `GetEigenVector` も変更しない）
 - ELPA ブロックサイズは固定 64、ELPA ソルバーは GPU=`ELPA_SOLVER_1STAGE` / CPU=`ELPA_SOLVER_2STAGE`
@@ -605,7 +605,7 @@ static const char *ELPA_GPU_OPTION = "nvidia-gpu";
    branch before each collective ELPA call (design doc section 4). */
 static int SyncError(int ierr) {
   int gerr = 0;
-  MPI_Allreduce(&ierr, &gerr, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&ierr, &gerr, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
   return gerr;
 }
 

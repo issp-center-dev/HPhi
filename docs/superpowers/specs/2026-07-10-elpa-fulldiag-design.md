@@ -153,7 +153,7 @@ ELPA マニュアル §2（Fortran/C 使用例）および §「GPU usage」の�
     configure 時に検出し `_ELPA_GPU` を定義。無ければ GPU 実行は起動時
     エラー）。
 - 呼び出し手順。**集団操作（`elpa_setup` / `elpa_setup_gpu` /
-  `elpa_eigenvectors`）の直前には必ず `MPI_Allreduce(MAX)` による
+  `elpa_eigenvectors`）の直前には必ず `MPI_Allreduce`（0=成功/-1=失敗の符号化では `MPI_MIN`。`MPI_MAX` は部分失敗を隠すため不可）による
   エラーフラグ同期を置き**、どこかのランクの局所的失敗（allocate/set）で
   他ランクが集団操作に進んでハングする事態を防ぐ:
   1. `handle = elpa_allocate(&error)`
@@ -364,7 +364,7 @@ makeHam (各ランクが担当列を生成)
   `elpa_setup` / `elpa_setup_gpu` / `elpa_eigenvectors`）の戻り値を検査する。
 - **集団的エラー同期**: §3「ELPA API 契約」の手順どおり、**全ての集団操作
   （`elpa_setup`、`elpa_setup_gpu`、`elpa_eigenvectors`、および後続の
-  `pzgemr2d_`）の直前**に `MPI_Allreduce(MAX)` でエラーフラグを全ランクで
+  `pzgemr2d_`）の直前**に `MPI_Allreduce`（0=成功/-1=失敗なら `MPI_MIN`）でエラーフラグを全ランクで
   共有する。どこかのランクの局所的失敗（`elpa_allocate` / `elpa_set` の
   失敗、メモリ確保失敗を含む）を全ランクが同期的に検知し、リソース解放 →
   `-1` を返して HPhi 標準のエラー終了（`exitMPI`）に乗せる。
