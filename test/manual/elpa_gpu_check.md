@@ -31,4 +31,5 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - Checklist 2 `fulldiag_elpa_hubbard_chain` (np=2, multi-rank HPhi end-to-end incl. startup gates): PASS. `fulldiag_solver_keyword` on ELPA build (capability branches): PASS.
 - Checklist 5 failure path: `Solver 3` + `NGPU 1` against CPU-only ELPA → clean abort (exit 14) with "the linked ELPA has no NVIDIA GPU support / Set NGPU 0" — no silent CPU fallback.
 - Defects found on hardware and fixed in 8732e240: (a) nblk must be capped so every process row/col owns a block (ELPA_ERROR_SETUP otherwise); (b) ELPA2 2stage gives inaccurate eigenvectors with capped nblk (e.g. 24 on 4x2) → 1stage fallback when capped.
-- Checklist 3/4 (GPU smoke, CUDA ELPA >= 2023.11.001): PENDING — requires a CUDA build of ELPA (RTX 6000 Ada, CUDA 12.9 available).
+- Additional (Codex-recommended) checks, all PASS: N(=4) < process grid (5x5, np=25) aborts with the clear "reduce ranks" error on all ranks (no hang); uncapped nblk=64 multi-rank 2stage (L=6 chain, N=400, np=2) matches Solver 0 energies exactly (maxdiff 0.0 over 400 eigenvalues).
+- Checklist 3/4 (GPU smoke, CUDA ELPA >= 2023.11.001): PENDING — requires a CUDA build of ELPA (RTX 6000 Ada sm_89, CUDA 12.9 available).
