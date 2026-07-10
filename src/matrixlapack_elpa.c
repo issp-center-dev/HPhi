@@ -30,7 +30,7 @@ static const char *ELPA_GPU_OPTION = "nvidia-gpu";
    branch before each collective ELPA call (design doc section 4). */
 static int SyncError(int ierr) {
   int gerr = 0;
-  MPI_Allreduce(&ierr, &gerr, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&ierr, &gerr, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
   return gerr;
 }
 
