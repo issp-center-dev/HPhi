@@ -20,6 +20,12 @@ https://github.com/issp-center-dev/HPhi/releases
 
 でコンパイルすることができます。全対角化の計算に\ ``ScaLAPACK``\ を使用する場合には、\ ``-DUSE_SCALAPACK=ON``\
 のオプションをcmake時につけてください。
+全対角化の計算に\ ``ELPA``\ を使用する場合には、\ ``-DUSE_ELPA=ON``\
+のオプションをcmake時につけてください（ScaLAPACKとMPIが必要です。
+``USE_SCALAPACK`` は自動的に有効化されます）。ELPAが標準外のパスに
+インストールされている場合は\ ``-DELPA_ROOT=/path/to/elpa``\ で場所を
+指定してください（``ELPA_INCLUDE_DIR``/``ELPA_LIBRARY`` での個別指定も
+可能です）。
 コンパイル後、$HOME/build/hphi直下にsrcフォルダが作成され、
 実行ファイルであるHPhiがそのフォルダ内に作成されます。
 MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。

@@ -17,6 +17,10 @@ We can compile :math:`{\mathcal H}\Phi` as::
  make
 
 To use ScaLAPACK library for full diagonalization, the cmake option ``-DUSE_SCALAPACK=ON`` is needed.
+To use ELPA library for full diagonalization, the cmake option ``-DUSE_ELPA=ON`` is needed
+(ELPA requires ScaLAPACK and MPI; ``USE_SCALAPACK`` is enabled automatically).
+If ELPA is installed in a non-standard path, specify its location via ``-DELPA_ROOT=/path/to/elpa``
+(individual overrides ``ELPA_INCLUDE_DIR``/``ELPA_LIBRARY`` are also supported).
 Here, we set a path to :math:`{\mathcal H}\Phi` as ``$PathTohphi``
 and to a build directory as ``$HOME/build/hphi``.
 After compilation, ``src`` folder is constructed below a ``$HOME/build/hphi``

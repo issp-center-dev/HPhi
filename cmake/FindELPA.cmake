@@ -67,10 +67,19 @@ endif()
 if(ELPA_FOUND)
   message(STATUS "ELPA include: ${ELPA_INCLUDE_DIRS}")
   message(STATUS "ELPA library: ${ELPA_LIBRARIES}")
-  # GPU API (ELPA >= 2023.11.001): detect elpa_setup_gpu
+  # GPU API (ELPA >= 2023.11.001): detect elpa_setup_gpu.
+  # MPI and LAPACK libraries are appended so the check's test link does not
+  # fail on unresolved dependency symbols when ELPA is a static library,
+  # which would falsely report the GPU API as missing.
   include(CheckSymbolExists)
+  # This module runs before the top-level find_package(LAPACK); fetch LAPACK
+  # here so its libraries are available for the link check (the later
+  # top-level call reuses the cached result).
+  if(NOT LAPACK_FOUND)
+    find_package(LAPACK QUIET)
+  endif()
   set(CMAKE_REQUIRED_INCLUDES ${ELPA_INCLUDE_DIRS})
-  set(CMAKE_REQUIRED_LIBRARIES ${ELPA_LIBRARIES})
+  set(CMAKE_REQUIRED_LIBRARIES ${ELPA_LIBRARIES} ${MPI_C_LIBRARIES} ${LAPACK_LIBRARIES})
   check_symbol_exists(elpa_setup_gpu "elpa/elpa.h" ELPA_HAVE_SETUP_GPU)
   unset(CMAKE_REQUIRED_INCLUDES)
   unset(CMAKE_REQUIRED_LIBRARIES)
