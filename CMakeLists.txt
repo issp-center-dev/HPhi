@@ -16,12 +16,23 @@ project(HPhi NONE)
 # command line."; the option() default below carries our own helpstring
 # ("Use Scalapack"). Only the command-line form counts as "explicitly set
 # OFF" for the USE_ELPA conflict check further down.
-set(_USE_SCALAPACK_EXPLICIT_OFF FALSE)
+#
+# Remember across re-configures that the user explicitly disabled ScaLAPACK
+# (option() rewrites USE_SCALAPACK's HELPSTRING after the first run, so the
+# command-line origin must be recorded in a separate sticky cache entry:
+# without it, run 1 `-DUSE_SCALAPACK=OFF` followed by run 2 `-DUSE_ELPA=ON`
+# in the same dir would silently auto-enable ScaLAPACK over the user's
+# explicit OFF instead of erroring).
 if(DEFINED CACHE{USE_SCALAPACK} AND NOT USE_SCALAPACK)
   get_property(_us_help CACHE USE_SCALAPACK PROPERTY HELPSTRING)
   if(_us_help STREQUAL "No help, variable specified on the command line.")
-    set(_USE_SCALAPACK_EXPLICIT_OFF TRUE)
+    set(HPHI_USE_SCALAPACK_EXPLICIT_OFF TRUE CACHE INTERNAL
+        "User explicitly passed -DUSE_SCALAPACK=OFF")
   endif()
+endif()
+if(USE_SCALAPACK)
+  # User (re-)enabled ScaLAPACK: clear the sticky marker.
+  unset(HPHI_USE_SCALAPACK_EXPLICIT_OFF CACHE)
 endif()
 option(USE_SCALAPACK "Use Scalapack" OFF)
 option(USE_ELPA "Use ELPA for FullDiag" OFF)
@@ -108,7 +119,7 @@ endif(ENABLE_MPI)
 # ELPA requires ScaLAPACK. Resolve USE_SCALAPACK BEFORE the LAPACK block below,
 # so that block emits exactly one of -D_lapack / -D_SCALAPACK (never both).
 if(USE_ELPA)
-  if(_USE_SCALAPACK_EXPLICIT_OFF)
+  if(HPHI_USE_SCALAPACK_EXPLICIT_OFF)
     message(FATAL_ERROR "USE_ELPA=ON requires ScaLAPACK, but USE_SCALAPACK=OFF was set explicitly.")
   endif()
   if(NOT USE_SCALAPACK)
