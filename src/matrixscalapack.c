@@ -271,4 +271,89 @@ int diag_scalapack_cmp(long int xNsize, double complex **A,
   return 0;
 }
 
+/* Cached destination grid for GetEigenVectorBlock: a 1x1 BLACS grid
+   containing rank 0 only, built once per run (design doc section 3). */
+static int ictxt_gather = -100;   /* -100: not initialized */
+static int desc_gather[9];
+
+/**
+ * @brief Initialize the rank-0-only destination grid and descriptor.
+ * All ranks must call this (blacs_gridmap_ is collective). Follows the
+ * p?gemr2d contract: ranks outside the destination grid keep
+ * desc[CTXT_] = -1 while all other descriptor fields stay valid.
+ */
+static void InitEigenVectorGatherContext(long int xNsize) {
+  int i_negone = -1, i_zero = 0;
+  int imap[1] = {0};
+  int ld = 1, np_gather = 1;
+  int myrow_g, mycol_g, nprow_g, npcol_g;
+
+  blacs_get_(&i_negone, &i_zero, &ictxt_gather);
+  blacs_gridmap_(&ictxt_gather, imap, &ld, &np_gather, &np_gather);
+
+  /* Fully initialize the descriptor on ALL ranks (some implementations
+     inspect fields other than CTXT_), then mark non-participants. */
+  desc_gather[0] = 1;               /* DTYPE_: dense */
+  desc_gather[1] = ictxt_gather;    /* CTXT_ */
+  desc_gather[2] = (int)xNsize;     /* M_ */
+  desc_gather[3] = 1;               /* N_ */
+  desc_gather[4] = (int)xNsize;     /* MB_ */
+  desc_gather[5] = 1;               /* NB_ */
+  desc_gather[6] = 0;               /* RSRC_ */
+  desc_gather[7] = 0;               /* CSRC_ */
+  desc_gather[8] = (int)xNsize;     /* LLD_ */
+
+  blacs_gridinfo_(&ictxt_gather, &nprow_g, &npcol_g, &myrow_g, &mycol_g);
+  if (myrow_g < 0) {
+    desc_gather[1] = -1;            /* not in the destination grid */
+  }
+}
+
+/**
+ * @brief get eigenvector from distributed matrix via a single block
+ * transfer (pzgemr2d_) instead of the element-wise pzelget_ loop used
+ * by GetEigenVector.
+ * @param[in] idx 0-based index of eigenvector (column of Z)
+ * @param[in] xNsize size of eigenvector
+ * @param[in] Z distribution matrix of eigenvector
+ * @param[in] descZ descriptor for Z
+ * @param[in, out] vec eigenvector; on rank 0, vec[0..xNsize-1] holds the
+ * gathered eigenvector. On other ranks vec is a work buffer with
+ * unspecified contents and must be non-NULL.
+ * @return 0 on success.
+ * @author Takahiro Misawa (The University of Tokyo)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ * @author Yusuke Konishi (Academeia Co., Ltd.)
+ */
+int GetEigenVectorBlock(long int idx, long int xNsize,
+                        double complex *Z, int *descZ,
+                        double complex *vec) {
+  const long int i_one = 1;
+  long int icol = idx + 1;
+  long int m = xNsize, n = 1;
+
+  if (ictxt_gather == -100) {
+    InitEigenVectorGatherContext(xNsize);
+  }
+  /* Last argument: a context containing the union of both grids
+     = the all-rank 2D context of Z. */
+  pzgemr2d_(&m, &n, Z, (long int *)&i_one, &icol, descZ,
+            vec, (long int *)&i_one, (long int *)&i_one, desc_gather,
+            &descZ[1]);
+  return 0;
+}
+
+/**
+ * @brief Release the cached destination grid (call after the phys loop).
+ */
+void FreeEigenVectorGatherContext(void) {
+  int myrow_g, mycol_g, nprow_g, npcol_g;
+  if (ictxt_gather == -100) return;
+  blacs_gridinfo_(&ictxt_gather, &nprow_g, &npcol_g, &myrow_g, &mycol_g);
+  if (myrow_g >= 0) {
+    blacs_gridexit_(&ictxt_gather);
+  }
+  ictxt_gather = -100;
+}
+
 #endif

@@ -38,11 +38,17 @@ void pzelget_(char *scope, char *top, double complex *alpha,
               const int *descA);
 long int numroc_(const long int *n, const long int *nb, const int *iproc, 
             const int *isrcproc, const int *nprocs);
-void pzheev_(char *jobz, char *uplo, const long int *n, double complex *a, 
-             const int *ia, const int *ja, int *desca, double *w, 
-             double complex *z, const int *iz, const int *jz, int *descz, 
-             double complex *work, const long int *lwork, double complex *rwork, 
+void pzheev_(char *jobz, char *uplo, const long int *n, double complex *a,
+             const int *ia, const int *ja, int *desca, double *w,
+             double complex *z, const int *iz, const int *jz, int *descz,
+             double complex *work, const long int *lwork, double complex *rwork,
              const long int *lrwork, int *info );
+void pzgemr2d_(long int *m, long int *n,
+               double complex *A, long int *ia, long int *ja, int *desca,
+               double complex *B, long int *ib, long int *jb, int *descb,
+               int *ictxt);
+void blacs_gridmap_(int *ictxt, int *usermap, int *ldumap,
+                    int *nprow, int *npcol);
 
 long int GetBlockSize(long int Msize, long int nproc);
 long int GetPArrayIndex(long int i, long int np, long int nb);
@@ -53,6 +59,10 @@ long int GetMatRawInRank(long int lj, long int rank, long int npcol, long int nb
 long int *GetMatElementInRank(long int i, long int j, long int nprow, long int npcol, long int nb);
 void DivMat(long int m, long int n, double complex Aorgmn, double complex *A, int *desca);
 void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, double complex *vec);
+int GetEigenVectorBlock(long int idx, long int xNsize,
+                        double complex *Z, int *descZ,
+                        double complex *vec);
+void FreeEigenVectorGatherContext(void);
 int diag_scalapack_cmp(long int xNsize, double complex **A,
                        double complex *r, double complex *Z, int *descZ);
 
