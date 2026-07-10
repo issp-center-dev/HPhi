@@ -56,6 +56,7 @@ char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
 char *cErrSolver="Error in %s\n Solver: must be one of 0 (LAPACK), 1 (ScaLAPACK), 2 (MAGMA), 3 (ELPA).\n";
 char *cErrSolverBuild="Error in %s\n Solver %d requires HPhi built with %s.\n";
 char *cErrElpaGPUBuild="Error in %s\n Solver 3 with NGPU >= 1 requires ELPA >= 2023.11.001 (elpa_setup_gpu).\n Rebuild HPhi against a newer ELPA, or set \"NGPU 0\" for CPU execution.\n";
+char *cErrElpaHamIO="Error in %s\n Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian distributed,\n which is incompatible with OutputHam/InputHam. Run with 1 process, or use another solver.\n";
 char *cWarnScaLAPACKDep="Warning in %s\n The \"ScaLAPACK\" keyword is deprecated. Use \"Solver 1\" instead.\n";
 char *cWarnSolverConflict="Warning in %s\n Legacy keyword \"%s\" conflicts with the explicit Solver value and is ignored.\n";
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";

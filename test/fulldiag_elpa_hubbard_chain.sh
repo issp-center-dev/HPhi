@@ -43,4 +43,18 @@ paste ed.dat reference_ed.dat > paste_ed.dat
 diff=`awk 'BEGIN{max=0}{d=$1-$3; if(d<0)d=-d; if(d>max)max=d; d=$2-$4; if(d<0)d=-d; if(d>max)max=d}END{print max}' paste_ed.dat`
 test "`echo "$diff < 0.000001" | bc`" = "1"
 
+# OutputHam is incompatible with distributed generation (Solver 3, nproc>1):
+# must be rejected at startup with a clear message.
+cd ..
+mkdir -p fulldiag_elpa_hamio_reject/
+cd fulldiag_elpa_hamio_reject
+cp ../fulldiag_elpa_hubbard_chain/stan.in .
+../../src/HPhi -sdry stan.in
+printf "Solver  3\nNGPU    0\nOutputHam  1\n" >> calcmod.def
+if ${MPIRUN} ../../src/HPhi -e namelist.def > reject.log 2>&1; then
+  echo "ERROR: Solver 3 + OutputHam + nproc>1 must fail at startup"
+  exit 1
+fi
+grep -qi "OutputHam\|InputHam" reject.log
+
 echo "fulldiag_elpa_hubbard_chain: OK"

@@ -116,6 +116,21 @@ fi
 # ELPA+MPI build; do not attempt to fake a multi-rank run in this serial-only
 # environment.
 
+# (5) ELPAビルドでは Solver 3 + OutputHam はマルチプロセス時に拒否される
+#     （シリアル実行では nproc==1 なので拒否されない = ここでは
+#     「calcmod のパースが通り実行が成功する」ことだけを確認し、
+#     マルチプロセス拒否そのものは fulldiag_elpa_hubbard_chain 側の
+#     ケースで検証する）
+if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
+  cd ..
+  mkdir -p fulldiag_solver_keyword_hamio/
+  cd fulldiag_solver_keyword_hamio
+  cp ../fulldiag_solver_keyword/stan.in .
+  ../../src/HPhi -sdry stan.in
+  printf "Solver  3\nNGPU  0\nOutputHam  1\n" >> calcmod.def
+  ${MPIRUNFC} ../../src/HPhi -e namelist.def > hamio.log 2>&1
+fi
+
 # (4) 旧 ScaLAPACK キーワードで非推奨警告が出ること（動作は従来どおり）
 cd ..
 mkdir -p fulldiag_solver_keyword_dep/

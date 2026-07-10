@@ -534,6 +534,17 @@ int ReadcalcmodFile(
     }
   }
 
+  /* Solver 3 (ELPA) with more than one MPI process will (in a later phase)
+     generate the Hamiltonian as a distributed block-cyclic panel rather than
+     the full replicated matrix. OutputHam/InputHam need the full replicated
+     matrix, so that combination must be rejected at startup. Serial (nproc==1)
+     runs are unaffected: the replicated matrix is still available there. */
+  if (X->iSolver == SOLVER_ELPA && nproc > 1
+      && (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
+    fprintf(stdoutMPI, cErrElpaHamIO, defname);
+    return (-1);
+  }
+
   return 0;
 }
 

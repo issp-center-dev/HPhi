@@ -57,6 +57,7 @@ extern char *cErrCUDA;
 extern char *cErrSolver;
 extern char *cErrSolverBuild;
 extern char *cErrElpaGPUBuild;
+extern char *cErrElpaHamIO;
 extern char *cWarnScaLAPACKDep;
 extern char *cWarnSolverConflict;
 extern char *cErrScaLAPACK;
