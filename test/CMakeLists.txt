@@ -591,4 +591,16 @@ endif(MPI_FOUND)
 
 if(USE_ELPA)
     add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
+
+    add_executable(elpa_eigen_check unit/elpa_eigen_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_eigen_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_definitions(elpa_eigen_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    target_link_libraries(elpa_eigen_check ${ELPA_LIBRARIES}
+        ${SCALAPACK_LIBRARIES} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+    add_test(NAME elpa_eigen_check
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
+                $<TARGET_FILE:elpa_eigen_check>)
 endif(USE_ELPA)
