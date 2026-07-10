@@ -14,7 +14,6 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "matrixscalapack.h"
-#include <assert.h>
 /**
  * @file matrixscalapack.c
  * @version 3.1
@@ -375,7 +374,7 @@ void FreeEigenVectorGatherContext(void) {
  * @param[in, out] panel this rank's 1D column-panel buffer
  * @param[in, out] A_distr destination 2D block-cyclic matrix
  * @param[in] descA_2d descriptor of A_distr
- * @return 0
+ * @return 0 on success, -1 on failure (same value on all ranks)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
 int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
@@ -399,8 +398,24 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
   blacs_gridinfo_(&ictxt_1d, &nprow_1, &npcol_1, &myrow_1, &mycol_1);
 
   /* The 1x P 'R' grid must map mycol to this rank 1:1, matching
-     xsetmem's panel ownership (jb = myrank*NC + 1). */
-  assert(mycol_1 == myrank);
+     xsetmem's panel ownership (jb = myrank*NC + 1). A mismatch would
+     silently scramble columns, so check at runtime (survives NDEBUG)
+     and synchronize the verdict so no rank enters the collective
+     pzgemr2d_ alone (same pattern as SyncError in matrixlapack_elpa.c). */
+  {
+    int ok = (mycol_1 == myrank) ? 0 : -1, gok;
+    if (ok != 0) {
+      fprintf(stdout,
+              "  Error: BLACS 1D grid column (%d) does not match MPI rank (%d):\n"
+              "         panel ownership is inconsistent; aborting redistribution.\n",
+              mycol_1, myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      blacs_gridexit_(&ictxt_1d);
+      return -1;
+    }
+  }
 
   lld = (panel_ld > 0) ? (int)panel_ld : 1;
   mb1 = xNsize;

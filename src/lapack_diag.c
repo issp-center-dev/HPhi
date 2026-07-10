@@ -100,13 +100,20 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   if (iHamPanelActive) {
     /* Distributed generation (phase 2): redistribute the 1D panel and
        free it before ELPA to lower the memory peak. */
-    RedistPanelToBlockCyclic(xMsize, HamColBegin,
-                             (HamColEnd >= HamColBegin)
-                               ? (HamColEnd - HamColBegin + 1) : 0,
-                             HamPanelLd, Ham_local, A_distr, descA);
+    int rerr = RedistPanelToBlockCyclic(xMsize, HamColBegin,
+                                        (HamColEnd >= HamColBegin)
+                                          ? (HamColEnd - HamColBegin + 1) : 0,
+                                        HamPanelLd, Ham_local, A_distr, descA);
     free(Ham_local);
     Ham_local = NULL;
     iHamPanelActive = 0; /* panel consumed; phys.c uses Z_vec only */
+    if (rerr != 0) {
+      free(A_distr);
+      free(Z_vec);
+      Z_vec = NULL;
+      free(w);
+      return -1;
+    }
   } else {
     for (i = 0; i < xMsize; i++) {
       for (j = 0; j < xMsize; j++) {
