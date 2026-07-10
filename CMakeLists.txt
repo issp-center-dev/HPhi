@@ -119,6 +119,9 @@ endif(ENABLE_MPI)
 # ELPA requires ScaLAPACK. Resolve USE_SCALAPACK BEFORE the LAPACK block below,
 # so that block emits exactly one of -D_lapack / -D_SCALAPACK (never both).
 if(USE_ELPA)
+  if(NOT ENABLE_MPI)
+    message(FATAL_ERROR "USE_ELPA=ON requires MPI: configure with -DENABLE_MPI=ON (default).")
+  endif()
   if(HPHI_USE_SCALAPACK_EXPLICIT_OFF)
     message(FATAL_ERROR "USE_ELPA=ON requires ScaLAPACK, but USE_SCALAPACK=OFF was set explicitly.")
   endif()

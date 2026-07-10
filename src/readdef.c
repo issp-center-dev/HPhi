@@ -298,6 +298,15 @@ static int ResolveSolver(struct DefineList *X, const char *defname) {
     return -1;
   }
 #endif
+  /* Explicit Solver 2 (MAGMA) with explicit NGPU 0 passes the generic
+     X->iNGPU < 0 check further below (0 is not negative) but would then
+     fail later inside diag_magma_cmp() at runtime. Reject it here instead.
+     Only reachable on _MAGMA builds: on non-MAGMA builds the #ifndef _MAGMA
+     block above already returns -1 for SOLVER_MAGMA. */
+  if (X->iSolver == SOLVER_MAGMA && X->iNGPU == 0) {
+    fprintf(stdoutMPI, cErrCUDA, defname);
+    return -1;
+  }
   /* iFlgScaLAPACK now doubles as the internal "distributed-eigenvector
      FullDiag" flag consumed by the multi-process gates in HPhiMain.c
      (iCalcType==FullDiag && iFlgScaLAPACK==0 && nproc!=1 -> error),

@@ -242,6 +242,12 @@ set_tests_properties(
 #
 add_hphi_test(fulldiag_hubbard_chain)
 add_hphi_test(fulldiag_solver_keyword)
+if(USE_SCALAPACK)
+  set_property(TEST fulldiag_solver_keyword APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif(USE_SCALAPACK)
+if(USE_ELPA)
+  set_property(TEST fulldiag_solver_keyword APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif(USE_ELPA)
 add_test(
     NAME fulldiag_Hamiltonian_IO
     COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh

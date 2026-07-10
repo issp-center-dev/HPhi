@@ -41,43 +41,65 @@ if ${MPIRUNFC} ../../src/HPhi -e namelist.def > invalid.log 2>&1; then
   exit 1
 fi
 
-# (3) 非 ELPA ビルドでは Solver 3 はエラー終了すること
-#     (ELPA ビルドでは環境依存になるため、このケースは _ELPA 無しビルドの CI 前提)
-#     ここでは「失敗すること」自体を assert する: 以前の実装は run が成功しても
-#     ログに "Solver" が無い場合しか失敗にしなかったため、Solver 3 が非 ELPA
-#     ビルドで誤って成功しても (ログに偶然 "Solver" が出れば) テストが green
-#     のまま通ってしまうバグがあった (レビュー指摘)。
+# (3) capability-aware: 非 ELPA ビルドでは Solver 3 はエラー終了すること。
+#     ELPA ビルド (HPHI_HAS_ELPA=1, test/CMakeLists.txt が USE_ELPA から設定)
+#     では Solver 3 は正当な指定になるため、この serial (nproc==1) 環境では
+#     CPU-ELPA 経路 (NGPU 0 を明示) が正常終了することを assert する。
+#     非 ELPA ビルドでは、従来どおり「失敗すること」自体を assert する: 以前の
+#     実装は run が成功してもログに "Solver" が無い場合しか失敗にしなかった
+#     ため、Solver 3 が非 ELPA ビルドで誤って成功しても (ログに偶然 "Solver"
+#     が出れば) テストが green のまま通ってしまうバグがあった (レビュー指摘)。
 cd ..
 mkdir -p fulldiag_solver_keyword_elpa/
 cd fulldiag_solver_keyword_elpa
 cp ../fulldiag_solver_keyword/stan.in .
 ../../src/HPhi -sdry stan.in
 echo "Solver  3" >> calcmod.def
-if ${MPIRUNFC} ../../src/HPhi -e namelist.def > elpa.log 2>&1; then
-  echo "ERROR: Solver 3 should fail on non-ELPA build (HPhi succeeded instead)"
-  exit 1
+if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
+  echo "NGPU    0" >> calcmod.def
+  if ! ${MPIRUNFC} ../../src/HPhi -e namelist.def > elpa.log 2>&1; then
+    echo "ERROR: Solver 3 (NGPU 0) should succeed on an ELPA build"
+    cat elpa.log
+    exit 1
+  fi
+else
+  if ${MPIRUNFC} ../../src/HPhi -e namelist.def > elpa.log 2>&1; then
+    echo "ERROR: Solver 3 should fail on non-ELPA build (HPhi succeeded instead)"
+    exit 1
+  fi
+  grep -Eq "Solver|ELPA" elpa.log || {
+    echo "ERROR: Solver 3 failure log should mention Solver/ELPA"
+    exit 1
+  }
 fi
-grep -Eq "Solver|ELPA" elpa.log || {
-  echo "ERROR: Solver 3 failure log should mention Solver/ELPA"
-  exit 1
-}
 
-# (3b) 非 ScaLAPACK ビルドでは Solver 1 も同様にエラー終了すること
-#     (readdef.c ResolveSolver() の #ifndef _SCALAPACK ガード, 既存動作の確認)
+# (3b) capability-aware: 非 ScaLAPACK ビルドでは Solver 1 も同様にエラー終了
+#     すること (readdef.c ResolveSolver() の #ifndef _SCALAPACK ガード, 既存
+#     動作の確認)。ScaLAPACK ビルド (HPHI_HAS_SCALAPACK=1) では Solver 1 は
+#     正当な指定であり、この serial (nproc==1) 環境では lapack_diag() が
+#     ZHEEVall にフォールバックするため正常終了することを assert する。
 cd ..
 mkdir -p fulldiag_solver_keyword_scalapack/
 cd fulldiag_solver_keyword_scalapack
 cp ../fulldiag_solver_keyword/stan.in .
 ../../src/HPhi -sdry stan.in
 echo "Solver  1" >> calcmod.def
-if ${MPIRUNFC} ../../src/HPhi -e namelist.def > scalapack.log 2>&1; then
-  echo "ERROR: Solver 1 should fail on non-ScaLAPACK build (HPhi succeeded instead)"
-  exit 1
+if [ "${HPHI_HAS_SCALAPACK:-0}" = "1" ]; then
+  if ! ${MPIRUNFC} ../../src/HPhi -e namelist.def > scalapack.log 2>&1; then
+    echo "ERROR: Solver 1 should succeed serially on a ScaLAPACK build (falls back to ZHEEVall)"
+    cat scalapack.log
+    exit 1
+  fi
+else
+  if ${MPIRUNFC} ../../src/HPhi -e namelist.def > scalapack.log 2>&1; then
+    echo "ERROR: Solver 1 should fail on non-ScaLAPACK build (HPhi succeeded instead)"
+    exit 1
+  fi
+  grep -Eq "Solver|ScaLAPACK" scalapack.log || {
+    echo "ERROR: Solver 1 failure log should mention Solver/ScaLAPACK"
+    exit 1
+  }
 fi
-grep -Eq "Solver|ScaLAPACK" scalapack.log || {
-  echo "ERROR: Solver 1 failure log should mention Solver/ScaLAPACK"
-  exit 1
-}
 
 # NOTE (multi-rank gate coverage gap, documented per whole-branch review FIX 1):
 # ResolveSolver() in src/readdef.c derives X->iFlgScaLAPACK=1 for Solver 1/3 so
