@@ -32,4 +32,11 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - Checklist 5 failure path: `Solver 3` + `NGPU 1` against CPU-only ELPA → clean abort (exit 14) with "the linked ELPA has no NVIDIA GPU support / Set NGPU 0" — no silent CPU fallback.
 - Defects found on hardware and fixed in 8732e240: (a) nblk must be capped so every process row/col owns a block (ELPA_ERROR_SETUP otherwise); (b) ELPA2 2stage gives inaccurate eigenvectors with capped nblk (e.g. 24 on 4x2) → 1stage fallback when capped.
 - Additional (Codex-recommended) checks, all PASS: N(=4) < process grid (5x5, np=25) aborts with the clear "reduce ranks" error on all ranks (no hang); uncapped nblk=64 multi-rank 2stage (L=6 chain, N=400, np=2) matches Solver 0 energies exactly (maxdiff 0.0 over 400 eigenvalues).
-- Checklist 3/4 (GPU smoke, CUDA ELPA >= 2023.11.001): PENDING — requires a CUDA build of ELPA (RTX 6000 Ada sm_89, CUDA 12.9 available).
+- Checklist 3/4: see GPU phase below.
+
+### 2026-07-10 — clavius (s76), GPU phase — PASSED
+- ELPA 2025.06.001 built from source with CUDA (`--enable-nvidia-gpu-kernels --with-NVIDIA-GPU-compute-capability=sm_89`, CUDA 12.9, prefix `~/opt/elpa-2025.06-cuda`, versioned include dir — exercised FindELPA's ELPA_ROOT glob path; `ELPA_HAVE_SETUP_GPU=1`).
+- Checklist 3 (GPU smoke, 1 rank / 1 GPU): 8-site Hubbard chain FullDiag (N=4900), `Solver 3` + `NGPU 1`, `CUDA_VISIBLE_DEVICES=1`. "Using ELPA (GPU)" printed; HPhi observed as GPU compute app in nvidia-smi during the run; exit 0; all 4900 eigenvalues match the `Solver 0` LAPACK reference exactly (printed precision).
+- Checklist 4 (multi-rank GPU): np=2, `NGPU 2`, both RTX 6000 Ada visible. Two distinct GPU UUIDs active during the run (ELPA round-robin = 1 rank per GPU as designed); exit 0; eigenvalues again match exactly.
+- Checklist 5 (second variant): with the CPU conda libelpa shadowing the CUDA one via RPATH, the run aborted cleanly with "the linked ELPA has no NVIDIA GPU support / Set NGPU 0" — no silent CPU execution. **Troubleshooting note:** if a CPU-only libelpa with the same soname is on the loader path (e.g. conda env), it can shadow the CUDA build; ensure the CUDA ELPA lib dir wins (LD_LIBRARY_PATH/rpath) or remove the CPU copy.
+- Protocol deviation: smoke sizes used 8-site Hubbard (N=4900) instead of the 12/14-site sizes originally written in this checklist (those Hilbert dimensions are impractical for FullDiag); checklist text kept for history.
