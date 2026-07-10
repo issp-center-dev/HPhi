@@ -11,10 +11,11 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
 1. `ctest -R elpa_eigen_check` ... expect PASS (CPU path sanity)
 2. `ctest -R fulldiag_elpa_hubbard_chain` ... expect PASS
 3. GPU smoke (1 rank / 1 GPU):
-   `Solver 3`, `NGPU 1`, 12-site Hubbard chain FullDiag;
+   `Solver 3`, `NGPU 1`, 8-site Hubbard chain FullDiag (N=4900);
    compare zvo_phys energies against a `Solver 0` run (tol 1e-8);
    confirm "Using ELPA (GPU)" in stdout and GPU utilization in nvidia-smi.
-4. GPU multi-rank (ranks = GPUs per node): same comparison at 14 sites.
+4. GPU multi-rank (ranks = GPUs per node): same comparison, same 8-site case
+   (N=4900; larger sizes are impractical for dense FullDiag).
 5. Failure-path check: run with `NGPU 1` against a CPU-only ELPA build;
    expect a clear error mentioning NGPU 0 fallback instruction, no silent
    CPU execution.
@@ -39,7 +40,7 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - Checklist 3 (GPU smoke, 1 rank / 1 GPU): 8-site Hubbard chain FullDiag (N=4900), `Solver 3` + `NGPU 1`, `CUDA_VISIBLE_DEVICES=1`. "Using ELPA (GPU)" printed; HPhi observed as GPU compute app in nvidia-smi during the run; exit 0; all 4900 eigenvalues match the `Solver 0` LAPACK reference exactly (printed precision).
 - Checklist 4 (multi-rank GPU): np=2, `NGPU 2`, both RTX 6000 Ada visible. Two distinct GPU UUIDs active during the run (ELPA round-robin = 1 rank per GPU as designed); exit 0; eigenvalues again match exactly.
 - Checklist 5 (second variant): with the CPU conda libelpa shadowing the CUDA one via RPATH, the run aborted cleanly with "the linked ELPA has no NVIDIA GPU support / Set NGPU 0" — no silent CPU execution. **Troubleshooting note:** if a CPU-only libelpa with the same soname is on the loader path (e.g. conda env), it can shadow the CUDA build; ensure the CUDA ELPA lib dir wins (LD_LIBRARY_PATH/rpath) or remove the CPU copy.
-- Protocol deviation: smoke sizes used 8-site Hubbard (N=4900) instead of the 12/14-site sizes originally written in this checklist (those Hilbert dimensions are impractical for FullDiag); checklist text kept for history.
+- Protocol note: the checklist originally prescribed 12/14-site chains; those Hilbert dimensions are impractical for dense FullDiag, so the checklist now prescribes the validated 8-site case (N=4900).
 
 ### Benchmark gate (phase 1, N=4900, np=2, LapackDiag step from CalcTimer.dat)
 | Backend | Diag time |

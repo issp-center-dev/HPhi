@@ -258,7 +258,10 @@ The parameters correlated with the keywords are as follows.
    | It is recommended to match the number of MPI processes per node to the number of GPUs.
    | Note that ``NGPU`` does not physically limit the number of GPU devices.
      To strictly limit GPU count, use the job scheduler (``CUDA_VISIBLE_DEVICES``, etc.).
-   | GPU execution with ELPA requires ELPA version >= 2023.11.001. 
+   | GPU execution with ELPA requires ELPA version >= 2023.11.001.
+   | For ``Solver 3``, the Hilbert-space dimension (matrix size) must be at least
+     as large as the largest dimension of the MPI process grid (max of nprow, npcol);
+     otherwise HPhi exits at startup with an error asking to reduce the number of MPI ranks.
 
 .. raw:: latex
 
