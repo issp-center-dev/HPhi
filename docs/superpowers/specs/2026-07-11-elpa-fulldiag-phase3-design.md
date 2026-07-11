@@ -166,10 +166,10 @@ Mode 1 コーディング前に完了させる**（直接 grep だけで済ま�
 **連結の成否判定はファイルサイズで推測しない**（ゼロ所有ランクや、演算子
 選択によっては所有状態があっても正当に空のパーシャルが存在するため）。
 代わりに**ランク別マニフェスト**を使う: 各ランクは kind ごとに
-{attempted, opened, open_error, rows, closed_ok, part_path, final_path} の
+{attempted, opened, open_error, bytes, closed_ok, part_path, final_path}（bytes は ftell による「正当な空」判定用）の
 ステータスレコードを持ち、全パーシャルをクローズした後、ループ後の
 単一ランデブーで rank 0 へ gather する。状態の意味を明確に定める:
-attempted=真 かつ rows=0 かつ open_error=偽 は「正当な空出力」
+attempted=真 かつ bytes=0 かつ open_error=偽 は「正当な空出力」
 （part ファイルが物理的に存在しなくてもよい）; attempted=真 かつ
 open_error=真 のみが失敗。part_path と final_path は別フィールドで持ち、
 公開名の導出をランク側の記録に依存させない（`.part<rank>` 名での誤公開を
