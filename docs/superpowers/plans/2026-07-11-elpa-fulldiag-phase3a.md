@@ -41,7 +41,7 @@ cd /Users/k-yoshimi/Dropbox/CLionProjects/HPhi-box/HPhi
 # 注意: gcc -fpreprocessed は Apple clang に存在しない（このマシンで確認済み）。
 # コメント除去は Python で行い、失敗・空出力は必ずエラーにする（黙って空の
 # インベントリで PASS する事故を構造的に禁止）。
-python3 - "$f" <<'PY' などではなく、次の共有ストリッパを使う:
+# 共有ストリッパ（Step 5 で test/strip_c_comments.py としてコミットするものと同一）:
 cat > /tmp/strip_c_comments.py <<'PY'
 import re, sys
 src = open(sys.argv[1]).read()
@@ -88,7 +88,7 @@ stderr 温存）でコメント除去 → 許可リスト（インベントリ�
   概数を受け入れ基準にしない）が検出されることを確認 → Task 3 完了までは
   スクリプト冒頭の名前付き変数 `TEMP_UNGUARDED_FILES="src/nbody_correlation.c src/anomalous_pair.c"`
   （コメント `# Task 3 must empty this variable`）で当該ファイルの生 MPI 検査
-  のみ一時スキップして PASS させる。Task 3 がこの変数を空にする。**
+  のみ一時スキップして PASS させる。**Task 3 がこの変数を空にする**。
 
 - [ ] **Step 5: ctest 登録・ローカル確認・コミット**
 
