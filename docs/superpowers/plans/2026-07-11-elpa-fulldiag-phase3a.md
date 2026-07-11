@@ -228,6 +228,9 @@ NaN センチネルは使わない（0.0 + SetError で十分かつ一貫）。�
   ```c
   void GreenOutputSetPartialSuffix(int rank);   /* ローカルモード開始時 */
   void GreenOutputClearPartialSuffix(void);
+  /* GreenOutputSetPartialSuffix はセッション開始: 全 kind のマニフェスト
+     レコード（sticky エラー・first-open 状態含む）をゼロクリアする。
+     同一プロセスで phys() が複数回呼ばれても前セッションを継承しない */
   int  GreenOutputOpenAggregate(struct BindStruct *X, GreenOutputKind kind, FILE **fp);
       /* パーシャル時のセッション意味論（重要 — expec 関数は kind ごとに
          状態/呼び出しごとに開閉を繰り返す）:
@@ -249,8 +252,10 @@ NaN センチネルは使わない（0.0 + SetError で十分かつ一貫）。�
 - [ ] **Step 1: 実装**（マニフェストは `static` 配列 `[GreenOutputAnomalous+1]` の
   レコード構造体（**ワイヤ形式を固定**: `int attempted, opened, open_error,
   closed_ok; long int bytes; char part_path[256]; char final_path[256];` —
-  `MPI_Gather(..., sizeof(record), MPI_BYTE, ...)` で収集。同一バイナリの
-  同種ビルド前提を関数コメントに明記。パス 256 バイト超過は open 時に
+  `MPI_Gather(..., sizeof(record), MPI_BYTE, ...)` で収集 — これは
+  「同一実行バイナリ・同種 ABI のランク間のインメモリレコード転送」であり
+  可搬ワイヤ形式ではない（HPhi の MPI 実行は常に同一バイナリなので十分）。
+  この前提を関数コメントに明記。パス 256 バイト超過は open 時に
   エラー扱い）。**bytes は spec の rows の実装形**（ftell による正当な空との区別
   という意図は同一 — spec 側の字句も bytes に合わせて 1 行修正すること）。
   part_path/final_path は別フィールド。Gather は `MPI_Gather` 固定長。
@@ -369,7 +374,10 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
      同一の recvcounts/displs（int。N<=INT_MAX を確認済みの範囲で long→int 変換、
      超過時はエラー）を使い回す。一時受信バッファ・recvcounts/displs の malloc は
      Gatherv 前に Allreduce(MIN) で成功同期（パネル確保と同じパターン）。
-     rank 0 で X->Phys.all_* へコピー（MPI_IN_PLACE のエイリアス問題を避ける）。
+     送信側は各ランクが自区間の先頭 `&all_xxx_local[0]`（または既存 all_* 配列の
+     `[jb-1]` オフセット）から `sendcount = ncols`（ゼロ所有ランクは 0）で送り、
+     rank 0 は状態ブロックの recvcounts/displs で受けて X->Phys.all_* へコピー
+     （MPI_IN_PLACE のエイリアス問題を避ける）。
      rank 0 が状態順に i=... 行を再レンダリング出力（シリアル形式・S2 列あり） */
   if (GreenOutputMergePartials(X) != 0) {
     return -1;   /* マニフェストがエラーを報告: 公開しない（集団的に失敗） */
@@ -414,7 +422,9 @@ Mode 0 分散経路の変更（唯一の例外）: 既存の `use_scalapack` 分
   （既定 build_noMPI には mpi.h も `_SCALAPACK` も無い。matrixscalapack.c と
   同じ「空の翻訳単位」パターン。ヘッダの宣言も同様にガード）。phys.c 側の
   分岐は既に `#ifdef _SCALAPACK` 内。**Task 1 のガードスクリプトの `FILES` に
-  `src/phys_distributed.c` を追加する**（作成と同一コミットで）。
+  `src/phys_distributed_local.c` を追加する**（作成と同一コミットで。
+  オーケストレーション層 `phys_distributed.c` は正当な生 MPI 集団操作を含むため
+  **恒久的にスキャン対象外** — Task 1 の規約と同一）。
 - [ ] **Step 4: `phys()` の全出口（分散分岐の早期 return 含む）で
   `assert(!ExpecLocalActive())` をデバッグアサート**（spec の出口保証）。
 - [ ] **Step 5: ビルド＋回帰 17/17（既定ビルドでは新ファイルは空 TU）＋
@@ -437,7 +447,10 @@ Mode 0 分散経路の変更（唯一の例外）: 既存の `use_scalapack` 分
 **Interfaces:**
 - Consumes: Task 2-6 の全成果物
 
-- [ ] **Step 1: 等価性テストスクリプト**: 3 ケース（Hubbard 鎖 L=4 一体+二体GF・集約形式 ON・**さらに NBodyG 定義を追加してフォールバック経路と NBody 集約 kind も演習**（既存 `fulldiag_hubbard_nbody_interall` テストの def を流用）、SpinGC Gamma=0.5 L=6、Spin 鎖 L=8）× {ExpecMode 0, 1}（3a では 2 は 1 と同動作なので 2 も 1 ケースだけ回して INFO と一致を確認）で実行し、`zvo_phys_*` 全列（S²/Sz 込み）と全 Green ファイル（状態別・集約とも）を `paste`+awk 1e-8 比較。集約形式は `OutputGreenFormat` の集約値を calcmod に指定（既存 green_output_format テストの指定方法を流用）。np は `${MPIRUN}`（min:2）で、追加で np=3（**非整除の検証。ゼロ所有状態
+- [ ] **Step 1: 等価性テストスクリプト**: 3 ケース（Hubbard 鎖 L=4 一体+二体GF・集約形式 ON・**さらに NBodyG 定義を追加してフォールバック経路と NBody 集約 kind も演習**（既存 `fulldiag_hubbard_nbody_interall` テストの def を流用）、SpinGC Gamma=0.5 L=6、Spin 鎖 L=8）× {ExpecMode 0, 1}（3a では 2 は 1 と同動作なので 2 も 1 ケースだけ回して INFO と一致を確認）で実行し、`zvo_phys_*` 全列（S²/Sz 込み）と全 Green ファイル（状態別・集約とも）を `paste`+awk 1e-8 比較。集約形式は `OutputGreenFormat` の集約値を calcmod に指定（既存 green_output_format テストの指定方法を流用）。np ごとに**別名の ctest ケースとして登録**する（`fulldiag_expecmode_equiv_np2` を
+`exact:2`、`..._np3` を `exact:3` — スクリプトは `${MPIRUN}` をそのまま使い、
+np はプリチェック側で保証。min:2 登録内で内部的に別 np を起動する方式は
+使わない）。np=3 は（**非整除の検証。ゼロ所有状態
 ランクはこれらの N では発生しない — その経路は Task 5 の
 `elpa_statepanel_check` を小さな N 引数で回して担保**する: 単体テストに
 `argv[1]` で N を渡せるようにし、**名前付き ctest ケース
@@ -458,6 +471,9 @@ CMake 材料で登録）が green_output API を直接呼ぶ:
 (b) 正当な空 — 片ランクが 1 行も書かず Close → Merge 成功;
 (c) 失敗系 — 片ランクが Close 後にテスト自身が unlink(part_path) してから
     Merge → **全ランクで非ゼロ返却**・最終ファイル未公開・残存 part 温存。
+    テストは専用の一時出力ディレクトリを使い、シナリオ開始前に既存の
+    final/part を削除しておく（「未公開」= 新しい final が作られないことを
+    stat で確認、「温存」= 削除しなかった側の part が残ることを確認）。
 - [ ] **Step 2: 既定ビルドで未登録確認 → sh -n → コミット** `git commit -m "Add ExpecMode equivalence tests and strengthen the ELPA chain test"`
 
 ---
