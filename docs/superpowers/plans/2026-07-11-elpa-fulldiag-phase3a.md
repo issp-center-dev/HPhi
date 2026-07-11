@@ -90,9 +90,11 @@ done
 - [ ] **Step 3: ガードスクリプトを書く**
 
 `test/check_expec_local_calls.sh`: 検査対象ファイル集合は **Step 1 と同じ既存ファイルのみ**
-（`phys_distributed.c` はまだ存在しない — **Task 6 が作成と同時にこのスクリプトの
-リストへ追加する**。スクリプト冒頭に `FILES="..."` 変数と
-`# Task 6 adds src/phys_distributed.c here` コメントを置く）。
+（Task 6 が作る**MPI フリーのローカルループ層 `src/phys_distributed_local.c` のみ**を
+Task 6 が作成と同時にこのスクリプトのリストへ追加する。オーケストレーション層
+`phys_distributed.c` は正当な生 MPI 集団操作を含むため**恒久的に対象外**。
+スクリプト冒頭に `FILES="..."` 変数と
+`# Task 6 adds src/phys_distributed_local.c here (NOT phys_distributed.c)` コメントを置く）。
 処理: `test/strip_c_comments.py`（Task 1 でコミット、失敗・空出力で即エラー、
 stderr 温存）でコメント除去 → 許可リスト（インベントリ文書の表と一致:
 `SumMPI_dc SumMPI_d SumMPI_li SumMPI_i fopenMPI childfopenMPI stdoutMPI`）に
