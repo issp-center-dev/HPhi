@@ -43,12 +43,32 @@ cd /Users/k-yoshimi/Dropbox/CLionProjects/HPhi-box/HPhi
 # インベントリで PASS する事故を構造的に禁止）。
 # 共有ストリッパ（Step 5 で test/strip_c_comments.py としてコミットするものと同一）:
 cat > /tmp/strip_c_comments.py <<'PY'
-import re, sys
+# 正規表現でなく状態機械（文字列/文字リテラル内の // や /* を誤除去しない）
+import sys
 src = open(sys.argv[1]).read()
-out = re.sub(r'/\*.*?\*/', lambda m: '\n'*m.group(0).count('\n'), src, flags=re.S)
-out = re.sub(r'//[^\n]*', '', out)
-assert out.strip(), f"stripper produced empty output for {sys.argv[1]}"
-sys.stdout.write(out)
+out, i, n, st = [], 0, len(src), 'code'   # st: code|blk|line|str|chr
+while i < n:
+    c = src[i]; c2 = src[i:i+2]
+    if st == 'code':
+        if c2 == '/*': st = 'blk'; i += 2; continue
+        if c2 == '//': st = 'line'; i += 2; continue
+        if c == '"': st = 'str'
+        elif c == "'": st = 'chr'
+        out.append(c); i += 1
+    elif st == 'blk':
+        if c == '\n': out.append(c)
+        if c2 == '*/': st = 'code'; i += 2
+        else: i += 1
+    elif st == 'line':
+        if c == '\n': st = 'code'; out.append(c)
+        i += 1
+    else:  # str / chr
+        if c == '\\': out.append(src[i:i+2]); i += 2; continue
+        if (st == 'str' and c == '"') or (st == 'chr' and c == "'"): st = 'code'
+        out.append(c); i += 1
+res = ''.join(out)
+assert res.strip(), f"stripper produced empty output for {sys.argv[1]}"
+sys.stdout.write(res)
 PY
 for f in src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c \
          src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c; do
@@ -207,11 +227,15 @@ NaN センチネルは使わない（0.0 + SetError で十分かつ一貫）。�
   void GreenOutputSetPartialSuffix(int rank);   /* ローカルモード開始時 */
   void GreenOutputClearPartialSuffix(void);
   int  GreenOutputOpenAggregate(struct BindStruct *X, GreenOutputKind kind, FILE **fp);
-      /* パーシャル時: final 名から part_path を導出(".part%d")、unlink→open、
-         マニフェスト {attempted=1, opened, open_error} を更新。
-         非パーシャル時: 従来の childfopenMPI と同動作 */
+      /* パーシャル時のセッション意味論（重要 — expec 関数は kind ごとに
+         状態/呼び出しごとに開閉を繰り返す）:
+         同一 kind の最初の open（SetPartialSuffix 後）のみ unlink → "w" で作成、
+         2 回目以降は "a" で追記オープン。マニフェストは attempted=1 を初回に
+         立て、open_error は一度立ったら保持（sticky）。
+         非パーシャル時: 従来の childfopenMPI + GreenOutputOpenMode と同動作 */
   int  GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp);
-      /* bytes=ftell, closed_ok を記録して fclose */
+      /* bytes = fclose 直前の ftell（追記モードなので累積総バイト数）、
+         closed_ok を記録（失敗 sticky）して fclose */
   int  GreenOutputMergePartials(struct BindStruct *X);
       /* rank 0: マニフェストを Gather（固定長レコード×kind数）、
          全ランク成功時のみ final 名を初期化(トランケート)→ランク順に
@@ -221,8 +245,11 @@ NaN センチネルは使わない（0.0 + SetError で十分かつ一貫）。�
 - 注意: `GreenOutputInitializeAggregateFiles()` の呼び出しは Mode 1 経路では**行わない**（Merge が公開時に初期化する）。Mode 0 経路は従来どおり。
 
 - [ ] **Step 1: 実装**（マニフェストは `static` 配列 `[GreenOutputAnomalous+1]` の
-  レコード構造体 {attempted, opened, open_error, bytes, closed_ok, part_path,
-  final_path}。**bytes は spec の rows の実装形**（ftell による正当な空との区別
+  レコード構造体（**ワイヤ形式を固定**: `int attempted, opened, open_error,
+  closed_ok; long int bytes; char part_path[256]; char final_path[256];` —
+  `MPI_Gather(..., sizeof(record), MPI_BYTE, ...)` で収集。同一バイナリの
+  同種ビルド前提を関数コメントに明記。パス 256 バイト超過は open 時に
+  エラー扱い）。**bytes は spec の rows の実装形**（ftell による正当な空との区別
   という意図は同一 — spec 側の字句も bytes に合わせて 1 行修正すること）。
   part_path/final_path は別フィールド。Gather は `MPI_Gather` 固定長。
   **green_output.c は build_noMPI でもコンパイルされるため、MPI を使う
@@ -267,13 +294,28 @@ NaN センチネルは使わない（0.0 + SetError で十分かつ一貫）。�
 ### Task 6: Mode 1 ドライバ + phys.c 分岐 + Mode 0 S²/Sz 統一
 
 **Files:**
-- Create: `src/phys_distributed.c` / `src/include/phys_distributed.h`
+- Create: `src/phys_distributed.c`（**オーケストレーション層**: パネル確保・再分散・
+  ランデブー Allreduce・all_* Gatherv・Merge 呼び出し。生 MPI を含む —
+  **ガードスクリプトの対象外**）
+- Create: `src/phys_distributed_local.c`（**ローカルループ層**: ExpecLocal 区間の
+  状態ループのみ。**MPI ヘッダを include せず、生 MPI・exitMPI を一切含まない**。
+  **Task 6 でガードスクリプトの FILES に追加するのはこのファイルだけ**）
+- Create: `src/include/phys_distributed.h`
 - Modify: `src/phys.c`（冒頭分岐＋Mode 0 例外＋stdout 形式統一）
-- Modify: `src/CMakeLists.txt`（ソースリストに `phys_distributed.c`）
+- Modify: `src/CMakeLists.txt`（ソースリストに両 .c）
 
 **Interfaces:**
 - Consumes: Task 2 の `iExpecMode`、Task 3 の `ExpecLocalEnter/Leave/Active` + `iExpecLocalError`、Task 4 の GreenOutput 系、Task 5 の `RedistBlockCyclicToStatePanel`、グローバル `Z_vec`/`descZ_vec`/`v0`/`use_scalapack`
-- Produces: `int phys_stateparallel(struct BindStruct *X, unsigned long int neig);`
+- Produces:
+  ```c
+  /* phys_distributed.c（オーケストレーション、MPI あり） */
+  int phys_stateparallel(struct BindStruct *X, unsigned long int neig);
+  /* phys_distributed_local.c（MPI フリー、ガード対象） */
+  int phys_stateparallel_local_loop(struct BindStruct *X,
+        double complex *panel, long int jb, long int je, long int NN);
+      /* ExpecLocalEnter/SetPartialSuffix〜ClearPartialSuffix/Leave を内包。
+         戻り値 0/-1（ローカル rc）。MPI シンボルへの参照ゼロ */
+  ```
 
 - [ ] **Step 1: ドライバ実装**（spec §3 の擬似コードを忠実に）:
 
@@ -294,28 +336,38 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   free(Z_vec); Z_vec = NULL;
 
   if (GreenOutputInitializeAggregateFiles 相当の初期化はここでは呼ばない /* Merge が公開時に行う */);
-  ExpecLocalEnter();
-  GreenOutputSetPartialSuffix(myrank);
-  for (n = jb; n <= je && rc_local == 0; n++) {
-    X->Phys.eigen_num = n - 1;                      /* 既存 phys.c と同じ 0-based */
-    for (j = 0; j < NN; j++) v0[j + 1] = panel[(n - jb) * NN + j];
-    if (expec_energy_flct(X) != 0) { rc_local = -1; break; }
-    if (expec_cisajs(X, v1) != 0)  { rc_local = -1; break; }
-    if (expec_cisajscktaltdc(X, v1) != 0) { rc_local = -1; break; }
-    if (expec_nbodyg(X, v1) != 0)  { rc_local = -1; break; }
-    if (expec_anomalousg(X, v1) != 0) { rc_local = -1; break; }
-    if (X->Def.iCalcType == FullDiag && expec_totalspin(X, v1) != 0) { rc_local = -1; break; }
-    if (iExpecLocalError) { rc_local = -1; break; }
-    /* all_* への記録（既存 phys.c 末尾と同じ代入群、インデックスは n-1） */
-  }
-  GreenOutputClearPartialSuffix();
-  ExpecLocalLeave();
+  rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN);
   free(panel);
+  /* --- 以下 phys_stateparallel_local_loop の実体（phys_distributed_local.c、
+         MPI フリー）。エラー時も Clear/Leave を必ず通ってから return --- */
+  //   ExpecLocalEnter();                       /* エラーフラグもクリア */
+  //   GreenOutputSetPartialSuffix(myrank);
+  //   for (n = jb; n <= je && rc == 0; n++) {
+  //     X->Phys.eigen_num = n - 1;             /* 既存 phys.c と同じ 0-based */
+  //     for (j = 0; j < NN; j++) v0[j + 1] = panel[(n - jb) * NN + j];
+  //     if (expec_energy_flct(X) != 0)        { rc = -1; break; }
+  //     if (expec_cisajs(X, v1) != 0)         { rc = -1; break; }
+  //     if (expec_cisajscktaltdc(X, v1) != 0) { rc = -1; break; }
+  //     if (expec_nbodyg(X, v1) != 0)         { rc = -1; break; }
+  //     if (expec_anomalousg(X, v1) != 0)     { rc = -1; break; }
+  //     if (X->Def.iCalcType == FullDiag && expec_totalspin(X, v1) != 0) { rc = -1; break; }
+  //     if (ExpecLocalError())                { rc = -1; break; }   /* アクセサ使用 */
+  //     /* all_* への記録（既存 phys.c 末尾と同じ代入群、インデックスは n-1。
+  //        totalspin がどのグローバルベクトル(v0/v1)を読むかは実装時に
+  //        expec_totalspin.c で確認し、rank のローカルデータで満たされる
+  //        ことを検証してから配線する */
+  //   }
+  //   GreenOutputClearPartialSuffix();          /* break 経路でも必ず実行 */
+  //   ExpecLocalLeave();
+  //   return rc;
   /* 単一ランデブー */
   { int g; MPI_Allreduce(&rc_local, &g, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
     if (g != 0) return -1; }
-  /* all_* の Gatherv: 一時受信バッファに gather し rank 0 で X->Phys.all_* へ
-     コピー（MPI_IN_PLACE のエイリアス問題を避ける）。
+  /* all_* の Gatherv: 全 all_* 配列は double（xsetmem の d_1d_allocate）なので
+     同一の recvcounts/displs（int。N<=INT_MAX を確認済みの範囲で long→int 変換、
+     超過時はエラー）を使い回す。一時受信バッファ・recvcounts/displs の malloc は
+     Gatherv 前に Allreduce(MIN) で成功同期（パネル確保と同じパターン）。
+     rank 0 で X->Phys.all_* へコピー（MPI_IN_PLACE のエイリアス問題を避ける）。
      rank 0 が状態順に i=... 行を再レンダリング出力（シリアル形式・S2 列あり） */
   if (GreenOutputMergePartials(X) != 0) {
     return -1;   /* マニフェストがエラーを報告: 公開しない（集団的に失敗） */
@@ -376,7 +428,8 @@ Mode 0 分散経路の変更（唯一の例外）: 既存の `use_scalapack` 分
 
 **Files:**
 - Create: `test/fulldiag_expecmode_equiv.sh`（+x）
-- Modify: `test/CMakeLists.txt`（`if(USE_ELPA)` 内、`add_hphi_mpi_test(fulldiag_expecmode_equiv min:2)`）
+- Create: `test/unit/green_partial_merge_check.c`（マージ機構の直接単体テスト）
+- Modify: `test/CMakeLists.txt`（`if(USE_ELPA)` 内、`add_hphi_mpi_test(fulldiag_expecmode_equiv min:2)` と `green_partial_merge_check` の登録）
 - Modify: `test/fulldiag_elpa_hubbard_chain.sh`（S2/Sz 除外の回避コメントと列選別を撤去し、S² 列込み比較へ強化 — spec §6 の棚卸し）
 
 **Interfaces:**
@@ -385,17 +438,24 @@ Mode 0 分散経路の変更（唯一の例外）: 既存の `use_scalapack` 分
 - [ ] **Step 1: 等価性テストスクリプト**: 3 ケース（Hubbard 鎖 L=4 一体+二体GF・集約形式 ON・**さらに NBodyG 定義を追加してフォールバック経路と NBody 集約 kind も演習**（既存 `fulldiag_hubbard_nbody_interall` テストの def を流用）、SpinGC Gamma=0.5 L=6、Spin 鎖 L=8）× {ExpecMode 0, 1}（3a では 2 は 1 と同動作なので 2 も 1 ケースだけ回して INFO と一致を確認）で実行し、`zvo_phys_*` 全列（S²/Sz 込み）と全 Green ファイル（状態別・集約とも）を `paste`+awk 1e-8 比較。集約形式は `OutputGreenFormat` の集約値を calcmod に指定（既存 green_output_format テストの指定方法を流用）。np は `${MPIRUN}`（min:2）で、追加で np=3（**非整除の検証。ゼロ所有状態
 ランクはこれらの N では発生しない — その経路は Task 5 の
 `elpa_statepanel_check` を小さな N 引数で回して担保**する: 単体テストに
-`argv[1]` で N を渡せるようにし、ctest 登録に N=4 np>4 相当のケースを追加）
+`argv[1]` で N を渡せるようにし、**名前付き ctest ケース
+`elpa_statepanel_zero_owner` を `run_with_mpi_precheck.sh exact:3` + 引数 N=2 で
+登録**（np=3, NC=1 → 所有 1,1,0 = ゼロ所有ランクを決定的に発生させる。
+Task 9 でも同コマンドを実行）
 を script 内の 2 回目の mpirun で実行。
 **集約 kind の網羅**: OneBody/TwoBody/NBody は上記ケースで演習される。
 ThreeBody/FourBody/SixBody は `expec_cisajscktaltdc` の多体出力を持つ入力
 （既存テストの def を流用できるものがあれば追加）で 1 ケース演習し、
 入力で到達させられない kind と AnomalousG は「分散 FullDiag での到達可否」を
 Task 1 インベントリ監査の結論として文書に記録する（spec §2 の監査項目）。
-**失敗注入**: 等価性スクリプトの最後に「part ファイルを 1 つ書き込み後に
-削除 → Merge が非ゼロで失敗すること」を確認するシナリオを追加する。
-これがスクリプト単体で困難なら Task 9（clavius）での手動確認項目として
-明記し、スキップ理由をスクリプトのコメントに残す。
+**失敗注入（単体テストで実装 — シェルからのプロセス内割り込みは不可能）**:
+`test/unit/green_partial_merge_check.c`（MPI, 2 ランク, elpa_eigen_check と同じ
+CMake 材料で登録）が green_output API を直接呼ぶ:
+(a) 正常系 — 両ランクが SetPartialSuffix → Open/書き込み/Close → Merge →
+    最終ファイルが両ランクの行をランク順に含み、part が削除されること;
+(b) 正当な空 — 片ランクが 1 行も書かず Close → Merge 成功;
+(c) 失敗系 — 片ランクが Close 後にテスト自身が unlink(part_path) してから
+    Merge → **全ランクで非ゼロ返却**・最終ファイル未公開・残存 part 温存。
 - [ ] **Step 2: 既定ビルドで未登録確認 → sh -n → コミット** `git commit -m "Add ExpecMode equivalence tests and strengthen the ELPA chain test"`
 
 ---
@@ -429,7 +489,9 @@ Task 1 インベントリ監査の結論として文書に記録する（spec §
 
 - 既定（非分散）全既存テスト無変更 PASS、`check_expec_local_calls` PASS（一時除外なし）
 - ELPA ビルドで equiv テスト・statepanel 単体・既存 ELPA テスト全 PASS
-- clavius で Mode 0/1 等価（S² 込み）とベンチ ~P 倍を記録
+- clavius で Mode 0/1 等価（S² 込み）を確認し、ベンチマークを記録
+  （~P 倍は**測定目標**であり合否条件ではない — 再分散・I/O・帯域で
+  目減りし得る。実測値と内訳を記録することが完了条件）
 - spec v5.1 §2/§3/§5 の全項目に対応する実装・テスト・docs が存在
 - PR 移行ノート草稿（S²/Sz・stdout 形式変更）が作成済み（push 時に PR 説明文へ転記）
 - Mode 0 の変更で `zvo_phys` を書くのが rank 0 であることを実装時に output.c/phys.c で確認済み（all_* の Gather 不要判断の根拠）
