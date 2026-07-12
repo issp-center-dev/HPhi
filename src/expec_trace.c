@@ -712,6 +712,15 @@ static int trace_map_alloc(TraceMap *map, long int n) {
   long int k;
   map->n = n;
   map->is_diagonal = 0;
+  /* Representability guards, same rigor as TraceGbufBytes(): reject a
+     non-positive or size_t-overflowing dimension before multiplying. */
+  if (n <= 0 ||
+      (uintmax_t)n > (uintmax_t)SIZE_MAX ||
+      (size_t)n > SIZE_MAX / sizeof(double complex)) {
+    map->kprime = NULL;
+    map->amp = NULL;
+    return -1;
+  }
   map->kprime = (long int *)malloc(sizeof(long int) * (size_t)n);
   map->amp = (double complex *)malloc(sizeof(double complex) * (size_t)n);
   if (map->kprime == NULL || map->amp == NULL) {

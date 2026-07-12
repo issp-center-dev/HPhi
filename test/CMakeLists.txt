@@ -398,6 +398,13 @@ target_include_directories(expec_trace_map_check PRIVATE
     ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(expec_trace_map_check PRIVATE DSFMT_MEXP=19937)
 target_link_libraries(expec_trace_map_check m)
+# expec_trace.c's clock_gettime may live in librt on older glibc -- same
+# check-and-link as the HPhi target (src/CMakeLists.txt).
+include(CheckLibraryExists)
+check_library_exists(rt clock_gettime "time.h" HPHI_CLOCK_GETTIME_IN_RT)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(expec_trace_map_check rt)
+endif()
 # On an MPI build the top-level add_definitions(-DMPI) makes the linked-in
 # src/green_output.c contain real MPI calls (GreenOutputMergePartials()'s
 # MPI_Gather/MPI_Bcast), so the MPI libraries must be on this target's link

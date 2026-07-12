@@ -96,6 +96,14 @@ target_sources(HPhi PRIVATE
   ${STDFACE_DIR}/src/Wannier90.c
 )
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
+# expec_trace.c uses clock_gettime(CLOCK_MONOTONIC); on older glibc (< 2.17)
+# that symbol lives in librt. Link it when such a librt exists (harmless
+# no-op on modern glibc; absent and skipped on macOS).
+include(CheckLibraryExists)
+check_library_exists(rt clock_gettime "time.h" HPHI_CLOCK_GETTIME_IN_RT)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(HPhi rt)
+endif()
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
