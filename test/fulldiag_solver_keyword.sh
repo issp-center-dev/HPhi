@@ -175,8 +175,8 @@ if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
     cat expecmode.log
     exit 1
   fi
-  grep -q "INFO" expecmode.log || {
-    echo "ERROR: expected an INFO message about the ExpecMode single-process downgrade"
+  grep -q "ExpecMode reverts to 0 for a single process (results are identical)." expecmode.log || {
+    echo "ERROR: expected the ExpecMode single-process downgrade message"
     cat expecmode.log
     exit 1
   }

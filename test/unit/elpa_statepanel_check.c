@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
   int i_negone = -1, i_zero_i = 0;
   int rank, size, ictxt, iam, nprocs, info, ok = 1;
   int nprow, npcol, myrow, mycol;
-  long int n = NDIM, mb, mp, nq, i, j, k;
+  long int n = NDIM, mb, mp, nq, i, j;
   int lld, dims[2] = {0, 0};
   int descZ[9];
   double complex *Z_ref, *panel;

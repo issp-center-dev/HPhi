@@ -91,6 +91,78 @@ relying solely on the caller-side `CheckPE`/`isite>Nsite` gates plus the
 a Task 3 design decision informed by this table, not a gap this guard
 script silently hides -- the reachability chain is fully written down here.
 
+## 2b. `mltply()` subtree (addendum, final whole-branch review)
+
+Step 1/2 above traced every `child_*`/`GC_child_*` identifier called
+*directly* from the six §1 files. That tracing missed one call that goes
+through a completely different entry point: `src/expec_energy_flct.c:195`
+calls `mltply(X, v0, v1)` (`v0 += H*v1`, needed for the energy/fluctuation
+observable), and `mltply()` is the same top-level Hamiltonian-multiply
+dispatcher used by Lanczos/TPQ -- it fans out into a batched-MPI subtree
+that §1/§2 never enumerated. This addendum closes that gap; it does not
+change any guard behavior (`test/check_expec_local_calls.sh`'s `FILES` set
+is unchanged -- `mltply.c`/`mltplyHubbard.c`/`mltplySpin.c`/
+`mltplySpinless.c`/`mltplyMPIBatched.c` are general-purpose
+site-decomposition machinery shared with Lanczos/TPQ, matching the same
+"shared machinery, not `expec_*`-specific" reasoning §2 already applied to
+`mltplyMPI*Core.c`), it only records the reachability argument for the
+record.
+
+| File | Role reached from `expec_energy_flct.c:195`'s `mltply()` call | MPI surface | Reachability under Mode 1 (replica FullDiag) |
+|---|---|---|---|
+| `src/mltply.c` | Top dispatcher: switches on `X->Def.iCalcModel` to `mltplyHubbardGC`/`mltplyHubbard`/`mltplySpin`/`mltplySpinGC`/`mltplySpinlessFermion`, then reduces `X->Large.prdct` | `SumMPI_dc` at `mltply.c:155` (`X->Large.prdct = SumMPI_dc(X->Large.prdct);`) | **reachable, but already covered**: `SumMPI_dc` is on the frozen ExpecLocal `ALLOW` list (§1) and is hooked by Task 3's ExpecLocal no-op-passthrough semantics like every other `SumMPI_dc` call site. |
+| `src/mltplyHubbard.c` | `mltplyHubbardGC` (defined `:436`) calls the batched-InterAll init `InitializeMPIBatchedInterAll_HubbardGC` (`:567`) plus batched Transfer/DoubleTransfer inits (`:478`, `:495`); canonical `mltplyHubbard` (defined `:169`) calls the canonical-model batched inits (`:209`, `:226`). Both also keep a non-batched per-term `CheckPE`-gated fallback loop (e.g. canonical InterAll loop `:293-355`). | `MPI_Comm_size` (in the callees, no data exchange) plus the raw `MPI_Sendrecv` machinery reached transitively through `mltplyMPIBatched.c` (see below) | **unreachable under replica FullDiag** -- see reachability argument below. |
+| `src/mltplySpin.c` | Canonical `Spin` Exchange path calls `InitializeMPIBatchedExchange_Spin` and its group loop (`:275`, `:283-286`); `SpinGC` Exchange path calls `InitializeMPIBatchedExchange_SpinGC` and its group loop (`:788`, similar shape). Both also keep a non-batched per-term fallback (`HPHI_MPI_NOBATCH` branch, e.g. `:314-330`). | same shape as `mltplyHubbard.c` | **unreachable under replica FullDiag** -- same argument. |
+| `src/mltplySpinless.c` | `mltplySpinlessFermion` (defined `:115`) calls `InitializeMPIBatchedTransfers_SpinlessFermionGC` (`:162`) / `InitializeMPIBatchedTransfers_SpinlessFermion` (`:180`) depending on GC vs canonical model | same shape | **unreachable under replica FullDiag** -- same argument. |
+| `src/mltplyMPIBatched.c` | Defines every `Initialize*`/`X_child_*_MPI*_batched` function named above. The real raw-MPI calls (`MPI_Sendrecv`, e.g. `:361-366`, `:495-505`, `:847-852`, and further pairs at the InterAll/Exchange variants) live *inside* the `X_child_*_batched` functions, which are only invoked from each caller's `for (g = 0; g < batched->num_groups; g++)` loop. | `MPI_Sendrecv` (paired sends/receives, batched-group communication) | **unreachable under replica FullDiag** -- every group loop above is driven by `batched->num_groups`, which the reachability argument below shows is always 0. |
+
+**Reachability argument** (mirrors the `Nsite==NsiteMPI` invariant already
+proved in §3, applied to this subtree instead of `nbody_correlation.c`/
+`anomalous_pair.c`):
+
+- Every `Initialize*` function in `mltplyMPIBatched.c` decides whether a
+  term needs cross-rank batching using one of two equivalent site-locality
+  tests: `CheckPE(site, X)` (InterAll-type terms -- e.g.
+  `InitializeMPIBatchedInterAll_HubbardGC`'s `ComputeInterAllOrigin()`
+  helper, `mltplyMPIBatched.c:1372-1489`, sets `any_interPE` only if
+  `CheckPE()` is `TRUE` for at least one of the four sites) or an explicit
+  `site + 1 > X->Def.Nsite` inequality (Transfer/Exchange-type terms -- e.g.
+  `InitializeMPIBatchedTransfers_SpinlessFermionGC`'s `site1_local !=
+  site2_local` check, `mltplyMPIBatched.c:90-99`, and
+  `InitializeMPIBatchedExchange_Spin`'s `(site0+1 > Nsite) != (site1+1 >
+  Nsite)` check, `mltplyMPIBatched.c:2483-2487`). `CheckPE()` itself
+  (`mltplyMPIHubbardCore.c:38-46`, already audited in §2) returns `TRUE`
+  iff `org_isite+1 > X->Def.Nsite` -- the identical condition.
+- ExpecMode/Mode 1 is only reachable at all when Solver is 1 (ScaLAPACK) or
+  3 (ELPA) (`src/readdef.c`'s `cErrExpecMode` gate), and both solvers set
+  `X->Def.iFlgScaLAPACK = 1` (`readdef.c:321`), which forces
+  `NsiteMPI = Nsite` with no site separation (`check.c:99-109`, the same
+  structural fact §3 already establishes). So every site index satisfies
+  `site < Nsite` whenever Mode 1 can run at all -- `CheckPE(site,X)` is
+  `FALSE` and `site+1 > Nsite` is `FALSE` for every site, in every one of
+  the functions above.
+- Consequently: `any_interPE` never becomes `TRUE` (`ComputeInterAllOrigin`
+  always takes the `return -1;` "all sites are local" path), and
+  `site1_local != site2_local` / `(site0+1>Nsite) != (site1+1>Nsite)` are
+  never true. Every `Initialize*` function's unique-origin counter
+  (`num_unique` / `total_terms`) therefore stays `0`, so `batched->num_groups
+  == 0` in every case, and the `for (g = 0; g < num_groups; g++)` loops that
+  would call the `X_child_*_MPI*_batched` functions (where the actual
+  `MPI_Sendrecv` calls live) always execute zero times. The non-batched
+  per-term fallback branches (e.g. `mltplyHubbard.c`'s canonical InterAll
+  loop) are gated by the same `CheckPE`/`site>Nsite` condition and are
+  unreachable for the identical reason.
+- This rests on the same structural invariant as §3 (`Nsite==NsiteMPI`
+  whenever `iFlgScaLAPACK==1`), so it carries no separate proof burden --
+  it is the same argument, applied to a different call path that Step 1/2
+  did not originally walk.
+
+**Guard-scope note**: no change to `test/check_expec_local_calls.sh`'s
+`FILES` is implied or needed by this addendum -- these five files are
+general-purpose Hamiltonian-multiply machinery shared with Lanczos/TPQ
+(not `expec_*`-specific), exactly like the `mltplyMPI*Core.c` files §2
+already excludes from the guard's scope for the same reason.
+
 ## 3. `partner_rank` audit (Step 2 -- proof obligation)
 
 **Claim to verify**: in replicated FullDiag mode (`iFlgScaLAPACK=1`, no

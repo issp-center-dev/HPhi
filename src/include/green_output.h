@@ -44,9 +44,17 @@ int GreenOutputInitializeAggregateFiles(struct BindStruct *X);
  * NOTE: partial-mode opens still go through childfopenMPI()/fopenMPI(), so
  * on ranks other than 0 they only reach the real filesystem while ExpecLocal
  * mode is active (see ExpecLocalEnter()/ExpecLocalLeave() in wrapperMPI.h).
- * The Mode 1 driver activates both together:
+ * The Mode 1 driver activates both together, in the actual order the driver
+ * runs them (src/phys_distributed_local.c + src/phys_distributed.c):
  *   ExpecLocalEnter(); GreenOutputSetPartialSuffix(myrank); ... state loop ...
- *   ExpecLocalLeave(); GreenOutputMergePartials(X); GreenOutputClearPartialSuffix();
+ *   GreenOutputClearPartialSuffix(); ExpecLocalLeave(); ... (rank-0 gather,
+ *   collective) ... GreenOutputMergePartials(X);
+ * GreenOutputClearPartialSuffix() runs before the collective
+ * GreenOutputMergePartials() (not after, as an earlier draft of this comment
+ * showed) -- this is manifest-neutral: Clear only stops future opens from
+ * targeting the just-ended session's part-file suffix, it does not touch
+ * the manifest or delete any part file, so ending the session before Merge
+ * runs does not affect what Merge later reads.
  */
 void GreenOutputSetPartialSuffix(int rank);
 

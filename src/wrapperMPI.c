@@ -237,6 +237,12 @@ char* fgetsMPI(
   int inull;
   char *ctmp;
 
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it (same
+     style as the other assert-forbidden wrappers below, e.g. BarrierMPI). */
+  assert(!iExpecLocal);
   ctmp = InputString;
   inull = 0;
   if (myrank == 0) {

@@ -53,7 +53,13 @@ set -e
 # ---------------------------------------------------------------------
 
 testname="fulldiag_expecmode_equiv"
-hphi="../../src/HPhi"
+# Resolve the HPhi binary path ONCE, as an absolute path, before any `cd`.
+# ctest's cwd when this script starts is build/test; prep_case later runs
+# HPhi from build/test/${testname}/<case> (two levels deeper) and run_mode
+# from build/test/${testname}/<case>/<mode> (three levels deeper) -- a
+# single relative path cannot serve both depths, so we resolve it here
+# instead of relying on a fixed number of "../" hops.
+hphi="$(pwd)/../src/HPhi"
 tol="0.00000001"
 
 mkdir -p "${testname}"
@@ -82,12 +88,24 @@ run_hphi() {
 # identical -- any structural mismatch is itself a failure, not just a
 # numeric one.
 # TimeKeeper files are excluded: they legitimately record wall-clock
-# timings that differ run-to-run and carry no physics content.
+# timings that differ run-to-run and carry no physics content. CalcTimer.dat
+# is excluded for the same reason (wall-clock timings, written on every
+# MPI-build run; would spuriously fail the numeric diff at tol 1e-8).
+#
+# This comparison relies on Mode 1's rank-order part-file concatenation
+# (GreenOutputMergePartials(), see src/include/green_output.h) equaling
+# serial (Mode 0) state order: state ownership across ranks is a contiguous
+# block (ceil(N/P) states per rank, rank 0 first), so concatenating parts in
+# rank order reproduces ascending state order exactly, byte-for-byte
+# comparable against Mode 0's own ascending-state-order output.
 compare_output_trees() {
   dirA="$1"
   dirB="$2"
-  ( cd "${dirA}/output" && find . -type f ! -name '*TimeKeeper*' | sort ) > _filesA.lst
-  ( cd "${dirB}/output" && find . -type f ! -name '*TimeKeeper*' | sort ) > _filesB.lst
+  ( cd "${dirA}/output" && find . -type f ! -name '*TimeKeeper*' ! -name 'CalcTimer.dat' | sort ) > _filesA.lst
+  ( cd "${dirB}/output" && find . -type f ! -name '*TimeKeeper*' ! -name 'CalcTimer.dat' | sort ) > _filesB.lst
+  [ -s _filesA.lst ] || fail "compare_output_trees: ${dirA}/output produced zero output files -- broken run or over-eager exclude filter"
+  [ -s _filesB.lst ] || fail "compare_output_trees: ${dirB}/output produced zero output files -- broken run or over-eager exclude filter"
+  grep -Eq '_eigen\.dat$' _filesA.lst || fail "compare_output_trees: ${dirA}/output has no aggregate Green/eigen file (*_eigen.dat, see GreenOutputFileName()'s _Eigen_Aggregate formats in src/green_output.c) -- the aggregate/merge path this test exists to cover did not actually run"
   diff _filesA.lst _filesB.lst > /dev/null || {
     echo "Output file sets differ between ${dirA}/output and ${dirB}/output:" >&2
     diff _filesA.lst _filesB.lst >&2

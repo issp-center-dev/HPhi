@@ -53,11 +53,20 @@ TEMP_UNGUARDED_FILES=""
 # table verbatim).
 ALLOW="SumMPI_dc SumMPI_d SumMPI_li SumMPI_i fopenMPI childfopenMPI stdoutMPI"
 
-# Token-recognition pattern for MPI-flavoured calls: identical to the
-# pattern used to generate the Step 1 inventory in
-# docs/superpowers/specs/2026-07-11-expec-call-inventory.md (kept verbatim
-# so the guard and the frozen inventory can never silently drift apart).
-PATTERN='(SumMPI_[a-z]+|MaxMPI_[a-z]+|BcastMPI_[a-z]+|BarrierMPI|NormMPI_dc|VecProdMPI|MPI_[A-Za-z_]+|exitMPI|fopenMPI|childfopenMPI)\('
+# Token-recognition pattern for MPI-flavoured calls: same call vocabulary as
+# the pattern used to generate the Step 1 inventory in
+# docs/superpowers/specs/2026-07-11-expec-call-inventory.md, plus two
+# additions made during the final whole-branch review:
+#   - `fgetsMPI` added to the vocabulary: it does a real MPI_Bcast
+#     (src/wrapperMPI.c) but its name doesn't match any of the other
+#     alternatives, so an unguarded future call in a scanned file would
+#     otherwise slip past this guard undetected.
+#   - A `(^|[^A-Za-z0-9_])` left-boundary group prepended to the whole
+#     alternation, so a call name can never match as a substring of a
+#     longer identifier (e.g. `foo_MPI_Barrier(` no longer falsely matches
+#     `MPI_Barrier(`). The name-extraction step below strips this boundary
+#     character back off before comparing against ALLOW.
+PATTERN='(^|[^A-Za-z0-9_])(SumMPI_[a-z]+|MaxMPI_[a-z]+|BcastMPI_[a-z]+|BarrierMPI|NormMPI_dc|VecProdMPI|MPI_[A-Za-z_]+|exitMPI|fopenMPI|childfopenMPI|fgetsMPI)\('
 
 workdir=$(mktemp -d "${TMPDIR:-/tmp}/check_expec_local_calls.XXXXXX")
 trap 'rm -rf "$workdir"' EXIT INT TERM
@@ -117,7 +126,10 @@ for f in $FILES; do
   fi
 
   while IFS=: read -r lineno token; do
-    name=$(printf '%s' "$token" | sed -E 's/\($//')
+    # Strip the trailing "(" first, then the single leading boundary
+    # character captured by the PATTERN's "(^|[^A-Za-z0-9_])" group (there is
+    # none to strip when the match starts at the true beginning of the line).
+    name=$(printf '%s' "$token" | sed -E 's/\($//; s/^[^A-Za-z0-9_]//')
 
     # Excluded if inside a defensive-guard marker region.
     guarded=0
