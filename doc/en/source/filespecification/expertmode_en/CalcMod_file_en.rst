@@ -272,6 +272,55 @@ The parameters correlated with the keywords are as follows.
      roughly as O(N²/P) rather than O(N²) — larger Hilbert-space dimensions become
      feasible by increasing the process count.
 
+*  ``ExpecMode``
+
+   **Type :** Int (default value: 0)
+
+   | **Description :** (FullDiag)
+     Selects the evaluation kernel for full-diagonalization observables
+     (energy, N, Sz, S2, doublon, and Green functions):
+   | 0: Conventional evaluation (existing behavior).
+   | 1: State-task-parallel evaluation. Each MPI rank evaluates the
+     observables for its own contiguous block of eigenstates
+     independently (no communication during the per-state evaluation
+     loop). The aggregate Green-function output is written as
+     rank-local partial files and merged into the final aggregate files
+     by rank 0 once every rank's manifest reports success.
+   | 2: Reserved for a future trace-kernel evaluation mode. Not yet
+     implemented; currently runs as ``ExpecMode 1`` and prints
+   | ``INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.``
+   | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
+     diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
+     any other combination (wrong ``CalcType`` or ``Solver``) is rejected
+     at startup with an error. With exactly one MPI process, ``ExpecMode``
+     is automatically reverted to 0 (results are identical for a single
+     process either way), printing
+   | ``INFO: ExpecMode reverts to 0 for a single process (results are identical).``
+   | Guarantee: ``ExpecMode`` changes only evaluation speed, never the
+     physics -- ``ExpecMode`` 0, 1, and 2 produce identical results up to
+     floating-point rounding (summation order differs between kernels, so
+     agreement is not bit-identical).
+   | Memory: ``ExpecMode 1`` additionally holds a state panel roughly the
+     same size as the distributed eigenvector storage used by ``Solver 3``
+     (O(N2/P) per rank). During the one-time redistribution step both the
+     original storage and the new panel coexist, giving a temporary peak
+     of roughly 2xO(N2/P) per rank before the original storage is freed;
+     steady-state usage afterward is O(N2/P), unchanged from ``ExpecMode 0``.
+   | Guidance: prefer ``ExpecMode 1`` for large multi-node ``Solver 3``
+     (ELPA) or ``Solver 1`` (ScaLAPACK) runs with many eigenstates and/or
+     many Green-function observables, where re-evaluating every eigenstate
+     redundantly on every rank (``ExpecMode 0``) becomes the bottleneck.
+     Keep the default ``ExpecMode 0`` otherwise, including for small
+     systems and single-process runs.
+   | Note (behavior fix): as of this phase, distributed FullDiag runs
+     (``Solver`` 1 or 3, more than one MPI process) compute S2 and Sz on
+     rank 0 for ``ExpecMode 0`` as well -- previously these distributed runs
+     zero-filled S2 and Sz and printed a shortened stdout progress line
+     without the S2 column. The stdout progress line now always matches
+     the single-process (serial) format, with the S2 column included, for
+     every ``Solver``/``ExpecMode`` combination. This is an intentional
+     correctness fix, independent of ``ExpecMode``'s value.
+
 .. raw:: latex
 
    \newpage

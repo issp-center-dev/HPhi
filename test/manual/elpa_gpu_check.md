@@ -28,6 +28,30 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
 9. Memory spot check (phase 2): for a fixed N (e.g. 8-site Hubbard, N=4900),
    compare MaxRSS (`/usr/bin/time -v`) between np=1 and np=P; per-rank memory
    must drop roughly as 1/P.
+10. `ctest -R fulldiag_expecmode_equiv` (np=2, np=3) ... expect PASS (phase 3a:
+    `ExpecMode` 0 vs 1 vs 2 equivalence -- every `zvo_phys*`/Green aggregate
+    output file must match within tolerance 1e-8; case 1 also asserts the
+    `ExpecMode 2` -> 1 downgrade INFO message fires and its output matches
+    Mode 1's).
+11. `ctest -R green_partial_merge_check` ... expect PASS (phase 3a: partial
+    (`.part<rank>`) file merge success/failure semantics, any np >= 2).
+12. Mode 1 benchmark: same fixed-N FullDiag case as item 9, `Solver 3`,
+    np >= 4; compare the observable-evaluation wall time (`CalcTimer.dat`)
+    between `ExpecMode 0` and `ExpecMode 1`; expect `ExpecMode 1` faster
+    (redundant per-rank re-evaluation of every eigenstate eliminated) with
+    both giving matching physics (per item 10).
+13. S2/Sz distributed-`ExpecMode 0` fix check: `Solver 1` or `Solver 3`,
+    nproc > 1, `ExpecMode 0` (default); confirm stdout progress lines show
+    a non-zero `S2=` column matching the `Solver 0` / serial reference
+    (not the pre-phase-3a zero-filled `S2=0.000000`), and that the line
+    format matches the single-process (serial) layout exactly (same
+    fields, same order, `S2` column present).
+14. `ExpecMode` eligibility / demotion checks: `ExpecMode 1` with `Solver 0`
+    (or with a non-FullDiag `CalcType`) aborts at startup with the
+    ExpecMode eligibility error (`cErrExpecMode`); `ExpecMode 1` at nproc=1
+    prints the "reverts to 0" INFO and matches the `ExpecMode 0` reference;
+    `ExpecMode 2` prints the "running as ExpecMode 1" INFO and matches an
+    explicit `ExpecMode 1` run.
 Record results (date, host, ELPA version, commit) at the bottom of this file.
 
 ---
