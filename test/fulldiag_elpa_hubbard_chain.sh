@@ -26,21 +26,27 @@ echo "NGPU    0" >> calcmod.def
 # test exists to exercise. Use the same variable the precheck validated.
 ${MPIRUN} ../../src/HPhi -e namelist.def
 
-# エネルギーと二重占有率のみ比較する（ELPA 経路は use_scalapack 扱いで
-# S2/Sz を計算しないため、既存 fulldiag_hubbard_chain の参照から
-# 該当列だけを使う）
+# Full <H> <N> <Sz> <S2> <D> column comparison (all 5 columns, not just
+# energy and doublon): Task 6 unified the distributed FullDiag observable
+# path (Mode 0 too) so that S2/Sz are computed identically to the serial
+# path instead of being zero-filled, so there is no longer a reason to
+# exclude those columns here. These are simply the first 7 (lowest-energy)
+# rows of the exact same reference used by fulldiag_hubbard_chain.sh
+# (non-ELPA, non-distributed) for the identical stan.in -- reused verbatim
+# to assert the ELPA/distributed path reproduces the serial physics
+# exactly, S2/Sz included.
 cat > reference_ed.dat <<EOF
-  -2.102748   0.287325
-  -1.806424   0.335409
-  -1.068140   0.277708
-  -0.828427   0.146447
-  -0.828427   0.146447
-   0.000000   0.000000
-   0.581449   1.079437
+  -2.102748   4.000000  -0.000000   0.000000   0.287325
+  -1.806424   4.000000  -0.000000   2.000000   0.335409
+  -1.068140   4.000000   0.000000   0.000000   0.277708
+  -0.828427   4.000000  -0.000000   2.000000   0.146447
+  -0.828427   4.000000  -0.000000   2.000000   0.146447
+   0.000000   4.000000   0.000000   6.000000   0.000000
+   0.581449   4.000000  -0.000000   0.000000   1.079437
 EOF
-awk 'NR>1 && NR<=8 {printf "%11.6f %10.6f\n", $1, $5}' output/zvo_phys_Nup2_Ndown2.dat > ed.dat
+awk 'NR>1 && NR<=8 {printf "%11.6f %10.6f %10.6f %10.6f %10.6f\n", $1, $2, $3, $4, $5}' output/zvo_phys_Nup2_Ndown2.dat > ed.dat
 paste ed.dat reference_ed.dat > paste_ed.dat
-diff=`awk 'BEGIN{max=0}{d=$1-$3; if(d<0)d=-d; if(d>max)max=d; d=$2-$4; if(d<0)d=-d; if(d>max)max=d}END{print max}' paste_ed.dat`
+diff=`awk 'BEGIN{max=0}{for(i=1;i<=5;i++){d=$i-$(i+5); if(d<0)d=-d; if(d>max)max=d}}END{print max}' paste_ed.dat`
 test "`echo "$diff < 0.000001" | bc`" = "1"
 
 # OutputHam is incompatible with distributed generation (Solver 3, nproc>1):

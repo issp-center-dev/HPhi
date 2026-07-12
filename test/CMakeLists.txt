@@ -595,6 +595,45 @@ if(MPI_FOUND)
     set_tests_properties(
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
+
+    # green_output partial-output/merge unit test (phase 3a Task 7). Unlike
+    # elpa_eigen_check/elpa_redist_check/elpa_statepanel_check above, the
+    # code this test exercises (GreenOutputMergePartials() and the partial
+    # session API in src/green_output.c) is guarded only by "#ifdef MPI",
+    # NOT by "_SCALAPACK"/"_ELPA" -- it has nothing to do with the
+    # ScaLAPACK/ELPA eigensolver path, only with MPI-rank-local partial
+    # Green-output files. So it is registered here, under plain
+    # if(MPI_FOUND), and actually RUNS on any MPI build (ELPA/ScaLAPACK
+    # present or not) rather than being gated behind if(USE_ELPA).
+    # It links the real src/green_output.c + src/FileIO.c + src/wrapperMPI.c
+    # + src/global.c + src/ErrorMessage.c (no HPhi-global stub objects
+    # substituted) so the test exercises the actual merge/publish code
+    # path, including the real childfopenMPI()/fopenMPI() ExpecLocal
+    # per-rank file I/O the Mode 1 driver relies on.
+    add_executable(green_partial_merge_check unit/green_partial_merge_check.c
+        ${CMAKE_SOURCE_DIR}/src/green_output.c
+        ${CMAKE_SOURCE_DIR}/src/FileIO.c
+        ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+        ${CMAKE_SOURCE_DIR}/src/global.c
+        ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+    target_include_directories(green_partial_merge_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include)
+    target_compile_definitions(green_partial_merge_check PRIVATE -DMPI)
+    target_link_libraries(green_partial_merge_check ${MPI_C_LIBRARIES} m)
+    # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as the
+    # other MPI unit tests. min:2 (not exact:2): every scenario in
+    # unit/green_partial_merge_check.c is written to generalize to any
+    # nprocs >= 2 (rank 0 / highest rank play fixed roles).
+    add_test(
+        NAME green_partial_merge_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                $<TARGET_FILE:green_partial_merge_check>
+    )
+    set_tests_properties(
+        green_partial_merge_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;green;unit;mpi"
+    )
 endif(MPI_FOUND)
 
 if(USE_ELPA)
@@ -706,5 +745,39 @@ if(USE_ELPA)
     set_tests_properties(
         elpa_statepanel_zero_owner
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    # ExpecMode 0/1/(2) equivalence (phase 3a Task 7): same FullDiag problem,
+    # ExpecMode 0 (serial) vs ExpecMode 1 (state-task-parallel) vs a single
+    # ExpecMode 2 sanity case (3a: 2 downgrades to 1, so it must reproduce
+    # ExpecMode 1's own result and print the downgrade INFO), compared on
+    # both zvo_phys_* (S^2/Sz included) and every Green aggregate file
+    # (per-state and aggregated kinds). Requires Solver 1 (ScaLAPACK) or 3
+    # (ELPA) for ExpecMode to be accepted at all (see readdef.c's
+    # cErrExpecMode gate), so -- like fulldiag_elpa_hubbard_chain above --
+    # this is genuinely registration-only on a non-ELPA/non-ScaLAPACK build:
+    # there is no way to exercise it without one of those solvers compiled
+    # in, regardless of MPI availability.
+    # Registered as two SEPARATE named ctest cases (not one min:2 case)
+    # because np=3 specifically exercises non-divisible state-panel
+    # ownership (script takes its process count from ${MPIRUN} via the
+    # precheck wrapper; it does not launch a second np internally). Both
+    # names point at the SAME script (test/fulldiag_expecmode_equiv.sh),
+    # so add_test() is used directly here rather than the
+    # add_hphi_mpi_test() macro (which assumes the ctest NAME and the
+    # script's base filename match).
+    add_test(
+        NAME fulldiag_expecmode_equiv_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    add_test(
+        NAME fulldiag_expecmode_equiv_np3
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    set_tests_properties(
+        fulldiag_expecmode_equiv_np2 fulldiag_expecmode_equiv_np3
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;expecmode"
     )
 endif(USE_ELPA)
