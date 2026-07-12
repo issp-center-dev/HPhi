@@ -398,6 +398,17 @@ target_include_directories(expec_trace_map_check PRIVATE
     ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(expec_trace_map_check PRIVATE DSFMT_MEXP=19937)
 target_link_libraries(expec_trace_map_check m)
+# On an MPI build the top-level add_definitions(-DMPI) makes the linked-in
+# src/green_output.c contain real MPI calls (GreenOutputMergePartials()'s
+# MPI_Gather/MPI_Bcast), so the MPI libraries must be on this target's link
+# line -- same pattern/condition as the green_partial_merge_check target
+# below. The test itself stays serial and launcher-free: it never calls
+# GreenOutputMergePartials() (nor expec_trace_owned_states(), whose output
+# phase is the only expec_trace.c path into green_output.c), so no MPI
+# function is ever reached at runtime and MPI_Init is not required.
+if(MPI_FOUND)
+    target_link_libraries(expec_trace_map_check ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
 add_test(NAME expec_trace_map_check COMMAND expec_trace_map_check)
 set_tests_properties(expec_trace_map_check
     PROPERTIES LABELS "unit;fulldiag;expecmode")
