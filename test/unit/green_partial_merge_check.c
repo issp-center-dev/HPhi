@@ -26,7 +26,7 @@
  * "special/failing" role, so the same binary is meaningful whether run
  * with exactly 2 ranks or more.
  *
- * Three scenarios, one per GreenOutputKind so they cannot interfere with
+ * Five scenarios, one per GreenOutputKind so they cannot interfere with
  * each other's manifest bookkeeping within a single process:
  *   (a) GreenOutputOneBody  -- normal success: every rank writes one
  *       identifying row; Merge succeeds on every rank, the final file
@@ -46,6 +46,15 @@
  *       pre-existing final so this really tests "no NEW final"), and
  *       every OTHER rank's part file must still be on disk afterwards
  *       (nothing is deleted on failure).
+ *   (d) GreenOutputFourBody -- lifecycle failure: the highest rank opens
+ *       and writes but never closes (manifest: opened=1, closed_ok=0);
+ *       merge validation must reject the manifest on every rank and
+ *       publish nothing.
+ *   (e) GreenOutputSixBody  -- size mismatch: all ranks open/write/close
+ *       cleanly, then the highest rank's part is truncated from outside
+ *       the API; the merge's pass-2 probe must detect that the on-disk
+ *       length differs from the manifest's recorded byte count and fail
+ *       on every rank, publishing nothing and deleting nothing.
  *
  * Non-vacuousness check (documented per the phase-3a plan's TDD
  * requirement -- this test is not driven by a prior failing test, so its
@@ -184,6 +193,8 @@ int main(int argc, char **argv) {
   PreClean(&X, GreenOutputOneBody, nprocs);
   PreClean(&X, GreenOutputTwoBody, nprocs);
   PreClean(&X, GreenOutputThreeBody, nprocs);
+  PreClean(&X, GreenOutputFourBody, nprocs);
+  PreClean(&X, GreenOutputSixBody, nprocs);
   MPI_Barrier(MPI_COMM_WORLD);
 
   /* =====================================================================
@@ -360,6 +371,114 @@ int main(int argc, char **argv) {
           } else {
             CHECK(FileExists(part_joined), "(c) surviving part file '%s' must be retained after a failed merge", part_joined);
           }
+        }
+      }
+    }
+  }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+
+  /* =====================================================================
+   * (d) Lifecycle-failure injection: the HIGHEST rank opens and writes
+   *     the FourBody kind but NEVER closes it, so its manifest record has
+   *     opened=1 / closed_ok=0 (buffered data may not be on disk even
+   *     though the part file exists and is readable). Merge must reject
+   *     the manifest (pass 1 lifecycle check) with nonzero rc on EVERY
+   *     rank and must not publish a final file.
+   * ===================================================================*/
+  {
+    FILE *fp = NULL;
+    int rc_open, rc_merge;
+    int victim = nprocs - 1;
+
+    GreenOutputSetPartialSuffix(g_rank);
+    ExpecLocalEnter();
+    rc_open = GreenOutputOpenAggregate(&X, GreenOutputFourBody, &fp);
+    CHECK(rc_open == 0, "(d) GreenOutputOpenAggregate failed for FourBody");
+    if (rc_open == 0) {
+      fprintf(fp, "rank%d\n", g_rank);
+    }
+    if (g_rank == victim) {
+      /* deliberately do NOT close: closed_ok stays 0 in the manifest */
+    } else {
+      int rc_close = GreenOutputCloseAggregate(GreenOutputFourBody, fp);
+      CHECK(rc_close == 0, "(d) GreenOutputCloseAggregate failed for FourBody");
+      fp = NULL;
+    }
+    ExpecLocalLeave();
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    rc_merge = GreenOutputMergePartials(&X);
+    CHECK(rc_merge != 0, "(d) GreenOutputMergePartials returned 0, expected nonzero on every rank for an opened-but-never-closed part");
+    GreenOutputClearPartialSuffix();
+    if (g_rank == victim && fp != NULL) fclose(fp); /* test hygiene only */
+
+    if (g_rank == 0) {
+      CHECK(GreenOutputFileName(&X, GreenOutputFourBody, final_rel) == 0,
+            "(d) GreenOutputFileName failed for FourBody (post-merge check)");
+      JoinOutputPath(final_rel, joined, sizeof(joined));
+      CHECK(!FileExists(joined), "(d) final FourBody file '%s' must NOT be published after a lifecycle-failed merge", joined);
+    }
+  }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+
+  /* =====================================================================
+   * (e) Size-mismatch injection: every rank opens, writes, and closes the
+   *     SixBody kind successfully, THEN the HIGHEST rank truncates its
+   *     own part file from outside the API (rewrites it shorter than the
+   *     manifest's recorded byte count). Merge's pass-2 probe must detect
+   *     that the on-disk length no longer matches the manifest and fail
+   *     on EVERY rank without publishing; all parts stay in place.
+   * ===================================================================*/
+  {
+    FILE *fp = NULL;
+    int rc_open, rc_close, rc_merge;
+    int victim = nprocs - 1;
+
+    GreenOutputSetPartialSuffix(g_rank);
+    ExpecLocalEnter();
+    rc_open = GreenOutputOpenAggregate(&X, GreenOutputSixBody, &fp);
+    CHECK(rc_open == 0, "(e) GreenOutputOpenAggregate failed for SixBody");
+    if (rc_open == 0) {
+      fprintf(fp, "rank%d payload payload payload\n", g_rank);
+    }
+    rc_close = GreenOutputCloseAggregate(GreenOutputSixBody, fp);
+    CHECK(rc_close == 0, "(e) GreenOutputCloseAggregate failed for SixBody");
+    ExpecLocalLeave();
+
+    if (g_rank == victim) {
+      CHECK(GreenOutputFileName(&X, GreenOutputSixBody, final_rel) == 0,
+            "(e) GreenOutputFileName failed for SixBody");
+      {
+        char part_joined[D_FileNameMax + 64];
+        FILE *trunc = NULL;
+        PartPath(final_rel, victim, part_joined, sizeof(part_joined));
+        trunc = fopen(part_joined, "wb");
+        CHECK(trunc != NULL, "(e) failed to reopen victim part file '%s' for truncation", part_joined);
+        if (trunc != NULL) {
+          fputs("x\n", trunc); /* shorter than the manifest's byte count */
+          fclose(trunc);
+        }
+      }
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    rc_merge = GreenOutputMergePartials(&X);
+    CHECK(rc_merge != 0, "(e) GreenOutputMergePartials returned 0, expected nonzero on every rank for a size-mismatched part");
+    GreenOutputClearPartialSuffix();
+
+    if (g_rank == 0) {
+      CHECK(GreenOutputFileName(&X, GreenOutputSixBody, final_rel) == 0,
+            "(e) GreenOutputFileName failed for SixBody (post-merge check)");
+      JoinOutputPath(final_rel, joined, sizeof(joined));
+      CHECK(!FileExists(joined), "(e) final SixBody file '%s' must NOT be published after a size-mismatch merge failure", joined);
+      {
+        int r;
+        for (r = 0; r < nprocs; r++) {
+          char part_joined[D_FileNameMax + 64];
+          PartPath(final_rel, r, part_joined, sizeof(part_joined));
+          CHECK(FileExists(part_joined), "(e) part file '%s' must be retained after a failed merge", part_joined);
         }
       }
     }

@@ -402,13 +402,18 @@ int GreenOutputMergePartials(struct BindStruct *X)
              0, MPI_COMM_WORLD);
 
   if (myrank_l == 0) {
-    /* Pass 1: any recorded open failure anywhere is fatal. Never infer
-       success from file sizes -- only the manifest's own open_error flag
-       (and, in pass 2, an actual re-open) decide this. */
+    /* Pass 1: an attempted record is trusted only if its whole lifecycle
+       succeeded: the open did not fail, the file was actually opened, and
+       the last close (fflush included) succeeded. A part that was opened
+       but never closed, or whose fclose failed, may be missing buffered
+       data even though the file itself is still readable. Never infer
+       success from file sizes alone -- the manifest decides (pass 2 only
+       cross-checks reality against the manifest's own claims). */
     for (r = 0; r < nprocs_l && rc == 0; r++) {
       for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
         GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
-        if (rr->attempted && rr->open_error) { rc = -1; break; }
+        if (rr->attempted &&
+            (rr->open_error || !rr->opened || !rr->closed_ok)) { rc = -1; break; }
       }
     }
     /* Pass 2: verify every part file the manifest claims succeeded can
@@ -423,6 +428,12 @@ int GreenOutputMergePartials(struct BindStruct *X)
           FILE *probe = NULL;
           if (!rr->attempted) continue; /* legitimately empty / zero-owner rank */
           if (childfopenMPI(rr->part_path, "rb", &probe) != 0) { rc = -1; break; }
+          /* Cross-check the on-disk length against the manifest's own
+             recorded byte count (ftell at the last successful close): a
+             mismatch means the part changed after the writer closed it. */
+          if (fseek(probe, 0L, SEEK_END) != 0 || ftell(probe) != rr->bytes) {
+            fclose(probe); rc = -1; break;
+          }
           fclose(probe);
         }
       }
