@@ -57,7 +57,8 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
 15. `ctest -R expec_trace_map_check` ... expect PASS (phase 3b: ExpecMode-2
     trace-kernel unit tests -- mapping-probe correctness/purity, one-body
     and two-body streaming, and the `HPHI_TRACE_BUF_MAX_MB` memory-gate
-    boundary, for Hubbard/HubbardGC/Spin-half/SpinGC-half).
+    boundary, for the GC models only (HubbardGC/SpinGC-half); canonical
+    Hubbard/Spin coverage comes from item 16's equivalence cases 3/5).
 16. `ctest -R fulldiag_expecmode_equiv` (np=2, np=3), production path ...
     expect PASS (phase 3b: cases 1/2/3/5 -- Hubbard chain, SpinGC Gamma
     chain, canonical Spin chain, and the dedicated Hubbard one-body/
