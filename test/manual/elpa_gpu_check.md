@@ -151,3 +151,18 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - **Solver 1 (ScaLAPACK) + ExpecMode 1** (L=6 chain, N=400, np=2): Mode 0 vs 1 maxdiff 0.0 (exercises the non-ELPA leg of the eligibility matrix).
 - **Zero-owner ranks through the full driver** (SpinGC L=2, N=4, np=6 -> ranks 4-5 own zero states): Mode 0 vs 1 maxdiff 0.0, clean exit.
 - **Assert-enabled Debug build** (ExpecLocal nesting/exit asserts, redistribution guards live): zero-owner Mode 1 run EXIT=0, maxdiff 0.0 vs Mode 0.
+
+### 2026-07-12 — clavius (s76), Phase 3b (ExpecMode 2 trace kernels) — PASSED
+- Commit under test: 93083ba5 (+ cae2b75f instrumentation). Build: `-DUSE_ELPA=ON -DELPA_ROOT=~/opt/elpa-2025.06-cuda` (Release). `CUDA_MPS_PIPE_DIRECTORY` bypass in effect (see Phase 3a note).
+- Item 15 `expec_trace_map_check` (np=1): ALL PASS (mapping validity/purity, streaming, gate boundaries, no-operators, shared-evaluator plan cases).
+- Item 16 production-path equivalence: `fulldiag_expecmode_equiv_np2`/`_np3` PASS (serial 2/2, np=2 suite 8/8, np=3 suite 8/8 incl. statepanel/zero-owner/merge/hubbard-chain). Cases 1/2/3/5 select both trace kernels; case 4 correctly demotes two-body via the shared-evaluator rule while keeping the one-body kernel. All output trees (incl. `var`) match within 1e-8.
+  - Development-stage checkpoints (recorded for provenance): forced-kernel equiv np=2/3 after Task 4; the strengthened production run after Task 5 caught a REAL bug (mode 2 dropped `zvo_ThreeBody/FourBody/SixBody_eigen.dat` because `expec_cisajscktaltdc` shares its evaluator with the two-body GF) — fixed by the plan-level shared-evaluator demotion (dc6791ee).
+- **Item 17 benchmark gate** (L=8 Hubbard chain, N=4900, one-body 16 + two-body 48 pairs for all states, Solver 3 CPU, np=4):
+  | Mode | wall | expec_energy_flct (CalcTimer) |
+  |---|---|---|
+  | 0 | 64.2 s | 0.75 + 5.13 s |
+  | 1 | 32.3 s | 0.18 + 1.27 s |
+  | **2** | **26.0 s** | 0.12 + 0.86 s |
+  Target `ExpecMode 2 >= ExpecMode 1` met (26.0 s vs 32.3 s; 2.5x vs Mode 0). Breakdown (rank-0 lines, per item 17's method): one-body map=0.000s stream=0.233s output=0.036s; two-body map=0.001s stream=0.781s output=0.052s — the kernels spend ~1.1 s where the Mode-1 evaluators spent ~7.4 s of the wall delta; the remaining Mode-2 time is the (deliberately un-kernelized) energy-family fallback (`mltply` per state). `zvo_phys` maxdiff 0.0 vs Mode 0 for both modes; per-eigen Green file sets identical (9809 files each).
+- Fallback-reason INFO lines exercised END-TO-END on the production path: (a) shared-evaluator (case 4); (b) no-operators (TwoBodyG line removed from namelist → "no operators of this kind are defined", run exits 0); (c) memory gate (96 duplicated two-body pairs at `HPHI_TRACE_BUF_MAX_MB=1` → "result buffer would exceed HPHI_TRACE_BUF_MAX_MB", physics maxdiff 0.0 and the two-body per-eigen file BYTE-IDENTICAL to Mode 0 via the fallback). Note: the gate arithmetic means realistic small correlation defs (48 pairs × NC=1225 ≈ 0.9 MiB) fit under even the 1 MiB floor — demotion requires genuinely large nops×NC.
+- Item 18 (optional L=10 GPU point): SKIPPED this round — N≈63504 dense diagonalization extrapolates to ~2.5 h occupying both GPUs (N³ scaling from 4.2 s at N=4900), and GPU 0 was running another user's MACE workload; per the GPU-sharing rules the run was not attempted. The item remains open for a quiet window.
