@@ -716,7 +716,8 @@ static int trace_map_alloc(TraceMap *map, long int n) {
      non-positive or size_t-overflowing dimension before multiplying. */
   if (n <= 0 ||
       (uintmax_t)n > (uintmax_t)SIZE_MAX ||
-      (size_t)n > SIZE_MAX / sizeof(double complex)) {
+      (size_t)n > SIZE_MAX / sizeof(double complex) ||
+      (size_t)n > SIZE_MAX / sizeof(long int)) {
     map->kprime = NULL;
     map->amp = NULL;
     return -1;

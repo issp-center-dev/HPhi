@@ -401,7 +401,7 @@ target_link_libraries(expec_trace_map_check m)
 # expec_trace.c's clock_gettime may live in librt on older glibc -- same
 # check-and-link as the HPhi target (src/CMakeLists.txt).
 include(CheckLibraryExists)
-check_library_exists(rt clock_gettime "time.h" HPHI_CLOCK_GETTIME_IN_RT)
+check_library_exists(rt clock_gettime "" HPHI_CLOCK_GETTIME_IN_RT)
 if(HPHI_CLOCK_GETTIME_IN_RT)
   target_link_libraries(expec_trace_map_check rt)
 endif()

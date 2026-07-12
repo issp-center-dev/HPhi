@@ -100,7 +100,7 @@ target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
 # that symbol lives in librt. Link it when such a librt exists (harmless
 # no-op on modern glibc; absent and skipped on macOS).
 include(CheckLibraryExists)
-check_library_exists(rt clock_gettime "time.h" HPHI_CLOCK_GETTIME_IN_RT)
+check_library_exists(rt clock_gettime "" HPHI_CLOCK_GETTIME_IN_RT)
 if(HPHI_CLOCK_GETTIME_IN_RT)
   target_link_libraries(HPhi rt)
 endif()
