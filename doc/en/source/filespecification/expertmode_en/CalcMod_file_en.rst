@@ -304,6 +304,7 @@ The parameters correlated with the keywords are as follows.
      output; ``%s`` below stands for ``one-body`` or ``two-body``):
    | ``INFO: ExpecMode 2: %s Green functions use the trace kernel.``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (unsupported model).``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (no operators of this kind are defined).``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
@@ -311,22 +312,30 @@ The parameters correlated with the keywords are as follows.
      half-integer ``Spin``/``SpinGC`` (general-spin models, ``tJ``/
      ``tJGC``, and ``Kondo``/``KondoGC`` are not yet covered and always
      print the "unsupported model" line above for both quantities).
-   | On a supported model, each quantity is still individually subject to
-     two runtime fallbacks, checked independently: (a) a memory gate --
-     if the quantity's result buffer would exceed
+   | On a supported model, each quantity's outcome is still decided by up
+     to three further runtime reasons, evaluated in a fixed order so that
+     exactly one reason applies (they are mutually exclusive by
+     construction, not independently checked): (a) a shared-evaluator rule
+     for the two-body Green function only, checked first -- it shares its
+     evaluator with the ThreeBodyG/FourBodyG/SixBodyG (N-body) Green
+     functions, so whenever any of those is requested, the two-body
+     quantity falls back together with them (this keeps each output
+     file's writer unique: otherwise the fallback loop would silently
+     drop the N-body output, or the trace kernel would double-write the
+     two-body files); the one-body quantity is unaffected by rule (a).
+     (b) a no-operators check, checked next -- if this run defines zero
+     operators of that kind (e.g. no ``TwoBodyG``/``CisAjtCkuAlvDC``
+     entries), the quantity has nothing to stream and falls back; this
+     rule fires BEFORE the memory gate below, so an empty operator table
+     is never misreported as exceeding the memory cap. (c) a memory gate,
+     checked last (and only reached if neither (a) nor (b) already
+     applied) -- if the quantity's result buffer would exceed
      ``HPHI_TRACE_BUF_MAX_MB`` (an environment variable giving the cap in
      MiB, an integer in [1, 1048576], default 1024; the cap applies per
      MPI rank and per quantity to the result buffer only; it is parsed
-     from the environment on rank 0 and broadcast to every rank, so it
-     only needs to be set in the launch environment), that quantity
-     falls back to ``ExpecMode 1``; (b) a shared-evaluator rule for the
-     two-body Green function only -- it shares its evaluator with the
-     ThreeBodyG/FourBodyG/SixBodyG (N-body) Green functions, so whenever
-     any of those is requested, the two-body quantity falls back
-     together with them (this keeps each output file's writer unique:
-     otherwise the fallback loop would silently drop the N-body output,
-     or the trace kernel would double-write the two-body files). The
-     one-body quantity is unaffected by rule (b).
+     from the environment on rank 0, only for ``ExpecMode`` 2 runs, and
+     broadcast to every rank, so it only needs to be set in the launch
+     environment), that quantity falls back to ``ExpecMode 1``.
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected

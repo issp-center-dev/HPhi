@@ -31,12 +31,29 @@
  *
  * Phase 3b Task 1 also makes this the ExpecMode 2 (trace-kernel) dispatch
  * point: it builds the TraceExecutionPlan (identically on every rank -- see
- * src/expec_trace.c), Bcasts the HPHI_TRACE_BUF_MAX_MB cap so the plan
- * agrees across ranks even if the environment does not, reports the plan on
- * rank 0, then runs expec_trace_owned_states() before the ExpecMode-1
- * fallback loop so the two never race on the same quantity. For ExpecMode
- * 0/1 the plan is all-fallback (kTraceCap ships all FALSE in this task), so
- * this is a structural no-op until later 3b tasks land real kernels.
+ * src/expec_trace.c), reports the plan on rank 0, then runs
+ * expec_trace_owned_states() before the ExpecMode-1 fallback loop so the
+ * two never race on the same quantity. The HPHI_TRACE_BUF_MAX_MB cap is
+ * parsed (rank 0 only) and Bcast ONLY when iExpecMode==EXPECMODE_TRACE, so
+ * ExpecMode 0/1 runs never touch that environment variable (final
+ * whole-branch review fix); TraceBuildPlan() never reads gbuf_max_bytes on
+ * the ExpecMode!=TRACE path anyway (it returns the all-fallback plan before
+ * that argument is used), so passing 0 there is safe.
+ *
+ * As of Task 5, the capability table (src/expec_trace.c's kTraceCap) gates
+ * Hubbard, HubbardGC, half-integer Spin, and half-integer SpinGC -- every
+ * other model, plus any of those four models' quantities that a runtime
+ * check (shared-evaluator, no-operators, or the memory gate; see
+ * TraceBuildPlan()) demotes, still falls back to the ExpecMode-1 path this
+ * same call dispatches to right afterward. ExpecMode 0/1 always take the
+ * all-fallback plan regardless (TraceBuildPlan() returns it unconditionally
+ * whenever X->Def.iExpecMode != EXPECMODE_TRACE).
+ *
+ * Task 8 adds one more rank-0-only, post-Leave step: printing the trace
+ * kernel's per-quantity phase-timing breakdown (map-extraction/streaming/
+ * output) via TraceGetTimings() -- see that call site below for the exact
+ * line format and src/include/expec_trace_internal.h for the accessor's
+ * contract.
  */
 #include "phys_distributed.h"
 #ifdef _SCALAPACK
@@ -46,6 +63,10 @@
 #include "wrapperMPI.h"
 #include "DefCommon.h"
 #include "expec_trace.h"
+#include "expec_trace_internal.h"   /* TraceGetTimings() only -- see the file
+                                       header above and that function's doc
+                                       comment for why the orchestrator, not
+                                       a kernel-internal caller, uses it */
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
@@ -89,9 +110,10 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   free(Z_vec);
   Z_vec = NULL;
 
-  /* --- ExpecMode 2 plan: build once, identically on every rank (all-FALSE
-     capability table in phase 3b Task 1, so this is currently a pure
-     all-fallback plan for ExpecMode 2 too -- see src/expec_trace.c). ---- */
+  /* --- ExpecMode 2 plan: build once, identically on every rank (the
+     capability table gates Hubbard/HubbardGC/half-Spin/half-SpinGC as of
+     Task 5; every other model, and any runtime-demoted quantity of those
+     four, gets the all-fallback plan -- see src/expec_trace.c). ---- */
   {
     TraceExecutionPlan tplan;
     /* overflow-free ceiling division (NN>=0, nproc>0 are the caller's
@@ -99,8 +121,15 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
        to calling nc_uniform to make explicit it is NOT a rank-local ncols. */
     long int nc_uniform = NN / (long int)nproc + ((NN % (long int)nproc) != 0);
     uint64_t gbuf_max = 0;
-    if (myrank == 0) gbuf_max = (uint64_t)TraceGbufMaxBytesFromEnv(); /* rank 0 only */
-    MPI_Bcast(&gbuf_max, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+    /* Final whole-branch review fix: only ExpecMode 2 runs parse (and can
+       warn about) HPHI_TRACE_BUF_MAX_MB. ExpecMode 0/1 leave gbuf_max at 0
+       and skip the Bcast too -- TraceBuildPlan() never reads this argument
+       on the ExpecMode!=TRACE path (see its own early return), so 0 is
+       never divided by or otherwise used there. */
+    if (X->Def.iExpecMode == EXPECMODE_TRACE) {
+      if (myrank == 0) gbuf_max = (uint64_t)TraceGbufMaxBytesFromEnv(); /* rank 0 only */
+      MPI_Bcast(&gbuf_max, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+    }
     /* checked narrowing in case size_t is narrower than 64 bits here */
     TraceBuildPlan(X, nc_uniform,
                    (gbuf_max > (uint64_t)SIZE_MAX) ? (size_t)SIZE_MAX : (size_t)gbuf_max,
@@ -121,6 +150,30 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
       rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN, &tplan);
     GreenOutputClearPartialSuffix();
     ExpecLocalLeave();
+
+    /* Task 8 benchmark-breakdown line (final whole-branch review fix):
+       rank 0 only, after Leave (so ExpecLocal's guard window is already
+       closed -- this print is not itself scanned/restricted the way the
+       per-rank observable session above is), and only when this rank's
+       local trace-kernel dispatch actually completed
+       (rc_local==0 -- a failed call may have left the accumulators
+       mid-phase). One line per quantity this run selected the trace kernel
+       for; a quantity that fell back is not printed (nothing was timed for
+       it -- see TraceGetTimings()'s doc comment). */
+    if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0 && rc_local == 0) {
+      double timings[TRACE_Q_NQUANT][3];
+      TraceGetTimings(timings);
+      if (tplan.kernel[TRACE_Q_ONEBODY])
+        fprintf(stdoutMPI,
+                "  ExpecMode 2 timing (rank 0): one-body map=%.3fs stream=%.3fs output=%.3fs\n",
+                timings[TRACE_Q_ONEBODY][0], timings[TRACE_Q_ONEBODY][1],
+                timings[TRACE_Q_ONEBODY][2]);
+      if (tplan.kernel[TRACE_Q_TWOBODY])
+        fprintf(stdoutMPI,
+                "  ExpecMode 2 timing (rank 0): two-body map=%.3fs stream=%.3fs output=%.3fs\n",
+                timings[TRACE_Q_TWOBODY][0], timings[TRACE_Q_TWOBODY][1],
+                timings[TRACE_Q_TWOBODY][2]);
+    }
   }
   free(panel);
 

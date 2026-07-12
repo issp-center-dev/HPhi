@@ -67,6 +67,7 @@
 #pragma once
 #include <complex.h>
 #include "struct.h"
+#include "expec_trace.h"
 
 /**
  * @brief Precomputed basis mapping k -> (k', amplitude) for one GF operator.
@@ -180,6 +181,25 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
 int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
                        long int jb, long int je, long int NN,
                        long int ncols, double complex *gbuf);
+
+/**
+ * @brief Task 8 benchmark-breakdown accessor (final whole-branch review
+ * fix): copy the per-quantity, per-phase wall-clock seconds accumulated by
+ * the most recent expec_trace_owned_states() call on THIS rank into
+ * out[q][0..2] = {map-extraction, streaming, output}. A quantity that did
+ * not run as a kernel this call (plan->kernel[q]==0, including a
+ * zero-owner rank's immediate early return) reads back as {0,0,0}.
+ *
+ * This is the one deliberate crossing of the Task-2 orchestration-boundary
+ * split (see this header's file doc comment): src/phys_distributed.c (the
+ * MPI orchestration layer, NOT a kernel-internal caller) calls this,
+ * rank 0 only, right after ExpecLocalLeave(), to print the rank-local
+ * timing summary line the plan's Task 8 benchmark gate requires. The
+ * timings themselves are gathered with no MPI call (clock_gettime() only)
+ * inside src/expec_trace.c, which stays print-free and MPI-free for
+ * timings -- only the read-back-and-print step lives in the orchestrator.
+ */
+void TraceGetTimings(double out[TRACE_Q_NQUANT][3]);
 
 /* ------------------------------------------------------------------ */
 /* Mapping-probe adapters (defined next to their element functions).   */

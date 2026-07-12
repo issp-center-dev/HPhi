@@ -94,6 +94,7 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <time.h>
 
 /* green_output.h / FileIO.h (phase 3b Task 3): the ONEBODY output phase
    below reuses GreenOutputKindUsesAggregate/OpenAggregate/CloseAggregate/
@@ -284,10 +285,11 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
        whole evaluator and silently drop the multibody outputs; calling the
        evaluator anyway would double-write the two-body files. So whenever
        any multibody GF is defined, the two-body GF falls back together with
-       them. Checked BEFORE the memory gate so gbuf_bytes[TWOBODY] stays 0
-       and demoted_memory[TWOBODY] stays 0 (the reasons are exclusive).
-       ONEBODY is unaffected: expec_cisajs() handles one-body only (no
-       NTBody/NFBody/NSBody reference exists in expec_cisajs.c). */
+       them. Checked BEFORE the no-operators check and the memory gate so
+       gbuf_bytes[TWOBODY]/no_operators[TWOBODY]/demoted_memory[TWOBODY] all
+       stay 0 (the reasons are exclusive). ONEBODY is unaffected:
+       expec_cisajs() handles one-body only (no NTBody/NFBody/NSBody
+       reference exists in expec_cisajs.c). */
     if (q == TRACE_Q_TWOBODY &&
         (X->Def.NTBody > 0 || X->Def.NFBody > 0 || X->Def.NSBody > 0)) {
       plan->demoted_shared_evaluator[q] = 1;
@@ -297,6 +299,20 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
 
     nops = (q == TRACE_Q_ONEBODY) ? (long int)X->Def.NCisAjt
                                    : (long int)X->Def.NCisAjtCkuAlvDC;
+
+    /* No-operators demotion (final whole-branch review fix, see the field's
+       doc comment in expec_trace.h): a supported model with zero operators
+       of this kind defined has nothing to stream. Checked BEFORE the memory
+       gate -- TraceGbufBytes(0, ...) also returns 0, so without this
+       short-circuit the memory gate would fire instead and
+       TraceReportPlan() would misreport "result buffer would exceed
+       HPHI_TRACE_BUF_MAX_MB" for a quantity that never had a buffer to size
+       in the first place. */
+    if (nops <= 0) {
+      plan->no_operators[q] = 1;
+      plan->kernel[q] = 0;
+      continue;
+    }
 
     plan->gbuf_bytes[q] = TraceGbufBytes(nops, nc_uniform, gbuf_max_bytes);
     if (plan->gbuf_bytes[q] == 0) {
@@ -322,6 +338,11 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
               "fallback (they share their evaluator with three-/four-/six-body "
               "Green functions).\n",
               kQuantityName[q]);
+    } else if (plan->no_operators[q]) {
+      fprintf(fp,
+              "  INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 "
+              "fallback (no operators of this kind are defined).\n",
+              kQuantityName[q]);
     } else if (plan->demoted_memory[q]) {
       fprintf(fp,
               "  INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 "
@@ -337,6 +358,38 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
   fprintf(fp,
           "  INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and "
           "AnomalousG always use the ExpecMode-1 path in this version.\n");
+}
+
+/**
+ * @brief Task 8 benchmark-breakdown instrumentation: per-quantity,
+ * per-phase wall-clock accumulators for the ONE expec_trace_owned_states()
+ * call this rank makes per run. [q][0]=map-extraction seconds (time spent
+ * inside TraceMapExtractOneBody/TwoBody(), summed over every operator
+ * pair), [q][1]=streaming seconds (time spent in the k-loop that sums each
+ * pair's contribution over every owned state), [q][2]=output seconds (time
+ * spent in expec_trace_onebody_output()/expec_trace_twobody_output()).
+ * Reset to all-zero at the top of every expec_trace_owned_states() call, so
+ * a quantity this rank never runs as a kernel (kernel[q]==0, including a
+ * zero-owner rank's immediate early return) stays at 0.
+ *
+ * This TU stays print-free for timings (see the file header's MPI-free
+ * contract): TraceGetTimings() is the read-only accessor the ORCHESTRATOR
+ * (src/phys_distributed.c) calls, rank 0 only, after ExpecLocalLeave(), to
+ * print the one rank-local summary line per kernel quantity that the
+ * plan's Task 8 benchmark gate requires (see that call site's comment for
+ * the exact line format). */
+static double g_trace_timings[TRACE_Q_NQUANT][3];
+
+/** @brief Monotonic wall-clock seconds (clock_gettime(CLOCK_MONOTONIC,...)
+ * -- MPI-free, C99+POSIX, matches this TU's MPI-free guard). */
+static double TraceNowSeconds(void) {
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  return (double)ts.tv_sec + (double)ts.tv_nsec * 1e-9;
+}
+
+void TraceGetTimings(double out[TRACE_Q_NQUANT][3]) {
+  memcpy(out, g_trace_timings, sizeof(g_trace_timings));
 }
 
 /**
@@ -496,6 +549,13 @@ int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *pla
   long int ncols = (je >= jb) ? (je - jb + 1) : 0;
   double complex *gbuf;
   int rc;
+  double t0;
+
+  /* Task 8: reset this rank's phase-timing accumulators at the top of every
+     call, so a quantity this call never runs as a kernel (including via the
+     zero-owner early return just below) reports 0, not a stale value from
+     an earlier call. See g_trace_timings' doc comment above. */
+  memset(g_trace_timings, 0, sizeof(g_trace_timings));
 
   /* Zero-owner rank: nothing to stream, nothing to write (Mode-1's loop
      over an empty [jb,je] range is likewise a no-op) -- return immediately,
@@ -519,7 +579,9 @@ int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *pla
       return -1;
     }
 
+    t0 = TraceNowSeconds();
     rc = expec_trace_onebody_output(X, jb, je, ncols, gbuf);
+    g_trace_timings[TRACE_Q_ONEBODY][2] += TraceNowSeconds() - t0;
     free(gbuf);
     if (rc != 0) return rc;
   }
@@ -542,7 +604,9 @@ int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *pla
       return -1;
     }
 
+    t0 = TraceNowSeconds();
     rc = expec_trace_twobody_output(X, jb, je, ncols, gbuf);
+    g_trace_timings[TRACE_Q_TWOBODY][2] += TraceNowSeconds() - t0;
     free(gbuf);
     if (rc != 0) return rc;
   }
@@ -555,6 +619,7 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
                        long int ncols, double complex *gbuf) {
   long int nops = (long int)X->Def.NCisAjt;
   long int p, n, k;
+  double t0;
 
   /* The panel's stride NN must equal the Hilbert-space dimension every
      TraceMap is built over -- see src/phys_distributed_local.c:70-81's
@@ -566,8 +631,11 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
   for (p = 0; p < nops; p++) {
     TraceMap map;
 
+    t0 = TraceNowSeconds();
     if (TraceMapExtractOneBody(X, (int)p, &map) != 0) return -1;
+    g_trace_timings[TRACE_Q_ONEBODY][0] += TraceNowSeconds() - t0;
 
+    t0 = TraceNowSeconds();
     for (n = jb; n <= je; n++) {
       const double complex *z = panel + (n - jb) * NN;
       double complex acc = 0.0;
@@ -578,6 +646,7 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
       }
       gbuf[p * ncols + (n - jb)] = acc;
     }
+    g_trace_timings[TRACE_Q_ONEBODY][1] += TraceNowSeconds() - t0;
 
     TraceMapFree(&map); /* only one TraceMap alive at a time (spec Sec.3.1) */
   }
@@ -589,6 +658,7 @@ int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
                        long int ncols, double complex *gbuf) {
   long int nops = (long int)X->Def.NCisAjtCkuAlvDC;
   long int p, n, k;
+  double t0;
 
   /* Same panel-stride invariant as TraceStreamOneBody() -- see that
      function's doc comment. */
@@ -597,8 +667,11 @@ int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
   for (p = 0; p < nops; p++) {
     TraceMap map;
 
+    t0 = TraceNowSeconds();
     if (TraceMapExtractTwoBody(X, (int)p, &map) != 0) return -1;
+    g_trace_timings[TRACE_Q_TWOBODY][0] += TraceNowSeconds() - t0;
 
+    t0 = TraceNowSeconds();
     for (n = jb; n <= je; n++) {
       const double complex *z = panel + (n - jb) * NN;
       double complex acc = 0.0;
@@ -609,6 +682,7 @@ int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
       }
       gbuf[p * ncols + (n - jb)] = acc;
     }
+    g_trace_timings[TRACE_Q_TWOBODY][1] += TraceNowSeconds() - t0;
 
     TraceMapFree(&map); /* only one TraceMap alive at a time (spec Sec.3.1) */
   }

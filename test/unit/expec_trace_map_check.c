@@ -209,6 +209,17 @@ static int **alloc_ops(int nrow, int ncol) {
   for (r = 0; r < nrow; r++) p[r] = (int *)calloc((size_t)ncol, sizeof(int));
   return p;
 }
+/* Final whole-branch review fix (Minor): free ALL nrow rows an alloc_ops()
+   fixture allocated, matching whatever nops that fixture's NCisAjt/
+   NCisAjtCkuAlvDC was actually set to -- earlier plan-only fixtures
+   allocated 1 row but set nops>1, so freeing "row 0 only" happened to work
+   by accident; it also meant a future table-peeking TraceBuildPlan() could
+   read out of bounds inside an otherwise-passing test. */
+static void free_ops(int **p, int nrow) {
+  int r;
+  for (r = 0; r < nrow; r++) free(p[r]);
+  free(p);
+}
 static void set_ob(int **CisAjt, int i, int i1, int s1, int i2, int s2) {
   CisAjt[i][0] = i1; CisAjt[i][1] = s1; CisAjt[i][2] = i2; CisAjt[i][3] = s2;
 }
@@ -403,7 +414,9 @@ static void test_memory_gate_boundary(void) {
   TraceExecutionPlan plan;
   long int nc_uniform = 4;
   size_t exact_bytes;
-  int **ob = alloc_ops(1, 4);
+  int **ob = alloc_ops(5, 4);  /* nrow == NCisAjt below (final whole-branch
+                                   review fix: was alloc_ops(1,4) vs
+                                   NCisAjt==5, an under-allocated fixture) */
 
   fprintf(stderr, "[memory-gate boundary]\n");
   memset(&X, 0, sizeof(X));
@@ -432,8 +445,7 @@ static void test_memory_gate_boundary(void) {
   expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[ONEBODY]==0",
              plan.gbuf_bytes[TRACE_Q_ONEBODY] == 0);
 
-  free(ob[0]);
-  free(ob);
+  free_ops(ob, 5);
 }
 
 /* ---- Task 4 Step 2: TWOBODY memory-gate boundary. Mirrors
@@ -448,7 +460,9 @@ static void test_memory_gate_boundary_twobody(void) {
   TraceExecutionPlan plan;
   long int nc_uniform = 4;
   size_t exact_bytes;
-  int **tb = alloc_ops(1, 8);
+  int **tb = alloc_ops(7, 8);  /* nrow == NCisAjtCkuAlvDC below (final
+                                   whole-branch review fix: was
+                                   alloc_ops(1,8) vs NCisAjtCkuAlvDC==7) */
 
   fprintf(stderr, "[memory-gate boundary: TWOBODY]\n");
   memset(&X, 0, sizeof(X));
@@ -477,8 +491,7 @@ static void test_memory_gate_boundary_twobody(void) {
   expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[TWOBODY]==0",
              plan.gbuf_bytes[TRACE_Q_TWOBODY] == 0);
 
-  free(tb[0]);
-  free(tb);
+  free_ops(tb, 7);
 }
 
 /* ---- Task 5 fix: shared-evaluator demotion. expec_cisajscktaltdc()
@@ -497,8 +510,11 @@ static void test_shared_evaluator_demotion(void) {
   long int nc_uniform = 4;
   size_t big_cap = (size_t)1 << 20; /* plenty for both quantities: memory is
                                        NOT the demotion reason under test */
-  int **ob = alloc_ops(1, 4);
-  int **tb = alloc_ops(1, 8);
+  int **ob = alloc_ops(3, 4);  /* nrow == NCisAjt below (final whole-branch
+                                   review fix: was alloc_ops(1,4) vs
+                                   NCisAjt==3) */
+  int **tb = alloc_ops(2, 8);  /* nrow == NCisAjtCkuAlvDC below (was
+                                   alloc_ops(1,8) vs NCisAjtCkuAlvDC==2) */
 
   fprintf(stderr, "[shared-evaluator demotion]\n");
   memset(&X, 0, sizeof(X));
@@ -533,10 +549,99 @@ static void test_shared_evaluator_demotion(void) {
   expect_true("shared evaluator control: NSBody==0 -> demoted_shared_evaluator[TWOBODY]==0",
              plan.demoted_shared_evaluator[TRACE_Q_TWOBODY] == 0);
 
-  free(ob[0]);
-  free(ob);
-  free(tb[0]);
-  free(tb);
+  free_ops(ob, 3);
+  free_ops(tb, 2);
+}
+
+/* ---- Final whole-branch review fix (Important 1): a supported model with
+ * ZERO operators of a kind must be reported as "no operators of this kind
+ * are defined", NOT misreported as the memory cap being exceeded.
+ * TraceGbufBytes(0, ...) already returns 0 (nops<=0 short-circuit), so
+ * before this fix the memory gate alone would have set demoted_memory[q]=1
+ * for exactly this case -- TraceBuildPlan()'s per-q loop now checks
+ * no_operators BEFORE the memory gate, see that function and the field's
+ * doc comment in expec_trace.h. Checked for ONEBODY here; TWOBODY's
+ * NCisAjtCkuAlvDC==0 path is symmetric (same nops<=0 short-circuit, same
+ * per-q loop), so a second full fixture is not needed to exercise the same
+ * three lines of code -- the mutual-exclusion assertions below already
+ * confirm demoted_memory/demoted_shared_evaluator stay 0 for the demoted
+ * quantity. ---- */
+static void test_no_operators_demotion(void) {
+  struct BindStruct X;
+  TraceExecutionPlan plan;
+  long int nc_uniform = 4;
+  size_t big_cap = (size_t)1 << 20; /* plenty: memory is NOT under test */
+
+  fprintf(stderr, "[no-operators demotion]\n");
+  memset(&X, 0, sizeof(X));
+  X.Def.iCalcModel = HubbardGC;      /* capability-table TRUE for both quantities */
+  X.Def.iFlgGeneralSpin = 0;
+  X.Def.iExpecMode = EXPECMODE_TRACE;
+  X.Def.NCisAjt = 0;                 /* zero one-body operators defined */
+  X.Def.CisAjtCkuAlvDC = NULL;
+  X.Def.NCisAjtCkuAlvDC = 0;         /* zero two-body operators too */
+
+  TraceBuildPlan(&X, nc_uniform, big_cap, &plan);
+  expect_true("no-operators: NCisAjt==0 -> kernel[ONEBODY]==0",
+             plan.kernel[TRACE_Q_ONEBODY] == 0);
+  expect_true("no-operators: NCisAjt==0 -> no_operators[ONEBODY]==1",
+             plan.no_operators[TRACE_Q_ONEBODY] == 1);
+  expect_true("no-operators: NCisAjt==0 -> demoted_memory[ONEBODY]==0 (reasons exclusive)",
+             plan.demoted_memory[TRACE_Q_ONEBODY] == 0);
+  expect_true("no-operators: NCisAjt==0 -> demoted_shared_evaluator[ONEBODY]==0",
+             plan.demoted_shared_evaluator[TRACE_Q_ONEBODY] == 0);
+  expect_true("no-operators: NCisAjt==0 -> gbuf_bytes[ONEBODY]==0",
+             plan.gbuf_bytes[TRACE_Q_ONEBODY] == 0);
+
+  expect_true("no-operators: NCisAjtCkuAlvDC==0 -> kernel[TWOBODY]==0",
+             plan.kernel[TRACE_Q_TWOBODY] == 0);
+  expect_true("no-operators: NCisAjtCkuAlvDC==0 -> no_operators[TWOBODY]==1",
+             plan.no_operators[TRACE_Q_TWOBODY] == 1);
+  expect_true("no-operators: NCisAjtCkuAlvDC==0 -> demoted_memory[TWOBODY]==0 (reasons exclusive)",
+             plan.demoted_memory[TRACE_Q_TWOBODY] == 0);
+}
+
+/* ---- Final whole-branch review fix (Minor 6): confirm what
+ * TraceStreamOneBody() actually does when a KERNEL-SELECTED quantity's
+ * operator count is 0 -- i.e. a hand-built plan with kernel[ONEBODY]==1
+ * that TraceBuildPlan() itself would never produce now that the
+ * no-operators demotion above exists (nops==0 always demotes there), but
+ * that expec_trace_owned_states() cannot rule out from the plan alone
+ * without re-deriving nops (which the plan's doc comment forbids -- see
+ * gbuf_bytes' doc comment in expec_trace.h). What we found: the outer
+ * `for (p = 0; p < nops; p++)` loop in TraceStreamOneBody() simply does not
+ * execute when nops==0, so the function returns 0 (success) without
+ * touching panel, gbuf, or calling TraceMapExtractOneBody() at all -- a
+ * clean no-op, not undefined behavior. This test calls TraceStreamOneBody()
+ * directly (the testable internal entry point) with X.Def.NCisAjt==0 and
+ * asserts exactly that: rc==0 and the (canary-filled) gbuf is left
+ * untouched. Separately, expec_trace_owned_states() is ALSO already safe in
+ * this scenario even without relying on the above: TraceBuildPlan() only
+ * ever sets kernel[q]==1 together with gbuf_bytes[q]>0 (see the no-operators
+ * and memory-gate branches), and expec_trace_owned_states() defensively
+ * re-checks `gbuf_bytes[q]==0 -> return -1` before every malloc regardless
+ * of kernel[q], so a hand-built plan that lies about kernel[ONEBODY]==1
+ * with gbuf_bytes[ONEBODY]==0 is rejected there rather than reaching
+ * TraceStreamOneBody() with a zero-size buffer. ---- */
+static void test_no_operators_streaming_is_clean_noop(void) {
+  struct BindStruct X;
+  long int NN = 4, jb = 1, je = 1, ncols = 1;
+  double complex panel[4] = { 1.0 + 2.0*I, 3.0, 4.0, 5.0 };
+  double complex gbuf[1];
+  int rc;
+
+  fprintf(stderr, "[no-operators streaming no-op]\n");
+  memset(&X, 0, sizeof(X));
+  X.Def.iCalcModel = HubbardGC;
+  X.Def.NCisAjt = 0;              /* nops == 0: the loop body never runs */
+  X.Def.CisAjt = NULL;
+  X.Check.idim_max = (unsigned long)NN;
+
+  gbuf[0] = 123.0 + 456.0*I;       /* canary: must survive untouched */
+  rc = TraceStreamOneBody(&X, panel, jb, je, NN, ncols, gbuf);
+  expect_true("TraceStreamOneBody nops==0 -> rc==0 (clean no-op)", rc == 0);
+  expect_true("TraceStreamOneBody nops==0 -> gbuf left untouched",
+             gbuf[0] == (123.0 + 456.0*I));
 }
 
 static void test_hubbardgc(void) {
@@ -642,6 +747,8 @@ int main(void) {
   test_memory_gate_boundary();
   test_memory_gate_boundary_twobody();
   test_shared_evaluator_demotion();
+  test_no_operators_demotion();
+  test_no_operators_streaming_is_clean_noop();
   if (g_failures == 0) {
     fprintf(stderr, "ALL PASS\n");
     return 0;

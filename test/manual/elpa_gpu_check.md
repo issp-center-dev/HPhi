@@ -87,6 +87,15 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
     dropping the item, since the usage guidance in the `ExpecMode`
     documentation and the phase 3b migration note may need to be revised
     to match the measured result.
+    Measurement method (final whole-branch review fix): the breakdown
+    comes straight from the rank-0 stdout lines the `ExpecMode 2`
+    orchestrator (`src/phys_distributed.c`, after `ExpecLocalLeave()`)
+    prints for every quantity that ran as the trace kernel:
+    `  ExpecMode 2 timing (rank 0): one-body map=%.3fs stream=%.3fs output=%.3fs`
+    `  ExpecMode 2 timing (rank 0): two-body map=%.3fs stream=%.3fs output=%.3fs`
+    (`map`/`stream`/`output` are exactly the mapping-extraction/streaming/
+    output phases above); totals are wall-clock plus the `CalcTimer.dat`
+    expec section, as in phase 3a.
 18. Optional GPU data point (phase 3b, if clavius GPUs are free -- check
     `nvidia-smi` first and do not contend with other users' jobs): L=10
     Hubbard (N ~= 63504) FullDiag with `Solver 3`, `NGPU` > 0; record one

@@ -292,6 +292,7 @@ CalcModファイル
      ``one-body`` または ``two-body`` に置き換わります)。
    | ``INFO: ExpecMode 2: %s Green functions use the trace kernel.``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (unsupported model).``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (no operators of this kind are defined).``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
@@ -299,21 +300,30 @@ CalcModファイル
      (half-integer) の ``Spin``/``SpinGC`` です (一般スピン模型、
      ``tJ``/``tJGC``、``Kondo``/``KondoGC`` は未対応で、両物理量とも
      常に上記の「unsupported model」の行が表示されます)。
-   | 対応モデルであっても、各物理量は個別に、独立した2つの実行時
-     フォールバック判定を受けます。(a) メモリゲート -- その物理量の
-     結果バッファが ``HPHI_TRACE_BUF_MAX_MB`` (環境変数。MiB単位の上限を
-     [1, 1048576] の整数で指定、デフォルト 1024。この上限は1MPIランク
-     かつ1物理量あたりの結果バッファのみに適用され、ランク0で環境から
-     読み取られ全ランクへブロードキャストされるため、起動環境にのみ
-     設定すれば十分です) を超える場合、その物理量は ``ExpecMode 1`` へ
-     フォールバックします。(b) 二体Green関数のみに適用される評価器共有
-     規則 -- 二体Green関数は ThreeBodyG/FourBodyG/SixBodyG (N体) の
-     Green関数と評価器を共有しているため、これらのいずれかが定義されて
-     いる場合、二体物理量はそれらと一緒にフォールバックします (各出力
-     ファイルの書き手を常に一意に保つためです。そうしないとフォール
-     バックループがN体出力を黙って落とすか、トレースカーネルが二体
-     ファイルを二重に書き込んでしまいます)。一体物理量は規則(b)の
-     影響を受けません。
+   | 対応モデルであっても、各物理量の結果は、決まった順序で評価される
+     最大3つの実行時要因のいずれか一つによって決まります (これらは
+     互いに排他的になるよう構成されており、独立に判定されるわけでは
+     ありません)。(a) 二体Green関数のみに適用される評価器共有規則 --
+     最初に判定されます。二体Green関数は ThreeBodyG/FourBodyG/SixBodyG
+     (N体) のGreen関数と評価器を共有しているため、これらのいずれかが
+     定義されている場合、二体物理量はそれらと一緒にフォールバック
+     します (各出力ファイルの書き手を常に一意に保つためです。そう
+     しないとフォールバックループがN体出力を黙って落とすか、トレース
+     カーネルが二体ファイルを二重に書き込んでしまいます)。一体物理量は
+     規則(a)の影響を受けません。(b) 演算子なしチェック -- 次に判定
+     されます。この実行でその種類の演算子が1つも定義されていない場合
+     (例: ``TwoBodyG``/``CisAjtCkuAlvDC`` が0個)、その物理量はストリー
+     ミングすべき対象がないためフォールバックします。この判定は下記
+     メモリゲートより先に行われるため、演算子が空のテーブルがメモリ
+     上限超過と誤って報告されることはありません。(c) メモリゲート --
+     最後に判定されます ((a)・(b) のいずれにも該当しなかった場合のみ
+     到達します)。その物理量の結果バッファが ``HPHI_TRACE_BUF_MAX_MB``
+     (環境変数。MiB単位の上限を [1, 1048576] の整数で指定、デフォルト
+     1024。この上限は1MPIランクかつ1物理量あたりの結果バッファのみに
+     適用され、``ExpecMode`` 2の実行に限りランク0で環境から読み取られ
+     全ランクへブロードキャストされるため、起動環境にのみ設定すれば
+     十分です) を超える場合、その物理量は ``ExpecMode 1`` へフォール
+     バックします。
    | 有効条件: ``ExpecMode`` を 0 以外にする場合、``CalcType`` = 2
      (全対角化) かつ ``Solver`` 1 (ScaLAPACK) または 3 (ELPA) である
      必要があります。それ以外の組合せ (``CalcType`` または ``Solver``

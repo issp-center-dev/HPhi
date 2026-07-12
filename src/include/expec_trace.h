@@ -87,6 +87,23 @@ typedef struct {
       mode2 lost zvo_ThreeBody/FourBody/SixBody_eigen.dat) -- the freeze
       exception is deliberate and this comment is its record. */
   int demoted_shared_evaluator[TRACE_Q_NQUANT];
+  /** no_operators[q]==1: quantity q is statically capability-table eligible
+      (and is not demoted by the shared-evaluator rule) but this run defines
+      ZERO operators of that kind (X->Def.NCisAjt==0 for TRACE_Q_ONEBODY,
+      X->Def.NCisAjtCkuAlvDC==0 for TRACE_Q_TWOBODY), so there is nothing for
+      the trace kernel to stream. Checked BEFORE the memory gate -- an empty
+      operator table always makes TraceGbufBytes() return 0 too (nops<=0),
+      so without this field the memory gate would set demoted_memory[q]=1
+      and TraceReportPlan() would wrongly claim the result buffer exceeded
+      HPHI_TRACE_BUF_MAX_MB for a quantity that has no result buffer to
+      exceed anything with. Mutually exclusive with demoted_memory[q] and
+      demoted_shared_evaluator[q] by construction (each quantity's outcome
+      is decided by exactly one of these `if`/`else if` branches in
+      TraceBuildPlan()'s per-q loop). NOTE: like demoted_shared_evaluator
+      above, this field was added AFTER the Task-1 header freeze (final
+      whole-branch review of phase 3b) -- the freeze exception is
+      deliberate and this comment is its record. */
+  int no_operators[TRACE_Q_NQUANT];
   /** When kernel[q]==1, the verified allocation size (bytes) for that
       quantity's result buffer, i.e. TraceGbufBytes()'s return value. Task
       3/4's malloc() must use ONLY this value -- re-reading the environment
