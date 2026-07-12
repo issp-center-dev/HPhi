@@ -55,11 +55,15 @@
     int kernel[TRACE_Q_NQUANT];
     /* demoted_memory[q]==1: 静的には対応モデルだがメモリゲートで降格した */
     int demoted_memory[TRACE_Q_NQUANT];
-    long int ncols;        /* 構築時の所有状態数（表示用に保持） */
+    long int nc_uniform;   /* 構築に使った一様ブロック幅 NC=ceil(neig/nproc)
+                              （rank 局所の所有数ではない。ゼロ所有判定は
+                              je<jb で行い、この値は使わない） */
   } TraceExecutionPlan;
-  /* 静的ケイパビリティ表 ∧ 実行時メモリゲート（チェック付き size_t 乗算）で
-     plan を 1 回構築する。ExpecMode!=2 なら全量 fallback の plan を返す */
-  void TraceBuildPlan(const struct BindStruct *X, long int ncols,
+  /* 静的ケイパビリティ表 ∧ 実行時メモリゲート（チェック付きサイズ計算）で
+     plan を 1 回構築する。nc_uniform は全ランク同値の NC=ceil(neig/nproc) を
+     呼び出し側が渡す（rank 局所 ncols は渡してはならない — plan の全ランク
+     一致が崩れる）。ExpecMode!=2 なら全量 fallback の plan を返す */
+  void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                       TraceExecutionPlan *plan);
   /* rank 0 用: plan の内容を量ごとに INFO 表示（降格理由込み）。
      エネルギー系/S2/NBodyG/AnomalousG が常時フォールバックである旨の固定行も出す */
@@ -91,7 +95,7 @@ static const TraceCap kTraceCap[] = {
 };
 ```
 
-`TraceBuildPlan`: 表を引き、TRUE の量についてのみメモリゲートを評価する。**判定は rank 依存の ncols ではなく、全ランクで同一の一様ブロック幅 `NC = ceil(neig/nproc)` を用いる**（各 rank の ncols ≤ NC、かつ NC は通信なしで全ランク同値 → plan が構造的に全ランク一致し、rank 間での kernel/fallback 混在実行が起こらない。API の ncols 引数は NC を渡す — フィールド名も `nc_uniform` に読み替える）。サイズ判定と確保は**同一のチェック付きヘルパ**を共用する:
+`TraceBuildPlan`: 表を引き、TRUE の量についてのみメモリゲートを評価する。**判定は rank 依存の ncols ではなく、全ランクで同一の一様ブロック幅 `NC = ceil(neig/nproc)` を用いる**（各 rank の ncols ≤ NC、かつ NC は通信なしで全ランク同値 → plan が構造的に全ランク一致し、rank 間での kernel/fallback 混在実行が起こらない。API の引数・フィールドは `nc_uniform` と命名済み — 上記 Interfaces 参照）。サイズ判定と確保は**同一のチェック付きヘルパ**を共用する:
 
 ```c
 /* 0 を返したら「収まらない/表現不能」。plan 構築（判定）と Task 3/4 の
@@ -99,12 +103,18 @@ static const TraceCap kTraceCap[] = {
 static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_bytes) {
   size_t sn, sc;
   if (nops <= 0 || nc_uniform <= 0) return 0;
+  /* long int が size_t より広い環境での切り詰めを先に排除（uintmax_t 経由の
+     表現可能性チェック — 64bit 前提にしない） */
+  if ((uintmax_t)nops > (uintmax_t)SIZE_MAX ||
+      (uintmax_t)nc_uniform > (uintmax_t)SIZE_MAX) return 0;
   sn = (size_t)nops; sc = (size_t)nc_uniform;
   if (sc > SIZE_MAX / sizeof(double complex)) return 0;      /* ncols*16 が overflow */
   if (sn > SIZE_MAX / (sc * sizeof(double complex))) return 0; /* nops*(ncols*16) が overflow */
   if (sn * sc * sizeof(double complex) > max_bytes) return 0; /* キャップ超過 */
   return sn * sc * sizeof(double complex);
 }
+/* HPHI_TRACE_GBUF_MAX_MB の MiB→byte 変換も同様にチェック付きで行う
+   （value_mb > SIZE_MAX >> 20 なら既定値へフォールバックし警告） */
 ```
 `TraceGbufBytes(...)==0` なら demoted_memory[q]=1, kernel[q]=0。`TraceGbufMaxBytes()`: 環境変数 `HPHI_TRACE_GBUF_MAX_MB`（1..1048576 の整数のみ受理、不正値は既定にフォールバックして stderr に 1 行警告）×2^20、未設定は既定 1024 MiB。**このゲートは量ごと・ランクごとの結果バッファ 1 本のキャップであり、プロセス総メモリの上限ではない**（コメントで明記。写像 O(N) 1 本と panel は別勘定）。
 
@@ -127,7 +137,8 @@ static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_byte
 
 ```c
   TraceExecutionPlan tplan;
-  TraceBuildPlan(X, ncols, &tplan);   /* ExpecMode!=2 なら全量 fallback */
+  long int nc_uniform = (NN + (long int)nproc - 1) / (long int)nproc; /* 全ランク同値 */
+  TraceBuildPlan(X, nc_uniform, &tplan);   /* ExpecMode!=2 なら全量 fallback */
   if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
     TraceReportPlan(&tplan, stdoutMPI);
   ExpecLocalEnter();
@@ -169,7 +180,8 @@ Expected: 18/18 PASS（Mode 2 実挙動 = 全量フォールバック = Mode 1 �
 - Produces（**`src/include/expec_trace_internal.h`** — Task 1 で確定済みの `expec_trace.h`（オーケストレーション API のみ、以後不変）とは別の src 内部ヘッダ。単体テストはこちらを include してカーネル内部を直接呼ぶ。HPhi はヘッダをインストールしないが、公開面の規律として区別する）:
   ```c
   typedef struct {
-    long int n;
+    long int n;            /* = X->Check.idim_max（ヒルベルト次元。正準/GC とも。
+                              kprime の値域は [-1, n-1] — 抽出後に範囲アサート） */
     long int *kprime;      /* [n] 0-based 行き先; 遷移消滅は -1 */
     double complex *amp;   /* [n] 振幅（kprime>=0 のときのみ有意） */
     int is_diagonal;
@@ -226,7 +238,7 @@ static int CisAjt_map(long unsigned int j, struct BindStruct *X,
 
 シリアル・MPI 不要・**GC モデルのみ**（HubbardGC L=4: n=256 / SpinGC-half L=4: n=16。green_partial_merge_check.c のスタブ流儀）。検査:
 1. **写像正当性**: ランダム複素ベクトル z で `Σ_{k:kprime≥0} conj(z[kprime])·amp·z[k]` が、同じ要素関数（元関数、M_CORR、vec=z 直接）の `Σ dam_pr` と 1e-13 一致。一体: 対角/非対角/ゼロ結果（常時消滅の組）各 1。二体: 4 分岐各 1 + 同一添字 + ゼロ結果。
-2. **純粋性（スペック §3.2b）**: 同一演算子で抽出 2 回 → kprime/amp が bit 一致。抽出前後で `X->Large` の**意味フィールド個別 snapshot**（mode, is1_spin..is4_spin, A_spin, B_spin, isA_spin, isB_spin, irght, ilft, ihfbit, i_max, tmp_V — memcmp 全域比較はパディングで無効なので使わない）が不変、`X->Phys` の energy/doublon 等も不変。
+2. **純粋性（スペック §3.2b）**: 同一演算子で抽出 2 回 → kprime/amp が bit 一致。抽出前後の snapshot 対象は**Step 0 監査表 §2c の (vi) 書き込み集合列に記録された全フィールド・全配列**（実装時に確定した名前付きリストをテスト内に列挙する — 「等」で省略しない。memcmp 全域比較はパディングで無効なので使わない）。
 3. **境界**: 演算子 0 個（NCisAjt=0）で抽出ドライバが何もしないこと。
 
 Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check` → RED（未実装）→ 実装 → GREEN。build_noMPI にも登録・実行。
@@ -243,17 +255,17 @@ Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check
 
 - [ ] **Step 1: ストリーミングとバッファ**
 
-`expec_trace_owned_states` の ONEBODY 部: `gbuf[nops×ncols]`（確保前に plan 構築時と同じ除算比較で再検証。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。
+`expec_trace_owned_states` の ONEBODY 部: `gbuf`（**確保バイト数は `TraceGbufBytes(nops, plan->nc_uniform, TraceGbufMaxBytes())` の戻り値のみを使う** — サイズ式の再記述禁止。0 が返る事態は plan 構築時に排除済みだが、0 なら防御的に rc=-1。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。**量またぎの原子性は保証しない**（一体を書き終えた後に二体の準備で失敗した場合、一体の part は残るが、集団 rc=-1 により Merge は公開せず（マニフェスト規則）実行全体が失敗として終わる — Mode 1 のループ途中失敗と同じ回復モデル[再実行]。これは意図した仕様として docs に記載不要[内部挙動]、コード内コメントに記す）。
 
 - [ ] **Step 2: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の中身が expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf の直接実行と 1e-13 一致。メモリゲート境界: `HPHI_TRACE_GBUF_MAX_MB=1` で nops×ncols がゲートを跨ぐ 2 ケース — 降格した plan では kernel[q]==0 になること）→ RED→GREEN → 回帰 → コミット
 
-- [ ] **Step 3（clavius 早期チェックポイント — コントローラ実行）**: rsync → build_elpa 再構成・ビルド → **一時的に**単体テストレベルで正準 Hubbard の写像正当性を検証: `expec_trace_map_check` に正準ケースを追加するのではなく、equiv の Hubbard ケースを `ExpecMode 2` + ケイパビリティ強制 ON（開発用フック `HPHI_TRACE_FORCE=onebody` — 下記 Task 1 で定義済みのセマンティクス）で np=2 実行し、mode0 と比較（一体のみ強制有効の状態）。不一致ならここで修正してから Task 4 へ進む。
+- [ ] **Step 3（clavius 早期チェックポイント — コントローラ実行）**: rsync → build_elpa 再構成・ビルド → **一時的に**単体テストレベルで正準 Hubbard の写像正当性を検証: `expec_trace_map_check` に正準ケースを追加するのではなく、equiv の Hubbard ケースを `ExpecMode 2` + ケイパビリティ強制 ON（開発用フック `HPHI_TRACE_FORCE=onebody` — Task 1 で定義済みのセマンティクス）で np=2 実行し、mode0 と比較。**ログで一体が "use the trace kernel" 行になっていることを必ず確認**（一体のみ強制有効の状態）。不一致ならここで修正してから Task 4 へ進む。
 
 ---
 
 ### Task 4: 二体GFカーネル + clavius 早期チェックポイント（正準）
 
-Task 3 と同一構造: `nops = X->Def.NCisAjtCkuAlvDC`、別バッファ・別ゲート判定（片方だけ降格可）。Rearray 失敗ペアは Mode 1 と同一の 0.0 行（expec_cisajscktaltdc.c の該当 fprintf と同一書式、GreenOutputWriteIndexPrefix 込み）。単体テスト（GC 4 分岐+同一添字+ゼロ結果+ゲート境界）→ RED→GREEN → 回帰 → コミット → **clavius 早期チェックポイント**（`HPHI_TRACE_FORCE=1` で equiv の SpinGC honeycomb 多体ケース[green6 含む — NBodyG 系がフォールバックであることも同時に確認できる]と Hubbard ケースを np=2/3 実行、mode0 比較）。
+Task 3 と同一構造: `nops = X->Def.NCisAjtCkuAlvDC`、別バッファ・別ゲート判定（片方だけ降格可）。Rearray 失敗ペアは Mode 1 と同一の 0.0 行（expec_cisajscktaltdc.c の該当 fprintf と同一書式、GreenOutputWriteIndexPrefix 込み）。単体テスト（GC 4 分岐+同一添字+ゼロ結果+ゲート境界）→ RED→GREEN → 回帰 → コミット → **clavius 早期チェックポイント**（`HPHI_TRACE_FORCE=onebody,twobody` で equiv の SpinGC honeycomb 多体ケース[green6 含む — NBodyG 系がフォールバックであることも同時に確認できる]と Hubbard ケースを np=2/3 実行、mode0 比較。**ログで一体・二体の両方が "use the trace kernel" 行になっていることを必ず確認**する — フック値の打ち間違いでフォールバック経路だけを検証してしまう事故の防止）。
 
 ---
 
