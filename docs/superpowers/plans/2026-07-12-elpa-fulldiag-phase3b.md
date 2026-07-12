@@ -2,299 +2,300 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `ExpecMode 2` を実キーワードにする — 演算子ごとに基底写像 (k→k′, 振幅) を 1 回前計算し、所有全状態を密ループでストリーミング評価するトレースカーネル（`src/expec_trace.c`）を、モデル別の段階的有効化とフォールバック付きで実装する。
+**Goal:** `ExpecMode 2` を実キーワードにする — 演算子ごとに基底写像 (k→k′, 振幅) を 1 回前計算し、所有全状態を密ループでストリーミング評価するトレースカーネル（`src/expec_trace.c`）を、**一体GF・二体GF に限定して**モデル別の段階的有効化とフォールバック付きで実装する。
 
-**Architecture:** 設計文書 `docs/superpowers/specs/2026-07-11-elpa-fulldiag-phase3-design.md`（v5.1、§3「Mode 2」が正）のフェーズ3b。フェーズ3a の Mode 1 基盤（状態パネル、ExpecLocal、パーシャル+マニフェスト出力）は完成済みで、3b は `phys_stateparallel()` 内のカーネル選択として載る。①スケルトン+ケイパビリティ表+INFO（全量フォールバック=挙動は Mode 1 と同一）→ ②写像抽出エンジン+純粋性テスト → ③対角量・エネルギー系カーネル → ④一体GFカーネル → ⑤二体GFカーネル → ⑥ゴールデンテストで合格モデルのみ表を TRUE 化 → ⑦equivテスト拡張 → ⑧docs → ⑨clavius検証+ベンチ。
+**Architecture:** 設計文書 `docs/superpowers/specs/2026-07-11-elpa-fulldiag-phase3-design.md`（v5.1、§3「Mode 2」が正）のフェーズ3b。フェーズ3a の Mode 1 基盤（状態パネル、ExpecLocal、パーシャル+マニフェスト出力）は完成済みで、3b は `phys_stateparallel()` 内のカーネル選択として載る。**唯一の真実源は呼び出しごとに 1 回構築される不変の `TraceExecutionPlan`**（静的ケイパビリティ ∧ 実行時メモリゲート）で、INFO 表示・カーネル実行・フォールバックループの 3 者が同じ plan を消費する。①スケルトン+plan+INFO（全量フォールバック=挙動は Mode 1 と同一）→ ②写像プローブアダプタ（mltply*Core.c 側）+家系別監査+純粋性テスト → ③一体GFカーネル → ④二体GFカーネル → ⑤ゴールデンテストでケイパビリティ確定 → ⑥docs → ⑦ローカル回帰 → ⑧clavius検証+ベンチ（正準系の早期チェックポイント込み）。
 
 **Tech Stack:** C99, MPI（オーケストレーション層のみ）, 既存 mltply*Core 要素関数, フェーズ3a の green_output/ExpecLocal/状態パネル基盤, CMake/ctest。
 
 ## Global Constraints
 
-- スペック §3「Mode 2: トレースカーネル」が正。判断に迷ったらスペック。**演算子代数を再実装しない** — 写像は「汎用経路が呼ぶのと同一の要素関数を k ごとに 1 回呼んで記録」する（規約を構造ごと継承）。
-- **保証**: `ExpecMode` は速度のみを変える。0/1/2 の結果は丸め誤差の範囲で一致（1e-8、bit 一致ではない）。カーネル担当量とフォールバック量の書き手は**常に一意**（二重書き込み・部分上書きの構造的排除、スペック §3 所有表）。
-- モデル別段階的有効化: ゴールデンテスト（Task 6）合格モデルのみケイパビリティ表で有効。初期対象は **Hubbard（正準+GC）と Spin/SpinGC の half**。汎用スピン・spinless・Kondo は全量フォールバック。`all_s2` は 3b では**全モデルでフォールバック**（expec_totalspin 経由。表の「トレースカーネル（対象モデル）」化は 3c 以降の拡張余地として明記）。
-- `src/expec_trace.c` は **MPI フリー**（mpi.h include 禁止、生 MPI・exitMPI 禁止、許可 wrapperMPI は SumMPI_dc/d/li/i, fopenMPI, childfopenMPI, stdoutMPI のみ）。作成と同一コミットで `test/check_expec_local_calls.sh` の `FILES` に追加。集団操作はすべて `src/phys_distributed.c`（恒久的にスキャン対象外）。
-- 要素関数呼び出しは **`X->Large.mode = M_CORR` のまま**行う（tmp_v0 への副作用が構造的に無効になる。mltplyCommon.h: M_MLTPLY=0, M_ENERGY=1, M_CORR=3, M_CALCSPEC=4, H_CORR=5）。H_CORR は使わない。
-- 既定（`ExpecMode 0/1`）の挙動は不変。build_noMPI（`cmake -DENABLE_MPI=OFF ..`）の `ctest -R "fulldiag|check_expec"` 18/18 基準。ELPA 実行系はローカルでは登録のみ、実行は Task 9（clavius, `~/HPhi-elpa`, conda env `hphi_elpa`, `LD_LIBRARY_PATH=$HOME/opt/elpa-2025.06-cuda/lib:$CONDA_PREFIX/lib`, **`export CUDA_MPS_PIPE_DIRECTORY=/tmp/nonexistent-mps-hphi` 必須**、rsync はリポジトリルートから）。
-- GC 系要素関数は list_1 間接参照なし（基底添字=ビットパターン）→ **GC モデルの単体テストはローカル MPI ビルドで実行可能**。正準系（list_1/GetOffComp 要）は HPhi 実行経由のゴールデンテスト（clavius）で検証。
+- スペック §3「Mode 2: トレースカーネル」が正。**演算子代数を再実装しない** — 写像抽出は既存要素関数と同一コード経路を共有する**私設プローブアダプタ**（各要素関数の定義ファイル内に併設、公開 API 変更なし）経由で行う。
+- **3b のカーネル対象は ONEBODY（expec_cisajs 相当）と TWOBODY（expec_cisajscktaltdc 相当）のみ。** エネルギー系（energy/var/doublon/num/sz = expec_energy_flct 一式）・S²（expec_totalspin）・NBodyG・AnomalousG は **3b では常にフォールバック**（Mode 1 経路）。理由: (a) var は固有ベクトル品質検査であり、固有値代用は「ExpecMode は速度のみを変える」保証に違反する（レビュー却下済みの旧案）。(b) expec_energy_flct は energy/var/対角量を 1 回の mltply で同時計算するため部分カーネル化は二重書き手を生む。エネルギー系のトレース化（H 全項写像）は 3c 拡張として移行ノートに明記。**この方針により expec_energy_flct はフォールバックループで常に実行され、v0→v1 の受け渡し規約（phys_distributed_local.c:70-81）は Mode 1 と完全に同一のまま**（v1 詰め替えの特殊処理は不要）。
+- **保証**: `ExpecMode` は速度のみを変える。0/1/2 の全出力列（var 含む）は丸め誤差の範囲で一致（1e-8、bit 一致ではない）。各量の書き手は**常に一意**（plan のマスクが唯一の判定。ケイパビリティ表・メモリゲート・フォールバックループが独立に判断することを構造的に禁止する）。
+- モデル別段階的有効化: ゴールデンテスト（Task 5）合格の（モデル×量×**演算子家系ブランチ全網羅**）のみケイパビリティ表で TRUE。**実装中は表は全 FALSE のまま**（単体テストはカーネル関数を直接呼ぶ — 本番ディスパッチを経由しない）。初期候補は Hubbard（正準+GC）と Spin/SpinGC の half。汎用スピン・spinless・Kondo は対象外。
+- `src/expec_trace.c` は **MPI フリー**（mpi.h include 禁止、生 MPI・exitMPI 禁止、許可 wrapperMPI は SumMPI_dc/d/li/i, fopenMPI, childfopenMPI, stdoutMPI のみ）。作成と同一コミットで `test/check_expec_local_calls.sh` の `FILES` に追加。集団操作はすべて `src/phys_distributed.c`（恒久的にスキャン対象外）。プローブアダプタを併設する `mltply*Core.c` は現状どおりスキャン対象外（MPI 面なし — 凍結インベントリ §2 の記録どおり）。
+- 要素関数プローブは **`X->Large.mode = M_CORR` のまま**行う（tmp_v0 書き込みが構造的に無効。M_MLTPLY=0, M_ENERGY=1, M_CORR=3, M_CALCSPEC=4, H_CORR=5）。H_CORR は使わない。**プローブの結合定数は常に tmp_V=1.0 を渡す**（GF には結合定数がなく、汎用経路も tmp_OneGreen=1.0 / Rearray の tmp_V を使う。これにより「戻り値==0 ⟺ 遷移消滅」が成立 — 振幅は ±1 または ±位相×1 のため。二体は Rearray が返す tmp_V(±1/共役符号) をそのまま渡し、`assert(tmp_V != 0.0)` を置く）。
+- 既定（`ExpecMode 0/1`）の挙動は不変。build_noMPI（`cmake -DENABLE_MPI=OFF ..`）の `ctest -R "fulldiag|check_expec"` 18/18 基準。ELPA 実行系はローカルでは登録のみ、実行は Task 8（clavius, `~/HPhi-elpa`, conda env `hphi_elpa`, `LD_LIBRARY_PATH=$HOME/opt/elpa-2025.06-cuda/lib:$CONDA_PREFIX/lib`, **`export CUDA_MPS_PIPE_DIRECTORY=/tmp/nonexistent-mps-hphi` 必須**、rsync はリポジトリルートから）。**正準系（GetOffComp/list_1）の写像はローカル単体テスト不能のため、Task 3/4 完了直後にそれぞれ clavius 早期チェックポイント（コントローラ実行）を置く** — 最終ゲートまで正準系の検証を遅らせない。
+- GC 系要素関数は list_1 間接参照なし（基底添字=ビットパターン）→ GC モデルの単体テストはローカル MPI ビルドで実行可能。
 - コミットメッセージ末尾に本セッションの Co-Authored-By/Claude-Session トレーラ。
 
 ## File Structure
 
-- Create: `src/expec_trace.c` — ケイパビリティ表・写像抽出・ストリーミング・カーネル本体（MPI フリー）
-- Create: `src/include/expec_trace.h` — 公開 API（下記 Interfaces）
-- Modify: `src/phys.c` — Mode 2 ダウングレード INFO の撤去（分岐は phys_stateparallel 内へ）
-- Modify: `src/phys_distributed.c` — Mode 2 のカーネル選択+INFO 集約表示
-- Modify: `src/phys_distributed_local.c` — 状態ループの量別スキップ（カーネル担当量はフォールバック実行しない）
-- Modify: `src/CMakeLists.txt`, `test/CMakeLists.txt`, `test/check_expec_local_calls.sh`（FILES に expec_trace.c）
-- Test: `test/unit/expec_trace_map_check.c`（GC 写像・純粋性、ローカル実行可）, `test/fulldiag_expecmode_equiv.sh` 拡張
-- Docs: CalcMod ja/en, `docs/superpowers/specs/2026-07-11-phase3a-migration-note.md` の 3b 追記（新規ファイル `...-phase3b-migration-note.md`）
+- Create: `src/expec_trace.c` — TraceExecutionPlan・ストリーミング・カーネル本体（MPI フリー）
+- Create: `src/include/expec_trace.h` — 公開 API（Task 1 で確定、以後変更しない）
+- Modify: `src/mltplyHubbardCore.c`, `src/mltplySpinCore.c` — 私設写像プローブアダプタ（各要素関数の直後に併設。公開ヘッダには載せず、`src/include/expec_trace_probe.h`（新規、src 内部用）に宣言）
+- Modify: `src/phys.c`（ダウングレード INFO 撤去）, `src/phys_distributed.c`（plan 構築+カーネル呼び出し）, `src/phys_distributed_local.c`（plan マスク消費）
+- Modify: `src/CMakeLists.txt`, `test/CMakeLists.txt`, `test/check_expec_local_calls.sh`
+- Modify: `docs/superpowers/specs/2026-07-11-expec-call-inventory.md` — §2c として家系別プローブ監査表を追加
+- Test: `test/unit/expec_trace_map_check.c`（GC 写像・純粋性・境界、ローカル実行可）, `test/fulldiag_expecmode_equiv.sh` 拡張
+- Docs: CalcMod ja/en, `docs/superpowers/specs/2026-07-12-phase3b-migration-note.md`
 
 ---
 
-### Task 1: expec_trace スケルトン + ケイパビリティ表 + ディスパッチ配線（全量フォールバック）
+### Task 1: TraceExecutionPlan + スケルトン + ディスパッチ配線（全量フォールバック）
 
 **Files:**
 - Create: `src/expec_trace.c`, `src/include/expec_trace.h`
-- Modify: `src/phys.c:90-96`（ダウングレード INFO 撤去）, `src/phys_distributed.c`, `src/phys_distributed_local.c`, `src/CMakeLists.txt`, `test/check_expec_local_calls.sh`（FILES へ追加）
-- Test: `test/fulldiag_solver_keyword.sh` は不変（nproc==1 降格は readdef のまま）。ローカル受け入れ = ビルド 2 系 + ガード + 回帰 18/18
+- Modify: `src/phys.c:90-96`, `src/phys_distributed.c`, `src/phys_distributed_local.c`, `src/CMakeLists.txt`, `test/check_expec_local_calls.sh`
+- Modify: `test/fulldiag_expecmode_equiv.sh`（INFO アサーション更新）
 
 **Interfaces:**
-- Produces（Task 2-7 が依存する公開 API、`src/include/expec_trace.h`）:
+- Produces（`src/include/expec_trace.h` — **この形が最終。以後のタスクはこのヘッダを変更しない**。写像抽出などカーネル内部の型・関数は Task 2 の `expec_trace_internal.h`（別ヘッダ）に置き、こちらへは追加しない。HPhi はヘッダを外部インストールしないため両者とも内部ヘッダだが、オーケストレーション境界の凍結として区別する）:
   ```c
   typedef enum {
-    TRACE_Q_ENERGY_FLCT = 0,  /* energy+var+doublon+num+sz (expec_energy_flct 相当一式) */
-    TRACE_Q_ONEBODY,          /* expec_cisajs 相当 */
-    TRACE_Q_TWOBODY,          /* expec_cisajscktaltdc 相当 */
+    TRACE_Q_ONEBODY = 0,   /* expec_cisajs 相当 */
+    TRACE_Q_TWOBODY,       /* expec_cisajscktaltdc 相当 */
     TRACE_Q_NQUANT
   } TraceQuantity;
-  /* 1=カーネル担当 / 0=フォールバック（Mode 1 経路）。モデル×量の定数表を参照 */
-  int TraceKernelAvailable(const struct BindStruct *X, TraceQuantity q);
-  /* rank 0 用: 量ごとの担当（kernel/fallback）を "  INFO: ExpecMode 2 ..." 形式で
-     fp に出力（呼ぶのはオーケストレーション層。expec_trace.c 自身は表示しない） */
-  void TraceKernelReportPlan(const struct BindStruct *X, FILE *fp);
-  /* 所有状態一括評価: panel は列優先 ld=NN の所有状態パネル（phys_stateparallel と同じ）。
-     担当量のみ評価し X->Phys.all_* と GF 出力へ書く。戻り値 0/-1（ローカル rc） */
-  int expec_trace_owned_states(struct BindStruct *X, const double complex *panel,
+  typedef struct {
+    /* kernel[q]==1: トレースカーネルが担当。0: フォールバック（Mode 1 経路）。
+       構築後は不変。INFO 表示・カーネル・フォールバックループの全員がこの
+       同一インスタンスを消費する（他の判定源を持たない） */
+    int kernel[TRACE_Q_NQUANT];
+    /* demoted_memory[q]==1: 静的には対応モデルだがメモリゲートで降格した */
+    int demoted_memory[TRACE_Q_NQUANT];
+    long int ncols;        /* 構築時の所有状態数（表示用に保持） */
+  } TraceExecutionPlan;
+  /* 静的ケイパビリティ表 ∧ 実行時メモリゲート（チェック付き size_t 乗算）で
+     plan を 1 回構築する。ExpecMode!=2 なら全量 fallback の plan を返す */
+  void TraceBuildPlan(const struct BindStruct *X, long int ncols,
+                      TraceExecutionPlan *plan);
+  /* rank 0 用: plan の内容を量ごとに INFO 表示（降格理由込み）。
+     エネルギー系/S2/NBodyG/AnomalousG が常時フォールバックである旨の固定行も出す */
+  void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp);
+  /* plan->kernel[q]==1 の量だけを所有状態一括評価し GF 出力へ書く。
+     戻り値 0/-1（ローカル rc）。書き込み開始前に量単位で完結性を保証:
+     写像抽出やバッファ確保の失敗は「その量を書かずに rc=-1」（部分出力なし） */
+  int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *plan,
+                               const double complex *panel,
                                long int jb, long int je, long int NN);
   ```
-- Consumes: 3a の `phys_stateparallel()`（phys_distributed.c:43-187 の構造）と `phys_stateparallel_local_loop()`（phys_distributed_local.c:67-92 の per-state ループ）。
+- Consumes: 3a の `phys_stateparallel()`（phys_distributed.c:43-187）と `phys_stateparallel_local_loop()`（phys_distributed_local.c:67-92）。
 
-- [ ] **Step 1: ケイパビリティ表とスケルトンを書く**
+- [ ] **Step 1: plan・表・スケルトン**
 
-`src/expec_trace.c` に定数表（Task 6 で TRUE 化するまで全 FALSE）:
+`src/expec_trace.c` に静的表（**全 FALSE で出荷。Task 5 まで誰も TRUE にしない**）:
 
 ```c
-/* model × quantity capability matrix. A row is enabled ONLY after the
-   model passes the golden cross-check tests (see plan Task 6 / spec §3.5).
-   NBodyG / AnomalousG / totalspin(S2) are ALWAYS fallback in phase 3b and
-   deliberately have no row here. */
 typedef struct { int calc_model; int flg_general_spin; int q[TRACE_Q_NQUANT]; } TraceCap;
 static const TraceCap kTraceCap[] = {
-  /* model,      genspin, {ENERGY_FLCT, ONEBODY, TWOBODY} */
-  { Hubbard,     0,       {0, 0, 0} },
-  { HubbardGC,   0,       {0, 0, 0} },
-  { Spin,        0,       {0, 0, 0} },   /* half のみ; genspin=1 は非対応 */
-  { SpinGC,      0,       {0, 0, 0} },
-  /* Kondo/KondoGC/tJ/tJGC/Spinless*/
+  /* Rows are flipped to 1 ONLY by plan Task 5, after the golden
+     cross-checks for EVERY reachable operator-family branch of that
+     (model, quantity) pass. See the branch-coverage table in
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §2c. */
+  { Hubbard,   0, {0, 0} },
+  { HubbardGC, 0, {0, 0} },
+  { Spin,      0, {0, 0} },   /* half のみ; iFlgGeneralSpin==1 は行に一致させない */
+  { SpinGC,    0, {0, 0} },
 };
 ```
 
-`TraceKernelAvailable` は iCalcModel と iFlgGeneralSpin で表を引き、行が無い/genspin 不一致なら 0。`expec_trace_owned_states` はこの段階では担当量なし（即 return 0）。`TraceKernelReportPlan` は 3 量それぞれについて
-`"  INFO: ExpecMode 2: <quantity> uses the <trace kernel|ExpecMode-1 fallback> path.\n"` を出力（quantity 名は `energy/fluctuation`, `one-body Green functions`, `two-body Green functions`。NBodyG/AnomalousG/S2 は常時フォールバックなので `"  INFO: ExpecMode 2: NBodyG/AnomalousG/S2 always use the ExpecMode-1 fallback path.\n"` を 1 行固定で出す）。
-
-- [ ] **Step 2: ディスパッチ配線**
-
-`src/phys.c:91-92` の
-```c
-    if (X->Def.iExpecMode == EXPECMODE_TRACE)
-      fprintf(stdoutMPI, "  INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.\n");
-```
-を撤去（`phys_stateparallel(X, neig)` 呼び出しと assert は不変）。`src/phys_distributed.c` の `phys_stateparallel()` に、ローカルループ呼び出しの**直前**（パネル確保・再分散の後）で:
+`TraceBuildPlan`: 表を引き、TRUE の量についてのみメモリゲートを評価する。**判定は rank 依存の ncols ではなく、全ランクで同一の一様ブロック幅 `NC = ceil(neig/nproc)` を用いる**（各 rank の ncols ≤ NC、かつ NC は通信なしで全ランク同値 → plan が構造的に全ランク一致し、rank 間での kernel/fallback 混在実行が起こらない。API の ncols 引数は NC を渡す — フィールド名も `nc_uniform` に読み替える）。サイズ判定と確保は**同一のチェック付きヘルパ**を共用する:
 
 ```c
-  int use_trace = (X->Def.iExpecMode == EXPECMODE_TRACE);
-  if (use_trace && myrank == 0) TraceKernelReportPlan(X, stdoutMPI);
-  if (use_trace) {
-    rc_local = expec_trace_owned_states(X, panel, jb, je, NN);   /* 担当量 */
-    if (rc_local == 0)
-      rc_local = phys_stateparallel_local_loop_fallback(X, panel, jb, je, NN);
-  } else {
-    rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN);
-  }
+/* 0 を返したら「収まらない/表現不能」。plan 構築（判定）と Task 3/4 の
+   malloc（確保サイズ計算）の両方がこの 1 関数を使う — 2 判定の乖離を構造的に禁止 */
+static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_bytes) {
+  size_t sn, sc;
+  if (nops <= 0 || nc_uniform <= 0) return 0;
+  sn = (size_t)nops; sc = (size_t)nc_uniform;
+  if (sc > SIZE_MAX / sizeof(double complex)) return 0;      /* ncols*16 が overflow */
+  if (sn > SIZE_MAX / (sc * sizeof(double complex))) return 0; /* nops*(ncols*16) が overflow */
+  if (sn * sc * sizeof(double complex) > max_bytes) return 0; /* キャップ超過 */
+  return sn * sc * sizeof(double complex);
+}
+```
+`TraceGbufBytes(...)==0` なら demoted_memory[q]=1, kernel[q]=0。`TraceGbufMaxBytes()`: 環境変数 `HPHI_TRACE_GBUF_MAX_MB`（1..1048576 の整数のみ受理、不正値は既定にフォールバックして stderr に 1 行警告）×2^20、未設定は既定 1024 MiB。**このゲートは量ごと・ランクごとの結果バッファ 1 本のキャップであり、プロセス総メモリの上限ではない**（コメントで明記。写像 O(N) 1 本と panel は別勘定）。
+
+`TraceReportPlan` の出力（equiv テストがこの全行を検証する — 量ごと 1 行+固定行 1 行）:
+```
+  INFO: ExpecMode 2: one-body Green functions use the trace kernel.
+  INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (unsupported model).
+  INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_GBUF_MAX_MB).
+  INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.
+```
+（2 行目と 3 行目は排他 — 理由テキストは "unsupported model" / "result buffer would exceed HPHI_TRACE_GBUF_MAX_MB" の 2 種。）
+
+`expec_trace_owned_states` はこの段階では担当量なし（plan が全 FALSE）で即 return 0。
+
+**開発用強制フック（Task 5 で削除）**: `TraceBuildPlan` は環境変数 `HPHI_TRACE_FORCE` を読む。値は**量名のカンマ区切りリスト**（`onebody` / `twobody`。例: `HPHI_TRACE_FORCE=onebody,twobody`）。列挙された量だけをケイパビリティ表の値に関係なく kernel[q]=1 にする（メモリゲートは通常どおり適用）。**列挙されない量は絶対に強制されない**ため、未実装カーネルが選択されて出力が欠落する事故は構造的に起こらない（Task 3 のチェックポイントは `=onebody`、Task 4 は `=onebody,twobody` を使う）。認識できないトークンは stderr 警告のうえ無視。実装箇所には `/* development-only hook: plan Task 5 REMOVES this */` コメントを付す。
+
+- [ ] **Step 2: ディスパッチ配線（plan が唯一の判定源）**
+
+`src/phys.c:91-92` のダウングレード INFO 2 行を撤去。`src/phys_distributed.c` の `phys_stateparallel()`、ローカルループ呼び出し部を:
+
+```c
+  TraceExecutionPlan tplan;
+  TraceBuildPlan(X, ncols, &tplan);   /* ExpecMode!=2 なら全量 fallback */
+  if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
+    TraceReportPlan(&tplan, stdoutMPI);
+  ExpecLocalEnter();
+  GreenOutputSetPartialSuffix(myrank);
+  rc_local = expec_trace_owned_states(X, &tplan, panel, jb, je, NN);
+  if (rc_local == 0)
+    rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN, &tplan);
+  GreenOutputClearPartialSuffix();
+  ExpecLocalLeave();
 ```
 
-`phys_distributed_local.c` に `phys_stateparallel_local_loop_fallback()` を追加: 既存 `phys_stateparallel_local_loop()` と同一の状態ループだが、**カーネル担当量の evaluator 呼び出しと all_* 代入をスキップ**する（`TraceKernelAvailable(X, TRACE_Q_ENERGY_FLCT)` なら `expec_energy_flct` と all_energy/doublon/num_up/num_down/sz 代入を飛ばす、ONEBODY なら `expec_cisajs` を、TWOBODY なら `expec_cisajscktaltdc` を飛ばす。NBodyG/AnomalousG/totalspin と all_s2 代入は常に実行）。重複を避けるため、両ループは共通の static 関数 `state_loop_impl(X, panel, jb, je, NN, skip_mask)` に統合し、既存 `phys_stateparallel_local_loop` は `skip_mask=0` の薄いラッパにする。
-
-**注意（v0/v1 規約, phys_distributed_local.c:70-81 の事実）**: `expec_energy_flct` をスキップする場合、後続 evaluator が読む `v1` は誰も詰めない。fallback ループでは ENERGY_FLCT スキップ時に**明示的に `v1[j+1]=panel[...]` を直接詰め、`v0` はゼロクリア**する（後続の expec_cisajs/expec_cisajscktaltdc/expec_totalspin は vec=v1 しか読まない — 3a Task 6 で検証済みの事実。expec_nbodyg/expec_anomalousg も同様に v1 を受け取る）。この詰め替えの検証は Task 6 のゴールデンテストが担う。
+**注意（3a からの構造変更を最小化）**: 3a では Enter/SetPartialSuffix はローカルループ内部にあった。plan 消費とカーネルを同じ ExpecLocal セッションに入れるため、Enter/Set/Clear/Leave を**オーケストレーション層へ引き上げ**、`phys_stateparallel_local_loop` からは除去する（同関数のシグネチャに `const TraceExecutionPlan *plan` を追加し、per-state ループで `plan->kernel[TRACE_Q_ONEBODY]` なら `expec_cisajs` 呼び出しをスキップ、`plan->kernel[TRACE_Q_TWOBODY]` なら `expec_cisajscktaltdc` をスキップ。**それ以外の evaluator と all_* 代入群は無条件に従来どおり** — エネルギー系は常にフォールバックなので v0/v1 受け渡しは Mode 1 と同一）。`phys_distributed_local.c` は MPI フリーのまま（plan は値渡しの読み取り専用構造体）。ガードの許可リストに影響なし。3a の既存呼び出し（Mode 1）も同じ経路を通る（plan 全 FALSE）ため挙動不変。**単一出口不変条件**: `ExpecLocalEnter()` 成功後は、カーネル/フォールバックのいずれが失敗しても `GreenOutputClearPartialSuffix()` と `ExpecLocalLeave()` を**ちょうど 1 回ずつ**通ってから return する（上記コード形を崩す早期 return を将来追加することを禁ずるコメントを添える）。ランク局所の失敗の集約は Mode 1 と同一 — rc_local が既存の単一ランデブー `MPI_Allreduce(MIN)` に入り、失敗時は Gatherv/Merge に到達しない。ゼロ所有ランク（ncols==0）はカーネルでも即 return 0（Mode 1 のループ不実行と同型）。
 
 - [ ] **Step 3: ガード FILES 追加 + ビルド + 回帰**
 
-`test/check_expec_local_calls.sh` の `FILES` に `src/expec_trace.c` を追加。`src/CMakeLists.txt` のソースリストに追加（`#ifdef _SCALAPACK` で空 TU 化は**しない** — expec_trace.c は MPI 非依存の純ローカルコードなので全ビルドでコンパイルし、呼び出し側だけが `_SCALAPACK` 内。ただし list_1 等 extern 参照のみ）。
+`test/check_expec_local_calls.sh` の `FILES` に `src/expec_trace.c` を追加。`src/CMakeLists.txt` に expec_trace.c を追加（全ビルドでコンパイル。MPI 非依存）。
 
 Run: `cd build_noMPI && cmake .. && make HPhi -j8 && ctest -R "fulldiag|check_expec"`
-Expected: 18/18 PASS（この段階の Mode 2 実挙動 = 全量フォールバック = Mode 1 と同一、INFO のみ変化）
+Expected: 18/18 PASS（Mode 2 実挙動 = 全量フォールバック = Mode 1 と同一、INFO のみ変化）。build_mpi でも `make HPhi` + `ctest -R "green_partial|check_expec"` green。
 
 - [ ] **Step 4: equiv スクリプトの Mode-2 INFO アサーション更新**
 
-`test/fulldiag_expecmode_equiv.sh` の Mode 2 サブケース（3a で追加、"ExpecMode 2 kernels are not available in this build" を grep している箇所）を、新 INFO 形式（`"ExpecMode 2:"` を含む行が 1 行以上 + 出力一致は従来どおり Mode 1 と比較）に更新。`sh -n` で構文確認。
+3a の "ExpecMode 2 kernels are not available in this build" grep を撤去し、**plan の全行検証**に置換: mode2 実行ログに (a) `"ExpecMode 2: one-body Green functions use the"` 行、(b) `"ExpecMode 2: two-body Green functions use the"` 行、(c) `"always use the ExpecMode-1 path"` 行が**すべて**存在すること（この段階では (a)(b) とも fallback 理由付き）。出力一致検証は従来どおり。`sh -n` 確認。
 
-- [ ] **Step 5: コミット** `git commit -m "Wire ExpecMode 2 dispatch through a trace-kernel capability table"`
+- [ ] **Step 5: コミット** `git commit -m "Introduce the TraceExecutionPlan dispatch for ExpecMode 2"`
 
 ---
 
-### Task 2: 写像抽出エンジン + 純粋性テスト（GC 系はローカル実行）
+### Task 2: 写像プローブアダプタ（mltply*Core 併設）+ 家系別監査 + 純粋性テスト
 
 **Files:**
-- Modify: `src/expec_trace.c`, `src/include/expec_trace.h`
-- Create: `test/unit/expec_trace_map_check.c`
-- Modify: `test/CMakeLists.txt`（green_partial_merge_check の登録様式を踏襲: `-DMPI`, min:2 は不要 — **シリアル/np=1 で十分**なので通常の add_test + ラベル unit）
+- Modify: `src/mltplyHubbardCore.c`, `src/mltplySpinCore.c`（プローブアダプタ併設）
+- Create: `src/include/expec_trace_probe.h`（src 内部宣言）
+- Modify: `src/expec_trace.c`（TraceMap 型と抽出ドライバ）
+- Modify: `docs/superpowers/specs/2026-07-11-expec-call-inventory.md`（§2c 家系別監査表）
+- Create: `test/unit/expec_trace_map_check.c` / Modify: `test/CMakeLists.txt`
 
 **Interfaces:**
-- Produces:
+- Produces（**`src/include/expec_trace_internal.h`** — Task 1 で確定済みの `expec_trace.h`（オーケストレーション API のみ、以後不変）とは別の src 内部ヘッダ。単体テストはこちらを include してカーネル内部を直接呼ぶ。HPhi はヘッダをインストールしないが、公開面の規律として区別する）:
   ```c
   typedef struct {
-    long int n;            /* 基底次元 */
-    long int *kprime;      /* [n] 0-based 行き先。基底外(消滅)は -1 */
-    double complex *amp;   /* [n] 振幅 s_k×結合定数（dam_pr プローブ値そのもの） */
-    int is_diagonal;       /* kprime[k]==k 恒等のとき 1 */
+    long int n;
+    long int *kprime;      /* [n] 0-based 行き先; 遷移消滅は -1 */
+    double complex *amp;   /* [n] 振幅（kprime>=0 のときのみ有意） */
+    int is_diagonal;
   } TraceMap;
-  /* ones プローブで要素関数を k=1..n に 1 回ずつ呼び、(k', amp) を記録する。
-     戻り値 0/-1。probe_v1/probe_v0 は呼び出し側が確保した n+1 要素の全1配列
-     （抽出中に書き換えられないことは純粋性テストの検査対象） */
-  int TraceMapExtractOneBody(struct BindStruct *X, int ipair, TraceMap *map,
-                             double complex *probe_v0, double complex *probe_v1);
-  int TraceMapExtractTwoBody(struct BindStruct *X, int ipair, TraceMap *map,
-                             double complex *probe_v0, double complex *probe_v1);
+  int TraceMapExtractOneBody(struct BindStruct *X, int ipair, TraceMap *map);
+  int TraceMapExtractTwoBody(struct BindStruct *X, int ipair, TraceMap *map);
   void TraceMapFree(TraceMap *map);
   ```
-- Consumes: 要素関数（下記）と Task 1 のスケルトン。
+  （probe ベクトルは抽出側の内部実装詳細 — アダプタが値そのものを返すため ones 配列は不要。`expec_trace_probe.h` のアダプタ宣言もこの内部ヘッダに統合してよい[実装時にファイル数を最小化する側を選ぶ]。）
+- Produces（`src/include/expec_trace_probe.h`、アダプタ群 — **既存要素関数の公開シグネチャは一切変更しない**）:
+  ```c
+  /* 各既存要素関数の定義ファイル内、当該関数の直後に併設。命名規約:
+     <元関数名>_TraceProbe。戻り値: 1=遷移あり(*kprime_out,*amp_out 有効) /
+     0=消滅。実装は元関数と同一のビット判定・GetOffComp 呼び出し列を共有する
+     （元関数の本体を「写像計算部」と「ベクトル適用部」に分ける static 関数
+     抽出リファクタで共有し、コピーは作らない — 元関数の数値挙動が変わらない
+     ことは既存回帰 18/18 が担保） */
+  int CisAjt_TraceProbe(long unsigned int j, struct BindStruct *X,
+      long unsigned int is1_spin, long unsigned int is2_spin,
+      long unsigned int sum_spin, long unsigned int diff_spin,
+      long int *kprime_out, double complex *amp_out);
+  /* 同様に: GC_CisAjt_TraceProbe, GC_CisAis_TraceProbe,
+     child_Spin_CisAis_TraceProbe, child_SpinGC_CisAis_TraceProbe,
+     child_SpinGC_CisAit_TraceProbe,
+     CisAisCisAis_element_TraceProbe, CisAisCjtAku_element_TraceProbe,
+     CisAjtCkuAku_element_TraceProbe, CisAjtCkuAlv_element_TraceProbe,
+     （GC_ 版 4 種）, GC_CisAisCisAis_spin_element_TraceProbe,
+     GC_CisAisCitAiu_spin_element_TraceProbe,
+     GC_CisAitCiuAiu_spin_element_TraceProbe,
+     GC_CisAitCiuAiv_spin_element_TraceProbe,
+     （Spin-half 正準二体の到達家系 — Step 0 の監査で確定した分） */
+  ```
 
-- [ ] **Step 1: 抽出原理をコメントで固定し、一体 Hubbard/GC から実装**
+- [ ] **Step 0: 家系別プローブ監査（成果物 = インベントリ §2c 表）**
 
-原理（スペック §3.1 の実装形。**プローブ = 全1ベクトル**）: `X->Large.mode==M_CORR` では全要素関数の `tmp_v0` 書き込みが無効（mltplyHubbardCore.c:387-389 等）で、戻り値は常に `dam_pr = conj(tmp_v1[off]) * tmp_V * sgn * tmp_v1[j]`。`tmp_v1[*]=1` を渡せば **`dam_pr = tmp_V×sgn`（=amp）** が得られ、off 引数（または対角なら k 自身）が k′。消滅（正準系で GetOffComp 失敗、または PauliBlock）は dam_pr==0 → `kprime[k]=-1`。
+対象 4 モデル×2 量について、汎用経路（expec_cisajs.c / expec_cisajscktaltdc.c の LOCAL 分岐）が**到達し得る要素関数ブランチを全数列挙**し、各行に: (i) 元関数名と定義位置 (ii) kprime の取得法（out-param / 対角恒等 / GetOffComp 内部）(iii) 振幅の構成（符号×tmp_V、共役の有無、Rearray 前処理で吸収済みの係数）(iv) M_CORR で tmp_v0 書き込みが無効であることのソース根拠（行番号）(v) プローブアダプタ名 (vi) **当該経路の到達ヘルパ（GetOffComp/SgnBit 等含む）が書き込む可能性のある X のフィールド・グローバル配列の全列挙**（純粋性テストの snapshot 対象リストはこの列から導出する — 場当たりで選ばない）、を記録する。**Spin 正準（half）の二体家系はフェーズ3a の探索で未踏なので、ここで expec_cisajscktalt_SpinHalf（expec_cisajscktaltdc.c:961 以降のディスパッチ先）を読み、到達家系を列挙して表に含める**。表にない家系が汎用経路に存在した場合はその（モデル×量）を対象から外す（表が根拠）。この表は Task 5 のケイパビリティ TRUE 化の前提条件リストになる。
 
-一体 Hubbard 正準（expec_cisajs.c:409-499 の LOCAL 分岐と同一の要素列）:
+- [ ] **Step 1: アダプタ実装（一体: Hubbard 正準/GC, Spin-half, SpinGC-half）**
+
+方式は関数抽出リファクタ: 例として `CisAjt`（mltplyHubbardCore.c:354-396）を
 ```c
-  /* pair: X->Def.CisAjt[ipair] = {isite1-1, sigma1, isite2-1, sigma2} */
-  general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
-  is1 = X->Large.is1_spin; is2 = X->Large.is2_spin;   /* GetInfo 直後に snapshot（Large は次の GetInfo で上書きされる） */
-  Asum = X->Large.A_spin;  Adiff = X->Large.isA_spin;
-  for (k = 1; k <= n; k++) {
-    if (diagonal) { map->kprime[k-1] = k-1; map->amp[k-1] = (list_1[k] & is1) ? 1.0 : 0.0; }
-    else {
-      dam = CisAjt(k, probe_v0, probe_v1, X, is1, is2, Asum, Adiff, 1.0, &off);
-      map->kprime[k-1] = (dam != 0.0) ? (long int)off - 1 : -1;   /* off は 1-based */
-      map->amp[k-1] = dam;
-    }
-  }
+static int CisAjt_map(long unsigned int j, struct BindStruct *X,
+    long unsigned int is1_spin, long unsigned int is2_spin,
+    long unsigned int sum_spin, long unsigned int diff_spin,
+    long unsigned int *off_out, double complex *sgn_out);  /* 既存本体の写像計算部 */
 ```
-（**注意**: 現行 `CisAjt`（mltplyHubbardCore.c:354-396）は off を out-param で返さない — 内部 `GetOffComp` の結果 `off` はローカル。**要素関数のシグネチャは変更しない**。代わりに正準一体は `child_CisAjt` 系（off を返す薄い関数）を直接使うか、`CisAjt` と同じ列（`list_1[k]` → ビット判定 → `GetOffComp(list_2_1,list_2_2,...,&off)`）を expec_trace.c 内の static ヘルパで**同一 API 呼び出しにより**再構成する。どちらを採るかは実装時に `src/mltplyHubbardCore.c` の child 層 API（`child_CisAjt` が存在するか、off を返すか）を確認して決め、**採った方式と根拠を実装コミットのメッセージに記録**する。GC は `GC_CisAjt(j,...,&tmp_off)` が off を out-param で返す（mltplyHubbardCore.c:403-441）のでそのまま使える。）
+に抽出し、既存 `CisAjt` は `CisAjt_map` を呼んでから従来どおり `tmp_v0`/`dam_pr` を処理、`CisAjt_TraceProbe` も `CisAjt_map` を呼ぶだけ、と 3 層にする（**同一コード経路の共有 = 代数の再実装なし**。対角系（CisAis 系）はプローブが `*kprime_out=j-1` を返し振幅=ビット判定結果）。`expec_trace.c` の `TraceMapExtractOneBody` は expec_cisajs.c の LOCAL 分岐と同一の前処理（`general_hopp_GetInfo` → snapshot）を行い、k=1..n でアダプタを呼んで詰める。
 
-一体 Spin-half（対角のみ: child_Spin_CisAis / child_SpinGC_CisAis, mltplySpinCore.c:210-239）と SpinGC-half（対角+横磁場: child_SpinGC_CisAit が off を返す, mltplySpinCore.c:247-271）も同じ形で。
+- [ ] **Step 2: アダプタ実装（二体: Hubbard 正準/GC 4 分岐, SpinGC-half 4 分岐, Spin-half 正準の到達家系）**
 
-- [ ] **Step 2: 二体の抽出**（expec_cisajscktaltdc.c:899-940 [Hubbard] / :1994-2024 [SpinGC-half] の LOCAL 分岐と同一の要素列）
+`Rearray_Interactions(ipair,...,2)` → `general_int_GetInfo` →（監査表の家系ごとに）`*_element_TraceProbe`。`*_element` 系も同じ関数抽出方式（写像計算部 `*_element_map` を共有）。プローブの結合定数規約を精密化: **tmp_V は 1.0 で初期化し、`Rearray_Interactions` が並べ替えに伴い変換した値（±1/共役因子。正規の GF ペアでは常に非ゼロ — `assert`）をそのまま共有 `*_map` ルーチンへ渡す**。共役・符号反転を伴う Rearray 分岐は単体テストで明示的に踏む。Rearray 非ゼロ返却ペアは `map->n=0` で返し、呼び出し側（Task 4）が Mode 1 と同一の 0.0 行フォールバック（**Rearray 非ゼロ = 「規約外ペア → 0.0 行を書く」が Mode 1 の実挙動であることを expec_cisajscktaltdc.c:1007 付近で確認し、エラー流用でないことを監査表に記録**）。
 
-`Rearray_Interactions(ipair, ..., X, 2)` → `general_int_GetInfo(...)` → 4 分岐（diag/diag, diag/off, off/diag, off/off）の `*_element` 関数を ones プローブで k ごとに呼ぶ。`*_element` は off を out-param（`&tmp_off`）で返すのでそのまま記録。diag/diag（CisAisCisAis 系, off-param なし）は `kprime[k]=k-1`。SpinGC-half の同一サイト縮約 4 分岐（GC_CisAisCisAis_spin_element 等, mltplySpinCore.c:471-620）も同様。Rearray が非ゼロを返すペア（規約外）は `map->n=0` で返し、呼び出し側（Task 5）が Mode 1 と同じ「0.0 行を書く」フォールバック処理をする。
+- [ ] **Step 3: 純粋性・写像正当性テスト（RED→GREEN）** — `test/unit/expec_trace_map_check.c`
 
-- [ ] **Step 3: 純粋性テストを書く（RED→GREEN）** — `test/unit/expec_trace_map_check.c`
+シリアル・MPI 不要・**GC モデルのみ**（HubbardGC L=4: n=256 / SpinGC-half L=4: n=16。green_partial_merge_check.c のスタブ流儀）。検査:
+1. **写像正当性**: ランダム複素ベクトル z で `Σ_{k:kprime≥0} conj(z[kprime])·amp·z[k]` が、同じ要素関数（元関数、M_CORR、vec=z 直接）の `Σ dam_pr` と 1e-13 一致。一体: 対角/非対角/ゼロ結果（常時消滅の組）各 1。二体: 4 分岐各 1 + 同一添字 + ゼロ結果。
+2. **純粋性（スペック §3.2b）**: 同一演算子で抽出 2 回 → kprime/amp が bit 一致。抽出前後で `X->Large` の**意味フィールド個別 snapshot**（mode, is1_spin..is4_spin, A_spin, B_spin, isA_spin, isB_spin, irght, ilft, ihfbit, i_max, tmp_V — memcmp 全域比較はパディングで無効なので使わない）が不変、`X->Phys` の energy/doublon 等も不変。
+3. **境界**: 演算子 0 個（NCisAjt=0）で抽出ドライバが何もしないこと。
 
-MPI 不要（シリアル）。**GC モデルのみ**（list_1 不要 — HubbardGC と SpinGC-half）。スタブは green_partial_merge_check.c の流儀（myrank=0, stdoutMPI=stdout を file-scope 定義）。手組みの小さい BindStruct: L=4 サイト HubbardGC（n=256）と L=4 SpinGC-half（n=16）、Tpow/Large.i_max 等の最小初期化（`X.Large.mode=M_CORR` 固定）。検査:
-1. **写像正当性**: ランダム複素ベクトル z について、`Σ_k conj(z[k′])·amp[k]·z[k]`（kprime≥0 のみ）が、同じ要素関数を M_CORR で z 直接評価した `Σ_k dam_pr(z)` と 1e-13 で一致（一体: 対角 1 個・非対角 1 個・ゼロ結果[常に消滅する組]1 個。二体: 4 分岐各 1 個）。
-2. **純粋性（スペック §3.2b）**: 同一演算子で抽出を 2 回実行し kprime/amp が bit 一致、かつ抽出前後で `X->Large` の snapshot（memcmp）と probe_v0/probe_v1 の内容が不変。
+Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check` → RED（未実装）→ 実装 → GREEN。build_noMPI にも登録・実行。
 
-Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check`
-Expected: 最初は FAIL（関数未実装）→ 実装後 PASS。build_noMPI でも同テストを登録・実行（MPI 非依存）。
-
-- [ ] **Step 4: 回帰 + コミット** `git commit -m "Add trace-map extraction engine with purity checks"`
+- [ ] **Step 4: 回帰（アダプタ抽出リファクタが既存経路を壊していないこと = 18/18）+ コミット**
 
 ---
 
-### Task 3: エネルギー系カーネル（対角量 + H 写像による energy/var）
+### Task 3: 一体GFカーネル + clavius 早期チェックポイント（正準）
 
 **Files:**
 - Modify: `src/expec_trace.c`
-- Test: `test/unit/expec_trace_map_check.c` にエネルギー系ケース追加
+- Test: `test/unit/expec_trace_map_check.c` にストリーミング+バッファケース追加
 
-**Interfaces:**
-- Produces: `expec_trace_owned_states()` が ENERGY_FLCT 担当時に `X->Phys.all_energy/all_doublon/all_num_up/all_num_down/all_sz`（インデックス n-1）を所有状態分埋める。
-- Consumes: Task 2 の TraceMap。
+- [ ] **Step 1: ストリーミングとバッファ**
 
-- [ ] **Step 1: 対角量の重み前計算**
+`expec_trace_owned_states` の ONEBODY 部: `gbuf[nops×ncols]`（確保前に plan 構築時と同じ除算比較で再検証。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。
 
-doublon/num_up/num_down/Sz は対角写像: `w_k` を k=1..n で 1 回計算（expec_energy_flct.c の各モデル実装 `expec_energy_flct_Hubbard`(:358-474, list_1 使用)/`_HubbardGC`(:238-351)/`_HalfSpinGC`(:481-546) と**同一のビット演算式**を per-k ヘルパに抽出して使う。Spin 正準は expec_energy_flct.c:140-155 のとおり定数[doublon=0, num=NsiteMPI, Sz=0.5*Total2SzMPI]なのでストリーミング不要）。状態ストリーミング: `q_n = Σ_k w_k·|z_n[k]|²`。
+- [ ] **Step 2: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の中身が expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf の直接実行と 1e-13 一致。メモリゲート境界: `HPHI_TRACE_GBUF_MAX_MB=1` で nops×ncols がゲートを跨ぐ 2 ケース — 降格した plan では kernel[q]==0 になること）→ RED→GREEN → 回帰 → コミット
 
-- [ ] **Step 2: energy/var は H 写像ストリーミング**
-
-`<H>` と `<H²>` は **mltply を per-state で呼ぶ代わりに**、ハミルトニアンの全項（Trans/InterAll/CoulombIntra/... — `expec_energy_flct` が呼ぶ `mltply(X,v0,v1)` の項構成）を… **実装最小化の決定**: 3b の ENERGY_FLCT カーネルは `<H>` を**対角化の固有値から採用**し（スペック §3.3 第一文）、`var = <H²>-<H>²` は**フォールバック時のみ**出力する（カーネル担当時は var 検査を実施しない旨を INFO で明示し、`X->Phys.var` は 0 埋めではなく**固有値² を代入**して従来出力の列を壊さない — つまり var 列は定義上 0 になる）。固有値の取得: `lapack_diag.c` の ELPA/ScaLAPACK 経路が `X->Phys.all_energy`… **ではなく** 固有値配列をどのグローバルに置くかを実装時に `src/lapack_diag.c` で確認し（Eigenvalue.dat を書いているコードが読んでいる配列）、`phys_stateparallel()` から `expec_trace_owned_states` へ引数で渡す形に整える（グローバル追加はしない。`double *eigenvalues` 引数を API に追加: `expec_trace_owned_states(X, panel, jb, je, NN, eigenvalues)`。Task 1 の API をこの形に更新するのはこのタスクの冒頭で行い、ヘッダ・呼び出し側・スケルトンを同時に直す）。
-**この決定の含意**（レビュー用に明記): Mode 2 の `<H>` は固有値そのもの（Mode 0/1 は `conj(v1)·H·v1` の再計算）— 両者は残差 ~1e-13 で一致し 1e-8 等価性を満たす。var 列は Mode 0/1 の「固有ベクトル品質検査」の意味を失う（0 になる）ため、docs（Task 8）と INFO で「Mode 2 は var 検査を行わない」ことを明示する。
-
-- [ ] **Step 3: ケイパビリティ表で Hubbard/HubbardGC/Spin/SpinGC の ENERGY_FLCT を暫定 TRUE 化**（Task 6 のゴールデン前だが、equiv テストが 3 モードで全量比較するため、TRUE 化はローカル回帰+単体テストの範囲で行い、最終確定は Task 6/9）
-
-- [ ] **Step 4: 単体テストケース追加**（GC 2 モデル: ランダムベクトルで w_k ストリーミング結果が expec_energy_flct_HubbardGC/_HalfSpinGC の per-state 実装と 1e-13 一致）→ RED→GREEN → 回帰 → コミット
+- [ ] **Step 3（clavius 早期チェックポイント — コントローラ実行）**: rsync → build_elpa 再構成・ビルド → **一時的に**単体テストレベルで正準 Hubbard の写像正当性を検証: `expec_trace_map_check` に正準ケースを追加するのではなく、equiv の Hubbard ケースを `ExpecMode 2` + ケイパビリティ強制 ON（開発用フック `HPHI_TRACE_FORCE=onebody` — 下記 Task 1 で定義済みのセマンティクス）で np=2 実行し、mode0 と比較（一体のみ強制有効の状態）。不一致ならここで修正してから Task 4 へ進む。
 
 ---
 
-### Task 4: 一体GFカーネル（バッファリング + 出力）
+### Task 4: 二体GFカーネル + clavius 早期チェックポイント（正準）
+
+Task 3 と同一構造: `nops = X->Def.NCisAjtCkuAlvDC`、別バッファ・別ゲート判定（片方だけ降格可）。Rearray 失敗ペアは Mode 1 と同一の 0.0 行（expec_cisajscktaltdc.c の該当 fprintf と同一書式、GreenOutputWriteIndexPrefix 込み）。単体テスト（GC 4 分岐+同一添字+ゼロ結果+ゲート境界）→ RED→GREEN → 回帰 → コミット → **clavius 早期チェックポイント**（`HPHI_TRACE_FORCE=1` で equiv の SpinGC honeycomb 多体ケース[green6 含む — NBodyG 系がフォールバックであることも同時に確認できる]と Hubbard ケースを np=2/3 実行、mode0 比較）。
+
+---
+
+### Task 5: ゴールデンテストとケイパビリティ確定
 
 **Files:**
-- Modify: `src/expec_trace.c`
-- Test: 単体テストに一体 GF ストリーミングケース追加
+- Modify: `test/fulldiag_expecmode_equiv.sh`, `src/expec_trace.c`（表の最終値のみ）
 
-**Interfaces:**
-- Produces: ONEBODY 担当時、演算子外側×状態内側で `g[ipair][n]` を評価し、**Mode 1 と同一の出力機構・同一のファイル内容**（状態別 `zvo_cisajs_eigen%d.dat` は per-state ローカル書き、集約は GreenOutput パーシャル）で書く。
-- Consumes: Task 2 の TraceMapExtractOneBody。
-
-- [ ] **Step 1: バッファ設計を実装**
-
-`double complex *gbuf` サイズ `NCisAjt × ncols`。**メモリゲート**: `NCisAjt*ncols*16 > TRACE_GBUF_MAX_BYTES`（`#define TRACE_GBUF_MAX_BYTES (1UL<<30)` /* 1 GiB per rank */）なら ONEBODY をこの実行に限りフォールバックへ降格し、rank 0 INFO で理由を表示（`TraceKernelReportPlan` 時点で判定できるよう、判定関数は X->Def.NCisAjt と ncols から静的に計算）。演算子ループ: pair ごとに TraceMapExtract → 全所有状態をストリーミング（`g = Σ conj(z[k′])·amp·z[k]`）→ gbuf[ipair][*] に格納 → TraceMapFree（同時保持は 1 演算子分の O(N)、スペック §3.1）。
-
-- [ ] **Step 2: 出力**
-
-全 pair 終了後、状態順に: `X->Phys.eigen_num = n-1` をセットし、expec_cisajs.c が使うのと**同一のファイル名規約・行フォーマット**（expec_cisajs.c の fprintf 書式を関数化するか、書式文字列を 1 箇所の #define に共通化 — 実装時に expec_cisajs.c の該当 fprintf を確認し、**書式の二重定義を避ける**方を選ぶ）で per-state ファイル/パーシャル集約に書く。ExpecLocal は**オーケストレーション層が Mode 2 でも Enter/SetPartialSuffix 済み**の区間で走るため fopenMPI はランクローカル（Task 1 の配線で `expec_trace_owned_states` 呼び出しを ExpecLocalEnter/Leave で囲む — Task 1 Step 2 のコードに含める）。
-
-- [ ] **Step 3: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の値が expec_cisajs_HubbardGC 直接実行と 1e-13 一致）→ RED→GREEN → 回帰 → コミット
+- [ ] **Step 1: equiv に正準 Hubbard 一体+二体のゴールデンケースを追加**（L=4、greentwo.def はスペック §6 の 4 種 — 非対角・密度-密度対角・同一添字・ゼロ結果 — を**サイト範囲 < Nsite 厳守**で含める。既存 4 ケースはそのまま）。**GetOffComp の分岐網羅**: 上向き/下向きホップ・順/逆順ペア・境界サイト対を greenone.def に含め、1 ケース内で正準写像の主要分岐を踏む。
+- [ ] **Step 2: 表の TRUE 化**（監査表 §2c の全到達家系にアダプタがあり、単体テスト+早期チェックポイントに合格した (モデル×量) のみ。**各 TRUE 行のコメントに、根拠となる §2c 監査行の範囲と検証テスト名（expec_trace_map_check のケース名 / equiv ケース名）を機械可読に記録**する — 後日ディスパッチ分岐が変わったとき TRUE 行の妥当性を追跡できるようにする。合格しなかった組は FALSE のまま理由をコメントで記録）。`HPHI_TRACE_FORCE` フックはこの時点で**削除**（開発専用のため出荷しない — Task 1 で導入時に「Task 5 で削除」とコメントしておく）。
+- [ ] **Step 3: equiv の INFO アサーションを最終 plan（kernel 行）に更新** → 回帰 → コミット
 
 ---
 
-### Task 5: 二体GFカーネル
+### Task 6: docs + 移行ノート
 
-**Files:**
-- Modify: `src/expec_trace.c`
-- Test: 単体テストに二体ケース追加
-
-一体（Task 4）と同一構造: `NCisAjtCkuAlvDC × ncols` バッファ + 同じメモリゲート（一体・二体は別々に判定 — 片方だけ降格可）。演算子ごとに `Rearray_Interactions(...,2)` → TraceMapExtractTwoBody → ストリーミング。Rearray 失敗ペアは Mode 1 と同一の 0.0 行を書く（expec_cisajscktaltdc.c の該当 fprintf と同一書式）。出力書式は expec_cisajscktaltdc.c の per-state 書式と同一。単体テスト（GC 4 分岐 + 同一添字 + ゼロ結果）→ RED→GREEN → 回帰 → コミット。
-
----
-
-### Task 6: ゴールデンテストとケイパビリティ最終確定
-
-**Files:**
-- Modify: `test/fulldiag_expecmode_equiv.sh`（Mode 2 の実カーネル検証を強化）
-- Modify: `src/expec_trace.c`（表の最終値）
-
-- [ ] **Step 1: equiv スクリプトに Mode 2 実カーネル検証を追加**
-
-既存 4 ケース（Hubbard+NBodyG / SpinGC Gamma / 正準 Spin / SpinGC honeycomb 多体）は既に mode0/mode1/mode2 を回して全出力比較している — 3b では mode2 が実カーネルになるため**追加変更は INFO アサーションのみ**（Task 1 Step 4 で対応済み）。ここでは新規ケースを 1 つ追加: **Hubbard L=4 正準で一体+二体 GF を持つケースの mode2 出力が mode0 と 1e-8 一致**（正準系のゴールデン — ローカルでは登録のみ、実行は Task 9）。スペック §6「非対角項・密度-密度対角項・同一添字・ゼロ結果演算子」は greentwo.def の内容として盛り込む（サイト範囲は **Nsite 未満**を厳守 — 3a で範囲外サイトが既存 SIGFPE を踏んだ教訓）。
-
-- [ ] **Step 2: ケイパビリティ表の最終確定**
-
-単体テスト（GC）+ equiv（正準含む、Task 9 で実行）に合格した組だけ TRUE を残す。合格しなかった組は FALSE に戻し、理由をコメントで表に記録。
-
-- [ ] **Step 3: 回帰 + コミット**
+- CalcMod ja/en: ExpecMode 2 の実態化（対象量 = 一体・二体 GF、対象モデル、フォールバック規則、メモリゲートと `HPHI_TRACE_GBUF_MAX_MB`、INFO の読み方。「2 は 1 として動作」の 3a 記述を置換。**エネルギー系・S² のトレース化は将来拡張**である旨）。INFO 文字列は実装から verbatim（字下げ注記は 3a の流儀）。
+- Create: `docs/superpowers/specs/2026-07-12-phase3b-migration-note.md`（PR 転記用: ExpecMode 2 実装、利用指針は**ベンチ結果を見てから確定**[スペック §2 は「3b 以降は通常 2 を推奨」だが、Task 8 の実測が Mode 1 未満なら推奨文言を実測に合わせる]、var 列は Mode 2 でも従来どおり計算される[エネルギー系フォールバック]こと）。
+- `test/manual/elpa_gpu_check.md` に Mode 2 検証項目+ベンチ項目追加。
+- 両言語 rst レンダー確認 → コミット。
 
 ---
 
-### Task 7: docs + 移行ノート
+### Task 7: ローカル最終回帰
 
-**Files:**
-- Modify: `doc/en/.../CalcMod_file_en.rst`, `doc/ja/.../CalcMod_file_ja.rst`（ExpecMode 2 の実態化: 対象量・対象モデル・フォールバック規則・「var 検査は行わない」・INFO の読み方。3a で入れた「2 は 1 として動作」の記述を置換）
-- Create: `docs/superpowers/specs/2026-07-12-phase3b-migration-note.md`（PR 転記用: ExpecMode 2 実装、利用指針「フェーズ3b 以降は通常 2 を推奨」[スペック §2]、var 列の意味変更）
-- Modify: `test/manual/elpa_gpu_check.md`（Mode 2 検証項目 + ベンチ項目追加）
-
-検証: INFO 文字列は実装から verbatim 引用（字下げ注記の流儀は 3a と同じ）。sphinx/rst2html 両言語レンダー確認。コミット。
+- build_noMPI 18/18 / build_mpi unit（expec_trace_map_check 含む）green / ガード PASS（expec_trace.c 対象、違反ゼロ）/ `sh -n` 各スクリプト。必要なら修正コミット。
 
 ---
 
-### Task 8: ローカル最終回帰 + ガード確認
+### Task 8: clavius 実機検証 + ベンチマークゲート（コントローラ直接実行）
 
-- build_noMPI 18/18 / build_mpi の unit（expec_trace_map_check 含む）green / `check_expec_local_calls` PASS（expec_trace.c スキャン対象で違反ゼロ）/ `sh -n` 各スクリプト。コミット（残作業があれば）。
-
----
-
-### Task 9: clavius 実機検証 + ベンチマークゲート（コントローラ直接実行）
-
-- [ ] rsync（リポジトリルートから）→ build_elpa 再構成・ビルド（+ expec_trace_map_check / equiv 用バイナリ）
-- [ ] `expec_trace_map_check`（np=1）/ equiv np=2,3（全ケース: mode0 vs 1 vs 2）/ 既存 ELPA テスト全部（statepanel sweep, zero_owner, merge check, hubbard_chain, solver_keyword）
-- [ ] **ベンチマークゲート**（スペック §6）: N=4900 全状態の一体+二体 GF 実時間を Mode 0/1/2 で比較（np=4）。目標: Mode 2 ≥ Mode 1（実測値と内訳を記録することが完了条件 — 「≥」未達なら損益分岐の分析を記録し、docs の利用指針を実測に合わせて修正）
-- [ ] 可能なら L=10 Hubbard（N≈63504, 対角化 GPU）で Mode 0/1/2 の実時間 1 点（スペック §6 の外挿根拠。GPU 使用前に **nvidia-smi で空き確認**、他ユーザーのジョブと競合しないこと）
+- [ ] rsync → 再構成・ビルド → `expec_trace_map_check`（np=1）/ equiv np=2,3（全ケース mode0/1/2）/ 既存 ELPA テスト全部
+- [ ] **ベンチマークゲート**（スペック §6）: N=4900 全状態の一体+二体 GF 実時間を Mode 0/1/2 で比較（np=4）。目標 Mode 2 ≥ Mode 1 — **実測値と内訳（写像抽出時間 vs ストリーミング時間 vs 出力時間）の記録が完了条件**。未達なら損益分岐の分析を記録し Task 6 の利用指針を修正
+- [ ] 可能なら L=10 Hubbard（N≈63504、対角化 GPU — **nvidia-smi で空き確認、他ユーザーと競合しない**）で Mode 0/1/2 実時間 1 点
 - [ ] 結果を `test/manual/elpa_gpu_check.md` に「Phase 3b validation」節として追記・コミット
 
 ## 完了条件（フェーズ3b）
 
 - 既定（ExpecMode 0/1）全既存テスト無変更 PASS、ガード PASS（expec_trace.c 含む）
-- GC 単体テスト（写像正当性・純粋性・一体・二体・エネルギー系）PASS（ローカル+clavius）
-- equiv np=2/3 で mode0/1/2 全出力一致（1e-8）— 正準 Hubbard の一体+二体ゴールデン含む
-- ベンチ記録（Mode 2 vs 1 vs 0、損益分岐コメント付き）
-- ケイパビリティ表の最終値がテスト結果と一致（合格モデルのみ TRUE）
-- docs/移行ノートが実装（INFO 文字列・var 列の扱い・フォールバック規則）と一致
+- 家系別監査表（§2c）が存在し、TRUE 化された全 (モデル×量) の到達家系を網羅
+- GC 単体テスト（写像正当性・純粋性・一体・二体・ゲート境界・境界条件）PASS（ローカル+clavius）
+- equiv np=2/3 で mode0/1/2 全出力一致（1e-8、var 列含む）— 正準 Hubbard の一体+二体ゴールデン含む
+- ベンチ記録（Mode 2 vs 1 vs 0、内訳と損益分岐コメント付き）と docs 利用指針の整合
+- ケイパビリティ表の最終値がテスト結果と一致、`HPHI_TRACE_FORCE` フックが削除済み
+- docs/移行ノートが実装（INFO 文字列・メモリゲート・フォールバック規則・var 列が従来どおりであること）と一致
