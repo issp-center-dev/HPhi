@@ -367,6 +367,7 @@ int ReadcalcmodFile(
   X->iSolver = -1;      /* unresolved; fixed up by ResolveSolver() below */
   X->iFlgSolverSpec = 0;
   X->iFlgNGPUSpec = 0;
+  X->iExpecMode = EXPECMODE_SERIAL;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -428,6 +429,9 @@ int ReadcalcmodFile(
     else if(CheckWords(ctmp, "Solver")==0){
         X->iSolver=itmp;
         X->iFlgSolverSpec=1;
+    }
+    else if(CheckWords(ctmp, "ExpecMode")==0){
+        X->iExpecMode=itmp;
     }
     else if(CheckWords(ctmp, "ScaLAPACK")==0){
       fprintf(stdoutMPI, cWarnScaLAPACKDep, defname);
@@ -545,6 +549,30 @@ int ReadcalcmodFile(
       && (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
     fprintf(stdoutMPI, cErrElpaHamIO, defname);
     return (-1);
+  }
+
+  /* ExpecMode selects the observable-evaluation kernel for FullDiag
+     (distributed-eigenvector solvers only). readdef checks range and
+     CalcType/Solver eligibility, and demotes nproc==1 runs to serial here
+     (single-process results are identical either way). The 3a "trace
+     kernels not available -> demote 2 to 1" downgrade is NOT done here: it
+     happens at the phys dispatch level (Task 6) so that 3b's introduction of
+     real trace kernels does not require touching readdef again. */
+  if (ValidateValue(X->iExpecMode, 0, NUM_EXPECMODE - 1)) {
+    fprintf(stdoutMPI, cErrExpecMode, defname);
+    return (-1);
+  }
+  if (X->iExpecMode != EXPECMODE_SERIAL) {
+    if (X->iCalcType != FullDiag ||
+        (X->iSolver != SOLVER_SCALAPACK && X->iSolver != SOLVER_ELPA)) {
+      fprintf(stdoutMPI, cErrExpecMode, defname);
+      return (-1);
+    }
+    if (nproc == 1) {
+      fprintf(stdoutMPI,
+        "  INFO: ExpecMode reverts to 0 for a single process (results are identical).\n");
+      X->iExpecMode = EXPECMODE_SERIAL;
+    }
   }
 
   return 0;

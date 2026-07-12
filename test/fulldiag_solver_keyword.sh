@@ -141,4 +141,49 @@ echo "ScaLAPACK  0" >> calcmod.def
 ${MPIRUNFC} ../../src/HPhi -e namelist.def > dep.log 2>&1
 grep -q "deprecated" dep.log
 
+# (6) ExpecMode 1 は非分散ソルバー（Solver 0）ではエラー終了すること
+cd ..
+mkdir -p fulldiag_solver_keyword_expecmode_invalid/
+cd fulldiag_solver_keyword_expecmode_invalid
+cp ../fulldiag_solver_keyword/stan.in .
+../../src/HPhi -sdry stan.in
+printf "Solver  0\nExpecMode  1\n" >> calcmod.def
+if ${MPIRUNFC} ../../src/HPhi -e namelist.def > expecmode_invalid.log 2>&1; then
+  echo "ERROR: ExpecMode 1 with Solver 0 should have failed"
+  exit 1
+fi
+grep -q "requires CalcType = FullDiag" expecmode_invalid.log || {
+  echo "ERROR: ExpecMode failure log should mention the CalcType/Solver eligibility requirement"
+  exit 1
+}
+
+# (7) capability-aware: ELPA ビルド（HPHI_HAS_ELPA=1）でのみ、Solver 3 +
+#     ExpecMode 1 をシリアル実行（MPIRUNFC 空 = nproc 1）すると、readdef.c の
+#     nproc==1 降格規則により INFO を出して ExpecMode 0 として正常終了し、
+#     結果が ExpecMode 0（ケース(1)の参照値）と一致することを確認する。
+#     非 ELPA ビルドではこのブロックはスキップされる（Solver 3 がケース(3)の
+#     とおりビルドエラーになるため）。
+if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
+  cd ..
+  mkdir -p fulldiag_solver_keyword_expecmode/
+  cd fulldiag_solver_keyword_expecmode
+  cp ../fulldiag_solver_keyword/stan.in .
+  ../../src/HPhi -sdry stan.in
+  printf "Solver  3\nNGPU  0\nExpecMode  1\n" >> calcmod.def
+  if ! ${MPIRUNFC} ../../src/HPhi -e namelist.def > expecmode.log 2>&1; then
+    echo "ERROR: Solver 3 + ExpecMode 1 should succeed serially (downgrades to ExpecMode 0)"
+    cat expecmode.log
+    exit 1
+  fi
+  grep -q "INFO" expecmode.log || {
+    echo "ERROR: expected an INFO message about the ExpecMode single-process downgrade"
+    cat expecmode.log
+    exit 1
+  }
+  awk 'NR>1 && NR<=4 {printf "%11.6f\n", $1}' output/zvo_phys_Nup2_Ndown2.dat > energy.dat
+  paste energy.dat ../fulldiag_solver_keyword/reference_energy.dat > paste_e.dat
+  diff=`awk 'BEGIN{max=0}{d=$1-$2; if(d<0)d=-d; if(d>max)max=d}END{print max}' paste_e.dat`
+  test "`echo "$diff < 0.000001" | bc`" = "1"
+fi
+
 echo "fulldiag_solver_keyword: OK"

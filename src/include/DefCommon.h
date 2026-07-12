@@ -33,6 +33,12 @@
 #define SOLVER_MAGMA 2
 #define SOLVER_ELPA 3
 
+/*!< FullDiag observable evaluation mode (CalcMod keyword "ExpecMode") */
+#define NUM_EXPECMODE 3
+#define EXPECMODE_SERIAL 0
+#define EXPECMODE_STATEPARALLEL 1
+#define EXPECMODE_TRACE 2
+
 /*!< CalcModel */
 #define NUM_CALCMODEL     12 /*!< Number of model values accepted from CalcModel. Number-conserved variants are internal and selected from conserved quantities. */
 #define Hubbard           0  /*!< CalcModel is Hubbard model.*/
