@@ -367,15 +367,17 @@ set_tests_properties(unittest_setmemory_zero_size_common
 # BOTH the MPI and non-MPI builds (registered here, outside if(MPI_FOUND)).
 # Links only the real sources in the extraction closure -- expec_trace.c (the
 # drivers), the two Core files (the co-located *_TraceProbe adapters + element
-# functions), bitcalc.c (GetSplitBitByModel/GetOffComp/SgnBit), global.c (the
-# list_1/Tpow globals + stdoutMPI), and ErrorMessage.c (the cErr* strings
-# bitcalc references). Rearray_Interactions and `myrank` are provided in the
-# test TU itself (see the file header), so the MPI-heavy element libraries and
+# functions), rearray_interactions.c (the REAL two-body reordering, its own TU
+# precisely so this test does not need a drift-prone copy), bitcalc.c
+# (GetSplitBitByModel/GetOffComp/SgnBit), global.c (which provides the
+# list_1/Tpow globals plus `myrank` and stdoutMPI), and ErrorMessage.c (the
+# cErr* strings bitcalc references). The MPI-heavy element libraries and
 # wrapperMPI.c are NOT pulled in.
 add_executable(expec_trace_map_check unit/expec_trace_map_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
     ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/global.c
     ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)

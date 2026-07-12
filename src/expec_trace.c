@@ -46,23 +46,16 @@
 #include "mltplySpinCore.h"
 #include "bitcalc.h"
 #include "global.h"
+#include "rearray_interactions.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
 
-/* Rearray_Interactions() is a non-static helper in src/expec_cisajscktaltdc.c
-   (no public header). The two-body extraction driver reuses the SAME +-1
-   tmp_V-folding pass the Mode-1 Spin/SpinGC-half two-body path uses, so declare
-   it here rather than reimplementing the reordering. It performs no MPI. */
-extern int Rearray_Interactions(
-    int i,
-    long unsigned int *org_isite1, long unsigned int *org_isite2,
-    long unsigned int *org_isite3, long unsigned int *org_isite4,
-    long unsigned int *org_sigma1, long unsigned int *org_sigma2,
-    long unsigned int *org_sigma3, long unsigned int *org_sigma4,
-    double complex *tmp_V, struct BindStruct *X, int type);
+/* Rearray_Interactions() (src/rearray_interactions.c): the two-body extraction
+   driver reuses the SAME +-1 tmp_V-folding reordering pass the Mode-1
+   Spin/SpinGC-half two-body path uses. It performs no MPI. */
 
 /* Static capability table: (calc_model, flg_general_spin) -> per-quantity
    trace-kernel readiness. Rows are flipped to 1 ONLY by plan Task 5, after

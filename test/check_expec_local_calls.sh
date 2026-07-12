@@ -38,7 +38,13 @@ fi
 # site-decomposition machinery used by Lanczos/TPQ as well, not something
 # this expec-focused guard polices; their reachability was audited instead
 # in the inventory document itself.
-FILES="src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c src/phys_distributed_local.c src/expec_trace.c"
+FILES="src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c src/phys_distributed_local.c src/expec_trace.c src/rearray_interactions.c"
+# src/rearray_interactions.c (phase 3b Task 2 follow-up): Rearray_Interactions
+# was moved verbatim out of the scanned src/expec_cisajscktaltdc.c into its own
+# MPI-free TU (so the trace-map unit test links the real function). It stays in
+# FILES because it is expec-layer dispatch code carved out of a scanned file --
+# NOT the shared mltply*Core.c element machinery the comment above excludes --
+# and dropping it would silently shrink the guard's coverage.
 # The MPI-free local-loop layer (Task 6) is scanned here; the orchestration
 # layer src/phys_distributed.c holds the legitimate raw MPI collectives and is
 # permanently NOT scanned.

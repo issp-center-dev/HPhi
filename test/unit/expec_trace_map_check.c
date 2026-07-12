@@ -55,57 +55,11 @@
 #include "bitcalc.h"
 #include "global.h"
 #include "expec_trace_internal.h"
+#include "rearray_interactions.h"
 
-/* (`myrank` and stdoutMPI are provided by the linked src/global.c.) */
-
-/* --------------------------------------------------------------------------
- * Link-local verbatim copy of Rearray_Interactions (src/expec_cisajscktaltdc.c).
- * The production two-body driver calls the REAL one; linking that whole
- * translation unit would drag in the entire MPI two-body element library. This
- * copy is byte-for-byte the type==2 (two-body) reordering logic and MUST be
- * kept in sync with the source; the Task-5 clavius golden test exercises the
- * real function end-to-end.
- * -------------------------------------------------------------------------- */
-int Rearray_Interactions(
-    int i,
-    long unsigned int *org_isite1, long unsigned int *org_isite2,
-    long unsigned int *org_isite3, long unsigned int *org_isite4,
-    long unsigned int *org_sigma1, long unsigned int *org_sigma2,
-    long unsigned int *org_sigma3, long unsigned int *org_sigma4,
-    double complex *tmp_V, struct BindStruct *X, int type) {
-  long unsigned int t1, t2, t3, t4, u1, u2, u3, u4;
-  (void)type; /* the test only uses type==2 (CisAjtCkuAlvDC) */
-  t1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][0] + 1;
-  u1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][1];
-  t2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][2] + 1;
-  u2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][3];
-  t3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][4] + 1;
-  u3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][5];
-  t4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][6] + 1;
-  u4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[i][7];
-  if (t1 == t2 && t3 == t4) {
-    if (t1 > t3) {
-      *org_isite1 = t3; *org_sigma1 = u3; *org_isite2 = t4; *org_sigma2 = u4;
-      *org_isite3 = t1; *org_sigma3 = u1; *org_isite4 = t2; *org_sigma4 = u2;
-    } else {
-      *org_isite1 = t1; *org_sigma1 = u1; *org_isite2 = t2; *org_sigma2 = u2;
-      *org_isite3 = t3; *org_sigma3 = u3; *org_isite4 = t4; *org_sigma4 = u4;
-    }
-    *tmp_V = 1.0;
-  } else if (t1 == t4 && t3 == t2) {
-    if (t1 > t3) {
-      *org_isite1 = t3; *org_sigma1 = u3; *org_isite2 = t2; *org_sigma2 = u2;
-      *org_isite3 = t1; *org_sigma3 = u1; *org_isite4 = t4; *org_sigma4 = u4;
-    } else {
-      *org_isite1 = t1; *org_sigma1 = u1; *org_isite2 = t4; *org_sigma2 = u4;
-      *org_isite3 = t3; *org_sigma3 = u3; *org_isite4 = t2; *org_sigma4 = u2;
-    }
-    *tmp_V = -1.0;
-  } else {
-    return -1;
-  }
-  return 0;
-}
+/* `myrank` and stdoutMPI are provided by the linked src/global.c;
+   Rearray_Interactions is the REAL definition from the linked
+   src/rearray_interactions.c (same TU the production driver uses). */
 
 /* --------------------------------------------------------------------------
  * Test harness
