@@ -30,12 +30,17 @@
  * TraceGbufMaxBytesFromEnv() on rank 0 only and passes the Bcast result in
  * here as a plain size_t.
  *
- * Task 1 shipped the dispatch skeleton: kTraceCap below is still all FALSE
- * (only Task 5's golden cross-checks are permitted to flip a row to TRUE),
- * so in production TraceBuildPlan() still returns an all-fallback plan and
- * expec_trace_owned_states() is still a no-op -- kernel[q] only ever becomes
- * 1 today via the development-only HPHI_TRACE_FORCE hook (early-checkpoint
- * testing, see TraceParseForceEnv()).
+ * Task 1 shipped the dispatch skeleton with kTraceCap all FALSE and a
+ * development-only HPHI_TRACE_FORCE hook so Tasks 3/4's clavius early
+ * checkpoints could exercise the ONEBODY/TWOBODY kernels ahead of the
+ * capability table being trustworthy. Task 5's golden cross-checks (unit
+ * tests in test/unit/expec_trace_map_check.c plus the equiv np=2/3
+ * checkpoints in test/fulldiag_expecmode_equiv.sh) have now passed for
+ * Hubbard, HubbardGC, Spin (half), and SpinGC (half) -- see kTraceCap's
+ * per-row evidence comments below -- so those four rows are TRUE and the
+ * HPHI_TRACE_FORCE hook has been REMOVED (it was documented from its
+ * introduction as development-only, not shipped): the capability table is
+ * now the only enablement path for ExpecMode 2.
  *
  * Task 3 adds the ONEBODY kernel body: TraceStreamOneBody() (declared in
  * expec_trace_internal.h, so it's directly unit-testable) streams every
@@ -107,14 +112,80 @@
    trace-kernel readiness. Rows are flipped to 1 ONLY by plan Task 5, after
    the golden cross-checks for EVERY reachable operator-family branch of that
    (model, quantity) pass. See the branch-coverage table in
-   docs/superpowers/specs/2026-07-11-expec-call-inventory.md §2c. */
+   docs/superpowers/specs/2026-07-11-expec-call-inventory.md §2c.
+
+   Phase 3b Task 5 evidence (why each row below is TRUE, machine-readable so
+   a future dispatch-branch change can be checked against what was actually
+   verified):
+
+   - Hubbard   {1,1}: §2c.1 rows "CisAjt @ mltplyHubbardCore.c" + "canonical
+     diagonal (inline ..., expec_cisajs.c:482-487)" (one-body); §2c.2 "Hubbard
+     / HubbardGC do not call Rearray_Interactions" table, all 4 branches
+     (CisAisCisAis_element / CisAisCjtAku_element / CisAjtCkuAku_element /
+     CisAjtCkuAlv_element) + the Sz-violating 0.0-shortcut row (§2c.2
+     "Rearray-nonzero semantics" paragraph, mirrored for canonical Hubbard by
+     the `iFlgSzConserved` shortcut at expec_cisajscktaltdc.c:728-734) (two-
+     body). Canonical basis (GetOffComp/list_1) is not locally unit-testable
+     (§2c.3), so verification is the clavius forced-kernel checkpoint
+     np=2/3 2026-07-12 (Task 3 onebody-only, Task 4 onebody+twobody) PLUS
+     the Task 5 golden case fulldiag_expecmode_equiv.sh's case1_hubbard_nbodyg
+     (ExpecMode-2 sanity sub-case) and case5_hubbard_onebody_twobody_golden
+     (dedicated branch-coverage golden: up/down hops, forward/reversed pairs,
+     the boundary site pair, diagonal density both spins, and all 4 two-body
+     element families + the Sz-violating zero-result row, all sites < Nsite).
+   - HubbardGC {1,1}: §2c.1 rows "GC_CisAis"/"GC_CisAjt" (one-body); §2c.2 GC
+     branches of the same 4-way table (two-body). GC bare-bit basis is
+     locally unit-testable: test/unit/expec_trace_map_check.c's
+     test_hubbardgc() -- "HubbardGC 1B diagonal", "HubbardGC 1B off-diagonal",
+     "HubbardGC 1B cross-spin", "HubbardGC 1B purity", "HubbardGC 1B stream",
+     "HubbardGC 2B CisAisCisAis", "HubbardGC 2B CisAisCjtAku",
+     "HubbardGC 2B CisAjtCkuAku", "HubbardGC 2B CisAjtCkuAlv",
+     "HubbardGC 2B same-index", "HubbardGC 2B off-diag zero-check",
+     "HubbardGC 2B purity", "HubbardGC 2B stream", all PASS; plus
+     fulldiag_expecmode_equiv.sh's case1_hubbard_nbodyg ExpecMode-2 sub-case
+     (NBodyG exercises the always-fallback path in the same run) and the
+     clavius forced-kernel checkpoint np=2/3 2026-07-12.
+   - Spin      {1,1}: half only (iFlgGeneralSpin==1 is deliberately not
+     matched by this row -- general spin stays out of scope, §2c.3
+     "Exclusions"). §2c.1 row "child_Spin_CisAis" (one-body); §2c.2
+     "Spin-half CANONICAL two-body" table, all 3 reachable families
+     (density-density diagonal / same-index reduction / exchange) plus the
+     Rearray-irregular 0.0 row (§2c.2 "Rearray-nonzero semantics"). Canonical
+     basis is not locally unit-testable (§2c.3), so verification is the
+     clavius forced-kernel checkpoint np=2/3 2026-07-12 (case3_spin_chain,
+     canonical Spin L=8) plus fulldiag_expecmode_equiv.sh's
+     case3_spin_chain ExpecMode-2 sub-case (Task 5).
+   - SpinGC    {1,1}: half only, same general-spin exclusion as Spin. §2c.1
+     rows "child_SpinGC_CisAis"/"child_SpinGC_CisAit" (one-body); §2c.2
+     "SpinGC-half two-body" table, all 4 families (GC_CisAisCisAis_spin /
+     GC_CisAisCitAiu / GC_CisAitCiuAiu / GC_CisAitCiuAiv). GC bare-bit basis
+     is locally unit-testable: test/unit/expec_trace_map_check.c's
+     test_spingchalf() -- "SpinGC 1B diagonal", "SpinGC 1B transverse",
+     "SpinGC 1B zero-result", "SpinGC 1B purity", "SpinGC 1B stream",
+     "SpinGC 2B CisAisCisAis_spin", "SpinGC 2B CisAisCitAiu",
+     "SpinGC 2B CisAitCiuAiu", "SpinGC 2B CisAitCiuAiv",
+     "SpinGC 2B same-index", "SpinGC 2B purity",
+     "SpinGC 2B Rearray-irregular rc==0/n==0 sentinel/irregular streamed==0",
+     "SpinGC 2B stream", all PASS; plus fulldiag_expecmode_equiv.sh's
+     case2_spingc_gamma, case4_spingc_honeycomb_manybody (ThreeBodyG/
+     FourBodyG/SixBodyG stay on the always-fallback path in the same run)
+     ExpecMode-2 sub-cases, and the clavius forced-kernel checkpoint
+     np=2/3 2026-07-12.
+
+   NOT flipped (stay at the {0,0} fallback default, so no row is listed
+   below): tJ/tJGC/Kondo/KondoGC -- known is_gc grouping mismatch in
+   TraceMapExtractTwoBody/expec_trace_twobody_output's `is_gc` test (tJGC/
+   KondoGC are grouped with HubbardGC's is_gc dispatch, which the §2c audit
+   never verified for the tJ/Kondo-specific localized/itinerant exclusions);
+   general spin (iFlgGeneralSpin==1) and Spinless remain out of scope per the
+   plan's Global Constraints. */
 typedef struct { int calc_model; int flg_general_spin; int q[TRACE_Q_NQUANT]; } TraceCap;
 static const TraceCap kTraceCap[] = {
-  { Hubbard,   0, {0, 0} },
-  { HubbardGC, 0, {0, 0} },
-  { Spin,      0, {0, 0} },   /* half only; iFlgGeneralSpin==1 is deliberately
+  { Hubbard,   0, {1, 1} },
+  { HubbardGC, 0, {1, 1} },
+  { Spin,      0, {1, 1} },   /* half only; iFlgGeneralSpin==1 is deliberately
                                  not matched by this row */
-  { SpinGC,    0, {0, 0} },
+  { SpinGC,    0, {1, 1} },
 };
 #define N_TRACE_CAP ((int)(sizeof(kTraceCap) / sizeof(kTraceCap[0])))
 
@@ -166,54 +237,10 @@ size_t TraceGbufMaxBytesFromEnv(void) {
   return ((size_t)val) << 20;
 }
 
-/**
- * @brief development-only hook: plan Task 5 REMOVES this
- *
- * Parses HPHI_TRACE_FORCE as a comma-separated list of quantity names
- * (onebody, twobody). Only the quantities named are forced to
- * kernel[q]=1-eligible regardless of kTraceCap (the memory gate in
- * TraceBuildPlan() still applies on top); every quantity NOT named is never
- * forced, so an unimplemented kernel can never be silently selected for a
- * quantity the caller didn't explicitly ask for. Unrecognized tokens print
- * one stderr warning each and are otherwise ignored.
- */
-static void TraceParseForceEnv(int force_q[TRACE_Q_NQUANT]) {
-  const char *e;
-  char buf[256];
-  char *tok;
-  size_t len;
-
-  force_q[TRACE_Q_ONEBODY] = 0;
-  force_q[TRACE_Q_TWOBODY] = 0;
-
-  e = getenv("HPHI_TRACE_FORCE");
-  if (e == NULL || e[0] == '\0') return;
-
-  len = strlen(e);
-  if (len >= sizeof(buf)) len = sizeof(buf) - 1;
-  memcpy(buf, e, len);
-  buf[len] = '\0';
-
-  tok = strtok(buf, ",");
-  while (tok != NULL) {
-    if (strcmp(tok, "onebody") == 0) {
-      force_q[TRACE_Q_ONEBODY] = 1;
-    } else if (strcmp(tok, "twobody") == 0) {
-      force_q[TRACE_Q_TWOBODY] = 1;
-    } else {
-      fprintf(stderr,
-              "  Warning: HPHI_TRACE_FORCE token '%s' is not a recognized "
-              "quantity name (onebody, twobody); ignored.\n", tok);
-    }
-    tok = strtok(NULL, ",");
-  }
-}
-
 void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                     size_t gbuf_max_bytes, TraceExecutionPlan *plan) {
   int q, i;
   int cap_q[TRACE_Q_NQUANT] = {0, 0};
-  int force_q[TRACE_Q_NQUANT];
 
   memset(plan, 0, sizeof(*plan));
   plan->nc_uniform = nc_uniform;
@@ -232,15 +259,12 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
     }
   }
 
-  TraceParseForceEnv(force_q); /* development-only hook: plan Task 5 REMOVES this */
-
   for (q = 0; q < TRACE_Q_NQUANT; q++) {
     long int nops;
 
-    if (!(cap_q[q] || force_q[q])) {
-      /* unsupported model (and not dev-forced): stays kernel=0,
-         demoted_memory=0 -- TraceReportPlan() reports this as
-         "unsupported model". */
+    if (!cap_q[q]) {
+      /* unsupported model: stays kernel=0, demoted_memory=0 --
+         TraceReportPlan() reports this as "unsupported model". */
       continue;
     }
 
@@ -348,10 +372,14 @@ static int expec_trace_onebody_output(struct BindStruct *X, long int jb, long in
 /**
  * @brief Task 4 output phase: write gbuf's TWOBODY results state-major,
  * exactly mirroring src/expec_cisajscktaltdc.c's FullDiag branching and row
- * formats for the models this quantity's capability table (or the
- * HPHI_TRACE_FORCE dev hook) can select: HubbardGC, and the canonical
- * Hubbard-family group (Hubbard/tJ/tJGC/Kondo/KondoGC, all of which Mode 1
- * routes to expec_cisajscktalt_Hubbard()), and Spin/SpinGC (half only).
+ * formats for the models this quantity's capability table (kTraceCap) can
+ * select: HubbardGC, and the canonical Hubbard-family group (Hubbard/tJ/
+ * tJGC/Kondo/KondoGC, all of which Mode 1 routes to
+ * expec_cisajscktalt_Hubbard()), and Spin/SpinGC (half only). Only Hubbard/
+ * HubbardGC/Spin/SpinGC are TRUE as of Task 5 (tJ/tJGC/Kondo/KondoGC stay on
+ * the fallback path -- see kTraceCap's "NOT flipped" note), so this format-
+ * selection logic is written for the full Hubbard family even though only
+ * a subset of it is currently reachable via the trace kernel.
  *
  * Row-format selection replicates Mode 1's per-model dispatch WITHOUT
  * needing any state carried over from the streaming phase, because it only

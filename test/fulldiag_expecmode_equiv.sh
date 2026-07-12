@@ -51,6 +51,21 @@ set -e
 #     these -- src/expec_cisajscktaltdc.c:183-185 -- so Case 4 uses
 #     SpinGC, matching that constraint).
 # ---------------------------------------------------------------------
+#
+# Phase 3b Task 5 (golden-test hardening + capability-table finalization):
+# kTraceCap (src/expec_trace.c) now has Hubbard/HubbardGC/Spin(half)/
+# SpinGC(half) TRUE for one-body AND two-body GFs, so Cases 1-4's
+# ExpecMode-2 sub-cases now assert the literal "use the trace kernel" INFO
+# line for both quantities (assert_kernel_plan(), below) instead of a
+# generic fallback-or-kernel match. Case 5 is new: a dedicated canonical
+# (non-GC) Hubbard one-body+two-body golden case whose greenone.def/
+# greentwo.def deliberately walk every reachable operator-family branch the
+# §2c call-inventory audit lists for that (model, quantity) pair -- this is
+# the only branch-coverage evidence for the canonical Hubbard basis, which
+# is not locally unit-testable (test/unit/expec_trace_map_check.c is
+# GC-only). The tJ/tJGC/Kondo/KondoGC rows stay FALSE (known is_gc grouping
+# mismatch, recorded in kTraceCap's comment) and are not exercised here.
+# ---------------------------------------------------------------------
 
 testname="fulldiag_expecmode_equiv"
 # Resolve the HPhi binary path ONCE, as an absolute path, before any `cd`.
@@ -136,6 +151,26 @@ compare_output_trees() {
   done < _filesA.lst
 }
 
+# Phase 3b Task 5: assert that a mode2 run's log shows the plan that is
+# expected now that the capability table (src/expec_trace.c's kTraceCap) has
+# Hubbard/HubbardGC/Spin(half)/SpinGC(half) flipped TRUE for both one-body
+# and two-body Green functions -- i.e. TraceReportPlan() must show the
+# ACTUAL "use the trace kernel" line for both quantities (not merely a
+# generic "use the ..." fallback-or-kernel match), plus the fixed
+# always-fallback line for energy/fluctuation/S2/NBodyG/AnomalousG, which
+# never changes regardless of capability. This replaces phase 3a/early-3b's
+# generic grep (which only checked that *some* plan line was printed,
+# because the table shipped all-FALSE back then).
+assert_kernel_plan() {
+  logfile="$1"
+  grep -q "ExpecMode 2: one-body Green functions use the trace kernel\." \
+    "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for one-body GFs in ${logfile}"
+  grep -q "ExpecMode 2: two-body Green functions use the trace kernel\." \
+    "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for two-body GFs in ${logfile}"
+  grep -q "always use the ExpecMode-1 path" \
+    "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
+}
+
 # Prepare a case directory: write stan.in, run `HPhi -sdry`, then let the
 # caller add extra namelist/def files before calling run_mode(). Always
 # turns on the aggregate Green output format (spec: reuse
@@ -209,20 +244,19 @@ run_mode "${case1}" 0
 run_mode "${case1}" 1
 compare_output_trees "${case1}/mode0" "${case1}/mode1"
 
-# ExpecMode 2 sanity sub-case (only exercised once). Phase 3b Task 1 replaces
-# the old single downgrade-INFO grep with a check of every TraceReportPlan()
-# line (src/expec_trace.c): the capability table ships all FALSE, so both
-# one-body and two-body report a fallback reason, plus the fixed
-# always-fallback line for energy/S2/NBodyG/AnomalousG. Mode 2's numeric
-# result must still be identical to Mode 1's -- the plan is currently
-# all-fallback, so Mode 2 == Mode 1 in behavior, only the INFO output differs.
+# ExpecMode 2 sanity sub-case. Phase 3b Task 1 replaced the old single
+# downgrade-INFO grep with a check of every TraceReportPlan() line
+# (src/expec_trace.c); Task 5 flipped kTraceCap's Hubbard row to TRUE for
+# both one-body and two-body (golden evidence: this case's ExpecMode-2
+# sub-case plus case5_hubbard_onebody_twobody_golden below, and the clavius
+# forced-kernel checkpoint np=2/3 2026-07-12 -- see kTraceCap's per-row
+# comment), so the plan now actually selects the trace kernel for both
+# quantities -- assert_kernel_plan() requires the literal "trace kernel"
+# text, not just any fallback-or-kernel INFO line. Mode 2's numeric result
+# must still be identical to Mode 1's regardless of which path the plan
+# picked (the "ExpecMode changes speed only" guarantee).
 run_mode "${case1}" 2
-grep -q "ExpecMode 2: one-body Green functions use the" \
-  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 one-body plan INFO line was not printed"
-grep -q "ExpecMode 2: two-body Green functions use the" \
-  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 two-body plan INFO line was not printed"
-grep -q "always use the ExpecMode-1 path" \
-  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 always-fallback plan INFO line was not printed"
+assert_kernel_plan "${case1}/mode2/log_run.txt"
 compare_output_trees "${case1}/mode1" "${case1}/mode2"
 
 # =========================================================================
@@ -240,6 +274,13 @@ run_mode "${case2}" 0
 run_mode "${case2}" 1
 compare_output_trees "${case2}/mode0" "${case2}/mode1"
 
+# ExpecMode 2 sub-case: SpinGC (half) is TRUE in kTraceCap as of Task 5 (see
+# its per-row evidence comment in src/expec_trace.c), so the plan must
+# select the trace kernel here too.
+run_mode "${case2}" 2
+assert_kernel_plan "${case2}/mode2/log_run.txt"
+compare_output_trees "${case2}/mode1" "${case2}/mode2"
+
 # =========================================================================
 # Case 3: Spin (canonical) chain, L = 8, 2Sz = 0.
 # =========================================================================
@@ -254,6 +295,15 @@ outputmode = "correlation"'
 run_mode "${case3}" 0
 run_mode "${case3}" 1
 compare_output_trees "${case3}/mode0" "${case3}/mode1"
+
+# ExpecMode 2 sub-case: canonical Spin (half) is TRUE in kTraceCap as of
+# Task 5 (see its per-row evidence comment in src/expec_trace.c) -- the
+# canonical Spin basis (GetOffComp/list_1) is not locally unit-testable, so
+# this case plus the clavius forced-kernel checkpoint np=2/3 2026-07-12 are
+# the verification for that row.
+run_mode "${case3}" 2
+assert_kernel_plan "${case3}/mode2/log_run.txt"
+compare_output_trees "${case3}/mode1" "${case3}/mode2"
 
 # =========================================================================
 # Case 4: ThreeBody/FourBody/SixBody aggregate-kind coverage. SpinGC on the
@@ -320,5 +370,83 @@ EOF
 run_mode "${case4}" 0
 run_mode "${case4}" 1
 compare_output_trees "${case4}/mode0" "${case4}/mode1"
+
+# ExpecMode 2 sub-case: SpinGC (half, 2S=1 stays iFlgGeneralSpin==FALSE --
+# src/readdef.c's `X->LocSpn[i]>LOCSPIN` check only sets general-spin when
+# 2S>1) is TRUE in kTraceCap as of Task 5, so the one-body/two-body GFs here
+# select the trace kernel while ThreeBodyG/FourBodyG/SixBodyG stay on the
+# always-fallback path in the very same run (NBodyG is out of scope for the
+# trace kernel per the plan's Global Constraints) -- this case is therefore
+# also the golden evidence that kernel and always-fallback quantities
+# coexist correctly in one run for a model whose capability row is TRUE.
+run_mode "${case4}" 2
+assert_kernel_plan "${case4}/mode2/log_run.txt"
+compare_output_trees "${case4}/mode1" "${case4}/mode2"
+
+# =========================================================================
+# Case 5: canonical Hubbard chain L=4, one-body + two-body GF only (no
+# NBodyG -- Case 1 already covers the NBodyG/always-fallback interaction).
+# This is the phase-3b Task 5 golden case dedicated to branch-coverage of
+# the canonical (non-GC) Hubbard trace-kernel dispatch, which is NOT locally
+# unit-testable (test/unit/expec_trace_map_check.c is GC-only, per its file
+# header -- the canonical basis needs GetOffComp/list_1). greenone.def
+# exercises GetOffComp's reachable branches in one case: up-spin hop and
+# down-spin hop, each in both the forward and reversed site order, plus the
+# boundary site pair (site 0, site L-1=3), plus diagonal density terms for
+# both spins. greentwo.def exercises all four canonical two-body element
+# families the §2c audit lists for Hubbard (non-diagonal CisAjtCkuAlv,
+# density-density-diagonal CisAisCisAis, and both "same-index" mixed
+# families CisAisCjtAku / CisAjtCkuAku) plus the Sz-violating zero-result
+# row (expec_cisajscktaltdc.c:728-734's 0.0 shortcut, mirrored by
+# TraceMapExtractTwoBody()'s map.n==0 sentinel at expec_trace.c). Every site
+# index stays strictly < Nsite=4 throughout (the phase-3a lesson: an
+# out-of-range site index SIGFPEs).
+# =========================================================================
+case5="case5_hubbard_onebody_twobody_golden"
+prep_case "${case5}" 'model = "Hubbard"
+method = "FullDiag"
+lattice = "chain"
+L = 4
+t = 1.0
+U = 4.0
+nelec = 4
+2Sz = 0
+outputmode = "correlation"'
+(
+  cd "${case5}"
+  cat > greenone.def <<EOF
+========================
+NCisAjs 8
+========================
+========GreenOne========
+========================
+0 0 1 0
+1 0 0 0
+0 1 1 1
+1 1 0 1
+0 0 3 0
+3 0 0 0
+0 0 0 0
+0 1 0 1
+EOF
+  cat > greentwo.def <<EOF
+========================
+NCisAjsCktAlt 5
+========================
+========GreenTwo========
+========================
+0 0 0 0 1 1 1 1
+0 0 0 0 1 0 2 0
+0 0 1 0 2 1 2 1
+0 0 1 0 2 1 3 1
+0 0 1 1 2 0 3 0
+EOF
+)
+run_mode "${case5}" 0
+run_mode "${case5}" 1
+compare_output_trees "${case5}/mode0" "${case5}/mode1"
+run_mode "${case5}" 2
+assert_kernel_plan "${case5}/mode2/log_run.txt"
+compare_output_trees "${case5}/mode1" "${case5}/mode2"
 
 echo "fulldiag_expecmode_equiv: OK"

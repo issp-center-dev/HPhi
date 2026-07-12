@@ -27,12 +27,15 @@
  * orchestration boundary explicitly, even though HPhi never installs either
  * header externally.
  *
- * Task 1 ships the dispatch skeleton only: the capability table
- * (src/expec_trace.c's kTraceCap) is all FALSE, so TraceBuildPlan() always
- * returns an all-fallback plan and expec_trace_owned_states() is a no-op.
- * ExpecMode 2 therefore behaves exactly like ExpecMode 1 until later tasks
- * flip capability rows to TRUE (only after the golden cross-checks in Task
- * 5 pass for every reachable operator-family branch).
+ * Task 1 shipped the dispatch skeleton with the capability table
+ * (src/expec_trace.c's kTraceCap) all FALSE, so TraceBuildPlan() returned an
+ * all-fallback plan and expec_trace_owned_states() was a no-op. Task 5's
+ * golden cross-checks (unit tests + equiv np=2/3 checkpoints) have since
+ * passed for every reachable operator-family branch of Hubbard, HubbardGC,
+ * Spin (half), and SpinGC (half), so those four rows are now TRUE for the
+ * one-body and two-body quantities; tJ/tJGC/Kondo/KondoGC, general spin, and
+ * Spinless remain on the ExpecMode-1 fallback path (see kTraceCap's
+ * per-row comments for exactly which evidence backs each TRUE row).
  */
 #pragma once
 #include <stddef.h>
@@ -64,8 +67,8 @@ typedef struct {
       after TraceBuildPlan() returns. */
   int kernel[TRACE_Q_NQUANT];
   /** demoted_memory[q]==1: quantity q is statically capability-table
-      eligible (or HPHI_TRACE_FORCE-forced) but was demoted to fallback by
-      the runtime memory gate (TraceGbufBytes() returned 0). */
+      eligible but was demoted to fallback by the runtime memory gate
+      (TraceGbufBytes() returned 0). */
   int demoted_memory[TRACE_Q_NQUANT];
   /** When kernel[q]==1, the verified allocation size (bytes) for that
       quantity's result buffer, i.e. TraceGbufBytes()'s return value. Task

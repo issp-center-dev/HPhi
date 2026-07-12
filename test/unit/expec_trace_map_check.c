@@ -57,7 +57,6 @@
 #include "expec_trace.h"
 #include "expec_trace_internal.h"
 #include "rearray_interactions.h"
-#include <stdlib.h> /* setenv/unsetenv (POSIX; matches this test's other libc use) */
 
 /* `myrank` and stdoutMPI are provided by the linked src/global.c;
    Rearray_Interactions is the REAL definition from the linked
@@ -387,11 +386,12 @@ static void run_stream_twobody_case(struct BindStruct *X, long int n,
   free(panel);
 }
 
-/* ---- Task 3 Step 2: memory-gate boundary. With the capability table
- * forced on via the HPHI_TRACE_FORCE dev hook (kTraceCap itself stays all
- * FALSE until plan Task 5; this hook is the documented way to exercise the
- * gate without it -- see TraceParseForceEnv()'s doc comment in
- * expec_trace.c), TraceBuildPlan() is called directly (not through
+/* ---- Task 3 Step 2: memory-gate boundary. HubbardGC's ONEBODY row is TRUE
+ * in kTraceCap as of plan Task 5 (test_hubbardgc() below is part of the
+ * golden evidence for that row), so TraceBuildPlan() picks it up directly --
+ * no forcing hook needed (the HPHI_TRACE_FORCE dev hook Task 3/4 used for
+ * early checkpointing was removed in Task 5; the capability table is now the
+ * only enablement path). TraceBuildPlan() is called directly (not through
  * TraceGbufMaxBytesFromEnv()/the MPI orchestrator -- the plan doc says the
  * env var is read by phys_distributed.c, not needed here) with a byte cap
  * exactly at, and one byte under, nops*nc_uniform*sizeof(double complex).
@@ -414,8 +414,6 @@ static void test_memory_gate_boundary(void) {
   X.Def.NCisAjt = 5;           /* nops */
   X.Def.NCisAjtCkuAlvDC = 0;   /* keep TWOBODY out of this boundary check */
 
-  setenv("HPHI_TRACE_FORCE", "onebody", 1);
-
   exact_bytes = (size_t)X.Def.NCisAjt * (size_t)nc_uniform * sizeof(double complex);
 
   TraceBuildPlan(&X, nc_uniform, exact_bytes, &plan);
@@ -434,13 +432,13 @@ static void test_memory_gate_boundary(void) {
   expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[ONEBODY]==0",
              plan.gbuf_bytes[TRACE_Q_ONEBODY] == 0);
 
-  unsetenv("HPHI_TRACE_FORCE");
   free(ob[0]);
   free(ob);
 }
 
 /* ---- Task 4 Step 2: TWOBODY memory-gate boundary. Mirrors
- * test_memory_gate_boundary() exactly, but forces "twobody" and sizes the
+ * test_memory_gate_boundary() exactly (HubbardGC's TWOBODY row is likewise
+ * TRUE in kTraceCap as of Task 5, so no forcing hook is needed), sizing the
  * cap off X.Def.NCisAjtCkuAlvDC (NCisAjt stays 0 so ONEBODY never enters the
  * plan, keeping this check isolated to TRACE_Q_TWOBODY -- the plan's per-
  * quantity gate is independent by construction: one quantity's cap can
@@ -461,8 +459,6 @@ static void test_memory_gate_boundary_twobody(void) {
   X.Def.CisAjtCkuAlvDC = tb;
   X.Def.NCisAjtCkuAlvDC = 7;       /* nops */
 
-  setenv("HPHI_TRACE_FORCE", "twobody", 1);
-
   exact_bytes = (size_t)X.Def.NCisAjtCkuAlvDC * (size_t)nc_uniform * sizeof(double complex);
 
   TraceBuildPlan(&X, nc_uniform, exact_bytes, &plan);
@@ -481,7 +477,6 @@ static void test_memory_gate_boundary_twobody(void) {
   expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[TWOBODY]==0",
              plan.gbuf_bytes[TRACE_Q_TWOBODY] == 0);
 
-  unsetenv("HPHI_TRACE_FORCE");
   free(tb[0]);
   free(tb);
 }
