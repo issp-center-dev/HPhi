@@ -343,6 +343,50 @@ static void run_stream_onebody_case(struct BindStruct *X, long int n,
   free(panel);
 }
 
+/* ---- Task 4 Step 2: TraceStreamTwoBody() gbuf contents vs direct
+ * expec_cisajscktalt_HubbardGC / expec_cisajscktalt_SpinGCHalf execution (via
+ * the same direct_twobody() ground-truth helper the two-body mapping-
+ * validity checks above already use), for a random 3-state panel. 1e-13
+ * tolerance. Mirrors run_stream_onebody_case() exactly, swapping
+ * NCisAjt/CisAjt/TraceStreamOneBody/direct_onebody for their two-body
+ * counterparts. ---- */
+static void run_stream_twobody_case(struct BindStruct *X, long int n,
+                                    unsigned int seed_base, const char *label) {
+  const long int jb = 1, je = 3, ncols = 3;
+  long int nops = (long int)X->Def.NCisAjtCkuAlvDC;
+  double complex *panel = (double complex *)malloc(sizeof(double complex) * (size_t)(ncols * n));
+  double complex *cols[3];
+  double complex *gbuf;
+  long int c, p, k;
+  int rc;
+  char nm[192];
+
+  for (c = 0; c < ncols; c++) {
+    cols[c] = (double complex *)malloc(sizeof(double complex) * (size_t)(n + 1));
+    fill_random(cols[c], n, seed_base + (unsigned int)c * 7919u);
+    for (k = 0; k < n; k++) panel[c * n + k] = cols[c][k + 1];
+  }
+
+  gbuf = (double complex *)malloc(sizeof(double complex) * (size_t)(nops * ncols));
+  rc = TraceStreamTwoBody(X, panel, jb, je, n, ncols, gbuf);
+  snprintf(nm, sizeof(nm), "%s TraceStreamTwoBody rc==0", label);
+  expect_true(nm, rc == 0);
+
+  if (rc == 0) {
+    for (p = 0; p < nops; p++) {
+      for (c = 0; c < ncols; c++) {
+        double complex direct = direct_twobody(X, (int)p, cols[c], n);
+        snprintf(nm, sizeof(nm), "%s gbuf[pair=%ld,state=%ld] vs direct", label, p, c);
+        expect_close(nm, direct, gbuf[p * ncols + c]);
+      }
+    }
+  }
+
+  free(gbuf);
+  for (c = 0; c < ncols; c++) free(cols[c]);
+  free(panel);
+}
+
 /* ---- Task 3 Step 2: memory-gate boundary. With the capability table
  * forced on via the HPHI_TRACE_FORCE dev hook (kTraceCap itself stays all
  * FALSE until plan Task 5; this hook is the documented way to exercise the
@@ -395,6 +439,53 @@ static void test_memory_gate_boundary(void) {
   free(ob);
 }
 
+/* ---- Task 4 Step 2: TWOBODY memory-gate boundary. Mirrors
+ * test_memory_gate_boundary() exactly, but forces "twobody" and sizes the
+ * cap off X.Def.NCisAjtCkuAlvDC (NCisAjt stays 0 so ONEBODY never enters the
+ * plan, keeping this check isolated to TRACE_Q_TWOBODY -- the plan's per-
+ * quantity gate is independent by construction: one quantity's cap can
+ * demote without affecting the other, see TraceBuildPlan()'s per-q loop). ---- */
+static void test_memory_gate_boundary_twobody(void) {
+  struct BindStruct X;
+  TraceExecutionPlan plan;
+  long int nc_uniform = 4;
+  size_t exact_bytes;
+  int **tb = alloc_ops(1, 8);
+
+  fprintf(stderr, "[memory-gate boundary: TWOBODY]\n");
+  memset(&X, 0, sizeof(X));
+  X.Def.iCalcModel = HubbardGC;
+  X.Def.iFlgGeneralSpin = 0;
+  X.Def.iExpecMode = EXPECMODE_TRACE;
+  X.Def.NCisAjt = 0;              /* keep ONEBODY out of this boundary check */
+  X.Def.CisAjtCkuAlvDC = tb;
+  X.Def.NCisAjtCkuAlvDC = 7;       /* nops */
+
+  setenv("HPHI_TRACE_FORCE", "twobody", 1);
+
+  exact_bytes = (size_t)X.Def.NCisAjtCkuAlvDC * (size_t)nc_uniform * sizeof(double complex);
+
+  TraceBuildPlan(&X, nc_uniform, exact_bytes, &plan);
+  expect_true("gate boundary: cap==exact -> kernel[TWOBODY]==1",
+             plan.kernel[TRACE_Q_TWOBODY] == 1);
+  expect_true("gate boundary: cap==exact -> demoted_memory[TWOBODY]==0",
+             plan.demoted_memory[TRACE_Q_TWOBODY] == 0);
+  expect_true("gate boundary: cap==exact -> gbuf_bytes[TWOBODY]==nops*nc_uniform*16",
+             plan.gbuf_bytes[TRACE_Q_TWOBODY] == exact_bytes);
+
+  TraceBuildPlan(&X, nc_uniform, exact_bytes - 1, &plan);
+  expect_true("gate boundary: cap==exact-1 -> kernel[TWOBODY]==0",
+             plan.kernel[TRACE_Q_TWOBODY] == 0);
+  expect_true("gate boundary: cap==exact-1 -> demoted_memory[TWOBODY]==1",
+             plan.demoted_memory[TRACE_Q_TWOBODY] == 1);
+  expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[TWOBODY]==0",
+             plan.gbuf_bytes[TRACE_Q_TWOBODY] == 0);
+
+  unsetenv("HPHI_TRACE_FORCE");
+  free(tb[0]);
+  free(tb);
+}
+
 static void test_hubbardgc(void) {
   struct BindStruct X;
   long int n = 256;
@@ -431,6 +522,7 @@ static void test_hubbardgc(void) {
   run_twobody_case(&X, 4, vec, n, "HubbardGC 2B same-index");
   run_twobody_case(&X, 5, vec, n, "HubbardGC 2B off-diag zero-check");
   run_purity(&X, 1, 3, n, "HubbardGC 2B purity");
+  run_stream_twobody_case(&X, n, 0x2C68u, "HubbardGC 2B stream");
 
   free(vec);
 }
@@ -481,6 +573,12 @@ static void test_spingchalf(void) {
     TraceMapFree(&map);
   }
 
+  /* stream test: covers all 6 pairs, including the Rearray-irregular one
+     (index 5) above -- TraceStreamTwoBody()'s inner k-loop over map.n==0
+     naturally contributes 0.0, matching direct_twobody()'s explicit
+     "Rearray fails -> return 0.0" branch. */
+  run_stream_twobody_case(&X, n, 0x5DE1u, "SpinGC 2B stream");
+
   free(vec);
 }
 
@@ -489,6 +587,7 @@ int main(void) {
   test_hubbardgc();
   test_spingchalf();
   test_memory_gate_boundary();
+  test_memory_gate_boundary_twobody();
   if (g_failures == 0) {
     fprintf(stderr, "ALL PASS\n");
     return 0;

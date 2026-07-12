@@ -46,16 +46,31 @@
  * GreenOutputKindUsesAggregate/OpenAggregate/CloseAggregate/WriteIndexPrefix
  * and the GREEN_ONEBODY_ROW_FORMAT row format exactly as
  * src/expec_cisajs.c's FullDiag path does, so the two paths can never
- * silently drift into byte-different output for the same values. The
- * streaming phase completes (or fails) entirely before the output phase
- * opens its first file, so a mapping/allocation failure never produces
- * partial output for the quantity. Cross-quantity atomicity is NOT
- * guaranteed: if ONEBODY's output phase succeeds but a later quantity
- * (TWOBODY, once Task 4 lands) fails to even start, ONEBODY's part file(s)
- * remain on disk, but the collective rc=-1 that failure produces means
- * GreenOutputMergePartials() never publishes ANY aggregate this run (the
- * manifest is all-or-nothing) -- the same recovery model (rerun) Mode 1's
- * mid-loop failures already have.
+ * silently drift into byte-different output for the same values.
+ *
+ * Task 4 adds the TWOBODY kernel body: TraceStreamTwoBody() and
+ * expec_trace_twobody_output() mirror the ONEBODY pair exactly (same
+ * operator-outer/state-inner streaming formula, same separate-buffer/
+ * separate-output-phase structure), sized by plan->gbuf_bytes[TRACE_Q_TWOBODY]
+ * ONLY -- ONEBODY and TWOBODY are demoted to the ExpecMode-1 fallback
+ * independently, so one quantity's memory-gate outcome never affects the
+ * other's. The two-body row format is NOT a single macro like ONEBODY's:
+ * src/expec_cisajscktaltdc.c's PRE-EXISTING call sites already split into
+ * GREEN_TWOBODY_ROW_FORMAT and GREEN_TWOBODY_ROW_FORMAT_SP (see
+ * green_row_format.h's doc comment for the exact split), so
+ * expec_trace_twobody_output() selects between them per pair using only
+ * that pair's raw operator indices and X->Def.iFlgSzConserved -- see its own
+ * doc comment for the exact selection rule.
+ *
+ * For both quantities, the streaming phase completes (or fails) entirely
+ * before the output phase opens its first file, so a mapping/allocation
+ * failure never produces partial output for that quantity. Cross-quantity
+ * atomicity is NOT guaranteed: if ONEBODY's output phase succeeds but
+ * TWOBODY fails (or vice versa were the dispatch order reversed), the
+ * succeeding quantity's part file(s) remain on disk, but the collective
+ * rc=-1 that failure produces means GreenOutputMergePartials() never
+ * publishes ANY aggregate this run (the manifest is all-or-nothing) -- the
+ * same recovery model (rerun) Mode 1's mid-loop failures already have.
  */
 #include "expec_trace.h"
 #include "expec_trace_internal.h"
@@ -330,6 +345,90 @@ static int expec_trace_onebody_output(struct BindStruct *X, long int jb, long in
   return 0;
 }
 
+/**
+ * @brief Task 4 output phase: write gbuf's TWOBODY results state-major,
+ * exactly mirroring src/expec_cisajscktaltdc.c's FullDiag branching and row
+ * formats for the models this quantity's capability table (or the
+ * HPHI_TRACE_FORCE dev hook) can select: HubbardGC, and the canonical
+ * Hubbard-family group (Hubbard/tJ/tJGC/Kondo/KondoGC, all of which Mode 1
+ * routes to expec_cisajscktalt_Hubbard()), and Spin/SpinGC (half only).
+ *
+ * Row-format selection replicates Mode 1's per-model dispatch WITHOUT
+ * needing any state carried over from the streaming phase, because it only
+ * depends on the pair's raw operator indices (X->Def.CisAjtCkuAlvDC[p]) and
+ * X->Def.iFlgSzConserved -- both already available here, same as the
+ * one-body output phase reads X->Def.CisAjt[p] directly:
+ *   - HubbardGC/tJGC/KondoGC (is_gc): GREEN_TWOBODY_ROW_FORMAT, always
+ *     (Mode 1's GC path never writes the Sz-conserved 0.0-shortcut row).
+ *   - Hubbard/tJ/Kondo (canonical, not is_gc): GREEN_TWOBODY_ROW_FORMAT_SP
+ *     for a pair with iFlgSzConserved==TRUE && sigma1+sigma3!=sigma2+sigma4
+ *     (Mode-1's Sz-conserved-violation 0.0 shortcut row --
+ *     TraceMapExtractTwoBody()'s map.n==0 sentinel for exactly this same
+ *     condition, see its doc comment), else GREEN_TWOBODY_ROW_FORMAT (the
+ *     normally-computed row).
+ *   - Spin/SpinGC (half): GREEN_TWOBODY_ROW_FORMAT_SP always -- Mode 1's
+ *     expec_cisajscktalt_SpinHalf/SpinGCHalf use this format for BOTH their
+ *     Rearray-irregular 0.0 row and their normally-computed row.
+ *
+ * @return 0 on success, -1 on the first open failure (Mode-1 parity, same
+ * as expec_trace_onebody_output() above).
+ */
+static int expec_trace_twobody_output(struct BindStruct *X, long int jb, long int je,
+                                      long int ncols, const double complex *gbuf) {
+  long int nops = (long int)X->Def.NCisAjtCkuAlvDC;
+  long int n, p;
+  int model = X->Def.iCalcModel;
+  int is_gc = (model == HubbardGC || model == tJGC || model == KondoGC);
+  int is_hubbard_family = (model == Hubbard || model == HubbardGC || model == tJ ||
+                           model == tJGC || model == Kondo || model == KondoGC);
+
+  for (n = jb; n <= je; n++) {
+    FILE *fp = NULL;
+    char sdt[D_FileNameMax];
+
+    X->Phys.eigen_num = (int)(n - 1); /* 0-based, same convention as Mode 1 */
+
+    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputTwoBody, &fp) != 0) return -1;
+    } else {
+      sprintf(sdt, cFileName2BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+      if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+    }
+
+    for (p = 0; p < nops; p++) {
+      long unsigned int i1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][0];
+      long unsigned int s1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][1];
+      long unsigned int i2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][2];
+      long unsigned int s2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][3];
+      long unsigned int i3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][4];
+      long unsigned int s3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][5];
+      long unsigned int i4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][6];
+      long unsigned int s4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[p][7];
+      double complex val = gbuf[p * ncols + (n - jb)];
+      const char *fmt;
+
+      if (is_hubbard_family) {
+        fmt = (!is_gc && X->Def.iFlgSzConserved == TRUE && (s1 + s3 != s2 + s4))
+                  ? GREEN_TWOBODY_ROW_FORMAT_SP : GREEN_TWOBODY_ROW_FORMAT;
+      } else {
+        fmt = GREEN_TWOBODY_ROW_FORMAT_SP;
+      }
+
+      GreenOutputWriteIndexPrefix(fp, X);
+      fprintf(fp, fmt, i1, s1, i2, s2, i3, s3, i4, s4, creal(val), cimag(val));
+    }
+
+    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
+      GreenOutputCloseAggregate(GreenOutputTwoBody, fp); /* return value not
+          checked -- Mode-1 parity, see expec_trace_onebody_output()'s doc
+          comment above */
+    } else {
+      fclose(fp);
+    }
+  }
+  return 0;
+}
+
 int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *plan,
                              const double complex *panel,
                              long int jb, long int je, long int NN) {
@@ -364,11 +463,28 @@ int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *pla
     if (rc != 0) return rc;
   }
 
-  /* TRACE_Q_TWOBODY: phase 3b Task 4 territory, not implemented yet.
-     plan->kernel[TRACE_Q_TWOBODY] is 0 in every production run (kTraceCap
-     ships all FALSE until Task 5); the HPHI_TRACE_FORCE dev hook is never
-     passed "twobody" by this task's clavius checkpoint (see the plan doc,
-     Task 3 Step 3: only HPHI_TRACE_FORCE=onebody). */
+  if (plan->kernel[TRACE_Q_TWOBODY]) {
+    /* plan->gbuf_bytes[TRACE_Q_TWOBODY] is the ONLY size this malloc may
+       use, exactly mirroring the TRACE_Q_ONEBODY block above -- see
+       TraceExecutionPlan's doc comment in expec_trace.h. This is a SEPARATE
+       buffer and a SEPARATE gate decision from ONEBODY's: one quantity can
+       be demoted to the ExpecMode-1 fallback while the other still uses the
+       trace kernel this run (TraceBuildPlan() decides each plan->kernel[q]
+       independently). */
+    if (plan->gbuf_bytes[TRACE_Q_TWOBODY] == 0) return -1;
+
+    gbuf = (double complex *)malloc(plan->gbuf_bytes[TRACE_Q_TWOBODY]);
+    if (gbuf == NULL) return -1; /* before any write: no partial output */
+
+    if (TraceStreamTwoBody(X, panel, jb, je, NN, ncols, gbuf) != 0) {
+      free(gbuf); /* mapping extraction failed -- nothing was written yet */
+      return -1;
+    }
+
+    rc = expec_trace_twobody_output(X, jb, je, ncols, gbuf);
+    free(gbuf);
+    if (rc != 0) return rc;
+  }
 
   return 0;
 }
@@ -390,6 +506,37 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
     TraceMap map;
 
     if (TraceMapExtractOneBody(X, (int)p, &map) != 0) return -1;
+
+    for (n = jb; n <= je; n++) {
+      const double complex *z = panel + (n - jb) * NN;
+      double complex acc = 0.0;
+
+      for (k = 0; k < map.n; k++) {
+        if (map.kprime[k] >= 0)
+          acc += conj(z[map.kprime[k]]) * map.amp[k] * z[k];
+      }
+      gbuf[p * ncols + (n - jb)] = acc;
+    }
+
+    TraceMapFree(&map); /* only one TraceMap alive at a time (spec Sec.3.1) */
+  }
+  return 0;
+}
+
+int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
+                       long int jb, long int je, long int NN,
+                       long int ncols, double complex *gbuf) {
+  long int nops = (long int)X->Def.NCisAjtCkuAlvDC;
+  long int p, n, k;
+
+  /* Same panel-stride invariant as TraceStreamOneBody() -- see that
+     function's doc comment. */
+  assert((long int)X->Check.idim_max == NN);
+
+  for (p = 0; p < nops; p++) {
+    TraceMap map;
+
+    if (TraceMapExtractTwoBody(X, (int)p, &map) != 0) return -1;
 
     for (n = jb; n <= je; n++) {
       const double complex *z = panel + (n - jb) * NN;

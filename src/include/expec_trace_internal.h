@@ -148,6 +148,39 @@ int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
                        long int jb, long int je, long int NN,
                        long int ncols, double complex *gbuf);
 
+/**
+ * @brief Phase 3b Task 4, Step 1: stream every TWOBODY operator pair
+ * (X->Def.CisAjtCkuAlvDC) over every state this rank owns. Identical
+ * contract and streaming formula to TraceStreamOneBody() above (same
+ * operator-outer loop, same gbuf[p*ncols + (n-jb)] fill, same purity/no-I/O
+ * guarantees) -- only the operator table (X->Def.CisAjtCkuAlvDC,
+ * X->Def.NCisAjtCkuAlvDC) and extraction driver (TraceMapExtractTwoBody())
+ * differ. A pair whose TraceMap is the n==0 sentinel (Rearray-irregular for
+ * Spin/SpinGC, or the Sz-conserved-violation shortcut for canonical
+ * Hubbard) naturally streams to 0.0: the k-loop below has nothing to sum
+ * over when map.n==0, so no special-casing is needed here.
+ *
+ * @param[in] X calculation parameters (X->Def.CisAjtCkuAlvDC,
+ *               X->Def.NCisAjtCkuAlvDC, X->Check.idim_max)
+ * @param[in] panel column-major state panel; panel[(n-jb)*NN + k] is
+ *               component k (0-based, 0<=k<X->Check.idim_max) of state n
+ *               (jb<=n<=je). Caller-verified precondition: NN ==
+ *               X->Check.idim_max (asserted here).
+ * @param[in] jb, je 1-based inclusive owned-state range (caller guarantees
+ *               je>=jb; zero-ownership is the caller's responsibility to
+ *               skip before calling this)
+ * @param[in] NN panel stride (== X->Check.idim_max for FullDiag)
+ * @param[in] ncols je-jb+1, the gbuf column stride (NOT plan->nc_uniform)
+ * @param[out] gbuf caller-allocated buffer of at least
+ *               X->Def.NCisAjtCkuAlvDC*ncols complex entries
+ * @return 0 on success; -1 if a pair's TraceMapExtractTwoBody() fails (gbuf
+ *               is left partially filled -- the caller must not use it as
+ *               output in that case)
+ */
+int TraceStreamTwoBody(struct BindStruct *X, const double complex *panel,
+                       long int jb, long int je, long int NN,
+                       long int ncols, double complex *gbuf);
+
 /* ------------------------------------------------------------------ */
 /* Mapping-probe adapters (defined next to their element functions).   */
 /* One-body.                                                           */
