@@ -310,8 +310,9 @@ The parameters correlated with the keywords are as follows.
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
    | Supported models (as of this phase): ``Hubbard``/``HubbardGC`` and
      half-integer ``Spin``/``SpinGC`` (general-spin models, ``tJ``/
-     ``tJGC``, and ``Kondo``/``KondoGC`` are not yet covered and always
-     print the "unsupported model" line above for both quantities).
+     ``tJGC``, ``Kondo``/``KondoGC``, and ``SpinlessFermion``/
+     ``SpinlessFermionGC`` are not yet covered and always print the
+     "unsupported model" line above for both quantities).
    | On a supported model, each quantity's outcome is still decided by up
      to three further runtime reasons, evaluated in a fixed order so that
      exactly one reason applies (they are mutually exclusive by
@@ -367,10 +368,9 @@ The parameters correlated with the keywords are as follows.
      designed to further amortize per-state operator overhead for
      one-body/two-body Green-function-heavy workloads on the supported
      models above, and is expected to be at least as fast as
-     ``ExpecMode 1`` for such correlation-function-heavy workloads; see
-     ``test/manual/elpa_gpu_check.md`` for measured results. Keep the
-     default ``ExpecMode 0`` otherwise, including for small systems and
-     single-process runs.
+     ``ExpecMode 1`` for such correlation-function-heavy workloads. Keep
+     the default ``ExpecMode 0`` otherwise, including for small systems
+     and single-process runs.
    | Note (behavior fix): as of phase 3a, distributed FullDiag runs
      (``Solver`` 1 or 3, more than one MPI process) compute S2 and Sz on
      rank 0 for ``ExpecMode 0`` as well -- previously these distributed runs

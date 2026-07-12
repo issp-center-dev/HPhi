@@ -298,8 +298,9 @@ CalcModファイル
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
    | 対応モデル (本フェーズ時点): ``Hubbard``/``HubbardGC`` と半整数
      (half-integer) の ``Spin``/``SpinGC`` です (一般スピン模型、
-     ``tJ``/``tJGC``、``Kondo``/``KondoGC`` は未対応で、両物理量とも
-     常に上記の「unsupported model」の行が表示されます)。
+     ``tJ``/``tJGC``、``Kondo``/``KondoGC``、``SpinlessFermion``/
+     ``SpinlessFermionGC`` は未対応で、両物理量とも常に上記の
+     「unsupported model」の行が表示されます)。
    | 対応モデルであっても、各物理量の結果は、決まった順序で評価される
      最大3つの実行時要因のいずれか一つによって決まります (これらは
      互いに排他的になるよう構成されており、独立に判定されるわけでは
@@ -346,8 +347,9 @@ CalcModファイル
      ``HPHI_TRACE_BUF_MAX_MB`` で上限を定めた結果バッファを保持します。
      一度だけ行われる再分散のあいだは元の格納領域と新しいパネルが両方
      存在するため、一時的なピークは1ランクあたりおよそ 2xO(N²/P) と
-     なり、再分散後 (元の格納領域を解放した後) はトレースバッファ分を
-     除き ``ExpecMode 0`` と変わらない O(N²/P) に戻ります。
+     なり、再分散後 (元の格納領域を解放した後) は O(N²/P) に
+     トレースバッファ分を加えた程度に戻ります (``ExpecMode 0`` との
+     差はトレースバッファ分のみです)。
    | 利用指針: 固有状態数やGreen関数の観測量が多い大規模マルチノードの
      ``Solver 3`` (ELPA) または ``Solver 1`` (ScaLAPACK) 実行では、
      全固有状態を全ランクで重複して評価する ``ExpecMode 0`` がボトル
@@ -356,8 +358,7 @@ CalcModファイル
      多い FullDiag ワークロードについて、状態ごとの演算子オーバーヘッド
      をさらに償却するよう設計されており、そのような相関関数中心の
      ワークロードでは ``ExpecMode 1`` と同等以上に高速であることが
-     期待されます。実測値は ``test/manual/elpa_gpu_check.md`` を
-     参照してください。それ以外 (小規模系や1プロセス実行を含む) は
+     期待されます。それ以外 (小規模系や1プロセス実行を含む) は
      デフォルトの ``ExpecMode 0`` のままで構いません。
    | 注 (挙動修正): フェーズ3aより、分散FullDiag実行 (``Solver`` 1 または
      3、MPIプロセス数が2以上) では ``ExpecMode 0`` でもランク0でS2と

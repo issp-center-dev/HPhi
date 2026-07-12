@@ -49,6 +49,13 @@ case, update the guidance bullet accordingly before merging.
   - **Memory gate**: if a quantity's result buffer would exceed the new
     `HPHI_TRACE_BUF_MAX_MB` cap, that quantity falls back to
     `ExpecMode 1`.
+    Note for memory-constrained upgrades: `ExpecMode 2` allocates a
+    result buffer of `n_operators x ceil(n_states/P) x 16` bytes per
+    kernel quantity per rank (the cap only bounds it — it is not a
+    pre-allocation). Runs that used `ExpecMode 2` before this phase
+    (when it silently ran as `ExpecMode 1` and allocated nothing) can
+    therefore use more memory per rank now; on memory-tight nodes lower
+    `HPHI_TRACE_BUF_MAX_MB` to force the fallback.
   - **Shared-evaluator rule (two-body only)**: the two-body Green
     function shares its evaluator with the ThreeBodyG/FourBodyG/SixBodyG
     (N-body) Green functions. Whenever any N-body GF is requested, the
