@@ -433,42 +433,70 @@ int GreenOutputMergePartials(struct BindStruct *X)
   MPI_Bcast(&rc, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rc == 0 && myrank_l == 0) {
+    /* Two-phase publish (write-to-temp, then rename):
+       Phase A concatenates each attempted kind's parts into a private
+       <final>.tmp_merge file, with every fread/fwrite/ferror/fclose checked.
+       Phase B, entered only if EVERY kind's temp was written and closed
+       cleanly, rename()s each temp onto its final name. This way a write
+       failure (disk full, quota, I/O error) during concatenation can never
+       leave a truncated file under the final name, and no final file is
+       published unless all kinds succeeded. Renaming per kind is the
+       Mode-1 replacement for GreenOutputInitializeAggregateFiles()
+       (which Mode 1 must not call directly). */
+    char tmp_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 80];
+    char final_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 64];
+    int kind_active[GREEN_OUTPUT_NKIND];
+
+    for (k = 0; k < GREEN_OUTPUT_NKIND; k++) kind_active[k] = 0;
+
+    /* Phase A: concatenate into temp files. */
     for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
       int any_attempted = 0;
-      char final_name[256]; /* matches GreenOutputManifestRecord.final_path */
+      int n;
       FILE *fout = NULL;
 
       for (r = 0; r < nprocs_l; r++) {
         GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
         if (rr->attempted) {
           any_attempted = 1;
-          strncpy(final_name, rr->final_path, sizeof(final_name) - 1);
-          final_name[sizeof(final_name) - 1] = '\0';
+          GreenOutputJoinOutputPath(rr->final_path, final_joined[k], sizeof(final_joined[k]));
           break;
         }
       }
       if (!any_attempted) continue;
+      kind_active[k] = 1;
 
-      /* Publish: truncate/create the final aggregate file once, here. This
-         is the Mode-1 replacement for GreenOutputInitializeAggregateFiles()
-         (which Mode 1 must not call directly). */
-      if (childfopenMPI(final_name, "w", &fout) != 0) { rc = -1; break; }
-      fclose(fout);
+      n = snprintf(tmp_joined[k], sizeof(tmp_joined[k]), "%s.tmp_merge", final_joined[k]);
+      if (n < 0 || (size_t)n >= sizeof(tmp_joined[k])) { rc = -1; break; }
 
-      for (r = 0; r < nprocs_l; r++) {
+      fout = fopen(tmp_joined[k], "wb");
+      if (fout == NULL) { rc = -1; break; }
+
+      for (r = 0; r < nprocs_l && rc == 0; r++) {
         GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
         FILE *fin = NULL;
+        char part_joined[sizeof(rr->part_path) + 64];
         char buf[8192];
         size_t got;
 
         if (!rr->attempted) continue; /* zero-owner rank: contributes nothing */
-        if (childfopenMPI(rr->part_path, "rb", &fin) != 0) { rc = -1; break; }
-        if (childfopenMPI(final_name, "a", &fout) != 0) { fclose(fin); rc = -1; break; }
+        GreenOutputJoinOutputPath(rr->part_path, part_joined, sizeof(part_joined));
+        fin = fopen(part_joined, "rb");
+        if (fin == NULL) { rc = -1; break; }
         while ((got = fread(buf, 1, sizeof(buf), fin)) > 0) {
-          fwrite(buf, 1, got, fout);
+          if (fwrite(buf, 1, got, fout) != got) { rc = -1; break; }
         }
-        fclose(fin);
-        fclose(fout);
+        if (rc == 0 && ferror(fin)) rc = -1; /* short read due to I/O error */
+        if (fclose(fin) != 0) rc = -1;
+      }
+      if (fclose(fout) != 0) rc = -1; /* flush failure = truncated temp */
+    }
+
+    /* Phase B: publish by rename, only if every kind concatenated cleanly. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        if (!kind_active[k]) continue;
+        if (rename(tmp_joined[k], final_joined[k]) != 0) rc = -1;
       }
     }
 
@@ -484,6 +512,17 @@ int GreenOutputMergePartials(struct BindStruct *X)
           }
         }
       }
+    } else {
+      /* Failure: remove whatever temps exist (best effort), keep all part
+         files on disk for diagnosis, publish nothing further. (If a rename
+         in Phase B failed partway, kinds already renamed stay published --
+         rename is the smallest possible window -- but rc=-1 is still
+         returned everywhere and no part file is deleted.) */
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (kind_active[k]) remove(tmp_joined[k]);
+      }
+      fprintf(stdoutMPI,
+              "Error: GreenOutputMergePartials: merge failed; partial (.part*) files are kept for diagnosis.\n");
     }
   }
 

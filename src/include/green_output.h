@@ -120,12 +120,16 @@ int GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp);
  * perfectly valid empty contribution.
  *
  * On success: for every kind attempted by at least one rank, rank 0
- * truncates/creates the final aggregate file (this is the Mode-1
- * replacement for GreenOutputInitializeAggregateFiles(), which Mode 1 must
- * NOT call directly -- publishing IS the initialization here), concatenates
- * every attempting rank's part file into it in rank order, then deletes all
- * part files. On failure: nothing is published or deleted (surviving part
- * files are left in place for diagnosis) and every rank returns non-zero.
+ * concatenates every attempting rank's part file in rank order into a
+ * private "<final>.tmp_merge" file (every fread/fwrite/fclose checked), and
+ * only after ALL kinds concatenated cleanly rename()s each temp onto its
+ * final name (this publish step is the Mode-1 replacement for
+ * GreenOutputInitializeAggregateFiles(), which Mode 1 must NOT call
+ * directly), then deletes all part files. On failure: temps are removed,
+ * nothing is published under a final name, no part file is deleted
+ * (surviving parts are left in place for diagnosis), and every rank
+ * returns non-zero. A truncated file can therefore never appear under a
+ * final aggregate name, even on a mid-merge disk-full/write error.
  *
  * In a build without MPI this is a no-op that returns 0 (no cross-rank
  * partial files can exist to merge).
