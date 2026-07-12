@@ -30,13 +30,32 @@
  * TraceGbufMaxBytesFromEnv() on rank 0 only and passes the Bcast result in
  * here as a plain size_t.
  *
- * Task 1 (this commit) ships the dispatch skeleton: kTraceCap below is all
- * FALSE, so TraceBuildPlan() always returns an all-fallback plan for every
- * (model, quantity) combination and expec_trace_owned_states() is a no-op.
- * ExpecMode 2 is therefore observably identical to ExpecMode 1 except for
- * the new TraceReportPlan() INFO lines. Later 3b tasks add the mapping-probe
- * adapters and the real one-body/two-body kernels; only Task 5's golden
- * cross-checks are permitted to flip a kTraceCap row to TRUE.
+ * Task 1 shipped the dispatch skeleton: kTraceCap below is still all FALSE
+ * (only Task 5's golden cross-checks are permitted to flip a row to TRUE),
+ * so in production TraceBuildPlan() still returns an all-fallback plan and
+ * expec_trace_owned_states() is still a no-op -- kernel[q] only ever becomes
+ * 1 today via the development-only HPHI_TRACE_FORCE hook (early-checkpoint
+ * testing, see TraceParseForceEnv()).
+ *
+ * Task 3 adds the ONEBODY kernel body: TraceStreamOneBody() (declared in
+ * expec_trace_internal.h, so it's directly unit-testable) streams every
+ * X->Def.CisAjt pair, operator-outer / state-inner, into a gbuf sized
+ * EXACTLY plan->gbuf_bytes[TRACE_Q_ONEBODY] (never recomputed here -- see
+ * TraceBuildPlan()'s doc comment), and expec_trace_owned_states() then
+ * writes gbuf out state-major in a separate output phase, reusing
+ * GreenOutputKindUsesAggregate/OpenAggregate/CloseAggregate/WriteIndexPrefix
+ * and the GREEN_ONEBODY_ROW_FORMAT row format exactly as
+ * src/expec_cisajs.c's FullDiag path does, so the two paths can never
+ * silently drift into byte-different output for the same values. The
+ * streaming phase completes (or fails) entirely before the output phase
+ * opens its first file, so a mapping/allocation failure never produces
+ * partial output for the quantity. Cross-quantity atomicity is NOT
+ * guaranteed: if ONEBODY's output phase succeeds but a later quantity
+ * (TWOBODY, once Task 4 lands) fails to even start, ONEBODY's part file(s)
+ * remain on disk, but the collective rc=-1 that failure produces means
+ * GreenOutputMergePartials() never publishes ANY aggregate this run (the
+ * manifest is all-or-nothing) -- the same recovery model (rerun) Mode 1's
+ * mid-loop failures already have.
  */
 #include "expec_trace.h"
 #include "expec_trace_internal.h"
@@ -47,11 +66,23 @@
 #include "bitcalc.h"
 #include "global.h"
 #include "rearray_interactions.h"
+#include "green_output.h"
+#include "green_row_format.h"
+#include "FileIO.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+
+/* green_output.h / FileIO.h (phase 3b Task 3): the ONEBODY output phase
+   below reuses GreenOutputKindUsesAggregate/OpenAggregate/CloseAggregate/
+   WriteIndexPrefix and childfopenMPI exactly as src/expec_cisajs.c does --
+   these are all on the frozen ExpecLocal wrapperMPI allow-list
+   (childfopenMPI ultimately calls fopenMPI; see the file header above) or
+   are themselves MPI-free (green_output.c's manifest bookkeeping performs no
+   MPI_* call outside GreenOutputMergePartials(), which this TU never
+   calls). */
 
 /* Rearray_Interactions() (src/rearray_interactions.c): the two-body extraction
    driver reuses the SAME +-1 tmp_V-folding reordering pass the Mode-1
@@ -236,22 +267,143 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
           "AnomalousG always use the ExpecMode-1 path in this version.\n");
 }
 
+/**
+ * @brief Task 3 output phase: write gbuf's ONEBODY results state-major,
+ * exactly mirroring src/expec_cisajs.c's FullDiag branching and row format.
+ *
+ * For each owned state n (jb..je), sets X->Phys.eigen_num = n-1 (same
+ * per-state convention the ExpecMode-1 fallback loop uses immediately after
+ * this -- see phys_stateparallel_local_loop(), which re-sets it every
+ * iteration regardless, so there is no cross-talk), opens exactly the file
+ * expec_cisajs() would open for that state (GreenOutputOpenAggregate() in
+ * aggregate/partial mode, or a direct childfopenMPI() of
+ * cFileName1BGreen_FullDiag otherwise), writes one GREEN_ONEBODY_ROW_FORMAT
+ * row per pair (in X->Def.CisAjt order, i.e. the same order gbuf was filled
+ * in), then closes it. The open failure is checked and propagated (matching
+ * expec_cisajs()); the aggregate close's return value is deliberately NOT
+ * checked here either, matching expec_cisajs() verbatim -- a close failure
+ * still surfaces because GreenOutputCloseAggregate() sets the session's
+ * sticky closed_ok=0 for this kind, which GreenOutputMergePartials() (called
+ * by the orchestrator after this whole ExpecLocal session ends) checks
+ * before publishing anything.
+ *
+ * @return 0 on success, -1 on the first open failure (Mode-1 parity: no
+ * retry, no fallback -- the sticky manifest/collective rc=-1 path takes over
+ * from here, same as a Mode-1 write failure would).
+ */
+static int expec_trace_onebody_output(struct BindStruct *X, long int jb, long int je,
+                                      long int ncols, const double complex *gbuf) {
+  long int nops = (long int)X->Def.NCisAjt;
+  long int n, p;
+
+  for (n = jb; n <= je; n++) {
+    FILE *fp = NULL;
+    char sdt[D_FileNameMax];
+
+    X->Phys.eigen_num = (int)(n - 1); /* 0-based, same convention as Mode 1 */
+
+    if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputOneBody, &fp) != 0) return -1;
+    } else {
+      sprintf(sdt, cFileName1BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
+      if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+    }
+
+    for (p = 0; p < nops; p++) {
+      long unsigned int i1 = (long unsigned int)X->Def.CisAjt[p][0];
+      long unsigned int s1 = (long unsigned int)X->Def.CisAjt[p][1];
+      long unsigned int i2 = (long unsigned int)X->Def.CisAjt[p][2];
+      long unsigned int s2 = (long unsigned int)X->Def.CisAjt[p][3];
+      double complex val = gbuf[p * ncols + (n - jb)];
+
+      GreenOutputWriteIndexPrefix(fp, X);
+      fprintf(fp, GREEN_ONEBODY_ROW_FORMAT, i1, s1, i2, s2, creal(val), cimag(val));
+    }
+
+    if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
+      GreenOutputCloseAggregate(GreenOutputOneBody, fp); /* return value not
+          checked -- Mode-1 parity, see the function doc comment above */
+    } else {
+      fclose(fp);
+    }
+  }
+  return 0;
+}
+
 int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *plan,
                              const double complex *panel,
                              long int jb, long int je, long int NN) {
-  /* Task 1: kTraceCap ships all FALSE, so in production plan->kernel[q] is
-     0 for every quantity and this is a pure no-op -- every quantity is left
-     for phys_stateparallel_local_loop()'s ExpecMode-1 fallback to handle, as
-     it always has. (The HPHI_TRACE_FORCE dev hook can flip kernel[q] on
-     before a real kernel exists, for early Task 3/4 checkpoint testing
-     only; that is an explicit opt-in outside the production dispatch path,
-     see TraceParseForceEnv().) */
-  (void)X;
-  (void)plan;
-  (void)panel;
-  (void)jb;
-  (void)je;
-  (void)NN;
+  long int ncols = (je >= jb) ? (je - jb + 1) : 0;
+  double complex *gbuf;
+  int rc;
+
+  /* Zero-owner rank: nothing to stream, nothing to write (Mode-1's loop
+     over an empty [jb,je] range is likewise a no-op) -- return immediately,
+     before even looking at plan->kernel[], so a zero-owner rank's manifest
+     attempted count stays 0 rather than recording an empty attempt. */
+  if (ncols <= 0) return 0;
+
+  if (plan->kernel[TRACE_Q_ONEBODY]) {
+    /* plan->gbuf_bytes[TRACE_Q_ONEBODY] is the ONLY size this malloc may
+       use (see TraceExecutionPlan's doc comment in expec_trace.h) -- no
+       re-reading HPHI_TRACE_BUF_MAX_MB, no re-deriving nops*ncols here.
+       kernel[q]==1 implies TraceBuildPlan() already verified this is
+       nonzero, but check anyway rather than trust that invariant blindly. */
+    if (plan->gbuf_bytes[TRACE_Q_ONEBODY] == 0) return -1;
+
+    gbuf = (double complex *)malloc(plan->gbuf_bytes[TRACE_Q_ONEBODY]);
+    if (gbuf == NULL) return -1; /* before any write: no partial output */
+
+    if (TraceStreamOneBody(X, panel, jb, je, NN, ncols, gbuf) != 0) {
+      free(gbuf); /* mapping extraction failed -- nothing was written yet */
+      return -1;
+    }
+
+    rc = expec_trace_onebody_output(X, jb, je, ncols, gbuf);
+    free(gbuf);
+    if (rc != 0) return rc;
+  }
+
+  /* TRACE_Q_TWOBODY: phase 3b Task 4 territory, not implemented yet.
+     plan->kernel[TRACE_Q_TWOBODY] is 0 in every production run (kTraceCap
+     ships all FALSE until Task 5); the HPHI_TRACE_FORCE dev hook is never
+     passed "twobody" by this task's clavius checkpoint (see the plan doc,
+     Task 3 Step 3: only HPHI_TRACE_FORCE=onebody). */
+
+  return 0;
+}
+
+int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
+                       long int jb, long int je, long int NN,
+                       long int ncols, double complex *gbuf) {
+  long int nops = (long int)X->Def.NCisAjt;
+  long int p, n, k;
+
+  /* The panel's stride NN must equal the Hilbert-space dimension every
+     TraceMap is built over -- see src/phys_distributed_local.c:70-81's
+     `v0[j + 1] = panel[(n - jb) * NN + j]` (NN doubles as both the
+     FullDiag state count and, here, the per-state vector length; the two
+     coincide because neig == idim_max in the replicated FullDiag driver). */
+  assert((long int)X->Check.idim_max == NN);
+
+  for (p = 0; p < nops; p++) {
+    TraceMap map;
+
+    if (TraceMapExtractOneBody(X, (int)p, &map) != 0) return -1;
+
+    for (n = jb; n <= je; n++) {
+      const double complex *z = panel + (n - jb) * NN;
+      double complex acc = 0.0;
+
+      for (k = 0; k < map.n; k++) {
+        if (map.kprime[k] >= 0)
+          acc += conj(z[map.kprime[k]]) * map.amp[k] * z[k];
+      }
+      gbuf[p * ncols + (n - jb)] = acc;
+    }
+
+    TraceMapFree(&map); /* only one TraceMap alive at a time (spec Sec.3.1) */
+  }
   return 0;
 }
 

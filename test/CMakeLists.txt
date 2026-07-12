@@ -361,18 +361,27 @@ add_test(NAME unittest_setmemory_zero_size_common
 set_tests_properties(unittest_setmemory_zero_size_common
     PROPERTIES LABELS "unit;setmemory")
 
-# Unit test: ExpecMode 2 trace-kernel mapping-probe extraction (phase 3b Task 2).
-# Serial, no MPI: GC models only (HubbardGC n=256, SpinGC-half n=16), so the
-# bare-bit basis needs no list_1/list_2 and this runs as a plain executable in
-# BOTH the MPI and non-MPI builds (registered here, outside if(MPI_FOUND)).
+# Unit test: ExpecMode 2 trace-kernel mapping-probe extraction (phase 3b Task 2)
+# and the ONEBODY streaming kernel (phase 3b Task 3). Serial, no MPI: GC
+# models only (HubbardGC n=256, SpinGC-half n=16), so the bare-bit basis needs
+# no list_1/list_2 and this runs as a plain executable in BOTH the MPI and
+# non-MPI builds (registered here, outside if(MPI_FOUND)).
 # Links only the real sources in the extraction closure -- expec_trace.c (the
-# drivers), the two Core files (the co-located *_TraceProbe adapters + element
+# drivers, plus, since Task 3, TraceStreamOneBody() and the ONEBODY output
+# phase), the two Core files (the co-located *_TraceProbe adapters + element
 # functions), rearray_interactions.c (the REAL two-body reordering, its own TU
 # precisely so this test does not need a drift-prone copy), bitcalc.c
 # (GetSplitBitByModel/GetOffComp/SgnBit), global.c (which provides the
 # list_1/Tpow globals plus `myrank` and stdoutMPI), and ErrorMessage.c (the
-# cErr* strings bitcalc references). The MPI-heavy element libraries and
-# wrapperMPI.c are NOT pulled in.
+# cErr* strings bitcalc references). Task 3 added wrapperMPI.c/FileIO.c/
+# green_output.c/splash.c to this list: expec_trace.c's
+# (never-called-by-this-test) output phase now references
+# childfopenMPI()/GreenOutput*() symbols, so the TU needs them at LINK time
+# even though the test only exercises TraceStreamOneBody() (pure buffer
+# fill, no I/O) and TraceBuildPlan(), never expec_trace_owned_states()
+# itself; splash.c is transitively required because wrapperMPI.c's
+# (likewise never-called) InitializeMPI() references splash(). The
+# MPI-heavy element libraries are still NOT pulled in.
 add_executable(expec_trace_map_check unit/expec_trace_map_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
@@ -380,7 +389,11 @@ add_executable(expec_trace_map_check unit/expec_trace_map_check.c
     ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/global.c
-    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/FileIO.c
+    ${CMAKE_SOURCE_DIR}/src/green_output.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c)
 target_include_directories(expec_trace_map_check PRIVATE
     ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(expec_trace_map_check PRIVATE DSFMT_MEXP=19937)

@@ -108,6 +108,46 @@ int TraceMapExtractTwoBody(struct BindStruct *X, int ipair, TraceMap *map);
 /** @brief Release TraceMap buffers (NULL-safe; leaves the struct zeroed). */
 void TraceMapFree(TraceMap *map);
 
+/**
+ * @brief Phase 3b Task 3, Step 1: stream every ONEBODY operator pair
+ * (X->Def.CisAjt) over every state this rank owns, filling
+ * gbuf[p*ncols + (n-jb)] = sum_{k: kprime[k]>=0} conj(z_n[kprime[k]]) *
+ * amp[k] * z_n[k], where z_n[k] = panel[(n-jb)*NN + k] (0<=k<idim_max,
+ * jb<=n<=je).
+ *
+ * Operator-outer loop (spec Sec.3.1): for each pair, extract its TraceMap,
+ * stream all owned states into gbuf, then TraceMapFree() it before moving to
+ * the next pair -- only one TraceMap is alive at a time. Pure buffer fill:
+ * performs no I/O and touches no global manifest/file state, which is what
+ * makes it directly unit-testable (test/unit/expec_trace_map_check.c) and
+ * lets the caller (expec_trace_owned_states()) guarantee that a mapping
+ * failure here is caught BEFORE any output file is opened (no partial
+ * output for the quantity).
+ *
+ * @param[in] X calculation parameters (X->Def.CisAjt, X->Def.NCisAjt,
+ *               X->Check.idim_max)
+ * @param[in] panel column-major state panel; panel[(n-jb)*NN + k] is
+ *               component k (0-based, 0<=k<X->Check.idim_max) of state n
+ *               (jb<=n<=je). Caller-verified precondition: NN ==
+ *               X->Check.idim_max (asserted here) -- see
+ *               src/phys_distributed_local.c's panel indexing.
+ * @param[in] jb, je 1-based inclusive owned-state range (caller guarantees
+ *               je>=jb; zero-ownership is the caller's responsibility to
+ *               skip before calling this)
+ * @param[in] NN panel stride (== X->Check.idim_max for FullDiag)
+ * @param[in] ncols je-jb+1, the gbuf column stride (NOT plan->nc_uniform --
+ *               gbuf is allocated for the plan's uniform upper bound but
+ *               packed here using this rank's tighter actual column count)
+ * @param[out] gbuf caller-allocated buffer of at least
+ *               X->Def.NCisAjt*ncols complex entries
+ * @return 0 on success; -1 if a pair's TraceMapExtractOneBody() fails (gbuf
+ *               is left partially filled -- the caller must not use it as
+ *               output in that case)
+ */
+int TraceStreamOneBody(struct BindStruct *X, const double complex *panel,
+                       long int jb, long int je, long int NN,
+                       long int ncols, double complex *gbuf);
+
 /* ------------------------------------------------------------------ */
 /* Mapping-probe adapters (defined next to their element functions).   */
 /* One-body.                                                           */

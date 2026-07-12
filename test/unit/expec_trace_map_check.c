@@ -54,8 +54,10 @@
 #include "mltplySpinCore.h"
 #include "bitcalc.h"
 #include "global.h"
+#include "expec_trace.h"
 #include "expec_trace_internal.h"
 #include "rearray_interactions.h"
+#include <stdlib.h> /* setenv/unsetenv (POSIX; matches this test's other libc use) */
 
 /* `myrank` and stdoutMPI are provided by the linked src/global.c;
    Rearray_Interactions is the REAL definition from the linked
@@ -297,6 +299,102 @@ static void run_purity(struct BindStruct *X, int twobody, int ip, long int n,
   TraceMapFree(&m2);
 }
 
+/* ---- Task 3 Step 2: TraceStreamOneBody() gbuf contents vs direct
+ * expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf execution (via the same
+ * direct_onebody() ground-truth helper the Step-3 mapping-validity checks
+ * above already use), for a random 3-state panel. 1e-13 tolerance. ---- */
+static void run_stream_onebody_case(struct BindStruct *X, long int n,
+                                    unsigned int seed_base, const char *label) {
+  const long int jb = 1, je = 3, ncols = 3;
+  long int nops = (long int)X->Def.NCisAjt;
+  double complex *panel = (double complex *)malloc(sizeof(double complex) * (size_t)(ncols * n));
+  double complex *cols[3];
+  double complex *gbuf;
+  long int c, p, k;
+  int rc;
+  char nm[192];
+
+  for (c = 0; c < ncols; c++) {
+    cols[c] = (double complex *)malloc(sizeof(double complex) * (size_t)(n + 1));
+    fill_random(cols[c], n, seed_base + (unsigned int)c * 7919u);
+    /* panel[(col)*NN + k] = cols[c][k+1]: 0-based slice of the 1-based
+       reference vector, exactly the layout TraceStreamOneBody()'s doc
+       comment specifies (== phys_distributed_local.c:70-81's convention). */
+    for (k = 0; k < n; k++) panel[c * n + k] = cols[c][k + 1];
+  }
+
+  gbuf = (double complex *)malloc(sizeof(double complex) * (size_t)(nops * ncols));
+  rc = TraceStreamOneBody(X, panel, jb, je, n, ncols, gbuf);
+  snprintf(nm, sizeof(nm), "%s TraceStreamOneBody rc==0", label);
+  expect_true(nm, rc == 0);
+
+  if (rc == 0) {
+    for (p = 0; p < nops; p++) {
+      for (c = 0; c < ncols; c++) {
+        double complex direct = direct_onebody(X, (int)p, cols[c], n);
+        snprintf(nm, sizeof(nm), "%s gbuf[pair=%ld,state=%ld] vs direct", label, p, c);
+        expect_close(nm, direct, gbuf[p * ncols + c]);
+      }
+    }
+  }
+
+  free(gbuf);
+  for (c = 0; c < ncols; c++) free(cols[c]);
+  free(panel);
+}
+
+/* ---- Task 3 Step 2: memory-gate boundary. With the capability table
+ * forced on via the HPHI_TRACE_FORCE dev hook (kTraceCap itself stays all
+ * FALSE until plan Task 5; this hook is the documented way to exercise the
+ * gate without it -- see TraceParseForceEnv()'s doc comment in
+ * expec_trace.c), TraceBuildPlan() is called directly (not through
+ * TraceGbufMaxBytesFromEnv()/the MPI orchestrator -- the plan doc says the
+ * env var is read by phys_distributed.c, not needed here) with a byte cap
+ * exactly at, and one byte under, nops*nc_uniform*sizeof(double complex).
+ * At the cap: fits -> kernel[ONEBODY]==1, demoted_memory[ONEBODY]==0.
+ * One byte short: demoted -> kernel[ONEBODY]==0, demoted_memory[ONEBODY]==1,
+ * gbuf_bytes[ONEBODY]==0. ---- */
+static void test_memory_gate_boundary(void) {
+  struct BindStruct X;
+  TraceExecutionPlan plan;
+  long int nc_uniform = 4;
+  size_t exact_bytes;
+  int **ob = alloc_ops(1, 4);
+
+  fprintf(stderr, "[memory-gate boundary]\n");
+  memset(&X, 0, sizeof(X));
+  X.Def.iCalcModel = HubbardGC;
+  X.Def.iFlgGeneralSpin = 0;
+  X.Def.iExpecMode = EXPECMODE_TRACE;
+  X.Def.CisAjt = ob;
+  X.Def.NCisAjt = 5;           /* nops */
+  X.Def.NCisAjtCkuAlvDC = 0;   /* keep TWOBODY out of this boundary check */
+
+  setenv("HPHI_TRACE_FORCE", "onebody", 1);
+
+  exact_bytes = (size_t)X.Def.NCisAjt * (size_t)nc_uniform * sizeof(double complex);
+
+  TraceBuildPlan(&X, nc_uniform, exact_bytes, &plan);
+  expect_true("gate boundary: cap==exact -> kernel[ONEBODY]==1",
+             plan.kernel[TRACE_Q_ONEBODY] == 1);
+  expect_true("gate boundary: cap==exact -> demoted_memory[ONEBODY]==0",
+             plan.demoted_memory[TRACE_Q_ONEBODY] == 0);
+  expect_true("gate boundary: cap==exact -> gbuf_bytes[ONEBODY]==nops*nc_uniform*16",
+             plan.gbuf_bytes[TRACE_Q_ONEBODY] == exact_bytes);
+
+  TraceBuildPlan(&X, nc_uniform, exact_bytes - 1, &plan);
+  expect_true("gate boundary: cap==exact-1 -> kernel[ONEBODY]==0",
+             plan.kernel[TRACE_Q_ONEBODY] == 0);
+  expect_true("gate boundary: cap==exact-1 -> demoted_memory[ONEBODY]==1",
+             plan.demoted_memory[TRACE_Q_ONEBODY] == 1);
+  expect_true("gate boundary: cap==exact-1 -> gbuf_bytes[ONEBODY]==0",
+             plan.gbuf_bytes[TRACE_Q_ONEBODY] == 0);
+
+  unsetenv("HPHI_TRACE_FORCE");
+  free(ob[0]);
+  free(ob);
+}
+
 static void test_hubbardgc(void) {
   struct BindStruct X;
   long int n = 256;
@@ -316,6 +414,7 @@ static void test_hubbardgc(void) {
   run_onebody_case(&X, 1, vec, n, "HubbardGC 1B off-diagonal");
   run_onebody_case(&X, 2, vec, n, "HubbardGC 1B cross-spin");
   run_purity(&X, 0, 1, n, "HubbardGC 1B purity");
+  run_stream_onebody_case(&X, n, 0x1B57u, "HubbardGC 1B stream");
 
   /* two-body: four element-family branches + same-index */
   X.Def.CisAjtCkuAlvDC = tb; X.Def.NCisAjtCkuAlvDC = 6;
@@ -356,6 +455,7 @@ static void test_spingchalf(void) {
   run_onebody_case(&X, 1, vec, n, "SpinGC 1B transverse");
   run_onebody_case(&X, 2, vec, n, "SpinGC 1B zero-result");
   run_purity(&X, 0, 1, n, "SpinGC 1B purity");
+  run_stream_onebody_case(&X, n, 0x59A6u, "SpinGC 1B stream");
 
   /* two-body: four spin-family branches */
   X.Def.CisAjtCkuAlvDC = tb; X.Def.NCisAjtCkuAlvDC = 6;
@@ -388,6 +488,7 @@ int main(void) {
   fprintf(stderr, "== expec_trace_map_check ==\n");
   test_hubbardgc();
   test_spingchalf();
+  test_memory_gate_boundary();
   if (g_failures == 0) {
     fprintf(stderr, "ALL PASS\n");
     return 0;
