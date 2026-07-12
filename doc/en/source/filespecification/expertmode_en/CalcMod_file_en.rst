@@ -299,7 +299,7 @@ The parameters correlated with the keywords are as follows.
      these quantities is a candidate for a future phase.
    | Whether the one-body/two-body trace kernel is actually used is
      decided once per run from a per-(model, quantity) capability table
-     plus two runtime checks, and reported at the start of the run by a
+     plus three runtime checks, and reported at the start of the run by a
      rank-0 ``INFO`` line per quantity (indented in the actual log
      output; ``%s`` below stands for ``one-body`` or ``two-body``):
    | ``INFO: ExpecMode 2: %s Green functions use the trace kernel.``

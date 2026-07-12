@@ -39,8 +39,13 @@ case, update the guidance bullet accordingly before merging.
   general-spin, Spinless) always falls back to `ExpecMode 1` for both
   Green-function quantities ("unsupported model").
 
-- **Two further, independent per-quantity runtime fallbacks** apply even
-  on a supported model:
+- **Three further per-quantity runtime fallbacks** (checked in a fixed
+  order — shared-evaluator, then no-operators, then the result-buffer
+  cap — and mutually exclusive with each other and with the
+  unsupported-model case) apply even on a supported model:
+  - **No-operators rule**: a quantity with no operators of its kind
+    defined in the input falls back trivially (INFO: "no operators of
+    this kind are defined") — nothing is computed or written either way.
   - **Memory gate**: if a quantity's result buffer would exceed the new
     `HPHI_TRACE_BUF_MAX_MB` cap, that quantity falls back to
     `ExpecMode 1`.
@@ -52,7 +57,7 @@ case, update the guidance bullet accordingly before merging.
     skipped, and the two-body output is never written twice. The
     one-body quantity is unaffected by this rule.
 
-  Each quantity's outcome (trace kernel / one of the three fallback
+  Each quantity's outcome (trace kernel / one of the four fallback
   reasons) is reported by a rank-0 `INFO` line at the start of the run;
   see `src/expec_trace.c`'s `TraceReportPlan()` for the exact strings
   (also quoted verbatim in the `ExpecMode` CalcMod documentation).
