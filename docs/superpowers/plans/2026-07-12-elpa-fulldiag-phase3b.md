@@ -64,7 +64,10 @@
      呼び出し側が渡す（rank 局所 ncols は渡してはならない — plan の全ランク
      一致が崩れる）。ExpecMode!=2 なら全量 fallback の plan を返す */
   void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
-                      TraceExecutionPlan *plan);
+                      size_t gbuf_max_bytes, TraceExecutionPlan *plan);
+  /* gbuf_max_bytes は MPI オーケストレーション層（phys_distributed.c）が
+     rank 0 で環境変数を解析し MPI_Bcast した値を渡す — 環境変数がノード間で
+     不一致でも plan は全ランク一致（expec_trace.c は MPI フリーのまま） */
   /* rank 0 用: plan の内容を量ごとに INFO 表示（降格理由込み）。
      エネルギー系/S2/NBodyG/AnomalousG が常時フォールバックである旨の固定行も出す */
   void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp);
@@ -113,19 +116,19 @@ static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_byte
   if (sn * sc * sizeof(double complex) > max_bytes) return 0; /* キャップ超過 */
   return sn * sc * sizeof(double complex);
 }
-/* HPHI_TRACE_GBUF_MAX_MB の MiB→byte 変換も同様にチェック付きで行う
+/* HPHI_TRACE_BUF_MAX_MB の MiB→byte 変換も同様にチェック付きで行う
    （value_mb > SIZE_MAX >> 20 なら既定値へフォールバックし警告） */
 ```
-`TraceGbufBytes(...)==0` なら demoted_memory[q]=1, kernel[q]=0。`TraceGbufMaxBytes()`: 環境変数 `HPHI_TRACE_GBUF_MAX_MB`（1..1048576 の整数のみ受理、不正値は既定にフォールバックして stderr に 1 行警告）×2^20、未設定は既定 1024 MiB。**このゲートは量ごと・ランクごとの結果バッファ 1 本のキャップであり、プロセス総メモリの上限ではない**（コメントで明記。写像 O(N) 1 本と panel は別勘定）。
+`TraceGbufBytes(...)==0` なら demoted_memory[q]=1, kernel[q]=0。`TraceGbufMaxBytes()`: 環境変数 `HPHI_TRACE_BUF_MAX_MB`（1..1048576 の整数のみ受理、不正値は既定にフォールバックして stderr に 1 行警告）×2^20、未設定は既定 1024 MiB。**このゲートは量ごと・ランクごとの結果バッファ 1 本のキャップであり、プロセス総メモリの上限ではない**（コメントで明記。写像 O(N) 1 本と panel は別勘定）。
 
 `TraceReportPlan` の出力（equiv テストがこの全行を検証する — 量ごと 1 行+固定行 1 行）:
 ```
   INFO: ExpecMode 2: one-body Green functions use the trace kernel.
   INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (unsupported model).
-  INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_GBUF_MAX_MB).
+  INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).
   INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.
 ```
-（2 行目と 3 行目は排他 — 理由テキストは "unsupported model" / "result buffer would exceed HPHI_TRACE_GBUF_MAX_MB" の 2 種。）
+（2 行目と 3 行目は排他 — 理由テキストは "unsupported model" / "result buffer would exceed HPHI_TRACE_BUF_MAX_MB" の 2 種。）
 
 `expec_trace_owned_states` はこの段階では担当量なし（plan が全 FALSE）で即 return 0。
 
@@ -138,7 +141,10 @@ static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_byte
 ```c
   TraceExecutionPlan tplan;
   long int nc_uniform = (NN + (long int)nproc - 1) / (long int)nproc; /* 全ランク同値 */
-  TraceBuildPlan(X, nc_uniform, &tplan);   /* ExpecMode!=2 なら全量 fallback */
+  unsigned long gbuf_max = 0;
+  if (myrank == 0) gbuf_max = (unsigned long)TraceGbufMaxBytesFromEnv(); /* env は rank 0 のみ解析 */
+  MPI_Bcast(&gbuf_max, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+  TraceBuildPlan(X, nc_uniform, (size_t)gbuf_max, &tplan); /* ExpecMode!=2 なら全量 fallback */
   if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
     TraceReportPlan(&tplan, stdoutMPI);
   ExpecLocalEnter();
@@ -257,7 +263,7 @@ Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check
 
 `expec_trace_owned_states` の ONEBODY 部: `gbuf`（**確保バイト数は `TraceGbufBytes(nops, plan->nc_uniform, TraceGbufMaxBytes())` の戻り値のみを使う** — サイズ式の再記述禁止。0 が返る事態は plan 構築時に排除済みだが、0 なら防御的に rc=-1。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。**量またぎの原子性は保証しない**（一体を書き終えた後に二体の準備で失敗した場合、一体の part は残るが、集団 rc=-1 により Merge は公開せず（マニフェスト規則）実行全体が失敗として終わる — Mode 1 のループ途中失敗と同じ回復モデル[再実行]。これは意図した仕様として docs に記載不要[内部挙動]、コード内コメントに記す）。
 
-- [ ] **Step 2: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の中身が expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf の直接実行と 1e-13 一致。メモリゲート境界: `HPHI_TRACE_GBUF_MAX_MB=1` で nops×ncols がゲートを跨ぐ 2 ケース — 降格した plan では kernel[q]==0 になること）→ RED→GREEN → 回帰 → コミット
+- [ ] **Step 2: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の中身が expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf の直接実行と 1e-13 一致。メモリゲート境界: `HPHI_TRACE_BUF_MAX_MB=1` で nops×ncols がゲートを跨ぐ 2 ケース — 降格した plan では kernel[q]==0 になること）→ RED→GREEN → 回帰 → コミット
 
 - [ ] **Step 3（clavius 早期チェックポイント — コントローラ実行）**: rsync → build_elpa 再構成・ビルド → **一時的に**単体テストレベルで正準 Hubbard の写像正当性を検証: `expec_trace_map_check` に正準ケースを追加するのではなく、equiv の Hubbard ケースを `ExpecMode 2` + ケイパビリティ強制 ON（開発用フック `HPHI_TRACE_FORCE=onebody` — Task 1 で定義済みのセマンティクス）で np=2 実行し、mode0 と比較。**ログで一体が "use the trace kernel" 行になっていることを必ず確認**（一体のみ強制有効の状態）。不一致ならここで修正してから Task 4 へ進む。
 
@@ -282,7 +288,7 @@ Task 3 と同一構造: `nops = X->Def.NCisAjtCkuAlvDC`、別バッファ・別�
 
 ### Task 6: docs + 移行ノート
 
-- CalcMod ja/en: ExpecMode 2 の実態化（対象量 = 一体・二体 GF、対象モデル、フォールバック規則、メモリゲートと `HPHI_TRACE_GBUF_MAX_MB`、INFO の読み方。「2 は 1 として動作」の 3a 記述を置換。**エネルギー系・S² のトレース化は将来拡張**である旨）。INFO 文字列は実装から verbatim（字下げ注記は 3a の流儀）。
+- CalcMod ja/en: ExpecMode 2 の実態化（対象量 = 一体・二体 GF、対象モデル、フォールバック規則、メモリゲートと `HPHI_TRACE_BUF_MAX_MB`、INFO の読み方。「2 は 1 として動作」の 3a 記述を置換。**エネルギー系・S² のトレース化は将来拡張**である旨）。INFO 文字列は実装から verbatim（字下げ注記は 3a の流儀）。
 - Create: `docs/superpowers/specs/2026-07-12-phase3b-migration-note.md`（PR 転記用: ExpecMode 2 実装、利用指針は**ベンチ結果を見てから確定**[スペック §2 は「3b 以降は通常 2 を推奨」だが、Task 8 の実測が Mode 1 未満なら推奨文言を実測に合わせる]、var 列は Mode 2 でも従来どおり計算される[エネルギー系フォールバック]こと）。
 - `test/manual/elpa_gpu_check.md` に Mode 2 検証項目+ベンチ項目追加。
 - 両言語 rst レンダー確認 → コミット。
