@@ -55,6 +55,10 @@
     int kernel[TRACE_Q_NQUANT];
     /* demoted_memory[q]==1: 静的には対応モデルだがメモリゲートで降格した */
     int demoted_memory[TRACE_Q_NQUANT];
+    /* kernel[q]==1 のとき、その量の結果バッファの検証済み確保バイト数
+       （TraceGbufBytes の戻り値）。Task 3/4 の malloc は**この値のみ**を使う
+       — 環境変数の再読・サイズ式の再計算を構造的に排除する。kernel[q]==0 なら 0 */
+    size_t gbuf_bytes[TRACE_Q_NQUANT];
     long int nc_uniform;   /* 構築に使った一様ブロック幅 NC=ceil(neig/nproc)
                               （rank 局所の所有数ではない。ゼロ所有判定は
                               je<jb で行い、この値は使わない） */
@@ -66,8 +70,12 @@
   void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                       size_t gbuf_max_bytes, TraceExecutionPlan *plan);
   /* gbuf_max_bytes は MPI オーケストレーション層（phys_distributed.c）が
-     rank 0 で環境変数を解析し MPI_Bcast した値を渡す — 環境変数がノード間で
-     不一致でも plan は全ランク一致（expec_trace.c は MPI フリーのまま） */
+     rank 0 で TraceGbufMaxBytesFromEnv() を呼び MPI_Bcast した値を渡す —
+     環境変数がノード間で不一致でも plan は全ランク一致（expec_trace.c は
+     MPI フリーのまま）。TraceBuildPlan は量ごとに TraceGbufBytes を評価し
+     plan->gbuf_bytes[q] に格納する */
+  /* HPHI_TRACE_BUF_MAX_MB を解析（getenv のみ、MPI 非依存）。rank 0 でのみ呼ぶ */
+  size_t TraceGbufMaxBytesFromEnv(void);
   /* rank 0 用: plan の内容を量ごとに INFO 表示（降格理由込み）。
      エネルギー系/S2/NBodyG/AnomalousG が常時フォールバックである旨の固定行も出す */
   void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp);
@@ -140,11 +148,15 @@ static size_t TraceGbufBytes(long int nops, long int nc_uniform, size_t max_byte
 
 ```c
   TraceExecutionPlan tplan;
-  long int nc_uniform = (NN + (long int)nproc - 1) / (long int)nproc; /* 全ランク同値 */
-  unsigned long gbuf_max = 0;
-  if (myrank == 0) gbuf_max = (unsigned long)TraceGbufMaxBytesFromEnv(); /* env は rank 0 のみ解析 */
-  MPI_Bcast(&gbuf_max, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-  TraceBuildPlan(X, nc_uniform, (size_t)gbuf_max, &tplan); /* ExpecMode!=2 なら全量 fallback */
+  /* 加算オーバーフローしない ceiling 除算（NN>=0, nproc>0 は呼び出し前提） */
+  long int nc_uniform = NN / (long int)nproc + ((NN % (long int)nproc) != 0);
+  uint64_t gbuf_max = 0;
+  if (myrank == 0) gbuf_max = (uint64_t)TraceGbufMaxBytesFromEnv(); /* env は rank 0 のみ解析 */
+  MPI_Bcast(&gbuf_max, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+  /* size_t が 64bit 未満の環境では SIZE_MAX に飽和させてから渡す（チェック付き変換） */
+  TraceBuildPlan(X, nc_uniform,
+                 (gbuf_max > (uint64_t)SIZE_MAX) ? (size_t)SIZE_MAX : (size_t)gbuf_max,
+                 &tplan); /* ExpecMode!=2 なら全量 fallback */
   if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
     TraceReportPlan(&tplan, stdoutMPI);
   ExpecLocalEnter();
@@ -261,7 +273,7 @@ Run: `cd build_mpi && make expec_trace_map_check && ./test/expec_trace_map_check
 
 - [ ] **Step 1: ストリーミングとバッファ**
 
-`expec_trace_owned_states` の ONEBODY 部: `gbuf`（**確保バイト数は `TraceGbufBytes(nops, plan->nc_uniform, TraceGbufMaxBytes())` の戻り値のみを使う** — サイズ式の再記述禁止。0 が返る事態は plan 構築時に排除済みだが、0 なら防御的に rc=-1。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。**量またぎの原子性は保証しない**（一体を書き終えた後に二体の準備で失敗した場合、一体の part は残るが、集団 rc=-1 により Merge は公開せず（マニフェスト規則）実行全体が失敗として終わる — Mode 1 のループ途中失敗と同じ回復モデル[再実行]。これは意図した仕様として docs に記載不要[内部挙動]、コード内コメントに記す）。
+`expec_trace_owned_states` の ONEBODY 部: `gbuf`（**確保バイト数は `plan->gbuf_bytes[TRACE_Q_ONEBODY]` のみを使う** — plan 構築時に検証済みの値で、環境変数の再読・サイズ式の再記述を禁止。0 なら防御的に rc=-1[plan 構築時に排除済みのはず]。malloc 失敗は**書き込み前なので**その量を rc=-1 で報告 — 部分出力なし）。演算子外側ループ: pair → `TraceMapExtractOneBody` → 全所有状態ストリーミング → gbuf → `TraceMapFree`（写像の同時保持は 1 本、スペック §3.1）。**全 pair 完了後に**出力フェーズ: 状態順に `X->Phys.eigen_num = n-1` を設定し、expec_cisajs.c と同一のファイル名規約・行書式で per-state ファイル/パーシャル集約へ書く（書式文字列は expec_cisajs.c の該当 fprintf と共通の #define へ抽出し二重定義を避ける。eigen_num の設定は Mode 1 の per-state 慣行と同じで、後続フォールバックループが状態ごとに再設定するため干渉しない）。書き込み中の失敗は Mode 1 の書き込み失敗と同じ扱い（sticky manifest エラー → 集団 rc=-1。**フォールバックへの再試行はしない** — 二重出力防止）。**量またぎの原子性は保証しない**（一体を書き終えた後に二体の準備で失敗した場合、一体の part は残るが、集団 rc=-1 により Merge は公開せず（マニフェスト規則）実行全体が失敗として終わる — Mode 1 のループ途中失敗と同じ回復モデル[再実行]。これは意図した仕様として docs に記載不要[内部挙動]、コード内コメントに記す）。
 
 - [ ] **Step 2: 単体テストケース**（GC: ランダム 3 状態パネルで gbuf の中身が expec_cisajs_HubbardGC / expec_cisajs_SpinGCHalf の直接実行と 1e-13 一致。メモリゲート境界: `HPHI_TRACE_BUF_MAX_MB=1` で nops×ncols がゲートを跨ぐ 2 ケース — 降格した plan では kernel[q]==0 になること）→ RED→GREEN → 回帰 → コミット
 
