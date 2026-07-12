@@ -28,27 +28,45 @@
  *   matrixscalapack.c). Permanently NOT scanned by the guard.
  *
  * - phys_stateparallel_local_loop() (src/phys_distributed_local.c, MPI-free
- *   local loop): the ExpecLocal-wrapped per-rank state loop that calls the
- *   existing expec_* observable evaluators. Contains ZERO raw MPI_* /
- *   exitMPI / non-allowlisted wrapperMPI calls and does not include mpi.h;
- *   it is the file added to check_expec_local_calls.sh's FILES. It references
- *   only build-independent globals (v0/v1, X->Phys.*) and always-available
- *   APIs (expec_*, ExpecLocal*, GreenOutput* partial helpers), so it compiles
- *   in every build (including the non-MPI / non-_SCALAPACK default build);
- *   it is simply never *called* there because the only caller,
- *   phys_stateparallel(), is compiled out.
+ *   local loop): the per-rank state loop that calls the existing expec_*
+ *   observable evaluators (skipping any quantity the ExpecMode 2 trace
+ *   kernel already owns, per the TraceExecutionPlan). Contains ZERO raw
+ *   MPI_* / exitMPI / non-allowlisted wrapperMPI calls and does not include
+ *   mpi.h; it is the file added to check_expec_local_calls.sh's FILES. It
+ *   references only build-independent globals (v0/v1, X->Phys.*) and
+ *   always-available APIs (expec_*, ExpecLocalError, GreenOutput* partial
+ *   helpers), so it compiles in every build (including the non-MPI /
+ *   non-_SCALAPACK default build); it is simply never *called* there because
+ *   its only caller, phys_stateparallel(), is compiled out.
+ *
+ *   ExpecLocalEnter()/ExpecLocalLeave() and
+ *   GreenOutputSetPartialSuffix()/GreenOutputClearPartialSuffix() are NOT
+ *   called from this function (phase 3b Task 1 hoisted them up to
+ *   phys_stateparallel(), since plan construction and the ExpecMode 2
+ *   kernel dispatch must share the same ExpecLocal session as this
+ *   fallback loop) -- the caller is responsible for that single-exit
+ *   Enter/.../Clear/Leave bracketing around both expec_trace_owned_states()
+ *   and this function.
  */
 #pragma once
 #include "struct.h"
+#include "expec_trace.h"
 
 /**
- * @brief MPI-free per-rank observable state loop (ExpecMode 1 local layer).
+ * @brief MPI-free per-rank observable state loop (ExpecMode 1 fallback
+ * layer, also used to complete whatever ExpecMode 2's trace kernel does not
+ * own).
  *
- * Enters ExpecLocal mode, opens a green_output partial session for @p X's
- * rank, evaluates all FullDiag observables for the states this rank owns
- * (columns of @p panel), and records them into X->Phys.all_*[n-1]. Always
- * pairs GreenOutputClearPartialSuffix()/ExpecLocalLeave() before returning,
- * on both the success and the early-break (rc=-1) paths.
+ * Evaluates every FullDiag observable NOT marked plan->kernel[q]==1 for the
+ * states this rank owns (columns of @p panel), and records them into
+ * X->Phys.all_*[n-1]. The energy/fluctuation family, S2, NBodyG, and
+ * AnomalousG are unconditional (phase 3b ships no trace kernel for them);
+ * only expec_cisajs (TRACE_Q_ONEBODY) and expec_cisajscktaltdc
+ * (TRACE_Q_TWOBODY) are ever skipped here, and only when @p plan says the
+ * trace kernel already produced that quantity's output. Does NOT call
+ * ExpecLocalEnter/Leave or GreenOutputSetPartialSuffix/ClearPartialSuffix --
+ * the caller brackets both this function and expec_trace_owned_states() in
+ * a single such session.
  *
  * @param[in,out] X    calculation parameters / result struct
  * @param[in] panel    this rank's column-major state panel (ld = NN); column
@@ -57,12 +75,16 @@
  * @param[in] je       last owned state (1-based, inclusive); je<jb ==> no
  *                     states owned (zero-owner rank), loop body is skipped
  * @param[in] NN       full eigenvector length (= X->Check.idim_max)
+ * @param[in] plan     the ExpecMode 2 execution plan (all kernel[q]==0 when
+ *                     ExpecMode!=2, so behavior is unchanged for ExpecMode
+ *                     0/1)
  * @return 0 on success, -1 if any observable evaluation (or a deferred
  *         ExpecLocal error) failed for an owned state (rank-local verdict)
  */
 int phys_stateparallel_local_loop(struct BindStruct *X,
                                   double complex *panel,
-                                  long int jb, long int je, long int NN);
+                                  long int jb, long int je, long int NN,
+                                  const TraceExecutionPlan *plan);
 
 #ifdef _SCALAPACK
 /**

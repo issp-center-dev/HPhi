@@ -88,8 +88,6 @@ void phys(struct BindStruct *X, //!<[inout]
   double complex *vec_tmp;
   int ictxt, ierr, rank;
   if (use_scalapack && X->Def.iExpecMode != EXPECMODE_SERIAL) {
-    if (X->Def.iExpecMode == EXPECMODE_TRACE)
-      fprintf(stdoutMPI, "  INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.\n");
     if (phys_stateparallel(X, neig) != 0) exitMPI(-1);
     assert(!ExpecLocalActive());
     return;

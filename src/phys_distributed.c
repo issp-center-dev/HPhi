@@ -28,6 +28,15 @@
  * only under _SCALAPACK (an empty TU otherwise, mirroring matrixscalapack.c),
  * because it references the distributed eigenvector globals Z_vec/descZ_vec
  * and the ScaLAPACK redistribution primitive.
+ *
+ * Phase 3b Task 1 also makes this the ExpecMode 2 (trace-kernel) dispatch
+ * point: it builds the TraceExecutionPlan (identically on every rank -- see
+ * src/expec_trace.c), Bcasts the HPHI_TRACE_BUF_MAX_MB cap so the plan
+ * agrees across ranks even if the environment does not, reports the plan on
+ * rank 0, then runs expec_trace_owned_states() before the ExpecMode-1
+ * fallback loop so the two never race on the same quantity. For ExpecMode
+ * 0/1 the plan is all-fallback (kTraceCap ships all FALSE in this task), so
+ * this is a structural no-op until later 3b tasks land real kernels.
  */
 #include "phys_distributed.h"
 #ifdef _SCALAPACK
@@ -36,9 +45,11 @@
 #include "green_output.h"
 #include "wrapperMPI.h"
 #include "DefCommon.h"
+#include "expec_trace.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#include <stdint.h>
 
 int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   long int NN = (long int)neig;
@@ -78,8 +89,39 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   free(Z_vec);
   Z_vec = NULL;
 
-  /* --- MPI-free per-rank observable loop (partial green_output session). --- */
-  rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN);
+  /* --- ExpecMode 2 plan: build once, identically on every rank (all-FALSE
+     capability table in phase 3b Task 1, so this is currently a pure
+     all-fallback plan for ExpecMode 2 too -- see src/expec_trace.c). ---- */
+  {
+    TraceExecutionPlan tplan;
+    /* overflow-free ceiling division (NN>=0, nproc>0 are the caller's
+       precondition) -- distinct from NC above, which the plan API commits
+       to calling nc_uniform to make explicit it is NOT a rank-local ncols. */
+    long int nc_uniform = NN / (long int)nproc + ((NN % (long int)nproc) != 0);
+    uint64_t gbuf_max = 0;
+    if (myrank == 0) gbuf_max = (uint64_t)TraceGbufMaxBytesFromEnv(); /* rank 0 only */
+    MPI_Bcast(&gbuf_max, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+    /* checked narrowing in case size_t is narrower than 64 bits here */
+    TraceBuildPlan(X, nc_uniform,
+                   (gbuf_max > (uint64_t)SIZE_MAX) ? (size_t)SIZE_MAX : (size_t)gbuf_max,
+                   &tplan); /* ExpecMode!=2 => all-fallback plan */
+    if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
+      TraceReportPlan(&tplan, stdoutMPI);
+
+    /* --- MPI-free per-rank observable session (partial green_output
+       session). Single-exit invariant: once ExpecLocalEnter() has run,
+       GreenOutputClearPartialSuffix() and ExpecLocalLeave() below MUST run
+       exactly once before this block ends, regardless of whether the
+       kernel dispatch or the fallback loop reports failure -- do NOT add an
+       early return between Enter() and Leave(). --- */
+    ExpecLocalEnter();                 /* also clears the sticky ExpecLocal error */
+    GreenOutputSetPartialSuffix(myrank);
+    rc_local = expec_trace_owned_states(X, &tplan, panel, jb, je, NN);
+    if (rc_local == 0)
+      rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN, &tplan);
+    GreenOutputClearPartialSuffix();
+    ExpecLocalLeave();
+  }
   free(panel);
 
   /* --- single rendezvous: share the failure verdict across all ranks. --- */

@@ -71,7 +71,7 @@ target_sources(HPhi PRIVATE
 target_sources(HPhi PRIVATE
   expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c
   nbody_correlation.c phys.c expec_energy_flct.c
-  phys_distributed.c phys_distributed_local.c
+  phys_distributed.c phys_distributed_local.c expec_trace.c
 )
 
 # Common utilities

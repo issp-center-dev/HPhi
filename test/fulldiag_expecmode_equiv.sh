@@ -209,12 +209,20 @@ run_mode "${case1}" 0
 run_mode "${case1}" 1
 compare_output_trees "${case1}/mode0" "${case1}/mode1"
 
-# ExpecMode 2 sanity sub-case (only exercised once, per spec: 3a always
-# downgrades trace-kernel Mode 2 to Mode 1, so this both confirms the INFO
-# message fires and that the result is bit-identical to Mode 1's).
+# ExpecMode 2 sanity sub-case (only exercised once). Phase 3b Task 1 replaces
+# the old single downgrade-INFO grep with a check of every TraceReportPlan()
+# line (src/expec_trace.c): the capability table ships all FALSE, so both
+# one-body and two-body report a fallback reason, plus the fixed
+# always-fallback line for energy/S2/NBodyG/AnomalousG. Mode 2's numeric
+# result must still be identical to Mode 1's -- the plan is currently
+# all-fallback, so Mode 2 == Mode 1 in behavior, only the INFO output differs.
 run_mode "${case1}" 2
-grep -q "ExpecMode 2 kernels are not available in this build; running as ExpecMode 1" \
-  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 downgrade INFO message was not printed"
+grep -q "ExpecMode 2: one-body Green functions use the" \
+  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 one-body plan INFO line was not printed"
+grep -q "ExpecMode 2: two-body Green functions use the" \
+  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 two-body plan INFO line was not printed"
+grep -q "always use the ExpecMode-1 path" \
+  "${case1}/mode2/log_run.txt" || fail "ExpecMode 2 always-fallback plan INFO line was not printed"
 compare_output_trees "${case1}/mode1" "${case1}/mode2"
 
 # =========================================================================

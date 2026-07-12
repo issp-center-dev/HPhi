@@ -16,7 +16,8 @@
 /**
  * @file phys_distributed_local.c
  *
- * @brief ExpecMode 1 (state-task-parallel) MPI-free local observable loop.
+ * @brief ExpecMode 1 (state-task-parallel) MPI-free local observable loop;
+ * also completes whatever the ExpecMode 2 trace kernel does not own.
  *
  * This translation unit is the "local loop" layer of the state-parallel
  * FullDiag observables driver. It must contain ZERO raw MPI_* calls, no
@@ -32,6 +33,20 @@
  * always-available APIs, this file compiles fully in every build, including
  * the non-MPI / non-_SCALAPACK default build; it is simply never called there
  * (its only caller, phys_stateparallel(), is compiled out without _SCALAPACK).
+ *
+ * Phase 3b Task 1: this function takes a `const TraceExecutionPlan *plan`
+ * (read-only, value-passed struct pointer -- still MPI-free) and skips ONLY
+ * expec_cisajs() when plan->kernel[TRACE_Q_ONEBODY] and ONLY
+ * expec_cisajscktaltdc() when plan->kernel[TRACE_Q_TWOBODY]; every other
+ * evaluator and the all_* assignment group run unconditionally, exactly as
+ * in phase 3a. ExpecLocalEnter()/Leave() and
+ * GreenOutputSetPartialSuffix()/ClearPartialSuffix() were hoisted OUT of
+ * this function up to the orchestrator (phys_stateparallel()) in the same
+ * commit, so that plan construction and the (currently no-op)
+ * expec_trace_owned_states() kernel dispatch share the same ExpecLocal
+ * session as this loop. For ExpecMode 0/1, plan is the all-fallback plan
+ * (every kernel[q]==0), so this function's call sequence and the
+ * Enter/Set/Clear/Leave ordering relative to it are unchanged from phase 3a.
  */
 #include "phys_distributed.h"
 #include "expec_energy_flct.h"
@@ -54,15 +69,15 @@
  * does, then expec_energy_flct() moves it into v1 (and puts H*v1 into v0), so
  * the subsequent evaluators -- including expec_totalspin() -- read the
  * eigenvector through their v1 argument. X->Phys.eigen_num stays 0-based.
+ * Does NOT call ExpecLocalEnter/Leave or GreenOutputSetPartialSuffix/
+ * ClearPartialSuffix -- see the file header comment and phys_distributed.h.
  */
 int phys_stateparallel_local_loop(struct BindStruct *X,
                                   double complex *panel,
-                                  long int jb, long int je, long int NN) {
+                                  long int jb, long int je, long int NN,
+                                  const TraceExecutionPlan *plan) {
   int rc = 0;
   long int n, j;
-
-  ExpecLocalEnter();                 /* also clears the sticky ExpecLocal error */
-  GreenOutputSetPartialSuffix(myrank);
 
   for (n = jb; n <= je && rc == 0; n++) {
     X->Phys.eigen_num = (int)(n - 1); /* 0-based, as in the serial phys.c */
@@ -72,8 +87,12 @@ int phys_stateparallel_local_loop(struct BindStruct *X,
     }
 
     if (expec_energy_flct(X) != 0) { rc = -1; break; }
-    if (expec_cisajs(X, v1) != 0) { rc = -1; break; }
-    if (expec_cisajscktaltdc(X, v1) != 0) { rc = -1; break; }
+    if (!plan->kernel[TRACE_Q_ONEBODY]) {
+      if (expec_cisajs(X, v1) != 0) { rc = -1; break; }
+    }
+    if (!plan->kernel[TRACE_Q_TWOBODY]) {
+      if (expec_cisajscktaltdc(X, v1) != 0) { rc = -1; break; }
+    }
     if (expec_nbodyg(X, v1) != 0) { rc = -1; break; }
     if (expec_anomalousg(X, v1) != 0) { rc = -1; break; }
     if (X->Def.iCalcType == FullDiag) {
@@ -91,7 +110,5 @@ int phys_stateparallel_local_loop(struct BindStruct *X,
     X->Phys.all_num_down[n - 1] = X->Phys.num_down;
   }
 
-  GreenOutputClearPartialSuffix();   /* reached on both success and break paths */
-  ExpecLocalLeave();
   return rc;
 }

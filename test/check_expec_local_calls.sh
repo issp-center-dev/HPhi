@@ -38,10 +38,15 @@ fi
 # site-decomposition machinery used by Lanczos/TPQ as well, not something
 # this expec-focused guard polices; their reachability was audited instead
 # in the inventory document itself.
-FILES="src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c src/phys_distributed_local.c"
+FILES="src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c src/phys_distributed_local.c src/expec_trace.c"
 # The MPI-free local-loop layer (Task 6) is scanned here; the orchestration
 # layer src/phys_distributed.c holds the legitimate raw MPI collectives and is
 # permanently NOT scanned.
+# src/expec_trace.c (phase 3b Task 1: the ExpecMode 2 trace-kernel plan
+# construction / INFO reporting / dispatch skeleton) is added to this list in
+# the same commit that creates it -- it must stay MPI-free (no mpi.h, no raw
+# MPI_*/exitMPI, only the allow-listed wrapperMPI helpers below) for the same
+# reason phys_distributed_local.c does.
 
 # Task 3 emptied this once ExpecLocal defensive guards were inserted and
 # marker-wrapped around the partner_rank != myrank branches in both files
