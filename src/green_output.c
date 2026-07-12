@@ -429,10 +429,7 @@ int GreenOutputMergePartials(struct BindStruct *X)
     }
   }
 
-  /* Single rendezvous: every rank returns the identical verdict. */
-  MPI_Bcast(&rc, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-  if (rc == 0 && myrank_l == 0) {
+  if (myrank_l == 0 && rc == 0) {
     /* Two-phase publish (write-to-temp, then rename):
        Phase A concatenates each attempted kind's parts into a private
        <final>.tmp_merge file, with every fread/fwrite/ferror/fclose checked.
@@ -464,10 +461,12 @@ int GreenOutputMergePartials(struct BindStruct *X)
         }
       }
       if (!any_attempted) continue;
-      kind_active[k] = 1;
 
       n = snprintf(tmp_joined[k], sizeof(tmp_joined[k]), "%s.tmp_merge", final_joined[k]);
       if (n < 0 || (size_t)n >= sizeof(tmp_joined[k])) { rc = -1; break; }
+      /* Only mark active once tmp_joined[k] holds a valid path -- the
+         failure-cleanup path remove()s every active kind's temp path. */
+      kind_active[k] = 1;
 
       fout = fopen(tmp_joined[k], "wb");
       if (fout == NULL) { rc = -1; break; }
@@ -525,6 +524,13 @@ int GreenOutputMergePartials(struct BindStruct *X)
               "Error: GreenOutputMergePartials: merge failed; partial (.part*) files are kept for diagnosis.\n");
     }
   }
+
+  /* Single rendezvous, LAST: every rank reaches this unconditionally (no
+     early return exists between the Gather above and here on any rank), so
+     the verdict broadcast from rank 0 covers manifest-validation failures
+     AND publish-phase (Phase A/B) failures alike -- on any failure, every
+     rank returns nonzero. */
+  MPI_Bcast(&rc, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (myrank_l == 0 && all != NULL) free(all);
   return rc;
