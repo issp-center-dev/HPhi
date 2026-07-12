@@ -144,14 +144,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     //vec=v0;
     break;
   }
-  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody) &&
-      GreenOutputFileName(X, GreenOutputOneBody, sdt) != 0) {
-    return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
+    if (GreenOutputOpenAggregate(X, GreenOutputOneBody, &fp) != 0) {
+      return -1;
+    }
+  } else {
+    if (childfopenMPI(sdt, "w", &fp) != 0) {
+      return -1;
+    }
   }
-  
-  if(childfopenMPI(sdt, GreenOutputOpenMode(X), &fp)!=0){
-    return -1;
-  } 
   switch(X->Def.iCalcModel){
   case HubbardGC:
     if(expec_cisajs_HubbardGC(X, vec, &fp)!=0){
@@ -302,7 +303,11 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     return -1;
   }
 
-  fclose(fp);
+  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
+    GreenOutputCloseAggregate(GreenOutputOneBody, fp);
+  } else {
+    fclose(fp);
+  }
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
       TimeKeeper(X, cFileNameTimeKeep, cLanczosExpecOneBodyGFinish, "a");

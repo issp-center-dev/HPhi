@@ -593,9 +593,11 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
   }
   if (get_anomalousg_filename(X, sdt) != 0) return -1;
   use_aggregate = GreenOutputKindUsesAggregate(X, GreenOutputAnomalous);
-  if (use_aggregate &&
-      GreenOutputFileName(X, GreenOutputAnomalous, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, use_aggregate ? "a" : "w", &fp) != 0) return -1;
+  if (use_aggregate) {
+    if (GreenOutputOpenAggregate(X, GreenOutputAnomalous, &fp) != 0) return -1;
+  } else {
+    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  }
 
   for (t = 0; t < X->Def.NAnomalousG; t++) {
     const double complex value = calc_anomalousg_term_hubbardgc(X, t, vec);
@@ -603,6 +605,10 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
     write_anomalousg_line(fp, &X->Def, t, value);
   }
 
-  fclose(fp);
+  if (use_aggregate) {
+    GreenOutputCloseAggregate(GreenOutputAnomalous, fp);
+  } else {
+    fclose(fp);
+  }
   return 0;
 }

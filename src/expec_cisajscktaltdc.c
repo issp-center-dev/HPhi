@@ -179,14 +179,6 @@ int expec_cisajscktaltdc
     sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
-  if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody) &&
-      GreenOutputFileName(X, GreenOutputTwoBody, sdt) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody) &&
-      GreenOutputFileName(X, GreenOutputThreeBody, sdt_2) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody) &&
-      GreenOutputFileName(X, GreenOutputFourBody, sdt_3) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody) &&
-      GreenOutputFileName(X, GreenOutputSixBody, sdt_4) != 0) return -1;
   if(X->Def.iCalcModel == Spin &&
      (X->Def.NTBody>0 || X->Def.NFBody>0 || X->Def.NSBody>0)){
     fprintf(stdoutMPI,
@@ -195,30 +187,38 @@ int expec_cisajscktaltdc
   }
   if(X->Def.NCisAjtCkuAlvDC>0){
     // If the number of two-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt, GreenOutputOpenMode(X), &fp)!=0){
-      return -1;
+    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputTwoBody, &fp) != 0) return -1;
+    } else {
+      if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
     }
   }
   if(X->Def.NTBody>0){
     // If the number of three-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_2, GreenOutputOpenMode(X), &fp_2)!=0){
-      return -1;
+    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputThreeBody, &fp_2) != 0) return -1;
+    } else {
+      if (childfopenMPI(sdt_2, "w", &fp_2) != 0) return -1;
     }
   }else{
     fp_2 = fp;
   }
   if(X->Def.NFBody>0){
     // If the number of four-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_3, GreenOutputOpenMode(X), &fp_3)!=0){
-      return -1;
+    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputFourBody, &fp_3) != 0) return -1;
+    } else {
+      if (childfopenMPI(sdt_3, "w", &fp_3) != 0) return -1;
     }
   }else{
     fp_3 = fp;
   }
   if(X->Def.NSBody>0){
     // If the number of six-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_4, GreenOutputOpenMode(X), &fp_4)!=0){
-      return -1;
+    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
+      if (GreenOutputOpenAggregate(X, GreenOutputSixBody, &fp_4) != 0) return -1;
+    } else {
+      if (childfopenMPI(sdt_4, "w", &fp_4) != 0) return -1;
     }
   }else{
     fp_4 = fp;
@@ -517,19 +517,35 @@ int expec_cisajscktaltdc
   
   if(X->Def.NCisAjtCkuAlvDC>0){
     // If the number of two-body interactions is zero, the file name is not used.
-    fclose(fp);
+    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
+      GreenOutputCloseAggregate(GreenOutputTwoBody, fp);
+    } else {
+      fclose(fp);
+    }
   }
   if(X->Def.NTBody>0){
     // If the number of three-body interactions is zero, the file name is not used.
-    fclose(fp_2);
+    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
+      GreenOutputCloseAggregate(GreenOutputThreeBody, fp_2);
+    } else {
+      fclose(fp_2);
+    }
   }
   if(X->Def.NFBody>0){
     // If the number of four-body interactions is zero, the file name is not used.
-    fclose(fp_3);
+    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
+      GreenOutputCloseAggregate(GreenOutputFourBody, fp_3);
+    } else {
+      fclose(fp_3);
+    }
   }
   if(X->Def.NSBody>0){
     // If the number of six-body interactions is zero, the file name is not used.
-    fclose(fp_4);
+    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
+      GreenOutputCloseAggregate(GreenOutputSixBody, fp_4);
+    } else {
+      fclose(fp_4);
+    }
   }
   
   if(X->Def.iCalcType==Lanczos){

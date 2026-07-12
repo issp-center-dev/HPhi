@@ -1553,9 +1553,11 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody) &&
-      GreenOutputFileName(X, GreenOutputNBody, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, GreenOutputOpenMode(X), &fp) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
+    if (GreenOutputOpenAggregate(X, GreenOutputNBody, &fp) != 0) return -1;
+  } else {
+    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  }
 
   for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
@@ -1574,6 +1576,10 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     write_nbodyg_line(fp, &X->Def, t, value);
   }
 
-  fclose(fp);
+  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
+    GreenOutputCloseAggregate(GreenOutputNBody, fp);
+  } else {
+    fclose(fp);
+  }
   return 0;
 }
