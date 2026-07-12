@@ -361,6 +361,32 @@ add_test(NAME unittest_setmemory_zero_size_common
 set_tests_properties(unittest_setmemory_zero_size_common
     PROPERTIES LABELS "unit;setmemory")
 
+# Unit test: ExpecMode 2 trace-kernel mapping-probe extraction (phase 3b Task 2).
+# Serial, no MPI: GC models only (HubbardGC n=256, SpinGC-half n=16), so the
+# bare-bit basis needs no list_1/list_2 and this runs as a plain executable in
+# BOTH the MPI and non-MPI builds (registered here, outside if(MPI_FOUND)).
+# Links only the real sources in the extraction closure -- expec_trace.c (the
+# drivers), the two Core files (the co-located *_TraceProbe adapters + element
+# functions), bitcalc.c (GetSplitBitByModel/GetOffComp/SgnBit), global.c (the
+# list_1/Tpow globals + stdoutMPI), and ErrorMessage.c (the cErr* strings
+# bitcalc references). Rearray_Interactions and `myrank` are provided in the
+# test TU itself (see the file header), so the MPI-heavy element libraries and
+# wrapperMPI.c are NOT pulled in.
+add_executable(expec_trace_map_check unit/expec_trace_map_check.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+target_include_directories(expec_trace_map_check PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(expec_trace_map_check PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(expec_trace_map_check m)
+add_test(NAME expec_trace_map_check COMMAND expec_trace_map_check)
+set_tests_properties(expec_trace_map_check
+    PROPERTIES LABELS "unit;fulldiag;expecmode")
+
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
     ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)

@@ -39,11 +39,30 @@
  * cross-checks are permitted to flip a kTraceCap row to TRUE.
  */
 #include "expec_trace.h"
+#include "expec_trace_internal.h"
 #include "DefCommon.h"
+#include "mltplyCommon.h"
+#include "mltplyHubbardCore.h"
+#include "mltplySpinCore.h"
+#include "bitcalc.h"
+#include "global.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
+
+/* Rearray_Interactions() is a non-static helper in src/expec_cisajscktaltdc.c
+   (no public header). The two-body extraction driver reuses the SAME +-1
+   tmp_V-folding pass the Mode-1 Spin/SpinGC-half two-body path uses, so declare
+   it here rather than reimplementing the reordering. It performs no MPI. */
+extern int Rearray_Interactions(
+    int i,
+    long unsigned int *org_isite1, long unsigned int *org_isite2,
+    long unsigned int *org_isite3, long unsigned int *org_isite4,
+    long unsigned int *org_sigma1, long unsigned int *org_sigma2,
+    long unsigned int *org_sigma3, long unsigned int *org_sigma4,
+    double complex *tmp_V, struct BindStruct *X, int type);
 
 /* Static capability table: (calc_model, flg_general_spin) -> per-quantity
    trace-kernel readiness. Rows are flipped to 1 ONLY by plan Task 5, after
@@ -241,4 +260,323 @@ int expec_trace_owned_states(struct BindStruct *X, const TraceExecutionPlan *pla
   (void)je;
   (void)NN;
   return 0;
+}
+
+/* ================================================================== */
+/* Basis-mapping extraction (phase 3b Task 2).                        */
+/*                                                                    */
+/* These drivers replicate the LOCAL (intra-process) dispatch of      */
+/* expec_cisajs.c / expec_cisajscktaltdc.c with X->Large.mode=M_CORR  */
+/* and, per operator pair, stream the co-located `*_TraceProbe`        */
+/* adapters over k=1..idim_max to fill a TraceMap. In the replicated  */
+/* FullDiag layout the trace kernel runs in (iFlgScaLAPACK, no MPI    */
+/* site decomposition) every operator site is intra-process, so the   */
+/* inter-PE branches of the Mode-1 dispatch are unreachable and are   */
+/* intentionally not mirrored here.                                    */
+/*                                                                    */
+/* Purity: X->Large is snapshot on entry and restored on exit, so the */
+/* GetInfo scratch writes leave X byte-identical (see the purity      */
+/* unit test). The only writes any reachable helper makes are to      */
+/* X->Large; list_1/list_2_* and the Def/Tpow tables are read-only.   */
+/* ================================================================== */
+
+/** @brief Allocate/zero TraceMap buffers of length n (kprime=-1, amp=0). */
+static int trace_map_alloc(TraceMap *map, long int n) {
+  long int k;
+  map->n = n;
+  map->is_diagonal = 0;
+  map->kprime = (long int *)malloc(sizeof(long int) * (size_t)n);
+  map->amp = (double complex *)malloc(sizeof(double complex) * (size_t)n);
+  if (map->kprime == NULL || map->amp == NULL) {
+    TraceMapFree(map);
+    return -1;
+  }
+  for (k = 0; k < n; k++) {
+    map->kprime[k] = -1;
+    map->amp[k] = 0.0;
+  }
+  return 0;
+}
+
+void TraceMapFree(TraceMap *map) {
+  if (map == NULL) return;
+  free(map->kprime);
+  free(map->amp);
+  map->kprime = NULL;
+  map->amp = NULL;
+  map->n = 0;
+  map->is_diagonal = 0;
+}
+
+/** @brief Post-extraction range assertion: every kprime in [-1, n-1]. */
+static void trace_map_assert_range(const TraceMap *map) {
+  long int k;
+  if (map->n <= 0) return;
+  for (k = 0; k < map->n; k++) {
+    assert(map->kprime[k] >= -1 && map->kprime[k] < map->n);
+  }
+}
+
+int TraceMapExtractOneBody(struct BindStruct *X, int ipair, TraceMap *map) {
+  long int n = (long int)X->Check.idim_max;
+  struct LargeList saved = X->Large; /* purity snapshot */
+  long unsigned int irght, ilft, ihfbit;
+  long unsigned int org_isite1, org_isite2, org_sigma1, org_sigma2;
+  long int k;
+  int rc = 0;
+
+  memset(map, 0, sizeof(*map));
+  if (trace_map_alloc(map, n) != 0) return -1;
+
+  if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+    TraceMapFree(map);
+    return -1;
+  }
+  X->Large.i_max = n;
+  X->Large.irght = irght;
+  X->Large.ilft = ilft;
+  X->Large.ihfbit = ihfbit;
+  X->Large.mode = M_CORR;
+
+  org_isite1 = (long unsigned int)X->Def.CisAjt[ipair][0] + 1;
+  org_sigma1 = (long unsigned int)X->Def.CisAjt[ipair][1];
+  org_isite2 = (long unsigned int)X->Def.CisAjt[ipair][2] + 1;
+  org_sigma2 = (long unsigned int)X->Def.CisAjt[ipair][3];
+
+  switch (X->Def.iCalcModel) {
+  case HubbardGC: {
+    long unsigned int isite1, isite2, Asum, Adiff;
+    general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+    if (isite1 == isite2) {
+      map->is_diagonal = 1;
+      for (k = 1; k <= n; k++)
+        GC_CisAis_TraceProbe(k, X, isite1, &map->kprime[k - 1], &map->amp[k - 1]);
+    } else {
+      for (k = 1; k <= n; k++)
+        GC_CisAjt_TraceProbe(k, X, isite1, isite2, Asum, Adiff,
+                             &map->kprime[k - 1], &map->amp[k - 1]);
+    }
+    break;
+  }
+  case Hubbard:
+  case tJ:
+  case tJGC:
+  case Kondo:
+  case KondoGC: {
+    /* Sz-conserved cross-spin one-body, and Kondo localized-vs-itinerant
+       pairs, yield a 0.0 GF: leave the (already all -1) empty map. */
+    if (X->Def.iFlgSzConserved == TRUE && org_sigma1 != org_sigma2) break;
+    if (X->Def.iCalcModel == Kondo || X->Def.iCalcModel == KondoGC) {
+      if ((X->Def.LocSpn[org_isite1 - 1] == 1 && X->Def.LocSpn[org_isite2 - 1] == 0) ||
+          (X->Def.LocSpn[org_isite1 - 1] == 0 && X->Def.LocSpn[org_isite2 - 1] == 1))
+        break;
+    }
+    general_hopp_GetInfo(X, org_isite1, org_isite2, org_sigma1, org_sigma2);
+    if (org_isite1 == org_isite2 && org_sigma1 == org_sigma2) {
+      long unsigned int is = X->Def.Tpow[2 * org_isite1 - 2 + org_sigma1];
+      map->is_diagonal = 1;
+      for (k = 1; k <= n; k++) {
+        map->kprime[k - 1] = k - 1;
+        map->amp[k - 1] = (double complex)((list_1[k] & is) / is);
+      }
+    } else {
+      long unsigned int isite1 = X->Large.is1_spin, isite2 = X->Large.is2_spin;
+      long unsigned int Asum = X->Large.isA_spin, Adiff = X->Large.A_spin;
+      for (k = 1; k <= n; k++)
+        CisAjt_TraceProbe(k, X, isite1, isite2, Asum, Adiff,
+                          &map->kprime[k - 1], &map->amp[k - 1]);
+    }
+    break;
+  }
+  case Spin: {
+    if (X->Def.iFlgGeneralSpin != FALSE) { rc = -1; break; } /* general spin: unsupported */
+    if (org_sigma1 == org_sigma2 && org_isite1 == org_isite2) {
+      long unsigned int isite1 = X->Def.Tpow[org_isite1 - 1];
+      map->is_diagonal = 1;
+      for (k = 1; k <= n; k++)
+        child_Spin_CisAis_TraceProbe(k, X, isite1, org_sigma1,
+                                     &map->kprime[k - 1], &map->amp[k - 1]);
+    } /* else off-diagonal spin hopping -> empty map (GF = 0) */
+    break;
+  }
+  case SpinGC: {
+    if (X->Def.iFlgGeneralSpin != FALSE) { rc = -1; break; }
+    if (org_isite1 == org_isite2) {
+      long unsigned int isite1 = X->Def.Tpow[org_isite1 - 1];
+      if (org_sigma1 == org_sigma2) {
+        map->is_diagonal = 1;
+        for (k = 1; k <= n; k++)
+          child_SpinGC_CisAis_TraceProbe(k, X, isite1, org_sigma1,
+                                         &map->kprime[k - 1], &map->amp[k - 1]);
+      } else {
+        for (k = 1; k <= n; k++)
+          child_SpinGC_CisAit_TraceProbe(k, X, isite1, org_sigma2,
+                                         &map->kprime[k - 1], &map->amp[k - 1]);
+      }
+    } /* else empty map (GF = 0) */
+    break;
+  }
+  default:
+    rc = -1;
+    break;
+  }
+
+  if (rc == 0) trace_map_assert_range(map);
+  X->Large = saved; /* purity restore */
+  if (rc != 0) TraceMapFree(map);
+  return rc;
+}
+
+int TraceMapExtractTwoBody(struct BindStruct *X, int ipair, TraceMap *map) {
+  long int n = (long int)X->Check.idim_max;
+  struct LargeList saved = X->Large; /* purity snapshot */
+  long unsigned int irght, ilft, ihfbit;
+  long int k;
+  int rc = 0;
+  double complex tmp_V = 1.0;
+  long unsigned int oi1, oi2, oi3, oi4, os1, os2, os3, os4;
+
+  memset(map, 0, sizeof(*map));
+
+  if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0)
+    return -1;
+  X->Large.i_max = n;
+  X->Large.irght = irght;
+  X->Large.ilft = ilft;
+  X->Large.ihfbit = ihfbit;
+  X->Large.mode = M_CORR;
+
+  switch (X->Def.iCalcModel) {
+  case HubbardGC:
+  case Hubbard:
+  case tJ:
+  case tJGC:
+  case Kondo:
+  case KondoGC: {
+    long unsigned int isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff;
+    int is_gc = (X->Def.iCalcModel == HubbardGC || X->Def.iCalcModel == tJGC ||
+                 X->Def.iCalcModel == KondoGC);
+    oi1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][0] + 1;
+    os1 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][1];
+    oi2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][2] + 1;
+    os2 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][3];
+    oi3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][4] + 1;
+    os3 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][5];
+    oi4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][6] + 1;
+    os4 = (long unsigned int)X->Def.CisAjtCkuAlvDC[ipair][7];
+    /* Canonical Hubbard applies the Sz-conserved 0.0-row shortcut. */
+    if (!is_gc && X->Def.iFlgSzConserved == TRUE && (os1 + os3 != os2 + os4)) {
+      map->n = 0; /* irregular/forbidden -> Mode-1 writes a 0.0 row */
+      break;
+    }
+    if (trace_map_alloc(map, n) != 0) { rc = -1; break; }
+    tmp_V = 1.0;
+    general_int_GetInfo(ipair, X, oi1, oi2, oi3, oi4, os1, os2, os3, os4, tmp_V);
+    isite1 = X->Large.is1_spin;
+    isite2 = X->Large.is2_spin;
+    Asum = X->Large.isA_spin;
+    Adiff = X->Large.A_spin;
+    isite3 = X->Large.is3_spin;
+    isite4 = X->Large.is4_spin;
+    Bsum = X->Large.isB_spin;
+    Bdiff = X->Large.B_spin;
+    if (isite1 == isite2 && isite3 == isite4) {
+      map->is_diagonal = 1;
+      for (k = 1; k <= n; k++)
+        if (is_gc)
+          GC_CisAisCisAis_element_TraceProbe(k, isite1, isite3, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+        else
+          CisAisCisAis_element_TraceProbe(k, isite1, isite3, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+    } else if (isite1 == isite2 && isite3 != isite4) {
+      for (k = 1; k <= n; k++)
+        if (is_gc)
+          GC_CisAisCjtAku_element_TraceProbe(k, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+        else
+          CisAisCjtAku_element_TraceProbe(k, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+    } else if (isite1 != isite2 && isite3 == isite4) {
+      for (k = 1; k <= n; k++)
+        if (is_gc)
+          GC_CisAjtCkuAku_element_TraceProbe(k, isite1, isite2, isite3, Asum, Adiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+        else
+          CisAjtCkuAku_element_TraceProbe(k, isite1, isite2, isite3, Asum, Adiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+    } else {
+      for (k = 1; k <= n; k++)
+        if (is_gc)
+          GC_CisAjtCkuAlv_element_TraceProbe(k, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+        else
+          CisAjtCkuAlv_element_TraceProbe(k, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+    }
+    break;
+  }
+  case Spin: {
+    /* Canonical Spin-half two-body: Rearray folds the +-1 into tmp_V. */
+    if (X->Def.iFlgGeneralSpin != FALSE) { rc = -1; break; }
+    if (Rearray_Interactions(ipair, &oi1, &oi2, &oi3, &oi4, &os1, &os2, &os3, &os4, &tmp_V, X, 2) != 0) {
+      map->n = 0; /* irregular pair -> Mode-1 writes a 0.0 row */
+      break;
+    }
+    if (trace_map_alloc(map, n) != 0) { rc = -1; break; }
+    {
+      long unsigned int isA_up = X->Def.Tpow[oi1 - 1];
+      long unsigned int isB_up = X->Def.Tpow[oi3 - 1];
+      if (os1 == os2 && os3 == os4) { /* density-density diagonal */
+        map->is_diagonal = 1;
+        for (k = 1; k <= n; k++)
+          CisAisCisAis_spin_element_TraceProbe(k, isA_up, isB_up, os2, os4, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+      } else if (oi1 == oi3 && os1 == os4 && os3 == os2) { /* same-index reduction */
+        map->is_diagonal = 1;
+        for (k = 1; k <= n; k++) {
+          long int kp;
+          double complex a;
+          child_Spin_CisAis_TraceProbe(k, X, isA_up, os1, &kp, &a);
+          map->kprime[k - 1] = kp;
+          map->amp[k - 1] = tmp_V * a;
+        }
+      } else if (os1 == os4 && os2 == os3) { /* exchange: amp = sign, NO tmp_V */
+        for (k = 1; k <= n; k++)
+          child_exchange_spin_element_TraceProbe(k, X, isA_up, isB_up, os2, os4, &map->kprime[k - 1], &map->amp[k - 1]);
+      } /* else empty map (GF = 0) */
+    }
+    break;
+  }
+  case SpinGC: {
+    if (X->Def.iFlgGeneralSpin != FALSE) { rc = -1; break; }
+    if (Rearray_Interactions(ipair, &oi1, &oi2, &oi3, &oi4, &os1, &os2, &os3, &os4, &tmp_V, X, 2) != 0) {
+      map->n = 0;
+      break;
+    }
+    if (trace_map_alloc(map, n) != 0) { rc = -1; break; }
+    if (oi1 == oi2 && oi3 == oi4) {
+      long unsigned int isA_up = X->Def.Tpow[oi2 - 1];
+      long unsigned int isB_up = X->Def.Tpow[oi4 - 1];
+      if (os1 == os2 && os3 == os4) {
+        map->is_diagonal = 1;
+        for (k = 1; k <= n; k++)
+          GC_CisAisCisAis_spin_element_TraceProbe(k, isA_up, isB_up, os2, os4, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+      } else if (os1 == os2 && os3 != os4) {
+        for (k = 1; k <= n; k++)
+          GC_CisAisCitAiu_spin_element_TraceProbe(k, os2, os4, isA_up, isB_up, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+      } else if (os1 != os2 && os3 == os4) {
+        for (k = 1; k <= n; k++)
+          GC_CisAitCiuAiu_spin_element_TraceProbe(k, os2, os4, isA_up, isB_up, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+      } else {
+        for (k = 1; k <= n; k++)
+          GC_CisAitCiuAiv_spin_element_TraceProbe(k, os2, os4, isA_up, isB_up, tmp_V, X, &map->kprime[k - 1], &map->amp[k - 1]);
+      }
+    } /* else (non-onsite pairing) -> empty map (GF = 0), matching Mode 1 */
+    break;
+  }
+  default:
+    rc = -1;
+    break;
+  }
+
+  if (rc == 0) trace_map_assert_range(map);
+  X->Large = saved; /* purity restore */
+  if (rc != 0) TraceMapFree(map);
+  return rc;
 }

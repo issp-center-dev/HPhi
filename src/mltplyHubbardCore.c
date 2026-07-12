@@ -52,6 +52,7 @@
 #include "wrapperMPI.h"
 #include "mltplyCommon.h"
 #include "mltplyHubbardCore.h"
+#include "expec_trace_internal.h"
 
 /******************************************************************************/
 //[s] GetInfo functions
@@ -279,6 +280,16 @@ int exchange_GetInfo(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
+/**
+@brief Mapping core of ::GC_CisAis shared 3-way (original / probe). Diagonal:
+returns the occupation (0/1) of @f$(i\sigma)@f$ for bare-bit state j-1.
+*/
+static long unsigned int GC_CisAis_map(
+  long unsigned int j,
+  long unsigned int is1_spin
+) {
+  return ((j - 1) & is1_spin) / is1_spin;
+}
 double complex GC_CisAis(
   long unsigned int j,//!<[in] Index of element of wavefunction
   double complex *tmp_v0,//!<[inout] Result vector
@@ -288,12 +299,10 @@ double complex GC_CisAis(
   double complex tmp_trans//!<[in] Transfer integral
 ) {
   long unsigned int A_ibit_tmp;
-  long unsigned int list_1_j;
   double complex dmv;
   double complex dam_pr;
 
-  list_1_j = j - 1;
-  A_ibit_tmp = (list_1_j & is1_spin) / is1_spin;
+  A_ibit_tmp = GC_CisAis_map(j, is1_spin);
   dmv = tmp_v1[j] * A_ibit_tmp;
   if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) {
     tmp_v0[j] += dmv * tmp_trans;
@@ -301,6 +310,19 @@ double complex GC_CisAis(
   dam_pr = dmv * conj(tmp_v1[j]);
   return dam_pr;
 }/*double complex GC_CisAis*/
+/**
+@brief Trace-probe adapter for ::GC_CisAis (grand-canonical diagonal one-body).
+Diagonal: always returns 1 with *kprime_out = j-1 and *amp_out = occupation.
+*/
+int GC_CisAis_TraceProbe(
+  long unsigned int j, struct BindStruct *X, long unsigned int is1_spin,
+  long int *kprime_out, double complex *amp_out
+) {
+  (void)X;
+  *kprime_out = (long int)j - 1;
+  *amp_out = (double complex)GC_CisAis_map(j, is1_spin);
+  return 1;
+}/*int GC_CisAis_TraceProbe*/
 /**
 @brief Operation of @f$t c_{i\sigma} c_{i\sigma}^\dagger@f$ (Grandcanonical)
 @return Fragment of @f$\langle v_1|{\hat H}|v_1\rangle@f$
@@ -351,6 +373,40 @@ int child_CisAis(
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAjt shared 3-way (original / probe). Computes the
+canonical hopping destination and Fermion sign WITHOUT touching any vector.
+@return 1 if the hop survives (kprime_out = 0-based destination in the basis,
+i.e. GetOffComp's 1-based off minus 1; sgn_out = +-1); 0 if annihilated or the
+exchanged bit pattern is not in the basis (kprime_out = -1).
+*/
+static int CisAjt_map(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int is2_spin,
+  long unsigned int sum_spin, long unsigned int diff_spin,
+  long int *kprime_out, int *sgn_out
+) {
+  long unsigned int ibit_tmp_1, ibit_tmp_2;
+  long unsigned int bit, iexchg, off;
+  int sgn;
+
+  ibit_tmp_1 = (list_1[j] & is1_spin);
+  ibit_tmp_2 = (list_1[j] & is2_spin);
+  if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
+    bit = list_1[j] & diff_spin;
+    SgnBit(bit, &sgn); // Fermion sign
+    iexchg = list_1[j] ^ sum_spin;
+    if(GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)==FALSE){
+      *kprime_out = -1;
+      return 0;
+    }
+    *kprime_out = (long int)off - 1;
+    *sgn_out = sgn;
+    return 1;
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex CisAjt(
   long unsigned int j,//!<[in] Index of wavefunction
   double complex *tmp_v0,//!<[inout] @f$v_0 = H v_1@f$
@@ -362,32 +418,16 @@ double complex CisAjt(
   long unsigned int diff_spin,//!<[in] Mask for Fermion sign
   double complex tmp_V//!<[in] Hopping integral
 ) {
-  long unsigned int ibit_tmp_1, ibit_tmp_2;
-  long unsigned int bit, iexchg, off;
+  long int kprime;
   int sgn;
   double complex dmv, dam_pr;
 
-  ibit_tmp_1 = (list_1[j] & is1_spin);
-  ibit_tmp_2 = (list_1[j] & is2_spin);
-  if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
-    bit = list_1[j] & diff_spin;
-    SgnBit(bit, &sgn); // Fermion sign
-    iexchg = list_1[j] ^ sum_spin;
-
-    if(GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft, X->Large.ihfbit, &off)==FALSE){
-      return 0;
-    }
-/*
-    if(X->Large.mode==M_CORR){
-      fprintf(stdout, "DEBUG-1: myrank=%d, org=%d, bit=%d, iexchg=%d, list_1[%d]=%d\n",
-              myrank, list_1[j], bit, iexchg, off, list_1[off]);
-    }
-*/
+  if (CisAjt_map(j, X, is1_spin, is2_spin, sum_spin, diff_spin, &kprime, &sgn)) {
     dmv = sgn * tmp_v1[j];
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[off] += tmp_V * dmv;
+      tmp_v0[kprime + 1] += tmp_V * dmv;
     }
-    dam_pr = dmv * conj(tmp_v1[off]);
+    dam_pr = dmv * conj(tmp_v1[kprime + 1]);
     return dam_pr;
   }
   else {
@@ -395,11 +435,60 @@ double complex CisAjt(
   }
 }
 /**
+@brief Trace-probe adapter for ::CisAjt (canonical off-diagonal one-body).
+One-body operator: implicit coupling 1.0, so *amp_out is the bare Fermion sign.
+*/
+int CisAjt_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int is2_spin,
+  long unsigned int sum_spin, long unsigned int diff_spin,
+  long int *kprime_out, double complex *amp_out
+) {
+  int sgn;
+  if (CisAjt_map(j, X, is1_spin, is2_spin, sum_spin, diff_spin, kprime_out, &sgn)) {
+    *amp_out = (double complex)sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int CisAjt_TraceProbe*/
+/**
 @brief @f$c_{is}^\dagger c_{jt}@f$ term for grandcanonical Hubbard
 @return @f$\langle v_1|{\hat H}_{\rm this}|v_1\rangle@f$
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAjt shared 3-way (original / probe). Bare-bit
+grand-canonical hop: no vector access. @return 1 if the hop survives
+(kprime_out = 0-based destination = bare-bit pattern list_1_off; sgn_out = +-1);
+0 if annihilated (kprime_out = -1).
+*/
+static int GC_CisAjt_map(
+  long unsigned int j,
+  long unsigned int is1_spin, long unsigned int is2_spin,
+  long unsigned int sum_spin, long unsigned int diff_spin,
+  long int *kprime_out, int *sgn_out
+) {
+  long unsigned int list_1_j, list_1_off;
+  long unsigned int ibit_tmp_1, ibit_tmp_2;
+  long unsigned int bit;
+  int sgn;
+
+  list_1_j = j - 1;
+  ibit_tmp_1 = (list_1_j & is1_spin);
+  ibit_tmp_2 = (list_1_j & is2_spin);
+  if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
+    bit = list_1_j & diff_spin;
+    SgnBit(bit, &sgn); // Fermion sign
+    list_1_off = list_1_j ^ sum_spin;
+    *kprime_out = (long int)list_1_off;
+    *sgn_out = sgn;
+    return 1;
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAjt(
   long unsigned int j,//!<[in] Index of wavefunction
   double complex *tmp_v0,//!<[in] @f$v_0 = H v_1@f$
@@ -412,33 +501,43 @@ double complex GC_CisAjt(
   double complex tmp_V,//!<[in] Hopping
   long unsigned int *tmp_off//!<[in] Index of wavefunction of final state
 ) {
-  long unsigned int list_1_j, list_1_off;
-  long unsigned int ibit_tmp_1, ibit_tmp_2;
-  long unsigned int bit;
+  long int kprime;
   int sgn;
   double complex dmv, dam_pr;
 
-  list_1_j = j - 1;
-  ibit_tmp_1 = (list_1_j & is1_spin);
-  ibit_tmp_2 = (list_1_j & is2_spin);
   *tmp_off = 0;
-
-  if (ibit_tmp_1 == 0 && ibit_tmp_2 != 0) {
-    bit = list_1_j & diff_spin;
-    SgnBit(bit, &sgn); // Fermion sign
-    list_1_off = list_1_j ^ sum_spin;
-    *tmp_off = list_1_off;
+  if (GC_CisAjt_map(j, is1_spin, is2_spin, sum_spin, diff_spin, &kprime, &sgn)) {
+    *tmp_off = (long unsigned int)kprime;
     dmv = sgn * tmp_v1[j];
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[list_1_off + 1] += dmv * tmp_V;
+      tmp_v0[kprime + 1] += dmv * tmp_V;
     }
-    dam_pr = dmv * conj(tmp_v1[list_1_off + 1]);
+    dam_pr = dmv * conj(tmp_v1[kprime + 1]);
     return dam_pr;
   }
   else {
     return 0;
   }
 }/*double complex GC_CisAjt*/
+/**
+@brief Trace-probe adapter for ::GC_CisAjt (grand-canonical off-diagonal
+one-body). One-body operator: implicit coupling 1.0, *amp_out = Fermion sign.
+*/
+int GC_CisAjt_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int is2_spin,
+  long unsigned int sum_spin, long unsigned int diff_spin,
+  long int *kprime_out, double complex *amp_out
+) {
+  int sgn;
+  (void)X;
+  if (GC_CisAjt_map(j, is1_spin, is2_spin, sum_spin, diff_spin, kprime_out, &sgn)) {
+    *amp_out = (double complex)sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAjt_TraceProbe*/
 /**
 @brief Compute index of wavefunction of final state
 @return Fermion sign
@@ -735,6 +834,20 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAisCisAis_element (diagonal). @return the signed
+occupation product (0/1); kprime_out = j-1 (diagonal, always valid).
+*/
+static int CisAisCisAis_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite3,
+  struct BindStruct *X, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_CisAis(list_1[j], X, isite3);
+  tmp_sgn *= child_CisAis(list_1[j], X, isite1);
+  *kprime_out = (long int)j - 1;
+  return tmp_sgn;
+}
 double complex CisAisCisAis_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -746,17 +859,31 @@ double complex CisAisCisAis_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_CisAis(list_1[j], X, isite3);
-  tmp_sgn *= child_CisAis(list_1[j], X, isite1);
+  (void)tmp_off;
+  tmp_sgn = CisAisCisAis_element_map(j, isite1, isite3, X, &kprime);
   dmv = tmp_V * tmp_v1[j] * tmp_sgn;
   if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-    tmp_v0[j] += dmv;
+    tmp_v0[kprime + 1] += dmv;
   }
-  dam_pr = conj(tmp_v1[j]) * dmv;
+  dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   return dam_pr;
 }/*double complex CisAisCisAis_element*/
+/**
+@brief Trace-probe adapter for ::CisAisCisAis_element (canonical diagonal
+two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occupation.
+*/
+int CisAisCisAis_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite3,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  int tmp_sgn = CisAisCisAis_element_map(j, isite1, isite3, X, kprime_out);
+  *amp_out = tmp_V * (double complex)tmp_sgn;
+  return 1;
+}/*int CisAisCisAis_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of canonical Hubbard system
@@ -764,6 +891,29 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAisCjtAku_element. Chains child_CisAjt (canonical
+1-based destination via *tmp_off) then child_CisAis. @return signed result
+(0 = annihilated); kprime_out = *tmp_off-1 on survival, else -1.
+*/
+static int CisAisCjtAku_element_map(
+  long unsigned int j, long unsigned int isite1,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_CisAis(list_1[*tmp_off], X, isite1);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off) - 1;
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex CisAisCjtAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -778,21 +928,38 @@ double complex CisAisCjtAku_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, tmp_off);
+  tmp_sgn = CisAisCjtAku_element_map(j, isite1, isite3, isite4, Bsum, Bdiff, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAis(list_1[*tmp_off], X, isite1);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
     }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex CisAisCjtAku_element*/
+/**
+@brief Trace-probe adapter for ::CisAisCjtAku_element (canonical two-body).
+*/
+int CisAisCjtAku_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off;
+  int tmp_sgn = CisAisCjtAku_element_map(j, isite1, isite3, isite4, Bsum, Bdiff, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int CisAisCjtAku_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of canonical Hubbard system
@@ -800,6 +967,28 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAjtCkuAku_element. child_CisAis gate then
+child_CisAjt (canonical 1-based *tmp_off). @return signed result (0 = dead);
+kprime_out = *tmp_off-1 on survival, else -1.
+*/
+static int CisAjtCkuAku_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_CisAis(list_1[j], X, isite3);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off) - 1;
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex CisAjtCkuAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -814,22 +1003,38 @@ double complex CisAjtCkuAku_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr;
   dam_pr = 0;
-  tmp_sgn = child_CisAis(list_1[j], X, isite3);
+  tmp_sgn = CisAjtCkuAku_element_map(j, isite1, isite2, isite3, Asum, Adiff, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAjt(list_1[j], X, isite1, isite2, Asum, Adiff, tmp_off);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off]) * dmv;
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
     }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex CisAjtCkuAku_element*/
+/**
+@brief Trace-probe adapter for ::CisAjtCkuAku_element (canonical two-body).
+*/
+int CisAjtCkuAku_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off;
+  int tmp_sgn = CisAjtCkuAku_element_map(j, isite1, isite2, isite3, Asum, Adiff, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int CisAjtCkuAku_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of canonical Hubbard system
@@ -837,6 +1042,31 @@ term of canonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAjtCkuAlv_element. child_GC_CisAjt (bare-bit
+intermediate tmp_off_1) then child_CisAjt (canonical 1-based *tmp_off_2).
+@return signed result (0 = dead); kprime_out = *tmp_off_2-1 on survival, else -1.
+*/
+static int CisAjtCkuAlv_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Asum, long unsigned int Adiff,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  struct BindStruct *X, long unsigned int *tmp_off_2, long int *kprime_out
+) {
+  int tmp_sgn;
+  long unsigned int tmp_off_1;
+  tmp_sgn = child_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off_2) - 1;
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex CisAjtCkuAlv_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -854,24 +1084,39 @@ double complex CisAjtCkuAlv_element(
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
-  long unsigned int tmp_off_1;
-
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0;
-  tmp_sgn = child_GC_CisAjt(list_1[j], X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
-
+  tmp_sgn = CisAjtCkuAlv_element_map(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, X, tmp_off_2, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off_2] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off_2]) * dmv;
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
     }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex CisAjtCkuAlv_element*/
+/**
+@brief Trace-probe adapter for ::CisAjtCkuAlv_element (canonical two-body).
+*/
+int CisAjtCkuAlv_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Asum, long unsigned int Adiff,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off_2;
+  int tmp_sgn = CisAjtCkuAlv_element_map(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, X, &tmp_off_2, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int CisAjtCkuAlv_element_TraceProbe*/
 //[s] Grand Canonical
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}@f$
@@ -880,6 +1125,20 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAisCisAis_element (grand-canonical diagonal).
+@return signed occupation product (0/1); kprime_out = j-1 (always valid).
+*/
+static int GC_CisAisCisAis_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite3,
+  struct BindStruct *X, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_CisAis(j - 1, X, isite3);
+  tmp_sgn *= child_CisAis(j - 1, X, isite1);
+  *kprime_out = (long int)j - 1;
+  return tmp_sgn;
+}
 double complex GC_CisAisCisAis_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -891,19 +1150,32 @@ double complex GC_CisAisCisAis_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv = 0.0;
   double complex dam_pr = 0;
-  tmp_sgn = child_CisAis(j - 1, X, isite3);
-  tmp_sgn *= child_CisAis(j - 1, X, isite1);
+  tmp_sgn = GC_CisAisCisAis_element_map(j, isite1, isite3, X, &kprime);
   if (tmp_sgn != 0) {
     dmv = tmp_V * tmp_v1[j] * tmp_sgn;
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[j] += dmv;
+      tmp_v0[kprime + 1] += dmv;
     }
-    dam_pr = conj(tmp_v1[j]) * dmv;
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex GC_CisAisCisAis_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAisCisAis_element (grand-canonical
+diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occ.
+*/
+int GC_CisAisCisAis_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite3,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  int tmp_sgn = GC_CisAisCisAis_element_map(j, isite1, isite3, X, kprime_out);
+  *amp_out = tmp_V * (double complex)tmp_sgn;
+  return 1;
+}/*int GC_CisAisCisAis_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
@@ -911,6 +1183,29 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAisCjtAku_element. child_GC_CisAjt (bare-bit
+*tmp_off) gated by child_CisAis. @return signed result (0 = dead);
+kprime_out = *tmp_off on survival, else -1.
+*/
+static int GC_CisAisCjtAku_element_map(
+  long unsigned int j, long unsigned int isite1,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_CisAis(*tmp_off, X, isite1);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAisCjtAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -925,21 +1220,39 @@ double complex GC_CisAisCjtAku_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, tmp_off);
+  tmp_sgn = GC_CisAisCjtAku_element_map(j, isite1, isite3, isite4, Bsum, Bdiff, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_CisAis(*tmp_off, X, isite1);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
     }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex GC_CisAisCjtAku_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAisCjtAku_element (grand-canonical
+two-body).
+*/
+int GC_CisAisCjtAku_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off;
+  int tmp_sgn = GC_CisAisCjtAku_element_map(j, isite1, isite3, isite4, Bsum, Bdiff, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAisCjtAku_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}@f$
 term of grandcanonical Hubbard system
@@ -947,6 +1260,28 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAjtCkuAku_element. child_CisAis gate then
+child_GC_CisAjt (bare-bit *tmp_off). @return signed result (0 = dead);
+kprime_out = *tmp_off on survival, else -1.
+*/
+static int GC_CisAjtCkuAku_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_CisAis((j - 1), X, isite3);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAjtCkuAku_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -961,21 +1296,38 @@ double complex GC_CisAjtCkuAku_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_CisAis((j - 1), X, isite3);
+  tmp_sgn = GC_CisAjtCkuAku_element_map(j, isite1, isite2, isite3, Asum, Adiff, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_GC_CisAjt((j - 1), X, isite1, isite2, Asum, Adiff, tmp_off);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
-    }/*if (tmp_sgn != 0)*/
-  }/*if (tmp_sgn != 0)*/
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
+    }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+  }
   return dam_pr;
 }/*double complex GC_CisAjtCkuAku_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAjtCkuAku_element (grand-canonical
+two-body).
+*/
+int GC_CisAjtCkuAku_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off;
+  int tmp_sgn = GC_CisAjtCkuAku_element_map(j, isite1, isite2, isite3, Asum, Adiff, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAjtCkuAku_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}@f$
 term of grandcanonical Hubbard system
@@ -983,6 +1335,31 @@ term of grandcanonical Hubbard system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAjtCkuAlv_element. Two chained child_GC_CisAjt
+(intermediate bare-bit tmp_off_1, final bare-bit *tmp_off_2). @return signed
+result (0 = dead); kprime_out = *tmp_off_2 on survival, else -1.
+*/
+static int GC_CisAjtCkuAlv_element_map(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Asum, long unsigned int Adiff,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  struct BindStruct *X, long unsigned int *tmp_off_2, long int *kprime_out
+) {
+  int tmp_sgn;
+  long unsigned int tmp_off_1;
+  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off_2);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAjtCkuAlv_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isite1,//!<[in] Site 1
@@ -1000,23 +1377,41 @@ double complex GC_CisAjtCkuAlv_element(
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
-  long unsigned int tmp_off_1;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
 
-  tmp_sgn = child_GC_CisAjt((j - 1), X, isite3, isite4, Bsum, Bdiff, &tmp_off_1);
+  tmp_sgn = GC_CisAjtCkuAlv_element_map(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, X, tmp_off_2, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_GC_CisAjt(tmp_off_1, X, isite1, isite2, Asum, Adiff, tmp_off_2);
-    if (tmp_sgn != 0) {
-      dmv = tmp_V * tmp_v1[j] * tmp_sgn;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off_2 + 1] += dmv;
-      }
-      dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
+    dmv = tmp_V * tmp_v1[j] * tmp_sgn;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
     }
+    dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   }
   return dam_pr;
 }/*double complex GC_CisAjtCkuAlv_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAjtCkuAlv_element (grand-canonical
+two-body).
+*/
+int GC_CisAjtCkuAlv_element_TraceProbe(
+  long unsigned int j, long unsigned int isite1, long unsigned int isite2,
+  long unsigned int isite3, long unsigned int isite4,
+  long unsigned int Asum, long unsigned int Adiff,
+  long unsigned int Bsum, long unsigned int Bdiff,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off_2;
+  int tmp_sgn = GC_CisAjtCkuAlv_element_map(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, X, &tmp_off_2, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAjtCkuAlv_element_TraceProbe*/
 //[e] Grand Canonical
 /**
 @brief Compute @f$c_{is}^\dagger@f$

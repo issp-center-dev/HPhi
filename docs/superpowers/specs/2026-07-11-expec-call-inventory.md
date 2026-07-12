@@ -314,3 +314,145 @@ Registered as ctest `check_expec_local_calls` via
 `add_hphi_test_with_srcdir(check_expec_local_calls)` in
 `test/CMakeLists.txt`, next to the other validation-style
 srcdir-parameterized tests (e.g. `green_output_format`).
+
+## 2c. Mapping-probe family audit (phase 3b, Task 2)
+
+Per-family audit of every element-function branch the LOCAL (intra-process)
+path of `expec_cisajs.c` / `expec_cisajscktaltdc.c` can reach for the four
+trace-kernel candidate models (Hubbard, HubbardGC, Spin-half, SpinGC-half) x
+two quantities (one-body / two-body). This is the precondition list for Task 5
+capability TRUE-ing. Line numbers are as of this commit.
+
+Common facts referenced below:
+
+- **kprime / vector-index invariant.** Every extracted `*_map` core reports a
+  0-based destination `kprime`; the pre-refactor original always read/wrote its
+  result vector at `kprime+1`. Canonical GetOffComp yields a 1-based `off`, so
+  `kprime = off-1`; the grand-canonical bare-bit `tmp_off` is 0-based, so
+  `kprime = tmp_off`. Diagonal families use `kprime = j-1`. So `kprime+1` is the
+  slot the Mode-1 code touched in every family.
+- **M_CORR purity.** In M_CORR the `tmp_v0[...] += ...` write is gated by
+  `X->Large.mode == M_MLTPLY || == M_CALCSPEC`, so it never fires; only the
+  returned `dam_pr` (Hubbard core) / the `else` branch reading `tmp_v1`
+  (SpinGC-half core) is live. The SpinGC-half element funcs additionally have an
+  `H_CORR` branch reading `conj(tmp_v0[...])`; extraction uses M_CORR only, so
+  that branch is dead too. The probes never pass a `tmp_v0` at all.
+- **Reachable-helper write-set (column vi), used by the purity test's snapshot
+  list.** The only mutable target any reachable helper writes is `X->Large`
+  (via `general_hopp_GetInfo` / `general_int_GetInfo` and, for the
+  Spin/SpinGC-half two-body, `Rearray_Interactions` which sets `X->Large.tmp_V`
+  through GetInfo — but the two-body Spin/SpinGC path computes `isA_up/isB_up`
+  directly from `X->Def.Tpow` and does NOT call `general_int_GetInfo`, so for
+  those `X->Large` is touched only by the driver's own field writes
+  `i_max/irght/ilft/ihfbit/mode`). `GetOffComp` reads `list_2_1`/`list_2_2`;
+  `SgnBit` is pure; `child_*` read `list_1` / bare bits and `X->Large.is*`.
+  **No reachable helper writes any global array** (`list_1`/`list_2_*` are
+  read-only). The extraction driver additionally snapshots and restores the
+  ENTIRE `X->Large` on entry/exit, so post-extraction `X` is byte-identical.
+  Snapshot fields verified by the purity test: `X->Large.{mode, i_max, irght,
+  ilft, ihfbit, is1_spin, is2_spin, is3_spin, is4_spin, isA_spin, isB_spin,
+  A_spin, B_spin, is1_up, is1_down, is2_up, is2_down, tmp_V, tmp_J, isite1,
+  isite2, isite3, isite4}`.
+
+### 2c.1 One-body (cisajs)
+
+| (i) function @ location | (ii) kprime source | (iii) amplitude | (iv) M_CORR purity evidence | (v) adapter | (vi) reachable-helper write-set |
+|---|---|---|---|---|---|
+| `GC_CisAis` @ mltplyHubbardCore.c (diagonal, HubbardGC) | diagonal `j-1` | occupation 0/1 (implicit coupling 1.0) | write gated `M_MLTPLY\|M_CALCSPEC` (in-func `if`) | `GC_CisAis_TraceProbe` | `general_hopp_GetInfo`->`X->Large.is*/A_spin`; probe pure |
+| `GC_CisAjt` @ mltplyHubbardCore.c (off-diag, HubbardGC) | bare-bit `tmp_off` (`list_1_j^sum`) | Fermion sign `SgnBit`, coupling 1.0 | write gated `M_MLTPLY\|M_CALCSPEC` | `GC_CisAjt_TraceProbe` | `general_hopp_GetInfo`; `SgnBit` pure |
+| `CisAjt` @ mltplyHubbardCore.c (off-diag, canonical Hubbard) | canonical `off-1` via `GetOffComp` | Fermion sign, coupling 1.0 | write gated `M_MLTPLY\|M_CALCSPEC` | `CisAjt_TraceProbe` | `general_hopp_GetInfo`; `GetOffComp` reads `list_2_*`; `SgnBit` pure |
+| canonical diagonal (inline `list_1[j]&is`, expec_cisajs.c:482-487) | diagonal `j-1` | occupation 0/1 | pure read only (no element func) | driver-inline in `TraceMapExtractOneBody` | reads `list_1`,`X->Def.Tpow` |
+| `child_Spin_CisAis` @ mltplySpinCore.c:210 (diagonal, Spin-half) | diagonal `j-1` | 0/1 spin match | pure function (no vector) | `child_Spin_CisAis_TraceProbe` | reads `list_1`; pure |
+| `child_SpinGC_CisAis` @ mltplySpinCore.c:227 (diagonal, SpinGC-half) | diagonal `j-1` | 0/1 spin match | pure function | `child_SpinGC_CisAis_TraceProbe` | pure (bare bit) |
+| `child_SpinGC_CisAit` @ mltplySpinCore.c:247 (transverse, SpinGC-half) | bare-bit `tmp_off` | flip sign +1 | pure function | `child_SpinGC_CisAit_TraceProbe` | pure (bare bit) |
+
+Zero-result one-body (write an empty map -> GF 0, matching Mode 1): canonical
+Hubbard cross-spin under `iFlgSzConserved` (expec_cisajs.c:427-433); Kondo
+localized-vs-itinerant pair (:436-446); Spin/SpinGC off-diagonal
+`org_isite1 != org_isite2` (expec_cisajs.c:567-569 / :721-724).
+
+### 2c.2 Two-body (cisajscktaltdc)
+
+Hubbard / HubbardGC do **not** call `Rearray_Interactions`; they call
+`general_int_GetInfo` with a fixed `tmp_V = 1.0` (expec_cisajscktaltdc.c:857,916
+canonical; :725,777 GC), so amplitude = `1.0 * tmp_sgn`. Branch selection is by
+`isite1==isite2` / `isite3==isite4` (the same four-way `is*` test the Mode-1
+dispatch uses).
+
+| (i) function @ location | (ii) kprime source | (iii) amplitude | (iv) M_CORR purity | (v) adapter |
+|---|---|---|---|---|
+| `CisAisCisAis_element` (canonical, diag) | `j-1` | `tmp_V*tmp_sgn` | gated write | `CisAisCisAis_element_TraceProbe` |
+| `CisAisCjtAku_element` (canonical) | `child_CisAjt` off `-1` | `tmp_V*tmp_sgn` | gated write | `CisAisCjtAku_element_TraceProbe` |
+| `CisAjtCkuAku_element` (canonical) | `child_CisAjt` off `-1` | `tmp_V*tmp_sgn` | gated write | `CisAjtCkuAku_element_TraceProbe` |
+| `CisAjtCkuAlv_element` (canonical) | `child_CisAjt` off `-1` (after `child_GC_CisAjt` intermediate) | `tmp_V*tmp_sgn` | gated write | `CisAjtCkuAlv_element_TraceProbe` |
+| `GC_CisAisCisAis_element` (GC, diag) | `j-1` | `tmp_V*tmp_sgn` | gated write | `GC_CisAisCisAis_element_TraceProbe` |
+| `GC_CisAisCjtAku_element` (GC) | bare-bit `tmp_off` | `tmp_V*tmp_sgn` | gated write | `GC_CisAisCjtAku_element_TraceProbe` |
+| `GC_CisAjtCkuAku_element` (GC) | bare-bit `tmp_off` | `tmp_V*tmp_sgn` | gated write | `GC_CisAjtCkuAku_element_TraceProbe` |
+| `GC_CisAjtCkuAlv_element` (GC) | bare-bit `tmp_off` | `tmp_V*tmp_sgn` | gated write | `GC_CisAjtCkuAlv_element_TraceProbe` |
+
+All Hubbard/GC helper write-set (vi): `general_int_GetInfo` -> `X->Large.is*/
+A_spin/B_spin/isA_spin/isB_spin/tmp_V/isite*`; `child_CisAjt` -> `GetOffComp`
+reads `list_2_*`; `child_GC_CisAjt`/`child_CisAis`/`SgnBit` pure.
+
+**SpinGC-half two-body.** Uses `Rearray_Interactions(...,2)` then, only if the
+reordered pair is onsite in both factors (`org_isite1==org_isite2 &&
+org_isite3==org_isite4`, expec_cisajscktaltdc.c:1995), computes
+`isA_up=Tpow[isite2-1]`, `isB_up=Tpow[isite4-1]` and dispatches by
+`(sigma1==sigma2?, sigma3==sigma4?)`. `tmp_V` from Rearray is folded into the
+amplitude.
+
+| (i) function @ location (:2002/:2008/:2014/:2020) | (ii) kprime | (iii) amp | (v) adapter |
+|---|---|---|---|
+| `GC_CisAisCisAis_spin_element` (diag) | `j-1` | `tmp_V*tmp_sgn` | `GC_CisAisCisAis_spin_element_TraceProbe` |
+| `GC_CisAisCitAiu_spin_element` | bare-bit `tmp_off` | `tmp_V*tmp_sgn` | `GC_CisAisCitAiu_spin_element_TraceProbe` |
+| `GC_CisAitCiuAiu_spin_element` | bare-bit `tmp_off` | `tmp_V*tmp_sgn` | `GC_CisAitCiuAiu_spin_element_TraceProbe` |
+| `GC_CisAitCiuAiv_spin_element` | bare-bit `tmp_off` (after intermediate) | `tmp_V*tmp_sgn` | `GC_CisAitCiuAiv_spin_element_TraceProbe` |
+
+Note: the SpinGC-half element funcs carry an `H_CORR` branch (reads
+`conj(tmp_v0)`); extraction is M_CORR only so it is dead. The write-set (vi) for
+this path is `X->Large.{i_max,irght,ilft,ihfbit,mode}` (driver-set) only — the
+element funcs read `isA_up/isB_up` as explicit args, NOT from `X->Large`, and
+`general_int_GetInfo` is NOT called here.
+
+**Spin-half CANONICAL two-body (`expec_cisajscktalt_SpinHalf`,
+expec_cisajscktaltdc.c:979-1101 — previously unmapped, enumerated here).** After
+`Rearray_Interactions(...,2)`, the LOCAL branch
+(`org_isite1<=Nsite && org_isite3<=Nsite`, :1064) has THREE reachable families:
+
+| (i) branch @ location | (ii) kprime | (iii) amplitude | (v) adapter |
+|---|---|---|---|
+| density-density diagonal (`s1==s2 && s3==s4`, :1071) `CisAisCisAis_spin_element` | `j-1` | `tmp_V*tmp_sgn` | `CisAisCisAis_spin_element_TraceProbe` |
+| same-index reduction (`o1==o3 && s1==s4 && s3==s2`, :1073-1079) inline `child_Spin_CisAis` | `j-1` | `tmp_V * occ` | driver reuses `child_Spin_CisAis_TraceProbe`, folds `tmp_V` |
+| exchange (`s1==s4 && s2==s3`, :1081-1088) `child_exchange_spin_element` | canonical `tmp_off-1` | **`tmp_sgn` ONLY — NO `tmp_V`** | `child_exchange_spin_element_TraceProbe` |
+
+**Amplitude anomaly (recorded per brief).** The exchange branch at
+expec_cisajscktaltdc.c:1085-1087 computes `dmv = vec[j]*tmp_sgn;
+dam_pr += conj(vec[tmp_off])*dmv` — it does **not** multiply by `tmp_V`, unlike
+the diagonal/same-index branches. This is faithfully preserved: the exchange
+adapter reports the bare sign and `TraceMapExtractTwoBody`'s Spin exchange branch
+does not reintroduce `tmp_V`. (In practice this Sz-conserving spin-flip pair has
+`tmp_V=+1` for the ordering that reaches this branch, but the code path omits it
+regardless, and we match Mode 1 exactly.)
+
+**Rearray-nonzero semantics (verified per brief).** When
+`Rearray_Interactions` returns non-zero (an irregular pair that is neither
+`i1==i2 & i3==i4` nor `i1==i4 & i3==i2`), the Mode-1 SpinHalf/SpinGCHalf paths
+write a literal `0.0` correlation row and `continue`
+(expec_cisajscktaltdc.c:1007-1012 SpinHalf, :1952-1957 SpinGCHalf). This is the
+NORMAL "unconventional pair -> zero" behavior, **not** an error path (the
+function still returns 0). The extraction driver mirrors it by returning the
+`TraceMap.n == 0` sentinel; Task 4's kernel writes the 0.0 row for it.
+
+### 2c.3 Capability conclusions (feeds Task 5)
+
+- **HubbardGC / SpinGC-half (one-body + two-body):** all reachable families have
+  clean `*_map` cores and adapters; locally unit-tested (GC bare-bit basis) in
+  `test/unit/expec_trace_map_check.c`. Candidates for TRUE after Task 5 golden.
+- **Hubbard / Spin-half canonical (one-body + two-body):** all reachable
+  families have clean cores and adapters, but the canonical basis
+  (`GetOffComp`/`list_1`) is not locally unit-testable; verification is deferred
+  to the Task 3/4 clavius early checkpoints and the Task 5 canonical golden.
+- **Exclusions:** general-spin (`iFlgGeneralSpin==1`) is out of scope — the
+  driver returns `-1` for it. Kondo/tJ diagonal one-body num operators and the
+  Kondo localized-site zero rows are handled as empty maps; their capability
+  flip still awaits Task 5 coverage. Spinless/Kondo remain FALSE per the plan.
