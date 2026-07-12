@@ -47,7 +47,10 @@ changes with attribution).
   stdout/`zvo_phys*` output against a pre-phase-3a distributed run should
   expect `S2`/`Sz` to change from `0` to their correct values, and the
   progress-line column layout to change from the shortened form to the
-  serial form.
+  serial form. **Scripts that parse the stdout progress lines of
+  distributed FullDiag runs by column index must be updated**: inserting
+  the `S2` column shifts every subsequent field (e.g. the doublon column)
+  one position to the right relative to the old shortened format.
 
 - No existing keyword is deprecated or removed in this phase. `ExpecMode`
   is purely additive and defaults to the pre-existing behavior (`0`)

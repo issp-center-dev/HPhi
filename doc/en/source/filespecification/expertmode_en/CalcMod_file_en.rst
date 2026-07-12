@@ -287,14 +287,15 @@ The parameters correlated with the keywords are as follows.
      rank-local partial files and merged into the final aggregate files
      by rank 0 once every rank's manifest reports success.
    | 2: Reserved for a future trace-kernel evaluation mode. Not yet
-     implemented; currently runs as ``ExpecMode 1`` and prints
+     implemented; currently runs as ``ExpecMode 1`` and prints (indented
+     in the actual log output)
    | ``INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.``
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected
      at startup with an error. With exactly one MPI process, ``ExpecMode``
      is automatically reverted to 0 (results are identical for a single
-     process either way), printing
+     process either way), printing (indented in the actual log output)
    | ``INFO: ExpecMode reverts to 0 for a single process (results are identical).``
    | Guarantee: ``ExpecMode`` changes only evaluation speed, never the
      physics -- ``ExpecMode`` 0, 1, and 2 produce identical results up to
@@ -302,10 +303,10 @@ The parameters correlated with the keywords are as follows.
      agreement is not bit-identical).
    | Memory: ``ExpecMode 1`` additionally holds a state panel roughly the
      same size as the distributed eigenvector storage used by ``Solver 3``
-     (O(N2/P) per rank). During the one-time redistribution step both the
+     (O(N²/P) per rank). During the one-time redistribution step both the
      original storage and the new panel coexist, giving a temporary peak
-     of roughly 2xO(N2/P) per rank before the original storage is freed;
-     steady-state usage afterward is O(N2/P), unchanged from ``ExpecMode 0``.
+     of roughly 2xO(N²/P) per rank before the original storage is freed;
+     steady-state usage afterward is O(N²/P), unchanged from ``ExpecMode 0``.
    | Guidance: prefer ``ExpecMode 1`` for large multi-node ``Solver 3``
      (ELPA) or ``Solver 1`` (ScaLAPACK) runs with many eigenstates and/or
      many Green-function observables, where re-evaluating every eigenstate
