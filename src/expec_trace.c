@@ -167,10 +167,17 @@
      "SpinGC 2B same-index", "SpinGC 2B purity",
      "SpinGC 2B Rearray-irregular rc==0/n==0 sentinel/irregular streamed==0",
      "SpinGC 2B stream", all PASS; plus fulldiag_expecmode_equiv.sh's
-     case2_spingc_gamma, case4_spingc_honeycomb_manybody (ThreeBodyG/
-     FourBodyG/SixBodyG stay on the always-fallback path in the same run)
-     ExpecMode-2 sub-cases, and the clavius forced-kernel checkpoint
-     np=2/3 2026-07-12.
+     case2_spingc_gamma (both one-body and two-body kernels selected and
+     exercised end-to-end) ExpecMode-2 sub-case, and the clavius
+     forced-kernel checkpoint np=2/3 2026-07-12. case4_spingc_honeycomb_
+     manybody is one-body-kernel evidence ONLY: its ThreeBodyG/FourBodyG/
+     SixBodyG defs trigger the shared-evaluator rule (see the field's doc
+     comment in expec_trace.h and TraceBuildPlan() below), so its two-body
+     GF demotes to the ExpecMode-1 fallback (asserted via
+     assert_kernel_plan_shared_evaluator(), not assert_kernel_plan())
+     rather than exercising the two-body trace kernel -- it is cited above
+     for the one-body kernel plus the shared-evaluator fallback behavior,
+     not as two-body kernel evidence.
 
    NOT flipped (stay at the {0,0} fallback default, so no row is listed
    below): tJ/tJGC/Kondo/KondoGC -- known is_gc grouping mismatch in

@@ -286,10 +286,47 @@ The parameters correlated with the keywords are as follows.
      loop). The aggregate Green-function output is written as
      rank-local partial files and merged into the final aggregate files
      by rank 0 once every rank's manifest reports success.
-   | 2: Reserved for a future trace-kernel evaluation mode. Not yet
-     implemented; currently runs as ``ExpecMode 1`` and prints (indented
-     in the actual log output)
-   | ``INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.``
+   | 2: Trace-kernel evaluation, applied to the one-body
+     (``expec_cisajs``-equivalent) and two-body
+     (``expec_cisajscktaltdc``-equivalent) Green functions only. For each
+     operator, HPhi precomputes the basis-state mapping (destination
+     state and amplitude) once, then streams every owned eigenstate
+     through that mapping in a dense loop, amortizing the per-state
+     operator overhead that ``ExpecMode 1`` still pays for these two
+     quantities. Energy/fluctuation (including the ``var`` column),
+     ``S2``, ``NBodyG``, and ``AnomalousG`` are always evaluated on the
+     ``ExpecMode 1`` path in this version -- trace-kernel evaluation for
+     these quantities is a candidate for a future phase.
+   | Whether the one-body/two-body trace kernel is actually used is
+     decided once per run from a per-(model, quantity) capability table
+     plus two runtime checks, and reported at the start of the run by a
+     rank-0 ``INFO`` line per quantity (indented in the actual log
+     output; ``%s`` below stands for ``one-body`` or ``two-body``):
+   | ``INFO: ExpecMode 2: %s Green functions use the trace kernel.``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (unsupported model).``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
+   | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
+   | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
+   | Supported models (as of this phase): ``Hubbard``/``HubbardGC`` and
+     half-integer ``Spin``/``SpinGC`` (general-spin models, ``tJ``/
+     ``tJGC``, and ``Kondo``/``KondoGC`` are not yet covered and always
+     print the "unsupported model" line above for both quantities).
+   | On a supported model, each quantity is still individually subject to
+     two runtime fallbacks, checked independently: (a) a memory gate --
+     if the quantity's result buffer would exceed
+     ``HPHI_TRACE_BUF_MAX_MB`` (an environment variable giving the cap in
+     MiB, an integer in [1, 1048576], default 1024; the cap applies per
+     MPI rank and per quantity to the result buffer only; it is parsed
+     from the environment on rank 0 and broadcast to every rank, so it
+     only needs to be set in the launch environment), that quantity
+     falls back to ``ExpecMode 1``; (b) a shared-evaluator rule for the
+     two-body Green function only -- it shares its evaluator with the
+     ThreeBodyG/FourBodyG/SixBodyG (N-body) Green functions, so whenever
+     any of those is requested, the two-body quantity falls back
+     together with them (this keeps each output file's writer unique:
+     otherwise the fallback loop would silently drop the N-body output,
+     or the trace kernel would double-write the two-body files). The
+     one-body quantity is unaffected by rule (b).
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected
@@ -300,20 +337,32 @@ The parameters correlated with the keywords are as follows.
    | Guarantee: ``ExpecMode`` changes only evaluation speed, never the
      physics -- ``ExpecMode`` 0, 1, and 2 produce identical results up to
      floating-point rounding (summation order differs between kernels, so
-     agreement is not bit-identical).
-   | Memory: ``ExpecMode 1`` additionally holds a state panel roughly the
-     same size as the distributed eigenvector storage used by ``Solver 3``
-     (O(N²/P) per rank). During the one-time redistribution step both the
-     original storage and the new panel coexist, giving a temporary peak
-     of roughly 2xO(N²/P) per rank before the original storage is freed;
-     steady-state usage afterward is O(N²/P), unchanged from ``ExpecMode 0``.
-   | Guidance: prefer ``ExpecMode 1`` for large multi-node ``Solver 3``
-     (ELPA) or ``Solver 1`` (ScaLAPACK) runs with many eigenstates and/or
-     many Green-function observables, where re-evaluating every eigenstate
-     redundantly on every rank (``ExpecMode 0``) becomes the bottleneck.
-     Keep the default ``ExpecMode 0`` otherwise, including for small
-     systems and single-process runs.
-   | Note (behavior fix): as of this phase, distributed FullDiag runs
+     agreement is not bit-identical). This includes the ``var`` column,
+     which ``ExpecMode 2`` computes via the same ``ExpecMode 1`` path as
+     the rest of the energy family (it is not trace-kernelized in this
+     phase).
+   | Memory: ``ExpecMode 1``/``2`` additionally hold a state panel roughly
+     the same size as the distributed eigenvector storage used by
+     ``Solver 3`` (O(N²/P) per rank); ``ExpecMode 2`` additionally holds,
+     per quantity that uses the trace kernel, a result buffer capped by
+     ``HPHI_TRACE_BUF_MAX_MB`` above. During the one-time redistribution
+     step both the original storage and the new panel coexist, giving a
+     temporary peak of roughly 2xO(N²/P) per rank before the original
+     storage is freed; steady-state usage afterward is O(N²/P) plus the
+     trace buffers, otherwise unchanged from ``ExpecMode 0``.
+   | Guidance: prefer ``ExpecMode 1`` or ``2`` for large multi-node
+     ``Solver 3`` (ELPA) or ``Solver 1`` (ScaLAPACK) runs with many
+     eigenstates and/or many Green-function observables, where
+     re-evaluating every eigenstate redundantly on every rank
+     (``ExpecMode 0``) becomes the bottleneck. ``ExpecMode 2`` is
+     designed to further amortize per-state operator overhead for
+     one-body/two-body Green-function-heavy workloads on the supported
+     models above, and is expected to be at least as fast as
+     ``ExpecMode 1`` for such correlation-function-heavy workloads; see
+     ``test/manual/elpa_gpu_check.md`` for measured results. Keep the
+     default ``ExpecMode 0`` otherwise, including for small systems and
+     single-process runs.
+   | Note (behavior fix): as of phase 3a, distributed FullDiag runs
      (``Solver`` 1 or 3, more than one MPI process) compute S2 and Sz on
      rank 0 for ``ExpecMode 0`` as well -- previously these distributed runs
      zero-filled S2 and Sz and printed a shortened stdout progress line

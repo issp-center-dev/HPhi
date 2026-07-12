@@ -275,10 +275,45 @@ CalcModファイル
      行いません)。集約Green関数出力はランクごとのパーシャルファイルとして
      書き出され、全ランクのマニフェストが成功を報告した時点でランク0が
      最終的な集約ファイルへマージします。
-   | 2: 将来のトレースカーネル評価モード用に予約されています。まだ
-     実装されておらず、現時点では ``ExpecMode 1`` として動作し、次を
-     表示します (実際のログ出力では行頭に字下げが入ります)。
-   | ``INFO: ExpecMode 2 kernels are not available in this build; running as ExpecMode 1.``
+   | 2: トレースカーネル評価。一体Green関数 (``expec_cisajs`` 相当) と
+     二体Green関数 (``expec_cisajscktaltdc`` 相当) にのみ適用されます。
+     各演算子について、基底状態の写像 (行き先の状態と振幅) を1回だけ
+     前計算し、所有する全固有状態をその写像で密ループでストリーミング
+     評価することで、``ExpecMode 1`` がこの2つの物理量について依然
+     支払っている状態ごとの演算子オーバーヘッドを償却します。
+     エネルギー・ゆらぎ系 (``var`` 列を含む)、``S2``、``NBodyG``、
+     ``AnomalousG`` は本バージョンでは常に ``ExpecMode 1`` の経路で
+     評価されます -- これらの物理量のトレースカーネル化は将来の
+     フェーズでの拡張候補です。
+   | 一体・二体のトレースカーネルが実際に使われるかどうかは、実行ごとに
+     1回、(モデル, 物理量) ごとのケイパビリティ表と2つの実行時判定から
+     決まり、実行開始時にランク0が物理量ごとに次の ``INFO`` 行で報告
+     します (実際のログ出力では行頭に字下げが入ります。以下の ``%s`` は
+     ``one-body`` または ``two-body`` に置き換わります)。
+   | ``INFO: ExpecMode 2: %s Green functions use the trace kernel.``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (unsupported model).``
+   | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
+   | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
+   | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
+   | 対応モデル (本フェーズ時点): ``Hubbard``/``HubbardGC`` と半整数
+     (half-integer) の ``Spin``/``SpinGC`` です (一般スピン模型、
+     ``tJ``/``tJGC``、``Kondo``/``KondoGC`` は未対応で、両物理量とも
+     常に上記の「unsupported model」の行が表示されます)。
+   | 対応モデルであっても、各物理量は個別に、独立した2つの実行時
+     フォールバック判定を受けます。(a) メモリゲート -- その物理量の
+     結果バッファが ``HPHI_TRACE_BUF_MAX_MB`` (環境変数。MiB単位の上限を
+     [1, 1048576] の整数で指定、デフォルト 1024。この上限は1MPIランク
+     かつ1物理量あたりの結果バッファのみに適用され、ランク0で環境から
+     読み取られ全ランクへブロードキャストされるため、起動環境にのみ
+     設定すれば十分です) を超える場合、その物理量は ``ExpecMode 1`` へ
+     フォールバックします。(b) 二体Green関数のみに適用される評価器共有
+     規則 -- 二体Green関数は ThreeBodyG/FourBodyG/SixBodyG (N体) の
+     Green関数と評価器を共有しているため、これらのいずれかが定義されて
+     いる場合、二体物理量はそれらと一緒にフォールバックします (各出力
+     ファイルの書き手を常に一意に保つためです。そうしないとフォール
+     バックループがN体出力を黙って落とすか、トレースカーネルが二体
+     ファイルを二重に書き込んでしまいます)。一体物理量は規則(b)の
+     影響を受けません。
    | 有効条件: ``ExpecMode`` を 0 以外にする場合、``CalcType`` = 2
      (全対角化) かつ ``Solver`` 1 (ScaLAPACK) または 3 (ELPA) である
      必要があります。それ以外の組合せ (``CalcType`` または ``Solver``
@@ -290,20 +325,31 @@ CalcModファイル
    | 保証: ``ExpecMode`` は評価の速度のみを変え、物理量の値は変わりません
      -- ``ExpecMode`` 0、1、2 は浮動小数点の丸め誤差の範囲内で同一の結果を
      与えます (カーネルにより総和の順序が異なるため、ビット単位で完全に
-     一致するわけではありません)。
-   | メモリ: ``ExpecMode 1`` は ``Solver 3`` が使用する分散固有ベクトル
-     格納領域とほぼ同じ大きさの状態パネル (1ランクあたり O(N²/P)) を
-     追加で保持します。一度だけ行われる再分散のあいだは元の格納領域と
-     新しいパネルが両方存在するため、一時的なピークは1ランクあたり
-     およそ 2xO(N²/P) となり、再分散後 (元の格納領域を解放した後) は
-     ``ExpecMode 0`` と変わらない O(N²/P) に戻ります。
+     一致するわけではありません)。これは ``var`` 列にも当てはまります --
+     ``ExpecMode 2`` でも ``var`` 列はエネルギー系の他の量と同じ
+     ``ExpecMode 1`` の経路で計算されます (本フェーズではトレース
+     カーネル化されていません)。
+   | メモリ: ``ExpecMode 1``/``2`` は ``Solver 3`` が使用する分散固有
+     ベクトル格納領域とほぼ同じ大きさの状態パネル (1ランクあたり
+     O(N²/P)) を追加で保持します。さらに ``ExpecMode 2`` では、
+     トレースカーネルを使用する物理量ごとに、上記の
+     ``HPHI_TRACE_BUF_MAX_MB`` で上限を定めた結果バッファを保持します。
+     一度だけ行われる再分散のあいだは元の格納領域と新しいパネルが両方
+     存在するため、一時的なピークは1ランクあたりおよそ 2xO(N²/P) と
+     なり、再分散後 (元の格納領域を解放した後) はトレースバッファ分を
+     除き ``ExpecMode 0`` と変わらない O(N²/P) に戻ります。
    | 利用指針: 固有状態数やGreen関数の観測量が多い大規模マルチノードの
      ``Solver 3`` (ELPA) または ``Solver 1`` (ScaLAPACK) 実行では、
      全固有状態を全ランクで重複して評価する ``ExpecMode 0`` がボトル
-     ネックになる場合に ``ExpecMode 1`` を推奨します。それ以外
-     (小規模系や1プロセス実行を含む) はデフォルトの ``ExpecMode 0``
-     のままで構いません。
-   | 注 (挙動修正): 本フェーズより、分散FullDiag実行 (``Solver`` 1 または
+     ネックになる場合に ``ExpecMode 1`` または ``2`` を推奨します。
+     ``ExpecMode 2`` は、上記の対応モデルにおいて一体・二体Green関数が
+     多い FullDiag ワークロードについて、状態ごとの演算子オーバーヘッド
+     をさらに償却するよう設計されており、そのような相関関数中心の
+     ワークロードでは ``ExpecMode 1`` と同等以上に高速であることが
+     期待されます。実測値は ``test/manual/elpa_gpu_check.md`` を
+     参照してください。それ以外 (小規模系や1プロセス実行を含む) は
+     デフォルトの ``ExpecMode 0`` のままで構いません。
+   | 注 (挙動修正): フェーズ3aより、分散FullDiag実行 (``Solver`` 1 または
      3、MPIプロセス数が2以上) では ``ExpecMode 0`` でもランク0でS2と
      Szを計算するようになりました -- これまでこれらの分散実行ではS2と
      Szがゼロ埋めされ、S2列を含まない短縮形式のstdout進捗行が出力されて

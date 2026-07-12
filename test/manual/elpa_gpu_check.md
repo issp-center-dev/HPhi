@@ -30,9 +30,10 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
    must drop roughly as 1/P.
 10. `ctest -R fulldiag_expecmode_equiv` (np=2, np=3) ... expect PASS (phase 3a:
     `ExpecMode` 0 vs 1 vs 2 equivalence -- every `zvo_phys*`/Green aggregate
-    output file must match within tolerance 1e-8; case 1 also asserts the
-    `ExpecMode 2` -> 1 downgrade INFO message fires and its output matches
-    Mode 1's).
+    output file must match within tolerance 1e-8). As of phase 3b (item 15
+    below), the same script's case 1 (Hubbard) exercises the real
+    `ExpecMode 2` trace kernel rather than a downgrade to Mode 1 -- see
+    item 15 for the current, per-case kernel/fallback expectations.
 11. `ctest -R green_partial_merge_check` ... expect PASS (phase 3a: partial
     (`.part<rank>`) file merge success/failure semantics, any np >= 2).
 12. Mode 1 benchmark: same fixed-N FullDiag case as item 9, `Solver 3`,
@@ -49,9 +50,47 @@ Target: clavius (single node multi-GPU) and one multi-node GPU system.
 14. `ExpecMode` eligibility / demotion checks: `ExpecMode 1` with `Solver 0`
     (or with a non-FullDiag `CalcType`) aborts at startup with the
     ExpecMode eligibility error (`cErrExpecMode`); `ExpecMode 1` at nproc=1
-    prints the "reverts to 0" INFO and matches the `ExpecMode 0` reference;
-    `ExpecMode 2` prints the "running as ExpecMode 1" INFO and matches an
-    explicit `ExpecMode 1` run.
+    prints the "reverts to 0" INFO and matches the `ExpecMode 0` reference.
+    As of phase 3b, `ExpecMode 2` no longer unconditionally runs as
+    `ExpecMode 1`; see item 15 for its current per-quantity kernel/fallback
+    INFO lines.
+15. `ctest -R expec_trace_map_check` ... expect PASS (phase 3b: ExpecMode-2
+    trace-kernel unit tests -- mapping-probe correctness/purity, one-body
+    and two-body streaming, and the `HPHI_TRACE_BUF_MAX_MB` memory-gate
+    boundary, for Hubbard/HubbardGC/Spin-half/SpinGC-half).
+16. `ctest -R fulldiag_expecmode_equiv` (np=2, np=3), production path ...
+    expect PASS (phase 3b: cases 1/2/3/5 -- Hubbard chain, SpinGC Gamma
+    chain, canonical Spin chain, and the dedicated Hubbard one-body/
+    two-body golden case, all of them supported-model rows -- must have
+    `ExpecMode 2` print "ExpecMode 2: one-body Green functions use the
+    trace kernel." and "ExpecMode 2: two-body Green functions use the
+    trace kernel." (not a downgrade), with `zvo_phys*`/Green aggregate
+    output, including the `var` column, matching `ExpecMode 0`/`1`
+    within 1e-8. Case 4 (SpinGC honeycomb with ThreeBodyG/FourBodyG/
+    SixBodyG defined) must instead print the two-body shared-evaluator
+    fallback line ("... they share their evaluator with
+    three-/four-/six-body Green functions.") while still selecting the
+    one-body trace kernel. (HubbardGC and the unsupported-model fallback
+    are not exercised by this script -- their coverage is
+    `expec_trace_map_check`'s unit tests plus the per-row evidence
+    comment above `kTraceCap` in `src/expec_trace.c`; item 15 above
+    already covers HubbardGC.)
+17. **Benchmark gate** (phase 3b, spec §6): fixed-N FullDiag case as item 9
+    (8-site Hubbard chain, N=4900), `Solver 3`, np=4, one-body + two-body
+    GF defined for all states; compare observable-evaluation wall time
+    (`CalcTimer.dat`) across `ExpecMode 0`/`1`/`2`. Target: `ExpecMode 2`
+    >= `ExpecMode 1`. Record the measured times **and** a breakdown of
+    `ExpecMode 2`'s time into mapping-extraction vs streaming vs output
+    phases (completion requires the breakdown, not just the totals); if
+    the target is missed, record a break-even analysis instead of
+    dropping the item, since the usage guidance in the `ExpecMode`
+    documentation and the phase 3b migration note may need to be revised
+    to match the measured result.
+18. Optional GPU data point (phase 3b, if clavius GPUs are free -- check
+    `nvidia-smi` first and do not contend with other users' jobs): L=10
+    Hubbard (N ~= 63504) FullDiag with `Solver 3`, `NGPU` > 0; record one
+    wall-time comparison across `ExpecMode 0`/`1`/`2` for the GPU
+    diagonalization + observable-evaluation path.
 Record results (date, host, ELPA version, commit) at the bottom of this file.
 
 ---
