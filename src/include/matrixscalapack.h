@@ -67,6 +67,10 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
                              long int ncols_panel, long int panel_ld,
                              double complex *panel,
                              double complex *A_distr, int *descA_2d);
+int RedistBlockCyclicToStatePanel(long int xNsize,
+                                  double complex *Z, int *descZ,
+                                  long int jbegin, long int ncols,
+                                  long int panel_ld, double complex *panel);
 int diag_scalapack_cmp(long int xNsize, double complex **A,
                        double complex *r, double complex *Z, int *descZ);
 

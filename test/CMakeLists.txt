@@ -657,4 +657,54 @@ if(USE_ELPA)
         elpa_redist_check
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
     )
+
+    add_executable(elpa_statepanel_check unit/elpa_statepanel_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_statepanel_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_definitions(elpa_statepanel_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
+    # for elpa_eigen_check; reuse it here for the same reason.
+    target_link_libraries(elpa_statepanel_check ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+    # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as
+    # elpa_redist_check; RedistBlockCyclicToStatePanel's default check
+    # (N=97) also builds its BLACS grid from MPI_Dims_create and works
+    # with any process count, so "min:2" is enough.
+    add_test(
+        NAME elpa_statepanel_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                $<TARGET_FILE:elpa_statepanel_check>
+    )
+    set_tests_properties(
+        elpa_statepanel_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    # Dedicated small-N edge case: reuse the same source (NDIM
+    # overridable at compile time) with N=2 and exactly 3 ranks, so the
+    # frozen ownership formula (NC=ceil(2/3)=1) guarantees rank 2 owns
+    # zero states -- exercising the "zero-owner ranks participate with a
+    # 1-element dummy buffer + valid descriptor" path that is easy to
+    # miss with only the np-vs-N=97 combinations exercised above.
+    add_executable(elpa_statepanel_zero_owner unit/elpa_statepanel_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_statepanel_zero_owner PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_definitions(elpa_statepanel_zero_owner PRIVATE -D_ELPA -D_SCALAPACK -DMPI -DNDIM=2)
+    target_link_libraries(elpa_statepanel_zero_owner ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+    add_test(
+        NAME elpa_statepanel_zero_owner
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
+                $<TARGET_FILE:elpa_statepanel_zero_owner>
+    )
+    set_tests_properties(
+        elpa_statepanel_zero_owner
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
 endif(USE_ELPA)

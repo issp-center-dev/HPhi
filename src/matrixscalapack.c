@@ -450,4 +450,103 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
   return 0;
 }
 
+/**
+ * @brief Redistribute an existing 2D block-cyclic matrix Z (e.g. the
+ * eigenvector matrix produced by diag_scalapack_cmp/diag_elpa_cmp) into
+ * a 1D state-column panel with a single pzgemr2d_ call -- the mirror
+ * image of RedistPanelToBlockCyclic (source and destination roles
+ * swapped; Z/descZ is the source here, panel is the destination). Same
+ * 1 x P 'R' 1D grid, ownership formula, and zero-owner-participates
+ * pattern as RedistPanelToBlockCyclic: NC = ceil(N/P),
+ * first_state(r) = r*NC+1 (1-based), ncols_local(r) =
+ * max(0, min((r+1)*NC, N) - r*NC). Ranks owning zero states still
+ * participate with a 1-element dummy buffer + valid descriptor;
+ * pzgemr2d_ only touches the columns numroc() assigns to that rank, so
+ * the buffer is never read/written for those ranks.
+ * @param[in] xNsize global matrix dimension N
+ * @param[in] Z source 2D block-cyclic matrix (e.g. ScaLAPACK/ELPA
+ * eigenvectors)
+ * @param[in] descZ descriptor for Z
+ * @param[in] jbegin first owned state, 1-based (checked against the
+ * ownership derived internally from the 1D grid/NC; must match by
+ * construction)
+ * @param[in] ncols number of states owned by this rank (checked against
+ * the internally derived ownership)
+ * @param[in] panel_ld leading dimension of panel (= xNsize)
+ * @param[in, out] panel this rank's 1D state-column panel buffer; on
+ * return, panel[:, 0..ncols-1] (column-major, ld = panel_ld) holds the
+ * full eigenvectors for this rank's owned 1-based states
+ * [jbegin, jbegin+ncols-1]
+ * @return 0 on success, -1 on failure (same value on all ranks)
+ * @author Kazuyoshi Yoshimi (The University of Tokyo)
+ */
+int RedistBlockCyclicToStatePanel(long int xNsize,
+                                  double complex *Z, int *descZ,
+                                  long int jbegin, long int ncols,
+                                  long int panel_ld, double complex *panel) {
+  int i_negone = -1, i_zero_i = 0, info;
+  int ictxt_1d, nprow_1, npcol_1, myrow_1, mycol_1;
+  int desc1d[9];
+  int lld;
+  long int NC, mb1, nb1;
+  const long int i_one = 1;
+  int size;
+
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  NC = (xNsize + size - 1) / size;
+
+  blacs_get_(&i_negone, &i_zero_i, &ictxt_1d);
+  nprow_1 = 1; npcol_1 = size;
+  blacs_gridinit_(&ictxt_1d, "R", &nprow_1, &npcol_1);
+  blacs_gridinfo_(&ictxt_1d, &nprow_1, &npcol_1, &myrow_1, &mycol_1);
+
+  /* Same ownership-consistency guard as RedistPanelToBlockCyclic: the
+     1x P 'R' grid must map mycol to this rank 1:1, and the caller-
+     supplied (jbegin, ncols) must agree with the ownership derived
+     internally from mycol_1/NC/xNsize. Synchronize the verdict so no
+     rank enters the collective pzgemr2d_ alone. */
+  {
+    int ok = (mycol_1 == myrank) ? 0 : -1, gok;
+    long int nc_expect = (mycol_1 < (int)((xNsize + NC - 1) / NC))
+                           ? (((long int)mycol_1 + 1) * NC <= xNsize
+                                ? NC : xNsize - (long int)mycol_1 * NC)
+                           : 0;
+    long int jb_expect = (long int)mycol_1 * NC + 1;
+    if (ok != 0) {
+      fprintf(stdout,
+              "  Error: BLACS 1D grid column (%d) does not match MPI rank (%d):\n"
+              "         panel ownership is inconsistent; aborting redistribution.\n",
+              mycol_1, myrank);
+    }
+    if (ncols != nc_expect ||
+        (ncols > 0 && jbegin != jb_expect)) {
+      ok = -1;
+      fprintf(stdout,
+              "  Error: caller-supplied panel ownership (jbegin=%ld, ncols=%ld) does\n"
+              "         not match the internally derived ownership (jbegin=%ld, ncols=%ld)\n"
+              "         for rank %d: panel ownership is inconsistent; aborting redistribution.\n",
+              jbegin, ncols, jb_expect, nc_expect, myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      blacs_gridexit_(&ictxt_1d);
+      return -1;
+    }
+  }
+
+  lld = (panel_ld > 0) ? (int)panel_ld : 1;
+  mb1 = xNsize;
+  nb1 = NC;
+  descinit_(desc1d, &xNsize, &xNsize, &mb1, &nb1, &i_zero_i, &i_zero_i,
+            &ictxt_1d, &lld, &info);
+
+  pzgemr2d_(&xNsize, &xNsize,
+           Z, (long int *)&i_one, (long int *)&i_one, descZ,
+           panel, (long int *)&i_one, (long int *)&i_one, desc1d,
+           &descZ[1]);
+
+  blacs_gridexit_(&ictxt_1d);
+  return 0;
+}
+
 #endif
