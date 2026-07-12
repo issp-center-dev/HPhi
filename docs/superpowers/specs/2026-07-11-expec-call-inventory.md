@@ -456,3 +456,37 @@ function still returns 0). The extraction driver mirrors it by returning the
   driver returns `-1` for it. Kondo/tJ diagonal one-body num operators and the
   Kondo localized-site zero rows are handled as empty maps; their capability
   flip still awaits Task 5 coverage. Spinless/Kondo remain FALSE per the plan.
+
+### 2c.4 Shared-evaluator constraint (Task 5 addendum — missed by the ownership table)
+
+The per-family tables above audit which element-function branches each
+(model, quantity) can reach, but they missed an EVALUATOR-level ownership
+fact: `expec_cisajscktaltdc()` computes the two-body GF **and** the
+ThreeBody/FourBody/SixBody GFs in one pass — its entry guard
+(`expec_cisajscktaltdc.c:115`) runs the function when ANY of
+`NCisAjtCkuAlvDC`/`NTBody`/`NFBody`/`NSBody` is positive, and the multibody
+sections (`:184`/`:194`/`:204` and the per-model bodies) execute inside the
+same call. The multibody GFs are always-fallback in 3b, so when
+`plan->kernel[TRACE_Q_TWOBODY]==1` the Mode-1 fallback loop skips the WHOLE
+evaluator — silently dropping `zvo_ThreeBody/FourBody/SixBody_eigen.dat`
+(observed on clavius: equiv `case4_spingc_honeycomb_manybody` np=2/3 FAIL,
+mode2 missing those three files). Calling the evaluator anyway would
+double-write the two-body files (two writers — forbidden by the plan's
+single-writer guarantee).
+
+**Resolution (plan-level demotion, keeping the plan the single truth
+source):** `TraceBuildPlan()` demotes `TRACE_Q_TWOBODY` to the fallback
+whenever `X->Def.NTBody > 0 || X->Def.NFBody > 0 || X->Def.NSBody > 0`,
+recording the reason in the plan field `demoted_shared_evaluator[]` (added
+to `src/include/expec_trace.h` after the Task-1 freeze as a design-gap fix;
+`gbuf_bytes[TWOBODY]` stays 0 and `demoted_memory[TWOBODY]` stays 0 — the
+reasons are exclusive). `TraceReportPlan()` reports it as
+`"... use the ExpecMode-1 fallback (they share their evaluator with
+three-/four-/six-body Green functions)."`. ONEBODY is unaffected:
+`expec_cisajs.c` contains **no** `NTBody`/`NFBody`/`NSBody` reference
+(verified by grep, exit 1), so the one-body evaluator is not shared.
+Regression coverage: `test/unit/expec_trace_map_check.c`'s
+`test_shared_evaluator_demotion()` (NSBody>0 → TWOBODY demoted, ONEBODY
+kept; NSBody==0 control → both kernels) and equiv case4's
+`assert_kernel_plan_shared_evaluator()` + output-tree compare (fails on
+missing multibody aggregates if this regresses).

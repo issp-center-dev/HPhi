@@ -70,6 +70,23 @@ typedef struct {
       eligible but was demoted to fallback by the runtime memory gate
       (TraceGbufBytes() returned 0). */
   int demoted_memory[TRACE_Q_NQUANT];
+  /** demoted_shared_evaluator[q]==1: quantity q is capability-table eligible
+      (and would have passed the memory gate) but was demoted to fallback
+      because its Mode-1 evaluator is SHARED with always-fallback quantities
+      that must still run: expec_cisajscktaltdc() evaluates the two-body GF
+      AND the ThreeBody/FourBody/SixBody GFs in one pass (it runs when ANY
+      of NCisAjtCkuAlvDC/NTBody/NFBody/NSBody > 0 -- see
+      expec_cisajscktaltdc.c:115), so when any multibody GF is defined the
+      two-body GF must fall back together with them -- skipping the whole
+      evaluator would silently drop the multibody outputs, and calling it
+      anyway would double-write the two-body files (two writers, forbidden).
+      Only TRACE_Q_TWOBODY can currently be demoted this way (expec_cisajs()
+      handles one-body only -- it contains no NTBody/NFBody/NSBody
+      references). NOTE: this field was added AFTER the Task-1 header freeze
+      as a design-gap fix uncovered by the Task-5 golden tests (equiv case4:
+      mode2 lost zvo_ThreeBody/FourBody/SixBody_eigen.dat) -- the freeze
+      exception is deliberate and this comment is its record. */
+  int demoted_shared_evaluator[TRACE_Q_NQUANT];
   /** When kernel[q]==1, the verified allocation size (bytes) for that
       quantity's result buffer, i.e. TraceGbufBytes()'s return value. Task
       3/4's malloc() must use ONLY this value -- re-reading the environment

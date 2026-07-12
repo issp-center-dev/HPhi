@@ -268,6 +268,26 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
       continue;
     }
 
+    /* Shared-evaluator demotion (design-gap fix, see the field's doc comment
+       in expec_trace.h): expec_cisajscktaltdc() computes the two-body GF and
+       the ThreeBody/FourBody/SixBody GFs in ONE evaluator
+       (expec_cisajscktaltdc.c:115 runs it when ANY of the four counts is
+       positive), and the multibody GFs are always-fallback in 3b. If the
+       trace kernel took the two-body GF, the fallback loop would skip the
+       whole evaluator and silently drop the multibody outputs; calling the
+       evaluator anyway would double-write the two-body files. So whenever
+       any multibody GF is defined, the two-body GF falls back together with
+       them. Checked BEFORE the memory gate so gbuf_bytes[TWOBODY] stays 0
+       and demoted_memory[TWOBODY] stays 0 (the reasons are exclusive).
+       ONEBODY is unaffected: expec_cisajs() handles one-body only (no
+       NTBody/NFBody/NSBody reference exists in expec_cisajs.c). */
+    if (q == TRACE_Q_TWOBODY &&
+        (X->Def.NTBody > 0 || X->Def.NFBody > 0 || X->Def.NSBody > 0)) {
+      plan->demoted_shared_evaluator[q] = 1;
+      plan->kernel[q] = 0;
+      continue;
+    }
+
     nops = (q == TRACE_Q_ONEBODY) ? (long int)X->Def.NCisAjt
                                    : (long int)X->Def.NCisAjtCkuAlvDC;
 
@@ -288,6 +308,12 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
   for (q = 0; q < TRACE_Q_NQUANT; q++) {
     if (plan->kernel[q]) {
       fprintf(fp, "  INFO: ExpecMode 2: %s Green functions use the trace kernel.\n",
+              kQuantityName[q]);
+    } else if (plan->demoted_shared_evaluator[q]) {
+      fprintf(fp,
+              "  INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 "
+              "fallback (they share their evaluator with three-/four-/six-body "
+              "Green functions).\n",
               kQuantityName[q]);
     } else if (plan->demoted_memory[q]) {
       fprintf(fp,

@@ -171,6 +171,27 @@ assert_kernel_plan() {
     "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
 }
 
+# Variant for a run that ALSO defines ThreeBodyG/FourBodyG/SixBodyG (case4):
+# expec_cisajscktaltdc() computes the two-body GF and the multibody GFs in
+# ONE evaluator (expec_cisajscktaltdc.c:115 runs it when ANY of
+# NCisAjtCkuAlvDC/NTBody/NFBody/NSBody > 0), so TraceBuildPlan() demotes the
+# two-body GF to the ExpecMode-1 fallback whenever a multibody GF is defined
+# (plan field demoted_shared_evaluator -- see src/include/expec_trace.h).
+# The clavius production run of an earlier Task-5 revision caught exactly
+# this: with the two-body kernel selected, mode2 silently LOST
+# zvo_ThreeBody/FourBody/SixBody_eigen.dat (the fallback loop skips the
+# whole shared evaluator). One-body is unaffected (expec_cisajs() has no
+# NTBody/NFBody/NSBody reference), so its kernel line is still required.
+assert_kernel_plan_shared_evaluator() {
+  logfile="$1"
+  grep -q "ExpecMode 2: one-body Green functions use the trace kernel\." \
+    "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for one-body GFs in ${logfile}"
+  grep -q "ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions)\." \
+    "${logfile}" || fail "ExpecMode 2 did not report the shared-evaluator fallback for two-body GFs in ${logfile}"
+  grep -q "always use the ExpecMode-1 path" \
+    "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
+}
+
 # Prepare a case directory: write stan.in, run `HPhi -sdry`, then let the
 # caller add extra namelist/def files before calling run_mode(). Always
 # turns on the aggregate Green output format (spec: reuse
@@ -373,14 +394,17 @@ compare_output_trees "${case4}/mode0" "${case4}/mode1"
 
 # ExpecMode 2 sub-case: SpinGC (half, 2S=1 stays iFlgGeneralSpin==FALSE --
 # src/readdef.c's `X->LocSpn[i]>LOCSPIN` check only sets general-spin when
-# 2S>1) is TRUE in kTraceCap as of Task 5, so the one-body/two-body GFs here
-# select the trace kernel while ThreeBodyG/FourBodyG/SixBodyG stay on the
-# always-fallback path in the very same run (NBodyG is out of scope for the
-# trace kernel per the plan's Global Constraints) -- this case is therefore
-# also the golden evidence that kernel and always-fallback quantities
-# coexist correctly in one run for a model whose capability row is TRUE.
+# 2S>1) is TRUE in kTraceCap as of Task 5, so the ONE-body GF selects the
+# trace kernel -- but the TWO-body GF must fall back here because this case
+# defines ThreeBodyG/FourBodyG/SixBodyG, which share their Mode-1 evaluator
+# with the two-body GF (the shared-evaluator demotion; see
+# assert_kernel_plan_shared_evaluator()'s comment above). This case is
+# therefore the golden evidence BOTH that kernel and always-fallback
+# quantities coexist correctly in one run AND that the shared-evaluator
+# demotion preserves the multibody output files (the compare below fails
+# with missing zvo_ThreeBody/FourBody/SixBody_eigen.dat if it regresses).
 run_mode "${case4}" 2
-assert_kernel_plan "${case4}/mode2/log_run.txt"
+assert_kernel_plan_shared_evaluator "${case4}/mode2/log_run.txt"
 compare_output_trees "${case4}/mode1" "${case4}/mode2"
 
 # =========================================================================

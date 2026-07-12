@@ -481,6 +481,64 @@ static void test_memory_gate_boundary_twobody(void) {
   free(tb);
 }
 
+/* ---- Task 5 fix: shared-evaluator demotion. expec_cisajscktaltdc()
+ * computes the two-body GF and the ThreeBody/FourBody/SixBody GFs in ONE
+ * evaluator (expec_cisajscktaltdc.c:115), and the multibody GFs are
+ * always-fallback -- so when any of NTBody/NFBody/NSBody > 0,
+ * TraceBuildPlan() must demote TWOBODY to the fallback
+ * (demoted_shared_evaluator[TWOBODY]==1, kernel==0, gbuf_bytes==0) even
+ * though the model row is TRUE and the memory gate would pass, while
+ * ONEBODY (whose evaluator, expec_cisajs(), references none of those
+ * counts) keeps its kernel. Caught on clavius by equiv case4: mode2 lost
+ * zvo_ThreeBody/FourBody/SixBody_eigen.dat before this demotion existed. ---- */
+static void test_shared_evaluator_demotion(void) {
+  struct BindStruct X;
+  TraceExecutionPlan plan;
+  long int nc_uniform = 4;
+  size_t big_cap = (size_t)1 << 20; /* plenty for both quantities: memory is
+                                       NOT the demotion reason under test */
+  int **ob = alloc_ops(1, 4);
+  int **tb = alloc_ops(1, 8);
+
+  fprintf(stderr, "[shared-evaluator demotion]\n");
+  memset(&X, 0, sizeof(X));
+  X.Def.iCalcModel = HubbardGC;
+  X.Def.iFlgGeneralSpin = 0;
+  X.Def.iExpecMode = EXPECMODE_TRACE;
+  X.Def.CisAjt = ob;
+  X.Def.NCisAjt = 3;
+  X.Def.CisAjtCkuAlvDC = tb;
+  X.Def.NCisAjtCkuAlvDC = 2;
+  X.Def.NSBody = 1; /* one six-body GF defined -> two-body must fall back */
+
+  TraceBuildPlan(&X, nc_uniform, big_cap, &plan);
+  expect_true("shared evaluator: NSBody>0 -> kernel[TWOBODY]==0",
+             plan.kernel[TRACE_Q_TWOBODY] == 0);
+  expect_true("shared evaluator: NSBody>0 -> demoted_shared_evaluator[TWOBODY]==1",
+             plan.demoted_shared_evaluator[TRACE_Q_TWOBODY] == 1);
+  expect_true("shared evaluator: NSBody>0 -> demoted_memory[TWOBODY]==0 (reasons exclusive)",
+             plan.demoted_memory[TRACE_Q_TWOBODY] == 0);
+  expect_true("shared evaluator: NSBody>0 -> gbuf_bytes[TWOBODY]==0",
+             plan.gbuf_bytes[TRACE_Q_TWOBODY] == 0);
+  expect_true("shared evaluator: NSBody>0 -> kernel[ONEBODY] stays 1",
+             plan.kernel[TRACE_Q_ONEBODY] == 1);
+  expect_true("shared evaluator: NSBody>0 -> demoted_shared_evaluator[ONEBODY]==0",
+             plan.demoted_shared_evaluator[TRACE_Q_ONEBODY] == 0);
+
+  /* Control: with no multibody GFs, the same fixture keeps both kernels. */
+  X.Def.NSBody = 0;
+  TraceBuildPlan(&X, nc_uniform, big_cap, &plan);
+  expect_true("shared evaluator control: NSBody==0 -> kernel[TWOBODY]==1",
+             plan.kernel[TRACE_Q_TWOBODY] == 1);
+  expect_true("shared evaluator control: NSBody==0 -> demoted_shared_evaluator[TWOBODY]==0",
+             plan.demoted_shared_evaluator[TRACE_Q_TWOBODY] == 0);
+
+  free(ob[0]);
+  free(ob);
+  free(tb[0]);
+  free(tb);
+}
+
 static void test_hubbardgc(void) {
   struct BindStruct X;
   long int n = 256;
@@ -583,6 +641,7 @@ int main(void) {
   test_spingchalf();
   test_memory_gate_boundary();
   test_memory_gate_boundary_twobody();
+  test_shared_evaluator_demotion();
   if (g_failures == 0) {
     fprintf(stderr, "ALL PASS\n");
     return 0;
