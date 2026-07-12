@@ -41,9 +41,11 @@ fi
 FILES="src/expec_energy_flct.c src/expec_cisajs.c src/expec_cisajscktaltdc.c src/expec_totalspin.c src/nbody_correlation.c src/anomalous_pair.c"
 # Task 6 adds src/phys_distributed_local.c here (NOT phys_distributed.c)
 
-# Task 3 must empty this variable once ExpecLocal defensive guards are
-# inserted and marker-wrapped around the partner_rank != myrank branches.
-TEMP_UNGUARDED_FILES="src/nbody_correlation.c src/anomalous_pair.c"
+# Task 3 emptied this once ExpecLocal defensive guards were inserted and
+# marker-wrapped around the partner_rank != myrank branches in both files
+# (see EXPEC_LOCAL_GUARDED_BEGIN/END regions in src/nbody_correlation.c and
+# src/anomalous_pair.c).
+TEMP_UNGUARDED_FILES=""
 
 # ExpecLocal permitted call matrix (must match the inventory document's
 # table verbatim).

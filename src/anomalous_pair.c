@@ -387,6 +387,16 @@ static double complex multiply_anomalous_term(
       X, term, tmp_v0, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -406,6 +416,7 @@ static double complex multiply_anomalous_term(
   fprintf(stdoutMPI, "Error: AnomalousTerm reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return dam_pr;
 }
 
@@ -503,6 +514,16 @@ static double complex calc_anomalousg_term_hubbardgc(
     return SumMPI_dc(value);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -522,6 +543,7 @@ static double complex calc_anomalousg_term_hubbardgc(
   fprintf(stdoutMPI, "Error: AnomalousG reached an MPI-only rank flip path without MPI.\n");
   return SumMPI_dc(0.0);
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(value);
 }
 
