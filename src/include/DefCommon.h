@@ -46,6 +46,12 @@
 #define NUM_OUTPUTMODE 2 /*!< Number of output mode.*/
 #define RAWMODE  0 /*!< calc one body green function and two body green functions.*/
 #define CORRMODE 1 /*!< calc one body green function and two body green functions and correlatinos for charge and spin.*/
+
+/*!< OutputGreenFormat */
+#define NUM_OUTPUTGREENFORMAT 2 /*!< Number of Green function output formats.*/
+#define OUTPUTGREENFORMAT_SPLIT 0 /*!< Existing split Green function files.*/
+#define OUTPUTGREENFORMAT_AGGREGATE 1 /*!< Indexed aggregate Green function and TPQ/cTPQ data files.*/
+
 #define NUM_OUTPUTHAM 2 /*!< Number of output Hamiltonian mode */
 
 /*!< InputMode */

@@ -424,7 +424,6 @@ int sz(
                       for(ib=0;ib<X->Check.sdim;ib++){
                           icnt+=omp_sz_KondoNConserved(ib,ihfbit, X, list_1_, list_2_1_, list_2_2_, list_jb);
                       }
-                      BarrierMPI();
                       //printf("AAA icnt=%ld\n",icnt);
                       break;
                   case Kondo:
@@ -1024,8 +1023,10 @@ int omp_sz_hacker(long unsigned int ib,
     }
   }
   else if(X->Def.iCalcModel==HubbardNConserved){
-    if(tmp_num_up+tmp_num_down <= X->Def.Ne){ //do not exceed Ne
-      ia = X->Def.Tpow[X->Def.Ne-tmp_num_up-tmp_num_down]-1;
+    long unsigned int rem_electrons = X->Def.Ne-tmp_num_up-tmp_num_down;
+    if(tmp_num_up+tmp_num_down <= X->Def.Ne &&
+       rem_electrons <= X->Def.Nsite){ // remaining electrons must fit in the right half (max Nsite)
+      ia = X->Def.Tpow[rem_electrons]-1;
       if(ia < X->Check.sdim){
         list_1_[ja+jb]=ia+ib*ihfbit;
         list_2_1_[ia]=ja+1;
@@ -2032,6 +2033,11 @@ unsigned long int sz_hacker_for_large_systems(
       list_2_1_[ia]  = ja+1;
       list_2_2_[ib]  = jb+1;
       i_cnt          = 1;
+      if (i == 0) {
+          /* vacuum sector: the single state is already registered above.
+             Do not call snoob(0). */
+          return i_cnt;
+      }
       while (1) {
           long unsigned int next = snoob(i);
           if (next >= i_max) break;

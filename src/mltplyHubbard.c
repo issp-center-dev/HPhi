@@ -142,6 +142,8 @@ Other
 #include "CalcTime.h"
 #include "mltplyHubbardCore.h"
 #include "mltplyMPIHubbardCore.h"
+#include "nbody_interall.h"
+#include "anomalous_pair.h"
 
 #ifdef MPI
 // Static storage for batched transfers (MPIsingle)
@@ -352,6 +354,17 @@ int mltplyHubbard(
     X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(320);
+
+  if ((X->Def.iCalcModel == Hubbard ||
+       X->Def.iCalcModel == tJ ||
+       X->Def.iCalcModel == tJGC ||
+       X->Def.iCalcModel == Kondo ||
+       X->Def.iCalcModel == KondoGC) &&
+      X->Def.NNBodyInterAll_OffDiagonal > 0) {
+    if (MultiplyNBodyInterAllHubbard(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
   /**
   Pair hopping
   */
@@ -650,6 +663,19 @@ int mltplyHubbardGC(
     X->Large.prdct += dam_pr;
   }/*for (i = 0; i < X->Def.NInterAll_OffDiagonal; i+=2)*/
   StopTimer(220);
+
+  if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+    if (MultiplyNBodyInterAllHubbardGC(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
+
+  if (X->Def.NAnomalousTerm > 0) {
+    if (MultiplyAnomalousTermHubbardGC(X, tmp_v0, tmp_v1) != 0) {
+      return -1;
+    }
+  }
+
   /**
   Pair hopping
   */

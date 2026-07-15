@@ -45,6 +45,9 @@
 #include "expec_totalspin.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
+#include "anomalous_pair.h"
+#include "green_output.h"
 #include "wrapperMPI.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
@@ -86,6 +89,10 @@ void phys(struct BindStruct *X, //!<[inout]
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
 #endif
+  if (GreenOutputInitializeAggregateFiles(X) != 0) {
+    fprintf(stderr, "Error: initialize aggregate Green output files.\n");
+    exitMPI(-1);
+  }
   for (i = 0; i < neig; i++) {
 #ifdef _SCALAPACK
     for (j = 0; j < i_max; j++) {
@@ -135,6 +142,14 @@ void phys(struct BindStruct *X, //!<[inout]
     }
     if (expec_cisajscktaltdc(X, v1) != 0) {
       fprintf(stderr, "Error: calc TwoBodyG.\n");
+      exitMPI(-1);
+    }
+    if (expec_nbodyg(X, v1) != 0) {
+      fprintf(stderr, "Error: calc NBodyG.\n");
+      exitMPI(-1);
+    }
+    if (expec_anomalousg(X, v1) != 0) {
+      fprintf(stderr, "Error: calc AnomalousG.\n");
       exitMPI(-1);
     }
     

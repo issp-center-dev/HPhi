@@ -208,8 +208,7 @@ static void Initialize_wave(
       sprintf(sdt, cFileNameInputVector, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
-        fprintf(stdout, "Restart file is not found.\n");
-        fprintf(stdout, "Start from scratch.\n");
+        fprintf(stderr, "Restart file is not found (rank %d).\n", myrank);
         ierr = 1;
         break;
       }
@@ -225,6 +224,12 @@ static void Initialize_wave(
         fclose(fp);
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
+
+    /* All ranks must agree on the fallback: restart files are per-rank and a
+       partially missing set would otherwise let some ranks return early while
+       others enter the scratch path, whose MPI collectives do not match. */
+    ierr = (int)MaxMPI_li((unsigned long int)ierr);
+    if (ierr != 0) fprintf(stdoutMPI, "Start from scratch.\n");
 
     if (ierr == 0) {
       //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
@@ -612,6 +617,48 @@ int LOBPCG_Main(
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueFinish, "a");
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenValueEnd);
+
+  /**@brief
+  <li>Re-orthonormalize the converged eigenvector block (modified Gram-Schmidt).</li>
+  */
+  /* LOBPCG can leave the eigenvectors of a DEGENERATE eigenvalue non-orthonormal: they still
+     span the degenerate subspace, but with a non-trivial mutual overlap. Any per-eigenstate
+     spectral / finite-temperature sum (e.g. the dynamical Green's function) then double-counts
+     that overlap and is wrong -- it breaks the basis-independence of the trace over the
+     degenerate multiplet (observed as a spurious orbital-symmetry breaking).
+
+     Only vectors that share an eigenvalue (within deg_tol) are re-orthonormalized: rotating a
+     vector against one with a DIFFERENT eigenvalue would turn it into a mixture of distinct
+     eigenstates, so non-degenerate (and merely near-degenerate) vectors are left untouched.
+     This also keeps the inner products restricted to the (small) degenerate multiplets. */
+  for (ie = 0; ie < X->Def.k_exct; ie++) {
+    int touched = 0;
+    double deg_tol = 1.0e-6 * (1.0 + fabs(eig[ie]));
+    for (je = 0; je < ie; je++) {
+      if (fabs(eig[ie] - eig[je]) > deg_tol) continue; /* different eigenvalue: leave orthogonal */
+      double complex proj = VecProdMPI(i_max, wxp[1][je], wxp[1][ie]);
+#pragma omp parallel for default(none) shared(i_max, wxp, ie, je, proj) private(idim)
+      for (idim = 1; idim <= i_max; idim++)
+        wxp[1][ie][idim] -= proj * wxp[1][je][idim];
+      touched = 1;
+    }
+    if (touched) {
+      dnorm = sqrt(creal(VecProdMPI(i_max, wxp[1][ie], wxp[1][ie])));
+      if (dnorm < 1.0e-12) {
+        /* The vector collapsed onto earlier ones: LOBPCG did not resolve the full degenerate
+           multiplet (the block lost rank). Leave it unnormalized and warn rather than divide
+           by ~0; increasing exct/Lanczos_max usually cures it. */
+        fprintf(stderr, "Warning: degenerate eigenvector %d is linearly dependent after "
+                        "re-orthonormalization (norm %.2e); the multiplet may be under-resolved.\n",
+                ie, dnorm);
+      }
+      else {
+#pragma omp parallel for default(none) shared(i_max, wxp, ie, dnorm) private(idim)
+        for (idim = 1; idim <= i_max; idim++)
+          wxp[1][ie][idim] /= dnorm;
+      }
+    }
+  }
 
   free_d_1d_allocate(eig);
   free_d_1d_allocate(eigsub);

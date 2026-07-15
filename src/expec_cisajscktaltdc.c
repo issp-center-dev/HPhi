@@ -28,6 +28,7 @@
 #include "mltplyMPIHubbardCore.h"
 #include "mltplyMPISpinlessFermion.h"
 #include "common/setmemory.h"
+#include "green_output.h"
 
 /**
  * @file   expec_cisajscktaltdc.c
@@ -178,6 +179,14 @@ int expec_cisajscktaltdc
     sprintf(sdt_4,cFileName6BGreen_FullDiag, X->Def.CDataFileHead, X->Phys.eigen_num);
     break;
   }
+  if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody) &&
+      GreenOutputFileName(X, GreenOutputTwoBody, sdt) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody) &&
+      GreenOutputFileName(X, GreenOutputThreeBody, sdt_2) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody) &&
+      GreenOutputFileName(X, GreenOutputFourBody, sdt_3) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody) &&
+      GreenOutputFileName(X, GreenOutputSixBody, sdt_4) != 0) return -1;
   if(X->Def.iCalcModel == Spin &&
      (X->Def.NTBody>0 || X->Def.NFBody>0 || X->Def.NSBody>0)){
     fprintf(stdoutMPI,
@@ -186,13 +195,13 @@ int expec_cisajscktaltdc
   }
   if(X->Def.NCisAjtCkuAlvDC>0){
     // If the number of two-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt, "w", &fp)!=0){
+    if(childfopenMPI(sdt, GreenOutputOpenMode(X), &fp)!=0){
       return -1;
     }
   }
   if(X->Def.NTBody>0){
     // If the number of three-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_2, "w", &fp_2)!=0){
+    if(childfopenMPI(sdt_2, GreenOutputOpenMode(X), &fp_2)!=0){
       return -1;
     }
   }else{
@@ -200,7 +209,7 @@ int expec_cisajscktaltdc
   }
   if(X->Def.NFBody>0){
     // If the number of four-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_3, "w", &fp_3)!=0){
+    if(childfopenMPI(sdt_3, GreenOutputOpenMode(X), &fp_3)!=0){
       return -1;
     }
   }else{
@@ -208,7 +217,7 @@ int expec_cisajscktaltdc
   }
   if(X->Def.NSBody>0){
     // If the number of six-body interactions is zero, the file name is not used.
-    if(childfopenMPI(sdt_4, "w", &fp_4)!=0){
+    if(childfopenMPI(sdt_4, GreenOutputOpenMode(X), &fp_4)!=0){
       return -1;
     }
   }else{
@@ -493,6 +502,7 @@ int expec_cisajscktaltdc
           }
         }
         dam_pr_sp = SumMPI_dc(dam_pr_sp);
+        GreenOutputWriteIndexPrefix(fp, X);
         fprintf(fp, " %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",
                 org_isite1_sp-1, org_sigma1_sp, org_isite2_sp-1, org_sigma2_sp,
                 org_isite3_sp-1, org_sigma3_sp, org_isite4_sp-1, org_sigma4_sp,
@@ -790,6 +800,7 @@ int expec_cisajscktalt_HubbardGC(struct BindStruct *X,double complex *vec, FILE 
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1, org_isite2-1,org_sigma2, org_isite3-1, org_sigma3, org_isite4-1,org_sigma4, creal(dam_pr), cimag(dam_pr));
 
     }//Intra PE
@@ -833,6 +844,7 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
         if(X->Def.iFlgSzConserved ==TRUE){
             if(org_sigma1+org_sigma3 != org_sigma2+org_sigma4){
                 dam_pr=SumMPI_dc(dam_pr);
+                GreenOutputWriteIndexPrefix(*_fp, X);
                 fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",org_isite1-1, org_sigma1, org_isite2-1, org_sigma2, org_isite3-1, org_sigma3, org_isite4-1, org_sigma4, creal(dam_pr), cimag(dam_pr));
                 continue;
             }
@@ -911,6 +923,7 @@ int expec_cisajscktalt_Hubbard(struct BindStruct *X,double complex *vec, FILE **
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf\n",org_isite1-1,org_sigma1, org_isite2-1,org_sigma2, org_isite3-1, org_sigma3, org_isite4-1,org_sigma4, creal(dam_pr), cimag(dam_pr));
     }
 
@@ -977,6 +990,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1062,6 +1076,7 @@ int expec_cisajscktalt_SpinHalf(struct BindStruct *X,double complex *vec, FILE *
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
 
     }
@@ -1136,6 +1151,7 @@ int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE *
         /*[e]For three body*/ 
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,3)!=0){
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1216,6 +1232,7 @@ int expec_Threebody_SpinGeneral(struct BindStruct *X,double complex *vec, FILE *
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp, " %4ld %4ld %4ld %4ld "
                       " %4ld %4ld %4ld %4ld " 
                       " %4ld %4ld %4ld %4ld " 
@@ -1273,6 +1290,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         tmp_org_sigma4   = X->Def.CisAjtCkuAlvDC[i][7];
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1285,6 +1303,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
         tmp_Sz -= GetLocal2Sz(X->Def.CisAjtCkuAlvDC[i][4 * j+2] + 1, tmp_org, X->Def.SiteToBit, X->Def.Tpow);
       }
       if(tmp_Sz !=0){ // not Sz conserved
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
         continue;
       }
@@ -1345,6 +1364,7 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4, creal(dam_pr),cimag(dam_pr));
     }
     return 0;
@@ -1445,6 +1465,7 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,6)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1522,6 +1543,7 @@ int expec_Sixbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_f
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld  %4ld %4ld %4ld %4ld  %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",
         tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, 
         tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,
@@ -1640,6 +1662,7 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,4)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1717,6 +1740,7 @@ int expec_Fourbody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld  %4ld %4ld %4ld %4ld %.10lf %.10lf \n",
         tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, 
         tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,
@@ -1786,6 +1810,7 @@ int expec_Threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,3)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1863,6 +1888,7 @@ int expec_Threebody_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",
         tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, 
         tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,
@@ -1909,6 +1935,7 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1,tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -1980,6 +2007,7 @@ int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,creal(dam_pr),cimag(dam_pr));
     }
     return 0;
@@ -2023,6 +2051,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
 
         if(Rearray_Interactions(i, &org_isite1, &org_isite2, &org_isite3, &org_isite4, &org_sigma1, &org_sigma2, &org_sigma3, &org_sigma4, &tmp_V, X,2)!=0){
             //error message will be added
+            GreenOutputWriteIndexPrefix(*_fp, X);
             fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1,tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4,0.0,0.0);
             continue;
         }
@@ -2104,6 +2133,7 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
             }
         }
         dam_pr = SumMPI_dc(dam_pr);
+        GreenOutputWriteIndexPrefix(*_fp, X);
         fprintf(*_fp," %4ld %4ld %4ld %4ld %4ld %4ld %4ld %4ld %.10lf %.10lf \n",tmp_org_isite1-1, tmp_org_sigma1, tmp_org_isite2-1, tmp_org_sigma2, tmp_org_isite3-1, tmp_org_sigma3, tmp_org_isite4-1, tmp_org_sigma4, creal(dam_pr),cimag(dam_pr));
     }
     return 0;

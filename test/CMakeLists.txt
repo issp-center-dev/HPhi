@@ -61,18 +61,45 @@ add_hphi_test(lanczos_spin_calchs_minus1)
 add_hphi_test(lanczos_spin_ladder_DM)
 add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
+add_hphi_test(lanczos_hubbardgc_nbody_interall)
+add_hphi_test(lanczos_hubbardgc_nbodyg)
+add_hphi_test(lanczos_hubbardgc_anomalous_pair)
+add_hphi_test(lanczos_hubbard_nbody_interall)
+add_hphi_test(lanczos_hubbard_nbodyg)
 add_hphi_test(lanczos_kondogc_chain)
+add_hphi_test(lanczos_tj_kondo_nbody_interall)
+add_hphi_test(lanczos_tj_nconserved_nbodyg)
 add_hphi_test(lanczos_spingc_honey)
 add_hphi_test(lanczos_spingc_hcor)
+add_hphi_test(lanczos_spingc_nbody_interall)
+add_hphi_test(lanczos_spingc_nbody_interall_n1)
+add_hphi_test(lanczos_spingc_nbodyg)
+add_hphi_test(lanczos_spin_nbody_interall)
+add_hphi_test(lanczos_spingc_spinone_nbody_interall)
+add_hphi_test(lanczos_spingc_spinone_nbodyg)
+add_hphi_test(lanczos_spin_spinone_nbody_interall)
+add_hphi_test(lanczos_spin_spinone_nbodyg)
+add_hphi_test(fulldiag_spin_spinone_nbodyg)
+add_hphi_test(nbody_spingc_spinone_validation)
 add_hphi_test(lanczos_genspingc_ladder)
 add_hphi_test(lanczos_tjgc_dimension)
 add_hphi_test(lanczos_tjgc_exchange)
+add_hphi_test(nbody_interall_validation)
+add_hphi_test(nbodyg_validation)
+add_hphi_test(nbody_hubbardgc_validation)
+add_hphi_test(anomalous_hubbardgc_validation)
+add_hphi_test(nbody_hubbard_validation)
+add_hphi_test(nbody_tj_kondo_validation)
 add_hphi_test_with_srcdir(lanczos_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_GC)
+add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
+add_hphi_test_with_srcdir(lanczos_spinless_nbodyg)
+add_hphi_test_with_srcdir(nbody_spinless_validation)
 add_hphi_test_with_srcdir(spinless_interall_diagonal)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
+add_hphi_test_with_srcdir(green_output_format)
 add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
@@ -81,10 +108,15 @@ add_hphi_test(lanczos_genspin_ladder_restart)
 # Lanczos test labels
 set_tests_properties(
     lanczos_hubbard_square lanczos_hubbardgc_tri
+    lanczos_hubbardgc_nbody_interall lanczos_hubbardgc_nbodyg
+    lanczos_hubbard_nbody_interall lanczos_hubbard_nbodyg
     lanczos_hubbard_square_restart
     lanczos_hubbard_square_calchs2 lanczos_hubbard_square_ncond_calchs2
     lanczos_hubbard_chain_polarized_calchs2
     PROPERTIES LABELS "lanczos;hubbard")
+set_tests_properties(
+    lanczos_hubbardgc_anomalous_pair
+    PROPERTIES LABELS "lanczos;fulldiag;te;hubbard;anomalous")
 set_tests_properties(
     calchs2_unsupported_reject
     PROPERTIES LABELS "lanczos;hubbard;validation")
@@ -99,6 +131,8 @@ set_tests_properties(
     lanczos_spin_kagome lanczos_spin_ladder_DM
     lanczos_spin_calchs_minus1
     lanczos_spingc_honey lanczos_spingc_hcor
+    lanczos_spingc_nbodyg
+    lanczos_spin_nbody_interall
     lanczos_spin_kagome_restart
     PROPERTIES LABELS "lanczos;spin")
 set_tests_properties(
@@ -109,14 +143,55 @@ set_tests_properties(
     lanczos_tjgc_dimension lanczos_tjgc_exchange
     PROPERTIES LABELS "lanczos;tjgc")
 set_tests_properties(
+    lanczos_tj_kondo_nbody_interall
+    PROPERTIES LABELS "lanczos;tj;tjgc;kondo;nbody")
+set_tests_properties(
+    lanczos_tj_nconserved_nbodyg
+    PROPERTIES LABELS "lanczos;tj;nbody")
+set_tests_properties(
     lanczos_spinless lanczos_spinless_GC lanczos_spinless_calchs0
     PROPERTIES LABELS "lanczos;spinless")
+set_tests_properties(
+    lanczos_spinless_nbody_interall lanczos_spinless_nbodyg
+    PROPERTIES LABELS "lanczos;spinless;nbody")
+set_tests_properties(
+    nbodyg_validation
+    PROPERTIES LABELS "spin;validation;nbody")
+set_tests_properties(
+    nbody_spingc_spinone_validation
+    PROPERTIES LABELS "spinone;genspin;validation;nbody")
+set_tests_properties(
+    nbody_hubbardgc_validation nbody_hubbard_validation
+    PROPERTIES LABELS "hubbard;validation;nbody")
+set_tests_properties(
+    anomalous_hubbardgc_validation
+    PROPERTIES LABELS "hubbard;validation;anomalous")
+set_tests_properties(
+    nbody_tj_kondo_validation
+    PROPERTIES LABELS "tj;tjgc;kondo;validation;nbody")
+set_tests_properties(
+    nbody_spinless_validation
+    PROPERTIES LABELS "spinless;validation;nbody")
+set_tests_properties(
+    lanczos_spingc_spinone_nbody_interall
+    lanczos_spin_spinone_nbody_interall
+    PROPERTIES LABELS "lanczos;genspin;spinone;nbody")
+set_tests_properties(
+    lanczos_spingc_spinone_nbodyg
+    lanczos_spin_spinone_nbodyg
+    PROPERTIES LABELS "lanczos;genspin;spinone;nbody")
+set_tests_properties(
+    fulldiag_spin_spinone_nbodyg
+    PROPERTIES LABELS "fulldiag;genspin;spinone;nbody")
 set_tests_properties(
     spinless_onebody_sigma_validation
     PROPERTIES LABELS "spinless;validation")
 set_tests_properties(
     spinless_onebody_offdiag_compare
     PROPERTIES LABELS "spinless;validation;onebody")
+set_tests_properties(
+    green_output_format
+    PROPERTIES LABELS "tpq;te;fulldiag;green;validation")
 
 #
 # LOBCG
@@ -171,24 +246,37 @@ add_test(
     COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh
 )
 add_hphi_test(fulldiag_kondo_chain)
+add_hphi_test(kondo_nconserved_dimension)
 add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
+add_hphi_test(fulldiag_hubbardgc_nbody_interall)
+add_hphi_test(fulldiag_hubbard_nbody_interall)
 add_hphi_test(fulldiag_tj_calchs1)
+add_hphi_test(fulldiag_tj_kondo_nbody_interall)
 add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
+add_hphi_test(fulldiag_spingc_nbody_interall_compare)
 add_hphi_test(fulldiag_genspingc_ladder)
 
 # Full diag test labels
 set_tests_properties(
     fulldiag_hubbard_chain fulldiag_hubbardgc_tri fulldiag_Hamiltonian_IO
+    fulldiag_hubbardgc_nbody_interall
+    fulldiag_hubbard_nbody_interall
     PROPERTIES LABELS "fulldiag;hubbard")
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
 set_tests_properties(
+    kondo_nconserved_dimension
+    PROPERTIES LABELS "fulldiag;kondo;validation")
+set_tests_properties(
     fulldiag_tj_calchs1
     PROPERTIES LABELS "fulldiag;tj")
+set_tests_properties(
+    fulldiag_tj_kondo_nbody_interall
+    PROPERTIES LABELS "fulldiag;tj;tjgc;kondo;nbody")
 set_tests_properties(
     fulldiag_spin_tri fulldiag_spingc_tri
     PROPERTIES LABELS "fulldiag;spin")
@@ -214,6 +302,9 @@ add_hphi_test(spectrum_hubbard_offdiag_pair_density)
 add_hphi_test(spectrum_spin_offdiag_szsz)
 add_hphi_test(spectrum_spingc_offdiag_szsz)
 add_hphi_test(spectrum_offdiag_invalid_reject)
+add_hphi_test(spectrum_bicg_nonconvergence_reject)
+add_hphi_test(spectrum_loop_multiop_reader_validation)
+add_hphi_test(spectrum_hubbard_nconserved_calchs2_boundary)
 
 # Spectrum test labels
 set_tests_properties(
@@ -228,6 +319,15 @@ set_tests_properties(
 set_tests_properties(
     spectrum_offdiag_invalid_reject
     PROPERTIES LABELS "spectrum;offdiag;validation")
+set_tests_properties(
+    spectrum_bicg_nonconvergence_reject
+    PROPERTIES LABELS "spectrum;hubbard;offdiag;validation")
+set_tests_properties(
+    spectrum_loop_multiop_reader_validation
+    PROPERTIES LABELS "spectrum;hubbard;validation")
+set_tests_properties(
+    spectrum_hubbard_nconserved_calchs2_boundary
+    PROPERTIES LABELS "spectrum;hubbard;offdiag;validation")
 
 # Unit test: off-diagonal excitation sector-shift truth table
 add_executable(unittest_excitation_sector_shift
@@ -240,6 +340,31 @@ add_test(NAME unittest_excitation_sector_shift
     COMMAND unittest_excitation_sector_shift)
 set_tests_properties(unittest_excitation_sector_shift
     PROPERTIES LABELS "unit;offdiag")
+
+# Unit test: zero-size 2d/3d setmemory allocations
+add_executable(unittest_setmemory_zero_size_common
+    ${CMAKE_SOURCE_DIR}/test/unittest_setmemory_zero_size.c
+    ${CMAKE_SOURCE_DIR}/src/common/setmemory.c)
+target_include_directories(unittest_setmemory_zero_size_common
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/common)
+add_test(NAME unittest_setmemory_zero_size_common
+    COMMAND unittest_setmemory_zero_size_common)
+set_tests_properties(unittest_setmemory_zero_size_common
+    PROPERTIES LABELS "unit;setmemory")
+
+# Unit test: komega BiCG non-finite guard
+add_executable(unittest_komega_bicg_nonfinite
+    ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)
+target_include_directories(unittest_komega_bicg_nonfinite
+    PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(unittest_komega_bicg_nonfinite komega)
+if(MPI_FOUND)
+    target_link_libraries(unittest_komega_bicg_nonfinite ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
+add_test(NAME unittest_komega_bicg_nonfinite
+    COMMAND unittest_komega_bicg_nonfinite)
+set_tests_properties(unittest_komega_bicg_nonfinite
+    PROPERTIES LABELS "unit;spectrum")
 
 # MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
 add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
@@ -298,6 +423,7 @@ set_tests_properties(
 add_hphi_test_with_srcdir(tpq_spin_kagome)
 add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
 add_hphi_test(tpq_small_lanczos_max)
+add_hphi_test(tpq_restart_missing_vector_fallback)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
@@ -305,6 +431,9 @@ set_tests_properties(
 set_tests_properties(
     tpq_small_lanczos_max
     PROPERTIES LABELS "tpq;validation")
+set_tests_properties(
+    tpq_restart_missing_vector_fallback
+    PROPERTIES LABELS "tpq;ctpq;validation")
 
 #
 # cTPQ
@@ -369,6 +498,7 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_consistency_spin min:2)
     add_hphi_mpi_test(mpi_consistency_spingc min:2)
     add_hphi_mpi_test(mpi_consistency_kondo min:2)
+    add_hphi_mpi_test(mpi_consistency_kondo_nconserved_cg exact:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard min:2)
     add_hphi_mpi_test(mpi_consistency_te_spin min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless min:2)
@@ -385,6 +515,26 @@ if(MPI_FOUND)
     add_hphi_mpi_test(mpi_nobatch_equivalence_interall_selfterm exact:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence_pairlift exact:4)
     add_hphi_mpi_test_with_srcdir(mpi_nobatch_equivalence_spinless exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_spingc exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_spingc exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_anomalous_hubbardgc exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_hubbard exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_hubbard exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_kondo_nconserved exact:4)
+    add_hphi_mpi_test_with_srcdir(mpi_nbody_interall_spinless exact:4)
+    add_hphi_mpi_test_with_srcdir(mpi_nbodyg_spinless exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_spin exact:4)
+    add_hphi_mpi_test(mpi_nbodyg_spin exact:4)
+    add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbody_interall_spingc_spinone_np9 exact:9)
+    add_hphi_mpi_test(mpi_nbodyg_spingc_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbodyg_spingc_spinone_np9 exact:9)
+    add_hphi_mpi_test(mpi_nbody_interall_spin_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbody_interall_spin_spinone_np9 exact:9)
+    add_hphi_mpi_test(mpi_nbodyg_spin_spinone exact:3)
+    add_hphi_mpi_test(mpi_nbodyg_spin_spinone_np9 exact:9)
 
     # MPI consistency test labels
     set_tests_properties(
@@ -398,17 +548,41 @@ if(MPI_FOUND)
     set_tests_properties(
         mpi_consistency_hubbard mpi_consistency_hubbardgc mpi_consistency_te_hubbard
         mpi_consistency_te_hubbardgc_twobody mpi_consistency_te_hubbard_twobody
+        mpi_nbody_interall_hubbardgc mpi_nbodyg_hubbardgc
+        mpi_anomalous_hubbardgc
+        mpi_nbody_interall_hubbard mpi_nbodyg_hubbard
         PROPERTIES LABELS "mpi;consistency;hubbard")
     set_tests_properties(
         mpi_consistency_spin mpi_consistency_spingc mpi_consistency_te_spin
         mpi_consistency_threebody_generalspin
         PROPERTIES LABELS "mpi;consistency;spin")
     set_tests_properties(
-        mpi_consistency_kondo mpi_consistency_te_kondo
+        mpi_nbody_interall_spingc mpi_nbodyg_spingc
+        mpi_nbody_interall_spin mpi_nbodyg_spin
+        PROPERTIES LABELS "mpi;consistency;spin;nbody")
+    set_tests_properties(
+        mpi_nbody_interall_spingc_spinone
+        mpi_nbody_interall_spingc_spinone_np9
+        mpi_nbodyg_spingc_spinone
+        mpi_nbodyg_spingc_spinone_np9
+        mpi_nbody_interall_spin_spinone
+        mpi_nbody_interall_spin_spinone_np9
+        mpi_nbodyg_spin_spinone
+        mpi_nbodyg_spin_spinone_np9
+        PROPERTIES LABELS "mpi;consistency;genspin;spinone;nbody")
+    set_tests_properties(
+        mpi_consistency_kondo mpi_consistency_kondo_nconserved_cg
+        mpi_consistency_te_kondo
         PROPERTIES LABELS "mpi;consistency;kondo")
+    set_tests_properties(
+        mpi_nbody_interall_kondo_nconserved
+        PROPERTIES LABELS "mpi;consistency;kondo;nbody")
     set_tests_properties(
         mpi_consistency_spinless mpi_consistency_spinless_GC
         PROPERTIES LABELS "mpi;consistency;spinless")
+    set_tests_properties(
+        mpi_nbody_interall_spinless mpi_nbodyg_spinless
+        PROPERTIES LABELS "mpi;consistency;spinless;nbody")
     set_tests_properties(
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")

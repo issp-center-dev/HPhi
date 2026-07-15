@@ -178,6 +178,40 @@ struct DefineList {
                                off-diagonal inter-all term. malloc in setmem_def().*/
     //[e] For InterAll
 
+  unsigned int NNBodyInterAll;/**<@brief Total number of NBodyInterAll terms*/
+  unsigned int NNBodyInterAll_Diagonal;/**<@brief Number of diagonal NBodyInterAll terms*/
+  unsigned int NNBodyInterAll_OffDiagonal;/**<@brief Number of off-diagonal NBodyInterAll terms*/
+  unsigned int NBodyInterAll_TotalFactors;/**<@brief Total number of raw NBodyInterAll factors*/
+  unsigned int NBodyInterAll_TotalCanonicalFactors;/**<@brief Total number of canonical NBodyInterAll factors*/
+  unsigned int NBodyInterAll_MaxN;/**<@brief Maximum factor count in one NBodyInterAll term*/
+  unsigned int *NBodyInterAll_N;/**<@brief [DefineList::NNBodyInterAll] Raw factor counts*/
+  unsigned int *NBodyInterAll_Offset;/**<@brief [DefineList::NNBodyInterAll] Raw factor offsets*/
+  int **NBodyInterAll_Factors;/**<@brief [DefineList::NBodyInterAll_TotalFactors][4] Raw factors: site_out, spin_out, site_in, spin_in*/
+  double complex *ParaNBodyInterAll;/**<@brief [DefineList::NNBodyInterAll] Coupling constants*/
+  unsigned int *NBodyInterAll_CanonicalN;/**<@brief [DefineList::NNBodyInterAll] Canonical factor counts*/
+  unsigned int *NBodyInterAll_CanonicalOffset;/**<@brief [DefineList::NNBodyInterAll] Canonical factor offsets*/
+  int **NBodyInterAll_CanonicalFactors;/**<@brief [DefineList::NBodyInterAll_TotalFactors][4] Canonical factors*/
+  unsigned int *NBodyInterAll_DiagonalIndex;/**<@brief [DefineList::NNBodyInterAll_Diagonal] Diagonal raw term indices*/
+  unsigned int *NBodyInterAll_OffDiagonalIndex;/**<@brief [DefineList::NNBodyInterAll_OffDiagonal] Off-diagonal raw term indices*/
+
+  unsigned int NNBodyG;/**<@brief Total number of generic N-body correlation terms*/
+  unsigned int NBodyG_TotalFactors;/**<@brief Total number of raw NBodyG factors*/
+  unsigned int NBodyG_TotalCanonicalFactors;/**<@brief Total number of canonical NBodyG factors*/
+  unsigned int NBodyG_MaxN;/**<@brief Maximum factor count in one NBodyG term*/
+  unsigned int *NBodyG_N;/**<@brief [DefineList::NNBodyG] Raw factor counts*/
+  unsigned int *NBodyG_Offset;/**<@brief [DefineList::NNBodyG] Raw factor offsets*/
+  int **NBodyG_Factors;/**<@brief [DefineList::NBodyG_TotalFactors][4] Raw factors: site_out, spin_out, site_in, spin_in*/
+  int *NBodyG_IsZero;/**<@brief [DefineList::NNBodyG] TRUE if the canonical same-site product is zero*/
+  unsigned int *NBodyG_CanonicalN;/**<@brief [DefineList::NNBodyG] Canonical factor counts*/
+  unsigned int *NBodyG_CanonicalOffset;/**<@brief [DefineList::NNBodyG] Canonical factor offsets*/
+  int **NBodyG_CanonicalFactors;/**<@brief [DefineList::NBodyG_TotalFactors][4] Canonical factors*/
+
+  unsigned int NAnomalousTerm;/**<@brief Number of HubbardGC anomalous pair Hamiltonian terms*/
+  int **AnomalousTerm;/**<@brief [DefineList::NAnomalousTerm][5]: type, site1, spin1, site2, spin2*/
+  double complex *ParaAnomalousTerm;/**<@brief [DefineList::NAnomalousTerm] Coupling constants*/
+  unsigned int NAnomalousG;/**<@brief Number of HubbardGC anomalous pair correlation terms*/
+  int **AnomalousG;/**<@brief [DefineList::NAnomalousG][5]: type, site1, spin1, site2, spin2*/
+
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
 
@@ -238,6 +272,9 @@ struct DefineList {
   int iOutputDataHead; /**<brief Switch for using CDataFileHead in output
                           file names for TPQ/TE physical quantity files (SS,
                           Flct, Norm). 0: no header (default), 1: use header*/
+  int iOutputGreenFormat; /**<brief Switch for Green function and TPQ/cTPQ data
+                            output format. 0: split files (default),
+                            1: aggregate indexed files*/
 
     //[s] For Spectrum
   double complex dcOmegaMax;/**<@brief Upper limit of the frequency for the spectrum.*/
@@ -247,6 +284,27 @@ struct DefineList {
   int iFlgSpecOmegaMax;/**<@brief Whether DefineList::dcOmegaMax is input or not.*/
   int iFlgSpecOmegaMin;/**<@brief Whether DefineList::dcOmegaMin is input or not.*/
   int iFlgSpecOmegaOrg;/**<@brief Whether DefineList::dcOmegaOrg is input or not.*/
+  int iSpectrumLoopExct;/**<@brief Number of eigenstates the spectrum calculation loops over
+                          internally. When > 0, CalcSpectrum loops idx=0..iSpectrumLoopExct-1,
+                          reading eigenvec_{idx}, using E_idx (from xx_energy.dat) as the per-state
+                          spectral shift, and writing one DynamicalGreen_{idx}.dat per eigenstate.
+                          The value is the count (= exct_cut), so it can be <= k_exct. Default 0
+                          keeps the legacy single-eigenvector behavior.*/
+  int iSpectrumNumOp;/**<@brief Number of single-excitation operator sets processed in one run.
+                       When > 1 (together with iSpectrumLoopExct > 0), the finite-T loop reads each
+                       eigenvector ONCE and, for that eigenstate, builds and solves the spectrum for
+                       every operator set op=0..iSpectrumNumOp-1 (set 0 from the namelist
+                       SingleExcitation, sets 1.. from single_ex_<op>.def), writing
+                       DynamicalGreen_<idx>_<op>.dat. All sets must map to the same Hilbert sector.
+                       Default 0/1 keeps the single-operator behavior.*/
+  int iSpectrumNumBra;/**<@brief Number of left (bra) single-excitation operator sets projected from
+                        ONE BiCG solve (Komega nl). When > 1 (together with iSpectrumLoopExct > 0),
+                        each (eigenstate, ket-op) solve is projected onto every bra set b=0..nBra-1
+                        (set 0 from the namelist SingleExcitationBra, sets 1.. from single_ex_bra_<b>.def),
+                        writing DynamicalGreen_<idx>_<op>_<b>.dat. This reuses one ket solve for all
+                        bras, cutting the BiCG count from n_orb^2 to n_orb for off-diagonal Green's
+                        functions. All bra sets must map to the same excited sector as the ket.
+                        Default 0/1 keeps the single-bra behavior.*/
   int iFlgCalcSpec;/**<@brief Input parameter CalcSpec in teh CalcMod file.*/
   int iFlagListModified;/**<@brief When the Hilbert space of excited state differs from the original one.*/
 

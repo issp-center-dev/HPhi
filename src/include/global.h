@@ -107,6 +107,8 @@ extern const char* cFileName2BGreen_Lanczos;/**> Name of the file to output Two-
 extern const char* cFileName3BGreen_Lanczos;/**> Name of the file to output Three-Body Green's functions obtained by Lanczos method.*/
 extern const char* cFileName4BGreen_Lanczos;/**> Name of the file to output Four-Body Green's functions obtained by Lanczos method.*/
 extern const char* cFileName6BGreen_Lanczos;/**> Name of the file to output Six-Body Green's functions obtained by Lanczos method.*/
+extern const char* cFileNameNBodyG_Lanczos;/**> Name of the file to output generic N-body Green's functions obtained by Lanczos method.*/
+extern const char* cFileNameAnomalousG_Lanczos;/**> Name of the file to output HubbardGC anomalous pair Green's functions obtained by Lanczos/CG method.*/
 extern const char* cFileName2BGreen_CG;/**> Name of the file to output Two-Body Green's functions obtained by CG method.*/
 extern const char* cFileNameTimeEV_CG;/**> Name of the file to output time for getting eigen vector by CG method.*/
 extern const char* cFileNameListModel;/**> Name of the file to output list.*/
@@ -120,16 +122,37 @@ extern const char* cFileNameSSRand;/**> Name of the SS_rand file.*/
 extern const char* cFileNameTPQStep;/**> Name of the Time_TPQ_Step file.*/
 extern const char* cFileNameNormRand;/**> Name of the NormRand file.*/
 extern const char* cFileNameFlctRand;/**> Name of the Flct file.*/
+extern const char* cFileNameSS_TPQ_Aggregate;/**> Name of the aggregate SS file for TPQ/cTPQ calculation.*/
+extern const char* cFileNameNorm_TPQ_Aggregate;/**> Name of the aggregate Norm file for TPQ/cTPQ calculation.*/
+extern const char* cFileNameFlct_TPQ_Aggregate;/**> Name of the aggregate Flct file for TPQ/cTPQ calculation.*/
 extern const char* cFileName1BGreen_TPQ;/**> Name of the file to output one-body Green's functions for TPQ calculation.*/
 extern const char* cFileName2BGreen_TPQ;/**> Name of the file to output two-body Green's functions for TPQ calculation.*/
 extern const char* cFileName3BGreen_TPQ;/**> Name of the file to output three-body Green's functions for TPQ calculation.*/
 extern const char* cFileName4BGreen_TPQ;/**> Name of the file to output four-body Green's functions for TPQ calculation.*/
 extern const char* cFileName6BGreen_TPQ;/**> Name of the file to output six-body Green's functions for TPQ calculation.*/
+extern const char* cFileNameNBodyG_TPQ;/**> Name of the file to output generic N-body Green's functions for TPQ calculation.*/
+extern const char* cFileNameAnomalousG_TPQ;/**> Name of the file to output HubbardGC anomalous pair Green's functions for TPQ calculation.*/
+extern const char* cFileName1BGreen_TPQ_Aggregate;/**> Name of the aggregate file to output one-body Green's functions for TPQ calculation.*/
+extern const char* cFileName2BGreen_TPQ_Aggregate;/**> Name of the aggregate file to output two-body Green's functions for TPQ calculation.*/
+extern const char* cFileName3BGreen_TPQ_Aggregate;/**> Name of the aggregate file to output three-body Green's functions for TPQ calculation.*/
+extern const char* cFileName4BGreen_TPQ_Aggregate;/**> Name of the aggregate file to output four-body Green's functions for TPQ calculation.*/
+extern const char* cFileName6BGreen_TPQ_Aggregate;/**> Name of the aggregate file to output six-body Green's functions for TPQ calculation.*/
+extern const char* cFileNameNBodyG_TPQ_Aggregate;/**> Name of the aggregate file to output generic N-body Green's functions for TPQ calculation.*/
+extern const char* cFileNameAnomalousG_TPQ_Aggregate;/**> Name of the aggregate file to output HubbardGC anomalous pair Green's functions for TPQ calculation.*/
 extern const char* cFileName1BGreen_TE;/**> Name of the file to output one-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName2BGreen_TE;/**> Name of the file to output two-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName3BGreen_TE;/**> Name of the file to output three-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName4BGreen_TE;/**> Name of the file to output four-body Green's functions for Time Evolution calculation.*/
 extern const char* cFileName6BGreen_TE;/**> Name of the file to output six-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileNameNBodyG_TE;/**> Name of the file to output generic N-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileNameAnomalousG_TE;/**> Name of the file to output HubbardGC anomalous pair Green's functions for Time Evolution calculation.*/
+extern const char* cFileName1BGreen_TE_Aggregate;/**> Name of the aggregate file to output one-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName2BGreen_TE_Aggregate;/**> Name of the aggregate file to output two-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName3BGreen_TE_Aggregate;/**> Name of the aggregate file to output three-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName4BGreen_TE_Aggregate;/**> Name of the aggregate file to output four-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileName6BGreen_TE_Aggregate;/**> Name of the aggregate file to output six-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileNameNBodyG_TE_Aggregate;/**> Name of the aggregate file to output generic N-body Green's functions for Time Evolution calculation.*/
+extern const char* cFileNameAnomalousG_TE_Aggregate;/**> Name of the aggregate file to output HubbardGC anomalous pair Green's functions for Time Evolution calculation.*/
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 extern const char* cFileNameTPQVector;/**> Name of the file to output cTPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
@@ -148,6 +171,15 @@ extern const char* cFileName2BGreen_FullDiag;/**> Name of the file to output two
 extern const char* cFileName3BGreen_FullDiag;/**> Name of the file to output three-body Green's functions for Full diagonalization.*/
 extern const char* cFileName4BGreen_FullDiag;/**> Name of the file to output four-body Green's functions for Full diagonalization.*/
 extern const char* cFileName6BGreen_FullDiag;/**> Name of the file to output six-body Green's functions for Full diagonalization.*/
+extern const char* cFileNameNBodyG_FullDiag;/**> Name of the file to output generic N-body Green's functions for Full diagonalization.*/
+extern const char* cFileNameAnomalousG_FullDiag;/**> Name of the file to output HubbardGC anomalous pair Green's functions for Full diagonalization.*/
+extern const char* cFileName1BGreen_Eigen_Aggregate;/**> Name of the aggregate file to output one-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileName2BGreen_Eigen_Aggregate;/**> Name of the aggregate file to output two-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileName3BGreen_Eigen_Aggregate;/**> Name of the aggregate file to output three-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileName4BGreen_Eigen_Aggregate;/**> Name of the aggregate file to output four-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileName6BGreen_Eigen_Aggregate;/**> Name of the aggregate file to output six-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileNameNBodyG_Eigen_Aggregate;/**> Name of the aggregate file to output generic N-body Green's functions for eigen-indexed calculations.*/
+extern const char* cFileNameAnomalousG_Eigen_Aggregate;/**> Name of the aggregate file to output HubbardGC anomalous pair Green's functions for eigen-indexed calculations.*/
 extern const char* cFileNamePhys_FullDiag_Ham;/**> Name of the file to output Hamiltonian for Full diagonalization.*/
 
 //For Spectrum

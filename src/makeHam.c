@@ -20,6 +20,8 @@
 #include "mltplySpinCore.h"
 #include "makeHam.h"
 #include "wrapperMPI.h"
+#include "nbody_interall.h"
+#include "anomalous_pair.h"
 
 /**
  * @file   makeHam.c
@@ -190,6 +192,16 @@ int makeHam(struct BindStruct *X) {
           }
         }
       }
+      if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+        if (AddNBodyInterAllToHamHubbardGC(X) != 0) {
+          return -1;
+        }
+      }
+      if (X->Def.NAnomalousTerm > 0) {
+        if (AddAnomalousTermToHamHubbardGC(X) != 0) {
+          return -1;
+        }
+      }
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
@@ -313,6 +325,17 @@ int makeHam(struct BindStruct *X) {
         }
       }
 
+      if ((X->Def.iCalcModel == Hubbard ||
+           X->Def.iCalcModel == tJ ||
+           X->Def.iCalcModel == tJGC ||
+           X->Def.iCalcModel == Kondo ||
+           X->Def.iCalcModel == KondoGC) &&
+          X->Def.NNBodyInterAll_OffDiagonal > 0) {
+        if (AddNBodyInterAllToHamHubbard(X) != 0) {
+          return -1;
+        }
+      }
+
       //Pair hopping
       for (i = 0; i < X->Def.NPairHopping / 2; i++) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
@@ -412,6 +435,11 @@ int makeHam(struct BindStruct *X) {
             }
           }
         }
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
+          }
+        }
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           exchange_spin_GetInfo(i, X);
@@ -479,6 +507,12 @@ int makeHam(struct BindStruct *X) {
             }
           }
         }
+
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
+          }
+        }
       }
       break;
 
@@ -507,6 +541,12 @@ int makeHam(struct BindStruct *X) {
               dmv = tmp_sgn * tmp_V;
               Ham[tmp_off][j] += dmv;
             }
+          }
+        }
+
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
           }
         }
 
@@ -544,6 +584,12 @@ int makeHam(struct BindStruct *X) {
                 }
               }
             }
+          }
+        }
+
+        if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+          if (AddNBodyInterAllToHamSpinGC(X) != 0) {
+            return -1;
           }
         }
       }

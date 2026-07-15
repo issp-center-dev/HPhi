@@ -51,6 +51,9 @@
 #include "expec_energy_flct.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "nbody_correlation.h"
+#include "anomalous_pair.h"
+#include "green_output.h"
 #include "CalcByTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -71,10 +74,12 @@
  *       - Green's functions if requested
  *    c. Normalize |psi> to prevent overflow
  *
- * Output files (per sample):
- * - SS_rand*.dat: Energy, \f$\langle S^2\rangle\f$, etc. vs step
- * - Norm_rand*.dat: Norm vs step (for beta calculation)
- * - Flct_rand*.dat: Fluctuations
+ * Output files:
+ * - SS_rand*.dat, or SS_tpq.dat in aggregate mode: Energy,
+ *   \f$\langle S^2\rangle\f$, etc. vs step
+ * - Norm_rand*.dat, or Norm_tpq.dat in aggregate mode: Norm vs step
+ *   (for beta calculation)
+ * - Flct_rand*.dat, or Flct_tpq.dat in aggregate mode: Fluctuations
  *
  * @param NumAve Number of random samples to average [in]
  * @param ExpecInterval Steps between observable calculations [in]
@@ -102,6 +107,9 @@ int CalcByTPQ(
   double inv_temp, Ns;
   struct TimeKeepStruct tstruct;
   size_t byte_size;
+  int green_output_initialized = 0;
+  int tpq_data_output_initialized = 0;
+  int tpq_data_output_aggregate = 0;
 
   tstruct.tstart=time(NULL);
   
@@ -109,8 +117,19 @@ int CalcByTPQ(
   step_spin = ExpecInterval;
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogTPQ_Start);
+  tpq_data_output_aggregate = GreenOutputUsesTPQDataAggregate(&(X->Bind));
   for (rand_i = 0; rand_i<rand_max; rand_i++){
-    if(X->Bind.Def.iOutputDataHead==1){
+    if(tpq_data_output_aggregate){
+      if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataSS, sdt_phys) != 0) {
+        return -1;
+      }
+      if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataNorm, sdt_norm) != 0) {
+        return -1;
+      }
+      if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataFlct, sdt_flct) != 0) {
+        return -1;
+      }
+    }else if(X->Bind.Def.iOutputDataHead==1){
       int prefix_length;
       prefix_length = sprintf(sdt_phys, "%s_", X->Bind.Def.CDataFileHead);
       sprintf(sdt_phys + prefix_length, cFileNameSSRand, rand_i);
@@ -136,50 +155,74 @@ int CalcByTPQ(
       sprintf(sdt, cFileNameInputVector, rand_i, myrank);
       childfopenALL(sdt, "rb", &fp);
       if(fp==NULL){
-        fprintf(stdout, "A file of Inputvector does not exist.\n");
-        fprintf(stdout, "Start to calculate in normal procedure.\n");
+        fprintf(stderr, "A file of Inputvector does not exist (rank %d).\n", myrank);
         iret=1;
       }
-      byte_size = fread(&step_i, sizeof(step_i), 1, fp);
-      byte_size = fread(&i_max, sizeof(long int), 1, fp);
-      if(i_max != X->Bind.Check.idim_max){
-        fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-        exitMPI(-1);
-      }
-      byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
-      TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-      fclose(fp);
-      StopTimer(3600);
-      X->Bind.Def.istep=step_i;
-      StartTimer(3200);
-      iret=expec_energy_flct(&(X->Bind));
-      StopTimer(3200);
-      if(iret != 0) return -1;
+      /* All ranks must agree on the fallback: tmpvec files are per-rank and a
+         partially missing set would otherwise split ranks across the restart
+         and fresh-start branches, whose MPI collectives do not match. */
+      iret = (int)MaxMPI_li((unsigned long int)iret);
+      if(iret==1){
+        if(fp != NULL) fclose(fp);
+        fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
+        StopTimer(3600);
+      }else{
+        byte_size = fread(&step_i, sizeof(step_i), 1, fp);
+        byte_size = fread(&i_max, sizeof(long int), 1, fp);
+        if(i_max != X->Bind.Check.idim_max){
+          fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
+          exitMPI(-1);
+        }
+        byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
+        TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
+        fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+        fclose(fp);
+        StopTimer(3600);
+        X->Bind.Def.istep=step_i;
+        StartTimer(3200);
+        iret=expec_energy_flct(&(X->Bind));
+        StopTimer(3200);
+        if(iret != 0) return -1;
 
-      step_iO=step_i-1;
-      if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+        step_iO=step_i-1;
+        if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
+      }
     }
     
     if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
       StartTimer(3600);
-      if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
-        return -1;
+      if (green_output_initialized == 0) {
+        if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
+          return -1;
+        }
+        green_output_initialized = 1;
       }
-      fprintf(fp, "%s", cLogSSRand);
-      fclose(fp);
+      if (tpq_data_output_aggregate) {
+        if (tpq_data_output_initialized == 0) {
+          if (GreenOutputInitializeTPQDataAggregateFiles(&(X->Bind)) != 0) {
+            return -1;
+          }
+          tpq_data_output_initialized = 1;
+        }
+      } else {
+        if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
+          return -1;
+        }
+        fprintf(fp, "%s", cLogSSRand);
+        fclose(fp);
 // for norm
-      if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
-        return -1;
-      }
-      fprintf(fp, "%s", cLogNormRand);
-      fclose(fp);
+        if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
+          return -1;
+        }
+        fprintf(fp, "%s", cLogNormRand);
+        fclose(fp);
 // for fluctuations
-      if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
-        return -1;
+        if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
+          return -1;
+        }
+        fprintf(fp, "%s", cLogFlctRand);
+        fclose(fp);
       }
-      fprintf(fp, "%s", cLogFlctRand);
-      fclose(fp);
 
       StopTimer(3600);
 
@@ -201,14 +244,13 @@ int CalcByTPQ(
       if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
-        X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+      GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
       fclose(fp);
       // for norm
       if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_1st_norm, global_1st_norm, step_i);
+      GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_1st_norm, global_1st_norm);
       fclose(fp);
       /**@brief
       Compute expectation value at infinite temperature
@@ -223,6 +265,10 @@ int CalcByTPQ(
       iret=expec_cisajscktaltdc(&(X->Bind), v1);
       StopTimer(3400);
       if(iret !=0) return -1;
+      iret=expec_nbodyg(&(X->Bind), v1);
+      if(iret !=0) return -1;
+      iret=expec_anomalousg(&(X->Bind), v1);
+      if(iret !=0) return -1;
 
       /** @brief Compute v1=0, and compute v0 = H*v1 */
       StartTimer(3200);
@@ -235,20 +281,19 @@ int CalcByTPQ(
       if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var,
-              X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
+      GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
       fclose(fp);
 // for norm
       if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+      GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_norm, global_1st_norm);
       fclose(fp);
 // for fluctuations
       if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+      GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
       fclose(fp);
 //
       StopTimer(3600);
@@ -284,21 +329,21 @@ int CalcByTPQ(
       if(childfopenMPI(sdt_phys, "a", &fp)!=0){
         return FALSE;
       }
-      fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp, X->Bind.Phys.energy, X->Bind.Phys.var, X->Bind.Phys.doublon, X->Bind.Phys.num ,step_i);
+      GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
 // for
       fclose(fp);
 
       if(childfopenMPI(sdt_norm, "a", &fp)!=0){
         return FALSE;
       }
-      fprintf(fp, "%.16lf %.16lf %.16lf %d\n", inv_temp, global_norm, global_1st_norm, step_i);
+      GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_norm, global_1st_norm);
       fclose(fp);
 
 // for fluctuations
       if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
         return -1;
       }
-      fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", inv_temp,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
+      GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
       fclose(fp);
 //
       StopTimer(3600);
@@ -313,6 +358,10 @@ int CalcByTPQ(
         StartTimer(3400);
         iret=expec_cisajscktaltdc(&(X->Bind), v1);
         StopTimer(3400);
+        if(iret !=0) return -1;
+        iret=expec_nbodyg(&(X->Bind), v1);
+        if(iret !=0) return -1;
+        iret=expec_anomalousg(&(X->Bind), v1);
         if(iret !=0) return -1;
       }
     }

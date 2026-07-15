@@ -42,6 +42,7 @@ char *cErrNLoc ="Error: Ne=Nup+Ndown must be (Ne >= NLocalSpin).\n";
 char *cErrDefFileParam="Error: In %s, wrong parameter name:%s \n";
 char *cErrCalcType="Error in %s\n CalcType: 0: Lanczos Method, 1: Thermal Pure Quantum State Method, 2: Full Diagonalization Method, 3: Calculation Spectrum mode.\n";
 char *cErrOutputMode="Error in %s\n OutputMode: \n 0: calc one body green function and two body green functions,\n 1: calc one body green function and two body green functions and correlatinos for charge and spin.\n";
+char *cErrOutputGreenFormat="Error in %s\n OutputGreenFormat: \n 0: existing split Green function and TPQ/cTPQ data files,\n 1: aggregate indexed Green function and TPQ/cTPQ data files.\n";
 char *cErrCalcEigenVec="Error in %s\n CalcEigenVec: \n 0: Lanczos+CG method,\n 1: Lanczos method.\n";
 char *cErrOutputHam="Error in %s\n OutputHam: \n 0: not output Hamiltonian,\n 1: output Hamiltonian.\n";
 char *cErrOutputHamForFullDiag="Error in %s\n OutputHam is only defined for FullDiag mode, CalcType=2.\n";

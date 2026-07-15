@@ -20,16 +20,14 @@
  * The shift returned here mirrors the *net* sector change applied by
  * MakeExcitedList() (src/CalcSpectrum.c). Note that MakeExcitedList's second
  * switch runs only when iFlgListModifed==TRUE, so several GC/NConserved
- * branches inside it are dead code. The net behavior is:
- *   - single: HubbardGC -> none; Spin/SpinGC -> N/A;
- *             Hubbard/Kondo/KondoGC/tJ/tJGC/(Hubbard|tJ)NConserved -> shift.
- *   - pair:   all GC (incl. KondoGC/tJGC) + NConserved -> none;
- *             Hubbard/Kondo/tJ -> off-diagonal-spin shift; Spin -> shift.
+ * branches inside it are dead code. Supported off-diagonal behavior is:
+ *   - single: Hubbard -> dNe/dNup/dNdown shift; HubbardGC -> no shift;
+ *             HubbardNConserved -> dNe-only shift; Spin/SpinGC -> N/A.
+ *   - pair:   Hubbard/Spin -> off-diagonal-spin shift; SpinGC -> no shift.
  *
- * v1 off-diagonal allow-list = {Hubbard, Spin, SpinGC}. Models outside the
- * allow-list return valid=FALSE here (the allow-list guard rejects them); their
- * exact shift is encoded together with a dedicated test when a model is
- * promoted into the allow-list.
+ * Models outside these supported paths return valid=FALSE here; their exact
+ * shift should be encoded with a dedicated test when a model is promoted into
+ * the off-diagonal spectrum allow-list.
  */
 #include "Common.h"
 #include "ExcitationSectorShift.h"
@@ -54,12 +52,24 @@ SectorShift GetExcitationSectorShift(int iCalcModel, int isGeneralSpin, int isPa
     case SpinGC: /* single excitation N/A for spin (CalcSpectrum.c:563-565, SingleEx.c:54) */
       s.valid = FALSE;
       break;
+    case HubbardGC:
+      /* Grand canonical: the full Fock space is one Hilbert space, so a single c/c^dag
+         excitation stays in it -- no sector shift (the doc's "single: HubbardGC -> none").
+         s keeps the default {0,0,0,0, valid=TRUE}. This lets the bra/ket off-diagonal path
+         (SpectrumNumBra) project ket and bra -- of either spin -- in the shared GC space. */
+      break;
+    case HubbardNConserved:
+      /* Ne conserved, 2Sz free: c/c^dag shifts the sector by +-1 in Ne ONLY (the excited list
+         is Ne+-1 with all 2Sz). Track dNe alone and leave the Sz components zero, so the
+         bra/ket and cross-operator sector checks match same- AND cross-spin operators (both
+         spins land in the same Ne+-1 space) -- the spin-orbit-capable off-diagonal route. */
+      if (isCreation) s.dNe = +1;
+      else            s.dNe = -1;
+      break;
     case Kondo:
     case KondoGC:
     case tJ:
     case tJGC:
-    case HubbardGC:
-    case HubbardNConserved:
     case tJNConserved:
     case KondoNConserved:
       /* deferred: not in v1 allow-list (rejected upstream by the allow-list guard) */

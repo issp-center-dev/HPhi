@@ -50,6 +50,7 @@
 #include "diagonalcalc.h"
 #include "mltplySpinCore.h"
 #include "wrapperMPI.h"
+#include "nbody_interall.h"
 
 
 int SetDiagonalTETransfer(
@@ -195,6 +196,36 @@ int diagonalcalc
     }
      fclose(fp);   
     }
+
+  if (X->Def.NNBodyInterAll_Diagonal > 0) {
+    if (X->Def.iCalcModel == HubbardGC) {
+      if (SetDiagonalNBodyInterAllHubbardGC(X) != 0) {
+        return -1;
+      }
+    }
+    else if (X->Def.iCalcModel == Hubbard ||
+             X->Def.iCalcModel == tJ ||
+             X->Def.iCalcModel == tJGC ||
+             X->Def.iCalcModel == Kondo ||
+             X->Def.iCalcModel == KondoGC) {
+      if (SetDiagonalNBodyInterAllHubbard(X) != 0) {
+        return -1;
+      }
+    }
+    else if (X->Def.iCalcModel == SpinlessFermionGC) {
+      if (SetDiagonalNBodyInterAllSpinlessGC(X) != 0) {
+        return -1;
+      }
+    }
+    else if (X->Def.iCalcModel == SpinlessFermion) {
+      if (SetDiagonalNBodyInterAllSpinless(X) != 0) {
+        return -1;
+      }
+    }
+    else if (SetDiagonalNBodyInterAllSpinGC(X) != 0) {
+      return -1;
+    }
+  }
   
   TimeKeeper(X, cFileNameTimeKeep, cDiagonalCalcFinish, "a");
   fprintf(stdoutMPI, "%s", cProEndCalcDiag);

@@ -19,6 +19,7 @@ target_sources(HPhi PRIVATE
   dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
+  nbody_interall.c anomalous_pair.c green_output.c
 )
 
 # Multiply operations
@@ -69,7 +70,7 @@ target_sources(HPhi PRIVATE
 # Physical quantities
 target_sources(HPhi PRIVATE
   expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c
-  phys.c expec_energy_flct.c
+  nbody_correlation.c phys.c expec_energy_flct.c
 )
 
 # Common utilities

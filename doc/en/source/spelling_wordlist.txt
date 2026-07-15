@@ -68,6 +68,21 @@ OneBodyG
 eigen
 cisajscktalt
 TwoBodyG
+NBodyInterAll
+NBodyG
+SpinlessFermion
+SpinlessFermionGC
+HubbardGC
+HubbardNConserved
+tJ
+tJGC
+tJNConserved
+KondoGC
+KondoNConserved
+CalcSpec
+TimeEvolution
+FullDiag
+Hermite
 eigenvec
 Sz
 eigenvetor
@@ -156,4 +171,3 @@ DynamicalGreen
 countings
 Frommer
 calcmod
-

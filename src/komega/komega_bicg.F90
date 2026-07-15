@@ -81,6 +81,114 @@ MODULE komega_bicg
   !
 CONTAINS
 !>
+!! Non-finite checks.  These avoid compiler-dependent IEEE module support and
+!! follow the existing ABS-based breakdown style in this bundled Komega source.
+!!
+LOGICAL FUNCTION komega_BICG_isfinite_c(val)
+  !
+  IMPLICIT NONE
+  !
+  COMPLEX(8),INTENT(IN) :: val
+  !
+  komega_BICG_isfinite_c = ABS(val) < HUGE(0d0)
+  !
+END FUNCTION komega_BICG_isfinite_c
+!
+LOGICAL FUNCTION komega_BICG_isfinite_r(val)
+  !
+  IMPLICIT NONE
+  !
+  REAL(8),INTENT(IN) :: val
+  !
+  komega_BICG_isfinite_r = ABS(val) < HUGE(0d0)
+  !
+END FUNCTION komega_BICG_isfinite_r
+!
+SUBROUTINE komega_BICG_set_failure(status, code)
+  !
+  USE komega_parameter, ONLY : iter, iz_seed
+  !
+  IMPLICIT NONE
+  !
+  INTEGER,INTENT(INOUT) :: status(3)
+  INTEGER,INTENT(IN) :: code
+  !
+  status(1) = -iter
+  status(2) = code
+  IF(status(3) == 0) status(3) = iz_seed
+  !
+END SUBROUTINE komega_BICG_set_failure
+!
+SUBROUTINE komega_BICG_check_projection(r_l, status)
+  !
+  USE komega_parameter, ONLY : nl
+  !
+  IMPLICIT NONE
+  !
+  COMPLEX(8),INTENT(IN) :: r_l(nl)
+  INTEGER,INTENT(INOUT) :: status(3)
+  !
+  INTEGER :: il
+  !
+  DO il = 1, nl
+     IF(.NOT. komega_BICG_isfinite_c(r_l(il))) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+  END DO
+  !
+END SUBROUTINE komega_BICG_check_projection
+!
+SUBROUTINE komega_BICG_check_shiftedeqn(status)
+  !
+  USE komega_parameter, ONLY : nz, almost0, lz_conv
+  USE komega_vals_c, ONLY : alpha, alpha_old, beta, pi, pi_old, z, z_seed
+  !
+  IMPLICIT NONE
+  !
+  INTEGER,INTENT(INOUT) :: status(3)
+  !
+  INTEGER :: iz
+  COMPLEX(8) :: pi_new
+  !
+  IF(.NOT. komega_BICG_isfinite_c(alpha) .OR. &
+  &  .NOT. komega_BICG_isfinite_c(alpha_old) .OR. &
+  &  .NOT. komega_BICG_isfinite_c(beta)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
+  IF(ABS(alpha_old) < almost0) THEN
+     CALL komega_BICG_set_failure(status, 2)
+     RETURN
+  END IF
+  DO iz = 1, nz
+     IF(lz_conv(iz)) cycle
+     IF(.NOT. komega_BICG_isfinite_c(pi(iz)) .OR. &
+     &  .NOT. komega_BICG_isfinite_c(pi_old(iz))) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(ABS(pi(iz)) < almost0) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 3)
+        RETURN
+     END IF
+     pi_new = (1d0 + alpha * (z(iz) - z_seed)) * pi(iz) &
+     &      - alpha * beta / alpha_old * (pi_old(iz) - pi(iz))
+     IF(.NOT. komega_BICG_isfinite_c(pi_new)) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(ABS(pi_new) < almost0) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 3)
+        RETURN
+     END IF
+  END DO
+  !
+END SUBROUTINE komega_BICG_check_shiftedeqn
+!>
 !! Shifted Part
 !!
 SUBROUTINE komega_BICG_shiftedeqn(r_l, x)
@@ -131,22 +239,74 @@ SUBROUTINE komega_BICG_seed_switch(v2, v4, status)
   COMPLEX(8),INTENT(INOUT) :: v2(ndim), v4(ndim)
   INTEGER,INTENT(INOUT) :: status(3)
   !
-  INTEGER :: jter
-  COMPLEX(8) :: scale
+  INTEGER :: iz, jter, new_seed
+  COMPLEX(8) :: scale, alpha_new, rho_new
   !
-  status(3) = MINLOC(ABS(pi(1:nz)), 1, .NOT. lz_conv(1:nz))
-  !
-  IF(ABS(pi(status(3))) < almost0) THEN
-     status(2) = 3
+  IF(ALL(lz_conv(1:nz))) THEN
+     status(3) = iz_seed
+     RETURN
   END IF
   !
-  IF(status(3) /= iz_seed) THEN
+  DO iz = 1, nz
+     IF(lz_conv(iz)) cycle
+     IF(.NOT. komega_BICG_isfinite_c(pi(iz)) .OR. &
+     &  .NOT. komega_BICG_isfinite_c(pi_old(iz))) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+  END DO
+  !
+  new_seed = MINLOC(ABS(pi(1:nz)), 1, .NOT. lz_conv(1:nz))
+  status(3) = new_seed
+  !
+  IF(ABS(pi(new_seed)) < almost0) THEN
+     CALL komega_BICG_set_failure(status, 3)
+     RETURN
+  END IF
+  !
+  IF(new_seed /= iz_seed) THEN
      !
-     iz_seed = status(3)
+     IF(.NOT. komega_BICG_isfinite_c(alpha) .OR. &
+     &  .NOT. komega_BICG_isfinite_c(rho)) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(ABS(pi_old(new_seed)) < almost0) THEN
+        CALL komega_BICG_set_failure(status, 3)
+        RETURN
+     END IF
+     alpha_new = alpha * pi_old(new_seed) / pi(new_seed)
+     rho_new = rho / pi_old(new_seed)**2
+     IF(.NOT. komega_BICG_isfinite_c(alpha_new) .OR. &
+     &  .NOT. komega_BICG_isfinite_c(rho_new)) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     !
+     ! For restarting
+     !
+     IF(itermax > 0) THEN
+        DO jter = 1, iter
+           IF(.NOT. komega_BICG_isfinite_c(pi_save(new_seed, jter - 2)) .OR. &
+           &  .NOT. komega_BICG_isfinite_c(pi_save(new_seed, jter - 1)) .OR. &
+           &  .NOT. komega_BICG_isfinite_c(pi_save(new_seed, jter))) THEN
+              CALL komega_BICG_set_failure(status, 5)
+              RETURN
+           END IF
+           IF(ABS(pi_save(new_seed, jter - 1)) < almost0 .OR. &
+           &  ABS(pi_save(new_seed, jter)) < almost0) THEN
+              CALL komega_BICG_set_failure(status, 3)
+              RETURN
+           END IF
+        END DO
+     END IF
+     !
+     iz_seed = new_seed
      z_seed = z(iz_seed)
      !
-     alpha = alpha * pi_old(iz_seed) / pi(iz_seed)
-     rho = rho / pi_old(iz_seed)**2
+     alpha = alpha_new
+     rho = rho_new
      !
      scale = 1d0 / pi(iz_seed)
      CALL zscal(ndim, scale, v2, 1)
@@ -360,7 +520,7 @@ END SUBROUTINE komega_BICG_restart
 SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   !
   USE ISO_C_BINDING
-  USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, &
+  USE komega_parameter, ONLY : iter, itermax, ndim, nl, nz, iz_seed, &
   &                            threshold, almost0, lz_conv, resnorm
   USE komega_vals_c, ONLY : alpha, alpha_old, alpha_save, &
   &                         beta, beta_save, rho, z_seed, pi
@@ -374,29 +534,70 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   INTEGER(C_INT),INTENT(INOUT) :: status(3)
   !
   INTEGER :: iz
-  COMPLEX(8) :: rho_old, alpha_denom
+  REAL(8) :: res_shift
+  COMPLEX(8) :: rho_old, alpha_denom, resdot
   !
   iter = iter + 1
   status(1:3) = 0
+  status(3) = iz_seed
   !
   rho_old = rho
   rho = zdotcMPI(ndim,v4,v2)
+  IF(.NOT. komega_BICG_isfinite_c(rho)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
   IF(iter == 1) THEN
      beta = CMPLX(0d0, 0d0, KIND(0d0))
   ELSE
+     IF(.NOT. komega_BICG_isfinite_c(rho_old)) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(ABS(rho_old) < almost0) THEN
+        CALL komega_BICG_set_failure(status, 4)
+        RETURN
+     END IF
      beta = rho / rho_old
+     IF(.NOT. komega_BICG_isfinite_c(beta)) THEN
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
   END IF
   v12(1:ndim) = z_seed * v2(1:ndim) - v12(1:ndim)
   v14(1:ndim) = CONJG(z_seed) * v4(1:ndim) - v14(1:ndim)
   alpha_old = alpha
+  IF(.NOT. komega_BICG_isfinite_c(alpha)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
+  IF(ABS(alpha) < almost0) THEN
+     CALL komega_BICG_set_failure(status, 2)
+     RETURN
+  END IF
   alpha_denom = zdotcMPI(ndim,v4,v12) - beta * rho / alpha
   !
+  IF(.NOT. komega_BICG_isfinite_c(alpha_denom)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
   IF(ABS(alpha_denom) < almost0) THEN
-     status(2) = 2
+     CALL komega_BICG_set_failure(status, 2)
+     RETURN
   ELSE IF(ABS(rho) < almost0) THEN
-     status(2) = 4
+     CALL komega_BICG_set_failure(status, 4)
+     RETURN
   END IF
   alpha = rho / alpha_denom
+  IF(.NOT. komega_BICG_isfinite_c(alpha)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
+  !
+  CALL komega_BICG_check_projection(r_l, status)
+  IF(status(2) /= 0) RETURN
+  CALL komega_BICG_check_shiftedeqn(status)
+  IF(status(2) /= 0) RETURN
   !
   ! For restarting
   !
@@ -426,13 +627,39 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   ! Seed Switching
   !
   CALL komega_BICG_seed_switch(v2,v4,status)
+  IF(status(2) /= 0) RETURN
   !
   ! Convergence check
   !
-  resnorm = SQRT(DBLE(zdotcMPI(ndim,v2,v2)))
+  resdot = zdotcMPI(ndim,v2,v2)
+  IF(.NOT. komega_BICG_isfinite_c(resdot) .OR. DBLE(resdot) < 0d0) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
+  resnorm = SQRT(DBLE(resdot))
+  IF(.NOT. komega_BICG_isfinite_r(resnorm)) THEN
+     CALL komega_BICG_set_failure(status, 5)
+     RETURN
+  END IF
   !
   DO iz = 1, nz
-     IF(ABS(resnorm/pi(iz)) < threshold) lz_conv(iz) = .TRUE.
+     IF(.NOT. komega_BICG_isfinite_c(pi(iz))) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(ABS(pi(iz)) < almost0) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 3)
+        RETURN
+     END IF
+     res_shift = ABS(resnorm/pi(iz))
+     IF(.NOT. komega_BICG_isfinite_r(res_shift)) THEN
+        status(3) = iz
+        CALL komega_BICG_set_failure(status, 5)
+        RETURN
+     END IF
+     IF(res_shift < threshold) lz_conv(iz) = .TRUE.
   END DO
   !
   IF(resnorm < threshold) THEN
