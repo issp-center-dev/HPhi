@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CHECK_Chemi.dat &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="CHECK_InterAll.dat" href="CHECK_InterAll_en.html" />
+    <link rel="prev" title="4.3. Output files" href="index_outputfiles_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="check-chemi-dat">
+<span id="subsec-checkchemi"></span><h1>CHECK_Chemi.dat<a class="headerlink" href="#check-chemi-dat" title="Link to this heading">¶</a></h1>
+<p>This file is outputted to check the input of chemical potential
+<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-outputfiles-en-check-chemi-en-0">
+<span class="eqno">(4.27)<a class="headerlink" href="#equation-filespecification-outputfiles-en-check-chemi-en-0" title="Link to this equation">¶</a></span>\[\sum_{i,\sigma} \mu_{i\sigma} c_{i\sigma}^{\dagger}c_{i\sigma}.\]</div>
+<p>An example of the file format is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>i=0 spin=0 isite1=1 tmp_V=0.000000
+i=1 spin=0 isite1=2 tmp_V=0.000000
+i=2 spin=0 isite1=3 tmp_V=0.000000
+i=3 spin=0 isite1=4 tmp_V=0.000000
+i=4 spin=0 isite1=5 tmp_V=0.000000
+i=5 spin=0 isite1=6 tmp_V=0.000000
+...
+</pre></div>
+</div>
+<section id="file-format">
+<span id="file-format-20"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>i=[int01] spin=[int02] isite1=[int03] tmp_V=[double01]</p></li>
+</ul>
+</section>
+<section id="parameters">
+<span id="parameters-20"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>[int01]</p>
+<p><strong>Type :</strong> Int</p>
+<p><strong>Description :</strong> The counted number of inputting terms.</p>
+</li>
+<li><p>[int02]</p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> An integer for showing the spin index of
+<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>:</div>
+<div class="line">0: Up-spin,</div>
+<div class="line">1: Down-spin.</div>
+</div>
+</li>
+<li><p>[int03]</p>
+<p><strong>Type :</strong> Int</p>
+<p><strong>Description :</strong> An integer for showing the site index of
+<span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>.</p>
+</li>
+<li><p>[double01]</p>
+<p><strong>Type :</strong> Double</p>
+<p><strong>Description :</strong> A value for <span class="math notranslate nohighlight">\(\mu_{i\sigma}\)</span>.</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_outputfiles_en.html#quick-reference">4.3.1. Quick Reference</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_outputfiles_en.html#detailed-specifications">4.3.2. Detailed Specifications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="index_outputfiles_en.html" title="previous chapter"><span class="section-number">4.3. </span>Output files</a></li>
+      <li>Next: <a href="CHECK_InterAll_en.html" title="next chapter">CHECK_InterAll.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/CHECK_Chemi_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

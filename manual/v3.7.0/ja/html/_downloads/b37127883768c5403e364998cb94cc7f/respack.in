@@ -1,0 +1,44 @@
+&PARAM_CHIQW
+Num_freq_grid = 1
+!Ecut_for_eps = 
+flg_cRPA = 1
+/
+&PARAM_WANNIER
+N_wannier = 1
+Lower_energy_window = 8
+Upper_energy_window = 13
+N_initial_guess = 1
+/
+dx2 0.2 0.500000 0.000000 0.50000 0.0 0.0 1.0  0.0 1.0 0.0 1.0 0.0 0.0
+&PARAM_INTERPOLATION
+N_sym_points = 10
+!dense = 20, 24, 28
+/
+0.50000 0.50000 -0.50000
+0.49526 0.50474 -0.04267
+0.72630 0.27370 -0.27370
+0.50000 0.50000 -0.50000
+0.00000 0.00000 0.00000
+0.00000 0.00000 0.50000
+0.04267 -0.04267 0.50474
+0.27370 -0.27370 0.27370
+0.00000 0.00000 0.00000
+0.50000 0.00000 0.00000
+&PARAM_VISUALIZATION
+flg_vis_wannier = 1,
+ix_vis_min = -1,
+ix_vis_max = 2,
+iy_vis_min = -1,
+iy_vis_max = 1,
+iz_vis_min = -1,
+iz_vis_max = 2
+/
+&PARAM_CALC_INT
+calc_ifreq = 1
+ix_intJ_min = -1
+ix_intJ_max = 1
+iy_intJ_min = -1
+iy_intJ_max = 1
+iz_intJ_min = -1
+iz_intJ_max = 1
+/

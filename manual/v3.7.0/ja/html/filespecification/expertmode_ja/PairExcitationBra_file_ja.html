@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PairExcitationBra指定ファイル &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="SpectrumVec指定ファイル" href="SpectrumVec_File_ja.html" />
+    <link rel="prev" title="SingleExcitationBra指定ファイル" href="SingleExcitationBra_file_ja.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pairexcitationbra">
+<span id="subsec-pairexcitationbra"></span><h1>PairExcitationBra指定ファイル<a class="headerlink" href="#pairexcitationbra" title="Link to this heading">¶</a></h1>
+<p>非対角動的グリーン関数</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-pairexcitationbra-file-ja-0">
+<span class="eqno">(4.24)<a class="headerlink" href="#equation-filespecification-expertmode-ja-pairexcitationbra-file-ja-0" title="Link to this equation">¶</a></span>\[G_{BA}(z) = \langle \phi | B^{\dagger} \frac{1}{z-H} A | \phi \rangle\]</div>
+<p>を計算するための<strong>ブラ側</strong>二体励起演算子<span class="math notranslate nohighlight">\(B\)</span>を定義します。
+ケット側演算子<span class="math notranslate nohighlight">\(A\)</span>は<a class="reference internal" href="PairExcitation_file_ja.html"><span class="doc">PairExcitation</span></a>指定ファイルで定義します。
+本ファイルを省略した場合は、通常の対角グリーン関数（<span class="math notranslate nohighlight">\(B=A\)</span>）が計算されます。</p>
+<p>ファイルフォーマットおよびパラメータは<a class="reference internal" href="PairExcitation_file_ja.html"><span class="doc">PairExcitation</span></a>指定ファイルと同一で、
+演算子数のキーワードのみ <code class="docutils literal notranslate"><span class="pre">NPairExcitationBra</span></code> です。以下にファイル例（サイト 1 の密度演算子<span class="math notranslate nohighlight">\(n_{1\uparrow}\)</span>）を記載します。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>===============================
+NPairExcitationBra    1
+===============================
+======= Pair Excitation Bra ====
+===============================
+    1     0     1     0     1    1.0    0.0
+</pre></div>
+</div>
+<section id="use-rules-pairexcitationbra-ja">
+<span id="id1"></span><h2>使用ルール<a class="headerlink" href="#use-rules-pairexcitationbra-ja" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>ヘッダの省略はできません。フォーマット・パラメータは<a class="reference internal" href="PairExcitation_file_ja.html"><span class="doc">PairExcitation</span></a>と同一です。</p></li>
+<li><p>本ファイルに記載する演算子は<span class="math notranslate nohighlight">\(B\)</span>であり<span class="math notranslate nohighlight">\(B^{\dagger}\)</span>ではありません
+（計算される量は<span class="math notranslate nohighlight">\(\langle\phi|B^{\dagger}(z-H)^{-1}A|\phi\rangle\)</span>です）。</p></li>
+<li><p>非対角グリーン関数はシフト型 BiCG 法（<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>）かつ <code class="docutils literal notranslate"><span class="pre">CalcSpec=&quot;Normal&quot;</span></code> のときのみ利用可能です
+（ブラ演算子を指定した場合、リスタート・保存系のスペクトルモードは利用できません）。</p></li>
+<li><p>ケット（<a class="reference internal" href="PairExcitation_file_ja.html"><span class="doc">PairExcitation</span></a>）とブラの演算子は、<span class="math notranslate nohighlight">\(|\phi\rangle\)</span>を
+<strong>同一</strong>の励起ヒルベルト空間（粒子数・<span class="math notranslate nohighlight">\(S_z\)</span>の変化が同じ）へ写す必要があります。
+1 つのファイル内の全演算子も同一のセクター変化をもつ必要があります。これを満たさない場合はプログラムが終了します。</p></li>
+<li><p>対応モデル：Hubbard, Spin, SpinGC 模型。（その他の模型は非対角グリーン関数に未対応のため、
+これらの場合はプログラムが終了します。）``SingleExcitationBra`` と <code class="docutils literal notranslate"><span class="pre">PairExcitationBra</span></code> を同時に指定することはできません。</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_expertmode_ja.html#id2">4.2.1. クイックリファレンス</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_expertmode_ja.html#id3">4.2.2. 詳細仕様</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. 技術詳細</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_expertmode_ja.html"><span class="section-number">4.2. </span>エキスパートモード用入力ファイル</a><ul>
+      <li>Previous: <a href="SingleExcitationBra_file_ja.html" title="前の章へ">SingleExcitationBra指定ファイル</a></li>
+      <li>Next: <a href="SpectrumVec_File_ja.html" title="次の章へ">SpectrumVec指定ファイル</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_ja/PairExcitationBra_file_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

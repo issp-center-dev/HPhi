@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.3. OpenMP Parallelization &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.4. Memory Management" href="memory_en.html" />
+    <link rel="prev" title="6.2. MPI Parallelization" href="MPI_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="openmp-parallelization">
+<h1><span class="section-number">6.3. </span>OpenMP Parallelization<a class="headerlink" href="#openmp-parallelization" title="Link to this heading">¶</a></h1>
+<p>This section describes how <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> utilizes OpenMP for shared-memory parallelization.</p>
+<section id="overview">
+<h2><span class="section-number">6.3.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> uses OpenMP to parallelize operations over the local Hilbert space
+on each MPI process. This hybrid MPI+OpenMP approach enables efficient use of modern
+multi-core computing nodes.</p>
+</section>
+<section id="parallelized-operations">
+<h2><span class="section-number">6.3.2. </span>Parallelized Operations<a class="headerlink" href="#parallelized-operations" title="Link to this heading">¶</a></h2>
+<p>The following operations are parallelized using OpenMP:</p>
+<dl class="simple">
+<dt><strong>Hamiltonian-vector multiplication</strong></dt><dd><p>The main computational kernel in iterative eigensolvers. Each thread processes
+a portion of the local state vector.</p>
+</dd>
+<dt><strong>Diagonal matrix elements</strong></dt><dd><p>Evaluation of on-site interactions and chemical potentials.</p>
+</dd>
+<dt><strong>Inner products and norms</strong></dt><dd><p>Vector operations required for Lanczos and LOBPCG algorithms.</p>
+</dd>
+<dt><strong>Expectation values</strong></dt><dd><p>Physical observable calculations such as energy, spin correlations,
+and charge correlations.</p>
+</dd>
+</dl>
+</section>
+<section id="thread-safe-implementation">
+<h2><span class="section-number">6.3.3. </span>Thread-safe Implementation<a class="headerlink" href="#thread-safe-implementation" title="Link to this heading">¶</a></h2>
+<p>Care must be taken to avoid race conditions when multiple threads update
+shared data structures. <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> uses the following strategies:</p>
+<dl class="simple">
+<dt><strong>Separate accumulation</strong></dt><dd><p>Each thread accumulates results to separate memory locations,
+which are then combined in a serial section or using OpenMP reduction clauses.</p>
+</dd>
+<dt><strong>Read-only shared data</strong></dt><dd><p>Hamiltonian parameters and state indexing arrays are read-only during
+parallel regions.</p>
+</dd>
+</dl>
+</section>
+<section id="setting-the-number-of-threads">
+<h2><span class="section-number">6.3.4. </span>Setting the Number of Threads<a class="headerlink" href="#setting-the-number-of-threads" title="Link to this heading">¶</a></h2>
+<p>The number of OpenMP threads is controlled by the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">2</span><span class="w"> </span>./HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def
+</pre></div>
+</div>
+<p>For optimal performance, the product of MPI processes and OpenMP threads
+should match the number of available CPU cores.</p>
+</section>
+<section id="performance-considerations">
+<h2><span class="section-number">6.3.5. </span>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Load balancing</strong></dt><dd><p>The local Hilbert space is evenly divided among threads by default.
+For systems with symmetry restrictions, some threads may have more work.</p>
+</dd>
+<dt><strong>Memory bandwidth</strong></dt><dd><p>Hamiltonian-vector multiplication is often memory-bound.
+Using fewer threads with better cache locality may sometimes be more efficient
+than maximizing thread count.</p>
+</dd>
+<dt><strong>NUMA effects</strong></dt><dd><p>On NUMA systems, memory affinity can significantly impact performance.
+Consider using <code class="docutils literal notranslate"><span class="pre">OMP_PROC_BIND</span></code> and <code class="docutils literal notranslate"><span class="pre">OMP_PLACES</span></code> for thread pinning.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. Technical Details</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_en.html">6.1. Hilbert Space Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_en.html">6.2. MPI Parallelization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.3. OpenMP Parallelization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">6.3.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parallelized-operations">6.3.2. Parallelized Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thread-safe-implementation">6.3.3. Thread-safe Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-the-number-of-threads">6.3.4. Setting the Number of Threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-considerations">6.3.5. Performance Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_en.html">6.6. Restart Mechanism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>Technical Details</a><ul>
+      <li>Previous: <a href="MPI_en.html" title="previous chapter"><span class="section-number">6.2. </span>MPI Parallelization</a></li>
+      <li>Next: <a href="memory_en.html" title="next chapter"><span class="section-number">6.4. </span>Memory Management</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/openmp_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.5. 数値精度 &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.6. リスタート機構" href="restart_ja.html" />
+    <link rel="prev" title="6.4. メモリ管理" href="memory_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1><span class="section-number">6.5. </span>数値精度<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> における数値精度の考慮事項を説明します。</p>
+<section id="id2">
+<h2><span class="section-number">6.5.1. </span>浮動小数点表現<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はIEEE 754倍精度浮動小数点数を全体で使用します：</p>
+<ul class="simple">
+<li><p>実数: 64ビットdouble（<code class="docutils literal notranslate"><span class="pre">double</span></code>）</p></li>
+<li><p>複素数: 128ビットcomplex double（<code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">complex</span></code>）</p></li>
+</ul>
+<p>これにより約15-16桁の有効数字の精度が得られます。</p>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.5.2. </span>数値誤差の原因<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>有限精度演算</strong></dt><dd><p>各浮動小数点演算は小さな丸め誤差を導入します。
+これらは反復アルゴリズム中に蓄積します。</p>
+</dd>
+<dt><strong>桁落ち誤差</strong></dt><dd><p>ほぼ等しい数の減算では有効桁を失う可能性があります。
+これは相転移近傍の特定の物理量で発生することがあります。</p>
+</dd>
+<dt><strong>オーバーフローとアンダーフロー</strong></dt><dd><p>非常に大きいまたは小さい中間値は表現可能な範囲を超える可能性があります。
+<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は通常の使用でこれらを避けるように設計されています。</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.5.3. </span>収束判定条件<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はいくつかの収束判定条件を使用します：</p>
+<dl class="simple">
+<dt><strong>Lanczos固有値収束</strong></dt><dd><p>Lanczos反復は固有値の相対変化が指定された閾値
+（デフォルト: <span class="math notranslate nohighlight">\(10^{-14}\)</span>、すなわち <code class="docutils literal notranslate"><span class="pre">LanczosEps</span> <span class="pre">=</span> <span class="pre">14</span></code>）を下回ると収束します。</p>
+</dd>
+<dt><strong>固有ベクトル残差</strong></dt><dd><p>固有ベクトルの精度は <span class="math notranslate nohighlight">\(|H|\psi\rangle - E|\psi\rangle|\)</span> でチェックされます。</p>
+</dd>
+<dt><strong>直交性</strong></dt><dd><p>複数の固有値の場合、固有ベクトル間の直交性は
+再直交化によって維持されます。</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h2><span class="section-number">6.5.4. </span>収束閾値の設定<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>収束閾値は <code class="docutils literal notranslate"><span class="pre">ModPara</span></code> 入力ファイルで指定します：</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></dt><dd><p>収束閾値を制御する整数。Lanczos法では、固有値と一つ前のステップの
+固有値との相対誤差が <span class="math notranslate nohighlight">\(10^{- {\rm LanczosEps}}\)</span> を下回ると収束した
+と判定します（デフォルト: <code class="docutils literal notranslate"><span class="pre">LanczosEps</span> <span class="pre">=</span> <span class="pre">14</span></code>）。 <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code> の場合は、
+残差ベクトルの2-ノルムが <span class="math notranslate nohighlight">\(10^{- {\rm LanczosEps}/2}\)</span> を下回ると計算を終了します。</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code></dt><dd><p>収束判定の対象とする固有値を指定する整数（例: <code class="docutils literal notranslate"><span class="pre">1</span></code> で基底状態、
+<code class="docutils literal notranslate"><span class="pre">2</span></code> で第一励起状態）。</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></dt><dd><p>反復ステップ数の上限。上記の閾値に達した場合はそれより前に計算を終了します。</p>
+</dd>
+</dl>
+<p>ほとんどのアプリケーションでは、デフォルト値で十分な精度が得られます。</p>
+</section>
+<section id="id6">
+<h2><span class="section-number">6.5.5. </span>検証とテスト<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は以下を検証するテストケースを含んでいます：</p>
+<ul class="simple">
+<li><p>既知の解析結果に対する固有値の精度</p></li>
+<li><p>ハミルトニアンのエルミート性</p></li>
+<li><p>粒子数と <span class="math notranslate nohighlight">\(S_z\)</span> の保存</p></li>
+<li><p>異なる計算方法間の一貫性</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2><span class="section-number">6.5.6. </span>推奨事項<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>物理量の確認</strong></dt><dd><p>保存量（粒子数、 <span class="math notranslate nohighlight">\(S_z\)</span> など）が数値精度の範囲内で
+一定であることを常に確認してください。</p>
+</dd>
+<dt><strong>方法の比較</strong></dt><dd><p>可能な場合、LanczosとLOBPCG法の結果を比較してください。
+一致は信頼できる結果を示します。</p>
+</dd>
+<dt><strong>システムサイズ依存性</strong></dt><dd><p>より大きなシステムへの結果の外挿には注意が必要です。
+数値誤差のスケーリングが異なる可能性があります。</p>
+</dd>
+<dt><strong>異常の報告</strong></dt><dd><p>予期しない数値的振る舞いが観察された場合は、
+最小限の再現例とともに開発者に報告してください。</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_ja.html">6.1. ヒルベルト空間の構成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_ja.html">6.2. MPI並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.5. 数値精度</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.5.1. 浮動小数点表現</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.5.2. 数値誤差の原因</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.5.3. 収束判定条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.5.4. 収束閾値の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.5.5. 検証とテスト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.5.6. 推奨事項</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="restart_ja.html">6.6. リスタート機構</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="memory_ja.html" title="前の章へ"><span class="section-number">6.4. </span>メモリ管理</a></li>
+      <li>Next: <a href="restart_ja.html" title="次の章へ"><span class="section-number">6.6. </span>リスタート機構</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/precision_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

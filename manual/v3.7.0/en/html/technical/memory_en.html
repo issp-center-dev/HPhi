@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.4. Memory Management &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.5. Numerical Precision" href="precision_en.html" />
+    <link rel="prev" title="6.3. OpenMP Parallelization" href="openmp_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="memory-management">
+<h1><span class="section-number">6.4. </span>Memory Management<a class="headerlink" href="#memory-management" title="Link to this heading">¶</a></h1>
+<p>This section describes how <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> manages memory for large-scale calculations.</p>
+<section id="memory-requirements">
+<h2><span class="section-number">6.4.1. </span>Memory Requirements<a class="headerlink" href="#memory-requirements" title="Link to this heading">¶</a></h2>
+<p>The dominant memory usage in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> comes from storing the state vectors.
+For a Hilbert space of dimension <span class="math notranslate nohighlight">\(D\)</span> distributed across <span class="math notranslate nohighlight">\(P\)</span> MPI processes,
+each process requires:</p>
+<dl class="simple">
+<dt><strong>Lanczos method</strong></dt><dd><ul class="simple">
+<li><p>Two state vectors (<code class="docutils literal notranslate"><span class="pre">v0</span></code>, <code class="docutils literal notranslate"><span class="pre">v1</span></code>): <span class="math notranslate nohighlight">\(2 \times D/P \times 16\)</span> bytes (complex double)</p></li>
+<li><p>One buffer for MPI communication: <span class="math notranslate nohighlight">\(D/P \times 16\)</span> bytes</p></li>
+</ul>
+</dd>
+<dt><strong>LOBPCG method</strong></dt><dd><ul class="simple">
+<li><p>Multiple state vectors for subspace iteration</p></li>
+<li><p>Buffer for orthogonalization</p></li>
+</ul>
+</dd>
+<dt><strong>List arrays</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list_1</span></code>: <span class="math notranslate nohighlight">\(D/P \times 8\)</span> bytes (unsigned long)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_2_1</span></code>, <code class="docutils literal notranslate"><span class="pre">list_2_2</span></code>: depends on system size</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="memory-allocation">
+<h2><span class="section-number">6.4.2. </span>Memory Allocation<a class="headerlink" href="#memory-allocation" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> allocates memory dynamically using wrapper functions defined in
+<code class="docutils literal notranslate"><span class="pre">common/setmemory.c</span></code>. These functions handle allocation for various data types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">d_1d_allocate</span></code>: 1D double array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd_1d_allocate</span></code>: 1D complex double array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i_2d_allocate</span></code>: 2D integer array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lui_1d_allocate</span></code>: 1D unsigned long integer array</p></li>
+</ul>
+<p>Memory is allocated at the beginning of the calculation in <code class="docutils literal notranslate"><span class="pre">xsetmem.c</span></code> and
+freed at the end.</p>
+</section>
+<section id="estimating-memory-usage">
+<h2><span class="section-number">6.4.3. </span>Estimating Memory Usage<a class="headerlink" href="#estimating-memory-usage" title="Link to this heading">¶</a></h2>
+<p>Before running a calculation, you can estimate the required memory:</p>
+<div class="math notranslate nohighlight" id="equation-technical-memory-en-0">
+<span class="eqno">(6.5)<a class="headerlink" href="#equation-technical-memory-en-0" title="Link to this equation">¶</a></span>\[M_{\text{total}} \approx \frac{D}{P} \times (N_v \times 16 + N_l \times 8) \text{ bytes}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(D\)</span> is the Hilbert space dimension</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the number of MPI processes</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_v\)</span> is the number of state vectors (typically 3-4 for Lanczos)</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_l\)</span> is the number of list arrays (typically 1-3)</p></li>
+</ul>
+<dl class="simple">
+<dt><strong>Example</strong></dt><dd><p>For a 16-site Hubbard model with 4 up and 4 down electrons (<span class="math notranslate nohighlight">\(S_z = 0\)</span>):</p>
+<ul class="simple">
+<li><p>Hilbert space: <span class="math notranslate nohighlight">\(D = \binom{16}{4}^2 = 1,820^2 = 3,312,400\)</span></p></li>
+<li><p>With 4 MPI processes: <span class="math notranslate nohighlight">\(D/P = 828,100\)</span> states per process</p></li>
+<li><p>Memory per process: approximately 50 MB for state vectors</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="memory-optimization-strategies">
+<h2><span class="section-number">6.4.4. </span>Memory Optimization Strategies<a class="headerlink" href="#memory-optimization-strategies" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Increasing MPI processes</strong></dt><dd><p>Distributing the Hilbert space across more processes reduces
+per-process memory requirements.</p>
+</dd>
+<dt><strong>Using symmetries</strong></dt><dd><p>Particle number conservation, <span class="math notranslate nohighlight">\(S_z\)</span> conservation, and other symmetries
+reduce the Hilbert space dimension.</p>
+</dd>
+<dt><strong>Restart functionality</strong></dt><dd><p>For very large calculations, the restart feature allows breaking
+the calculation into smaller chunks.</p>
+</dd>
+</dl>
+</section>
+<section id="common-memory-issues">
+<h2><span class="section-number">6.4.5. </span>Common Memory Issues<a class="headerlink" href="#common-memory-issues" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Out-of-memory errors</strong></dt><dd><p>If the calculation runs out of memory, try:</p>
+<ol class="arabic simple">
+<li><p>Increase the number of MPI processes</p></li>
+<li><p>Use symmetry restrictions</p></li>
+<li><p>Request more memory per node on cluster systems</p></li>
+</ol>
+</dd>
+<dt><strong>Memory leaks</strong></dt><dd><p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> carefully manages memory to avoid leaks.
+If you observe growing memory usage, please report it as a bug.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. Technical Details</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_en.html">6.1. Hilbert Space Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_en.html">6.2. MPI Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.4. Memory Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memory-requirements">6.4.1. Memory Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-allocation">6.4.2. Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#estimating-memory-usage">6.4.3. Estimating Memory Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-optimization-strategies">6.4.4. Memory Optimization Strategies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-memory-issues">6.4.5. Common Memory Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_en.html">6.6. Restart Mechanism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>Technical Details</a><ul>
+      <li>Previous: <a href="openmp_en.html" title="previous chapter"><span class="section-number">6.3. </span>OpenMP Parallelization</a></li>
+      <li>Next: <a href="precision_en.html" title="next chapter"><span class="section-number">6.5. </span>Numerical Precision</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/memory_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

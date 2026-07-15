@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Time_CG_EigenVector.dat &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="energy.dat" href="energy_en.html" />
+    <link rel="prev" title="sz_TimeKeeper.dat" href="sz_TimeKeeper_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="time-cg-eigenvector-dat">
+<span id="subsec-timecgeigenv"></span><h1>Time_CG_EigenVector.dat<a class="headerlink" href="#time-cg-eigenvector-dat" title="Link to this heading">¶</a></h1>
+<p>(For the Lanczos method) The process for calculating the eigenvector by
+the CG method is outputted. An example of the file format is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>allocate succeed !!!
+b[4341]=1.000000 bnorm== 1.000000
+i_itr=0 itr=5 0.0411202543 0.0000100000
+...
+i_itr=0 itr=155 0.0000000058 0.0000100000
+CG OK:   t_itr=155
+i_itr=0 itr=155 time=0.000000
+fabs(fabs(xb)-1.0)=0.9955114473313577
+b[4341]=0.004489 bnorm== 1.000000
+i_itr=1 itr=5 13.0033983157 0.0000100000
+...
+CG OK:   t_itr=275
+i_itr=1 itr=120 time=0.000000
+fabs(fabs(xb)-1.0)=0.0000000000001295
+number of iterations in inv1:i_itr=1 itr=120
+t_itr=275 0.000000
+</pre></div>
+</div>
+<section id="file-name">
+<span id="file-name-3"></span><h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>##_Time_CG_EigenVector.dat</p></li>
+</ul>
+<p>## indicates a header defined by [string02] in a ModPara file.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_outputfiles_en.html#quick-reference">4.3.1. Quick Reference</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_outputfiles_en.html#detailed-specifications">4.3.2. Detailed Specifications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="sz_TimeKeeper_en.html" title="previous chapter">sz_TimeKeeper.dat</a></li>
+      <li>Next: <a href="energy_en.html" title="next chapter">energy.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/Time_CG_EigenVector_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

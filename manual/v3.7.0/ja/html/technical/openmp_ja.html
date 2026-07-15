@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.3. OpenMP並列化 &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.4. メモリ管理" href="memory_ja.html" />
+    <link rel="prev" title="6.2. MPI並列化" href="MPI_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="openmp">
+<h1><span class="section-number">6.3. </span>OpenMP並列化<a class="headerlink" href="#openmp" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> がOpenMPを利用した共有メモリ並列化について説明します。</p>
+<section id="id1">
+<h2><span class="section-number">6.3.1. </span>概要<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はOpenMPを使用して、各MPIプロセス上のローカルヒルベルト空間に対する
+演算を並列化します。このハイブリッドMPI+OpenMPアプローチにより、
+現代のマルチコア計算ノードを効率的に利用できます。</p>
+</section>
+<section id="id2">
+<h2><span class="section-number">6.3.2. </span>並列化される演算<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>以下の演算がOpenMPで並列化されます：</p>
+<dl class="simple">
+<dt><strong>ハミルトニアン・ベクトル乗算</strong></dt><dd><p>反復固有値ソルバーの主要な計算カーネル。各スレッドがローカル状態ベクトルの
+一部を処理します。</p>
+</dd>
+<dt><strong>対角行列要素</strong></dt><dd><p>オンサイト相互作用と化学ポテンシャルの評価。</p>
+</dd>
+<dt><strong>内積とノルム</strong></dt><dd><p>LanczosおよびLOBPCGアルゴリズムに必要なベクトル演算。</p>
+</dd>
+<dt><strong>期待値</strong></dt><dd><p>エネルギー、スピン相関、電荷相関などの物理量の計算。</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.3.3. </span>スレッドセーフな実装<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>複数のスレッドが共有データ構造を更新する際の競合状態を避けるために
+注意が必要です。 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は以下の戦略を使用します：</p>
+<dl class="simple">
+<dt><strong>分離した累積</strong></dt><dd><p>各スレッドは別々のメモリ位置に結果を累積し、
+その後シリアル部分またはOpenMPのreduction句を使用して結合します。</p>
+</dd>
+<dt><strong>読み取り専用の共有データ</strong></dt><dd><p>ハミルトニアンパラメータと状態インデックス配列は
+並列領域内では読み取り専用です。</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.3.4. </span>スレッド数の設定<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>OpenMPのスレッド数は <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> 環境変数で制御されます：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">2</span><span class="w"> </span>./HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def
+</pre></div>
+</div>
+<p>最適なパフォーマンスのために、MPIプロセス数とOpenMPスレッド数の積は
+利用可能なCPUコア数と一致させるべきです。</p>
+</section>
+<section id="id5">
+<h2><span class="section-number">6.3.5. </span>パフォーマンスの考慮事項<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>負荷分散</strong></dt><dd><p>ローカルヒルベルト空間はデフォルトでスレッド間で均等に分割されます。
+対称性制限のある系では、一部のスレッドがより多くの作業を持つことがあります。</p>
+</dd>
+<dt><strong>メモリ帯域幅</strong></dt><dd><p>ハミルトニアン・ベクトル乗算はしばしばメモリ律速です。
+スレッド数を最大化するよりも、キャッシュ局所性の良い
+少ないスレッド数の方が効率的な場合があります。</p>
+</dd>
+<dt><strong>NUMAの影響</strong></dt><dd><p>NUMAシステムでは、メモリアフィニティがパフォーマンスに大きく影響します。
+スレッドピニングのために <code class="docutils literal notranslate"><span class="pre">OMP_PROC_BIND</span></code> と <code class="docutils literal notranslate"><span class="pre">OMP_PLACES</span></code> の使用を検討してください。</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_ja.html">6.1. ヒルベルト空間の構成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_ja.html">6.2. MPI並列化</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.3. OpenMP並列化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.3.1. 概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.3.2. 並列化される演算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.3.3. スレッドセーフな実装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.3.4. スレッド数の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.3.5. パフォーマンスの考慮事項</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_ja.html">6.6. リスタート機構</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="MPI_ja.html" title="前の章へ"><span class="section-number">6.2. </span>MPI並列化</a></li>
+      <li>Next: <a href="memory_ja.html" title="次の章へ"><span class="section-number">6.4. </span>メモリ管理</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/openmp_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,453 @@
+.. highlight:: none
+
+.. _Subsec:modpara:
+
+ModPara file
+-----------------
+
+| This file determines the parameters for calculation. The file format
+  is as follows.
+
+::
+
+    --------------------
+    Model_Parameters   0
+    --------------------
+    VMC_Cal_Parameters
+    --------------------
+    CDataFileHead  zvo
+    CParaFileHead  zqp
+    --------------------
+    Nsite          16   
+    Ncond          16    
+    2Sz            0 
+    Lanczos_max    1000 
+    initial_iv     12   
+    exct           1    
+    LanczosEps     14   
+    LanczosTarget  2    
+    LargeValue     12   
+    NumAve         5    
+    ExpecInterval  20   
+
+.. _file_format_2:
+
+File format
+~~~~~~~~~~~
+
+*  Lines 1-4: Header
+
+*  Line 6: [string01] [string02]
+
+*  Lines 7-8: Header
+
+*  Lines 9- : [string01] [int01].
+
+.. _parameters_2:
+
+Parameters
+~~~~~~~~~~
+
+*  [string01]
+
+   **Type :** String
+
+   **Description :** Select a word from keywords.
+
+*  [string02]
+
+   **Type :** String (a blank parameter is not allowed)
+
+   **Description :** Set a header for output files.
+
+*  [int01]
+
+   **Type :** Int (a blank parameter is not allowed)
+
+   **Description :** A parameter that is correlated with a keyword.
+
+.. _use_rules_2:
+
+Use rules
+~~~~~~~~~
+
+*  From Line 9: After setting keywords at [string 01], a half-width
+   blank is needed for setting a parameter
+
+*  All the parameters are needed and the order for the parameters is
+   fixed
+
+ 
+
+.. _keywords_and_parameter_1:
+
+Keywords and parameters
+~~~~~~~~~~~~~~~~~~~~~~~
+
+In the following, common parameters and parameters for each method are
+shown.
+
+ 
+
+Common parameters
+~~~~~~~~~~~~~~~~~
+
+*  ``CDataFileHead``
+
+   **Type :** String (a blank parameter is not allowed)
+
+   **Description :** A header for output files. For example, the output
+   filename for one-body Green’s function becomes
+   "**xxx_Lanczos_cisajs.dat**" (xxx are the characters set by
+   ``CDataFileHead``).
+
+*  ``Nsite``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The number of sites.
+
+*  ``Ncond``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The number of conduction electrons (not used in
+   grand canonical ensemble).
+
+*  ``2Sz``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The total value of :math:`2S_z` (not used in grand
+   canonical ensemble). For conservation of :math:`S_z` in the case of
+   ``CalcModel`` = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
+   set ``Ncond``. For ``CalcModel`` = 0, giving ``Ncond`` **without** ``2Sz``
+   selects the ``HubbardNConserved`` model, which fixes the electron number
+   while leaving :math:`S_z` free; this is the sector used by the
+   single-excitation off-diagonal (bra-ket) dynamical Green's function for
+   2Sz-nonconserving (cross-spin) systems.
+
+*  ``initial_iv``
+
+   **Type :** Int
+
+   **Description :** An initial vector is specified with this parameter.
+
+   *  Lanczos method
+
+      *  For canonical ensemble and ``initial_iv`` :math:`\geq 0`
+
+         The non-zero components of an initial vector are specified with
+         this parameter.
+
+      *  For grand canonical ensemble or ``initial_iv`` :math:`< 0`
+
+         The seed of the random generator is given by this parameter and
+         the random vector is used as the initial vector.
+
+   *  TPQ method
+
+      The seed of the random generator is given by this parameter and
+      the random vector is used as the initial vector.
+
+   See :ref:`Ch:algorithm` for details of setting an
+   initial vector.
+
+*  ``CalcHS``
+
+   **Type :** Int (positive integer)
+
+   **Description :** Selects the algorithm used to enumerate the
+   restricted Hilbert space with the specified quantum number.
+   If ``CalcHS=1``, an efficient algorithm based on bit manipulation
+   is used (details are given in
+   http://www.pasums.issp.u-tokyo.ac.jp/wp-content/themes/HPhi/media/develop/tips.pdf [in Japanese]).
+   If ``CalcHS=2``, an alternative enumeration path is taken that can
+   be useful for some large-sector cases by avoiding the full
+   ``sdim = 2^Nsite`` outer loop of ``CalcHS=1``; note, however, that
+   the current implementation still allocates the auxiliary index
+   arrays (``list_2_1``, ``list_2_2``, ``list_jb``) at size ``O(sdim)``
+   and uses an additional ``O(idim_max)`` temporary sort buffer for
+   the Hubbard branch, so it is not a memory-only large-system fix.
+   ``CalcHS=2`` is currently available only for the ``Hubbard`` and
+   ``HubbardNConserved`` models; passing it with any other model
+   (e.g. ``Kondo``, ``Spin``) results in an explicit error. Default
+   value is 1.
+
+ 
+
+Lanczos method
+~~~~~~~~~~~~~~
+
+*  ``Lanczos_max``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The maximum number of Lanczos steps in the
+   calculation. When the convergence within the specified accuracy is
+   satisfied, the calculation is completed before a step reaches
+   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
+   must be larger than that of the previous calculation.
+
+*  ``exct``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer for setting the number of eigenvectors
+   obtained from the ground energy by the Lanczos method.
+
+*  ``LanczosEps``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer for judging the convergence of the
+   Lanczos method. The convergence is determined by whether the
+   condition is satisfied that the relative error between an eigenvalue
+   and an eigenvalue at the Lanczos step of the one step before is less
+   than :math:`10^{- \verb|LanczosEps|}`.
+
+*  ``LanczosTarget``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer giving the target of the eigenvalue for
+   judging the convergence of the Lanczos method. For example, the
+   target becomes a ground state when ``LanczosTarget`` is equal to one,
+   and a first excited state when ``LanczosTarget`` is equal to two.
+
+ 
+
+CG method
+~~~~~~~~~
+
+*  ``exct``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The number of eigenvectors is specified.
+
+*  ``Lanczos_max``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The maximum number of iteration steps in the
+   calculation. When the convergence within the specified accuracy is
+   satisfied, the calculation is completed before a step reaches
+   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
+   must be larger than that of the previous calculation.
+
+*  ``LanczosEps``
+
+   **Type :** Int (positive integer)
+
+   **Description :** For ``method="CG"``, the calculation finishes when
+   the 2-norm of the residual vector becomes smaller than
+   :math:`10^{- \verb|LanczosEps|/2}`.
+
+ 
+
+TPQ (mTPQ/cTPQ) method
+~~~~~~~~~~
+
+*  ``Lanczos_max``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The total number of TPQ steps is specified with
+   this parameter. In the case of restart calculation, ``Lanczos_max``
+   must be larger than that of the previous calculation.
+
+*  ``LargeValue``
+
+   **Type :** Double
+
+   **Description :** An integer giving :math:`l` of 
+   :math:`l-{\mathcal H}/N_{s}` used in the mTPQ method.
+   In the cTPQ method,  :math:`l` is used as the width of the imaginary-time evolution, i.e.,
+   :math:`\Delta\tau=1/l`. See :ref:`Ch:algorithm` for the details of the cTPQ method.
+
+*  ``NumAve``
+
+   **Type :** Int
+
+   **Description :** An integer giving the number of independent runs
+   for the TPQ method.
+
+*  ``ExpecInterval``
+
+   **Type :** Int
+
+   | **Description :** An integer giving the interval steps of
+     calculating the correlation functions in the TPQ method.
+   | **Note:** A small interval increases the time cost of calculations.
+
+*  ``ExpandCoef``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer giving the expansion order :math:`n_{\rm max}` for
+   cTPQ method;
+
+   .. math:: U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .
+
+   See :ref:`Ch:algorithm` for the details of the cTPQ method.
+
+
+ 
+
+Calculating dynamical Green’s functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*  ``OmegaOrg``
+
+   **Type :** Complex
+
+   **Description :** The center value of the frequency. Specify the real
+   and imaginary parts in that order separated by a space, and if there
+   is no imaginary part, the real part of the frequency is only given.
+
+*  ``OmegaIm``
+
+   **Type :** Double
+
+   **Description :** The imaginary part of the frequency. When
+   ``OmegaOrg`` is defined in a ``modpara`` file, ``OmegaIm`` is added
+   to the imaginary value of ``OmegaOrg``.
+
+*  ``OmegaMin``
+
+   **Type :** Complex
+
+   **Description :** The lower limit of the frequency from ``OmegaOrg``.
+   Specify the real and imaginary parts in that order separated by a
+   space, and if there is no imaginary part, the real part of the
+   frequency is only given.
+
+*  ``OmegaMax``
+
+   **Type :** Complex
+
+   **Description :** The upper limit of the frequency from 
+   ``OmegaOrg``. Specify the real and imaginary parts in that order
+   separated by a space, and if there is no imaginary part, a real part
+   of the frequency is only given.
+
+*  ``NOmega``
+
+   **Type :** Int
+
+   **Description :** The integer for defining the step size of the
+   frequency :math:`\Delta \omega = (` ``OmegaMax`` -
+   ``OmegaMin`` :math:`)/N_{\omega}`. The frequency is given by
+   :math:`z_n=` ``OmegaOrg``\ :math:`+`\ ``OmegaMin``\ :math:`+ \Delta \omega \times n`.
+
+*  ``SpectrumLoopExct``
+
+   **Type :** Int (default value: 0)
+
+   **Description :** The number of eigenstates over which the dynamical
+   Green's function calculation loops internally. When this value is
+   :math:`N>0`, the spectrum calculation reads the eigenvectors
+   ``eigenvec_0`` ... ``eigenvec_``\ :math:`(N-1)` in turn (so the
+   ``SpectrumVec`` keyword must give the *base* name shared by all of
+   them, e.g. ``zvo_eigenvec``), uses each eigen-energy :math:`E_n`
+   (read from ``**_energy.dat``) as the spectral shift ``OmegaOrg`` for
+   that state, and writes one ``**_DynamicalGreen_``\ :math:`n`\ ``.dat``
+   per eigenstate. This computes the spectra of the
+   :math:`N` lowest eigenstates in a single run (typically used to
+   assemble a finite-temperature, Boltzmann-weighted spectrum) instead
+   of one run per eigenstate. :math:`N` must not exceed the number of
+   computed eigenstates ``exct``. The value :math:`0` (default) keeps
+   the conventional behavior in which a single eigenvector specified by
+   ``SpectrumVec`` is used. This mode requires ``CalcSpec=Normal`` and
+   is incompatible with ``OutputExVec=1`` (the per-state excited vectors
+   would overwrite one another).
+
+*  ``SpectrumNumOp``
+
+   **Type :** Int (default value: 1)
+
+   **Description :** The number of single-excitation operator sets evaluated
+   in one ``SpectrumLoopExct`` run. When this value is :math:`M>1`, each
+   eigenvector is read only once per eigenstate and the spectra for all
+   :math:`M` operator sets are computed from it (operators looped inside the
+   eigenstate loop), which avoids re-reading the eigenvectors for every
+   operator. Operator set ``0`` is taken from the ``SingleExcitation`` file in
+   the namelist; sets ``1`` ... :math:`(M-1)` are read from
+   ``single_ex_1.def`` ... ``single_ex_``\ :math:`(M-1)`\ ``.def`` in the run
+   directory. All sets must map to the **same** Hilbert sector (same change of
+   electron number / spin), which is checked at run time. The output for set
+   :math:`m` and eigenstate :math:`n` is written to
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``.dat``. This option
+   is only effective together with ``SpectrumLoopExct``\ :math:`>0` and requires
+   ``SingleExcitation`` (not ``PairExcitation``). On its own (single bra) it
+   produces diagonal spectra; to combine the operator sets with off-diagonal
+   (bra) operators, enable ``SpectrumNumBra``\ :math:`>1` so that the ket and bra
+   sets compose. The default :math:`1` keeps the single-operator behavior.
+
+*  ``SpectrumNumBra``
+
+   **Type :** Int (default value: 1)
+
+   **Description :** The number of **left** (bra) single-excitation operator sets
+   onto which a single shifted-BiCG solve is projected (via the Komega
+   multiple-vector ``nl`` feature). When this value is :math:`B>1`, each
+   ``(eigenstate, ket-operator)`` BiCG solve is reused and projected onto all
+   :math:`B` bra sets, so the number of BiCG solves needed for the off-diagonal
+   Green's functions drops from :math:`n_{\rm orb}^2` to :math:`n_{\rm orb}`. Bra
+   set ``0`` is taken from the ``SingleExcitationBra`` file in the namelist; sets
+   ``1`` ... :math:`(B-1)` are read from ``single_ex_bra_1.def`` ...
+   ``single_ex_bra_``\ :math:`(B-1)`\ ``.def`` in the run directory. All bra sets
+   must map to the **same** excited Hilbert sector as the ket. The output for ket
+   operator :math:`m`, bra set :math:`b` and eigenstate :math:`n` is written to
+   ``**_DynamicalGreen_``\ :math:`n`\ ``_``\ :math:`m`\ ``_``\ :math:`b`\ ``.dat``
+   (the operator field is always present in multi-bra mode). This option is only
+   effective together with ``SpectrumLoopExct``\ :math:`>0`, and requires the
+   shifted-BiCG solver (``CalcType=CG``), ``CalcSpec=Normal``, ``SingleExcitation``
+   kets and a namelist ``SingleExcitationBra`` (bra set ``0``); ``PairExcitation``
+   is not supported. It composes with ``SpectrumNumOp`` (the full
+   ket :math:`\times` bra grid is evaluated in one run). The default :math:`1`
+   keeps the single-bra behavior.
+
+Real time evolution method
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*  ``Lanczos_max``
+
+   **Type :** Int (positive integer)
+
+   **Description :** The total number of real time evolution steps is
+   specified with this parameter. In the case of restart calculation,
+   ``Lanczos_max`` must be larger than that of the previous calculation.
+
+*  ``ExpandCoef``
+
+   **Type :** Int (positive integer)
+
+   **Description :** An integer giving the expansion order :math:`n` for
+   real-time evolution method;
+
+   .. math:: \exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.
+
+
+
+*  ``ExpecInterval``
+
+   **Type :** Int (positive integer)
+
+   | **Description :** An integer giving the interval steps of
+     calculating the correlation functions.
+   | **Note:** A small interval increases the time cost of calculations.
+
+*  ``OutputInterval``
+
+   **Type :** Int (positive integer)
+
+   | **Description :** An integer giving the interval steps of output
+     the wave function.
+   | The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod``
+     file.
+
+.. raw:: latex
+
+   \newpage

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.5. Troubleshooting &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Tutorial" href="../tutorial/tu-index.html" />
+    <link rel="prev" title="2.4. Basic usage" href="basicusage_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="troubleshooting">
+<span id="sec-troubleshooting"></span><h1><span class="section-number">2.5. </span>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h1>
+<p>This section explains error messages that may occur during <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> execution and how to resolve them.</p>
+<section id="quick-reference">
+<h2><span class="section-number">2.5.1. </span>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
+<p><strong>Command-line and File Errors</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">argument</span> <span class="pre">count</span> <span class="pre">is</span> <span class="pre">incorrect</span></code></p></td>
+<td><p>Invalid number of command-line arguments</p></td>
+<td><p>Run as <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-e</span> <span class="pre">namelist.def</span></code> or <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-s</span> <span class="pre">stan.in</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Error:</span> <span class="pre">The</span> <span class="pre">file</span> <span class="pre">(filename)</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist.</span></code></p></td>
+<td><p>Specified file does not exist</p></td>
+<td><p>Check file path and filename</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">Open</span> <span class="pre">input</span> <span class="pre">file</span></code></p></td>
+<td><p>Cannot open input file</p></td>
+<td><p>Verify file existence and read permissions</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Keyword and Parameter Errors</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Unsupported</span> <span class="pre">Keyword</span> <span class="pre">!</span></code></p></td>
+<td><p>Non-existent keyword specified</p></td>
+<td><p>Check manual for supported keywords</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Keyword</span> <span class="pre">(name)</span> <span class="pre">is</span> <span class="pre">duplicated</span> <span class="pre">!</span></code></p></td>
+<td><p>Same keyword specified twice</p></td>
+<td><p>Remove duplicate keyword</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">(name)</span> <span class="pre">is</span> <span class="pre">NOT</span> <span class="pre">specified</span> <span class="pre">!</span></code></p></td>
+<td><p>Required keyword not specified</p></td>
+<td><p>Add the required keyword</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Model and Solver Errors</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Unsupported</span> <span class="pre">Solver</span> <span class="pre">:</span> <span class="pre">(name)</span></code></p></td>
+<td><p>Unsupported solver specified</p></td>
+<td><p>Use Lanczos, TPQ, FullDiag, CG, or TimeEvolution</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Unsupported</span> <span class="pre">Model</span> <span class="pre">:</span> <span class="pre">(name)</span></code></p></td>
+<td><p>Unsupported model specified</p></td>
+<td><p>Use Hubbard, Spin, Kondo, or SpinlessFermion</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sorry,</span> <span class="pre">this</span> <span class="pre">system</span> <span class="pre">is</span> <span class="pre">unsupported</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">STANDARD</span> <span class="pre">MODE...</span></code></p></td>
+<td><p>Unsupported model/lattice combination</p></td>
+<td><p>Use Expert mode or choose a supported combination</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Memory Errors</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Malloc</span> <span class="pre">ERROR</span> <span class="pre">for</span> <span class="pre">XXX</span></code></p></td>
+<td><p>Memory allocation failed</p></td>
+<td><p>Reduce system size or use a machine with more memory</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">There</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">enough</span> <span class="pre">memory.</span> <span class="pre">Please</span> <span class="pre">reduce</span> <span class="pre">MPI</span> <span class="pre">process</span> <span class="pre">number.</span></code></p></td>
+<td><p>Not enough memory per process</p></td>
+<td><p>Reduce MPI process count to increase memory per process</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>MPI Errors</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">You</span> <span class="pre">can</span> <span class="pre">not</span> <span class="pre">use</span> <span class="pre">OpenMP</span> <span class="pre">and</span> <span class="pre">MPI</span> <span class="pre">at</span> <span class="pre">the</span> <span class="pre">same</span> <span class="pre">time.</span></code></p></td>
+<td><p>OpenMP and MPI combination is restricted</p></td>
+<td><p>Use either OpenMP or MPI</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">MPI</span> <span class="pre">process</span> <span class="pre">count</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">power</span> <span class="pre">of</span> <span class="pre">2</span></code></p></td>
+<td><p>MPI process count is not a power of 2</p></td>
+<td><p>Set MPI process count to 1, 2, 4, 8, 16, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">Not</span> <span class="pre">enough</span> <span class="pre">MPI</span> <span class="pre">processes.</span></code></p></td>
+<td><p>Insufficient MPI processes</p></td>
+<td><p>Increase the process count</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hamiltonian Validation Errors (Canonical Ensemble)</strong></p>
+<p>The following errors occur when the combination of site count, electron count, and spin is physically impossible in canonical ensemble calculations.</p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Message</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">abs(2</span> <span class="pre">*</span> <span class="pre">Sz)</span> <span class="pre">&gt;</span> <span class="pre">nsite</span> <span class="pre">in</span> <span class="pre">Hubbard</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Absolute value of Sz exceeds half the number of sites</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Nelec</span> <span class="pre">&gt;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">nsite</span> <span class="pre">in</span> <span class="pre">Hubbard</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Electron count exceeds twice the number of sites</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">(nelec</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">Sz)</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">!=</span> <span class="pre">0</span> <span class="pre">in</span> <span class="pre">Hubbard</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Parity of electron count and Sz does not match</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">nelec</span> <span class="pre">&lt;=</span> <span class="pre">nsite</span> <span class="pre">&amp;&amp;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">|Sz|</span> <span class="pre">&gt;</span> <span class="pre">nelec</span> <span class="pre">in</span> <span class="pre">Hubbard</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Sz is too large for the electron count</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">nelec</span> <span class="pre">&gt;</span> <span class="pre">nsite</span> <span class="pre">&amp;&amp;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">|Sz|</span> <span class="pre">&gt;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">nsite</span> <span class="pre">-</span> <span class="pre">nelec</span> <span class="pre">in</span> <span class="pre">Hubbard</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Sz is too large when electron count is high</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">abs(2</span> <span class="pre">*</span> <span class="pre">Sz)</span> <span class="pre">&gt;</span> <span class="pre">nsite</span> <span class="pre">in</span> <span class="pre">Spin</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Sz exceeds half the number of sites in spin model</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">(nsite</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">Sz)</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">!=</span> <span class="pre">0</span> <span class="pre">in</span> <span class="pre">Spin</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Parity of site count and Sz does not match in spin model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">Nelec_cond</span> <span class="pre">/</span> <span class="pre">2</span> <span class="pre">+</span> <span class="pre">Nelec_loc</span> <span class="pre">&gt;</span> <span class="pre">nsite</span> <span class="pre">in</span> <span class="pre">Kondo</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Electron count exceeds site count in Kondo model</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ERROR</span> <span class="pre">!</span> <span class="pre">(nelec_cond</span> <span class="pre">+</span> <span class="pre">nelec_loc</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">Sz)</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">!=</span> <span class="pre">0</span> <span class="pre">in</span> <span class="pre">Kondo</span> <span class="pre">model</span> <span class="pre">!</span></code></p></td>
+<td><p>Parity of electron count and Sz does not match in Kondo model</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Solution:</strong> Check input parameters <code class="docutils literal notranslate"><span class="pre">Nsite</span></code>, <code class="docutils literal notranslate"><span class="pre">Nelec</span></code>, <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> and correct to physically valid combinations.</p>
+<p><strong>Warning Messages</strong></p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Message</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Check</span> <span class="pre">!</span> <span class="pre">(name)</span> <span class="pre">is</span> <span class="pre">SPECIFIED</span> <span class="pre">but</span> <span class="pre">will</span> <span class="pre">NOT</span> <span class="pre">be</span> <span class="pre">USED.</span></code></p></td>
+<td><p>Specified parameter is not used in current calculation. Comment out if unnecessary</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">(name)</span> <span class="pre">=</span> <span class="pre">(value)</span> <span class="pre">######</span> <span class="pre">DEFAULT</span> <span class="pre">VALUE</span> <span class="pre">IS</span> <span class="pre">USED</span> <span class="pre">######</span></code></p></td>
+<td><p>Default value is being used (not an error)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="detailed-solutions-for-common-errors">
+<h2><span class="section-number">2.5.2. </span>Detailed Solutions for Common Errors<a class="headerlink" href="#detailed-solutions-for-common-errors" title="Link to this heading">¶</a></h2>
+<section id="out-of-memory-error">
+<h3>Out of Memory Error<a class="headerlink" href="#out-of-memory-error" title="Link to this heading">¶</a></h3>
+<p><strong>Symptom:</strong> <code class="docutils literal notranslate"><span class="pre">Malloc</span> <span class="pre">ERROR</span></code> is displayed and calculation cannot start.</p>
+<p><strong>Cause:</strong> Hilbert space dimension is too large and required memory cannot be allocated.</p>
+<p><strong>Solutions:</strong></p>
+<ol class="arabic">
+<li><p><strong>Reduce system size</strong></p>
+<p>Reducing the number of sites exponentially decreases the Hilbert space dimension.</p>
+</li>
+<li><p><strong>Increase MPI process count</strong></p>
+<p>Using more processes like <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">16</span> <span class="pre">HPhi</span> <span class="pre">...</span></code> distributes the Hilbert space across processes.</p>
+</li>
+<li><p><strong>Check available memory</strong></p>
+<p>Review <code class="docutils literal notranslate"><span class="pre">CHECK_Memory.dat</span></code> to understand required memory.</p>
+</li>
+</ol>
+</section>
+<section id="mpi-process-count-error">
+<h3>MPI Process Count Error<a class="headerlink" href="#mpi-process-count-error" title="Link to this heading">¶</a></h3>
+<p><strong>Symptom:</strong> <code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">MPI</span> <span class="pre">process</span> <span class="pre">count</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">power</span> <span class="pre">of</span> <span class="pre">2</span></code></p>
+<p><strong>Cause:</strong> <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> requires MPI process count to be a power of 2 (1, 2, 4, 8, 16, 32, …).</p>
+<p><strong>Solution:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correct examples</span>
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">4</span><span class="w"> </span>HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">8</span><span class="w"> </span>HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">16</span><span class="w"> </span>HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def
+
+<span class="c1"># Wrong example (3 is not a power of 2)</span>
+mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">3</span><span class="w"> </span>HPhi<span class="w"> </span>-e<span class="w"> </span>namelist.def<span class="w">  </span><span class="c1"># Error</span>
+</pre></div>
+</div>
+</section>
+<section id="file-not-found-error">
+<h3>File Not Found Error<a class="headerlink" href="#file-not-found-error" title="Link to this heading">¶</a></h3>
+<p><strong>Symptom:</strong> <code class="docutils literal notranslate"><span class="pre">Error:</span> <span class="pre">The</span> <span class="pre">file</span> <span class="pre">(filename)</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist.</span></code></p>
+<p><strong>Solutions:</strong></p>
+<ol class="arabic simple">
+<li><p>Verify filenames in namelist.def</p></li>
+<li><p>For relative paths, check position relative to execution directory</p></li>
+<li><p>Check case sensitivity of filenames (Linux/macOS are case-sensitive)</p></li>
+</ol>
+</section>
+<section id="convergence-issues">
+<h3>Convergence Issues<a class="headerlink" href="#convergence-issues" title="Link to this heading">¶</a></h3>
+<p><strong>Symptom:</strong> Lanczos or CG method does not converge.</p>
+<p><strong>Solutions:</strong></p>
+<ol class="arabic">
+<li><p><strong>Increase Lanczos steps</strong></p>
+<p>Adjust <code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code> or <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> in ModPara file</p>
+</li>
+<li><p><strong>Change initial vector</strong></p>
+<p>Try different random seeds with <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> parameter</p>
+</li>
+<li><p><strong>Degenerate eigenvalues</strong></p>
+<p>Convergence may be slow when degenerate eigenvalues exist</p>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prerequisite_en.html">2.1. Prerequisite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation_en.html">2.2. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="directorystructure_en.html">2.3. Directory structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basicusage_en.html">2.4. Basic usage</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5. Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#quick-reference">2.5.1. Quick Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-solutions-for-common-errors">2.5.2. Detailed Solutions for Common Errors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="ho-index.html"><span class="section-number">2. </span>How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a><ul>
+      <li>Previous: <a href="basicusage_en.html" title="previous chapter"><span class="section-number">2.4. </span>Basic usage</a></li>
+      <li>Next: <a href="../tutorial/tu-index.html" title="next chapter"><span class="section-number">3. </span>Tutorial</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/howtouse/troubleshooting_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

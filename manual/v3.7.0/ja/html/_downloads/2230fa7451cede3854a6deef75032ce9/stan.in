@@ -1,0 +1,17 @@
+model = "Hubbard"
+lattice = "wannier90"
+a0w = 8
+a0l = 0
+a0h = 8
+a1w = 0
+a1l = 1
+a1h = 0
+a2w = 1
+a2l = 0
+a2h = 0
+method = "TPQ"
+nelec = 8
+exct = 1
+cutoff_t = 0.5
+cutoff_u = 1.0
+cutoff_j = 0.02

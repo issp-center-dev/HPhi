@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.5. Numerical Precision &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.6. Restart Mechanism" href="restart_en.html" />
+    <link rel="prev" title="6.4. Memory Management" href="memory_en.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="numerical-precision">
+<h1><span class="section-number">6.5. </span>Numerical Precision<a class="headerlink" href="#numerical-precision" title="Link to this heading">¶</a></h1>
+<p>This section describes numerical precision considerations in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
+<section id="floating-point-representation">
+<h2><span class="section-number">6.5.1. </span>Floating-Point Representation<a class="headerlink" href="#floating-point-representation" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> uses IEEE 754 double precision floating-point numbers throughout:</p>
+<ul class="simple">
+<li><p>Real numbers: 64-bit double (<code class="docutils literal notranslate"><span class="pre">double</span></code>)</p></li>
+<li><p>Complex numbers: 128-bit complex double (<code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">complex</span></code>)</p></li>
+</ul>
+<p>This provides approximately 15-16 significant decimal digits of precision.</p>
+</section>
+<section id="sources-of-numerical-error">
+<h2><span class="section-number">6.5.2. </span>Sources of Numerical Error<a class="headerlink" href="#sources-of-numerical-error" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Finite precision arithmetic</strong></dt><dd><p>Each floating-point operation introduces small rounding errors.
+These accumulate during iterative algorithms.</p>
+</dd>
+<dt><strong>Cancellation errors</strong></dt><dd><p>Subtracting nearly equal numbers can lose significant digits.
+This can occur in certain physical quantities near phase transitions.</p>
+</dd>
+<dt><strong>Overflow and underflow</strong></dt><dd><p>Very large or small intermediate values can exceed the representable range.
+<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> is designed to avoid these in normal usage.</p>
+</dd>
+</dl>
+</section>
+<section id="convergence-criteria">
+<h2><span class="section-number">6.5.3. </span>Convergence Criteria<a class="headerlink" href="#convergence-criteria" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> uses several convergence criteria:</p>
+<dl class="simple">
+<dt><strong>Lanczos eigenvalue convergence</strong></dt><dd><p>The Lanczos iteration converges when the relative change in eigenvalue
+falls below a specified threshold (default: <span class="math notranslate nohighlight">\(10^{-14}\)</span>, i.e.
+<code class="docutils literal notranslate"><span class="pre">LanczosEps</span> <span class="pre">=</span> <span class="pre">14</span></code>).</p>
+</dd>
+<dt><strong>Eigenvector residual</strong></dt><dd><p>The eigenvector accuracy is checked via <span class="math notranslate nohighlight">\(|H|\psi\rangle - E|\psi\rangle|\)</span>.</p>
+</dd>
+<dt><strong>Orthogonality</strong></dt><dd><p>For multiple eigenvalues, orthogonality between eigenvectors is maintained
+through reorthogonalization.</p>
+</dd>
+</dl>
+</section>
+<section id="setting-convergence-thresholds">
+<h2><span class="section-number">6.5.4. </span>Setting Convergence Thresholds<a class="headerlink" href="#setting-convergence-thresholds" title="Link to this heading">¶</a></h2>
+<p>The convergence thresholds are specified in the <code class="docutils literal notranslate"><span class="pre">ModPara</span></code> input file:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></dt><dd><p>Integer controlling the convergence threshold. For the Lanczos method,
+the iteration is judged to have converged when the relative error
+between an eigenvalue and that of the previous step becomes smaller
+than <span class="math notranslate nohighlight">\(10^{- {\tt LanczosEps}}\)</span> (default: <code class="docutils literal notranslate"><span class="pre">LanczosEps</span> <span class="pre">=</span> <span class="pre">14</span></code>).
+For <code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>, the calculation finishes when the 2-norm of the
+residual vector becomes smaller than <span class="math notranslate nohighlight">\(10^{- {\tt LanczosEps}/2}\)</span>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">LanczosTarget</span></code></dt><dd><p>Integer giving the target eigenvalue used to judge convergence
+(e.g. <code class="docutils literal notranslate"><span class="pre">1</span></code> for the ground state, <code class="docutils literal notranslate"><span class="pre">2</span></code> for the first excited state).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></dt><dd><p>Maximum number of iteration steps; the calculation finishes earlier
+once the threshold above is reached.</p>
+</dd>
+</dl>
+<p>For most applications, the default values provide sufficient accuracy.</p>
+</section>
+<section id="validation-and-testing">
+<h2><span class="section-number">6.5.5. </span>Validation and Testing<a class="headerlink" href="#validation-and-testing" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> includes test cases that verify:</p>
+<ul class="simple">
+<li><p>Eigenvalue accuracy against known analytical results</p></li>
+<li><p>Hermiticity of the Hamiltonian</p></li>
+<li><p>Conservation of particle number and <span class="math notranslate nohighlight">\(S_z\)</span></p></li>
+<li><p>Consistency between different calculation methods</p></li>
+</ul>
+</section>
+<section id="recommendations">
+<h2><span class="section-number">6.5.6. </span>Recommendations<a class="headerlink" href="#recommendations" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Check physical quantities</strong></dt><dd><p>Always verify that conserved quantities (particle number, <span class="math notranslate nohighlight">\(S_z\)</span>, etc.)
+remain constant to within numerical precision.</p>
+</dd>
+<dt><strong>Compare methods</strong></dt><dd><p>When possible, compare results from Lanczos and LOBPCG methods.
+Agreement indicates reliable results.</p>
+</dd>
+<dt><strong>System size dependence</strong></dt><dd><p>Be cautious about extrapolating results to larger systems,
+as numerical errors may scale differently.</p>
+</dd>
+<dt><strong>Report anomalies</strong></dt><dd><p>If you observe unexpected numerical behavior, please report it
+to the developers with a minimal reproducing example.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. Technical Details</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_en.html">6.1. Hilbert Space Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MPI_en.html">6.2. MPI Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.5. Numerical Precision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#floating-point-representation">6.5.1. Floating-Point Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sources-of-numerical-error">6.5.2. Sources of Numerical Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convergence-criteria">6.5.3. Convergence Criteria</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-convergence-thresholds">6.5.4. Setting Convergence Thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validation-and-testing">6.5.5. Validation and Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#recommendations">6.5.6. Recommendations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="restart_en.html">6.6. Restart Mechanism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>Technical Details</a><ul>
+      <li>Previous: <a href="memory_en.html" title="previous chapter"><span class="section-number">6.4. </span>Memory Management</a></li>
+      <li>Next: <a href="restart_en.html" title="next chapter"><span class="section-number">6.6. </span>Restart Mechanism</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/precision_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

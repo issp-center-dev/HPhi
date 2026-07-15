@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.2. MPI並列化 &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
+    <script src="../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.3. OpenMP並列化" href="openmp_ja.html" />
+    <link rel="prev" title="6.1. ヒルベルト空間の構成" href="hilbert_ja.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mpi">
+<h1><span class="section-number">6.2. </span>MPI並列化<a class="headerlink" href="#mpi" title="Link to this heading">¶</a></h1>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> で使用されるMPI並列化戦略について説明します。</p>
+<section id="id1">
+<h2><span class="section-number">6.2.1. </span>概要<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はMPIを使用して複数プロセス間で計算を並列化します。
+ヒルベルト空間の基底状態はMPIプロセス間に分散され、
+ハミルトニアンの行列ベクトル積 <span class="math notranslate nohighlight">\(\hat{H}|\psi\rangle\)</span> が並列に実行されます。</p>
+</section>
+<section id="id2">
+<h2><span class="section-number">6.2.2. </span>サイトの分類<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><span class="math notranslate nohighlight">\(N\)</span> サイト系で <span class="math notranslate nohighlight">\(N_{\rm proc}\)</span> MPIプロセスを使用する場合、
+サイトは2つのカテゴリに分類されます：</p>
+<dl class="simple">
+<dt><strong>ローカルサイト</strong> (<span class="math notranslate nohighlight">\(N_{\rm local}\)</span> サイト)</dt><dd><p>量子状態が各プロセス内に格納されるサイト。
+これらのサイトに対する基底状態操作はローカルで実行可能。</p>
+</dd>
+<dt><strong>プロセス間サイト</strong> (<span class="math notranslate nohighlight">\(N_{\rm inter}\)</span> サイト)</dt><dd><p>量子状態が複数プロセスにまたがるサイト。
+これらのサイトに対する操作にはMPI通信が必要。</p>
+</dd>
+</dl>
+<p>関係式：</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-ja-0">
+<span class="eqno">(6.1)<a class="headerlink" href="#equation-technical-mpi-ja-0" title="Link to this equation">¶</a></span>\[N_{\rm local} = N - \log_2(N_{\rm proc})\]</div>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-ja-1">
+<span class="eqno">(6.2)<a class="headerlink" href="#equation-technical-mpi-ja-1" title="Link to this equation">¶</a></span>\[N_{\rm inter} = \log_2(N_{\rm proc})\]</div>
+<p>例えば、8サイト系で4 MPIプロセス（<span class="math notranslate nohighlight">\(N_{\rm proc}=4\)</span>）を使用する場合、
+ローカルサイト <span class="math notranslate nohighlight">\(N_{\rm local}=6\)</span>、プロセス間サイト <span class="math notranslate nohighlight">\(N_{\rm inter}=2\)</span> となります。</p>
+</section>
+<section id="id3">
+<h2><span class="section-number">6.2.3. </span>MPI通信パターン<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>ハミルトニアン中の演算は、必要なMPI通信によって分類されます：</p>
+<dl>
+<dt><strong>ローカル演算</strong></dt><dd><p>演算に関わる両サイトがローカルサイト。
+MPI通信は不要。</p>
+</dd>
+<dt><strong>MPIsingle演算</strong></dt><dd><p>一方がローカルサイト、他方がプロセス間サイト。
+1つのパートナープロセスとのMPI通信が必要。
+通信相手（origin）は以下で決定：</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-ja-2">
+<span class="eqno">(6.3)<a class="headerlink" href="#equation-technical-mpi-ja-2" title="Link to this equation">¶</a></span>\[\text{origin} = \text{myrank} \oplus T_{\rm pow}[\text{site}]\]</div>
+<p>ここで <span class="math notranslate nohighlight">\(\oplus\)</span> はXOR演算、<span class="math notranslate nohighlight">\(T_{\rm pow}\)</span> は各サイトの2のべき乗です。</p>
+</dd>
+<dt><strong>MPIdouble演算</strong></dt><dd><p>両サイトがプロセス間サイト。
+MPI通信が必要だが、受信データは一様に処理可能。
+通信相手は：</p>
+<div class="math notranslate nohighlight" id="equation-technical-mpi-ja-3">
+<span class="eqno">(6.4)<a class="headerlink" href="#equation-technical-mpi-ja-3" title="Link to this equation">¶</a></span>\[\text{origin} = \text{myrank} \oplus (T_{\rm pow}[\text{site}_1] + T_{\rm pow}[\text{site}_2])\]</div>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2><span class="section-number">6.2.4. </span>バッチ処理MPI通信<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>MPI通信オーバーヘッドを削減するため、<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は
+同じ通信相手（origin）を持つ複数の演算をバッチにグループ化します：</p>
+<dl class="simple">
+<dt><strong>最適化前：</strong></dt><dd><p>プロセス間サイトを持つ各転送項/相互作用項が個別に <code class="docutils literal notranslate"><span class="pre">MPI_Sendrecv</span></code> を呼び出す。
+同じoriginを持つ <span class="math notranslate nohighlight">\(N\)</span> 項がある場合、<span class="math notranslate nohighlight">\(N\)</span> 回の独立した通信が発生。</p>
+</dd>
+<dt><strong>最適化後：</strong></dt><dd><p>同じoriginを持つ項をグループ化。
+1回の <code class="docutils literal notranslate"><span class="pre">MPI_Sendrecv</span></code> で必要なデータを取得し、
+その後 <span class="math notranslate nohighlight">\(N\)</span> 項すべてをローカルで処理。</p>
+</dd>
+</dl>
+<p>この最適化は以下の場合に特に効果的：</p>
+<ul class="simple">
+<li><p>多くのホッピング項が同じ通信相手を共有する2D/3D格子モデル</p></li>
+<li><p>隣接サイト間に多くの転送項を持つ系</p></li>
+</ul>
+<p>バッチ通信は以下のモデルに実装済み：</p>
+<ul class="simple">
+<li><p>SpinlessFermionモデル（MPIsingle）</p></li>
+<li><p>Hubbardモデル（MPIsingle、MPIdouble；InterAllはHubbardGCのみ）</p></li>
+<li><p>Spinモデル（Exchange MPIsingle；SpinGCはPairLiftも一括処理）</p></li>
+</ul>
+<p>MPIビルドでは、バッチ通信はデフォルトで有効です。入力ファイルでの指定は不要です。
+この最適化は、対応しているプロセス間項の通信・適用経路を変更しますが、
+従来の項ごとのMPI通信経路と同じ数値結果を再現するよう設計されています。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><strong>時間発展（TimeEvolution）モードでのバッチ通信の制限</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> または <code class="docutils literal notranslate"><span class="pre">TEOneBody``（expert</span> <span class="pre">mode</span> <span class="pre">の</span> <span class="pre">step</span> <span class="pre">依存型、</span>
+<span class="pre">``NTEInterAllMax</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> もしくは <code class="docutils literal notranslate"><span class="pre">NTETransferMax</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>）を使用する
+時間発展計算では、MPI バッチ通信は自動的に無効化され、
+従来の per-term MPI 通信にフォールバックします。</p>
+<p>これは、バッチ通信のグループ構造がプロセス起動時に 1 回だけ初期化される
+設計のため、step ごとに追加・変更される相互作用項を追従できないためです。</p>
+<p>Peierls 代用（AC Laser モード、<code class="docutils literal notranslate"><span class="pre">PumpType</span> <span class="pre">=</span> <span class="pre">&quot;AC</span> <span class="pre">Laser&quot;</span></code>）は
+既存の転送項の係数のみを変更するため、バッチ通信の恩恵を受けられます。</p>
+</div>
+<section id="id5">
+<h3>バッチ通信の無効化<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>環境変数 <code class="docutils literal notranslate"><span class="pre">HPHI_MPI_NOBATCH=1</span></code> を設定すると、MPI通信のバッチ処理を全体で無効化し、
+バッチ化前の項ごとのMPI通信にフォールバックします。デバッグや、バッチ最適化が
+非バッチ時と同一の結果を再現することの検証に使用します。また、特定の計算機・入力で
+従来経路との性能比較を行う場合にも使用できます:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_MPI_NOBATCH=1
+mpirun -np 4 ./HPhi -e namelist.def
+</pre></div>
+</div>
+<p>起動時に <code class="docutils literal notranslate"><span class="pre">MPI</span> <span class="pre">batching</span> <span class="pre">:</span> <span class="pre">ON</span></code> または <code class="docutils literal notranslate"><span class="pre">MPI</span> <span class="pre">batching</span> <span class="pre">:</span> <span class="pre">OFF</span></code> と表示されます。
+この値は rank 0 で読み込まれ全ランクにブロードキャストされるため、
+常に全プロセスで一致します。</p>
+</section>
+</section>
+<section id="spinlessfermionoff-diagonal-two-body-green">
+<h2><span class="section-number">6.2.5. </span>SpinlessFermionのoff-diagonal two-body Green関数<a class="headerlink" href="#spinlessfermionoff-diagonal-two-body-green" title="Link to this heading">¶</a></h2>
+<p>SpinlessFermionにおける
+<span class="math notranslate nohighlight">\(\langle c^\dagger_i c_j c^\dagger_k c_l \rangle\)</span>
+のMPI経路は、グランドカノニカル（GC）に加えてカノニカルでも
+プロセス間サイトを含む場合に対応しています。</p>
+<p>この経路では、グローバルビット表現で演算子列を適用し、
+ランク間通信を伴う場合でもフェルミオン符号を一貫して評価します。</p>
+</section>
+<section id="mpi-ctest">
+<h2><span class="section-number">6.2.6. </span>MPI前提テストの挙動（ctest）<a class="headerlink" href="#mpi-ctest" title="Link to this heading">¶</a></h2>
+<p>以下のテストはMPI実行環境を前提とします：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mpi_consistency_*</span></code> （目安: <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code>）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lanczos_*_mpidouble</span></code> （目安: <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">=</span> <span class="pre">16</span></code>）</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> が未設定、または必要なMPIランク条件を満たさない場合、
+これらは <code class="docutils literal notranslate"><span class="pre">ctest</span></code> 上で <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> として報告されます。</p>
+<p>例：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 4 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 16 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><span class="section-number">6.2.7. </span>フェルミオン符号<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>フェルミオン系（Hubbard、SpinlessFermion）では、
+演算子の反交換から生じるフェルミオン符号をMPI通信時に注意深く扱う必要があります。</p>
+<p>符号は <code class="docutils literal notranslate"><span class="pre">SgnBit</span></code> 関数を使用して計算され、
+生成演算子と消滅演算子の間の占有状態数をカウントします。
+この符号は初期化時に事前計算され、各転送グループと共に格納されます。</p>
+</section>
+<section id="id7">
+<h2><span class="section-number">6.2.8. </span>プロセス数の要件<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>MPIプロセス数は特定の制約を満たす必要があります：</p>
+<dl class="simple">
+<dt><strong>Hubbard/近藤モデル</strong></dt><dd><p>プロセス数 = <span class="math notranslate nohighlight">\(4^n\)</span> （1サイトあたり4状態: 空、上、下、二重占有）</p>
+</dd>
+<dt><strong>スピン1/2モデル</strong></dt><dd><p>プロセス数 = <span class="math notranslate nohighlight">\(2^n\)</span> （1サイトあたり2状態: 上、下）</p>
+</dd>
+<dt><strong>一般スピンモデル</strong></dt><dd><p>プロセス数 = プロセス間サイトの <span class="math notranslate nohighlight">\((2S_i+1)\)</span> の積</p>
+</dd>
+</dl>
+<p>プロセス数設定の詳細は <a class="reference internal" href="../howtouse/basicusage_ja.html#subsec-process"><span class="std std-ref">プロセス数の設定</span></a> を参照してください。</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. ファイルフォーマット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 技術詳細</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hilbert_ja.html">6.1. ヒルベルト空間の構成</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. MPI並列化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.2.1. 概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.2.2. サイトの分類</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.2.3. MPI通信パターン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.2.4. バッチ処理MPI通信</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spinlessfermionoff-diagonal-two-body-green">6.2.5. SpinlessFermionのoff-diagonal two-body Green関数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi-ctest">6.2.6. MPI前提テストの挙動（ctest）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.2.7. フェルミオン符号</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.2.8. プロセス数の要件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="restart_ja.html">6.6. リスタート機構</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><span class="section-number">6. </span>技術詳細</a><ul>
+      <li>Previous: <a href="hilbert_ja.html" title="前の章へ"><span class="section-number">6.1. </span>ヒルベルト空間の構成</a></li>
+      <li>Next: <a href="openmp_ja.html" title="次の章へ"><span class="section-number">6.3. </span>OpenMP並列化</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/technical/MPI_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

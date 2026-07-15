@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>AnomalousG.dat &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cisajscktalt.dat" href="cisajscktalt_en.html" />
+    <link rel="prev" title="cisajs.dat" href="cisajs_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="anomalousg-dat">
+<span id="subsec-anomalousgoutput"></span><h1>AnomalousG.dat<a class="headerlink" href="#anomalousg-dat" title="Link to this heading">¶</a></h1>
+<p>This file is the output file for anomalous pair Green’s functions specified
+by the input file with the keyword <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>. A line with type <code class="docutils literal notranslate"><span class="pre">0</span></code> is
+the expectation value of <span class="math notranslate nohighlight">\(c_{i\sigma_1}c_{j\sigma_2}\)</span>, and a line with
+type <code class="docutils literal notranslate"><span class="pre">1</span></code> is the expectation value of
+<span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\)</span>. An example of the
+file format is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0 0 0 0 1 -0.5000000000 0.0000000000
+1 0 1 0 0 -0.5000000000 0.0000000000
+</pre></div>
+</div>
+<section id="file-name">
+<h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Lanczos method, LOBCG method: ##_AnomalousG.dat</p></li>
+<li><p>TPQ method, cTPQ method: ##_AnomalousG_set??step%%.dat</p></li>
+<li><p>TPQ/cTPQ method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_tpq.dat</p></li>
+<li><p>Full diagonalization method: ##_AnomalousG_eigen&amp;&amp;.dat</p></li>
+<li><p>Full diagonalization method, LOBCG method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_eigen.dat</p></li>
+<li><p>Real time evolution method: ##_AnomalousG_step%%.dat</p></li>
+<li><p>Real time evolution method with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>:
+##_AnomalousG_te.dat</p></li>
+</ul>
+<p>##, ??, %%, and &amp;&amp; indicate [string02] in a ModPara file, the number of
+runs in calculation in the TPQ method, the number of steps in the TPQ or
+time evolution method, and the index of the eigenvalues, respectively.
+In aggregate files, each data row has leading index columns: <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>
+for TPQ/cTPQ, <code class="docutils literal notranslate"><span class="pre">step</span></code> for real-time evolution, and <code class="docutils literal notranslate"><span class="pre">eigen</span></code> for Full
+diagonalization/LOBCG.</p>
+</section>
+<section id="file-format">
+<h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>[int01] [int02] [int03] [int04] [int05] [double01] [double02].</p></li>
+</ul>
+<p>For aggregate files generated with <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>, the same
+columns are preceded by <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code>, or <code class="docutils literal notranslate"><span class="pre">eigen</span></code> according to
+the calculation method.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>[int01]</p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> The anomalous pair type:</div>
+<div class="line">0: <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}c_{j\sigma_2}\rangle\)</span></div>
+<div class="line">1: <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle\)</span>.</div>
+</div>
+</li>
+<li><p>[int02], [int04]</p>
+<p><strong>Type :</strong> Int</p>
+<p><strong>Description :</strong> The integer of the site number.
+[int02] and [int04] show the <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> site numbers,
+respectively.</p>
+</li>
+<li><p>[int03], [int05]</p>
+<p><strong>Type :</strong> Int</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> The integer of the spin index:</div>
+<div class="line">0: Up-spin</div>
+<div class="line">1: Down-spin.</div>
+<div class="line">[int03] and [int05] show
+<span class="math notranslate nohighlight">\(\sigma_1\)</span> and <span class="math notranslate nohighlight">\(\sigma_2\)</span>, respectively.</div>
+</div>
+</li>
+<li><p>[double01], [double02]</p>
+<p><strong>Type :</strong> Double</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> The value of the anomalous pair Green’s function.</div>
+<div class="line">[double01] and [double02] show the real and imaginary parts,
+respectively.</div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_outputfiles_en.html#quick-reference">4.3.1. Quick Reference</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_outputfiles_en.html#detailed-specifications">4.3.2. Detailed Specifications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="cisajs_en.html" title="previous chapter">cisajs.dat</a></li>
+      <li>Next: <a href="cisajscktalt_en.html" title="next chapter">cisajscktalt.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/AnomalousG_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
