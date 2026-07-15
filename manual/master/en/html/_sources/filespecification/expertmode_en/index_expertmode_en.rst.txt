@@ -48,9 +48,15 @@ The following table summarizes all input files for expert mode.
    * - :doc:`Trans <Trans_file_en>`
      - No
      - One-body terms: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}`
+   * - :doc:`AnomalousTerm <AnomalousTerm_file_en>`
+     - No
+     - HubbardGC anomalous pair terms: :math:`c_{i\sigma_1}c_{j\sigma_2}` and :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}`
    * - :doc:`InterAll <InterAll_file_en>`
      - No
      - General two-body interactions: :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}`
+   * - :doc:`NBodyInterAll <NBodyInterAll_file_en>`
+     - No
+     - Generic N-body interactions: :math:`\prod_p c_{i_p\sigma'_p}^{\dagger}c_{j_p\sigma_p}`
    * - :doc:`CoulombIntra <CoulombIntra_file_en>`
      - No
      - On-site Coulomb: :math:`n_{i\uparrow}n_{i\downarrow}`
@@ -86,9 +92,15 @@ The following table summarizes all input files for expert mode.
    * - :doc:`OneBodyG <OneBodyG_file_en>`
      - No
      - One-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle`
+   * - :doc:`AnomalousG <AnomalousG_file_en>`
+     - No
+     - HubbardGC anomalous pair Green's functions: :math:`\langle c_{i\sigma_1}c_{j\sigma_2}\rangle` and :math:`\langle c^{\dagger}_{i\sigma_1}c^{\dagger}_{j\sigma_2}\rangle`
    * - :doc:`TwoBodyG <TwoBodyG_file_en>`
      - No
      - Two-body Green's functions: :math:`\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k\sigma_3}c_{l\sigma_4}\rangle`
+   * - :doc:`NBodyG <NBodyG_file_en>`
+     - No
+     - Generic N-body Green's functions: :math:`\left\langle \prod_p c^{\dagger}_{i_p\sigma'_p}c_{j_p\sigma_p}\right\rangle`
 
 **Spectrum and Time Evolution**
 
@@ -152,12 +164,20 @@ These files specify the terms in the Hamiltonian.
 
    Trans_file_en
 
+**Anomalous pair terms:**
+
+.. toctree::
+   :maxdepth: 1
+
+   AnomalousTerm_file_en
+
 **Two-body interactions:**
 
 .. toctree::
    :maxdepth: 1
 
    InterAll_file_en
+   NBodyInterAll_file_en
    CoulombIntra_file_en
    CoulombInter_file_en
    Hund_file_en
@@ -175,7 +195,9 @@ These files specify which physical quantities to calculate and output.
    :maxdepth: 1
 
    OneBodyG_file_en
+   AnomalousG_file_en
    TwoBodyG_file_en
+   NBodyG_file_en
 
 Spectrum and Time Evolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

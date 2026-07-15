@@ -77,11 +77,11 @@ Quick Reference
      - Description
    * - :doc:`Time_TPQ_Step.dat <Time_TPQ_Step_en>`
      - TPQ step timing
-   * - :doc:`Norm_rand*.dat <Norm_rand_en>`
+   * - :doc:`Norm_rand*.dat / Norm_tpq.dat <Norm_rand_en>`
      - Norm of TPQ states
-   * - :doc:`SS_rand*.dat <SS_rand_en>`
+   * - :doc:`SS_rand*.dat / SS_tpq.dat <SS_rand_en>`
      - Spin-spin correlation for TPQ
-   * - :doc:`Flct_rand*.dat <Flct_rand_en>`
+   * - :doc:`Flct_rand*.dat / Flct_tpq.dat <Flct_rand_en>`
      - Fluctuations for TPQ
 
 **Time Evolution Output**
@@ -117,8 +117,12 @@ Quick Reference
      - Physical quantities (energy, doublon, Sz, etc.)
    * - :doc:`zvo_cisajs*.dat <cisajs_en>`
      - One-body Green's functions
+   * - :doc:`zvo_AnomalousG*.dat <AnomalousG_en>`
+     - Anomalous pair Green's functions
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_en>`
      - Two-body Green's functions
+   * - :doc:`zvo_NBodyG*.dat <NBodyG_en>`
+     - Generic N-body Green's functions
 
 **Wave Functions and Vectors**
 
@@ -238,7 +242,9 @@ Files containing calculated physical quantities.
    Eigenvalue_en
    phys_en
    cisajs_en
+   AnomalousG_en
    cisajscktalt_en
+   NBodyG_en
 
 Wave Functions and Vectors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

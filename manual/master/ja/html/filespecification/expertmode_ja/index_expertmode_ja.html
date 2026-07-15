@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>4.2. エキスパートモード用入力ファイル &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <title>4.2. エキスパートモード用入力ファイル &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
@@ -91,9 +91,17 @@
 <td><p>No</p></td>
 <td><p>一体項: <span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="InterAll_file_ja.html"><span class="doc">InterAll</span></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="AnomalousTerm_file_ja.html"><span class="doc">AnomalousTerm</span></a></p></td>
+<td><p>No</p></td>
+<td><p>HubbardGCの異常ペア項: <span class="math notranslate nohighlight">\(c_{i\sigma_1}c_{j\sigma_2}\)</span> および <span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="InterAll_file_ja.html"><span class="doc">InterAll</span></a></p></td>
 <td><p>No</p></td>
 <td><p>一般二体相互作用: <span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="NBodyInterAll_file_ja.html"><span class="doc">NBodyInterAll</span></a></p></td>
+<td><p>No</p></td>
+<td><p>一般N体相互作用: <span class="math notranslate nohighlight">\(\prod_p c_{i_p\sigma'_p}^{\dagger}c_{j_p\sigma_p}\)</span></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="CoulombIntra_file_ja.html"><span class="doc">CoulombIntra</span></a></p></td>
 <td><p>No</p></td>
@@ -143,9 +151,17 @@
 <td><p>No</p></td>
 <td><p>一体グリーン関数: <span class="math notranslate nohighlight">\(\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}\rangle\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="TwoBodyG_file_ja.html"><span class="doc">TwoBodyG</span></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="AnomalousG_file_ja.html"><span class="doc">AnomalousG</span></a></p></td>
+<td><p>No</p></td>
+<td><p>HubbardGCの異常ペアグリーン関数: <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}c_{j\sigma_2}\rangle\)</span> および <span class="math notranslate nohighlight">\(\langle c^{\dagger}_{i\sigma_1}c^{\dagger}_{j\sigma_2}\rangle\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="TwoBodyG_file_ja.html"><span class="doc">TwoBodyG</span></a></p></td>
 <td><p>No</p></td>
 <td><p>二体グリーン関数: <span class="math notranslate nohighlight">\(\langle c^{\dagger}_{i\sigma_1}c_{j\sigma_2}c^{\dagger}_{k\sigma_3}c_{l\sigma_4}\rangle\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="NBodyG_file_ja.html"><span class="doc">NBodyG</span></a></p></td>
+<td><p>No</p></td>
+<td><p>N体グリーン関数: <span class="math notranslate nohighlight">\(\left\langle \prod_p c^{\dagger}_{i_p\sigma'_p}c_{j_p\sigma_p}\right\rangle\)</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -218,10 +234,17 @@
 <li class="toctree-l1"><a class="reference internal" href="Trans_file_ja.html">Trans指定ファイル</a></li>
 </ul>
 </div>
+<p><strong>異常ペア項:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="AnomalousTerm_file_ja.html">AnomalousTerm指定ファイル</a></li>
+</ul>
+</div>
 <p><strong>二体相互作用:</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="InterAll_file_ja.html">InterAll指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NBodyInterAll_file_ja.html">NBodyInterAll指定ファイル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CoulombIntra_file_ja.html">CoulombIntra指定ファイル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CoulombInter_file_ja.html">CoulombInter指定ファイル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hund_file_ja.html">Hund指定ファイル</a></li>
@@ -238,7 +261,9 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="OneBodyG_file_ja.html">OneBodyG指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AnomalousG_file_ja.html">AnomalousG指定ファイル</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TwoBodyG_file_ja.html">TwoBodyG指定ファイル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NBodyG_file_ja.html">NBodyG指定ファイル</a></li>
 </ul>
 </div>
 </section>

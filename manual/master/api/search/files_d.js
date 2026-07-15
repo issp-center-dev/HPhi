@@ -1,16 +1,17 @@
 var searchData=
 [
-  ['setmemory_2ec_0',['setmemory.c',['../setmemory_8c.html',1,'']]],
-  ['setmemory_2eh_1',['setmemory.h',['../setmemory_8h.html',1,'']]],
-  ['singleex_2ec_2',['SingleEx.c',['../SingleEx_8c.html',1,'']]],
-  ['singleex_2eh_3',['SingleEx.h',['../SingleEx_8h.html',1,'']]],
-  ['singleexhubbard_2ec_4',['SingleExHubbard.c',['../SingleExHubbard_8c.html',1,'']]],
-  ['singleexhubbard_2eh_5',['SingleExHubbard.h',['../SingleExHubbard_8h.html',1,'']]],
-  ['splash_2ec_6',['splash.c',['../splash_8c.html',1,'']]],
-  ['splash_2eh_7',['splash.h',['../splash_8h.html',1,'']]],
-  ['stdface_5fmain_2eh_8',['StdFace_main.h',['../StdFace__main_8h.html',1,'']]],
-  ['struct_2ec_9',['struct.c',['../struct_8c.html',1,'']]],
-  ['struct_2eh_10',['struct.h',['../struct_8h.html',1,'']]],
-  ['sz_2ec_11',['sz.c',['../sz_8c.html',1,'']]],
-  ['sz_2eh_12',['sz.h',['../sz_8h.html',1,'']]]
+  ['pairex_2ec_0',['PairEx.c',['../PairEx_8c.html',1,'']]],
+  ['pairex_2eh_1',['PairEx.h',['../PairEx_8h.html',1,'']]],
+  ['pairexhubbard_2ec_2',['PairExHubbard.c',['../PairExHubbard_8c.html',1,'']]],
+  ['pairexhubbard_2eh_3',['PairExHubbard.h',['../PairExHubbard_8h.html',1,'']]],
+  ['pairexspin_2ec_4',['PairExSpin.c',['../PairExSpin_8c.html',1,'']]],
+  ['pairexspin_2eh_5',['PairExSpin.h',['../PairExSpin_8h.html',1,'']]],
+  ['pairexspinless_2ec_6',['PairExSpinless.c',['../PairExSpinless_8c.html',1,'']]],
+  ['pairexspinless_2eh_7',['PairExSpinless.h',['../PairExSpinless_8h.html',1,'']]],
+  ['phys_2ec_8',['phys.c',['../phys_8c.html',1,'']]],
+  ['phys_2eh_9',['phys.h',['../phys_8h.html',1,'']]],
+  ['powerlanczos_2ec_10',['PowerLanczos.c',['../PowerLanczos_8c.html',1,'']]],
+  ['powerlanczos_2eh_11',['PowerLanczos.h',['../PowerLanczos_8h.html',1,'']]],
+  ['progressmessage_2ec_12',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
+  ['progressmessage_2eh_13',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
 ];

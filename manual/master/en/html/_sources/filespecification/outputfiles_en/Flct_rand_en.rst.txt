@@ -30,6 +30,12 @@ File name
 
 ?? indicates the number of runs in the calculation of the TPQ method.
 
+When ``OutputGreenFormat=1`` is specified for TPQ/cTPQ, this quantity is
+written to ``Flct_tpq.dat`` instead. The aggregate file contains all
+runs, and each data row starts with ``set`` and ``step``:
+``set step inv_temp N N^2 D D^2 Sz Sz^2``. The split
+``Flct_rand??.dat`` files are not created in this mode.
+
 .. _file_format_32:
 
 File format

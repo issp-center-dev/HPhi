@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ModParaファイル &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <title>ModParaファイル &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
@@ -118,7 +118,7 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">2Sz</span></code></p>
 <p><strong>形式 :</strong> int型 (非負整数)</p>
 <p><strong>説明 :</strong>
-<span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。</p>
+<span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0（電子系 Hubbard 模型）において<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>を指定せず<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>のみを与えると、電子数を固定しつつ<span class="math notranslate nohighlight">\(S_z\)</span>を自由とする<code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code>模型が選択されます。これは 2Sz 非保存（スピン交差）系の一体励起非対角（ブラ・ケット）動的グリーン関数で用いるセクターです。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>形式 :</strong> int型 (整数)</p>
@@ -277,6 +277,69 @@ cTPQ計算の詳細は <a class="reference internal" href="../../algorithm/al-in
 動的グリーン関数を計算する際の振動数の刻み幅<span class="math notranslate nohighlight">\(\Delta \omega = (\)</span>
 <code class="docutils literal notranslate"><span class="pre">OmegaMax</span></code>-
 <code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code><span class="math notranslate nohighlight">\()/N_{\omega}\)</span>を与えるための整数。振動数は<span class="math notranslate nohighlight">\(z_n=\)</span><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code><span class="math notranslate nohighlight">\(+\)</span><code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code><span class="math notranslate nohighlight">\(+ \Delta \omega \times n\)</span>で与えられます。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値: 0)</p>
+<p><strong>説明 :</strong>
+動的グリーン関数の計算を、内部で複数の固有状態についてループさせる際の
+固有状態数を指定します。値を<span class="math notranslate nohighlight">\(N&gt;0\)</span>とすると、スペクトル計算は
+固有ベクトル<code class="docutils literal notranslate"><span class="pre">eigenvec_0</span></code> ... <code class="docutils literal notranslate"><span class="pre">eigenvec_</span></code><span class="math notranslate nohighlight">\((N-1)\)</span>を順番に
+読み込み(このため<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code>にはそれらが共有する<em>ベース名</em>、
+例えば<code class="docutils literal notranslate"><span class="pre">zvo_eigenvec</span></code>を指定します)、各固有エネルギー
+<span class="math notranslate nohighlight">\(E_n\)</span>(<code class="docutils literal notranslate"><span class="pre">**_energy.dat</span></code>から読み込み)をその状態のスペクトルシフト
+<code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code>として用い、固有状態ごとに
+<code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>を1つずつ出力します。
+これにより、エネルギーの低い方から<span class="math notranslate nohighlight">\(N\)</span>個の固有状態の
+スペクトルを1回の実行でまとめて計算できます(典型的には有限温度の
+ボルツマン重み付きスペクトルを構成するために用います)。
+<span class="math notranslate nohighlight">\(N\)</span>は計算済みの固有状態数<code class="docutils literal notranslate"><span class="pre">exct</span></code>以下である必要があります。
+値<span class="math notranslate nohighlight">\(0\)</span>(デフォルト)では、<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code>で指定した
+単一の固有ベクトルを用いる従来の動作になります。本モードは
+<code class="docutils literal notranslate"><span class="pre">CalcSpec=Normal</span></code>が必須で、<code class="docutils literal notranslate"><span class="pre">OutputExVec=1</span></code>とは併用できません
+(固有状態ごとの励起ベクトルが互いに上書きされるため)。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値: 1)</p>
+<p><strong>説明 :</strong>
+1回の<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>実行でまとめて評価する単一励起演算子セットの
+数を指定します。値を<span class="math notranslate nohighlight">\(M&gt;1\)</span>とすると、各固有ベクトルは固有状態ごとに
+1回だけ読み込まれ、その固有ベクトルから<span class="math notranslate nohighlight">\(M\)</span>個の演算子セットすべての
+スペクトルを計算します(固有状態ループの内側で演算子をループ)。これにより
+演算子ごとに固有ベクトルを読み直す必要がなくなります。演算子セット<code class="docutils literal notranslate"><span class="pre">0</span></code>は
+namelist の<code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code>ファイルから、セット<code class="docutils literal notranslate"><span class="pre">1</span></code>...
+<span class="math notranslate nohighlight">\((M-1)\)</span>は実行ディレクトリの<code class="docutils literal notranslate"><span class="pre">single_ex_1.def</span></code>...
+<code class="docutils literal notranslate"><span class="pre">single_ex_</span></code><span class="math notranslate nohighlight">\((M-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code>から読み込みます。すべてのセットは
+<strong>同一</strong>の Hilbert セクター(電子数・スピンの変化が同じ)に写像される必要が
+あり、実行時に検査されます。セット<span class="math notranslate nohighlight">\(m\)</span>・固有状態<span class="math notranslate nohighlight">\(n\)</span>の出力は
+<code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(m\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>に書き出されます。
+本オプションは<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code><span class="math notranslate nohighlight">\(&gt;0\)</span>と併用したときのみ有効で、
+<code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code>(<code class="docutils literal notranslate"><span class="pre">PairExcitation</span></code>不可)が必要です。単独で(単一の
+bra と組み合わせて)用いると対角スペクトルを計算します。演算子セットを bra
+(非対角)励起演算子と組み合わせる場合は、<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code><span class="math notranslate nohighlight">\(&gt;1\)</span>を
+有効にして ket と bra のセットを組み合わせます。デフォルト<span class="math notranslate nohighlight">\(1\)</span>では
+単一演算子の動作になります。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値: 1)</p>
+<p><strong>説明 :</strong>
+1回のシフト型 BiCG 解を射影する<strong>bra(左側)</strong>単一励起演算子セットの数を
+指定します(Komega の多ベクトル射影機能 <code class="docutils literal notranslate"><span class="pre">nl</span></code> を利用)。値を<span class="math notranslate nohighlight">\(B&gt;1\)</span>と
+すると、各<code class="docutils literal notranslate"><span class="pre">(固有状態,</span> <span class="pre">ket</span> <span class="pre">演算子)</span></code>の BiCG 解を再利用して<span class="math notranslate nohighlight">\(B\)</span>個の
+bra セットすべてに射影します。これにより非対角グリーン関数に必要な BiCG 解の
+数が<span class="math notranslate nohighlight">\(n_{\rm orb}^2\)</span>から<span class="math notranslate nohighlight">\(n_{\rm orb}\)</span>に減ります。bra セット
+<code class="docutils literal notranslate"><span class="pre">0</span></code>は namelist の<code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code>ファイルから、セット<code class="docutils literal notranslate"><span class="pre">1</span></code>...
+<span class="math notranslate nohighlight">\((B-1)\)</span>は実行ディレクトリの<code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code>...
+<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code>から読み込みます。すべての bra
+セットは ket と<strong>同一</strong>の励起 Hilbert セクターに写像される必要があります。
+ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セット<span class="math notranslate nohighlight">\(b\)</span>・固有状態<span class="math notranslate nohighlight">\(n\)</span>の出力は
+<code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(m\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(b\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>に
+書き出されます(multi-bra モードでは演算子フィールドが常に付与されます)。
+本オプションは<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code><span class="math notranslate nohighlight">\(&gt;0\)</span>と併用したときのみ有効で、
+シフト型 BiCG ソルバ(<code class="docutils literal notranslate"><span class="pre">CalcType=CG</span></code>)、<code class="docutils literal notranslate"><span class="pre">CalcSpec=Normal</span></code>、
+<code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code>ket、namelist の<code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code>(bra セット
+<code class="docutils literal notranslate"><span class="pre">0</span></code>)が必要です(<code class="docutils literal notranslate"><span class="pre">PairExcitation</span></code>は非対応)。<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>と
+組み合わせ可能です(ket <span class="math notranslate nohighlight">\(\times\)</span> bra のグリッド全体を1回の実行で評価)。
+デフォルト<span class="math notranslate nohighlight">\(1\)</span>では単一 bra の動作になります。</p>
 </li>
 </ul>
 </section>

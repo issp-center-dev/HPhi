@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ModPara file &#8212; HΦ Documentation 3.6.0 documentation</title>
+    <title>ModPara file &#8212; HΦ Documentation 3.7.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=5349f462"></script>
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -125,7 +125,11 @@ grand canonical ensemble).</p>
 <p><strong>Description :</strong> The total value of <span class="math notranslate nohighlight">\(2S_z\)</span> (not used in grand
 canonical ensemble). For conservation of <span class="math notranslate nohighlight">\(S_z\)</span> in the case of
 <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0 (fermion Hubbard model) or 2 (Kondo lattice model),
-set <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>.</p>
+set <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>. For <code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0, giving <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> <strong>without</strong> <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>
+selects the <code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code> model, which fixes the electron number
+while leaving <span class="math notranslate nohighlight">\(S_z\)</span> free; this is the sector used by the
+single-excitation off-diagonal (bra-ket) dynamical Green’s function for
+2Sz-nonconserving (cross-spin) systems.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>Type :</strong> Int</p>
@@ -302,6 +306,68 @@ of the frequency is only given.</p>
 frequency <span class="math notranslate nohighlight">\(\Delta \omega = (\)</span> <code class="docutils literal notranslate"><span class="pre">OmegaMax</span></code> -
 <code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code> <span class="math notranslate nohighlight">\()/N_{\omega}\)</span>. The frequency is given by
 <span class="math notranslate nohighlight">\(z_n=\)</span> <code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code><span class="math notranslate nohighlight">\(+\)</span><code class="docutils literal notranslate"><span class="pre">OmegaMin</span></code><span class="math notranslate nohighlight">\(+ \Delta \omega \times n\)</span>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<p><strong>Description :</strong> The number of eigenstates over which the dynamical
+Green’s function calculation loops internally. When this value is
+<span class="math notranslate nohighlight">\(N&gt;0\)</span>, the spectrum calculation reads the eigenvectors
+<code class="docutils literal notranslate"><span class="pre">eigenvec_0</span></code> … <code class="docutils literal notranslate"><span class="pre">eigenvec_</span></code><span class="math notranslate nohighlight">\((N-1)\)</span> in turn (so the
+<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> keyword must give the <em>base</em> name shared by all of
+them, e.g. <code class="docutils literal notranslate"><span class="pre">zvo_eigenvec</span></code>), uses each eigen-energy <span class="math notranslate nohighlight">\(E_n\)</span>
+(read from <code class="docutils literal notranslate"><span class="pre">**_energy.dat</span></code>) as the spectral shift <code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code> for
+that state, and writes one <code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>
+per eigenstate. This computes the spectra of the
+<span class="math notranslate nohighlight">\(N\)</span> lowest eigenstates in a single run (typically used to
+assemble a finite-temperature, Boltzmann-weighted spectrum) instead
+of one run per eigenstate. <span class="math notranslate nohighlight">\(N\)</span> must not exceed the number of
+computed eigenstates <code class="docutils literal notranslate"><span class="pre">exct</span></code>. The value <span class="math notranslate nohighlight">\(0\)</span> (default) keeps
+the conventional behavior in which a single eigenvector specified by
+<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> is used. This mode requires <code class="docutils literal notranslate"><span class="pre">CalcSpec=Normal</span></code> and
+is incompatible with <code class="docutils literal notranslate"><span class="pre">OutputExVec=1</span></code> (the per-state excited vectors
+would overwrite one another).</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code></p>
+<p><strong>Type :</strong> Int (default value: 1)</p>
+<p><strong>Description :</strong> The number of single-excitation operator sets evaluated
+in one <code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code> run. When this value is <span class="math notranslate nohighlight">\(M&gt;1\)</span>, each
+eigenvector is read only once per eigenstate and the spectra for all
+<span class="math notranslate nohighlight">\(M\)</span> operator sets are computed from it (operators looped inside the
+eigenstate loop), which avoids re-reading the eigenvectors for every
+operator. Operator set <code class="docutils literal notranslate"><span class="pre">0</span></code> is taken from the <code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code> file in
+the namelist; sets <code class="docutils literal notranslate"><span class="pre">1</span></code> … <span class="math notranslate nohighlight">\((M-1)\)</span> are read from
+<code class="docutils literal notranslate"><span class="pre">single_ex_1.def</span></code> … <code class="docutils literal notranslate"><span class="pre">single_ex_</span></code><span class="math notranslate nohighlight">\((M-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code> in the run
+directory. All sets must map to the <strong>same</strong> Hilbert sector (same change of
+electron number / spin), which is checked at run time. The output for set
+<span class="math notranslate nohighlight">\(m\)</span> and eigenstate <span class="math notranslate nohighlight">\(n\)</span> is written to
+<code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(m\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>. This option
+is only effective together with <code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code><span class="math notranslate nohighlight">\(&gt;0\)</span> and requires
+<code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code> (not <code class="docutils literal notranslate"><span class="pre">PairExcitation</span></code>). On its own (single bra) it
+produces diagonal spectra; to combine the operator sets with off-diagonal
+(bra) operators, enable <code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code><span class="math notranslate nohighlight">\(&gt;1\)</span> so that the ket and bra
+sets compose. The default <span class="math notranslate nohighlight">\(1\)</span> keeps the single-operator behavior.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code></p>
+<p><strong>Type :</strong> Int (default value: 1)</p>
+<p><strong>Description :</strong> The number of <strong>left</strong> (bra) single-excitation operator sets
+onto which a single shifted-BiCG solve is projected (via the Komega
+multiple-vector <code class="docutils literal notranslate"><span class="pre">nl</span></code> feature). When this value is <span class="math notranslate nohighlight">\(B&gt;1\)</span>, each
+<code class="docutils literal notranslate"><span class="pre">(eigenstate,</span> <span class="pre">ket-operator)</span></code> BiCG solve is reused and projected onto all
+<span class="math notranslate nohighlight">\(B\)</span> bra sets, so the number of BiCG solves needed for the off-diagonal
+Green’s functions drops from <span class="math notranslate nohighlight">\(n_{\rm orb}^2\)</span> to <span class="math notranslate nohighlight">\(n_{\rm orb}\)</span>. Bra
+set <code class="docutils literal notranslate"><span class="pre">0</span></code> is taken from the <code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code> file in the namelist; sets
+<code class="docutils literal notranslate"><span class="pre">1</span></code> … <span class="math notranslate nohighlight">\((B-1)\)</span> are read from <code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code> …
+<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code> in the run directory. All bra sets
+must map to the <strong>same</strong> excited Hilbert sector as the ket. The output for ket
+operator <span class="math notranslate nohighlight">\(m\)</span>, bra set <span class="math notranslate nohighlight">\(b\)</span> and eigenstate <span class="math notranslate nohighlight">\(n\)</span> is written to
+<code class="docutils literal notranslate"><span class="pre">**_DynamicalGreen_</span></code><span class="math notranslate nohighlight">\(n\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(m\)</span><code class="docutils literal notranslate"><span class="pre">_</span></code><span class="math notranslate nohighlight">\(b\)</span><code class="docutils literal notranslate"><span class="pre">.dat</span></code>
+(the operator field is always present in multi-bra mode). This option is only
+effective together with <code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code><span class="math notranslate nohighlight">\(&gt;0\)</span>, and requires the
+shifted-BiCG solver (<code class="docutils literal notranslate"><span class="pre">CalcType=CG</span></code>), <code class="docutils literal notranslate"><span class="pre">CalcSpec=Normal</span></code>, <code class="docutils literal notranslate"><span class="pre">SingleExcitation</span></code>
+kets and a namelist <code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code> (bra set <code class="docutils literal notranslate"><span class="pre">0</span></code>); <code class="docutils literal notranslate"><span class="pre">PairExcitation</span></code>
+is not supported. It composes with <code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code> (the full
+ket <span class="math notranslate nohighlight">\(\times\)</span> bra grid is evaluated in one run). The default <span class="math notranslate nohighlight">\(1\)</span>
+keeps the single-bra behavior.</p>
 </li>
 </ul>
 </section>

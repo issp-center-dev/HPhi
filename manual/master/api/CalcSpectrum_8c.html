@@ -141,6 +141,7 @@ $(document).ready(function(){initNavTree('CalcSpectrum_8c.html',''); initResizab
 <code>#include &quot;<a class="el" href="sz_8h_source.html">sz.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="check_8h_source.html">check.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="diagonalcalc_8h_source.html">diagonalcalc.h</a>&quot;</code><br />
+<code>#include &lt;mpi.h&gt;</code><br />
 </div>
 <p><a href="CalcSpectrum_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -149,6 +150,40 @@ Functions</h2></td></tr>
 <tr class="memitem:ab25f1866d9e94f458722189a626e8c7f" id="r_ab25f1866d9e94f458722189a626e8c7f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#ab25f1866d9e94f458722189a626e8c7f">OutputSpectrum</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
 <tr class="memdesc:ab25f1866d9e94f458722189a626e8c7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output spectrum.  <br /></td></tr>
 <tr class="separator:ab25f1866d9e94f458722189a626e8c7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c78e42727a5126dd10ee50b54631c69" id="r_a6c78e42727a5126dd10ee50b54631c69"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a6c78e42727a5126dd10ee50b54631c69">CalcOneSpectrum</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *<a class="el" href="global_8c.html#a404d2e8f5bb3cbf39c3df4940adf25c7">v1Org</a>, double complex OmegaOrg, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
+<tr class="memdesc:a6c78e42727a5126dd10ee50b54631c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute ONE dynamical spectrum from a single input eigenvector |v1Org&gt; at spectral shift OmegaOrg (= E_n).  <br /></td></tr>
+<tr class="separator:a6c78e42727a5126dd10ee50b54631c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b215f38f5ddbfdc501c327344403702" id="r_a1b215f38f5ddbfdc501c327344403702"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a1b215f38f5ddbfdc501c327344403702">BuildEigenVectorFileName</a> (int idx, int useIdxSuffix, char *sdt, size_t sdtSize)</td></tr>
+<tr class="memdesc:a1b215f38f5ddbfdc501c327344403702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the local-rank eigenvector file name for ReadEigenVector and preflight checks.  <br /></td></tr>
+<tr class="separator:a1b215f38f5ddbfdc501c327344403702"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f357989501aad3f8dcae0f9731ac292" id="r_a8f357989501aad3f8dcae0f9731ac292"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a8f357989501aad3f8dcae0f9731ac292">ReadEigenVector</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int idx, int useIdxSuffix, double complex *<a class="el" href="global_8c.html#a404d2e8f5bb3cbf39c3df4940adf25c7">v1Org</a>)</td></tr>
+<tr class="memdesc:a8f357989501aad3f8dcae0f9731ac292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read one MPI-distributed eigenvector into v1Org (original, pre-excitation sector).  <br /></td></tr>
+<tr class="separator:a8f357989501aad3f8dcae0f9731ac292"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e5a2b02410ea37ba88e4afd24b31b88" id="r_a6e5a2b02410ea37ba88e4afd24b31b88"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a6e5a2b02410ea37ba88e4afd24b31b88">CheckEigenVectorFile</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int idx, int useIdxSuffix)</td></tr>
+<tr class="memdesc:a6e5a2b02410ea37ba88e4afd24b31b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preflight one eigenvector file without filling the work vector.  <br /></td></tr>
+<tr class="separator:a6e5a2b02410ea37ba88e4afd24b31b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab98a4d948c769229da5e96d69a400896" id="r_ab98a4d948c769229da5e96d69a400896"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#ab98a4d948c769229da5e96d69a400896">CheckFiniteTLoopEigenVectors</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int nloop)</td></tr>
+<tr class="memdesc:ab98a4d948c769229da5e96d69a400896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check all finite-T loop eigenvector files before writing any spectrum.  <br /></td></tr>
+<tr class="separator:ab98a4d948c769229da5e96d69a400896"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0484cf3acd876fecc524fb9837d5e547" id="r_a0484cf3acd876fecc524fb9837d5e547"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a0484cf3acd876fecc524fb9837d5e547">ReadEigenEnergy</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int idx, double *Ene)</td></tr>
+<tr class="memdesc:a0484cf3acd876fecc524fb9837d5e547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the idx-th eigen-energy E_idx from "&lt;CDataFileHead&gt;_energy.dat".  <br /></td></tr>
+<tr class="separator:a0484cf3acd876fecc524fb9837d5e547"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06bd00cdc4125049da4405d2dd31a911" id="r_a06bd00cdc4125049da4405d2dd31a911"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a06bd00cdc4125049da4405d2dd31a911">OutputSpectrumIdx</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int idx, int op, int useOp, int bra, int useBra, int stride, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
+<tr class="memdesc:a06bd00cdc4125049da4405d2dd31a911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the spectrum for eigenstate idx (operator op, bra b) to a per-state output file.  <br /></td></tr>
+<tr class="separator:a06bd00cdc4125049da4405d2dd31a911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac080a9c868e7d652c391d91f515c4bcf" id="r_ac080a9c868e7d652c391d91f515c4bcf"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#ac080a9c868e7d652c391d91f515c4bcf">ValidateSingleExcitationRow</a> (const char *fname, unsigned int row, unsigned int nSiteTotal, int site, int spin, int type)</td></tr>
+<tr class="separator:ac080a9c868e7d652c391d91f515c4bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4fa96051b57514f0def5eb5ba4e02fa" id="r_ab4fa96051b57514f0def5eb5ba4e02fa"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#ab4fa96051b57514f0def5eb5ba4e02fa">ValidateSingleExcitationSet</a> (const char *fname, unsigned int nSiteTotal, unsigned int N, int **ops)</td></tr>
+<tr class="separator:ab4fa96051b57514f0def5eb5ba4e02fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5091bb975ee3449c72764cabbc983d68" id="r_a5091bb975ee3449c72764cabbc983d68"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a5091bb975ee3449c72764cabbc983d68">ReadSingleExcitationSet</a> (const char *fname, unsigned int nSiteTotal, unsigned int *pN, int ***pOps, double complex **pPara)</td></tr>
+<tr class="memdesc:a5091bb975ee3449c72764cabbc983d68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read one single-excitation operator set from an HPhi single_ex-format def file.  <br /></td></tr>
+<tr class="separator:a5091bb975ee3449c72764cabbc983d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abeddd282fed4e3d673710ce2e072dd03" id="r_abeddd282fed4e3d673710ce2e072dd03"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#abeddd282fed4e3d673710ce2e072dd03">CalcSpectrumMultiBra</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *<a class="el" href="global_8c.html#a404d2e8f5bb3cbf39c3df4940adf25c7">v1Org</a>, double complex OmegaOrg, int Nomega, double complex *dcSpectrum, double complex *dcomega, int nBra, unsigned int *braSet_N, int ***braSet_ops, double complex **braSet_para)</td></tr>
+<tr class="memdesc:abeddd282fed4e3d673710ce2e072dd03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute nBra dynamical spectra that share ONE ket BiCG solve (Stage 3 bra/ket reuse).  <br /></td></tr>
+<tr class="separator:abeddd282fed4e3d673710ce2e072dd03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86eb240ab99d02a8efd39e9814b45d62" id="r_a86eb240ab99d02a8efd39e9814b45d62"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#a86eb240ab99d02a8efd39e9814b45d62">RunMultiOpFiniteTLoop</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *<a class="el" href="global_8c.html#a404d2e8f5bb3cbf39c3df4940adf25c7">v1Org</a>, int Nomega, double complex *dcSpectrum, double complex *dcomega)</td></tr>
+<tr class="memdesc:a86eb240ab99d02a8efd39e9814b45d62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite-temperature spectrum loop: eigenstates idx-outer, operator sets op-inner.  <br /></td></tr>
+<tr class="separator:a86eb240ab99d02a8efd39e9814b45d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca49d715bfd77330cff5f431d8b7c717" id="r_aca49d715bfd77330cff5f431d8b7c717"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcSpectrum_8c.html#aca49d715bfd77330cff5f431d8b7c717">CalcSpectrum</a> (struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:aca49d715bfd77330cff5f431d8b7c717"><td class="mdescLeft">&#160;</td><td class="mdescRight">A main function to calculate spectrum.  <br /></td></tr>
 <tr class="separator:aca49d715bfd77330cff5f431d8b7c717"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,6 +204,149 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a1b215f38f5ddbfdc501c327344403702" name="a1b215f38f5ddbfdc501c327344403702"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b215f38f5ddbfdc501c327344403702">&#9670;&#160;</a></span>BuildEigenVectorFileName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int BuildEigenVectorFileName </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>useIdxSuffix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>sdt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sdtSize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Build the local-rank eigenvector file name for ReadEigenVector and preflight checks. </p>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00220">220</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="readdef_8c_source.html#l03837">GetFileNameByKW()</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00311">CheckEigenVectorFile()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00259">ReadEigenVector()</a>.</p>
+
+</div>
+</div>
+<a id="a6c78e42727a5126dd10ee50b54631c69" name="a6c78e42727a5126dd10ee50b54631c69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c78e42727a5126dd10ee50b54631c69">&#9670;&#160;</a></span>CalcOneSpectrum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CalcOneSpectrum </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>v1Org</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>OmegaOrg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>Nomega</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcSpectrum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcomega</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute ONE dynamical spectrum from a single input eigenvector |v1Org&gt; at spectral shift OmegaOrg (= E_n). </p>
+<p>Reentrant building block for the finite-temperature loop. It rebuilds the frequency grid from OmegaOrg every call (so both the resolvent shift (z-(H-E_n))^{-1} and the output frequency axis stay consistent with the per-launch path), builds the ket (and optional bra) excited state from v1Org, dispatches the solver, and returns the spectrum in dcSpectrum. It does NOT write any output file; the caller is responsible for I/O and for the excitation-list / sector setup (MakeExcitedList) and its teardown.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">X</td><td>[in,out] Calculation struct. dcOmegaOrg is set to OmegaOrg. </td></tr>
+    <tr><td class="paramname">v1Org</td><td>[in] Input eigenvector in the original (pre-excitation) sector. </td></tr>
+    <tr><td class="paramname">OmegaOrg</td><td>[in] Spectral shift E_n for this eigenstate. </td></tr>
+    <tr><td class="paramname">Nomega</td><td>[in] Number of frequencies. </td></tr>
+    <tr><td class="paramname">dcSpectrum</td><td>[out] Spectrum array (Nomega). </td></tr>
+    <tr><td class="paramname">dcomega</td><td>[out] Frequency grid (Nomega), rebuilt here from OmegaOrg. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success (including the zero-norm case, which returns a zero spectrum). </td></tr>
+    <tr><td class="paramname">FALSE</td><td>solver failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00098">98</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00063">c_CalcExcitedStateEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00062">c_CalcExcitedStateStart</a>, <a class="el" href="LogMessage_8c_source.html#l00064">c_CalcSpectrumStart</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00371">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00127">cFileNameOutputExcitedVec</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="struct_8h_source.html#l00504">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00280">DefineList::dcOmegaMax</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::dcOmegaMin</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="CalcSpectrum_8c_source.html#l01261">GetExcitedState()</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00396">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00271">DefineList::iOutputExVec</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00324">NormMPI_dc()</a>, <a class="el" href="struct_8h_source.html#l00241">DefineList::NPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00253">DefineList::NPairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00235">DefineList::NSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00247">DefineList::NSingleExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00239">DefineList::PairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00251">DefineList::PairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00242">DefineList::ParaPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00254">DefineList::ParaPairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00236">DefineList::ParaSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00248">DefineList::ParaSingleExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00233">DefineList::SingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00245">DefineList::SingleExcitationOperatorBra</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="global_8c_source.html#l00135">v1Org</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
 <a id="aca49d715bfd77330cff5f431d8b7c717" name="aca49d715bfd77330cff5f431d8b7c717"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aca49d715bfd77330cff5f431d8b7c717">&#9670;&#160;</a></span>CalcSpectrum()</h2>
 
@@ -205,13 +383,206 @@ output: dcOmegaOrg, iFlagListModified.</td></tr>
 <dl class="section author"><dt>Author</dt><dd>Kazuyoshi Yoshimi (The University of Tokyo) </dd>
 <dd>
 Youhei Yamaji (The University of Tokyo) </dd></dl>
-<p>&lt; bra excited state B|phi&gt; for off-diagonal spectrum (NULL = diagonal)</p>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00091">91</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00957">957</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00455">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00063">c_CalcExcitedStateEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00062">c_CalcExcitedStateStart</a>, <a class="el" href="LogMessage_8c_source.html#l00065">c_CalcSpectrumEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00064">c_CalcSpectrumStart</a>, <a class="el" href="LogMessage_8c_source.html#l00061">c_InputEigenVectorEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00060">c_InputEigenVectorStart</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00208">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="setmemory_8c_source.html#l00232">cd_1d_allocate()</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00095">cFileNameOutputExcitedVec</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="struct_8h_source.html#l00446">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00243">DefineList::dcOmegaMax</a>, <a class="el" href="struct_8h_source.html#l00244">DefineList::dcOmegaMin</a>, <a class="el" href="struct_8h_source.html#l00245">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00445">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00097">diagonalcalc()</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00035">SectorShift::dNdown</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00033">SectorShift::dNe</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00034">SectorShift::dNup</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00036">SectorShift::dTotal2Sz</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00240">free_cd_1d_allocate()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="ExcitationSectorShift_8c_source.html#l00116">GetExcitationOperatorSetShift()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00402">GetExcitedState()</a>, <a class="el" href="readdef_8c_source.html#l03431">GetFileNameByKW()</a>, <a class="el" href="struct_8h_source.html#l00229">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00223">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00338">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00340">CheckList::idim_maxOrg</a>, <a class="el" href="struct_8h_source.html#l00251">DefineList::iFlagListModified</a>, <a class="el" href="struct_8h_source.html#l00250">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00249">DefineList::iFlgSpecOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00246">DefineList::iNOmega</a>, <a class="el" href="struct_8h_source.html#l00237">DefineList::iOutputExVec</a>, <a class="el" href="struct_8h_source.html#l00350">LargeList::itr</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="struct_8h_source.html#l00447">BindStruct::Large</a>, <a class="el" href="global_8c_source.html#l00116">list_1_org</a>, <a class="el" href="global_8c_source.html#l00118">list_2_1_org</a>, <a class="el" href="global_8c_source.html#l00119">list_2_2_org</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00525">MakeExcitedList()</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00324">NormMPI_dc()</a>, <a class="el" href="struct_8h_source.html#l00207">DefineList::NPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::NPairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00201">DefineList::NSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00213">DefineList::NSingleExcitationOperatorBra</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00029">OFFDIAG_SHIFT_SET_INCONSISTENT</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00050">OutputSpectrum()</a>, <a class="el" href="struct_8h_source.html#l00205">DefineList::PairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::PairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00208">DefineList::ParaPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00220">DefineList::ParaPairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00202">DefineList::ParaSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00214">DefineList::ParaSingleExcitationOperatorBra</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00038">SectorShift::reason</a>, <a class="el" href="DefCommon_8h_source.html#l00067">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00063">RECALC_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00065">RECALC_OUTPUT_TMComponents_VEC</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00441">SetOmega()</a>, <a class="el" href="struct_8h_source.html#l00199">DefineList::SingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00211">DefineList::SingleExcitationOperatorBra</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00161">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00099">v0</a>, <a class="el" href="global_8c_source.html#l00100">v1</a>, <a class="el" href="global_8c_source.html#l00103">v1Org</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00037">SectorShift::valid</a>, <a class="el" href="global_8c_source.html#l00104">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00065">c_CalcSpectrumEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00064">c_CalcSpectrumStart</a>, <a class="el" href="LogMessage_8c_source.html#l00061">c_InputEigenVectorEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00060">c_InputEigenVectorStart</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00371">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="struct_8h_source.html#l00504">BindStruct::Check</a>, <a class="el" href="struct_8h_source.html#l00280">DefineList::dcOmegaMax</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::dcOmegaMin</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00035">SectorShift::dNdown</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00033">SectorShift::dNe</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00034">SectorShift::dNup</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00036">SectorShift::dTotal2Sz</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="ExcitationSectorShift_8c_source.html#l00126">GetExcitationOperatorSetShift()</a>, <a class="el" href="struct_8h_source.html#l00263">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00398">CheckList::idim_maxOrg</a>, <a class="el" href="struct_8h_source.html#l00309">DefineList::iFlagListModified</a>, <a class="el" href="struct_8h_source.html#l00308">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00286">DefineList::iFlgSpecOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00283">DefineList::iNOmega</a>, <a class="el" href="struct_8h_source.html#l00271">DefineList::iOutputExVec</a>, <a class="el" href="struct_8h_source.html#l00287">DefineList::iSpectrumLoopExct</a>, <a class="el" href="struct_8h_source.html#l00300">DefineList::iSpectrumNumBra</a>, <a class="el" href="struct_8h_source.html#l00293">DefineList::iSpectrumNumOp</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00150">list_2_1_org</a>, <a class="el" href="global_8c_source.html#l00151">list_2_2_org</a>, <a class="el" href="CalcSpectrum_8c_source.html#l01384">MakeExcitedList()</a>, <a class="el" href="struct_8h_source.html#l00241">DefineList::NPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00253">DefineList::NPairExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00235">DefineList::NSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00247">DefineList::NSingleExcitationOperatorBra</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00029">OFFDIAG_SHIFT_SET_INCONSISTENT</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00053">OutputSpectrum()</a>, <a class="el" href="struct_8h_source.html#l00239">DefineList::PairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00251">DefineList::PairExcitationOperatorBra</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00259">ReadEigenVector()</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00038">SectorShift::reason</a>, <a class="el" href="DefCommon_8h_source.html#l00073">RECALC_INOUT_TMComponents_VEC</a>, <a class="el" href="DefCommon_8h_source.html#l00069">RECALC_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00071">RECALC_OUTPUT_TMComponents_VEC</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l01300">SetOmega()</a>, <a class="el" href="struct_8h_source.html#l00233">DefineList::SingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00245">DefineList::SingleExcitationOperatorBra</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="global_8c_source.html#l00135">v1Org</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00037">SectorShift::valid</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00647">main()</a>.</p>
+
+</div>
+</div>
+<a id="abeddd282fed4e3d673710ce2e072dd03" name="abeddd282fed4e3d673710ce2e072dd03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abeddd282fed4e3d673710ce2e072dd03">&#9670;&#160;</a></span>CalcSpectrumMultiBra()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CalcSpectrumMultiBra </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>v1Org</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>OmegaOrg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>Nomega</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcSpectrum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcomega</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>braSet_N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int ***&#160;</td>
+          <td class="paramname"><em>braSet_ops</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex **&#160;</td>
+          <td class="paramname"><em>braSet_para</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute nBra dynamical spectra that share ONE ket BiCG solve (Stage 3 bra/ket reuse). </p>
+<p>Generalises CalcOneSpectrum: the ket A|phi&gt; is built from X-&gt;Def's single-excitation operator (the current op set) and the resolvent (z-(H-E))^{-1}|A phi&gt; is solved ONCE; it is then projected onto nBra bras B_b|phi&gt; via Komega's nl projections, giving G_b(z) = &lt;B_b phi|(z-(H-E))^{-1}|A phi&gt; for every b in one solve. This cuts the BiCG count for off-diagonal Green's functions from n_orb^2 to n_orb. The bras are un-normalized (the ket carries the norm on both sides, as in the single-bra path) and live in the same excited sector as the ket (one-body c_i/c_j on one spin), so the shared MakeExcitedList lists apply to both. Writes nBra spectra into dcSpectrum with Komega's column-major layout dcSpectrum[i*nBra + b]. Does NOT write output; the caller does I/O and owns the excitation lists and v1Org/dcSpectrum.</p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success (including the zero-ket-norm case, which zeroes every spectrum). </td></tr>
+    <tr><td class="paramname">FALSE</td><td>allocation or solver failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00632">632</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00063">c_CalcExcitedStateEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00062">c_CalcExcitedStateStart</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00371">CalcSpectrumByBiCG()</a>, <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="struct_8h_source.html#l00504">BindStruct::Check</a>, <a class="el" href="struct_8h_source.html#l00280">DefineList::dcOmegaMax</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::dcOmegaMin</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l01261">GetExcitedState()</a>, <a class="el" href="struct_8h_source.html#l00257">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00396">CheckList::idim_max</a>, <a class="el" href="wrapperMPI_8c_source.html#l00324">NormMPI_dc()</a>, <a class="el" href="struct_8h_source.html#l00241">DefineList::NPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00235">DefineList::NSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00239">DefineList::PairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00242">DefineList::ParaPairExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00236">DefineList::ParaSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00233">DefineList::SingleExcitationOperator</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="global_8c_source.html#l00135">v1Org</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a6e5a2b02410ea37ba88e4afd24b31b88" name="a6e5a2b02410ea37ba88e4afd24b31b88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e5a2b02410ea37ba88e4afd24b31b88">&#9670;&#160;</a></span>CheckEigenVectorFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CheckEigenVectorFile </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>useIdxSuffix</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Preflight one eigenvector file without filling the work vector. </p>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00311">311</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00220">BuildEigenVectorFileName()</a>, <a class="el" href="struct_8h_source.html#l00504">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00398">CheckList::idim_maxOrg</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00369">CheckFiniteTLoopEigenVectors()</a>.</p>
+
+</div>
+</div>
+<a id="ab98a4d948c769229da5e96d69a400896" name="ab98a4d948c769229da5e96d69a400896"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab98a4d948c769229da5e96d69a400896">&#9670;&#160;</a></span>CheckFiniteTLoopEigenVectors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CheckFiniteTLoopEigenVectors </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nloop</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check all finite-T loop eigenvector files before writing any spectrum. </p>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00369">369</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="CalcSpectrum_8c_source.html#l00311">CheckEigenVectorFile()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>
@@ -270,11 +641,11 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00401">401</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l01260">1260</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="PairEx_8c_source.html#l00048">GetPairExcitedState()</a>, <a class="el" href="SingleEx_8c_source.html#l00030">GetSingleExcitedState()</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00030">ExcitationOperatorSet::NPair</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00027">ExcitationOperatorSet::NSingle</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00031">ExcitationOperatorSet::Pair</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00032">ExcitationOperatorSet::ParaPair</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00029">ExcitationOperatorSet::ParaSingle</a>, <a class="el" href="CalcSpectrum_8h_source.html#l00028">ExcitationOperatorSet::Single</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>.</p>
 
 </div>
 </div>
@@ -321,11 +692,11 @@ Output: iCalcModel (From HubbardNConserved to Hubbard), {Ne, Nup, Ndown, Nsite, 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00525">525</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l01384">1384</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00035">cErrLargeMem</a>, <a class="el" href="check_8c_source.html#l00078">check()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00109">FinalizeMPI()</a>, <a class="el" href="xsetmem_8c_source.html#l00314">GetlistSize()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="ErrorMessage_8c_source.html#l00020">iErrCodeMem</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="global_8c_source.html#l00109">list_1</a>, <a class="el" href="global_8c_source.html#l00116">list_1_org</a>, <a class="el" href="global_8c_source.html#l00117">list_1buf_org</a>, <a class="el" href="global_8c_source.html#l00112">list_2_1</a>, <a class="el" href="global_8c_source.html#l00118">list_2_1_org</a>, <a class="el" href="global_8c_source.html#l00113">list_2_2</a>, <a class="el" href="global_8c_source.html#l00119">list_2_2_org</a>, <a class="el" href="setmemory_8c_source.html#l00049">lui_1d_allocate()</a>, <a class="el" href="global_8h_source.html#l00024">MPIFALSE</a>, <a class="el" href="global_8c_source.html#l00158">myrank</a>, <a class="el" href="xsetmem_8c_source.html#l00183">setmem_large()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00161">stdoutMPI</a>, <a class="el" href="sz_8c_source.html#l00109">sz()</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00035">cErrLargeMem</a>, <a class="el" href="check_8c_source.html#l00078">check()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00109">FinalizeMPI()</a>, <a class="el" href="xsetmem_8c_source.html#l00348">GetlistSize()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="ErrorMessage_8c_source.html#l00020">iErrCodeMem</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00149">list_1buf_org</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00150">list_2_1_org</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="global_8c_source.html#l00151">list_2_2_org</a>, <a class="el" href="setmemory_8c_source.html#l00053">lui_1d_allocate()</a>, <a class="el" href="global_8h_source.html#l00024">MPIFALSE</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="xsetmem_8c_source.html#l00217">setmem_large()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="sz_8c_source.html#l00109">sz()</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -385,11 +756,387 @@ Output: iCalcModel (From HubbardNConserved to Hubbard), {Ne, Nup, Ndown, Nsite, 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00050">50</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00053">53</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00455">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00054">cFileNameCalcDynamicalGreen</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00245">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00445">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00056">cFileNameCalcDynamicalGreen</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>.</p>
+
+</div>
+</div>
+<a id="a06bd00cdc4125049da4405d2dd31a911" name="a06bd00cdc4125049da4405d2dd31a911"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06bd00cdc4125049da4405d2dd31a911">&#9670;&#160;</a></span>OutputSpectrumIdx()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int OutputSpectrumIdx </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>op</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>useOp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>bra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>useBra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>stride</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>Nomega</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcSpectrum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcomega</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Write the spectrum for eigenstate idx (operator op, bra b) to a per-state output file. </p>
+<p>Naming, by what is active:</p><ul>
+<li>single operator, single bra (useOp==FALSE): "&lt;head&gt;_DynamicalGreen_&lt;idx&gt;.dat" (Stage 1a).</li>
+<li>multiple operators (useOp==TRUE, useBra==FALSE): "&lt;head&gt;_DynamicalGreen_&lt;idx&gt;_&lt;op&gt;.dat".</li>
+<li>multiple bras (useBra==TRUE, op field forced on): "&lt;head&gt;_DynamicalGreen_&lt;idx&gt;_&lt;op&gt;_&lt;bra&gt;.dat". The spectrum for bra b lives at dcSpectrum[i*stride + bra] (stride == nBra; Komega x(nBra,Nomega) column-major layout), so this reads a strided slice. Same column format as OutputSpectrum; consumed by the DCore finite-T reader (CalcSpectrumCore._read_spectrum). </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00443">443</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a0484cf3acd876fecc524fb9837d5e547" name="a0484cf3acd876fecc524fb9837d5e547"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0484cf3acd876fecc524fb9837d5e547">&#9670;&#160;</a></span>ReadEigenEnergy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ReadEigenEnergy </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>Ene</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read the idx-th eigen-energy E_idx from "&lt;CDataFileHead&gt;_energy.dat". </p>
+<p>The energy file holds one "Energy &lt;value&gt;" line per computed eigenstate, in eigenstate order; this returns the (idx)-th of them. Used as the per-state spectral shift OmegaOrg in the finite-T loop (the same value DCore would otherwise pass as OmegaOrg per launch).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">X</td><td>[in] Calculation struct (for CDataFileHead). </td></tr>
+    <tr><td class="paramname">idx</td><td>[in] Eigenstate index. </td></tr>
+    <tr><td class="paramname">Ene</td><td>[out] E_idx. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success. </td></tr>
+    <tr><td class="paramname">FALSE</td><td>file missing or index not found. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00399">399</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00044">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00040">cFileNameEnergy_Lanczos</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a8f357989501aad3f8dcae0f9731ac292" name="a8f357989501aad3f8dcae0f9731ac292"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f357989501aad3f8dcae0f9731ac292">&#9670;&#160;</a></span>ReadEigenVector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ReadEigenVector </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>useIdxSuffix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>v1Org</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read one MPI-distributed eigenvector into v1Org (original, pre-excitation sector). </p>
+<p>Reads the SpectrumVec file for the local MPI rank. When useIdxSuffix is TRUE the file name is "&lt;SpectrumVec&gt;_&lt;idx&gt;_rank_&lt;myrank&gt;.dat" (used by the finite-T eigenstate loop, where SpectrumVec is the common base, e.g. ".../zvo_eigenvec"); when FALSE it is the legacy "&lt;SpectrumVec&gt;_rank_&lt;myrank&gt;.dat".</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">X</td><td>[in,out] Calculation struct (Large.itr is set from the stored step). </td></tr>
+    <tr><td class="paramname">idx</td><td>[in] Eigenstate index (used only when useIdxSuffix is TRUE). </td></tr>
+    <tr><td class="paramname">useIdxSuffix</td><td>[in] Whether to insert the "_&lt;idx&gt;" eigenstate suffix. </td></tr>
+    <tr><td class="paramname">v1Org</td><td>[out] Eigenvector (length idim_maxOrg+1). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success. </td></tr>
+    <tr><td class="paramname">FALSE</td><td>file missing or dimension mismatch. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00259">259</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00220">BuildEigenVectorFileName()</a>, <a class="el" href="struct_8h_source.html#l00504">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="struct_8h_source.html#l00398">CheckList::idim_maxOrg</a>, <a class="el" href="struct_8h_source.html#l00408">LargeList::itr</a>, <a class="el" href="struct_8h_source.html#l00505">BindStruct::Large</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00135">v1Org</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a5091bb975ee3449c72764cabbc983d68" name="a5091bb975ee3449c72764cabbc983d68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5091bb975ee3449c72764cabbc983d68">&#9670;&#160;</a></span>ReadSingleExcitationSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ReadSingleExcitationSet </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nSiteTotal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>pN</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int ***&#160;</td>
+          <td class="paramname"><em>pOps</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex **&#160;</td>
+          <td class="paramname"><em>pPara</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read one single-excitation operator set from an HPhi single_ex-format def file. </p>
+<p>File layout: 5 header lines, the 2nd being "&lt;keyword&gt; &lt;N&gt;", followed by N lines "&lt;site&gt; &lt;spin&gt; &lt;type&gt; &lt;re&gt; &lt;im&gt;". Operators in one file are summed into one excited state (e.g. c_i + i c_j). Allocates *pOps ([N][3]) and *pPara ([N]); the caller frees them with free_i_2d_allocate / free_cd_1d_allocate. Used to load the operator sets op=1.. for the multi-operator finite-T loop (set 0 comes from the namelist SingleExcitation).</p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success. </td></tr>
+    <tr><td class="paramname">FALSE</td><td>file missing or malformed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00535">535</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00140">fopenMPI()</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00152">free_i_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00138">i_2d_allocate()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00481">ValidateSingleExcitationRow()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
+
+</div>
+</div>
+<a id="a86eb240ab99d02a8efd39e9814b45d62" name="a86eb240ab99d02a8efd39e9814b45d62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86eb240ab99d02a8efd39e9814b45d62">&#9670;&#160;</a></span>RunMultiOpFiniteTLoop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int RunMultiOpFiniteTLoop </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>v1Org</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>Nomega</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcSpectrum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>dcomega</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finite-temperature spectrum loop: eigenstates idx-outer, operator sets op-inner. </p>
+<p>For each of the iSpectrumLoopExct eigenstates it reads the eigenvector ONCE and reuses it across all iSpectrumNumOp operator sets (op-inner), so the eigenvector reads drop from exct*nop to exct. Operator set 0 is the namelist SingleExcitation (already in X-&gt;Def); sets 1.. are loaded from single_ex_&lt;op&gt;.def and must map to set 0's Hilbert sector (the shared sector for which MakeExcitedList already built the excited lists). The per-state spectral shift is E_idx (real) plus any configured imaginary broadening. Writes one DynamicalGreen_&lt;idx&gt;[_&lt;op&gt;].dat per (eigenstate, operator). X-&gt;Def's single-excitation pointers are always restored before return, and the operator sets loaded here (1..) are freed; the caller still owns v1Org/dcSpectrum/dcomega and the excitation lists.</p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">TRUE</td><td>success. </td></tr>
+    <tr><td class="paramname">FALSE</td><td>allocation, file-read, eigenstate-count, or sector-mismatch failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00740">740</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00513">EDMainCalStruct::Bind</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00369">CheckFiniteTLoopEigenVectors()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00282">DefineList::dcOmegaOrg</a>, <a class="el" href="struct_8h_source.html#l00503">BindStruct::Def</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00035">SectorShift::dNdown</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00033">SectorShift::dNe</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00034">SectorShift::dNup</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00036">SectorShift::dTotal2Sz</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00152">free_i_2d_allocate()</a>, <a class="el" href="ExcitationSectorShift_8c_source.html#l00126">GetExcitationOperatorSetShift()</a>, <a class="el" href="struct_8h_source.html#l00263">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00094">DefineList::iFlgSzConserved</a>, <a class="el" href="struct_8h_source.html#l00287">DefineList::iSpectrumLoopExct</a>, <a class="el" href="struct_8h_source.html#l00300">DefineList::iSpectrumNumBra</a>, <a class="el" href="struct_8h_source.html#l00293">DefineList::iSpectrumNumOp</a>, <a class="el" href="struct_8h_source.html#l00235">DefineList::NSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00247">DefineList::NSingleExcitationOperatorBra</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00064">DefineList::NsiteMPI</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00443">OutputSpectrumIdx()</a>, <a class="el" href="struct_8h_source.html#l00236">DefineList::ParaSingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00248">DefineList::ParaSingleExcitationOperatorBra</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00399">ReadEigenEnergy()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00259">ReadEigenVector()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00535">ReadSingleExcitationSet()</a>, <a class="el" href="struct_8h_source.html#l00233">DefineList::SingleExcitationOperator</a>, <a class="el" href="struct_8h_source.html#l00245">DefineList::SingleExcitationOperatorBra</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00135">v1Org</a>, <a class="el" href="ExcitationSectorShift_8h_source.html#l00037">SectorShift::valid</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00510">ValidateSingleExcitationSet()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>.</p>
 
 </div>
 </div>
@@ -425,11 +1172,131 @@ Output: dcOmegaMax, dcOmegaMin</td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00440">440</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l01299">1299</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00040">cFileNameEnergy_Lanczos</a>, <a class="el" href="global_8c_source.html#l00039">cFileNameLanczosStep</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00125">LargeValue</a>, <a class="el" href="global_8c_source.html#l00161">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00040">cFileNameEnergy_Lanczos</a>, <a class="el" href="global_8c_source.html#l00039">cFileNameLanczosStep</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00091">CalcSpectrum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>.</p>
+
+</div>
+</div>
+<a id="ac080a9c868e7d652c391d91f515c4bcf" name="ac080a9c868e7d652c391d91f515c4bcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac080a9c868e7d652c391d91f515c4bcf">&#9670;&#160;</a></span>ValidateSingleExcitationRow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ValidateSingleExcitationRow </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nSiteTotal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>site</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00481">481</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l02671">CheckSite()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00535">ReadSingleExcitationSet()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00510">ValidateSingleExcitationSet()</a>.</p>
+
+</div>
+</div>
+<a id="ab4fa96051b57514f0def5eb5ba4e02fa" name="ab4fa96051b57514f0def5eb5ba4e02fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4fa96051b57514f0def5eb5ba4e02fa">&#9670;&#160;</a></span>ValidateSingleExcitationSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ValidateSingleExcitationSet </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nSiteTotal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>ops</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcSpectrum_8c_source.html#l00510">510</a> of file <a class="el" href="CalcSpectrum_8c_source.html">CalcSpectrum.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00481">ValidateSingleExcitationRow()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>.</p>
 
 </div>
 </div>

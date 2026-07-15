@@ -55,6 +55,7 @@ var ErrorMessage_8h =
     [ "cErrnvec", "ErrorMessage_8h.html#a87f37da29984cb3b1b645b5c482f412f", null ],
     [ "cErrnvecShow", "ErrorMessage_8h.html#a5993595d810270fa5628df259631e842", null ],
     [ "cErrOutput", "ErrorMessage_8h.html#aac81c10706437b43e268b0ee6158d982", null ],
+    [ "cErrOutputGreenFormat", "ErrorMessage_8h.html#a9710ebc651a3382d8b1b019da42cfb5e", null ],
     [ "cErrOutputHam", "ErrorMessage_8h.html#ad8a5ae88b64ee0075988c5580e88f83d", null ],
     [ "cErrOutputHamForFullDiag", "ErrorMessage_8h.html#a2fbbdfa47f05098b69458e3e634468b8", null ],
     [ "cErrOutputMode", "ErrorMessage_8h.html#aa94f43835abdab2a83b28c62c801ca98", null ],

@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>入力ファイル指定用ファイル &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <title>入力ファイル指定用ファイル &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
@@ -44,9 +44,13 @@
 ModPara  modpara.def
 LocSpin  zlocspn.def
 Trans    ztransfer.def
+AnomalousTerm zanomalousterm.def
 InterAll zinterall.def
+NBodyInterAll znbodyinterall.def
 OneBodyG zcisajs.def
+AnomalousG zanomalousg.def
 TwoBodyG zcisajscktaltdc.def
+NBodyG znbodyg.def
 </pre></div>
 </div>
 <div class="line-block">
@@ -105,8 +109,14 @@ LocSpinです。</p></li>
 <tr class="row-odd"><td><p>Trans</p></td>
 <td><p>一般的一体相互作用に関する設定をします。</p></td>
 </tr>
-<tr class="row-even"><td><p>InterAll</p></td>
+<tr class="row-even"><td><p>AnomalousTerm</p></td>
+<td><p>HubbardGCの異常ペアハミルトニアン項に関する設定をします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>InterAll</p></td>
 <td><p>一般的二体相互作用に関する設定をします。</p></td>
+</tr>
+<tr class="row-even"><td><p>NBodyInterAll</p></td>
+<td><p>一般的N体相互作用に関する設定をします。</p></td>
 </tr>
 <tr class="row-odd"><td><p>CoulombIntra</p></td>
 <td><p>内部クーロン相互作用に関する設定をします。</p></td>
@@ -132,8 +142,14 @@ LocSpinです。</p></li>
 <tr class="row-even"><td><p>OneBodyG</p></td>
 <td><p>出力する一体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}\rangle\)</span> に関する設定をします。</p></td>
 </tr>
-<tr class="row-odd"><td><p>TwoBodyG</p></td>
+<tr class="row-odd"><td><p>AnomalousG</p></td>
+<td><p>出力する異常ペアグリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}c_{j\sigma_2}\rangle\)</span> および <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle\)</span> に関する設定をします。</p></td>
+</tr>
+<tr class="row-even"><td><p>TwoBodyG</p></td>
 <td><p>出力する二体グリーン関数 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}c_{k\sigma_3}^{\dagger}c_{l\sigma_4}\rangle\)</span>に関する設定をします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>NBodyG</p></td>
+<td><p>出力するN体グリーン関数に関する設定をします。</p></td>
 </tr>
 <tr class="row-even"><td><p>SingleExcitation</p></td>
 <td><p>一体励起状態の生成演算子に関する指定をします。</p></td>

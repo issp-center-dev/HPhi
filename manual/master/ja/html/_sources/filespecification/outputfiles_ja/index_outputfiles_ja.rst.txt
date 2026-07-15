@@ -77,11 +77,11 @@
      - 説明
    * - :doc:`Time_TPQ_Step.dat <Time_TPQ_Step_ja>`
      - TPQステップ時間
-   * - :doc:`Norm_rand*.dat <Norm_rand_ja>`
+   * - :doc:`Norm_rand*.dat / Norm_tpq.dat <Norm_rand_ja>`
      - TPQ状態のノルム
-   * - :doc:`SS_rand*.dat <SS_rand_ja>`
+   * - :doc:`SS_rand*.dat / SS_tpq.dat <SS_rand_ja>`
      - TPQのスピン-スピン相関
-   * - :doc:`Flct_rand*.dat <Flct_rand_ja>`
+   * - :doc:`Flct_rand*.dat / Flct_tpq.dat <Flct_rand_ja>`
      - TPQの揺らぎ
 
 **時間発展出力**
@@ -117,8 +117,12 @@
      - 物理量（エネルギー、ダブロン、Sz等）
    * - :doc:`zvo_cisajs*.dat <cisajs_ja>`
      - 一体グリーン関数
+   * - :doc:`zvo_AnomalousG*.dat <AnomalousG_ja>`
+     - 異常ペアグリーン関数
    * - :doc:`zvo_cisajscktalt*.dat <cisajscktalt_ja>`
      - 二体グリーン関数
+   * - :doc:`zvo_NBodyG*.dat <NBodyG_ja>`
+     - N体グリーン関数
 
 **波動関数・ベクトル**
 
@@ -238,7 +242,9 @@ TPQ（有限温度）出力
    Eigenvalue_ja
    phys_ja
    cisajs_ja
+   AnomalousG_ja
    cisajscktalt_ja
+   NBodyG_ja
 
 波動関数・ベクトル
 ^^^^^^^^^^^^^^^^^^

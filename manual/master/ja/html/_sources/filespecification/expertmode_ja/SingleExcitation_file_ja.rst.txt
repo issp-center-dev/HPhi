@@ -97,6 +97,12 @@ SingleExcitation指定ファイル
 
 -  :math:`[`\ int02\ :math:`]`-:math:`[`\ int04\ :math:`]`\ を指定する際、範囲外の整数を指定した場合はエラー終了します。
 
+-  \ :ref:`ModPara <Subsec:modpara>`\ ファイルで\ ``SpectrumNumOp``\ :math:`>1`\ を
+   指定した場合、追加の ket 演算子セット\ ``1``\ ...\ :math:`(M-1)`\ は実行
+   ディレクトリの\ ``single_ex_1.def``\ ...\ ``single_ex_``\ :math:`(M-1)`\ ``.def``\ から
+   読み込まれます。これらのファイルは本ページで説明する形式と全く同じです
+   (セット\ ``0``\ は namelist で指定する本\ ``SingleExcitation``\ ファイルです)。
+
 
 .. raw:: latex
 

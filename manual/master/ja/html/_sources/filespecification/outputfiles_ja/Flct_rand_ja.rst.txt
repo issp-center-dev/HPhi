@@ -26,6 +26,11 @@ Flct\_rand.dat
 
 ??はTPQ法計算時のrunの番号を表します。
 
+TPQ/cTPQで ``OutputGreenFormat=1`` を指定した場合、この物理量は
+``Flct_tpq.dat`` に出力されます。この集約ファイルには全runが含まれ、
+各データ行は ``set step inv_temp N N^2 D D^2 Sz Sz^2`` の順になります。
+このモードでは ``Flct_rand??.dat`` は作成されません。
+
 ファイル形式
 ^^^^^^^^^^^^
 

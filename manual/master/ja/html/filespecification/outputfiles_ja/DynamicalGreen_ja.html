@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DynamicalGreen.dat &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <title>DynamicalGreen.dat &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
@@ -44,6 +44,19 @@
 <li><p>##_DynamicalGreen.dat</p></li>
 </ul>
 <p>##はModParaファイル内の[string02]で指定されるヘッダを表します。</p>
+<p>有限温度の固有状態ループおよび multiple-operator / multiple-bra モード
+(<a class="reference internal" href="../expertmode_ja/ModPara_file_ja.html#subsec-modpara"><span class="std std-ref">ModPara</span></a>ファイルの<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>、
+<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>、<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code>)を有効にすると、
+<code class="docutils literal notranslate"><span class="pre">(固有状態,</span> <span class="pre">ket</span> <span class="pre">演算子,</span> <span class="pre">bra)</span></code>の組み合わせごとに1つのファイルが出力され、
+0始まりの添字がファイル名に付与されます。</p>
+<ul class="simple">
+<li><p>##_DynamicalGreen_<em>idx</em>.dat — 固有状態 <em>idx</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumLoopExct</span></code>)。</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>.dat — 固有状態 <em>idx</em>、ket 演算子セット
+<em>op</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumNumOp</span></code>)。</p></li>
+<li><p>##_DynamicalGreen_<em>idx</em>_<em>op</em>_<em>bra</em>.dat — 固有状態 <em>idx</em>、
+ket 演算子セット <em>op</em>、bra 演算子セット <em>bra</em>(<code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code>)。</p></li>
+</ul>
+<p>以下のファイル形式はこれらすべての変種で共通です。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>

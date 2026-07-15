@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SingleExcitationBra file &#8212; HΦ Documentation 3.6.0 documentation</title>
+    <title>SingleExcitationBra file &#8212; HΦ Documentation 3.7.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=5349f462"></script>
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -40,7 +40,7 @@
 <strong>bra</strong> single excited state <span class="math notranslate nohighlight">\(B|\phi\rangle\)</span>, used to compute the
 <em>off-diagonal</em> dynamical Green’s function</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-singleexcitationbra-file-en-0">
-<span class="eqno">(4.18)<a class="headerlink" href="#equation-filespecification-expertmode-en-singleexcitationbra-file-en-0" title="Link to this equation">¶</a></span>\[G_{BA}(z) = \langle \phi | B^{\dagger} \frac{1}{z-H} A | \phi \rangle ,\]</div>
+<span class="eqno">(4.23)<a class="headerlink" href="#equation-filespecification-expertmode-en-singleexcitationbra-file-en-0" title="Link to this equation">¶</a></span>\[G_{BA}(z) = \langle \phi | B^{\dagger} \frac{1}{z-H} A | \phi \rangle ,\]</div>
 <p>where the ket operator <span class="math notranslate nohighlight">\(A\)</span> is given in
 <a class="reference internal" href="SingleExcitation_file_en.html"><span class="doc">SingleExcitation</span></a>. If this file is omitted, the
 ordinary diagonal Green’s function (<span class="math notranslate nohighlight">\(B=A\)</span>) is calculated.</p>
@@ -66,13 +66,38 @@ computed quantity is <span class="math notranslate nohighlight">\(\langle\phi|B^
 method (<code class="docutils literal notranslate"><span class="pre">method=&quot;CG&quot;</span></code>) and <code class="docutils literal notranslate"><span class="pre">CalcSpec=&quot;Normal&quot;</span></code> (restart/save spectrum
 modes are not supported together with a bra operator).</p></li>
 <li><p>The ket (<a class="reference internal" href="SingleExcitation_file_en.html"><span class="doc">SingleExcitation</span></a>) and bra operators
-must map <span class="math notranslate nohighlight">\(|\phi\rangle\)</span> into the <strong>same</strong> excited Hilbert sector (the
-same change of particle number and <span class="math notranslate nohighlight">\(S_z\)</span>). All operators within one
-file must also share the same sector change. Otherwise the program is
-terminated.</p></li>
-<li><p>Supported model: Hubbard. (A single excitation is not defined for spin
-systems, and other models are not yet supported for the off-diagonal Green’s
-function; the program is terminated for them.)</p></li>
+must map <span class="math notranslate nohighlight">\(|\phi\rangle\)</span> into the <strong>same</strong> excited Hilbert sector, and all
+operators within one file must share the same sector change; otherwise the
+program is terminated. What “same sector” means depends on the model:</p>
+<ul>
+<li><p>Hubbard (canonical): the same change of particle number <strong>and</strong>
+<span class="math notranslate nohighlight">\(S_z\)</span>.</p></li>
+<li><p>HubbardGC (grand canonical): a single excitation carries no sector shift,
+so the whole Fock space is one Hilbert space and the ket and bra (of either
+spin) always share it.</p></li>
+<li><p>HubbardNConserved (<span class="math notranslate nohighlight">\(S_z\)</span> free): only the same change of particle
+number is required; the <span class="math notranslate nohighlight">\(S_z\)</span> change may differ.</p></li>
+</ul>
+</li>
+<li><p>Supported models: Hubbard, HubbardGC (grand canonical), and
+HubbardNConserved (canonical, fixed electron number with free <span class="math notranslate nohighlight">\(S_z\)</span>).
+(A single excitation is not defined for spin systems, and other models are
+not yet supported for the off-diagonal Green’s function; the program is
+terminated for them.)</p></li>
+<li><p>HubbardNConserved is selected from the Hubbard model (<code class="docutils literal notranslate"><span class="pre">CalcModel=0</span></code>) by
+giving <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> (the electron number) without <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> in the
+<a class="reference internal" href="ModPara_file_en.html#subsec-modpara"><span class="std std-ref">ModPara</span></a> file. Because <span class="math notranslate nohighlight">\(S_z\)</span> is then free, this
+enables the cross-spin (2Sz-free) off-diagonal route (used, for example, for
+spin-orbit-coupled impurities): the excited Hilbert
+sector is fixed by the electron number alone, so the ket and bra need only
+share the same change of particle number, and a cross-spin <span class="math notranslate nohighlight">\(G_{BA}\)</span> is
+obtained from a single solve.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">SpectrumNumBra</span></code> <span class="math notranslate nohighlight">\(&gt;1\)</span> is set in the
+<a class="reference internal" href="ModPara_file_en.html#subsec-modpara"><span class="std std-ref">ModPara</span></a> file, the additional bra operator sets
+<code class="docutils literal notranslate"><span class="pre">1</span></code> … <span class="math notranslate nohighlight">\((B-1)\)</span> are read from files named <code class="docutils literal notranslate"><span class="pre">single_ex_bra_1.def</span></code> …
+<code class="docutils literal notranslate"><span class="pre">single_ex_bra_</span></code><span class="math notranslate nohighlight">\((B-1)\)</span><code class="docutils literal notranslate"><span class="pre">.def</span></code> in the run directory, using the
+same format as this file; bra set <code class="docutils literal notranslate"><span class="pre">0</span></code> is this <code class="docutils literal notranslate"><span class="pre">SingleExcitationBra</span></code> file
+given in the namelist.</p></li>
 </ul>
 </section>
 </section>

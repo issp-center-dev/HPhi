@@ -5,19 +5,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>cisajscktalt.dat &#8212; HΦ マニュアル 3.6.0 ドキュメント</title>
+    <title>cisajscktalt.dat &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=ca534fcc"></script>
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
-    <link rel="next" title="ham.dat" href="ham_ja.html" />
-    <link rel="prev" title="cisajs.dat" href="cisajs_ja.html" />
+    <link rel="next" title="NBodyG.dat" href="NBodyG_ja.html" />
+    <link rel="prev" title="AnomalousG.dat" href="AnomalousG_ja.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -53,15 +53,19 @@
 <h2>ファイル名<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>Lanczos法: ##_cisajscktalt.dat</p>
 <p>TPQ法: ##_cisajscktalt_set??step%%.dat</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> のTPQ/cTPQ法: ##_cisajscktalt_tpq.dat</p>
 <p>実時間発展法: ##_cisajscktalt_step%%.dat</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の実時間発展法: ##_cisajscktalt_te.dat</p>
 <p>全対角化法、LOBCG法: ##_cisajscktalt_eigen&amp;&amp;.dat</p>
-<p>##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法でのステップ数、&amp;&amp;は固有値の番号を表します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の全対角化法、LOBCG法: ##_cisajscktalt_eigen.dat</p>
+<p>##はModParaファイル内の[string02]で指定されるヘッダ、??はTPQ法計算時のrunの番号、%%はTPQ法でのステップ数、&amp;&amp;は固有値の番号を表します。集約形式では、各行の先頭にTPQ/cTPQでは <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>、実時間発展では <code class="docutils literal notranslate"><span class="pre">step</span></code>、全対角化/LOBCGでは <code class="docutils literal notranslate"><span class="pre">eigen</span></code> が追加されます。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int04<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int05<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int06<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int07<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>int08<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p></li>
 </ul>
+<p><code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> の集約ファイルでは、上記の列の前に計算手法に応じた <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span></code>、<code class="docutils literal notranslate"><span class="pre">step</span></code>、または <code class="docutils literal notranslate"><span class="pre">eigen</span></code> のindex列が追加されます。</p>
 </section>
 <section id="id3">
 <h2>パラメータ<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
@@ -145,8 +149,8 @@
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
   <li><a href="index_outputfiles_ja.html"><span class="section-number">4.3. </span>出力ファイル</a><ul>
-      <li>Previous: <a href="cisajs_ja.html" title="前の章へ">cisajs.dat</a></li>
-      <li>Next: <a href="ham_ja.html" title="次の章へ">ham.dat</a></li>
+      <li>Previous: <a href="AnomalousG_ja.html" title="前の章へ">AnomalousG.dat</a></li>
+      <li>Next: <a href="NBodyG_ja.html" title="次の章へ">NBodyG.dat</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

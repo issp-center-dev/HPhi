@@ -31,14 +31,26 @@ File name
 
 *  TPQ method: ##_cisajscktalt_set??step%%.dat
 
+*  TPQ/cTPQ method with ``OutputGreenFormat=1``:
+   ##_cisajscktalt_tpq.dat
+
 *  Full diagonalization method, LOBCG method:
    ##_cisajscktalt_eigen&&.dat
 
+*  Full diagonalization method, LOBCG method with ``OutputGreenFormat=1``:
+   ##_cisajscktalt_eigen.dat
+
 *  Real time evolution method: ## cisajscktalt step%%.dat
+
+*  Real time evolution method with ``OutputGreenFormat=1``:
+   ##_cisajscktalt_te.dat
 
 ##, ??, %%, and && indicate [string02] in a ModPara file, the number of
 runs in calculation in the TPQ method, the number of steps in the TPQ
-method, and the index of the eigenvalues, respectively.
+method, and the index of the eigenvalues, respectively. In aggregate
+files, each data row has leading index columns: ``set step`` for
+TPQ/cTPQ, ``step`` for real-time evolution, and ``eigen`` for Full
+diagonalization/LOBCG.
 
 .. _file_format_41:
 
@@ -46,6 +58,10 @@ File format
 ~~~~~~~~~~~
 
 *  [int01]  [int02]  [int03]  [int04]  [int05]  [int06]  [int07]  [int08]  [double01]  [double02].
+
+For aggregate files generated with ``OutputGreenFormat=1``, the same
+columns are preceded by ``set step``, ``step``, or ``eigen`` according to
+the calculation method.
 
 .. _parameters_41:
 
