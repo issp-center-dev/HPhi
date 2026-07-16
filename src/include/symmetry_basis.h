@@ -19,6 +19,7 @@ struct SymmetryBasisRuntime {
   unsigned int group_order;
   unsigned long int full_dim;
   unsigned long int dim;
+  unsigned long int capacity;
   struct SymmetryBasisVector *basis;
   unsigned long int *raw_to_sym;
   double complex *raw_to_coeff;
