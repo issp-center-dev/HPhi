@@ -240,10 +240,15 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
     return -1;
   }
-  if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NCoulombInter > 0 ||
-      def->NHundCoupling > 0 || def->NIsingCoupling > 0 ||
-      def->NInterAll > 0) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 initially supports Exchange terms only.\n");
+  if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NInterAll > 0) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only.\n");
+    return -1;
+  }
+  if (def->NCoulombInter != def->NIsingCoupling ||
+      def->NHundCoupling != def->NIsingCoupling) {
+    fprintf(stdoutMPI,
+            "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only; "
+            "direct CoulombInter/Hund terms are not supported.\n");
     return -1;
   }
   return 0;
@@ -263,6 +268,62 @@ static double sum_exchange_pair(const struct DefineList *def, int site0, int sit
     if (def->ExchangeCoupling[i][0] == def->ExchangeCoupling[i][1]) continue;
     if (same_unordered_pair(def->ExchangeCoupling[i][0], def->ExchangeCoupling[i][1], site0, site1)) {
       sum += def->ParaExchangeCoupling[i];
+    }
+  }
+  return sum;
+}
+
+static unsigned int count_ising_hund_pair(const struct DefineList *def, int site0, int site1)
+{
+  unsigned int i;
+  unsigned int count = 0;
+  if (site0 == site1) return 0;
+  for (i = 0; i < def->NHundCoupling; i++) {
+    if (def->HundCoupling[i][0] == def->HundCoupling[i][1]) continue;
+    if (same_unordered_pair(def->HundCoupling[i][0], def->HundCoupling[i][1], site0, site1)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+static unsigned int count_ising_coulomb_pair(const struct DefineList *def, int site0, int site1)
+{
+  unsigned int i;
+  unsigned int count = 0;
+  if (site0 == site1) return 0;
+  for (i = 0; i < def->NCoulombInter; i++) {
+    if (def->CoulombInter[i][0] == def->CoulombInter[i][1]) continue;
+    if (same_unordered_pair(def->CoulombInter[i][0], def->CoulombInter[i][1], site0, site1)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+static double sum_ising_hund_pair(const struct DefineList *def, int site0, int site1)
+{
+  unsigned int i;
+  double sum = 0.0;
+  if (site0 == site1) return 0.0;
+  for (i = 0; i < def->NHundCoupling; i++) {
+    if (def->HundCoupling[i][0] == def->HundCoupling[i][1]) continue;
+    if (same_unordered_pair(def->HundCoupling[i][0], def->HundCoupling[i][1], site0, site1)) {
+      sum += def->ParaHundCoupling[i];
+    }
+  }
+  return sum;
+}
+
+static double sum_ising_coulomb_pair(const struct DefineList *def, int site0, int site1)
+{
+  unsigned int i;
+  double sum = 0.0;
+  if (site0 == site1) return 0.0;
+  for (i = 0; i < def->NCoulombInter; i++) {
+    if (def->CoulombInter[i][0] == def->CoulombInter[i][1]) continue;
+    if (same_unordered_pair(def->CoulombInter[i][0], def->CoulombInter[i][1], site0, site1)) {
+      sum += def->ParaCoulombInter[i];
     }
   }
   return sum;
@@ -299,10 +360,97 @@ static int validate_exchange_invariance(const struct DefineList *def)
   return 0;
 }
 
+static int validate_ising_hund_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NHundCoupling; i++) {
+      int src0 = def->HundCoupling[i][0];
+      int src1 = def->HundCoupling[i][1];
+      if (src0 < 0 || src1 < 0 ||
+          (unsigned int)src0 >= def->Nsite ||
+          (unsigned int)src1 >= def->Nsite) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Ising Hund term %u has a site outside [0, Nsite).\n",
+                i);
+        return -1;
+      }
+      if (src0 == src1) continue;
+      {
+        int a = def->SymTrans[g][src0];
+        int b = def->SymTrans[g][src1];
+        double src_sum = sum_ising_hund_pair(def, src0, src1);
+        double mapped_sum = sum_ising_hund_pair(def, a, b);
+        if (count_ising_hund_pair(def, a, b) == 0) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym Ising Hund term %u maps to a missing pair under op %u.\n",
+                  i, g);
+          return -1;
+        }
+        if (fabs(mapped_sum - src_sum) > 1.0e-10) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym Ising Hund invariance failed for term %u under op %u.\n",
+                  i, g);
+          return -1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+static int validate_ising_coulomb_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NCoulombInter; i++) {
+      int src0 = def->CoulombInter[i][0];
+      int src1 = def->CoulombInter[i][1];
+      if (src0 < 0 || src1 < 0 ||
+          (unsigned int)src0 >= def->Nsite ||
+          (unsigned int)src1 >= def->Nsite) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Ising CoulombInter term %u has a site outside [0, Nsite).\n",
+                i);
+        return -1;
+      }
+      if (src0 == src1) continue;
+      {
+        int a = def->SymTrans[g][src0];
+        int b = def->SymTrans[g][src1];
+        double src_sum = sum_ising_coulomb_pair(def, src0, src1);
+        double mapped_sum = sum_ising_coulomb_pair(def, a, b);
+        if (count_ising_coulomb_pair(def, a, b) == 0) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym Ising CoulombInter term %u maps to a missing pair under op %u.\n",
+                  i, g);
+          return -1;
+        }
+        if (fabs(mapped_sum - src_sum) > 1.0e-10) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym Ising CoulombInter invariance failed for term %u under op %u.\n",
+                  i, g);
+          return -1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+static int validate_ising_diagonal_invariance(const struct DefineList *def)
+{
+  if (def->NIsingCoupling == 0) return 0;
+  if (validate_ising_hund_invariance(def) != 0) return -1;
+  if (validate_ising_coulomb_invariance(def) != 0) return -1;
+  return 0;
+}
+
 int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
   if (validate_exchange_invariance(def) != 0) return -1;
+  if (validate_ising_diagonal_invariance(def) != 0) return -1;
   return 0;
 }

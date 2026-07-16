@@ -13,6 +13,7 @@ double *list_Diagonal = NULL;
 int g_tj_odd_split_guard_enabled = 0;
 long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
+static unsigned long int test_raw_dim = 0;
 
 static int perm_storage[6][6];
 static int anti_storage[6][6];
@@ -59,7 +60,41 @@ static unsigned long int setup_fixed_sz_basis(unsigned int nsite,
       list_1[dim] = state;
     }
   }
+  test_raw_dim = dim;
   return dim;
+}
+
+static unsigned long int raw_index_for_state(unsigned long int state)
+{
+  unsigned long int raw;
+  for (raw = 1; raw <= test_raw_dim; raw++) {
+    if (list_1[raw] == state) return raw;
+  }
+  return 0;
+}
+
+static double spin_ising_pair_energy(unsigned long int state,
+                                     unsigned int site0,
+                                     unsigned int site1,
+                                     double coupling)
+{
+  unsigned long int bit0 = (state >> site0) & 1UL;
+  unsigned long int bit1 = (state >> site1) & 1UL;
+  if (bit0 == bit1) return 0.25 * coupling;
+  return -0.25 * coupling;
+}
+
+static void set_ising_ring_diagonal(unsigned int nsite, double coupling)
+{
+  unsigned long int raw;
+  for (raw = 1; raw <= test_raw_dim; raw++) {
+    unsigned int site;
+    double diagonal = 0.0;
+    for (site = 0; site < nsite; site++) {
+      diagonal += spin_ising_pair_energy(list_1[raw], site, (site + 1U) % nsite, coupling);
+    }
+    list_Diagonal[raw] = diagonal;
+  }
 }
 
 static void setup_cyclic_def(struct DefineList *def,
@@ -171,6 +206,10 @@ static double complex raw_reference_matrix_element(const struct BindStruct *X,
     unsigned long int state = list_1[raw];
     double complex beta_coeff = projected_coeff_for_state(X, beta, state);
     if (cabs(beta_coeff) < 1.0e-12) continue;
+    if (list_Diagonal != NULL) {
+      double complex alpha_coeff = projected_coeff_for_state(X, alpha, state);
+      value += conj(alpha_coeff) * list_Diagonal[raw] * beta_coeff;
+    }
     for (term = 0; term < X->Def.NExchangeCoupling; term++) {
       unsigned long int out_state;
       if (apply_exchange_halfspin_test(state,
@@ -191,6 +230,9 @@ static double complex canonicalized_matrix_element(const struct BindStruct *X,
 {
   unsigned int term;
   double complex value = 0.0;
+  if (alpha == beta && X->Sym->sym_diagonal != NULL) {
+    value += X->Sym->sym_diagonal[beta];
+  }
   for (term = 0; term < X->Def.NExchangeCoupling; term++) {
     unsigned long int out_state;
     if (apply_exchange_halfspin_test(X->Sym->basis[beta].rep_state,
@@ -264,11 +306,13 @@ static void assert_symmetry_dim(unsigned int nsite,
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
+                                                    double diagonal_coupling,
                                                     const char *label)
 {
   struct BindStruct X;
   unsigned long int alpha, beta;
   setup_bind(&X, nsite, nup, momentum_index);
+  if (diagonal_coupling != 0.0) set_ising_ring_diagonal(nsite, diagonal_coupling);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -278,6 +322,39 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
       double complex raw_value = raw_reference_matrix_element(&X, alpha, beta);
       double complex canonical_value = canonicalized_matrix_element(&X, alpha, beta);
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
+    }
+  }
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_orbit_diagonal_is_representative(unsigned int nsite,
+                                                    unsigned int nup,
+                                                    unsigned int momentum_index,
+                                                    double diagonal_coupling,
+                                                    const char *label)
+{
+  struct BindStruct X;
+  unsigned long int beta;
+  setup_bind(&X, nsite, nup, momentum_index);
+  set_ising_ring_diagonal(nsite, diagonal_coupling);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  for (beta = 1; beta <= X.Sym->dim; beta++) {
+    unsigned int g;
+    double representative_diagonal = X.Sym->sym_diagonal[beta];
+    for (g = 0; g < X.Def.NSymTrans; g++) {
+      unsigned long int moved = SymmetryApplyToSpinBits(X.Sym->basis[beta].rep_state,
+                                                        X.Def.SymTrans[g],
+                                                        X.Def.Nsite);
+      unsigned long int raw = raw_index_for_state(moved);
+      assert_int_eq(raw != 0, 1, label);
+      assert_complex_close(list_Diagonal[raw], representative_diagonal, 1.0e-12, label);
     }
   }
   FreeSymmetryBasis(X.Sym);
@@ -398,9 +475,13 @@ int main(void)
     list_1 = NULL;
     list_Diagonal = NULL;
   }
-  assert_canonicalized_matrix_matches_raw(4, 2, 0,
+  assert_canonicalized_matrix_matches_raw(4, 2, 0, 0.0,
                                           "C4 k=0 canonicalized matrix matches raw reference");
-  assert_canonicalized_matrix_matches_raw(6, 3, 1,
+  assert_canonicalized_matrix_matches_raw(6, 3, 1, 0.0,
                                           "C6 k=pi/3 canonicalized matrix matches raw reference");
+  assert_orbit_diagonal_is_representative(6, 3, 1, 1.0,
+                                          "C6 k=pi/3 Ising diagonal is orbit-invariant");
+  assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,
+                                          "C6 k=pi/3 Ising canonicalized matrix matches raw reference");
   return 0;
 }
