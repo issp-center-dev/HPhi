@@ -19,7 +19,7 @@ target_sources(HPhi PRIVATE
   dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
-  nbody_interall.c anomalous_pair.c green_output.c
+  nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
 )
 
 # Multiply operations
@@ -29,6 +29,7 @@ target_sources(HPhi PRIVATE
   mltplyHubbardCore.c mltplySpinCore.c
   mltplyMPIHubbardCore.c mltplyMPISpinCore.c
   mltplySpinless.c mltplyMPISpinlessFermion.c mltplyMPIBatched.c
+  mltplySpinSym.c
 )
 
 # Lanczos solver
