@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <math.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
@@ -159,10 +160,18 @@ static int ensure_basis_capacity(struct SymmetryBasisRuntime *sym,
                                  unsigned long int needed)
 {
   struct SymmetryBasisVector *next;
+  unsigned long int next_capacity;
+  if (needed <= sym->capacity) return 0;
+  next_capacity = (sym->capacity == 0UL) ? 16UL : sym->capacity;
+  while (next_capacity < needed) {
+    if (next_capacity > ULONG_MAX / 2UL) return -1;
+    next_capacity *= 2UL;
+  }
   next = (struct SymmetryBasisVector *)realloc(sym->basis,
-      sizeof(struct SymmetryBasisVector) * (needed + 1));
+      sizeof(struct SymmetryBasisVector) * (next_capacity + 1UL));
   if (next == NULL) return -1;
   sym->basis = next;
+  sym->capacity = next_capacity;
   return 0;
 }
 
@@ -217,7 +226,6 @@ static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRunti
     if (sym->basis[mid].rep_state < rep_state) {
       lo = mid + 1;
     } else {
-      if (mid == 0) break;
       hi = mid - 1;
     }
   }
