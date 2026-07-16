@@ -36,6 +36,8 @@ Contributors
 
 This software was developed by the following contributors.
 
+* ver.3.7.0 (released on 2026/7/9)
+
 * ver.3.6.0 (released on 2026/6/16)
 
 * ver.3.5.2 (released on 2024/3/07)
