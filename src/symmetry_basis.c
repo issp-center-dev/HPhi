@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "struct.h"
@@ -161,14 +162,17 @@ static int ensure_basis_capacity(struct SymmetryBasisRuntime *sym,
 {
   struct SymmetryBasisVector *next;
   unsigned long int next_capacity;
+  size_t element_count;
   if (needed <= sym->capacity) return 0;
   next_capacity = (sym->capacity == 0UL) ? 16UL : sym->capacity;
   while (next_capacity < needed) {
     if (next_capacity > ULONG_MAX / 2UL) return -1;
     next_capacity *= 2UL;
   }
+  if (next_capacity > SIZE_MAX / sizeof(*next) - 1UL) return -1;
+  element_count = (size_t)next_capacity + 1U;
   next = (struct SymmetryBasisVector *)realloc(sym->basis,
-      sizeof(struct SymmetryBasisVector) * (next_capacity + 1UL));
+      sizeof(*next) * element_count);
   if (next == NULL) return -1;
   sym->basis = next;
   sym->capacity = next_capacity;
@@ -215,9 +219,30 @@ static void compute_orbit_metadata(const struct DefineList *def,
   *orbit_size = def->NSymTrans / *stabilizer_size;
 }
 
+static unsigned long int rep_state_hash(unsigned long int state);
+static unsigned long int next_power_of_two(unsigned long int value);
+static int insert_rep_hash(struct SymmetryBasisRuntime *sym,
+                           unsigned long int rep_state,
+                           unsigned long int basis_index);
+static int build_rep_hash(struct SymmetryBasisRuntime *sym);
+
 static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRuntime *sym,
                                                  unsigned long int rep_state)
 {
+  if (sym->rep_hash_size > 0UL && sym->rep_hash_values != NULL &&
+      sym->rep_hash_keys != NULL) {
+    unsigned long int mask = sym->rep_hash_size - 1UL;
+    unsigned long int slot = rep_state_hash(rep_state) & mask;
+    unsigned long int probes;
+    for (probes = 0; probes < sym->rep_hash_size; probes++) {
+      unsigned long int value = sym->rep_hash_values[slot];
+      if (value == 0UL) return 0UL;
+      if (sym->rep_hash_keys[slot] == rep_state) return value;
+      slot = (slot + 1UL) & mask;
+    }
+    return 0UL;
+  }
+
   unsigned long int lo = 1;
   unsigned long int hi = sym->dim;
   while (lo <= hi) {
@@ -228,6 +253,77 @@ static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRunti
     } else {
       hi = mid - 1;
     }
+  }
+  return 0;
+}
+
+static unsigned long int rep_state_hash(unsigned long int state)
+{
+#if ULONG_MAX > 0xffffffffUL
+  state ^= state >> 30;
+  state *= 0xbf58476d1ce4e5b9UL;
+  state ^= state >> 27;
+  state *= 0x94d049bb133111ebUL;
+  state ^= state >> 31;
+#else
+  state ^= state >> 16;
+  state *= 0x7feb352dUL;
+  state ^= state >> 15;
+  state *= 0x846ca68bUL;
+  state ^= state >> 16;
+#endif
+  return state;
+}
+
+static unsigned long int next_power_of_two(unsigned long int value)
+{
+  unsigned long int size = 1UL;
+  while (size < value) {
+    if (size > ULONG_MAX / 2UL) return 0UL;
+    size *= 2UL;
+  }
+  return size;
+}
+
+static int insert_rep_hash(struct SymmetryBasisRuntime *sym,
+                           unsigned long int rep_state,
+                           unsigned long int basis_index)
+{
+  unsigned long int mask = sym->rep_hash_size - 1UL;
+  unsigned long int slot = rep_state_hash(rep_state) & mask;
+  unsigned long int probes;
+  for (probes = 0; probes < sym->rep_hash_size; probes++) {
+    if (sym->rep_hash_values[slot] == 0UL) {
+      sym->rep_hash_keys[slot] = rep_state;
+      sym->rep_hash_values[slot] = basis_index;
+      return 0;
+    }
+    if (sym->rep_hash_keys[slot] == rep_state) return -1;
+    slot = (slot + 1UL) & mask;
+  }
+  return -1;
+}
+
+static int build_rep_hash(struct SymmetryBasisRuntime *sym)
+{
+  unsigned long int i;
+  unsigned long int target_size;
+  if (sym->dim == 0UL) return 0;
+  if (sym->dim > (ULONG_MAX - 1UL) / 2UL) return -1;
+  target_size = next_power_of_two(sym->dim * 2UL + 1UL);
+  if (target_size == 0UL) return -1;
+  if (target_size < 4UL) target_size = 4UL;
+  if (target_size > SIZE_MAX / sizeof(*sym->rep_hash_keys)) return -1;
+
+  sym->rep_hash_keys = (unsigned long int *)calloc((size_t)target_size,
+                                                   sizeof(*sym->rep_hash_keys));
+  sym->rep_hash_values = (unsigned long int *)calloc((size_t)target_size,
+                                                     sizeof(*sym->rep_hash_values));
+  if (sym->rep_hash_keys == NULL || sym->rep_hash_values == NULL) return -1;
+  sym->rep_hash_size = target_size;
+
+  for (i = 1; i <= sym->dim; i++) {
+    if (insert_rep_hash(sym, sym->basis[i].rep_state, i) != 0) return -1;
   }
   return 0;
 }
@@ -275,30 +371,38 @@ int BuildSymmetryBasis(struct BindStruct *X)
     compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size, &stabilizer_sum);
     if (cabs(stabilizer_sum) < 0.5) continue;
     sym->dim++;
-    if (ensure_basis_capacity(sym, sym->dim) != 0) return -1;
+    if (ensure_basis_capacity(sym, sym->dim) != 0) goto fail;
     if (store_basis_vector(sym, sym->dim, rep_state, orbit_size, stabilizer_size,
-                           stabilizer_sum, diagonal) != 0) return -1;
+                           stabilizer_sum, diagonal) != 0) goto fail;
   }
 
   if (sym->dim > 1) {
     qsort(sym->basis + 1, sym->dim, sizeof(struct SymmetryBasisVector),
           compare_basis_rep_state);
   }
+  if (build_rep_hash(sym) != 0) goto fail;
 
-  sym->sym_diagonal = (double *)calloc(sym->dim + 1, sizeof(double));
-  if (sym->sym_diagonal == NULL) return -1;
+  if (sym->dim > SIZE_MAX / sizeof(*sym->sym_diagonal) - 1UL) goto fail;
+  sym->sym_diagonal = (double *)calloc((size_t)sym->dim + 1U,
+                                      sizeof(*sym->sym_diagonal));
+  if (sym->sym_diagonal == NULL) goto fail;
   for (raw = 1; raw <= sym->dim; raw++) {
     sym->sym_diagonal[raw] = sym->basis[raw].diagonal;
   }
 
-  X->Sym = sym;
   fprintf(stdoutMPI, "Symmetry basis: raw_dim=%lu sector_dim=%lu group_order=%u\n",
           sym->full_dim, sym->dim, sym->group_order);
   if (sym->dim == 0) {
     fprintf(stdoutMPI, "Error: TransSym sector has zero basis dimension.\n");
+    FreeSymmetryBasis(sym);
     return -1;
   }
+  X->Sym = sym;
   return 0;
+
+fail:
+  FreeSymmetryBasis(sym);
+  return -1;
 }
 
 int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
@@ -355,5 +459,7 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
   if (sym == NULL) return;
   free(sym->basis);
   free(sym->sym_diagonal);
+  free(sym->rep_hash_keys);
+  free(sym->rep_hash_values);
   free(sym);
 }

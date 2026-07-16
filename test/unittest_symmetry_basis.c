@@ -364,6 +364,113 @@ static void assert_orbit_diagonal_is_representative(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+static void assert_representative_hash_matches_basis(unsigned int nsite,
+                                                     unsigned int nup,
+                                                     unsigned int momentum_index,
+                                                     const char *label)
+{
+  struct BindStruct X;
+  unsigned long int beta;
+  unsigned long int slot;
+  unsigned long int occupied = 0;
+  struct SymmetryCanonicalResult result;
+  setup_bind(&X, nsite, nup, momentum_index);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(X.Sym->capacity >= X.Sym->dim, 1, label);
+  assert_int_eq(X.Sym->rep_hash_size > X.Sym->dim, 1, label);
+  assert_int_eq(X.Sym->rep_hash_keys != NULL, 1, label);
+  assert_int_eq(X.Sym->rep_hash_values != NULL, 1, label);
+
+  for (slot = 0; slot < X.Sym->rep_hash_size; slot++) {
+    unsigned long int basis_index = X.Sym->rep_hash_values[slot];
+    if (basis_index == 0UL) continue;
+    occupied++;
+    assert_int_eq(basis_index <= X.Sym->dim, 1, label);
+    assert_ulong_eq(X.Sym->basis[basis_index].rep_state,
+                    X.Sym->rep_hash_keys[slot],
+                    label);
+  }
+  assert_ulong_eq(occupied, X.Sym->dim, label);
+
+  for (beta = 1; beta <= X.Sym->dim; beta++) {
+    assert_int_eq(SymmetryCanonicalizeSpinState(&X,
+                                                X.Sym->basis[beta].rep_state,
+                                                &result),
+                  0,
+                  label);
+    assert_int_eq(result.found, 1, label);
+    assert_ulong_eq(result.basis_index, beta, label);
+  }
+
+  assert_int_eq(SymmetryCanonicalizeSpinState(&X, 0UL, &result), 0, label);
+  assert_int_eq(result.found, 0, label);
+
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_hash_probe_lookup_handles_collision(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisRuntime sym;
+  struct SymmetryBasisVector basis[2];
+  unsigned long int keys[2];
+  unsigned long int values[2];
+  int identity_perm[4] = {0, 1, 2, 3};
+  int identity_anti[4] = {1, 1, 1, 1};
+  int *perm_rows_one[1];
+  int *anti_rows_one[1];
+  double complex chars_one[1];
+  unsigned long int target_state = 0x5UL;
+  unsigned long int dummy_state = 0x6UL;
+  int scenario;
+
+  memset(&X, 0, sizeof(X));
+  memset(&sym, 0, sizeof(sym));
+  memset(basis, 0, sizeof(basis));
+  perm_rows_one[0] = identity_perm;
+  anti_rows_one[0] = identity_anti;
+  chars_one[0] = 1.0;
+  X.Def.iFlgSymmetryBasis = TRUE;
+  X.Def.Nsite = 4;
+  X.Def.NSymTrans = 1;
+  X.Def.SymTrans = perm_rows_one;
+  X.Def.SymTransAnti = anti_rows_one;
+  X.Def.SymTransChar = chars_one;
+  X.Sym = &sym;
+  sym.enabled = TRUE;
+  sym.dim = 1;
+  sym.basis = basis;
+  sym.rep_hash_size = 2;
+  sym.rep_hash_keys = keys;
+  sym.rep_hash_values = values;
+  basis[1].rep_state = target_state;
+
+  for (scenario = 0; scenario < 2; scenario++) {
+    struct SymmetryCanonicalResult result;
+    if (scenario == 0) {
+      keys[0] = dummy_state;
+      values[0] = 2UL;
+      keys[1] = target_state;
+      values[1] = 1UL;
+    } else {
+      keys[0] = target_state;
+      values[0] = 1UL;
+      keys[1] = dummy_state;
+      values[1] = 2UL;
+    }
+    assert_int_eq(SymmetryCanonicalizeSpinState(&X, target_state, &result), 0, label);
+    assert_int_eq(result.found, 1, label);
+    assert_ulong_eq(result.basis_index, 1UL, label);
+  }
+}
+
 int main(void)
 {
   int shift4[4] = {1, 2, 3, 0};
@@ -483,5 +590,8 @@ int main(void)
                                           "C6 k=pi/3 Ising diagonal is orbit-invariant");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,
                                           "C6 k=pi/3 Ising canonicalized matrix matches raw reference");
+  assert_representative_hash_matches_basis(6, 3, 1,
+                                           "C6 k=pi/3 representative hash matches basis");
+  assert_hash_probe_lookup_handles_collision("representative hash probing handles collisions");
   return 0;
 }
