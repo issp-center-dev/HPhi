@@ -42,6 +42,30 @@ dump_spectrum_diagnostics() {
     echo "---- end diagnostics ----"
 }
 
+# Preserve the original failure, but use the same CI runner for two clean
+# process-level probes: one with batching explicitly enabled and one with the
+# legacy per-term MPI path. This only runs after a failure and never masks it.
+rerun_spectrum_diagnostic() {
+    label="$1"
+    nobatch="$2"
+    log="diagnostic_${label}.log"
+
+    rm -f output/bicg_status.dat output/residual.dat output/zvo_DynamicalGreen.dat
+    echo "---- diagnostic rerun: ${label} (HPHI_MPI_NOBATCH=${nobatch}) ----"
+    if HPHI_MPI_NOBATCH="${nobatch}" HPHI_BICG_DIAG_ITER1=1 \
+        ${MPIRUN} ../../src/HPhi -e namelist_cg.def > "${log}" 2>&1; then
+        rc=0
+    else
+        rc=$?
+    fi
+    cat "${log}"
+    if [ -f output/bicg_status.dat ]; then
+        echo "---- ${label}: output/bicg_status.dat ----"
+        cat output/bicg_status.dat
+    fi
+    echo "---- diagnostic rerun result: ${label} exit=${rc} ----"
+}
+
 cat > stan_gs.in <<EOF
 model = "Hubbard"
 method = "CG"
@@ -136,6 +160,8 @@ cat > reference.dat <<EOF
 EOF
 if ! ${MPIRUN} ../../src/HPhi -e namelist_cg.def; then
     dump_spectrum_diagnostics
+    rerun_spectrum_diagnostic "batched" 0
+    rerun_spectrum_diagnostic "nobatch" 1
     exit 1
 fi
 
