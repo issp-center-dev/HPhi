@@ -37,5 +37,6 @@ var searchData=
   ['kwtetwobody_34',['KWTETwoBody',['../readdef_8h.html#a488b99a1cdf61853f68459931809dafb',1,'readdef.h']]],
   ['kwthreebodyg_35',['KWThreeBodyG',['../readdef_8h.html#a0b5a5f10f43377c8eff5dca5a223a4f9',1,'readdef.h']]],
   ['kwtrans_36',['KWTrans',['../readdef_8h.html#a2c0182ed0879ed77605bad50257a4ab4',1,'readdef.h']]],
-  ['kwtwobodyg_37',['KWTwoBodyG',['../readdef_8h.html#a29080adba0beae1a58d46e118c9b6587',1,'readdef.h']]]
+  ['kwtranssym_37',['KWTransSym',['../readdef_8h.html#ab35a3854f5b43eff279b487408fe40aa',1,'readdef.h']]],
+  ['kwtwobodyg_38',['KWTwoBodyG',['../readdef_8h.html#a29080adba0beae1a58d46e118c9b6587',1,'readdef.h']]]
 ];

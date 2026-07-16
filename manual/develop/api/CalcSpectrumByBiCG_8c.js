@@ -15,6 +15,5 @@ var CalcSpectrumByBiCG_8c =
     [ "PrintBiCGResidualSummary", "CalcSpectrumByBiCG_8c.html#a64a1f2cf6dcc3aac5e2e834e7e7a5977", null ],
     [ "PrintBiCGStatusHeader", "CalcSpectrumByBiCG_8c.html#a3f1159342d85f30d044a9c61f477fdf6", null ],
     [ "PrintBiCGStatusTrace", "CalcSpectrumByBiCG_8c.html#a5deaaa09c542f19558df8912c03964da", null ],
-    [ "PrintBiCGVectorDiag", "CalcSpectrumByBiCG_8c.html#a08ad4ec794decd59ec696dfaf8304426", null ],
     [ "ReadTMComponents_BiCG", "CalcSpectrumByBiCG_8c.html#a4a03d2def0e0600c4e9bfc9f0c79dd70", null ]
 ];

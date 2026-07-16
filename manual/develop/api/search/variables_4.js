@@ -8,13 +8,14 @@ var searchData=
   ['edparageneraltransfer_5',['EDParaGeneralTransfer',['../structDefineList.html#a7759e4fbd1140e455dfec8fb7d126627',1,'DefineList']]],
   ['edspinchemi_6',['EDSpinChemi',['../structDefineList.html#a3120a7b484e245e4998134270c4572fe',1,'DefineList']]],
   ['eigen_5fnum_7',['eigen_num',['../structPhysList.html#a5616dcf1777ecef24f4883835541a375',1,'PhysList']]],
-  ['energy_8',['energy',['../structPhysList.html#a0ead805fab300ad3b7423dddd8c5cd4a',1,'PhysList']]],
-  ['eps_9',['eps',['../global_8c.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c'],['../global_8h.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c']]],
-  ['eps_5fcg_10',['eps_cg',['../global_8c.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c'],['../global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c']]],
-  ['eps_5fcheckimag0_11',['eps_checkimag0',['../global_8h.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c'],['../global_8c.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c']]],
-  ['eps_5fenergy_12',['eps_energy',['../global_8c.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c'],['../global_8h.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c']]],
-  ['eps_5flanczos_13',['eps_lanczos',['../global_8c.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c'],['../global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c']]],
-  ['exchangecoupling_14',['ExchangeCoupling',['../structDefineList.html#aca15af1bddc7adf084cf01542a25f4c2',1,'DefineList']]],
-  ['expandcoef_15',['ExpandCoef',['../structParamList.html#a73f4e7970e37930eac2d3c3d6aeeec34',1,'ParamList']]],
-  ['expecinterval_16',['ExpecInterval',['../structParamList.html#a2bcaf7f7110c9af48376a05cf1cf8418',1,'ParamList']]]
+  ['enabled_8',['enabled',['../structSymmetryBasisRuntime.html#aa2541bc58e9d987fd411b6d89f413424',1,'SymmetryBasisRuntime']]],
+  ['energy_9',['energy',['../structPhysList.html#a0ead805fab300ad3b7423dddd8c5cd4a',1,'PhysList']]],
+  ['eps_10',['eps',['../global_8c.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c'],['../global_8h.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c']]],
+  ['eps_5fcg_11',['eps_cg',['../global_8c.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c'],['../global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c']]],
+  ['eps_5fcheckimag0_12',['eps_checkimag0',['../global_8h.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c'],['../global_8c.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c']]],
+  ['eps_5fenergy_13',['eps_energy',['../global_8c.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c'],['../global_8h.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c']]],
+  ['eps_5flanczos_14',['eps_lanczos',['../global_8c.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c'],['../global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c']]],
+  ['exchangecoupling_15',['ExchangeCoupling',['../structDefineList.html#aca15af1bddc7adf084cf01542a25f4c2',1,'DefineList']]],
+  ['expandcoef_16',['ExpandCoef',['../structParamList.html#a73f4e7970e37930eac2d3c3d6aeeec34',1,'ParamList']]],
+  ['expecinterval_17',['ExpecInterval',['../structParamList.html#a2bcaf7f7110c9af48376a05cf1cf8418',1,'ParamList']]]
 ];

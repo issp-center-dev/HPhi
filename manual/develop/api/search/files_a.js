@@ -37,6 +37,8 @@ var searchData=
   ['mltplyspincore_2eh_34',['mltplySpinCore.h',['../mltplySpinCore_8h.html',1,'']]],
   ['mltplyspinless_2ec_35',['mltplySpinless.c',['../mltplySpinless_8c.html',1,'']]],
   ['mltplyspinless_2eh_36',['mltplySpinless.h',['../mltplySpinless_8h.html',1,'']]],
-  ['multiply_2ec_37',['Multiply.c',['../Multiply_8c.html',1,'']]],
-  ['multiply_2eh_38',['Multiply.h',['../Multiply_8h.html',1,'']]]
+  ['mltplyspinsym_2ec_37',['mltplySpinSym.c',['../mltplySpinSym_8c.html',1,'']]],
+  ['mltplyspinsym_2eh_38',['mltplySpinSym.h',['../mltplySpinSym_8h.html',1,'']]],
+  ['multiply_2ec_39',['Multiply.c',['../Multiply_8c.html',1,'']]],
+  ['multiply_2eh_40',['Multiply.h',['../Multiply_8h.html',1,'']]]
 ];

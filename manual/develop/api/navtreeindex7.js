@@ -1,5 +1,7 @@
 var NAVTREEINDEX7 =
 {
+"mltplyMPIHubbardCore_8h.html#a7d8e77067af63349da6da7ef520ab380":[10,0,1,56,6],
+"mltplyMPIHubbardCore_8h.html#a81ceaf1edd9e416156a2430f36ca6de3":[10,0,1,56,22],
 "mltplyMPIHubbardCore_8h.html#a83e98ae3ddd808f1d94ed8096640cadf":[10,0,1,56,12],
 "mltplyMPIHubbardCore_8h.html#a8e77ddb5a395ce0d96b89bfc232e5be1":[10,0,1,56,16],
 "mltplyMPIHubbardCore_8h.html#aa5f08c7f311c6e0dfd6488fe7ac56f00":[10,0,1,56,13],
@@ -209,6 +211,15 @@ var NAVTREEINDEX7 =
 "mltplySpinCore_8h.html#afa391aad3a8b7239d8feb010f2e51724":[10,0,1,61,1],
 "mltplySpinCore_8h.html#afeccd8254cb5ee2bd7deb27f134daa98":[10,0,1,61,18],
 "mltplySpinCore_8h_source.html":[10,0,1,61],
+"mltplySpinSym_8c.html":[10,0,57],
+"mltplySpinSym_8c.html#a061dce7bdcf05d0e9e7111b83b84eb13":[10,0,57,2],
+"mltplySpinSym_8c.html#a7f645c93967a7d2fd8c8f05946c71156":[10,0,57,0],
+"mltplySpinSym_8c.html#a95b58b72762b3b366c1b1228d8c0833d":[10,0,57,3],
+"mltplySpinSym_8c.html#aede73e856cd5e27e8f1f590f8a088201":[10,0,57,1],
+"mltplySpinSym_8c_source.html":[10,0,57],
+"mltplySpinSym_8h.html":[10,0,1,63],
+"mltplySpinSym_8h.html#a061dce7bdcf05d0e9e7111b83b84eb13":[10,0,1,63,0],
+"mltplySpinSym_8h_source.html":[10,0,1,63],
 "mltplySpin_8c.html":[10,0,54],
 "mltplySpin_8c.html#a020b096c079862b71fb71eb799e95180":[10,0,54,5],
 "mltplySpin_8c.html#a0c1d4e0eca7da30233d96a251ea125f9":[10,0,54,7],
@@ -238,16 +249,5 @@ var NAVTREEINDEX7 =
 "mltplySpin_8h.html#a49705894462616c2d3184fb2514c9ff9":[10,0,1,60,11],
 "mltplySpin_8h.html#a60dc2f1f62e571e890181e959ac95bb2":[10,0,1,60,6],
 "mltplySpin_8h.html#a64d16a2825abf713057dc6ddec33547c":[10,0,1,60,4],
-"mltplySpin_8h.html#aa1326905a9352030ff148324e2dba110":[10,0,1,60,0],
-"mltplySpin_8h.html#aa30d4a9b260f8b44f1110a6f759cf0dd":[10,0,1,60,3],
-"mltplySpin_8h.html#aa338a5dff7b9ce8ed3c19ff7300eeb6c":[10,0,1,60,10],
-"mltplySpin_8h.html#aaacfb2aca0416786e4c48f0d5361152e":[10,0,1,60,9],
-"mltplySpin_8h.html#ae74bdb8ab49465bcf40da87848266353":[10,0,1,60,2],
-"mltplySpin_8h.html#af530d989e2ee768e886923be3484ae0e":[10,0,1,60,13],
-"mltplySpin_8h_source.html":[10,0,1,60],
-"mltplySpinless_8c.html":[10,0,56],
-"mltplySpinless_8c.html#a079626d9bda6791a2a0e011bb40b527f":[10,0,56,4],
-"mltplySpinless_8c.html#a162f2fe45333cc6109443ee589f29fec":[10,0,56,3],
-"mltplySpinless_8c.html#a5a881cc0abd208fb68a1b2805449e74a":[10,0,56,0],
-"mltplySpinless_8c.html#a6660e59b6f260ec6440e396b8b419f6c":[10,0,56,1]
+"mltplySpin_8h.html#aa1326905a9352030ff148324e2dba110":[10,0,1,60,0]
 };
