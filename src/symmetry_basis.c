@@ -226,7 +226,6 @@ static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRunti
     if (sym->basis[mid].rep_state < rep_state) {
       lo = mid + 1;
     } else {
-      if (mid == 0) break;
       hi = mid - 1;
     }
   }
