@@ -50,6 +50,22 @@ is specified with this parameter. When
 model = <code class="docutils literal notranslate"><span class="pre">&quot;Fermion</span> <span class="pre">HubbardGC&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;SpinGC&quot;</span></code>, it should not be
 specified.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code></p>
+<p><strong>Type :</strong> Integer</p>
+<p><strong>Description :</strong> The one-dimensional translation momentum sector is
+specified by an integer <span class="math notranslate nohighlight">\(m\)</span>. The generated expert input contains
+<code class="docutils literal notranslate"><span class="pre">qptransidx.def</span></code> and the corresponding <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> entry in
+<code class="docutils literal notranslate"><span class="pre">namelist.def</span></code>. For a chain of length <span class="math notranslate nohighlight">\(L\)</span>, the character of
+the translation by <span class="math notranslate nohighlight">\(g\)</span> sites is
+<span class="math notranslate nohighlight">\(\exp(-2\pi i m g/L)\)</span>, and <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> must satisfy
+<span class="math notranslate nohighlight">\(0 \le m &lt; L\)</span>.</p>
+<p>This parameter is currently supported only for HPhi Standard mode with
+<code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Spin&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;chain&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">2S</span> <span class="pre">=</span> <span class="pre">1</span></code>, fixed
+<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, periodic boundary conditions without <code class="docutils literal notranslate"><span class="pre">phase0</span></code>, and
+exchange-only spin couplings with <code class="docutils literal notranslate"><span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">0</span></code> and no field, general, or
+pair terms. The supported calculation methods are <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code>.</p>
+</li>
 </ul>
 </section>
 
