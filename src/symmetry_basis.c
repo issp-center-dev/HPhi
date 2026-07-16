@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdint.h>
 #include "DefCommon.h"
+#include "global.h"
 #include "symmetry_basis.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -225,6 +226,11 @@ static int insert_rep_hash(struct SymmetryBasisRuntime *sym,
                            unsigned long int rep_state,
                            unsigned long int basis_index);
 static int build_rep_hash(struct SymmetryBasisRuntime *sym);
+static void symmetry_block_range(unsigned long int dim,
+                                 int rank,
+                                 int nrank,
+                                 unsigned long int *offset,
+                                 unsigned long int *count);
 
 static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRuntime *sym,
                                                  unsigned long int rep_state)
@@ -326,6 +332,19 @@ static int build_rep_hash(struct SymmetryBasisRuntime *sym)
     if (insert_rep_hash(sym, sym->basis[i].rep_state, i) != 0) return -1;
   }
   return 0;
+}
+
+static void symmetry_block_range(unsigned long int dim,
+                                 int rank,
+                                 int nrank,
+                                 unsigned long int *offset,
+                                 unsigned long int *count)
+{
+  unsigned long int base = dim / (unsigned long int)nrank;
+  unsigned long int rem = dim % (unsigned long int)nrank;
+  unsigned long int urank = (unsigned long int)rank;
+  *count = base + (urank < rem ? 1UL : 0UL);
+  *offset = base * urank + (urank < rem ? urank : rem);
 }
 
 static int store_basis_vector(struct SymmetryBasisRuntime *sym,
@@ -433,12 +452,63 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
   return 0;
 }
 
-void ActivateSymmetryBasisDimension(struct BindStruct *X)
+int ActivateSymmetryBasisDimension(struct BindStruct *X)
 {
   if (X->Sym != NULL && X->Sym->enabled == TRUE) {
-    X->Check.idim_max = X->Sym->dim;
+    int rank = 0;
+    if (nproc < 1 || myrank < 0 || myrank >= nproc) return -1;
+    symmetry_block_range(X->Sym->dim, myrank, nproc,
+                         &X->Sym->local_offset, &X->Sym->local_dim);
+#ifdef MPI
+    free(X->Sym->mpi_recvcounts);
+    free(X->Sym->mpi_displs);
+    free(X->Sym->mpi_full_v1);
+    X->Sym->mpi_recvcounts = NULL;
+    X->Sym->mpi_displs = NULL;
+    X->Sym->mpi_full_v1 = NULL;
+    if (nproc > 1) {
+      if (X->Sym->dim > (unsigned long int)INT_MAX) {
+        fprintf(stdoutMPI,
+                "Error: TransSym MPI sector dimension %lu exceeds MPI int count limit.\n",
+                X->Sym->dim);
+        return -1;
+      }
+      X->Sym->mpi_recvcounts = (int *)calloc((size_t)nproc, sizeof(int));
+      X->Sym->mpi_displs = (int *)calloc((size_t)nproc, sizeof(int));
+      X->Sym->mpi_full_v1 = (double complex *)calloc(X->Sym->dim + 1UL,
+                                                     sizeof(double complex));
+      if (X->Sym->mpi_recvcounts == NULL || X->Sym->mpi_displs == NULL ||
+          X->Sym->mpi_full_v1 == NULL) {
+        return -1;
+      }
+      for (rank = 0; rank < nproc; rank++) {
+        unsigned long int offset;
+        unsigned long int count;
+        symmetry_block_range(X->Sym->dim, rank, nproc, &offset, &count);
+        X->Sym->mpi_recvcounts[rank] = (int)count;
+        X->Sym->mpi_displs[rank] = (int)offset;
+      }
+    }
+#else
+    (void)rank;
+#endif
+    X->Check.idim_max = X->Sym->local_dim;
     X->Check.idim_maxMPI = X->Sym->dim;
   }
+  return 0;
+}
+
+int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
+                               unsigned long int global_index,
+                               unsigned long int *local_index)
+{
+  if (sym == NULL || global_index == 0UL) return FALSE;
+  if (global_index <= sym->local_offset ||
+      global_index > sym->local_offset + sym->local_dim) {
+    return FALSE;
+  }
+  if (local_index != NULL) *local_index = global_index - sym->local_offset;
+  return TRUE;
 }
 
 int ValidateSymmetrySectorOptions(const struct BindStruct *X)
@@ -461,5 +531,8 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
   free(sym->sym_diagonal);
   free(sym->rep_hash_keys);
   free(sym->rep_hash_values);
+  free(sym->mpi_recvcounts);
+  free(sym->mpi_displs);
+  free(sym->mpi_full_v1);
   free(sym);
 }

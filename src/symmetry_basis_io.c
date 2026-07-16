@@ -198,10 +198,6 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
-  if (nproc != 1) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis is serial-only in v1.\n");
-    return -1;
-  }
   if (def->iCalcModel != Spin) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin canonical model.\n");
     return -1;

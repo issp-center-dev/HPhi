@@ -212,4 +212,33 @@ complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
 
+run_mpi_symmetry_case() {
+    label="$1"
+    namelist="$2"
+    expected_energy="$3"
+    expected_dim="$4"
+    log_file="symmetry_${label}_mpi.log"
+    rm -rf output
+    ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1
+    mpi_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+    test -n "${mpi_energy}"
+    mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+    test "${mpi_diff}" = "0.000000"
+    grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
+    if grep -q "MPI site separation summary" "${log_file}"; then
+        echo "TransSym MPI path unexpectedly used site decomposition."
+        exit 1
+    fi
+}
+
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
+        write_kpi_transsym_l6
+        run_mpi_symmetry_case heisenberg namelist_heisenberg.def "${sym_heisenberg_energy}" 4
+        write_kpi_over_3_transsym_l6
+        run_mpi_symmetry_case complex namelist.def "${complex_energy}" 3
+    fi
+fi
+
 exit $?

@@ -116,4 +116,21 @@ test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry.log
 
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        ${MPIRUN} ../../src/HPhi -e namelist.def > symmetry_mpi.log 2>&1
+        mpi_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+        test -n "${mpi_energy}"
+        mpi_diff=`awk -v a="${mpi_energy}" -v b="${sym_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+        test "${mpi_diff}" = "0.000000"
+        grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry_mpi.log
+        if grep -q "MPI site separation summary" symmetry_mpi.log; then
+            echo "TransSym MPI path unexpectedly used site decomposition."
+            exit 1
+        fi
+    fi
+fi
+
 exit $?
