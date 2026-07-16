@@ -121,8 +121,7 @@ $(document).ready(function(){initNavTree('mltplySpinSym_8c.html',''); initResiza
   <div class="headertitle"><div class="title">mltplySpinSym.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="bitcalc_8h_source.html">bitcalc.h</a>&gt;</code><br />
-<code>#include &quot;<a class="el" href="mltplySpinSym_8h_source.html">mltplySpinSym.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="mltplySpinSym_8h_source.html">mltplySpinSym.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="struct_8h_source.html">struct.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
@@ -133,16 +132,14 @@ $(document).ready(function(){initNavTree('mltplySpinSym_8c.html',''); initResiza
 Functions</h2></td></tr>
 <tr class="memitem:aede73e856cd5e27e8f1f590f8a088201" id="r_aede73e856cd5e27e8f1f590f8a088201"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#aede73e856cd5e27e8f1f590f8a088201">apply_exchange_halfspin</a> (unsigned long int state, int site0, int site1, unsigned long int *out_state)</td></tr>
 <tr class="separator:aede73e856cd5e27e8f1f590f8a088201"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95b58b72762b3b366c1b1228d8c0833d" id="r_a95b58b72762b3b366c1b1228d8c0833d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a95b58b72762b3b366c1b1228d8c0833d">raw_index_from_state_sym</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int state, unsigned long int *raw_index)</td></tr>
-<tr class="separator:a95b58b72762b3b366c1b1228d8c0833d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f645c93967a7d2fd8c8f05946c71156" id="r_a7f645c93967a7d2fd8c8f05946c71156"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a7f645c93967a7d2fd8c8f05946c71156">add_raw_transition</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1, double complex *prdct, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, double complex beta_amp, unsigned long int to_state, double complex hval, double complex input_amp)</td></tr>
-<tr class="separator:a7f645c93967a7d2fd8c8f05946c71156"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab894e212f0802098e5378413a398d7e3" id="r_ab894e212f0802098e5378413a398d7e3"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#ab894e212f0802098e5378413a398d7e3">add_canonicalized_transition</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1, double complex *prdct, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, unsigned long int to_state, double complex hval, double complex input_amp)</td></tr>
+<tr class="separator:ab894e212f0802098e5378413a398d7e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a061dce7bdcf05d0e9e7111b83b84eb13" id="r_a061dce7bdcf05d0e9e7111b83b84eb13"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a061dce7bdcf05d0e9e7111b83b84eb13">mltplySpinSym</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="separator:a061dce7bdcf05d0e9e7111b83b84eb13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a7f645c93967a7d2fd8c8f05946c71156" name="a7f645c93967a7d2fd8c8f05946c71156"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f645c93967a7d2fd8c8f05946c71156">&#9670;&#160;</a></span>add_raw_transition()</h2>
+<a id="ab894e212f0802098e5378413a398d7e3" name="ab894e212f0802098e5378413a398d7e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab894e212f0802098e5378413a398d7e3">&#9670;&#160;</a></span>add_canonicalized_transition()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,7 +148,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void add_raw_transition </td>
+          <td class="memname">static int add_canonicalized_transition </td>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
@@ -179,12 +176,6 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>beta</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double complex&#160;</td>
-          <td class="paramname"><em>beta_amp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -217,11 +208,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00028">28</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00018">18</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00019">raw_index_from_state_sym()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__basis_8h_source.html#l00020">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00019">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8c_source.html#l00304">SymmetryCanonicalizeSpinState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00052">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00041">mltplySpinSym()</a>.</p>
 
 </div>
 </div>
@@ -271,11 +262,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00007">7</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00006">6</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00052">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00041">mltplySpinSym()</a>.</p>
 
 </div>
 </div>
@@ -311,59 +302,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00052">52</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00041">41</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00028">add_raw_transition()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00007">apply_exchange_halfspin()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00018">add_canonicalized_transition()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00006">apply_exchange_halfspin()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>.</p>
-
-</div>
-</div>
-<a id="a95b58b72762b3b366c1b1228d8c0833d" name="a95b58b72762b3b366c1b1228d8c0833d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95b58b72762b3b366c1b1228d8c0833d">&#9670;&#160;</a></span>raw_index_from_state_sym()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int raw_index_from_state_sym </td>
-          <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
-          <td class="paramname"><em>X</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned long int&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned long int *&#160;</td>
-          <td class="paramname"><em>raw_index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00019">19</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
-
-<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00028">add_raw_transition()</a>.</p>
 
 </div>
 </div>

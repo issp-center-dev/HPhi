@@ -1,7 +1,7 @@
 var searchData=
 [
   ['activatesymmetrybasisdimension_0',['activatesymmetrybasisdimension',['../symmetry__basis_8c.html#a048a6ee82da792264a9ca84f852f6747',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c'],['../symmetry__basis_8h.html#a048a6ee82da792264a9ca84f852f6747',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c']]],
-  ['add_5fraw_5ftransition_1',['add_raw_transition',['../mltplySpinSym_8c.html#a7f645c93967a7d2fd8c8f05946c71156',1,'mltplySpinSym.c']]],
+  ['add_5fcanonicalized_5ftransition_1',['add_canonicalized_transition',['../mltplySpinSym_8c.html#ab894e212f0802098e5378413a398d7e3',1,'mltplySpinSym.c']]],
   ['addanomaloustermtohamhubbardgc_2',['addanomaloustermtohamhubbardgc',['../anomalous__pair_8c.html#a1cc48cdad93b364ffb182a9e97e4fe96',1,'AddAnomalousTermToHamHubbardGC(struct BindStruct *X):&#160;anomalous_pair.c'],['../anomalous__pair_8h.html#a1cc48cdad93b364ffb182a9e97e4fe96',1,'AddAnomalousTermToHamHubbardGC(struct BindStruct *X):&#160;anomalous_pair.c']]],
   ['addnbodyinteralltohamhubbard_3',['addnbodyinteralltohamhubbard',['../nbody__interall_8h.html#aab23d376b0972153aa8c392ce15bfcf4',1,'AddNBodyInterAllToHamHubbard(struct BindStruct *X):&#160;nbody_interall.c'],['../nbody__interall_8c.html#aab23d376b0972153aa8c392ce15bfcf4',1,'AddNBodyInterAllToHamHubbard(struct BindStruct *X):&#160;nbody_interall.c']]],
   ['addnbodyinteralltohamhubbardgc_4',['addnbodyinteralltohamhubbardgc',['../nbody__interall_8h.html#a54b87f352317037a3966b2a1673d4f3d',1,'AddNBodyInterAllToHamHubbardGC(struct BindStruct *X):&#160;nbody_interall.c'],['../nbody__interall_8c.html#a54b87f352317037a3966b2a1673d4f3d',1,'AddNBodyInterAllToHamHubbardGC(struct BindStruct *X):&#160;nbody_interall.c']]],

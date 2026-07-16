@@ -148,11 +148,11 @@ var NAVTREEINDEX =
 "global_8h.html#a1cac7fe5916902fe104eb6294496b8fa",
 "input_8h.html",
 "mltplyMPIHubbardCore_8h.html#a7d8e77067af63349da6da7ef520ab380",
-"mltplySpin_8h.html#aa30d4a9b260f8b44f1110a6f759cf0dd",
-"page_setmem.html#sec_setmem_estimate",
-"structDefineList.html#a0c90b1155faeb479fd9e4ccf8c72329b",
-"structMPIInterAllGroup.html#a84f80bb97832a7d3f808c9c6d9df6010",
-"wrapperMPI_8h.html#a40ff4f9a2622fada050275da64621421"
+"mltplySpin_8h.html#aa338a5dff7b9ce8ed3c19ff7300eeb6c",
+"page_setmem.html#sec_setmem_free",
+"structDefineList.html#a0ca6597eba3eb1be271ca71901d0e4a4",
+"structMPIInterAllGroup.html#a8d1e776f7f9903657888cc54a2b6c859",
+"wrapperMPI_8c.html#aeab38d65c1c82094276a9b250b9a5049"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

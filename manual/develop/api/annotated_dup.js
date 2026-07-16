@@ -22,6 +22,7 @@ var annotated_dup =
     [ "SectorShift", "structSectorShift.html", "structSectorShift" ],
     [ "SymmetryBasisRuntime", "structSymmetryBasisRuntime.html", "structSymmetryBasisRuntime" ],
     [ "SymmetryBasisVector", "structSymmetryBasisVector.html", "structSymmetryBasisVector" ],
+    [ "SymmetryCanonicalResult", "structSymmetryCanonicalResult.html", "structSymmetryCanonicalResult" ],
     [ "TimeKeepStruct", "structTimeKeepStruct.html", "structTimeKeepStruct" ],
     [ "W128_T", "unionW128__T.html", "unionW128__T" ]
 ];

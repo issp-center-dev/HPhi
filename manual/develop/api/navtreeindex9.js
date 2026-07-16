@@ -1,6 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"page_setmem.html#sec_setmem_estimate":[8,4],
 "page_setmem.html#sec_setmem_free":[8,2],
 "page_setmem.html#sec_setmem_functions":[8,1],
 "page_setmem.html#sec_setmem_overview":[8,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX9 =
 "structDefineList.html#a0a20ef558db29fdb792c93680f938adf":[9,0,4,82],
 "structDefineList.html#a0addab7d71a29ad52070e5132f39a271":[9,0,4,167],
 "structDefineList.html#a0bce5cf65aa07ea30984a6991e8c4bc4":[9,0,4,75],
-"structDefineList.html#a0bdb25dd85dfa0809d21fb1975180cf3":[9,0,4,94]
+"structDefineList.html#a0bdb25dd85dfa0809d21fb1975180cf3":[9,0,4,94],
+"structDefineList.html#a0c90b1155faeb479fd9e4ccf8c72329b":[9,0,4,174]
 };
