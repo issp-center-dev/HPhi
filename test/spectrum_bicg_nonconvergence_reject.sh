@@ -108,6 +108,9 @@ if [ "${rc}" = "0" ]; then
 fi
 
 grep -q "BiCG spectrum did not finish successfully" run.log
+grep -q "BiCG iteration-1 diagnostic:" run.log
+grep -q "v2_weighted_sum=" run.log
+grep -q "Hv2_weighted_sum=" run.log
 
 if [ -e output/zvo_DynamicalGreen.dat ]; then
     echo "ERROR: non-converged BiCG spectrum wrote DynamicalGreen output" >&2

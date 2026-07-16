@@ -78,7 +78,7 @@ CONTAINS
 FUNCTION ddotMPI(n,dx,dy) RESULT(prod)
   !
 #if defined(MPI)
-  use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_PRECISION, MPI_SUM
+  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_PRECISION, MPI_SUM
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -90,14 +90,17 @@ FUNCTION ddotMPI(n,dx,dy) RESULT(prod)
   !
 #if defined(MPI)
   INTEGER :: ierr
+  REAL(8) :: local_prod
 #endif
   !
   prod = ddot(n,dx,1,dy,1)
   !
 #if defined(MPI)
-  IF(lmpi) &
-  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
-  &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
+  IF(lmpi) THEN
+     local_prod = prod
+     CALL MPI_Allreduce(local_prod, prod, 1, &
+     &                  MPI_DOUBLE_PRECISION, MPI_SUM, comm, ierr)
+  END IF
 #endif
   !
 END FUNCTION ddotMPI
@@ -107,7 +110,7 @@ END FUNCTION ddotMPI
 FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
-  use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_COMPLEX, MPI_SUM
+  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_COMPLEX, MPI_SUM
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -119,6 +122,7 @@ FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
   INTEGER :: ierr
+  COMPLEX(8) :: local_prod
 #endif
   !
 #if defined(__NO_ZDOT)
@@ -128,9 +132,11 @@ FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
 #endif
   !
 #if defined(MPI)
-  IF(lmpi) &
-  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
-  &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
+  IF(lmpi) THEN
+     local_prod = prod
+     CALL MPI_Allreduce(local_prod, prod, 1, &
+     &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
+  END IF
 #endif
   !
 END FUNCTION zdotcMPI
@@ -140,7 +146,7 @@ END FUNCTION zdotcMPI
 FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
-  use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_COMPLEX, MPI_SUM
+  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_COMPLEX, MPI_SUM
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -152,6 +158,7 @@ FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
   INTEGER :: ierr
+  COMPLEX(8) :: local_prod
 #endif
   !
 #if defined(__NO_ZDOT)
@@ -161,9 +168,11 @@ FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
 #endif
   !
 #if defined(MPI)
-  IF(lmpi) &
-  &  call MPI_allREDUCE(MPI_IN_PLACE, prod, 1, &
-  &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
+  IF(lmpi) THEN
+     local_prod = prod
+     CALL MPI_Allreduce(local_prod, prod, 1, &
+     &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
+  END IF
 #endif
   !
 END FUNCTION zdotuMPI
@@ -173,7 +182,7 @@ END FUNCTION zdotuMPI
 FUNCTION dabsmax(array, n) RESULT(maxarray)
   !
 #if defined(MPI)
-  use mpi, only : MPI_IN_PLACE, MPI_DOUBLE_PRECISION, MPI_MAX
+  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_PRECISION, MPI_MAX
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -185,14 +194,17 @@ FUNCTION dabsmax(array, n) RESULT(maxarray)
   !
 #if defined(MPI)
   INTEGER :: ierr
+  REAL(8) :: local_maxarray
 #endif
   !
   maxarray = MAXVAL(ABS(array))
   !
 #if defined(MPI)
-  IF(lmpi) &
-  &  call MPI_allREDUCE(MPI_IN_PLACE, maxarray, 1, &
-  &                  MPI_DOUBLE_PRECISION, MPI_MAX, comm, ierr)
+  IF(lmpi) THEN
+     local_maxarray = maxarray
+     CALL MPI_Allreduce(local_maxarray, maxarray, 1, &
+     &                  MPI_DOUBLE_PRECISION, MPI_MAX, comm, ierr)
+  END IF
 #endif
   !
 END FUNCTION dabsmax
