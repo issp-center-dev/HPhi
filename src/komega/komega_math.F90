@@ -107,7 +107,7 @@ END FUNCTION ddotMPI
 !
 ! zdotc with MPI allreduce
 !
-FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
+FUNCTION zdotcMPI(n,zx,zy,local_prod_out) RESULT(prod)
   !
 #if defined(MPI)
   USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_COMPLEX, MPI_SUM
@@ -118,22 +118,24 @@ FUNCTION zdotcMPI(n,zx,zy) RESULT(prod)
   !
   INTEGER,INTENT(IN) :: n
   COMPLEX(8),INTENT(IN) :: zx(n), zy(n)
+  COMPLEX(8),INTENT(OUT),OPTIONAL :: local_prod_out
   COMPLEX(8) prod
+  COMPLEX(8) :: local_prod
   !
 #if defined(MPI)
   INTEGER :: ierr
-  COMPLEX(8) :: local_prod
 #endif
   !
 #if defined(__NO_ZDOT)
-  prod = DOT_PRODUCT(zx,zy)
+  local_prod = DOT_PRODUCT(zx,zy)
 #else
-  prod = zdotc(n,zx,1,zy,1)
+  local_prod = zdotc(n,zx,1,zy,1)
 #endif
+  IF(PRESENT(local_prod_out)) local_prod_out = local_prod
+  prod = local_prod
   !
 #if defined(MPI)
   IF(lmpi) THEN
-     local_prod = prod
      CALL MPI_Allreduce(local_prod, prod, 1, &
      &                  MPI_DOUBLE_COMPLEX, MPI_SUM, comm, ierr)
   END IF
