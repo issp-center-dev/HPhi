@@ -45,6 +45,7 @@ var searchData=
   ['boost_42',['Boost',['../structBindStruct.html#ad957788ed202e9244b96c1a6e531ff15',1,'BindStruct']]],
   ['boostlist_43',['BoostList',['../structBoostList.html',1,'']]],
   ['build_20options_44',['CMake Build Options',['../page_cmake.html#sec_cmake_options',1,'']]],
-  ['buildeigenvectorfilename_45',['BuildEigenVectorFileName',['../CalcSpectrum_8c.html#a1b215f38f5ddbfdc501c327344403702',1,'CalcSpectrum.c']]],
-  ['buildsymmetrybasis_46',['buildsymmetrybasis',['../symmetry__basis_8h.html#aa4b23a374c23a23ed228057aee5f0953',1,'BuildSymmetryBasis(struct BindStruct *X):&#160;symmetry_basis.c'],['../symmetry__basis_8c.html#aa4b23a374c23a23ed228057aee5f0953',1,'BuildSymmetryBasis(struct BindStruct *X):&#160;symmetry_basis.c']]]
+  ['build_5frep_5fhash_45',['build_rep_hash',['../symmetry__basis_8c.html#a4e7b01af0b4dcb50645f9c84146ad3c7',1,'symmetry_basis.c']]],
+  ['buildeigenvectorfilename_46',['BuildEigenVectorFileName',['../CalcSpectrum_8c.html#a1b215f38f5ddbfdc501c327344403702',1,'CalcSpectrum.c']]],
+  ['buildsymmetrybasis_47',['buildsymmetrybasis',['../symmetry__basis_8h.html#aa4b23a374c23a23ed228057aee5f0953',1,'BuildSymmetryBasis(struct BindStruct *X):&#160;symmetry_basis.c'],['../symmetry__basis_8c.html#aa4b23a374c23a23ed228057aee5f0953',1,'BuildSymmetryBasis(struct BindStruct *X):&#160;symmetry_basis.c']]]
 ];

@@ -123,6 +123,7 @@ $(document).ready(function(){initNavTree('symmetry__basis_8c.html',''); initResi
 <div class="contents">
 <div class="textblock"><code>#include &lt;limits.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="DefCommon_8h_source.html">DefCommon.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="struct_8h_source.html">struct.h</a>&quot;</code><br />
@@ -152,6 +153,14 @@ Functions</h2></td></tr>
 <tr class="separator:a8b68830d189dc008d8066d1877204981"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5166eb8893aa73cf8b5b283441cdf3b" id="r_ad5166eb8893aa73cf8b5b283441cdf3b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#ad5166eb8893aa73cf8b5b283441cdf3b">compute_orbit_metadata</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int rep_state, unsigned int *orbit_size, unsigned int *stabilizer_size, double complex *stabilizer_sum)</td></tr>
 <tr class="separator:ad5166eb8893aa73cf8b5b283441cdf3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a699003c2546bedda8d01dc009347fe" id="r_a0a699003c2546bedda8d01dc009347fe"><td class="memItemLeft" align="right" valign="top">static unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#a0a699003c2546bedda8d01dc009347fe">rep_state_hash</a> (unsigned long int state)</td></tr>
+<tr class="separator:a0a699003c2546bedda8d01dc009347fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66f2cee21b88b44da7e947d90ae86ef8" id="r_a66f2cee21b88b44da7e947d90ae86ef8"><td class="memItemLeft" align="right" valign="top">static unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#a66f2cee21b88b44da7e947d90ae86ef8">next_power_of_two</a> (unsigned long int value)</td></tr>
+<tr class="separator:a66f2cee21b88b44da7e947d90ae86ef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67ba966c545f8e00c394bba622894d90" id="r_a67ba966c545f8e00c394bba622894d90"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#a67ba966c545f8e00c394bba622894d90">insert_rep_hash</a> (struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *sym, unsigned long int rep_state, unsigned long int basis_index)</td></tr>
+<tr class="separator:a67ba966c545f8e00c394bba622894d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e7b01af0b4dcb50645f9c84146ad3c7" id="r_a4e7b01af0b4dcb50645f9c84146ad3c7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#a4e7b01af0b4dcb50645f9c84146ad3c7">build_rep_hash</a> (struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *sym)</td></tr>
+<tr class="separator:a4e7b01af0b4dcb50645f9c84146ad3c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4de6c5a03e9c8263f4d2820eb1e5834" id="r_ac4de6c5a03e9c8263f4d2820eb1e5834"><td class="memItemLeft" align="right" valign="top">static unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#ac4de6c5a03e9c8263f4d2820eb1e5834">find_basis_index_by_rep</a> (const struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *sym, unsigned long int rep_state)</td></tr>
 <tr class="separator:ac4de6c5a03e9c8263f4d2820eb1e5834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c035a28701eee6a49cedf1c33fc91c1" id="r_a3c035a28701eee6a49cedf1c33fc91c1"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__basis_8c.html#a3c035a28701eee6a49cedf1c33fc91c1">store_basis_vector</a> (struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *sym, unsigned long int basis_id, unsigned long int rep_state, unsigned int orbit_size, unsigned int stabilizer_size, double complex stabilizer_sum, double diagonal)</td></tr>
@@ -184,11 +193,43 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00332">332</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00436">436</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00649">main()</a>.</p>
+
+</div>
+</div>
+<a id="a4e7b01af0b4dcb50645f9c84146ad3c7" name="a4e7b01af0b4dcb50645f9c84146ad3c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e7b01af0b4dcb50645f9c84146ad3c7">&#9670;&#160;</a></span>build_rep_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int build_rep_hash </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *&#160;</td>
+          <td class="paramname"><em>sym</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00307">307</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00030">SymmetryBasisRuntime::dim</a>, <a class="el" href="symmetry__basis_8c_source.html#l00288">insert_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00278">next_power_of_two()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00035">SymmetryBasisRuntime::rep_hash_keys</a>, <a class="el" href="symmetry__basis_8h_source.html#l00034">SymmetryBasisRuntime::rep_hash_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00036">SymmetryBasisRuntime::rep_hash_values</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -208,9 +249,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00252">252</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00348">348</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8c_source.html#l00178">compare_basis_rep_state()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00199">compute_orbit_metadata()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00015">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00030">SymmetryBasisRuntime::dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00026">SymmetryBasisRuntime::enabled</a>, <a class="el" href="symmetry__basis_8c_source.html#l00159">ensure_basis_capacity()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__basis_8c_source.html#l00187">find_representative_spin_state()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00029">SymmetryBasisRuntime::full_dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00028">SymmetryBasisRuntime::group_order</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00140">list_Diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00027">SymmetryBasisRuntime::nsite</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="symmetry__basis_8c_source.html#l00235">store_basis_vector()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00033">SymmetryBasisRuntime::sym_diagonal</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00182">compare_basis_rep_state()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00203">compute_orbit_metadata()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00015">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00030">SymmetryBasisRuntime::dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00026">SymmetryBasisRuntime::enabled</a>, <a class="el" href="symmetry__basis_8c_source.html#l00160">ensure_basis_capacity()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__basis_8c_source.html#l00191">find_representative_spin_state()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00457">FreeSymmetryBasis()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00029">SymmetryBasisRuntime::full_dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00028">SymmetryBasisRuntime::group_order</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00140">list_Diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00027">SymmetryBasisRuntime::nsite</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="symmetry__basis_8c_source.html#l00331">store_basis_vector()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00033">SymmetryBasisRuntime::sym_diagonal</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00649">main()</a>.</p>
 
@@ -250,11 +291,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00178">178</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00182">182</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -310,11 +351,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00199">199</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00203">203</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8h_source.html#l00011">SymmetryBasisVector::orbit_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00012">SymmetryBasisVector::stabilizer_size</a>, <a class="el" href="symmetry__basis_8c_source.html#l00008">SymmetryApplyToSpinBits()</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, and <a class="el" href="struct_8h_source.html#l00221">DefineList::SymTransChar</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8h_source.html#l00011">SymmetryBasisVector::orbit_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00012">SymmetryBasisVector::stabilizer_size</a>, <a class="el" href="symmetry__basis_8c_source.html#l00009">SymmetryApplyToSpinBits()</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, and <a class="el" href="struct_8h_source.html#l00221">DefineList::SymTransChar</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -352,11 +393,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00159">159</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00160">160</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00031">SymmetryBasisRuntime::capacity</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -394,11 +435,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00218">218</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00229">229</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00030">SymmetryBasisRuntime::dim</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00030">SymmetryBasisRuntime::dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00035">SymmetryBasisRuntime::rep_hash_keys</a>, <a class="el" href="symmetry__basis_8h_source.html#l00034">SymmetryBasisRuntime::rep_hash_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00036">SymmetryBasisRuntime::rep_hash_values</a>, <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00260">rep_state_hash()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00304">SymmetryCanonicalizeSpinState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00408">SymmetryCanonicalizeSpinState()</a>.</p>
 
 </div>
 </div>
@@ -436,11 +477,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00031">31</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00032">32</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00022">same_perm()</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00023">same_perm()</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00081">ValidateSymmetryGroupInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00082">ValidateSymmetryGroupInput()</a>.</p>
 
 </div>
 </div>
@@ -478,11 +519,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00187">187</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00191">191</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00008">SymmetryApplyToSpinBits()</a>, and <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00009">SymmetryApplyToSpinBits()</a>, and <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00304">SymmetryCanonicalizeSpinState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00408">SymmetryCanonicalizeSpinState()</a>.</p>
 
 </div>
 </div>
@@ -502,9 +543,59 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00353">353</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00457">457</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00033">SymmetryBasisRuntime::sym_diagonal</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00035">SymmetryBasisRuntime::rep_hash_keys</a>, <a class="el" href="symmetry__basis_8h_source.html#l00036">SymmetryBasisRuntime::rep_hash_values</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00033">SymmetryBasisRuntime::sym_diagonal</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
+
+</div>
+</div>
+<a id="a67ba966c545f8e00c394bba622894d90" name="a67ba966c545f8e00c394bba622894d90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67ba966c545f8e00c394bba622894d90">&#9670;&#160;</a></span>insert_rep_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int insert_rep_hash </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *&#160;</td>
+          <td class="paramname"><em>sym</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>rep_state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>basis_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00288">288</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00035">SymmetryBasisRuntime::rep_hash_keys</a>, <a class="el" href="symmetry__basis_8h_source.html#l00034">SymmetryBasisRuntime::rep_hash_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00036">SymmetryBasisRuntime::rep_hash_values</a>, <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00260">rep_state_hash()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>.</p>
 
 </div>
 </div>
@@ -542,11 +633,71 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00040">40</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00041">41</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00081">ValidateSymmetryGroupInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00082">ValidateSymmetryGroupInput()</a>.</p>
+
+</div>
+</div>
+<a id="a66f2cee21b88b44da7e947d90ae86ef8" name="a66f2cee21b88b44da7e947d90ae86ef8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66f2cee21b88b44da7e947d90ae86ef8">&#9670;&#160;</a></span>next_power_of_two()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned long int next_power_of_two </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00278">278</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>.</p>
+
+</div>
+</div>
+<a id="a0a699003c2546bedda8d01dc009347fe" name="a0a699003c2546bedda8d01dc009347fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a699003c2546bedda8d01dc009347fe">&#9670;&#160;</a></span>rep_state_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned long int rep_state_hash </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00260">260</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00288">insert_rep_hash()</a>.</p>
 
 </div>
 </div>
@@ -590,11 +741,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00022">22</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00023">23</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00031">find_perm()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00081">ValidateSymmetryGroupInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00032">find_perm()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00082">ValidateSymmetryGroupInput()</a>.</p>
 
 </div>
 </div>
@@ -662,11 +813,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00235">235</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00331">331</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00032">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00015">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__basis_8h_source.html#l00011">SymmetryBasisVector::orbit_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00010">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00014">SymmetryBasisVector::stabilizer_character_sum</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00012">SymmetryBasisVector::stabilizer_size</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -702,9 +853,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00008">8</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00009">9</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00199">compute_orbit_metadata()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00187">find_representative_spin_state()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00304">SymmetryCanonicalizeSpinState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00203">compute_orbit_metadata()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00191">find_representative_spin_state()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00408">SymmetryCanonicalizeSpinState()</a>.</p>
 
 </div>
 </div>
@@ -740,9 +891,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00304">304</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00408">408</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00020">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="symmetry__basis_8c_source.html#l00218">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00187">find_representative_spin_state()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00019">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00021">SymmetryCanonicalResult::op_rep_to_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8c_source.html#l00008">SymmetryApplyToSpinBits()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00020">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00191">find_representative_spin_state()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00019">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00021">SymmetryCanonicalResult::op_rep_to_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8c_source.html#l00009">SymmetryApplyToSpinBits()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00018">add_canonicalized_transition()</a>.</p>
 
@@ -772,11 +923,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00049">49</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00050">50</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, and <a class="el" href="struct_8h_source.html#l00220">DefineList::SymTransAnti</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00081">ValidateSymmetryGroupInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00082">ValidateSymmetryGroupInput()</a>.</p>
 
 </div>
 </div>
@@ -796,9 +947,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00081">81</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00082">82</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__basis_8c_source.html#l00031">find_perm()</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="symmetry__basis_8c_source.html#l00040">is_identity_perm()</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00022">same_perm()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, <a class="el" href="struct_8h_source.html#l00221">DefineList::SymTransChar</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00049">validate_bijection_and_anti()</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__basis_8c_source.html#l00032">find_perm()</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="symmetry__basis_8c_source.html#l00041">is_identity_perm()</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="symmetry__basis_8c_source.html#l00023">same_perm()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, <a class="el" href="struct_8h_source.html#l00221">DefineList::SymTransChar</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00050">validate_bijection_and_anti()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>.</p>
 
@@ -820,7 +971,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00340">340</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8c_source.html#l00444">444</a> of file <a class="el" href="symmetry__basis_8c_source.html">symmetry_basis.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 

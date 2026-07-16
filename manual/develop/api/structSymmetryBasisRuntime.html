@@ -142,6 +142,12 @@ Data Fields</h2></td></tr>
 <tr class="separator:a4615bb14519b8656206a9b7df14e2d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbc23f5de898b89a2c156d52b235ba61" id="r_afbc23f5de898b89a2c156d52b235ba61"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSymmetryBasisRuntime.html#afbc23f5de898b89a2c156d52b235ba61">sym_diagonal</a></td></tr>
 <tr class="separator:afbc23f5de898b89a2c156d52b235ba61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff54198265f1716ab66713830f3fbd8f" id="r_aff54198265f1716ab66713830f3fbd8f"><td class="memItemLeft" align="right" valign="top">unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSymmetryBasisRuntime.html#aff54198265f1716ab66713830f3fbd8f">rep_hash_size</a></td></tr>
+<tr class="separator:aff54198265f1716ab66713830f3fbd8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add5a21e60bf354231d93f5dd6c6bda7f" id="r_add5a21e60bf354231d93f5dd6c6bda7f"><td class="memItemLeft" align="right" valign="top">unsigned long int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSymmetryBasisRuntime.html#add5a21e60bf354231d93f5dd6c6bda7f">rep_hash_keys</a></td></tr>
+<tr class="separator:add5a21e60bf354231d93f5dd6c6bda7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a26aaa8d51ae244960712c28b7101f9" id="r_a3a26aaa8d51ae244960712c28b7101f9"><td class="memItemLeft" align="right" valign="top">unsigned long int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSymmetryBasisRuntime.html#a3a26aaa8d51ae244960712c28b7101f9">rep_hash_values</a></td></tr>
+<tr class="separator:a3a26aaa8d51ae244960712c28b7101f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -161,7 +167,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00032">32</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00159">ensure_basis_capacity()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00218">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00353">FreeSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00235">store_basis_vector()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00160">ensure_basis_capacity()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00457">FreeSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00331">store_basis_vector()</a>.</p>
 
 </div>
 </div>
@@ -179,7 +185,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00031">31</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00159">ensure_basis_capacity()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00160">ensure_basis_capacity()</a>.</p>
 
 </div>
 </div>
@@ -197,7 +203,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00030">30</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00218">find_basis_index_by_rep()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>.</p>
 
 </div>
 </div>
@@ -215,7 +221,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00026">26</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -233,7 +239,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00029">29</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -251,7 +257,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00028">28</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -269,7 +275,61 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00027">27</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>.</p>
+
+</div>
+</div>
+<a id="add5a21e60bf354231d93f5dd6c6bda7f" name="add5a21e60bf354231d93f5dd6c6bda7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add5a21e60bf354231d93f5dd6c6bda7f">&#9670;&#160;</a></span>rep_hash_keys</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long int* SymmetryBasisRuntime::rep_hash_keys</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00035">35</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00457">FreeSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00288">insert_rep_hash()</a>.</p>
+
+</div>
+</div>
+<a id="aff54198265f1716ab66713830f3fbd8f" name="aff54198265f1716ab66713830f3fbd8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff54198265f1716ab66713830f3fbd8f">&#9670;&#160;</a></span>rep_hash_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long int SymmetryBasisRuntime::rep_hash_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00034">34</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00288">insert_rep_hash()</a>.</p>
+
+</div>
+</div>
+<a id="a3a26aaa8d51ae244960712c28b7101f9" name="a3a26aaa8d51ae244960712c28b7101f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a26aaa8d51ae244960712c28b7101f9">&#9670;&#160;</a></span>rep_hash_values</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long int* SymmetryBasisRuntime::rep_hash_values</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00036">36</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00307">build_rep_hash()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00229">find_basis_index_by_rep()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00457">FreeSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00288">insert_rep_hash()</a>.</p>
 
 </div>
 </div>
@@ -287,7 +347,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__basis_8h_source.html#l00033">33</a> of file <a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00252">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00353">FreeSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00348">BuildSymmetryBasis()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00457">FreeSymmetryBasis()</a>.</p>
 
 </div>
 </div>

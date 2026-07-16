@@ -1,6 +1,7 @@
 var symmetry__basis_8c =
 [
     [ "ActivateSymmetryBasisDimension", "symmetry__basis_8c.html#a048a6ee82da792264a9ca84f852f6747", null ],
+    [ "build_rep_hash", "symmetry__basis_8c.html#a4e7b01af0b4dcb50645f9c84146ad3c7", null ],
     [ "BuildSymmetryBasis", "symmetry__basis_8c.html#aa4b23a374c23a23ed228057aee5f0953", null ],
     [ "compare_basis_rep_state", "symmetry__basis_8c.html#a0b0a1b80ef3cd8da8195ebd97d8baf34", null ],
     [ "compute_orbit_metadata", "symmetry__basis_8c.html#ad5166eb8893aa73cf8b5b283441cdf3b", null ],
@@ -9,7 +10,10 @@ var symmetry__basis_8c =
     [ "find_perm", "symmetry__basis_8c.html#af3e492178ce909774ca78511ce91f012", null ],
     [ "find_representative_spin_state", "symmetry__basis_8c.html#a8b68830d189dc008d8066d1877204981", null ],
     [ "FreeSymmetryBasis", "symmetry__basis_8c.html#a974a6f9fc737d8164c388631556112e3", null ],
+    [ "insert_rep_hash", "symmetry__basis_8c.html#a67ba966c545f8e00c394bba622894d90", null ],
     [ "is_identity_perm", "symmetry__basis_8c.html#ab5a5e729acad2480b3c4b44c880c8eaa", null ],
+    [ "next_power_of_two", "symmetry__basis_8c.html#a66f2cee21b88b44da7e947d90ae86ef8", null ],
+    [ "rep_state_hash", "symmetry__basis_8c.html#a0a699003c2546bedda8d01dc009347fe", null ],
     [ "same_perm", "symmetry__basis_8c.html#a2dbb1fb76cf1059cbc8d713d20332f26", null ],
     [ "store_basis_vector", "symmetry__basis_8c.html#a3c035a28701eee6a49cedf1c33fc91c1", null ],
     [ "SymmetryApplyToSpinBits", "symmetry__basis_8c.html#a1d25a3e12a76036f60e4443311700bd0", null ],
