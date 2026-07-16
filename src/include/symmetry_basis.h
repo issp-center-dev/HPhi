@@ -8,9 +8,18 @@ struct DefineList;
 
 struct SymmetryBasisVector {
   unsigned long int rep_state;
-  unsigned int count;
-  unsigned long int *raw_index;
-  double complex *coeff;
+  unsigned int orbit_size;
+  unsigned int stabilizer_size;
+  double norm;
+  double complex stabilizer_character_sum;
+  double diagonal;
+};
+
+struct SymmetryCanonicalResult {
+  int found;
+  unsigned long int basis_index;
+  unsigned int op_rep_to_state;
+  double complex phase;
 };
 
 struct SymmetryBasisRuntime {
@@ -21,8 +30,6 @@ struct SymmetryBasisRuntime {
   unsigned long int dim;
   unsigned long int capacity;
   struct SymmetryBasisVector *basis;
-  unsigned long int *raw_to_sym;
-  double complex *raw_to_coeff;
   double *sym_diagonal;
 };
 
@@ -31,6 +38,9 @@ unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite);
 int BuildSymmetryBasis(struct BindStruct *X);
+int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
+                                  unsigned long int state,
+                                  struct SymmetryCanonicalResult *result);
 void ActivateSymmetryBasisDimension(struct BindStruct *X);
 int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
