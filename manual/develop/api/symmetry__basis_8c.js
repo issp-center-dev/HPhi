@@ -1,6 +1,6 @@
 var symmetry__basis_8c =
 [
-    [ "ActivateSymmetryBasisDimension", "symmetry__basis_8c.html#a048a6ee82da792264a9ca84f852f6747", null ],
+    [ "ActivateSymmetryBasisDimension", "symmetry__basis_8c.html#a135f98a976b38c287e2f29537ff477ee", null ],
     [ "build_rep_hash", "symmetry__basis_8c.html#a4e7b01af0b4dcb50645f9c84146ad3c7", null ],
     [ "BuildSymmetryBasis", "symmetry__basis_8c.html#aa4b23a374c23a23ed228057aee5f0953", null ],
     [ "compare_basis_rep_state", "symmetry__basis_8c.html#a0b0a1b80ef3cd8da8195ebd97d8baf34", null ],
@@ -16,7 +16,9 @@ var symmetry__basis_8c =
     [ "rep_state_hash", "symmetry__basis_8c.html#a0a699003c2546bedda8d01dc009347fe", null ],
     [ "same_perm", "symmetry__basis_8c.html#a2dbb1fb76cf1059cbc8d713d20332f26", null ],
     [ "store_basis_vector", "symmetry__basis_8c.html#a3c035a28701eee6a49cedf1c33fc91c1", null ],
+    [ "symmetry_block_range", "symmetry__basis_8c.html#afff68f5ae4dcca21103fc47f118d6e96", null ],
     [ "SymmetryApplyToSpinBits", "symmetry__basis_8c.html#a1d25a3e12a76036f60e4443311700bd0", null ],
+    [ "SymmetryBasisGlobalToLocal", "symmetry__basis_8c.html#a1c4a7e407bed19b2e605c5cfd116f45c", null ],
     [ "SymmetryCanonicalizeSpinState", "symmetry__basis_8c.html#a17e17db5924d0431073930fecf21a593", null ],
     [ "validate_bijection_and_anti", "symmetry__basis_8c.html#af86aae01480c5f78f8d12949b5f7a0a1", null ],
     [ "ValidateSymmetryGroupInput", "symmetry__basis_8c.html#a6eb0f540c7f6bce3450e76d43a68fa99", null ],

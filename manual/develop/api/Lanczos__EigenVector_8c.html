@@ -134,7 +134,7 @@ $(document).ready(function(){initNavTree('Lanczos__EigenVector_8c.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4575347f442614960b1d0555ab1d1ffe" id="r_a4575347f442614960b1d0555ab1d1ffe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Lanczos__EigenVector_8c.html#a4575347f442614960b1d0555ab1d1ffe">Lanczos_EigenVector</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:a4575347f442614960b1d0555ab1d1ffe" id="r_a4575347f442614960b1d0555ab1d1ffe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Lanczos__EigenVector_8c.html#a4575347f442614960b1d0555ab1d1ffe">Lanczos_EigenVector</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a4575347f442614960b1d0555ab1d1ffe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reconstruct eigenvector by regenerating Lanczos vectors.  <br /></td></tr>
 <tr class="separator:a4575347f442614960b1d0555ab1d1ffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -142,13 +142,13 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Reconstruct eigenvector from Lanczos tridiagonal matrix. </p>
 <p>After <a class="el" href="Lanczos__EigenValue_8h.html#adffde20ad3202934fdc77cfa37472529" title="Compute lowest eigenvalues using Lanczos iteration.">Lanczos_EigenValue()</a> finds eigenvalues and stores the tridiagonal matrix elements (alpha[], beta[]), this function reconstructs the corresponding eigenvector.</p>
 <p>Algorithm: The eigenvector |psi&gt; in the original basis is: |psi&gt; = sum_j c_j |q_j&gt; where |q_j&gt; are Lanczos vectors and c_j are components of the eigenvector of the tridiagonal matrix T.</p>
-<p>Since storing all Lanczos vectors |q_j&gt; would require O(N*M) memory (N = Hilbert space dim, M = Lanczos steps), we regenerate them:</p>
+<p>Since storing all Lanczos vectors |q_j&gt; would require <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(N*M)</a> memory (N = Hilbert space dim, M = Lanczos steps), we regenerate them:</p>
 <ol type="1">
 <li>Diagonalize tridiagonal matrix T to get eigenvector components c_j</li>
 <li>Re-run Lanczos iteration with same initial vector</li>
 <li>At each step j, accumulate: |psi&gt; += c_j * |q_j&gt;</li>
 </ol>
-<p>This requires O(N) memory but O(M) H*v multiplications.</p>
+<p>This requires <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(N)</a> memory but <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(M)</a> H*v multiplications.</p>
 <p>Initial vector:</p><ul>
 <li>initial_mode = 0: Deterministic (one element = 1)</li>
 <li>initial_mode = 1: Random (for grand canonical ensembles)</li>
@@ -169,9 +169,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Lanczos_EigenVector </td>
+          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> Lanczos_EigenVector </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>

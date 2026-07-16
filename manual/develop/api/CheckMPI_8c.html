@@ -131,10 +131,10 @@ $(document).ready(function(){initNavTree('CheckMPI_8c.html',''); initResizable()
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0071aad5dceaaad19ef22a9c99751c29" id="r_a0071aad5dceaaad19ef22a9c99751c29"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CheckMPI_8c.html#a0071aad5dceaaad19ef22a9c99751c29">CheckMPI</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:a0071aad5dceaaad19ef22a9c99751c29" id="r_a0071aad5dceaaad19ef22a9c99751c29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CheckMPI_8c.html#a0071aad5dceaaad19ef22a9c99751c29">CheckMPI</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a0071aad5dceaaad19ef22a9c99751c29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure MPI decomposition based on number of processes.  <br /></td></tr>
 <tr class="separator:a0071aad5dceaaad19ef22a9c99751c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38d463871e9c46f5184bedbf9387ac27" id="r_a38d463871e9c46f5184bedbf9387ac27"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CheckMPI_8c.html#a38d463871e9c46f5184bedbf9387ac27">CheckMPI_Summary</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:a38d463871e9c46f5184bedbf9387ac27" id="r_a38d463871e9c46f5184bedbf9387ac27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CheckMPI_8c.html#a38d463871e9c46f5184bedbf9387ac27">CheckMPI_Summary</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a38d463871e9c46f5184bedbf9387ac27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print infomation of MPI parallelization Modify Definelist::Tpow in the inter process region.  <br /></td></tr>
 <tr class="separator:a38d463871e9c46f5184bedbf9387ac27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -163,9 +163,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int CheckMPI </td>
+          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> CheckMPI </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>
@@ -202,10 +202,10 @@ Functions</h2></td></tr>
 </ul>
 <p>130</p>
 <p>For canonical Hubbard <a class="el" href="structDefineList.html#a663475b5150d20237e3dd8a489dfbff9" title="Number of spin-up electrons in this process.">DefineList::Nup</a>, <a class="el" href="structDefineList.html#af746986c155b96c5130ad704f54d0b47" title="Number of spin-down electrons in this process.">DefineList::Ndown</a>, and <a class="el" href="structDefineList.html#a805142189d8d265e55c53a5fa745a54e" title="Number of electrons in this process.">DefineList::Ne</a> should be differerent in each PE.</p>
-<p>For canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon state(11) or over-subtracted particle counts.</p>
+<p>For canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">state(11)</a> or over-subtracted particle counts.</p>
 <p>For N-conserved canonical Hubbard <a class="el" href="structDefineList.html#a805142189d8d265e55c53a5fa745a54e" title="Number of electrons in this process.">DefineList::Ne</a> should be differerent in each PE.</p>
-<p>For N-conserved canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon state(11) or over-subtracted particle counts.</p>
-<p>For grand-canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon state(11).</p>
+<p>For N-conserved canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">state(11)</a> or over-subtracted particle counts.</p>
+<p>For grand-canonical tJ Build sectors in the Hubbard-like 4-state inter-process representation, but invalidate sectors containing doublon <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">state(11)</a>.</p>
 <p>For canonical Kondo system <a class="el" href="structDefineList.html#a663475b5150d20237e3dd8a489dfbff9" title="Number of spin-up electrons in this process.">DefineList::Nup</a>, <a class="el" href="structDefineList.html#af746986c155b96c5130ad704f54d0b47" title="Number of spin-down electrons in this process.">DefineList::Ndown</a>, and <a class="el" href="structDefineList.html#a805142189d8d265e55c53a5fa745a54e" title="Number of electrons in this process.">DefineList::Ne</a> should be differerent in each PE.</p>
 <p>For 1/2 Spin system, define local dimension <a class="el" href="structDefineList.html#acd881e170f064eb429a207412b8b64a2" title="Number of sites in the INTRA process region.">DefineList::Nsite</a></p>
 <p>For general Spin system, define local dimension <a class="el" href="structDefineList.html#acd881e170f064eb429a207412b8b64a2" title="Number of sites in the INTRA process region.">DefineList::Nsite</a></p>
@@ -233,9 +233,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CheckMPI_Summary </td>
+          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> CheckMPI_Summary </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>

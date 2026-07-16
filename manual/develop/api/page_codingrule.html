@@ -141,7 +141,7 @@ Function Names</h2>
 </ul>
 </li>
 </ul>
-<p>Example: <code>X_child_GC_general_hopp_MPIsingle()</code> </p>
+<p>Example: <code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">X_child_GC_general_hopp_MPIsingle()</a></code> </p>
 <h2><a class="anchor" id="subsec_variables"></a>
 Variable Names</h2>
 <ul>
@@ -166,14 +166,15 @@ Macro Names</h2>
 <h1><a class="anchor" id="sec_coding_openmp"></a>
 OpenMP Parallelization</h1>
 <ul>
-<li>Always use <code>default(none)</code> for scoping of OpenMP-parallel region:  <div class="fragment"><div class="line"><span class="preprocessor">#pragma omp parallel for default(none) private(idim) shared(wave,i_max,ie)</span></div>
-<div class="line">      <span class="keywordflow">for</span> (idim = 1; idim &lt;= i_max; idim++) wave[ie][idim] = 0.0;</div>
+<li>Always use <code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">default(none)</a></code> for scoping of OpenMP-parallel region:  <div class="fragment"><div class="line"><span class="preprocessor">#pragma omp parallel for default(none) private(idim) shared(wave,i_max,ie)</span></div>
+<div class="line">      <span class="keywordflow">for</span> (<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">idim</a> = 1; <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">idim</a> &lt;= i_max; <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">idim</a>++) <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">wave</a>[<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ie</a>][<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">idim</a>] = 0.0;</div>
+<div class="ttc" id="aglobal_8c_html_aa8a2431e50f9fc7d8c78af300d5f3bee"><div class="ttname"><a href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a></div><div class="ttdeci">int myrank</div><div class="ttdoc">Process ID, defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00190">global.c:190</a></div></div>
 </div><!-- fragment --></li>
 <li>Classify all variables explicitly:<ul>
-<li><code>private()</code> : Thread-local variables (loop indices)</li>
-<li><code>shared()</code> : Read-only shared data, const variables</li>
-<li><code>firstprivate()</code> : Variables initialized from master thread</li>
-<li><code>reduction()</code> : Variables for accumulation (+, *, max, min)</li>
+<li><code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">private()</a></code> : Thread-local variables (loop indices)</li>
+<li><code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">shared()</a></code> : Read-only shared data, const variables</li>
+<li><code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">firstprivate()</a></code> : Variables initialized from master thread</li>
+<li><code><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">reduction()</a></code> : Variables for accumulation (+, *, max, min)</li>
 </ul>
 </li>
 <li>Variable declared with <code>const</code> must not be included in <code>firstprivate</code>. Use <code>shared</code> instead.</li>
@@ -217,9 +218,9 @@ Error Handling</h1>
 <ul>
 <li>Return <code>int</code> for error codes: 0 = success, -1 = error</li>
 <li>Use global error messages defined in <a class="el" href="ErrorMessage_8h.html">ErrorMessage.h</a>/c</li>
-<li>Always check file operations: <div class="fragment"><div class="line">fp = <a class="code hl_function" href="wrapperMPI_8h.html#a2abfe04445bd797efbd04144652cfe0e">fopenMPI</a>(filename, <span class="stringliteral">&quot;r&quot;</span>);</div>
-<div class="line"><span class="keywordflow">if</span> (fp == NULL) {</div>
-<div class="line">  fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <a class="code hl_variable" href="ErrorMessage_8c.html#abb9ac53c659c65bd8b3fe08113e19a92">cErrFIOpen</a>, filename);</div>
+<li>Always check file operations: <div class="fragment"><div class="line"><a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fp</a> = <a class="code hl_function" href="wrapperMPI_8h.html#a2abfe04445bd797efbd04144652cfe0e">fopenMPI</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">filename</a>, <span class="stringliteral">&quot;r&quot;</span>);</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fp</a> == <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">NULL</a>) {</div>
+<div class="line">  <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fprintf</a>(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <a class="code hl_variable" href="ErrorMessage_8c.html#abb9ac53c659c65bd8b3fe08113e19a92">cErrFIOpen</a>, <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">filename</a>);</div>
 <div class="line">  <span class="keywordflow">return</span> -1;</div>
 <div class="line">}</div>
 <div class="ttc" id="aErrorMessage_8c_html_abb9ac53c659c65bd8b3fe08113e19a92"><div class="ttname"><a href="ErrorMessage_8c.html#abb9ac53c659c65bd8b3fe08113e19a92">cErrFIOpen</a></div><div class="ttdeci">char * cErrFIOpen</div><div class="ttdoc">Error Message in FileIO.c.</div><div class="ttdef"><b>Definition</b> <a href="ErrorMessage_8c_source.html#l00112">ErrorMessage.c:112</a></div></div>

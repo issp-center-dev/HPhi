@@ -1,7 +1,7 @@
 var searchData=
 [
   ['a_5fspin_0',['A_spin',['../structLargeList.html#a0595e327f9726774211d82f27477ae07',1,'LargeList']]],
-  ['activatesymmetrybasisdimension_1',['activatesymmetrybasisdimension',['../symmetry__basis_8h.html#a048a6ee82da792264a9ca84f852f6747',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c'],['../symmetry__basis_8c.html#a048a6ee82da792264a9ca84f852f6747',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c']]],
+  ['activatesymmetrybasisdimension_1',['activatesymmetrybasisdimension',['../symmetry__basis_8h.html#a135f98a976b38c287e2f29537ff477ee',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c'],['../symmetry__basis_8c.html#a135f98a976b38c287e2f29537ff477ee',1,'ActivateSymmetryBasisDimension(struct BindStruct *X):&#160;symmetry_basis.c']]],
   ['add_20file_20type_2',['Step 2: Add File Type',['../page_addexpert.html#subsec_expert_step2',1,'']]],
   ['add_20keyword_3',['Step 2: Add Keyword',['../page_addmodpara.html#subsec_modpara_step2',1,'']]],
   ['add_20new_20calculation_20mode_4',['Steps to Add New Calculation Mode',['../page_addcalcmod.html#sec_calcmod_steps',1,'']]],
@@ -13,7 +13,7 @@ var searchData=
   ['add_20new_20source_20file_20executable_20scripts_20handle_20cmake_10',['Add new source-file, executable, scripts (handle CMake)',['../page_cmake.html',1,'']]],
   ['add_20to_20definelist_11',['Step 1: Add to DefineList',['../page_addmodpara.html#subsec_modpara_step1',1,'']]],
   ['add_20to_20main_20switch_12',['Step 3: Add to Main Switch',['../page_addcalcmod.html#subsec_calcmod_step3',1,'']]],
-  ['add_5fcanonicalized_5ftransition_13',['add_canonicalized_transition',['../mltplySpinSym_8c.html#ab894e212f0802098e5378413a398d7e3',1,'mltplySpinSym.c']]],
+  ['add_5fcanonicalized_5ftransition_13',['add_canonicalized_transition',['../mltplySpinSym_8c.html#a424f4f95b62da893f5726a148cb12548',1,'mltplySpinSym.c']]],
   ['addanomaloustermtohamhubbardgc_14',['addanomaloustermtohamhubbardgc',['../anomalous__pair_8c.html#a1cc48cdad93b364ffb182a9e97e4fe96',1,'AddAnomalousTermToHamHubbardGC(struct BindStruct *X):&#160;anomalous_pair.c'],['../anomalous__pair_8h.html#a1cc48cdad93b364ffb182a9e97e4fe96',1,'AddAnomalousTermToHamHubbardGC(struct BindStruct *X):&#160;anomalous_pair.c']]],
   ['adding_20new_20timer_15',['Adding New Timer',['../page_time.html#subsec_time_new',1,'']]],
   ['addnbodyinteralltohamhubbard_16',['addnbodyinteralltohamhubbard',['../nbody__interall_8h.html#aab23d376b0972153aa8c392ce15bfcf4',1,'AddNBodyInterAllToHamHubbard(struct BindStruct *X):&#160;nbody_interall.c'],['../nbody__interall_8c.html#aab23d376b0972153aa8c392ce15bfcf4',1,'AddNBodyInterAllToHamHubbard(struct BindStruct *X):&#160;nbody_interall.c']]],
