@@ -100,11 +100,13 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
 
   if (X->Def.iFlgGeneralSpin == FALSE) {
     if (GetSplitBitByModel(X->Def.Nsite, X->Def.iCalcModel, &irght, &ilft, &ihfbit) != 0) {
+      StopTimer(1);
       return -1;
     }
   }
   else if (i_max != 0 && X->Def.iCalcModel == Spin) {
     if (GetSplitBitForGeneralSpin(X->Def.Nsite, &ihfbit, X->Def.SiteToBit) != 0) {
+      StopTimer(1);
       return -1;
     }
   }
@@ -117,13 +119,18 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
   if (X->Def.iFlgSymmetryBasis == TRUE) {
     if (X->Sym == NULL || X->Sym->enabled != TRUE) {
       fprintf(stdoutMPI, "Error: symmetry basis is requested but not built.\n");
+      StopTimer(1);
       return -1;
     }
     if (X->Def.iCalcModel != Spin) {
       fprintf(stdoutMPI, "Error: symmetry basis mltply supports only Spin in v1.\n");
+      StopTimer(1);
       return -1;
     }
-    if (mltplySpinSym(X, tmp_v0, tmp_v1) != 0) return -1;
+    if (mltplySpinSym(X, tmp_v0, tmp_v1) != 0) {
+      StopTimer(1);
+      return -1;
+    }
     X->Large.prdct = SumMPI_dc(X->Large.prdct);
     StopTimer(1);
     return 0;
@@ -166,6 +173,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     break;
 
   default:
+    StopTimer(1);
     return -1;
   }
   
