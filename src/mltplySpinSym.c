@@ -50,16 +50,18 @@ static const double complex *get_full_input_vector(struct BindStruct *X,
 #ifdef MPI
   if (nproc > 1) {
     int ierr;
+    const double complex *sendbuf = tmp_v1;
     if (X->Sym->mpi_full_v1 == NULL || X->Sym->mpi_recvcounts == NULL ||
         X->Sym->mpi_displs == NULL) {
       return NULL;
     }
-    ierr = MPI_Allgatherv(&tmp_v1[1], (int)X->Sym->local_dim,
+    if (X->Sym->local_dim > 0UL) sendbuf = &tmp_v1[1];
+    ierr = MPI_Allgatherv(sendbuf, (int)X->Sym->local_dim,
                           MPI_DOUBLE_COMPLEX,
                           &X->Sym->mpi_full_v1[1], X->Sym->mpi_recvcounts,
                           X->Sym->mpi_displs, MPI_DOUBLE_COMPLEX,
                           MPI_COMM_WORLD);
-    if (ierr != 0) return NULL;
+    if (ierr != MPI_SUCCESS) return NULL;
     return X->Sym->mpi_full_v1;
   }
 #else
