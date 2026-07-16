@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include "DefCommon.h"
 #include "global.h"
 #include "symmetry_basis.h"
@@ -162,14 +163,17 @@ static int ensure_basis_capacity(struct SymmetryBasisRuntime *sym,
 {
   struct SymmetryBasisVector *next;
   unsigned long int next_capacity;
+  size_t element_count;
   if (needed <= sym->capacity) return 0;
   next_capacity = (sym->capacity == 0UL) ? 16UL : sym->capacity;
   while (next_capacity < needed) {
     if (next_capacity > ULONG_MAX / 2UL) return -1;
     next_capacity *= 2UL;
   }
+  if (next_capacity > SIZE_MAX / sizeof(*next) - 1UL) return -1;
+  element_count = (size_t)next_capacity + 1U;
   next = (struct SymmetryBasisVector *)realloc(sym->basis,
-      sizeof(struct SymmetryBasisVector) * (next_capacity + 1UL));
+      sizeof(*next) * element_count);
   if (next == NULL) return -1;
   sym->basis = next;
   sym->capacity = next_capacity;
@@ -261,11 +265,19 @@ static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRunti
 
 static unsigned long int rep_state_hash(unsigned long int state)
 {
+#if ULONG_MAX > 0xffffffffUL
+  state ^= state >> 30;
+  state *= 0xbf58476d1ce4e5b9UL;
+  state ^= state >> 27;
+  state *= 0x94d049bb133111ebUL;
+  state ^= state >> 31;
+#else
   state ^= state >> 16;
   state *= 0x7feb352dUL;
   state ^= state >> 15;
   state *= 0x846ca68bUL;
   state ^= state >> 16;
+#endif
   return state;
 }
 
@@ -307,9 +319,12 @@ static int build_rep_hash(struct SymmetryBasisRuntime *sym)
   target_size = next_power_of_two(sym->dim * 2UL + 1UL);
   if (target_size == 0UL) return -1;
   if (target_size < 4UL) target_size = 4UL;
+  if (target_size > SIZE_MAX / sizeof(*sym->rep_hash_keys)) return -1;
 
-  sym->rep_hash_keys = (unsigned long int *)calloc(target_size, sizeof(unsigned long int));
-  sym->rep_hash_values = (unsigned long int *)calloc(target_size, sizeof(unsigned long int));
+  sym->rep_hash_keys = (unsigned long int *)calloc((size_t)target_size,
+                                                   sizeof(*sym->rep_hash_keys));
+  sym->rep_hash_values = (unsigned long int *)calloc((size_t)target_size,
+                                                     sizeof(*sym->rep_hash_values));
   if (sym->rep_hash_keys == NULL || sym->rep_hash_values == NULL) return -1;
   sym->rep_hash_size = target_size;
 
@@ -386,7 +401,9 @@ int BuildSymmetryBasis(struct BindStruct *X)
   }
   if (build_rep_hash(sym) != 0) goto fail;
 
-  sym->sym_diagonal = (double *)calloc(sym->dim + 1, sizeof(double));
+  if (sym->dim > SIZE_MAX / sizeof(*sym->sym_diagonal) - 1UL) goto fail;
+  sym->sym_diagonal = (double *)calloc((size_t)sym->dim + 1U,
+                                      sizeof(*sym->sym_diagonal));
   if (sym->sym_diagonal == NULL) goto fail;
   for (raw = 1; raw <= sym->dim; raw++) {
     sym->sym_diagonal[raw] = sym->basis[raw].diagonal;
