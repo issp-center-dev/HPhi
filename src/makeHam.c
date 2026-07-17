@@ -275,7 +275,12 @@ int makeHam(struct BindStruct *X) {
             dmv = tmp_trans *
                   child_CisAjt(list_1[j], X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
                            &tmp_off);
-            AddHamElem(tmp_off, j, dmv);
+            /* child_CisAjt sets *tmp_off=0 (and returns sgn 0 -> dmv 0) on an
+               annihilated hop, and a valid 1-based row (>=1) with dmv!=0 only
+               on a surviving hop. Skipping tmp_off==0 avoids the row-0 panel
+               underrun and is numerically identical to the replicated path,
+               which added dmv==0 into the unused Ham[0][j]. */
+            if (tmp_off > 0) AddHamElem(tmp_off, j, dmv);
           }
         }
       }
@@ -337,20 +342,32 @@ int makeHam(struct BindStruct *X) {
 
             for (j = hs_jb; j <= hs_je; j++) {
               dmv = CisAisCjtAku_element(j, isite1, isite3, isite4, Bsum, Bdiff, tmp_V, v0, v1, X, &tmp_off);
-              AddHamElem(tmp_off, j, dmv);
+              /* Element helper returns dam_pr==0 on every annihilated path;
+                 dmv!=0 implies its internal child_CisAjt (which couples
+                 *tmp_off=0 with return 0) survived, so tmp_off is a valid
+                 1-based row. Guarding on dmv is exact (adding 0 is a no-op)
+                 and robust to a stale tmp_off left by a dead gate. */
+              if (dmv != 0.0) AddHamElem(tmp_off, j, dmv);
             }
           } else if (isite1 != isite2 && isite3 == isite4) {
 
             for (j = hs_jb; j <= hs_je; j++) {
               dmv = CisAjtCkuAku_element(j, isite1, isite2, isite3, Asum, Adiff, tmp_V, v0, v1, X, &tmp_off);
-              AddHamElem(tmp_off, j, dmv);
+              /* child_CisAis gate runs BEFORE child_CisAjt here, so a failed
+                 gate leaves tmp_off STALE (untouched) -> tmp_off could be 0
+                 (row-0 underrun) or a wrong prior row. dmv==0 on every dead
+                 path, so guard on dmv (exact: skipped write was +=0). */
+              if (dmv != 0.0) AddHamElem(tmp_off, j, dmv);
             }
           } else if (isite1 != isite2 && isite3 != isite4) {
 
             for (j = hs_jb; j <= hs_je; j++) {
               dmv = CisAjtCkuAlv_element(j, isite1, isite2, isite3, isite4, Asum, Adiff, Bsum, Bdiff, tmp_V, v0,
                                                v1, X, &tmp_off_2);
-              AddHamElem(tmp_off_2, j, dmv);
+              /* Same stale-out-param hazard: a failed child_GC_CisAjt
+                 intermediate leaves tmp_off_2 untouched. dmv==0 on all dead
+                 paths; guard on dmv (exact, robust to stale tmp_off_2). */
+              if (dmv != 0.0) AddHamElem(tmp_off_2, j, dmv);
             }
           }
         }
@@ -376,7 +393,10 @@ int makeHam(struct BindStruct *X) {
           hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = pairhopp_element(j, v0, v1, X, &tmp_off);
-            AddHamElem(tmp_off, j, dmv);
+            /* pairhopp_element leaves tmp_off STALE on its dead branch (and
+               returns 0 without setting it on GetOffComp failure). dmv==0 on
+               every no-op; guard on dmv (exact, robust to stale tmp_off). */
+            if (dmv != 0.0) AddHamElem(tmp_off, j, dmv);
           }
         }
       }
@@ -387,7 +407,9 @@ int makeHam(struct BindStruct *X) {
         hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
         for (j = hs_jb; j <= hs_je; j++) {
           dmv = exchange_element(j, v0, v1, X, &tmp_off);
-          AddHamElem(tmp_off, j, dmv);
+          /* exchange_element leaves tmp_off STALE on its dead branch. dmv==0
+             on every no-op; guard on dmv (exact, robust to stale tmp_off). */
+          if (dmv != 0.0) AddHamElem(tmp_off, j, dmv);
         }
       }
       break;
@@ -596,7 +618,13 @@ int makeHam(struct BindStruct *X) {
             for (j = hs_jb; j <= hs_je; j++) {
               tmp_sgn = child_exchange_spin_element(j, X, isA_up, isB_up, sigma2, sigma4, &tmp_off);
               dmv = tmp_sgn * tmp_V;
-              AddHamElem(tmp_off, j, dmv);
+              /* child_exchange_spin_element sets *tmp_off=0 both on its dead
+                 branch AND (via an unchecked GetOffComp) if the exchanged
+                 state is out of the sector -- but in the latter case it still
+                 returns tmp_sgn=1, so dmv!=0. A dmv-guard would therefore
+                 write into row 0. Guard on tmp_off (row-0 skip matches the
+                 replicated Ham[0][j], which the eigensolver never reads). */
+              if (tmp_off > 0) AddHamElem(tmp_off, j, dmv);
             }
           }
         }
@@ -614,7 +642,12 @@ int makeHam(struct BindStruct *X) {
           hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = exchange_spin_element(j, v0, v1, X, &tmp_off);
-            AddHamElem(tmp_off, j, dmv);
+            /* exchange_spin_element leaves tmp_off STALE on its dead branch,
+               and on its live branch sets *tmp_off via an unchecked GetOffComp
+               (=0 if out of sector) while dmv!=0. So neither a stale value nor
+               a dmv-guard is safe; guard on tmp_off (row-0 skip matches the
+               replicated unused Ham[0][j]). */
+            if (tmp_off > 0) AddHamElem(tmp_off, j, dmv);
           }
         }
 
@@ -641,7 +674,11 @@ int makeHam(struct BindStruct *X) {
                 num1 = GetOffCompGeneralSpin(tmp_off, isite2, sigma4, sigma3, &off, X->Def.SiteToBit, X->Def.Tpow);
                 if (num1 != 0) {
                   ConvertToList1GeneralSpin(off, X->Check.sdim, &tmp_off);
-                  AddHamElem(tmp_off, j, tmp_V);
+                  /* ConvertToList1GeneralSpin sets *tmp_off=0 when the state
+                     is not in list_1. The amplitude here is the constant
+                     tmp_V (no dmv signal), so guard on tmp_off; row-0 skip
+                     matches the replicated unused Ham[0][j]. */
+                  if (tmp_off > 0) AddHamElem(tmp_off, j, tmp_V);
                 }
               }
             }

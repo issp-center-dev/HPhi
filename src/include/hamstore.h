@@ -43,12 +43,25 @@ static inline int HamOwnedCol(long int jcol) {
 }
 #define HAM_OWNED_COL(jcol) HamOwnedCol((long int)(jcol))
 
+/* Debug assertions (both branches): the row index is 1-based, so hs_i_ >= 1
+ * is required in either storage mode. A row of 0 -- produced when a Hamiltonian
+ * element helper reports an annihilated/out-of-sector transition and sets its
+ * out-param to 0 (or leaves it stale) -- underran the distributed panel
+ * (Ham_local[... + (0 - 1)], heap-buffer-overflow) while the replicated matrix
+ * silently absorbed it into the never-read Ham[0][j]. All such sites now guard
+ * the call, and this assert is the runtime safety net. The panel branch also
+ * checks the row against the panel leading dimension (HamPanelLd == idim_max);
+ * no cheap idim_max upper bound is in macro scope for the replicated branch
+ * (X->Large.i_max is not visible here), so only the lower bound is asserted
+ * there. */
 #define AddHamElem(irow, jcol, val)                                    \
   do {                                                                 \
     long int hs_i_ = (long int)(irow);                                 \
     long int hs_j_ = (long int)(jcol);                                 \
+    assert(hs_i_ >= 1);                                                \
     if (iHamPanelActive) {                                             \
       assert(hs_j_ >= HamColBegin && hs_j_ <= HamColEnd);              \
+      assert(hs_i_ <= HamPanelLd);                                     \
       Ham_local[(hs_j_ - HamColBegin) * HamPanelLd + (hs_i_ - 1)]      \
         += (val);                                                      \
     } else {                                                           \
