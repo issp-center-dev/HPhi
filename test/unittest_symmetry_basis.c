@@ -26,9 +26,12 @@ static double complex chars_storage[6];
 static int exchange_storage[6][2];
 static int *exchange_rows[6];
 static double exchange_params[6];
-static int transfer_storage[12][4];
-static int *transfer_rows[12];
-static double complex transfer_params[12];
+static int transfer_storage[24][4];
+static int *transfer_rows[24];
+static double complex transfer_params[24];
+static int coulomb_intra_storage[8][1];
+static int *coulomb_intra_rows[8];
+static double coulomb_intra_params[8];
 static int coulomb_storage[12][2];
 static int *coulomb_rows[12];
 static double coulomb_params[12];
@@ -65,6 +68,53 @@ static unsigned long int setup_fixed_sz_basis(unsigned int nsite,
   dim = 0;
   for (state = 0; state < limit; state++) {
     if ((unsigned int)popcount_ulong(state) == nup) {
+      dim++;
+      list_1[dim] = state;
+    }
+  }
+  test_raw_dim = dim;
+  return dim;
+}
+
+static int count_hubbard_spin(unsigned long int state,
+                              unsigned int nsite,
+                              unsigned int spin)
+{
+  unsigned int site;
+  int count = 0;
+  for (site = 0; site < nsite; site++) {
+    count += (int)((state >> (2U * site + spin)) & 1UL);
+  }
+  return count;
+}
+
+static unsigned long int setup_hubbard_basis(unsigned int nsite,
+                                             unsigned int nup,
+                                             unsigned int ndown)
+{
+  unsigned long int state;
+  unsigned long int dim = 0;
+  unsigned long int limit = 1UL << (2U * nsite);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+  for (state = 0; state < limit; state++) {
+    if ((unsigned int)count_hubbard_spin(state, nsite, 0) == nup &&
+        (unsigned int)count_hubbard_spin(state, nsite, 1) == ndown) {
+      dim++;
+    }
+  }
+  list_1 = (unsigned long int *)calloc(dim + 1, sizeof(unsigned long int));
+  list_Diagonal = (double *)calloc(dim + 1, sizeof(double));
+  if (list_1 == NULL || list_Diagonal == NULL) {
+    fprintf(stderr, "failed to allocate Hubbard basis\n");
+    exit(1);
+  }
+  dim = 0;
+  for (state = 0; state < limit; state++) {
+    if ((unsigned int)count_hubbard_spin(state, nsite, 0) == nup &&
+        (unsigned int)count_hubbard_spin(state, nsite, 1) == ndown) {
       dim++;
       list_1[dim] = state;
     }
@@ -226,6 +276,84 @@ static void setup_spinless_transfer_ring(struct DefineList *def, unsigned int ns
   }
 }
 
+static void setup_hubbard_bind(struct BindStruct *X,
+                               unsigned int nsite,
+                               unsigned int nup,
+                               unsigned int ndown,
+                               unsigned int momentum_index)
+{
+  memset(X, 0, sizeof(*X));
+  setup_cyclic_def(&X->Def, nsite, momentum_index);
+  X->Def.iCalcModel = Hubbard;
+  X->Def.Nup = nup;
+  X->Def.Ndown = ndown;
+  X->Def.Ne = nup + ndown;
+  X->Check.idim_max = setup_hubbard_basis(nsite, nup, ndown);
+}
+
+static void setup_hubbard_transfer_ring(struct DefineList *def, unsigned int nsite)
+{
+  unsigned int site, spin;
+  unsigned int row = 0;
+  def->NTransfer = 4U * nsite;
+  def->EDNTransfer = 4U * nsite;
+  def->GeneralTransfer = transfer_rows;
+  def->EDGeneralTransfer = transfer_rows;
+  def->ParaGeneralTransfer = transfer_params;
+  def->EDParaGeneralTransfer = transfer_params;
+  for (site = 0; site < nsite; site++) {
+    unsigned int next = (site + 1U) % nsite;
+    for (spin = 0; spin < 2U; spin++) {
+      transfer_rows[row] = transfer_storage[row];
+      transfer_storage[row][0] = (int)site;
+      transfer_storage[row][1] = (int)spin;
+      transfer_storage[row][2] = (int)next;
+      transfer_storage[row][3] = (int)spin;
+      transfer_params[row] = 1.0;
+      row++;
+
+      transfer_rows[row] = transfer_storage[row];
+      transfer_storage[row][0] = (int)next;
+      transfer_storage[row][1] = (int)spin;
+      transfer_storage[row][2] = (int)site;
+      transfer_storage[row][3] = (int)spin;
+      transfer_params[row] = 1.0;
+      row++;
+    }
+  }
+}
+
+static void set_hubbard_coulomb_intra_diagonal(unsigned int nsite, double coupling)
+{
+  unsigned long int raw;
+  for (raw = 1; raw <= test_raw_dim; raw++) {
+    unsigned int site;
+    double diagonal = 0.0;
+    for (site = 0; site < nsite; site++) {
+      unsigned long int up = (list_1[raw] >> (2U * site)) & 1UL;
+      unsigned long int down = (list_1[raw] >> (2U * site + 1U)) & 1UL;
+      diagonal += coupling * (double)(up * down);
+    }
+    list_Diagonal[raw] = diagonal;
+  }
+}
+
+static void setup_hubbard_coulomb_intra(struct DefineList *def,
+                                        unsigned int nsite,
+                                        double coupling)
+{
+  unsigned int site;
+  def->NCoulombIntra = nsite;
+  def->CoulombIntra = coulomb_intra_rows;
+  def->ParaCoulombIntra = coulomb_intra_params;
+  for (site = 0; site < nsite; site++) {
+    coulomb_intra_rows[site] = coulomb_intra_storage[site];
+    coulomb_intra_storage[site][0] = (int)site;
+    coulomb_intra_params[site] = coupling;
+  }
+  set_hubbard_coulomb_intra_diagonal(nsite, coupling);
+}
+
 static void setup_spinless_coulomb_ring(struct DefineList *def, unsigned int nsite, double coupling)
 {
   unsigned int site;
@@ -299,6 +427,22 @@ static int apply_spinless_hopping_hermite_test(unsigned long int state,
   return 1;
 }
 
+static int apply_hubbard_hopping_hermite_test(unsigned long int state,
+                                              unsigned int site1,
+                                              unsigned int spin1,
+                                              unsigned int site2,
+                                              unsigned int spin2,
+                                              double complex trans,
+                                              unsigned long int *out_state,
+                                              double complex *hval)
+{
+  if (spin1 > 1U || spin2 > 1U) return 0;
+  return apply_spinless_hopping_hermite_test(state,
+                                             2U * site1 + spin1,
+                                             2U * site2 + spin2,
+                                             trans, out_state, hval);
+}
+
 static double complex projected_coeff_for_state(const struct BindStruct *X,
                                                 unsigned long int basis_index,
                                                 unsigned long int state)
@@ -356,6 +500,21 @@ static double complex raw_reference_matrix_element(const struct BindStruct *X,
           value += conj(alpha_coeff) * hval * beta_coeff;
         }
       }
+    } else if (X->Def.iCalcModel == Hubbard) {
+      for (term = 0; term < X->Def.EDNTransfer; term += 2U) {
+        unsigned long int out_state;
+        double complex hval;
+        double complex trans = -X->Def.EDParaGeneralTransfer[term];
+        if (apply_hubbard_hopping_hermite_test(state,
+                                               (unsigned int)X->Def.EDGeneralTransfer[term][0],
+                                               (unsigned int)X->Def.EDGeneralTransfer[term][1],
+                                               (unsigned int)X->Def.EDGeneralTransfer[term][2],
+                                               (unsigned int)X->Def.EDGeneralTransfer[term][3],
+                                               trans, &out_state, &hval) != 0) {
+          double complex alpha_coeff = projected_coeff_for_state(X, alpha, out_state);
+          value += conj(alpha_coeff) * hval * beta_coeff;
+        }
+      }
     }
   }
   return value;
@@ -397,6 +556,28 @@ static double complex canonicalized_matrix_element(const struct BindStruct *X,
                                               (unsigned int)X->Def.EDGeneralTransfer[term][0],
                                               (unsigned int)X->Def.EDGeneralTransfer[term][2],
                                               trans, &out_state, &hval) != 0) {
+        struct SymmetryCanonicalResult result;
+        if (SymmetryCanonicalizeState(X, out_state, &result) != 0) {
+          fprintf(stderr, "canonicalize returned an internal error\n");
+          exit(1);
+        }
+        if (result.found != 0 && result.basis_index == alpha) {
+          double norm_factor = X->Sym->basis[alpha].norm / X->Sym->basis[beta].norm;
+          value += hval * result.phase * norm_factor;
+        }
+      }
+    }
+  } else if (X->Def.iCalcModel == Hubbard) {
+    for (term = 0; term < X->Def.EDNTransfer; term += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[term];
+      if (apply_hubbard_hopping_hermite_test(X->Sym->basis[beta].rep_state,
+                                             (unsigned int)X->Def.EDGeneralTransfer[term][0],
+                                             (unsigned int)X->Def.EDGeneralTransfer[term][1],
+                                             (unsigned int)X->Def.EDGeneralTransfer[term][2],
+                                             (unsigned int)X->Def.EDGeneralTransfer[term][3],
+                                             trans, &out_state, &hval) != 0) {
         struct SymmetryCanonicalResult result;
         if (SymmetryCanonicalizeState(X, out_state, &result) != 0) {
           fprintf(stderr, "canonicalize returned an internal error\n");
@@ -482,6 +663,27 @@ static void assert_spinless_symmetry_dim(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+static void assert_hubbard_symmetry_dim(unsigned int nsite,
+                                        unsigned int nup,
+                                        unsigned int ndown,
+                                        unsigned int momentum_index,
+                                        unsigned long int expected_dim,
+                                        const char *label)
+{
+  struct BindStruct X;
+  setup_hubbard_bind(&X, nsite, nup, ndown, momentum_index);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, expected_dim, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
@@ -523,6 +725,38 @@ static void assert_spinless_canonicalized_matrix_matches_raw(unsigned int nsite,
   if (density_coupling != 0.0) {
     setup_spinless_coulomb_ring(&X.Def, nsite, density_coupling);
     set_spinless_coulomb_ring_diagonal(nsite, density_coupling);
+  }
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  for (beta = 1; beta <= X.Sym->dim; beta++) {
+    for (alpha = 1; alpha <= X.Sym->dim; alpha++) {
+      double complex raw_value = raw_reference_matrix_element(&X, alpha, beta);
+      double complex canonical_value = canonicalized_matrix_element(&X, alpha, beta);
+      assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
+    }
+  }
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_hubbard_canonicalized_matrix_matches_raw(unsigned int nsite,
+                                                            unsigned int nup,
+                                                            unsigned int ndown,
+                                                            unsigned int momentum_index,
+                                                            double coulomb_intra,
+                                                            const char *label)
+{
+  struct BindStruct X;
+  unsigned long int alpha, beta;
+  setup_hubbard_bind(&X, nsite, nup, ndown, momentum_index);
+  setup_hubbard_transfer_ring(&X.Def, nsite);
+  if (coulomb_intra != 0.0) {
+    setup_hubbard_coulomb_intra(&X.Def, nsite, coulomb_intra);
   }
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
@@ -758,6 +992,10 @@ int main(void)
                                "SpinlessFermion C4 k=0 sector dimension");
   assert_spinless_symmetry_dim(4, 2, 1, 2,
                                "SpinlessFermion C4 k=pi/2 sector dimension");
+  assert_hubbard_symmetry_dim(4, 1, 1, 0, 4,
+                              "Hubbard C4 k=0 sector dimension");
+  assert_hubbard_symmetry_dim(4, 1, 1, 1, 4,
+                              "Hubbard C4 k=pi/2 sector dimension");
   {
     struct BindStruct X;
     unsigned long int raw;
@@ -840,6 +1078,12 @@ int main(void)
                                                    "SpinlessFermion C4 k=pi/2 matrix matches raw reference");
   assert_spinless_canonicalized_matrix_matches_raw(4, 2, 1, 0.25,
                                                    "SpinlessFermion C4 k=pi/2 CoulombInter matrix matches raw reference");
+  assert_hubbard_canonicalized_matrix_matches_raw(4, 1, 1, 0, 0.0,
+                                                  "Hubbard C4 k=0 matrix matches raw reference");
+  assert_hubbard_canonicalized_matrix_matches_raw(4, 1, 1, 1, 0.5,
+                                                  "Hubbard C4 k=pi/2 CoulombIntra matrix matches raw reference");
+  assert_hubbard_canonicalized_matrix_matches_raw(4, 2, 1, 1, 0.0,
+                                                  "Hubbard C4 k=pi/2 same-spin matrix matches raw reference");
   assert_orbit_diagonal_is_representative(6, 3, 1, 1.0,
                                           "C6 k=pi/3 Ising diagonal is orbit-invariant");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,

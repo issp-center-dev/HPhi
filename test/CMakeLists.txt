@@ -77,6 +77,7 @@ add_hphi_test(symmetry_spin_chain_validation)
 add_hphi_test(symmetry_spin_chain_standard_generation)
 add_hphi_test(symmetry_spinless_fermion_lanczos)
 add_hphi_test(symmetry_spinless_fermion_standard_generation)
+add_hphi_test(symmetry_hubbard_lanczos)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -161,6 +162,9 @@ set_tests_properties(
 set_tests_properties(
     symmetry_spinless_fermion_standard_generation
     PROPERTIES LABELS "symmetry;spinless;standard")
+set_tests_properties(
+    symmetry_hubbard_lanczos
+    PROPERTIES LABELS "symmetry;hubbard;lanczos;validation")
 set_tests_properties(
     lanczos_kondo_chain lanczos_kondogc_chain
     lanczos_kondo_chain_restart

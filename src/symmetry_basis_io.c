@@ -199,12 +199,21 @@ static int has_fixed_spinless_sector(const struct DefineList *def)
   return def->iCalcModel == SpinlessFermion && def->Ne <= def->Nsite;
 }
 
+static int has_fixed_hubbard_sector(const struct DefineList *def)
+{
+  return def->iCalcModel == Hubbard &&
+         def->Nup <= def->Nsite &&
+         def->Ndown <= def->Nsite &&
+         def->Ne == def->Nup + def->Ndown;
+}
+
 int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
-  if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin and SpinlessFermion canonical models.\n");
+  if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
+      def->iCalcModel != Hubbard) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, and Hubbard canonical models.\n");
     return -1;
   }
   if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
@@ -217,6 +226,14 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   }
   if (def->iCalcModel == SpinlessFermion && has_fixed_spinless_sector(def) != TRUE) {
     fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis requires fixed Ncond/Ne.\n");
+    return -1;
+  }
+  if (def->iCalcModel == Hubbard && has_fixed_hubbard_sector(def) != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
+    return -1;
+  }
+  if (def->iCalcModel == Hubbard && nproc > 1) {
+    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis is serial-only in v1.\n");
     return -1;
   }
   if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE ||
@@ -263,6 +280,14 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
         def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
         def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
       fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer and CoulombInter terms only.\n");
+      return -1;
+    }
+  } else if (def->iCalcModel == Hubbard) {
+    if (def->EDNChemi > 0 || def->NCoulombInter > 0 ||
+        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
+        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
+        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
+      fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis supports Transfer and CoulombIntra terms only.\n");
       return -1;
     }
   }
@@ -555,6 +580,114 @@ static int validate_spinless_transfer_invariance(const struct DefineList *def)
   return 0;
 }
 
+static double complex sum_hubbard_transfer(const struct DefineList *def,
+                                           int src,
+                                           int dst,
+                                           int spin)
+{
+  unsigned int i;
+  double complex sum = 0.0;
+  for (i = 0; i < def->NTransfer; i++) {
+    if (def->GeneralTransfer[i][0] == src &&
+        def->GeneralTransfer[i][1] == spin &&
+        def->GeneralTransfer[i][2] == dst &&
+        def->GeneralTransfer[i][3] == spin) {
+      sum += def->ParaGeneralTransfer[i];
+    }
+  }
+  return sum;
+}
+
+static int validate_hubbard_transfer_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NTransfer; i++) {
+      int src = def->GeneralTransfer[i][0];
+      int src_spin = def->GeneralTransfer[i][1];
+      int dst = def->GeneralTransfer[i][2];
+      int dst_spin = def->GeneralTransfer[i][3];
+      double complex src_sum;
+      double complex mapped_sum;
+      if (src < 0 || dst < 0 ||
+          (unsigned int)src >= def->Nsite ||
+          (unsigned int)dst >= def->Nsite ||
+          src_spin < 0 || dst_spin < 0 ||
+          src_spin > 1 || dst_spin > 1 ||
+          src_spin != dst_spin) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hubbard Transfer term %u is outside the supported fixed-spin hopping range.\n",
+                i);
+        return -1;
+      }
+      src_sum = sum_hubbard_transfer(def, src, dst, src_spin);
+      mapped_sum = sum_hubbard_transfer(def, def->SymTrans[g][src], def->SymTrans[g][dst], src_spin);
+      if (cabs(mapped_sum - src_sum) > 1.0e-10) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hubbard Transfer invariance failed for term %u under op %u.\n",
+                i, g);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+static unsigned int count_hubbard_coulomb_intra_site(const struct DefineList *def, int site)
+{
+  unsigned int i;
+  unsigned int count = 0;
+  for (i = 0; i < def->NCoulombIntra; i++) {
+    if (def->CoulombIntra[i][0] == site) count++;
+  }
+  return count;
+}
+
+static double sum_hubbard_coulomb_intra_site(const struct DefineList *def, int site)
+{
+  unsigned int i;
+  double sum = 0.0;
+  for (i = 0; i < def->NCoulombIntra; i++) {
+    if (def->CoulombIntra[i][0] == site) sum += def->ParaCoulombIntra[i];
+  }
+  return sum;
+}
+
+static int validate_hubbard_coulomb_intra_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NCoulombIntra; i++) {
+      int src = def->CoulombIntra[i][0];
+      int mapped;
+      double src_sum;
+      double mapped_sum;
+      if (src < 0 || (unsigned int)src >= def->Nsite) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hubbard CoulombIntra term %u has a site outside [0, Nsite).\n",
+                i);
+        return -1;
+      }
+      mapped = def->SymTrans[g][src];
+      src_sum = sum_hubbard_coulomb_intra_site(def, src);
+      mapped_sum = sum_hubbard_coulomb_intra_site(def, mapped);
+      if (count_hubbard_coulomb_intra_site(def, mapped) == 0) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hubbard CoulombIntra term %u maps to a missing site under op %u.\n",
+                i, g);
+        return -1;
+      }
+      if (fabs(mapped_sum - src_sum) > 1.0e-10) {
+        fprintf(stdoutMPI,
+                "Error: TransSym Hubbard CoulombIntra invariance failed for term %u under op %u.\n",
+                i, g);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
 int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
@@ -565,6 +698,9 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
   } else if (def->iCalcModel == SpinlessFermion) {
     if (validate_spinless_transfer_invariance(def) != 0) return -1;
     if (validate_spinless_coulomb_invariance(def) != 0) return -1;
+  } else if (def->iCalcModel == Hubbard) {
+    if (validate_hubbard_transfer_invariance(def) != 0) return -1;
+    if (validate_hubbard_coulomb_intra_invariance(def) != 0) return -1;
   }
   return 0;
 }
