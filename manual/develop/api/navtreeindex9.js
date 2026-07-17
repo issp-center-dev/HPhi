@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"page_log.html#sec_log_debug":[3,3],
 "page_log.html#sec_log_error":[3,1],
 "page_log.html#sec_log_progress":[3,0],
 "page_log.html#sec_log_time":[3,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "structDefineList.html#a05f51af0be5f87991d7d6557d8244fdb":[9,0,4,119],
 "structDefineList.html#a06aeb15fc8b6b37061570adfc9670829":[9,0,4,159],
 "structDefineList.html#a070611dcb758c4f1ae08c28c441c2456":[9,0,4,179],
-"structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,4,131],
-"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,4,85]
+"structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,4,131]
 };

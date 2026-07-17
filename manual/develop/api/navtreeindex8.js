@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"mltplySpin_8h.html#a367fcb99b257491d4370cdef55e496de":[10,0,1,60,12],
 "mltplySpin_8h.html#a49705894462616c2d3184fb2514c9ff9":[10,0,1,60,11],
 "mltplySpin_8h.html#a60dc2f1f62e571e890181e959ac95bb2":[10,0,1,60,6],
 "mltplySpin_8h.html#a64d16a2825abf713057dc6ddec33547c":[10,0,1,60,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX8 =
 "page_codingrule.html#subsec_functions":[0,1,0],
 "page_codingrule.html#subsec_macros":[0,1,2],
 "page_codingrule.html#subsec_variables":[0,1,1],
-"page_log.html":[3],
-"page_log.html#sec_log_debug":[3,3]
+"page_log.html":[3]
 };
