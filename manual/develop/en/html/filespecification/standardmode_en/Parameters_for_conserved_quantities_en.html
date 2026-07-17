@@ -60,11 +60,20 @@ the translation by <span class="math notranslate nohighlight">\(g\)</span> sites
 <span class="math notranslate nohighlight">\(\exp(-2\pi i m g/L)\)</span>, and <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> must satisfy
 <span class="math notranslate nohighlight">\(0 \le m &lt; L\)</span>.</p>
 <p>This parameter is currently supported only for HPhi Standard mode with
-<code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Spin&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;chain&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">2S</span> <span class="pre">=</span> <span class="pre">1</span></code>, fixed
-<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, periodic boundary conditions without <code class="docutils literal notranslate"><span class="pre">phase0</span></code>, and
-exchange-only spin couplings with <code class="docutils literal notranslate"><span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">0</span></code> and no field, general, or
-pair terms. The supported calculation methods are <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code> and
-<code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;chain&quot;</span></code>, periodic boundary conditions without <code class="docutils literal notranslate"><span class="pre">phase0</span></code>,
+and the <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code> calculation method. The supported
+models are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Spin&quot;</span></code> with <code class="docutils literal notranslate"><span class="pre">2S</span> <span class="pre">=</span> <span class="pre">1</span></code>, fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, and
+exchange-only spin couplings with <code class="docutils literal notranslate"><span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">0</span></code> and no field, general,
+or pair terms.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">&quot;Hubbard&quot;</span></code>) with fixed
+<code class="docutils literal notranslate"><span class="pre">nelec</span></code> and <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, nearest-neighbor hopping <code class="docutils literal notranslate"><span class="pre">t</span></code>/<code class="docutils literal notranslate"><span class="pre">t0</span></code>, and
+onsite <code class="docutils literal notranslate"><span class="pre">U</span></code>. Chemical-potential or field terms
+(<code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code>, <code class="docutils literal notranslate"><span class="pre">Gamma</span></code>, <code class="docutils literal notranslate"><span class="pre">Gamma_y</span></code>), longer-range hopping
+(<code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">t''</span></code>), offsite Coulomb terms (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>),
+and general or pair terms are not supported with <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>.</p></li>
+</ul>
 </li>
 </ul>
 </section>
