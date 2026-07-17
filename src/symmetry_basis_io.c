@@ -275,11 +275,11 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
       return -1;
     }
   } else if (def->iCalcModel == SpinlessFermion) {
-    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NCoulombInter > 0 ||
+    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 ||
         def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
         def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
         def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer terms only.\n");
+      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer and CoulombInter terms only.\n");
       return -1;
     }
   } else if (def->iCalcModel == Hubbard) {
@@ -478,6 +478,50 @@ static int validate_ising_coulomb_invariance(const struct DefineList *def)
   return 0;
 }
 
+static int validate_spinless_coulomb_invariance(const struct DefineList *def)
+{
+  unsigned int g, i;
+  for (g = 0; g < def->NSymTrans; g++) {
+    for (i = 0; i < def->NCoulombInter; i++) {
+      int src0 = def->CoulombInter[i][0];
+      int src1 = def->CoulombInter[i][1];
+      if (src0 < 0 || src1 < 0 ||
+          (unsigned int)src0 >= def->Nsite ||
+          (unsigned int)src1 >= def->Nsite) {
+        fprintf(stdoutMPI,
+                "Error: TransSym SpinlessFermion CoulombInter term %u has a site outside [0, Nsite).\n",
+                i);
+        return -1;
+      }
+      if (src0 == src1) {
+        fprintf(stdoutMPI,
+                "Error: TransSym SpinlessFermion CoulombInter term %u is on-site (i==j), which is not supported by the symmetry basis.\n",
+                i);
+        return -1;
+      }
+      {
+        int a = def->SymTrans[g][src0];
+        int b = def->SymTrans[g][src1];
+        double src_sum = sum_ising_coulomb_pair(def, src0, src1);
+        double mapped_sum = sum_ising_coulomb_pair(def, a, b);
+        if (count_ising_coulomb_pair(def, a, b) == 0) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym SpinlessFermion CoulombInter term %u maps to a missing pair under op %u.\n",
+                  i, g);
+          return -1;
+        }
+        if (fabs(mapped_sum - src_sum) > 1.0e-10) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym SpinlessFermion CoulombInter invariance failed for term %u under op %u.\n",
+                  i, g);
+          return -1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 static int validate_ising_diagonal_invariance(const struct DefineList *def)
 {
   if (def->NIsingCoupling == 0) return 0;
@@ -653,6 +697,7 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
     if (validate_ising_diagonal_invariance(def) != 0) return -1;
   } else if (def->iCalcModel == SpinlessFermion) {
     if (validate_spinless_transfer_invariance(def) != 0) return -1;
+    if (validate_spinless_coulomb_invariance(def) != 0) return -1;
   } else if (def->iCalcModel == Hubbard) {
     if (validate_hubbard_transfer_invariance(def) != 0) return -1;
     if (validate_hubbard_coulomb_intra_invariance(def) != 0) return -1;
