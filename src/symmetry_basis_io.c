@@ -232,10 +232,6 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
     return -1;
   }
-  if (def->iCalcModel == Hubbard && nproc > 1) {
-    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis is serial-only in v1.\n");
-    return -1;
-  }
   if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE ||
       def->iOutputEigenVec != FALSE || def->iInputEigenVec != FALSE ||
       def->iReStart != RESTART_NOT) {
