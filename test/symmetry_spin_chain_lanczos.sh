@@ -3,6 +3,12 @@
 mkdir -p symmetry_spin_chain_lanczos
 cd symmetry_spin_chain_lanczos
 
+run_hphi() {
+    log="$1"
+    shift
+    "$@" > "${log}" 2>&1 || { cat "${log}"; exit 1; }
+}
+
 cat > calcmod.def <<EOF
 CalcType 0
 CalcModel 1
@@ -145,7 +151,7 @@ LocSpin locspn.def
 Exchange exchange.def
 EOF
 
-../../src/HPhi -e namelist_ref.def > reference.log 2>&1
+run_hphi reference.log ../../src/HPhi -e namelist_ref.def
 ref_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 rm -rf output
 
@@ -157,7 +163,7 @@ Exchange exchange.def
 TransSym qptransidx.def
 EOF
 
-../../src/HPhi -e namelist.def > symmetry.log 2>&1
+run_hphi symmetry.log ../../src/HPhi -e namelist.def
 sym_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${ref_energy}"
 test -n "${sym_energy}"
@@ -175,7 +181,7 @@ Ising ising.def
 EOF
 
 rm -rf output
-../../src/HPhi -e namelist_heisenberg_ref.def > reference_heisenberg.log 2>&1
+run_hphi reference_heisenberg.log ../../src/HPhi -e namelist_heisenberg_ref.def
 ref_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 rm -rf output
 
@@ -189,7 +195,7 @@ Ising ising.def
 TransSym qptransidx.def
 EOF
 
-../../src/HPhi -e namelist_heisenberg.def > symmetry_heisenberg.log 2>&1
+run_hphi symmetry_heisenberg.log ../../src/HPhi -e namelist_heisenberg.def
 sym_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${ref_heisenberg_energy}"
 test -n "${sym_heisenberg_energy}"
@@ -199,7 +205,7 @@ grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenb
 
 rm -rf output
 write_kpi_over_3_transsym_l6
-../../src/HPhi -e namelist.def > symmetry_complex.log 2>&1
+run_hphi symmetry_complex.log ../../src/HPhi -e namelist.def
 complex_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${complex_energy}"
 complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "%8.6f", d}'`
