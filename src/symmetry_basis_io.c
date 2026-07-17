@@ -258,10 +258,6 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
       return -1;
     }
   } else if (def->iCalcModel == SpinlessFermion) {
-    if (nproc > 1) {
-      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis is serial-only in this version.\n");
-      return -1;
-    }
     if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NCoulombInter > 0 ||
         def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
         def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
