@@ -33,11 +33,19 @@ Parameters for conserved quantities
    :math:`0 \le m < L`.
 
    This parameter is currently supported only for HPhi Standard mode with
-   ``model = "Spin"``, ``lattice = "chain"``, ``2S = 1``, fixed
-   ``2Sz``, periodic boundary conditions without ``phase0``, and
-   exchange-only spin couplings with ``Jz = 0`` and no field, general, or
-   pair terms. The supported calculation methods are ``"Lanczos"`` and
-   ``"CG"``.
+   ``lattice = "chain"``, periodic boundary conditions without ``phase0``,
+   and the ``"Lanczos"`` or ``"CG"`` calculation method. The supported
+   models are:
+
+   * ``model = "Spin"`` with ``2S = 1``, fixed ``2Sz``, and
+     exchange-only spin couplings with ``Jz = 0`` and no field, general,
+     or pair terms.
+   * ``model = "Fermion Hubbard"`` (or ``"Hubbard"``) with fixed
+     ``nelec`` and ``2Sz``, nearest-neighbor hopping ``t``/``t0``, and
+     onsite ``U``. Chemical-potential or field terms
+     (``mu``, ``h``, ``Gamma``, ``Gamma_y``), longer-range hopping
+     (``t'``, ``t''``), offsite Coulomb terms (``V``/``CoulombInter``),
+     and general or pair terms are not supported with ``MomentumIndex``.
 
 .. raw:: latex
 

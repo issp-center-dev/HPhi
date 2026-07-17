@@ -29,11 +29,19 @@
    :math:`\exp(-2\pi i m g/L)` です。 ``MomentumIndex`` は
    :math:`0 \le m < L` を満たす必要があります。
 
-   現在は HPhi のスタンダードモードで ``model = "Spin"``,
-   ``lattice = "chain"``, ``2S = 1``, 固定 ``2Sz``, ``phase0`` を
-   使わない周期境界条件、かつ ``Jz = 0`` で磁場・一般相互作用・
-   pair 項を含まない exchange-only のスピン相互作用にのみ対応します。
-   対応する計算手法は ``"Lanczos"`` と ``"CG"`` です。
+   現在は HPhi のスタンダードモードで ``lattice = "chain"``,
+   ``phase0`` を使わない周期境界条件、かつ ``"Lanczos"`` または
+   ``"CG"`` の計算手法にのみ対応します。対応する model は以下です。
+
+   * ``model = "Spin"`` では ``2S = 1``、固定 ``2Sz``、かつ
+     ``Jz = 0`` で磁場・一般相互作用・pair 項を含まない
+     exchange-only のスピン相互作用に対応します。
+   * ``model = "Fermion Hubbard"`` または ``"Hubbard"`` では、固定
+     ``nelec`` と ``2Sz``、最近接ホッピング ``t``/``t0``、オンサイト
+     ``U`` に対応します。化学ポテンシャルや磁場項
+     (``mu``, ``h``, ``Gamma``, ``Gamma_y``)、遠距離ホッピング
+     (``t'``, ``t''``)、非局所 Coulomb 項 (``V``/``CoulombInter``)、
+     一般相互作用、pair 項は ``MomentumIndex`` と併用できません。
 
 .. raw:: latex
 
