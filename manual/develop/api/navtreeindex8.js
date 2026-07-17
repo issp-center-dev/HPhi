@@ -1,5 +1,9 @@
 var NAVTREEINDEX8 =
 {
+"mltplySpin_8h.html#a49705894462616c2d3184fb2514c9ff9":[10,0,1,60,11],
+"mltplySpin_8h.html#a60dc2f1f62e571e890181e959ac95bb2":[10,0,1,60,6],
+"mltplySpin_8h.html#a64d16a2825abf713057dc6ddec33547c":[10,0,1,60,4],
+"mltplySpin_8h.html#aa1326905a9352030ff148324e2dba110":[10,0,1,60,0],
 "mltplySpin_8h.html#aa30d4a9b260f8b44f1110a6f759cf0dd":[10,0,1,60,3],
 "mltplySpin_8h.html#aa338a5dff7b9ce8ed3c19ff7300eeb6c":[10,0,1,60,10],
 "mltplySpin_8h.html#aaacfb2aca0416786e4c48f0d5361152e":[10,0,1,60,9],
@@ -245,9 +249,5 @@ var NAVTREEINDEX8 =
 "page_codingrule.html#subsec_macros":[0,1,2],
 "page_codingrule.html#subsec_variables":[0,1,1],
 "page_log.html":[3],
-"page_log.html#sec_log_debug":[3,3],
-"page_log.html#sec_log_error":[3,1],
-"page_log.html#sec_log_progress":[3,0],
-"page_log.html#sec_log_time":[3,2],
-"page_setmem.html":[8]
+"page_log.html#sec_log_debug":[3,3]
 };

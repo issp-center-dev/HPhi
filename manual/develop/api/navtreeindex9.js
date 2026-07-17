@@ -1,5 +1,9 @@
 var NAVTREEINDEX9 =
 {
+"page_log.html#sec_log_error":[3,1],
+"page_log.html#sec_log_progress":[3,0],
+"page_log.html#sec_log_time":[3,2],
+"page_setmem.html":[8],
 "page_setmem.html#sec_setmem_estimate":[8,4],
 "page_setmem.html#sec_setmem_free":[8,2],
 "page_setmem.html#sec_setmem_functions":[8,1],
@@ -245,9 +249,5 @@ var NAVTREEINDEX9 =
 "structDefineList.html#a06aeb15fc8b6b37061570adfc9670829":[9,0,4,159],
 "structDefineList.html#a070611dcb758c4f1ae08c28c441c2456":[9,0,4,179],
 "structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,4,131],
-"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,4,85],
-"structDefineList.html#a0a20ef558db29fdb792c93680f938adf":[9,0,4,82],
-"structDefineList.html#a0addab7d71a29ad52070e5132f39a271":[9,0,4,167],
-"structDefineList.html#a0bce5cf65aa07ea30984a6991e8c4bc4":[9,0,4,75],
-"structDefineList.html#a0bdb25dd85dfa0809d21fb1975180cf3":[9,0,4,94]
+"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,4,85]
 };

@@ -25,7 +25,7 @@ var searchData=
   ['finalizempibatchedtransfers_22',['finalizempibatchedtransfers',['../mltplyMPIBatched_8h.html#a2a2a479d510e69d2dc7f50919fae02f1',1,'FinalizeMPIBatchedTransfers(MPIBatchedTransfers *batched):&#160;mltplyMPIBatched.c'],['../mltplyMPIBatched_8c.html#a2a2a479d510e69d2dc7f50919fae02f1',1,'FinalizeMPIBatchedTransfers(MPIBatchedTransfers *batched):&#160;mltplyMPIBatched.c']]],
   ['find_5fbasis_5findex_5fby_5frep_23',['find_basis_index_by_rep',['../symmetry__basis_8c.html#ac4de6c5a03e9c8263f4d2820eb1e5834',1,'symmetry_basis.c']]],
   ['find_5fperm_24',['find_perm',['../symmetry__basis_8c.html#af3e492178ce909774ca78511ce91f012',1,'symmetry_basis.c']]],
-  ['find_5frepresentative_5fspin_5fstate_25',['find_representative_spin_state',['../symmetry__basis_8c.html#a8b68830d189dc008d8066d1877204981',1,'symmetry_basis.c']]],
+  ['find_5frepresentative_5fstate_25',['find_representative_state',['../symmetry__basis_8c.html#a349e3493d5022519bd074009b93c09ef',1,'symmetry_basis.c']]],
   ['find_5fsite_26',['find_site',['../nbody__correlation_8c.html#aea5776ccdfaaced857139e29f927c50a',1,'find_site(const int *sites, unsigned int n, int site):&#160;nbody_correlation.c'],['../nbody__interall_8c.html#aea5776ccdfaaced857139e29f927c50a',1,'find_site(const int *sites, unsigned int n, int site):&#160;nbody_interall.c']]],
   ['firstmultiply_27',['firstmultiply',['../FirstMultiply_8h.html#ac604557436119bb129e012c1dd4437a8',1,'FirstMultiply(int rand_i, struct BindStruct *X):&#160;FirstMultiply.c'],['../FirstMultiply_8c.html#ac604557436119bb129e012c1dd4437a8',1,'FirstMultiply(int rand_i, struct BindStruct *X):&#160;FirstMultiply.c']]],
   ['firstmultiply_2ec_28',['FirstMultiply.c',['../FirstMultiply_8c.html',1,'']]],
