@@ -14,6 +14,58 @@ fi
 mkdir -p spectrum_hubbard_offdiag_single_mpi/
 cd spectrum_hubbard_offdiag_single_mpi
 
+dump_spectrum_diagnostics() {
+    echo "---- spectrum_hubbard_offdiag_single_mpi diagnostics ----"
+    echo "MPIRUN=${MPIRUN}"
+    echo "OMP_NUM_THREADS=${OMP_NUM_THREADS:-}"
+    echo "HPHI_MPI_NOBATCH=${HPHI_MPI_NOBATCH:-}"
+    for f in \
+        SpectrumModpara \
+        calcmod_cg.def \
+        namelist_cg.def \
+        singleexcitation.def \
+        singleexcitationbra.def \
+        output/bicg_status.dat \
+        output/residual.dat \
+        output/zvo_DynamicalGreen.dat \
+        output/zvo_energy.dat \
+        reference.dat \
+        paste1.dat
+    do
+        if [ -f "${f}" ]; then
+            echo "---- ${f} ----"
+            cat "${f}"
+        else
+            echo "---- ${f} missing ----"
+        fi
+    done
+    echo "---- end diagnostics ----"
+}
+
+# Preserve the original failure, but use the same CI runner for two clean
+# process-level probes: one with batching explicitly enabled and one with the
+# legacy per-term MPI path. This only runs after a failure and never masks it.
+rerun_spectrum_diagnostic() {
+    label="$1"
+    nobatch="$2"
+    log="diagnostic_${label}.log"
+
+    rm -f output/bicg_status.dat output/residual.dat output/zvo_DynamicalGreen.dat
+    echo "---- diagnostic rerun: ${label} (HPHI_MPI_NOBATCH=${nobatch}) ----"
+    if HPHI_MPI_NOBATCH="${nobatch}" HPHI_BICG_DIAG_ITER1=1 \
+        ${MPIRUN} ../../src/HPhi -e namelist_cg.def > "${log}" 2>&1; then
+        rc=0
+    else
+        rc=$?
+    fi
+    cat "${log}"
+    if [ -f output/bicg_status.dat ]; then
+        echo "---- ${label}: output/bicg_status.dat ----"
+        cat output/bicg_status.dat
+    fi
+    echo "---- diagnostic rerun result: ${label} exit=${rc} ----"
+}
+
 cat > stan_gs.in <<EOF
 model = "Hubbard"
 method = "CG"
@@ -25,7 +77,10 @@ nelec = 4
 2Sz = 0
 EigenVecIO = "out"
 EOF
-${MPIRUN} ../../src/HPhi -s stan_gs.in
+if ! ${MPIRUN} ../../src/HPhi -s stan_gs.in; then
+    dump_spectrum_diagnostics
+    exit 1
+fi
 
 cat > calcmod_cg.def <<EOF
 CalcType   3
@@ -94,7 +149,6 @@ cat > namelist_cg.def <<EOF
   SingleExcitationBra  singleexcitationbra.def
      SpectrumVec  zvo_eigenvec_0
 EOF
-${MPIRUN} ../../src/HPhi -e namelist_cg.def
 
 # Serial / exact reference (validated against exact diagonalization).
 cat > reference.dat <<EOF
@@ -104,11 +158,25 @@ cat > reference.dat <<EOF
 0.3000000000 0.0000000000 -0.6027761001 -0.1810475321
 0.4000000000 0.0000000000 -0.7942785902 -0.3376755873
 EOF
+if ! ${MPIRUN} ../../src/HPhi -e namelist_cg.def; then
+    dump_spectrum_diagnostics
+    rerun_spectrum_diagnostic "batched" 0
+    rerun_spectrum_diagnostic "nobatch" 1
+    exit 1
+fi
+
 paste output/zvo_DynamicalGreen.dat reference.dat > paste1.dat
 diff=`awk 'BEGIN{diff=0.0} {diff+=sqrt(($3-$7)*($3-$7))+sqrt(($4-$8)*($4-$8))} END{printf "%e", diff}' paste1.dat`
 echo "MPI-vs-serial L2 diff = ${diff}"
 
 ok=`awk "BEGIN{print (${diff} < 1.0e-5) ? 1 : 0}"`
-test "${ok}" = "1"
+if [ "${ok}" != "1" ]; then
+    dump_spectrum_diagnostics
+    exit 1
+fi
+
+if [ -f output/bicg_status.dat ]; then
+    grep '^# BiCG residual summary' output/bicg_status.dat || true
+fi
 
 exit $?
