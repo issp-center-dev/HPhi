@@ -64,7 +64,8 @@ initial_iv     -1
 exct           1
 LanczosEps     14
 LanczosTarget  2
-LargeValue     8.0
+# The ignored third field must not leak into later one-value Omega lines.
+LargeValue     8.0  3.25
 NumAve         5
 ExpecInterval  20
 NOmega         5
