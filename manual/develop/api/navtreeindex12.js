@@ -1,5 +1,6 @@
 var NAVTREEINDEX12 =
 {
+"sz_8h.html#af01a29b319a21fbaeb2a099bedd86e77":[10,0,1,84,28],
 "sz_8h.html#afaffae7021d22bb07277e597fbc87f46":[10,0,1,84,19],
 "sz_8h_source.html":[10,0,1,84],
 "time_8c.html":[10,0,78],

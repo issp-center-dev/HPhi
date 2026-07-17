@@ -18,6 +18,7 @@ var symmetry__basis__io_8c =
     [ "validate_ising_coulomb_invariance", "symmetry__basis__io_8c.html#a30182c563f667c0e6da0093f649ca312", null ],
     [ "validate_ising_diagonal_invariance", "symmetry__basis__io_8c.html#acfb452d680242f5dcccb671f07e5c849", null ],
     [ "validate_ising_hund_invariance", "symmetry__basis__io_8c.html#a4ec6605676ec856a3ae2754729fee5ea", null ],
+    [ "validate_spinless_coulomb_invariance", "symmetry__basis__io_8c.html#a613f7462aa666f491b9fbff8df674854", null ],
     [ "validate_spinless_transfer_invariance", "symmetry__basis__io_8c.html#a8ba5b42ef8bae907194ae112559a072d", null ],
     [ "ValidateSymmetryHamiltonian", "symmetry__basis__io_8c.html#a27c89420fdc5d4dad6bcb882e5ad720c", null ],
     [ "ValidateSymmetryRuntimeOptions", "symmetry__basis__io_8c.html#ad4ab530d0d7f0916a60a8ae1df9e18bf", null ]
