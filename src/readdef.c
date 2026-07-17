@@ -682,11 +682,21 @@ int ReadDefFileNInt(
         //! Read header (1 line).
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
             double dtmp, dtmp2;
+            int nread;
             X->read_hacker = 1;
         //! Read lines.
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
-              sscanf(ctmp2, "%s %lf %lf\n", ctmp, &dtmp, &dtmp2);
+              dtmp = 0.0;
+              dtmp2 = 0.0;
+              nread = sscanf(ctmp2, "%199s %lf %lf", ctmp, &dtmp, &dtmp2);
+              if (nread < 2) {
+                fprintf(stdoutMPI,
+                        "Error in %s\n ModPara line must contain a keyword and numeric value: %s",
+                        defname, ctmp2);
+                fclose(fp);
+                return (-1);
+              }
               if (CheckWords(ctmp, "Nsite") == 0) {
                 X->Nsite = (int) dtmp;
               }
