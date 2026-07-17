@@ -21,6 +21,70 @@ unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
   return out;
 }
 
+static int parity_sign_from_mapped_orbitals(const unsigned int *mapped,
+                                            unsigned int count)
+{
+  unsigned int i, j;
+  unsigned int inversions = 0;
+  for (i = 0; i < count; i++) {
+    for (j = i + 1U; j < count; j++) {
+      if (mapped[i] > mapped[j]) inversions++;
+    }
+  }
+  return (inversions % 2U == 0U) ? 1 : -1;
+}
+
+static int apply_fermion_site_permutation(unsigned long int state,
+                                          const int *perm,
+                                          unsigned int nsite,
+                                          unsigned int orbitals_per_site,
+                                          struct SymmetryTransformResult *result)
+{
+  const unsigned int max_bits = (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  unsigned int norb = nsite * orbitals_per_site;
+  unsigned int orb;
+  unsigned int count = 0;
+  unsigned int mapped_orbitals[sizeof(unsigned long int) * CHAR_BIT];
+  unsigned long int out = 0UL;
+  if (orbitals_per_site == 0U || nsite > max_bits / orbitals_per_site) return -1;
+  if (norb > max_bits) return -1;
+  for (orb = 0; orb < norb; orb++) {
+    if ((state & (1UL << orb)) != 0UL) {
+      unsigned int site = orb / orbitals_per_site;
+      unsigned int spin = orb % orbitals_per_site;
+      unsigned int target_site = (unsigned int)perm[site];
+      unsigned int mapped = orbitals_per_site * target_site + spin;
+      if (mapped >= max_bits) return -1;
+      mapped_orbitals[count++] = mapped;
+      out |= (1UL << mapped);
+    }
+  }
+  result->state = out;
+  result->amplitude = (double)parity_sign_from_mapped_orbitals(mapped_orbitals, count);
+  return 0;
+}
+
+int SymmetryApplyToState(const struct DefineList *def,
+                         unsigned long int state,
+                         unsigned int op,
+                         struct SymmetryTransformResult *result)
+{
+  if (def == NULL || result == NULL || op >= def->NSymTrans) return -1;
+  memset(result, 0, sizeof(*result));
+  switch (def->iCalcModel) {
+  case Spin:
+    result->state = SymmetryApplyToSpinBits(state, def->SymTrans[op], def->Nsite);
+    result->amplitude = 1.0;
+    return 0;
+  case SpinlessFermion:
+    return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 1U, result);
+  case Hubbard:
+    return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);
+  default:
+    return -1;
+  }
+}
+
 static int same_perm(const int *a, const int *b, unsigned int nsite)
 {
   unsigned int i;
@@ -189,35 +253,40 @@ static int compare_basis_rep_state(const void *lhs, const void *rhs)
   return 0;
 }
 
-static unsigned long int find_representative_spin_state(const struct DefineList *def,
-                                                        unsigned long int state)
+static int find_representative_state(const struct DefineList *def,
+                                     unsigned long int state,
+                                     unsigned long int *rep)
 {
   unsigned int g;
-  unsigned long int rep = state;
+  if (rep == NULL) return -1;
+  *rep = state;
   for (g = 0; g < def->NSymTrans; g++) {
-    unsigned long int moved = SymmetryApplyToSpinBits(state, def->SymTrans[g], def->Nsite);
-    if (moved < rep) rep = moved;
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
+    if (moved.state < *rep) *rep = moved.state;
   }
-  return rep;
+  return 0;
 }
 
-static void compute_orbit_metadata(const struct DefineList *def,
-                                   unsigned long int rep_state,
-                                   unsigned int *orbit_size,
-                                   unsigned int *stabilizer_size,
-                                   double complex *stabilizer_sum)
+static int compute_orbit_metadata(const struct DefineList *def,
+                                  unsigned long int rep_state,
+                                  unsigned int *orbit_size,
+                                  unsigned int *stabilizer_size,
+                                  double complex *stabilizer_sum)
 {
   unsigned int g;
   *stabilizer_size = 0;
   *stabilizer_sum = 0.0;
   for (g = 0; g < def->NSymTrans; g++) {
-    unsigned long int moved = SymmetryApplyToSpinBits(rep_state, def->SymTrans[g], def->Nsite);
-    if (moved == rep_state) {
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(def, rep_state, g, &moved) != 0) return -1;
+    if (moved.state == rep_state) {
       (*stabilizer_size)++;
-      *stabilizer_sum += conj(def->SymTransChar[g]);
+      *stabilizer_sum += conj(def->SymTransChar[g]) * moved.amplitude;
     }
   }
   *orbit_size = def->NSymTrans / *stabilizer_size;
+  return 0;
 }
 
 static unsigned long int rep_state_hash(unsigned long int state);
@@ -381,13 +450,15 @@ int BuildSymmetryBasis(struct BindStruct *X)
 
   for (raw = 1; raw <= full_dim; raw++) {
     unsigned long int state = list_1[raw];
-    unsigned long int rep_state = find_representative_spin_state(&X->Def, state);
+    unsigned long int rep_state = 0UL;
     unsigned int orbit_size = 0;
     unsigned int stabilizer_size = 0;
     double complex stabilizer_sum = 0.0;
     double diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
+    if (find_representative_state(&X->Def, state, &rep_state) != 0) goto fail;
     if (state != rep_state) continue;
-    compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size, &stabilizer_sum);
+    if (compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size,
+                               &stabilizer_sum) != 0) goto fail;
     if (cabs(stabilizer_sum) < 0.5) continue;
     sym->dim++;
     if (ensure_basis_capacity(sym, sym->dim) != 0) goto fail;
@@ -424,9 +495,9 @@ fail:
   return -1;
 }
 
-int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
-                                  unsigned long int state,
-                                  struct SymmetryCanonicalResult *result)
+int SymmetryCanonicalizeState(const struct BindStruct *X,
+                              unsigned long int state,
+                              struct SymmetryCanonicalResult *result)
 {
   unsigned int g;
   unsigned long int rep_state;
@@ -435,21 +506,29 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
   memset(result, 0, sizeof(*result));
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
 
-  rep_state = find_representative_spin_state(&X->Def, state);
+  if (find_representative_state(&X->Def, state, &rep_state) != 0) return -1;
   basis_index = find_basis_index_by_rep(X->Sym, rep_state);
   if (basis_index == 0) return 0;
 
   for (g = 0; g < X->Def.NSymTrans; g++) {
-    unsigned long int moved = SymmetryApplyToSpinBits(rep_state, X->Def.SymTrans[g], X->Def.Nsite);
-    if (moved == state) {
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(&X->Def, rep_state, g, &moved) != 0) return -1;
+    if (moved.state == state) {
       result->found = TRUE;
       result->basis_index = basis_index;
       result->op_rep_to_state = g;
-      result->phase = X->Def.SymTransChar[g];
+      result->phase = X->Def.SymTransChar[g] * moved.amplitude;
       return 0;
     }
   }
   return 0;
+}
+
+int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
+                                  unsigned long int state,
+                                  struct SymmetryCanonicalResult *result)
+{
+  return SymmetryCanonicalizeState(X, state, result);
 }
 
 int ActivateSymmetryBasisDimension(struct BindStruct *X)

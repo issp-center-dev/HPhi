@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "struct.h"
 
@@ -25,6 +26,9 @@ static double complex chars_storage[6];
 static int exchange_storage[6][2];
 static int *exchange_rows[6];
 static double exchange_params[6];
+static int transfer_storage[12][4];
+static int *transfer_rows[12];
+static double complex transfer_params[12];
 
 static int popcount_ulong(unsigned long int x)
 {
@@ -111,6 +115,7 @@ static void setup_cyclic_def(struct DefineList *def,
     anti_rows[g] = anti_storage[g];
   }
   def->iFlgSymmetryBasis = TRUE;
+  def->iCalcModel = Spin;
   def->Nsite = nsite;
   def->NSymTrans = nsite;
   def->SymTrans = perm_rows;
@@ -156,6 +161,45 @@ static void setup_bind(struct BindStruct *X,
   X->Check.idim_max = setup_fixed_sz_basis(nsite, nup);
 }
 
+static void setup_spinless_bind(struct BindStruct *X,
+                                unsigned int nsite,
+                                unsigned int ne,
+                                unsigned int momentum_index)
+{
+  memset(X, 0, sizeof(*X));
+  setup_cyclic_def(&X->Def, nsite, momentum_index);
+  X->Def.iCalcModel = SpinlessFermion;
+  X->Def.Ne = ne;
+  X->Def.Nup = ne;
+  X->Def.Ndown = 0;
+  X->Check.idim_max = setup_fixed_sz_basis(nsite, ne);
+}
+
+static void setup_spinless_transfer_ring(struct DefineList *def, unsigned int nsite)
+{
+  unsigned int site;
+  def->EDNTransfer = 2U * nsite;
+  def->EDGeneralTransfer = transfer_rows;
+  def->EDParaGeneralTransfer = transfer_params;
+  for (site = 0; site < nsite; site++) {
+    unsigned int next = (site + 1U) % nsite;
+    unsigned int forward = 2U * site;
+    unsigned int reverse = forward + 1U;
+    transfer_rows[forward] = transfer_storage[forward];
+    transfer_storage[forward][0] = (int)site;
+    transfer_storage[forward][1] = 0;
+    transfer_storage[forward][2] = (int)next;
+    transfer_storage[forward][3] = 0;
+    transfer_params[forward] = 1.0;
+    transfer_rows[reverse] = transfer_storage[reverse];
+    transfer_storage[reverse][0] = (int)next;
+    transfer_storage[reverse][1] = 0;
+    transfer_storage[reverse][2] = (int)site;
+    transfer_storage[reverse][3] = 0;
+    transfer_params[reverse] = 1.0;
+  }
+}
+
 static double complex orbit_coeff_sum_for_state(unsigned long int raw_state,
                                                 const struct DefineList *def,
                                                 unsigned long int target_state)
@@ -181,6 +225,40 @@ static int apply_exchange_halfspin_test(unsigned long int state,
   return 1;
 }
 
+static unsigned long int mask_between_sites_test(unsigned int site0, unsigned int site1)
+{
+  unsigned int lo = site0 < site1 ? site0 : site1;
+  unsigned int hi = site0 < site1 ? site1 : site0;
+  if (hi <= lo + 1U) return 0UL;
+  return (1UL << hi) - (1UL << (lo + 1U));
+}
+
+static int apply_spinless_hopping_hermite_test(unsigned long int state,
+                                               unsigned int site1,
+                                               unsigned int site2,
+                                               double complex trans,
+                                               unsigned long int *out_state,
+                                               double complex *hval)
+{
+  unsigned long int mask1 = 1UL << site1;
+  unsigned long int mask2 = 1UL << site2;
+  unsigned long int occupied1 = state & mask1;
+  unsigned long int occupied2 = state & mask2;
+  int sgn = (popcount_ulong(state & mask_between_sites_test(site1, site2)) % 2 == 0) ? 1 : -1;
+  if (site1 == site2) return 0;
+  if ((occupied1 == 0UL && occupied2 == 0UL) ||
+      (occupied1 != 0UL && occupied2 != 0UL)) {
+    return 0;
+  }
+  *out_state = state ^ mask1 ^ mask2;
+  if (occupied1 != 0UL && occupied2 == 0UL) {
+    *hval = (double)sgn * conj(trans);
+  } else {
+    *hval = (double)sgn * trans;
+  }
+  return 1;
+}
+
 static double complex projected_coeff_for_state(const struct BindStruct *X,
                                                 unsigned long int basis_index,
                                                 unsigned long int state)
@@ -189,10 +267,12 @@ static double complex projected_coeff_for_state(const struct BindStruct *X,
   const struct SymmetryBasisVector *basis = &X->Sym->basis[basis_index];
   double complex sum = 0.0;
   for (g = 0; g < X->Def.NSymTrans; g++) {
-    unsigned long int moved = SymmetryApplyToSpinBits(basis->rep_state,
-                                                      X->Def.SymTrans[g],
-                                                      X->Def.Nsite);
-    if (moved == state) sum += conj(X->Def.SymTransChar[g]);
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(&X->Def, basis->rep_state, g, &moved) != 0) {
+      fprintf(stderr, "state transform returned an internal error\n");
+      exit(1);
+    }
+    if (moved.state == state) sum += conj(X->Def.SymTransChar[g]) * moved.amplitude;
   }
   return sum / basis->norm;
 }
@@ -212,14 +292,29 @@ static double complex raw_reference_matrix_element(const struct BindStruct *X,
       double complex alpha_coeff = projected_coeff_for_state(X, alpha, state);
       value += conj(alpha_coeff) * list_Diagonal[raw] * beta_coeff;
     }
-    for (term = 0; term < X->Def.NExchangeCoupling; term++) {
-      unsigned long int out_state;
-      if (apply_exchange_halfspin_test(state,
-                                       X->Def.ExchangeCoupling[term][0],
-                                       X->Def.ExchangeCoupling[term][1],
-                                       &out_state) != 0) {
-        double complex alpha_coeff = projected_coeff_for_state(X, alpha, out_state);
-        value += conj(alpha_coeff) * X->Def.ParaExchangeCoupling[term] * beta_coeff;
+    if (X->Def.iCalcModel == Spin) {
+      for (term = 0; term < X->Def.NExchangeCoupling; term++) {
+        unsigned long int out_state;
+        if (apply_exchange_halfspin_test(state,
+                                         X->Def.ExchangeCoupling[term][0],
+                                         X->Def.ExchangeCoupling[term][1],
+                                         &out_state) != 0) {
+          double complex alpha_coeff = projected_coeff_for_state(X, alpha, out_state);
+          value += conj(alpha_coeff) * X->Def.ParaExchangeCoupling[term] * beta_coeff;
+        }
+      }
+    } else if (X->Def.iCalcModel == SpinlessFermion) {
+      for (term = 0; term < X->Def.EDNTransfer; term += 2U) {
+        unsigned long int out_state;
+        double complex hval;
+        double complex trans = -X->Def.EDParaGeneralTransfer[term];
+        if (apply_spinless_hopping_hermite_test(state,
+                                                (unsigned int)X->Def.EDGeneralTransfer[term][0],
+                                                (unsigned int)X->Def.EDGeneralTransfer[term][2],
+                                                trans, &out_state, &hval) != 0) {
+          double complex alpha_coeff = projected_coeff_for_state(X, alpha, out_state);
+          value += conj(alpha_coeff) * hval * beta_coeff;
+        }
       }
     }
   }
@@ -235,20 +330,42 @@ static double complex canonicalized_matrix_element(const struct BindStruct *X,
   if (alpha == beta && X->Sym->sym_diagonal != NULL) {
     value += X->Sym->sym_diagonal[beta];
   }
-  for (term = 0; term < X->Def.NExchangeCoupling; term++) {
-    unsigned long int out_state;
-    if (apply_exchange_halfspin_test(X->Sym->basis[beta].rep_state,
-                                     X->Def.ExchangeCoupling[term][0],
-                                     X->Def.ExchangeCoupling[term][1],
-                                     &out_state) != 0) {
-      struct SymmetryCanonicalResult result;
-      if (SymmetryCanonicalizeSpinState(X, out_state, &result) != 0) {
-        fprintf(stderr, "canonicalize returned an internal error\n");
-        exit(1);
+  if (X->Def.iCalcModel == Spin) {
+    for (term = 0; term < X->Def.NExchangeCoupling; term++) {
+      unsigned long int out_state;
+      if (apply_exchange_halfspin_test(X->Sym->basis[beta].rep_state,
+                                       X->Def.ExchangeCoupling[term][0],
+                                       X->Def.ExchangeCoupling[term][1],
+                                       &out_state) != 0) {
+        struct SymmetryCanonicalResult result;
+        if (SymmetryCanonicalizeState(X, out_state, &result) != 0) {
+          fprintf(stderr, "canonicalize returned an internal error\n");
+          exit(1);
+        }
+        if (result.found != 0 && result.basis_index == alpha) {
+          double norm_factor = X->Sym->basis[alpha].norm / X->Sym->basis[beta].norm;
+          value += X->Def.ParaExchangeCoupling[term] * result.phase * norm_factor;
+        }
       }
-      if (result.found != 0 && result.basis_index == alpha) {
-        double norm_factor = X->Sym->basis[alpha].norm / X->Sym->basis[beta].norm;
-        value += X->Def.ParaExchangeCoupling[term] * result.phase * norm_factor;
+    }
+  } else if (X->Def.iCalcModel == SpinlessFermion) {
+    for (term = 0; term < X->Def.EDNTransfer; term += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[term];
+      if (apply_spinless_hopping_hermite_test(X->Sym->basis[beta].rep_state,
+                                              (unsigned int)X->Def.EDGeneralTransfer[term][0],
+                                              (unsigned int)X->Def.EDGeneralTransfer[term][2],
+                                              trans, &out_state, &hval) != 0) {
+        struct SymmetryCanonicalResult result;
+        if (SymmetryCanonicalizeState(X, out_state, &result) != 0) {
+          fprintf(stderr, "canonicalize returned an internal error\n");
+          exit(1);
+        }
+        if (result.found != 0 && result.basis_index == alpha) {
+          double norm_factor = X->Sym->basis[alpha].norm / X->Sym->basis[beta].norm;
+          value += hval * result.phase * norm_factor;
+        }
       }
     }
   }
@@ -305,6 +422,26 @@ static void assert_symmetry_dim(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+static void assert_spinless_symmetry_dim(unsigned int nsite,
+                                         unsigned int ne,
+                                         unsigned int momentum_index,
+                                         unsigned long int expected_dim,
+                                         const char *label)
+{
+  struct BindStruct X;
+  setup_spinless_bind(&X, nsite, ne, momentum_index);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, expected_dim, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
@@ -315,6 +452,33 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
   unsigned long int alpha, beta;
   setup_bind(&X, nsite, nup, momentum_index);
   if (diagonal_coupling != 0.0) set_ising_ring_diagonal(nsite, diagonal_coupling);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  for (beta = 1; beta <= X.Sym->dim; beta++) {
+    for (alpha = 1; alpha <= X.Sym->dim; alpha++) {
+      double complex raw_value = raw_reference_matrix_element(&X, alpha, beta);
+      double complex canonical_value = canonicalized_matrix_element(&X, alpha, beta);
+      assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
+    }
+  }
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_spinless_canonicalized_matrix_matches_raw(unsigned int nsite,
+                                                             unsigned int ne,
+                                                             unsigned int momentum_index,
+                                                             const char *label)
+{
+  struct BindStruct X;
+  unsigned long int alpha, beta;
+  setup_spinless_bind(&X, nsite, ne, momentum_index);
+  setup_spinless_transfer_ring(&X.Def, nsite);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -440,6 +604,7 @@ static void assert_hash_probe_lookup_handles_collision(const char *label)
   anti_rows_one[0] = identity_anti;
   chars_one[0] = 1.0;
   X.Def.iFlgSymmetryBasis = TRUE;
+  X.Def.iCalcModel = Spin;
   X.Def.Nsite = 4;
   X.Def.NSymTrans = 1;
   X.Def.SymTrans = perm_rows_one;
@@ -480,6 +645,40 @@ int main(void)
   assert_ulong_eq(SymmetryApplyToSpinBits(0x1UL, shift4, 4), 0x2UL, "single bit shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x9UL, shift4, 4), 0x3UL, "wrap shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x6UL, shift4, 4), 0xcUL, "two bit shift");
+  {
+    struct DefineList def;
+    struct SymmetryTransformResult moved;
+    setup_cyclic_def(&def, 4, 0);
+    def.iCalcModel = SpinlessFermion;
+    assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 1, &moved), 0,
+                  "spinless adjacent translate");
+    assert_ulong_eq(moved.state, 0x6UL, "spinless adjacent translated state");
+    assert_complex_close(moved.amplitude, 1.0, 1.0e-12,
+                         "spinless adjacent translation sign");
+    assert_int_eq(SymmetryApplyToState(&def, 0x9UL, 1, &moved), 0,
+                  "spinless wrap translate");
+    assert_ulong_eq(moved.state, 0x3UL, "spinless wrap translated state");
+    assert_complex_close(moved.amplitude, -1.0, 1.0e-12,
+                         "spinless wrap translation sign");
+  }
+  {
+    struct DefineList def;
+    struct SymmetryTransformResult moved;
+    setup_cyclic_def(&def, 4, 0);
+    def.iCalcModel = Hubbard;
+    assert_int_eq(SymmetryApplyToState(&def, (1UL << 0) | (1UL << 6), 1, &moved), 0,
+                  "hubbard same-spin wrap translate");
+    assert_ulong_eq(moved.state, (1UL << 0) | (1UL << 2),
+                    "hubbard same-spin wrap translated state");
+    assert_complex_close(moved.amplitude, -1.0, 1.0e-12,
+                         "hubbard same-spin wrap translation sign");
+    assert_int_eq(SymmetryApplyToState(&def, (1UL << 0) | (1UL << 7), 1, &moved), 0,
+                  "hubbard mixed-spin wrap translate");
+    assert_ulong_eq(moved.state, (1UL << 1) | (1UL << 2),
+                    "hubbard mixed-spin wrap translated state");
+    assert_complex_close(moved.amplitude, -1.0, 1.0e-12,
+                         "hubbard mixed-spin wrap translation sign");
+  }
   assert_int_eq(1, 1, "unit harness still running");
   {
     struct DefineList def;
@@ -510,6 +709,10 @@ int main(void)
   assert_symmetry_dim(4, 2, 1, 1, "C4 k=pi/2 sector dimension");
   assert_symmetry_dim(6, 3, 3, 4, "C6 k=pi sector dimension");
   assert_symmetry_dim(6, 3, 1, 3, "C6 k=pi/3 sector dimension");
+  assert_spinless_symmetry_dim(4, 2, 0, 1,
+                               "SpinlessFermion C4 k=0 sector dimension");
+  assert_spinless_symmetry_dim(4, 2, 1, 2,
+                               "SpinlessFermion C4 k=pi/2 sector dimension");
   {
     struct BindStruct X;
     unsigned long int raw;
@@ -588,6 +791,8 @@ int main(void)
                                           "C4 k=0 canonicalized matrix matches raw reference");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 0.0,
                                           "C6 k=pi/3 canonicalized matrix matches raw reference");
+  assert_spinless_canonicalized_matrix_matches_raw(4, 2, 1,
+                                                   "SpinlessFermion C4 k=pi/2 matrix matches raw reference");
   assert_orbit_diagonal_is_representative(6, 3, 1, 1.0,
                                           "C6 k=pi/3 Ising diagonal is orbit-invariant");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,

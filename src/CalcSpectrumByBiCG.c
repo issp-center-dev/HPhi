@@ -94,6 +94,56 @@ static const char *BiCGStatusReason(int status) {
   }
 }
 
+static const char *BiCGStageName(int stage) {
+  switch (stage) {
+    case 1: return "entered update";
+    case 2: return "rho reduced";
+    case 3: return "beta ready";
+    case 4: return "seed matvecs ready";
+    case 5: return "alpha denominator reduced";
+    case 6: return "alpha ready";
+    case 7: return "shifted-equation checks";
+    case 8: return "shifted-equation checks passed";
+    case 9: return "shifted equation updated";
+    case 10: return "residual vectors updated";
+    case 11: return "seed switch";
+    case 12: return "seed switch complete";
+    case 13: return "residual norm reduced";
+    case 14: return "residual norm valid";
+    case 15: return "update complete";
+    default: return "not recorded";
+  }
+}
+
+static void PrintBiCGScalarStageDiag(const int status[3]) {
+  int stage, iter, seed;
+  double complex value[KOMEGA_BICG_DIAG_VALUE_COUNT];
+  komega_bicg_getdiag(&stage, &iter, &seed, value);
+  fprintf(stderr,
+          "BiCG scalar-stage diagnostic: rank=%d trigger_status=(%d,%d,%d) "
+          "stage=%d [%s] iter=%d seed=%d "
+          "rho_local=(%25.17e,%25.17e) rho_global=(%25.17e,%25.17e) "
+          "beta=(%25.17e,%25.17e) "
+          "alpha_inner_local=(%25.17e,%25.17e) "
+          "alpha_inner_global=(%25.17e,%25.17e) "
+          "alpha_denom=(%25.17e,%25.17e) "
+          "alpha_old=(%25.17e,%25.17e) alpha=(%25.17e,%25.17e) "
+          "residual_first=(%25.17e,%25.17e) "
+          "shadow_residual_first=(%25.17e,%25.17e) "
+          "resdot_local=(%25.17e,%25.17e) "
+          "resdot_global=(%25.17e,%25.17e) "
+          "z_seed=(%25.17e,%25.17e) pi_seed=(%25.17e,%25.17e)\n",
+          myrank, status[0], status[1], status[2], stage, BiCGStageName(stage), iter, seed,
+          creal(value[0]), cimag(value[0]), creal(value[1]), cimag(value[1]),
+          creal(value[2]), cimag(value[2]), creal(value[3]), cimag(value[3]),
+          creal(value[4]), cimag(value[4]), creal(value[5]), cimag(value[5]),
+          creal(value[6]), cimag(value[6]), creal(value[7]), cimag(value[7]),
+          creal(value[8]), cimag(value[8]), creal(value[9]), cimag(value[9]),
+          creal(value[10]), cimag(value[10]), creal(value[11]), cimag(value[11]),
+          creal(value[12]), cimag(value[12]), creal(value[13]), cimag(value[13]));
+  fflush(stderr);
+}
+
 static void PrintBiCGIteration1Diag(
   const BiCGVectorDiag *v2_diag,
   const BiCGVectorDiag *v12_diag,
@@ -424,6 +474,7 @@ int CalcSpectrumByBiCG(
   BiCGVectorDiag iter1_v2_diag, iter1_v12_diag;
   int have_iter1_diag = FALSE;
   int iter1_diag_printed = FALSE;
+  int scalar_stage_diag_printed = FALSE;
   double iter1_residual = NAN;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
@@ -564,6 +615,10 @@ int CalcSpectrumByBiCG(
     */
 
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, res_proj, status);
+    if (status[1] >= 2) {
+      PrintBiCGScalarStageDiag(status);
+      scalar_stage_diag_printed = TRUE;
+    }
     if (has_local_residual) unshifted_residual = creal(v12[1]);
     if (stp == 1) iter1_residual = unshifted_residual;
 
@@ -661,6 +716,9 @@ int CalcSpectrumByBiCG(
   if (bicg_failed == TRUE && have_iter1_diag == TRUE && iter1_diag_printed == FALSE) {
     PrintBiCGIteration1Diag(&iter1_v2_diag, &iter1_v12_diag,
       status[0], status[1], status[2], iter1_residual);
+  }
+  if (bicg_failed == TRUE && status[1] >= 2 && scalar_stage_diag_printed == FALSE) {
+    PrintBiCGScalarStageDiag(status);
   }
   /**
   </ul>
