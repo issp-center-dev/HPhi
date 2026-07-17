@@ -21,6 +21,8 @@ For more details, See ‘COPYING.LESSER’ in the root directory of this library
 #include <complex.h>
 #pragma once
 
+#define KOMEGA_BICG_DIAG_VALUE_COUNT 14
+
 void komega_bicg_init(int *ndim, int *nl, int *nz, double complex *x,
                       double complex *z, int *itermax, double *threshold, int *comm);
 void komega_cocg_init(int *ndim, int *nl, int *nz, double complex *x,
@@ -81,6 +83,8 @@ void komega_cg_c_getvec(double complex *r_old);
 void komega_cg_r_getvec(double *r_old);
 
 void komega_bicg_getresidual(double *res);
+void komega_bicg_getdiag(int *stage, int *iter, int *seed,
+                         double complex values[KOMEGA_BICG_DIAG_VALUE_COUNT]);
 void komega_cocg_getresidual(double *res);
 void komega_cg_c_getresidual(double *res);
 void komega_cg_r_getresidual(double *res);
