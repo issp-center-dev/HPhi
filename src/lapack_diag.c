@@ -58,6 +58,18 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
             "Error: matrix dimension (%ld) is smaller than the process grid (%d x %d).\n"
             "       Reduce the number of MPI ranks for this problem size.\n",
             xMsize, nprow, npcol);
+    /* Pre-existing early return, predating the descinit-verdict block
+       below (PR #276 review round 2): this runs before any BLACS grid
+       exists, but iHamPanelActive/Ham_local are set by the caller
+       (xsetmem.c) well before lapack_diag_elpa() is entered, so the
+       distributed-panel mode leak fixed in the descinit-failure branch
+       applies here too. Same one-line cleanup idiom, minus
+       blacs_gridexit_ (no grid to tear down yet). */
+    if (iHamPanelActive) {
+      free(Ham_local);
+      Ham_local = NULL;
+      iHamPanelActive = 0;
+    }
     return -1;
   }
   mb = ElpaBlockSize(xMsize, nprow, npcol);
@@ -95,18 +107,30 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
     /* descinit_ overwrites info per call: fold both verdicts, then
        synchronize so no rank proceeds into the collectives below with an
        invalid descriptor while others abort (same pattern as
-       RedistBlockCyclicToStatePanel). */
-    int ok = (info == 0) ? 0 : -1, gok;
+       RedistBlockCyclicToStatePanel). Capture descA's info before the
+       second descinit_ call overwrites it, so a descA-only failure is
+       not misreported as info=0 (PR #276 review round 2). */
+    int info_a = info;
+    int ok = (info_a == 0) ? 0 : -1, gok;
     descinit_(descZ_vec, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
     if (info != 0) ok = -1;
     if (ok != 0) {
       fprintf(stdout,
-              "  Error: descinit_ failed (info=%d) for the ELPA descriptors\n"
-              "         on rank %d; aborting the ELPA diagonalization.\n",
-              info, myrank);
+              "  Error: descinit_ failed (info_A=%d, info_Z=%d) for the ELPA\n"
+              "         descriptors on rank %d; aborting the ELPA diagonalization.\n",
+              info_a, info, myrank);
     }
     MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
     if (gok != 0) {
+      /* Distributed-panel mode (phase 2): this return happens before the
+         panel-mode branch below consumes Ham_local, so free it here too
+         (same idiom as the panel-mode allocation-failure paths further
+         down in this function; PR #276 review round 2). */
+      if (iHamPanelActive) {
+        free(Ham_local);
+        Ham_local = NULL;
+        iHamPanelActive = 0;
+      }
       blacs_gridexit_(&ictxt);
       return -1;
     }

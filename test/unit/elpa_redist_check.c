@@ -106,6 +106,25 @@ int main(int argc, char **argv) {
       }
     }
   }
+  /* Failure-propagation phase: rank 0 passes an invalid panel leading
+     dimension (1 < LOCr = n), so descinit_ fails with info != 0 on rank 0
+     ONLY. The synchronized verdict inside RedistPanelToBlockCyclic must
+     make EVERY rank return -1 without entering the collective pzgemr2d_
+     (a hang here means the verdict Allreduce is broken). Requires n > 1
+     so that lde=1 is genuinely invalid on rank 0. Mirrors the analogous
+     phase in elpa_statepanel_check.c for RedistBlockCyclicToStatePanel. */
+  if (n > 1 && size >= 2) {
+    long int lde_bad = (rank == 0) ? 1 : lde;
+    int rc2 = RedistPanelToBlockCyclic(n, jb + 1, ncols, lde_bad, panel,
+                                       B_panel2d, descB);
+    if (rc2 != -1) {
+      fprintf(stderr,
+              "rank %d: expected rc=-1 from the descinit_ failure-propagation "
+              "phase, got %d\n", rank, rc2);
+      ok = 0;
+    }
+  }
+
   { int gok; MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD); ok = gok; }
   if (rank == 0) printf("elpa_redist_check: %s\n", ok ? "OK" : "FAILED");
   free(A_ref); free(B_panel2d); free(panel);
