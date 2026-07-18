@@ -26,6 +26,26 @@ https://github.com/issp-center-dev/HPhi/releases
 インストールされている場合は\ ``-DELPA_ROOT=/path/to/elpa``\ で場所を
 指定してください（``ELPA_INCLUDE_DIR``/``ELPA_LIBRARY`` での個別指定も
 可能です）。
+
+.. note::
+
+   ELPAビルド時のプラットフォーム注意（AMD EPYC + Mellanox InfiniBand
+   クラスタ、Intel oneAPI 2022 / Intel MPI 2021.7 で実機確認済み）:
+
+   * **AVX-512 を持たない CPU**（AMD EPYC Rome/Milan など）では、ELPA
+     本体の configure に ``--disable-avx512 --disable-avx512-kernels``
+     を付けてください。ELPA はビルドホストの能力に関係なく AVX-512
+     カーネルをコンパイルし、ランタイムのカーネル選択がそれを選ぶ
+     ことがあります。その場合、2段ソルバ経路
+     （``single_hh_trafo_*_AVX512_*``）で不正命令（SIGILL）により
+     クラッシュします。小さい行列（1段ソルバ経路）では発症しない
+     ため、見落としやすい点に注意してください。
+   * **Intel MPI** を Mellanox（mlx/UCX プロバイダ）環境で使う場合、
+     ``ExpecMode`` 1 または 2 の複数ランク実行が物理量収集
+     （``MPI_Gatherv``）で既定チューニングのアルゴリズムにより
+     デッドロックすることがあります。回避策として
+     ``I_MPI_ADJUST_GATHERV=3``（マルチノード可）または
+     ``I_MPI_FABRICS=shm``（単一ノードのみ）を設定してください。
 コンパイル後、$HOME/build/hphi直下にsrcフォルダが作成され、
 実行ファイルであるHPhiがそのフォルダ内に作成されます。
 MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。

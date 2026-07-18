@@ -174,3 +174,18 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
 - RED→GREEN on hardware (valgrind 3.27, conda env; ASan unusable under mpiexec here — shadow-range conflict, google/sanitizers#856): pre-fix binary → `Invalid read of size 16 ... 16 bytes before a block of size 10,368 alloc'd (setmem_large)` in makeHam on BOTH ranks; post-fix binary → **zero Invalid accesses** in the same window. (Both runs later stop inside ELPA's AVX-512 kernels with SIGILL — a valgrind instruction-decoder limitation, after generation completes; the pre/post comparison window is identical.)
 - Debug (assert-enabled) build: full `fulldiag_elpa_hubbard_chain` run to completion, no assert trips. Release physics: chain + equiv np=2/3 + statepanel + merge 5/5+5/5 PASS.
 - Remaining valgrind contexts are environment noise (OpenMPI/PMIx/libnvidia-ml) plus a PRE-EXISTING `GetFileName`/`ReadDefFileNInt` uninitialised-strlen in legacy def parsing (untouched by this branch; upstream follow-up candidate).
+
+### 2026-07-18 — kugui (ISSP HPE Cray, AMD EPYC 7763 + Mellanox IB), Intel toolchain + MULTI-NODE — PASSED
+- Commit under test: af858a0c. Toolchain: Intel oneAPI 2022.2.1 (classic icc/ifort) + Intel MPI 2021.7.1 + MKL 2022 ScaLAPACK; RHEL 8 / glibc 2.28; cmake 3.20.2; PBS. ELPA 2025.06.001 built from source (mpiicc/mpiifort, MKL, `--disable-openmp`).
+- This closes the protocol's "one multi-node system" target (CPU): first true multi-node validation.
+- **Two platform pitfalls found, diagnosed (gdb stacks + A/B tests), and worked around — now documented in the installation manual (ja/en)**:
+  1. **ELPA AVX-512 kernel on a non-AVX-512 CPU**: ELPA compiles AVX-512 kernels regardless of build host and its runtime selection picked `single_hh_trafo_complex_AVX512_1hv_double` on EPYC → SIGILL in every uncapped-nblk 2-stage path (eigen np=1 N=97, equiv case4 N=256), while capped 1-stage paths worked — deceptive partial-pass pattern. Not a compiler-flag issue (persisted with plain `-O2`). Fix: configure ELPA with `--disable-avx512 --disable-avx512-kernels`.
+  2. **Intel MPI gatherv deadlock (mlx/UCX provider)**: `ExpecMode 1/2`'s all_* `MPI_Gatherv` deadlocked (root in Waitall, sender in Ssend — gdb-confirmed) under the default tuned `linear_ssend` algorithm and `I_MPI_ADJUST_GATHERV=1/2`; completes with `I_MPI_ADJUST_GATHERV=3` or `I_MPI_FABRICS=shm` (same binary/call — judged an Intel MPI 2021.7 platform defect, not an HPhi protocol issue; OpenMPI on the workstation only ever exercised the shm path).
+- Single node (with both workarounds): map_check, eigen/redist/statepanel np=1,2,4,8 (incl. all failure-injection phases), merge np=2, serial ctest, hubbard_chain, equiv np=2/3 (all 5 cases × 3 modes) — ALL PASS.
+- **Multi-node (2 nodes × 4 ranks = 8, `I_MPI_ADJUST_GATHERV=3`)**: eigen/redist/statepanel/merge at 8 ranks over 2 nodes PASS (note: each unit run took ~15 min under the mlx provider — budget walltime accordingly). End-to-end L=8 Hubbard N=4900, Solver 3, all states one-+two-body GF:
+  | Mode | wall (2 nodes / 8 ranks) |
+  |---|---|
+  | 0 | 11 m 52 s |
+  | 1 | 52 s |
+  | **2** | **49 s** |
+  `zvo_phys` maxdiff 0.0 for Modes 1/2 vs Mode 0. The Mode-0 wall is dominated by per-state inter-node collectives (eigenvector gather + reductions × 4900 states) — exactly the cost the phase-3 state-task parallelism removes (**~14x faster**); Mode 2 ≥ Mode 1 holds here too (kernel breakdown: one-body map 0.000/stream 0.069/output 0.768 s; two-body 0.001/0.241/0.625 s).
