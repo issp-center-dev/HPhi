@@ -687,7 +687,8 @@ if(MPI_FOUND)
         NAME green_partial_merge_check
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
-                $<TARGET_FILE:green_partial_merge_check>
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:green_partial_merge_check>
+                ${MPIEXEC_POSTFLAGS}
     )
     set_tests_properties(
         green_partial_merge_check
@@ -743,7 +744,8 @@ if(USE_ELPA)
         NAME elpa_eigen_check
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
-                $<TARGET_FILE:elpa_eigen_check>
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_eigen_check>
+                ${MPIEXEC_POSTFLAGS}
     )
     set_tests_properties(
         elpa_eigen_check
@@ -772,7 +774,8 @@ if(USE_ELPA)
         NAME elpa_redist_check
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
-                $<TARGET_FILE:elpa_redist_check>
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_redist_check>
+                ${MPIEXEC_POSTFLAGS}
     )
     set_tests_properties(
         elpa_redist_check
@@ -799,7 +802,8 @@ if(USE_ELPA)
         NAME elpa_statepanel_check
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
-                $<TARGET_FILE:elpa_statepanel_check>
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_statepanel_check>
+                ${MPIEXEC_POSTFLAGS}
     )
     set_tests_properties(
         elpa_statepanel_check
@@ -826,7 +830,8 @@ if(USE_ELPA)
         NAME elpa_statepanel_zero_owner
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
-                $<TARGET_FILE:elpa_statepanel_zero_owner>
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_statepanel_zero_owner>
+                ${MPIEXEC_POSTFLAGS}
     )
     set_tests_properties(
         elpa_statepanel_zero_owner
