@@ -26,8 +26,9 @@
  * "special/failing" role, so the same binary is meaningful whether run
  * with exactly 2 ranks or more.
  *
- * Five scenarios, one per GreenOutputKind so they cannot interfere with
- * each other's manifest bookkeeping within a single process:
+ * Six scenarios. The first five use separate GreenOutputKind values; the
+ * sixth deliberately writes two kinds in one session to exercise
+ * cross-kind publication rollback:
  *   (a) GreenOutputOneBody  -- normal success: every rank writes one
  *       identifying row; Merge succeeds on every rank, the final file
  *       contains every rank's row IN RANK ORDER, and every part file is
@@ -55,6 +56,11 @@
  *       the API; the merge's pass-2 probe must detect that the on-disk
  *       length differs from the manifest's recorded byte count and fail
  *       on every rank, publishing nothing and deleting nothing.
+ *   (f) GreenOutputOneBody + GreenOutputTwoBody -- both have pre-existing
+ *       finals and valid new parts. The test injects a failure while the
+ *       second new final is being published, after the first was already
+ *       published. Merge must restore BOTH old finals, leave all parts,
+ *       remove temp/backup artifacts, and fail on every rank.
  *
  * Non-vacuousness check (documented per the phase-3a plan's TDD
  * requirement -- this test is not driven by a prior failing test, so its
@@ -67,6 +73,7 @@
  * vacuously true. The mutations were reverted before committing.
  */
 #include <mpi.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,6 +97,21 @@ void splash(void) { }
 
 static int g_ok = 1;
 static int g_rank = 0;
+static int g_rename_call = 0;
+static int g_rename_fail_on_call = 0;
+
+/* src/green_output.c calls this instead of rename() only in this unit-test
+   target (GREEN_OUTPUT_TESTING). The injected error is one-shot so rollback
+   renames can proceed normally after the targeted publish fails. */
+int GreenOutputTestRename(const char *old_path, const char *new_path) {
+  g_rename_call++;
+  if (g_rename_fail_on_call == g_rename_call) {
+    g_rename_fail_on_call = 0;
+    errno = EIO;
+    return -1;
+  }
+  return rename(old_path, new_path);
+}
 
 #define CHECK(cond, ...) \
   do { \
@@ -104,6 +126,20 @@ static int g_rank = 0;
 static int FileExists(const char *path) {
   struct stat st;
   return stat(path, &st) == 0;
+}
+
+static int FileHasExactContents(const char *path, const char *expected) {
+  FILE *fp = fopen(path, "rb");
+  char buf[256];
+  size_t got;
+  size_t expected_len = strlen(expected);
+  int same;
+  if (fp == NULL) return 0;
+  got = fread(buf, 1, sizeof(buf), fp);
+  same = (got == expected_len && memcmp(buf, expected, expected_len) == 0 &&
+          !ferror(fp) && feof(fp));
+  fclose(fp);
+  return same;
 }
 
 /* Join cParentOutputFolder + relative path, exactly as GreenOutputJoinOutputPath()
@@ -134,6 +170,13 @@ static void PreClean(const struct BindStruct *X, GreenOutputKind kind, int nproc
   if (GreenOutputFileName(X, kind, final_rel) != 0) return;
   JoinOutputPath(final_rel, joined, sizeof(joined));
   remove(joined);
+  {
+    char auxiliary[D_FileNameMax + 96];
+    snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", joined);
+    remove(auxiliary);
+    snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", joined);
+    remove(auxiliary);
+  }
   for (r = 0; r < nprocs_hint; r++) {
     char part_joined[D_FileNameMax + 64];
     PartPath(final_rel, r, part_joined, sizeof(part_joined));
@@ -480,6 +523,95 @@ int main(int argc, char **argv) {
           PartPath(final_rel, r, part_joined, sizeof(part_joined));
           CHECK(FileExists(part_joined), "(e) part file '%s' must be retained after a failed merge", part_joined);
         }
+      }
+    }
+  }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+
+  /* =====================================================================
+   * (f) Cross-kind publish failure: seed old OneBody and TwoBody finals,
+   *     build valid new parts for both, then fail the fourth rename on rank
+   *     0. The first two renames create backups, the third publishes the
+   *     new OneBody file, and the fourth attempts to publish TwoBody. The
+   *     merge must roll the whole output set back to the old generation.
+   * ===================================================================*/
+  {
+    FILE *fp_one = NULL;
+    FILE *fp_two = NULL;
+    int rc_merge;
+    char one_rel[D_FileNameMax] = {0}, two_rel[D_FileNameMax] = {0};
+    char one_joined[D_FileNameMax + 64] = {0};
+    char two_joined[D_FileNameMax + 64] = {0};
+
+    PreClean(&X, GreenOutputOneBody, nprocs);
+    PreClean(&X, GreenOutputTwoBody, nprocs);
+    if (g_rank == 0) {
+      FILE *seed;
+      CHECK(GreenOutputFileName(&X, GreenOutputOneBody, one_rel) == 0,
+            "(f) GreenOutputFileName failed for OneBody");
+      CHECK(GreenOutputFileName(&X, GreenOutputTwoBody, two_rel) == 0,
+            "(f) GreenOutputFileName failed for TwoBody");
+      JoinOutputPath(one_rel, one_joined, sizeof(one_joined));
+      JoinOutputPath(two_rel, two_joined, sizeof(two_joined));
+      seed = fopen(one_joined, "wb");
+      CHECK(seed != NULL, "(f) could not seed old OneBody final");
+      if (seed != NULL) { fputs("old-one\n", seed); fclose(seed); }
+      seed = fopen(two_joined, "wb");
+      CHECK(seed != NULL, "(f) could not seed old TwoBody final");
+      if (seed != NULL) { fputs("old-two\n", seed); fclose(seed); }
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    GreenOutputSetPartialSuffix(g_rank);
+    ExpecLocalEnter();
+    CHECK(GreenOutputOpenAggregate(&X, GreenOutputOneBody, &fp_one) == 0,
+          "(f) GreenOutputOpenAggregate failed for OneBody");
+    if (fp_one != NULL) fprintf(fp_one, "new-one-rank%d\n", g_rank);
+    CHECK(GreenOutputCloseAggregate(GreenOutputOneBody, fp_one) == 0,
+          "(f) GreenOutputCloseAggregate failed for OneBody");
+    CHECK(GreenOutputOpenAggregate(&X, GreenOutputTwoBody, &fp_two) == 0,
+          "(f) GreenOutputOpenAggregate failed for TwoBody");
+    if (fp_two != NULL) fprintf(fp_two, "new-two-rank%d\n", g_rank);
+    CHECK(GreenOutputCloseAggregate(GreenOutputTwoBody, fp_two) == 0,
+          "(f) GreenOutputCloseAggregate failed for TwoBody");
+    ExpecLocalLeave();
+
+    if (g_rank == 0) {
+      g_rename_call = 0;
+      g_rename_fail_on_call = 4;
+    }
+    rc_merge = GreenOutputMergePartials(&X);
+    CHECK(rc_merge != 0,
+          "(f) GreenOutputMergePartials returned 0 after injected publish failure");
+    GreenOutputClearPartialSuffix();
+
+    if (g_rank == 0) {
+      int r;
+      char auxiliary[D_FileNameMax + 96];
+      CHECK(g_rename_call == 6,
+            "(f) rename wrapper saw %d calls, expected 6 (2 backup, 2 publish attempts, 2 restores)",
+            g_rename_call);
+      CHECK(FileHasExactContents(one_joined, "old-one\n"),
+            "(f) old OneBody final was not restored exactly");
+      CHECK(FileHasExactContents(two_joined, "old-two\n"),
+            "(f) old TwoBody final was not restored exactly");
+      snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", one_joined);
+      CHECK(!FileExists(auxiliary), "(f) OneBody temp remained after rollback");
+      snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", one_joined);
+      CHECK(!FileExists(auxiliary), "(f) OneBody backup remained after rollback");
+      snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", two_joined);
+      CHECK(!FileExists(auxiliary), "(f) TwoBody temp remained after rollback");
+      snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", two_joined);
+      CHECK(!FileExists(auxiliary), "(f) TwoBody backup remained after rollback");
+      for (r = 0; r < nprocs; r++) {
+        char part_joined[D_FileNameMax + 64];
+        PartPath(one_rel, r, part_joined, sizeof(part_joined));
+        CHECK(FileExists(part_joined),
+              "(f) OneBody part '%s' must remain after rollback", part_joined);
+        PartPath(two_rel, r, part_joined, sizeof(part_joined));
+        CHECK(FileExists(part_joined),
+              "(f) TwoBody part '%s' must remain after rollback", part_joined);
       }
     }
   }

@@ -677,7 +677,7 @@ if(MPI_FOUND)
         ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
     target_include_directories(green_partial_merge_check PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include)
-    target_compile_definitions(green_partial_merge_check PRIVATE -DMPI)
+    target_compile_definitions(green_partial_merge_check PRIVATE -DMPI -DGREEN_OUTPUT_TESTING)
     target_link_libraries(green_partial_merge_check ${MPI_C_LIBRARIES} m)
     # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as the
     # other MPI unit tests. min:2 (not exact:2): every scenario in
@@ -696,6 +696,21 @@ if(MPI_FOUND)
 endif(MPI_FOUND)
 
 if(USE_ELPA)
+    configure_file(
+        ${CMAKE_SOURCE_DIR}/test/cmake/elpa_configure_cache.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_cache.cmake
+        @ONLY)
+    add_test(
+        NAME elpa_configure_check
+        COMMAND ${CMAKE_COMMAND}
+                -DHPHI_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+                -DHPHI_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_check
+                -DHPHI_PRELOAD_CACHE=${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_cache.cmake
+                -P ${CMAKE_SOURCE_DIR}/test/cmake/elpa_configure_check.cmake)
+    set_tests_properties(
+        elpa_configure_check
+        PROPERTIES LABELS "elpa;cmake;validation")
+
     add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
 
     add_executable(elpa_eigen_check unit/elpa_eigen_check.c
@@ -703,6 +718,7 @@ if(USE_ELPA)
         ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
     target_include_directories(elpa_eigen_check PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_eigen_check PRIVATE ${ELPA_COMPILE_OPTIONS})
     target_compile_definitions(elpa_eigen_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
     # SCALAPACK_LIBRARIES may be a single space-separated flag string from
     # config/*.cmake; normalize it into a list the same way src/CMakeLists.txt
@@ -734,6 +750,7 @@ if(USE_ELPA)
         ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
     target_include_directories(elpa_redist_check PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_redist_check PRIVATE ${ELPA_COMPILE_OPTIONS})
     target_compile_definitions(elpa_redist_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
     # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
     # for elpa_eigen_check; reuse it here for the same reason.
@@ -761,6 +778,7 @@ if(USE_ELPA)
         ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
     target_include_directories(elpa_statepanel_check PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_statepanel_check PRIVATE ${ELPA_COMPILE_OPTIONS})
     target_compile_definitions(elpa_statepanel_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
     # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
     # for elpa_eigen_check; reuse it here for the same reason.
@@ -792,6 +810,7 @@ if(USE_ELPA)
         ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
     target_include_directories(elpa_statepanel_zero_owner PRIVATE
         ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_statepanel_zero_owner PRIVATE ${ELPA_COMPILE_OPTIONS})
     target_compile_definitions(elpa_statepanel_zero_owner PRIVATE -D_ELPA -D_SCALAPACK -DMPI -DNDIM=2)
     target_link_libraries(elpa_statepanel_zero_owner ${ELPA_LIBRARIES}
         ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
@@ -835,8 +854,20 @@ if(USE_ELPA)
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
     )
+    add_test(
+        NAME fulldiag_expecmode_scalapack_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
     set_tests_properties(
         fulldiag_expecmode_equiv_np2 fulldiag_expecmode_equiv_np3
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;expecmode"
     )
+    set_tests_properties(
+        fulldiag_expecmode_scalapack_np2
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;scalapack;expecmode"
+    )
+    set_property(
+        TEST fulldiag_expecmode_scalapack_np2
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
 endif(USE_ELPA)

@@ -129,15 +129,19 @@ int GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp);
  *
  * On success: for every kind attempted by at least one rank, rank 0
  * concatenates every attempting rank's part file in rank order into a
- * private "<final>.tmp_merge" file (every fread/fwrite/fclose checked), and
- * only after ALL kinds concatenated cleanly rename()s each temp onto its
- * final name (this publish step is the Mode-1 replacement for
+ * private "<final>.tmp_merge" file (every fread/fwrite/fclose checked).
+ * Only after ALL kinds concatenate cleanly, existing finals are moved to
+ * "<final>.bak_merge" recovery files and every temp is renamed onto its final
+ * name (this publish step is the Mode-1 replacement for
  * GreenOutputInitializeAggregateFiles(), which Mode 1 must NOT call
- * directly), then deletes all part files. On failure: temps are removed,
- * nothing is published under a final name, no part file is deleted
- * (surviving parts are left in place for diagnosis), and every rank
- * returns non-zero. A truncated file can therefore never appear under a
- * final aggregate name, even on a mid-merge disk-full/write error.
+ * directly). If any backup/publish rename fails, already-published new files
+ * are removed or atomically replaced by their backups, so the pre-merge set
+ * of finals is restored; no part file is deleted and every rank returns
+ * non-zero. If the rollback system calls themselves fail, an explicit
+ * ROLLBACK FAILED diagnostic names the recovery artifact. On success,
+ * backups and part files are deleted. A truncated file can therefore never
+ * appear under a final aggregate name, even on a mid-merge disk-full/write
+ * error.
  *
  * In a build without MPI this is a no-op that returns 0 (no cross-rank
  * partial files can exist to merge).

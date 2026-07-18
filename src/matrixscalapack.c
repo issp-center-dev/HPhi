@@ -357,6 +357,26 @@ void FreeEigenVectorGatherContext(void) {
 }
 
 /**
+ * @brief Release a distributed eigenvector matrix and its BLACS contexts.
+ *
+ * The source 2D grid stored in descZ must remain alive while phys() gathers
+ * or redistributes eigenvectors. Call this only after the observable phase.
+ * Pointer arguments make the helper usable by focused unit tests without
+ * depending on HPhi's process-global storage.
+ */
+void FreeDistributedEigenvectors(double complex **Z, int *descZ, int *used) {
+  int ictxt;
+  if (Z == NULL || descZ == NULL || used == NULL || !*used) return;
+  FreeEigenVectorGatherContext();
+  free(*Z);
+  *Z = NULL;
+  ictxt = descZ[1];
+  if (ictxt >= 0) blacs_gridexit_(&ictxt);
+  descZ[1] = -1;
+  *used = 0;
+}
+
+/**
  * @brief Redistribute a 1D column-block panel into an existing 2D
  * block-cyclic matrix with a single pzgemr2d_ call (design doc sec. 3
  * phase 2). The 1D source: a 1 x P grid ('R'), MB = N (all rows in one

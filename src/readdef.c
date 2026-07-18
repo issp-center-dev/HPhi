@@ -267,6 +267,15 @@ static int ResolveSolver(struct DefineList *X, const char *defname) {
     fprintf(stdoutMPI, cErrSolver, defname);
     return -1;
   }
+  /* Solver is an explicit FullDiag backend selector. Without this guard,
+     Solver 1/3 on Lanczos/LOBPCG/TPQ never invokes that backend but still
+     sets iFlgScaLAPACK below, silently disabling MPI site decomposition and
+     replicating the Hilbert space on every rank. Solver 0 remains accepted
+     for compatibility because it is also the default/no-op value. */
+  if (X->iCalcType != FullDiag && X->iSolver != SOLVER_LAPACK) {
+    fprintf(stdoutMPI, cErrSolverCalcType, defname, X->iSolver);
+    return -1;
+  }
   if (X->iFlgScaLAPACK == 1 && X->iSolver != SOLVER_SCALAPACK) {
     fprintf(stdoutMPI, cWarnSolverConflict, defname, "ScaLAPACK");
     X->iFlgScaLAPACK = 0;

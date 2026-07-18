@@ -7,7 +7,15 @@
 #include <string.h>
 #include <stdlib.h>
 #ifdef MPI
+#include <errno.h>
 #include <mpi.h>
+#include <sys/stat.h>
+#ifdef GREEN_OUTPUT_TESTING
+extern int GreenOutputTestRename(const char *old_path, const char *new_path);
+#define GreenOutputRename GreenOutputTestRename
+#else
+#define GreenOutputRename rename
+#endif
 #endif
 
 static int GreenOutputAggregateFamily(const struct BindStruct *X)
@@ -441,21 +449,33 @@ int GreenOutputMergePartials(struct BindStruct *X)
   }
 
   if (myrank_l == 0 && rc == 0) {
-    /* Two-phase publish (write-to-temp, then rename):
+    /* Transactional publish (write-to-temp, backup, then rename):
        Phase A concatenates each attempted kind's parts into a private
        <final>.tmp_merge file, with every fread/fwrite/ferror/fclose checked.
-       Phase B, entered only if EVERY kind's temp was written and closed
-       cleanly, rename()s each temp onto its final name. This way a write
-       failure (disk full, quota, I/O error) during concatenation can never
-       leave a truncated file under the final name, and no final file is
-       published unless all kinds succeeded. Renaming per kind is the
+       Phase B first moves every pre-existing final to <final>.bak_merge,
+       then rename()s every temp onto its final name. If a rename fails, all
+       earlier publishes are rolled back: new finals are removed and backups
+       restored. A write failure (disk full, quota, I/O error) can therefore
+       never leave a truncated file under the final name, and a detected
+       publish failure does not leave a mixture of old and new kinds.
+       Renaming per kind is the
        Mode-1 replacement for GreenOutputInitializeAggregateFiles()
        (which Mode 1 must not call directly). */
     char tmp_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 80];
     char final_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 64];
+    char backup_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 80];
     int kind_active[GREEN_OUTPUT_NKIND];
+    int had_final[GREEN_OUTPUT_NKIND];
+    int backed_up[GREEN_OUTPUT_NKIND];
+    int published[GREEN_OUTPUT_NKIND];
+    int rollback_failed = 0;
 
-    for (k = 0; k < GREEN_OUTPUT_NKIND; k++) kind_active[k] = 0;
+    for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+      kind_active[k] = 0;
+      had_final[k] = 0;
+      backed_up[k] = 0;
+      published[k] = 0;
+    }
 
     /* Phase A: concatenate into temp files. */
     for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
@@ -502,15 +522,94 @@ int GreenOutputMergePartials(struct BindStruct *X)
       if (fclose(fout) != 0) rc = -1; /* flush failure = truncated temp */
     }
 
-    /* Phase B: publish by rename, only if every kind concatenated cleanly. */
+    /* Phase B preflight: determine which finals need backups and refuse to
+       overwrite a recovery artifact from an earlier interrupted run. Do
+       this for every kind before moving any file. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        struct stat st;
+        int n;
+        if (!kind_active[k]) continue;
+        n = snprintf(backup_joined[k], sizeof(backup_joined[k]),
+                     "%s.bak_merge", final_joined[k]);
+        if (n < 0 || (size_t)n >= sizeof(backup_joined[k])) { rc = -1; break; }
+
+        if (lstat(final_joined[k], &st) == 0) {
+          if (S_ISDIR(st.st_mode)) {
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: final path is a directory: %s\n",
+                    final_joined[k]);
+            rc = -1;
+            break;
+          }
+          had_final[k] = 1;
+        } else if (errno != ENOENT) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot inspect final path %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+          break;
+        }
+
+        if (lstat(backup_joined[k], &st) == 0) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: recovery backup already exists: %s\n",
+                  backup_joined[k]);
+          rc = -1;
+          break;
+        } else if (errno != ENOENT) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot inspect backup path %s: %s\n",
+                  backup_joined[k], strerror(errno));
+          rc = -1;
+          break;
+        }
+      }
+    }
+
+    /* Move all old generations out of the way before publishing any new
+       generation. A failure here is rolled back below without exposing new
+       output files. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        if (!kind_active[k] || !had_final[k]) continue;
+        if (GreenOutputRename(final_joined[k], backup_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot back up %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+        } else {
+          backed_up[k] = 1;
+        }
+      }
+    }
+
+    /* Publish every new generation. */
     if (rc == 0) {
       for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
         if (!kind_active[k]) continue;
-        if (rename(tmp_joined[k], final_joined[k]) != 0) rc = -1;
+        if (GreenOutputRename(tmp_joined[k], final_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot publish %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+        } else {
+          published[k] = 1;
+        }
       }
     }
 
     if (rc == 0) {
+      /* The complete new generation is visible. Old-generation backups are
+         now expendable; a cleanup failure is reported but does not invalidate
+         the already-complete output set. */
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (backed_up[k] && remove(backup_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Warning: GreenOutputMergePartials: could not remove backup %s: %s\n",
+                  backup_joined[k], strerror(errno));
+        }
+      }
       /* Only ever delete part files once every kind published successfully. */
       for (r = 0; r < nprocs_l; r++) {
         for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
@@ -523,16 +622,33 @@ int GreenOutputMergePartials(struct BindStruct *X)
         }
       }
     } else {
-      /* Failure: remove whatever temps exist (best effort), keep all part
-         files on disk for diagnosis, publish nothing further. (If a rename
-         in Phase B failed partway, kinds already renamed stay published --
-         rename is the smallest possible window -- but rc=-1 is still
-         returned everywhere and no part file is deleted.) */
+      /* Roll back a partially-completed publish. Where an old final existed,
+         restoring its backup atomically replaces any new final. Where no old
+         final existed, remove any newly-published final. Part files are kept
+         in all failure cases for diagnosis/retry. */
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (backed_up[k]) {
+          if (GreenOutputRename(backup_joined[k], final_joined[k]) != 0) {
+            rollback_failed = 1;
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: ROLLBACK FAILED restoring %s from %s: %s\n",
+                    final_joined[k], backup_joined[k], strerror(errno));
+          }
+        } else if (published[k]) {
+          if (remove(final_joined[k]) != 0 && errno != ENOENT) {
+            rollback_failed = 1;
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: ROLLBACK FAILED removing %s: %s\n",
+                    final_joined[k], strerror(errno));
+          }
+        }
+      }
       for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
         if (kind_active[k]) remove(tmp_joined[k]);
       }
       fprintf(stdoutMPI,
-              "Error: GreenOutputMergePartials: merge failed; partial (.part*) files are kept for diagnosis.\n");
+              "Error: GreenOutputMergePartials: merge failed%s; partial (.part*) files are kept for diagnosis.\n",
+              rollback_failed ? " and rollback was incomplete" : "; previous final outputs were restored");
     }
   }
 

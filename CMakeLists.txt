@@ -23,16 +23,18 @@ project(HPhi NONE)
 # without it, run 1 `-DUSE_SCALAPACK=OFF` followed by run 2 `-DUSE_ELPA=ON`
 # in the same dir would silently auto-enable ScaLAPACK over the user's
 # explicit OFF instead of erroring).
-if(DEFINED CACHE{USE_SCALAPACK} AND NOT USE_SCALAPACK)
-  get_property(_us_help CACHE USE_SCALAPACK PROPERTY HELPSTRING)
-  if(_us_help STREQUAL "No help, variable specified on the command line.")
-    set(HPHI_USE_SCALAPACK_EXPLICIT_OFF TRUE CACHE INTERNAL
-        "User explicitly passed -DUSE_SCALAPACK=OFF")
+if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)
+  # A toolchain may define a normal (non-cache) variable. Querying CACHE
+  # properties for such a variable is an error, so first use get_property's
+  # old-CMake-compatible SET form to confirm that a cache entry exists.
+  get_property(_us_is_cache CACHE USE_SCALAPACK PROPERTY TYPE SET)
+  if(_us_is_cache)
+    get_property(_us_help CACHE USE_SCALAPACK PROPERTY HELPSTRING)
+    if(_us_help STREQUAL "No help, variable specified on the command line.")
+      set(HPHI_USE_SCALAPACK_EXPLICIT_OFF TRUE CACHE INTERNAL
+          "User explicitly passed -DUSE_SCALAPACK=OFF")
+    endif()
   endif()
-endif()
-if(USE_SCALAPACK)
-  # User (re-)enabled ScaLAPACK: clear the sticky marker.
-  unset(HPHI_USE_SCALAPACK_EXPLICIT_OFF CACHE)
 endif()
 option(USE_SCALAPACK "Use Scalapack" OFF)
 option(USE_ELPA "Use ELPA for FullDiag" OFF)
@@ -43,6 +45,11 @@ if(CONFIG)
   message(STATUS "Loading configration: " ${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
   include(${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
 endif(CONFIG)
+if(USE_SCALAPACK)
+  # The command line or a configuration file (re-)enabled ScaLAPACK.
+  # Clear a marker left by an earlier configure in this build directory.
+  unset(HPHI_USE_SCALAPACK_EXPLICIT_OFF CACHE)
+endif()
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
@@ -107,20 +114,27 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
   endif()
 endif()
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 if(ENABLE_MPI)
   find_package(MPI)
   if(MPI_FOUND)
-    include_directories(${MPI_C_INCLUDE_PATH})
+    include_directories(${MPI_C_INCLUDE_PATH} ${MPI_C_INCLUDE_DIRS})
     add_definitions(-DMPI)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_C_LINK_FLAGS}")
   endif(MPI_FOUND)
 endif(ENABLE_MPI)
 
-# ELPA requires ScaLAPACK. Resolve USE_SCALAPACK BEFORE the LAPACK block below,
-# so that block emits exactly one of -D_lapack / -D_SCALAPACK (never both).
+# ELPA requires a working MPI implementation and ScaLAPACK. Resolve
+# USE_SCALAPACK before dependency discovery, so the block below emits exactly
+# one of -D_lapack / -D_SCALAPACK (never both).
 if(USE_ELPA)
   if(NOT ENABLE_MPI)
     message(FATAL_ERROR "USE_ELPA=ON requires MPI: configure with -DENABLE_MPI=ON (default).")
+  endif()
+  if(NOT MPI_FOUND)
+    message(FATAL_ERROR
+      "USE_ELPA=ON requires a working MPI C implementation, but CMake could not find one.")
   endif()
   if(HPHI_USE_SCALAPACK_EXPLICIT_OFF)
     message(FATAL_ERROR "USE_ELPA=ON requires ScaLAPACK, but USE_SCALAPACK=OFF was set explicitly.")
@@ -129,18 +143,21 @@ if(USE_ELPA)
     message(STATUS "USE_ELPA=ON requires ScaLAPACK: enabling USE_SCALAPACK.")
     set(USE_SCALAPACK ON CACHE BOOL "Use Scalapack" FORCE)
   endif()
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-  find_package(ELPA REQUIRED)
 endif(USE_ELPA)
 
 find_package(LAPACK)
-if(USE_SCALAPACK MATCHES OFF)
+if(USE_SCALAPACK)
+  find_package(ScaLAPACK REQUIRED)
+  add_definitions(-D_SCALAPACK)
+else()
   if(LAPACK_FOUND)
     add_definitions(-D_lapack)
   endif(LAPACK_FOUND)
-else()
-  add_definitions(-D_SCALAPACK)
 endif()
+
+if(USE_ELPA)
+  find_package(ELPA REQUIRED)
+endif(USE_ELPA)
 
 add_subdirectory(src)
 add_subdirectory(tool)

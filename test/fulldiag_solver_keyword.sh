@@ -41,6 +41,33 @@ if ${MPIRUNFC} ../../src/HPhi -e namelist.def > invalid.log 2>&1; then
   exit 1
 fi
 
+# (2b) Solver is a FullDiag backend selector. An explicit distributed solver
+#      on Lanczos must be rejected before capability checks or MPI setup;
+#      otherwise iFlgScaLAPACK disables site decomposition even though the
+#      requested backend is never called.
+cd ..
+mkdir -p solver_keyword_nonfulldiag/
+cd solver_keyword_nonfulldiag
+cat > stan.in <<EOF
+L = 4
+model = "Spin"
+method = "Lanczos"
+lattice = "chain"
+J = 1.0
+2Sz = 0
+EOF
+../../src/HPhi -sdry stan.in
+echo "Solver  1" >> calcmod.def
+if ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
+  echo "ERROR: Solver 1 with Lanczos should have failed"
+  exit 1
+fi
+grep -q "only valid with CalcType=2" nonfulldiag.log || {
+  echo "ERROR: non-FullDiag Solver failure should explain FullDiag eligibility"
+  cat nonfulldiag.log
+  exit 1
+}
+
 # (3) capability-aware: 非 ELPA ビルドでは Solver 3 はエラー終了すること。
 #     ELPA ビルド (HPHI_HAS_ELPA=1, test/CMakeLists.txt が USE_ELPA から設定)
 #     では Solver 3 は正当な指定になるため、この serial (nproc==1) 環境では

@@ -161,6 +161,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
       free(Ham_local);
       Ham_local = NULL;
       iHamPanelActive = 0;
+      blacs_gridexit_(&ictxt);
       return -1;
     }
 
@@ -174,6 +175,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
     if (rerr != 0) {
       free(A_distr);
       free(w);
+      blacs_gridexit_(&ictxt);
       return -1;
     }
 
@@ -188,6 +190,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
       free(Z_vec);
       Z_vec = NULL;
       free(w);
+      blacs_gridexit_(&ictxt);
       return -1;
     }
   } else {
@@ -206,6 +209,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
       free(Z_vec);
       Z_vec = NULL;
       free(w);
+      blacs_gridexit_(&ictxt);
       return -1;
     }
 
@@ -227,6 +231,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
     free(Z_vec);
     Z_vec = NULL;
     free(w);
+    blacs_gridexit_(&ictxt);
     return -1;
   }
 
@@ -293,6 +298,9 @@ struct BindStruct *X//!<[inout]
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
       Z_vec = malloc(mp * nq * sizeof(complex double));
+      /* diag_scalapack_cmp() builds the equivalent grid recorded in
+         descZ_vec. This temporary sizing grid is no longer needed. */
+      blacs_gridexit_(&ictxt);
       diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
     } else {
       ZHEEVall(xMsize, Ham, v0, L_vec);
@@ -324,6 +332,9 @@ struct BindStruct *X//!<[inout]
   }
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
   if (childfopenMPI(sdt, "w", &fp) != 0) {
+#ifdef _SCALAPACK
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
     return -1;
   }
   for (i = 0; i < i_max; i++) {

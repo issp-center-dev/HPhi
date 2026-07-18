@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+solver="${HPHI_FULLDIAG_SOLVER:-3}"
+case "${solver}" in
+  1|3) ;;
+  *) echo "ERROR: HPHI_FULLDIAG_SOLVER must be 1 or 3"; exit 1 ;;
+esac
+
 # fulldiag_expecmode_equiv (phase 3a Task 7): ExpecMode 0/1/(2) physics
 # equivalence. "ExpecMode changes speed only" (Task 6 guarantee) is checked
 # by running the SAME FullDiag problem with ExpecMode 0 (serial) and
@@ -10,13 +16,12 @@ set -e
 # Green aggregate output file (per-state "*_eigen%d" files AND the
 # aggregated "*_eigen" files) byte-for-byte-numerically (tolerance 1e-8).
 #
-# Registered as two SEPARATE named ctest cases pointed at this one script
-# (see test/CMakeLists.txt): fulldiag_expecmode_equiv_np2 (exact:2) and
-# fulldiag_expecmode_equiv_np3 (exact:3, exercising non-divisible
-# state-panel ownership: N states over 3 ranks never divides evenly for
-# the small Hilbert spaces used below). This script takes its process
-# count entirely from ${MPIRUN} (set by the precheck wrapper); it never
-# launches a second, different -np internally.
+# Registered as separate named ctest cases pointed at this one script (see
+# test/CMakeLists.txt): ELPA at exact:2/exact:3 and ScaLAPACK at exact:2.
+# The exact:3 case exercises non-divisible state-panel ownership: N states
+# over 3 ranks never divides evenly for the small Hilbert spaces used below.
+# This script takes its process count entirely from ${MPIRUN} (set by the
+# precheck wrapper); it never launches a second, different -np internally.
 #
 # Requires Solver 1 (ScaLAPACK) or 3 (ELPA) for ExpecMode to be accepted at
 # all (src/readdef.c's cErrExpecMode gate) -- so, like
@@ -221,7 +226,11 @@ run_mode() {
   cp "${casedir}"/*.def "${moddir}/" 2>/dev/null || true
   (
     cd "${moddir}"
-    printf 'Solver 3\nNGPU 0\nExpecMode %d\n' "${mode}" >> calcmod.def
+    printf 'Solver %s\n' "${solver}" >> calcmod.def
+    if [ "${solver}" = "3" ]; then
+      printf 'NGPU 0\n' >> calcmod.def
+    fi
+    printf 'ExpecMode %d\n' "${mode}" >> calcmod.def
     run_hphi log_run.txt ${MPIRUN} "${hphi}" -e namelist.def
   )
 }

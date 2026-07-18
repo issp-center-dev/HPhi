@@ -55,6 +55,7 @@ extern char *cErrRestart;
 extern char *cErrFiniteTemp;
 extern char *cErrCUDA;
 extern char *cErrSolver;
+extern char *cErrSolverCalcType;
 extern char *cErrSolverBuild;
 extern char *cErrElpaGPUBuild;
 extern char *cErrElpaHamIO;

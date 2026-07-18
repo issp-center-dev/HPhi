@@ -109,8 +109,6 @@ int main(int argc, char **argv) {
     GetEigenVectorBlock(k, n, Z_distr, descZ, vec_tmp);
     if (rank == 0) for (i = 0; i < n; i++) vecs[k * n + i] = vec_tmp[i];
   }
-  FreeEigenVectorGatherContext();
-
   if (rank == 0) {
     /* (a) eigenvalues vs LAPACK zheev */
     double complex *a_full = malloc(n * n * sizeof(double complex));
@@ -153,7 +151,18 @@ int main(int argc, char **argv) {
     free(a_full); free(w_ref); free(rwork); free(work);
   }
   MPI_Bcast(&ok, 1, MPI_INT, 0, MPI_COMM_WORLD);
-  free(A_distr); free(Z_distr); free(w); free(vec_tmp); free(vecs);
+  {
+    int used = 1, cleanup_ok, cleanup_all;
+    FreeDistributedEigenvectors(&Z_distr, descZ, &used);
+    cleanup_ok = (Z_distr == NULL && used == 0 && descZ[1] == -1) ? 1 : 0;
+    MPI_Allreduce(&cleanup_ok, &cleanup_all, 1, MPI_INT, MPI_MIN,
+                  MPI_COMM_WORLD);
+    if (!cleanup_all) {
+      if (rank == 0) fprintf(stderr, "distributed eigenvector cleanup failed\n");
+      ok = 0;
+    }
+  }
+  free(A_distr); free(w); free(vec_tmp); free(vecs);
   MPI_Finalize();
   return ok ? 0 : 1;
 }

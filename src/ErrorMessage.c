@@ -54,6 +54,7 @@ char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
 char *cErrSolver="Error in %s\n Solver: must be one of 0 (LAPACK), 1 (ScaLAPACK), 2 (MAGMA), 3 (ELPA).\n";
+char *cErrSolverCalcType="Error in %s\n Solver %d is a FullDiag backend and is only valid with CalcType=2.\n";
 char *cErrSolverBuild="Error in %s\n Solver %d requires HPhi built with %s.\n";
 char *cErrElpaGPUBuild="Error in %s\n Solver 3 with NGPU >= 1 requires ELPA >= 2023.11.001 (elpa_setup_gpu).\n Rebuild HPhi against a newer ELPA, or set \"NGPU 0\" for CPU execution.\n";
 char *cErrElpaHamIO="Error in %s\n Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian distributed,\n which is incompatible with OutputHam/InputHam. Run with 1 process, or use another solver.\n";

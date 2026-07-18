@@ -86,9 +86,11 @@ void phys(struct BindStruct *X, //!<[inout]
   i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
-  int ictxt, ierr, rank;
+  int rank;
   if (use_scalapack && X->Def.iExpecMode != EXPECMODE_SERIAL) {
-    if (phys_stateparallel(X, neig) != 0) exitMPI(-1);
+    int phys_rc = phys_stateparallel(X, neig);
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+    if (phys_rc != 0) exitMPI(-1);
     assert(!ExpecLocalActive());
     return;
   }
@@ -228,12 +230,10 @@ void phys(struct BindStruct *X, //!<[inout]
     X->Phys.all_num_down[i] = X->Phys.num_down;
   }
 #ifdef _SCALAPACK
-  if(use_scalapack) free(vec_tmp);
-#ifdef _ELPA
-  if (use_scalapack && X->Def.iSolver == SOLVER_ELPA) {
-    FreeEigenVectorGatherContext();
+  if(use_scalapack) {
+    free(vec_tmp);
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
   }
-#endif
 #endif
   assert(!ExpecLocalActive());
 }
