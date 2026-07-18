@@ -91,7 +91,26 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   lld = (mp > 0) ? mp : 1;
 
   descinit_(descA, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
-  descinit_(descZ_vec, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
+  {
+    /* descinit_ overwrites info per call: fold both verdicts, then
+       synchronize so no rank proceeds into the collectives below with an
+       invalid descriptor while others abort (same pattern as
+       RedistBlockCyclicToStatePanel). */
+    int ok = (info == 0) ? 0 : -1, gok;
+    descinit_(descZ_vec, &xMsize, &xMsize, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
+    if (info != 0) ok = -1;
+    if (ok != 0) {
+      fprintf(stdout,
+              "  Error: descinit_ failed (info=%d) for the ELPA descriptors\n"
+              "         on rank %d; aborting the ELPA diagonalization.\n",
+              info, myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      blacs_gridexit_(&ictxt);
+      return -1;
+    }
+  }
 
   if (iHamPanelActive) {
     /* Distributed generation (phase 2): allocate only A_distr + w first,
@@ -178,6 +197,11 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
                        (int)mb, X->Def.iNGPU);
   free(A_distr);
   if (ierr != 0) {
+    /* Failed diagonalization must not leave a dangling non-NULL Z_vec
+       (PR #276 review): downstream code treats Z_vec != NULL as "valid
+       distributed eigenvectors exist". */
+    free(Z_vec);
+    Z_vec = NULL;
     free(w);
     return -1;
   }

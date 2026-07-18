@@ -440,6 +440,22 @@ int RedistPanelToBlockCyclic(long int xNsize, long int jbegin,
   nb1 = NC;
   descinit_(desc1d, &xNsize, &xNsize, &mb1, &nb1, &i_zero_i, &i_zero_i,
             &ictxt_1d, &lld, &info);
+  /* Synchronize the descinit_ verdict so no rank enters the collective
+     pzgemr2d_ with an invalid descriptor (same pattern as
+     RedistBlockCyclicToStatePanel below). */
+  {
+    int ok = (info == 0) ? 0 : -1, gok;
+    if (ok != 0) {
+      fprintf(stdout,
+              "  Error: descinit_ failed (info=%d) for the generation-panel descriptor\n"
+              "         on rank %d; aborting redistribution.\n", info, myrank);
+    }
+    MPI_Allreduce(&ok, &gok, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (gok != 0) {
+      blacs_gridexit_(&ictxt_1d);
+      return -1;
+    }
+  }
 
   pzgemr2d_(&xNsize, &xNsize,
            panel, (long int *)&i_one, (long int *)&i_one, desc1d,
