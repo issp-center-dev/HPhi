@@ -14,6 +14,22 @@ file(REMOVE_RECURSE "${HPHI_TEST_ROOT}")
 file(MAKE_DIRECTORY "${HPHI_TEST_ROOT}")
 include("${HPHI_PRELOAD_CACHE}")
 
+# The parent build may expose more than one ELPA include directory. The
+# negative-library probe accepts a single ELPA_INCLUDE_DIR cache value, so
+# select the actual API directory rather than forwarding a semicolon list as
+# multiple execute_process arguments.
+set(_valid_elpa_include_dir)
+foreach(_elpa_include_dir ${HPHI_VALID_ELPA_INCLUDE_DIRS})
+  if(EXISTS "${_elpa_include_dir}/elpa/elpa.h")
+    set(_valid_elpa_include_dir "${_elpa_include_dir}")
+    break()
+  endif()
+endforeach()
+if(NOT _valid_elpa_include_dir)
+  message(FATAL_ERROR
+    "No ELPA include directory containing elpa/elpa.h was provided by the parent build")
+endif()
+
 function(hphi_expect_configure_failure name expected_text)
   set(_build "${HPHI_TEST_ROOT}/${name}")
   file(MAKE_DIRECTORY "${_build}")
@@ -42,6 +58,11 @@ hphi_expect_configure_failure(
   -DUSE_ELPA=ON -DUSE_SCALAPACK=OFF)
 
 hphi_expect_configure_failure(
+  config_elpa_with_explicit_scalapack_off
+  "USE_ELPA=ON requires ScaLAPACK, but USE_SCALAPACK=OFF was set explicitly"
+  -DCONFIG=elpa -DUSE_SCALAPACK=OFF)
+
+hphi_expect_configure_failure(
   missing_mpi
   "USE_ELPA=ON requires a working MPI C implementation"
   -DUSE_ELPA=ON -DCMAKE_DISABLE_FIND_PACKAGE_MPI=TRUE)
@@ -65,7 +86,7 @@ hphi_expect_configure_failure(
   invalid_elpa_library
   "ELPA was found, but a test program using elpa_init could not be linked"
   -DUSE_ELPA=ON
-  "-DELPA_INCLUDE_DIR=${HPHI_VALID_ELPA_INCLUDE_DIRS}"
+  "-DELPA_INCLUDE_DIR=${_valid_elpa_include_dir}"
   "-DELPA_LIBRARY=${_fake_elpa_library}")
 
 # A prior explicit OFF is sticky so a later bare -DUSE_ELPA=ON reports a

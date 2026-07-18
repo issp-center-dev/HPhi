@@ -712,6 +712,10 @@ if(USE_ELPA)
         PROPERTIES LABELS "elpa;cmake;validation")
 
     add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
+    add_hphi_mpi_test(fulldiag_output_open_failure exact:2)
+    set_tests_properties(
+        fulldiag_output_open_failure
+        PROPERTIES LABELS "fulldiag;elpa;validation" TIMEOUT 30)
 
     add_executable(elpa_eigen_check unit/elpa_eigen_check.c
         ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
@@ -726,7 +730,8 @@ if(USE_ELPA)
     string(REGEX REPLACE "-L[ ]+" "-L" _ec_sc_libs "${SCALAPACK_LIBRARIES}")
     string(REGEX REPLACE "[ ]+" ";" _ec_sc_libs "${_ec_sc_libs}")
     target_link_libraries(elpa_eigen_check ${ELPA_LIBRARIES}
-        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
     # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
     # convention as the other MPI tests in this file (see add_hphi_mpi_test),
     # rather than a bare add_test(mpiexec ...): on hosts without a usable
@@ -755,7 +760,8 @@ if(USE_ELPA)
     # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
     # for elpa_eigen_check; reuse it here for the same reason.
     target_link_libraries(elpa_redist_check ${ELPA_LIBRARIES}
-        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
     # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
     # convention as elpa_eigen_check above. Unlike elpa_eigen_check,
     # unit/elpa_redist_check.c builds its BLACS grid from MPI_Dims_create
@@ -783,7 +789,8 @@ if(USE_ELPA)
     # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
     # for elpa_eigen_check; reuse it here for the same reason.
     target_link_libraries(elpa_statepanel_check ${ELPA_LIBRARIES}
-        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
     # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as
     # elpa_redist_check; RedistBlockCyclicToStatePanel's default check
     # (N=97) also builds its BLACS grid from MPI_Dims_create and works
@@ -813,7 +820,8 @@ if(USE_ELPA)
     target_compile_options(elpa_statepanel_zero_owner PRIVATE ${ELPA_COMPILE_OPTIONS})
     target_compile_definitions(elpa_statepanel_zero_owner PRIVATE -D_ELPA -D_SCALAPACK -DMPI -DNDIM=2)
     target_link_libraries(elpa_statepanel_zero_owner ${ELPA_LIBRARIES}
-        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} m)
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
     add_test(
         NAME elpa_statepanel_zero_owner
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
@@ -854,14 +862,19 @@ if(USE_ELPA)
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
     )
+    set_tests_properties(
+        fulldiag_expecmode_equiv_np2 fulldiag_expecmode_equiv_np3
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;expecmode"
+    )
+endif(USE_ELPA)
+
+# This case exercises the ScaLAPACK solver and must remain available in a
+# USE_SCALAPACK=ON, USE_ELPA=OFF build as well as in an ELPA build.
+if(USE_SCALAPACK)
     add_test(
         NAME fulldiag_expecmode_scalapack_np2
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
-    )
-    set_tests_properties(
-        fulldiag_expecmode_equiv_np2 fulldiag_expecmode_equiv_np3
-        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;expecmode"
     )
     set_tests_properties(
         fulldiag_expecmode_scalapack_np2
@@ -870,4 +883,4 @@ if(USE_ELPA)
     set_property(
         TEST fulldiag_expecmode_scalapack_np2
         APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
-endif(USE_ELPA)
+endif(USE_SCALAPACK)

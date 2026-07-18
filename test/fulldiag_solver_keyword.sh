@@ -60,6 +60,7 @@ EOF
 echo "Solver  1" >> calcmod.def
 if ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
   echo "ERROR: Solver 1 with Lanczos should have failed"
+  cat nonfulldiag.log
   exit 1
 fi
 grep -q "only valid with CalcType=2" nonfulldiag.log || {
@@ -67,6 +68,37 @@ grep -q "only valid with CalcType=2" nonfulldiag.log || {
   cat nonfulldiag.log
   exit 1
 }
+
+# (2c) In a ScaLAPACK-enabled build, the deprecated ScaLAPACK keyword resolves
+#      through the same distributed FullDiag backend and must obey the same
+#      CalcType guard. This used to return from legacy resolution before the
+#      explicit Solver guard. A non-ScaLAPACK build intentionally ignores the
+#      legacy value (the parser's longstanding #ifdef _SCALAPACK behavior), so
+#      there is no distributed flag to reject in that configuration.
+cd ..
+mkdir -p scalapack_keyword_nonfulldiag/
+cd scalapack_keyword_nonfulldiag
+cp ../solver_keyword_nonfulldiag/stan.in .
+../../src/HPhi -sdry stan.in
+echo "ScaLAPACK  1" >> calcmod.def
+if [ "${HPHI_HAS_SCALAPACK:-0}" = "1" ]; then
+  if ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
+    echo "ERROR: legacy ScaLAPACK 1 with Lanczos should have failed"
+    cat nonfulldiag.log
+    exit 1
+  fi
+  grep -q "only valid with CalcType=2" nonfulldiag.log || {
+    echo "ERROR: legacy ScaLAPACK failure should explain FullDiag eligibility"
+    cat nonfulldiag.log
+    exit 1
+  }
+else
+  if ! ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
+    echo "ERROR: a non-ScaLAPACK build should preserve legacy keyword fallback"
+    cat nonfulldiag.log
+    exit 1
+  fi
+fi
 
 # (3) capability-aware: 非 ELPA ビルドでは Solver 3 はエラー終了すること。
 #     ELPA ビルド (HPHI_HAS_ELPA=1, test/CMakeLists.txt が USE_ELPA から設定)
@@ -92,6 +124,7 @@ if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
 else
   if ${MPIRUNFC} ../../src/HPhi -e namelist.def > elpa.log 2>&1; then
     echo "ERROR: Solver 3 should fail on non-ELPA build (HPhi succeeded instead)"
+    cat elpa.log
     exit 1
   fi
   grep -Eq "Solver|ELPA" elpa.log || {
@@ -120,6 +153,7 @@ if [ "${HPHI_HAS_SCALAPACK:-0}" = "1" ]; then
 else
   if ${MPIRUNFC} ../../src/HPhi -e namelist.def > scalapack.log 2>&1; then
     echo "ERROR: Solver 1 should fail on non-ScaLAPACK build (HPhi succeeded instead)"
+    cat scalapack.log
     exit 1
   fi
   grep -Eq "Solver|ScaLAPACK" scalapack.log || {

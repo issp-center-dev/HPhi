@@ -257,7 +257,7 @@ int lapack_diag(
 struct BindStruct *X//!<[inout]
 ) {
 
-  FILE *fp;
+  FILE *fp = NULL;
   char sdt[D_FileNameMax] = "";
   long int i, j, i_max, xMsize;
 #ifdef _SCALAPACK
@@ -331,11 +331,25 @@ struct BindStruct *X//!<[inout]
     break;
   }
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
-  if (childfopenMPI(sdt, "w", &fp) != 0) {
-#ifdef _SCALAPACK
-    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+  {
+    int open_failed = (childfopenMPI(sdt, "w", &fp) != 0) ? 1 : 0;
+#ifdef MPI
+    int any_open_failed = 0;
+    /* childfopenMPI opens the real output only on rank 0 and /dev/null on
+       the other ranks. Propagate rank 0's failure before any rank returns,
+       otherwise the remaining ranks continue into collective observable
+       evaluation and deadlock. */
+    MPI_Allreduce(&open_failed, &any_open_failed, 1, MPI_INT, MPI_MAX,
+                  MPI_COMM_WORLD);
+    open_failed = any_open_failed;
 #endif
-    return -1;
+    if (open_failed) {
+      if (fp != NULL) fclose(fp);
+#ifdef _SCALAPACK
+      FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+      return -1;
+    }
   }
   for (i = 0; i < i_max; i++) {
     fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));

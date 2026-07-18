@@ -29,7 +29,8 @@
  * Six scenarios. The first five use separate GreenOutputKind values; the
  * sixth deliberately writes two kinds in one session to exercise
  * cross-kind publication rollback:
- *   (a) GreenOutputOneBody  -- normal success: every rank writes one
+ *   (a) GreenOutputOneBody  -- normal success with an old final and a stale
+ *       recovery-name collision: every rank writes one
  *       identifying row; Merge succeeds on every rank, the final file
  *       contains every rank's row IN RANK ORDER, and every part file is
  *       gone afterwards.
@@ -74,6 +75,7 @@
  */
 #include <mpi.h>
 #include <errno.h>
+#include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -128,6 +130,29 @@ static int FileExists(const char *path) {
   return stat(path, &st) == 0;
 }
 
+static int BackupArtifactExists(const char *joined) {
+  char pattern[D_FileNameMax + 128];
+  glob_t matches;
+  int found;
+  memset(&matches, 0, sizeof(matches));
+  snprintf(pattern, sizeof(pattern), "%s.bak_merge*", joined);
+  found = (glob(pattern, 0, NULL, &matches) == 0 && matches.gl_pathc > 0);
+  globfree(&matches);
+  return found;
+}
+
+static void RemoveBackupArtifacts(const char *joined) {
+  char pattern[D_FileNameMax + 128];
+  glob_t matches;
+  size_t i;
+  memset(&matches, 0, sizeof(matches));
+  snprintf(pattern, sizeof(pattern), "%s.bak_merge*", joined);
+  if (glob(pattern, 0, NULL, &matches) == 0) {
+    for (i = 0; i < matches.gl_pathc; i++) remove(matches.gl_pathv[i]);
+  }
+  globfree(&matches);
+}
+
 static int FileHasExactContents(const char *path, const char *expected) {
   FILE *fp = fopen(path, "rb");
   char buf[256];
@@ -174,8 +199,7 @@ static void PreClean(const struct BindStruct *X, GreenOutputKind kind, int nproc
     char auxiliary[D_FileNameMax + 96];
     snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", joined);
     remove(auxiliary);
-    snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", joined);
-    remove(auxiliary);
+    RemoveBackupArtifacts(joined);
   }
   for (r = 0; r < nprocs_hint; r++) {
     char part_joined[D_FileNameMax + 64];
@@ -241,14 +265,31 @@ int main(int argc, char **argv) {
   MPI_Barrier(MPI_COMM_WORLD);
 
   /* =====================================================================
-   * (a) Normal success: every rank writes one identifying row into the
-   *     OneBody kind; Merge must succeed everywhere, the final file must
-   *     contain every rank's row IN RANK ORDER, and every part file must
-   *     be gone afterwards.
+   * (a) Normal success with a stale backup-name collision: every rank writes
+   *     one identifying row into the OneBody kind; Merge must succeed
+   *     everywhere, the final file must contain every rank's row IN RANK
+   *     ORDER, and every part file must be gone afterwards.
    * ===================================================================*/
   {
     FILE *fp = NULL;
     int rc_open, rc_close, rc_merge;
+    char stale_backup[D_FileNameMax + 128] = {0};
+
+    if (g_rank == 0) {
+      FILE *seed;
+      CHECK(GreenOutputFileName(&X, GreenOutputOneBody, final_rel) == 0,
+            "(a) GreenOutputFileName failed while seeding old output");
+      JoinOutputPath(final_rel, joined, sizeof(joined));
+      seed = fopen(joined, "wb");
+      CHECK(seed != NULL, "(a) could not seed old OneBody final");
+      if (seed != NULL) { fputs("old-one\n", seed); fclose(seed); }
+      snprintf(stale_backup, sizeof(stale_backup), "%s.bak_merge.%ld.0",
+               joined, (long)getpid());
+      seed = fopen(stale_backup, "wb");
+      CHECK(seed != NULL, "(a) could not seed stale recovery backup");
+      if (seed != NULL) { fputs("stale-backup\n", seed); fclose(seed); }
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
 
     GreenOutputSetPartialSuffix(g_rank);
     ExpecLocalEnter();
@@ -297,6 +338,9 @@ int main(int argc, char **argv) {
           CHECK(!FileExists(part_joined), "(a) part file '%s' should have been deleted after success", part_joined);
         }
       }
+      CHECK(FileHasExactContents(stale_backup, "stale-backup\n"),
+            "(a) stale recovery backup was overwritten or removed");
+      remove(stale_backup);
     }
   }
   MPI_Barrier(MPI_COMM_WORLD);
@@ -598,12 +642,12 @@ int main(int argc, char **argv) {
             "(f) old TwoBody final was not restored exactly");
       snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", one_joined);
       CHECK(!FileExists(auxiliary), "(f) OneBody temp remained after rollback");
-      snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", one_joined);
-      CHECK(!FileExists(auxiliary), "(f) OneBody backup remained after rollback");
+      CHECK(!BackupArtifactExists(one_joined),
+            "(f) OneBody backup remained after rollback");
       snprintf(auxiliary, sizeof(auxiliary), "%s.tmp_merge", two_joined);
       CHECK(!FileExists(auxiliary), "(f) TwoBody temp remained after rollback");
-      snprintf(auxiliary, sizeof(auxiliary), "%s.bak_merge", two_joined);
-      CHECK(!FileExists(auxiliary), "(f) TwoBody backup remained after rollback");
+      CHECK(!BackupArtifactExists(two_joined),
+            "(f) TwoBody backup remained after rollback");
       for (r = 0; r < nprocs; r++) {
         char part_joined[D_FileNameMax + 64];
         PartPath(one_rel, r, part_joined, sizeof(part_joined));

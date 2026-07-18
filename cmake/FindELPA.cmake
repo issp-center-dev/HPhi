@@ -59,9 +59,30 @@ if(NOT ELPA_FOUND)
     endif()
     if(PC_ELPA_FOUND)
       set(ELPA_INCLUDE_DIRS ${PC_ELPA_INCLUDE_DIRS})
-      # PC_*_LDFLAGS works with CMake 3.0; PC_*_LINK_LIBRARIES requires
-      # CMake 3.12 and would break HPhi's declared compatibility range.
-      set(ELPA_LIBRARIES ${PC_ELPA_LDFLAGS})
+      if(NOT CMAKE_VERSION VERSION_LESS "3.12")
+        # LINK_LIBRARIES resolves nonstandard library directories to full
+        # paths where possible. This lets CMake add a build RPATH; passing
+        # only -L/-l through LDFLAGS can produce an executable which links
+        # successfully but cannot locate ELPA at runtime.
+        set(ELPA_LIBRARIES ${PC_ELPA_LINK_LIBRARIES}
+            ${PC_ELPA_LDFLAGS_OTHER})
+      else()
+        # PC_*_LINK_LIBRARIES was added in CMake 3.12. Retain HPhi's older
+        # CMake compatibility by resolving each pkg-config library ourselves.
+        set(ELPA_LIBRARIES)
+        foreach(_elpa_pkg_library ${PC_ELPA_LIBRARIES})
+          unset(_elpa_pkg_library_path CACHE)
+          find_library(_elpa_pkg_library_path NAMES ${_elpa_pkg_library}
+            HINTS ${PC_ELPA_LIBRARY_DIRS})
+          if(_elpa_pkg_library_path)
+            list(APPEND ELPA_LIBRARIES ${_elpa_pkg_library_path})
+          else()
+            list(APPEND ELPA_LIBRARIES "-l${_elpa_pkg_library}")
+          endif()
+        endforeach()
+        unset(_elpa_pkg_library_path CACHE)
+        list(APPEND ELPA_LIBRARIES ${PC_ELPA_LDFLAGS_OTHER})
+      endif()
       set(ELPA_COMPILE_OPTIONS ${PC_ELPA_CFLAGS_OTHER})
       set(ELPA_FOUND TRUE)
     endif()
@@ -92,7 +113,8 @@ if(ELPA_FOUND)
   string(REPLACE ";" " " _elpa_compile_flags "${ELPA_COMPILE_OPTIONS}")
   set(CMAKE_REQUIRED_INCLUDES ${ELPA_INCLUDE_DIRS})
   set(CMAKE_REQUIRED_LIBRARIES ${ELPA_LIBRARIES} ${SCALAPACK_LIBRARIES}
-      ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES})
+      ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES}
+      ${HPHI_FORTRAN_RUNTIME_LIBRARIES})
   set(CMAKE_REQUIRED_FLAGS
       "${CMAKE_REQUIRED_FLAGS} ${_elpa_compile_flags} ${MPI_C_LINK_FLAGS}")
   unset(ELPA_HAVE_INIT CACHE)

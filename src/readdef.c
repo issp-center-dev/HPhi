@@ -259,6 +259,14 @@ static int ResolveSolver(struct DefineList *X, const char *defname) {
     else {
       X->iSolver = SOLVER_LAPACK;
     }
+    /* The deprecated ScaLAPACK keyword still selects the distributed
+       FullDiag backend. Reject it for other CalcTypes just like an explicit
+       Solver 1; otherwise iFlgScaLAPACK disables MPI site decomposition even
+       though no ScaLAPACK diagonalization will ever be called. */
+    if (X->iCalcType != FullDiag && X->iFlgScaLAPACK == 1) {
+      fprintf(stdoutMPI, cErrSolverCalcType, defname, X->iSolver);
+      return -1;
+    }
     return 0;
   }
 

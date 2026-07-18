@@ -22,7 +22,11 @@ project(HPhi NONE)
 # command-line origin must be recorded in a separate sticky cache entry:
 # without it, run 1 `-DUSE_SCALAPACK=OFF` followed by run 2 `-DUSE_ELPA=ON`
 # in the same dir would silently auto-enable ScaLAPACK over the user's
-# explicit OFF instead of erroring).
+# explicit OFF instead of erroring). Also keep a non-cache flag for the
+# current configure: CONFIG=elpa may turn USE_SCALAPACK back ON later in this
+# same run, but it must not erase an explicit command-line OFF before the
+# conflict check has had a chance to report it.
+set(_hphi_use_scalapack_explicit_off_this_run FALSE)
 if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)
   # A toolchain may define a normal (non-cache) variable. Querying CACHE
   # properties for such a variable is an error, so first use get_property's
@@ -33,6 +37,7 @@ if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)
     if(_us_help STREQUAL "No help, variable specified on the command line.")
       set(HPHI_USE_SCALAPACK_EXPLICIT_OFF TRUE CACHE INTERNAL
           "User explicitly passed -DUSE_SCALAPACK=OFF")
+      set(_hphi_use_scalapack_explicit_off_this_run TRUE)
     endif()
   endif()
 endif()
@@ -45,7 +50,7 @@ if(CONFIG)
   message(STATUS "Loading configration: " ${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
   include(${PROJECT_SOURCE_DIR}/config/${CONFIG}.cmake)
 endif(CONFIG)
-if(USE_SCALAPACK)
+if(USE_SCALAPACK AND NOT _hphi_use_scalapack_explicit_off_this_run)
   # The command line or a configuration file (re-)enabled ScaLAPACK.
   # Clear a marker left by an earlier configure in this build directory.
   unset(HPHI_USE_SCALAPACK_EXPLICIT_OFF CACHE)
@@ -60,6 +65,21 @@ option(ENABLE_MPI "Enable MPI Parallelization" ON)
 option(ENABLE_SCALAPACK "Use Scalapack" ON)
 option(GIT_SUBMODULE_UPDATE "Execute `git submodule update --init` automatically" ON)
 enable_language(C Fortran)
+
+# HPhi is a C executable, but ScaLAPACK and ELPA are commonly implemented in
+# Fortran. Shared libraries carry their runtime dependencies themselves;
+# static archives do not. Preserve the Fortran compiler's implicit search
+# directories and runtime libraries so configure probes and final/test links
+# work for both forms. MPI_Fortran_LIBRARIES is added at each use site after
+# find_package(MPI), because a static ScaLAPACK may also call the Fortran MPI
+# interface.
+set(HPHI_FORTRAN_RUNTIME_LIBRARIES)
+foreach(_hphi_fortran_runtime_dir ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES})
+  list(APPEND HPHI_FORTRAN_RUNTIME_LIBRARIES
+       "-L${_hphi_fortran_runtime_dir}")
+endforeach()
+list(APPEND HPHI_FORTRAN_RUNTIME_LIBRARIES
+     ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
 
 # Set C standard
 set(CMAKE_C_STANDARD 99)
