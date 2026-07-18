@@ -38,6 +38,7 @@ cp ../fulldiag_solver_keyword/stan.in .
 echo "Solver  9" >> calcmod.def
 if ${MPIRUNFC} ../../src/HPhi -e namelist.def > invalid.log 2>&1; then
   echo "ERROR: Solver 9 should have failed"
+  cat invalid.log
   exit 1
 fi
 
@@ -69,12 +70,10 @@ grep -q "only valid with CalcType=2" nonfulldiag.log || {
   exit 1
 }
 
-# (2c) In a ScaLAPACK-enabled build, the deprecated ScaLAPACK keyword resolves
-#      through the same distributed FullDiag backend and must obey the same
-#      CalcType guard. This used to return from legacy resolution before the
-#      explicit Solver guard. A non-ScaLAPACK build intentionally ignores the
-#      legacy value (the parser's longstanding #ifdef _SCALAPACK behavior), so
-#      there is no distributed flag to reject in that configuration.
+# (2c) The deprecated ScaLAPACK keyword must remain backward compatible.
+#      Outside FullDiag, a ScaLAPACK-enabled build warns and ignores it so the
+#      normal MPI site decomposition remains enabled; a non-ScaLAPACK build
+#      keeps its longstanding behavior of ignoring the unavailable flag.
 cd ..
 mkdir -p scalapack_keyword_nonfulldiag/
 cd scalapack_keyword_nonfulldiag
@@ -82,13 +81,15 @@ cp ../solver_keyword_nonfulldiag/stan.in .
 ../../src/HPhi -sdry stan.in
 echo "ScaLAPACK  1" >> calcmod.def
 if [ "${HPHI_HAS_SCALAPACK:-0}" = "1" ]; then
-  if ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
-    echo "ERROR: legacy ScaLAPACK 1 with Lanczos should have failed"
+  # Use the configured CI launcher when available so this also proves that
+  # clearing iFlgScaLAPACK restores multi-rank site decomposition.
+  if ! ${MPIRUN} ../../src/HPhi -e namelist.def > nonfulldiag.log 2>&1; then
+    echo "ERROR: legacy ScaLAPACK 1 with Lanczos should remain runnable"
     cat nonfulldiag.log
     exit 1
   fi
-  grep -q "only valid with CalcType=2" nonfulldiag.log || {
-    echo "ERROR: legacy ScaLAPACK failure should explain FullDiag eligibility"
+  grep -q 'legacy "ScaLAPACK" keyword applies only to CalcType=2 and is ignored' nonfulldiag.log || {
+    echo "ERROR: legacy ScaLAPACK fallback should explain that the keyword was ignored"
     cat nonfulldiag.log
     exit 1
   }
@@ -129,6 +130,7 @@ else
   fi
   grep -Eq "Solver|ELPA" elpa.log || {
     echo "ERROR: Solver 3 failure log should mention Solver/ELPA"
+    cat elpa.log
     exit 1
   }
 fi
@@ -158,6 +160,7 @@ else
   fi
   grep -Eq "Solver|ScaLAPACK" scalapack.log || {
     echo "ERROR: Solver 1 failure log should mention Solver/ScaLAPACK"
+    cat scalapack.log
     exit 1
   }
 fi
@@ -211,10 +214,12 @@ cp ../fulldiag_solver_keyword/stan.in .
 printf "Solver  0\nExpecMode  1\n" >> calcmod.def
 if ${MPIRUNFC} ../../src/HPhi -e namelist.def > expecmode_invalid.log 2>&1; then
   echo "ERROR: ExpecMode 1 with Solver 0 should have failed"
+  cat expecmode_invalid.log
   exit 1
 fi
 grep -q "requires CalcType = FullDiag" expecmode_invalid.log || {
   echo "ERROR: ExpecMode failure log should mention the CalcType/Solver eligibility requirement"
+  cat expecmode_invalid.log
   exit 1
 }
 

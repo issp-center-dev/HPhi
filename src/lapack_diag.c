@@ -17,6 +17,9 @@
 #include "matrixlapack.h"
 #include "FileIO.h"
 #include "DefCommon.h"
+#ifdef MPI
+#include <mpi.h>
+#endif
 #ifdef _MAGMA
 #include "matrixlapack_magma.h"
 #endif

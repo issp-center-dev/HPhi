@@ -233,8 +233,8 @@ The parameters correlated with the keywords are as follows.
      Diagonalization backend for the full diagonalization method:
    | 0 (LAPACK, serial), 1 (ScaLAPACK), 2 (MAGMA, single-node multi-GPU),
      3 (ELPA, multi-node CPU/GPU; requires a build with ``USE_ELPA=ON``).
-   | When omitted, the backend is resolved from the legacy ``Scalapack``
-     and ``NGPU`` keywords so that existing inputs behave as before.
+   | When omitted for FullDiag, the backend is resolved from the legacy
+     ``Scalapack`` and ``NGPU`` keywords using the existing precedence.
 
 *  ``Scalapack``
 
@@ -245,6 +245,10 @@ The parameters correlated with the keywords are as follows.
    | 1: use ScaLAPACK.
    | (Deprecated) This keyword is retained for backward compatibility.
      Please use ``Solver 1`` for new inputs.
+   | This legacy keyword applies only to ``CalcType=2`` (FullDiag). For
+     another calculation type it is ignored with a warning, preserving the
+     normal MPI site decomposition. By contrast, an explicit ``Solver`` value
+     1, 2, or 3 outside FullDiag is rejected as an input error.
 
 
 *  ``NGPU``

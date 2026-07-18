@@ -667,7 +667,7 @@ int GreenOutputMergePartials(struct BindStruct *X)
                 "Error: GreenOutputMergePartials: merge failed and rollback was incomplete; partial (.part*) files are kept for diagnosis.\n");
       } else if (rollback_performed) {
         fprintf(stdoutMPI,
-                "Error: GreenOutputMergePartials: merge failed; previous final outputs were restored; partial (.part*) files are kept for diagnosis.\n");
+                "Error: GreenOutputMergePartials: merge failed; the pre-merge final-output state was restored; partial (.part*) files are kept for diagnosis.\n");
       } else {
         fprintf(stdoutMPI,
                 "Error: GreenOutputMergePartials: merge failed before any final output was changed; partial (.part*) files are kept for diagnosis.\n");

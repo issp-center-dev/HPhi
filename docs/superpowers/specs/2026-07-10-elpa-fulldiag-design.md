@@ -94,7 +94,7 @@ FullDiag をマルチノード GPU 対応にする。
 ### 優先順位表（`Solver` × 旧キーワード × ビルドフラグ）
 
 パース後に `readdef.c` 内の単一関数で解決する（実行時経路に互換ロジックを
-分散させない）。
+分散させない）。次表は `CalcType=2`（FullDiag）での解決規則である。
 
 | `Solver` | `ScaLAPACK` | `NGPU`（解決後） | ビルド | 結果 |
 |---|---|---|---|---|
@@ -106,7 +106,11 @@ FullDiag をマルチノード GPU 対応にする。
 | なし | 0/なし | 0 | 任意 | `Solver 0` |
 
 - 旧 `ScaLAPACK` キーワード検出時は「`Solver 1` を使え」という
-  非推奨（deprecation）警告を常に出す（動作は維持）。
+  非推奨（deprecation）警告を常に出す。FullDiagでの動作は維持する。
+- FullDiag以外で旧 `ScaLAPACK 1` が指定された場合は、後方互換のためhard
+  errorにはせず、CalcType制約の警告を出して値を無視する。内部
+  `iFlgScaLAPACK`を0へ戻し、Lanczos/LOBPCG/TPQのMPIサイト分割を維持する。
+  FullDiag以外で明示的な `Solver 1/2/3` を指定した場合は入力エラーとする。
 
 ### 起動時検証（`readdef.c`）
 
@@ -114,6 +118,8 @@ FullDiag をマルチノード GPU 対応にする。
 全ランクからの重複出力を避ける）。
 
 - `Solver` の値域チェック（0–3）。
+- FullDiag以外で明示的な `Solver 1/2/3` → エラー。
+- FullDiag以外で旧 `ScaLAPACK 1` → 警告して無視（通常のMPIサイト分割を維持）。
 - `Solver 1` かつ非 `_SCALAPACK` ビルド → エラー。
 - `Solver 2` かつ非 `_MAGMA` ビルド → エラー。
 - `Solver 3` かつ非 `_ELPA` ビルド → エラー。
@@ -452,8 +458,9 @@ makeHam (各ランクが担当列を生成)
 
 - `Solver` × 旧 `ScaLAPACK`/`NGPU` × ビルドフラグの優先順位表（§2）の
   各行を calcmod.def の組み合わせテストで検証（エラー終了すべきものが
-  エラーになること、非推奨警告が出ること、レガシー入力の解決結果が
-  現行動作と一致することを含む）。
+  エラーになること、非推奨警告が出ること、FullDiagのレガシー入力の解決結果が
+  現行動作と一致すること、非FullDiagの旧 `ScaLAPACK 1` が警告付きで無視され
+  MPIサイト分割を無効化しないことを含む）。
 
 ### 統合テスト（各フェーズ完了時）
 

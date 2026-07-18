@@ -243,8 +243,10 @@ int GetKWWithIdx(
  */
 static int ResolveSolver(struct DefineList *X, const char *defname) {
   if (X->iFlgSolverSpec == 0) {
-    /* Legacy resolution: preserve current behavior exactly.
-       Compile-time NGPU default (2 on _MAGMA builds) applies here. */
+    /* Legacy resolution preserves the established FullDiag precedence.
+       Compile-time NGPU default (2 on _MAGMA builds) applies here. For a
+       non-FullDiag calculation, the deprecated ScaLAPACK flag is ignored
+       below so it cannot disable MPI site decomposition. */
     if (X->iNGPU > 0) {
 #ifdef _MAGMA
       X->iSolver = SOLVER_MAGMA;
@@ -259,13 +261,14 @@ static int ResolveSolver(struct DefineList *X, const char *defname) {
     else {
       X->iSolver = SOLVER_LAPACK;
     }
-    /* The deprecated ScaLAPACK keyword still selects the distributed
-       FullDiag backend. Reject it for other CalcTypes just like an explicit
-       Solver 1; otherwise iFlgScaLAPACK disables MPI site decomposition even
-       though no ScaLAPACK diagonalization will ever be called. */
+    /* Unlike an explicit Solver value, keep legacy inputs runnable: outside
+       FullDiag, warn and ignore ScaLAPACK instead of turning an input that
+       previously ran into a hard error. Clearing the internal flag restores
+       the normal MPI site decomposition for Lanczos/LOBPCG/TPQ. */
     if (X->iCalcType != FullDiag && X->iFlgScaLAPACK == 1) {
-      fprintf(stdoutMPI, cErrSolverCalcType, defname, X->iSolver);
-      return -1;
+      fprintf(stdoutMPI, cWarnScaLAPACKCalcType, defname, X->iCalcType);
+      X->iFlgScaLAPACK = 0;
+      if (X->iSolver == SOLVER_SCALAPACK) X->iSolver = SOLVER_LAPACK;
     }
     return 0;
   }
