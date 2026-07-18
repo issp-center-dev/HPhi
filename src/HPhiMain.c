@@ -34,6 +34,7 @@
 #include "CalcTime.h"
 #include "symmetry_basis.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_matvec_plan.h"
 
 /*!
   @mainpage
@@ -767,15 +768,26 @@ int main(int argc, char* argv[]){
     StopTimer(2000);
 
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
+      StartTimer(1100);
       if (BuildSymmetryBasis(&(X.Bind)) != 0) {
+        StopTimer(1100);
         exitMPI(-1);
       }
       if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
+        StopTimer(1100);
         exitMPI(-1);
       }
       if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
+        StopTimer(1100);
         exitMPI(-1);
       }
+      StopTimer(1100);
+      StartTimer(1101);
+      if (BuildSymmetryMatvecPlan(&(X.Bind)) != 0) {
+        StopTimer(1101);
+        exitMPI(-1);
+      }
+      StopTimer(1101);
     }
       
     switch (X.Bind.Def.iCalcType) {
@@ -843,6 +855,8 @@ int main(int argc, char* argv[]){
   
   StopTimer(0);
   OutputTimer(&(X.Bind));
+  FreeSymmetryBasis(X.Bind.Sym);
+  X.Bind.Sym = NULL;
   FinalizeMPI();
   return 0;
 }

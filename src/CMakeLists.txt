@@ -20,6 +20,7 @@ target_sources(HPhi PRIVATE
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
   nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
+  symmetry_matvec_plan.c
 )
 
 # Multiply operations
@@ -95,6 +96,9 @@ target_sources(HPhi PRIVATE
   ${STDFACE_DIR}/src/Wannier90.c
 )
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
+if(TARGET OpenMP::OpenMP_C)
+  target_link_libraries(HPhi OpenMP::OpenMP_C)
+endif()
 if(MPI_FOUND)
   target_link_libraries(HPhi ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)

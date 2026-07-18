@@ -103,6 +103,8 @@ void OutputTimer(struct BindStruct *X) {
   //fp = childfopenMPI(fileName, "w");
   StampTime(fp, "All", 0);
   StampTime(fp, "  sz", 1000);
+  StampTime(fp, "  symmetry basis build/activate", 1100);
+  StampTime(fp, "  symmetry matvec plan build", 1101);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -173,6 +175,9 @@ void OutputTimer(struct BindStruct *X) {
   fprintf(fp,"================================================\n");
   
   StampTime(fp,"All mltply",1);
+  StampTime(fp,"  symmetry input Allgatherv",1501);
+  StampTime(fp,"  symmetry legacy beta scan",1502);
+  StampTime(fp,"  symmetry local-row plan apply",1503);
   StampTime(fp,"  diagonal", 100);
 
   switch(X->Def.iCalcModel){

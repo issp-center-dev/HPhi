@@ -4,6 +4,7 @@
 #include "DefCommon.h"
 #include "global.h"
 #include "symmetry_basis.h"
+#include "symmetry_matvec_plan.h"
 #include "struct.h"
 #include "wrapperMPI.h"
 
@@ -536,6 +537,8 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
   if (X->Sym != NULL && X->Sym->enabled == TRUE) {
     int rank = 0;
     if (nproc < 1 || myrank < 0 || myrank >= nproc) return -1;
+    FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
+    X->Sym->matvec_plan = NULL;
     symmetry_block_range(X->Sym->dim, myrank, nproc,
                          &X->Sym->local_offset, &X->Sym->local_dim);
 #ifdef MPI
@@ -606,6 +609,7 @@ int ValidateSymmetrySectorOptions(const struct BindStruct *X)
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
 {
   if (sym == NULL) return;
+  FreeSymmetryMatvecPlan(sym->matvec_plan);
   free(sym->basis);
   free(sym->sym_diagonal);
   free(sym->rep_hash_keys);

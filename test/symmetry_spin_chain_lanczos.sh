@@ -171,6 +171,7 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
+grep -q "Symmetry matvec: mode=plan" symmetry.log
 
 cat > namelist_heisenberg_ref.def <<EOF
 CalcMod calcmod.def
@@ -195,22 +196,39 @@ Ising ising.def
 TransSym qptransidx.def
 EOF
 
-run_hphi symmetry_heisenberg.log ../../src/HPhi -e namelist_heisenberg.def
+run_hphi symmetry_heisenberg.log env HPHI_SYMMETRY_MATVEC=plan ../../src/HPhi -e namelist_heisenberg.def
 sym_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${ref_heisenberg_energy}"
 test -n "${sym_heisenberg_energy}"
 heisenberg_diff=`awk -v a="${sym_heisenberg_energy}" -v b="${ref_heisenberg_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${heisenberg_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
+grep -q "Symmetry matvec: mode=plan" symmetry_heisenberg.log
 
 rm -rf output
 write_kpi_over_3_transsym_l6
-run_hphi symmetry_complex.log ../../src/HPhi -e namelist.def
+run_hphi symmetry_complex.log env HPHI_SYMMETRY_MATVEC=plan ../../src/HPhi -e namelist.def
 complex_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${complex_energy}"
 complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
+grep -q "Symmetry matvec: mode=plan" symmetry_complex.log
+
+rm -rf output
+run_hphi symmetry_complex_legacy.log env HPHI_SYMMETRY_MATVEC=legacy ../../src/HPhi -e namelist.def
+legacy_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+test -n "${legacy_energy}"
+legacy_diff=`awk -v a="${legacy_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%.16e", d}'`
+awk -v d="${legacy_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
+grep -q "Symmetry matvec: mode=legacy" symmetry_complex_legacy.log
+
+rm -rf output
+if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_invalid_mode.log 2>&1; then
+    cat symmetry_invalid_mode.log
+    exit 1
+fi
+grep -q "HPHI_SYMMETRY_MATVEC must be 'plan' or 'legacy'" symmetry_invalid_mode.log
 
 run_mpi_symmetry_case() {
     label="$1"
@@ -219,12 +237,16 @@ run_mpi_symmetry_case() {
     expected_dim="$4"
     log_file="symmetry_${label}_mpi.log"
     rm -rf output
-    ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1
+    if ! HPHI_SYMMETRY_MATVEC=plan ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1; then
+        cat "${log_file}"
+        exit 1
+    fi
     mpi_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
     test -n "${mpi_energy}"
     mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
     test "${mpi_diff}" = "0.000000"
     grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
+    grep -q "Symmetry matvec: mode=plan" "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym MPI path unexpectedly used site decomposition."
         exit 1
@@ -238,6 +260,32 @@ if [ -n "${MPIRUN}" ]; then
         run_mpi_symmetry_case heisenberg namelist_heisenberg.def "${sym_heisenberg_energy}" 4
         write_kpi_over_3_transsym_l6
         run_mpi_symmetry_case complex namelist.def "${complex_energy}" 3
+
+        cat > symmetry_rank_env.sh <<'EOF'
+#!/bin/sh
+rank=${OMPI_COMM_WORLD_RANK:-${PMI_RANK:-${PMIX_RANK:-0}}}
+if [ "${rank}" -eq 0 ]; then
+    export HPHI_SYMMETRY_MATVEC=plan
+else
+    export HPHI_SYMMETRY_MATVEC=invalid
+fi
+exec "$@"
+EOF
+        chmod +x symmetry_rank_env.sh
+        rm -rf output
+        if ! ${MPIRUN} ./symmetry_rank_env.sh ../../src/HPhi -e namelist.def > symmetry_rank_env_mpi.log 2>&1; then
+            cat symmetry_rank_env_mpi.log
+            exit 1
+        fi
+        rank_env_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+        test -n "${rank_env_energy}"
+        rank_env_diff=`awk -v a="${rank_env_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+        test "${rank_env_diff}" = "0.000000"
+        grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
+        if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
+            cat symmetry_rank_env_mpi.log
+            exit 1
+        fi
     fi
 fi
 
