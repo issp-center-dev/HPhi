@@ -177,8 +177,8 @@ Green関数を集約形式で出力、``CalcTimer.dat`` の ``CalcPhys`` 区分�
 ~~~~~~~~~~~~
 
 8サイトHubbard鎖 (:math:`N=4900`)、全状態の一体・二体Green関数出力
-付き、``Solver 3`` (CPU)、2ノード :math:`\times` 4プロセス (AMD EPYC
-7763、InfiniBand接続、Intel MPI) での全体実行時間:
+付き、``Solver 3`` (CPU)、kugui の2ノード :math:`\times` 4プロセス
+(AMD EPYC 7763、InfiniBand接続、Intel MPI) での全体実行時間:
 
 .. csv-table::
    :header: "ExpecMode", "実行時間 (2ノード8プロセス)"

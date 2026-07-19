@@ -30,7 +30,8 @@ https://github.com/issp-center-dev/HPhi/releases
 .. note::
 
    ELPAビルド時のプラットフォーム注意（AMD EPYC + Mellanox InfiniBand
-   クラスタ、Intel oneAPI 2022 / Intel MPI 2021.7 で実機確認済み）:
+   クラスタ、Intel oneAPI 2022 / Intel MPI 2021.7 で実機確認済み。
+   いずれも物性研スパコン kugui で実際に遭遇・診断した事例です）:
 
    * **AVX-512 を持たない CPU**（AMD EPYC Rome/Milan など）では、ELPA
      本体の configure に ``--disable-avx512 --disable-avx512-kernels``

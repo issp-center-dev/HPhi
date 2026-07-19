@@ -25,7 +25,9 @@ If ELPA is installed in a non-standard path, specify its location via ``-DELPA_R
 .. note::
 
    Platform notes for ELPA builds (verified on an AMD EPYC + Mellanox
-   InfiniBand cluster with Intel oneAPI 2022 / Intel MPI 2021.7):
+   InfiniBand cluster with Intel oneAPI 2022 / Intel MPI 2021.7; both
+   issues were actually encountered and diagnosed on the ISSP
+   supercomputer kugui):
 
    * On CPUs **without AVX-512** (e.g. AMD EPYC Rome/Milan), configure
      ELPA itself with ``--disable-avx512 --disable-avx512-kernels``.

@@ -194,8 +194,8 @@ Multiple nodes
 
 Total run time for the 8-site Hubbard chain (:math:`N=4900`) with one-
 and two-body Green-function output for all states, ``Solver 3`` (CPU),
-on 2 nodes :math:`\times` 4 processes (AMD EPYC 7763, InfiniBand,
-Intel MPI):
+on 2 nodes :math:`\times` 4 processes of kugui (AMD EPYC 7763,
+InfiniBand, Intel MPI):
 
 .. csv-table::
    :header: "ExpecMode", "Run time (2 nodes, 8 processes)"
