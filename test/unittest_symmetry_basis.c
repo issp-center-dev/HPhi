@@ -914,6 +914,10 @@ static void assert_symmetry_dim(unsigned int nsite,
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
   }
+  assert_int_eq(X.Sym->basis_transform_calls <
+                    X.Sym->basis_raw_states * X.Def.NSymTrans +
+                    X.Sym->basis_representative_candidates * X.Def.NSymTrans,
+                1, label);
   assert_ulong_eq(X.Sym->dim, expected_dim, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);

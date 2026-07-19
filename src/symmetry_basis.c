@@ -272,25 +272,30 @@ static int find_representative_state(const struct DefineList *def,
   return 0;
 }
 
-static int compute_orbit_metadata(const struct DefineList *def,
-                                  unsigned long int rep_state,
-                                  unsigned int *orbit_size,
-                                  unsigned int *stabilizer_size,
-                                  double complex *stabilizer_sum,
-                                  unsigned long long *transform_calls)
+static int analyze_basis_candidate(const struct DefineList *def,
+                                   unsigned long int state,
+                                   int *is_representative,
+                                   unsigned int *orbit_size,
+                                   unsigned int *stabilizer_size,
+                                   double complex *stabilizer_sum,
+                                   unsigned long long *transform_calls)
 {
   unsigned int g;
+  *is_representative = FALSE;
   *stabilizer_size = 0;
   *stabilizer_sum = 0.0;
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(def, rep_state, g, &moved) != 0) return -1;
+    if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
     if (transform_calls != NULL) (*transform_calls)++;
-    if (moved.state == rep_state) {
+    if (moved.state < state) return 0;
+    if (moved.state == state) {
       (*stabilizer_size)++;
       *stabilizer_sum += conj(def->SymTransChar[g]) * moved.amplitude;
     }
   }
+  if (*stabilizer_size == 0U) return -1;
+  *is_representative = TRUE;
   *orbit_size = def->NSymTrans / *stabilizer_size;
   return 0;
 }
@@ -459,23 +464,20 @@ int BuildSymmetryBasis(struct BindStruct *X)
   StartTimer(1110);
   for (raw = 1; raw <= full_dim; raw++) {
     unsigned long int state = list_1[raw];
-    unsigned long int rep_state = 0UL;
+    unsigned long int rep_state = state;
+    int is_representative = FALSE;
     unsigned int orbit_size = 0;
     unsigned int stabilizer_size = 0;
     double complex stabilizer_sum = 0.0;
     double diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
-    if (find_representative_state(&X->Def, state, &rep_state,
-                                  &transform_calls) != 0) {
+    if (analyze_basis_candidate(&X->Def, state, &is_representative,
+                                &orbit_size, &stabilizer_size,
+                                &stabilizer_sum, &transform_calls) != 0) {
       StopTimer(1110);
       goto fail;
     }
-    if (state != rep_state) continue;
+    if (is_representative != TRUE) continue;
     representative_candidates++;
-    if (compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size,
-                               &stabilizer_sum, &transform_calls) != 0) {
-      StopTimer(1110);
-      goto fail;
-    }
     if (cabs(stabilizer_sum) < 0.5) continue;
     sym->dim++;
     if (ensure_basis_capacity(sym, sym->dim) != 0) {
