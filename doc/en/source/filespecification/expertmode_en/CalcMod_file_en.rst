@@ -254,7 +254,14 @@ The parameters correlated with the keywords are as follows.
    | **Usage from standard mode:** the standard-mode input file does not
      accept the ``Solver``/``ExpecMode`` keywords. Generate the expert-mode
      files once with ``HPhi -sdry stan.in``, append the keywords to the
-     generated ``calcmod.def``, and run in expert mode as above.
+     generated ``calcmod.def``, and **run in expert mode (**\ ``-e``\ **)**
+     as above (running in standard mode ``-s`` regenerates the def files,
+     so the edits would not take effect). For the same reason, re-running
+     ``HPhi -sdry`` after changing ``stan.in`` overwrites ``calcmod.def``
+     and discards the appended keywords, so they must be appended again.
+     If ``stan.in`` contained the legacy ``Scalapack``/``NGPU`` keywords,
+     we recommend removing those lines from the generated ``calcmod.def``
+     and specifying ``Solver`` instead.
      See :ref:`Sec:ParallelFullDiag` for the parallel algorithms and a
      performance comparison of the backends.
 

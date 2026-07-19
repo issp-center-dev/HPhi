@@ -144,7 +144,7 @@ seconds):
    "16384", "1929.6", "536.9", "172.6", "48.23", "35.51"
 
 .. figure:: ../../../figs/fulldiag_solver_bench.png
-   :name: fig_fulldiag_solver_bench_en
+   :name: fig_fulldiag_solver_bench
    :alt: Diagonalization time versus matrix dimension
    :width: 600px
 
@@ -172,7 +172,7 @@ aggregate one- and two-body Green-function output for all states,
    "16384", "424.5", "26.40", "20.84"
 
 .. figure:: ../../../figs/fulldiag_expecmode_bench.png
-   :name: fig_fulldiag_expecmode_bench_en
+   :name: fig_fulldiag_expecmode_bench
    :alt: Observable-evaluation time versus matrix dimension
    :width: 600px
 
