@@ -162,6 +162,38 @@ static int find_perm(const struct DefineList *def, const int *perm)
   return -1;
 }
 
+static int build_group_inverse(const struct DefineList *def,
+                               struct SymmetryBasisRuntime *sym)
+{
+  unsigned int g, h, site;
+  if (def->NSymTrans == 0U) return -1;
+#if SIZE_MAX <= UINT_MAX
+  if (def->NSymTrans > SIZE_MAX / sizeof(*sym->group_inverse)) return -1;
+#endif
+  sym->group_inverse = (unsigned int *)malloc(
+      (size_t)def->NSymTrans * sizeof(*sym->group_inverse));
+  if (sym->group_inverse == NULL) return -1;
+  for (g = 0U; g < def->NSymTrans; g++) {
+    int found = FALSE;
+    for (h = 0U; h < def->NSymTrans; h++) {
+      for (site = 0U; site < def->Nsite; site++) {
+        int mapped = def->SymTrans[g][site];
+        if (mapped < 0 || (unsigned int)mapped >= def->Nsite ||
+            def->SymTrans[h][mapped] != (int)site) {
+          break;
+        }
+      }
+      if (site == def->Nsite) {
+        sym->group_inverse[g] = h;
+        found = TRUE;
+        break;
+      }
+    }
+    if (found != TRUE) return -1;
+  }
+  return 0;
+}
+
 static int is_identity_perm(const int *perm, unsigned int nsite)
 {
   unsigned int site;
@@ -364,18 +396,31 @@ static int compare_basis_rep_state(const void *lhs, const void *rhs)
 }
 
 static int find_representative_state(const struct DefineList *def,
+                                     const struct SymmetryBasisRuntime *sym,
                                      unsigned long int state,
                                      unsigned long int *rep,
+                                     unsigned int *op_rep_to_state,
                                      unsigned long long *transform_calls)
 {
   unsigned int g;
   if (rep == NULL) return -1;
   *rep = state;
+  if (op_rep_to_state != NULL) *op_rep_to_state = UINT_MAX;
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
     if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
     if (transform_calls != NULL) (*transform_calls)++;
-    if (moved.state < *rep) *rep = moved.state;
+    if (moved.state < *rep) {
+      *rep = moved.state;
+      if (op_rep_to_state != NULL && sym != NULL &&
+          sym->group_inverse != NULL) {
+        *op_rep_to_state = sym->group_inverse[g];
+      }
+    } else if (moved.state == *rep && op_rep_to_state != NULL &&
+               sym != NULL && sym->group_inverse != NULL &&
+               sym->group_inverse[g] < *op_rep_to_state) {
+      *op_rep_to_state = sym->group_inverse[g];
+    }
   }
   return 0;
 }
@@ -727,6 +772,9 @@ int BuildSymmetryBasis(struct BindStruct *X)
   sym->nsite = X->Def.Nsite;
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
+  local_error = build_group_inverse(&X->Def, sym) != 0 ? 1 : 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
   distribution_chunk = symmetry_distribution_chunk(full_dim, nproc);
   rank_raw_count = symmetry_rank_raw_count(full_dim, distribution_chunk,
                                            myrank, nproc);
@@ -922,15 +970,51 @@ int SymmetryCanonicalizeState(const struct BindStruct *X,
                               struct SymmetryCanonicalResult *result)
 {
   unsigned int g;
+  unsigned int op_rep_to_state;
   unsigned long int rep_state;
   unsigned long int basis_index;
   if (result == NULL) return -1;
   memset(result, 0, sizeof(*result));
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
 
-  if (find_representative_state(&X->Def, state, &rep_state, NULL) != 0) return -1;
+  if (find_representative_state(&X->Def, X->Sym, state, &rep_state,
+                                &op_rep_to_state, NULL) != 0) {
+    return -1;
+  }
   basis_index = find_basis_index_by_rep(X->Sym, rep_state);
   if (basis_index == 0) return 0;
+
+  if (op_rep_to_state != UINT_MAX &&
+      op_rep_to_state < X->Def.NSymTrans) {
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(&X->Def, rep_state, op_rep_to_state,
+                             &moved) != 0 || moved.state != state) {
+      return -1;
+    }
+    result->found = TRUE;
+    result->basis_index = basis_index;
+    result->op_rep_to_state = op_rep_to_state;
+    result->phase = X->Def.SymTransChar[op_rep_to_state] * moved.amplitude;
+#ifdef HPHI_SYMMETRY_CANONICAL_VERIFY
+    for (g = 0U; g < X->Def.NSymTrans; g++) {
+      struct SymmetryTransformResult reference;
+      if (SymmetryApplyToState(&X->Def, rep_state, g, &reference) != 0) {
+        return -1;
+      }
+      if (reference.state == state) {
+        double complex reference_phase =
+            X->Def.SymTransChar[g] * reference.amplitude;
+        if (g != result->op_rep_to_state ||
+            reference_phase != result->phase) {
+          return -1;
+        }
+        break;
+      }
+    }
+    if (g == X->Def.NSymTrans) return -1;
+#endif
+    return 0;
+  }
 
   for (g = 0; g < X->Def.NSymTrans; g++) {
     struct SymmetryTransformResult moved;
@@ -1035,6 +1119,7 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
   free(sym->sym_diagonal);
   free(sym->rep_hash_keys);
   free(sym->rep_hash_values);
+  free(sym->group_inverse);
   free(sym->mpi_recvcounts);
   free(sym->mpi_displs);
   free(sym->mpi_full_v1);
