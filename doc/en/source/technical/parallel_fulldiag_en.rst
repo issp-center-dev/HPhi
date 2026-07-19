@@ -21,9 +21,10 @@ A full diagonalization run consists of four stages:
 2. **Diagonalization**: all eigenvalues and eigenvectors are computed by
    the backend selected with the ``Solver`` keyword (LAPACK / ScaLAPACK
    / MAGMA / ELPA).
-3. **Eigenvector redistribution** (``Solver 3``): the eigenvectors are
-   rearranged from the distribution used by the solver into a
-   distribution suited for observable evaluation.
+3. **Eigenvector redistribution** (distributed ``Solver 1``/``3`` runs
+   with ``ExpecMode 1``/``2``): the eigenvectors are rearranged from
+   the distribution used by the solver into a distribution suited for
+   observable evaluation.
 4. **Observable evaluation and output**: for each eigenstate
    :math:`|\Phi_i\rangle`, expectation values
    :math:`\langle \Phi_i | \hat{A} | \Phi_i \rangle` (energy,
@@ -49,8 +50,8 @@ the two-dimensional block-cyclic layout required by ELPA (and by the
 ScaLAPACK descriptors). The process grid :math:`n_{\rm prow} \times
 n_{\rm pcol}` is chosen as close to square as :math:`P` allows. If the
 matrix dimension :math:`N` is smaller than
-:math:`\max(n_{\rm prow}, n_{\rm pcol})`, the run stops at startup with
-an error asking to reduce the number of ranks.
+:math:`\max(n_{\rm prow}, n_{\rm pcol})`, the run stops before the ELPA
+diagonalization with an error asking to reduce the number of ranks.
 
 Diagonalization with ELPA
 -------------------------
@@ -59,10 +60,16 @@ ELPA (Eigenvalue soLvers for Petaflop Applications) is a parallel
 library for dense eigenvalue problems that uses the same
 two-dimensional block-cyclic distribution as ScaLAPACK while achieving
 higher parallel efficiency. :math:`{\mathcal H}\Phi` uses the complex
-Hermitian solver and leaves the 1-stage/2-stage algorithm choice to
-ELPA's automatic selection. Setting ``NGPU`` :math:`\geq 1` enables the
-GPU kernels; the process-to-GPU assignment is handled automatically by
-ELPA (one process per GPU; requires ELPA 2023.11.001 or later).
+Hermitian solver and selects the 1-stage/2-stage algorithm itself: GPU
+runs always use 1-stage, and CPU runs use 2-stage when the block size
+can take its default value, falling back to 1-stage when the matrix is
+small relative to the process grid and the block size is capped.
+Setting ``NGPU`` :math:`\geq 1` enables the GPU version; the
+process-to-GPU assignment is handled by ELPA (one process per GPU is
+the recommended launch configuration; requires ELPA 2023.11.001 or
+later). ``NGPU`` is an enablement flag and does not physically limit
+the devices used — control the assignment through the job scheduler or
+``CUDA_VISIBLE_DEVICES``.
 
 State-task-parallel observable evaluation (ExpecMode 1)
 -------------------------------------------------------
@@ -77,12 +84,13 @@ With ``ExpecMode 1`` the eigenvectors are redistributed after the
 diagonalization into a "state panel" layout in which each rank owns a
 contiguous block of eigenstates, and each rank then evaluates its own
 states independently, **with no communication inside the per-state
-loop**. The physical quantities (``zvo_phys.dat``) are collected from
+loop**. The physical quantities (``zvo_phys*.dat``) are collected from
 the ranks only once at the end. The aggregate Green-function output
 (``OutputGreenFormat 1``) is written to per-rank partial files, and
-rank 0 merges them into the final file only after the manifests of all
-ranks report success (this guarantees that no incomplete final file is
-left behind on failure).
+rank 0 merges them only after the manifests of all ranks report
+success, publishing the final file transactionally via a temporary
+file and rename (a design that avoids publishing an incomplete final
+file on failure).
 
 Trace-kernel evaluation (ExpecMode 2)
 -------------------------------------
@@ -98,12 +106,12 @@ number of states, which pays off when one- and two-body Green functions
 are evaluated for many eigenstates.
 
 The supported models in this version are ``Hubbard``/``HubbardGC`` and
-half-integer ``Spin``/``SpinGC``. For unsupported models, and under
+spin-1/2 ``Spin``/``SpinGC``. For unsupported models, and under
 certain runtime conditions (evaluator sharing with the N-body Green
 functions, no operators of a kind defined, or the result buffer
 exceeding ``HPHI_TRACE_BUF_MAX_MB``), the affected quantity
 automatically falls back to the ``ExpecMode 1`` path, and the decision
-is reported by ``INFO`` lines at the start of the run. See the
+is reported by ``INFO`` lines just before the observable evaluation. See the
 ``ExpecMode`` entry in :ref:`Subsec:calcmod` for details.
 
 Speed comparison
@@ -203,8 +211,10 @@ Guidelines
 * For small systems that fit in one process, ``Solver 0`` (LAPACK) is
   the simplest choice.
 * From a few thousand dimensions upward with several processes,
-  ``Solver 3`` (ELPA) wins on diagonalization speed, memory, and
-  observable evaluation. If GPUs are available, ``NGPU`` accelerates it
-  further.
+  ``Solver 3`` (ELPA) wins on both diagonalization speed and memory
+  (:math:`O(N^2/P)` via distributed Hamiltonian generation). If GPUs
+  are available, ``NGPU`` accelerates it further. Note that the
+  ``ExpecMode 1``/``2`` observable-evaluation speedups are also
+  available with distributed ``Solver 1`` runs.
 * For observables, use ``ExpecMode 2`` for the supported models and
   ``ExpecMode 1`` otherwise (the results agree with ``ExpecMode 0``).

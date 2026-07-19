@@ -322,8 +322,9 @@ CalcModファイル
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
-   | 対応モデル (本フェーズ時点): ``Hubbard``/``HubbardGC`` と半整数
-     (half-integer) の ``Spin``/``SpinGC`` です (一般スピン模型、
+   | 対応モデル (本フェーズ時点): ``Hubbard``/``HubbardGC`` と
+     スピン1/2の ``Spin``/``SpinGC`` です (一般スピン模型
+     (:math:`S \geq 1` を含む)、
      ``tJ``/``tJGC``、``Kondo``/``KondoGC``、``SpinlessFermion``/
      ``SpinlessFermionGC`` は未対応で、両物理量とも常に上記の
      「unsupported model」の行が表示されます)。

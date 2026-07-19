@@ -335,7 +335,8 @@ The parameters correlated with the keywords are as follows.
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
    | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
    | Supported models (as of this phase): ``Hubbard``/``HubbardGC`` and
-     half-integer ``Spin``/``SpinGC`` (general-spin models, ``tJ``/
+     spin-1/2 ``Spin``/``SpinGC`` (general-spin models (including
+     :math:`S \geq 1`), ``tJ``/
      ``tJGC``, ``Kondo``/``KondoGC``, and ``SpinlessFermion``/
      ``SpinlessFermionGC`` are not yet covered and always print the
      "unsupported model" line above for both quantities).
