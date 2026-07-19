@@ -7,6 +7,10 @@
 #include "symmetry_matvec_plan.h"
 #include "struct.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 FILE *stdoutMPI = NULL;
 int nproc = 1;
 int myrank = 0;
@@ -880,6 +884,89 @@ static void assert_hubbard_plan(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+#ifdef _OPENMP
+static void assert_parallel_plan_matches_serial(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryMatvecPlan *parallel_plan;
+  size_t row_ptr_count;
+  size_t serial_nnz;
+  size_t serial_row_nnz_max;
+  size_t *serial_row_ptr;
+  unsigned long int *serial_col_index;
+  double complex *serial_values;
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+  setup_hubbard_bind(&X, 6, 3, 3, 1);
+  setup_hubbard_transfer_ring(&X.Def, 6);
+  setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
+  if (BuildSymmetryBasis(&X) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: serial plan setup failed\n", label);
+    exit(1);
+  }
+
+  row_ptr_count = (size_t)X.Sym->matvec_plan->local_dim + 1U;
+  serial_nnz = X.Sym->matvec_plan->nnz;
+  serial_row_nnz_max = X.Sym->matvec_plan->row_nnz_max;
+  serial_row_ptr = (size_t *)malloc(row_ptr_count * sizeof(*serial_row_ptr));
+  serial_col_index = (unsigned long int *)malloc(
+      serial_nnz * sizeof(*serial_col_index));
+  serial_values = (double complex *)malloc(serial_nnz * sizeof(*serial_values));
+  if (serial_row_ptr == NULL ||
+      (serial_nnz > 0U &&
+       (serial_col_index == NULL || serial_values == NULL))) {
+    fprintf(stderr, "%s: serial plan snapshot allocation failed\n", label);
+    exit(1);
+  }
+  memcpy(serial_row_ptr, X.Sym->matvec_plan->row_ptr,
+         row_ptr_count * sizeof(*serial_row_ptr));
+  if (serial_nnz > 0U) {
+    memcpy(serial_col_index, X.Sym->matvec_plan->col_index,
+           serial_nnz * sizeof(*serial_col_index));
+    memcpy(serial_values, X.Sym->matvec_plan->values,
+           serial_nnz * sizeof(*serial_values));
+  }
+
+  omp_set_num_threads(4);
+  if (BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: parallel plan setup failed\n", label);
+    exit(1);
+  }
+  parallel_plan = X.Sym->matvec_plan;
+  assert_ulong_eq((unsigned long int)parallel_plan->nnz,
+                  (unsigned long int)serial_nnz, label);
+  assert_ulong_eq((unsigned long int)parallel_plan->row_nnz_max,
+                  (unsigned long int)serial_row_nnz_max, label);
+  assert_int_eq(memcmp(parallel_plan->row_ptr, serial_row_ptr,
+                       row_ptr_count * sizeof(*serial_row_ptr)) == 0,
+                1, label);
+  if (serial_nnz > 0U) {
+    assert_int_eq(memcmp(parallel_plan->col_index, serial_col_index,
+                         serial_nnz * sizeof(*serial_col_index)) == 0,
+                  1, label);
+    assert_int_eq(memcmp(parallel_plan->values, serial_values,
+                         serial_nnz * sizeof(*serial_values)) == 0,
+                  1, label);
+  }
+
+  free(serial_row_ptr);
+  free(serial_col_index);
+  free(serial_values);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+}
+#endif
+
 static void assert_zero_row_plan(const char *label)
 {
   struct BindStruct X;
@@ -1403,6 +1490,10 @@ int main(void)
                       "Hubbard C4 k=0 local-row plan matches canonicalized matrix");
   assert_hubbard_plan(4, 2, 2, 1, 0.5,
                       "Hubbard C4 k=pi/2 local-row plan matches canonicalized matrix");
+#ifdef _OPENMP
+  assert_parallel_plan_matches_serial(
+      "Hubbard plan CSR is identical for one and four OpenMP threads");
+#endif
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");
