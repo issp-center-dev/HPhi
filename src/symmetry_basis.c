@@ -9,6 +9,11 @@
 #include "CalcTime.h"
 #include "wrapperMPI.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#define SYMMETRY_BASIS_OMP_CHUNK 1024
+#endif
+
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite)
@@ -224,25 +229,36 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
   return 0;
 }
 
-static int ensure_basis_capacity(struct SymmetryBasisRuntime *sym,
-                                 unsigned long int needed)
+struct SymmetryBasisCollector {
+  struct SymmetryBasisVector *entries;
+  unsigned long int count;
+  unsigned long int capacity;
+  unsigned long long raw_states;
+  unsigned long long representative_candidates;
+  unsigned long long compatible_survivors;
+  unsigned long long transform_calls;
+  int error;
+};
+
+static int ensure_collector_capacity(struct SymmetryBasisCollector *collector,
+                                     unsigned long int needed)
 {
   struct SymmetryBasisVector *next;
   unsigned long int next_capacity;
   size_t element_count;
-  if (needed <= sym->capacity) return 0;
-  next_capacity = (sym->capacity == 0UL) ? 16UL : sym->capacity;
+  if (needed <= collector->capacity) return 0;
+  next_capacity = (collector->capacity == 0UL) ? 16UL : collector->capacity;
   while (next_capacity < needed) {
     if (next_capacity > ULONG_MAX / 2UL) return -1;
     next_capacity *= 2UL;
   }
-  if (next_capacity > SIZE_MAX / sizeof(*next) - 1UL) return -1;
-  element_count = (size_t)next_capacity + 1U;
-  next = (struct SymmetryBasisVector *)realloc(sym->basis,
+  if (next_capacity > SIZE_MAX / sizeof(*next)) return -1;
+  element_count = (size_t)next_capacity;
+  next = (struct SymmetryBasisVector *)realloc(collector->entries,
       sizeof(*next) * element_count);
   if (next == NULL) return -1;
-  sym->basis = next;
-  sym->capacity = next_capacity;
+  collector->entries = next;
+  collector->capacity = next_capacity;
   return 0;
 }
 
@@ -427,28 +443,58 @@ static void symmetry_block_range(unsigned long int dim,
   *offset = base * urank + (urank < rem ? urank : rem);
 }
 
-static int store_basis_vector(struct SymmetryBasisRuntime *sym,
-                              unsigned long int basis_id,
-                              unsigned long int rep_state,
-                              unsigned int orbit_size,
-                              unsigned int stabilizer_size,
-                              double complex stabilizer_sum,
-                              double diagonal)
+static void initialize_basis_vector(struct SymmetryBasisVector *entry,
+                                    unsigned long int rep_state,
+                                    unsigned int orbit_size,
+                                    unsigned int stabilizer_size,
+                                    double complex stabilizer_sum,
+                                    double diagonal)
 {
-  sym->basis[basis_id].rep_state = rep_state;
-  sym->basis[basis_id].orbit_size = orbit_size;
-  sym->basis[basis_id].stabilizer_size = stabilizer_size;
-  sym->basis[basis_id].stabilizer_character_sum = stabilizer_sum;
-  sym->basis[basis_id].norm = sqrt((double)orbit_size * creal(conj(stabilizer_sum) * stabilizer_sum));
-  sym->basis[basis_id].diagonal = diagonal;
+  entry->rep_state = rep_state;
+  entry->orbit_size = orbit_size;
+  entry->stabilizer_size = stabilizer_size;
+  entry->stabilizer_character_sum = stabilizer_sum;
+  entry->norm = sqrt((double)orbit_size *
+                     creal(conj(stabilizer_sum) * stabilizer_sum));
+  entry->diagonal = diagonal;
+}
+
+static int append_basis_vector(struct SymmetryBasisCollector *collector,
+                               unsigned long int rep_state,
+                               unsigned int orbit_size,
+                               unsigned int stabilizer_size,
+                               double complex stabilizer_sum,
+                               double diagonal)
+{
+  if (collector->count == ULONG_MAX ||
+      ensure_collector_capacity(collector, collector->count + 1UL) != 0) {
+    return -1;
+  }
+  initialize_basis_vector(&collector->entries[collector->count], rep_state,
+                          orbit_size, stabilizer_size, stabilizer_sum, diagonal);
+  collector->count++;
   return 0;
+}
+
+static void free_basis_collectors(struct SymmetryBasisCollector *collectors,
+                                  int collector_count)
+{
+  int thread;
+  if (collectors == NULL) return;
+  for (thread = 0; thread < collector_count; thread++) {
+    free(collectors[thread].entries);
+  }
+  free(collectors);
 }
 
 int BuildSymmetryBasis(struct BindStruct *X)
 {
   unsigned long int raw, full_dim;
-  unsigned long int representative_candidates = 0UL;
-  unsigned long long transform_calls = 0ULL;
+  unsigned long int basis_offset;
+  int collector_count = 1;
+  int actual_thread_count = 1;
+  int thread;
+  struct SymmetryBasisCollector *collectors = NULL;
   struct SymmetryBasisRuntime *sym;
 
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
@@ -461,43 +507,121 @@ int BuildSymmetryBasis(struct BindStruct *X)
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
 
+#ifdef _OPENMP
+  collector_count = omp_get_max_threads();
+#endif
+  if (collector_count < 1) goto fail;
+  collectors = (struct SymmetryBasisCollector *)calloc(
+      (size_t)collector_count, sizeof(*collectors));
+  if (collectors == NULL) goto fail;
+
   StartTimer(1110);
-  for (raw = 1; raw <= full_dim; raw++) {
-    unsigned long int state = list_1[raw];
-    unsigned long int rep_state = state;
-    int is_representative = FALSE;
-    unsigned int orbit_size = 0;
-    unsigned int stabilizer_size = 0;
-    double complex stabilizer_sum = 0.0;
-    double diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
-    if (analyze_basis_candidate(&X->Def, state, &is_representative,
-                                &orbit_size, &stabilizer_size,
-                                &stabilizer_sum, &transform_calls) != 0) {
-      StopTimer(1110);
-      goto fail;
-    }
-    if (is_representative != TRUE) continue;
-    representative_candidates++;
-    if (cabs(stabilizer_sum) < 0.5) continue;
-    sym->dim++;
-    if (ensure_basis_capacity(sym, sym->dim) != 0) {
-      StopTimer(1110);
-      goto fail;
-    }
-    if (store_basis_vector(sym, sym->dim, rep_state, orbit_size, stabilizer_size,
-                           stabilizer_sum, diagonal) != 0) {
-      StopTimer(1110);
-      goto fail;
+#ifdef _OPENMP
+#pragma omp parallel shared(actual_thread_count, collectors, X, full_dim)
+#endif
+  {
+    int thread_id = 0;
+    struct SymmetryBasisCollector *collector;
+#ifdef _OPENMP
+    thread_id = omp_get_thread_num();
+#pragma omp single
+    actual_thread_count = omp_get_num_threads();
+#endif
+    collector = &collectors[thread_id];
+#ifdef _OPENMP
+    /* Cyclic chunks spread representative-heavy regions while retaining
+       locality in list_1 and list_Diagonal. */
+#pragma omp for schedule(static, SYMMETRY_BASIS_OMP_CHUNK)
+#endif
+    for (raw = 1; raw <= full_dim; raw++) {
+      unsigned long int state;
+      int is_representative = FALSE;
+      unsigned int orbit_size = 0;
+      unsigned int stabilizer_size = 0;
+      double complex stabilizer_sum = 0.0;
+      double diagonal;
+      if (collector->error != 0) continue;
+      collector->raw_states++;
+      state = list_1[raw];
+      diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
+      if (analyze_basis_candidate(&X->Def, state, &is_representative,
+                                  &orbit_size, &stabilizer_size,
+                                  &stabilizer_sum,
+                                  &collector->transform_calls) != 0) {
+        collector->error = 1;
+        continue;
+      }
+      if (is_representative != TRUE) continue;
+      collector->representative_candidates++;
+      if (cabs(stabilizer_sum) < 0.5) continue;
+      if (append_basis_vector(collector, state, orbit_size, stabilizer_size,
+                              stabilizer_sum, diagonal) != 0) {
+        collector->error = 1;
+        continue;
+      }
+      collector->compatible_survivors++;
     }
   }
-  StopTimer(1110);
-  sym->basis_raw_states = (unsigned long long)full_dim;
-  sym->basis_representative_candidates =
-      (unsigned long long)representative_candidates;
-  sym->basis_compatible_survivors = (unsigned long long)sym->dim;
-  sym->basis_transform_calls = transform_calls;
+
+  for (thread = 0; thread < actual_thread_count; thread++) {
+    struct SymmetryBasisCollector *collector = &collectors[thread];
+    if (collector->error != 0 ||
+        sym->dim > ULONG_MAX - collector->count) {
+      StopTimer(1110);
+      free_basis_collectors(collectors, collector_count);
+      collectors = NULL;
+      goto fail;
+    }
+    sym->dim += collector->count;
+    sym->basis_raw_states += collector->raw_states;
+    sym->basis_representative_candidates +=
+        collector->representative_candidates;
+    sym->basis_compatible_survivors += collector->compatible_survivors;
+    sym->basis_transform_calls += collector->transform_calls;
+    if (collector->raw_states > sym->basis_thread_raw_states_max)
+      sym->basis_thread_raw_states_max = collector->raw_states;
+    if (collector->representative_candidates >
+        sym->basis_thread_representative_candidates_max)
+      sym->basis_thread_representative_candidates_max =
+          collector->representative_candidates;
+    if (collector->compatible_survivors >
+        sym->basis_thread_compatible_survivors_max)
+      sym->basis_thread_compatible_survivors_max =
+          collector->compatible_survivors;
+    if (collector->transform_calls > sym->basis_thread_transform_calls_max)
+      sym->basis_thread_transform_calls_max = collector->transform_calls;
+  }
+  sym->basis_thread_count = (unsigned int)actual_thread_count;
   sym->basis_orbit_metadata_calls =
-      (unsigned long long)representative_candidates;
+      sym->basis_representative_candidates;
+
+  if (sym->dim > SIZE_MAX / sizeof(*sym->basis) - 1UL) {
+    StopTimer(1110);
+    free_basis_collectors(collectors, collector_count);
+    collectors = NULL;
+    goto fail;
+  }
+  sym->basis = (struct SymmetryBasisVector *)calloc(
+      (size_t)sym->dim + 1U, sizeof(*sym->basis));
+  if (sym->basis == NULL) {
+    StopTimer(1110);
+    free_basis_collectors(collectors, collector_count);
+    collectors = NULL;
+    goto fail;
+  }
+  sym->capacity = sym->dim;
+  basis_offset = 1UL;
+  for (thread = 0; thread < actual_thread_count; thread++) {
+    struct SymmetryBasisCollector *collector = &collectors[thread];
+    if (collector->count > 0UL) {
+      memcpy(sym->basis + basis_offset, collector->entries,
+             (size_t)collector->count * sizeof(*sym->basis));
+      basis_offset += collector->count;
+    }
+  }
+  free_basis_collectors(collectors, collector_count);
+  collectors = NULL;
+  StopTimer(1110);
 
   StartTimer(1111);
   if (sym->dim > 1) {
@@ -533,7 +657,8 @@ int BuildSymmetryBasis(struct BindStruct *X)
   fprintf(stdoutMPI,
           "Symmetry basis build: raw_states=%lu representative_candidates=%lu "
           "compatible_survivors=%lu\n",
-          sym->full_dim, representative_candidates, sym->dim);
+          sym->full_dim,
+          (unsigned long int)sym->basis_representative_candidates, sym->dim);
   if (sym->dim == 0) {
     fprintf(stdoutMPI, "Error: TransSym sector has zero basis dimension.\n");
     FreeSymmetryBasis(sym);
@@ -543,6 +668,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
   return 0;
 
 fail:
+  free_basis_collectors(collectors, collector_count);
   FreeSymmetryBasis(sym);
   return -1;
 }

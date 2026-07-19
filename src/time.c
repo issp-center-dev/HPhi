@@ -45,6 +45,11 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "basis_compatible_survivors",
     "basis_transform_calls",
     "basis_orbit_metadata_calls",
+    "basis_thread_count",
+    "basis_thread_raw_states_max",
+    "basis_thread_representative_candidates_max",
+    "basis_thread_compatible_survivors_max",
+    "basis_thread_transform_calls_max",
     "plan_local_rows",
     "plan_local_nnz",
     "plan_row_nnz_max"
@@ -79,9 +84,14 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[2] = X->Sym->basis_compatible_survivors;
   work_local[3] = X->Sym->basis_transform_calls;
   work_local[4] = X->Sym->basis_orbit_metadata_calls;
-  work_local[5] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
-  work_local[6] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
-  work_local[7] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
+  work_local[5] = (unsigned long long)X->Sym->basis_thread_count;
+  work_local[6] = X->Sym->basis_thread_raw_states_max;
+  work_local[7] = X->Sym->basis_thread_representative_candidates_max;
+  work_local[8] = X->Sym->basis_thread_compatible_survivors_max;
+  work_local[9] = X->Sym->basis_thread_transform_calls_max;
+  work_local[10] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
+  work_local[11] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
+  work_local[12] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;

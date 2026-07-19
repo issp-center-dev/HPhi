@@ -305,7 +305,7 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_ranks != expected_ranks || timer_count != 11 || work_count != 9) bad = 1
+            if (header_ranks != expected_ranks || timer_count != 11 || work_count != 14) bad = 1
             if (work_min["basis_raw_states"] != 16 ||
                 work_max["basis_raw_states"] != 16) bad = 1
             if (work_min["basis_representative_candidates"] != 4 ||
@@ -315,6 +315,7 @@ assert_rank_stats() {
             if (work_min["basis_transform_calls"] <= 0) bad = 1
             if (work_min["basis_orbit_metadata_calls"] != 4 ||
                 work_max["basis_orbit_metadata_calls"] != 4) bad = 1
+            if (work_min["basis_thread_count"] < 1) bad = 1
             if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
             exit bad
         }

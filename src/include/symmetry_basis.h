@@ -47,6 +47,11 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_compatible_survivors;
   unsigned long long basis_transform_calls;
   unsigned long long basis_orbit_metadata_calls;
+  unsigned int basis_thread_count;
+  unsigned long long basis_thread_raw_states_max;
+  unsigned long long basis_thread_representative_candidates_max;
+  unsigned long long basis_thread_compatible_survivors_max;
+  unsigned long long basis_thread_transform_calls_max;
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;

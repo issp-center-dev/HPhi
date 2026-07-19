@@ -918,7 +918,15 @@ static void assert_symmetry_dim(unsigned int nsite,
                     X.Sym->basis_raw_states * X.Def.NSymTrans +
                     X.Sym->basis_representative_candidates * X.Def.NSymTrans,
                 1, label);
+  assert_ulong_eq((unsigned long int)X.Sym->basis_raw_states,
+                  test_raw_dim, label);
+  assert_int_eq(X.Sym->basis_thread_count >= 1U, 1, label);
+  assert_int_eq(X.Sym->basis_thread_transform_calls_max <=
+                    X.Sym->basis_transform_calls,
+                1, label);
   assert_ulong_eq(X.Sym->dim, expected_dim, label);
+  assert_ulong_eq((unsigned long int)X.Sym->basis_compatible_survivors,
+                  expected_dim, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
