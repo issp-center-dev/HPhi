@@ -25,9 +25,104 @@
 #include "Common.h"
 #include "FileIO.h"
 #include "CalcTime.h"
+#include "symmetry_basis.h"
+#include "symmetry_matvec_plan.h"
 
 #ifdef MPI
 #include <mpi.h>
+#endif
+
+#ifdef MPI
+static void OutputSymmetryRankStats(const struct BindStruct *X)
+{
+  static const int timer_ids[] = {
+    1100, 1110, 1111, 1112, 1113, 1114,
+    1101, 1120, 1121, 1122, 4113
+  };
+  static const char *work_keys[] = {
+    "basis_raw_states",
+    "basis_representative_candidates",
+    "basis_compatible_survivors",
+    "basis_transform_calls",
+    "basis_orbit_metadata_calls",
+    "plan_local_rows",
+    "plan_local_nnz",
+    "plan_row_nnz_max"
+  };
+  const size_t timer_count = sizeof(timer_ids) / sizeof(timer_ids[0]);
+  const size_t work_count = sizeof(work_keys) / sizeof(work_keys[0]);
+  const struct SymmetryMatvecPlan *plan;
+  double timer_local[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_min[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_max[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_sum[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  unsigned long long work_local[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_min[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_max[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_sum[sizeof(work_keys) / sizeof(work_keys[0])];
+  double row_mean_local;
+  double row_mean_min;
+  double row_mean_max;
+  double row_mean_sum;
+  char fileName[D_FileNameMax];
+  FILE *fp;
+  size_t i;
+
+  if (X == NULL || X->Def.iFlgSymmetryBasis == FALSE || X->Sym == NULL ||
+      X->Sym->enabled != TRUE) {
+    return;
+  }
+  plan = X->Sym->matvec_plan;
+  for (i = 0; i < timer_count; i++) timer_local[i] = Timer[timer_ids[i]];
+  work_local[0] = X->Sym->basis_raw_states;
+  work_local[1] = X->Sym->basis_representative_candidates;
+  work_local[2] = X->Sym->basis_compatible_survivors;
+  work_local[3] = X->Sym->basis_transform_calls;
+  work_local[4] = X->Sym->basis_orbit_metadata_calls;
+  work_local[5] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
+  work_local[6] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
+  work_local[7] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
+  row_mean_local = plan != NULL && plan->local_dim > 0UL
+                       ? (double)plan->nnz / (double)plan->local_dim
+                       : 0.0;
+
+  MPI_Allreduce(timer_local, timer_min, (int)timer_count, MPI_DOUBLE,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(timer_local, timer_max, (int)timer_count, MPI_DOUBLE,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(timer_local, timer_sum, (int)timer_count, MPI_DOUBLE,
+                MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_min, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_max, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_sum, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_min, 1, MPI_DOUBLE,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_max, 1, MPI_DOUBLE,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_sum, 1, MPI_DOUBLE,
+                MPI_SUM, MPI_COMM_WORLD);
+
+  sprintf(fileName, "CalcTimerRankStats.dat");
+  if (childfopenMPI(fileName, "w", &fp) != 0) return;
+  fprintf(fp, "format=HPhiCalcTimerRankStats version=1 ranks=%d\n", nproc);
+  for (i = 0; i < timer_count; i++) {
+    fprintf(fp, "timer id=%d ranks=%d min=%.17g max=%.17g mean=%.17g\n",
+            timer_ids[i], nproc, timer_min[i], timer_max[i],
+            timer_sum[i] / (double)nproc);
+  }
+  for (i = 0; i < work_count; i++) {
+    fprintf(fp, "work key=%s ranks=%d min=%llu max=%llu mean=%.17g\n",
+            work_keys[i], nproc, work_min[i], work_max[i],
+            (double)work_sum[i] / (double)nproc);
+  }
+  fprintf(fp,
+          "work key=plan_row_nnz_mean ranks=%d min=%.17g max=%.17g mean=%.17g\n",
+          nproc, row_mean_min, row_mean_max, row_mean_sum / (double)nproc);
+  fclose(fp);
+}
 #endif
 /** 
  * 
@@ -270,6 +365,7 @@ void OutputTimer(struct BindStruct *X) {
   fprintf(fp,"================================================\n");
 
   fclose(fp);
+  OutputSymmetryRankStats(X);
   free(Timer);
   free(TimerStart);
 #endif

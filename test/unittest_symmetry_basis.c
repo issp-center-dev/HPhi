@@ -662,6 +662,7 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
 {
   unsigned long int alpha, beta;
   size_t p;
+  size_t expected_row_nnz_max = 0U;
   size_t matrix_size;
   int duplicate_found = 0;
   double difference_norm2 = 0.0;
@@ -704,6 +705,8 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
 
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
     unsigned long int local_row = alpha - 1UL;
+    size_t row_nnz = plan->row_ptr[local_row + 1UL] - plan->row_ptr[local_row];
+    if (row_nnz > expected_row_nnz_max) expected_row_nnz_max = row_nnz;
     for (p = plan->row_ptr[local_row]; p < plan->row_ptr[local_row + 1UL]; p++) {
       size_t index = (size_t)(alpha - 1UL) * (size_t)plan->dim +
                      (size_t)(plan->col_index[p] - 1UL);
@@ -712,6 +715,8 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
       if (multiplicity[index] > 1U) duplicate_found = 1;
     }
   }
+  assert_ulong_eq((unsigned long int)plan->row_nnz_max,
+                  (unsigned long int)expected_row_nnz_max, label);
   if (require_duplicate != 0) assert_int_eq(duplicate_found, 1, label);
 
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
@@ -885,6 +890,7 @@ static void assert_zero_row_plan(const char *label)
   assert_ulong_eq(X.Sym->local_dim, 0UL, label);
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
+  assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
   assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
   assert_complex_close(prdct, 0.0, 1.0e-12, label);
   nproc = 1;

@@ -257,7 +257,8 @@ static int compare_basis_rep_state(const void *lhs, const void *rhs)
 
 static int find_representative_state(const struct DefineList *def,
                                      unsigned long int state,
-                                     unsigned long int *rep)
+                                     unsigned long int *rep,
+                                     unsigned long long *transform_calls)
 {
   unsigned int g;
   if (rep == NULL) return -1;
@@ -265,6 +266,7 @@ static int find_representative_state(const struct DefineList *def,
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
     if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
+    if (transform_calls != NULL) (*transform_calls)++;
     if (moved.state < *rep) *rep = moved.state;
   }
   return 0;
@@ -274,7 +276,8 @@ static int compute_orbit_metadata(const struct DefineList *def,
                                   unsigned long int rep_state,
                                   unsigned int *orbit_size,
                                   unsigned int *stabilizer_size,
-                                  double complex *stabilizer_sum)
+                                  double complex *stabilizer_sum,
+                                  unsigned long long *transform_calls)
 {
   unsigned int g;
   *stabilizer_size = 0;
@@ -282,6 +285,7 @@ static int compute_orbit_metadata(const struct DefineList *def,
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
     if (SymmetryApplyToState(def, rep_state, g, &moved) != 0) return -1;
+    if (transform_calls != NULL) (*transform_calls)++;
     if (moved.state == rep_state) {
       (*stabilizer_size)++;
       *stabilizer_sum += conj(def->SymTransChar[g]) * moved.amplitude;
@@ -439,6 +443,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
 {
   unsigned long int raw, full_dim;
   unsigned long int representative_candidates = 0UL;
+  unsigned long long transform_calls = 0ULL;
   struct SymmetryBasisRuntime *sym;
 
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
@@ -459,14 +464,15 @@ int BuildSymmetryBasis(struct BindStruct *X)
     unsigned int stabilizer_size = 0;
     double complex stabilizer_sum = 0.0;
     double diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
-    if (find_representative_state(&X->Def, state, &rep_state) != 0) {
+    if (find_representative_state(&X->Def, state, &rep_state,
+                                  &transform_calls) != 0) {
       StopTimer(1110);
       goto fail;
     }
     if (state != rep_state) continue;
     representative_candidates++;
     if (compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size,
-                               &stabilizer_sum) != 0) {
+                               &stabilizer_sum, &transform_calls) != 0) {
       StopTimer(1110);
       goto fail;
     }
@@ -483,6 +489,13 @@ int BuildSymmetryBasis(struct BindStruct *X)
     }
   }
   StopTimer(1110);
+  sym->basis_raw_states = (unsigned long long)full_dim;
+  sym->basis_representative_candidates =
+      (unsigned long long)representative_candidates;
+  sym->basis_compatible_survivors = (unsigned long long)sym->dim;
+  sym->basis_transform_calls = transform_calls;
+  sym->basis_orbit_metadata_calls =
+      (unsigned long long)representative_candidates;
 
   StartTimer(1111);
   if (sym->dim > 1) {
@@ -543,7 +556,7 @@ int SymmetryCanonicalizeState(const struct BindStruct *X,
   memset(result, 0, sizeof(*result));
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
 
-  if (find_representative_state(&X->Def, state, &rep_state) != 0) return -1;
+  if (find_representative_state(&X->Def, state, &rep_state, NULL) != 0) return -1;
   basis_index = find_basis_index_by_rep(X->Sym, rep_state);
   if (basis_index == 0) return 0;
 

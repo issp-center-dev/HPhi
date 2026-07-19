@@ -295,6 +295,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   }
   StopTimer(1120);
   plan->nnz = plan->row_ptr[plan->local_dim];
+  plan->row_nnz_max = max_row_nnz;
 
   StartTimer(1121);
   if (plan->nnz > SIZE_MAX / sizeof(*plan->col_index) ||

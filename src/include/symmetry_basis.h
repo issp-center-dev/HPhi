@@ -42,6 +42,11 @@ struct SymmetryBasisRuntime {
   unsigned long int *rep_hash_values;
   unsigned long int local_offset;
   unsigned long int local_dim;
+  unsigned long long basis_raw_states;
+  unsigned long long basis_representative_candidates;
+  unsigned long long basis_compatible_survivors;
+  unsigned long long basis_transform_calls;
+  unsigned long long basis_orbit_metadata_calls;
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;
