@@ -67,6 +67,10 @@ models are:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Spin&quot;</span></code> with <code class="docutils literal notranslate"><span class="pre">2S</span> <span class="pre">=</span> <span class="pre">1</span></code>, fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, and
 exchange-only spin couplings with <code class="docutils literal notranslate"><span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">0</span></code> and no field, general,
 or pair terms.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;SpinlessFermion&quot;</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">ncond</span></code> and hopping-only
+terms. Density interactions (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>), general
+interactions, and pair terms are not supported with
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> in Standard mode.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">&quot;Hubbard&quot;</span></code>) with fixed
 <code class="docutils literal notranslate"><span class="pre">nelec</span></code> and <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, nearest-neighbor hopping <code class="docutils literal notranslate"><span class="pre">t</span></code>/<code class="docutils literal notranslate"><span class="pre">t0</span></code>, and
 onsite <code class="docutils literal notranslate"><span class="pre">U</span></code>. Chemical-potential or field terms
@@ -74,6 +78,26 @@ onsite <code class="docutils literal notranslate"><span class="pre">U</span></co
 (<code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">t''</span></code>), offsite Coulomb terms (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>),
 and general or pair terms are not supported with <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>.</p></li>
 </ul>
+<p>To obtain the lowest energy at every momentum point, run one Standard-mode
+calculation for each <span class="math notranslate nohighlight">\(m=0,\ldots,L-1\)</span>, changing only
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>. For example, a six-site spin chain in the <span class="math notranslate nohighlight">\(m=1\)</span>
+sector can be specified as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>L = 6
+model = Spin
+method = Lanczos
+lattice = chain
+Jx = 1.0
+Jy = 1.0
+Jz = 0.0
+2Sz = 0
+MomentumIndex = 1
+</pre></div>
+</div>
+<p>If this input is saved as <code class="docutils literal notranslate"><span class="pre">stan.in</span></code>, run <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-s</span> <span class="pre">stan.in</span></code>. The
+corresponding momentum is <span class="math notranslate nohighlight">\(k=2\pi m/L\)</span>, and the lowest energy is
+written to <code class="docutils literal notranslate"><span class="pre">output/zvo_energy.dat</span></code>. Run each value of <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>
+in a separate working directory, or save the output before the next run,
+so that the results are not overwritten.</p>
 </li>
 </ul>
 </section>

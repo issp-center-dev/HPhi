@@ -64,6 +64,10 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Spin&quot;</span></code> では <code class="docutils literal notranslate"><span class="pre">2S</span> <span class="pre">=</span> <span class="pre">1</span></code>、固定 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、かつ
 <code class="docutils literal notranslate"><span class="pre">Jz</span> <span class="pre">=</span> <span class="pre">0</span></code> で磁場・一般相互作用・pair 項を含まない
 exchange-only のスピン相互作用に対応します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;SpinlessFermion&quot;</span></code> では固定 <code class="docutils literal notranslate"><span class="pre">ncond</span></code> と hopping-only
+の項に対応します。密度相互作用 (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>)、
+一般相互作用、pair 項はスタンダードモードの <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>
+と併用できません。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">&quot;Fermion</span> <span class="pre">Hubbard&quot;</span></code> または <code class="docutils literal notranslate"><span class="pre">&quot;Hubbard&quot;</span></code> では、固定
 <code class="docutils literal notranslate"><span class="pre">nelec</span></code> と <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、最近接ホッピング <code class="docutils literal notranslate"><span class="pre">t</span></code>/<code class="docutils literal notranslate"><span class="pre">t0</span></code>、オンサイト
 <code class="docutils literal notranslate"><span class="pre">U</span></code> に対応します。化学ポテンシャルや磁場項
@@ -71,6 +75,26 @@ exchange-only のスピン相互作用に対応します。</p></li>
 (<code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">t''</span></code>)、非局所 Coulomb 項 (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>)、
 一般相互作用、pair 項は <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> と併用できません。</p></li>
 </ul>
+<p>各運動量点の最低エネルギーを求めるには、<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> だけを
+変更し、<span class="math notranslate nohighlight">\(m=0,\ldots,L-1\)</span> ごとにスタンダードモードの計算を
+個別に実行します。例えば6サイトのスピン鎖の <span class="math notranslate nohighlight">\(m=1\)</span>
+セクターは次のように指定できます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>L = 6
+model = Spin
+method = Lanczos
+lattice = chain
+Jx = 1.0
+Jy = 1.0
+Jz = 0.0
+2Sz = 0
+MomentumIndex = 1
+</pre></div>
+</div>
+<p>この入力を <code class="docutils literal notranslate"><span class="pre">stan.in</span></code> に保存した場合は <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-s</span> <span class="pre">stan.in</span></code> を
+実行します。対応する運動量は <span class="math notranslate nohighlight">\(k=2\pi m/L\)</span> で、最低エネルギーは
+<code class="docutils literal notranslate"><span class="pre">output/zvo_energy.dat</span></code> に出力されます。結果が上書きされないよう、
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> ごとに異なる作業ディレクトリで実行するか、次の計算前に
+出力を保存してください。</p>
 </li>
 </ul>
 </section>
