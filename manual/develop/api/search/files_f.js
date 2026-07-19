@@ -15,6 +15,8 @@ var searchData=
   ['symmetry_5fbasis_2eh_12',['symmetry_basis.h',['../symmetry__basis_8h.html',1,'']]],
   ['symmetry_5fbasis_5fio_2ec_13',['symmetry_basis_io.c',['../symmetry__basis__io_8c.html',1,'']]],
   ['symmetry_5fbasis_5fio_2eh_14',['symmetry_basis_io.h',['../symmetry__basis__io_8h.html',1,'']]],
-  ['sz_2ec_15',['sz.c',['../sz_8c.html',1,'']]],
-  ['sz_2eh_16',['sz.h',['../sz_8h.html',1,'']]]
+  ['symmetry_5fmatvec_5fplan_2ec_15',['symmetry_matvec_plan.c',['../symmetry__matvec__plan_8c.html',1,'']]],
+  ['symmetry_5fmatvec_5fplan_2eh_16',['symmetry_matvec_plan.h',['../symmetry__matvec__plan_8h.html',1,'']]],
+  ['sz_2ec_17',['sz.c',['../sz_8c.html',1,'']]],
+  ['sz_2eh_18',['sz.h',['../sz_8h.html',1,'']]]
 ];

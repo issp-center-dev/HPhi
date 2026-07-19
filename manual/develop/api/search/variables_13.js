@@ -6,8 +6,9 @@ var searchData=
   ['v1org_3',['v1org',['../global_8c.html#a404d2e8f5bb3cbf39c3df4940adf25c7',1,'v1Org:&#160;global.c'],['../global_8h.html#a404d2e8f5bb3cbf39c3df4940adf25c7',1,'v1Org:&#160;global.c']]],
   ['v2_4',['v2',['../global_8h.html#a97fbc83d45f0e9674962f580b99ce67d',1,'v2:&#160;global.c'],['../global_8c.html#a97fbc83d45f0e9674962f580b99ce67d',1,'v2:&#160;global.c']]],
   ['valid_5',['valid',['../structSectorShift.html#abd127373d1588ea2f6ba21fa00a4faa1',1,'SectorShift']]],
-  ['var_6',['var',['../structPhysList.html#a23cddf509dfd42977aeee31d7df527d0',1,'PhysList']]],
-  ['vec_7',['vec',['../global_8c.html#ad7960e15bbb3ec77e0480d11807de888',1,'vec:&#160;global.c'],['../global_8h.html#ad7960e15bbb3ec77e0480d11807de888',1,'vec:&#160;global.c']]],
-  ['vecb_8',['vecB',['../structBoostList.html#a74c49d2d25bc8fbd82b504d96c3b9713',1,'BoostList']]],
-  ['vg_9',['vg',['../global_8c.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c'],['../global_8h.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c']]]
+  ['values_6',['values',['../structSymmetryMatvecPlan.html#a5f98c485df1d3221fb5cf18aed341db5',1,'SymmetryMatvecPlan']]],
+  ['var_7',['var',['../structPhysList.html#a23cddf509dfd42977aeee31d7df527d0',1,'PhysList']]],
+  ['vec_8',['vec',['../global_8c.html#ad7960e15bbb3ec77e0480d11807de888',1,'vec:&#160;global.c'],['../global_8h.html#ad7960e15bbb3ec77e0480d11807de888',1,'vec:&#160;global.c']]],
+  ['vecb_9',['vecB',['../structBoostList.html#a74c49d2d25bc8fbd82b504d96c3b9713',1,'BoostList']]],
+  ['vg_10',['vg',['../global_8c.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c'],['../global_8h.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c']]]
 ];

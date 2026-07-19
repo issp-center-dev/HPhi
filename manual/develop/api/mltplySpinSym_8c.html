@@ -117,42 +117,41 @@ $(document).ready(function(){initNavTree('mltplySpinSym_8c.html',''); initResiza
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">mltplySpinSym.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="mltplySpinSym_8h_source.html">mltplySpinSym.h</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
-<code>#include &lt;limits.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="CalcTime_8h_source.html">CalcTime.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="DefCommon_8h_source.html">DefCommon.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="bitcalc_8h_source.html">bitcalc.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="global_8h_source.html">global.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="struct_8h_source.html">struct.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__matvec__plan_8h_source.html">symmetry_matvec_plan.h</a>&quot;</code><br />
 </div>
 <p><a href="mltplySpinSym_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLegacyApplyContext.html">LegacyApplyContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aede73e856cd5e27e8f1f590f8a088201" id="r_aede73e856cd5e27e8f1f590f8a088201"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#aede73e856cd5e27e8f1f590f8a088201">apply_exchange_halfspin</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>)</td></tr>
-<tr class="separator:aede73e856cd5e27e8f1f590f8a088201"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f94f905180a00c62f271d3ace43d351" id="r_a3f94f905180a00c62f271d3ace43d351"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a3f94f905180a00c62f271d3ace43d351">mask_between_sites</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>)</td></tr>
-<tr class="separator:a3f94f905180a00c62f271d3ace43d351"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a454cc0bdddc7b0d2c7a09f63256e2ef1" id="r_a454cc0bdddc7b0d2c7a09f63256e2ef1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a454cc0bdddc7b0d2c7a09f63256e2ef1">apply_spinless_hopping_hermite</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">trans</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>)</td></tr>
-<tr class="separator:a454cc0bdddc7b0d2c7a09f63256e2ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bf203cc47a6612576a23f96e7274724" id="r_a1bf203cc47a6612576a23f96e7274724"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a1bf203cc47a6612576a23f96e7274724">apply_hubbard_hopping_hermite</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">spin1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">spin2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">trans</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>)</td></tr>
-<tr class="separator:a1bf203cc47a6612576a23f96e7274724"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a424f4f95b62da893f5726a148cb12548" id="r_a424f4f95b62da893f5726a148cb12548"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a424f4f95b62da893f5726a148cb12548">add_canonicalized_transition</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">full_v1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *prdct, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">to_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">input_amp</a>)</td></tr>
-<tr class="separator:a424f4f95b62da893f5726a148cb12548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a600bd5fe493aec5779b70056136ff018" id="r_a600bd5fe493aec5779b70056136ff018"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a600bd5fe493aec5779b70056136ff018">apply_legacy_entry</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_index</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">coefficient</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">context</a>)</td></tr>
+<tr class="separator:a600bd5fe493aec5779b70056136ff018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07e9837419484e933ee6504bd9e30cba" id="r_a07e9837419484e933ee6504bd9e30cba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a07e9837419484e933ee6504bd9e30cba">apply_legacy_scan</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *full_v1, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *prdct)</td></tr>
+<tr class="separator:a07e9837419484e933ee6504bd9e30cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67d4d4c350104bd409321aeb37cb7789" id="r_a67d4d4c350104bd409321aeb37cb7789"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a67d4d4c350104bd409321aeb37cb7789">get_full_input_vector</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
 <tr class="separator:a67d4d4c350104bd409321aeb37cb7789"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a061dce7bdcf05d0e9e7111b83b84eb13" id="r_a061dce7bdcf05d0e9e7111b83b84eb13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a061dce7bdcf05d0e9e7111b83b84eb13">mltplySpinSym</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a061dce7bdcf05d0e9e7111b83b84eb13" id="r_a061dce7bdcf05d0e9e7111b83b84eb13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinSym_8c.html#a061dce7bdcf05d0e9e7111b83b84eb13">mltplySpinSym</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
 <tr class="separator:a061dce7bdcf05d0e9e7111b83b84eb13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a424f4f95b62da893f5726a148cb12548" name="a424f4f95b62da893f5726a148cb12548"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a424f4f95b62da893f5726a148cb12548">&#9670;&#160;</a></span>add_canonicalized_transition()</h2>
+<a id="a600bd5fe493aec5779b70056136ff018" name="a600bd5fe493aec5779b70056136ff018"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a600bd5fe493aec5779b70056136ff018">&#9670;&#160;</a></span>apply_legacy_entry()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -161,7 +160,55 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> add_canonicalized_transition </td>
+          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_legacy_entry </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramname"><em>out_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramname"><em>coefficient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00020">20</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00015">LegacyApplyContext::full_v1</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00016">LegacyApplyContext::input_amp</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00017">LegacyApplyContext::prdct</a>, <a class="el" href="struct_8h_source.html#l00516">BindStruct::Sym</a>, <a class="el" href="symmetry__basis_8c_source.html#l00583">SymmetryBasisGlobalToLocal()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00014">LegacyApplyContext::tmp_v0</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00013">LegacyApplyContext::X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>.</p>
+
+</div>
+</div>
+<a id="a07e9837419484e933ee6504bd9e30cba" name="a07e9837419484e933ee6504bd9e30cba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07e9837419484e933ee6504bd9e30cba">&#9670;&#160;</a></span>apply_legacy_scan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_legacy_scan </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
@@ -182,31 +229,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
-          <td class="paramname"><em>prdct</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>beta</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>to_state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
-          <td class="paramname"><em>hval</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
-          <td class="paramname"><em>input_amp</em>&#160;</td>
+          <td class="paramname"><em>prdct</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -221,209 +244,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00084">84</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00036">36</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__basis_8h_source.html#l00020">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00019">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8c_source.html#l00580">SymmetryBasisGlobalToLocal()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00498">SymmetryCanonicalizeState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00020">apply_legacy_entry()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00015">LegacyApplyContext::full_v1</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00016">LegacyApplyContext::input_amp</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00017">LegacyApplyContext::prdct</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00014">LegacyApplyContext::tmp_v0</a>, <a class="el" href="struct_8c_source.html#l00020">X</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00013">LegacyApplyContext::X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00135">mltplySpinSym()</a>.</p>
-
-</div>
-</div>
-<a id="aede73e856cd5e27e8f1f590f8a088201" name="aede73e856cd5e27e8f1f590f8a088201"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aede73e856cd5e27e8f1f590f8a088201">&#9670;&#160;</a></span>apply_exchange_halfspin()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_exchange_halfspin </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site0</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
-          <td class="paramname"><em>out_state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00013">13</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00135">mltplySpinSym()</a>.</p>
-
-</div>
-</div>
-<a id="a1bf203cc47a6612576a23f96e7274724" name="a1bf203cc47a6612576a23f96e7274724"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bf203cc47a6612576a23f96e7274724">&#9670;&#160;</a></span>apply_hubbard_hopping_hermite()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_hubbard_hopping_hermite </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>spin1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>spin2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
-          <td class="paramname"><em>trans</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
-          <td class="paramname"><em>out_state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
-          <td class="paramname"><em>hval</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00060">60</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
-
-<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00033">apply_spinless_hopping_hermite()</a>, and <a class="el" href="global_8h_source.html#l00025">FALSE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00135">mltplySpinSym()</a>.</p>
-
-</div>
-</div>
-<a id="a454cc0bdddc7b0d2c7a09f63256e2ef1" name="a454cc0bdddc7b0d2c7a09f63256e2ef1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a454cc0bdddc7b0d2c7a09f63256e2ef1">&#9670;&#160;</a></span>apply_spinless_hopping_hermite()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_spinless_hopping_hermite </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
-          <td class="paramname"><em>trans</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
-          <td class="paramname"><em>out_state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
-          <td class="paramname"><em>hval</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00033">33</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00025">mask_between_sites()</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00060">apply_hubbard_hopping_hermite()</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00135">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>.</p>
 
 </div>
 </div>
@@ -461,51 +286,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00109">109</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00058">58</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00189">nproc</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00135">mltplySpinSym()</a>.</p>
-
-</div>
-</div>
-<a id="a3f94f905180a00c62f271d3ace43d351" name="a3f94f905180a00c62f271d3ace43d351"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f94f905180a00c62f271d3ace43d351">&#9670;&#160;</a></span>mask_between_sites()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> mask_between_sites </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site0</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
-          <td class="paramname"><em>site1</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00025">25</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00033">apply_spinless_hopping_hermite()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>.</p>
 
 </div>
 </div>
@@ -541,9 +326,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00135">135</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinSym_8c_source.html#l00084">84</a> of file <a class="el" href="mltplySpinSym_8c_source.html">mltplySpinSym.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00084">add_canonicalized_transition()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00013">apply_exchange_halfspin()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00060">apply_hubbard_hopping_hermite()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00033">apply_spinless_hopping_hermite()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00109">get_full_input_vector()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="symmetry__basis_8c_source.html#l00580">SymmetryBasisGlobalToLocal()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00336">ApplySymmetryMatvecPlan()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00015">LegacyApplyContext::full_v1</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00058">get_full_input_vector()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00017">LegacyApplyContext::prdct</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00009">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00008">SYMMETRY_MATVEC_MODE_PLAN</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00014">LegacyApplyContext::tmp_v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>.</p>
 

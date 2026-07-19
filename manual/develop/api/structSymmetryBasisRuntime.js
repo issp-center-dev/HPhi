@@ -8,6 +8,8 @@ var structSymmetryBasisRuntime =
     [ "group_order", "structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e", null ],
     [ "local_dim", "structSymmetryBasisRuntime.html#a6fc83a27cb979fead30c5b84a03848b3", null ],
     [ "local_offset", "structSymmetryBasisRuntime.html#af466ac1991424b2c5864da3893ad303c", null ],
+    [ "matvec_mode", "structSymmetryBasisRuntime.html#a58cb3414151b5f48a7d602b787c524dc", null ],
+    [ "matvec_plan", "structSymmetryBasisRuntime.html#a300dd3af429e3d149e9781f94b789ea3", null ],
     [ "mpi_displs", "structSymmetryBasisRuntime.html#a7d7a3314b5704e10816d7cbc1aa75fc0", null ],
     [ "mpi_full_v1", "structSymmetryBasisRuntime.html#aac1bfae807736b0b93a2a03048f61799", null ],
     [ "mpi_recvcounts", "structSymmetryBasisRuntime.html#a0e3aad1b2dc52faf8887d5d68ed73f71", null ],

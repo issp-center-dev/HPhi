@@ -33,6 +33,7 @@ var searchData=
   ['paratetransferdiagonal_30',['ParaTETransferDiagonal',['../structDefineList.html#a2312228537cf857c2a5be459869f81f9',1,'DefineList']]],
   ['phase_31',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult']]],
   ['phys_32',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
-  ['prdct_33',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList']]],
-  ['precg_34',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
+  ['plan_33',['plan',['../structFillEntriesContext.html#a2fe68b4d2dcd3bb80ad3be03df8f5a52',1,'FillEntriesContext']]],
+  ['prdct_34',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
+  ['precg_35',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
 ];

@@ -1,6 +1,7 @@
 var wrapperMPI_8h =
 [
     [ "BarrierMPI", "wrapperMPI_8h.html#a1de4e228440442f34d491eedd7973622", null ],
+    [ "BcastMPI_i", "wrapperMPI_8h.html#ad03fb793bdd71c39a37c76a8e8fd56de", null ],
     [ "BcastMPI_li", "wrapperMPI_8h.html#a6c950c3f54e22b4572174c6cd4ce36b0", null ],
     [ "exitMPI", "wrapperMPI_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed", null ],
     [ "fgetsMPI", "wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a", null ],

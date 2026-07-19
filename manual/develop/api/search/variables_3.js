@@ -7,7 +7,7 @@ var searchData=
   ['dcomegaorg_4',['dcOmegaOrg',['../structDefineList.html#a1f44ba4fcb830965aa80dc95a8affe31',1,'DefineList']]],
   ['def_5',['Def',['../structBindStruct.html#a365c4c2952a7e0157c4902449c116b24',1,'BindStruct']]],
   ['diagonal_6',['diagonal',['../structSymmetryBasisVector.html#aa3e741c90718478225b46a556a12580a',1,'SymmetryBasisVector']]],
-  ['dim_7',['dim',['../structSymmetryBasisRuntime.html#a2e6a279e89a566d67bc35ce6be8315af',1,'SymmetryBasisRuntime']]],
+  ['dim_7',['dim',['../structSymmetryBasisRuntime.html#a2e6a279e89a566d67bc35ce6be8315af',1,'SymmetryBasisRuntime::dim'],['../structSymmetryMatvecPlan.html#ae7353afe34bd6a7fd7e9227496d036de',1,'SymmetryMatvecPlan::dim']]],
   ['dndown_8',['dNdown',['../structSectorShift.html#a8dfaa39a50d2a06f6831a9b6512dd2cd',1,'SectorShift']]],
   ['dne_9',['dNe',['../structSectorShift.html#a971f102f37a62c84b8a8491ac7dd50e8',1,'SectorShift']]],
   ['dnup_10',['dNup',['../structSectorShift.html#a3ed6a84216b8e2557b40dff91b30e8bb',1,'SectorShift']]],

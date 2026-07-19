@@ -7,5 +7,6 @@ var searchData=
   ['flgboost_4',['flgBoost',['../structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703',1,'BoostList']]],
   ['found_5',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
   ['fsgn_6',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
-  ['full_5fdim_7',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime']]]
+  ['full_5fdim_7',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime']]],
+  ['full_5fv1_8',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
 ];

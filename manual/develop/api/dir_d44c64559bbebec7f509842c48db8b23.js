@@ -84,6 +84,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "struct.h", "struct_8h.html", "struct_8h" ],
     [ "symmetry_basis.h", "symmetry__basis_8h.html", "symmetry__basis_8h" ],
     [ "symmetry_basis_io.h", "symmetry__basis__io_8h.html", "symmetry__basis__io_8h" ],
+    [ "symmetry_matvec_plan.h", "symmetry__matvec__plan_8h.html", "symmetry__matvec__plan_8h" ],
     [ "sz.h", "sz_8h.html", "sz_8h" ],
     [ "vec12.h", "vec12_8h.html", "vec12_8h" ],
     [ "version_major.h", "version__major_8h.html", null ],

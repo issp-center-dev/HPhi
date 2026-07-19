@@ -1,6 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"page_log.html#sec_log_debug":[3,3],
 "page_log.html#sec_log_error":[3,1],
 "page_log.html#sec_log_progress":[3,0],
 "page_log.html#sec_log_time":[3,2],
@@ -240,14 +239,15 @@ var NAVTREEINDEX9 =
 "structCheckList.html#a74e8c6ae2ba83361e7fbfbef7cd3fda0":[9,0,3,1],
 "structCheckList.html#a89fc4bd39e108c2efa45fb7e3dc7c13b":[9,0,3,2],
 "structCheckList.html#aaf992da196c21c87c8850bb10f0d40b2":[9,0,3,4],
-"structDSFMT__T.html":[9,0,5],
-"structDSFMT__T.html#a776de3ff937f19d246e7edce2676981a":[9,0,5,0],
-"structDSFMT__T.html#aa7b5e6f3e8e109b75493514525854931":[9,0,5,1],
-"structDefineList.html":[9,0,4],
-"structDefineList.html#a02409ec33f1a07f47fb57e3700550c64":[9,0,4,158],
-"structDefineList.html#a0281ce521e34f2b82b96de08f1298983":[9,0,4,73],
-"structDefineList.html#a05f51af0be5f87991d7d6557d8244fdb":[9,0,4,119],
-"structDefineList.html#a06aeb15fc8b6b37061570adfc9670829":[9,0,4,159],
-"structDefineList.html#a070611dcb758c4f1ae08c28c441c2456":[9,0,4,179],
-"structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,4,131]
+"structCountEntriesContext.html":[9,0,4],
+"structCountEntriesContext.html#a614fa2f4bc0217f380d168c8e13d3545":[9,0,4,0],
+"structDSFMT__T.html":[9,0,6],
+"structDSFMT__T.html#a776de3ff937f19d246e7edce2676981a":[9,0,6,0],
+"structDSFMT__T.html#aa7b5e6f3e8e109b75493514525854931":[9,0,6,1],
+"structDefineList.html":[9,0,5],
+"structDefineList.html#a02409ec33f1a07f47fb57e3700550c64":[9,0,5,158],
+"structDefineList.html#a0281ce521e34f2b82b96de08f1298983":[9,0,5,73],
+"structDefineList.html#a05f51af0be5f87991d7d6557d8244fdb":[9,0,5,119],
+"structDefineList.html#a06aeb15fc8b6b37061570adfc9670829":[9,0,5,159],
+"structDefineList.html#a070611dcb758c4f1ae08c28c441c2456":[9,0,5,179]
 };

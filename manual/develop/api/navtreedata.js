@@ -145,14 +145,14 @@ var NAVTREEINDEX =
 "LogMessage_8c.html#af71fc60a8638ffb4b8aa42613dbae0dc",
 "anomalous__pair_8c.html#a554352de6619d8d7d94465a0f0ba6f4e",
 "expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0",
-"global_8h.html#a18b86ba12763e11b6cbc878e43edb711",
-"input_8c.html#a53da3ac7824590302b0aec6d7c9ecd57",
-"mltplyMPIHubbardCore_8h.html#a70d6e1c992ec878c2c8ec3e8128e21ed",
-"mltplySpin_8h.html#a367fcb99b257491d4370cdef55e496de",
-"page_log.html#sec_log_debug",
-"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191",
-"structMPIInterAllGroup.html#a0615b287419b5428b9b7c07d0f35f16a",
-"sz_8h.html#ac329cb57c6b95deb1189bad49505e9ba"
+"global_8h.html#a0ae558cf6ee642cbc9c6dc430ac560ec",
+"index.html",
+"mltplyMPIHubbardCore_8h.html#a6982bcab00cc82b36b0460da4ec9c767",
+"mltplySpin_8h.html#a49705894462616c2d3184fb2514c9ff9",
+"page_log.html#sec_log_error",
+"structDefineList.html#a09fa2f50f7daaa648426f773af18e18d",
+"structMPIBatchedTransfers.html#a0e4ca180e159ab059039d1ef374d08eb",
+"sz_8c.html#a6b08e0fd9e16a6ea84c201abe54ec187"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
