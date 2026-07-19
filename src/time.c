@@ -50,6 +50,8 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "basis_thread_representative_candidates_max",
     "basis_thread_compatible_survivors_max",
     "basis_thread_transform_calls_max",
+    "basis_gather_entries",
+    "basis_gather_bytes",
     "plan_local_rows",
     "plan_local_nnz",
     "plan_row_nnz_max"
@@ -89,9 +91,11 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[7] = X->Sym->basis_thread_representative_candidates_max;
   work_local[8] = X->Sym->basis_thread_compatible_survivors_max;
   work_local[9] = X->Sym->basis_thread_transform_calls_max;
-  work_local[10] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
-  work_local[11] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
-  work_local[12] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
+  work_local[10] = X->Sym->basis_gather_entries;
+  work_local[11] = X->Sym->basis_gather_bytes;
+  work_local[12] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
+  work_local[13] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
+  work_local[14] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;

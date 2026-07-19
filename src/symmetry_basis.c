@@ -9,9 +9,13 @@
 #include "CalcTime.h"
 #include "wrapperMPI.h"
 
+#define SYMMETRY_BASIS_DISTRIBUTION_CHUNK 1024UL
+
+#ifdef MPI
+#include <mpi.h>
+#endif
 #ifdef _OPENMP
 #include <omp.h>
-#define SYMMETRY_BASIS_OMP_CHUNK 1024
 #endif
 
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
@@ -239,6 +243,46 @@ struct SymmetryBasisCollector {
   unsigned long long transform_calls;
   int error;
 };
+
+static unsigned long int symmetry_distribution_chunk(unsigned long int full_dim,
+                                                     int nrank)
+{
+  unsigned long int unrank = (unsigned long int)nrank;
+  if (full_dim == 0UL) return 1UL;
+  if (full_dim / unrank < SYMMETRY_BASIS_DISTRIBUTION_CHUNK) {
+    return full_dim / unrank + (full_dim % unrank != 0UL ? 1UL : 0UL);
+  }
+  return SYMMETRY_BASIS_DISTRIBUTION_CHUNK;
+}
+
+static unsigned long int symmetry_rank_raw_count(unsigned long int full_dim,
+                                                 unsigned long int chunk,
+                                                 int rank,
+                                                 int nrank)
+{
+  unsigned long int full_chunks = full_dim / chunk;
+  unsigned long int tail = full_dim % chunk;
+  unsigned long int urank = (unsigned long int)rank;
+  unsigned long int unrank = (unsigned long int)nrank;
+  unsigned long int count = (full_chunks / unrank) * chunk;
+  if (urank < full_chunks % unrank) {
+    count += chunk;
+  }
+  if (tail > 0UL && urank == full_chunks % unrank) count += tail;
+  return count;
+}
+
+static unsigned long int symmetry_rank_raw_index(unsigned long int local_index,
+                                                 unsigned long int chunk,
+                                                 int rank,
+                                                 int nrank)
+{
+  unsigned long int local_chunk = local_index / chunk;
+  unsigned long int within_chunk = local_index % chunk;
+  unsigned long int global_chunk =
+      local_chunk * (unsigned long int)nrank + (unsigned long int)rank;
+  return global_chunk * chunk + within_chunk + 1UL;
+}
 
 static int ensure_collector_capacity(struct SymmetryBasisCollector *collector,
                                      unsigned long int needed)
@@ -487,12 +531,137 @@ static void free_basis_collectors(struct SymmetryBasisCollector *collectors,
   free(collectors);
 }
 
+#ifdef MPI
+static int create_symmetry_basis_vector_type(MPI_Datatype *vector_type)
+{
+  struct SymmetryBasisVector sample;
+  int block_lengths[6] = {1, 1, 1, 1, 1, 1};
+  MPI_Aint base;
+  MPI_Aint displacements[6];
+  MPI_Datatype member_types[6] = {
+    MPI_UNSIGNED_LONG, MPI_UNSIGNED, MPI_UNSIGNED,
+    MPI_DOUBLE, MPI_DOUBLE_COMPLEX, MPI_DOUBLE
+  };
+  MPI_Datatype packed_type;
+  int ierr;
+
+  MPI_Get_address(&sample, &base);
+  MPI_Get_address(&sample.rep_state, &displacements[0]);
+  MPI_Get_address(&sample.orbit_size, &displacements[1]);
+  MPI_Get_address(&sample.stabilizer_size, &displacements[2]);
+  MPI_Get_address(&sample.norm, &displacements[3]);
+  MPI_Get_address(&sample.stabilizer_character_sum, &displacements[4]);
+  MPI_Get_address(&sample.diagonal, &displacements[5]);
+  for (ierr = 0; ierr < 6; ierr++) displacements[ierr] -= base;
+
+  ierr = MPI_Type_create_struct(6, block_lengths, displacements, member_types,
+                                &packed_type);
+  if (ierr != MPI_SUCCESS) return -1;
+  ierr = MPI_Type_create_resized(packed_type, 0,
+                                 (MPI_Aint)sizeof(struct SymmetryBasisVector),
+                                 vector_type);
+  MPI_Type_free(&packed_type);
+  if (ierr != MPI_SUCCESS) return -1;
+  ierr = MPI_Type_commit(vector_type);
+  if (ierr != MPI_SUCCESS) {
+    MPI_Type_free(vector_type);
+    return -1;
+  }
+  return 0;
+}
+#endif
+
+static int gather_symmetry_basis(struct SymmetryBasisRuntime *sym)
+{
+  if (nproc <= 1) return 0;
+#ifdef MPI
+  int local_count;
+  int total_count = 0;
+  int local_error;
+  int global_error;
+  int ierr;
+  int rank;
+  int *counts = NULL;
+  int *displacements = NULL;
+  struct SymmetryBasisVector *global_basis = NULL;
+  MPI_Datatype vector_type = MPI_DATATYPE_NULL;
+
+  local_error = sym->dim > (unsigned long int)INT_MAX ? 1 : 0;
+  counts = (int *)malloc((size_t)nproc * sizeof(*counts));
+  displacements = (int *)malloc((size_t)nproc * sizeof(*displacements));
+  if (counts == NULL || displacements == NULL) local_error = 1;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  local_count = (int)sym->dim;
+  ierr = MPI_Allgather(&local_count, 1, MPI_INT,
+                       counts, 1, MPI_INT, MPI_COMM_WORLD);
+  if (ierr != MPI_SUCCESS) goto fail;
+  for (rank = 0; rank < nproc; rank++) {
+    if (counts[rank] < 0 || counts[rank] > INT_MAX - total_count) {
+      local_error = 1;
+      break;
+    }
+    displacements[rank] = total_count;
+    total_count += counts[rank];
+  }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  if ((unsigned long int)total_count >
+      SIZE_MAX / sizeof(*global_basis) - 1UL) {
+    local_error = 1;
+  } else {
+    global_basis = (struct SymmetryBasisVector *)calloc(
+        (size_t)total_count + 1U, sizeof(*global_basis));
+    if (global_basis == NULL) local_error = 1;
+  }
+  if (create_symmetry_basis_vector_type(&vector_type) != 0) local_error = 1;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  ierr = MPI_Allgatherv(local_count > 0 ? sym->basis + 1 : sym->basis,
+                        local_count, vector_type,
+                        global_basis + 1, counts, displacements, vector_type,
+                        MPI_COMM_WORLD);
+  if (ierr != MPI_SUCCESS) goto fail;
+
+  MPI_Type_free(&vector_type);
+  free(counts);
+  free(displacements);
+  free(sym->basis);
+  sym->basis = global_basis;
+  sym->dim = (unsigned long int)total_count;
+  sym->capacity = sym->dim;
+  sym->basis_gather_entries = (unsigned long long)total_count;
+  sym->basis_gather_bytes =
+      (unsigned long long)total_count * sizeof(*global_basis);
+  return 0;
+
+fail:
+  if (vector_type != MPI_DATATYPE_NULL) MPI_Type_free(&vector_type);
+  free(global_basis);
+  free(counts);
+  free(displacements);
+  return -1;
+#else
+  (void)sym;
+  return -1;
+#endif
+}
+
 int BuildSymmetryBasis(struct BindStruct *X)
 {
   unsigned long int raw, full_dim;
+  unsigned long int local_raw_index;
+  unsigned long int rank_raw_count;
+  unsigned long int distribution_chunk;
   unsigned long int basis_offset;
+  unsigned long int global_representative_candidates;
   int collector_count = 1;
   int actual_thread_count = 1;
+  int local_error = 0;
+  int global_error;
   int thread;
   struct SymmetryBasisCollector *collectors = NULL;
   struct SymmetryBasisRuntime *sym;
@@ -500,12 +669,19 @@ int BuildSymmetryBasis(struct BindStruct *X)
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
   full_dim = X->Check.idim_max;
   sym = (struct SymmetryBasisRuntime *)calloc(1, sizeof(*sym));
-  if (sym == NULL) return -1;
+  global_error = SumMPI_i(sym == NULL ? 1 : 0);
+  if (global_error != 0) {
+    free(sym);
+    return -1;
+  }
 
   sym->enabled = TRUE;
   sym->nsite = X->Def.Nsite;
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
+  distribution_chunk = symmetry_distribution_chunk(full_dim, nproc);
+  rank_raw_count = symmetry_rank_raw_count(full_dim, distribution_chunk,
+                                           myrank, nproc);
 
 #ifdef _OPENMP
   collector_count = omp_get_max_threads();
@@ -513,11 +689,12 @@ int BuildSymmetryBasis(struct BindStruct *X)
   if (collector_count < 1) goto fail;
   collectors = (struct SymmetryBasisCollector *)calloc(
       (size_t)collector_count, sizeof(*collectors));
-  if (collectors == NULL) goto fail;
+  global_error = SumMPI_i(collectors == NULL ? 1 : 0);
+  if (global_error != 0) goto fail;
 
   StartTimer(1110);
 #ifdef _OPENMP
-#pragma omp parallel shared(actual_thread_count, collectors, X, full_dim)
+#pragma omp parallel shared(actual_thread_count, collectors, X, rank_raw_count, distribution_chunk)
 #endif
   {
     int thread_id = 0;
@@ -531,9 +708,11 @@ int BuildSymmetryBasis(struct BindStruct *X)
 #ifdef _OPENMP
     /* Cyclic chunks spread representative-heavy regions while retaining
        locality in list_1 and list_Diagonal. */
-#pragma omp for schedule(static, SYMMETRY_BASIS_OMP_CHUNK)
+#pragma omp for schedule(static, distribution_chunk)
 #endif
-    for (raw = 1; raw <= full_dim; raw++) {
+    for (local_raw_index = 0UL; local_raw_index < rank_raw_count;
+         local_raw_index++) {
+      unsigned long int raw_index;
       unsigned long int state;
       int is_representative = FALSE;
       unsigned int orbit_size = 0;
@@ -542,8 +721,10 @@ int BuildSymmetryBasis(struct BindStruct *X)
       double diagonal;
       if (collector->error != 0) continue;
       collector->raw_states++;
-      state = list_1[raw];
-      diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
+      raw_index = symmetry_rank_raw_index(local_raw_index, distribution_chunk,
+                                          myrank, nproc);
+      state = list_1[raw_index];
+      diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw_index] : 0.0;
       if (analyze_basis_candidate(&X->Def, state, &is_representative,
                                   &orbit_size, &stabilizer_size,
                                   &stabilizer_sum,
@@ -567,10 +748,8 @@ int BuildSymmetryBasis(struct BindStruct *X)
     struct SymmetryBasisCollector *collector = &collectors[thread];
     if (collector->error != 0 ||
         sym->dim > ULONG_MAX - collector->count) {
-      StopTimer(1110);
-      free_basis_collectors(collectors, collector_count);
-      collectors = NULL;
-      goto fail;
+      local_error = 1;
+      continue;
     }
     sym->dim += collector->count;
     sym->basis_raw_states += collector->raw_states;
@@ -591,19 +770,26 @@ int BuildSymmetryBasis(struct BindStruct *X)
     if (collector->transform_calls > sym->basis_thread_transform_calls_max)
       sym->basis_thread_transform_calls_max = collector->transform_calls;
   }
-  sym->basis_thread_count = (unsigned int)actual_thread_count;
-  sym->basis_orbit_metadata_calls =
-      sym->basis_representative_candidates;
-
-  if (sym->dim > SIZE_MAX / sizeof(*sym->basis) - 1UL) {
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) {
     StopTimer(1110);
     free_basis_collectors(collectors, collector_count);
     collectors = NULL;
     goto fail;
   }
-  sym->basis = (struct SymmetryBasisVector *)calloc(
-      (size_t)sym->dim + 1U, sizeof(*sym->basis));
-  if (sym->basis == NULL) {
+  sym->basis_thread_count = (unsigned int)actual_thread_count;
+  sym->basis_orbit_metadata_calls =
+      sym->basis_representative_candidates;
+
+  if (sym->dim > SIZE_MAX / sizeof(*sym->basis) - 1UL) {
+    local_error = 1;
+  } else {
+    sym->basis = (struct SymmetryBasisVector *)calloc(
+        (size_t)sym->dim + 1U, sizeof(*sym->basis));
+    if (sym->basis == NULL) local_error = 1;
+  }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) {
     StopTimer(1110);
     free_basis_collectors(collectors, collector_count);
     collectors = NULL;
@@ -621,6 +807,12 @@ int BuildSymmetryBasis(struct BindStruct *X)
   }
   free_basis_collectors(collectors, collector_count);
   collectors = NULL;
+  if (gather_symmetry_basis(sym) != 0) {
+    StopTimer(1110);
+    goto fail;
+  }
+  global_representative_candidates = SumMPI_li(
+      (unsigned long int)sym->basis_representative_candidates);
   StopTimer(1110);
 
   StartTimer(1111);
@@ -630,7 +822,9 @@ int BuildSymmetryBasis(struct BindStruct *X)
   }
   StopTimer(1111);
   StartTimer(1112);
-  if (build_rep_hash(sym) != 0) {
+  local_error = build_rep_hash(sym) != 0 ? 1 : 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) {
     StopTimer(1112);
     goto fail;
   }
@@ -643,7 +837,9 @@ int BuildSymmetryBasis(struct BindStruct *X)
   }
   sym->sym_diagonal = (double *)calloc((size_t)sym->dim + 1U,
                                       sizeof(*sym->sym_diagonal));
-  if (sym->sym_diagonal == NULL) {
+  local_error = sym->sym_diagonal == NULL ? 1 : 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) {
     StopTimer(1113);
     goto fail;
   }
@@ -658,7 +854,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
           "Symmetry basis build: raw_states=%lu representative_candidates=%lu "
           "compatible_survivors=%lu\n",
           sym->full_dim,
-          (unsigned long int)sym->basis_representative_candidates, sym->dim);
+          global_representative_candidates, sym->dim);
   if (sym->dim == 0) {
     fprintf(stdoutMPI, "Error: TransSym sector has zero basis dimension.\n");
     FreeSymmetryBasis(sym);

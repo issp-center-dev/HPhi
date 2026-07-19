@@ -35,6 +35,16 @@ int BcastMPI_i(int root, int value)
   return value;
 }
 
+int SumMPI_i(int value)
+{
+  return value;
+}
+
+unsigned long int SumMPI_li(unsigned long int value)
+{
+  return value;
+}
+
 static int perm_storage[6][6];
 static int anti_storage[6][6];
 static int *perm_rows[6];

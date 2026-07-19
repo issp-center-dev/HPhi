@@ -52,6 +52,8 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_thread_representative_candidates_max;
   unsigned long long basis_thread_compatible_survivors_max;
   unsigned long long basis_thread_transform_calls_max;
+  unsigned long long basis_gather_entries;
+  unsigned long long basis_gather_bytes;
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;
