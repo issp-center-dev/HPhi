@@ -32,8 +32,31 @@ unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
   return out;
 }
 
-static int parity_sign_from_mapped_orbitals(const unsigned int *mapped,
-                                            unsigned int count)
+#if (!defined(__GNUC__) && !defined(__clang__)) || \
+    defined(HPHI_SYMMETRY_PARITY_VERIFY)
+static unsigned int portable_popcount_ulong(unsigned long int value)
+{
+  unsigned int count = 0U;
+  while (value != 0UL) {
+    value &= value - 1UL;
+    count++;
+  }
+  return count;
+}
+#endif
+
+static unsigned int symmetry_popcount_ulong(unsigned long int value)
+{
+#if defined(__GNUC__) || defined(__clang__)
+  return (unsigned int)__builtin_popcountl(value);
+#else
+  return portable_popcount_ulong(value);
+#endif
+}
+
+#ifdef HPHI_SYMMETRY_PARITY_VERIFY
+static int reference_parity_sign_from_mapped_orbitals(
+    const unsigned int *mapped, unsigned int count)
 {
   unsigned int i, j;
   unsigned int inversions = 0;
@@ -44,6 +67,7 @@ static int parity_sign_from_mapped_orbitals(const unsigned int *mapped,
   }
   return (inversions % 2U == 0U) ? 1 : -1;
 }
+#endif
 
 static int apply_fermion_site_permutation(unsigned long int state,
                                           const int *perm,
@@ -54,8 +78,12 @@ static int apply_fermion_site_permutation(unsigned long int state,
   const unsigned int max_bits = (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
   unsigned int norb = nsite * orbitals_per_site;
   unsigned int orb;
+#ifdef HPHI_SYMMETRY_PARITY_VERIFY
   unsigned int count = 0;
   unsigned int mapped_orbitals[sizeof(unsigned long int) * CHAR_BIT];
+#endif
+  unsigned int inversion_parity = 0U;
+  unsigned long int seen = 0UL;
   unsigned long int out = 0UL;
   if (orbitals_per_site == 0U || nsite > max_bits / orbitals_per_site) return -1;
   if (norb > max_bits) return -1;
@@ -65,13 +93,33 @@ static int apply_fermion_site_permutation(unsigned long int state,
       unsigned int spin = orb % orbitals_per_site;
       unsigned int target_site = (unsigned int)perm[site];
       unsigned int mapped = orbitals_per_site * target_site + spin;
+      unsigned long int higher_seen;
       if (mapped >= max_bits) return -1;
+#ifdef HPHI_SYMMETRY_PARITY_VERIFY
       mapped_orbitals[count++] = mapped;
+#endif
+      /* Split the shift so mapped == max_bits - 1 never shifts by the
+         word width. */
+      higher_seen = (seen >> mapped) >> 1U;
+      inversion_parity ^= symmetry_popcount_ulong(higher_seen) & 1U;
+#ifdef HPHI_SYMMETRY_PARITY_VERIFY
+      if (symmetry_popcount_ulong(higher_seen) !=
+          portable_popcount_ulong(higher_seen)) {
+        return -1;
+      }
+#endif
+      seen |= 1UL << mapped;
       out |= (1UL << mapped);
     }
   }
   result->state = out;
-  result->amplitude = (double)parity_sign_from_mapped_orbitals(mapped_orbitals, count);
+  result->amplitude = inversion_parity == 0U ? 1.0 : -1.0;
+#ifdef HPHI_SYMMETRY_PARITY_VERIFY
+  if ((int)result->amplitude !=
+      reference_parity_sign_from_mapped_orbitals(mapped_orbitals, count)) {
+    return -1;
+  }
+#endif
   return 0;
 }
 

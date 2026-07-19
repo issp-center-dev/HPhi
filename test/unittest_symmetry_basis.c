@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
@@ -652,6 +653,131 @@ static void assert_complex_close(double complex got,
             label, creal(got), cimag(got), creal(expected), cimag(expected));
     exit(1);
   }
+}
+
+static void reference_fermion_permutation(unsigned long int state,
+                                          const int *perm,
+                                          unsigned int nsite,
+                                          unsigned int orbitals_per_site,
+                                          unsigned long int *out_state,
+                                          int *sign)
+{
+  unsigned int mapped[sizeof(unsigned long int) * CHAR_BIT];
+  unsigned int count = 0U;
+  unsigned int inversions = 0U;
+  unsigned int orb;
+  unsigned int i, j;
+  unsigned int norb = nsite * orbitals_per_site;
+  *out_state = 0UL;
+  for (orb = 0U; orb < norb; orb++) {
+    if ((state & (1UL << orb)) != 0UL) {
+      unsigned int site = orb / orbitals_per_site;
+      unsigned int flavor = orb % orbitals_per_site;
+      unsigned int target = orbitals_per_site * (unsigned int)perm[site] +
+                            flavor;
+      mapped[count++] = target;
+      *out_state |= 1UL << target;
+    }
+  }
+  for (i = 0U; i < count; i++) {
+    for (j = i + 1U; j < count; j++) {
+      if (mapped[i] > mapped[j]) inversions++;
+    }
+  }
+  *sign = (inversions & 1U) == 0U ? 1 : -1;
+}
+
+static void assert_fermion_permutation_states(const int *perm,
+                                              unsigned int nsite,
+                                              unsigned int orbitals_per_site,
+                                              int model,
+                                              const char *label)
+{
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int *perm_rows_local[1];
+  unsigned int norb = nsite * orbitals_per_site;
+  unsigned long int state;
+  unsigned long int limit = 1UL << norb;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = (int *)perm;
+  def.Nsite = nsite;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
+  def.iCalcModel = model;
+  for (state = 0UL; state < limit; state++) {
+    unsigned long int expected_state;
+    int expected_sign;
+    reference_fermion_permutation(state, perm, nsite, orbitals_per_site,
+                                  &expected_state, &expected_sign);
+    if (SymmetryApplyToState(&def, state, 0U, &result) != 0 ||
+        result.state != expected_state ||
+        result.amplitude != (double)expected_sign) {
+      fprintf(stderr, "%s: state=%#lx expected_state=%#lx expected_sign=%d\n",
+              label, state, expected_state, expected_sign);
+      exit(1);
+    }
+  }
+}
+
+static void enumerate_fermion_permutations(int *perm,
+                                           int *used,
+                                           unsigned int nsite,
+                                           unsigned int depth)
+{
+  unsigned int target;
+  if (depth == nsite) {
+    assert_fermion_permutation_states(perm, nsite, 1U, SpinlessFermion,
+                                      "spinless exhaustive permutation parity");
+    assert_fermion_permutation_states(perm, nsite, 2U, Hubbard,
+                                      "Hubbard exhaustive permutation parity");
+    return;
+  }
+  for (target = 0U; target < nsite; target++) {
+    if (used[target] != 0) continue;
+    used[target] = 1;
+    perm[depth] = (int)target;
+    enumerate_fermion_permutations(perm, used, nsite, depth + 1U);
+    used[target] = 0;
+  }
+}
+
+static void assert_exhaustive_fermion_permutation_parity(void)
+{
+  int perm[4] = {0, 0, 0, 0};
+  int used[4] = {0, 0, 0, 0};
+  enumerate_fermion_permutations(perm, used, 4U, 0U);
+}
+
+static void assert_fermion_parity_word_boundary(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int permutation[32];
+  int *perm_rows_local[1];
+  unsigned long int state;
+  unsigned long int expected_state;
+  int expected_sign;
+  unsigned int site;
+  if (word_bits < 64U) return;
+  for (site = 0U; site < 32U; site++) permutation[site] = 31 - (int)site;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = permutation;
+  def.Nsite = 32U;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
+  def.iCalcModel = Hubbard;
+  state = (1UL << 1U) | (1UL << 62U);
+  reference_fermion_permutation(state, permutation, 32U, 2U,
+                                &expected_state, &expected_sign);
+  assert_int_eq(SymmetryApplyToState(&def, state, 0U, &result), 0,
+                "Hubbard parity handles mapped orbital 63");
+  assert_ulong_eq(result.state, expected_state,
+                  "Hubbard parity boundary transformed state");
+  assert_int_eq((int)result.amplitude, expected_sign,
+                "Hubbard parity boundary sign");
 }
 
 struct LegacyVectorContext {
@@ -1309,6 +1435,8 @@ int main(void)
 {
   int shift4[4] = {1, 2, 3, 0};
   stdoutMPI = stderr;
+  assert_exhaustive_fermion_permutation_parity();
+  assert_fermion_parity_word_boundary();
   assert_ulong_eq(SymmetryApplyToSpinBits(0x1UL, shift4, 4), 0x2UL, "single bit shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x9UL, shift4, 4), 0x3UL, "wrap shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x6UL, shift4, 4), 0xcUL, "two bit shift");
