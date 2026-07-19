@@ -104,7 +104,15 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "All", 0);
   StampTime(fp, "  sz", 1000);
   StampTime(fp, "  symmetry basis build/activate", 1100);
+  StampTime(fp, "    symmetry basis raw enumeration", 1110);
+  StampTime(fp, "    symmetry basis sort/merge", 1111);
+  StampTime(fp, "    symmetry representative hash build", 1112);
+  StampTime(fp, "    symmetry diagonal materialization", 1113);
+  StampTime(fp, "    symmetry dimension activation/validation", 1114);
   StampTime(fp, "  symmetry matvec plan build", 1101);
+  StampTime(fp, "    symmetry plan count/prefix", 1120);
+  StampTime(fp, "    symmetry plan storage allocation", 1121);
+  StampTime(fp, "    symmetry plan fill", 1122);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -126,6 +134,11 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "      mltply      in LanczosEigenValue", 4101);
       StampTime(fp, "      vec12       in LanczosEigenValue", 4102);
       StampTime(fp, "      DSEVvalue   in LanczosEigenValue", 4103);
+      StampTime(fp, "      initial vector zero fill", 4110);
+      StampTime(fp, "      initial vector random fill", 4111);
+      StampTime(fp, "      initial vector local norm", 4112);
+      StampTime(fp, "      initial vector MPI reduction", 4113);
+      StampTime(fp, "      initial vector normalization", 4114);
       StampTime(fp, "    LanczosEigenVector", 4200);
       StampTime(fp, "      mltply      in LanczosEigenVector", 4201);
       StampTime(fp, "    expec_energy_flct", 4300);

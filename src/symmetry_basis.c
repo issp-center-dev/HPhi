@@ -6,6 +6,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
 #include "struct.h"
+#include "CalcTime.h"
 #include "wrapperMPI.h"
 
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
@@ -437,6 +438,7 @@ static int store_basis_vector(struct SymmetryBasisRuntime *sym,
 int BuildSymmetryBasis(struct BindStruct *X)
 {
   unsigned long int raw, full_dim;
+  unsigned long int representative_candidates = 0UL;
   struct SymmetryBasisRuntime *sym;
 
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
@@ -449,6 +451,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
 
+  StartTimer(1110);
   for (raw = 1; raw <= full_dim; raw++) {
     unsigned long int state = list_1[raw];
     unsigned long int rep_state = 0UL;
@@ -456,33 +459,66 @@ int BuildSymmetryBasis(struct BindStruct *X)
     unsigned int stabilizer_size = 0;
     double complex stabilizer_sum = 0.0;
     double diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw] : 0.0;
-    if (find_representative_state(&X->Def, state, &rep_state) != 0) goto fail;
+    if (find_representative_state(&X->Def, state, &rep_state) != 0) {
+      StopTimer(1110);
+      goto fail;
+    }
     if (state != rep_state) continue;
+    representative_candidates++;
     if (compute_orbit_metadata(&X->Def, rep_state, &orbit_size, &stabilizer_size,
-                               &stabilizer_sum) != 0) goto fail;
+                               &stabilizer_sum) != 0) {
+      StopTimer(1110);
+      goto fail;
+    }
     if (cabs(stabilizer_sum) < 0.5) continue;
     sym->dim++;
-    if (ensure_basis_capacity(sym, sym->dim) != 0) goto fail;
+    if (ensure_basis_capacity(sym, sym->dim) != 0) {
+      StopTimer(1110);
+      goto fail;
+    }
     if (store_basis_vector(sym, sym->dim, rep_state, orbit_size, stabilizer_size,
-                           stabilizer_sum, diagonal) != 0) goto fail;
+                           stabilizer_sum, diagonal) != 0) {
+      StopTimer(1110);
+      goto fail;
+    }
   }
+  StopTimer(1110);
 
+  StartTimer(1111);
   if (sym->dim > 1) {
     qsort(sym->basis + 1, sym->dim, sizeof(struct SymmetryBasisVector),
           compare_basis_rep_state);
   }
-  if (build_rep_hash(sym) != 0) goto fail;
+  StopTimer(1111);
+  StartTimer(1112);
+  if (build_rep_hash(sym) != 0) {
+    StopTimer(1112);
+    goto fail;
+  }
+  StopTimer(1112);
 
-  if (sym->dim > SIZE_MAX / sizeof(*sym->sym_diagonal) - 1UL) goto fail;
+  StartTimer(1113);
+  if (sym->dim > SIZE_MAX / sizeof(*sym->sym_diagonal) - 1UL) {
+    StopTimer(1113);
+    goto fail;
+  }
   sym->sym_diagonal = (double *)calloc((size_t)sym->dim + 1U,
                                       sizeof(*sym->sym_diagonal));
-  if (sym->sym_diagonal == NULL) goto fail;
+  if (sym->sym_diagonal == NULL) {
+    StopTimer(1113);
+    goto fail;
+  }
   for (raw = 1; raw <= sym->dim; raw++) {
     sym->sym_diagonal[raw] = sym->basis[raw].diagonal;
   }
+  StopTimer(1113);
 
   fprintf(stdoutMPI, "Symmetry basis: raw_dim=%lu sector_dim=%lu group_order=%u\n",
           sym->full_dim, sym->dim, sym->group_order);
+  fprintf(stdoutMPI,
+          "Symmetry basis build: raw_states=%lu representative_candidates=%lu "
+          "compatible_survivors=%lu\n",
+          sym->full_dim, representative_candidates, sym->dim);
   if (sym->dim == 0) {
     fprintf(stdoutMPI, "Error: TransSym sector has zero basis dimension.\n");
     FreeSymmetryBasis(sym);

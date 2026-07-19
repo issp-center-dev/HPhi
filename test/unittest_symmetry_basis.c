@@ -19,6 +19,16 @@ long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
 static unsigned long int test_raw_dim = 0;
 
+void StartTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
+void StopTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
 int BcastMPI_i(int root, int value)
 {
   (void)root;

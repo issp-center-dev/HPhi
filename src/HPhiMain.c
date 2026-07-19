@@ -773,14 +773,18 @@ int main(int argc, char* argv[]){
         StopTimer(1100);
         exitMPI(-1);
       }
+      StartTimer(1114);
       if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
+        StopTimer(1114);
         StopTimer(1100);
         exitMPI(-1);
       }
       if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
+        StopTimer(1114);
         StopTimer(1100);
         exitMPI(-1);
       }
+      StopTimer(1114);
       StopTimer(1100);
       StartTimer(1101);
       if (BuildSymmetryMatvecPlan(&(X.Bind)) != 0) {

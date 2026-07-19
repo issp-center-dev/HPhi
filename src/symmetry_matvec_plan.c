@@ -4,6 +4,7 @@
 #include "bitcalc.h"
 #include "global.h"
 #include "struct.h"
+#include "CalcTime.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
 #include "wrapperMPI.h"
@@ -276,19 +277,29 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
                                   sizeof(*plan->row_ptr));
   if (plan->row_ptr == NULL) goto fail;
 
+  StartTimer(1120);
   for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
     unsigned long int alpha = plan->local_offset + local_row + 1UL;
     struct CountEntriesContext count = {0U};
-    if (SymmetryEnumerateColumn(X, alpha, count_entry, &count) != 0) goto fail;
-    if (plan->row_ptr[local_row] > SIZE_MAX - count.count) goto fail;
+    if (SymmetryEnumerateColumn(X, alpha, count_entry, &count) != 0) {
+      StopTimer(1120);
+      goto fail;
+    }
+    if (plan->row_ptr[local_row] > SIZE_MAX - count.count) {
+      StopTimer(1120);
+      goto fail;
+    }
     plan->row_ptr[local_row + 1UL] = plan->row_ptr[local_row] + count.count;
     if (count.count < min_row_nnz) min_row_nnz = count.count;
     if (count.count > max_row_nnz) max_row_nnz = count.count;
   }
+  StopTimer(1120);
   plan->nnz = plan->row_ptr[plan->local_dim];
 
+  StartTimer(1121);
   if (plan->nnz > SIZE_MAX / sizeof(*plan->col_index) ||
       plan->nnz > SIZE_MAX / sizeof(*plan->values)) {
+    StopTimer(1121);
     goto fail;
   }
   col_bytes = plan->nnz * sizeof(*plan->col_index);
@@ -296,9 +307,14 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   if (plan->nnz > 0U) {
     plan->col_index = (unsigned long int *)malloc(col_bytes);
     plan->values = (double complex *)malloc(value_bytes);
-    if (plan->col_index == NULL || plan->values == NULL) goto fail;
+    if (plan->col_index == NULL || plan->values == NULL) {
+      StopTimer(1121);
+      goto fail;
+    }
   }
+  StopTimer(1121);
 
+  StartTimer(1122);
   for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
     unsigned long int alpha = plan->local_offset + local_row + 1UL;
     struct FillEntriesContext fill;
@@ -307,9 +323,11 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     fill.end = plan->row_ptr[local_row + 1UL];
     if (SymmetryEnumerateColumn(X, alpha, fill_transposed_entry, &fill) != 0 ||
         fill.next != fill.end) {
+      StopTimer(1122);
       goto fail;
     }
   }
+  StopTimer(1122);
 
   if (row_ptr_bytes > SIZE_MAX - col_bytes ||
       row_ptr_bytes + col_bytes > SIZE_MAX - value_bytes) {
