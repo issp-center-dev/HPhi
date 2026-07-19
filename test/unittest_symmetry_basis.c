@@ -4,6 +4,7 @@
 #include <math.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
+#include "symmetry_matvec_plan.h"
 #include "struct.h"
 
 FILE *stdoutMPI = NULL;
@@ -17,6 +18,12 @@ int g_tj_odd_split_guard_enabled = 0;
 long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
 static unsigned long int test_raw_dim = 0;
+
+int BcastMPI_i(int root, int value)
+{
+  (void)root;
+  return value;
+}
 
 static int perm_storage[6][6];
 static int anti_storage[6][6];
@@ -623,6 +630,262 @@ static void assert_complex_close(double complex got,
   }
 }
 
+struct LegacyVectorContext {
+  double complex *output;
+  double complex input_amp;
+  unsigned long int dim;
+};
+
+static int accumulate_legacy_vector_entry(unsigned long int out_index,
+                                          double complex coefficient,
+                                          void *context)
+{
+  struct LegacyVectorContext *legacy = (struct LegacyVectorContext *)context;
+  if (out_index == 0UL || out_index > legacy->dim) return -1;
+  legacy->output[out_index] += coefficient * legacy->input_amp;
+  return 0;
+}
+
+static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
+                                                     int require_duplicate,
+                                                     const char *label)
+{
+  unsigned long int alpha, beta;
+  size_t p;
+  size_t matrix_size;
+  int duplicate_found = 0;
+  double difference_norm2 = 0.0;
+  double legacy_norm2 = 0.0;
+  double complex expected_prdct = 0.0;
+  double complex plan_prdct = 0.0;
+  double complex *dense;
+  double complex *input;
+  double complex *legacy_output;
+  double complex *output;
+  unsigned int *multiplicity;
+  struct SymmetryMatvecPlan *plan;
+
+  if (ActivateSymmetryBasisDimension(X) != 0 || BuildSymmetryMatvecPlan(X) != 0) {
+    fprintf(stderr, "%s: plan setup failed\n", label);
+    exit(1);
+  }
+  plan = X->Sym->matvec_plan;
+  assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_ulong_eq(plan->dim, X->Sym->dim, label);
+  assert_ulong_eq(plan->local_offset, 0UL, label);
+  assert_ulong_eq(plan->local_dim, X->Sym->dim, label);
+
+  if (plan->dim > SIZE_MAX / plan->dim) {
+    fprintf(stderr, "%s: dense matrix size overflow\n", label);
+    exit(1);
+  }
+  matrix_size = (size_t)plan->dim * (size_t)plan->dim;
+  dense = (double complex *)calloc(matrix_size, sizeof(*dense));
+  multiplicity = (unsigned int *)calloc(matrix_size, sizeof(*multiplicity));
+  input = (double complex *)calloc((size_t)plan->dim + 1U, sizeof(*input));
+  legacy_output = (double complex *)calloc((size_t)plan->dim + 1U,
+                                           sizeof(*legacy_output));
+  output = (double complex *)calloc((size_t)plan->dim + 1U, sizeof(*output));
+  if (dense == NULL || multiplicity == NULL || input == NULL ||
+      legacy_output == NULL || output == NULL) {
+    fprintf(stderr, "%s: dense test allocation failed\n", label);
+    exit(1);
+  }
+
+  for (alpha = 1UL; alpha <= plan->dim; alpha++) {
+    unsigned long int local_row = alpha - 1UL;
+    for (p = plan->row_ptr[local_row]; p < plan->row_ptr[local_row + 1UL]; p++) {
+      size_t index = (size_t)(alpha - 1UL) * (size_t)plan->dim +
+                     (size_t)(plan->col_index[p] - 1UL);
+      dense[index] += plan->values[p];
+      multiplicity[index]++;
+      if (multiplicity[index] > 1U) duplicate_found = 1;
+    }
+  }
+  if (require_duplicate != 0) assert_int_eq(duplicate_found, 1, label);
+
+  for (alpha = 1UL; alpha <= plan->dim; alpha++) {
+    for (beta = 1UL; beta <= plan->dim; beta++) {
+      double complex plan_value = dense[(size_t)(alpha - 1UL) * (size_t)plan->dim +
+                                        (size_t)(beta - 1UL)];
+      double complex expected = canonicalized_matrix_element(X, alpha, beta);
+      double complex transpose = dense[(size_t)(beta - 1UL) * (size_t)plan->dim +
+                                       (size_t)(alpha - 1UL)];
+      assert_complex_close(plan_value, expected, 1.0e-12, label);
+      assert_complex_close(plan_value, conj(transpose), 1.0e-12, label);
+    }
+  }
+
+  for (beta = 1UL; beta <= plan->dim; beta++) {
+    input[beta] = 0.125 * (double)beta + I * 0.0625 * (double)(beta + 1UL);
+  }
+  {
+    struct LegacyVectorContext legacy;
+    legacy.output = legacy_output;
+    legacy.dim = plan->dim;
+    for (beta = 1UL; beta <= plan->dim; beta++) {
+      legacy.input_amp = input[beta];
+      if (SymmetryEnumerateColumn(X, beta, accumulate_legacy_vector_entry,
+                                  &legacy) != 0) {
+        fprintf(stderr, "%s: legacy vector scan failed\n", label);
+        exit(1);
+      }
+    }
+  }
+  if (ApplySymmetryMatvecPlan(X, output, input, &plan_prdct) != 0) {
+    fprintf(stderr, "%s: plan apply failed\n", label);
+    exit(1);
+  }
+  for (alpha = 1UL; alpha <= plan->dim; alpha++) {
+    double complex expected = 0.0;
+    for (beta = 1UL; beta <= plan->dim; beta++) {
+      expected += dense[(size_t)(alpha - 1UL) * (size_t)plan->dim +
+                        (size_t)(beta - 1UL)] * input[beta];
+    }
+    assert_complex_close(output[alpha], expected, 1.0e-12, label);
+    assert_complex_close(output[alpha], legacy_output[alpha], 1.0e-12, label);
+    difference_norm2 += pow(cabs(output[alpha] - legacy_output[alpha]), 2.0);
+    legacy_norm2 += pow(cabs(legacy_output[alpha]), 2.0);
+    expected_prdct += conj(input[alpha]) * expected;
+  }
+  if (sqrt(difference_norm2) / fmax(sqrt(legacy_norm2), 1.0e-300) > 1.0e-12) {
+    fprintf(stderr, "%s: plan/legacy relative L2 error exceeds 1e-12\n", label);
+    exit(1);
+  }
+  assert_complex_close(plan_prdct, expected_prdct, 1.0e-12, label);
+
+  X->Sym->local_offset++;
+  assert_int_eq(ApplySymmetryMatvecPlan(X, output, input, &plan_prdct), -1,
+                "plan snapshot guard");
+  X->Sym->local_offset--;
+
+  free(dense);
+  free(multiplicity);
+  free(input);
+  free(legacy_output);
+  free(output);
+}
+
+static void assert_spin_plan(unsigned int nsite,
+                             unsigned int nup,
+                             unsigned int momentum_index,
+                             double diagonal_coupling,
+                             const char *label)
+{
+  struct BindStruct X;
+  setup_bind(&X, nsite, nup, momentum_index);
+  if (diagonal_coupling != 0.0) set_ising_ring_diagonal(nsite, diagonal_coupling);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_plan_matches_canonicalized_matrix(&X, 1, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_spin_diagonal_only_plan(const char *label)
+{
+  struct BindStruct X;
+  setup_bind(&X, 6, 3, 1);
+  X.Def.NExchangeCoupling = 0U;
+  set_ising_ring_diagonal(6, 0.37);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_plan_matches_canonicalized_matrix(&X, 0, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_spinless_plan(unsigned int nsite,
+                                 unsigned int ne,
+                                 unsigned int momentum_index,
+                                 double density_coupling,
+                                 const char *label)
+{
+  struct BindStruct X;
+  setup_spinless_bind(&X, nsite, ne, momentum_index);
+  setup_spinless_transfer_ring(&X.Def, nsite);
+  if (density_coupling != 0.0) {
+    setup_spinless_coulomb_ring(&X.Def, nsite, density_coupling);
+    set_spinless_coulomb_ring_diagonal(nsite, density_coupling);
+  }
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_plan_matches_canonicalized_matrix(&X, 0, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_hubbard_plan(unsigned int nsite,
+                                unsigned int nup,
+                                unsigned int ndown,
+                                unsigned int momentum_index,
+                                double coulomb_intra,
+                                const char *label)
+{
+  struct BindStruct X;
+  setup_hubbard_bind(&X, nsite, nup, ndown, momentum_index);
+  setup_hubbard_transfer_ring(&X.Def, nsite);
+  if (coulomb_intra != 0.0) {
+    setup_hubbard_coulomb_intra(&X.Def, nsite, coulomb_intra);
+  }
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  assert_plan_matches_canonicalized_matrix(&X, 0, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_zero_row_plan(const char *label)
+{
+  struct BindStruct X;
+  double complex input[2] = {0.0, 1.0};
+  double complex output[1] = {0.0};
+  double complex prdct = 1.0;
+  setup_bind(&X, 4, 2, 1);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  nproc = 2;
+  myrank = 1;
+  if (ActivateSymmetryBasisDimension(&X) != 0 || BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: zero-row plan setup failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->local_dim, 0UL, label);
+  assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
+  assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
+  assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
+  assert_complex_close(prdct, 0.0, 1.0e-12, label);
+  nproc = 1;
+  myrank = 0;
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static void assert_symmetry_dim(unsigned int nsite,
                                 unsigned int nup,
                                 unsigned int momentum_index,
@@ -1088,6 +1351,21 @@ int main(void)
                                           "C6 k=pi/3 Ising diagonal is orbit-invariant");
   assert_canonicalized_matrix_matches_raw(6, 3, 1, 1.0,
                                           "C6 k=pi/3 Ising canonicalized matrix matches raw reference");
+  assert_spin_plan(6, 3, 0, 1.0,
+                   "C6 k=0 Spin local-row plan matches canonicalized matrix");
+  assert_spin_plan(6, 3, 1, 1.0,
+                   "C6 k=pi/3 Spin local-row plan matches canonicalized matrix");
+  assert_spin_diagonal_only_plan(
+      "C6 k=pi/3 diagonal-only local-row plan matches canonicalized matrix");
+  assert_spinless_plan(6, 3, 0, 0.25,
+                       "SpinlessFermion C6 k=0 local-row plan matches canonicalized matrix");
+  assert_spinless_plan(6, 3, 1, 0.25,
+                       "SpinlessFermion C6 k=pi/3 local-row plan matches canonicalized matrix");
+  assert_hubbard_plan(4, 2, 2, 0, 0.5,
+                      "Hubbard C4 k=0 local-row plan matches canonicalized matrix");
+  assert_hubbard_plan(4, 2, 2, 1, 0.5,
+                      "Hubbard C4 k=pi/2 local-row plan matches canonicalized matrix");
+  assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");
   assert_hash_probe_lookup_handles_collision("representative hash probing handles collisions");

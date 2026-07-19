@@ -5,6 +5,7 @@
 
 struct BindStruct;
 struct DefineList;
+struct SymmetryMatvecPlan;
 
 struct SymmetryBasisVector {
   unsigned long int rep_state;
@@ -44,6 +45,8 @@ struct SymmetryBasisRuntime {
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;
+  int matvec_mode;
+  struct SymmetryMatvecPlan *matvec_plan;
 };
 
 int ValidateSymmetryGroupInput(const struct DefineList *def);

@@ -49,12 +49,16 @@ endmacro()
 add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
 target_include_directories(unittest_symmetry_basis
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(unittest_symmetry_basis PRIVATE DSFMT_MEXP=19937)
 target_link_libraries(unittest_symmetry_basis m)
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_basis OpenMP::OpenMP_C)
+endif()
 add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
