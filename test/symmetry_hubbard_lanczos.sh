@@ -214,6 +214,19 @@ assert_energy_matches_reference() {
     fi
 }
 
+assert_doublon_matches_reference() {
+    expected="$1"
+    log="$2"
+    doublon=`awk '$1 == "Doublon" {print $2; exit}' output/zvo_energy.dat`
+    test -n "${doublon}"
+    if ! awk -v a="${doublon}" -v b="${expected}" \
+        'BEGIN{d=a-b; if(d<0)d=-d; exit(d <= 1.0e-6 ? 0 : 1)}'; then
+        cat "${log}"
+        echo "Doublon mismatch: got ${doublon}, reference ${expected}"
+        exit 1
+    fi
+}
+
 expect_failure() {
     pattern="$1"
     log="$2"
@@ -248,6 +261,7 @@ run_mpi_symmetry_case() {
     label="$1"
     expected_energy="$2"
     expected_dim="$3"
+    expected_doublon="${4:-}"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
     if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
@@ -255,6 +269,9 @@ run_mpi_symmetry_case() {
         exit 1
     fi
     assert_energy_matches_reference "${expected_energy}" "${log_file}"
+    if [ -n "${expected_doublon}" ]; then
+        assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
+    fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
 }
 
@@ -262,10 +279,11 @@ run_mpi_if_available() {
     label="$1"
     expected_energy="$2"
     expected_dim="$3"
+    expected_doublon="${4:-}"
     if [ -n "${MPIRUN}" ]; then
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
-            run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim"
+            run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" "$expected_doublon"
         fi
     fi
 }
@@ -279,20 +297,23 @@ write_ref_namelist
 
 ../../src/HPhi -e namelist.def > hubbard_ref.log 2>&1
 ref_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+ref_doublon=`awk '$1 == "Doublon" {print $2; exit}' output/zvo_energy.dat`
 test -n "${ref_energy}"
+test -n "${ref_doublon}"
 rm -rf output
 
 write_k0_transsym
 write_sym_namelist yes
 ../../src/HPhi -e namelist.def > hubbard_k0.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_k0.log
 if grep -q "MPI site separation summary" hubbard_k0.log; then
     cat hubbard_k0.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-run_mpi_if_available k0 "${ref_energy}" 4
+run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 
 rm -rf output
 write_kpi2_transsym
@@ -314,8 +335,9 @@ write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
 ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-run_mpi_if_available k0_cg "${ref_energy}" 4
+run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 
 rm -rf output
