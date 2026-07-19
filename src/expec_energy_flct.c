@@ -40,6 +40,7 @@
 #include "expec_energy_flct.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "symmetry_basis.h"
 
 /**
  * @brief Calculate energy expectation value and variance
@@ -125,7 +126,7 @@ int expec_energy_flct(struct BindStruct *X){
   case tJGC:
   case Kondo:
   case KondoGC:
-      expec_energy_flct_Hubbard(X);
+      if (expec_energy_flct_Hubbard(X) != 0) return -1;
   break;
   
   case SpinGC:
@@ -369,7 +370,16 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     double tmp_v02;
     long unsigned int i_max,tmp_list_1;
     unsigned int l_ibit1,u_ibit1,i_32;
+    int use_symmetry_basis;
     i_max=X->Check.idim_max;
+
+    use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
+    if (use_symmetry_basis == TRUE &&
+        (X->Sym == NULL || X->Sym->enabled != TRUE || X->Sym->basis == NULL ||
+         X->Sym->local_offset > X->Sym->dim ||
+         i_max > X->Sym->dim - X->Sym->local_offset)) {
+        return -1;
+    }
 
     i_32   = (unsigned int)(pow(2,32)-1);
 
@@ -396,14 +406,19 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     }
 //[e]
 #pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0,list_1) \
-  firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32) \
+  firstprivate(i_max, X,myrank,is1_up_a,is1_down_a,is1_up_b,is1_down_b,i_32,use_symmetry_basis) \
   private(j, tmp_v02,D,N,Sz,isite1,tmp_list_1,bit_up,bit_down,bit_D,u_ibit1,l_ibit1,ibit_up,ibit_down,ibit_D)
     for(j = 1; j <= i_max; j++) {
         tmp_v02 = conj(v0[j]) * v0[j];
         bit_up = 0;
         bit_down = 0;
         bit_D = 0;
-        tmp_list_1 = list_1[j];
+        if (use_symmetry_basis == TRUE) {
+            unsigned long int global_index = X->Sym->local_offset + j;
+            tmp_list_1 = X->Sym->basis[global_index].rep_state;
+        } else {
+            tmp_list_1 = list_1[j];
+        }
 // isite1 > X->Def.Nsite
         ibit_up = (unsigned long int) myrank & is1_up_a;
         u_ibit1 = ibit_up >> 32;
