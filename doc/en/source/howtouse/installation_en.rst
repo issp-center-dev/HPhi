@@ -41,6 +41,7 @@ If ELPA is installed in a non-standard path, specify its location via ``-DELPA_R
      observable-collection step (``MPI_Gatherv``) with the default
      tuned algorithm. Set ``I_MPI_ADJUST_GATHERV=3`` (works multi-node)
      or ``I_MPI_FABRICS=shm`` (single node only) as a workaround.
+
 Here, we set a path to :math:`{\mathcal H}\Phi` as ``$PathTohphi``
 and to a build directory as ``$HOME/build/hphi``.
 After compilation, ``src`` folder is constructed below a ``$HOME/build/hphi``
