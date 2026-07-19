@@ -235,6 +235,28 @@ The parameters correlated with the keywords are as follows.
      3 (ELPA, multi-node CPU/GPU; requires a build with ``USE_ELPA=ON``).
    | When omitted for FullDiag, the backend is resolved from the legacy
      ``Scalapack`` and ``NGPU`` keywords using the existing precedence.
+   | **Usage example (expert mode):** write ``Solver`` (and optionally
+     ``ExpecMode``) in ``calcmod.def``,
+
+   ::
+
+       CalcType     2
+       CalcModel    0
+       Solver       3
+       ExpecMode    2
+
+   | and run HPhi in expert mode with the desired number of MPI processes:
+
+   ::
+
+       mpiexec -np 4 HPhi -e namelist.def
+
+   | **Usage from standard mode:** the standard-mode input file does not
+     accept the ``Solver``/``ExpecMode`` keywords. Generate the expert-mode
+     files once with ``HPhi -sdry stan.in``, append the keywords to the
+     generated ``calcmod.def``, and run in expert mode as above.
+     See :ref:`Sec:ParallelFullDiag` for the parallel algorithms and a
+     performance comparison of the backends.
 
 *  ``Scalapack``
 

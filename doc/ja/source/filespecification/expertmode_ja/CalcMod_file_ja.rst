@@ -223,6 +223,29 @@ CalcModファイル
    | FullDiagで未指定の場合は、従来の優先順位に従って
      ``Scalapack``/``NGPU`` キーワードから自動決定されます。
      ``Solver 3`` は ELPA を有効にしたビルド (``USE_ELPA=ON``) が必要です。
+   | **使用例 (エキスパートモード):** ``calcmod.def`` に ``Solver``
+     (必要に応じて ``ExpecMode`` も) を記載し、
+
+   ::
+
+       CalcType     2
+       CalcModel    0
+       Solver       3
+       ExpecMode    2
+
+   | 任意のMPIプロセス数でエキスパートモードとして実行します:
+
+   ::
+
+       mpiexec -np 4 HPhi -e namelist.def
+
+   | **スタンダードモードから使用する場合:** スタンダードモードの入力
+     ファイルは ``Solver``/``ExpecMode`` キーワードを受け付けません。
+     ``HPhi -sdry stan.in`` で一度エキスパートモード用ファイル一式を生成し、
+     生成された ``calcmod.def`` に上記キーワードを追記した上で、上と同様に
+     エキスパートモードとして実行してください。並列アルゴリズムの詳細と
+     バックエンド間の速度比較は :ref:`Sec:ParallelFullDiag` を参照して
+     ください。
 
 -  ``Scalapack``
 

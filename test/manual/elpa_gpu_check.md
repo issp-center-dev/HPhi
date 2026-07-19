@@ -189,3 +189,10 @@ Record results (date, host, ELPA version, commit) at the bottom of this file.
   | 1 | 52 s |
   | **2** | **49 s** |
   `zvo_phys` maxdiff 0.0 for Modes 1/2 vs Mode 0. The Mode-0 wall is dominated by per-state inter-node collectives (eigenvector gather + reductions × 4900 states) — exactly the cost the phase-3 state-task parallelism removes (**~14x faster**); Mode 2 ≥ Mode 1 holds here too (kernel breakdown: one-body map 0.000/stream 0.069/output 0.768 s; two-body 0.001/0.241/0.625 s).
+
+### 2026-07-19 — kugui, manual-appendix benchmark sweep (CPU + A100 GPU) — COMPLETED
+- Purpose: size-vs-time data for the new manual appendix (`doc/{ja,en}/source/technical/parallel_fulldiag_*.rst`). Commit under test: post-merge of the maintainer's CI/config fixes (dca3e750 + local doc work), rebuilt on kugui.
+- System: SpinGC chain, `J=1`, `Gamma=0.5`, `L=8,10,12,14` (`N=2^L=256..16384`), standard mode `-sdry` + `calcmod.def` edits, `outputmode="none"` for the solver sweep / `"correlation"` + `OutputGreenFormat 1` for the ExpecMode sweep.
+- CPU (PBS 858288, F1cpu, EPYC 7763, 16 cores per config — Solver 0: 1p x 16t; Solver 1/3: 16p x 1t; `I_MPI_ADJUST_GATHERV=3`): all 24 runs rc=0. `LapackDiag` at N=16384: S0 1929.6 s / S1 536.9 s / S3 172.6 s. `CalcPhys` (Solver 3, 16p) at N=16384: Mode 0 424.5 s / Mode 1 26.4 s / Mode 2 20.8 s (trace kernels confirmed active via INFO lines).
+- GPU: ELPA 2025.06.001 rebuilt with CUDA 12.4 (`--enable-nvidia-gpu-kernels --enable-nvidia-sm80-gpu --with-NVIDIA-GPU-compute-capability=sm_80 --disable-avx512{,-kernels}`; needs `-lstdc++` appended to LIBS — first attempt failed linking `elpa2_print_kernels` with undefined `std::ios_base::Init`) as `~/opt/elpa-2025.06-a100`; HPhi rebuilt against it (`build_kugui_gpu`, PBS 858296). Sweep on F2acc (858297, EPYC 7763 + 2x A100-SXM4-40GB): all 8 runs rc=0, "Using ELPA (GPU)" confirmed. `LapackDiag` at N=16384: 1 GPU 48.2 s / 2 GPUs 35.5 s.
+- Full tables/figures: manual appendix (both languages); raw dirs kugui `~/bench_appendix/{cpu,gpu}_L*_*`.
