@@ -18,16 +18,46 @@
 #include <omp.h>
 #endif
 
+#if (!defined(__GNUC__) && !defined(__clang__)) || \
+    defined(HPHI_SYMMETRY_SPIN_VERIFY)
+static unsigned int portable_ctz_ulong(unsigned long int value)
+{
+  unsigned int count = 0U;
+  while ((value & 1UL) == 0UL) {
+    value >>= 1U;
+    count++;
+  }
+  return count;
+}
+#endif
+
+static unsigned int symmetry_ctz_ulong(unsigned long int value)
+{
+#if defined(__GNUC__) || defined(__clang__)
+  return (unsigned int)__builtin_ctzl(value);
+#else
+  return portable_ctz_ulong(value);
+#endif
+}
+
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite)
 {
-  unsigned int site;
+  const unsigned int max_bits =
+      (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
   unsigned long int out = 0;
-  for (site = 0; site < nsite; site++) {
-    if ((state & (1UL << site)) != 0UL) {
-      out |= (1UL << (unsigned int)perm[site]);
-    }
+  if (perm == NULL || nsite > max_bits) return 0UL;
+  if (nsite < max_bits) state &= (1UL << nsite) - 1UL;
+  while (state != 0UL) {
+    unsigned int site = symmetry_ctz_ulong(state);
+    int target = perm[site];
+#ifdef HPHI_SYMMETRY_SPIN_VERIFY
+    if (site != portable_ctz_ulong(state)) return 0UL;
+#endif
+    if (target < 0 || (unsigned int)target >= nsite) return 0UL;
+    out |= 1UL << (unsigned int)target;
+    state &= state - 1UL;
   }
   return out;
 }

@@ -687,6 +687,28 @@ static void reference_fermion_permutation(unsigned long int state,
   *sign = (inversions & 1U) == 0U ? 1 : -1;
 }
 
+static void assert_spin_permutation_states(const int *perm,
+                                           unsigned int nsite,
+                                           const char *label)
+{
+  unsigned long int state;
+  unsigned long int limit = 1UL << nsite;
+  for (state = 0UL; state < limit; state++) {
+    unsigned long int expected = 0UL;
+    unsigned int site;
+    for (site = 0U; site < nsite; site++) {
+      if ((state & (1UL << site)) != 0UL) {
+        expected |= 1UL << (unsigned int)perm[site];
+      }
+    }
+    if (SymmetryApplyToSpinBits(state, perm, nsite) != expected) {
+      fprintf(stderr, "%s: state=%#lx expected=%#lx\n",
+              label, state, expected);
+      exit(1);
+    }
+  }
+}
+
 static void assert_fermion_permutation_states(const int *perm,
                                               unsigned int nsite,
                                               unsigned int orbitals_per_site,
@@ -727,6 +749,8 @@ static void enumerate_fermion_permutations(int *perm,
 {
   unsigned int target;
   if (depth == nsite) {
+    assert_spin_permutation_states(perm, nsite,
+                                   "spin exhaustive set-bit permutation");
     assert_fermion_permutation_states(perm, nsite, 1U, SpinlessFermion,
                                       "spinless exhaustive permutation parity");
     assert_fermion_permutation_states(perm, nsite, 2U, Hubbard,
@@ -778,6 +802,20 @@ static void assert_fermion_parity_word_boundary(void)
                   "Hubbard parity boundary transformed state");
   assert_int_eq((int)result.amplitude, expected_sign,
                 "Hubbard parity boundary sign");
+}
+
+static void assert_spin_permutation_word_boundary(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  int permutation[64];
+  unsigned int site;
+  if (word_bits < 64U) return;
+  for (site = 0U; site < 64U; site++) permutation[site] = 63 - (int)site;
+  assert_ulong_eq(SymmetryApplyToSpinBits(1UL, permutation, 64U),
+                  1UL << 63U, "Spin set-bit maps to bit 63");
+  assert_ulong_eq(SymmetryApplyToSpinBits(1UL << 63U, permutation, 64U),
+                  1UL, "Spin set-bit reads bit 63");
 }
 
 struct LegacyVectorContext {
@@ -1437,6 +1475,7 @@ int main(void)
   stdoutMPI = stderr;
   assert_exhaustive_fermion_permutation_parity();
   assert_fermion_parity_word_boundary();
+  assert_spin_permutation_word_boundary();
   assert_ulong_eq(SymmetryApplyToSpinBits(0x1UL, shift4, 4), 0x2UL, "single bit shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x9UL, shift4, 4), 0x3UL, "wrap shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x6UL, shift4, 4), 0xcUL, "two bit shift");
