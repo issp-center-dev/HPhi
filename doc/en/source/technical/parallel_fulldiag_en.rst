@@ -211,6 +211,29 @@ states); ``ExpecMode 1``/``2`` remove exactly this cost (about 14x
 here). On multiple nodes we strongly recommend ``ExpecMode 1`` or
 higher.
 
+Maximum feasible size
+~~~~~~~~~~~~~~~~~~~~~
+
+The reachable matrix dimension :math:`N` is limited mainly by memory
+(guidelines based on measurements on kugui):
+
+* **CPU (Solver 3)**: the job-wide peak is about :math:`64 N^2` bytes
+  (roughly four simultaneous matrix copies). In practice
+  :math:`N=63504` (the 10-site Hubbard chain) completed on 4 nodes
+  (128 processes) with a 23-minute diagonalization and about
+  67 GB/node (~91% parallel efficiency relative to the 16-rank
+  baseline). Extrapolating with this model, about
+  :math:`N \sim 2 \times 10^5` (diagonalization ~3 h) is the practical
+  ceiling on 16 nodes (~3.8 TB).
+* **GPU (Solver 3, A100 40GB)**: the 1-stage GPU implementation of
+  ELPA (2025.06) allocates a device work buffer of the order of one
+  full matrix (:math:`16 N^2` bytes) **per GPU** during the
+  tridiagonal solve, so this ceiling does not grow with the number of
+  GPUs. In practice :math:`N=48620` works (199 s diagonalization on 4
+  GPUs) while :math:`N=63504` stops with an allocation failure. The
+  practical ceiling on A100 40GB is :math:`N \approx 4.9 \times 10^4`;
+  use CPU nodes beyond that.
+
 Guidelines
 ~~~~~~~~~~
 
