@@ -127,21 +127,23 @@ measured on one node of the ISSP supercomputer kugui (AMD EPYC 7763,
 Intel compilers + Intel MPI + MKL). Every CPU configuration uses 16
 cores in total: ``Solver 0`` uses 1 process :math:`\times` 16 threads,
 ``Solver 1``/``3`` use 16 processes :math:`\times` 1 thread. The GPU
-runs use a GPU node of the same system (EPYC 7763 + 2 :math:`\times`
-NVIDIA A100-SXM4-40GB), with one process per GPU (``NGPU`` 1 and 2,
-assigned automatically by ELPA).
+runs use GPU nodes of the same system (EPYC 7763 + 2 :math:`\times`
+NVIDIA A100-SXM4-40GB per node) with one process per GPU: one GPU =
+1 process (``NGPU 1``), two GPUs = 2 processes on one node
+(``NGPU 2``), and four GPUs = 2 nodes :math:`\times` 2 processes
+(``NGPU 2``, InfiniBand + Intel MPI between the nodes).
 
 Diagonalization time (``LapackDiag`` section of ``CalcTimer.dat``,
 seconds):
 
 .. csv-table::
-   :header: ":math:`N`", "Solver 0 (LAPACK)", "Solver 1 (ScaLAPACK)", "Solver 3 (ELPA, CPU)", "Solver 3 (ELPA, GPU :math:`\times` 1)", "Solver 3 (ELPA, GPU :math:`\times` 2)"
-   :widths: 10, 18, 18, 18, 18, 18
+   :header: ":math:`N`", "Solver 0 (LAPACK)", "Solver 1 (ScaLAPACK)", "Solver 3 (ELPA, CPU)", "Solver 3 (GPU :math:`\times` 1)", "Solver 3 (GPU :math:`\times` 2)", "Solver 3 (GPU :math:`\times` 4, 2 nodes)"
+   :widths: 10, 16, 16, 16, 14, 14, 14
 
-   "256", "0.82", "0.19", "0.20", "3.42", "1.69"
-   "1024", "0.94", "0.33", "0.21", "1.40", "1.51"
-   "4096", "42.22", "7.60", "3.72", "3.41", "3.11"
-   "16384", "1929.6", "536.9", "172.6", "48.23", "35.51"
+   "256", "0.82", "0.19", "0.20", "3.42", "1.69", "3.55"
+   "1024", "0.94", "0.33", "0.21", "1.40", "1.51", "2.02"
+   "4096", "42.22", "7.60", "3.72", "3.41", "3.11", "2.54"
+   "16384", "1929.6", "536.9", "172.6", "48.23", "35.51", "18.97"
 
 .. figure:: ../../../figs/fulldiag_solver_bench.png
    :name: fig_fulldiag_solver_bench
@@ -155,8 +157,12 @@ times faster than ``Solver 0`` (LAPACK) and about 3.1 times faster
 than ``Solver 1`` (ScaLAPACK). The GPU runs pay an initialization and
 transfer overhead at small :math:`N`, break even with the 16-core CPU
 runs around :math:`N \sim 4000`, and reach about 3.6 times the ELPA
-CPU speed (about 40 times LAPACK) with one A100 and about 4.9 times
-(about 54 times LAPACK) with two A100s at :math:`N=16384`.
+CPU speed (about 40 times LAPACK) with one A100, about 4.9 times
+(about 54 times LAPACK) with two A100s, and about 9.1 times (about
+102 times LAPACK) with four A100s on 2 nodes at :math:`N=16384`. The
+2-to-4-GPU (inter-node) step scales by about 1.87, close to ideal. At
+:math:`N \lesssim 4000`, adding GPUs does not help — scale the GPU
+count with the matrix size.
 
 Observable-evaluation time (``Solver 3`` CPU with 16 processes,
 aggregate one- and two-body Green-function output for all states,

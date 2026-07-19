@@ -116,20 +116,21 @@ Green関数を多数の固有状態について評価する場合に有効です
 CPU 構成は全て合計16コアに揃えています: ``Solver 0`` は1プロセス
 :math:`\times` 16スレッド、``Solver 1``/``3`` は16プロセス
 :math:`\times` 1スレッドです。GPU は同システムの GPU ノード
-(EPYC 7763 + NVIDIA A100-SXM4-40GB :math:`\times` 2) で測定し、
-GPU 1枚では1プロセス、2枚では2プロセスを使用します (ELPA が
-1プロセス1GPUを自動割当、``NGPU`` はそれぞれ 1、2)。
+(EPYC 7763 + NVIDIA A100-SXM4-40GB :math:`\times` 2/ノード) で測定し、
+1プロセス1GPU構成を使用します: 1枚=1プロセス (``NGPU 1``)、
+2枚=1ノード2プロセス (``NGPU 2``)、4枚=2ノード :math:`\times`
+2プロセス (``NGPU 2``、ノード間は InfiniBand + Intel MPI)。
 
 対角化時間 (``CalcTimer.dat`` の ``LapackDiag`` 区分、秒):
 
 .. csv-table::
-   :header: ":math:`N`", "Solver 0 (LAPACK)", "Solver 1 (ScaLAPACK)", "Solver 3 (ELPA, CPU)", "Solver 3 (ELPA, GPU :math:`\times` 1)", "Solver 3 (ELPA, GPU :math:`\times` 2)"
-   :widths: 10, 18, 18, 18, 18, 18
+   :header: ":math:`N`", "Solver 0 (LAPACK)", "Solver 1 (ScaLAPACK)", "Solver 3 (ELPA, CPU)", "Solver 3 (GPU :math:`\times` 1)", "Solver 3 (GPU :math:`\times` 2)", "Solver 3 (GPU :math:`\times` 4, 2ノード)"
+   :widths: 10, 16, 16, 16, 14, 14, 14
 
-   "256", "0.82", "0.19", "0.20", "3.42", "1.69"
-   "1024", "0.94", "0.33", "0.21", "1.40", "1.51"
-   "4096", "42.22", "7.60", "3.72", "3.41", "3.11"
-   "16384", "1929.6", "536.9", "172.6", "48.23", "35.51"
+   "256", "0.82", "0.19", "0.20", "3.42", "1.69", "3.55"
+   "1024", "0.94", "0.33", "0.21", "1.40", "1.51", "2.02"
+   "4096", "42.22", "7.60", "3.72", "3.41", "3.11", "2.54"
+   "16384", "1929.6", "536.9", "172.6", "48.23", "35.51", "18.97"
 
 .. figure:: ../../../figs/fulldiag_solver_bench.png
    :name: fig_fulldiag_solver_bench
@@ -143,7 +144,11 @@ GPU 1枚では1プロセス、2枚では2プロセスを使用します (ELPA �
 高速です。GPU は :math:`N` が小さい間は初期化・転送のオーバー
 ヘッドで不利ですが、:math:`N \sim 4000` で CPU 16コアと並び、
 :math:`N=16384` では GPU 1枚で ELPA CPU の約3.6倍 (LAPACK の
-約40倍)、2枚で約4.9倍 (同約54倍) に達します。
+約40倍)、2枚で約4.9倍 (同約54倍)、2ノード4枚では約9.1倍
+(同約102倍) に達します。2枚 :math:`\to` 4枚 (ノード間) の
+スケーリングは約1.87倍とほぼ理想的です。一方 :math:`N \lesssim
+4000` では GPU を増やしても改善せず、GPU 枚数は行列サイズに
+見合った分だけ増やすのが得策です。
 
 物理量評価時間 (``Solver 3`` CPU 16プロセス、全状態の一体・二体
 Green関数を集約形式で出力、``CalcTimer.dat`` の ``CalcPhys`` 区分、秒):
