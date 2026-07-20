@@ -64,6 +64,7 @@
 #include "hamstore.h"
 #include "wrapperMPI.h"
 #include "expec_trace_ham.h"
+#include "expec_energy_flct.h"
 
 /* Globals provided by the linked src/global.c (Ham, list_*, v0/v1, sink hooks,
    myrank/nproc/stdoutMPI, iHamPanelActive/iHamSinkMode). */
@@ -283,6 +284,165 @@ static void run_gate_and_injection(void) {
   if (ok) TraceHamFree(&csr);
 }
 
+/* -----------------------------------------------------------------------
+ * Part 2: energy-family diagonal coefficient arrays (csr->diag[]).
+ *
+ * For each eligible fixture we (a) load a fixed random normalized vector into
+ * v0, (b) run the legacy expec_energy_flct() and snapshot its eight Phys
+ * fluctuation fields, (c) run TraceHamCollect() and rebuild the SAME eight
+ * fields from csr->diag[] applying the frozen-table scalings, and assert they
+ * agree to 1e-12. The canonical-Spin fixture instead pins the stale-preserving
+ * constant path (num_up/num_down untouched).
+ * --------------------------------------------------------------------------*/
+
+static double frand_pm1(void) { return 2.0 * ((double)rand() / (double)RAND_MAX) - 1.0; }
+
+static void expect_close(const char *label, const char *field,
+                         double a, double b, double tol) {
+  double d = fabs(a - b);
+  char nm[320];
+  snprintf(nm, sizeof(nm), "%s: %s (csr=%.15g legacy=%.15g |d|=%.3e)",
+           label, field, a, b, d);
+  expect_true(nm, d <= tol);
+}
+
+static void run_coeff_fixture(const char *label, const char *subdir,
+                              const char *stan, int patch_model) {
+  struct BindStruct X;
+  TraceHamCsr csr;
+  long int n, i;
+  double complex *xs;
+  double nrm;
+  int ok;
+  double e_doublon, e_doublon2, e_num, e_num2, e_Sz, e_Sz2, e_num_up, e_num_down;
+  double sumD = 0, sumD2 = 0, sumN = 0, sumN2 = 0, sumS = 0, sumS2 = 0;
+  double c_doublon, c_doublon2, c_num, c_num2, c_Sz, c_Sz2, c_num_up, c_num_down;
+
+  fprintf(stderr, "[coeff %s]\n", label);
+  if (chdir(g_base) != 0) { expect_true(label, 0); return; }
+  mkdir(subdir, 0777);
+  if (chdir(subdir) != 0) { expect_true(label, 0); return; }
+
+  if (setup_fixture(&X, stan, patch_model) != 0) {
+    fprintf(stderr, "  FAIL %s: setup failed\n", label);
+    g_failures++;
+    return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  /* Fixed random normalized state into v0; keep an independent snapshot xs. */
+  srand(20260721u);
+  xs = (double complex *)malloc((size_t)(n + 1) * sizeof(double complex));
+  nrm = 0.0;
+  for (i = 1; i <= n; i++) {
+    v0[i] = frand_pm1() + frand_pm1() * I;
+    nrm += creal(conj(v0[i]) * v0[i]);
+  }
+  nrm = sqrt(nrm);
+  for (i = 1; i <= n; i++) { v0[i] /= nrm; xs[i] = v0[i]; }
+
+  /* Legacy evaluator (destroys v0); snapshot its eight fluctuation fields. */
+  expec_energy_flct(&X);
+  e_doublon  = X.Phys.doublon;
+  e_doublon2 = X.Phys.doublon2;
+  e_num      = X.Phys.num;
+  e_num2     = X.Phys.num2;
+  e_Sz       = X.Phys.Sz;
+  e_Sz2      = X.Phys.Sz2;
+  e_num_up   = X.Phys.num_up;
+  e_num_down = X.Phys.num_down;
+
+  ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+  {
+    char nm[256];
+    snprintf(nm, sizeof(nm), "%s: TraceHamCollect succeeds", label);
+    expect_true(nm, ok == 1);
+  }
+  if (!ok) { free(xs); return; }
+
+  for (i = 0; i < n; i++) {
+    double w = creal(conj(xs[i + 1]) * xs[i + 1]);
+    if (csr.n_diag == 3) {
+      double D = csr.diag[0][i], N = csr.diag[1][i], S = csr.diag[2][i];
+      sumD += w * D; sumD2 += w * D * D;
+      sumN += w * N; sumN2 += w * N * N;
+      sumS += w * S; sumS2 += w * S * S;
+    } else if (csr.n_diag == 1) {
+      double S = csr.diag[0][i];
+      sumS += w * S; sumS2 += w * S * S;
+    }
+  }
+
+  if (csr.n_diag == 3) {           /* Hubbard family / HubbardGC */
+    c_doublon  = sumD;
+    c_doublon2 = sumD2;
+    c_num      = sumN;
+    c_num2     = sumN2;
+    c_Sz       = 0.5 * sumS;
+    c_Sz2      = 0.25 * sumS2;
+    c_num_up   = 0.5 * (sumN + sumS);
+    c_num_down = 0.5 * (sumN - sumS);
+  } else {                         /* SpinGC (n_diag == 1) */
+    double Ns = (double)X.Def.NsiteMPI;
+    c_doublon  = 0.0;
+    c_doublon2 = 0.0;
+    c_num      = Ns;
+    c_num2     = Ns * Ns;
+    c_Sz       = 0.5 * sumS;
+    c_Sz2      = 0.25 * sumS2;
+    c_num_up   = 0.5 * (Ns + sumS);
+    c_num_down = 0.5 * (Ns - sumS);
+  }
+
+  expect_close(label, "doublon",  c_doublon,  e_doublon,  1e-12);
+  expect_close(label, "doublon2", c_doublon2, e_doublon2, 1e-12);
+  expect_close(label, "num",      c_num,      e_num,      1e-12);
+  expect_close(label, "num2",     c_num2,     e_num2,     1e-12);
+  expect_close(label, "Sz",       c_Sz,       e_Sz,       1e-12);
+  expect_close(label, "Sz2",      c_Sz2,      e_Sz2,      1e-12);
+  expect_close(label, "num_up",   c_num_up,   e_num_up,   1e-12);
+  expect_close(label, "num_down", c_num_down, e_num_down, 1e-12);
+
+  TraceHamFree(&csr);
+  free(xs);
+}
+
+/* Canonical Spin: constant path must leave num_up/num_down UNWRITTEN. */
+static void run_spin_sentinel(void) {
+  struct BindStruct X;
+  const char *stan =
+    "L = 6\nmodel = \"Spin\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "J = 1.0\n2Sz = 0\n";
+  long int n, i;
+
+  fprintf(stderr, "[coeff Spin sentinel L=6]\n");
+  if (chdir(g_base) != 0) { expect_true("spin-sentinel: chdir base", 0); return; }
+  mkdir("spin_sentinel", 0777);
+  if (chdir("spin_sentinel") != 0) { expect_true("spin-sentinel: chdir sub", 0); return; }
+
+  if (setup_fixture(&X, stan, -1) != 0) {
+    fprintf(stderr, "  FAIL spin-sentinel: setup failed\n");
+    g_failures++;
+    return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  srand(777u);
+  for (i = 1; i <= n; i++) v0[i] = frand_pm1() + frand_pm1() * I;
+
+  X.Phys.num_up   = 4321.0;   /* sentinels: the Spin path must not touch these */
+  X.Phys.num_down = 8765.0;
+
+  expec_energy_flct(&X);
+
+  expect_true("spin-sentinel: num_up stale-preserved (==4321)",   X.Phys.num_up == 4321.0);
+  expect_true("spin-sentinel: num_down stale-preserved (==8765)", X.Phys.num_down == 8765.0);
+  expect_true("spin-sentinel: doublon == 0",  X.Phys.doublon == 0.0);
+  expect_true("spin-sentinel: doublon2 == 0", X.Phys.doublon2 == 0.0);
+  expect_true("spin-sentinel: num == NsiteMPI", X.Phys.num == (double)X.Def.NsiteMPI);
+  expect_close("spin-sentinel", "Sz", X.Phys.Sz, 0.5 * (double)X.Def.Total2SzMPI, 1e-12);
+}
+
 int main(void) {
   stdoutMPI = stdout;
   myrank = 0;
@@ -338,6 +498,33 @@ int main(void) {
     "J = 1.0\n2S = 2\n", -1);
 
   run_gate_and_injection();
+
+  /* ---- Part 2: diagonal coefficient arrays (csr->diag[]). ---- */
+  run_coeff_fixture("Hubbard L=4 half-filled", "coeff_hubbard",
+    "L = 4\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\nnelec = 4\n2Sz = 0\n", -1);
+
+  run_coeff_fixture("HubbardGC L=4", "coeff_hubbardgc",
+    "L = 4\nmodel = \"HubbardGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\n", -1);
+
+  run_coeff_fixture("tJGC L=4", "coeff_tjgc",
+    "L = 4\nmodel = \"HubbardGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\n", tJGC);
+
+  run_coeff_fixture("KondoGC chain L=2", "coeff_kondogc",
+    "L = 2\nmodel = \"KondoGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nJ = 4.0\n", -1);
+
+  run_coeff_fixture("SpinGC-1/2 L=6 Gamma=0.5", "coeff_spingc",
+    "L = 6\nmodel = \"SpinGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "J = 1.0\nGamma = 0.5\n", -1);
+
+  run_coeff_fixture("SpinGC S=1 L=4", "coeff_genspingc",
+    "L = 4\nmodel = \"SpinGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "J = 1.0\n2S = 2\n", -1);
+
+  run_spin_sentinel();
 
   if (chdir(g_base) == 0) chdir("..");
 

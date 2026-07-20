@@ -50,6 +50,7 @@
 #include "makeHam.h"
 #include "wrapperMPI.h"
 #include "expec_trace_ham.h"
+#include "expec_energy_flct.h"
 
 /* ------------------------------------------------------------------ *
  *  File-local collector state (shared with the two static sinks).
@@ -205,6 +206,42 @@ static void merge_sort_seg(long int *col, double complex *v, long int len,
       while (a < mid) { ws[k].col = col[a]; ws[k].val = v[a]; a++; k++; }
       while (b < hi)  { ws[k].col = col[b]; ws[k].val = v[b]; b++; k++; }
       for (k = lo; k < hi; k++) { col[k] = ws[k].col; v[k] = ws[k].val; }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Fill the energy-family diagonal coefficient arrays (Task 3).
+ *
+ *  diag[q][i] holds the RAW per-basis quantity for CSR row i (0-based), i.e.
+ *  the evaluator's basis index k == i + 1. The SAME per-k helpers the Mode-1
+ *  evaluators use are called here, so no algebra is duplicated and the arrays
+ *  reproduce expec_energy_flct()'s fluctuation fields under the frozen-table
+ *  scalings. Serial (single-threaded), run once after the CSR is built.
+ *
+ *  Dispatch mirrors expec_energy_flct()'s switch EXACTLY: only iCalcModel ==
+ *  HubbardGC uses the GC (bare (k-1)) helper; Hubbard/tJ/tJGC/Kondo/KondoGC
+ *  (and the N-conserved variants) use the canonical list_1 helper.
+ * ------------------------------------------------------------------ */
+static void trace_fill_diag(struct BindStruct *X, long int n, int n_diag,
+                            double *diag[3]) {
+  long int i;
+  if (n_diag == 3) {
+    int gc = (X->Def.iCalcModel == HubbardGC);
+    double D, N, S;
+    for (i = 0; i < n; i++) {
+      if (gc) EnergyFlctCoeff_HubbardGC(X, i + 1, &D, &N, &S);
+      else    EnergyFlctCoeff_Hubbard(X, i + 1, &D, &N, &S);
+      diag[0][i] = D;
+      diag[1][i] = N;
+      diag[2][i] = S;
+    }
+  } else if (n_diag == 1) {
+    double S;
+    for (i = 0; i < n; i++) {
+      if (X->Def.iFlgGeneralSpin == TRUE) EnergyFlctCoeff_GeneralSpinGC(X, i + 1, &S);
+      else                                EnergyFlctCoeff_HalfSpinGC(X, i + 1, &S);
+      diag[0][i] = S;
     }
   }
 }
@@ -372,6 +409,9 @@ int TraceHamCollect(struct BindStruct *X, size_t cap_bytes,
   for (r = 1; r <= n; r++) assert(g_rowptr[r] >= g_rowptr[r - 1]);
 #endif
   assert(g_rowptr[n] == w);
+
+  /* Fill the energy-family diagonal coefficient arrays (Task 3). */
+  trace_fill_diag(X, n, n_diag, diag);
 
   csr->n = n;
   csr->nnz = w;

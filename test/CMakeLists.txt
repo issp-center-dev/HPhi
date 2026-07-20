@@ -489,11 +489,24 @@ set_tests_properties(expec_trace_map_check
 # rt/MPI link conditions are kept identical.
 add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace_ham.c
+    ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
     ${CMAKE_SOURCE_DIR}/src/makeHam.c
     ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
     ${CMAKE_SOURCE_DIR}/src/anomalous_pair.c
+    ${CMAKE_SOURCE_DIR}/src/mltply.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbard.c
     ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpin.c
     ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinless.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIHubbard.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpin.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpinlessFermion.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIBatched.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIBoost.c
     ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
     ${CMAKE_SOURCE_DIR}/src/HPhiTrans.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
