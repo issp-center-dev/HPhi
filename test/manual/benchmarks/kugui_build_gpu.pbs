@@ -1,0 +1,64 @@
+#!/bin/bash
+#PBS -q F1cpu
+#PBS -l select=1:ncpus=64:mpiprocs=64
+#PBS -l walltime=02:00:00
+#PBS -N hphi_elpa_gpu_build
+#PBS -j oe
+
+# Build ELPA 2025.06 with NVIDIA A100 (sm_80) kernels + HPhi against it.
+# Toolchain matches the CPU build: intel + intel-mpi + MKL sequential,
+# AVX-512 disabled (EPYC 7763 has none).
+set -x
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi cuda/12.4
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+echo "MKLROOT=$MKLROOT CUDA_HOME=${CUDA_HOME:-unset}"
+which mpiicc mpiifort nvcc || exit 1
+[ -z "${CUDA_HOME:-}" ] && CUDA_HOME=$(dirname "$(dirname "$(which nvcc)")")
+
+PREFIX=$HOME/opt/elpa-2025.06-a100
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+
+if [ ! -f "$PREFIX/lib/libelpa.so" ]; then
+  cd $HOME/src
+  rm -rf elpa-gpu-build-src
+  mkdir elpa-gpu-build-src && cd elpa-gpu-build-src
+  tar xzf ../elpa-2025.06.001.tar.gz
+  cd elpa-2025.06.001
+  mkdir -p build_gpu && cd build_gpu
+  ../configure --prefix="$PREFIX" \
+    CC=mpiicc CXX=mpiicpc FC=mpiifort \
+    CFLAGS="-O2 -march=native" FCFLAGS="-O2 -march=native" CXXFLAGS="-O2 -march=native" \
+    LDFLAGS="-L$MKLROOT/lib/intel64" \
+    LIBS="-lmkl_scalapack_lp64 -lmkl_blacs_intelmpi_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -lstdc++" \
+    --disable-openmp --disable-cuda-aware-mpi \
+    --disable-avx512 --disable-avx512-kernels \
+    --enable-nvidia-gpu-kernels --enable-nvidia-sm80-gpu \
+    --with-NVIDIA-GPU-compute-capability=sm_80 \
+    --with-cuda-path="$CUDA_HOME" \
+    > configure.log 2>&1 || { tail -60 configure.log; echo ELPA_CONFIGURE_FAILED >> "$BASE/status_gpu.log"; exit 2; }
+  make -j 32 > make.log 2>&1 || { tail -60 make.log; echo ELPA_MAKE_FAILED >> "$BASE/status_gpu.log"; exit 3; }
+  make install > install.log 2>&1 || { echo ELPA_INSTALL_FAILED >> "$BASE/status_gpu.log"; exit 4; }
+fi
+echo "ELPA_GPU_BUILD_OK $(date '+%F %T')" >> "$BASE/status_gpu.log"
+
+# HPhi against the GPU ELPA
+cd $HOME/HPhi-elpa
+rm -rf build_kugui_gpu
+mkdir build_kugui_gpu && cd build_kugui_gpu
+cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER=mpiicc -DCMAKE_Fortran_COMPILER=mpiifort \
+  -DUSE_SCALAPACK=ON -DUSE_ELPA=ON \
+  -DELPA_ROOT="$PREFIX" \
+  -DSCALAPACK_LIBRARIES="-L$MKLROOT/lib/intel64 -lmkl_scalapack_lp64 -lmkl_blacs_intelmpi_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" \
+  > cmake.log 2>&1 || { tail -40 cmake.log; echo HPHI_CMAKE_FAILED >> "$BASE/status_gpu.log"; exit 5; }
+cmake --build . -j 32 --target HPhi > build.log 2>&1 \
+  || { tail -40 build.log; echo HPHI_BUILD_FAILED >> "$BASE/status_gpu.log"; exit 6; }
+echo "HPHI_GPU_BUILD_OK $(date '+%F %T')" >> "$BASE/status_gpu.log"
