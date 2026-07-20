@@ -24,6 +24,19 @@
 #include "anomalous_pair.h"
 #include "hamstore.h"
 
+/* Column-range bounds for the pure column-scatter loops below (design doc
+   sec. 3). In replicated mode (iHamPanelActive == 0) these evaluate to
+   [1, full], leaving the replicated path bit-identical; in distributed-panel
+   mode they restrict to the owned range [HamColBegin, HamColEnd]. In
+   trace-collect mode every rank enumerates the FULL range regardless of
+   iHamPanelActive (the collect sink, not a column panel, owns placement).
+   Single definitions keep the ~17 column-range sites from drifting. */
+#define HS_JB() \
+  ((iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1)
+#define HS_JE(full) \
+  ((iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) \
+     ? HamColEnd : (long int)(full))
+
 /**
  * @file   makeHam.c
  * 
@@ -93,6 +106,9 @@ int makeHam(struct BindStruct *X) {
   X->Large.prdct = 0.0;
   X->Large.mode = M_Ham;
 
+  /* Dense-store zeroing. Skipped entirely in trace-collect mode: there is no
+     dense Ham/Ham_local to clear -- every element is streamed to the sink. */
+  if (iHamSinkMode != HAM_SINK_TRACE_COLLECT) {
   if (!iHamPanelActive) {
     for (i = 0; i <= i_max; i++) {
       for (j = 0; j <= i_max; j++) {
@@ -111,9 +127,21 @@ int makeHam(struct BindStruct *X) {
       for (hs_k = 0; hs_k < hs_nelem; hs_k++) Ham_local[hs_k] = 0;
     }
   }
-#pragma omp parallel for default(none) firstprivate(i_max) private(j) shared(Ham, list_Diagonal, v0, v1, iHamPanelActive, HamColBegin, HamColEnd, HamPanelLd, Ham_local)
+  } /* end if (iHamSinkMode != HAM_SINK_TRACE_COLLECT) */
+  /* Diagonal store + the v0/v1 == 1.0 initialization the off-diagonal element
+     helpers below depend on (they compute matrix elements as element*v1, and
+     read conj(v1); makeHam owns this constant -- it is not external input). In
+     trace-collect mode the diagonal element is streamed to the sink for the
+     FULL column range on every rank (bypassing the panel-restricting
+     HAM_OWNED_COL gate); v0/v1 are still initialized so the off-diagonal
+     enumeration below is fed the same 1.0 coefficients. */
+#pragma omp parallel for default(none) firstprivate(i_max) private(j) shared(Ham, list_Diagonal, v0, v1, iHamPanelActive, HamColBegin, HamColEnd, HamPanelLd, Ham_local, iHamSinkMode, hamCollectSink)
   for (j = 1; j <= i_max; j++) {
-    if (HAM_OWNED_COL(j)) AddHamElem(j, j, list_Diagonal[j]);
+    if (iHamSinkMode == HAM_SINK_TRACE_COLLECT) {
+      hamCollectSink(j, j, list_Diagonal[j]);
+    } else if (HAM_OWNED_COL(j)) {
+      AddHamElem(j, j, list_Diagonal[j]);
+    }
     v0[j] = 1.0;
     v1[j] = 1.0;
     //printf("%ld, %f\n", j, list_Diagonal[j]);
@@ -134,8 +162,8 @@ int makeHam(struct BindStruct *X) {
           }
           tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
 
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = tmp_trans *
                   GC_CisAjt(j, v0, v1, X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
@@ -185,8 +213,8 @@ int makeHam(struct BindStruct *X) {
 
           tmp_V = X->Large.tmp_V;
 
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(i_max);
           if (isite1 == isite2 && isite3 == isite4) {
 
             for (j = hs_jb; j <= hs_je; j++) {
@@ -230,8 +258,8 @@ int makeHam(struct BindStruct *X) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
           idx = 2 * i + ihermite;
           pairhopp_GetInfo(idx, X);
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = GC_pairhopp_element(j, v0, v1, X, &tmp_off);
             AddHamElem(tmp_off + 1, j, dmv);
@@ -241,8 +269,8 @@ int makeHam(struct BindStruct *X) {
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i++) {
         exchange_GetInfo(i, X);
-        hs_jb = iHamPanelActive ? HamColBegin : 1;
-        hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+        hs_jb = HS_JB();
+        hs_je = HS_JE(X->Large.i_max);
         for (j = hs_jb; j <= hs_je; j++) {
           dmv = GC_exchange_element(j, v0, v1, X, &tmp_off);
           AddHamElem(tmp_off + 1, j, dmv);
@@ -269,8 +297,8 @@ int makeHam(struct BindStruct *X) {
           }
           tmp_trans = -X->Def.EDParaGeneralTransfer[idx];
 
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = tmp_trans *
                   child_CisAjt(list_1[j], X, X->Large.is1_spin, X->Large.is2_spin, X->Large.isA_spin, X->Large.A_spin,
@@ -330,8 +358,8 @@ int makeHam(struct BindStruct *X) {
 
           tmp_V = X->Large.tmp_V;
 
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(i_max);
           if (isite1 == isite2 && isite3 == isite4) {
 
             for (j = hs_jb; j <= hs_je; j++) {
@@ -389,8 +417,8 @@ int makeHam(struct BindStruct *X) {
         for (ihermite = 0; ihermite < 2; ihermite++) {
           idx = 2 * i + ihermite;
           pairhopp_GetInfo(idx, X);
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = pairhopp_element(j, v0, v1, X, &tmp_off);
             /* pairhopp_element leaves tmp_off STALE on its dead branch (and
@@ -403,8 +431,8 @@ int makeHam(struct BindStruct *X) {
       //Exchange
       for (i = 0; i < X->Def.NExchangeCoupling; i++) {
         exchange_GetInfo(i, X);
-        hs_jb = iHamPanelActive ? HamColBegin : 1;
-        hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+        hs_jb = HS_JB();
+        hs_je = HS_JE(X->Large.i_max);
         for (j = hs_jb; j <= hs_je; j++) {
           dmv = exchange_element(j, v0, v1, X, &tmp_off);
           /* exchange_element leaves tmp_off STALE on its dead branch. dmv==0
@@ -432,8 +460,8 @@ int makeHam(struct BindStruct *X) {
 
             if (isite1 == isite2) {
               is1_spin = X->Def.Tpow[isite1 - 1];
-              hs_jb = iHamPanelActive ? HamColBegin : 1;
-              hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+              hs_jb = HS_JB();
+              hs_je = HS_JE(i_max);
               if (sigma1 == sigma2) {
                 // longitudinal magnetic field
                 for (j = hs_jb; j <= hs_je; j++) {
@@ -478,8 +506,8 @@ int makeHam(struct BindStruct *X) {
             isA_up = X->Def.Tpow[isite1 - 1];
             isB_up = X->Def.Tpow[isite2 - 1];
 
-            hs_jb = iHamPanelActive ? HamColBegin : 1;
-            hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+            hs_jb = HS_JB();
+            hs_je = HS_JE(i_max);
             if (sigma1 == sigma2 && sigma3 == sigma4) { //diagonal
               for (j = hs_jb; j <= hs_je; j++) {
                 dmv = GC_CisAisCisAis_spin_element(j, isA_up, isB_up, sigma2, sigma4, tmp_V, v0, v1, X);
@@ -512,8 +540,8 @@ int makeHam(struct BindStruct *X) {
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           exchange_spin_GetInfo(i, X);
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = GC_exchange_spin_element(j, v0, v1, X, &tmp_off);
             AddHamElem(tmp_off + 1, j, dmv);
@@ -526,8 +554,8 @@ int makeHam(struct BindStruct *X) {
             idx = 2 * i + ihermite;
             pairlift_spin_GetInfo(idx, X);
 
-            hs_jb = iHamPanelActive ? HamColBegin : 1;
-            hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+            hs_jb = HS_JB();
+            hs_je = HS_JE(X->Large.i_max);
             for (j = hs_jb; j <= hs_je; j++) {
               dmv = GC_pairlift_spin_element(j, v0, v1, X, &tmp_off);
               AddHamElem(tmp_off + 1, j, dmv);
@@ -547,8 +575,8 @@ int makeHam(struct BindStruct *X) {
             if (isite1 == isite2) {
               // longitudinal magnetic field is absorbed in diagonal calculation.
               // transverse magnetic field
-              hs_jb = iHamPanelActive ? HamColBegin : 1;
-              hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+              hs_jb = HS_JB();
+              hs_je = HS_JE(i_max);
               for (j = hs_jb; j <= hs_je; j++) {
                 num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &off, X->Def.SiteToBit, X->Def.Tpow);
                 AddHamElem(off + 1, j, tmp_trans * num1);
@@ -571,8 +599,8 @@ int makeHam(struct BindStruct *X) {
             sigma3 = X->Def.InterAll_OffDiagonal[idx][5];
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
-            hs_jb = iHamPanelActive ? HamColBegin : 1;
-            hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+            hs_jb = HS_JB();
+            hs_je = HS_JE(i_max);
             for (j = hs_jb; j <= hs_je; j++) {
               num1 = GetOffCompGeneralSpin(j - 1, isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
               if (num1 != 0) {
@@ -613,8 +641,8 @@ int makeHam(struct BindStruct *X) {
             isA_up = X->Large.is1_up;
             isB_up = X->Large.is2_up;
 
-            hs_jb = iHamPanelActive ? HamColBegin : 1;
-            hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+            hs_jb = HS_JB();
+            hs_je = HS_JE(i_max);
             for (j = hs_jb; j <= hs_je; j++) {
               tmp_sgn = child_exchange_spin_element(j, X, isA_up, isB_up, sigma2, sigma4, &tmp_off);
               dmv = tmp_sgn * tmp_V;
@@ -638,8 +666,8 @@ int makeHam(struct BindStruct *X) {
         //Exchange
         for (i = 0; i < X->Def.NExchangeCoupling; i++) {
           exchange_spin_GetInfo(i, X);
-          hs_jb = iHamPanelActive ? HamColBegin : 1;
-          hs_je = iHamPanelActive ? HamColEnd : (long int)X->Large.i_max;
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
           for (j = hs_jb; j <= hs_je; j++) {
             dmv = exchange_spin_element(j, v0, v1, X, &tmp_off);
             /* exchange_spin_element leaves tmp_off STALE on its dead branch,
@@ -666,8 +694,8 @@ int makeHam(struct BindStruct *X) {
             sigma4 = X->Def.InterAll_OffDiagonal[idx][7];
             tmp_V = X->Def.ParaInterAll_OffDiagonal[idx];
 
-            hs_jb = iHamPanelActive ? HamColBegin : 1;
-            hs_je = iHamPanelActive ? HamColEnd : (long int)i_max;
+            hs_jb = HS_JB();
+            hs_je = HS_JE(i_max);
             for (j = hs_jb; j <= hs_je; j++) {
               num1 = GetOffCompGeneralSpin(list_1[j], isite1, sigma2, sigma1, &tmp_off, X->Def.SiteToBit, X->Def.Tpow);
               if (num1 != 0) {

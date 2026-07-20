@@ -21,6 +21,32 @@
 #include "global.h"
 
 /**
+ * Sink-mode abstraction (design doc phase 3c, section 3).
+ *
+ * The two dense modes are DERIVED from iHamPanelActive at makeHam entry, so
+ * existing callers need no change:
+ *   HAM_SINK_DENSE_REPLICATED (0) <-> iHamPanelActive == 0
+ *   HAM_SINK_DENSE_PANEL          <-> iHamPanelActive == 1
+ * HAM_SINK_TRACE_COLLECT is set ONLY by the phase-3c trace collector (Task 2);
+ * in that mode every AddHamElem is routed to the installed hamCollectSink
+ * function pointer (see global.h) instead of a dense store, and makeHam
+ * enumerates the full column range on every rank.
+ *
+ * The function-pointer signature is kept as a typedef here for the Task-2
+ * collector; global.h declares the global hamCollectSink with the identical
+ * plain expanded type (it is included before this typedef exists, so it cannot
+ * name the typedef) -- the two are compatible.
+ */
+typedef void (*HamCollectSinkFn)(long int irow, long int jcol,
+                                 double complex val);
+
+enum HamSinkMode {
+  HAM_SINK_DENSE_REPLICATED = 0,
+  HAM_SINK_DENSE_PANEL,
+  HAM_SINK_TRACE_COLLECT
+};
+
+/**
  * Storage abstraction for the dense FullDiag Hamiltonian
  * (design doc section 3, phase 2).
  *
@@ -59,7 +85,9 @@ static inline int HamOwnedCol(long int jcol) {
     long int hs_i_ = (long int)(irow);                                 \
     long int hs_j_ = (long int)(jcol);                                 \
     assert(hs_i_ >= 1);                                                \
-    if (iHamPanelActive) {                                             \
+    if (iHamSinkMode == HAM_SINK_TRACE_COLLECT) {                      \
+      hamCollectSink(hs_i_, hs_j_, (val));                             \
+    } else if (iHamPanelActive) {                                      \
       assert(hs_j_ >= HamColBegin && hs_j_ <= HamColEnd);              \
       assert(hs_i_ <= HamPanelLd);                                     \
       Ham_local[(hs_j_ - HamColBegin) * HamPanelLd + (hs_i_ - 1)]      \
