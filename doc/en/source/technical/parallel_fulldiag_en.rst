@@ -225,14 +225,17 @@ The reachable matrix dimension :math:`N` is limited mainly by memory
   baseline). Extrapolating with this model, about
   :math:`N \sim 2 \times 10^5` (diagonalization ~3 h) is the practical
   ceiling on 16 nodes (~3.8 TB).
-* **GPU (Solver 3, A100 40GB)**: the 1-stage GPU implementation of
-  ELPA (2025.06) allocates a device work buffer of the order of one
-  full matrix (:math:`16 N^2` bytes) **per GPU** during the
-  tridiagonal solve, so this ceiling does not grow with the number of
-  GPUs. In practice :math:`N=48620` works (199 s diagonalization on 4
-  GPUs) while :math:`N=63504` stops with an allocation failure. The
-  practical ceiling on A100 40GB is :math:`N \approx 4.9 \times 10^4`;
-  use CPU nodes beyond that.
+* **GPU (Solver 3)**: the matrix and the eigenvectors are distributed
+  across device memories as well. On the complex 1-stage path of ELPA
+  (2025.06) the peak is about :math:`40 N^2 / P` bytes per GPU (the
+  complex matrix and eigenvectors plus the real workspace of the
+  tridiagonal stage). On 4 :math:`\times` A100 40GB,
+  :math:`N=48620` works (199 s diagonalization) while
+  :math:`N=63504` stops with a device-memory allocation failure,
+  consistent with this model's boundary of
+  :math:`N \approx 6.2 \times 10^4`. The ceiling grows as
+  :math:`\sqrt{P}` with the number of GPUs; beyond the available GPU
+  count, use CPU nodes.
 
 Guidelines
 ~~~~~~~~~~
