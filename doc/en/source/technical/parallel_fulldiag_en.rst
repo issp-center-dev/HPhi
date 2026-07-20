@@ -211,6 +211,37 @@ states); ``ExpecMode 1``/``2`` remove exactly this cost (about 14x
 here). On multiple nodes we strongly recommend ``ExpecMode 1`` or
 higher.
 
+Memory requirements
+~~~~~~~~~~~~~~~~~~~
+
+One complex double-precision :math:`N \times N` matrix takes
+:math:`16 N^2` bytes. The peak memory requirement per solver is
+roughly as follows (the coefficients are empirical, based on measured
+MaxRSS on kugui, and exclude fixed overhead such as the MPI runtime):
+
+* ``Solver 0``/``2``: every process holds a replicated matrix and
+  eigenvector set — about :math:`32 N^2` bytes **per process**.
+* ``Solver 1``: the diagonalization is distributed but the matrix
+  generation is replicated — about :math:`16 N^2 + 32 N^2 / P` bytes
+  **per process** (:math:`P`: number of processes). The replicated
+  generation dominates, so at large :math:`N` it needs more memory
+  than ``Solver 3``.
+* ``Solver 3`` (CPU): generation is also distributed — about
+  :math:`64 N^2` bytes **for the whole job** (roughly four matrix
+  copies; :math:`64 N^2 / P` per process).
+* ``Solver 3`` (GPU): in addition to the host memory above, about
+  :math:`40 N^2 / P` bytes of device memory **per GPU** (complex
+  matrix + eigenvectors + the real workspace of the tridiagonal
+  stage).
+
+.. csv-table::
+   :header: ":math:`N`", "Solver 0 (per process)", "Solver 3 CPU (whole job)", "Solver 3 GPU (per GPU, :math:`P=4`)"
+   :widths: 12, 22, 22, 26
+
+   "16,384", "8.6 GB", "17 GB", "2.7 GB"
+   "63,504", "129 GB", "258 GB", "40 GB (the A100-40GB limit)"
+   "200,000", "1.3 TB", "2.6 TB", "400 GB (infeasible at :math:`P=4`)"
+
 Maximum feasible size
 ~~~~~~~~~~~~~~~~~~~~~
 
