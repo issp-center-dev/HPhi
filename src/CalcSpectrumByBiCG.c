@@ -36,6 +36,10 @@
 
 typedef struct {
   double sum2;
+  double sum_real;
+  double sum_imag;
+  double weighted_sum_real;
+  double weighted_sum_imag;
   unsigned long nbad;
   int nsample;
   unsigned long sample_index[BICG_DIAG_SAMPLES];
@@ -50,13 +54,22 @@ static int IsFiniteComplex(double complex z) {
 static void AnalyzeBiCGVector(const double complex *v, unsigned long n, BiCGVectorDiag *diag) {
   unsigned long i;
   diag->sum2 = 0.0;
+  diag->sum_real = 0.0;
+  diag->sum_imag = 0.0;
+  diag->weighted_sum_real = 0.0;
+  diag->weighted_sum_imag = 0.0;
   diag->nbad = 0;
   diag->nsample = 0;
   for (i = 0; i < n; i++) {
     const double real = creal(v[i]);
     const double imag = cimag(v[i]);
     if (IsFiniteComplex(v[i])) {
+      const double weight = (double)(i + 1);
       diag->sum2 += real * real + imag * imag;
+      diag->sum_real += real;
+      diag->sum_imag += imag;
+      diag->weighted_sum_real += weight * real;
+      diag->weighted_sum_imag += weight * imag;
     } else {
       if (diag->nsample < BICG_DIAG_SAMPLES) {
         diag->sample_index[diag->nsample] = i + 1;
@@ -66,15 +79,6 @@ static void AnalyzeBiCGVector(const double complex *v, unsigned long n, BiCGVect
       }
       diag->nbad++;
     }
-  }
-}
-
-static void PrintBiCGVectorDiag(const char *name, const BiCGVectorDiag *diag) {
-  int i;
-  fprintf(stderr, "%s_sum2=%25.17e %s_nbad=%lu", name, diag->sum2, name, diag->nbad);
-  for (i = 0; i < diag->nsample; i++) {
-    fprintf(stderr, " %s_bad[%d]=(idx=%lu,value=%25.17e,%25.17e)",
-            name, i, diag->sample_index[i], diag->sample_real[i], diag->sample_imag[i]);
   }
 }
 
@@ -90,6 +94,56 @@ static const char *BiCGStatusReason(int status) {
   }
 }
 
+static const char *BiCGStageName(int stage) {
+  switch (stage) {
+    case 1: return "entered update";
+    case 2: return "rho reduced";
+    case 3: return "beta ready";
+    case 4: return "seed matvecs ready";
+    case 5: return "alpha denominator reduced";
+    case 6: return "alpha ready";
+    case 7: return "shifted-equation checks";
+    case 8: return "shifted-equation checks passed";
+    case 9: return "shifted equation updated";
+    case 10: return "residual vectors updated";
+    case 11: return "seed switch";
+    case 12: return "seed switch complete";
+    case 13: return "residual norm reduced";
+    case 14: return "residual norm valid";
+    case 15: return "update complete";
+    default: return "not recorded";
+  }
+}
+
+static void PrintBiCGScalarStageDiag(const int status[3]) {
+  int stage, iter, seed;
+  double complex value[KOMEGA_BICG_DIAG_VALUE_COUNT];
+  komega_bicg_getdiag(&stage, &iter, &seed, value);
+  fprintf(stderr,
+          "BiCG scalar-stage diagnostic: rank=%d trigger_status=(%d,%d,%d) "
+          "stage=%d [%s] iter=%d seed=%d "
+          "rho_local=(%25.17e,%25.17e) rho_global=(%25.17e,%25.17e) "
+          "beta=(%25.17e,%25.17e) "
+          "alpha_inner_local=(%25.17e,%25.17e) "
+          "alpha_inner_global=(%25.17e,%25.17e) "
+          "alpha_denom=(%25.17e,%25.17e) "
+          "alpha_old=(%25.17e,%25.17e) alpha=(%25.17e,%25.17e) "
+          "residual_first=(%25.17e,%25.17e) "
+          "shadow_residual_first=(%25.17e,%25.17e) "
+          "resdot_local=(%25.17e,%25.17e) "
+          "resdot_global=(%25.17e,%25.17e) "
+          "z_seed=(%25.17e,%25.17e) pi_seed=(%25.17e,%25.17e)\n",
+          myrank, status[0], status[1], status[2], stage, BiCGStageName(stage), iter, seed,
+          creal(value[0]), cimag(value[0]), creal(value[1]), cimag(value[1]),
+          creal(value[2]), cimag(value[2]), creal(value[3]), cimag(value[3]),
+          creal(value[4]), cimag(value[4]), creal(value[5]), cimag(value[5]),
+          creal(value[6]), cimag(value[6]), creal(value[7]), cimag(value[7]),
+          creal(value[8]), cimag(value[8]), creal(value[9]), cimag(value[9]),
+          creal(value[10]), cimag(value[10]), creal(value[11]), cimag(value[11]),
+          creal(value[12]), cimag(value[12]), creal(value[13]), cimag(value[13]));
+  fflush(stderr);
+}
+
 static void PrintBiCGIteration1Diag(
   const BiCGVectorDiag *v2_diag,
   const BiCGVectorDiag *v12_diag,
@@ -98,13 +152,33 @@ static void PrintBiCGIteration1Diag(
   int status2,
   double residual
 ) {
+  int i;
   fprintf(stderr,
-          "BiCG iteration-1 diagnostic: rank=%d status=(%d,%d,%d) residual=%25.17e ",
-          myrank, status0, status1, status2, residual);
-  PrintBiCGVectorDiag("v2", v2_diag);
-  fprintf(stderr, " ");
-  PrintBiCGVectorDiag("Hv2", v12_diag);
-  fprintf(stderr, "\n");
+          "BiCG iteration-1 diagnostic: rank=%d trigger_status=(%d,%d,%d) "
+          "iter1_residual=%25.17e "
+          "v2_sum2=%25.17e v2_sum=(%25.17e,%25.17e) "
+          "v2_weighted_sum=(%25.17e,%25.17e) v2_nbad=%lu "
+          "Hv2_sum2=%25.17e Hv2_sum=(%25.17e,%25.17e) "
+          "Hv2_weighted_sum=(%25.17e,%25.17e) Hv2_nbad=%lu\n",
+          myrank, status0, status1, status2, residual,
+          v2_diag->sum2, v2_diag->sum_real, v2_diag->sum_imag,
+          v2_diag->weighted_sum_real, v2_diag->weighted_sum_imag, v2_diag->nbad,
+          v12_diag->sum2, v12_diag->sum_real, v12_diag->sum_imag,
+          v12_diag->weighted_sum_real, v12_diag->weighted_sum_imag, v12_diag->nbad);
+  for (i = 0; i < v2_diag->nsample; i++) {
+    fprintf(stderr,
+            "BiCG iteration-1 non-finite sample: rank=%d vector=v2 sample=%d "
+            "index=%lu value=(%25.17e,%25.17e)\n",
+            myrank, i, v2_diag->sample_index[i],
+            v2_diag->sample_real[i], v2_diag->sample_imag[i]);
+  }
+  for (i = 0; i < v12_diag->nsample; i++) {
+    fprintf(stderr,
+            "BiCG iteration-1 non-finite sample: rank=%d vector=Hv2 sample=%d "
+            "index=%lu value=(%25.17e,%25.17e)\n",
+            myrank, i, v12_diag->sample_index[i],
+            v12_diag->sample_real[i], v12_diag->sample_imag[i]);
+  }
   fflush(stderr);
 }
 
@@ -396,13 +470,21 @@ int CalcSpectrumByBiCG(
   double initial_residual = 0.0;
   double max_unshifted_residual = 0.0;
   int first_spike_iter = 0;
+  int force_iter1_diag = FALSE;
   BiCGVectorDiag iter1_v2_diag, iter1_v12_diag;
   int have_iter1_diag = FALSE;
+  int iter1_diag_printed = FALSE;
+  int scalar_stage_diag_printed = FALSE;
+  double iter1_residual = NAN;
 
   fprintf(stdoutMPI, "#####  Spectrum calculation with BiCG  #####\n\n");
   status[0] = 0;
   status[1] = 0;
   status[2] = 0;
+  {
+    const char *diag_env = getenv("HPHI_BICG_DIAG_ITER1");
+    force_iter1_diag = (diag_env != NULL && atoi(diag_env) != 0);
+  }
   /* Defense in depth (independent of the top-level SpectrumNumBra validation): the
      tridiagonal-component restart format stores ONE projected residual stream per BiCG step,
      so multi-bra (nBra>1) is only valid for CalcSpec=Normal. Fail hard before touching any
@@ -498,6 +580,13 @@ int CalcSpectrumByBiCG(
 
   for (stp = 1; stp <= X->Bind.Def.Lanczos_max; stp++) {
     ran_bicg_loop = TRUE;
+    const int has_local_residual = X->Bind.Check.idim_max > 0;
+    double unshifted_residual = NAN;
+    if (stp == 1) {
+      /* Capture the input before the first matvec so a later finite-valued
+         breakdown can distinguish a bad excitation vector from a bad H|r>. */
+      AnalyzeBiCGVector(&v2[1], X->Bind.Check.idim_max, &iter1_v2_diag);
+    }
     /**
     <li>@f${\bf v}_{2}={\hat H}{\bf v}_{12}, {\bf v}_{4}={\hat H}{\bf v}_{14}@f$,
     where @f${\bf v}_{12}, {\bf v}_{14}@f$ are old (shadow) residual vector.</li>
@@ -515,7 +604,6 @@ int CalcSpectrumByBiCG(
     if (iret == -1) return FALSE;
 
     if (stp == 1) {
-      AnalyzeBiCGVector(&v2[1], X->Bind.Check.idim_max, &iter1_v2_diag);
       AnalyzeBiCGVector(&v12[1], X->Bind.Check.idim_max, &iter1_v12_diag);
       have_iter1_diag = TRUE;
     }
@@ -527,13 +615,26 @@ int CalcSpectrumByBiCG(
     */
 
     komega_bicg_update(&v12[1], &v2[1], &v14[1], &v4[1], dcSpectrum, res_proj, status);
+    if (status[1] >= 2) {
+      PrintBiCGScalarStageDiag(status);
+      scalar_stage_diag_printed = TRUE;
+    }
+    if (has_local_residual) unshifted_residual = creal(v12[1]);
+    if (stp == 1) iter1_residual = unshifted_residual;
 
-    if (stp == 1 && have_iter1_diag == TRUE &&
-        (status[1] == BICG_STATUS_NONFINITE || IsFiniteComplex(v12[1]) == FALSE)) {
-      if (status[0] >= 0) status[0] = -stp;
-      if (status[1] == 0) status[1] = BICG_STATUS_NONFINITE;
-      PrintBiCGIteration1Diag(&iter1_v2_diag, &iter1_v12_diag,
-        status[0], status[1], status[2], creal(v12[1]));
+    if (stp == 1 && have_iter1_diag == TRUE) {
+      const int iter1_nonfinite =
+        status[1] == BICG_STATUS_NONFINITE ||
+        (has_local_residual && IsFiniteComplex(v12[1]) == FALSE);
+      if (iter1_nonfinite) {
+        if (status[0] >= 0) status[0] = -stp;
+        if (status[1] == 0) status[1] = BICG_STATUS_NONFINITE;
+      }
+      if (iter1_nonfinite || force_iter1_diag) {
+        PrintBiCGIteration1Diag(&iter1_v2_diag, &iter1_v12_diag,
+          status[0], status[1], status[2], unshifted_residual);
+        iter1_diag_printed = TRUE;
+      }
     }
 
     if (status[1] < 2) {
@@ -542,17 +643,17 @@ int CalcSpectrumByBiCG(
       for (iomega = 0; iomega < Nomega; iomega++) resz[iomega] = NAN;
     }
 
-    if (isfinite(creal(v12[1])) == TRUE) {
+    if (isfinite(unshifted_residual) == TRUE) {
       if (isfinite(max_unshifted_residual) == FALSE ||
-          creal(v12[1]) > max_unshifted_residual) {
-        max_unshifted_residual = creal(v12[1]);
+          unshifted_residual > max_unshifted_residual) {
+        max_unshifted_residual = unshifted_residual;
       }
       if (first_spike_iter == 0 &&
-          BiCGResidualRatio(creal(v12[1]), initial_residual) > BICG_SPIKE_RATIO_WARN) {
+          BiCGResidualRatio(unshifted_residual, initial_residual) > BICG_SPIKE_RATIO_WARN) {
         first_spike_iter = stp;
       }
     }
-    PrintBiCGStatusTrace(fp_status, stp, status, creal(v12[1]), initial_residual,
+    PrintBiCGStatusTrace(fp_status, stp, status, unshifted_residual, initial_residual,
                          max_unshifted_residual, first_spike_iter, Nomega, resz);
     fflush(fp_status);
 
@@ -574,7 +675,7 @@ int CalcSpectrumByBiCG(
       fflush(fp);
     }
 
-    fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], creal(v12[1]));
+    fprintf(stdoutMPI, "  %9d  %9d %8d %25.15e\n", abs(status[0]), status[1], status[2], unshifted_residual);
     if (status[0] < 0) break;
   }/*for (stp = 0; stp <= X->Bind.Def.Lanczos_max; stp++)*/
   if (ran_bicg_loop == TRUE) {
@@ -608,6 +709,16 @@ int CalcSpectrumByBiCG(
         if (resz[iomega] > final_shifted_max_residual) final_shifted_max_residual = resz[iomega];
       }
     }
+  }
+  /* A finite but incorrect first matvec can fail only on a later BiCG step.
+     Preserve the iteration-1 per-rank fingerprints for every failed solve,
+     not only for failures that are already non-finite at iteration 1. */
+  if (bicg_failed == TRUE && have_iter1_diag == TRUE && iter1_diag_printed == FALSE) {
+    PrintBiCGIteration1Diag(&iter1_v2_diag, &iter1_v12_diag,
+      status[0], status[1], status[2], iter1_residual);
+  }
+  if (bicg_failed == TRUE && status[1] >= 2 && scalar_stage_diag_printed == FALSE) {
+    PrintBiCGScalarStageDiag(status);
   }
   /**
   </ul>

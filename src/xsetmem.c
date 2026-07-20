@@ -149,6 +149,14 @@ void setmem_def
     X->Def.AnomalousG = i_2d_allocate(anomalousg_terms, 5);
   }
 
+  {
+    const unsigned int symtrans = X->Def.NSymTrans > 0 ? X->Def.NSymTrans : 1;
+    const unsigned int symsites = X->Def.Nsite > 0 ? X->Def.Nsite : 1;
+    X->Def.SymTrans = i_2d_allocate(symtrans, symsites);
+    X->Def.SymTransAnti = i_2d_allocate(symtrans, symsites);
+    X->Def.SymTransChar = cd_1d_allocate(symtrans);
+  }
+
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
   X->Def.CisAjtCkuAlvDC = i_2d_allocate(X->Def.NCisAjtCkuAlvDC, 8);
 

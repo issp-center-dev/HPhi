@@ -46,18 +46,47 @@ macro(add_hphi_mpi_test_with_srcdir test_name mode)
     )
 endmacro()
 
+add_executable(unittest_symmetry_basis
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+target_include_directories(unittest_symmetry_basis
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_basis PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_basis m)
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_basis OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_basis
+    COMMAND unittest_symmetry_basis)
+set_tests_properties(unittest_symmetry_basis
+    PROPERTIES LABELS "unit;symmetry")
+
 #
 # Lanczos
 #
 add_hphi_test(lanczos_hubbard_square)
 add_hphi_test(lanczos_hubbard_square_calchs2)
 add_hphi_test(lanczos_hubbard_square_ncond_calchs2)
+add_hphi_test(modpara_parse_validation)
+set_tests_properties(modpara_parse_validation
+    PROPERTIES LABELS "validation;input")
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)
+add_hphi_test(lanczos_small_dimension_regression)
+add_hphi_test(symmetry_spin_chain_validation)
+add_hphi_test(symmetry_spin_chain_standard_generation)
+add_hphi_test(symmetry_spinless_fermion_lanczos)
+add_hphi_test(symmetry_spinless_fermion_standard_generation)
+add_hphi_test(symmetry_hubbard_lanczos)
+add_hphi_test(symmetry_hubbard_standard_generation)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
+add_hphi_test(symmetry_spin_chain_lanczos)
 add_hphi_test(lanczos_spin_ladder_DM)
 add_hphi_test(lanczos_genspin_ladder)
 add_hphi_test(lanczos_hubbardgc_tri)
@@ -125,6 +154,27 @@ set_tests_properties(
     threebody_calcmodel_validation
     PROPERTIES LABELS "lanczos;spin;validation")
 set_tests_properties(
+    lanczos_small_dimension_regression
+    PROPERTIES LABELS "lanczos;spin;validation")
+set_tests_properties(
+    symmetry_spin_chain_validation
+    PROPERTIES LABELS "symmetry;spin;validation")
+set_tests_properties(
+    symmetry_spin_chain_standard_generation
+    PROPERTIES LABELS "symmetry;spin;standard")
+set_tests_properties(
+    symmetry_spinless_fermion_lanczos
+    PROPERTIES LABELS "symmetry;spinless;lanczos")
+set_tests_properties(
+    symmetry_spinless_fermion_standard_generation
+    PROPERTIES LABELS "symmetry;spinless;standard")
+set_tests_properties(
+    symmetry_hubbard_lanczos
+    PROPERTIES LABELS "symmetry;hubbard;lanczos;validation")
+set_tests_properties(
+    symmetry_hubbard_standard_generation
+    PROPERTIES LABELS "symmetry;hubbard;standard")
+set_tests_properties(
     lanczos_kondo_chain lanczos_kondogc_chain
     lanczos_kondo_chain_restart
     PROPERTIES LABELS "lanczos;kondo")
@@ -136,6 +186,9 @@ set_tests_properties(
     lanczos_spin_nbody_interall
     lanczos_spin_kagome_restart
     PROPERTIES LABELS "lanczos;spin")
+set_tests_properties(
+    symmetry_spin_chain_lanczos
+    PROPERTIES LABELS "symmetry;spin;lanczos")
 set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
     lanczos_genspin_ladder_restart
@@ -201,6 +254,7 @@ add_hphi_test(lobcg_hubbard_square)
 add_hphi_test(lobcg_hubbard_szunconserv)
 add_hphi_test(lobcg_kondo_chain)
 add_hphi_test(lobcg_spin_kagome)
+add_hphi_test(symmetry_spin_chain_lobcg)
 add_hphi_test(lobcg_genspin_ladder)
 add_hphi_test(lobcg_hubbardgc_tri)
 add_hphi_test(lobcg_kondogc_chain)
@@ -230,6 +284,9 @@ set_tests_properties(
     lobcg_spingc_hcor lobcg_spingc_6body
     lobcg_spin_kagome_restart
     PROPERTIES LABELS "lobcg;spin")
+set_tests_properties(
+    symmetry_spin_chain_lobcg
+    PROPERTIES LABELS "symmetry;spin;lobcg")
 set_tests_properties(
     lobcg_genspin_ladder lobcg_genspingc_ladder
     lobcg_genspin_ladder_restart

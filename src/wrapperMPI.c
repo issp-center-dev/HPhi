@@ -412,6 +412,24 @@ int SumMPI_i(
   return(idim);
 }/*int SumMPI_i*/
 /**
+@brief MPI wrapper function to broadcast an integer across processes.
+@return Broadcasted value across processes.
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+int BcastMPI_i(
+  int root,//!<[in] The source process of the broadcast
+  int idim//!<[in] Value to be broadcasted
+) {
+  int idim0;
+  idim0 = idim;
+#ifdef MPI
+  if (MPI_Bcast(&idim0, 1, MPI_INT, root, MPI_COMM_WORLD) != MPI_SUCCESS) {
+    exitMPI(-1);
+  }
+#endif
+  return(idim0);
+}/*int BcastMPI_i*/
+/**
 @brief MPI wrapper function to broadcast unsigned long
 integer across processes.
 @return Broadcasted value across processes.

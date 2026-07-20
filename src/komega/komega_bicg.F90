@@ -77,7 +77,14 @@ MODULE komega_bicg
   PRIVATE
   !
   PUBLIC komega_BICG_init, komega_BICG_restart, komega_BICG_update, komega_BICG_getcoef, &
-  &      komega_BICG_getvec, komega_BICG_finalize, komega_BICG_getresidual
+  &      komega_BICG_getvec, komega_BICG_finalize, komega_BICG_getresidual, &
+  &      komega_BICG_getdiag
+  !
+  INTEGER,PARAMETER :: BICG_DIAG_VALUE_COUNT = 14
+  INTEGER :: bicg_diag_stage = 0
+  INTEGER :: bicg_diag_iter = 0
+  INTEGER :: bicg_diag_seed = 0
+  COMPLEX(8) :: bicg_diag_values(BICG_DIAG_VALUE_COUNT) = CMPLX(0d0, 0d0, KIND(0d0))
   !
 CONTAINS
 !>
@@ -399,6 +406,10 @@ SUBROUTINE komega_BICG_init(ndim0, nl0, nz0, x, z0, itermax0, threshold0, comm0)
   z_seed = z(iz_seed)
   iter = 0
   lz_conv(1:nz) = .FALSE.
+  bicg_diag_stage = 0
+  bicg_diag_iter = 0
+  bicg_diag_seed = iz_seed
+  bicg_diag_values(1:BICG_DIAG_VALUE_COUNT) = CMPLX(0d0, 0d0, KIND(0d0))
   !
   IF(itermax > 0) THEN
      ALLOCATE(alpha_save(itermax), beta_save(itermax), &
@@ -535,14 +546,22 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   !
   INTEGER :: iz
   REAL(8) :: res_shift
-  COMPLEX(8) :: rho_old, alpha_denom, resdot
+  COMPLEX(8) :: rho_old, alpha_inner, alpha_denom, resdot
   !
   iter = iter + 1
   status(1:3) = 0
   status(3) = iz_seed
+  bicg_diag_stage = 1
+  bicg_diag_iter = iter
+  bicg_diag_seed = iz_seed
+  bicg_diag_values(1:BICG_DIAG_VALUE_COUNT) = CMPLX(0d0, 0d0, KIND(0d0))
+  bicg_diag_values(13) = z_seed
+  IF(iz_seed >= 1 .AND. iz_seed <= nz) bicg_diag_values(14) = pi(iz_seed)
   !
   rho_old = rho
-  rho = zdotcMPI(ndim,v4,v2)
+  rho = zdotcMPI(ndim,v4,v2,bicg_diag_values(1))
+  bicg_diag_values(2) = rho
+  bicg_diag_stage = 2
   IF(.NOT. komega_BICG_isfinite_c(rho)) THEN
      CALL komega_BICG_set_failure(status, 5)
      RETURN
@@ -564,9 +583,13 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
         RETURN
      END IF
   END IF
+  bicg_diag_values(3) = beta
+  bicg_diag_stage = 3
   v12(1:ndim) = z_seed * v2(1:ndim) - v12(1:ndim)
   v14(1:ndim) = CONJG(z_seed) * v4(1:ndim) - v14(1:ndim)
   alpha_old = alpha
+  bicg_diag_values(7) = alpha_old
+  bicg_diag_stage = 4
   IF(.NOT. komega_BICG_isfinite_c(alpha)) THEN
      CALL komega_BICG_set_failure(status, 5)
      RETURN
@@ -575,7 +598,11 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
      CALL komega_BICG_set_failure(status, 2)
      RETURN
   END IF
-  alpha_denom = zdotcMPI(ndim,v4,v12) - beta * rho / alpha
+  alpha_inner = zdotcMPI(ndim,v4,v12,bicg_diag_values(4))
+  bicg_diag_values(5) = alpha_inner
+  alpha_denom = alpha_inner - beta * rho / alpha
+  bicg_diag_values(6) = alpha_denom
+  bicg_diag_stage = 5
   !
   IF(.NOT. komega_BICG_isfinite_c(alpha_denom)) THEN
      CALL komega_BICG_set_failure(status, 5)
@@ -589,15 +616,19 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
      RETURN
   END IF
   alpha = rho / alpha_denom
+  bicg_diag_values(8) = alpha
+  bicg_diag_stage = 6
   IF(.NOT. komega_BICG_isfinite_c(alpha)) THEN
      CALL komega_BICG_set_failure(status, 5)
      RETURN
   END IF
   !
+  bicg_diag_stage = 7
   CALL komega_BICG_check_projection(r_l, status)
   IF(status(2) /= 0) RETURN
   CALL komega_BICG_check_shiftedeqn(status)
   IF(status(2) /= 0) RETURN
+  bicg_diag_stage = 8
   !
   ! For restarting
   !
@@ -610,6 +641,7 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   ! Shifted equation
   !
   CALL komega_BICG_shiftedeqn(r_l, x)
+  bicg_diag_stage = 9
   !
   ! Update residual
   !
@@ -623,15 +655,27 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   &           - CONJG(alpha * beta / alpha_old) * v5(1:ndim)
   CALL zcopy(ndim,v4,1,v5,1)
   CALL zcopy(ndim,v14,1,v4,1)
+  IF(ndim > 0) THEN
+     bicg_diag_values(9) = v2(1)
+     bicg_diag_values(10) = v4(1)
+  END IF
+  bicg_diag_stage = 10
   !
   ! Seed Switching
   !
+  bicg_diag_stage = 11
   CALL komega_BICG_seed_switch(v2,v4,status)
   IF(status(2) /= 0) RETURN
+  bicg_diag_seed = iz_seed
+  bicg_diag_values(13) = z_seed
+  IF(iz_seed >= 1 .AND. iz_seed <= nz) bicg_diag_values(14) = pi(iz_seed)
+  bicg_diag_stage = 12
   !
   ! Convergence check
   !
-  resdot = zdotcMPI(ndim,v2,v2)
+  resdot = zdotcMPI(ndim,v2,v2,bicg_diag_values(11))
+  bicg_diag_values(12) = resdot
+  bicg_diag_stage = 13
   IF(.NOT. komega_BICG_isfinite_c(resdot) .OR. DBLE(resdot) < 0d0) THEN
      CALL komega_BICG_set_failure(status, 5)
      RETURN
@@ -641,6 +685,7 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
      CALL komega_BICG_set_failure(status, 5)
      RETURN
   END IF
+  bicg_diag_stage = 14
   !
   DO iz = 1, nz
      IF(.NOT. komega_BICG_isfinite_c(pi(iz))) THEN
@@ -698,6 +743,7 @@ SUBROUTINE komega_BICG_update(v12, v2, v14, v4, x, r_l, status) BIND(C)
   END IF
   !
   IF(ndim > 0) v12(1) = resnorm
+  bicg_diag_stage = 15
   !
 END SUBROUTINE komega_BICG_update
 !>
@@ -756,6 +802,24 @@ SUBROUTINE komega_BICG_getresidual(res) BIND(C)
   res(1:nz) = resnorm / ABS(pi(1:nz))
   !
 END SUBROUTINE komega_BICG_getresidual
+!>
+!! Return the most recent BiCG scalar-stage diagnostic without communication.
+!!
+SUBROUTINE komega_BICG_getdiag(stage0, iter0, seed0, values0) BIND(C)
+  !
+  USE ISO_C_BINDING
+  !
+  IMPLICIT NONE
+  !
+  INTEGER(C_INT),INTENT(OUT) :: stage0, iter0, seed0
+  COMPLEX(C_DOUBLE_COMPLEX),INTENT(OUT) :: values0(BICG_DIAG_VALUE_COUNT)
+  !
+  stage0 = bicg_diag_stage
+  iter0 = bicg_diag_iter
+  seed0 = bicg_diag_seed
+  values0(1:BICG_DIAG_VALUE_COUNT) = bicg_diag_values(1:BICG_DIAG_VALUE_COUNT)
+  !
+END SUBROUTINE komega_BICG_getdiag
 !>
 !! Deallocate private arrays
 !!

@@ -97,7 +97,11 @@ int check(struct BindStruct *X){
 
   int iAllup=X->Def.Ne;
 
-  if(X->Def.iFlgScaLAPACK == 0) {
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    X->Def.NsiteMPI = X->Def.Nsite;
+    X->Def.Total2SzMPI = X->Def.Total2Sz;
+  }
+  else if(X->Def.iFlgScaLAPACK == 0) {
     /*
       Set Site number per MPI process
     */
@@ -317,6 +321,9 @@ int check(struct BindStruct *X){
   //fprintf(stdoutMPI, "Debug: comb_sum= %ld \n",comb_sum);
 
   X->Check.idim_max = comb_sum;
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    X->Check.idim_maxMPI = X->Check.idim_max;
+  }
   switch(X->Def.iCalcType) {
     case Lanczos:
       switch (X->Def.iCalcModel) {
@@ -566,7 +573,9 @@ int check(struct BindStruct *X){
     Print MPI-site information and Modify Tpow 
     in the inter process region.
   */
-  CheckMPI_Summary(X);
+  if (X->Def.iFlgSymmetryBasis != TRUE) {
+    CheckMPI_Summary(X);
+  }
   
   return TRUE;
 }    

@@ -27,6 +27,8 @@
 
 #include "Common.h"
 
+struct SymmetryBasisRuntime;
+
 /*=================================================================================================*/
 //For TEM
 struct ParamList {
@@ -211,6 +213,12 @@ struct DefineList {
   double complex *ParaAnomalousTerm;/**<@brief [DefineList::NAnomalousTerm] Coupling constants*/
   unsigned int NAnomalousG;/**<@brief Number of HubbardGC anomalous pair correlation terms*/
   int **AnomalousG;/**<@brief [DefineList::NAnomalousG][5]: type, site1, spin1, site2, spin2*/
+
+  int iFlgSymmetryBasis;
+  unsigned int NSymTrans;
+  int **SymTrans;                  /**< [NSymTrans][Nsite], site permutation */
+  int **SymTransAnti;              /**< [NSymTrans][Nsite], v1 accepts only 1 */
+  double complex *SymTransChar;    /**< [NSymTrans], scalar 1D character */
 
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
@@ -525,6 +533,7 @@ struct BindStruct {
   struct LargeList Large;/**<@brief Variables for Matrix-Vector product*/
   struct PhysList Phys;/**<@brief Physical quantities*/
   struct BoostList Boost;/**<@brief For Boost*/
+  struct SymmetryBasisRuntime *Sym;
 };/*struct BindStruct*/
 /**
 @brief Bind

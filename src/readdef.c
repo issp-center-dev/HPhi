@@ -37,6 +37,7 @@
 #include "nbody_interall.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
+#include "symmetry_basis_io.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -81,7 +82,8 @@ static char cKWListOfFileNameList[][D_CharTmpReadDef]={
   "NBodyInterAll",
   "NBodyG",
   "AnomalousTerm",
-  "AnomalousG"
+  "AnomalousG",
+  "TransSym"
 };
 
 int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0]);
@@ -779,8 +781,12 @@ int ReadDefFileNInt(
   X->iNOmega=1000;
   X->NCond=0;
   X->iFlgSzConserved=FALSE;
+  X->iFlgSymmetryBasis=FALSE;
+  X->NSymTrans=0;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
+  int iReadNup=FALSE;
+  int iReadNdown=FALSE;
   xBoost->flgBoost=FALSE;
   InitializeInteractionNum(X);
   NumAve=1;
@@ -853,20 +859,39 @@ int ReadDefFileNInt(
         //! Read header (1 line).
             fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);   //8
             double dtmp, dtmp2;
+            int nread;
             X->read_hacker = 1;
         //! Read lines.
             while (fgetsMPI(ctmp2, 256, fp) != NULL) {
               if (*ctmp2 == '\n') continue;
-              sscanf(ctmp2, "%s %lf %lf\n", ctmp, &dtmp, &dtmp2);
+              dtmp = 0.0;
+              dtmp2 = 0.0;
+              nread = sscanf(ctmp2, "%199s %lf %lf", ctmp, &dtmp, &dtmp2);
+              if (nread < 2) {
+                fprintf(stdoutMPI,
+                        "Error in %s\n ModPara line must contain a keyword and numeric value: %s",
+                        defname, ctmp2);
+                fclose(fp);
+                return (-1);
+              }
               if (CheckWords(ctmp, "Nsite") == 0) {
                 X->Nsite = (int) dtmp;
               }
               else if (CheckWords(ctmp, "Nup") == 0) {
+                if (dtmp < 0.0) {
+                  fprintf(stdoutMPI, "Error in %s\n Nup must be non-negative.\n", defname);
+                  return (-1);
+                }
                 X->Nup = (int) dtmp;
+                iReadNup = TRUE;
               }
               else if (CheckWords(ctmp, "Ndown") == 0) {
+                if (dtmp < 0.0) {
+                  fprintf(stdoutMPI, "Error in %s\n Ndown must be non-negative.\n", defname);
+                  return (-1);
+                }
                 X->Ndown = (int) dtmp;
-                X->Total2Sz = X->Nup - X->Ndown;
+                iReadNdown = TRUE;
               }
               else if (CheckWords(ctmp, "2Sz") == 0) {
                 X->Total2Sz = (int) dtmp;
@@ -1116,6 +1141,12 @@ int ReadDefFileNInt(
         fgetsMPI(ctmp2, 256, fp);
         sscanf(ctmp2, "%s %u\n", ctmp, &(X->NAnomalousG));
         break;
+      case KWTransSym:
+        if (ReadTransSymNInt(defname, X) != 0) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
+        break;
       case KWOneBodyG:
         /* Read cisajs.def----------------------------------------*/
         fgetsMPI(ctmp, sizeof(ctmp) / sizeof(char), fp);
@@ -1265,6 +1296,27 @@ int ReadDefFileNInt(
     fclose(fp);
   }
 
+  if (iReadNup != iReadNdown) {
+    fprintf(stdoutMPI, "Error in %s\n Nup and Ndown must be specified together.\n",
+            cFileNameListFile[KWModPara]);
+    return (-1);
+  }
+  if (iReadNup == TRUE && iReadNdown == TRUE) {
+    int total2SzFromNupNdown = (int)X->Nup - (int)X->Ndown;
+    if (X->Nup > X->Nsite || X->Ndown > X->Nsite) {
+      fprintf(stdoutMPI, "Error in %s\n Nup and Ndown must not exceed Nsite.\n",
+              cFileNameListFile[KWModPara]);
+      return (-1);
+    }
+    if (X->iFlgSzConserved == TRUE && X->Total2Sz != total2SzFromNupNdown) {
+      fprintf(stdoutMPI,
+              "Error in %s\n 2Sz=%d conflicts with Nup-Ndown=%d.\n",
+              cFileNameListFile[KWModPara], X->Total2Sz, total2SzFromNupNdown);
+      return (-1);
+    }
+    X->Total2Sz = total2SzFromNupNdown;
+  }
+
   //Sz, Ncond
   switch(X->iCalcModel){
   case Spin:
@@ -1403,6 +1455,11 @@ int ReadDefFileNInt(
 
     if(X->nvec < X->k_exct){
         X->nvec=X->k_exct;
+    }
+    if (X->LanczosTarget < 0) {
+      fprintf(stdoutMPI, "Error in %s\n LanczosTarget=%d must be non-negative.\n",
+              defname, X->LanczosTarget);
+      return (-1);
     }
     if (X->LanczosTarget < X->k_exct) X->LanczosTarget = X->k_exct;
 
@@ -2109,6 +2166,13 @@ int ReadDefFileIdxPara(
       }
 
       if (ValidateAnomalousGScope(X) != 0) {
+        fclose(fp);
+        return ReadDefFileError(defname);
+      }
+      break;
+
+    case KWTransSym:
+      if (ReadTransSymFile(defname, X) != 0) {
         fclose(fp);
         return ReadDefFileError(defname);
       }
