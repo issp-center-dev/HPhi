@@ -477,6 +477,82 @@ add_test(NAME expec_trace_map_check COMMAND expec_trace_map_check)
 set_tests_properties(expec_trace_map_check
     PROPERTIES LABELS "unit;fulldiag;expecmode")
 
+# Unit test: ExpecMode 2 CSR Hamiltonian collector (phase 3c Task 2). Serial,
+# no MPI. Unlike expec_trace_map_check above (which hand-builds a bare-bit GC
+# BindStruct), this test's fixtures include CANONICAL list-based models
+# (Hubbard/tJ/Kondo half-filled, Spin Sz=0), so it drives HPhi's real setup
+# pipeline from StdFace-generated def files: StdFace_main -> ReadDef* ->
+# setmem_* -> check -> sz -> diagonalcalc -> makeHam. It therefore links the
+# full makeHam() closure + the setup closure + the StdFace library, rather than
+# the minimal source set expec_trace_map_check uses. green_output.c is linked
+# for the same reason (and needs MPI libs on an MPI build) as that target;
+# rt/MPI link conditions are kept identical.
+add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace_ham.c
+    ${CMAKE_SOURCE_DIR}/src/makeHam.c
+    ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
+    ${CMAKE_SOURCE_DIR}/src/anomalous_pair.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
+    ${CMAKE_SOURCE_DIR}/src/HPhiTrans.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/check.c
+    ${CMAKE_SOURCE_DIR}/src/CheckMPI.c
+    ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
+    ${CMAKE_SOURCE_DIR}/src/readdef.c
+    ${CMAKE_SOURCE_DIR}/src/sz.c
+    ${CMAKE_SOURCE_DIR}/src/xsetmem.c
+    ${CMAKE_SOURCE_DIR}/src/input.c
+    ${CMAKE_SOURCE_DIR}/src/output.c
+    ${CMAKE_SOURCE_DIR}/src/output_list.c
+    ${CMAKE_SOURCE_DIR}/src/nbody_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/eigenIO.c
+    ${CMAKE_SOURCE_DIR}/src/dSFMT.c
+    ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/struct.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c
+    ${CMAKE_SOURCE_DIR}/src/LogMessage.c
+    ${CMAKE_SOURCE_DIR}/src/ProgressMessage.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/FileIO.c
+    ${CMAKE_SOURCE_DIR}/src/green_output.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c
+    ${CMAKE_SOURCE_DIR}/src/time.c
+    ${CMAKE_SOURCE_DIR}/src/common/setmemory.c
+    ${STDFACE_DIR}/src/ChainLattice.c
+    ${STDFACE_DIR}/src/FCOrtho.c
+    ${STDFACE_DIR}/src/HoneycombLattice.c
+    ${STDFACE_DIR}/src/Kagome.c
+    ${STDFACE_DIR}/src/Ladder.c
+    ${STDFACE_DIR}/src/Orthorhombic.c
+    ${STDFACE_DIR}/src/Pyrochlore.c
+    ${STDFACE_DIR}/src/SquareLattice.c
+    ${STDFACE_DIR}/src/StdFace_main.c
+    ${STDFACE_DIR}/src/StdFace_ModelUtil.c
+    ${STDFACE_DIR}/src/TriangularLattice.c
+    ${STDFACE_DIR}/src/Wannier90.c)
+target_include_directories(expec_trace_ham_check PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include ${STDFACE_DIR})
+target_compile_definitions(expec_trace_ham_check PRIVATE DSFMT_MEXP=19937 _HPhi)
+target_link_libraries(expec_trace_ham_check m)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(expec_trace_ham_check rt)
+endif()
+if(MPI_FOUND)
+    target_link_libraries(expec_trace_ham_check ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(expec_trace_ham_check OpenMP::OpenMP_C)
+endif()
+add_test(NAME expec_trace_ham_check COMMAND expec_trace_ham_check)
+set_tests_properties(expec_trace_ham_check
+    PROPERTIES LABELS "unit;fulldiag;expecmode")
+
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
     ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)

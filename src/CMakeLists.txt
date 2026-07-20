@@ -51,7 +51,7 @@ target_sources(HPhi PRIVATE
 
 # Full diagonalization
 target_sources(HPhi PRIVATE
-  CalcByFullDiag.c lapack_diag.c makeHam.c
+  CalcByFullDiag.c lapack_diag.c makeHam.c expec_trace_ham.c
   matrixlapack.c matrixlapack_magma.c matrixlapack_elpa.c matrixscalapack.c
 )
 

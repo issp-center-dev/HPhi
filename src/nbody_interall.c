@@ -1832,8 +1832,8 @@ int AddNBodyInterAllToHamHubbard(struct BindStruct *X)
      never from the Lanczos/TPQ matvec (Multiply*) entry points above, so
      restricting the loop to the owned-column range is safe unconditionally
      on iHamPanelActive. */
-  long int hs_jb = iHamPanelActive ? HamColBegin : 1;
-  long int hs_je = iHamPanelActive ? HamColEnd : (long int)X->Check.idim_max;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (nbody_uses_hubbard_list_path(&X->Def) == FALSE) return -1;
 
@@ -1867,8 +1867,8 @@ int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X)
 {
   unsigned int p;
   unsigned long int j;
-  long int hs_jb = iHamPanelActive ? HamColBegin : 1;
-  long int hs_je = iHamPanelActive ? HamColEnd : (long int)X->Check.idim_max;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (X->Def.iCalcModel != HubbardGC) return -1;
 
@@ -1896,8 +1896,8 @@ int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
 {
   unsigned int p;
   unsigned long int j;
-  long int hs_jb = iHamPanelActive ? HamColBegin : 1;
-  long int hs_je = iHamPanelActive ? HamColEnd : (long int)X->Check.idim_max;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
   if (nbody_is_hubbard_model(&X->Def) == TRUE) return -1;

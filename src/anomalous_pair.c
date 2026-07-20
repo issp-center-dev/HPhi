@@ -442,8 +442,8 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
   /* Only invoked from makeHam() (M_Ham / FullDiag path); MultiplyAnomalousTermHubbardGC
      above is the separate Lanczos/TPQ matvec entry point, so the owned-column
      restriction here is safe unconditionally on iHamPanelActive. */
-  long int hs_jb = iHamPanelActive ? HamColBegin : 1;
-  long int hs_je = iHamPanelActive ? HamColEnd : (long int)X->Check.idim_max;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NAnomalousTerm == 0) return 0;
   if (X->Def.iCalcModel != HubbardGC) return -1;
 
