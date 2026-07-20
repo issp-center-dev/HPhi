@@ -933,12 +933,15 @@ int BuildSymmetryBasis(struct BindStruct *X)
   }
   free_basis_collectors(collectors, collector_count);
   collectors = NULL;
+  StartTimer(1115);
   if (gather_symmetry_basis(sym) != 0) {
+    StopTimer(1115);
     StopTimer(1110);
     goto fail;
   }
   global_representative_candidates = SumMPI_li(
       (unsigned long int)sym->basis_representative_candidates);
+  StopTimer(1115);
   StopTimer(1110);
 
   StartTimer(1111);

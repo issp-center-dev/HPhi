@@ -261,6 +261,7 @@ assert_rank_stats() {
     expected_dim="$1"
     expected_ranks="$2"
     log="$3"
+    expected_digest="${4:-}"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -270,7 +271,8 @@ assert_rank_stats() {
         echo "Missing ${stats}"
         exit 1
     fi
-    if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" '
+    if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
+        -v expected_digest="${expected_digest}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
@@ -304,8 +306,18 @@ assert_rank_stats() {
             work_mean[key] = mean
             next
         }
+        $1 == "basis_digest" {
+            digest_count++
+            ranks = value($3)
+            digest_min = value($4)
+            digest_max = value($5)
+            if (ranks != expected_ranks || digest_min != digest_max) bad = 1
+            if (expected_digest != "" && digest_min != expected_digest) bad = 1
+            next
+        }
         END {
-            if (header_ranks != expected_ranks || timer_count != 11 || work_count != 16) bad = 1
+            if (header_ranks != expected_ranks || timer_count != 12 ||
+                work_count != 16 || digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
@@ -329,6 +341,7 @@ run_mpi_symmetry_case() {
     expected_dim="$3"
     expected_doublon="${4:-}"
     expected_ranks="$5"
+    expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
     if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
@@ -340,7 +353,8 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}"
+    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+        "${expected_digest}"
 }
 
 run_mpi_if_available() {
@@ -349,10 +363,17 @@ run_mpi_if_available() {
     expected_dim="$3"
     expected_doublon="${4:-}"
     if [ -n "${MPIRUN}" ]; then
+        expected_digest=`awk '$1 == "basis_digest" {
+            split($4, parts, "="); print parts[2]; exit
+        }' output/CalcTimerRankStats.dat`
+        if [ -z "${expected_digest}" ]; then
+            echo "Missing serial symmetry basis digest"
+            exit 1
+        fi
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
             run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" \
-                "$expected_doublon" "$MPI_NP"
+                "$expected_doublon" "$MPI_NP" "$expected_digest"
         fi
     fi
 }

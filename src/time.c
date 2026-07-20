@@ -33,10 +33,46 @@
 #endif
 
 #ifdef MPI
+static unsigned long long HashSymmetryBytes(unsigned long long hash,
+                                            const void *data,
+                                            size_t size)
+{
+  const unsigned char *bytes = (const unsigned char *)data;
+  size_t i;
+  for (i = 0U; i < size; i++) {
+    hash ^= (unsigned long long)bytes[i];
+    hash *= 1099511628211ULL;
+  }
+  return hash;
+}
+
+static unsigned long long SymmetryBasisDigest(
+    const struct SymmetryBasisRuntime *sym)
+{
+  unsigned long long hash = 14695981039346656037ULL;
+  unsigned long int index;
+  hash = HashSymmetryBytes(hash, &sym->dim, sizeof(sym->dim));
+  for (index = 1UL; index <= sym->dim; index++) {
+    const struct SymmetryBasisVector *entry = &sym->basis[index];
+    hash = HashSymmetryBytes(hash, &entry->rep_state,
+                             sizeof(entry->rep_state));
+    hash = HashSymmetryBytes(hash, &entry->orbit_size,
+                             sizeof(entry->orbit_size));
+    hash = HashSymmetryBytes(hash, &entry->stabilizer_size,
+                             sizeof(entry->stabilizer_size));
+    hash = HashSymmetryBytes(hash, &entry->norm, sizeof(entry->norm));
+    hash = HashSymmetryBytes(hash, &entry->stabilizer_character_sum,
+                             sizeof(entry->stabilizer_character_sum));
+    hash = HashSymmetryBytes(hash, &entry->diagonal,
+                             sizeof(entry->diagonal));
+  }
+  return hash;
+}
+
 static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
-    1100, 1110, 1111, 1112, 1113, 1114,
+    1100, 1110, 1115, 1111, 1112, 1113, 1114,
     1101, 1120, 1121, 1122, 4113
   };
   static const char *work_keys[] = {
@@ -71,6 +107,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   double row_mean_min;
   double row_mean_max;
   double row_mean_sum;
+  unsigned long long basis_digest_local;
+  unsigned long long basis_digest_min;
+  unsigned long long basis_digest_max;
   char fileName[D_FileNameMax];
   FILE *fp;
   size_t i;
@@ -99,6 +138,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
+  basis_digest_local = SymmetryBasisDigest(X->Sym);
 
   MPI_Allreduce(timer_local, timer_min, (int)timer_count, MPI_DOUBLE,
                 MPI_MIN, MPI_COMM_WORLD);
@@ -118,6 +158,10 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
                 MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(&row_mean_local, &row_mean_sum, 1, MPI_DOUBLE,
                 MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_local, &basis_digest_min, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_local, &basis_digest_max, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_MAX, MPI_COMM_WORLD);
 
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
@@ -135,6 +179,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   fprintf(fp,
           "work key=plan_row_nnz_mean ranks=%d min=%.17g max=%.17g mean=%.17g\n",
           nproc, row_mean_min, row_mean_max, row_mean_sum / (double)nproc);
+  fprintf(fp,
+          "basis_digest algorithm=fnv1a64-fields ranks=%d min=%016llx max=%016llx\n",
+          nproc, basis_digest_min, basis_digest_max);
   fclose(fp);
 }
 #endif
@@ -214,6 +261,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "  sz", 1000);
   StampTime(fp, "  symmetry basis build/activate", 1100);
   StampTime(fp, "    symmetry basis raw enumeration", 1110);
+  StampTime(fp, "      symmetry basis MPI gather/reduction", 1115);
   StampTime(fp, "    symmetry basis sort/merge", 1111);
   StampTime(fp, "    symmetry representative hash build", 1112);
   StampTime(fp, "    symmetry diagonal materialization", 1113);

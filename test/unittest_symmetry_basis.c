@@ -1049,6 +1049,88 @@ static void assert_hubbard_plan(unsigned int nsite,
 }
 
 #ifdef _OPENMP
+static int basis_vector_fields_equal(
+    const struct SymmetryBasisVector *lhs,
+    const struct SymmetryBasisVector *rhs)
+{
+  return lhs->rep_state == rhs->rep_state &&
+         lhs->orbit_size == rhs->orbit_size &&
+         lhs->stabilizer_size == rhs->stabilizer_size &&
+         memcmp(&lhs->norm, &rhs->norm, sizeof(lhs->norm)) == 0 &&
+         memcmp(&lhs->stabilizer_character_sum,
+                &rhs->stabilizer_character_sum,
+                sizeof(lhs->stabilizer_character_sum)) == 0 &&
+         memcmp(&lhs->diagonal, &rhs->diagonal,
+                sizeof(lhs->diagonal)) == 0;
+}
+
+static void assert_parallel_basis_matches_serial(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisVector *serial_basis;
+  unsigned long int serial_dim;
+  unsigned long int index;
+  unsigned long long serial_raw_states;
+  unsigned long long serial_candidates;
+  unsigned long long serial_survivors;
+  unsigned long long serial_transform_calls;
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+  setup_hubbard_bind(&X, 6, 3, 3, 1);
+  setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: serial basis setup failed\n", label);
+    exit(1);
+  }
+  serial_dim = X.Sym->dim;
+  serial_raw_states = X.Sym->basis_raw_states;
+  serial_candidates = X.Sym->basis_representative_candidates;
+  serial_survivors = X.Sym->basis_compatible_survivors;
+  serial_transform_calls = X.Sym->basis_transform_calls;
+  serial_basis = (struct SymmetryBasisVector *)calloc(
+      (size_t)serial_dim + 1U, sizeof(*serial_basis));
+  if (serial_basis == NULL) {
+    fprintf(stderr, "%s: serial basis snapshot allocation failed\n", label);
+    exit(1);
+  }
+  for (index = 1UL; index <= serial_dim; index++) {
+    serial_basis[index] = X.Sym->basis[index];
+  }
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+
+  omp_set_num_threads(4);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: parallel basis setup failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, serial_dim, label);
+  assert_int_eq(X.Sym->basis_raw_states == serial_raw_states, 1, label);
+  assert_int_eq(X.Sym->basis_representative_candidates == serial_candidates,
+                1, label);
+  assert_int_eq(X.Sym->basis_compatible_survivors == serial_survivors,
+                1, label);
+  assert_int_eq(X.Sym->basis_transform_calls == serial_transform_calls,
+                1, label);
+  for (index = 1UL; index <= serial_dim; index++) {
+    assert_int_eq(basis_vector_fields_equal(&X.Sym->basis[index],
+                                            &serial_basis[index]),
+                  1, label);
+  }
+
+  free(serial_basis);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+}
+
 static void assert_parallel_plan_matches_serial(const char *label)
 {
   struct BindStruct X;
@@ -1658,6 +1740,8 @@ int main(void)
   assert_hubbard_plan(4, 2, 2, 1, 0.5,
                       "Hubbard C4 k=pi/2 local-row plan matches canonicalized matrix");
 #ifdef _OPENMP
+  assert_parallel_basis_matches_serial(
+      "Hubbard basis fields are identical for one and four OpenMP threads");
   assert_parallel_plan_matches_serial(
       "Hubbard plan CSR is identical for one and four OpenMP threads");
 #endif
