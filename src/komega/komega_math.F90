@@ -78,7 +78,7 @@ CONTAINS
 FUNCTION ddotMPI(n,dx,dy) RESULT(prod)
   !
 #if defined(MPI)
-  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_PRECISION, MPI_SUM
+  USE mpi
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -110,7 +110,7 @@ END FUNCTION ddotMPI
 FUNCTION zdotcMPI(n,zx,zy,local_prod_out) RESULT(prod)
   !
 #if defined(MPI)
-  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_COMPLEX, MPI_SUM
+  USE mpi
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -148,7 +148,7 @@ END FUNCTION zdotcMPI
 FUNCTION zdotuMPI(n,zx,zy) RESULT(prod)
   !
 #if defined(MPI)
-  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_COMPLEX, MPI_SUM
+  USE mpi
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
@@ -184,7 +184,7 @@ END FUNCTION zdotuMPI
 FUNCTION dabsmax(array, n) RESULT(maxarray)
   !
 #if defined(MPI)
-  USE mpi, ONLY : MPI_Allreduce, MPI_DOUBLE_PRECISION, MPI_MAX
+  USE mpi
   USE komega_parameter, ONLY : comm, lmpi
 #endif
   !
