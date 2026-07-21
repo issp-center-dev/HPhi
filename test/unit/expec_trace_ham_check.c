@@ -49,6 +49,9 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#ifdef MPI
+#include <mpi.h>
+#endif
 
 #include "struct.h"
 #include "global.h"
@@ -63,6 +66,7 @@
 #include "makeHam.h"
 #include "hamstore.h"
 #include "wrapperMPI.h"
+#include "expec_trace.h"
 #include "expec_trace_ham.h"
 #include "expec_energy_flct.h"
 
@@ -856,10 +860,116 @@ static void run_kernel_flct_equiv(void) {
   free(xs);
 }
 
-int main(void) {
+/* -----------------------------------------------------------------------
+ * Part 4: TraceFinalizeEnergyPlan() -- the build->finalize energy-plan
+ * lifecycle (phase 3c Task 5). The function lives in the MPI-capable
+ * orchestration TU src/phys_distributed.c (linked into this test); it performs
+ * ONE MPI_Allreduce(MIN) over {ok, nnz, -nnz} and applies the same verdict on
+ * every rank.
+ *
+ * nproc == 1 (serial / noMPI build, or an MPI singleton): the single-rank
+ * buffer trivially passes, so we pin BOTH pass-through outcomes -- a success
+ * keeps the energy kernel, a failure demotes it (memory reason).
+ *
+ * nproc >= 2 (launched under mpiexec): rank 1 injects an allocation failure in
+ * its collect (fail_alloc_at=0), every other rank collects normally; after
+ * TraceFinalizeEnergyPlan() EVERY rank must end demoted
+ * (kernel[TRACE_Q_ENERGY]==0, demoted_memory==1). The collect runs with a
+ * temporarily-replicated basis (nproc faked to 1 across setup+collect only) so
+ * each rank builds an identical, non-distributed fixture and setup's
+ * nproc-guarded MPI calls stay no-ops; the true nproc is restored before the
+ * collective finalize, whose MPI_Allreduce spans the real ranks via
+ * MPI_COMM_WORLD regardless of the global. The nnz values are irrelevant here
+ * (any failed rank makes reduced[0]==0, short-circuiting the nnz-agreement
+ * check before it is reached). */
+static void run_finalize_check(void) {
+  fprintf(stderr, "[finalize: energy build->finalize lifecycle]\n");
+
+  if (nproc == 1) {
+    TraceExecutionPlan plan;
+
+    memset(&plan, 0, sizeof(plan));
+    plan.kernel[TRACE_Q_ENERGY] = 1;
+    TraceFinalizeEnergyPlan(&plan, 1, 12345L);
+    expect_true("finalize np=1: local_ok=1 keeps the energy kernel",
+                plan.kernel[TRACE_Q_ENERGY] == 1);
+    expect_true("finalize np=1: local_ok=1 leaves demoted_memory clear",
+                plan.demoted_memory[TRACE_Q_ENERGY] == 0);
+
+    memset(&plan, 0, sizeof(plan));
+    plan.kernel[TRACE_Q_ENERGY] = 1;
+    TraceFinalizeEnergyPlan(&plan, 0, 0L);
+    expect_true("finalize np=1: local_ok=0 demotes the energy kernel",
+                plan.kernel[TRACE_Q_ENERGY] == 0);
+    expect_true("finalize np=1: local_ok=0 sets demoted_memory",
+                plan.demoted_memory[TRACE_Q_ENERGY] == 1);
+    return;
+  }
+
+  {
+    struct BindStruct X;
+    TraceHamCsr csr;
+    TraceExecutionPlan plan;
+    char sub[64];
+    int local_ok, saved_nproc, saved_myrank;
+    long int nnz_raw;
+    const char *stan =
+      "L = 4\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+      "t = 1.0\nU = 4.0\nnelec = 4\n2Sz = 0\n";
+
+    snprintf(sub, sizeof(sub), "finalize_rank%d", myrank);
+    if (chdir(g_base) != 0) { expect_true("finalize: chdir base", 0); return; }
+    mkdir(sub, 0777);
+    if (chdir(sub) != 0) { expect_true("finalize: chdir sub", 0); return; }
+
+    memset(&csr, 0, sizeof(csr));
+
+    /* Build+collect with a replicated basis (fake nproc=1); restore before the
+       collective finalize. */
+    saved_nproc = nproc;
+    saved_myrank = myrank;
+    nproc = 1;
+    myrank = 0;
+    if (setup_fixture(&X, stan, -1) != 0) {
+      fprintf(stderr, "  FAIL finalize: setup failed (rank %d)\n", saved_myrank);
+      g_failures++;
+      nproc = saved_nproc;
+      myrank = saved_myrank;
+      return;
+    }
+    if (saved_myrank == 1) {
+      local_ok = TraceHamCollect(&X, SIZE_MAX / 2, 0, &csr); /* forced failure */
+      nnz_raw = 0;
+    } else {
+      local_ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+      nnz_raw = local_ok ? csr.nnz : 0;
+    }
+    nproc = saved_nproc;
+    myrank = saved_myrank;
+
+    memset(&plan, 0, sizeof(plan));
+    plan.kernel[TRACE_Q_ENERGY] = 1; /* provisional, as TraceBuildPlan() leaves it */
+    TraceFinalizeEnergyPlan(&plan, local_ok, nnz_raw);
+
+    expect_true("finalize np>=2: rank1-fail demotes energy on THIS rank",
+                plan.kernel[TRACE_Q_ENERGY] == 0);
+    expect_true("finalize np>=2: rank1-fail sets demoted_memory on THIS rank",
+                plan.demoted_memory[TRACE_Q_ENERGY] == 1);
+    if (local_ok) TraceHamFree(&csr);
+  }
+}
+
+int main(int argc, char **argv) {
   stdoutMPI = stdout;
   myrank = 0;
   nproc = 1;
+#ifdef MPI
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+#else
+  (void)argc; (void)argv;
+#endif
 
   if (getcwd(g_base, sizeof(g_base)) == NULL) {
     fprintf(stderr, "getcwd failed\n");
@@ -868,7 +978,17 @@ int main(void) {
   strncat(g_base, "/expec_trace_ham_scratch", sizeof(g_base) - strlen(g_base) - 1);
   mkdir(g_base, 0777);
 
-  fprintf(stderr, "== expec_trace_ham_check ==\n");
+  fprintf(stderr, "== expec_trace_ham_check == (rank %d / %d)\n", myrank, nproc);
+
+  /* Parts 1-3 are the serial (noMPI-build) coverage: single-process
+     StdFace/ReadDef/makeHam fixtures plus the streaming-kernel checks. They are
+     compiled ONLY in the non-MPI build -- the heavy setup closure is not
+     MPI-singleton-safe (expec_energy_flct()->StartTimer() dereferences a Timer
+     array the full HPhi InitializeMPI() would allocate, which this test does
+     not call), and they are already fully exercised by the noMPI suite. The MPI
+     build compiles ONLY part 4 (the rank-synchronized finalize), run both as a
+     singleton and, via the mpiexec launcher, at nproc>=2. */
+#ifndef MPI
 
   run_matrix_fixture("Hubbard L=4 half-filled", "hubbard",
     "L = 4\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
@@ -945,12 +1065,30 @@ int main(void) {
   run_energy_sentinel();
   run_kernel_flct_equiv();
 
+#endif /* !MPI (parts 1-3 are noMPI-build only) */
+
+  /* ---- Part 4: TraceFinalizeEnergyPlan (single-rank at nproc==1, the
+     rank-synchronized 2-rank demotion under mpiexec). Collective at nproc>=2,
+     so EVERY rank must reach it. ---- */
+  run_finalize_check();
+
   if (chdir(g_base) == 0) chdir("..");
 
-  if (g_failures == 0) {
-    fprintf(stderr, "ALL PASS\n");
-    return 0;
+  {
+    int failed = (g_failures != 0);
+#ifdef MPI
+    /* A failure on ANY rank fails the whole test (rank 0 returns the verdict). */
+    int any_failed = failed;
+    MPI_Allreduce(MPI_IN_PLACE, &any_failed, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+    failed = any_failed;
+    MPI_Finalize();
+    if (myrank != 0) return failed ? 1 : 0;
+#endif
+    if (!failed) {
+      fprintf(stderr, "ALL PASS\n");
+      return 0;
+    }
+    fprintf(stderr, "FAILURES: %d\n", g_failures);
+    return 1;
   }
-  fprintf(stderr, "FAILURES: %d\n", g_failures);
-  return 1;
 }

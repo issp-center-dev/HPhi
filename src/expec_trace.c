@@ -248,7 +248,7 @@ size_t TraceGbufMaxBytesFromEnv(void) {
 void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                     size_t gbuf_max_bytes, TraceExecutionPlan *plan) {
   int q, i;
-  int cap_q[TRACE_Q_NQUANT] = {0, 0};
+  int cap_q[TRACE_Q_NQUANT] = {0, 0, 0};
 
   memset(plan, 0, sizeof(*plan));
   plan->nc_uniform = nc_uniform;
@@ -267,8 +267,28 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
     }
   }
 
+  /* Energy/fluctuation slot (phase 3c): eligible for EVERY model that reaches
+     makeHam -- broader than the GF capability table, so it is NOT gated on
+     cap_q[]. Any model that got as far as the FullDiag observable phase already
+     built its Hamiltonian through makeHam successfully, so re-enumerating it in
+     the collector will succeed too; the SpinlessFermion(GC) models have no
+     makeHam branch and therefore never reach here (Task-1 audit (e)). The ONLY
+     static demotion is InputHam: re-running makeHam would build a matrix
+     DIFFERENT from the one diagonalized. A FullDiag symmetry basis is
+     unreachable (Task-1 audit (d)), so there is no unsupported-config
+     predicate. Otherwise the slot is PROVISIONALLY kernel=1; the runtime CSR
+     collector plus TraceFinalizeEnergyPlan() make the final decision. */
+  if (X->Def.iInputHam != 0) {
+    plan->demoted_input_ham[TRACE_Q_ENERGY] = 1;
+    plan->kernel[TRACE_Q_ENERGY] = 0;
+  } else {
+    plan->kernel[TRACE_Q_ENERGY] = 1; /* provisional; finalize may demote */
+  }
+
   for (q = 0; q < TRACE_Q_NQUANT; q++) {
     long int nops;
+
+    if (q == TRACE_Q_ENERGY) continue; /* handled above; not a GF slot */
 
     if (!cap_q[q]) {
       /* unsupported model: stays kernel=0, demoted_memory=0 --
@@ -325,10 +345,35 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
 }
 
 void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
-  static const char *kQuantityName[TRACE_Q_NQUANT] = { "one-body", "two-body" };
+  static const char *kQuantityName[TRACE_Q_NQUANT] = { "one-body", "two-body",
+                                                       "energy" };
   int q;
 
   for (q = 0; q < TRACE_Q_NQUANT; q++) {
+    if (q == TRACE_Q_ENERGY) {
+      /* The energy/fluctuation family has its own verbatim INFO wording
+         (design spec 3c). kernel==1: trace kernel; else the ExpecMode-1
+         fallback with a reason -- InputHam (static, from TraceBuildPlan) or
+         the HPHI_TRACE_BUF_MAX_MB memory gate (from TraceFinalizeEnergyPlan).
+         These substrings are the single source for the Task-6 equivalence
+         script's greps -- keep them byte-exact. */
+      if (plan->kernel[q]) {
+        fprintf(fp,
+                "  INFO: ExpecMode 2: the energy/fluctuation family uses the "
+                "trace kernel.\n");
+      } else if (plan->demoted_input_ham[q]) {
+        fprintf(fp,
+                "  INFO: ExpecMode 2: the energy/fluctuation family uses the "
+                "ExpecMode-1 fallback (the Hamiltonian was read from "
+                "InputHam).\n");
+      } else {
+        fprintf(fp,
+                "  INFO: ExpecMode 2: the energy/fluctuation family uses the "
+                "ExpecMode-1 fallback (the Hamiltonian buffer would exceed "
+                "HPHI_TRACE_BUF_MAX_MB).\n");
+      }
+      continue;
+    }
     if (plan->kernel[q]) {
       fprintf(fp, "  INFO: ExpecMode 2: %s Green functions use the trace kernel.\n",
               kQuantityName[q]);
@@ -356,8 +401,8 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
     }
   }
   fprintf(fp,
-          "  INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and "
-          "AnomalousG always use the ExpecMode-1 path in this version.\n");
+          "  INFO: ExpecMode 2: S2, NBodyG, and AnomalousG always use the "
+          "ExpecMode-1 path in this version.\n");
 }
 
 /**

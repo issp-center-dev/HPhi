@@ -53,12 +53,33 @@
 #include "expec_totalspin.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
+#include "expec_trace_ham.h"   /* TraceEnergyEvalState() (energy trace kernel) */
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
 #include "green_output.h"
 #include "wrapperMPI.h"
 #include "DefCommon.h"
 #include "global.h"
+#include <time.h>
+
+/* Phase 3c Task 5: rank-local energy-kernel streaming time (seconds), reset at
+   the top of every phys_stateparallel_local_loop() and read back by the
+   orchestrator via phys_stateparallel_energy_stream_seconds(). This is a plain
+   file-static double with a plain accessor -- no MPI, so the ExpecLocal guard
+   (which scans this file) is satisfied. */
+static double g_energy_stream_seconds = 0.0;
+
+double phys_stateparallel_energy_stream_seconds(void) {
+  return g_energy_stream_seconds;
+}
+
+/** @brief Monotonic wall-clock seconds; MPI-free, mirrors expec_trace.c's
+ *  TraceNowSeconds() (C99+POSIX clock_gettime(CLOCK_MONOTONIC,...)). */
+static double local_now_seconds(void) {
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  return (double)ts.tv_sec + (double)ts.tv_nsec * 1e-9;
+}
 
 /**
  * @brief MPI-free per-rank observable state loop. See phys_distributed.h.
@@ -75,9 +96,12 @@
 int phys_stateparallel_local_loop(struct BindStruct *X,
                                   double complex *panel,
                                   long int jb, long int je, long int NN,
-                                  const TraceExecutionPlan *plan) {
+                                  const TraceExecutionPlan *plan,
+                                  const TraceHamCsr *ham_csr) {
   int rc = 0;
   long int n, j;
+
+  g_energy_stream_seconds = 0.0; /* reset the per-loop kernel-stream accumulator */
 
   for (n = jb; n <= je && rc == 0; n++) {
     X->Phys.eigen_num = (int)(n - 1); /* 0-based, as in the serial phys.c */
@@ -86,7 +110,22 @@ int phys_stateparallel_local_loop(struct BindStruct *X,
       v0[j + 1] = panel[(n - jb) * NN + j];
     }
 
-    if (expec_energy_flct(X) != 0) { rc = -1; break; }
+    /* Energy/fluctuation family: the trace kernel (when plan->kernel[ENERGY])
+       or the ExpecMode-1 fallback. In the FALLBACK branch expec_energy_flct()
+       consumes x from v0 and copies v0->v1 itself (byte-identical to ExpecMode
+       0/1). In the KERNEL branch the driver reproduces that v0->v1 copy (the
+       postcondition v1==x every downstream evaluator relies on), then streams
+       the energy family from the CSR; the kernel reads v1/CSR only and writes
+       neither v0 nor v1 (design spec 3b step 1). */
+    if (!plan->kernel[TRACE_Q_ENERGY]) {
+      if (expec_energy_flct(X) != 0) { rc = -1; break; }
+    } else {
+      double t0;
+      for (j = 0; j < NN; j++) v1[j + 1] = v0[j + 1];
+      t0 = local_now_seconds();
+      if (TraceEnergyEvalState(X, ham_csr) != 0) { rc = -1; break; }
+      g_energy_stream_seconds += local_now_seconds() - t0;
+    }
     if (!plan->kernel[TRACE_Q_ONEBODY]) {
       if (expec_cisajs(X, v1) != 0) { rc = -1; break; }
     }

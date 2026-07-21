@@ -51,6 +51,7 @@
 #pragma once
 #include "struct.h"
 #include "expec_trace.h"
+#include "expec_trace_ham.h"   /* TraceHamCsr (energy-kernel CSR context) */
 
 /**
  * @brief MPI-free per-rank observable state loop (ExpecMode 1 fallback
@@ -78,13 +79,29 @@
  * @param[in] plan     the ExpecMode 2 execution plan (all kernel[q]==0 when
  *                     ExpecMode!=2, so behavior is unchanged for ExpecMode
  *                     0/1)
+ * @param[in] ham_csr  the collected energy-family CSR context, valid ONLY when
+ *                     plan->kernel[TRACE_Q_ENERGY]==1; NULL (and never
+ *                     dereferenced) when the energy family falls back to
+ *                     expec_energy_flct(). Phase 3c Task 5.
  * @return 0 on success, -1 if any observable evaluation (or a deferred
  *         ExpecLocal error) failed for an owned state (rank-local verdict)
  */
 int phys_stateparallel_local_loop(struct BindStruct *X,
                                   double complex *panel,
                                   long int jb, long int je, long int NN,
-                                  const TraceExecutionPlan *plan);
+                                  const TraceExecutionPlan *plan,
+                                  const TraceHamCsr *ham_csr);
+
+/**
+ * @brief Phase 3c Task 5: rank-local wall-clock seconds spent inside the
+ * energy trace kernel (TraceEnergyEvalState) during the most recent
+ * phys_stateparallel_local_loop() call. Reset to 0 at the top of that loop, so
+ * a run where the energy family fell back (kernel[TRACE_Q_ENERGY]==0) reports
+ * 0. The orchestrator (phys_stateparallel(), rank 0) reads this for the
+ * "ExpecMode 2 timing ... energy ... stream=" breakdown line. MPI-free (a
+ * plain accessor of a file-static double); safe to declare here even though
+ * the definition lives in the ExpecLocal-scanned MPI-free local-loop TU. */
+double phys_stateparallel_energy_stream_seconds(void);
 
 #ifdef _SCALAPACK
 /**

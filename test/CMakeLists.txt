@@ -489,6 +489,11 @@ set_tests_properties(expec_trace_map_check
 # rt/MPI link conditions are kept identical.
 add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace_ham.c
+    # phase 3c Task 5: part 4 drives TraceFinalizeEnergyPlan(), which lives in
+    # phys_distributed.c (outside its _SCALAPACK guard) and consumes the plan
+    # struct/enum from expec_trace.c.
+    ${CMAKE_SOURCE_DIR}/src/phys_distributed.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
     ${CMAKE_SOURCE_DIR}/src/makeHam.c
     ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
@@ -557,7 +562,12 @@ if(HPHI_CLOCK_GETTIME_IN_RT)
   target_link_libraries(expec_trace_ham_check rt)
 endif()
 if(MPI_FOUND)
-    target_link_libraries(expec_trace_ham_check ${MPI_C_LIBRARIES})
+    # Under -DMPI the linked-in mltplyMPIBoost.c references zgemm_ (BLAS), so
+    # LAPACK must be on this target's link line in an MPI build (it is dead code
+    # at runtime here -- the fixtures never reach the Boost path -- but the
+    # symbol must resolve). LAPACK_LIBRARIES comes from the top-level
+    # find_package(LAPACK), same source the HPhi target links.
+    target_link_libraries(expec_trace_ham_check ${MPI_C_LIBRARIES} ${LAPACK_LIBRARIES})
 endif(MPI_FOUND)
 if(TARGET OpenMP::OpenMP_C)
     target_link_libraries(expec_trace_ham_check OpenMP::OpenMP_C)
@@ -565,6 +575,26 @@ endif()
 add_test(NAME expec_trace_ham_check COMMAND expec_trace_ham_check)
 set_tests_properties(expec_trace_ham_check
     PROPERTIES LABELS "unit;fulldiag;expecmode")
+
+# phase 3c Task 5: the SAME executable under mpiexec -np 2 exercises part 4's
+# rank-synchronized TraceFinalizeEnergyPlan() (rank 1 fails its collect; every
+# rank must end demoted). At nproc>=2 the executable skips the single-process
+# parts 1-3 and runs only the collective finalize. Registered ONLY on an MPI
+# build (the top-level add_definitions(-DMPI) makes the executable MPI-aware);
+# wrapped in run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77, matching the
+# elpa_* MPI unit tests, so a host without a usable 2-rank launcher skips
+# cleanly rather than failing.
+if(MPI_FOUND)
+    add_test(
+        NAME expec_trace_ham_finalize_mpi
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:expec_trace_ham_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(expec_trace_ham_finalize_mpi
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "unit;fulldiag;expecmode;mpi")
+endif(MPI_FOUND)
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite

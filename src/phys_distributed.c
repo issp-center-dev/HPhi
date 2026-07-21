@@ -54,8 +54,80 @@
  * output) via TraceGetTimings() -- see that call site below for the exact
  * line format and src/include/expec_trace_internal.h for the accessor's
  * contract.
+ *
+ * Phase 3c Task 5 adds the energy/fluctuation family (TRACE_Q_ENERGY) as a
+ * THIRD trace quantity with an explicit build->finalize lifecycle: after
+ * TraceBuildPlan() marks the energy slot PROVISIONAL, this driver runs the CSR
+ * collector (TraceHamCollect) and then TraceFinalizeEnergyPlan() -- a single
+ * rank-synchronized MPI_Allreduce(MIN) that demotes energy on ALL ranks if any
+ * rank's collect failed, or aborts on a cross-rank nnz mismatch -- BEFORE
+ * TraceReportPlan(), so the INFO line reflects the final verdict. The collected
+ * CSR is orchestrator-owned (TraceHamCsr ham_csr): passed by pointer to
+ * phys_stateparallel_local_loop() when the energy kernel is active (NULL when
+ * it fell back), and freed after the loop. TraceFinalizeEnergyPlan() itself is
+ * defined ABOVE the _SCALAPACK guard so it is also linkable by the serial unit
+ * test; its MPI_Allreduce is MPI-guarded (single-rank pass-through otherwise).
  */
 #include "phys_distributed.h"
+
+/* ===================================================================== *
+ * Phase 3c Task 5: TraceFinalizeEnergyPlan() -- the rank-synchronized
+ * finalize of the PROVISIONAL energy slot. Defined OUTSIDE the _SCALAPACK
+ * guard (unlike phys_stateparallel() below, which needs the distributed
+ * eigenvector globals) so it compiles into every build: it is the one plan
+ * step that must be MPI-capable, yet it is also linked by the serial unit
+ * test (which drives its single-rank pass-through). The MPI_Allreduce is
+ * guarded by MPI; at nproc==1 / non-MPI builds the single-rank buffer
+ * trivially passes. See the full protocol doc in src/include/expec_trace.h.
+ * ===================================================================== */
+#include "wrapperMPI.h"   /* exitMPI (collective-safe abort) + myrank/nproc */
+#ifdef MPI
+#include <mpi.h>
+#endif
+#include <limits.h>
+#include <stdio.h>
+
+void TraceFinalizeEnergyPlan(TraceExecutionPlan *plan, int local_ok,
+                             long int nnz_raw) {
+  long long buf[3];
+
+  if (local_ok && nnz_raw >= 0 && (long long)nnz_raw != LLONG_MAX) {
+    /* success rank with a representable nnz distinct from the failure sentinel
+       (long int always fits long long; nnz_raw>=0 makes the negation safe). */
+    buf[0] = 1;
+    buf[1] = (long long)nnz_raw;
+    buf[2] = -(long long)nnz_raw;
+  } else {
+    /* failed rank (gate exceeded, any allocation failure), or an nnz that
+       cannot be encoded distinctly from the sentinel -> treat self as failed. */
+    buf[0] = 0;
+    buf[1] = LLONG_MAX;
+    buf[2] = LLONG_MAX;
+  }
+
+#ifdef MPI
+  MPI_Allreduce(MPI_IN_PLACE, buf, 3, MPI_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
+#endif
+
+  /* Verdict order (identical reduced buffer on every rank -> identical branch),
+     design spec 3c: demote-before-consistency so failed-rank sentinels never
+     pollute the nnz agreement check. */
+  if (buf[0] == 0) {
+    plan->kernel[TRACE_Q_ENERGY] = 0;
+    plan->demoted_memory[TRACE_Q_ENERGY] = 1;
+  } else if (buf[1] != -buf[2]) {
+    fprintf(stderr,
+            "  Error: ExpecMode 2 energy trace kernel: the collected "
+            "Hamiltonian nnz differs across MPI ranks (min nnz=%lld, "
+            "max nnz=%lld) -- a nondeterministic makeHam enumeration, which is "
+            "a correctness error, not a fallback case. Aborting.\n",
+            buf[1], -buf[2]);
+    exitMPI(-1);
+  }
+  /* else: every rank succeeded with an agreeing nnz -> energy stays
+     kernel[TRACE_Q_ENERGY]=1 (final). */
+}
+
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"   /* mpi.h, global.h, Z_vec/descZ_vec, use_scalapack,
                                   RedistBlockCyclicToStatePanel */
@@ -71,6 +143,8 @@
 #include <stdio.h>
 #include <limits.h>
 #include <stdint.h>
+#include <string.h>
+#include <time.h>
 
 int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   long int NN = (long int)neig;
@@ -121,6 +195,15 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
        to calling nc_uniform to make explicit it is NOT a rank-local ncols. */
     long int nc_uniform = NN / (long int)nproc + ((NN % (long int)nproc) != 0);
     uint64_t gbuf_max = 0;
+    size_t gbuf_max_bytes;
+    /* Energy trace-kernel CSR context (phase 3c Task 5): collected once per
+       run (below), passed BY POINTER to the local loop, freed after it. Zeroed
+       here so TraceHamFree() is a safe no-op on every path that never collects
+       (ExpecMode 0/1, InputHam static demotion, or an unsupported model whose
+       energy slot the finalize step demotes). */
+    TraceHamCsr ham_csr;
+    double t_energy_map = 0.0; /* collect (map) seconds, rank-local */
+    memset(&ham_csr, 0, sizeof(ham_csr));
     /* Final whole-branch review fix: only ExpecMode 2 runs parse (and can
        warn about) HPHI_TRACE_BUF_MAX_MB. ExpecMode 0/1 leave gbuf_max at 0
        and skip the Bcast too -- TraceBuildPlan() never reads this argument
@@ -130,10 +213,41 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
       if (myrank == 0) gbuf_max = (uint64_t)TraceGbufMaxBytesFromEnv(); /* rank 0 only */
       MPI_Bcast(&gbuf_max, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
     }
-    /* checked narrowing in case size_t is narrower than 64 bits here */
-    TraceBuildPlan(X, nc_uniform,
-                   (gbuf_max > (uint64_t)SIZE_MAX) ? (size_t)SIZE_MAX : (size_t)gbuf_max,
+    /* checked narrowing in case size_t is narrower than 64 bits here -- the
+       SAME capped cap feeds both TraceBuildPlan() and TraceHamCollect(). */
+    gbuf_max_bytes =
+        (gbuf_max > (uint64_t)SIZE_MAX) ? (size_t)SIZE_MAX : (size_t)gbuf_max;
+    TraceBuildPlan(X, nc_uniform, gbuf_max_bytes,
                    &tplan); /* ExpecMode!=2 => all-fallback plan */
+
+    /* Energy build->finalize lifecycle (design spec 3c): when TraceBuildPlan()
+       left the energy slot PROVISIONALLY kernel=1 (ExpecMode 2, not InputHam),
+       run the CSR collector on this rank, then reconcile every rank's outcome
+       with TraceFinalizeEnergyPlan() -- a single MPI_Allreduce(MIN) that
+       demotes energy on ALL ranks if ANY rank failed, or aborts on a
+       cross-rank nnz mismatch. Done BEFORE TraceReportPlan() so the INFO line
+       reflects the final verdict. Skipped when the slot is already 0
+       (InputHam static demotion, or ExpecMode 0/1). */
+    if (tplan.kernel[TRACE_Q_ENERGY]) {
+      int local_ok;
+      long int nnz_raw;
+      struct timespec ts0, ts1;
+      clock_gettime(CLOCK_MONOTONIC, &ts0);
+      local_ok = TraceHamCollect(X, gbuf_max_bytes, -1, &ham_csr);
+      clock_gettime(CLOCK_MONOTONIC, &ts1);
+      t_energy_map = (double)(ts1.tv_sec - ts0.tv_sec) +
+                     (double)(ts1.tv_nsec - ts0.tv_nsec) * 1e-9;
+      /* On demotion TraceHamCollect() already freed+zeroed ham_csr, so nnz_raw
+         has no meaning -- pass 0 (the finalize contract ignores it when
+         local_ok==0). */
+      nnz_raw = local_ok ? ham_csr.nnz : 0;
+      TraceFinalizeEnergyPlan(&tplan, local_ok, nnz_raw);
+      /* If finalize demoted energy (this or another rank failed) but THIS rank
+         had collected a valid CSR, free it now -- it will not reach the loop. */
+      if (!tplan.kernel[TRACE_Q_ENERGY])
+        TraceHamFree(&ham_csr);
+    }
+
     if (X->Def.iExpecMode == EXPECMODE_TRACE && myrank == 0)
       TraceReportPlan(&tplan, stdoutMPI);
 
@@ -147,7 +261,9 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
     GreenOutputSetPartialSuffix(myrank);
     rc_local = expec_trace_owned_states(X, &tplan, panel, jb, je, NN);
     if (rc_local == 0)
-      rc_local = phys_stateparallel_local_loop(X, panel, jb, je, NN, &tplan);
+      rc_local = phys_stateparallel_local_loop(
+          X, panel, jb, je, NN, &tplan,
+          tplan.kernel[TRACE_Q_ENERGY] ? &ham_csr : NULL);
     GreenOutputClearPartialSuffix();
     ExpecLocalLeave();
 
@@ -173,7 +289,21 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
                 "  ExpecMode 2 timing (rank 0): two-body map=%.3fs stream=%.3fs output=%.3fs\n",
                 timings[TRACE_Q_TWOBODY][0], timings[TRACE_Q_TWOBODY][1],
                 timings[TRACE_Q_TWOBODY][2]);
+      /* Energy family (phase 3c): map = the CSR collector (t_energy_map),
+         stream = the per-state SpMV/field kernel accumulated in the local loop
+         (phys_stateparallel_energy_stream_seconds()). Phys-field stores are
+         folded into the streaming step, so the output field is reported as 0 --
+         the three-field format is kept for a stable, greppable line. */
+      if (tplan.kernel[TRACE_Q_ENERGY])
+        fprintf(stdoutMPI,
+                "  ExpecMode 2 timing (rank 0): energy map=%.3fs stream=%.3fs output=%.3fs\n",
+                t_energy_map, phys_stateparallel_energy_stream_seconds(), 0.0);
     }
+
+    /* Free the energy CSR context (design spec 3c: orchestrator-owned, freed
+       after the loop). Safe no-op when it was never collected or already freed
+       on a finalize demotion -- TraceHamFree() tolerates a zeroed struct. */
+    TraceHamFree(&ham_csr);
   }
   free(panel);
 

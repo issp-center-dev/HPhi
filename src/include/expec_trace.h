@@ -47,6 +47,17 @@
 typedef enum {
   TRACE_Q_ONEBODY = 0,   /* expec_cisajs equivalent */
   TRACE_Q_TWOBODY,       /* expec_cisajscktaltdc equivalent */
+  TRACE_Q_ENERGY,        /* expec_energy_flct equivalent (phase 3c) -- the CSR
+                            energy/fluctuation family kernel. Unlike the two GF
+                            slots (whose eligibility comes from the per-model
+                            capability table kTraceCap), the energy slot is
+                            eligible for EVERY model that reaches makeHam (see
+                            TraceBuildPlan()), and its final kernel[]/demotion
+                            state is decided by the two-phase build->finalize
+                            lifecycle (TraceBuildPlan() then
+                            TraceFinalizeEnergyPlan()), NOT by TraceBuildPlan()
+                            alone -- the runtime CSR collector may demote it
+                            rank-synchronously. */
   TRACE_Q_NQUANT
 } TraceQuantity;
 
@@ -104,6 +115,20 @@ typedef struct {
       whole-branch review of phase 3b) -- the freeze exception is
       deliberate and this comment is its record. */
   int no_operators[TRACE_Q_NQUANT];
+  /** demoted_input_ham[q]==1: quantity q was statically demoted to the
+      ExpecMode-1 fallback because this run's Hamiltonian was read from
+      InputHam (X->Def.iInputHam != 0). Re-running makeHam in the CSR collector
+      would build a DIFFERENT matrix than the one that was diagonalized, so the
+      energy family cannot use the trace kernel. Energy-only in practice
+      (TRACE_Q_ENERGY): the GF slots never set this. Set by TraceBuildPlan()
+      (static, pre-collect) and, being a build-time verdict, is exclusive with
+      the finalize-time demoted_memory[TRACE_Q_ENERGY] -- TraceBuildPlan()
+      leaves kernel[TRACE_Q_ENERGY]=0 when this is set, so
+      TraceFinalizeEnergyPlan()'s collect/reduce is skipped entirely for an
+      InputHam run. (Phase 3c Task 5; the Task-1 audit established that a
+      FullDiag symmetry basis is unreachable, so NO unsupported-configuration
+      predicate/field exists -- InputHam is the only static energy demotion.) */
+  int demoted_input_ham[TRACE_Q_NQUANT];
   /** When kernel[q]==1, the verified allocation size (bytes) for that
       quantity's result buffer, i.e. TraceGbufBytes()'s return value. Task
       3/4's malloc() must use ONLY this value -- re-reading the environment
@@ -142,6 +167,45 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                     size_t gbuf_max_bytes, TraceExecutionPlan *plan);
 
 /**
+ * @brief Phase 3c Task 5: finalize the PROVISIONAL energy slot with a single
+ * rank-synchronized reduction, so every rank ends with the identical energy
+ * verdict (build->finalize lifecycle, design spec 3c).
+ *
+ * After TraceBuildPlan() marks kernel[TRACE_Q_ENERGY]=1 provisionally, the
+ * orchestrator runs the CSR collector (TraceHamCollect) on this rank, then
+ * calls this to reconcile every rank's local outcome:
+ *
+ *   - @p local_ok is TraceHamCollect()'s return (1 success / 0 demotion or any
+ *     allocation failure INCLUDING the pre-gate counts array).
+ *   - @p nnz_raw is this rank's collected raw nnz (ham_csr.nnz) on success;
+ *     ignored when local_ok==0 (pass 0).
+ *
+ * Protocol: a SUCCESS rank contributes {1, nnz, -nnz} (the long int -> long
+ * long conversion is checked; if nnz_raw is negative or not representable this
+ * rank treats itself as FAILED); a FAILED rank contributes
+ * {0, LLONG_MAX, LLONG_MAX}. One MPI_Allreduce(MPI_MIN) over long long buf[3]
+ * (a no-op that trivially passes at nproc==1 / non-MPI builds). Every rank then
+ * applies the SAME verdict to the identical reduced buffer, IN THIS ORDER:
+ *   (1) reduced[0]==0  -> at least one rank failed: demote energy on EVERY
+ *       rank (kernel[TRACE_Q_ENERGY]=0, demoted_memory[TRACE_Q_ENERGY]=1);
+ *   (2) else reduced[1] != -reduced[2] -> all ranks succeeded but their nnz
+ *       disagree: the enumeration is nondeterministic across ranks, a
+ *       CORRECTNESS error, not a fallback case -> fprintf(stderr,...) + a
+ *       collective-safe exitMPI(-1) on ALL ranks.
+ *   (3) else: energy stays kernel[TRACE_Q_ENERGY]=1 (final).
+ *
+ * From this call onward the plan is immutable: TraceReportPlan(), the kernel
+ * dispatch, and phys_stateparallel_local_loop() all run afterward and observe
+ * the same final plan. Skip this call entirely when TraceBuildPlan() already
+ * left kernel[TRACE_Q_ENERGY]=0 (InputHam static demotion, or ExpecMode!=2).
+ *
+ * Implemented in the MPI-capable orchestration TU (src/phys_distributed.c),
+ * NOT the MPI-free local loop.
+ */
+void TraceFinalizeEnergyPlan(TraceExecutionPlan *plan, int local_ok,
+                             long int nnz_raw);
+
+/**
  * @brief Parse HPHI_TRACE_BUF_MAX_MB (getenv only; no MPI). Call on rank 0
  * only -- the caller (phys_distributed.c) MPI_Bcasts the result so every
  * rank agrees even if the environment differs node-to-node.
@@ -154,9 +218,13 @@ size_t TraceGbufMaxBytesFromEnv(void);
 
 /**
  * @brief rank-0-only: print the plan, one INFO line per quantity (with the
- * demotion reason when applicable) plus one fixed line noting that the
- * energy/fluctuation, S2, NBodyG, and AnomalousG families always use the
- * ExpecMode-1 path in this version.
+ * demotion reason when applicable) plus one fixed line noting that the S2,
+ * NBodyG, and AnomalousG families always use the ExpecMode-1 path in this
+ * version. As of phase 3c the energy/fluctuation family (TRACE_Q_ENERGY) is
+ * itself a per-quantity INFO line -- trace kernel active, or the ExpecMode-1
+ * fallback with its reason (HPHI_TRACE_BUF_MAX_MB memory gate, or InputHam) --
+ * and is therefore DROPPED from the fixed always-fallback line. Call AFTER
+ * TraceFinalizeEnergyPlan() so the energy line reflects the final verdict.
  */
 void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp);
 
