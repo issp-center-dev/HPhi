@@ -564,6 +564,35 @@ static void run_complex_energy(void) {
     expect_true("kernel-cplx: Ham has a non-zero imaginary part", imax > 0.1);
   }
 
+  /* Analytic spot-check of makeHam's complex-element generation (spec 5.1):
+     the CSR==Ham identity above shares its source (makeHam) with the reference,
+     so a conjugation/phase bug common to BOTH would be invisible there. Here we
+     pin the elements against the ANALYTIC value: every non-zero off-diagonal of
+     this 2-site fixture is a single hop carrying the bare transfer t=0.3+0.4i up
+     to a fermion sign, so it must equal +/-(0.3 +/- 0.4i) -- i.e. |Re|==0.3 and
+     |Im|==0.4 exactly. Both imaginary signs must appear (the Hermitian
+     conjugate partners Ham[i][j]=conj(Ham[j][i])), which catches a dropped or
+     mis-signed imaginary part that the makeHam-vs-CSR check cannot see. */
+  {
+    int n_off = 0, seen_pos_im = 0, seen_neg_im = 0, bad_val = 0;
+    for (i = 1; i <= n; i++)
+      for (s = 1; s <= n; s++) {
+        double re, im;
+        if (i == s) continue;
+        if (cabs(Ham[i][s]) < 1e-12) continue;
+        re = creal(Ham[i][s]);
+        im = cimag(Ham[i][s]);
+        n_off++;
+        if (fabs(fabs(re) - 0.3) > 1e-12 || fabs(fabs(im) - 0.4) > 1e-12) bad_val = 1;
+        if (im > 0.0) seen_pos_im = 1;
+        if (im < 0.0) seen_neg_im = 1;
+      }
+    expect_true("kernel-cplx: every off-diagonal == +/-(0.3+/-0.4i) analytically",
+                n_off > 0 && bad_val == 0);
+    expect_true("kernel-cplx: both conjugate imag signs present (+0.4 and -0.4)",
+                seen_pos_im && seen_neg_im);
+  }
+
   /* Three fixed non-eigenvector normalized states loaded into v1. */
   for (s = 0; s < 3; s++) {
     double complex xs[64];
@@ -741,6 +770,92 @@ static void run_energy_sentinel(void) {
   TraceHamFree(&csr);
 }
 
+/* Kernel field-write scalings vs the production evaluator (n_diag==3).
+ *
+ * Part 2 checked the diag[] contents; this checks the KERNEL's own eight
+ * fluctuation-field writes -- the scaling logic duplicated from
+ * expec_energy_flct() into TraceEnergyEvalState (0.25 vs 0.5, the +/- in
+ * num_up/num_down). Run the real expec_energy_flct() on a random normalized
+ * state in v0 and snapshot its eight fields (plus energy/var); run the kernel on
+ * the SAME state in v1; assert they agree. A swapped factor or transposed sign
+ * would surface here directly, ahead of Task 6's end-to-end 1e-8 script. */
+static void run_kernel_flct_equiv(void) {
+  struct BindStruct X;
+  TraceHamCsr csr;
+  long int n, i;
+  double complex *xs;
+  double nrm;
+  int ok;
+  double e_doublon, e_doublon2, e_num, e_num2, e_Sz, e_Sz2, e_num_up, e_num_down;
+  double e_energy, e_var;
+  /* HubbardGC (Sz NOT conserved) so the basis carries a spread of S(k): a
+     canonical 2Sz=0 sector would give sumS==0, making Sz2's 0.25 factor and the
+     +/- in num_up/num_down vacuous (num_up==num_down==0.5*num). Here sumS!=0, so
+     a swapped 0.25<->0.5 or a transposed num_up/down sign is caught. */
+  const char *stan =
+    "L = 2\nmodel = \"HubbardGC\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\n";
+
+  fprintf(stderr, "[kernel flct-equiv: HubbardGC L=2 vs expec_energy_flct]\n");
+  if (chdir(g_base) != 0) { expect_true("kernel-flct: chdir base", 0); return; }
+  mkdir("kernel_flct", 0777);
+  if (chdir("kernel_flct") != 0) { expect_true("kernel-flct: chdir sub", 0); return; }
+
+  if (setup_fixture(&X, stan, -1) != 0) {
+    fprintf(stderr, "  FAIL kernel-flct: setup failed\n"); g_failures++; return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  /* Fixed random normalized state into v0; snapshot xs (v0 is destroyed by
+     expec_energy_flct, which moves v0->v1 before computing energy). */
+  srand(24680u);
+  xs = (double complex *)malloc((size_t)(n + 1) * sizeof(double complex));
+  nrm = 0.0;
+  for (i = 1; i <= n; i++) {
+    v0[i] = frand_pm1() + frand_pm1() * I;
+    nrm += creal(conj(v0[i]) * v0[i]);
+  }
+  nrm = sqrt(nrm);
+  for (i = 1; i <= n; i++) { v0[i] /= nrm; xs[i] = v0[i]; }
+
+  expec_energy_flct(&X);
+  e_doublon  = X.Phys.doublon;   e_doublon2 = X.Phys.doublon2;
+  e_num      = X.Phys.num;       e_num2     = X.Phys.num2;
+  e_Sz       = X.Phys.Sz;        e_Sz2      = X.Phys.Sz2;
+  e_num_up   = X.Phys.num_up;    e_num_down = X.Phys.num_down;
+  e_energy   = X.Phys.energy;    e_var      = X.Phys.var;
+
+  ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+  expect_true("kernel-flct: TraceHamCollect succeeds", ok == 1);
+  if (!ok) { free(xs); return; }
+  expect_true("kernel-flct: HubbardGC has n_diag == 3", csr.n_diag == 3);
+  /* Non-vacuous guard: the +/- sign path is only exercised when sumS!=0, i.e.
+     num_up != num_down (their difference IS sumS). */
+  expect_true("kernel-flct: fixture exercises Sz (num_up != num_down)",
+              fabs(e_num_up - e_num_down) > 1e-6);
+  expect_true("kernel-flct: fixture exercises Sz2 (Sz2 > 0)", e_Sz2 > 1e-9);
+
+  for (i = 1; i <= n; i++) v1[i] = xs[i];
+  ok = (TraceEnergyEvalState(&X, &csr) == 0);
+  expect_true("kernel-flct: EvalState returns 0", ok);
+
+  /* The kernel's own eight field writes must match the legacy evaluator. */
+  expect_close("kernel-flct", "doublon",  X.Phys.doublon,  e_doublon,  1e-12);
+  expect_close("kernel-flct", "doublon2", X.Phys.doublon2, e_doublon2, 1e-12);
+  expect_close("kernel-flct", "num",      X.Phys.num,      e_num,      1e-12);
+  expect_close("kernel-flct", "num2",     X.Phys.num2,     e_num2,     1e-12);
+  expect_close("kernel-flct", "Sz",       X.Phys.Sz,       e_Sz,       1e-12);
+  expect_close("kernel-flct", "Sz2",      X.Phys.Sz2,      e_Sz2,      1e-12);
+  expect_close("kernel-flct", "num_up",   X.Phys.num_up,   e_num_up,   1e-12);
+  expect_close("kernel-flct", "num_down", X.Phys.num_down, e_num_down, 1e-12);
+  /* Bonus: the kernel's SpMV energy/var also match the mltply evaluator. */
+  expect_close("kernel-flct", "energy",   X.Phys.energy,   e_energy,   1e-9);
+  expect_close("kernel-flct", "var",      X.Phys.var,      e_var,      1e-9);
+
+  TraceHamFree(&csr);
+  free(xs);
+}
+
 int main(void) {
   stdoutMPI = stdout;
   myrank = 0;
@@ -828,6 +943,7 @@ int main(void) {
   run_complex_energy();
   run_cancellation();
   run_energy_sentinel();
+  run_kernel_flct_equiv();
 
   if (chdir(g_base) == 0) chdir("..");
 
