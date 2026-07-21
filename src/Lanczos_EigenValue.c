@@ -668,11 +668,13 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
     iv = X->Large.iv;
     fprintf(stdoutMPI, "  initial_mode=%d normal: iv = %ld i_max=%ld k_exct =%d \n\n", initial_mode, iv, i_max,
             X->Def.k_exct);
+    StartTimer(4110);
 #pragma omp parallel for default(none) private(i) shared(tmp_v0, tmp_v1) firstprivate(i_max)
     for (i = 1; i <= i_max; i++) {
       tmp_v0[i] = 0.0;
       tmp_v1[i] = 0.0;
     }
+    StopTimer(4110);
 
     sum_i_max = 0;
     if(X->Def.iFlgMPI==0) {
@@ -707,11 +709,19 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
 #pragma omp parallel default(none) private(i, u_long_i, mythread, dsfmt) \
             shared(tmp_v0, tmp_v1, iv, X, nthreads, myrank) firstprivate(i_max)
     {
-
+#pragma omp master
+      StartTimer(4110);
+#pragma omp barrier
 #pragma omp for
       for (i = 1; i <= i_max; i++) {
         tmp_v0[i] = 0.0;
       }
+#pragma omp master
+      {
+        StopTimer(4110);
+        StartTimer(4111);
+      }
+#pragma omp barrier
       /*
        Initialise MT
       */
@@ -738,23 +748,30 @@ void SetInitialVector(struct BindStruct *X, double complex* tmp_v0, double compl
         for (i = 1; i <= i_max; i++)
           tmp_v1[i] = 2.0 * (dsfmt_genrand_close_open(&dsfmt) - 0.5);
       }
-
+#pragma omp master
+      StopTimer(4111);
     }/*#pragma omp parallel*/
 
     cdnorm = 0.0;
+    StartTimer(4112);
 #pragma omp parallel for default(none) private(i) shared(tmp_v1, i_max) reduction(+: cdnorm)
     for (i = 1; i <= i_max; i++) {
       cdnorm += conj(tmp_v1[i]) * tmp_v1[i];
     }
+    StopTimer(4112);
+    StartTimer(4113);
     if(X->Def.iFlgMPI==0) {
       cdnorm = SumMPI_dc(cdnorm);
     }
+    StopTimer(4113);
     dnorm = creal(cdnorm);
     dnorm = sqrt(dnorm);
+    StartTimer(4114);
 #pragma omp parallel for default(none) private(i) shared(tmp_v1) firstprivate(i_max, dnorm)
     for (i = 1; i <= i_max; i++) {
       tmp_v1[i] = tmp_v1[i] / dnorm;
     }
+    StopTimer(4114);
   }/*else if(initial_mode==1)*/
 }
 

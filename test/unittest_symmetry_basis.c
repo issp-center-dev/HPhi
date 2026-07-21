@@ -2,10 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
 #include "struct.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 FILE *stdoutMPI = NULL;
 int nproc = 1;
@@ -19,9 +24,29 @@ long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
 static unsigned long int test_raw_dim = 0;
 
+void StartTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
+void StopTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
 int BcastMPI_i(int root, int value)
 {
   (void)root;
+  return value;
+}
+
+int SumMPI_i(int value)
+{
+  return value;
+}
+
+unsigned long int SumMPI_li(unsigned long int value)
+{
   return value;
 }
 
@@ -630,6 +655,169 @@ static void assert_complex_close(double complex got,
   }
 }
 
+static void reference_fermion_permutation(unsigned long int state,
+                                          const int *perm,
+                                          unsigned int nsite,
+                                          unsigned int orbitals_per_site,
+                                          unsigned long int *out_state,
+                                          int *sign)
+{
+  unsigned int mapped[sizeof(unsigned long int) * CHAR_BIT];
+  unsigned int count = 0U;
+  unsigned int inversions = 0U;
+  unsigned int orb;
+  unsigned int i, j;
+  unsigned int norb = nsite * orbitals_per_site;
+  *out_state = 0UL;
+  for (orb = 0U; orb < norb; orb++) {
+    if ((state & (1UL << orb)) != 0UL) {
+      unsigned int site = orb / orbitals_per_site;
+      unsigned int flavor = orb % orbitals_per_site;
+      unsigned int target = orbitals_per_site * (unsigned int)perm[site] +
+                            flavor;
+      mapped[count++] = target;
+      *out_state |= 1UL << target;
+    }
+  }
+  for (i = 0U; i < count; i++) {
+    for (j = i + 1U; j < count; j++) {
+      if (mapped[i] > mapped[j]) inversions++;
+    }
+  }
+  *sign = (inversions & 1U) == 0U ? 1 : -1;
+}
+
+static void assert_spin_permutation_states(const int *perm,
+                                           unsigned int nsite,
+                                           const char *label)
+{
+  unsigned long int state;
+  unsigned long int limit = 1UL << nsite;
+  for (state = 0UL; state < limit; state++) {
+    unsigned long int expected = 0UL;
+    unsigned int site;
+    for (site = 0U; site < nsite; site++) {
+      if ((state & (1UL << site)) != 0UL) {
+        expected |= 1UL << (unsigned int)perm[site];
+      }
+    }
+    if (SymmetryApplyToSpinBits(state, perm, nsite) != expected) {
+      fprintf(stderr, "%s: state=%#lx expected=%#lx\n",
+              label, state, expected);
+      exit(1);
+    }
+  }
+}
+
+static void assert_fermion_permutation_states(const int *perm,
+                                              unsigned int nsite,
+                                              unsigned int orbitals_per_site,
+                                              int model,
+                                              const char *label)
+{
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int *perm_rows_local[1];
+  unsigned int norb = nsite * orbitals_per_site;
+  unsigned long int state;
+  unsigned long int limit = 1UL << norb;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = (int *)perm;
+  def.Nsite = nsite;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
+  def.iCalcModel = model;
+  for (state = 0UL; state < limit; state++) {
+    unsigned long int expected_state;
+    int expected_sign;
+    reference_fermion_permutation(state, perm, nsite, orbitals_per_site,
+                                  &expected_state, &expected_sign);
+    if (SymmetryApplyToState(&def, state, 0U, &result) != 0 ||
+        result.state != expected_state ||
+        result.amplitude != (double)expected_sign) {
+      fprintf(stderr, "%s: state=%#lx expected_state=%#lx expected_sign=%d\n",
+              label, state, expected_state, expected_sign);
+      exit(1);
+    }
+  }
+}
+
+static void enumerate_fermion_permutations(int *perm,
+                                           int *used,
+                                           unsigned int nsite,
+                                           unsigned int depth)
+{
+  unsigned int target;
+  if (depth == nsite) {
+    assert_spin_permutation_states(perm, nsite,
+                                   "spin exhaustive set-bit permutation");
+    assert_fermion_permutation_states(perm, nsite, 1U, SpinlessFermion,
+                                      "spinless exhaustive permutation parity");
+    assert_fermion_permutation_states(perm, nsite, 2U, Hubbard,
+                                      "Hubbard exhaustive permutation parity");
+    return;
+  }
+  for (target = 0U; target < nsite; target++) {
+    if (used[target] != 0) continue;
+    used[target] = 1;
+    perm[depth] = (int)target;
+    enumerate_fermion_permutations(perm, used, nsite, depth + 1U);
+    used[target] = 0;
+  }
+}
+
+static void assert_exhaustive_fermion_permutation_parity(void)
+{
+  int perm[4] = {0, 0, 0, 0};
+  int used[4] = {0, 0, 0, 0};
+  enumerate_fermion_permutations(perm, used, 4U, 0U);
+}
+
+static void assert_fermion_parity_word_boundary(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int permutation[32];
+  int *perm_rows_local[1];
+  unsigned long int state;
+  unsigned long int expected_state;
+  int expected_sign;
+  unsigned int site;
+  if (word_bits < 64U) return;
+  for (site = 0U; site < 32U; site++) permutation[site] = 31 - (int)site;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = permutation;
+  def.Nsite = 32U;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
+  def.iCalcModel = Hubbard;
+  state = (1UL << 1U) | (1UL << 62U);
+  reference_fermion_permutation(state, permutation, 32U, 2U,
+                                &expected_state, &expected_sign);
+  assert_int_eq(SymmetryApplyToState(&def, state, 0U, &result), 0,
+                "Hubbard parity handles mapped orbital 63");
+  assert_ulong_eq(result.state, expected_state,
+                  "Hubbard parity boundary transformed state");
+  assert_int_eq((int)result.amplitude, expected_sign,
+                "Hubbard parity boundary sign");
+}
+
+static void assert_spin_permutation_word_boundary(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+  int permutation[64];
+  unsigned int site;
+  if (word_bits < 64U) return;
+  for (site = 0U; site < 64U; site++) permutation[site] = 63 - (int)site;
+  assert_ulong_eq(SymmetryApplyToSpinBits(1UL, permutation, 64U),
+                  1UL << 63U, "Spin set-bit maps to bit 63");
+  assert_ulong_eq(SymmetryApplyToSpinBits(1UL << 63U, permutation, 64U),
+                  1UL, "Spin set-bit reads bit 63");
+}
+
 struct LegacyVectorContext {
   double complex *output;
   double complex input_amp;
@@ -652,6 +840,7 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
 {
   unsigned long int alpha, beta;
   size_t p;
+  size_t expected_row_nnz_max = 0U;
   size_t matrix_size;
   int duplicate_found = 0;
   double difference_norm2 = 0.0;
@@ -694,6 +883,8 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
 
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
     unsigned long int local_row = alpha - 1UL;
+    size_t row_nnz = plan->row_ptr[local_row + 1UL] - plan->row_ptr[local_row];
+    if (row_nnz > expected_row_nnz_max) expected_row_nnz_max = row_nnz;
     for (p = plan->row_ptr[local_row]; p < plan->row_ptr[local_row + 1UL]; p++) {
       size_t index = (size_t)(alpha - 1UL) * (size_t)plan->dim +
                      (size_t)(plan->col_index[p] - 1UL);
@@ -702,6 +893,8 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
       if (multiplicity[index] > 1U) duplicate_found = 1;
     }
   }
+  assert_ulong_eq((unsigned long int)plan->row_nnz_max,
+                  (unsigned long int)expected_row_nnz_max, label);
   if (require_duplicate != 0) assert_int_eq(duplicate_found, 1, label);
 
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
@@ -855,6 +1048,171 @@ static void assert_hubbard_plan(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+#ifdef _OPENMP
+static int basis_vector_fields_equal(
+    const struct SymmetryBasisVector *lhs,
+    const struct SymmetryBasisVector *rhs)
+{
+  return lhs->rep_state == rhs->rep_state &&
+         lhs->orbit_size == rhs->orbit_size &&
+         lhs->stabilizer_size == rhs->stabilizer_size &&
+         memcmp(&lhs->norm, &rhs->norm, sizeof(lhs->norm)) == 0 &&
+         memcmp(&lhs->stabilizer_character_sum,
+                &rhs->stabilizer_character_sum,
+                sizeof(lhs->stabilizer_character_sum)) == 0 &&
+         memcmp(&lhs->diagonal, &rhs->diagonal,
+                sizeof(lhs->diagonal)) == 0;
+}
+
+static void assert_parallel_basis_matches_serial(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisVector *serial_basis;
+  unsigned long int serial_dim;
+  unsigned long int index;
+  unsigned long long serial_raw_states;
+  unsigned long long serial_candidates;
+  unsigned long long serial_survivors;
+  unsigned long long serial_transform_calls;
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+  setup_hubbard_bind(&X, 6, 3, 3, 1);
+  setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: serial basis setup failed\n", label);
+    exit(1);
+  }
+  serial_dim = X.Sym->dim;
+  serial_raw_states = X.Sym->basis_raw_states;
+  serial_candidates = X.Sym->basis_representative_candidates;
+  serial_survivors = X.Sym->basis_compatible_survivors;
+  serial_transform_calls = X.Sym->basis_transform_calls;
+  serial_basis = (struct SymmetryBasisVector *)calloc(
+      (size_t)serial_dim + 1U, sizeof(*serial_basis));
+  if (serial_basis == NULL) {
+    fprintf(stderr, "%s: serial basis snapshot allocation failed\n", label);
+    exit(1);
+  }
+  for (index = 1UL; index <= serial_dim; index++) {
+    serial_basis[index] = X.Sym->basis[index];
+  }
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+
+  omp_set_num_threads(4);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: parallel basis setup failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, serial_dim, label);
+  assert_int_eq(X.Sym->basis_raw_states == serial_raw_states, 1, label);
+  assert_int_eq(X.Sym->basis_representative_candidates == serial_candidates,
+                1, label);
+  assert_int_eq(X.Sym->basis_compatible_survivors == serial_survivors,
+                1, label);
+  assert_int_eq(X.Sym->basis_transform_calls == serial_transform_calls,
+                1, label);
+  for (index = 1UL; index <= serial_dim; index++) {
+    assert_int_eq(basis_vector_fields_equal(&X.Sym->basis[index],
+                                            &serial_basis[index]),
+                  1, label);
+  }
+
+  free(serial_basis);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+}
+
+static void assert_parallel_plan_matches_serial(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryMatvecPlan *parallel_plan;
+  size_t row_ptr_count;
+  size_t serial_nnz;
+  size_t serial_row_nnz_max;
+  size_t *serial_row_ptr;
+  unsigned long int *serial_col_index;
+  double complex *serial_values;
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+  setup_hubbard_bind(&X, 6, 3, 3, 1);
+  setup_hubbard_transfer_ring(&X.Def, 6);
+  setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
+  if (BuildSymmetryBasis(&X) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: serial plan setup failed\n", label);
+    exit(1);
+  }
+
+  row_ptr_count = (size_t)X.Sym->matvec_plan->local_dim + 1U;
+  serial_nnz = X.Sym->matvec_plan->nnz;
+  serial_row_nnz_max = X.Sym->matvec_plan->row_nnz_max;
+  serial_row_ptr = (size_t *)malloc(row_ptr_count * sizeof(*serial_row_ptr));
+  serial_col_index = (unsigned long int *)malloc(
+      serial_nnz * sizeof(*serial_col_index));
+  serial_values = (double complex *)malloc(serial_nnz * sizeof(*serial_values));
+  if (serial_row_ptr == NULL ||
+      (serial_nnz > 0U &&
+       (serial_col_index == NULL || serial_values == NULL))) {
+    fprintf(stderr, "%s: serial plan snapshot allocation failed\n", label);
+    exit(1);
+  }
+  memcpy(serial_row_ptr, X.Sym->matvec_plan->row_ptr,
+         row_ptr_count * sizeof(*serial_row_ptr));
+  if (serial_nnz > 0U) {
+    memcpy(serial_col_index, X.Sym->matvec_plan->col_index,
+           serial_nnz * sizeof(*serial_col_index));
+    memcpy(serial_values, X.Sym->matvec_plan->values,
+           serial_nnz * sizeof(*serial_values));
+  }
+
+  omp_set_num_threads(4);
+  if (BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: parallel plan setup failed\n", label);
+    exit(1);
+  }
+  parallel_plan = X.Sym->matvec_plan;
+  assert_ulong_eq((unsigned long int)parallel_plan->nnz,
+                  (unsigned long int)serial_nnz, label);
+  assert_ulong_eq((unsigned long int)parallel_plan->row_nnz_max,
+                  (unsigned long int)serial_row_nnz_max, label);
+  assert_int_eq(memcmp(parallel_plan->row_ptr, serial_row_ptr,
+                       row_ptr_count * sizeof(*serial_row_ptr)) == 0,
+                1, label);
+  if (serial_nnz > 0U) {
+    assert_int_eq(memcmp(parallel_plan->col_index, serial_col_index,
+                         serial_nnz * sizeof(*serial_col_index)) == 0,
+                  1, label);
+    assert_int_eq(memcmp(parallel_plan->values, serial_values,
+                         serial_nnz * sizeof(*serial_values)) == 0,
+                  1, label);
+  }
+
+  free(serial_row_ptr);
+  free(serial_col_index);
+  free(serial_values);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+}
+#endif
+
 static void assert_zero_row_plan(const char *label)
 {
   struct BindStruct X;
@@ -875,6 +1233,7 @@ static void assert_zero_row_plan(const char *label)
   assert_ulong_eq(X.Sym->local_dim, 0UL, label);
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
+  assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
   assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
   assert_complex_close(prdct, 0.0, 1.0e-12, label);
   nproc = 1;
@@ -898,7 +1257,19 @@ static void assert_symmetry_dim(unsigned int nsite,
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
   }
+  assert_int_eq(X.Sym->basis_transform_calls <
+                    X.Sym->basis_raw_states * X.Def.NSymTrans +
+                    X.Sym->basis_representative_candidates * X.Def.NSymTrans,
+                1, label);
+  assert_ulong_eq((unsigned long int)X.Sym->basis_raw_states,
+                  test_raw_dim, label);
+  assert_int_eq(X.Sym->basis_thread_count >= 1U, 1, label);
+  assert_int_eq(X.Sym->basis_thread_transform_calls_max <=
+                    X.Sym->basis_transform_calls,
+                1, label);
   assert_ulong_eq(X.Sym->dim, expected_dim, label);
+  assert_ulong_eq((unsigned long int)X.Sym->basis_compatible_survivors,
+                  expected_dim, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -1184,6 +1555,9 @@ int main(void)
 {
   int shift4[4] = {1, 2, 3, 0};
   stdoutMPI = stderr;
+  assert_exhaustive_fermion_permutation_parity();
+  assert_fermion_parity_word_boundary();
+  assert_spin_permutation_word_boundary();
   assert_ulong_eq(SymmetryApplyToSpinBits(0x1UL, shift4, 4), 0x2UL, "single bit shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x9UL, shift4, 4), 0x3UL, "wrap shift");
   assert_ulong_eq(SymmetryApplyToSpinBits(0x6UL, shift4, 4), 0xcUL, "two bit shift");
@@ -1365,6 +1739,12 @@ int main(void)
                       "Hubbard C4 k=0 local-row plan matches canonicalized matrix");
   assert_hubbard_plan(4, 2, 2, 1, 0.5,
                       "Hubbard C4 k=pi/2 local-row plan matches canonicalized matrix");
+#ifdef _OPENMP
+  assert_parallel_basis_matches_serial(
+      "Hubbard basis fields are identical for one and four OpenMP threads");
+  assert_parallel_plan_matches_serial(
+      "Hubbard plan CSR is identical for one and four OpenMP threads");
+#endif
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");

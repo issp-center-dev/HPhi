@@ -4,6 +4,7 @@
 #include "bitcalc.h"
 #include "global.h"
 #include "struct.h"
+#include "CalcTime.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
 #include "wrapperMPI.h"
@@ -245,7 +246,10 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   size_t plan_bytes;
   size_t min_row_nnz = SIZE_MAX;
   size_t max_row_nnz = 0U;
+  size_t *row_counts = NULL;
   struct SymmetryMatvecPlan *plan;
+  int count_error = 0;
+  int fill_error = 0;
   int mode;
 
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
@@ -275,20 +279,50 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   plan->row_ptr = (size_t *)calloc((size_t)plan->local_dim + 1U,
                                   sizeof(*plan->row_ptr));
   if (plan->row_ptr == NULL) goto fail;
+  if (plan->local_dim > 0UL) {
+    if ((size_t)plan->local_dim > SIZE_MAX / sizeof(*row_counts)) goto fail;
+    row_counts = (size_t *)malloc((size_t)plan->local_dim *
+                                 sizeof(*row_counts));
+    if (row_counts == NULL) goto fail;
+  }
 
+  StartTimer(1120);
+#pragma omp parallel for default(none) schedule(static) reduction(|:count_error) \
+  shared(X, plan, row_counts)
   for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
     unsigned long int alpha = plan->local_offset + local_row + 1UL;
     struct CountEntriesContext count = {0U};
-    if (SymmetryEnumerateColumn(X, alpha, count_entry, &count) != 0) goto fail;
-    if (plan->row_ptr[local_row] > SIZE_MAX - count.count) goto fail;
-    plan->row_ptr[local_row + 1UL] = plan->row_ptr[local_row] + count.count;
-    if (count.count < min_row_nnz) min_row_nnz = count.count;
-    if (count.count > max_row_nnz) max_row_nnz = count.count;
+    if (SymmetryEnumerateColumn(X, alpha, count_entry, &count) != 0) {
+      count_error = 1;
+      row_counts[local_row] = 0U;
+    } else {
+      row_counts[local_row] = count.count;
+    }
   }
+  if (count_error != 0) {
+    StopTimer(1120);
+    goto fail;
+  }
+  for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
+    size_t row_count = row_counts[local_row];
+    if (plan->row_ptr[local_row] > SIZE_MAX - row_count) {
+      StopTimer(1120);
+      goto fail;
+    }
+    plan->row_ptr[local_row + 1UL] = plan->row_ptr[local_row] + row_count;
+    if (row_count < min_row_nnz) min_row_nnz = row_count;
+    if (row_count > max_row_nnz) max_row_nnz = row_count;
+  }
+  StopTimer(1120);
+  free(row_counts);
+  row_counts = NULL;
   plan->nnz = plan->row_ptr[plan->local_dim];
+  plan->row_nnz_max = max_row_nnz;
 
+  StartTimer(1121);
   if (plan->nnz > SIZE_MAX / sizeof(*plan->col_index) ||
       plan->nnz > SIZE_MAX / sizeof(*plan->values)) {
+    StopTimer(1121);
     goto fail;
   }
   col_bytes = plan->nnz * sizeof(*plan->col_index);
@@ -296,9 +330,16 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   if (plan->nnz > 0U) {
     plan->col_index = (unsigned long int *)malloc(col_bytes);
     plan->values = (double complex *)malloc(value_bytes);
-    if (plan->col_index == NULL || plan->values == NULL) goto fail;
+    if (plan->col_index == NULL || plan->values == NULL) {
+      StopTimer(1121);
+      goto fail;
+    }
   }
+  StopTimer(1121);
 
+  StartTimer(1122);
+#pragma omp parallel for default(none) schedule(static) reduction(|:fill_error) \
+  shared(X, plan)
   for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
     unsigned long int alpha = plan->local_offset + local_row + 1UL;
     struct FillEntriesContext fill;
@@ -307,9 +348,14 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     fill.end = plan->row_ptr[local_row + 1UL];
     if (SymmetryEnumerateColumn(X, alpha, fill_transposed_entry, &fill) != 0 ||
         fill.next != fill.end) {
-      goto fail;
+      fill_error = 1;
     }
   }
+  if (fill_error != 0) {
+    StopTimer(1122);
+    goto fail;
+  }
+  StopTimer(1122);
 
   if (row_ptr_bytes > SIZE_MAX - col_bytes ||
       row_ptr_bytes + col_bytes > SIZE_MAX - value_bytes) {
@@ -328,6 +374,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   return 0;
 
 fail:
+  free(row_counts);
   FreeSymmetryMatvecPlan(plan);
   fprintf(stdoutMPI, "Error: failed to build symmetry matvec plan.\n");
   return -1;

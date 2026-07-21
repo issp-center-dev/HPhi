@@ -25,9 +25,165 @@
 #include "Common.h"
 #include "FileIO.h"
 #include "CalcTime.h"
+#include "symmetry_basis.h"
+#include "symmetry_matvec_plan.h"
 
 #ifdef MPI
 #include <mpi.h>
+#endif
+
+#ifdef MPI
+static unsigned long long HashSymmetryBytes(unsigned long long hash,
+                                            const void *data,
+                                            size_t size)
+{
+  const unsigned char *bytes = (const unsigned char *)data;
+  size_t i;
+  for (i = 0U; i < size; i++) {
+    hash ^= (unsigned long long)bytes[i];
+    hash *= 1099511628211ULL;
+  }
+  return hash;
+}
+
+static unsigned long long SymmetryBasisDigest(
+    const struct SymmetryBasisRuntime *sym)
+{
+  unsigned long long hash = 14695981039346656037ULL;
+  unsigned long int index;
+  hash = HashSymmetryBytes(hash, &sym->dim, sizeof(sym->dim));
+  for (index = 1UL; index <= sym->dim; index++) {
+    const struct SymmetryBasisVector *entry = &sym->basis[index];
+    hash = HashSymmetryBytes(hash, &entry->rep_state,
+                             sizeof(entry->rep_state));
+    hash = HashSymmetryBytes(hash, &entry->orbit_size,
+                             sizeof(entry->orbit_size));
+    hash = HashSymmetryBytes(hash, &entry->stabilizer_size,
+                             sizeof(entry->stabilizer_size));
+    hash = HashSymmetryBytes(hash, &entry->norm, sizeof(entry->norm));
+    hash = HashSymmetryBytes(hash, &entry->stabilizer_character_sum,
+                             sizeof(entry->stabilizer_character_sum));
+    hash = HashSymmetryBytes(hash, &entry->diagonal,
+                             sizeof(entry->diagonal));
+  }
+  return hash;
+}
+
+static void OutputSymmetryRankStats(const struct BindStruct *X)
+{
+  static const int timer_ids[] = {
+    1100, 1110, 1115, 1111, 1112, 1113, 1114,
+    1101, 1120, 1121, 1122, 4113
+  };
+  static const char *work_keys[] = {
+    "basis_raw_states",
+    "basis_representative_candidates",
+    "basis_compatible_survivors",
+    "basis_transform_calls",
+    "basis_orbit_metadata_calls",
+    "basis_thread_count",
+    "basis_thread_raw_states_max",
+    "basis_thread_representative_candidates_max",
+    "basis_thread_compatible_survivors_max",
+    "basis_thread_transform_calls_max",
+    "basis_gather_entries",
+    "basis_gather_bytes",
+    "plan_local_rows",
+    "plan_local_nnz",
+    "plan_row_nnz_max"
+  };
+  const size_t timer_count = sizeof(timer_ids) / sizeof(timer_ids[0]);
+  const size_t work_count = sizeof(work_keys) / sizeof(work_keys[0]);
+  const struct SymmetryMatvecPlan *plan;
+  double timer_local[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_min[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_max[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  double timer_sum[sizeof(timer_ids) / sizeof(timer_ids[0])];
+  unsigned long long work_local[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_min[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_max[sizeof(work_keys) / sizeof(work_keys[0])];
+  unsigned long long work_sum[sizeof(work_keys) / sizeof(work_keys[0])];
+  double row_mean_local;
+  double row_mean_min;
+  double row_mean_max;
+  double row_mean_sum;
+  unsigned long long basis_digest_local;
+  unsigned long long basis_digest_min;
+  unsigned long long basis_digest_max;
+  char fileName[D_FileNameMax];
+  FILE *fp;
+  size_t i;
+
+  if (X == NULL || X->Def.iFlgSymmetryBasis == FALSE || X->Sym == NULL ||
+      X->Sym->enabled != TRUE) {
+    return;
+  }
+  plan = X->Sym->matvec_plan;
+  for (i = 0; i < timer_count; i++) timer_local[i] = Timer[timer_ids[i]];
+  work_local[0] = X->Sym->basis_raw_states;
+  work_local[1] = X->Sym->basis_representative_candidates;
+  work_local[2] = X->Sym->basis_compatible_survivors;
+  work_local[3] = X->Sym->basis_transform_calls;
+  work_local[4] = X->Sym->basis_orbit_metadata_calls;
+  work_local[5] = (unsigned long long)X->Sym->basis_thread_count;
+  work_local[6] = X->Sym->basis_thread_raw_states_max;
+  work_local[7] = X->Sym->basis_thread_representative_candidates_max;
+  work_local[8] = X->Sym->basis_thread_compatible_survivors_max;
+  work_local[9] = X->Sym->basis_thread_transform_calls_max;
+  work_local[10] = X->Sym->basis_gather_entries;
+  work_local[11] = X->Sym->basis_gather_bytes;
+  work_local[12] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
+  work_local[13] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
+  work_local[14] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
+  row_mean_local = plan != NULL && plan->local_dim > 0UL
+                       ? (double)plan->nnz / (double)plan->local_dim
+                       : 0.0;
+  basis_digest_local = SymmetryBasisDigest(X->Sym);
+
+  MPI_Allreduce(timer_local, timer_min, (int)timer_count, MPI_DOUBLE,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(timer_local, timer_max, (int)timer_count, MPI_DOUBLE,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(timer_local, timer_sum, (int)timer_count, MPI_DOUBLE,
+                MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_min, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_max, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(work_local, work_sum, (int)work_count, MPI_UNSIGNED_LONG_LONG,
+                MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_min, 1, MPI_DOUBLE,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_max, 1, MPI_DOUBLE,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&row_mean_local, &row_mean_sum, 1, MPI_DOUBLE,
+                MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_local, &basis_digest_min, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_local, &basis_digest_max, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_MAX, MPI_COMM_WORLD);
+
+  sprintf(fileName, "CalcTimerRankStats.dat");
+  if (childfopenMPI(fileName, "w", &fp) != 0) return;
+  fprintf(fp, "format=HPhiCalcTimerRankStats version=1 ranks=%d\n", nproc);
+  for (i = 0; i < timer_count; i++) {
+    fprintf(fp, "timer id=%d ranks=%d min=%.17g max=%.17g mean=%.17g\n",
+            timer_ids[i], nproc, timer_min[i], timer_max[i],
+            timer_sum[i] / (double)nproc);
+  }
+  for (i = 0; i < work_count; i++) {
+    fprintf(fp, "work key=%s ranks=%d min=%llu max=%llu mean=%.17g\n",
+            work_keys[i], nproc, work_min[i], work_max[i],
+            (double)work_sum[i] / (double)nproc);
+  }
+  fprintf(fp,
+          "work key=plan_row_nnz_mean ranks=%d min=%.17g max=%.17g mean=%.17g\n",
+          nproc, row_mean_min, row_mean_max, row_mean_sum / (double)nproc);
+  fprintf(fp,
+          "basis_digest algorithm=fnv1a64-fields ranks=%d min=%016llx max=%016llx\n",
+          nproc, basis_digest_min, basis_digest_max);
+  fclose(fp);
+}
 #endif
 /** 
  * 
@@ -104,7 +260,16 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "All", 0);
   StampTime(fp, "  sz", 1000);
   StampTime(fp, "  symmetry basis build/activate", 1100);
+  StampTime(fp, "    symmetry basis raw enumeration", 1110);
+  StampTime(fp, "      symmetry basis MPI gather/reduction", 1115);
+  StampTime(fp, "    symmetry basis sort/merge", 1111);
+  StampTime(fp, "    symmetry representative hash build", 1112);
+  StampTime(fp, "    symmetry diagonal materialization", 1113);
+  StampTime(fp, "    symmetry dimension activation/validation", 1114);
   StampTime(fp, "  symmetry matvec plan build", 1101);
+  StampTime(fp, "    symmetry plan count/prefix", 1120);
+  StampTime(fp, "    symmetry plan storage allocation", 1121);
+  StampTime(fp, "    symmetry plan fill", 1122);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -126,6 +291,11 @@ void OutputTimer(struct BindStruct *X) {
       StampTime(fp, "      mltply      in LanczosEigenValue", 4101);
       StampTime(fp, "      vec12       in LanczosEigenValue", 4102);
       StampTime(fp, "      DSEVvalue   in LanczosEigenValue", 4103);
+      StampTime(fp, "      initial vector zero fill", 4110);
+      StampTime(fp, "      initial vector random fill", 4111);
+      StampTime(fp, "      initial vector local norm", 4112);
+      StampTime(fp, "      initial vector MPI reduction", 4113);
+      StampTime(fp, "      initial vector normalization", 4114);
       StampTime(fp, "    LanczosEigenVector", 4200);
       StampTime(fp, "      mltply      in LanczosEigenVector", 4201);
       StampTime(fp, "    expec_energy_flct", 4300);
@@ -257,6 +427,7 @@ void OutputTimer(struct BindStruct *X) {
   fprintf(fp,"================================================\n");
 
   fclose(fp);
+  OutputSymmetryRankStats(X);
   free(Timer);
   free(TimerStart);
 #endif

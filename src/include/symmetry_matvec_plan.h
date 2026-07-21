@@ -14,6 +14,7 @@ struct SymmetryMatvecPlan {
   unsigned long int local_offset;
   unsigned long int local_dim;
   size_t nnz;
+  size_t row_nnz_max;
   size_t *row_ptr;
   unsigned long int *col_index;
   double complex *values;

@@ -257,11 +257,91 @@ assert_symmetry_log() {
     fi
 }
 
+assert_rank_stats() {
+    expected_dim="$1"
+    expected_ranks="$2"
+    log="$3"
+    expected_digest="${4:-}"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f output/CalcTimer.dat ]; then
+        return
+    fi
+    if [ ! -f "${stats}" ]; then
+        cat "${log}"
+        echo "Missing ${stats}"
+        exit 1
+    fi
+    if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
+        -v expected_digest="${expected_digest}" '
+        function abs(x) { return x < 0 ? -x : x }
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        /^format=/ {
+            header_ranks = value($3)
+            next
+        }
+        $1 == "timer" {
+            timer_count++
+            ranks = value($3)
+            min = value($4)
+            max = value($5)
+            mean = value($6)
+            if (ranks != expected_ranks || min > mean || mean > max) bad = 1
+            if (expected_ranks == 1 &&
+                (abs(min - max) > 1.0e-15 || abs(min - mean) > 1.0e-15)) bad = 1
+            next
+        }
+        $1 == "work" {
+            work_count++
+            key = value($2)
+            ranks = value($3)
+            min = value($4)
+            max = value($5)
+            mean = value($6)
+            if (ranks != expected_ranks || min > mean || mean > max) bad = 1
+            work_min[key] = min
+            work_max[key] = max
+            work_mean[key] = mean
+            next
+        }
+        $1 == "basis_digest" {
+            digest_count++
+            ranks = value($3)
+            digest_min = value($4)
+            digest_max = value($5)
+            if (ranks != expected_ranks || digest_min != digest_max) bad = 1
+            if (expected_digest != "" && digest_min != expected_digest) bad = 1
+            next
+        }
+        END {
+            if (header_ranks != expected_ranks || timer_count != 12 ||
+                work_count != 16 || digest_count != 1) bad = 1
+            if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
+            if (work_min["basis_transform_calls"] <= 0) bad = 1
+            if (abs(work_mean["basis_orbit_metadata_calls"] * expected_ranks - 4) > 1.0e-12) bad = 1
+            if (work_min["basis_thread_count"] < 1) bad = 1
+            if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
+            exit bad
+        }
+    ' "${stats}"; then
+        cat "${log}"
+        cat "${stats}"
+        echo "Invalid rank-aware symmetry setup statistics"
+        exit 1
+    fi
+}
+
 run_mpi_symmetry_case() {
     label="$1"
     expected_energy="$2"
     expected_dim="$3"
     expected_doublon="${4:-}"
+    expected_ranks="$5"
+    expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
     if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
@@ -273,6 +353,8 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
+    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+        "${expected_digest}"
 }
 
 run_mpi_if_available() {
@@ -281,9 +363,17 @@ run_mpi_if_available() {
     expected_dim="$3"
     expected_doublon="${4:-}"
     if [ -n "${MPIRUN}" ]; then
+        expected_digest=`awk '$1 == "basis_digest" {
+            split($4, parts, "="); print parts[2]; exit
+        }' output/CalcTimerRankStats.dat`
+        if [ -z "${expected_digest}" ]; then
+            echo "Missing serial symmetry basis digest"
+            exit 1
+        fi
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
-            run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" "$expected_doublon"
+            run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" \
+                "$expected_doublon" "$MPI_NP" "$expected_digest"
         fi
     fi
 }
@@ -313,6 +403,7 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
+assert_rank_stats 4 1 hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 
 rm -rf output
@@ -326,6 +417,7 @@ if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
+assert_rank_stats 4 1 hubbard_kpi2.log
 run_mpi_if_available kpi2 "-2.0" 4
 
 rm -rf output
@@ -337,6 +429,7 @@ perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
+assert_rank_stats 4 1 hubbard_k0_cg.log
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 
