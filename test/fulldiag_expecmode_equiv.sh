@@ -185,8 +185,14 @@ compare_output_trees() {
 #      projector P, which is basis-INVARIANT -- equal for any two valid
 #      diagonalizations -- while individual per-state values are not. For a
 #      non-degenerate level (size 1) this reduces to the exact per-state
-#      comparison, unchanged. Tolerance is scaled to tol*max(1,level_size) so a
-#      k-term floating sum is not held to a tighter bound than a single value.
+#      comparison. Tolerance: zvo_phys is written with "%10lf" (6 decimals),
+#      so each printed value carries ~5e-7 absolute rounding; a sum of
+#      level_size such values, compared between two INDEPENDENT diagonalizations
+#      (whose degenerate-subspace bases differ), can disagree by up to
+#      ~level_size * 1e-6. The per-level tolerance is therefore ptol*level_size
+#      with ptol=2e-6 (output-precision-aware), NOT the 1e-8 used for the
+#      byte-identical deterministic (compare_output_trees) cases -- comparing
+#      6-decimal output to 1e-8 was the cause of the intermittent np=3 failure.
 # A real regression (e.g. Mode-2 energy kernel wrongly reactivating for a
 # spinless model, shifting the <N> column by O(1)) still fails: that per-level
 # SUM diverges by O(level_size) >> the scaled tolerance.
@@ -217,7 +223,7 @@ compare_phys() {
       diff _physhdrA.txt _physhdrB.txt >&2
       fail "compare_phys header/non-data line mismatch for ${base}"
     }
-    paste "${fa}" "${fb}" | awk -v tol="${tol}" -v etol="1e-6" -v fname="${base}" '
+    paste "${fa}" "${fb}" | awk -v tol="${tol}" -v etol="1e-6" -v ptol="2e-6" -v fname="${base}" '
       function abs(x){ return x<0?-x:x }
       {
         # Skip the header / any non-numeric-first-column line ("  <H> <N> ...")
@@ -265,7 +271,7 @@ compare_phys() {
         # reduce to the exact per-state check.
         for (g = 1; g <= gA; g++) {
           sz = endA[g] - startA[g] + 1
-          lt = tol * (sz > 1 ? sz : 1)
+          lt = ptol * (sz > 1 ? sz : 1)
           for (i = 1; i <= half; i++) {
             sa = 0; sb = 0
             for (k = startA[g]; k <= endA[g]; k++) { sa += A[k, i]; sb += B[k, i] }
