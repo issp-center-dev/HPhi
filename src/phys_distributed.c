@@ -64,69 +64,13 @@
  * TraceReportPlan(), so the INFO line reflects the final verdict. The collected
  * CSR is orchestrator-owned (TraceHamCsr ham_csr): passed by pointer to
  * phys_stateparallel_local_loop() when the energy kernel is active (NULL when
- * it fell back), and freed after the loop. TraceFinalizeEnergyPlan() itself is
- * defined ABOVE the _SCALAPACK guard so it is also linkable by the serial unit
- * test; its MPI_Allreduce is MPI-guarded (single-rank pass-through otherwise).
+ * it fell back), and freed after the loop. TraceFinalizeEnergyPlan() itself --
+ * the one rank-synchronized MPI step of that lifecycle -- lives in its own
+ * MPI-capable, ScaLAPACK-free TU (src/expec_trace_finalize.c) so the serial
+ * unit test can link it without dragging this whole _SCALAPACK orchestrator;
+ * this file just calls it via the declaration in expec_trace.h.
  */
 #include "phys_distributed.h"
-
-/* ===================================================================== *
- * Phase 3c Task 5: TraceFinalizeEnergyPlan() -- the rank-synchronized
- * finalize of the PROVISIONAL energy slot. Defined OUTSIDE the _SCALAPACK
- * guard (unlike phys_stateparallel() below, which needs the distributed
- * eigenvector globals) so it compiles into every build: it is the one plan
- * step that must be MPI-capable, yet it is also linked by the serial unit
- * test (which drives its single-rank pass-through). The MPI_Allreduce is
- * guarded by MPI; at nproc==1 / non-MPI builds the single-rank buffer
- * trivially passes. See the full protocol doc in src/include/expec_trace.h.
- * ===================================================================== */
-#include "wrapperMPI.h"   /* exitMPI (collective-safe abort) + myrank/nproc */
-#ifdef MPI
-#include <mpi.h>
-#endif
-#include <limits.h>
-#include <stdio.h>
-
-void TraceFinalizeEnergyPlan(TraceExecutionPlan *plan, int local_ok,
-                             long int nnz_raw) {
-  long long buf[3];
-
-  if (local_ok && nnz_raw >= 0 && (long long)nnz_raw != LLONG_MAX) {
-    /* success rank with a representable nnz distinct from the failure sentinel
-       (long int always fits long long; nnz_raw>=0 makes the negation safe). */
-    buf[0] = 1;
-    buf[1] = (long long)nnz_raw;
-    buf[2] = -(long long)nnz_raw;
-  } else {
-    /* failed rank (gate exceeded, any allocation failure), or an nnz that
-       cannot be encoded distinctly from the sentinel -> treat self as failed. */
-    buf[0] = 0;
-    buf[1] = LLONG_MAX;
-    buf[2] = LLONG_MAX;
-  }
-
-#ifdef MPI
-  MPI_Allreduce(MPI_IN_PLACE, buf, 3, MPI_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
-#endif
-
-  /* Verdict order (identical reduced buffer on every rank -> identical branch),
-     design spec 3c: demote-before-consistency so failed-rank sentinels never
-     pollute the nnz agreement check. */
-  if (buf[0] == 0) {
-    plan->kernel[TRACE_Q_ENERGY] = 0;
-    plan->demoted_memory[TRACE_Q_ENERGY] = 1;
-  } else if (buf[1] != -buf[2]) {
-    fprintf(stderr,
-            "  Error: ExpecMode 2 energy trace kernel: the collected "
-            "Hamiltonian nnz differs across MPI ranks (min nnz=%lld, "
-            "max nnz=%lld) -- a nondeterministic makeHam enumeration, which is "
-            "a correctness error, not a fallback case. Aborting.\n",
-            buf[1], -buf[2]);
-    exitMPI(-1);
-  }
-  /* else: every rank succeeded with an agreeing nnz -> energy stays
-     kernel[TRACE_Q_ENERGY]=1 (final). */
-}
 
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"   /* mpi.h, global.h, Z_vec/descZ_vec, use_scalapack,

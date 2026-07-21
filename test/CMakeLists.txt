@@ -490,9 +490,12 @@ set_tests_properties(expec_trace_map_check
 add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace_ham.c
     # phase 3c Task 5: part 4 drives TraceFinalizeEnergyPlan(), which lives in
-    # phys_distributed.c (outside its _SCALAPACK guard) and consumes the plan
-    # struct/enum from expec_trace.c.
-    ${CMAKE_SOURCE_DIR}/src/phys_distributed.c
+    # its own ScaLAPACK-free TU expec_trace_finalize.c (NOT phys_distributed.c,
+    # whose _SCALAPACK build compiles the phys_stateparallel orchestrator and
+    # would drag in RedistBlockCyclicToStatePanel/matrixscalapack and the
+    # phys_distributed_local.c symbols this test does not link). expec_trace.c
+    # supplies the plan struct/enum.
+    ${CMAKE_SOURCE_DIR}/src/expec_trace_finalize.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
     ${CMAKE_SOURCE_DIR}/src/makeHam.c
