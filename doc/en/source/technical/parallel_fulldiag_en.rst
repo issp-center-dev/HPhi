@@ -136,17 +136,21 @@ evaluates them with no communication inside the per-state loop (that is
 the whole point of ``ExpecMode 1``/``2``). Computing :math:`y = H x` for
 a locally-complete :math:`x` therefore needs every row of :math:`H` on
 that rank, so the CSR is built for the full column range on each rank.
-Distributing the CSR (each rank holding only :math:`\mathrm{nnz}/P` rows)
+Distributing the CSR (each rank holding only :math:`N/P` rows, and about
+:math:`\mathrm{nnz}/P` nonzeros)
 would force per-state communication to apply the distributed operator to
 a local full vector — reintroducing exactly the collective cost the
 state-panel design removes. Consequently the per-rank CSR does **not**
 shrink as :math:`P` grows. The CSR is nonetheless compact: it is sparse,
-with :math:`\mathrm{nnz} \approx T \cdot N` where :math:`T` is the number
-of Hamiltonian terms contributing per column — roughly linear in
-:math:`N` for a fixed model, with :math:`T` itself growing only slowly
-with system size (e.g. :math:`T \approx 21` for the Hubbard chain at
-:math:`L=10`, and :math:`T \approx L+1` for an :math:`L`-site
-transverse-field spin chain). Its dominant ``colidx``/``val`` storage is
+with :math:`\mathrm{nnz} \approx T \cdot N` emitted entries where
+:math:`T` is the number of Hamiltonian terms contributing per column —
+roughly linear in :math:`N` for a fixed model, with :math:`T` itself
+growing only slowly with system size (e.g. :math:`T \approx 21` for the
+Hubbard chain at :math:`L=10`, and :math:`T \approx L+1` for an
+:math:`L`-site transverse-field spin chain). The buffer capacity and the
+memory gate are sized on these emitted entries (the merged count
+:math:`\mathrm{rowptr}[N]` after summing duplicates can be smaller). Its
+dominant ``colidx``/``val`` storage is
 :math:`\approx 24 \times \mathrm{nnz}` bytes (plus :math:`O(N)`
 row-pointer, work-vector, and diagonal-coefficient arrays) — about 32 MB
 at :math:`N = 63504`. At moderate rank counts this is much smaller than

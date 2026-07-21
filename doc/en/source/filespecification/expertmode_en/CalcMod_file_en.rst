@@ -411,10 +411,12 @@ The parameters correlated with the keywords are as follows.
      ``HPHI_TRACE_BUF_MAX_MB`` memory gate as above, checked next (only
      reached if (a) does not apply) -- this cap now also bounds the
      energy family's own per-rank Hamiltonian buffer, a compact CSR
-     matrix of approximately :math:`24 \times \mathrm{nnz}` bytes (nnz:
-     the number of merged nonzero matrix entries collected on this
-     rank); if the projected CSR size would exceed the cap, the energy
-     family falls back to ``ExpecMode 1``. Unlike the Green-function
+     matrix of approximately :math:`24 \times \mathrm{nnz}` bytes (here
+     nnz is the number of matrix entries makeHam emits on this rank,
+     which the buffer capacity and the gate are sized for; the merged
+     entry count ``rowptr[N]`` after summing duplicates can be smaller);
+     if the projected CSR size would exceed the cap, the energy family
+     falls back to ``ExpecMode 1``. Unlike the Green-function
      kernels, the energy family has no "unsupported model" case (see
      above) and no shared-evaluator case (it does not share its
      evaluator with any other always-fallback quantity).

@@ -88,9 +88,12 @@ makes no speed promise beyond "expected to help."
 
 - **Memory note.** The energy family's per-rank CSR Hamiltonian buffer
   is approximately `24·nnz` bytes (`colidx`: 8 bytes/entry as `long
-  int`, `val`: 16 bytes/entry as `double complex`; `nnz` is the number
-  of merged nonzero matrix entries collected on this rank — row-pointer
-  and diagonal-coefficient overhead is comparatively negligible). This
+  int`, `val`: 16 bytes/entry as `double complex`; `nnz` here is the
+  number of entries makeHam emits on this rank, which the buffer
+  capacity and the memory gate are sized for — the merged count
+  `csr->nnz = rowptr[N]` after summing duplicates can be smaller;
+  row-pointer and diagonal-coefficient overhead is comparatively
+  negligible). This
   buffer **shares the existing `HPHI_TRACE_BUF_MAX_MB` cap**
   (default 1024 MiB, integer range `[1, 1048576]`) with the phase 3b
   Green-function result buffers — it is not a separate, additional
@@ -106,9 +109,10 @@ makes no speed promise beyond "expected to help."
   locally-complete `x` needs every row of `H` locally; a distributed CSR
   would reintroduce the per-state collectives that `ExpecMode 1`/`2`
   exist to remove. The CSR is nonetheless compact: it is sparse, with
-  `nnz ≈ T·N` (`T` = Hamiltonian terms per column, roughly linear in `N`
-  for a fixed model; `T` grows only slowly with size, e.g. `T ≈ 21` for
-  the Hubbard chain at `L=10`). Its dominant `colidx`/`val` storage is
+  `nnz ≈ T·N` emitted entries (`T` = Hamiltonian terms per column,
+  roughly linear in `N` for a fixed model; `T` grows only slowly with
+  size, e.g. `T ≈ 21` for the Hubbard chain at `L=10`). Its dominant
+  `colidx`/`val` storage is
   `≈ 24·nnz` bytes (plus `O(N)` row-pointer/work/diagonal arrays), about
   32 MB at `N = 63504`. At moderate rank counts this is much smaller than
   the `O(N²/P)` eigenvector state panel, but because the CSR is
