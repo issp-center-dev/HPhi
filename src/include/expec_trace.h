@@ -125,9 +125,20 @@ typedef struct {
       the finalize-time demoted_memory[TRACE_Q_ENERGY] -- TraceBuildPlan()
       leaves kernel[TRACE_Q_ENERGY]=0 when this is set, so
       TraceFinalizeEnergyPlan()'s collect/reduce is skipped entirely for an
-      InputHam run. (Phase 3c Task 5; the Task-1 audit established that a
-      FullDiag symmetry basis is unreachable, so NO unsupported-configuration
-      predicate/field exists -- InputHam is the only static energy demotion.) */
+      InputHam run.
+
+      This is the FIRST of the energy family's two STATIC demotion reasons; the
+      second is demoted_unsupported_model (see below). The full energy-slot
+      demotion check order is: (1) InputHam (this field), (2) unsupported model
+      (demoted_unsupported_model), both decided in TraceBuildPlan() -- InputHam
+      is checked first, so an InputHam run reports the InputHam reason even for a
+      model that is also unsupported -- then (3) the finalize-time memory gate
+      (demoted_memory), decided by TraceFinalizeEnergyPlan() only if neither
+      static reason fired. The three are mutually exclusive by this ordering.
+      (Phase 3c Tasks 5/blocker-1: the Task-1 audit established that a FullDiag
+      symmetry basis is unreachable, so there is no basis-configuration
+      predicate; InputHam and unsupported-model are the only static energy
+      demotions.) */
   int demoted_input_ham[TRACE_Q_NQUANT];
   /** demoted_unsupported_model[q]==1: quantity q was statically demoted to the
       ExpecMode-1 fallback because this run's CalcModel is not one whose

@@ -353,7 +353,9 @@ CalcModファイル
      表示されます)。
    | エネルギー・ゆらぎ系のトレースカーネルは、上記のGreen関数カーネル
      よりも広いモデルに対応しています: ``Hubbard``/``HubbardGC``、
-     ``tJ``/``tJGC``、``Kondo``/``KondoGC``、および一般スピン
+     ``tJ``/``tJGC``、``Kondo``/``KondoGC`` (それぞれ粒子数保存の
+     カノニカル変種 ``HubbardNConserved``/``tJNConserved``/``KondoNConserved``
+     -- ``2Sz`` を省略すると自動的に選択されます -- を含む)、および一般スピン
      (:math:`S \geq 1` を含む) の ``Spin``/``SpinGC`` に対応しており、
      Green関数で対応していた4行に限られません。ただし
      ``SpinlessFermion``/``SpinlessFermionGC`` には対応していません

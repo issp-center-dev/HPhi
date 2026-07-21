@@ -1030,10 +1030,13 @@ static int report_contains(const TraceExecutionPlan *plan, const char *needle) {
 
 static void run_energy_plan_report(void) {
   TraceExecutionPlan plan;
+  /* Match the FULL INFO line (the "INFO: ExpecMode 2: " prefix through the
+     terminal period), not a loose substring, so a reworded prefix/suffix cannot
+     slip past report_contains()'s strstr. Byte-exact from TraceReportPlan(). */
   const char *kernel_line =
-    "the energy/fluctuation family uses the trace kernel.";
+    "INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel.";
   const char *unsupported_line =
-    "the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).";
+    "INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).";
 
   fprintf(stderr, "[energy plan+report: TraceBuildPlan/TraceReportPlan]\n");
 

@@ -368,7 +368,10 @@ The parameters correlated with the keywords are as follows.
      "unsupported model" line above for both quantities).
    | The energy/fluctuation family's trace kernel has broader model
      coverage than the Green-function kernels above: it supports
-     ``Hubbard``/``HubbardGC``, ``tJ``/``tJGC``, ``Kondo``/``KondoGC``,
+     ``Hubbard``/``HubbardGC``, ``tJ``/``tJGC``, ``Kondo``/``KondoGC``
+     (each including its particle-number-conserved canonical variant --
+     ``HubbardNConserved``/``tJNConserved``/``KondoNConserved``, selected
+     automatically when ``2Sz`` is omitted),
      and ``Spin``/``SpinGC`` (including general spin, :math:`S \geq 1`) --
      not just the four rows supported for the Green functions. It does
      NOT support ``SpinlessFermion``/``SpinlessFermionGC`` (their

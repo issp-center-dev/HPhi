@@ -42,8 +42,10 @@ makes no speed promise beyond "expected to help."
   four (model, spin-representation) rows (`Hubbard`, `HubbardGC`,
   half-integer `Spin`, half-integer `SpinGC`). The energy-family
   kernel supports a broader set: `Hubbard`/`HubbardGC`, `tJ`/`tJGC`,
-  `Kondo`/`KondoGC`, and `Spin`/`SpinGC` (including general spin,
-  `S ≥ 1`). It does **not** support
+  `Kondo`/`KondoGC` (each including its particle-number-conserved
+  canonical variant — `HubbardNConserved`/`tJNConserved`/`KondoNConserved`,
+  selected automatically when `2Sz` is omitted), and `Spin`/`SpinGC`
+  (including general spin, `S ≥ 1`). It does **not** support
   `SpinlessFermion`/`SpinlessFermionGC` or any unknown model — their
   particle-number/spin fluctuation semantics differ and are not
   implemented by the kernel — so those fall back to the `ExpecMode 1`

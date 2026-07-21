@@ -203,15 +203,41 @@ compare_phys() {
     na=$(wc -l < "${fa}")
     nb=$(wc -l < "${fb}")
     [ "${na}" = "${nb}" ] || fail "compare_phys line count mismatch for ${base}: ${na} (${dirA}) vs ${nb} (${dirB})"
+    # (a) Header / any non-data line (first field nonnumeric, e.g. the
+    # "  <H>  <N>  <Sz>  <S2>  <D>" column-label row) must be byte-identical
+    # between A and B -- a CHANGED HEADER is itself a difference. `awk 'cond'`
+    # with no action prints $0 verbatim, so extracting the non-data lines this
+    # way and diffing them is a byte-exact header comparison (the degeneracy-
+    # aware per-level SUM comparison below intentionally SKIPS these lines, so
+    # header exactness must be guarded here or it would go unchecked).
+    awk '$1 !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/' "${fa}" > _physhdrA.txt
+    awk '$1 !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/' "${fb}" > _physhdrB.txt
+    diff _physhdrA.txt _physhdrB.txt > /dev/null || {
+      echo "Header/non-data lines differ between ${fa} and ${fb}:" >&2
+      diff _physhdrA.txt _physhdrB.txt >&2
+      fail "compare_phys header/non-data line mismatch for ${base}"
+    }
     paste "${fa}" "${fb}" | awk -v tol="${tol}" -v etol="1e-6" -v fname="${base}" '
       function abs(x){ return x<0?-x:x }
       {
-        # Skip the header / any non-numeric-first-column line ("  <H> <N> ...").
+        # Skip the header / any non-numeric-first-column line ("  <H> <N> ...")
+        # -- its byte-exactness is guarded separately above.
         if ($1 !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) next
         if (NF % 2 != 0) { printf "MISMATCH %s line %d: uneven column count (NF=%d)\n", fname, NR, NF; bad=1; next }
         h = NF / 2
         if (half == 0) half = h
         else if (h != half) { printf "MISMATCH %s line %d: column count changed (%d vs %d)\n", fname, NR, h, half; bad=1; next }
+        # (b) Validate BOTH paired fields are strictly numeric BEFORE the sum.
+        # A bare "+ 0" would silently coerce a nonnumeric value (nan/inf/bad) to
+        # 0 and could PASS -- especially where the expected value is 0. The
+        # strict regex (same one the old per-line compare used) also rejects
+        # nan/inf (case-insensitively -- neither matches), so a nonnumeric field
+        # where a number is expected is a hard failure, never skipped or coerced.
+        for (i = 1; i <= half; i++) {
+          if ($i !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/ || $(i + half) !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) {
+            printf "MISMATCH %s line %d col %d: non-numeric field where a number is expected (nan/inf/bad not allowed): \"%s\" vs \"%s\"\n", fname, NR, i, $i, $(i + half); bad = 1; next
+          }
+        }
         n++
         eA[n] = $1 + 0; eB[n] = $(1 + half) + 0
         for (i = 1; i <= half; i++) { A[n, i] = $i + 0; B[n, i] = $(i + half) + 0 }
@@ -312,7 +338,11 @@ assert_kernel_plan() {
 # kernel lines. The substring is byte-exact from expec_trace.c.
 assert_energy_kernel() {
   logfile="$1"
-  grep -q "the energy/fluctuation family uses the trace kernel\." \
+  # Match the FULL INFO line (leading "INFO: ExpecMode 2: " through the terminal
+  # ".") with grep -F, not a loose substring, so a reworded prefix/suffix cannot
+  # slip past. The string is byte-frozen and shared with the docs; only the match
+  # is tightened here.
+  grep -Fq "INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel." \
     "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for the energy/fluctuation family in ${logfile}"
 }
 
@@ -373,7 +403,8 @@ assert_energy_kernel_gf_unsupported() {
 # instead of the fallback value, diverging from Mode 0/1.
 assert_energy_and_gf_unsupported() {
   logfile="$1"
-  grep -q "the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model)\." \
+  # Full-line grep -F (INFO prefix through the terminal period), not a substring.
+  grep -Fq "INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model)." \
     "${logfile}" || fail "ExpecMode 2 did not report the unsupported-model energy fallback in ${logfile}"
   grep -q "ExpecMode 2: one-body Green functions use the ExpecMode-1 fallback (unsupported model)\." \
     "${logfile}" || fail "ExpecMode 2 one-body GF did not report the unsupported-model fallback in ${logfile}"
@@ -906,7 +937,7 @@ cp "${genham7}/output/zvo_Ham.dat" "${test7}/output/"
   printf 'ExpecMode 2\n' >> calcmod.def
   run_hphi log_run.txt ${MPIRUN} "${hphi}" -e namelist.def
 )
-grep -q "the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam)\." \
+grep -Fq "INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam)." \
   "${test7}/log_run.txt" \
   || fail "case7: ExpecMode 2 did not report the InputHam energy demotion in ${test7}/log_run.txt"
 compare_phys "${ref7}" "${test7}"
