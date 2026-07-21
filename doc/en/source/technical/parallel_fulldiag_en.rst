@@ -140,16 +140,24 @@ Distributing the CSR (each rank holding only :math:`\mathrm{nnz}/P` rows)
 would force per-state communication to apply the distributed operator to
 a local full vector — reintroducing exactly the collective cost the
 state-panel design removes. Consequently the per-rank CSR does **not**
-shrink as :math:`P` grows. This is acceptable because the CSR is sparse:
-for lattice Hamiltonians :math:`\mathrm{nnz} = O(N)` (a fixed number of
-terms per column), so the buffer is :math:`\approx 24 N` bytes — for
-example about 32 MB at :math:`N = 63504` — which is negligible beside the
-:math:`O(N^2/P)` eigenvector state panel that dominates per-rank memory
-and *does* scale with :math:`P`. The replicated CSR only becomes a
-concern for pathologically operator-dense inputs (large
-``InterAll``/``NBodyInterAll`` sets); there the per-rank
-``HPHI_TRACE_BUF_MAX_MB`` gate falls the energy family back to
-``ExpecMode 1`` and reports it.
+shrink as :math:`P` grows. The CSR is nonetheless compact: it is sparse,
+with :math:`\mathrm{nnz} \approx T \cdot N` where :math:`T` is the number
+of Hamiltonian terms contributing per column — roughly linear in
+:math:`N` for a fixed model, with :math:`T` itself growing only slowly
+with system size (e.g. :math:`T \approx 21` for the Hubbard chain at
+:math:`L=10`, and :math:`T \approx L+1` for an :math:`L`-site
+transverse-field spin chain). Its dominant ``colidx``/``val`` storage is
+:math:`\approx 24 \times \mathrm{nnz}` bytes (plus :math:`O(N)`
+row-pointer, work-vector, and diagonal-coefficient arrays) — about 32 MB
+at :math:`N = 63504`. At moderate rank counts this is much smaller than
+the :math:`O(N^2/P)` eigenvector state panel; but because the CSR is
+:math:`P`-independent while the panel shrinks with :math:`P`, the CSR's
+fixed per-rank cost becomes relatively more significant as :math:`P`
+grows and can dominate at sufficiently large :math:`P`, or already at
+moderate :math:`P` for operator-dense inputs (large
+``InterAll``/``NBodyInterAll`` sets). Whenever the projected CSR exceeds
+the per-rank ``HPHI_TRACE_BUF_MAX_MB`` gate, the energy family falls back
+to ``ExpecMode 1`` and reports it.
 
 Speed comparison
 ----------------

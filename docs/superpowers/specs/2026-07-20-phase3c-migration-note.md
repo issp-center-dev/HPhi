@@ -105,15 +105,19 @@ makes no speed promise beyond "expected to help."
   without per-state communication, and computing `y = H·x` for a
   locally-complete `x` needs every row of `H` locally; a distributed CSR
   would reintroduce the per-state collectives that `ExpecMode 1`/`2`
-  exist to remove. It is acceptable because the CSR is sparse —
-  `nnz = O(N)` for lattice Hamiltonians, so `≈ 24·N` bytes (about 32 MB
-  at `N = 63504`), negligible beside the `O(N²/P)` eigenvector state
-  panel that dominates per-rank memory and does scale with `P`. Only
-  pathologically operator-dense inputs make the replicated CSR the
-  bottleneck, and there the per-rank cap falls the family back to
-  `ExpecMode 1` and reports it. (This corrects an earlier
-  troubleshooting note that wrongly suggested adding MPI ranks shrinks
-  the CSR.)
+  exist to remove. The CSR is nonetheless compact: it is sparse, with
+  `nnz ≈ T·N` (`T` = Hamiltonian terms per column, roughly linear in `N`
+  for a fixed model; `T` grows only slowly with size, e.g. `T ≈ 21` for
+  the Hubbard chain at `L=10`). Its dominant `colidx`/`val` storage is
+  `≈ 24·nnz` bytes (plus `O(N)` row-pointer/work/diagonal arrays), about
+  32 MB at `N = 63504`. At moderate rank counts this is much smaller than
+  the `O(N²/P)` eigenvector state panel, but because the CSR is
+  `P`-independent while the panel shrinks with `P`, the CSR's fixed cost
+  becomes relatively more significant as `P` grows and can dominate at
+  large `P` or for operator-dense inputs; there the per-rank
+  `HPHI_TRACE_BUF_MAX_MB` gate falls the family back to `ExpecMode 1` and
+  reports it. (This corrects an earlier troubleshooting note that wrongly
+  suggested adding MPI ranks shrinks the CSR.)
 
 - **Terminology note.** "Trace kernel" (the name used throughout this
   feature, in `ExpecMode 2`'s description, and in the source comments)
