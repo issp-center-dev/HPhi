@@ -158,6 +158,14 @@ static int trace_model_n_diag(int iCalcModel) {
       return 0;      /* canonical Spin (and any ineligible model) */
   }
 }
+/* NOTE: TraceModelEnergySupported() (declared in expec_trace_ham.h) is the
+   POSITIVE supported-model predicate that pairs with this table. It is DEFINED
+   in src/expec_trace.c (next to its sole caller TraceBuildPlan), not here,
+   only so the minimal test/unit/expec_trace_map_check.c -- which links
+   expec_trace.c but deliberately NOT this heavy TU (makeHam/expec_energy_flct
+   closure) -- resolves the symbol without pulling that closure in. Its
+   whitelist MUST stay in sync with this switch: every model handled as a real
+   (non-default) case above, PLUS canonical Spin, is supported. */
 
 /* ------------------------------------------------------------------ *
  *  Gated allocator: allocation number *nalloc (0-based) fails when it

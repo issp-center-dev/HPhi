@@ -959,6 +959,115 @@ static void run_finalize_check(void) {
   }
 }
 
+/* -----------------------------------------------------------------------
+ * Part 5: TraceModelEnergySupported() -- the positive supported-model
+ * predicate that gates the energy trace kernel (src/expec_trace_ham.c).
+ *
+ * Pure function of the CalcModel enum: no MPI, no makeHam, no fixture. The
+ * energy kernel implements the per-basis fluctuation semantics of exactly the
+ * Hubbard/Kondo/tJ family (canonical + GC + N-conserved), SpinGC, and
+ * canonical Spin; SpinlessFermion(GC) and any unknown model must be REJECTED
+ * (their num/Sz semantics differ and are not implemented in the kernel, so a
+ * true here would silently activate a wrong-value kernel -- the blocker this
+ * predicate fixes). Runs in every build (MPI and noMPI).
+ * --------------------------------------------------------------------------*/
+static void run_energy_supported_predicate(void) {
+  int i;
+  int supported[] = { Hubbard, HubbardNConserved, Kondo, KondoNConserved,
+                      tJ, tJNConserved, HubbardGC, KondoGC, tJGC, SpinGC, Spin };
+  int unsupported[] = { SpinlessFermion, SpinlessFermionGC, 999 };
+
+  fprintf(stderr, "[energy-supported predicate: TraceModelEnergySupported]\n");
+  for (i = 0; i < (int)(sizeof(supported) / sizeof(supported[0])); i++) {
+    char nm[96];
+    snprintf(nm, sizeof(nm), "energy-supported: model %d supported (==1)", supported[i]);
+    expect_true(nm, TraceModelEnergySupported(supported[i]) == 1);
+  }
+  for (i = 0; i < (int)(sizeof(unsupported) / sizeof(unsupported[0])); i++) {
+    char nm[96];
+    snprintf(nm, sizeof(nm), "energy-supported: model %d NOT supported (==0)", unsupported[i]);
+    expect_true(nm, TraceModelEnergySupported(unsupported[i]) == 0);
+  }
+}
+
+/* -----------------------------------------------------------------------
+ * Part 6: end-to-end plan build + INFO reporting for the energy slot
+ * (TraceBuildPlan / TraceReportPlan, src/expec_trace.c). Pure: no MPI, no
+ * makeHam, no fixture -- a minimal BindStruct with only the Def fields
+ * TraceBuildPlan reads. This is the local non-vacuousness proof for the
+ * blocker-1 INFO wording: a SUPPORTED model keeps the energy kernel and prints
+ * "the energy/fluctuation family uses the trace kernel.", while
+ * SpinlessFermion is DEMOTED (demoted_unsupported_model set, kernel cleared)
+ * and prints "... uses the ExpecMode-1 fallback (unsupported model).". The two
+ * INFO strings are byte-exact from the shell equivalence script's greps.
+ * --------------------------------------------------------------------------*/
+static void build_plan_for_model(int model, TraceExecutionPlan *plan) {
+  struct BindStruct X;
+  memset(&X, 0, sizeof(X));
+  X.Def.iExpecMode = EXPECMODE_TRACE;
+  X.Def.iCalcModel = model;
+  X.Def.iFlgGeneralSpin = FALSE;
+  X.Def.iInputHam = 0;
+  X.Def.NCisAjt = 0;
+  X.Def.NCisAjtCkuAlvDC = 0;
+  TraceBuildPlan(&X, 1, ((size_t)1) << 30, plan);
+}
+
+static int report_contains(const TraceExecutionPlan *plan, const char *needle) {
+  char buf[4096];
+  size_t nread;
+  FILE *fp = tmpfile();
+  int found;
+  if (fp == NULL) return 0;
+  TraceReportPlan(plan, fp);
+  rewind(fp);
+  nread = fread(buf, 1, sizeof(buf) - 1, fp);
+  buf[nread] = '\0';
+  fclose(fp);
+  found = (strstr(buf, needle) != NULL);
+  return found;
+}
+
+static void run_energy_plan_report(void) {
+  TraceExecutionPlan plan;
+  const char *kernel_line =
+    "the energy/fluctuation family uses the trace kernel.";
+  const char *unsupported_line =
+    "the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).";
+
+  fprintf(stderr, "[energy plan+report: TraceBuildPlan/TraceReportPlan]\n");
+
+  /* Supported model (Hubbard): energy kernel stays active. */
+  build_plan_for_model(Hubbard, &plan);
+  expect_true("plan Hubbard: energy kernel active",
+              plan.kernel[TRACE_Q_ENERGY] == 1);
+  expect_true("plan Hubbard: not demoted-unsupported",
+              plan.demoted_unsupported_model[TRACE_Q_ENERGY] == 0);
+  expect_true("report Hubbard: prints the energy trace-kernel line",
+              report_contains(&plan, kernel_line));
+
+  /* Unsupported model (canonical SpinlessFermion): energy kernel demoted. */
+  build_plan_for_model(SpinlessFermion, &plan);
+  expect_true("plan SpinlessFermion: energy kernel demoted (kernel==0)",
+              plan.kernel[TRACE_Q_ENERGY] == 0);
+  expect_true("plan SpinlessFermion: demoted_unsupported_model set",
+              plan.demoted_unsupported_model[TRACE_Q_ENERGY] == 1);
+  expect_true("plan SpinlessFermion: NOT demoted_input_ham",
+              plan.demoted_input_ham[TRACE_Q_ENERGY] == 0);
+  expect_true("report SpinlessFermion: prints the unsupported-model fallback line",
+              report_contains(&plan, unsupported_line));
+  /* Non-vacuous: the demoted plan must NOT print the trace-kernel line. */
+  expect_true("report SpinlessFermion: does NOT print the trace-kernel line",
+              !report_contains(&plan, kernel_line));
+
+  /* SpinlessFermionGC: same demotion. */
+  build_plan_for_model(SpinlessFermionGC, &plan);
+  expect_true("plan SpinlessFermionGC: energy kernel demoted (kernel==0)",
+              plan.kernel[TRACE_Q_ENERGY] == 0);
+  expect_true("plan SpinlessFermionGC: demoted_unsupported_model set",
+              plan.demoted_unsupported_model[TRACE_Q_ENERGY] == 1);
+}
+
 int main(int argc, char **argv) {
   stdoutMPI = stdout;
   myrank = 0;
@@ -1071,6 +1180,12 @@ int main(int argc, char **argv) {
      rank-synchronized 2-rank demotion under mpiexec). Collective at nproc>=2,
      so EVERY rank must reach it. ---- */
   run_finalize_check();
+
+  /* ---- Part 5: pure supported-model predicate (both MPI and noMPI). ---- */
+  run_energy_supported_predicate();
+
+  /* ---- Part 6: plan build + INFO reporting for the energy slot. ---- */
+  run_energy_plan_report();
 
   if (chdir(g_base) == 0) chdir("..");
 

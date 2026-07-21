@@ -129,6 +129,19 @@ typedef struct {
       FullDiag symmetry basis is unreachable, so NO unsupported-configuration
       predicate/field exists -- InputHam is the only static energy demotion.) */
   int demoted_input_ham[TRACE_Q_NQUANT];
+  /** demoted_unsupported_model[q]==1: quantity q was statically demoted to the
+      ExpecMode-1 fallback because this run's CalcModel is not one whose
+      per-basis fluctuation semantics the energy trace kernel implements
+      (TraceModelEnergySupported() returned 0). Energy-only in practice
+      (TRACE_Q_ENERGY): SpinlessFermion(GC) and any unknown model take this
+      path -- their num/Sz semantics differ from canonical Spin's and are not
+      implemented in the kernel. Set by TraceBuildPlan() AFTER the InputHam
+      check (so an InputHam run reports the InputHam reason, not this one) and
+      is exclusive with it: TraceBuildPlan() leaves kernel[TRACE_Q_ENERGY]=0
+      when this is set, so TraceFinalizeEnergyPlan()'s collect/reduce is
+      skipped entirely for an unsupported-model run, keeping this field
+      exclusive with the finalize-time demoted_memory[TRACE_Q_ENERGY] too. */
+  int demoted_unsupported_model[TRACE_Q_NQUANT];
   /** When kernel[q]==1, the verified allocation size (bytes) for that
       quantity's result buffer, i.e. TraceGbufBytes()'s return value. Task
       3/4's malloc() must use ONLY this value -- re-reading the environment

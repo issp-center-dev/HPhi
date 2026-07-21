@@ -106,4 +106,11 @@ int TraceEnergyEvalState(struct BindStruct *X, const TraceHamCsr *csr);
 size_t TraceHamGatedBytes(long int n, long int nnz_raw, long int k_max,
                           int n_diag);
 
+/* The energy trace kernel is correct only for the models whose per-basis
+   fluctuation semantics trace_fill_diag/TraceEnergyEvalState implement.
+   Canonical Spin (n_diag==0) is supported; SpinlessFermion(GC) and any
+   unknown model are NOT (their num/Sz semantics differ and are not
+   implemented here), so they must fall back to the ExpecMode-1 path. */
+int TraceModelEnergySupported(int iCalcModel);
+
 #endif /* HPHI_EXPEC_TRACE_HAM_H */

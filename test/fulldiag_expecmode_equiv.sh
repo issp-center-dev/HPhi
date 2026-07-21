@@ -273,6 +273,34 @@ assert_energy_kernel_gf_unsupported() {
     "${logfile}" || fail "ExpecMode 2 two-body GF did not report the unsupported-model fallback in ${logfile}"
 }
 
+# Blocker-1 (energy-kernel CORRECTNESS fix): a model that is NOT energy-kernel-
+# eligible -- SpinlessFermion / SpinlessFermionGC. Before the fix TraceBuildPlan()
+# enabled the energy trace kernel for EVERY non-InputHam model, so canonical
+# SpinlessFermion (which trace_model_n_diag() maps to n_diag==0, same as
+# canonical Spin) silently activated the kernel and wrote canonical-Spin
+# CONSTANT fluctuation fields (num=NsiteMPI, Sz=0.5*Total2SzMPI) -- WRONG for a
+# spinless model. TraceModelEnergySupported() now whitelists only the models the
+# kernel actually implements, so the energy family here MUST report the
+# "unsupported model" ExpecMode-1 fallback (kernel demoted, NOT active), exactly
+# like both GF quantities already do. Substrings byte-exact from
+# expec_trace.c's TraceReportPlan(). The energy line is the direct regression
+# guard: if the blocker regressed, this run would instead print "the
+# energy/fluctuation family uses the trace kernel." and the grep below would
+# fail. The Mode-0/1/2 zvo_phys equivalence (compare below) is the value guard:
+# with the kernel wrongly active, Mode 2's <N> column would read NsiteMPI
+# instead of the fallback value, diverging from Mode 0/1.
+assert_energy_and_gf_unsupported() {
+  logfile="$1"
+  grep -q "the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model)\." \
+    "${logfile}" || fail "ExpecMode 2 did not report the unsupported-model energy fallback in ${logfile}"
+  grep -q "ExpecMode 2: one-body Green functions use the ExpecMode-1 fallback (unsupported model)\." \
+    "${logfile}" || fail "ExpecMode 2 one-body GF did not report the unsupported-model fallback in ${logfile}"
+  grep -q "ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (unsupported model)\." \
+    "${logfile}" || fail "ExpecMode 2 two-body GF did not report the unsupported-model fallback in ${logfile}"
+  grep -q "always use the ExpecMode-1 path" \
+    "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
+}
+
 # Prepare a case directory: write stan.in, run `HPhi -sdry`, then let the
 # caller add extra namelist/def files before calling run_mode(). Always
 # turns on the aggregate Green output format (spec: reuse
@@ -800,5 +828,265 @@ grep -q "the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamilt
   "${test7}/log_run.txt" \
   || fail "case7: ExpecMode 2 did not report the InputHam energy demotion in ${test7}/log_run.txt"
 compare_phys "${ref7}" "${test7}"
+
+# =========================================================================
+# Case 8 (blocker-1): canonical SpinlessFermion (CalcModel 7) -- the energy
+# trace kernel must be DEMOTED (unsupported model), not activated.
+#
+# SpinlessFermion is NOT energy-kernel-eligible: trace_model_n_diag() maps it
+# (via its bare default:) to n_diag==0, the SAME as canonical Spin, so the old
+# "enable for every non-InputHam model" logic silently activated the kernel and
+# wrote canonical-Spin CONSTANT num/Sz fields -- wrong for a spinless model.
+# TraceModelEnergySupported() now excludes it, so ExpecMode 2 falls back to the
+# Mode-1 path (asserted below), and Mode 0/1/2 must agree.
+#
+# Written as an Expert-mode def set (like case 6): StdFace's `model =
+# "spinlessfermion"` DOES emit a canonical spinless def set, but it ignores V
+# (CoulombInter) and emits OneBodyG/TwoBodyG rows with spin index 1, which
+# readdef rejects for a spinless model ("spin index must be 0") -- so a
+# hand-authored set is cleaner and fully controlled. It is a genuine spinless
+# Hamiltonian: t=1 nearest-neighbour hopping on the periodic 4-site chain
+# (spin index 0 only) plus a V=2 nearest-neighbour CoulombInter (the only
+# two-body term spinless supports besides hopping; no CoulombIntra/Hund/
+# Exchange/PairHop). Ncond 2 on 4 sites -> zvo_phys_Nup2_Ndown0.dat. All site
+# indices stay strictly < Nsite=4 (the phase-3a out-of-range lesson). Green
+# defs use spin index 0 only (spinless), so aggregate zvo_cisajs_eigen.dat /
+# zvo_cisajscktalt_eigen.dat are produced for the compare_output_trees
+# _eigen.dat guard. The def validity, makeHam reachability, FullDiag completion
+# and zvo_phys production were validated locally with the serial LAPACK build
+# (build_noMPI, ExpecMode 0); only the distributed ExpecMode 1/2 dispatch
+# (model-independent, proven by cases 1-7) runs first on clavius.
+# =========================================================================
+case8="case8_spinlessfermion_energy_demote"
+mkdir -p "${case8}"
+(
+  cd "${case8}"
+  cat > namelist.def <<EOF
+         ModPara  modpara.def
+         LocSpin  locspn.def
+           Trans  trans.def
+    CoulombInter  coulombinter.def
+        OneBodyG  greenone.def
+        TwoBodyG  greentwo.def
+         CalcMod  calcmod.def
+EOF
+  cat > calcmod.def <<EOF
+CalcType        2
+CalcModel       7
+ReStart         0
+CalcSpec        0
+CalcEigenVec    0
+InitialVecType  0
+InputEigenVec   0
+OutputEigenVec  0
+InputHam        0
+OutputHam       0
+OutputGreenFormat 1
+EOF
+  cat > modpara.def <<EOF
+--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite             4
+Ncond             2
+Lanczos_max       2000
+initial_iv        -1
+exct              1
+LanczosEps        14
+LanczosTarget     2
+LargeValue        12.0
+NumAve            5
+ExpecInterval     20
+EOF
+  cat > locspn.def <<EOF
+================================
+NlocalSpin     0
+================================
+========i_1LocSpn_0IteElc ======
+================================
+    0      0
+    1      0
+    2      0
+    3      0
+EOF
+  cat > trans.def <<EOF
+========================
+NTransfer      8
+========================
+========i_j_s_tijs======
+========================
+0 0 1 0 -1.0 0.0
+1 0 0 0 -1.0 0.0
+1 0 2 0 -1.0 0.0
+2 0 1 0 -1.0 0.0
+2 0 3 0 -1.0 0.0
+3 0 2 0 -1.0 0.0
+3 0 0 0 -1.0 0.0
+0 0 3 0 -1.0 0.0
+EOF
+  cat > coulombinter.def <<EOF
+========================
+NCoulombInter 4
+========================
+========CoulombInter====
+========================
+0 1 2.0
+1 2 2.0
+2 3 2.0
+3 0 2.0
+EOF
+  cat > greenone.def <<EOF
+========================
+NCisAjs 4
+========================
+========GreenOne========
+========================
+0 0 0 0
+1 0 1 0
+2 0 2 0
+3 0 3 0
+EOF
+  cat > greentwo.def <<EOF
+========================
+NCisAjsCktAlt 3
+========================
+========GreenTwo========
+========================
+0 0 0 0 1 0 1 0
+1 0 1 0 2 0 2 0
+2 0 2 0 3 0 3 0
+EOF
+)
+run_mode "${case8}" 0
+run_mode "${case8}" 1
+compare_output_trees "${case8}/mode0" "${case8}/mode1"
+run_mode "${case8}" 2
+assert_energy_and_gf_unsupported "${case8}/mode2/log_run.txt"
+compare_output_trees "${case8}/mode1" "${case8}/mode2"
+
+# =========================================================================
+# Case 9 (blocker-1): SpinlessFermionGC (CalcModel 8) -- same energy-kernel
+# demotion, grand-canonical basis (2^Nsite). StdFace has no GC alias for
+# spinless (src/StdFace/src/StdFace_main.c only maps "spinlessfermion"/
+# "spinless" -> canonical CalcModel 7), so this MUST be an Expert-mode def set.
+# Same t=1 hopping + V=2 CoulombInter as case 8; no Ncond/2Sz (GC), so the phys
+# file is the GC-named zvo_phys.dat. 16 basis states. Same local validation
+# story as case 8.
+# =========================================================================
+case9="case9_spinlessfermiongc_energy_demote"
+mkdir -p "${case9}"
+(
+  cd "${case9}"
+  cat > namelist.def <<EOF
+         ModPara  modpara.def
+         LocSpin  locspn.def
+           Trans  trans.def
+    CoulombInter  coulombinter.def
+        OneBodyG  greenone.def
+        TwoBodyG  greentwo.def
+         CalcMod  calcmod.def
+EOF
+  cat > calcmod.def <<EOF
+CalcType        2
+CalcModel       8
+ReStart         0
+CalcSpec        0
+CalcEigenVec    0
+InitialVecType  0
+InputEigenVec   0
+OutputEigenVec  0
+InputHam        0
+OutputHam       0
+OutputGreenFormat 1
+EOF
+  cat > modpara.def <<EOF
+--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite             4
+Lanczos_max       2000
+initial_iv        -1
+exct              1
+LanczosEps        14
+LanczosTarget     2
+LargeValue        12.0
+NumAve            5
+ExpecInterval     20
+EOF
+  cat > locspn.def <<EOF
+================================
+NlocalSpin     0
+================================
+========i_1LocSpn_0IteElc ======
+================================
+    0      0
+    1      0
+    2      0
+    3      0
+EOF
+  cat > trans.def <<EOF
+========================
+NTransfer      8
+========================
+========i_j_s_tijs======
+========================
+0 0 1 0 -1.0 0.0
+1 0 0 0 -1.0 0.0
+1 0 2 0 -1.0 0.0
+2 0 1 0 -1.0 0.0
+2 0 3 0 -1.0 0.0
+3 0 2 0 -1.0 0.0
+3 0 0 0 -1.0 0.0
+0 0 3 0 -1.0 0.0
+EOF
+  cat > coulombinter.def <<EOF
+========================
+NCoulombInter 4
+========================
+========CoulombInter====
+========================
+0 1 2.0
+1 2 2.0
+2 3 2.0
+3 0 2.0
+EOF
+  cat > greenone.def <<EOF
+========================
+NCisAjs 4
+========================
+========GreenOne========
+========================
+0 0 0 0
+1 0 1 0
+2 0 2 0
+3 0 3 0
+EOF
+  cat > greentwo.def <<EOF
+========================
+NCisAjsCktAlt 3
+========================
+========GreenTwo========
+========================
+0 0 0 0 1 0 1 0
+1 0 1 0 2 0 2 0
+2 0 2 0 3 0 3 0
+EOF
+)
+run_mode "${case9}" 0
+run_mode "${case9}" 1
+compare_output_trees "${case9}/mode0" "${case9}/mode1"
+run_mode "${case9}" 2
+assert_energy_and_gf_unsupported "${case9}/mode2/log_run.txt"
+compare_output_trees "${case9}/mode1" "${case9}/mode2"
 
 echo "fulldiag_expecmode_equiv: OK"

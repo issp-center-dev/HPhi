@@ -79,6 +79,7 @@
  */
 #include "expec_trace.h"
 #include "expec_trace_internal.h"
+#include "expec_trace_ham.h"
 #include "DefCommon.h"
 #include "mltplyCommon.h"
 #include "mltplyHubbardCore.h"
@@ -245,6 +246,43 @@ size_t TraceGbufMaxBytesFromEnv(void) {
   return ((size_t)val) << 20;
 }
 
+/* Positive whitelist of the models whose per-basis fluctuation semantics the
+   energy trace kernel (trace_fill_diag/TraceEnergyEvalState in
+   expec_trace_ham.c) actually implements. Declared in expec_trace_ham.h; kept
+   HERE (next to its sole caller TraceBuildPlan) rather than in
+   expec_trace_ham.c so the minimal expec_trace_map_check unit test -- which
+   links expec_trace.c but not the heavy expec_trace_ham.c
+   (makeHam/expec_energy_flct) closure -- resolves it without pulling that
+   closure in.
+
+   INTENTIONALLY separate from trace_model_n_diag() (expec_trace_ham.c): that
+   function returns 0 for BOTH canonical Spin (supported) and
+   SpinlessFermion/unknown (unsupported), so n_diag cannot distinguish
+   supported from unsupported. This whitelist MUST stay in sync with
+   trace_model_n_diag: every model it handles as a real (non-default) case,
+   PLUS canonical Spin, is supported here. SpinlessFermion(GC) and any other
+   model fall through to default: return 0, forcing the ExpecMode-1 fallback
+   (their num/Sz semantics differ from canonical Spin's and are not
+   implemented in the kernel). */
+int TraceModelEnergySupported(int iCalcModel) {
+  switch (iCalcModel) {
+    case Hubbard:
+    case HubbardNConserved:
+    case Kondo:
+    case KondoNConserved:
+    case tJ:
+    case tJNConserved:
+    case HubbardGC:
+    case KondoGC:
+    case tJGC:
+    case SpinGC:
+    case Spin:
+      return 1;
+    default:
+      return 0;    /* SpinlessFermion, SpinlessFermionGC, and any other model */
+  }
+}
+
 void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
                     size_t gbuf_max_bytes, TraceExecutionPlan *plan) {
   int q, i;
@@ -267,19 +305,29 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
     }
   }
 
-  /* Energy/fluctuation slot (phase 3c): eligible for EVERY model that reaches
-     makeHam -- broader than the GF capability table, so it is NOT gated on
-     cap_q[]. Any model that got as far as the FullDiag observable phase already
-     built its Hamiltonian through makeHam successfully, so re-enumerating it in
-     the collector will succeed too; the SpinlessFermion(GC) models have no
-     makeHam branch and therefore never reach here (Task-1 audit (e)). The ONLY
-     static demotion is InputHam: re-running makeHam would build a matrix
-     DIFFERENT from the one diagonalized. A FullDiag symmetry basis is
-     unreachable (Task-1 audit (d)), so there is no unsupported-config
-     predicate. Otherwise the slot is PROVISIONALLY kernel=1; the runtime CSR
-     collector plus TraceFinalizeEnergyPlan() make the final decision. */
+  /* Energy/fluctuation slot (phase 3c): broader than the GF capability table
+     (it is NOT gated on cap_q[]), but still restricted to the models whose
+     per-basis fluctuation semantics the energy kernel actually implements.
+     TWO static demotions, checked in order:
+       (1) InputHam: re-running makeHam in the CSR collector would build a
+           matrix DIFFERENT from the one diagonalized, so the energy family
+           cannot use the trace kernel.
+       (2) unsupported model: TraceModelEnergySupported() whitelists exactly
+           the Hubbard/Kondo/tJ family (canonical + GC + N-conserved), SpinGC,
+           and canonical Spin. SpinlessFermion(GC) -- and any unknown model --
+           are NOT whitelisted: canonical/GC spinless fluctuation semantics
+           (num/Sz) differ from canonical Spin's and are not implemented in
+           TraceEnergyEvalState/trace_fill_diag, so activating the kernel would
+           write WRONG num/Sz fields. These models must fall back. A FullDiag
+           symmetry basis is unreachable (Task-1 audit (d)), so no further
+           config predicate is needed. Otherwise the slot is PROVISIONALLY
+           kernel=1; the runtime CSR collector plus TraceFinalizeEnergyPlan()
+           make the final decision. */
   if (X->Def.iInputHam != 0) {
     plan->demoted_input_ham[TRACE_Q_ENERGY] = 1;
+    plan->kernel[TRACE_Q_ENERGY] = 0;
+  } else if (!TraceModelEnergySupported(X->Def.iCalcModel)) {
+    plan->demoted_unsupported_model[TRACE_Q_ENERGY] = 1;
     plan->kernel[TRACE_Q_ENERGY] = 0;
   } else {
     plan->kernel[TRACE_Q_ENERGY] = 1; /* provisional; finalize may demote */
@@ -366,6 +414,10 @@ void TraceReportPlan(const TraceExecutionPlan *plan, FILE *fp) {
                 "  INFO: ExpecMode 2: the energy/fluctuation family uses the "
                 "ExpecMode-1 fallback (the Hamiltonian was read from "
                 "InputHam).\n");
+      } else if (plan->demoted_unsupported_model[q]) {
+        fprintf(fp,
+                "  INFO: ExpecMode 2: the energy/fluctuation family uses the "
+                "ExpecMode-1 fallback (unsupported model).\n");
       } else {
         fprintf(fp,
                 "  INFO: ExpecMode 2: the energy/fluctuation family uses the "

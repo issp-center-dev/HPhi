@@ -37,16 +37,25 @@ int output(struct BindStruct *X) {
       case Hubbard:
       case tJ:
       case Kondo:
+      case SpinlessFermion: /* canonical: Nup=Ncond, Ndown=0 (readdef.c) */
         sprintf(sdt, cFileNamePhys_FullDiag, X->Def.CDataFileHead, X->Def.Nup, X->Def.Ndown);
         break;
       case SpinGC:
       case HubbardGC:
       case KondoGC:
       case tJGC:
+      case SpinlessFermionGC:
         sprintf(sdt, cFileNamePhys_FullDiag_GC, X->Def.CDataFileHead);
         break;
       default:
-        break;
+        /* Leaving sdt uninitialized here would open a garbage filename and
+           fail the whole FullDiag run; the two spinless models were formerly
+           missing above and hit exactly that. Any model reaching here is a
+           genuine gap -- fail loudly instead of writing to random memory. */
+        fprintf(stdoutMPI,
+                "Error: output(): no FullDiag phys-output filename rule for "
+                "CalcModel %d.\n", X->Def.iCalcModel);
+        return -1;
     }
     if (childfopenMPI(sdt, "w", &fp) != 0) {
       return -1;
