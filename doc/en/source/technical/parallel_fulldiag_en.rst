@@ -105,14 +105,30 @@ over that mapping. The per-operator overhead is thus amortized over the
 number of states, which pays off when one- and two-body Green functions
 are evaluated for many eigenstates.
 
-The supported models in this version are ``Hubbard``/``HubbardGC`` and
-spin-1/2 ``Spin``/``SpinGC``. For unsupported models, and under
-certain runtime conditions (evaluator sharing with the N-body Green
-functions, no operators of a kind defined, or the result buffer
-exceeding ``HPHI_TRACE_BUF_MAX_MB``), the affected quantity
-automatically falls back to the ``ExpecMode 1`` path, and the decision
-is reported by ``INFO`` lines just before the observable evaluation. See the
-``ExpecMode`` entry in :ref:`Subsec:calcmod` for details.
+The supported models for these two Green-function kernels are
+``Hubbard``/``HubbardGC`` and spin-1/2 ``Spin``/``SpinGC``. For
+unsupported models, and under certain runtime conditions (evaluator
+sharing with the N-body Green functions, no operators of a kind
+defined, or the result buffer exceeding ``HPHI_TRACE_BUF_MAX_MB``), the
+affected quantity automatically falls back to the ``ExpecMode 1`` path,
+and the decision is reported by ``INFO`` lines just before the
+observable evaluation.
+
+As of this version, ``ExpecMode 2`` also traces the energy/fluctuation
+family (including the ``var`` column) with a separate CSR
+(compressed-sparse-row) kernel: the Hamiltonian is precomputed once per
+rank into a compact sparse matrix, and every owned eigenstate is
+streamed through a sparse matrix-vector product instead of a full
+``mltply``-style traversal. Unlike the Green-function kernels above,
+the energy family is not limited to the four supported (model,
+spin-representation) rows above — it covers every model that
+``FullDiag`` can run — and it falls back to ``ExpecMode 1`` for only
+two reasons: the Hamiltonian was read from ``InputHam``, or the
+per-rank CSR buffer would exceed ``HPHI_TRACE_BUF_MAX_MB`` (the same
+cap used for the Green-function result buffers). ``S2``, ``NBodyG``,
+and ``AnomalousG`` remain on the ``ExpecMode 1`` path in this version.
+See the ``ExpecMode`` entry in :ref:`Subsec:calcmod` for the full
+fallback taxonomy and the exact ``INFO`` wording.
 
 Speed comparison
 ----------------

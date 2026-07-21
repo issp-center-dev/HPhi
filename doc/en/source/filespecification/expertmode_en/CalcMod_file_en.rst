@@ -319,17 +319,26 @@ The parameters correlated with the keywords are as follows.
      loop). The aggregate Green-function output is written as
      rank-local partial files and merged into the final aggregate files
      by rank 0 once every rank's manifest reports success.
-   | 2: Trace-kernel evaluation, applied to the one-body
-     (``expec_cisajs``-equivalent) and two-body
-     (``expec_cisajscktaltdc``-equivalent) Green functions only. For each
-     operator, HPhi precomputes the basis-state mapping (destination
-     state and amplitude) once, then streams every owned eigenstate
-     through that mapping in a dense loop, amortizing the per-state
-     operator overhead that ``ExpecMode 1`` still pays for these two
-     quantities. Energy/fluctuation (including the ``var`` column),
-     ``S2``, ``NBodyG``, and ``AnomalousG`` are always evaluated on the
+   | 2: Trace-kernel evaluation. Three quantity families use this
+     kernel: the one-body (``expec_cisajs``-equivalent) and two-body
+     (``expec_cisajscktaltdc``-equivalent) Green functions, and, as of
+     this version, the energy/fluctuation family (including the ``var``
+     column). For the Green functions, HPhi precomputes, for each
+     operator, the basis-state mapping (destination state and amplitude)
+     once, then streams every owned eigenstate through that mapping in a
+     dense loop, amortizing the per-state operator overhead that
+     ``ExpecMode 1`` still pays for these two quantities. For the
+     energy/fluctuation family, HPhi instead precomputes the Hamiltonian
+     once per rank into a compact CSR (compressed sparse row) matrix and
+     streams every owned eigenstate through a CSR sparse
+     matrix-vector product, amortizing the per-state
+     ``mltply``-style traversal overhead in the same way. ``S2``,
+     ``NBodyG``, and ``AnomalousG`` are always evaluated on the
      ``ExpecMode 1`` path in this version -- trace-kernel evaluation for
      these quantities is a candidate for a future phase.
+   | Note on terminology: "trace kernel" names this precomputed-mapping,
+     streaming evaluation technique -- it does not refer to the matrix
+     trace :math:`{\rm Tr}(\cdot)`.
    | Whether the one-body/two-body trace kernel is actually used is
      decided once per run from a per-(model, quantity) capability table
      plus three runtime checks, and reported at the start of the run by a
@@ -340,17 +349,37 @@ The parameters correlated with the keywords are as follows.
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (no operators of this kind are defined).``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
-   | ``INFO: ExpecMode 2: energy/fluctuation, S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
-   | Supported models (as of this phase): ``Hubbard``/``HubbardGC`` and
-     spin-1/2 ``Spin``/``SpinGC`` (general-spin models (including
+   | The energy/fluctuation family's outcome is decided independently, by
+     only two possible reasons (it has no unsupported-model case and no
+     shared-evaluator case -- see below), reported by its own rank-0
+     ``INFO`` line:
+   | ``INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel.``
+   | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
+   | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam).``
+   | ``S2``, ``NBodyG``, and ``AnomalousG`` remain unconditionally on the
+     ``ExpecMode 1`` path in this version, reported by one fixed line:
+   | ``INFO: ExpecMode 2: S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
+   | Supported models for the one-body/two-body Green-function trace
+     kernels (as of this phase): ``Hubbard``/``HubbardGC`` and spin-1/2
+     ``Spin``/``SpinGC`` (general-spin models (including
      :math:`S \geq 1`), ``tJ``/
      ``tJGC``, ``Kondo``/``KondoGC``, and ``SpinlessFermion``/
      ``SpinlessFermionGC`` are not yet covered and always print the
      "unsupported model" line above for both quantities).
-   | On a supported model, each quantity's outcome is still decided by up
-     to three further runtime reasons, evaluated in a fixed order so that
-     exactly one reason applies (they are mutually exclusive by
-     construction, not independently checked): (a) a shared-evaluator rule
+   | The energy/fluctuation family's trace kernel has much broader model
+     coverage than the Green-function kernels above: it supports every
+     model that ``FullDiag`` can run (every makeHam-reachable model),
+     including ``tJ``/``tJGC``, ``Kondo``/``KondoGC``, and general-spin
+     ``Spin``/``SpinGC`` (:math:`S \geq 1`) -- not just the four rows
+     supported for the Green functions. Consequently the energy family
+     has no "unsupported model" fallback case at all; its only two
+     possible outcomes are the trace kernel or one of the two fallback
+     reasons below.
+   | For the Green functions, on a supported model each quantity's
+     outcome is still decided by up to three further runtime reasons,
+     evaluated in a fixed order so that exactly one reason applies (they
+     are mutually exclusive by construction, not independently checked):
+     (a) a shared-evaluator rule
      for the two-body Green function only, checked first -- it shares its
      evaluator with the ThreeBodyG/FourBodyG/SixBodyG (N-body) Green
      functions, so whenever any of those is requested, the two-body
@@ -371,6 +400,24 @@ The parameters correlated with the keywords are as follows.
      from the environment on rank 0, only for ``ExpecMode`` 2 runs, and
      broadcast to every rank, so it only needs to be set in the launch
      environment), that quantity falls back to ``ExpecMode 1``.
+   | For the energy/fluctuation family, the outcome is decided by exactly
+     two possible reasons, checked in this order: (a) an ``InputHam``
+     check, checked first -- if this run's Hamiltonian was read from
+     ``InputHam`` (``InputHam 1``), the trace kernel cannot rebuild a
+     matching Hamiltonian by re-enumerating the model (doing so would
+     re-derive the matrix from the model definition instead of reading
+     back the one that was actually diagonalized), so the energy family
+     unconditionally falls back to ``ExpecMode 1``. (b) the same
+     ``HPHI_TRACE_BUF_MAX_MB`` memory gate as above, checked next (only
+     reached if (a) does not apply) -- this cap now also bounds the
+     energy family's own per-rank Hamiltonian buffer, a compact CSR
+     matrix of approximately :math:`24 \times \mathrm{nnz}` bytes (nnz:
+     the number of merged nonzero matrix entries collected on this
+     rank); if the projected CSR size would exceed the cap, the energy
+     family falls back to ``ExpecMode 1``. Unlike the Green-function
+     kernels, the energy family has no "unsupported model" case (see
+     above) and no shared-evaluator case (it does not share its
+     evaluator with any other always-fallback quantity).
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected
@@ -381,15 +428,23 @@ The parameters correlated with the keywords are as follows.
    | Guarantee: ``ExpecMode`` changes only evaluation speed, never the
      physics -- ``ExpecMode`` 0, 1, and 2 produce identical results up to
      floating-point rounding (summation order differs between kernels, so
-     agreement is not bit-identical). This includes the ``var`` column,
-     which ``ExpecMode 2`` computes via the same ``ExpecMode 1`` path as
-     the rest of the energy family (it is not trace-kernelized in this
-     phase).
+     agreement is not bit-identical). This includes the ``var`` column:
+     ``var`` is part of the energy/fluctuation family, so it now uses the
+     trace kernel together with the rest of that family whenever the
+     kernel is active (see above), and the ``ExpecMode 1`` path
+     otherwise; either way ``var`` continues to store
+     :math:`\langle H^2 \rangle` (downstream code subtracts
+     :math:`\langle H \rangle^2` to obtain the variance), an unchanged
+     field contract.
    | Memory: ``ExpecMode 1``/``2`` additionally hold a state panel roughly
      the same size as the distributed eigenvector storage used by
      ``Solver 3`` (O(N²/P) per rank); ``ExpecMode 2`` additionally holds,
-     per quantity that uses the trace kernel, a result buffer capped by
-     ``HPHI_TRACE_BUF_MAX_MB`` above. During the one-time redistribution
+     per quantity that uses the trace kernel, a buffer capped by
+     ``HPHI_TRACE_BUF_MAX_MB`` above -- a result buffer for the one-body/
+     two-body Green functions, or the per-rank CSR Hamiltonian buffer
+     described above (approximately :math:`24 \times \mathrm{nnz}`
+     bytes) for the energy/fluctuation family; all of these quantities
+     share the same cap. During the one-time redistribution
      step both the original storage and the new panel coexist, giving a
      temporary peak of roughly 2xO(N²/P) per rank before the original
      storage is freed; steady-state usage afterward is O(N²/P) plus the
@@ -399,10 +454,12 @@ The parameters correlated with the keywords are as follows.
      eigenstates and/or many Green-function observables, where
      re-evaluating every eigenstate redundantly on every rank
      (``ExpecMode 0``) becomes the bottleneck. ``ExpecMode 2`` is
-     designed to further amortize per-state operator overhead for
+     designed to further amortize per-state overhead for
      one-body/two-body Green-function-heavy workloads on the supported
-     models above, and is expected to be at least as fast as
-     ``ExpecMode 1`` for such correlation-function-heavy workloads. Keep
+     models above, and for energy/fluctuation-heavy workloads on any
+     model (the energy family's trace kernel is not limited to those
+     four rows), and is expected to be at least as fast as
+     ``ExpecMode 1`` for such workloads. Keep
      the default ``ExpecMode 0`` otherwise, including for small systems
      and single-process runs.
    | Note (behavior fix): as of phase 3a, distributed FullDiag runs
