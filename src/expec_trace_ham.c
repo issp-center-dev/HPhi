@@ -438,3 +438,124 @@ void TraceHamFree(TraceHamCsr *csr) {
   for (di = 0; di < 3; di++) free(csr->diag[di]);
   memset(csr, 0, sizeof(*csr));
 }
+
+/* ================================================================== *
+ *  Phase-3c Task 4: the streaming energy-family kernel.
+ *
+ *  For the single eigenstate in the global v1 (== x, 1-based) this
+ *    (1) forms y = H.x by a CSR SpMV (row i of y[] from row i of the CSR;
+ *        column colidx[k] (0-based) picks x == v1[colidx[k] + 1]);
+ *    (2) reduces energy = Re(x^dagger y) and <H^2> = y^dagger y = sum |y_i|^2;
+ *    (3) writes the fluctuation-family Phys fields prescribed by the frozen
+ *        per-model table from the precomputed csr->diag[] arrays, applying the
+ *        SAME scalings expec_energy_flct() applies.
+ *
+ *  The trace kernel runs in the replicated FullDiag layout (no MPI site
+ *  decomposition -- see expec_trace.c), so x and H are wholly rank-local and no
+ *  SumMPI is taken; the reductions are the same reproducibility class as the
+ *  Mode-1 evaluators. The SpMV writes only csr->y; the field writes touch only
+ *  X->Phys. v0 and v1 are never written. Diagonal H(i,i) is a normal CSR entry
+ *  and is included in the SpMV automatically; csr->diag[] carry the SEPARATE
+ *  energy-family coefficients (D/N/S), never the matrix diagonal.
+ * ================================================================== */
+int TraceEnergyEvalState(struct BindStruct *X, const TraceHamCsr *csr) {
+  long int n, i, k;
+  const long int *rowptr, *colidx;
+  const double complex *val;
+  double complex *y;
+  double complex e_acc;
+  double var_acc;
+
+  if (X == NULL || csr == NULL) return 1;
+  n = csr->n;
+  if (n < 0) return 1;
+  if (n > 0) {
+    if (csr->rowptr == NULL || csr->y == NULL) return 1;
+    if (csr->nnz > 0 && (csr->colidx == NULL || csr->val == NULL)) return 1;
+  }
+
+  rowptr = csr->rowptr;
+  colidx = csr->colidx;
+  val = csr->val;
+  y = csr->y;
+
+  /* -------- (1) SpMV: y = H.x, per-row dot product (no cross-row accum). --- */
+#pragma omp parallel for default(none) \
+  shared(rowptr, colidx, val, v1, y) firstprivate(n) private(i, k)
+  for (i = 0; i < n; i++) {
+    double complex acc = 0.0;
+    for (k = rowptr[i]; k < rowptr[i + 1]; k++) {
+      acc += val[k] * v1[colidx[k] + 1];
+    }
+    y[i] = acc;
+  }
+
+  /* -------- (2) energy = Re(x^dagger y), var = y^dagger y (== <H^2>). ------ */
+  e_acc = 0.0;
+  var_acc = 0.0;
+#pragma omp parallel for default(none) \
+  shared(v1, y) firstprivate(n) private(i) reduction(+:e_acc, var_acc)
+  for (i = 0; i < n; i++) {
+    e_acc += conj(v1[i + 1]) * y[i];       /* x^dagger y                    */
+    var_acc += creal(conj(y[i]) * y[i]);   /* |y_i|^2 (imag part is zero)   */
+  }
+  X->Phys.energy = creal(e_acc);
+  X->Phys.var = var_acc;                   /* store <H^2>; NOT clamped       */
+
+  /* -------- (3) frozen-table fluctuation fields from csr->diag[]. ---------- */
+  if (csr->n_diag == 3) {
+    /* Hubbard family / HubbardGC: diag[0]=D(k), diag[1]=N(k), diag[2]=S(k). */
+    const double *Dc = csr->diag[0], *Nc = csr->diag[1], *Sc = csr->diag[2];
+    double sumD = 0.0, sumD2 = 0.0, sumN = 0.0, sumN2 = 0.0, sumS = 0.0, sumS2 = 0.0;
+#pragma omp parallel for default(none) shared(v1, Dc, Nc, Sc) firstprivate(n) \
+  private(i) reduction(+:sumD, sumD2, sumN, sumN2, sumS, sumS2)
+    for (i = 0; i < n; i++) {
+      double w = creal(conj(v1[i + 1]) * v1[i + 1]);
+      double D = Dc[i], N = Nc[i], S = Sc[i];
+      sumD += w * D;   sumD2 += w * D * D;
+      sumN += w * N;   sumN2 += w * N * N;
+      sumS += w * S;   sumS2 += w * S * S;
+    }
+    X->Phys.doublon  = sumD;
+    X->Phys.doublon2 = sumD2;
+    X->Phys.num      = sumN;
+    X->Phys.num2     = sumN2;
+    X->Phys.Sz       = sumS * 0.5;
+    X->Phys.Sz2      = sumS2 * 0.25;
+    X->Phys.num_up   = 0.5 * (sumN + sumS);
+    X->Phys.num_down = 0.5 * (sumN - sumS);
+  } else if (csr->n_diag == 1) {
+    /* SpinGC (half or general): diag[0]=S(k); num is the NsiteMPI constant. */
+    const double *Sc = csr->diag[0];
+    double Ns = (double)X->Def.NsiteMPI;
+    double sumS = 0.0, sumS2 = 0.0;
+#pragma omp parallel for default(none) shared(v1, Sc) firstprivate(n) \
+  private(i) reduction(+:sumS, sumS2)
+    for (i = 0; i < n; i++) {
+      double w = creal(conj(v1[i + 1]) * v1[i + 1]);
+      double S = Sc[i];
+      sumS += w * S;   sumS2 += w * S * S;
+    }
+    X->Phys.doublon  = 0.0;
+    X->Phys.doublon2 = 0.0;
+    X->Phys.num      = Ns;
+    X->Phys.num2     = Ns * Ns;
+    X->Phys.Sz       = sumS * 0.5;
+    X->Phys.Sz2      = sumS2 * 0.25;
+    X->Phys.num_up   = 0.5 * (Ns + sumS);
+    X->Phys.num_down = 0.5 * (Ns - sumS);
+  } else {
+    /* n_diag == 0: canonical Spin -- constant row; num_up/num_down UNWRITTEN
+       (frozen table), left stale exactly like expec_energy_flct()'s case Spin. */
+    double Ns = (double)X->Def.NsiteMPI;
+    double sz = 0.5 * (double)X->Def.Total2SzMPI;
+    X->Phys.doublon  = 0.0;
+    X->Phys.doublon2 = 0.0;
+    X->Phys.num      = Ns;
+    X->Phys.num2     = Ns * Ns;
+    X->Phys.Sz       = sz;
+    X->Phys.Sz2      = sz * sz;
+  }
+
+  return 0;
+}

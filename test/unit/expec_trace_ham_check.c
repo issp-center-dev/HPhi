@@ -96,9 +96,22 @@ static void patch_calcmod(int model) {
   fclose(f);
 }
 
+/* Overwrite trans.def with a caller-supplied body (used by part 3 to inject a
+   complex hopping and a cancelling ±1e8 duplicate pair). `body` is written
+   verbatim after StdFace generates the def set but before ReadDefFileIdxPara
+   parses it, so makeHam builds H from exactly these transfer lines. */
+static void write_trans(const char *body) {
+  FILE *f = fopen("trans.def", "w");
+  if (f == NULL) return;
+  fputs(body, f);
+  fclose(f);
+}
+
 /* Drive the full setup for one fixture (cwd already inside its scratch dir).
+   If trans_override != NULL it replaces trans.def (complex/cancellation cases).
    Returns 0 on success with X populated + dense Ham built; -1 on setup error. */
-static int setup_fixture(struct BindStruct *X, const char *stan, int patch_model) {
+static int setup_fixture_trans(struct BindStruct *X, const char *stan,
+                               int patch_model, const char *trans_override) {
   FILE *f;
   memset(X, 0, sizeof(*X));
   iHamPanelActive = 0;
@@ -112,6 +125,7 @@ static int setup_fixture(struct BindStruct *X, const char *stan, int patch_model
 
   StdFace_main("stan.in");
   if (patch_model >= 0) patch_calcmod(patch_model);
+  if (trans_override != NULL) write_trans(trans_override);
 
   mkdir("output", 0777); /* check() writes CHECK_*.dat here */
 
@@ -131,6 +145,11 @@ static int setup_fixture(struct BindStruct *X, const char *stan, int patch_model
   iHamSinkMode = 0;
   if (makeHam(X) != 0) return -1;
   return 0;
+}
+
+/* Thin wrapper: the original (no trans override) signature parts 1-2 call. */
+static int setup_fixture(struct BindStruct *X, const char *stan, int patch_model) {
+  return setup_fixture_trans(X, stan, patch_model, NULL);
 }
 
 /* Expand a collected CSR to a fresh dense buffer (0-based, row-major n*n). */
@@ -443,6 +462,285 @@ static void run_spin_sentinel(void) {
   expect_close("spin-sentinel", "Sz", X.Phys.Sz, 0.5 * (double)X.Def.Total2SzMPI, 1e-12);
 }
 
+/* -----------------------------------------------------------------------
+ * Part 3: the streaming energy-family kernel TraceEnergyEvalState().
+ *
+ * The kernel READS the state from the global v1 and writes only Phys, so every
+ * check here loads v1 (never v0) and reads back X.Phys. The independent
+ * reference for the complex-Hermitian matrix is the legacy replicated dense
+ * Ham[][] that setup_fixture built through the ordinary makeHam() path -- a
+ * source of truth wholly separate from the kernel's CSR SpMV. Computing
+ * x^dagger H x and |H x|^2 straight from Ham[][] (with explicit conj) is what
+ * independently pins the kernel's complex conj/creal handling; transcribing
+ * HPhi's internal transfer sign/index convention into a literal 4x4 would add a
+ * second, fragile source of truth, so Ham[][] is used as the reference matrix.
+ * --------------------------------------------------------------------------*/
+
+/* Dense y = H x, energy = Re(x^dagger y), var = |H x|^2, straight from the
+   1-based replicated Ham[][] -- fully independent of the CSR/kernel path. */
+static void dense_energy_var(long int n, const double complex *x,
+                             double *energy, double *var) {
+  long int i, j;
+  double complex e = 0.0;
+  double v = 0.0;
+  for (i = 1; i <= n; i++) {
+    double complex yi = 0.0;
+    for (j = 1; j <= n; j++) yi += Ham[i][j] * x[j];
+    e += conj(x[i]) * yi;
+    v += creal(conj(yi) * yi);
+  }
+  *energy = creal(e);
+  *var = v;
+}
+
+/* Elementwise CSR-vs-Ham check (independent reference == makeHam dense). */
+static int csr_matches_ham(const TraceHamCsr *csr, double *hmax_out) {
+  long int n = csr->n, i, j;
+  double complex *dc = csr_to_dense(csr);
+  double hmax = 0.0;
+  int mism = 0;
+  for (i = 1; i <= n; i++)
+    for (j = 1; j <= n; j++) {
+      double a = cabs(Ham[i][j]);
+      if (a > hmax) hmax = a;
+    }
+  for (i = 0; i < n && mism == 0; i++)
+    for (j = 0; j < n; j++)
+      if (cabs(dc[i * n + j] - Ham[i + 1][j + 1]) > 1e-13 + 1e-13 * hmax) {
+        mism = 1;
+        break;
+      }
+  free(dc);
+  if (hmax_out) *hmax_out = hmax;
+  return mism == 0;
+}
+
+/* Complex-Hermitian reference: 2-site Hubbard, hopping t = 0.3 + 0.4i.
+   Transfer term stored as value * c^dagger_{i,si} c_{j,sj}; each direction is
+   listed with its Hermitian conjugate so makeHam builds a complex-Hermitian H
+   (up spin = sigma 0, down = sigma 1). */
+static void run_complex_energy(void) {
+  struct BindStruct X;
+  TraceHamCsr csr;
+  long int n, i, s;
+  int ok;
+  const char *stan =
+    "L = 2\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\nnelec = 2\n2Sz = 0\n";
+  const char *trans =
+    "======================== \n"
+    "NTransfer       4  \n"
+    "======================== \n"
+    "========i_j_s_tijs====== \n"
+    "======================== \n"
+    "    1     0     0     0     0.300000000000000     0.400000000000000\n"
+    "    0     0     1     0     0.300000000000000    -0.400000000000000\n"
+    "    1     1     0     1     0.300000000000000     0.400000000000000\n"
+    "    0     1     1     1     0.300000000000000    -0.400000000000000\n";
+
+  fprintf(stderr, "[kernel complex-Hermitian energy: Hubbard L=2 t=0.3+0.4i]\n");
+  if (chdir(g_base) != 0) { expect_true("kernel-cplx: chdir base", 0); return; }
+  mkdir("kernel_cplx", 0777);
+  if (chdir("kernel_cplx") != 0) { expect_true("kernel-cplx: chdir sub", 0); return; }
+
+  if (setup_fixture_trans(&X, stan, -1, trans) != 0) {
+    fprintf(stderr, "  FAIL kernel-cplx: setup failed\n"); g_failures++; return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+  expect_true("kernel-cplx: TraceHamCollect succeeds", ok == 1);
+  if (!ok) return;
+
+  expect_true("kernel-cplx: CSR == dense Ham (<=1e-13, complex)",
+              csr_matches_ham(&csr, NULL));
+  /* the matrix must actually carry an imaginary part (guards a silent
+     real-only regression that would make the conj test vacuous). */
+  {
+    double imax = 0.0;
+    for (i = 1; i <= n; i++)
+      for (s = 1; s <= n; s++)
+        if (fabs(cimag(Ham[i][s])) > imax) imax = fabs(cimag(Ham[i][s]));
+    expect_true("kernel-cplx: Ham has a non-zero imaginary part", imax > 0.1);
+  }
+
+  /* Three fixed non-eigenvector normalized states loaded into v1. */
+  for (s = 0; s < 3; s++) {
+    double complex xs[64];
+    double nrm = 0.0, e_dense, var_dense;
+    char nm[128];
+    for (i = 1; i <= n; i++) {
+      double re = cos(0.7 * (double)(i + 3 * s)) + 0.3 * (double)s;
+      double im = sin(1.1 * (double)(i + 2 * s)) - 0.2 * (double)s;
+      xs[i] = re + im * I;
+      nrm += creal(conj(xs[i]) * xs[i]);
+    }
+    nrm = sqrt(nrm);
+    for (i = 1; i <= n; i++) { xs[i] /= nrm; v1[i] = xs[i]; v0[i] = -777.0; }
+
+    ok = (TraceEnergyEvalState(&X, &csr) == 0);
+    snprintf(nm, sizeof(nm), "kernel-cplx[state %ld]: EvalState returns 0", s);
+    expect_true(nm, ok);
+
+    dense_energy_var(n, xs, &e_dense, &var_dense);
+    snprintf(nm, sizeof(nm), "kernel-cplx[state %ld]: energy == x_dag H x", s);
+    expect_close("kernel-cplx", nm, X.Phys.energy, e_dense, 1e-12);
+    snprintf(nm, sizeof(nm), "kernel-cplx[state %ld]: var == |H x|^2", s);
+    expect_close("kernel-cplx", nm, X.Phys.var, var_dense, 1e-12);
+
+    /* v0 must be untouched by the kernel. */
+    {
+      int v0_ok = 1;
+      for (i = 1; i <= n; i++) if (v0[i] != -777.0) v0_ok = 0;
+      snprintf(nm, sizeof(nm), "kernel-cplx[state %ld]: v0 not written", s);
+      expect_true(nm, v0_ok);
+    }
+    /* v1 must still hold the input state. */
+    {
+      int v1_ok = 1;
+      for (i = 1; i <= n; i++) if (v1[i] != xs[i]) v1_ok = 0;
+      snprintf(nm, sizeof(nm), "kernel-cplx[state %ld]: v1 preserved", s);
+      expect_true(nm, v1_ok);
+    }
+  }
+  TraceHamFree(&csr);
+}
+
+/* Cancellation: a duplicate +/-1e8 transfer pair (summing to 0) plus a normal
+   hopping. The merged CSR entry must equal the dense-path sum exactly, i.e. the
+   1e8's cancel in BOTH paths -- proven by the elementwise CSR==Ham identity and
+   an O(1) post-cancellation |Ham|. */
+static void run_cancellation(void) {
+  struct BindStruct X;
+  TraceHamCsr csr;
+  long int n, i;
+  int ok;
+  double hmax = 0.0, e_dense, var_dense;
+  const char *stan =
+    "L = 2\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "t = 1.0\nU = 4.0\nnelec = 2\n2Sz = 0\n";
+  /* up hopping 0<->1 given as +1e8 and -1e8 (cancel to 0); down hopping = 1. */
+  const char *trans =
+    "======================== \n"
+    "NTransfer       6  \n"
+    "======================== \n"
+    "========i_j_s_tijs====== \n"
+    "======================== \n"
+    "    1     0     0     0    100000000.000000000     0.000000000\n"
+    "    0     0     1     0    100000000.000000000     0.000000000\n"
+    "    1     0     0     0   -100000000.000000000     0.000000000\n"
+    "    0     0     1     0   -100000000.000000000     0.000000000\n"
+    "    1     1     0     1     1.000000000000000     0.000000000\n"
+    "    0     1     1     1     1.000000000000000     0.000000000\n";
+
+  fprintf(stderr, "[kernel cancellation: duplicate +/-1e8 transfer]\n");
+  if (chdir(g_base) != 0) { expect_true("kernel-cancel: chdir base", 0); return; }
+  mkdir("kernel_cancel", 0777);
+  if (chdir("kernel_cancel") != 0) { expect_true("kernel-cancel: chdir sub", 0); return; }
+
+  if (setup_fixture_trans(&X, stan, -1, trans) != 0) {
+    fprintf(stderr, "  FAIL kernel-cancel: setup failed\n"); g_failures++; return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+  expect_true("kernel-cancel: TraceHamCollect succeeds", ok == 1);
+  if (!ok) return;
+
+  /* Merged CSR entry == dense sum (both cancel the 1e8 pair to 0). */
+  expect_true("kernel-cancel: CSR == dense Ham (merged == dense sum)",
+              csr_matches_ham(&csr, &hmax));
+  /* The 1e8 magnitudes really cancelled: nothing O(1e8) survives. */
+  expect_true("kernel-cancel: post-cancellation |Ham| is O(1) (<100)", hmax < 100.0);
+
+  {
+    double complex xs[64];
+    double nrm = 0.0;
+    for (i = 1; i <= n; i++) {
+      xs[i] = (0.5 + 0.1 * (double)i) + (0.2 - 0.05 * (double)i) * I;
+      nrm += creal(conj(xs[i]) * xs[i]);
+    }
+    nrm = sqrt(nrm);
+    for (i = 1; i <= n; i++) { xs[i] /= nrm; v1[i] = xs[i]; }
+    ok = (TraceEnergyEvalState(&X, &csr) == 0);
+    expect_true("kernel-cancel: EvalState returns 0", ok);
+    dense_energy_var(n, xs, &e_dense, &var_dense);
+    expect_close("kernel-cancel", "energy == dense", X.Phys.energy, e_dense, 1e-12);
+    expect_close("kernel-cancel", "var == dense", X.Phys.var, var_dense, 1e-12);
+  }
+  TraceHamFree(&csr);
+}
+
+/* Sentinels: canonical Spin's constant path must leave num_up/num_down (the
+   frozen NOT-WRITTEN cells) untouched, while energy/var and the constant
+   fluctuation fields are overwritten. */
+static void run_energy_sentinel(void) {
+  struct BindStruct X;
+  TraceHamCsr csr;
+  long int n, i;
+  int ok;
+  const char *stan =
+    "L = 6\nmodel = \"Spin\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
+    "J = 1.0\n2Sz = 0\n";
+
+  fprintf(stderr, "[kernel sentinels: canonical Spin L=6]\n");
+  if (chdir(g_base) != 0) { expect_true("kernel-sentinel: chdir base", 0); return; }
+  mkdir("kernel_sentinel", 0777);
+  if (chdir("kernel_sentinel") != 0) { expect_true("kernel-sentinel: chdir sub", 0); return; }
+
+  if (setup_fixture(&X, stan, -1) != 0) {
+    fprintf(stderr, "  FAIL kernel-sentinel: setup failed\n"); g_failures++; return;
+  }
+  n = (long int)X.Check.idim_max;
+
+  ok = TraceHamCollect(&X, SIZE_MAX / 2, -1, &csr);
+  expect_true("kernel-sentinel: TraceHamCollect succeeds", ok == 1);
+  if (!ok) return;
+  expect_true("kernel-sentinel: canonical Spin has n_diag == 0", csr.n_diag == 0);
+
+  /* Fixed normalized real-ish state into v1. */
+  {
+    double nrm = 0.0;
+    srand(31337u);
+    for (i = 1; i <= n; i++) v1[i] = frand_pm1() + frand_pm1() * I;
+    for (i = 1; i <= n; i++) nrm += creal(conj(v1[i]) * v1[i]);
+    nrm = sqrt(nrm);
+    for (i = 1; i <= n; i++) v1[i] /= nrm;
+  }
+
+  /* Distinct sentinels in every Phys field the kernel might touch. */
+  X.Phys.energy   = 1111.0;
+  X.Phys.var      = 2222.0;
+  X.Phys.doublon  = 3333.0;
+  X.Phys.doublon2 = 4444.0;
+  X.Phys.num      = 5555.0;
+  X.Phys.num2     = 6666.0;
+  X.Phys.Sz       = 7777.0;
+  X.Phys.Sz2      = 8888.0;
+  X.Phys.num_up   = 4321.0;
+  X.Phys.num_down = 8765.0;
+
+  ok = (TraceEnergyEvalState(&X, &csr) == 0);
+  expect_true("kernel-sentinel: EvalState returns 0", ok);
+
+  /* Frozen NOT-WRITTEN cells retain their sentinels. */
+  expect_true("kernel-sentinel: num_up UNWRITTEN (==4321)",   X.Phys.num_up == 4321.0);
+  expect_true("kernel-sentinel: num_down UNWRITTEN (==8765)", X.Phys.num_down == 8765.0);
+  /* Written constant cells took their frozen values (not the sentinels). */
+  expect_true("kernel-sentinel: doublon written 0",  X.Phys.doublon == 0.0);
+  expect_true("kernel-sentinel: doublon2 written 0", X.Phys.doublon2 == 0.0);
+  expect_true("kernel-sentinel: num == NsiteMPI", X.Phys.num == (double)X.Def.NsiteMPI);
+  expect_true("kernel-sentinel: num2 == NsiteMPI^2",
+              X.Phys.num2 == (double)X.Def.NsiteMPI * (double)X.Def.NsiteMPI);
+  expect_close("kernel-sentinel", "Sz == 0.5*Total2SzMPI",
+               X.Phys.Sz, 0.5 * (double)X.Def.Total2SzMPI, 1e-12);
+  expect_true("kernel-sentinel: energy overwritten (!= sentinel)", X.Phys.energy != 1111.0);
+  expect_true("kernel-sentinel: var overwritten (!= sentinel)",    X.Phys.var != 2222.0);
+  expect_true("kernel-sentinel: var == <H^2> >= 0", X.Phys.var >= 0.0);
+
+  TraceHamFree(&csr);
+}
+
 int main(void) {
   stdoutMPI = stdout;
   myrank = 0;
@@ -525,6 +823,11 @@ int main(void) {
     "J = 1.0\n2S = 2\n", -1);
 
   run_spin_sentinel();
+
+  /* ---- Part 3: streaming energy-family kernel (TraceEnergyEvalState). ---- */
+  run_complex_energy();
+  run_cancellation();
+  run_energy_sentinel();
 
   if (chdir(g_base) == 0) chdir("..");
 

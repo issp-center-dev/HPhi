@@ -71,6 +71,34 @@ int TraceHamCollect(struct BindStruct *X, size_t cap_bytes,
 void TraceHamFree(TraceHamCsr *csr);
 
 /**
+ * Phase-3c Task 4: the streaming energy-family kernel.
+ *
+ * Evaluate the energy family for the one eigenstate currently in the global
+ * v1 (v1 == x, length csr->n, 1-based like the Mode-1 evaluators). Computes
+ * y = H.x via a CSR SpMV into csr->y, then
+ *   X->Phys.energy = Re(x^dagger y),
+ *   X->Phys.var    = y^dagger y   (i.e. <H^2>, NOT the variance -- downstream
+ *                                  subtracts energy^2; var is never clamped),
+ * and the fluctuation-family Phys fields prescribed by the frozen per-model
+ * table (design spec 3b), reproducing expec_energy_flct()'s scalings from the
+ * precomputed csr->diag[] coefficient arrays:
+ *   n_diag==3 (Hubbard family / HubbardGC): doublon/doublon2/num/num2 from D,N;
+ *     Sz=0.5*SumS, Sz2=0.25*SumS2, num_up/num_down=0.5*(SumN +/- SumS);
+ *   n_diag==1 (SpinGC): doublon/doublon2=0, num/num2 the NsiteMPI constants,
+ *     Sz/Sz2 from S, num_up/num_down=0.5*(NsiteMPI +/- SumS);
+ *   n_diag==0 (canonical Spin): the constant row (num=NsiteMPI,
+ *     Sz=0.5*Total2SzMPI, ...) with num_up/num_down left UNWRITTEN.
+ *
+ * The state lives in the replicated FullDiag layout (no MPI site
+ * decomposition), so every accumulation is a local OpenMP reduction with no
+ * SumMPI -- the same reproducibility class as the Mode-1 evaluators. This
+ * function READS v1 (and csr) only; it NEVER writes v0 or v1.
+ *
+ * Returns 0 on success, nonzero on error (NULL/invalid csr).
+ */
+int TraceEnergyEvalState(struct BindStruct *X, const TraceHamCsr *csr);
+
+/**
  * Exact projected peak (bytes) for the given counting quantities -- the value
  * the memory gate compares against cap_bytes, exposed for the boundary test.
  * Returns SIZE_MAX on any internal overflow (which can never pass a real cap).
