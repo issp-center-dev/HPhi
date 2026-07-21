@@ -157,13 +157,39 @@ compare_output_trees() {
 }
 
 # Phase 3c Task 6: compare ONLY the zvo_phys_* / zvo_phys.dat file(s) between
-# two run directories, column-by-column to ${tol} (same numeric-vs-text rule as
-# compare_output_trees). Used by the InputHam negative case (case 7), where the
-# Mode-2 run directory additionally contains the copied-in <head>_Ham.dat input
-# file that the Mode-0 reference does not, so a full-tree compare would fail on
-# the file-set diff. zvo_phys carries the energy/fluctuation quantities the
-# InputHam demotion path recomputes, so it is the right (and brief-specified)
-# comparison target here.
+# two run directories. Used by the InputHam negative case (case 7) and the
+# spinless energy-demotion cases (cases 8/9), where the observable comparison
+# must run on a DISTRIBUTED solver (ScaLAPACK for case 7; either solver for
+# 8/9 depending on the ctest registration -- Solver 1 under
+# fulldiag_expecmode_scalapack_np2). zvo_phys carries exactly the
+# energy/fluctuation quantities (H,N,Sz,S2,D) the ExpecMode demotion paths
+# recompute, so it is the right (and brief-specified) comparison target.
+#
+# DEGENERACY-AWARE COMPARISON (blocker-2 fix). Both files hold the identical
+# energy spectrum in ascending-energy order (same H matrix, deterministic
+# eigenVALUES), but a distributed eigensolver may return ANY orthonormal
+# rotation within a degenerate eigenspace across two SEPARATE HPhi launches
+# (ScaLAPACK's degenerate-subspace basis is not reproducible launch-to-launch,
+# unlike a single deterministic ELPA run). Energies then match state-by-state
+# but basis-dependent per-state quantities (S2, doublon, ...) need NOT. A
+# naive per-line float diff therefore spuriously fails on degeneracy (the
+# maintainer reproduced up to ~0.70 S2 differences on case 7 at ScaLAPACK
+# np=3). So instead of comparing per line, we:
+#   1. Group consecutive rows into DEGENERATE LEVELS: rows whose energy (col 1)
+#      agrees with the previous row within etol (1e-6 absolute; energies are
+#      O(1..10) here and real level gaps are O(0.1..1) >> etol). The grouping
+#      is derived from file A and independently re-derived from file B; a
+#      differing level count or boundary is a genuine spectral mismatch -> fail.
+#   2. Compare the per-level SUM of each column between A and B. The per-level
+#      sum of an observable is Tr(P.A.P) over the degenerate-eigenspace
+#      projector P, which is basis-INVARIANT -- equal for any two valid
+#      diagonalizations -- while individual per-state values are not. For a
+#      non-degenerate level (size 1) this reduces to the exact per-state
+#      comparison, unchanged. Tolerance is scaled to tol*max(1,level_size) so a
+#      k-term floating sum is not held to a tighter bound than a single value.
+# A real regression (e.g. Mode-2 energy kernel wrongly reactivating for a
+# spinless model, shifting the <N> column by O(1)) still fails: that per-level
+# SUM diverges by O(level_size) >> the scaled tolerance.
 compare_phys() {
   dirA="$1"
   dirB="$2"
@@ -177,24 +203,80 @@ compare_phys() {
     na=$(wc -l < "${fa}")
     nb=$(wc -l < "${fb}")
     [ "${na}" = "${nb}" ] || fail "compare_phys line count mismatch for ${base}: ${na} (${dirA}) vs ${nb} (${dirB})"
-    paste "${fa}" "${fb}" | awk -v tol="${tol}" -v fname="${base}" '
+    paste "${fa}" "${fb}" | awk -v tol="${tol}" -v etol="1e-6" -v fname="${base}" '
+      function abs(x){ return x<0?-x:x }
       {
+        # Skip the header / any non-numeric-first-column line ("  <H> <N> ...").
+        if ($1 !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) next
         if (NF % 2 != 0) { printf "MISMATCH %s line %d: uneven column count (NF=%d)\n", fname, NR, NF; bad=1; next }
-        half = NF / 2
-        for (i = 1; i <= half; i++) {
-          L = $i; R = $(i + half)
-          if (L ~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/ && R ~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) {
-            d = L - R; if (d < 0) d = -d
-            if (d > tol) { printf "MISMATCH %s line %d col %d: %s vs %s (diff %.3e)\n", fname, NR, i, L, R, d; bad = 1 }
-          } else if (L != R) {
-            printf "MISMATCH %s line %d col %d (text): \"%s\" vs \"%s\"\n", fname, NR, i, L, R; bad = 1
+        h = NF / 2
+        if (half == 0) half = h
+        else if (h != half) { printf "MISMATCH %s line %d: column count changed (%d vs %d)\n", fname, NR, h, half; bad=1; next }
+        n++
+        eA[n] = $1 + 0; eB[n] = $(1 + half) + 0
+        for (i = 1; i <= half; i++) { A[n, i] = $i + 0; B[n, i] = $(i + half) + 0 }
+      }
+      END {
+        if (bad) exit 1
+        if (n == 0) { printf "MISMATCH %s: no numeric data rows found\n", fname; exit 1 }
+        # Group ascending-energy rows into degenerate levels (from file A).
+        gA = 1; startA[1] = 1
+        for (k = 2; k <= n; k++) { if (abs(eA[k] - eA[k-1]) > etol) { gA++; startA[gA] = k } }
+        for (g = 1; g < gA; g++) endA[g] = startA[g+1] - 1
+        endA[gA] = n
+        # Independently group file B and require identical boundaries.
+        gB = 1; startB[1] = 1
+        for (k = 2; k <= n; k++) { if (abs(eB[k] - eB[k-1]) > etol) { gB++; startB[gB] = k } }
+        for (g = 1; g < gB; g++) endB[g] = startB[g+1] - 1
+        endB[gB] = n
+        if (gA != gB) { printf "MISMATCH %s: degenerate-level count differs (A=%d B=%d) -- different spectra\n", fname, gA, gB; exit 1 }
+        for (g = 1; g <= gA; g++) {
+          if (startA[g] != startB[g] || endA[g] != endB[g]) {
+            printf "MISMATCH %s: level %d boundary differs (A rows %d..%d, B rows %d..%d) -- different spectra\n", fname, g, startA[g], endA[g], startB[g], endB[g]; exit 1
           }
         }
+        # Per-level SUM comparison (basis-invariant Tr(P.A.P)); size-1 levels
+        # reduce to the exact per-state check.
+        for (g = 1; g <= gA; g++) {
+          sz = endA[g] - startA[g] + 1
+          lt = tol * (sz > 1 ? sz : 1)
+          for (i = 1; i <= half; i++) {
+            sa = 0; sb = 0
+            for (k = startA[g]; k <= endA[g]; k++) { sa += A[k, i]; sb += B[k, i] }
+            d = abs(sa - sb)
+            if (d > lt) { printf "MISMATCH %s level %d (rows %d..%d) col %d: sumA=%.10g vs sumB=%.10g (diff %.3e, tol %.3e)\n", fname, g, startA[g], endA[g], i, sa, sb, d, lt; bad = 1 }
+          }
+        }
+        exit (bad ? 1 : 0)
       }
-      END { exit (bad ? 1 : 0) }
     ' || fail "ExpecMode zvo_phys mismatch in ${base} (see MISMATCH lines above)"
   done
   [ "${found}" = "1" ] || fail "compare_phys: no zvo_phys*.dat found in ${dirA}/output"
+}
+
+# Blocker-2: the degeneracy-SAFE subset of compare_output_trees -- assert the
+# output FILE SET is identical between two run directories and that the
+# aggregate _eigen.dat merge output was produced, WITHOUT diffing per-state /
+# per-eigen values (those are basis-dependent and NOT degeneracy-safe on a
+# non-deterministic distributed solver). Used by the spinless cases 8/9, whose
+# near-diagonal, highly degenerate Hamiltonians make the per-eigen Green-file
+# diff of compare_output_trees fragile under ScaLAPACK; their observable
+# agreement is asserted separately via the degeneracy-aware compare_phys. File
+# existence (unlike eigenvector basis) does not depend on the degenerate
+# rotation, so this check stays valid on any solver.
+compare_output_presence() {
+  dirA="$1"
+  dirB="$2"
+  ( cd "${dirA}/output" && find . -type f ! -name '*TimeKeeper*' ! -name 'CalcTimer.dat' | sort ) > _pfilesA.lst
+  ( cd "${dirB}/output" && find . -type f ! -name '*TimeKeeper*' ! -name 'CalcTimer.dat' | sort ) > _pfilesB.lst
+  [ -s _pfilesA.lst ] || fail "compare_output_presence: ${dirA}/output produced zero output files -- broken run or over-eager exclude filter"
+  [ -s _pfilesB.lst ] || fail "compare_output_presence: ${dirB}/output produced zero output files -- broken run or over-eager exclude filter"
+  grep -Eq '_eigen\.dat$' _pfilesA.lst || fail "compare_output_presence: ${dirA}/output has no aggregate Green/eigen file (*_eigen.dat) -- the aggregate/merge path did not run"
+  diff _pfilesA.lst _pfilesB.lst > /dev/null || {
+    echo "Output file sets differ between ${dirA}/output and ${dirB}/output:" >&2
+    diff _pfilesA.lst _pfilesB.lst >&2
+    fail "compare_output_presence: output file set mismatch between ${dirA} and ${dirB}"
+  }
 }
 
 # Phase 3b Task 5: assert that a mode2 run's log shows the plan that is
@@ -964,10 +1046,19 @@ EOF
 )
 run_mode "${case8}" 0
 run_mode "${case8}" 1
-compare_output_trees "${case8}/mode0" "${case8}/mode1"
+# Blocker-2: spinless FullDiag builds a near-diagonal, highly degenerate H, so
+# the per-eigen Green-file value diff of compare_output_trees is NOT
+# degeneracy-safe under the ScaLAPACK registration (Solver 1, non-deterministic
+# degenerate basis across separate launches). Assert the file set / aggregate
+# merge output with the degeneracy-safe presence check, and the Mode-0/1/2
+# agreement of the degeneracy-INVARIANT observables with the degeneracy-aware
+# compare_phys (per-level Tr(P.A.P) sums) instead.
+compare_output_presence "${case8}/mode0" "${case8}/mode1"
+compare_phys "${case8}/mode0" "${case8}/mode1"
 run_mode "${case8}" 2
 assert_energy_and_gf_unsupported "${case8}/mode2/log_run.txt"
-compare_output_trees "${case8}/mode1" "${case8}/mode2"
+compare_output_presence "${case8}/mode1" "${case8}/mode2"
+compare_phys "${case8}/mode1" "${case8}/mode2"
 
 # =========================================================================
 # Case 9 (blocker-1): SpinlessFermionGC (CalcModel 8) -- same energy-kernel
@@ -1084,9 +1175,13 @@ EOF
 )
 run_mode "${case9}" 0
 run_mode "${case9}" 1
-compare_output_trees "${case9}/mode0" "${case9}/mode1"
+# Blocker-2: same degeneracy-robust comparison as case 8 (spinless GC, 16
+# basis states, near-diagonal highly degenerate H -- see case 8's note).
+compare_output_presence "${case9}/mode0" "${case9}/mode1"
+compare_phys "${case9}/mode0" "${case9}/mode1"
 run_mode "${case9}" 2
 assert_energy_and_gf_unsupported "${case9}/mode2/log_run.txt"
-compare_output_trees "${case9}/mode1" "${case9}/mode2"
+compare_output_presence "${case9}/mode1" "${case9}/mode2"
+compare_phys "${case9}/mode1" "${case9}/mode2"
 
 echo "fulldiag_expecmode_equiv: OK"
