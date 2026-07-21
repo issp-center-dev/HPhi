@@ -418,6 +418,11 @@ The parameters correlated with the keywords are as follows.
      kernels, the energy family has no "unsupported model" case (see
      above) and no shared-evaluator case (it does not share its
      evaluator with any other always-fallback quantity).
+   | If a run reports the memory-gate fallback but you want the trace
+     kernel, raise ``HPHI_TRACE_BUF_MAX_MB`` (up to the available
+     per-rank memory, or use more MPI ranks so each rank's CSR is
+     smaller); otherwise the reported ``ExpecMode 1`` fallback is safe to
+     accept and produces identical results.
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected
