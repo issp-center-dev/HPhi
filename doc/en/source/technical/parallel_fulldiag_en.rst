@@ -130,6 +130,27 @@ and ``AnomalousG`` remain on the ``ExpecMode 1`` path in this version.
 See the ``ExpecMode`` entry in :ref:`Subsec:calcmod` for the full
 fallback taxonomy and the exact ``INFO`` wording.
 
+**Why the CSR Hamiltonian is replicated on every rank.** In the
+state-panel layout each rank owns a block of *complete* eigenvectors and
+evaluates them with no communication inside the per-state loop (that is
+the whole point of ``ExpecMode 1``/``2``). Computing :math:`y = H x` for
+a locally-complete :math:`x` therefore needs every row of :math:`H` on
+that rank, so the CSR is built for the full column range on each rank.
+Distributing the CSR (each rank holding only :math:`\mathrm{nnz}/P` rows)
+would force per-state communication to apply the distributed operator to
+a local full vector — reintroducing exactly the collective cost the
+state-panel design removes. Consequently the per-rank CSR does **not**
+shrink as :math:`P` grows. This is acceptable because the CSR is sparse:
+for lattice Hamiltonians :math:`\mathrm{nnz} = O(N)` (a fixed number of
+terms per column), so the buffer is :math:`\approx 24 N` bytes — for
+example about 32 MB at :math:`N = 63504` — which is negligible beside the
+:math:`O(N^2/P)` eigenvector state panel that dominates per-rank memory
+and *does* scale with :math:`P`. The replicated CSR only becomes a
+concern for pathologically operator-dense inputs (large
+``InterAll``/``NBodyInterAll`` sets); there the per-rank
+``HPHI_TRACE_BUF_MAX_MB`` gate falls the energy family back to
+``ExpecMode 1`` and reports it.
+
 Speed comparison
 ----------------
 

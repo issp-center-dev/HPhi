@@ -98,6 +98,23 @@ makes no speed promise beyond "expected to help."
   on rank 0 only (for `ExpecMode 2` runs) and broadcast to every rank,
   so it only needs to be set in the launch environment.
 
+- **The CSR is replicated per rank, by design.** Each rank builds the CSR
+  for the *full* column range, so the per-rank CSR does **not** shrink as
+  the MPI-rank count grows. This is required, not incidental: the
+  state-panel layout gives each rank *complete* eigenvectors to evaluate
+  without per-state communication, and computing `y = H·x` for a
+  locally-complete `x` needs every row of `H` locally; a distributed CSR
+  would reintroduce the per-state collectives that `ExpecMode 1`/`2`
+  exist to remove. It is acceptable because the CSR is sparse —
+  `nnz = O(N)` for lattice Hamiltonians, so `≈ 24·N` bytes (about 32 MB
+  at `N = 63504`), negligible beside the `O(N²/P)` eigenvector state
+  panel that dominates per-rank memory and does scale with `P`. Only
+  pathologically operator-dense inputs make the replicated CSR the
+  bottleneck, and there the per-rank cap falls the family back to
+  `ExpecMode 1` and reports it. (This corrects an earlier
+  troubleshooting note that wrongly suggested adding MPI ranks shrinks
+  the CSR.)
+
 - **Terminology note.** "Trace kernel" (the name used throughout this
   feature, in `ExpecMode 2`'s description, and in the source comments)
   refers to the precomputed-mapping/precomputed-CSR streaming

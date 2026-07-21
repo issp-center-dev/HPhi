@@ -419,10 +419,12 @@ The parameters correlated with the keywords are as follows.
      above) and no shared-evaluator case (it does not share its
      evaluator with any other always-fallback quantity).
    | If a run reports the memory-gate fallback but you want the trace
-     kernel, raise ``HPHI_TRACE_BUF_MAX_MB`` (up to the available
-     per-rank memory, or use more MPI ranks so each rank's CSR is
-     smaller); otherwise the reported ``ExpecMode 1`` fallback is safe to
-     accept and produces identical results.
+     kernel, raise ``HPHI_TRACE_BUF_MAX_MB`` up to the available per-rank
+     memory. Note that, unlike the distributed eigenvector storage, the
+     CSR Hamiltonian is replicated in full on every rank, so adding MPI
+     ranks does NOT shrink it (see :ref:`Sec:ParallelFullDiag` for why);
+     raising the cap, or accepting the reported ``ExpecMode 1`` fallback
+     (which produces identical results), are the two options.
    | Eligibility: a nonzero ``ExpecMode`` requires ``CalcType`` = 2 (full
      diagonalization) together with ``Solver`` 1 (ScaLAPACK) or 3 (ELPA);
      any other combination (wrong ``CalcType`` or ``Solver``) is rejected
