@@ -156,6 +156,47 @@ compare_output_trees() {
   done < _filesA.lst
 }
 
+# Phase 3c Task 6: compare ONLY the zvo_phys_* / zvo_phys.dat file(s) between
+# two run directories, column-by-column to ${tol} (same numeric-vs-text rule as
+# compare_output_trees). Used by the InputHam negative case (case 7), where the
+# Mode-2 run directory additionally contains the copied-in <head>_Ham.dat input
+# file that the Mode-0 reference does not, so a full-tree compare would fail on
+# the file-set diff. zvo_phys carries the energy/fluctuation quantities the
+# InputHam demotion path recomputes, so it is the right (and brief-specified)
+# comparison target here.
+compare_phys() {
+  dirA="$1"
+  dirB="$2"
+  found=0
+  for fa in "${dirA}"/output/zvo_phys*.dat; do
+    [ -e "${fa}" ] || continue
+    found=1
+    base=$(basename "${fa}")
+    fb="${dirB}/output/${base}"
+    [ -e "${fb}" ] || fail "compare_phys: ${fb} missing (present in ${dirA})"
+    na=$(wc -l < "${fa}")
+    nb=$(wc -l < "${fb}")
+    [ "${na}" = "${nb}" ] || fail "compare_phys line count mismatch for ${base}: ${na} (${dirA}) vs ${nb} (${dirB})"
+    paste "${fa}" "${fb}" | awk -v tol="${tol}" -v fname="${base}" '
+      {
+        if (NF % 2 != 0) { printf "MISMATCH %s line %d: uneven column count (NF=%d)\n", fname, NR, NF; bad=1; next }
+        half = NF / 2
+        for (i = 1; i <= half; i++) {
+          L = $i; R = $(i + half)
+          if (L ~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/ && R ~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) {
+            d = L - R; if (d < 0) d = -d
+            if (d > tol) { printf "MISMATCH %s line %d col %d: %s vs %s (diff %.3e)\n", fname, NR, i, L, R, d; bad = 1 }
+          } else if (L != R) {
+            printf "MISMATCH %s line %d col %d (text): \"%s\" vs \"%s\"\n", fname, NR, i, L, R; bad = 1
+          }
+        }
+      }
+      END { exit (bad ? 1 : 0) }
+    ' || fail "ExpecMode zvo_phys mismatch in ${base} (see MISMATCH lines above)"
+  done
+  [ "${found}" = "1" ] || fail "compare_phys: no zvo_phys*.dat found in ${dirA}/output"
+}
+
 # Phase 3b Task 5: assert that a mode2 run's log shows the plan that is
 # expected now that the capability table (src/expec_trace.c's kTraceCap) has
 # Hubbard/HubbardGC/Spin(half)/SpinGC(half) flipped TRUE for both one-body
@@ -172,8 +213,25 @@ assert_kernel_plan() {
     "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for one-body GFs in ${logfile}"
   grep -q "ExpecMode 2: two-body Green functions use the trace kernel\." \
     "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for two-body GFs in ${logfile}"
+  assert_energy_kernel "${logfile}"
   grep -q "always use the ExpecMode-1 path" \
     "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
+}
+
+# Phase 3c Task 6: the energy/fluctuation family now runs through its OWN CSR
+# trace kernel (TRACE_Q_ENERGY, src/expec_trace.c TraceReportPlan()), eligible
+# for EVERY makeHam-reachable model -- broader than the GF capability table.
+# Every case below builds its Hamiltonian through makeHam (no InputHam) with a
+# tiny Hilbert space, so the energy slot always ends kernel-active (never
+# memory-demoted); this asserts that verbatim INFO line. Kept as a separate
+# helper so both assert_kernel_plan() (GF kernel cases) and
+# assert_kernel_plan_shared_evaluator() (case 4) reuse it, and so the tJ
+# energy-only case (case 6) can assert the SAME energy line without the GF
+# kernel lines. The substring is byte-exact from expec_trace.c.
+assert_energy_kernel() {
+  logfile="$1"
+  grep -q "the energy/fluctuation family uses the trace kernel\." \
+    "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for the energy/fluctuation family in ${logfile}"
 }
 
 # Variant for a run that ALSO defines ThreeBodyG/FourBodyG/SixBodyG (case4):
@@ -193,8 +251,26 @@ assert_kernel_plan_shared_evaluator() {
     "${logfile}" || fail "ExpecMode 2 did not select the trace kernel for one-body GFs in ${logfile}"
   grep -q "ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions)\." \
     "${logfile}" || fail "ExpecMode 2 did not report the shared-evaluator fallback for two-body GFs in ${logfile}"
+  assert_energy_kernel "${logfile}"
   grep -q "always use the ExpecMode-1 path" \
     "${logfile}" || fail "ExpecMode 2 always-fallback plan INFO line was not printed in ${logfile}"
+}
+
+# Phase 3c Task 6: taxonomy-orthogonality assertion for a model that IS
+# energy-kernel-eligible (makeHam-reachable) but is NOT in the GF capability
+# table (kTraceCap: tJ/tJGC/Kondo/KondoGC/general-spin rows are FALSE). The
+# energy family selects the trace kernel while BOTH GF quantities take the
+# "unsupported model" ExpecMode-1 fallback -- the energy kernel and the GF
+# kernels are dispatched independently (TraceBuildPlan() gates the GF slots on
+# cap_q[] but the energy slot only on InputHam). Substrings byte-exact from
+# expec_trace.c's TraceReportPlan().
+assert_energy_kernel_gf_unsupported() {
+  logfile="$1"
+  assert_energy_kernel "${logfile}"
+  grep -q "ExpecMode 2: one-body Green functions use the ExpecMode-1 fallback (unsupported model)\." \
+    "${logfile}" || fail "ExpecMode 2 one-body GF did not report the unsupported-model fallback in ${logfile}"
+  grep -q "ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (unsupported model)\." \
+    "${logfile}" || fail "ExpecMode 2 two-body GF did not report the unsupported-model fallback in ${logfile}"
 }
 
 # Prepare a case directory: write stan.in, run `HPhi -sdry`, then let the
@@ -481,5 +557,248 @@ compare_output_trees "${case5}/mode0" "${case5}/mode1"
 run_mode "${case5}" 2
 assert_kernel_plan "${case5}/mode2/log_run.txt"
 compare_output_trees "${case5}/mode1" "${case5}/mode2"
+
+# =========================================================================
+# Case 6 (phase 3c Task 6): tJ chain L=4 -- taxonomy-orthogonality golden
+# case. tJ is NOT a GF-kernel model (kTraceCap tJ row is FALSE, is_gc grouping
+# mismatch) but IS energy-kernel-eligible (any model reaching makeHam is), so
+# ExpecMode 2 selects the energy trace kernel while BOTH GF quantities take the
+# "unsupported model" ExpecMode-1 fallback -- the orthogonality this case
+# exists to prove.
+#
+# tJ is UNAVAILABLE in the Standard mode used by prep_case (StdFace has no tJ
+# lattice generator -- src/StdFace/src/StdFace_main.c dispatches only
+# hubbard/spin/kondo/spinlessfermion), so this case is written as an
+# Expert-mode def set (CalcModel 9). It is a genuine tJ Hamiltonian:
+# nearest-neighbour hopping t=1 on the periodic 4-site chain (both spins, both
+# directions) plus the J=1 tJ exchange J*(S_i.S_j - n_i n_j/4) on every bond,
+# written as InterAll with each transverse partner in HPhi's reversed
+# conjugate-operator ordering (the form its NonHermite checker requires). The
+# whole fixture -- def validity, makeHam reachability, and the aggregate
+# zvo_cisajs_eigen.dat / zvo_cisajscktalt_eigen.dat production the
+# compare_output_trees() _eigen.dat guard needs -- was validated locally with
+# the serial LAPACK build (build_noMPI, ExpecMode 0); only the distributed
+# ExpecMode 1/2 dispatch (model-independent, proven by cases 1-5) runs first on
+# clavius. Ncond 2 on 4 sites = 2 holes; 2Sz 0 -> zvo_phys_Nup1_Ndown1.dat.
+# All site indices stay strictly < Nsite=4 (the phase-3a out-of-range lesson).
+# =========================================================================
+case6="case6_tj_chain_energy_only"
+mkdir -p "${case6}"
+(
+  cd "${case6}"
+  cat > namelist.def <<EOF
+         ModPara  modpara.def
+         LocSpin  locspn.def
+           Trans  trans.def
+        InterAll  interall.def
+        OneBodyG  greenone.def
+        TwoBodyG  greentwo.def
+         CalcMod  calcmod.def
+EOF
+  cat > calcmod.def <<EOF
+CalcType        2
+CalcModel       9
+ReStart         0
+CalcSpec        0
+CalcEigenVec    0
+InitialVecType  0
+InputEigenVec   0
+OutputEigenVec  0
+InputHam        0
+OutputHam       0
+OutputGreenFormat 1
+EOF
+  cat > modpara.def <<EOF
+--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite             4
+Ncond             2
+2Sz               0
+Lanczos_max       2000
+initial_iv        -1
+exct              1
+LanczosEps        14
+LanczosTarget     2
+LargeValue        12.0
+NumAve            5
+ExpecInterval     20
+EOF
+  cat > locspn.def <<EOF
+================================
+NlocalSpin     0
+================================
+========i_1LocSpn_0IteElc ======
+================================
+    0      0
+    1      0
+    2      0
+    3      0
+EOF
+  cat > trans.def <<EOF
+========================
+NTransfer      16
+========================
+========i_j_s_tijs======
+========================
+0 0 1 0 -1.0 0.0
+1 0 0 0 -1.0 0.0
+0 1 1 1 -1.0 0.0
+1 1 0 1 -1.0 0.0
+1 0 2 0 -1.0 0.0
+2 0 1 0 -1.0 0.0
+1 1 2 1 -1.0 0.0
+2 1 1 1 -1.0 0.0
+2 0 3 0 -1.0 0.0
+3 0 2 0 -1.0 0.0
+2 1 3 1 -1.0 0.0
+3 1 2 1 -1.0 0.0
+3 0 0 0 -1.0 0.0
+0 0 3 0 -1.0 0.0
+3 1 0 1 -1.0 0.0
+0 1 3 1 -1.0 0.0
+EOF
+  cat > interall.def <<EOF
+======================
+NInterAll      16
+======================
+========zInterAll=====
+======================
+0 0 0 0 1 1 1 1 -0.5 0.0
+0 1 0 1 1 0 1 0 -0.5 0.0
+0 0 0 1 1 1 1 0 0.5 0.0
+1 0 1 1 0 1 0 0 0.5 0.0
+1 0 1 0 2 1 2 1 -0.5 0.0
+1 1 1 1 2 0 2 0 -0.5 0.0
+1 0 1 1 2 1 2 0 0.5 0.0
+2 0 2 1 1 1 1 0 0.5 0.0
+2 0 2 0 3 1 3 1 -0.5 0.0
+2 1 2 1 3 0 3 0 -0.5 0.0
+2 0 2 1 3 1 3 0 0.5 0.0
+3 0 3 1 2 1 2 0 0.5 0.0
+0 0 0 0 3 1 3 1 -0.5 0.0
+0 1 0 1 3 0 3 0 -0.5 0.0
+0 0 0 1 3 1 3 0 0.5 0.0
+3 0 3 1 0 1 0 0 0.5 0.0
+EOF
+  cat > greenone.def <<EOF
+========================
+NCisAjs 8
+========================
+========GreenOne========
+========================
+0 0 0 0
+0 1 0 1
+1 0 1 0
+1 1 1 1
+0 0 1 0
+1 0 0 0
+2 0 2 0
+2 1 2 1
+EOF
+  cat > greentwo.def <<EOF
+========================
+NCisAjsCktAlt 3
+========================
+========GreenTwo========
+========================
+0 0 0 0 1 1 1 1
+0 0 0 0 2 0 2 0
+1 0 1 0 2 1 2 1
+EOF
+)
+run_mode "${case6}" 0
+run_mode "${case6}" 1
+compare_output_trees "${case6}/mode0" "${case6}/mode1"
+run_mode "${case6}" 2
+assert_energy_kernel_gf_unsupported "${case6}/mode2/log_run.txt"
+compare_output_trees "${case6}/mode1" "${case6}/mode2"
+
+# =========================================================================
+# Case 7 (phase 3c Task 6): InputHam negative case -- the energy/fluctuation
+# family DEMOTES to the ExpecMode-1 path when the Hamiltonian is read from a
+# file (re-running makeHam in the CSR collector would build a matrix DIFFERENT
+# from the one diagonalized; src/expec_trace.c TraceBuildPlan()'s InputHam
+# static demotion). This is the ONLY static energy demotion.
+#
+# Solver choice (deliberate, not the script's ${solver}): this case forces
+# Solver 1 (ScaLAPACK) at the ${MPIRUN} process count, because:
+#   * ExpecMode 2 requires a distributed solver (ScaLAPACK/ELPA) AND nproc>1;
+#     at nproc==1 readdef reverts ExpecMode 2->0 (src/readdef.c ~line 593), so
+#     TraceReportPlan() never runs and the InputHam plan line never prints --
+#     np=1 therefore CANNOT exercise this path.
+#   * ELPA (Solver 3) + OutputHam/InputHam + nproc>1 is rejected at startup
+#     (src/readdef.c cErrElpaHamIO: the ELPA panel is not the full replicated
+#     matrix that inputHam()/outputHam() need). ScaLAPACK keeps the full
+#     replicated Ham (src/lapack_diag.c diag_scalapack_cmp takes Ham[][]) and
+#     is NOT gated, so it is the only solver on which InputHam + ExpecMode 2
+#     coexist. USE_ELPA forces USE_SCALAPACK (top-level CMakeLists.txt), so
+#     Solver 1 is compiled into the ELPA build too -- this case runs under both
+#     the ELPA and ScaLAPACK ctest registrations.
+# The OutputHam->InputHam file roundtrip and the InputHam==makeHam zvo_phys
+# equality were validated locally with the serial LAPACK build (build_noMPI,
+# Solver 0, np=1); only the ScaLAPACK/ExpecMode-2 dispatch (model-independent)
+# runs first on clavius.
+# =========================================================================
+case7="case7_inputham_negative"
+prep_case "${case7}" 'model = "Hubbard"
+method = "FullDiag"
+lattice = "chain"
+L = 4
+t = 1.0
+U = 4.0
+nelec = 4
+2Sz = 0
+outputmode = "correlation"'
+
+# Step A: produce output/<head>_Ham.dat once (OutputHam=1 makes CalcByFullDiag
+# return right after outputHam(), before any diagonalization/observables).
+genham7="${case7}/genham"
+mkdir -p "${genham7}"
+cp "${case7}"/*.def "${genham7}/" 2>/dev/null || true
+(
+  cd "${genham7}"
+  printf 'Solver 1\n' >> calcmod.def
+  printf 'OutputHam 1\n' >> calcmod.def
+  run_hphi log_run.txt ${MPIRUN} "${hphi}" -e namelist.def
+)
+[ -f "${genham7}/output/zvo_Ham.dat" ] \
+  || fail "case7: OutputHam did not produce ${genham7}/output/zvo_Ham.dat (see cFileNamePhys_FullDiag_Ham)"
+
+# Step B: Mode-0 reference -- normal makeHam FullDiag, ExpecMode 0, Solver 1.
+ref7="${case7}/mode0"
+mkdir -p "${ref7}"
+cp "${case7}"/*.def "${ref7}/" 2>/dev/null || true
+(
+  cd "${ref7}"
+  printf 'Solver 1\n' >> calcmod.def
+  printf 'ExpecMode 0\n' >> calcmod.def
+  run_hphi log_run.txt ${MPIRUN} "${hphi}" -e namelist.def
+)
+
+# Step C: Mode-2 InputHam run -- reads the Ham file, ExpecMode 2, Solver 1.
+# The energy family must demote (InputHam); assert the verbatim reason line and
+# that zvo_phys still equals the makeHam Mode-0 reference (the loaded matrix IS
+# the one makeHam built and OutputHam wrote, so the physics is identical).
+test7="${case7}/mode2"
+mkdir -p "${test7}/output"
+cp "${case7}"/*.def "${test7}/" 2>/dev/null || true
+cp "${genham7}/output/zvo_Ham.dat" "${test7}/output/"
+(
+  cd "${test7}"
+  printf 'Solver 1\n' >> calcmod.def
+  printf 'InputHam 1\n' >> calcmod.def
+  printf 'ExpecMode 2\n' >> calcmod.def
+  run_hphi log_run.txt ${MPIRUN} "${hphi}" -e namelist.def
+)
+grep -q "the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam)\." \
+  "${test7}/log_run.txt" \
+  || fail "case7: ExpecMode 2 did not report the InputHam energy demotion in ${test7}/log_run.txt"
+compare_phys "${ref7}" "${test7}"
 
 echo "fulldiag_expecmode_equiv: OK"
