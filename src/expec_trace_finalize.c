@@ -54,15 +54,16 @@
 #include <stdio.h>
 
 void TraceFinalizeEnergyPlan(TraceExecutionPlan *plan, int local_ok,
-                             long int nnz_raw) {
+                             long int nnz_merged) {
   long long buf[3];
 
-  if (local_ok && nnz_raw >= 0 && (long long)nnz_raw != LLONG_MAX) {
-    /* success rank with a representable nnz distinct from the failure sentinel
-       (long int always fits long long; nnz_raw>=0 makes the negation safe). */
+  if (local_ok && nnz_merged >= 0 && (long long)nnz_merged != LLONG_MAX) {
+    /* success rank with a representable merged nnz distinct from the failure
+       sentinel (long int always fits long long; nnz_merged>=0 makes the
+       negation safe). */
     buf[0] = 1;
-    buf[1] = (long long)nnz_raw;
-    buf[2] = -(long long)nnz_raw;
+    buf[1] = (long long)nnz_merged;
+    buf[2] = -(long long)nnz_merged;
   } else {
     /* failed rank (gate exceeded, any allocation failure), or an nnz that
        cannot be encoded distinctly from the sentinel -> treat self as failed. */

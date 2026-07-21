@@ -174,18 +174,18 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
        (InputHam static demotion, or ExpecMode 0/1). */
     if (tplan.kernel[TRACE_Q_ENERGY]) {
       int local_ok;
-      long int nnz_raw;
+      long int nnz_merged;
       struct timespec ts0, ts1;
       clock_gettime(CLOCK_MONOTONIC, &ts0);
       local_ok = TraceHamCollect(X, gbuf_max_bytes, -1, &ham_csr);
       clock_gettime(CLOCK_MONOTONIC, &ts1);
       t_energy_map = (double)(ts1.tv_sec - ts0.tv_sec) +
                      (double)(ts1.tv_nsec - ts0.tv_nsec) * 1e-9;
-      /* On demotion TraceHamCollect() already freed+zeroed ham_csr, so nnz_raw
-         has no meaning -- pass 0 (the finalize contract ignores it when
-         local_ok==0). */
-      nnz_raw = local_ok ? ham_csr.nnz : 0;
-      TraceFinalizeEnergyPlan(&tplan, local_ok, nnz_raw);
+      /* On demotion TraceHamCollect() already freed+zeroed ham_csr, so
+         nnz_merged has no meaning -- pass 0 (the finalize contract ignores it
+         when local_ok==0). ham_csr.nnz is the MERGED count (rowptr[n]). */
+      nnz_merged = local_ok ? ham_csr.nnz : 0;
+      TraceFinalizeEnergyPlan(&tplan, local_ok, nnz_merged);
       /* If finalize demoted energy (this or another rank failed) but THIS rank
          had collected a valid CSR, free it now -- it will not reach the loop. */
       if (!tplan.kernel[TRACE_Q_ENERGY])

@@ -52,8 +52,10 @@ typedef struct {
 } TraceHamCsr;
 
 /**
- * Collect the Hamiltonian of X into a compact CSR (this rank's column range,
- * or the full matrix at nproc==1).
+ * Collect the Hamiltonian of X into a compact CSR. In collect mode the CSR is
+ * built for the FULL column range on EVERY rank (the matrix is replicated, not
+ * partitioned across ranks), matching the replicated FullDiag layout the energy
+ * kernel runs in.
  *
  * Returns 1 on success (csr populated), 0 on demotion (gate exceeded or an
  * allocation failed; csr fully freed and zeroed, sink mode restored).

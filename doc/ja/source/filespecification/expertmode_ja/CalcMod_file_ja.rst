@@ -335,12 +335,13 @@ CalcModファイル
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (no operators of this kind are defined).``
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
-   | エネルギー・ゆらぎ系の判定は独立に行われ、可能な結果は2通りのみです
-     (後述のとおり、この系には「未対応モデル」の場合も「評価器共有」の
-     場合もありません)。判定はランク0が次の専用 ``INFO`` 行で報告します。
+   | エネルギー・ゆらぎ系の判定は独立に行われ、可能な理由は3通りです
+     (後述のとおり、この系には「評価器共有」の場合はありません)。判定は
+     ランク0が次の専用 ``INFO`` 行で報告します。
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel.``
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam).``
+   | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).``
    | ``S2``、``NBodyG``、``AnomalousG`` は本バージョンでも無条件に
      ``ExpecMode 1`` の経路のままであり、次の固定行で報告されます。
    | ``INFO: ExpecMode 2: S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
@@ -351,14 +352,14 @@ CalcModファイル
      は未対応で、両物理量とも常に上記の「unsupported model」の行が
      表示されます)。
    | エネルギー・ゆらぎ系のトレースカーネルは、上記のGreen関数カーネル
-     よりもはるかに広いモデルに対応しています: ``FullDiag`` が実行
-     できる全てのモデル (makeHam が到達可能な全モデル) に対応しており、
-     Green関数では対応4行のみだった ``tJ``/``tJGC``、``Kondo``/
-     ``KondoGC``、および :math:`S \geq 1` を含む一般スピンの
-     ``Spin``/``SpinGC`` も含まれます。したがってエネルギー系には
-     「未対応モデル」によるフォールバックは一切存在せず、可能な結果は
-     トレースカーネル、または下記の2つのフォールバック理由のいずれかの
-     みです。
+     よりも広いモデルに対応しています: ``Hubbard``/``HubbardGC``、
+     ``tJ``/``tJGC``、``Kondo``/``KondoGC``、および一般スピン
+     (:math:`S \geq 1` を含む) の ``Spin``/``SpinGC`` に対応しており、
+     Green関数で対応していた4行に限られません。ただし
+     ``SpinlessFermion``/``SpinlessFermionGC`` には対応していません
+     (その粒子数・スピンゆらぎのセマンティクスは異なり、カーネルには
+     実装されていません)。これらのモデル、および未知のモデルは
+     ``ExpecMode 1`` の経路へフォールバックします。
    | Green関数については、対応モデルであっても、各物理量の結果は、決まった
      順序で評価される最大3つの実行時要因のいずれか一つによって決まります
      (これらは互いに排他的になるよう構成されており、独立に判定される
@@ -383,15 +384,19 @@ CalcModファイル
      ランク0で環境から読み取られ全ランクへブロードキャストされる
      ため、起動環境にのみ設定すれば十分です) を超える場合、その物理量
      は ``ExpecMode 1`` へフォールバックします。
-   | エネルギー・ゆらぎ系については、可能な理由は次の2つのみで、この
+   | エネルギー・ゆらぎ系については、可能な理由はちょうど3つで、この
      順序で判定されます。(a) ``InputHam`` チェック -- 最初に判定され
      ます。この実行のハミルトニアンが ``InputHam`` (``InputHam 1``)
      で読み込まれた場合、トレースカーネルはモデル定義から再列挙して
      一致するハミルトニアンを再構築することができません (実際に対角化
      された行列ではなく、モデル定義から改めて導出した行列になって
      しまうためです)。そのためエネルギー系は無条件でフォールバック
-     します。(b) 上記と同じ ``HPHI_TRACE_BUF_MAX_MB`` メモリゲート --
-     次に判定されます ((a) に該当しない場合のみ到達します)。この上限は、
+     します。(b) 未対応モデルチェック -- 次に判定されます。モデルが
+     上記の対応モデルのいずれでもない場合 (すなわち
+     ``SpinlessFermion``/``SpinlessFermionGC``、または未知のモデルの
+     場合)、エネルギー系はフォールバックします。(c) 上記と同じ
+     ``HPHI_TRACE_BUF_MAX_MB`` メモリゲート -- 最後に判定されます
+     ((a)・(b) のいずれにも該当しない場合のみ到達します)。この上限は、
      エネルギー系については1ランクあたりのハミルトニアンバッファ、
      すなわちコンパクトなCSR (圧縮行格納) 行列 (おおよそ
      :math:`24 \times \mathrm{nnz}` バイト。ここで nnz は makeHam が
@@ -401,8 +406,8 @@ CalcModファイル
      見積もられたCSRサイズ
      が上限を超える場合、エネルギー系は ``ExpecMode 1`` へフォール
      バックします。Green関数のカーネルとは異なり、エネルギー系には
-     「未対応モデル」の場合 (前述のとおり) も評価器共有の場合 (他の
-     常時フォールバック物理量と評価器を共有していません) もありません。
+     評価器共有の場合 (他の常時フォールバック物理量と評価器を共有して
+     いません) はありません。
    | メモリゲートによるフォールバックが表示されたがトレースカーネルを
      使いたい場合は、``HPHI_TRACE_BUF_MAX_MB`` を1ランクあたりの利用
      可能メモリの範囲で引き上げてください。なお、分散保持される固有
@@ -436,8 +441,12 @@ CalcModファイル
      ``HPHI_TRACE_BUF_MAX_MB`` で上限を定めたバッファを保持します --
      一体・二体Green関数については結果バッファ、エネルギー・ゆらぎ系
      については上記の1ランクあたりCSRハミルトニアンバッファ (おおよそ
-     :math:`24 \times \mathrm{nnz}` バイト) であり、これらはすべて
-     同じ上限を共有します。一度だけ行われる再分散のあいだは元の格納
+     :math:`24 \times \mathrm{nnz}` バイト) です。``HPHI_TRACE_BUF_MAX_MB``
+     は物理量ごとのしきい値であり、各物理量のバッファに対して個別に
+     判定されます。同時に存在するトレースバッファの合計に対する上限
+     ではありません -- 一体の結果バッファ、二体の結果バッファ、
+     エネルギーのCSRはそれぞれが上限まで大きくなり得るため、それらの
+     合計は上限を超え得ます。一度だけ行われる再分散のあいだは元の格納
      領域と新しいパネルが両方存在するため、一時的なピークは1ランク
      あたりおよそ 2xO(N²/P) となり、再分散後 (元の格納領域を解放した
      後) は O(N²/P) にトレースバッファ分を加えた程度に戻ります

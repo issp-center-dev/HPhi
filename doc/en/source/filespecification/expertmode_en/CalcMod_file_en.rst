@@ -350,12 +350,12 @@ The parameters correlated with the keywords are as follows.
    | ``INFO: ExpecMode 2: %s Green functions use the ExpecMode-1 fallback (result buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: two-body Green functions use the ExpecMode-1 fallback (they share their evaluator with three-/four-/six-body Green functions).``
    | The energy/fluctuation family's outcome is decided independently, by
-     only two possible reasons (it has no unsupported-model case and no
-     shared-evaluator case -- see below), reported by its own rank-0
-     ``INFO`` line:
+     three possible reasons (it has no shared-evaluator case -- see below),
+     reported by its own rank-0 ``INFO`` line:
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel.``
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian buffer would exceed HPHI_TRACE_BUF_MAX_MB).``
    | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam).``
+   | ``INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).``
    | ``S2``, ``NBodyG``, and ``AnomalousG`` remain unconditionally on the
      ``ExpecMode 1`` path in this version, reported by one fixed line:
    | ``INFO: ExpecMode 2: S2, NBodyG, and AnomalousG always use the ExpecMode-1 path in this version.``
@@ -366,15 +366,15 @@ The parameters correlated with the keywords are as follows.
      ``tJGC``, ``Kondo``/``KondoGC``, and ``SpinlessFermion``/
      ``SpinlessFermionGC`` are not yet covered and always print the
      "unsupported model" line above for both quantities).
-   | The energy/fluctuation family's trace kernel has much broader model
-     coverage than the Green-function kernels above: it supports every
-     model that ``FullDiag`` can run (every makeHam-reachable model),
-     including ``tJ``/``tJGC``, ``Kondo``/``KondoGC``, and general-spin
-     ``Spin``/``SpinGC`` (:math:`S \geq 1`) -- not just the four rows
-     supported for the Green functions. Consequently the energy family
-     has no "unsupported model" fallback case at all; its only two
-     possible outcomes are the trace kernel or one of the two fallback
-     reasons below.
+   | The energy/fluctuation family's trace kernel has broader model
+     coverage than the Green-function kernels above: it supports
+     ``Hubbard``/``HubbardGC``, ``tJ``/``tJGC``, ``Kondo``/``KondoGC``,
+     and ``Spin``/``SpinGC`` (including general spin, :math:`S \geq 1`) --
+     not just the four rows supported for the Green functions. It does
+     NOT support ``SpinlessFermion``/``SpinlessFermionGC`` (their
+     particle-number/spin fluctuation semantics differ and are not
+     implemented by the kernel); those models, and any unknown model,
+     fall back to the ``ExpecMode 1`` path.
    | For the Green functions, on a supported model each quantity's
      outcome is still decided by up to three further runtime reasons,
      evaluated in a fixed order so that exactly one reason applies (they
@@ -401,15 +401,19 @@ The parameters correlated with the keywords are as follows.
      broadcast to every rank, so it only needs to be set in the launch
      environment), that quantity falls back to ``ExpecMode 1``.
    | For the energy/fluctuation family, the outcome is decided by exactly
-     two possible reasons, checked in this order: (a) an ``InputHam``
+     three possible reasons, checked in this order: (a) an ``InputHam``
      check, checked first -- if this run's Hamiltonian was read from
      ``InputHam`` (``InputHam 1``), the trace kernel cannot rebuild a
      matching Hamiltonian by re-enumerating the model (doing so would
      re-derive the matrix from the model definition instead of reading
      back the one that was actually diagonalized), so the energy family
-     unconditionally falls back to ``ExpecMode 1``. (b) the same
-     ``HPHI_TRACE_BUF_MAX_MB`` memory gate as above, checked next (only
-     reached if (a) does not apply) -- this cap now also bounds the
+     unconditionally falls back to ``ExpecMode 1``. (b) an
+     unsupported-model check, checked next -- if the model is not one of
+     the supported models listed above (i.e. it is
+     ``SpinlessFermion``/``SpinlessFermionGC`` or any unknown model), the
+     energy family falls back. (c) the same ``HPHI_TRACE_BUF_MAX_MB``
+     memory gate as above, checked last (only reached if neither (a) nor
+     (b) applies) -- this cap now also bounds the
      energy family's own per-rank Hamiltonian buffer, a compact CSR
      matrix of approximately :math:`24 \times \mathrm{nnz}` bytes (here
      nnz is the number of matrix entries makeHam emits on this rank,
@@ -417,9 +421,8 @@ The parameters correlated with the keywords are as follows.
      entry count ``rowptr[N]`` after summing duplicates can be smaller);
      if the projected CSR size would exceed the cap, the energy family
      falls back to ``ExpecMode 1``. Unlike the Green-function
-     kernels, the energy family has no "unsupported model" case (see
-     above) and no shared-evaluator case (it does not share its
-     evaluator with any other always-fallback quantity).
+     kernels, the energy family has no shared-evaluator case (it does not
+     share its evaluator with any other always-fallback quantity).
    | If a run reports the memory-gate fallback but you want the trace
      kernel, raise ``HPHI_TRACE_BUF_MAX_MB`` up to the available per-rank
      memory. Note that, unlike the distributed eigenvector storage, the
@@ -452,8 +455,12 @@ The parameters correlated with the keywords are as follows.
      ``HPHI_TRACE_BUF_MAX_MB`` above -- a result buffer for the one-body/
      two-body Green functions, or the per-rank CSR Hamiltonian buffer
      described above (approximately :math:`24 \times \mathrm{nnz}`
-     bytes) for the energy/fluctuation family; all of these quantities
-     share the same cap. During the one-time redistribution
+     bytes) for the energy/fluctuation family. ``HPHI_TRACE_BUF_MAX_MB``
+     is a per-quantity threshold: it is checked independently against EACH
+     quantity's buffer, not as a budget on the sum of the concurrently-live
+     trace buffers -- the one-body result buffer, the two-body result
+     buffer, and the energy CSR can each be as large as the cap, so their
+     live total can exceed it. During the one-time redistribution
      step both the original storage and the new panel coexist, giving a
      temporary peak of roughly 2xO(N²/P) per rank before the original
      storage is freed; steady-state usage afterward is O(N²/P) plus the

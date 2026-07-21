@@ -190,12 +190,15 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
  *
  *   - @p local_ok is TraceHamCollect()'s return (1 success / 0 demotion or any
  *     allocation failure INCLUDING the pre-gate counts array).
- *   - @p nnz_raw is this rank's collected raw nnz (ham_csr.nnz) on success;
- *     ignored when local_ok==0 (pass 0).
+ *   - @p nnz_merged is this rank's collected merged nnz (ham_csr.nnz =
+ *     rowptr[n], the entry count after duplicate columns are summed) on
+ *     success; ignored when local_ok==0 (pass 0). The merged count is
+ *     deterministic and rank-identical for a correct enumeration, so it is the
+ *     right quantity for the cross-rank agreement check below.
  *
  * Protocol: a SUCCESS rank contributes {1, nnz, -nnz} (the long int -> long
- * long conversion is checked; if nnz_raw is negative or not representable this
- * rank treats itself as FAILED); a FAILED rank contributes
+ * long conversion is checked; if nnz_merged is negative or not representable
+ * this rank treats itself as FAILED); a FAILED rank contributes
  * {0, LLONG_MAX, LLONG_MAX}. One MPI_Allreduce(MPI_MIN) over long long buf[3]
  * (a no-op that trivially passes at nproc==1 / non-MPI builds). Every rank then
  * applies the SAME verdict to the identical reduced buffer, IN THIS ORDER:
@@ -216,7 +219,7 @@ void TraceBuildPlan(const struct BindStruct *X, long int nc_uniform,
  * NOT the MPI-free local loop.
  */
 void TraceFinalizeEnergyPlan(TraceExecutionPlan *plan, int local_ok,
-                             long int nnz_raw);
+                             long int nnz_merged);
 
 /**
  * @brief Parse HPHI_TRACE_BUF_MAX_MB (getenv only; no MPI). Call on rank 0

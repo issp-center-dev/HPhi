@@ -121,11 +121,15 @@ rank into a compact sparse matrix, and every owned eigenstate is
 streamed through a sparse matrix-vector product instead of a full
 ``mltply``-style traversal. Unlike the Green-function kernels above,
 the energy family is not limited to the four supported (model,
-spin-representation) rows above — it covers every model that
-``FullDiag`` can run — and it falls back to ``ExpecMode 1`` for only
-two reasons: the Hamiltonian was read from ``InputHam``, or the
-per-rank CSR buffer would exceed ``HPHI_TRACE_BUF_MAX_MB`` (the same
-cap used for the Green-function result buffers). ``S2``, ``NBodyG``,
+spin-representation) rows above — it supports ``Hubbard``/``HubbardGC``,
+``tJ``/``tJGC``, ``Kondo``/``KondoGC``, and ``Spin``/``SpinGC``
+(including general spin). It does NOT support
+``SpinlessFermion``/``SpinlessFermionGC`` or any unknown model, which
+fall back to ``ExpecMode 1``. On a supported model it falls back for
+three reasons, checked in order: the Hamiltonian was read from
+``InputHam``, the model is unsupported, or the per-rank CSR buffer
+would exceed ``HPHI_TRACE_BUF_MAX_MB`` (the same cap used for the
+Green-function result buffers). ``S2``, ``NBodyG``,
 and ``AnomalousG`` remain on the ``ExpecMode 1`` path in this version.
 See the ``ExpecMode`` entry in :ref:`Subsec:calcmod` for the full
 fallback taxonomy and the exact ``INFO`` wording.

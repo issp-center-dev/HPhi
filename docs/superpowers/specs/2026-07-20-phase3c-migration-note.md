@@ -36,21 +36,22 @@ makes no speed promise beyond "expected to help."
   contract does not change whether the trace kernel or the
   `ExpecMode 1` fallback produced the value.
 
-- **Model coverage is much broader than the phase 3b Green-function
-  kernels.** The phase 3b one-body/two-body trace kernels are validated
-  and enabled for only four (model, spin-representation) rows
-  (`Hubbard`, `HubbardGC`, half-integer `Spin`, half-integer `SpinGC`).
-  The energy-family kernel, by contrast, is eligible for **every**
-  model that `FullDiag` can run — every makeHam-reachable model,
-  including `tJ`/`tJGC`, `Kondo`/`KondoGC`, and general-spin
-  `Spin`/`SpinGC` (`S ≥ 1`) — because it re-collects the Hamiltonian
-  generically rather than relying on a per-model capability table.
-  Consequently the energy family has **no** "unsupported model"
-  fallback case and **no** shared-evaluator fallback case (unlike the
-  two-body Green function, it does not share its evaluator with any
-  other always-fallback quantity).
+- **Model coverage is broader than the phase 3b Green-function
+  kernels, but is still an explicit whitelist.** The phase 3b
+  one-body/two-body trace kernels are validated and enabled for only
+  four (model, spin-representation) rows (`Hubbard`, `HubbardGC`,
+  half-integer `Spin`, half-integer `SpinGC`). The energy-family
+  kernel supports a broader set: `Hubbard`/`HubbardGC`, `tJ`/`tJGC`,
+  `Kondo`/`KondoGC`, and `Spin`/`SpinGC` (including general spin,
+  `S ≥ 1`). It does **not** support
+  `SpinlessFermion`/`SpinlessFermionGC` or any unknown model — their
+  particle-number/spin fluctuation semantics differ and are not
+  implemented by the kernel — so those fall back to the `ExpecMode 1`
+  path. The energy family still has **no** shared-evaluator fallback
+  case (unlike the two-body Green function, it does not share its
+  evaluator with any other always-fallback quantity).
 
-- **Only two fallback reasons for the energy family**, checked in this
+- **Three fallback reasons for the energy family**, checked in this
   order:
   1. **`InputHam`**: if this run's Hamiltonian was read from `InputHam`
      (`InputHam 1`), the trace kernel cannot rebuild a matching
@@ -58,7 +59,10 @@ makes no speed promise beyond "expected to help."
      the matrix from the model definition rather than reading back the
      one that was actually diagonalized — so the energy family
      unconditionally falls back to `ExpecMode 1`.
-  2. **The `HPHI_TRACE_BUF_MAX_MB` memory gate**: this existing cap
+  2. **Unsupported model**: if the model is not one of the supported
+     models above (i.e. `SpinlessFermion`/`SpinlessFermionGC` or any
+     unknown model), the energy family falls back to `ExpecMode 1`.
+  3. **The `HPHI_TRACE_BUF_MAX_MB` memory gate**: this existing cap
      (introduced in phase 3b for the Green-function result buffers) now
      *also* bounds the energy family's own per-rank Hamiltonian buffer.
      If the projected CSR size would exceed the cap, the energy family
@@ -72,6 +76,7 @@ makes no speed promise beyond "expected to help."
   INFO: ExpecMode 2: the energy/fluctuation family uses the trace kernel.
   INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian buffer would exceed HPHI_TRACE_BUF_MAX_MB).
   INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (the Hamiltonian was read from InputHam).
+  INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode-1 fallback (unsupported model).
   ```
 
   The fixed always-fallback line changes accordingly — energy/fluctuation
@@ -94,10 +99,15 @@ makes no speed promise beyond "expected to help."
   `csr->nnz = rowptr[N]` after summing duplicates can be smaller;
   row-pointer and diagonal-coefficient overhead is comparatively
   negligible). This
-  buffer **shares the existing `HPHI_TRACE_BUF_MAX_MB` cap**
-  (default 1024 MiB, integer range `[1, 1048576]`) with the phase 3b
-  Green-function result buffers — it is not a separate, additional
-  budget. As with the existing cap, it is parsed from the environment
+  buffer is bounded by the existing `HPHI_TRACE_BUF_MAX_MB` cap
+  (default 1024 MiB, integer range `[1, 1048576]`), the same cap the
+  phase 3b Green-function result buffers use. Note that the cap is a
+  **per-quantity threshold**: it is checked independently against
+  *each* quantity's buffer, not as a budget on the sum of the
+  concurrently-live trace buffers — the one-body result buffer, the
+  two-body result buffer, and the energy CSR can each be as large as
+  the cap, so their live total can exceed it. As with the existing
+  cap, it is parsed from the environment
   on rank 0 only (for `ExpecMode 2` runs) and broadcast to every rank,
   so it only needs to be set in the launch environment.
 
@@ -140,9 +150,10 @@ makes no speed promise beyond "expected to help."
   deprecated, or removed; no output file format changes. The only
   behavior change for existing runs is that energy-family evaluation on
   `ExpecMode 2` may now go through the new trace kernel instead of the
-  `ExpecMode 1` path whenever the model is not reading `InputHam` and
-  the CSR fits under `HPHI_TRACE_BUF_MAX_MB` — output values are
-  unaffected within tolerance.
+  `ExpecMode 1` path whenever the model is supported (see the whitelist
+  above), is not reading `InputHam`, and the CSR fits under
+  `HPHI_TRACE_BUF_MAX_MB` — output values are unaffected within
+  tolerance.
 
 ## Reviewer pointers
 
