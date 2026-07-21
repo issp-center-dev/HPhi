@@ -330,3 +330,9 @@ Guidelines
   available with distributed ``Solver 1`` runs.
 * For observables, use ``ExpecMode 2`` for the supported models and
   ``ExpecMode 1`` otherwise (the results agree with ``ExpecMode 0``).
+  When scaling up the process count for the :math:`O(N^2/P)` memory win,
+  note that ``ExpecMode 2``'s energy CSR Hamiltonian is replicated per
+  rank and does not shrink with :math:`P` (see the replication note
+  above); it is small for ordinary lattice models but sets a per-rank
+  memory floor that matters at large :math:`P` or for operator-dense
+  inputs.
