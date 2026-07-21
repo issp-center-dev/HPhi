@@ -132,23 +132,22 @@ Step 2: Create Implementation</h2>
 <p>Create CalcByMyNew.c and CalcByMyNew.h: </p><div class="fragment"><div class="line"><span class="comment">// CalcByMyNew.h</span></div>
 <div class="line"><span class="preprocessor">#pragma once</span></div>
 <div class="line"><span class="preprocessor">#include &quot;<a class="code" href="Common_8h.html">Common.h</a>&quot;</span></div>
-<div class="line"><span class="keywordtype">int</span> <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">CalcByMyNew</a>(<span class="keyword">struct</span> <a class="code hl_struct" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>);</div>
+<div class="line"><span class="keywordtype">int</span> CalcByMyNew(<span class="keyword">struct</span> <a class="code hl_struct" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// CalcByMyNew.c</span></div>
 <div class="line"><span class="preprocessor">#include &quot;CalcByMyNew.h&quot;</span></div>
-<div class="line"><span class="keywordtype">int</span> <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">CalcByMyNew</a>(<span class="keyword">struct</span> <a class="code hl_struct" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) {</div>
+<div class="line"><span class="keywordtype">int</span> CalcByMyNew(<span class="keyword">struct</span> <a class="code hl_struct" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) {</div>
 <div class="line">  <span class="comment">// Implementation</span></div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code hl_define" href="global_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>;</div>
 <div class="line">}</div>
 <div class="ttc" id="aCommon_8h_html"><div class="ttname"><a href="Common_8h.html">Common.h</a></div></div>
-<div class="ttc" id="aglobal_8c_html_aa8a2431e50f9fc7d8c78af300d5f3bee"><div class="ttname"><a href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a></div><div class="ttdeci">int myrank</div><div class="ttdoc">Process ID, defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00190">global.c:190</a></div></div>
 <div class="ttc" id="aglobal_8h_html_aa8cecfc5c5c054d2875c03e77b7be15d"><div class="ttname"><a href="global_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a></div><div class="ttdeci">#define TRUE</div><div class="ttdef"><b>Definition</b> <a href="global_8h_source.html#l00026">global.h:26</a></div></div>
 <div class="ttc" id="astructEDMainCalStruct_html"><div class="ttname"><a href="structEDMainCalStruct.html">EDMainCalStruct</a></div><div class="ttdoc">Bind.</div><div class="ttdef"><b>Definition</b> <a href="struct_8h_source.html#l00521">struct.h:521</a></div></div>
 <div class="ttc" id="astruct_8h_html_a2e5276e30c3a9c9155e407ab3e645567"><div class="ttname"><a href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a></div><div class="ttdeci">struct EDMainCalStruct X</div><div class="ttdef"><b>Definition</b> <a href="struct_8c_source.html#l00020">struct.c:20</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="subsec_calcmod_step3"></a>
 Step 3: Add to Main Switch</h2>
-<p>In <a class="el" href="HPhiMain_8c.html">HPhiMain.c</a>, add case to switch statement: </p><div class="fragment"><div class="line"><span class="keywordflow">case</span> <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">MyNewCalc</a>:</div>
-<div class="line">  <span class="keywordflow">if</span> (<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">CalcByMyNew</a>(&amp;<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != <a class="code hl_define" href="global_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>) {</div>
+<p>In <a class="el" href="HPhiMain_8c.html">HPhiMain.c</a>, add case to switch statement: </p><div class="fragment"><div class="line"><span class="keywordflow">case</span> MyNewCalc:</div>
+<div class="line">  <span class="keywordflow">if</span> (CalcByMyNew(&amp;<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) != <a class="code hl_define" href="global_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>) {</div>
 <div class="line">    <a class="code hl_function" href="wrapperMPI_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed">exitMPI</a>(-3);</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">break</span>;</div>
@@ -177,13 +176,13 @@ Step 4: Register in CMake</h2>
 <div class="line"><a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;iReStart=0;</div>
 <div class="line"><a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;iFlgMPI=0;</div>
 </div><!-- fragment --></li>
-<li>Each line is read by <code>fgetsMPI</code> function. <code>GetKWWithIdx</code> function reads ctmp = keyword, itmp=index. <div class="fragment"><div class="line"><span class="keywordflow">while</span>( <a class="code hl_function" href="wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a">fgetsMPI</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ctmpLine</a>, <a class="code hl_define" href="readdef_8h.html#a350c83960389aaeabea24681e2cb5f4c">D_CharTmpReadDef</a>+<a class="code hl_define" href="readdef_8h.html#a1aa2f55991724ddadfc250831a79c17f">D_CharKWDMAX</a>, <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fp</a>)!=<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">NULL</a> ){</div>
-<div class="line"> <span class="keywordflow">if</span>( (<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">iret</a>=<a class="code hl_function" href="readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79">GetKWWithIdx</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ctmpLine</a>, <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ctmp</a>, &amp;<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">itmp</a>)) !=0){</div>
-<div class="line">   <span class="keywordflow">if</span>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">iret</a>==1) <span class="keywordflow">continue</span>;</div>
+<li>Each line is read by <code>fgetsMPI</code> function. <code>GetKWWithIdx</code> function reads ctmp = keyword, itmp=index. <div class="fragment"><div class="line"><span class="keywordflow">while</span>( <a class="code hl_function" href="wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a">fgetsMPI</a>(ctmpLine, <a class="code hl_define" href="readdef_8h.html#a350c83960389aaeabea24681e2cb5f4c">D_CharTmpReadDef</a>+<a class="code hl_define" href="readdef_8h.html#a1aa2f55991724ddadfc250831a79c17f">D_CharKWDMAX</a>, fp)!=NULL ){</div>
+<div class="line"> <span class="keywordflow">if</span>( (iret=<a class="code hl_function" href="readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79">GetKWWithIdx</a>(ctmpLine, ctmp, &amp;itmp)) !=0){</div>
+<div class="line">   <span class="keywordflow">if</span>(iret==1) <span class="keywordflow">continue</span>;</div>
 <div class="line">   <span class="keywordflow">return</span>(-1);</div>
 <div class="line"> }   </div>
-<div class="line"> <span class="keywordflow">if</span>(<a class="code hl_function" href="readdef_8h.html#afad6a8fbb4fc6acbd22bd70e699eb21c">CheckWords</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ctmp</a>, <span class="stringliteral">&quot;CalcType&quot;</span>)==0){</div>
-<div class="line">   <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;iCalcType=<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">itmp</a>;</div>
+<div class="line"> <span class="keywordflow">if</span>(<a class="code hl_function" href="readdef_8h.html#afad6a8fbb4fc6acbd22bd70e699eb21c">CheckWords</a>(ctmp, <span class="stringliteral">&quot;CalcType&quot;</span>)==0){</div>
+<div class="line">   <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;iCalcType=itmp;</div>
 <div class="line"> }</div>
 <div class="line">...</div>
 <div class="line">}</div>
@@ -194,8 +193,8 @@ Step 4: Register in CMake</h2>
 <div class="ttc" id="awrapperMPI_8h_html_a9436224cf1cda3468767ab28d9359e9a"><div class="ttname"><a href="wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a">fgetsMPI</a></div><div class="ttdeci">char * fgetsMPI(char *InputString, int maxcount, FILE *fp)</div><div class="ttdoc">MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string.</div><div class="ttdef"><b>Definition</b> <a href="wrapperMPI_8c_source.html#l00157">wrapperMPI.c:157</a></div></div>
 </div><!-- fragment --></li>
 <li><p class="startli">The line is divided into keyword and number by using <code>CheckWords</code> function.</p>
-<p class="startli">For example, when you add new key word "NTest", you can get the value as follows: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code hl_function" href="readdef_8h.html#afad6a8fbb4fc6acbd22bd70e699eb21c">CheckWords</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ctmp</a>, <span class="stringliteral">&quot;NTest&quot;</span>) == 0) {</div>
-<div class="line">        <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;NTest = (<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>) <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dtmp</a>;</div>
+<p class="startli">For example, when you add new key word "NTest", you can get the value as follows: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code hl_function" href="readdef_8h.html#afad6a8fbb4fc6acbd22bd70e699eb21c">CheckWords</a>(ctmp, <span class="stringliteral">&quot;NTest&quot;</span>) == 0) {</div>
+<div class="line">        <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;NTest = (int) dtmp;</div>
 <div class="line">      }</div>
 </div><!-- fragment --></li>
 </ol>

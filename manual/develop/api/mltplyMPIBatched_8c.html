@@ -139,76 +139,76 @@ $(document).ready(function(){initNavTree('mltplyMPIBatched_8c.html',''); initRes
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa79073d57a52953050379bd00da22984" id="r_aa79073d57a52953050379bd00da22984"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#aa79073d57a52953050379bd00da22984">MPIBatchingEnabled</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>)</td></tr>
+<tr class="memitem:aa79073d57a52953050379bd00da22984" id="r_aa79073d57a52953050379bd00da22984"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#aa79073d57a52953050379bd00da22984">MPIBatchingEnabled</a> (void)</td></tr>
 <tr class="memdesc:aa79073d57a52953050379bd00da22984"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns 1 if MPI communication batching is enabled, 0 if disabled (HPHI_MPI_NOBATCH=1). Parsed on rank 0 and broadcast in InitializeMPI; declared outside the <code>#ifdef MPI</code> guard so non-MPI builds can call it too.  <br /></td></tr>
 <tr class="separator:aa79073d57a52953050379bd00da22984"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40acca467492b81322d24cf3a737b5ab" id="r_a40acca467492b81322d24cf3a737b5ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a40acca467492b81322d24cf3a737b5ab">InitializeMPIBatchedTransfers_SpinlessFermionGC</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a40acca467492b81322d24cf3a737b5ab" id="r_a40acca467492b81322d24cf3a737b5ab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a40acca467492b81322d24cf3a737b5ab">InitializeMPIBatchedTransfers_SpinlessFermionGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a40acca467492b81322d24cf3a737b5ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched transfers for SpinlessFermionGC MPIsingle mode.  <br /></td></tr>
 <tr class="separator:a40acca467492b81322d24cf3a737b5ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a2a479d510e69d2dc7f50919fae02f1" id="r_a2a2a479d510e69d2dc7f50919fae02f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a2a2a479d510e69d2dc7f50919fae02f1">FinalizeMPIBatchedTransfers</a> (<a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a2a2a479d510e69d2dc7f50919fae02f1" id="r_a2a2a479d510e69d2dc7f50919fae02f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a2a2a479d510e69d2dc7f50919fae02f1">FinalizeMPIBatchedTransfers</a> (<a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a2a2a479d510e69d2dc7f50919fae02f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory allocated for batched transfers.  <br /></td></tr>
 <tr class="separator:a2a2a479d510e69d2dc7f50919fae02f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae75430e963f9c905755bb977dbc99e7e" id="r_ae75430e963f9c905755bb977dbc99e7e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ae75430e963f9c905755bb977dbc99e7e">X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:ae75430e963f9c905755bb977dbc99e7e" id="r_ae75430e963f9c905755bb977dbc99e7e"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ae75430e963f9c905755bb977dbc99e7e">X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:ae75430e963f9c905755bb977dbc99e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for SpinlessFermionGC MPIsingle mode.  <br /></td></tr>
 <tr class="separator:ae75430e963f9c905755bb977dbc99e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a729d4d12be5404b5148c84ba03123f71" id="r_a729d4d12be5404b5148c84ba03123f71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a729d4d12be5404b5148c84ba03123f71">InitializeMPIBatchedTransfers_SpinlessFermion</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a729d4d12be5404b5148c84ba03123f71" id="r_a729d4d12be5404b5148c84ba03123f71"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a729d4d12be5404b5148c84ba03123f71">InitializeMPIBatchedTransfers_SpinlessFermion</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a729d4d12be5404b5148c84ba03123f71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched transfers for SpinlessFermion (canonical) MPIsingle mode.  <br /></td></tr>
 <tr class="separator:a729d4d12be5404b5148c84ba03123f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1b66a8e0607685f5c2c014f6301e880" id="r_ac1b66a8e0607685f5c2c014f6301e880"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ac1b66a8e0607685f5c2c014f6301e880">X_child_general_hopp_Spinless_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:ac1b66a8e0607685f5c2c014f6301e880" id="r_ac1b66a8e0607685f5c2c014f6301e880"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ac1b66a8e0607685f5c2c014f6301e880">X_child_general_hopp_Spinless_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:ac1b66a8e0607685f5c2c014f6301e880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for SpinlessFermion (canonical) MPIsingle mode.  <br /></td></tr>
 <tr class="separator:ac1b66a8e0607685f5c2c014f6301e880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc5319c3b4567168bf45df6aaf35205f" id="r_afc5319c3b4567168bf45df6aaf35205f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#afc5319c3b4567168bf45df6aaf35205f">InitializeMPIBatchedTransfers_HubbardGC</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:afc5319c3b4567168bf45df6aaf35205f" id="r_afc5319c3b4567168bf45df6aaf35205f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#afc5319c3b4567168bf45df6aaf35205f">InitializeMPIBatchedTransfers_HubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *batched)</td></tr>
 <tr class="memdesc:afc5319c3b4567168bf45df6aaf35205f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched transfers for HubbardGC MPIsingle mode.  <br /></td></tr>
 <tr class="separator:afc5319c3b4567168bf45df6aaf35205f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d15a052749852d4fa9f9c6eb1ae6019" id="r_a7d15a052749852d4fa9f9c6eb1ae6019"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a7d15a052749852d4fa9f9c6eb1ae6019">X_child_GC_general_hopp_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a7d15a052749852d4fa9f9c6eb1ae6019" id="r_a7d15a052749852d4fa9f9c6eb1ae6019"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a7d15a052749852d4fa9f9c6eb1ae6019">X_child_GC_general_hopp_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a7d15a052749852d4fa9f9c6eb1ae6019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for HubbardGC MPIsingle mode.  <br /></td></tr>
 <tr class="separator:a7d15a052749852d4fa9f9c6eb1ae6019"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a043cd1269b584aee514cc7662c6b5726" id="r_a043cd1269b584aee514cc7662c6b5726"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a043cd1269b584aee514cc7662c6b5726">InitializeMPIBatchedTransfers_Hubbard</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a043cd1269b584aee514cc7662c6b5726" id="r_a043cd1269b584aee514cc7662c6b5726"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a043cd1269b584aee514cc7662c6b5726">InitializeMPIBatchedTransfers_Hubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a043cd1269b584aee514cc7662c6b5726"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched transfers for Hubbard (canonical) MPIsingle mode.  <br /></td></tr>
 <tr class="separator:a043cd1269b584aee514cc7662c6b5726"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a725a882a03efbcc2199738d5d79f045f" id="r_a725a882a03efbcc2199738d5d79f045f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a725a882a03efbcc2199738d5d79f045f">X_child_general_hopp_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a725a882a03efbcc2199738d5d79f045f" id="r_a725a882a03efbcc2199738d5d79f045f"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a725a882a03efbcc2199738d5d79f045f">X_child_general_hopp_MPIsingle_batched</a> (<a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a725a882a03efbcc2199738d5d79f045f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for Hubbard (canonical) MPIsingle mode.  <br /></td></tr>
 <tr class="separator:a725a882a03efbcc2199738d5d79f045f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e4695508a3d198eb77316ac71fb9888" id="r_a5e4695508a3d198eb77316ac71fb9888"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a5e4695508a3d198eb77316ac71fb9888">InitializeMPIBatchedDoubleTransfers_HubbardGC</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a5e4695508a3d198eb77316ac71fb9888" id="r_a5e4695508a3d198eb77316ac71fb9888"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a5e4695508a3d198eb77316ac71fb9888">InitializeMPIBatchedDoubleTransfers_HubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a5e4695508a3d198eb77316ac71fb9888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched MPIdouble transfers for HubbardGC.  <br /></td></tr>
 <tr class="separator:a5e4695508a3d198eb77316ac71fb9888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cc628effd5f8e3dbd527bf88103d2e0" id="r_a9cc628effd5f8e3dbd527bf88103d2e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a9cc628effd5f8e3dbd527bf88103d2e0">FinalizeMPIBatchedDoubleTransfers</a> (<a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a9cc628effd5f8e3dbd527bf88103d2e0" id="r_a9cc628effd5f8e3dbd527bf88103d2e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a9cc628effd5f8e3dbd527bf88103d2e0">FinalizeMPIBatchedDoubleTransfers</a> (<a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *batched)</td></tr>
 <tr class="memdesc:a9cc628effd5f8e3dbd527bf88103d2e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory allocated for batched MPIdouble transfers.  <br /></td></tr>
 <tr class="separator:a9cc628effd5f8e3dbd527bf88103d2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c6382fced1d9cccf45baadaeb832879" id="r_a0c6382fced1d9cccf45baadaeb832879"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a0c6382fced1d9cccf45baadaeb832879">X_child_GC_general_hopp_MPIdouble_batched</a> (<a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a0c6382fced1d9cccf45baadaeb832879" id="r_a0c6382fced1d9cccf45baadaeb832879"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a0c6382fced1d9cccf45baadaeb832879">X_child_GC_general_hopp_MPIdouble_batched</a> (<a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a0c6382fced1d9cccf45baadaeb832879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for HubbardGC MPIdouble mode.  <br /></td></tr>
 <tr class="separator:a0c6382fced1d9cccf45baadaeb832879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4875e93815be871ef21aaa3f74402284" id="r_a4875e93815be871ef21aaa3f74402284"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a4875e93815be871ef21aaa3f74402284">ComputeInterAllOrigin</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> org_isite1, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> org_ispin1, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">org_isite2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> org_ispin2, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">org_isite3</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">org_ispin3</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">org_isite4</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">org_ispin4</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *origin, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *is_hermite)</td></tr>
+<tr class="memitem:a4875e93815be871ef21aaa3f74402284" id="r_a4875e93815be871ef21aaa3f74402284"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a4875e93815be871ef21aaa3f74402284">ComputeInterAllOrigin</a> (int org_isite1, int org_ispin1, int org_isite2, int org_ispin2, int org_isite3, int org_ispin3, int org_isite4, int org_ispin4, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int *origin, int *is_hermite)</td></tr>
 <tr class="memdesc:a4875e93815be871ef21aaa3f74402284"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if InterAll term requires inter-process communication and compute the origin (communication partner)  <br /></td></tr>
 <tr class="separator:a4875e93815be871ef21aaa3f74402284"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05a6a1ebed541119bc9ae066214a75d3" id="r_a05a6a1ebed541119bc9ae066214a75d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a05a6a1ebed541119bc9ae066214a75d3">InitializeMPIBatchedInterAll_HubbardGC</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a05a6a1ebed541119bc9ae066214a75d3" id="r_a05a6a1ebed541119bc9ae066214a75d3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a05a6a1ebed541119bc9ae066214a75d3">InitializeMPIBatchedInterAll_HubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *batched)</td></tr>
 <tr class="memdesc:a05a6a1ebed541119bc9ae066214a75d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched InterAll for HubbardGC.  <br /></td></tr>
 <tr class="separator:a05a6a1ebed541119bc9ae066214a75d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22d51c7fd62201de633917bde74a7bc2" id="r_a22d51c7fd62201de633917bde74a7bc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a22d51c7fd62201de633917bde74a7bc2">FinalizeMPIBatchedInterAll</a> (<a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a22d51c7fd62201de633917bde74a7bc2" id="r_a22d51c7fd62201de633917bde74a7bc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a22d51c7fd62201de633917bde74a7bc2">FinalizeMPIBatchedInterAll</a> (<a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *batched)</td></tr>
 <tr class="memdesc:a22d51c7fd62201de633917bde74a7bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory allocated for batched InterAll.  <br /></td></tr>
 <tr class="separator:a22d51c7fd62201de633917bde74a7bc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18072cc9e7e5b5ccc2d0c83647f22966" id="r_a18072cc9e7e5b5ccc2d0c83647f22966"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a18072cc9e7e5b5ccc2d0c83647f22966">X_child_GC_InterAll_Hubbard_MPI_batched</a> (<a class="el" href="structMPIInterAllGroup.html">MPIInterAllGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a18072cc9e7e5b5ccc2d0c83647f22966" id="r_a18072cc9e7e5b5ccc2d0c83647f22966"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a18072cc9e7e5b5ccc2d0c83647f22966">X_child_GC_InterAll_Hubbard_MPI_batched</a> (<a class="el" href="structMPIInterAllGroup.html">MPIInterAllGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a18072cc9e7e5b5ccc2d0c83647f22966"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI InterAll for HubbardGC.  <br /></td></tr>
 <tr class="separator:a18072cc9e7e5b5ccc2d0c83647f22966"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa14de2090f9b31b82534a2b426cadb72" id="r_aa14de2090f9b31b82534a2b426cadb72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#aa14de2090f9b31b82534a2b426cadb72">InitializeMPIBatchedDoubleTransfers_Hubbard</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:aa14de2090f9b31b82534a2b426cadb72" id="r_aa14de2090f9b31b82534a2b426cadb72"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#aa14de2090f9b31b82534a2b426cadb72">InitializeMPIBatchedDoubleTransfers_Hubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *batched)</td></tr>
 <tr class="memdesc:aa14de2090f9b31b82534a2b426cadb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched MPIdouble transfers for Hubbard (canonical)  <br /></td></tr>
 <tr class="separator:aa14de2090f9b31b82534a2b426cadb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f720f67aa54f545f6cdeb7583f5b333" id="r_a1f720f67aa54f545f6cdeb7583f5b333"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a1f720f67aa54f545f6cdeb7583f5b333">X_child_general_hopp_MPIdouble_batched</a> (<a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a1f720f67aa54f545f6cdeb7583f5b333" id="r_a1f720f67aa54f545f6cdeb7583f5b333"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a1f720f67aa54f545f6cdeb7583f5b333">X_child_general_hopp_MPIdouble_batched</a> (<a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a1f720f67aa54f545f6cdeb7583f5b333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI hopping for Hubbard (canonical) MPIdouble mode.  <br /></td></tr>
 <tr class="separator:a1f720f67aa54f545f6cdeb7583f5b333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad06ecbb627cf0f321740e07b15d67377" id="r_ad06ecbb627cf0f321740e07b15d67377"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ad06ecbb627cf0f321740e07b15d67377">InitializeMPIBatchedExchange_SpinGC</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:ad06ecbb627cf0f321740e07b15d67377" id="r_ad06ecbb627cf0f321740e07b15d67377"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ad06ecbb627cf0f321740e07b15d67377">InitializeMPIBatchedExchange_SpinGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *batched)</td></tr>
 <tr class="memdesc:ad06ecbb627cf0f321740e07b15d67377"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched Exchange for SpinGC.  <br /></td></tr>
 <tr class="separator:ad06ecbb627cf0f321740e07b15d67377"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7e08263a22bfcda19dadaa0abdea9b1" id="r_ab7e08263a22bfcda19dadaa0abdea9b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ab7e08263a22bfcda19dadaa0abdea9b1">FinalizeMPIBatchedSpinExchange</a> (<a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:ab7e08263a22bfcda19dadaa0abdea9b1" id="r_ab7e08263a22bfcda19dadaa0abdea9b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#ab7e08263a22bfcda19dadaa0abdea9b1">FinalizeMPIBatchedSpinExchange</a> (<a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *batched)</td></tr>
 <tr class="memdesc:ab7e08263a22bfcda19dadaa0abdea9b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory allocated for batched Spin Exchange.  <br /></td></tr>
 <tr class="separator:ab7e08263a22bfcda19dadaa0abdea9b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a641423f7dc8a4c155b9d7872d3eb41b7" id="r_a641423f7dc8a4c155b9d7872d3eb41b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a641423f7dc8a4c155b9d7872d3eb41b7">X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched</a> (<a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a641423f7dc8a4c155b9d7872d3eb41b7" id="r_a641423f7dc8a4c155b9d7872d3eb41b7"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a641423f7dc8a4c155b9d7872d3eb41b7">X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched</a> (<a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a641423f7dc8a4c155b9d7872d3eb41b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI Exchange for SpinGC.  <br /></td></tr>
 <tr class="separator:a641423f7dc8a4c155b9d7872d3eb41b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee4050cdafbc9d1816a398e08e86bf7" id="r_a9ee4050cdafbc9d1816a398e08e86bf7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a9ee4050cdafbc9d1816a398e08e86bf7">InitializeMPIBatchedExchange_Spin</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">batched</a>)</td></tr>
+<tr class="memitem:a9ee4050cdafbc9d1816a398e08e86bf7" id="r_a9ee4050cdafbc9d1816a398e08e86bf7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a9ee4050cdafbc9d1816a398e08e86bf7">InitializeMPIBatchedExchange_Spin</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *batched)</td></tr>
 <tr class="memdesc:a9ee4050cdafbc9d1816a398e08e86bf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize batched Exchange for Spin (canonical)  <br /></td></tr>
 <tr class="separator:a9ee4050cdafbc9d1816a398e08e86bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40754dcbb1a9b1eac932fcc12c817e87" id="r_a40754dcbb1a9b1eac932fcc12c817e87"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a40754dcbb1a9b1eac932fcc12c817e87">X_child_general_int_spin_MPIsingle_batched</a> (<a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">group</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">tmp_v1</a>)</td></tr>
+<tr class="memitem:a40754dcbb1a9b1eac932fcc12c817e87" id="r_a40754dcbb1a9b1eac932fcc12c817e87"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIBatched_8c.html#a40754dcbb1a9b1eac932fcc12c817e87">X_child_general_int_spin_MPIsingle_batched</a> (<a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *group, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:a40754dcbb1a9b1eac932fcc12c817e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform batched MPI Exchange for Spin (canonical)  <br /></td></tr>
 <tr class="separator:a40754dcbb1a9b1eac932fcc12c817e87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -230,69 +230,69 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> ComputeInterAllOrigin </td>
+          <td class="memname">int ComputeInterAllOrigin </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_isite1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_ispin1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_isite2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_ispin2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_isite3</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_ispin3</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_isite4</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>org_ispin4</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">unsigned long int *&#160;</td>
           <td class="paramname"><em>origin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">int *&#160;</td>
           <td class="paramname"><em>is_hermite</em>&#160;</td>
         </tr>
         <tr>
@@ -322,7 +322,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> FinalizeMPIBatchedDoubleTransfers </td>
+          <td class="memname">void FinalizeMPIBatchedDoubleTransfers </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIBatchedDoubleTransfers.html">MPIBatchedDoubleTransfers</a> *&#160;</td>
           <td class="paramname"><em>batched</em></td><td>)</td>
@@ -352,7 +352,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> FinalizeMPIBatchedInterAll </td>
+          <td class="memname">void FinalizeMPIBatchedInterAll </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIBatchedInterAll.html">MPIBatchedInterAll</a> *&#160;</td>
           <td class="paramname"><em>batched</em></td><td>)</td>
@@ -382,7 +382,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> FinalizeMPIBatchedSpinExchange </td>
+          <td class="memname">void FinalizeMPIBatchedSpinExchange </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIBatchedSpinExchange.html">MPIBatchedSpinExchange</a> *&#160;</td>
           <td class="paramname"><em>batched</em></td><td>)</td>
@@ -412,7 +412,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> FinalizeMPIBatchedTransfers </td>
+          <td class="memname">void FinalizeMPIBatchedTransfers </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIBatchedTransfers.html">MPIBatchedTransfers</a> *&#160;</td>
           <td class="paramname"><em>batched</em></td><td>)</td>
@@ -442,9 +442,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedDoubleTransfers_Hubbard </td>
+          <td class="memname">int InitializeMPIBatchedDoubleTransfers_Hubbard </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -479,9 +479,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedDoubleTransfers_HubbardGC </td>
+          <td class="memname">int InitializeMPIBatchedDoubleTransfers_HubbardGC </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -523,9 +523,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedExchange_Spin </td>
+          <td class="memname">int InitializeMPIBatchedExchange_Spin </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -567,9 +567,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedExchange_SpinGC </td>
+          <td class="memname">int InitializeMPIBatchedExchange_SpinGC </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -604,9 +604,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedInterAll_HubbardGC </td>
+          <td class="memname">int InitializeMPIBatchedInterAll_HubbardGC </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -649,9 +649,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedTransfers_Hubbard </td>
+          <td class="memname">int InitializeMPIBatchedTransfers_Hubbard </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -694,9 +694,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedTransfers_HubbardGC </td>
+          <td class="memname">int InitializeMPIBatchedTransfers_HubbardGC </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -731,9 +731,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedTransfers_SpinlessFermion </td>
+          <td class="memname">int InitializeMPIBatchedTransfers_SpinlessFermion </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -768,9 +768,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> InitializeMPIBatchedTransfers_SpinlessFermionGC </td>
+          <td class="memname">int InitializeMPIBatchedTransfers_SpinlessFermionGC </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
@@ -817,9 +817,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> MPIBatchingEnabled </td>
+          <td class="memname">int MPIBatchingEnabled </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -843,7 +843,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -851,19 +851,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -901,7 +901,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_GC_general_hopp_MPIdouble_batched </td>
+          <td class="memname">double complex X_child_GC_general_hopp_MPIdouble_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -909,19 +909,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -936,10 +936,10 @@ Functions</h2></td></tr>
 <p>MPIdouble: Both hopping sites are inter-process, so destination index equals source index (j -&gt; j). This means each thread owns unique tmp_v0[j].</p>
 <p>Parallel safety:</p><ul>
 <li>tmp_v0[j] += dmv: Each OMP thread owns distinct j, so no race.</li>
-<li>t-outer/j-inner chosen for efficiency: trans computed once per transfer (not <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(idim_max_buf)</a> times as in loop fusion).</li>
+<li>t-outer/j-inner chosen for efficiency: trans computed once per transfer (not O(idim_max_buf) times as in loop fusion).</li>
 </ul>
 <p>Threshold note:</p><ul>
-<li><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">cabs(trans)</a> &lt; 1e-15: Skip numerically negligible amplitudes to avoid accumulating floating-point noise.</li>
+<li>cabs(trans) &lt; 1e-15: Skip numerically negligible amplitudes to avoid accumulating floating-point noise.</li>
 </ul>
 <dl class="section return"><dt>Returns</dt><dd>dam_pr = sum of &lt;tmp_v1|H|tmp_v1&gt; contributions </dd></dl>
 
@@ -958,7 +958,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_GC_general_hopp_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_GC_general_hopp_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -966,19 +966,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1016,7 +1016,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1024,19 +1024,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1085,7 +1085,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_GC_InterAll_Hubbard_MPI_batched </td>
+          <td class="memname">double complex X_child_GC_InterAll_Hubbard_MPI_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIInterAllGroup.html">MPIInterAllGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1093,19 +1093,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1144,7 +1144,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_general_hopp_MPIdouble_batched </td>
+          <td class="memname">double complex X_child_general_hopp_MPIdouble_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPIDoubleTransferGroup.html">MPIDoubleTransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1152,19 +1152,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1193,7 +1193,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_general_hopp_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_general_hopp_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1201,19 +1201,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1252,7 +1252,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_general_hopp_Spinless_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_general_hopp_Spinless_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPITransferGroup.html">MPITransferGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1260,19 +1260,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>
@@ -1320,7 +1320,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> X_child_general_int_spin_MPIsingle_batched </td>
+          <td class="memname">double complex X_child_general_int_spin_MPIsingle_batched </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structMPISpinExchangeGroup.html">MPISpinExchangeGroup</a> *&#160;</td>
           <td class="paramname"><em>group</em>, </td>
@@ -1328,19 +1328,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v1</em>&#160;</td>
         </tr>
         <tr>

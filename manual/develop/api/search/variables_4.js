@@ -11,12 +11,14 @@ var searchData=
   ['enabled_8',['enabled',['../structSymmetryBasisRuntime.html#aa2541bc58e9d987fd411b6d89f413424',1,'SymmetryBasisRuntime']]],
   ['end_9',['end',['../structFillEntriesContext.html#a52baaba60eb10648204f8c6fac562461',1,'FillEntriesContext']]],
   ['energy_10',['energy',['../structPhysList.html#a0ead805fab300ad3b7423dddd8c5cd4a',1,'PhysList']]],
-  ['eps_11',['eps',['../global_8c.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c'],['../global_8h.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c']]],
-  ['eps_5fcg_12',['eps_cg',['../global_8c.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c'],['../global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c']]],
-  ['eps_5fcheckimag0_13',['eps_checkimag0',['../global_8c.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c'],['../global_8h.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c']]],
-  ['eps_5fenergy_14',['eps_energy',['../global_8h.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c'],['../global_8c.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c']]],
-  ['eps_5flanczos_15',['eps_lanczos',['../global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c'],['../global_8c.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c']]],
-  ['exchangecoupling_16',['ExchangeCoupling',['../structDefineList.html#aca15af1bddc7adf084cf01542a25f4c2',1,'DefineList']]],
-  ['expandcoef_17',['ExpandCoef',['../structParamList.html#a73f4e7970e37930eac2d3c3d6aeeec34',1,'ParamList']]],
-  ['expecinterval_18',['ExpecInterval',['../structParamList.html#a2bcaf7f7110c9af48376a05cf1cf8418',1,'ParamList']]]
+  ['entries_11',['entries',['../structSymmetryBasisCollector.html#af7f676e3965dc3f0828ee195975e94e6',1,'SymmetryBasisCollector']]],
+  ['eps_12',['eps',['../global_8c.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c'],['../global_8h.html#a974b448c3d0a13d483d36ef15de369b5',1,'eps:&#160;global.c']]],
+  ['eps_5fcg_13',['eps_cg',['../global_8c.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c'],['../global_8h.html#a4f6dc7c8450fc4a5f1b7a799a604a894',1,'eps_CG:&#160;global.c']]],
+  ['eps_5fcheckimag0_14',['eps_checkimag0',['../global_8c.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c'],['../global_8h.html#ac861276a05c60f7ba96934662ea6f7cc',1,'eps_CheckImag0:&#160;global.c']]],
+  ['eps_5fenergy_15',['eps_energy',['../global_8h.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c'],['../global_8c.html#ad27f75f04d9472efb5179035fc2e589a',1,'eps_Energy:&#160;global.c']]],
+  ['eps_5flanczos_16',['eps_lanczos',['../global_8h.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c'],['../global_8c.html#add085ab4d786d6d1081e4cd0ab5098c3',1,'eps_Lanczos:&#160;global.c']]],
+  ['error_17',['error',['../structSymmetryBasisCollector.html#aedb782dda22bb42cec191d68b6c25243',1,'SymmetryBasisCollector']]],
+  ['exchangecoupling_18',['ExchangeCoupling',['../structDefineList.html#aca15af1bddc7adf084cf01542a25f4c2',1,'DefineList']]],
+  ['expandcoef_19',['ExpandCoef',['../structParamList.html#a73f4e7970e37930eac2d3c3d6aeeec34',1,'ParamList']]],
+  ['expecinterval_20',['ExpecInterval',['../structParamList.html#a2bcaf7f7110c9af48376a05cf1cf8418',1,'ParamList']]]
 ];

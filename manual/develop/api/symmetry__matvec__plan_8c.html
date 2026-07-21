@@ -128,6 +128,7 @@ $(document).ready(function(){initNavTree('symmetry__matvec__plan_8c.html',''); i
 <code>#include &quot;<a class="el" href="bitcalc_8h_source.html">bitcalc.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="global_8h_source.html">global.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="struct_8h_source.html">struct.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="CalcTime_8h_source.html">CalcTime.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__matvec__plan_8h_source.html">symmetry_matvec_plan.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
@@ -143,31 +144,31 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aede73e856cd5e27e8f1f590f8a088201" id="r_aede73e856cd5e27e8f1f590f8a088201"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aede73e856cd5e27e8f1f590f8a088201">apply_exchange_halfspin</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>)</td></tr>
+<tr class="memitem:aede73e856cd5e27e8f1f590f8a088201" id="r_aede73e856cd5e27e8f1f590f8a088201"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aede73e856cd5e27e8f1f590f8a088201">apply_exchange_halfspin</a> (unsigned long int state, int site0, int site1, unsigned long int *out_state)</td></tr>
 <tr class="separator:aede73e856cd5e27e8f1f590f8a088201"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f94f905180a00c62f271d3ace43d351" id="r_a3f94f905180a00c62f271d3ace43d351"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a3f94f905180a00c62f271d3ace43d351">mask_between_sites</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site0</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>)</td></tr>
+<tr class="memitem:a3f94f905180a00c62f271d3ace43d351" id="r_a3f94f905180a00c62f271d3ace43d351"><td class="memItemLeft" align="right" valign="top">static unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a3f94f905180a00c62f271d3ace43d351">mask_between_sites</a> (unsigned int site0, unsigned int site1)</td></tr>
 <tr class="separator:a3f94f905180a00c62f271d3ace43d351"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a454cc0bdddc7b0d2c7a09f63256e2ef1" id="r_a454cc0bdddc7b0d2c7a09f63256e2ef1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a454cc0bdddc7b0d2c7a09f63256e2ef1">apply_spinless_hopping_hermite</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">trans</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>)</td></tr>
+<tr class="memitem:a454cc0bdddc7b0d2c7a09f63256e2ef1" id="r_a454cc0bdddc7b0d2c7a09f63256e2ef1"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a454cc0bdddc7b0d2c7a09f63256e2ef1">apply_spinless_hopping_hermite</a> (unsigned long int state, unsigned int site1, unsigned int site2, double complex trans, unsigned long int *out_state, double complex *hval)</td></tr>
 <tr class="separator:a454cc0bdddc7b0d2c7a09f63256e2ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bf203cc47a6612576a23f96e7274724" id="r_a1bf203cc47a6612576a23f96e7274724"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a1bf203cc47a6612576a23f96e7274724">apply_hubbard_hopping_hermite</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> state, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">spin1</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">site2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">spin2</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">trans</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>)</td></tr>
+<tr class="memitem:a1bf203cc47a6612576a23f96e7274724" id="r_a1bf203cc47a6612576a23f96e7274724"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a1bf203cc47a6612576a23f96e7274724">apply_hubbard_hopping_hermite</a> (unsigned long int state, unsigned int site1, unsigned int spin1, unsigned int site2, unsigned int spin2, double complex trans, unsigned long int *out_state, double complex *hval)</td></tr>
 <tr class="separator:a1bf203cc47a6612576a23f96e7274724"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6009f95400b557bae3633c0ae097235" id="r_ae6009f95400b557bae3633c0ae097235"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#ae6009f95400b557bae3633c0ae097235">emit_canonicalized_transition</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">to_state</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">hval</a>, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">callback</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">context</a>)</td></tr>
+<tr class="memitem:ae6009f95400b557bae3633c0ae097235" id="r_ae6009f95400b557bae3633c0ae097235"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#ae6009f95400b557bae3633c0ae097235">emit_canonicalized_transition</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, unsigned long int to_state, double complex hval, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> callback, void *context)</td></tr>
 <tr class="separator:ae6009f95400b557bae3633c0ae097235"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa279c7799042513650d2b4147fe0b862" id="r_aa279c7799042513650d2b4147fe0b862"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aa279c7799042513650d2b4147fe0b862">SymmetryEnumerateColumn</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">callback</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">context</a>)</td></tr>
+<tr class="memitem:aa279c7799042513650d2b4147fe0b862" id="r_aa279c7799042513650d2b4147fe0b862"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aa279c7799042513650d2b4147fe0b862">SymmetryEnumerateColumn</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> callback, void *context)</td></tr>
 <tr class="separator:aa279c7799042513650d2b4147fe0b862"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89ab66bf7d5ef89a8fa4f02a5bc77c4f" id="r_a89ab66bf7d5ef89a8fa4f02a5bc77c4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a89ab66bf7d5ef89a8fa4f02a5bc77c4f">count_entry</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_index</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">coefficient</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">context</a>)</td></tr>
+<tr class="memitem:a89ab66bf7d5ef89a8fa4f02a5bc77c4f" id="r_a89ab66bf7d5ef89a8fa4f02a5bc77c4f"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a89ab66bf7d5ef89a8fa4f02a5bc77c4f">count_entry</a> (unsigned long int out_index, double complex coefficient, void *context)</td></tr>
 <tr class="separator:a89ab66bf7d5ef89a8fa4f02a5bc77c4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ae5be3e06e03c5f504cc12682675cd7" id="r_a8ae5be3e06e03c5f504cc12682675cd7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a8ae5be3e06e03c5f504cc12682675cd7">fill_transposed_entry</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">out_index</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">coefficient</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">context</a>)</td></tr>
+<tr class="memitem:a8ae5be3e06e03c5f504cc12682675cd7" id="r_a8ae5be3e06e03c5f504cc12682675cd7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a8ae5be3e06e03c5f504cc12682675cd7">fill_transposed_entry</a> (unsigned long int out_index, double complex coefficient, void *context)</td></tr>
 <tr class="separator:a8ae5be3e06e03c5f504cc12682675cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3d0aca2be36634c008f1f84f5a30df7" id="r_af3d0aca2be36634c008f1f84f5a30df7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#af3d0aca2be36634c008f1f84f5a30df7">parse_matvec_mode</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>)</td></tr>
+<tr class="memitem:af3d0aca2be36634c008f1f84f5a30df7" id="r_af3d0aca2be36634c008f1f84f5a30df7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#af3d0aca2be36634c008f1f84f5a30df7">parse_matvec_mode</a> (void)</td></tr>
 <tr class="separator:af3d0aca2be36634c008f1f84f5a30df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96ed1175dda74cb15e0ad863e371aa34" id="r_a96ed1175dda74cb15e0ad863e371aa34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a96ed1175dda74cb15e0ad863e371aa34">select_matvec_mode</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>)</td></tr>
+<tr class="memitem:a96ed1175dda74cb15e0ad863e371aa34" id="r_a96ed1175dda74cb15e0ad863e371aa34"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a96ed1175dda74cb15e0ad863e371aa34">select_matvec_mode</a> (void)</td></tr>
 <tr class="separator:a96ed1175dda74cb15e0ad863e371aa34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04adecbc444fa19c54b2b8a2df0c4da9" id="r_a04adecbc444fa19c54b2b8a2df0c4da9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a04adecbc444fa19c54b2b8a2df0c4da9">FreeSymmetryMatvecPlan</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a> *plan)</td></tr>
+<tr class="memitem:a04adecbc444fa19c54b2b8a2df0c4da9" id="r_a04adecbc444fa19c54b2b8a2df0c4da9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a04adecbc444fa19c54b2b8a2df0c4da9">FreeSymmetryMatvecPlan</a> (struct <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a> *plan)</td></tr>
 <tr class="separator:a04adecbc444fa19c54b2b8a2df0c4da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af10ffc811b9b64746de262a238f52715" id="r_af10ffc811b9b64746de262a238f52715"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#af10ffc811b9b64746de262a238f52715">BuildSymmetryMatvecPlan</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:af10ffc811b9b64746de262a238f52715" id="r_af10ffc811b9b64746de262a238f52715"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#af10ffc811b9b64746de262a238f52715">BuildSymmetryMatvecPlan</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="separator:af10ffc811b9b64746de262a238f52715"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87a0fc2196bed941578ad1478f35f58b" id="r_a87a0fc2196bed941578ad1478f35f58b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a87a0fc2196bed941578ad1478f35f58b">ApplySymmetryMatvecPlan</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *tmp_v0, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *full_v1, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">local_prdct</a>)</td></tr>
+<tr class="memitem:a87a0fc2196bed941578ad1478f35f58b" id="r_a87a0fc2196bed941578ad1478f35f58b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a87a0fc2196bed941578ad1478f35f58b">ApplySymmetryMatvecPlan</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, const double complex *full_v1, double complex *local_prdct)</td></tr>
 <tr class="separator:a87a0fc2196bed941578ad1478f35f58b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -181,27 +182,27 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_exchange_halfspin </td>
+          <td class="memname">static int apply_exchange_halfspin </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>site0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>site1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">unsigned long int *&#160;</td>
           <td class="paramname"><em>out_state</em>&#160;</td>
         </tr>
         <tr>
@@ -217,11 +218,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00011">11</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00012">12</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">SymmetryEnumerateColumn()</a>.</p>
 
 </div>
 </div>
@@ -235,51 +236,51 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_hubbard_hopping_hermite </td>
+          <td class="memname">static int apply_hubbard_hopping_hermite </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>spin1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>spin2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramtype">double complex&#160;</td>
           <td class="paramname"><em>trans</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">unsigned long int *&#160;</td>
           <td class="paramname"><em>out_state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>hval</em>&#160;</td>
         </tr>
         <tr>
@@ -295,11 +296,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00058">58</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00059">59</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00031">apply_spinless_hopping_hermite()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8c_source.html#l00190">myrank</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00032">apply_spinless_hopping_hermite()</a>, and <a class="el" href="global_8h_source.html#l00025">FALSE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">SymmetryEnumerateColumn()</a>.</p>
 
 </div>
 </div>
@@ -313,39 +314,39 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> apply_spinless_hopping_hermite </td>
+          <td class="memname">static int apply_spinless_hopping_hermite </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramtype">double complex&#160;</td>
           <td class="paramname"><em>trans</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">unsigned long int *&#160;</td>
           <td class="paramname"><em>out_state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>hval</em>&#160;</td>
         </tr>
         <tr>
@@ -361,11 +362,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00031">31</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00032">32</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00023">mask_between_sites()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00024">mask_between_sites()</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00058">apply_hubbard_hopping_hermite()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00059">apply_hubbard_hopping_hermite()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">SymmetryEnumerateColumn()</a>.</p>
 
 </div>
 </div>
@@ -376,27 +377,27 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> ApplySymmetryMatvecPlan </td>
+          <td class="memname">int ApplySymmetryMatvecPlan </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>tmp_v0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">const double complex *&#160;</td>
           <td class="paramname"><em>full_v1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a> *&#160;</td>
+          <td class="paramtype">double complex *&#160;</td>
           <td class="paramname"><em>local_prdct</em>&#160;</td>
         </tr>
         <tr>
@@ -407,9 +408,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00336">336</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00383">383</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00014">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00017">SymmetryMatvecPlan::row_ptr</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00014">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::row_ptr</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00020">SymmetryMatvecPlan::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>.</p>
 
@@ -422,18 +423,18 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> BuildSymmetryMatvecPlan </td>
+          <td class="memname">int BuildSymmetryMatvecPlan </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">239</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">240</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00172">CountEntriesContext::count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00175">count_entry()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00193">fill_transposed_entry()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00230">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00014">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00188">FillEntriesContext::plan</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00017">SymmetryMatvecPlan::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00223">select_matvec_mode()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00009">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00173">CountEntriesContext::count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00176">count_entry()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00191">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">fill_transposed_entry()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00231">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00014">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00190">FillEntriesContext::next</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00189">FillEntriesContext::plan</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00017">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00224">select_matvec_mode()</a>, <a class="el" href="time_8c_source.html#l00227">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00239">StopTimer()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00009">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">SymmetryEnumerateColumn()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00020">SymmetryMatvecPlan::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -449,21 +450,21 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> count_entry </td>
+          <td class="memname">static int count_entry </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>out_index</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramtype">double complex&#160;</td>
           <td class="paramname"><em>coefficient</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -479,11 +480,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00175">175</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00176">176</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00172">CountEntriesContext::count</a>, and <a class="el" href="global_8c_source.html#l00190">myrank</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00173">CountEntriesContext::count</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -497,27 +498,27 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> emit_canonicalized_transition </td>
+          <td class="memname">static int emit_canonicalized_transition </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>beta</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>to_state</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramtype">double complex&#160;</td>
           <td class="paramname"><em>hval</em>, </td>
         </tr>
         <tr>
@@ -529,7 +530,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -545,11 +546,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00082">82</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00083">83</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__basis_8c_source.html#l00499">SymmetryCanonicalizeState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::op_rep_to_state</a>, <a class="el" href="symmetry__basis_8c_source.html#l01001">SymmetryCanonicalizeState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">SymmetryEnumerateColumn()</a>.</p>
 
 </div>
 </div>
@@ -563,21 +564,21 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> fill_transposed_entry </td>
+          <td class="memname">static int fill_transposed_entry </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>out_index</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">complex</a>&#160;</td>
+          <td class="paramtype">double complex&#160;</td>
           <td class="paramname"><em>coefficient</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -593,11 +594,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00193">193</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">194</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::col_index</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00188">FillEntriesContext::plan</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00191">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00190">FillEntriesContext::next</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00189">FillEntriesContext::plan</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00020">SymmetryMatvecPlan::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -608,20 +609,20 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> FreeSymmetryMatvecPlan </td>
+          <td class="memname">void FreeSymmetryMatvecPlan </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a> *&#160;</td>
           <td class="paramname"><em>plan</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00230">230</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00231">231</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::col_index</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00188">FillEntriesContext::plan</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00017">SymmetryMatvecPlan::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::values</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00189">FillEntriesContext::plan</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00018">SymmetryMatvecPlan::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00020">SymmetryMatvecPlan::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00535">ActivateSymmetryBasisDimension()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00609">FreeSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l01073">ActivateSymmetryBasisDimension()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l01147">FreeSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -635,15 +636,15 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> mask_between_sites </td>
+          <td class="memname">static unsigned long int mask_between_sites </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site0</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>site1</em>&#160;</td>
         </tr>
         <tr>
@@ -659,11 +660,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00023">23</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00024">24</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00031">apply_spinless_hopping_hermite()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00032">apply_spinless_hopping_hermite()</a>.</p>
 
 </div>
 </div>
@@ -677,9 +676,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> parse_matvec_mode </td>
+          <td class="memname">static int parse_matvec_mode </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -691,11 +690,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00208">208</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00209">209</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00009">SYMMETRY_MATVEC_MODE_LEGACY</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00008">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00009">SYMMETRY_MATVEC_MODE_LEGACY</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00008">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00223">select_matvec_mode()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00224">select_matvec_mode()</a>.</p>
 
 </div>
 </div>
@@ -709,9 +708,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> select_matvec_mode </td>
+          <td class="memname">static int select_matvec_mode </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -723,11 +722,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00223">223</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00224">224</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00307">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00208">parse_matvec_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00008">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00307">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00209">parse_matvec_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00008">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -738,15 +737,15 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> SymmetryEnumerateColumn </td>
+          <td class="memname">int SymmetryEnumerateColumn </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">unsigned</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">long</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">unsigned long int&#160;</td>
           <td class="paramname"><em>beta</em>, </td>
         </tr>
         <tr>
@@ -758,7 +757,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -769,11 +768,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00101">101</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00102">102</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00011">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00058">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00031">apply_spinless_hopping_hermite()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00082">emit_canonicalized_transition()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00012">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00059">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00032">apply_spinless_hopping_hermite()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00083">emit_canonicalized_transition()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::op_rep_to_state</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>

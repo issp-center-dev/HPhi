@@ -128,13 +128,12 @@ Timer Usage</h1>
 Basic Usage</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="CalcTime_8h.html">CalcTime.h</a>&quot;</span></div>
 <div class="line"> </div>
-<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">MyTimerID</a>);</div>
+<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(MyTimerID);</div>
 <div class="line"><span class="comment">// ... code to measure ...</span></div>
-<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">MyTimerID</a>);</div>
+<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(MyTimerID);</div>
 <div class="ttc" id="aCalcTime_8h_html"><div class="ttname"><a href="CalcTime_8h.html">CalcTime.h</a></div></div>
-<div class="ttc" id="aCalcTime_8h_html_a2581cae87041a26e35cc11d2b36433ea"><div class="ttname"><a href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a></div><div class="ttdeci">void StartTimer(int n)</div><div class="ttdoc">function for initializing elapse time [start]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00071">time.c:71</a></div></div>
-<div class="ttc" id="aCalcTime_8h_html_a7a401c1e932bb7ff998602ee237fbecd"><div class="ttname"><a href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a></div><div class="ttdeci">void StopTimer(int n)</div><div class="ttdoc">function for calculating elapse time [elapse time=StartTimer-StopTimer]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00083">time.c:83</a></div></div>
-<div class="ttc" id="aglobal_8c_html_aa8a2431e50f9fc7d8c78af300d5f3bee"><div class="ttname"><a href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a></div><div class="ttdeci">int myrank</div><div class="ttdoc">Process ID, defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00190">global.c:190</a></div></div>
+<div class="ttc" id="aCalcTime_8h_html_a2581cae87041a26e35cc11d2b36433ea"><div class="ttname"><a href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a></div><div class="ttdeci">void StartTimer(int n)</div><div class="ttdoc">function for initializing elapse time [start]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00227">time.c:227</a></div></div>
+<div class="ttc" id="aCalcTime_8h_html_a7a401c1e932bb7ff998602ee237fbecd"><div class="ttname"><a href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a></div><div class="ttdeci">void StopTimer(int n)</div><div class="ttdoc">function for calculating elapse time [elapse time=StartTimer-StopTimer]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00239">time.c:239</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="subsec_time_ids"></a>
 Timer ID Convention</h2>
 <p>Timer IDs are hierarchical (3-digit numbers):</p><ul>
@@ -157,17 +156,17 @@ Timer ID Convention</h2>
 Adding New Timer</h2>
 <p>Choose an unused ID following the hierarchy: </p><div class="fragment"><div class="line"><span class="preprocessor">#define TimerMyNew 350  </span><span class="comment">// Under 300 category</span></div>
 <div class="line"> </div>
-<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">TimerMyNew</a>);</div>
+<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(TimerMyNew);</div>
 <div class="line"><span class="comment">// ... new code ...</span></div>
-<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">TimerMyNew</a>);</div>
+<div class="line"><a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(TimerMyNew);</div>
 </div><!-- fragment --><h1><a class="anchor" id="sec_time_output"></a>
 Timer Output</h1>
 <p>Timer results are written by <a class="el" href="time_8c.html#a60afd43e6c53eb214d9b9111a6522365" title="function for outputting elapse time for each function">OutputTimer()</a>:</p><ul>
 <li>File: <code>output/Time_*</code>.dat</li>
 <li><p class="startli">Format: Timer ID, elapsed time, description</p>
 <p class="startli">Using StartTimer and StopTimer functions defined in <a class="el" href="time_8c.html">time.c</a>, we can measure the elapsed time for computation.</p><ol type="1">
-<li>Define an index and an output message by using StampTime function in <a class="el" href="time_8c.html">time.c</a>. For example, the index and the output message for the elapsed time of TPQ calculation is defined as follows. <div class="fragment"><div class="line"><a class="code hl_function" href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a>(<a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fp</a>, <span class="stringliteral">&quot;  CalcByTPQ&quot;</span>, 3000);</div>
-<div class="ttc" id="atime_8c_html_aa4d90d1494ace4e791c9b0c3653333d2"><div class="ttname"><a href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a></div><div class="ttdeci">void StampTime(FILE *fp, char *str, int num)</div><div class="ttdoc">function for displaying elapse time</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00039">time.c:39</a></div></div>
+<li>Define an index and an output message by using StampTime function in <a class="el" href="time_8c.html">time.c</a>. For example, the index and the output message for the elapsed time of TPQ calculation is defined as follows. <div class="fragment"><div class="line"><a class="code hl_function" href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a>(fp, <span class="stringliteral">&quot;  CalcByTPQ&quot;</span>, 3000);</div>
+<div class="ttc" id="atime_8c_html_aa4d90d1494ace4e791c9b0c3653333d2"><div class="ttname"><a href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a></div><div class="ttdeci">void StampTime(FILE *fp, char *str, int num)</div><div class="ttdoc">function for displaying elapse time</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00195">time.c:195</a></div></div>
 </div><!-- fragment --></li>
 <li>Include <a class="el" href="CalcTime_8h.html">CalcTime.h</a> in the target source file.</li>
 <li>Set StartTimer and StopTimer functions in the region where you want to measure the time. It is noted that both functions must have the same index defined in <a class="el" href="time_8c.html">time.c</a>. For example, the elapsed time of TPQ calculation can be measured as follows. <div class="fragment"><div class="line"> <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#a8fd728eaf34853a90790f9eddd9022ef">TPQCalc</a>:</div>
@@ -194,7 +193,7 @@ Timer Output</h1>
 </li>
 </ul>
 <p>When above procedures were done, after calculation, you can see the elapsed time in CalcTimer.dat file as follows. The time unit is second.</p>
-<div class="fragment"><div class="line"><a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">All</a>                                                [0000]     37.94046</div>
+<div class="fragment"><div class="line">All                                                [0000]     37.94046</div>
 <div class="line"> <a class="code hl_function" href="sz_8h.html#ac329cb57c6b95deb1189bad49505e9ba">sz</a>                                               [1000]      0.00058</div>
 <div class="line"> <a class="code hl_function" href="diagonalcalc_8c.html#a2f45884ecdc978493e3a02d712cae9c1">diagonalcalc</a>                                     [2000]      0.00046</div>
 <div class="line"> <a class="code hl_function" href="CalcByTPQ_8c.html#ae03e6c3be031f570a98eaf087be6efd7">CalcByTPQ</a>                                        [3000]     37.93129</div>

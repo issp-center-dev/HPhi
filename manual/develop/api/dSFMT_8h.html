@@ -126,7 +126,7 @@ $(document).ready(function(){initNavTree('dSFMT_8h.html',''); initResizable(); }
 </div><!--header-->
 <div class="contents">
 
-<p>double precision SIMD oriented Fast Mersenne <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">Twister(dSFMT)</a> pseudorandom number generator based on IEEE 754 format.  
+<p>double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IEEE 754 format.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
@@ -143,124 +143,124 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:aeda2790c35e4e205219e3c0ef1a2dd0a" id="r_aeda2790c35e4e205219e3c0ef1a2dd0a"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a>&#160;&#160;&#160;19937</td></tr>
+<tr class="memitem:aeda2790c35e4e205219e3c0ef1a2dd0a" id="r_aeda2790c35e4e205219e3c0ef1a2dd0a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a>&#160;&#160;&#160;19937</td></tr>
 <tr class="separator:aeda2790c35e4e205219e3c0ef1a2dd0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b6595773bfd02df5481e6a459071a1c" id="r_a3b6595773bfd02df5481e6a459071a1c"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a>&#160;&#160;&#160;((<a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a> - 128) / 104 + 1)</td></tr>
+<tr class="memitem:a3b6595773bfd02df5481e6a459071a1c" id="r_a3b6595773bfd02df5481e6a459071a1c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a>&#160;&#160;&#160;((<a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a> - 128) / 104 + 1)</td></tr>
 <tr class="separator:a3b6595773bfd02df5481e6a459071a1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0bbbd372d361b7fe3ea3ec2013c9097" id="r_aa0bbbd372d361b7fe3ea3ec2013c9097"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa0bbbd372d361b7fe3ea3ec2013c9097">DSFMT_N32</a>&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 4)</td></tr>
+<tr class="memitem:aa0bbbd372d361b7fe3ea3ec2013c9097" id="r_aa0bbbd372d361b7fe3ea3ec2013c9097"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa0bbbd372d361b7fe3ea3ec2013c9097">DSFMT_N32</a>&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 4)</td></tr>
 <tr class="separator:aa0bbbd372d361b7fe3ea3ec2013c9097"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36560990b64532b75e95bf5b683599dc" id="r_a36560990b64532b75e95bf5b683599dc"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a36560990b64532b75e95bf5b683599dc">DSFMT_N64</a>&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 2)</td></tr>
+<tr class="memitem:a36560990b64532b75e95bf5b683599dc" id="r_a36560990b64532b75e95bf5b683599dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a36560990b64532b75e95bf5b683599dc">DSFMT_N64</a>&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 2)</td></tr>
 <tr class="separator:a36560990b64532b75e95bf5b683599dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00d24c7231be28dbaf71f5408f30e44c" id="r_a00d24c7231be28dbaf71f5408f30e44c"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a></td></tr>
+<tr class="memitem:a00d24c7231be28dbaf71f5408f30e44c" id="r_a00d24c7231be28dbaf71f5408f30e44c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a></td></tr>
 <tr class="separator:a00d24c7231be28dbaf71f5408f30e44c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac582131d7a7c8ee57e73180d1714f9d5" id="r_ac582131d7a7c8ee57e73180d1714f9d5"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ac582131d7a7c8ee57e73180d1714f9d5">PRIu64</a>&#160;&#160;&#160;&quot;llu&quot;</td></tr>
+<tr class="memitem:ac582131d7a7c8ee57e73180d1714f9d5" id="r_ac582131d7a7c8ee57e73180d1714f9d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ac582131d7a7c8ee57e73180d1714f9d5">PRIu64</a>&#160;&#160;&#160;&quot;llu&quot;</td></tr>
 <tr class="separator:ac582131d7a7c8ee57e73180d1714f9d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba38357387a474f439428dee1984fc5a" id="r_aba38357387a474f439428dee1984fc5a"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aba38357387a474f439428dee1984fc5a">PRIx64</a>&#160;&#160;&#160;&quot;llx&quot;</td></tr>
+<tr class="memitem:aba38357387a474f439428dee1984fc5a" id="r_aba38357387a474f439428dee1984fc5a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aba38357387a474f439428dee1984fc5a">PRIx64</a>&#160;&#160;&#160;&quot;llx&quot;</td></tr>
 <tr class="separator:aba38357387a474f439428dee1984fc5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a014ce50c36f4de34281551e4da3d5195" id="r_a014ce50c36f4de34281551e4da3d5195"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a014ce50c36f4de34281551e4da3d5195">UINT64_C</a>(<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">v</a>)&#160;&#160;&#160;(<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">v</a> ## <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ULL</a>)</td></tr>
+<tr class="memitem:a014ce50c36f4de34281551e4da3d5195" id="r_a014ce50c36f4de34281551e4da3d5195"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a014ce50c36f4de34281551e4da3d5195">UINT64_C</a>(v)&#160;&#160;&#160;(v ## ULL)</td></tr>
 <tr class="separator:a014ce50c36f4de34281551e4da3d5195"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7490eb8287e4754e4e30153135f496e9" id="r_a7490eb8287e4754e4e30153135f496e9"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a>&#160;&#160;&#160;<a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a></td></tr>
+<tr class="memitem:a7490eb8287e4754e4e30153135f496e9" id="r_a7490eb8287e4754e4e30153135f496e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a>&#160;&#160;&#160;<a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a> static</td></tr>
 <tr class="separator:a7490eb8287e4754e4e30153135f496e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5842d43aa58fb6f026a8fdc02cb15455" id="r_a5842d43aa58fb6f026a8fdc02cb15455"><td class="memItemLeft" align="right" valign="top">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a5842d43aa58fb6f026a8fdc02cb15455" id="r_a5842d43aa58fb6f026a8fdc02cb15455"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a5842d43aa58fb6f026a8fdc02cb15455"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ab1ee414cba9ca0f33a3716e7a92c2b79" id="r_ab1ee414cba9ca0f33a3716e7a92c2b79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">typedef</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">union</a> <a class="el" href="unionW128__T.html">W128_T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab1ee414cba9ca0f33a3716e7a92c2b79">w128_t</a></td></tr>
+<tr class="memitem:ab1ee414cba9ca0f33a3716e7a92c2b79" id="r_ab1ee414cba9ca0f33a3716e7a92c2b79"><td class="memItemLeft" align="right" valign="top">typedef union <a class="el" href="unionW128__T.html">W128_T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab1ee414cba9ca0f33a3716e7a92c2b79">w128_t</a></td></tr>
 <tr class="separator:ab1ee414cba9ca0f33a3716e7a92c2b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e8239b4bedf4e53d5168d21848ab7af" id="r_a7e8239b4bedf4e53d5168d21848ab7af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">typedef</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structDSFMT__T.html">DSFMT_T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a></td></tr>
+<tr class="memitem:a7e8239b4bedf4e53d5168d21848ab7af" id="r_a7e8239b4bedf4e53d5168d21848ab7af"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structDSFMT__T.html">DSFMT_T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a></td></tr>
 <tr class="separator:a7e8239b4bedf4e53d5168d21848ab7af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afccb1e4d75cea7ffe3b45cba53d1e5e0" id="r_afccb1e4d75cea7ffe3b45cba53d1e5e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#afccb1e4d75cea7ffe3b45cba53d1e5e0">dsfmt_gen_rand_all</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>)</td></tr>
+<tr class="memitem:afccb1e4d75cea7ffe3b45cba53d1e5e0" id="r_afccb1e4d75cea7ffe3b45cba53d1e5e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#afccb1e4d75cea7ffe3b45cba53d1e5e0">dsfmt_gen_rand_all</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt)</td></tr>
 <tr class="separator:afccb1e4d75cea7ffe3b45cba53d1e5e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ad6f12b9a47ea89ceab693b1eec5079" id="r_a6ad6f12b9a47ea89ceab693b1eec5079"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6ad6f12b9a47ea89ceab693b1eec5079">dsfmt_fill_array_open_close</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>)</td></tr>
+<tr class="memitem:a6ad6f12b9a47ea89ceab693b1eec5079" id="r_a6ad6f12b9a47ea89ceab693b1eec5079"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6ad6f12b9a47ea89ceab693b1eec5079">dsfmt_fill_array_open_close</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, double array[], int size)</td></tr>
 <tr class="separator:a6ad6f12b9a47ea89ceab693b1eec5079"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a243fb9ed1b61233f3dba4ab15c541eb0" id="r_a243fb9ed1b61233f3dba4ab15c541eb0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a243fb9ed1b61233f3dba4ab15c541eb0">dsfmt_fill_array_close_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>)</td></tr>
+<tr class="memitem:a243fb9ed1b61233f3dba4ab15c541eb0" id="r_a243fb9ed1b61233f3dba4ab15c541eb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a243fb9ed1b61233f3dba4ab15c541eb0">dsfmt_fill_array_close_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, double array[], int size)</td></tr>
 <tr class="separator:a243fb9ed1b61233f3dba4ab15c541eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeed310e17f9f652c1b0ec86298c834c1" id="r_aeed310e17f9f652c1b0ec86298c834c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aeed310e17f9f652c1b0ec86298c834c1">dsfmt_fill_array_open_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>)</td></tr>
+<tr class="memitem:aeed310e17f9f652c1b0ec86298c834c1" id="r_aeed310e17f9f652c1b0ec86298c834c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aeed310e17f9f652c1b0ec86298c834c1">dsfmt_fill_array_open_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, double array[], int size)</td></tr>
 <tr class="separator:aeed310e17f9f652c1b0ec86298c834c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abeef257039f3b95b7475bbecdb521b89" id="r_abeef257039f3b95b7475bbecdb521b89"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#abeef257039f3b95b7475bbecdb521b89">dsfmt_fill_array_close1_open2</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>)</td></tr>
+<tr class="memitem:abeef257039f3b95b7475bbecdb521b89" id="r_abeef257039f3b95b7475bbecdb521b89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#abeef257039f3b95b7475bbecdb521b89">dsfmt_fill_array_close1_open2</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, double array[], int size)</td></tr>
 <tr class="separator:abeef257039f3b95b7475bbecdb521b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fa6a84095a280a4e1556415f3d4f259" id="r_a2fa6a84095a280a4e1556415f3d4f259"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a2fa6a84095a280a4e1556415f3d4f259">dsfmt_chk_init_gen_rand</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">seed</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">mexp</a>)</td></tr>
+<tr class="memitem:a2fa6a84095a280a4e1556415f3d4f259" id="r_a2fa6a84095a280a4e1556415f3d4f259"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a2fa6a84095a280a4e1556415f3d4f259">dsfmt_chk_init_gen_rand</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, uint32_t seed, int mexp)</td></tr>
 <tr class="separator:a2fa6a84095a280a4e1556415f3d4f259"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91cef405a85910d4e56b4a1d10fb89f1" id="r_a91cef405a85910d4e56b4a1d10fb89f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a91cef405a85910d4e56b4a1d10fb89f1">dsfmt_chk_init_by_array</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">init_key</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">key_length</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">mexp</a>)</td></tr>
+<tr class="memitem:a91cef405a85910d4e56b4a1d10fb89f1" id="r_a91cef405a85910d4e56b4a1d10fb89f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a91cef405a85910d4e56b4a1d10fb89f1">dsfmt_chk_init_by_array</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, uint32_t init_key[], int key_length, int mexp)</td></tr>
 <tr class="separator:a91cef405a85910d4e56b4a1d10fb89f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c8123e04c5f7185bd7c3944c0662498" id="r_a4c8123e04c5f7185bd7c3944c0662498"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a4c8123e04c5f7185bd7c3944c0662498">dsfmt_get_idstring</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>)</td></tr>
+<tr class="memitem:a4c8123e04c5f7185bd7c3944c0662498" id="r_a4c8123e04c5f7185bd7c3944c0662498"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a4c8123e04c5f7185bd7c3944c0662498">dsfmt_get_idstring</a> (void)</td></tr>
 <tr class="separator:a4c8123e04c5f7185bd7c3944c0662498"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af49cc1703b4cc1d0bffbd895917c303a" id="r_af49cc1703b4cc1d0bffbd895917c303a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af49cc1703b4cc1d0bffbd895917c303a">dsfmt_get_min_array_size</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>)</td></tr>
+<tr class="memitem:af49cc1703b4cc1d0bffbd895917c303a" id="r_af49cc1703b4cc1d0bffbd895917c303a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af49cc1703b4cc1d0bffbd895917c303a">dsfmt_get_min_array_size</a> (void)</td></tr>
 <tr class="separator:af49cc1703b4cc1d0bffbd895917c303a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1391665a8e5f9295a589aacb776e9de6" id="r_a1391665a8e5f9295a589aacb776e9de6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a1391665a8e5f9295a589aacb776e9de6">dsfmt_genrand_uint32</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a1391665a8e5f9295a589aacb776e9de6" id="r_a1391665a8e5f9295a589aacb776e9de6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a1391665a8e5f9295a589aacb776e9de6">dsfmt_genrand_uint32</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a1391665a8e5f9295a589aacb776e9de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a988f7f99c98960c22f19f68edb41f399" id="r_a988f7f99c98960c22f19f68edb41f399"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a988f7f99c98960c22f19f68edb41f399">dsfmt_genrand_close1_open2</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a988f7f99c98960c22f19f68edb41f399" id="r_a988f7f99c98960c22f19f68edb41f399"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a988f7f99c98960c22f19f68edb41f399">dsfmt_genrand_close1_open2</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a988f7f99c98960c22f19f68edb41f399"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d070f0dc97e95122038aed8be76f8dd" id="r_a1d070f0dc97e95122038aed8be76f8dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a1d070f0dc97e95122038aed8be76f8dd" id="r_a1d070f0dc97e95122038aed8be76f8dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a1d070f0dc97e95122038aed8be76f8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb8392cee5e6d63095024b7595d3555a" id="r_adb8392cee5e6d63095024b7595d3555a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#adb8392cee5e6d63095024b7595d3555a">dsfmt_genrand_open_close</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:adb8392cee5e6d63095024b7595d3555a" id="r_adb8392cee5e6d63095024b7595d3555a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#adb8392cee5e6d63095024b7595d3555a">dsfmt_genrand_open_close</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:adb8392cee5e6d63095024b7595d3555a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a3324227d2e65e8d8888eb675170ac" id="r_ad0a3324227d2e65e8d8888eb675170ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ad0a3324227d2e65e8d8888eb675170ac">dsfmt_genrand_open_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:ad0a3324227d2e65e8d8888eb675170ac" id="r_ad0a3324227d2e65e8d8888eb675170ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ad0a3324227d2e65e8d8888eb675170ac">dsfmt_genrand_open_open</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:ad0a3324227d2e65e8d8888eb675170ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a20bef41e73968d016f4cc9bdf3c3e3" id="r_a5a20bef41e73968d016f4cc9bdf3c3e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5a20bef41e73968d016f4cc9bdf3c3e3">dsfmt_gv_genrand_uint32</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a5a20bef41e73968d016f4cc9bdf3c3e3" id="r_a5a20bef41e73968d016f4cc9bdf3c3e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5a20bef41e73968d016f4cc9bdf3c3e3">dsfmt_gv_genrand_uint32</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a5a20bef41e73968d016f4cc9bdf3c3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab9284ee31e49e698240748e5c422e76" id="r_aab9284ee31e49e698240748e5c422e76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aab9284ee31e49e698240748e5c422e76">dsfmt_gv_genrand_close1_open2</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aab9284ee31e49e698240748e5c422e76" id="r_aab9284ee31e49e698240748e5c422e76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aab9284ee31e49e698240748e5c422e76">dsfmt_gv_genrand_close1_open2</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aab9284ee31e49e698240748e5c422e76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f2a1cb0b0b6f868708a00350affbbfa" id="r_a6f2a1cb0b0b6f868708a00350affbbfa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6f2a1cb0b0b6f868708a00350affbbfa">dsfmt_gv_genrand_close_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a6f2a1cb0b0b6f868708a00350affbbfa" id="r_a6f2a1cb0b0b6f868708a00350affbbfa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6f2a1cb0b0b6f868708a00350affbbfa">dsfmt_gv_genrand_close_open</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a6f2a1cb0b0b6f868708a00350affbbfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad429a1aead793e75fdff0e9616db4f3" id="r_aad429a1aead793e75fdff0e9616db4f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aad429a1aead793e75fdff0e9616db4f3">dsfmt_gv_genrand_open_close</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aad429a1aead793e75fdff0e9616db4f3" id="r_aad429a1aead793e75fdff0e9616db4f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aad429a1aead793e75fdff0e9616db4f3">dsfmt_gv_genrand_open_close</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aad429a1aead793e75fdff0e9616db4f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27b4a95b9fd7066d55d414f385237447" id="r_a27b4a95b9fd7066d55d414f385237447"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a27b4a95b9fd7066d55d414f385237447">dsfmt_gv_genrand_open_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a27b4a95b9fd7066d55d414f385237447" id="r_a27b4a95b9fd7066d55d414f385237447"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a27b4a95b9fd7066d55d414f385237447">dsfmt_gv_genrand_open_open</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a27b4a95b9fd7066d55d414f385237447"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66881a0b8e76641024d09bbae3d9be7e" id="r_a66881a0b8e76641024d09bbae3d9be7e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a66881a0b8e76641024d09bbae3d9be7e">dsfmt_gv_fill_array_open_close</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a66881a0b8e76641024d09bbae3d9be7e" id="r_a66881a0b8e76641024d09bbae3d9be7e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a66881a0b8e76641024d09bbae3d9be7e">dsfmt_gv_fill_array_open_close</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a66881a0b8e76641024d09bbae3d9be7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55ca4ccdc72ba0b34386df16a3dfd48f" id="r_a55ca4ccdc72ba0b34386df16a3dfd48f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a55ca4ccdc72ba0b34386df16a3dfd48f">dsfmt_gv_fill_array_close_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a55ca4ccdc72ba0b34386df16a3dfd48f" id="r_a55ca4ccdc72ba0b34386df16a3dfd48f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a55ca4ccdc72ba0b34386df16a3dfd48f">dsfmt_gv_fill_array_close_open</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a55ca4ccdc72ba0b34386df16a3dfd48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabefce2df25b67305dc71355e7a4ba28" id="r_aabefce2df25b67305dc71355e7a4ba28"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aabefce2df25b67305dc71355e7a4ba28">dsfmt_gv_fill_array_open_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aabefce2df25b67305dc71355e7a4ba28" id="r_aabefce2df25b67305dc71355e7a4ba28"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aabefce2df25b67305dc71355e7a4ba28">dsfmt_gv_fill_array_open_open</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aabefce2df25b67305dc71355e7a4ba28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dc013d6bb958f355ca211707498a6aa" id="r_a6dc013d6bb958f355ca211707498a6aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6dc013d6bb958f355ca211707498a6aa">dsfmt_gv_fill_array_close1_open2</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a6dc013d6bb958f355ca211707498a6aa" id="r_a6dc013d6bb958f355ca211707498a6aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a6dc013d6bb958f355ca211707498a6aa">dsfmt_gv_fill_array_close1_open2</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a6dc013d6bb958f355ca211707498a6aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b740379d0e954de5836560e4bc5dbfc" id="r_a7b740379d0e954de5836560e4bc5dbfc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7b740379d0e954de5836560e4bc5dbfc">dsfmt_gv_init_gen_rand</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">seed</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a7b740379d0e954de5836560e4bc5dbfc" id="r_a7b740379d0e954de5836560e4bc5dbfc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7b740379d0e954de5836560e4bc5dbfc">dsfmt_gv_init_gen_rand</a> (uint32_t seed) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a7b740379d0e954de5836560e4bc5dbfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed8c0aab532874c09c43144a5a054191" id="r_aed8c0aab532874c09c43144a5a054191"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aed8c0aab532874c09c43144a5a054191">dsfmt_gv_init_by_array</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">init_key</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">key_length</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aed8c0aab532874c09c43144a5a054191" id="r_aed8c0aab532874c09c43144a5a054191"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aed8c0aab532874c09c43144a5a054191">dsfmt_gv_init_by_array</a> (uint32_t init_key[], int key_length) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aed8c0aab532874c09c43144a5a054191"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa767efdc0f36a3cde4d61d3764a473de" id="r_aa767efdc0f36a3cde4d61d3764a473de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa767efdc0f36a3cde4d61d3764a473de">dsfmt_init_gen_rand</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">seed</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aa767efdc0f36a3cde4d61d3764a473de" id="r_aa767efdc0f36a3cde4d61d3764a473de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa767efdc0f36a3cde4d61d3764a473de">dsfmt_init_gen_rand</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, uint32_t seed) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aa767efdc0f36a3cde4d61d3764a473de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa54b7fee7995bb6fc4e6a0f436b84b43" id="r_aa54b7fee7995bb6fc4e6a0f436b84b43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa54b7fee7995bb6fc4e6a0f436b84b43">dsfmt_init_by_array</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">dsfmt</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">init_key</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">key_length</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aa54b7fee7995bb6fc4e6a0f436b84b43" id="r_aa54b7fee7995bb6fc4e6a0f436b84b43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aa54b7fee7995bb6fc4e6a0f436b84b43">dsfmt_init_by_array</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *dsfmt, uint32_t init_key[], int key_length) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aa54b7fee7995bb6fc4e6a0f436b84b43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8252a07409d644f4cfcaa4469ebd994" id="r_af8252a07409d644f4cfcaa4469ebd994"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af8252a07409d644f4cfcaa4469ebd994">get_idstring</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:af8252a07409d644f4cfcaa4469ebd994" id="r_af8252a07409d644f4cfcaa4469ebd994"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af8252a07409d644f4cfcaa4469ebd994">get_idstring</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:af8252a07409d644f4cfcaa4469ebd994"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a006127d9c8946a9e1ed89de92eb48e64" id="r_a006127d9c8946a9e1ed89de92eb48e64"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a006127d9c8946a9e1ed89de92eb48e64">get_min_array_size</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a006127d9c8946a9e1ed89de92eb48e64" id="r_a006127d9c8946a9e1ed89de92eb48e64"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a006127d9c8946a9e1ed89de92eb48e64">get_min_array_size</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a006127d9c8946a9e1ed89de92eb48e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dc496135101ef4140c7e790bf7474cd" id="r_a8dc496135101ef4140c7e790bf7474cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a8dc496135101ef4140c7e790bf7474cd">init_gen_rand</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">seed</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a8dc496135101ef4140c7e790bf7474cd" id="r_a8dc496135101ef4140c7e790bf7474cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a8dc496135101ef4140c7e790bf7474cd">init_gen_rand</a> (uint32_t seed) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a8dc496135101ef4140c7e790bf7474cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46947b547a4f7d7758a682298f7ec0ce" id="r_a46947b547a4f7d7758a682298f7ec0ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a46947b547a4f7d7758a682298f7ec0ce">init_by_array</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">init_key</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">key_length</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a46947b547a4f7d7758a682298f7ec0ce" id="r_a46947b547a4f7d7758a682298f7ec0ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a46947b547a4f7d7758a682298f7ec0ce">init_by_array</a> (uint32_t init_key[], int key_length) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a46947b547a4f7d7758a682298f7ec0ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5801a9157c59d0515f7a3c9328f37ec5" id="r_a5801a9157c59d0515f7a3c9328f37ec5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5801a9157c59d0515f7a3c9328f37ec5">genrand_close1_open2</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a5801a9157c59d0515f7a3c9328f37ec5" id="r_a5801a9157c59d0515f7a3c9328f37ec5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a5801a9157c59d0515f7a3c9328f37ec5">genrand_close1_open2</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a5801a9157c59d0515f7a3c9328f37ec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5e8f9060fd540a3bb1c5b7641284cad" id="r_ab5e8f9060fd540a3bb1c5b7641284cad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab5e8f9060fd540a3bb1c5b7641284cad">genrand_close_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:ab5e8f9060fd540a3bb1c5b7641284cad" id="r_ab5e8f9060fd540a3bb1c5b7641284cad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab5e8f9060fd540a3bb1c5b7641284cad">genrand_close_open</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:ab5e8f9060fd540a3bb1c5b7641284cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af35767b9543581ee9215c384d1620ef4" id="r_af35767b9543581ee9215c384d1620ef4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af35767b9543581ee9215c384d1620ef4">genrand_open_close</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:af35767b9543581ee9215c384d1620ef4" id="r_af35767b9543581ee9215c384d1620ef4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#af35767b9543581ee9215c384d1620ef4">genrand_open_close</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:af35767b9543581ee9215c384d1620ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ddba4b9c32e5e347acdd26bf679350e" id="r_a4ddba4b9c32e5e347acdd26bf679350e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a4ddba4b9c32e5e347acdd26bf679350e">genrand_open_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a4ddba4b9c32e5e347acdd26bf679350e" id="r_a4ddba4b9c32e5e347acdd26bf679350e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a4ddba4b9c32e5e347acdd26bf679350e">genrand_open_open</a> (void) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a4ddba4b9c32e5e347acdd26bf679350e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea84bcb5255b47c28e357a776375abf5" id="r_aea84bcb5255b47c28e357a776375abf5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aea84bcb5255b47c28e357a776375abf5">fill_array_open_close</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aea84bcb5255b47c28e357a776375abf5" id="r_aea84bcb5255b47c28e357a776375abf5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aea84bcb5255b47c28e357a776375abf5">fill_array_open_close</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aea84bcb5255b47c28e357a776375abf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adad2a0d2f6a99cabcfd2de855dd9bb7a" id="r_adad2a0d2f6a99cabcfd2de855dd9bb7a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#adad2a0d2f6a99cabcfd2de855dd9bb7a">fill_array_close_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:adad2a0d2f6a99cabcfd2de855dd9bb7a" id="r_adad2a0d2f6a99cabcfd2de855dd9bb7a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#adad2a0d2f6a99cabcfd2de855dd9bb7a">fill_array_close_open</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:adad2a0d2f6a99cabcfd2de855dd9bb7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee2e71992c8837b579dd471cb963030b" id="r_aee2e71992c8837b579dd471cb963030b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aee2e71992c8837b579dd471cb963030b">fill_array_open_open</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:aee2e71992c8837b579dd471cb963030b" id="r_aee2e71992c8837b579dd471cb963030b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#aee2e71992c8837b579dd471cb963030b">fill_array_open_open</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:aee2e71992c8837b579dd471cb963030b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f249c43d75cbe1200504d5dc6103cad" id="r_a7f249c43d75cbe1200504d5dc6103cad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7f249c43d75cbe1200504d5dc6103cad">fill_array_close1_open2</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">array</a>[], <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">size</a>) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
+<tr class="memitem:a7f249c43d75cbe1200504d5dc6103cad" id="r_a7f249c43d75cbe1200504d5dc6103cad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7490eb8287e4754e4e30153135f496e9">DSFMT_PRE_INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#a7f249c43d75cbe1200504d5dc6103cad">fill_array_close1_open2</a> (double array[], int size) <a class="el" href="dSFMT_8h.html#a5842d43aa58fb6f026a8fdc02cb15455">DSFMT_PST_INLINE</a></td></tr>
 <tr class="separator:a7f249c43d75cbe1200504d5dc6103cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:adfee3c4c3505ddcfc334251f94968737" id="r_adfee3c4c3505ddcfc334251f94968737"><td class="memItemLeft" align="right" valign="top"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#adfee3c4c3505ddcfc334251f94968737">dsfmt_global_data</a></td></tr>
 <tr class="separator:adfee3c4c3505ddcfc334251f94968737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5bb9876d117b3cdf8143c701a3f8cdf" id="r_ab5bb9876d117b3cdf8143c701a3f8cdf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab5bb9876d117b3cdf8143c701a3f8cdf">dsfmt_global_mexp</a></td></tr>
+<tr class="memitem:ab5bb9876d117b3cdf8143c701a3f8cdf" id="r_ab5bb9876d117b3cdf8143c701a3f8cdf"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dSFMT_8h.html#ab5bb9876d117b3cdf8143c701a3f8cdf">dsfmt_global_mexp</a></td></tr>
 <tr class="separator:ab5bb9876d117b3cdf8143c701a3f8cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>double precision SIMD oriented Fast Mersenne <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">Twister(dSFMT)</a> pseudorandom number generator based on IEEE 754 format. </p>
+<div class="textblock"><p>double precision SIMD oriented Fast Mersenne Twister(dSFMT) pseudorandom number generator based on IEEE 754 format. </p>
 <dl class="section author"><dt>Author</dt><dd>Mutsuo Saito (Hiroshima University) </dd>
 <dd>
 Makoto Matsumoto (Hiroshima University)</dd></dl>
@@ -281,7 +281,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_MEXP&#160;&#160;&#160;19937</td>
+          <td class="memname">#define DSFMT_MEXP&#160;&#160;&#160;19937</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -297,7 +297,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_N&#160;&#160;&#160;((<a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a> - 128) / 104 + 1)</td>
+          <td class="memname">#define DSFMT_N&#160;&#160;&#160;((<a class="el" href="dSFMT_8h.html#aeda2790c35e4e205219e3c0ef1a2dd0a">DSFMT_MEXP</a> - 128) / 104 + 1)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -314,7 +314,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_N32&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 4)</td>
+          <td class="memname">#define DSFMT_N32&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 4)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -331,7 +331,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_N64&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 2)</td>
+          <td class="memname">#define DSFMT_N64&#160;&#160;&#160;(<a class="el" href="dSFMT_8h.html#a3b6595773bfd02df5481e6a459071a1c">DSFMT_N</a> * 2)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -348,7 +348,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_PRE_INLINE&#160;&#160;&#160;<a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a></td>
+          <td class="memname">#define DSFMT_PRE_INLINE&#160;&#160;&#160;<a class="el" href="dSFMT_8h.html#a00d24c7231be28dbaf71f5408f30e44c">inline</a> static</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -364,7 +364,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> DSFMT_PST_INLINE</td>
+          <td class="memname">#define DSFMT_PST_INLINE</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -380,7 +380,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> inline</td>
+          <td class="memname">#define inline</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -396,7 +396,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> PRIu64&#160;&#160;&#160;&quot;llu&quot;</td>
+          <td class="memname">#define PRIu64&#160;&#160;&#160;&quot;llu&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -412,7 +412,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> PRIx64&#160;&#160;&#160;&quot;llx&quot;</td>
+          <td class="memname">#define PRIx64&#160;&#160;&#160;&quot;llx&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -428,11 +428,11 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">define</a> UINT64_C</td>
+          <td class="memname">#define UINT64_C</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">v</a></td><td>)</td>
-          <td>&#160;&#160;&#160;(<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">v</a> ## <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">ULL</a>)</td>
+          <td class="paramname">v</td><td>)</td>
+          <td>&#160;&#160;&#160;(v ## ULL)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -449,7 +449,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">typedef</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structDSFMT__T.html">DSFMT_T</a> <a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a></td>
+          <td class="memname">typedef struct <a class="el" href="structDSFMT__T.html">DSFMT_T</a> <a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -465,7 +465,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">typedef</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">union</a> <a class="el" href="unionW128__T.html">W128_T</a> <a class="el" href="dSFMT_8h.html#ab1ee414cba9ca0f33a3716e7a92c2b79">w128_t</a></td>
+          <td class="memname">typedef union <a class="el" href="unionW128__T.html">W128_T</a> <a class="el" href="dSFMT_8h.html#ab1ee414cba9ca0f33a3716e7a92c2b79">w128_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -483,7 +483,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_chk_init_by_array </td>
+          <td class="memname">void dsfmt_chk_init_by_array </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -491,19 +491,19 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>init_key</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>key_length</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>mexp</em>&#160;</td>
         </tr>
         <tr>
@@ -538,7 +538,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_chk_init_gen_rand </td>
+          <td class="memname">void dsfmt_chk_init_gen_rand </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -546,13 +546,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>seed</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>mexp</em>&#160;</td>
         </tr>
         <tr>
@@ -586,7 +586,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_fill_array_close1_open2 </td>
+          <td class="memname">void dsfmt_fill_array_close1_open2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -594,13 +594,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -637,7 +637,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_fill_array_close_open </td>
+          <td class="memname">void dsfmt_fill_array_close_open </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -645,13 +645,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -687,7 +687,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_fill_array_open_close </td>
+          <td class="memname">void dsfmt_fill_array_open_close </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -695,13 +695,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -737,7 +737,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_fill_array_open_open </td>
+          <td class="memname">void dsfmt_fill_array_open_open </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -745,13 +745,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -787,7 +787,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gen_rand_all </td>
+          <td class="memname">void dsfmt_gen_rand_all </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -820,7 +820,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_genrand_close1_open2 </td>
+          <td class="memname">static double dsfmt_genrand_close1_open2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -859,7 +859,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_genrand_close_open </td>
+          <td class="memname">static double dsfmt_genrand_close_open </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -898,7 +898,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_genrand_open_close </td>
+          <td class="memname">static double dsfmt_genrand_open_close </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -935,7 +935,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_genrand_open_open </td>
+          <td class="memname">static double dsfmt_genrand_open_open </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -974,7 +974,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> dsfmt_genrand_uint32 </td>
+          <td class="memname">static uint32_t dsfmt_genrand_uint32 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em></td><td>)</td>
@@ -1010,9 +1010,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> * dsfmt_get_idstring </td>
+          <td class="memname">const char * dsfmt_get_idstring </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1035,9 +1035,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> dsfmt_get_min_array_size </td>
+          <td class="memname">int dsfmt_get_min_array_size </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1063,15 +1063,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_fill_array_close1_open2 </td>
+          <td class="memname">static void dsfmt_gv_fill_array_close1_open2 </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1113,15 +1113,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_fill_array_close_open </td>
+          <td class="memname">static void dsfmt_gv_fill_array_close_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1165,15 +1165,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_fill_array_open_close </td>
+          <td class="memname">static void dsfmt_gv_fill_array_open_close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1195,7 +1195,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="dSFMT_8h.html#abeef257039f3b95b7475bbecdb521b89">dsfmt_fill_array_close1_open2()</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">and</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="dSFMT_8h.html#abeef257039f3b95b7475bbecdb521b89">dsfmt_fill_array_close1_open2()</a> and </dd>
 <dd>
 <a class="el" href="dSFMT_8h.html#a6dc013d6bb958f355ca211707498a6aa">dsfmt_gv_fill_array_close1_open2()</a> </dd></dl>
 
@@ -1217,15 +1217,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_fill_array_open_open </td>
+          <td class="memname">static void dsfmt_gv_fill_array_open_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1269,9 +1269,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_gv_genrand_close1_open2 </td>
+          <td class="memname">static double dsfmt_gv_genrand_close1_open2 </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1302,9 +1302,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_gv_genrand_close_open </td>
+          <td class="memname">static double dsfmt_gv_genrand_close_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1335,9 +1335,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_gv_genrand_open_close </td>
+          <td class="memname">static double dsfmt_gv_genrand_open_close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1368,9 +1368,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> dsfmt_gv_genrand_open_open </td>
+          <td class="memname">static double dsfmt_gv_genrand_open_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1401,9 +1401,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a> dsfmt_gv_genrand_uint32 </td>
+          <td class="memname">static uint32_t dsfmt_gv_genrand_uint32 </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1432,15 +1432,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_init_by_array </td>
+          <td class="memname">static void dsfmt_gv_init_by_array </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>init_key</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>key_length</em>&#160;</td>
         </tr>
         <tr>
@@ -1482,9 +1482,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_gv_init_gen_rand </td>
+          <td class="memname">static void dsfmt_gv_init_gen_rand </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>seed</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1521,7 +1521,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_init_by_array </td>
+          <td class="memname">static void dsfmt_init_by_array </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -1529,13 +1529,13 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>init_key</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>key_length</em>&#160;</td>
         </tr>
         <tr>
@@ -1577,7 +1577,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> dsfmt_init_gen_rand </td>
+          <td class="memname">static void dsfmt_init_gen_rand </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *&#160;</td>
           <td class="paramname"><em>dsfmt</em>, </td>
@@ -1585,7 +1585,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>seed</em>&#160;</td>
         </tr>
         <tr>
@@ -1626,15 +1626,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> fill_array_close1_open2 </td>
+          <td class="memname">static void fill_array_close1_open2 </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1676,15 +1676,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> fill_array_close_open </td>
+          <td class="memname">static void fill_array_close_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1728,15 +1728,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> fill_array_open_close </td>
+          <td class="memname">static void fill_array_open_close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1780,15 +1780,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> fill_array_open_open </td>
+          <td class="memname">static void fill_array_open_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a>&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>array</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -1832,9 +1832,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> genrand_close1_open2 </td>
+          <td class="memname">static double genrand_close1_open2 </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1866,9 +1866,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> genrand_close_open </td>
+          <td class="memname">static double genrand_close_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1900,9 +1900,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> genrand_open_close </td>
+          <td class="memname">static double genrand_open_close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1934,9 +1934,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">double</a> genrand_open_open </td>
+          <td class="memname">static double genrand_open_open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1968,9 +1968,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> * get_idstring </td>
+          <td class="memname">static const char * get_idstring </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -2000,9 +2000,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> get_min_array_size </td>
+          <td class="memname">static int get_min_array_size </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -2032,15 +2032,15 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> init_by_array </td>
+          <td class="memname">static void init_by_array </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>init_key</em>[], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>key_length</em>&#160;</td>
         </tr>
         <tr>
@@ -2082,9 +2082,9 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">static</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> init_gen_rand </td>
+          <td class="memname">static void init_gen_rand </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">uint32_t</a>&#160;</td>
+          <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>seed</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2149,7 +2149,7 @@ Makoto Matsumoto (Hiroshima University)</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> dsfmt_global_mexp</td>
+          <td class="memname">const int dsfmt_global_mexp</td>
         </tr>
       </table>
   </td>

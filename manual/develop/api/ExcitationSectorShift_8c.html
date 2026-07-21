@@ -131,10 +131,10 @@ $(document).ready(function(){initNavTree('ExcitationSectorShift_8c.html',''); in
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af9a16b04df3c187c34b1acb7cea48fd0" id="r_af9a16b04df3c187c34b1acb7cea48fd0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSectorShift.html">SectorShift</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ExcitationSectorShift_8c.html#af9a16b04df3c187c34b1acb7cea48fd0">GetExcitationSectorShift</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> iCalcModel, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">isGeneralSpin</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">isPair</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">op</a>)</td></tr>
+<tr class="memitem:af9a16b04df3c187c34b1acb7cea48fd0" id="r_af9a16b04df3c187c34b1acb7cea48fd0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSectorShift.html">SectorShift</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ExcitationSectorShift_8c.html#af9a16b04df3c187c34b1acb7cea48fd0">GetExcitationSectorShift</a> (int iCalcModel, int isGeneralSpin, int isPair, const int *op)</td></tr>
 <tr class="memdesc:af9a16b04df3c187c34b1acb7cea48fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Net sector shift of a single excitation operator row.  <br /></td></tr>
 <tr class="separator:af9a16b04df3c187c34b1acb7cea48fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37ee7dab3390e918bd6d3b31fc6cbf2f" id="r_a37ee7dab3390e918bd6d3b31fc6cbf2f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSectorShift.html">SectorShift</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ExcitationSectorShift_8c.html#a37ee7dab3390e918bd6d3b31fc6cbf2f">GetExcitationOperatorSetShift</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> iCalcModel, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">isGeneralSpin</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">isPair</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> **<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">op</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">nOp</a>)</td></tr>
+<tr class="memitem:a37ee7dab3390e918bd6d3b31fc6cbf2f" id="r_a37ee7dab3390e918bd6d3b31fc6cbf2f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSectorShift.html">SectorShift</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ExcitationSectorShift_8c.html#a37ee7dab3390e918bd6d3b31fc6cbf2f">GetExcitationOperatorSetShift</a> (int iCalcModel, int isGeneralSpin, int isPair, int **op, int nOp)</td></tr>
 <tr class="memdesc:a37ee7dab3390e918bd6d3b31fc6cbf2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate that every operator row in a set induces the same valid shift. Returns valid=FALSE if any row is unsupported or rows disagree.  <br /></td></tr>
 <tr class="separator:a37ee7dab3390e918bd6d3b31fc6cbf2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -157,31 +157,31 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structSectorShift.html">SectorShift</a> GetExcitationOperatorSetShift </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>iCalcModel</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>isGeneralSpin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>isPair</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> **&#160;</td>
+          <td class="paramtype">int **&#160;</td>
           <td class="paramname"><em>op</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>nOp</em>&#160;</td>
         </tr>
         <tr>
@@ -211,25 +211,25 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structSectorShift.html">SectorShift</a> GetExcitationSectorShift </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>iCalcModel</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>isGeneralSpin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>isPair</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">const</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> *&#160;</td>
+          <td class="paramtype">const int *&#160;</td>
           <td class="paramname"><em>op</em>&#160;</td>
         </tr>
         <tr>

@@ -134,7 +134,7 @@ $(document).ready(function(){initNavTree('Lanczos__EigenVector_8c.html',''); ini
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4575347f442614960b1d0555ab1d1ffe" id="r_a4575347f442614960b1d0555ab1d1ffe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Lanczos__EigenVector_8c.html#a4575347f442614960b1d0555ab1d1ffe">Lanczos_EigenVector</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:a4575347f442614960b1d0555ab1d1ffe" id="r_a4575347f442614960b1d0555ab1d1ffe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Lanczos__EigenVector_8c.html#a4575347f442614960b1d0555ab1d1ffe">Lanczos_EigenVector</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a4575347f442614960b1d0555ab1d1ffe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reconstruct eigenvector by regenerating Lanczos vectors.  <br /></td></tr>
 <tr class="separator:a4575347f442614960b1d0555ab1d1ffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -142,13 +142,13 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Reconstruct eigenvector from Lanczos tridiagonal matrix. </p>
 <p>After <a class="el" href="Lanczos__EigenValue_8h.html#adffde20ad3202934fdc77cfa37472529" title="Compute lowest eigenvalues using Lanczos iteration.">Lanczos_EigenValue()</a> finds eigenvalues and stores the tridiagonal matrix elements (alpha[], beta[]), this function reconstructs the corresponding eigenvector.</p>
 <p>Algorithm: The eigenvector |psi&gt; in the original basis is: |psi&gt; = sum_j c_j |q_j&gt; where |q_j&gt; are Lanczos vectors and c_j are components of the eigenvector of the tridiagonal matrix T.</p>
-<p>Since storing all Lanczos vectors |q_j&gt; would require <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(N*M)</a> memory (N = Hilbert space dim, M = Lanczos steps), we regenerate them:</p>
+<p>Since storing all Lanczos vectors |q_j&gt; would require O(N*M) memory (N = Hilbert space dim, M = Lanczos steps), we regenerate them:</p>
 <ol type="1">
 <li>Diagonalize tridiagonal matrix T to get eigenvector components c_j</li>
 <li>Re-run Lanczos iteration with same initial vector</li>
 <li>At each step j, accumulate: |psi&gt; += c_j * |q_j&gt;</li>
 </ol>
-<p>This requires <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(N)</a> memory but <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee" title="Process ID, defined in InitializeMPI()">O(M)</a> H*v multiplications.</p>
+<p>This requires O(N) memory but O(M) H*v multiplications.</p>
 <p>Initial vector:</p><ul>
 <li>initial_mode = 0: Deterministic (one element = 1)</li>
 <li>initial_mode = 1: Random (for grand canonical ensembles)</li>
@@ -169,9 +169,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> Lanczos_EigenVector </td>
+          <td class="memname">void Lanczos_EigenVector </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>
@@ -211,7 +211,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="Lanczos__EigenVector_8c_source.html#l00087">87</a> of file <a class="el" href="Lanczos__EigenVector_8c_source.html">Lanczos_EigenVector.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="wrapperMPI_8c_source.html#l00326">BcastMPI_li()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="LogMessage_8c_source.html#l00099">cLanczos_EigenVectorFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00098">cLanczos_EigenVectorStart</a>, <a class="el" href="LogMessage_8c_source.html#l00097">cLogLanczos_EigenVectorEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00096">cLogLanczos_EigenVectorStart</a>, <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="dSFMT_8h_source.html#l00437">dsfmt_init_gen_rand()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00154">initial_mode</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00189">nproc</a>, <a class="el" href="global_8c_source.html#l00191">nthreads</a>, <a class="el" href="time_8c_source.html#l00071">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00083">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00240">SumMPI_dc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00274">SumMPI_li()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="global_8c_source.html#l00139">vec</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="wrapperMPI_8c_source.html#l00326">BcastMPI_li()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="LogMessage_8c_source.html#l00099">cLanczos_EigenVectorFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00098">cLanczos_EigenVectorStart</a>, <a class="el" href="LogMessage_8c_source.html#l00097">cLogLanczos_EigenVectorEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00096">cLogLanczos_EigenVectorStart</a>, <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="dSFMT_8h_source.html#l00437">dsfmt_init_gen_rand()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00154">initial_mode</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00189">nproc</a>, <a class="el" href="global_8c_source.html#l00191">nthreads</a>, <a class="el" href="time_8c_source.html#l00227">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00239">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00240">SumMPI_dc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00274">SumMPI_li()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="global_8c_source.html#l00139">vec</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>.</p>
 

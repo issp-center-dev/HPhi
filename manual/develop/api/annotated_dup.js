@@ -23,6 +23,7 @@ var annotated_dup =
     [ "ParamList", "structParamList.html", "structParamList" ],
     [ "PhysList", "structPhysList.html", "structPhysList" ],
     [ "SectorShift", "structSectorShift.html", "structSectorShift" ],
+    [ "SymmetryBasisCollector", "structSymmetryBasisCollector.html", "structSymmetryBasisCollector" ],
     [ "SymmetryBasisRuntime", "structSymmetryBasisRuntime.html", "structSymmetryBasisRuntime" ],
     [ "SymmetryBasisVector", "structSymmetryBasisVector.html", "structSymmetryBasisVector" ],
     [ "SymmetryCanonicalResult", "structSymmetryCanonicalResult.html", "structSymmetryCanonicalResult" ],

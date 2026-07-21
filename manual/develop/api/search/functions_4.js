@@ -1,7 +1,7 @@
 var searchData=
 [
   ['emit_5fcanonicalized_5ftransition_0',['emit_canonicalized_transition',['../symmetry__matvec__plan_8c.html#ae6009f95400b557bae3633c0ae097235',1,'symmetry_matvec_plan.c']]],
-  ['ensure_5fbasis_5fcapacity_1',['ensure_basis_capacity',['../symmetry__basis_8c.html#a20248e66784092022a10639a14ae5a31',1,'symmetry_basis.c']]],
+  ['ensure_5fcollector_5fcapacity_1',['ensure_collector_capacity',['../symmetry__basis_8c.html#af7b60d9d76c45c99846291160e7e8ef6',1,'symmetry_basis.c']]],
   ['exchange_2',['exchange',['../mltplyHubbard_8c.html#a9e49e4fdc05500a2f943cc57cf50bcaa',1,'exchange(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c'],['../mltplyHubbard_8h.html#a9e49e4fdc05500a2f943cc57cf50bcaa',1,'exchange(double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X):&#160;mltplyHubbard.c']]],
   ['exchange_5felement_3',['exchange_element',['../mltplyHubbardCore_8h.html#adb5c2277e526e2103ba4ba9bd438e03b',1,'exchange_element(long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X, long unsigned int *tmp_off):&#160;mltplyHubbardCore.c'],['../mltplyHubbardCore_8c.html#adb5c2277e526e2103ba4ba9bd438e03b',1,'exchange_element(long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct BindStruct *X, long unsigned int *tmp_off):&#160;mltplyHubbardCore.c']]],
   ['exchange_5fgetinfo_4',['exchange_getinfo',['../mltplyHubbardCore_8h.html#a3308e39a52f716d269691c4f7ec05be0',1,'exchange_GetInfo(int iExchange, struct BindStruct *X):&#160;mltplyHubbardCore.c'],['../mltplyHubbardCore_8c.html#a3308e39a52f716d269691c4f7ec05be0',1,'exchange_GetInfo(int iExchange, struct BindStruct *X):&#160;mltplyHubbardCore.c']]],

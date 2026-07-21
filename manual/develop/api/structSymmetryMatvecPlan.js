@@ -6,6 +6,7 @@ var structSymmetryMatvecPlan =
     [ "local_offset", "structSymmetryMatvecPlan.html#a4c27e52dafce34057745baa745fbd061", null ],
     [ "nnz", "structSymmetryMatvecPlan.html#abe86b64be0390368456ef36c7ca7088b", null ],
     [ "ready", "structSymmetryMatvecPlan.html#ad49f6d1c102d9f36c18e9ea21ca3cf0c", null ],
+    [ "row_nnz_max", "structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b", null ],
     [ "row_ptr", "structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa", null ],
     [ "values", "structSymmetryMatvecPlan.html#a5f98c485df1d3221fb5cf18aed341db5", null ]
 ];

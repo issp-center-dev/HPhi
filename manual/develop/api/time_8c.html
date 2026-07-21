@@ -124,29 +124,83 @@ $(document).ready(function(){initNavTree('time_8c.html',''); initResizable(); })
 <div class="textblock"><code>#include &quot;<a class="el" href="Common_8h_source.html">Common.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="FileIO_8h_source.html">FileIO.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="CalcTime_8h_source.html">CalcTime.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__matvec__plan_8h_source.html">symmetry_matvec_plan.h</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
 </div>
 <p><a href="time_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa4d90d1494ace4e791c9b0c3653333d2" id="r_aa4d90d1494ace4e791c9b0c3653333d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">FILE</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">fp</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> *<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">str</a>, <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> num)</td></tr>
+<tr class="memitem:abad2c3abc861195838e896ff413f175a" id="r_abad2c3abc861195838e896ff413f175a"><td class="memItemLeft" align="right" valign="top">static unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#abad2c3abc861195838e896ff413f175a">HashSymmetryBytes</a> (unsigned long long hash, const void *data, size_t size)</td></tr>
+<tr class="separator:abad2c3abc861195838e896ff413f175a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7088a912167dc64a8ac1b98b0eda1a63" id="r_a7088a912167dc64a8ac1b98b0eda1a63"><td class="memItemLeft" align="right" valign="top">static unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a7088a912167dc64a8ac1b98b0eda1a63">SymmetryBasisDigest</a> (const struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *sym)</td></tr>
+<tr class="separator:a7088a912167dc64a8ac1b98b0eda1a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06074713e7e24505425960f024922bc5" id="r_a06074713e7e24505425960f024922bc5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a06074713e7e24505425960f024922bc5">OutputSymmetryRankStats</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="separator:a06074713e7e24505425960f024922bc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d90d1494ace4e791c9b0c3653333d2" id="r_aa4d90d1494ace4e791c9b0c3653333d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#aa4d90d1494ace4e791c9b0c3653333d2">StampTime</a> (FILE *fp, char *str, int num)</td></tr>
 <tr class="memdesc:aa4d90d1494ace4e791c9b0c3653333d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for displaying elapse time  <br /></td></tr>
 <tr class="separator:aa4d90d1494ace4e791c9b0c3653333d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aded9b0ef5cb7a143d739c80442978a1d" id="r_aded9b0ef5cb7a143d739c80442978a1d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#aded9b0ef5cb7a143d739c80442978a1d">InitTimer</a> ()</td></tr>
+<tr class="memitem:aded9b0ef5cb7a143d739c80442978a1d" id="r_aded9b0ef5cb7a143d739c80442978a1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#aded9b0ef5cb7a143d739c80442978a1d">InitTimer</a> ()</td></tr>
 <tr class="memdesc:aded9b0ef5cb7a143d739c80442978a1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for initializing Timer[]  <br /></td></tr>
 <tr class="separator:aded9b0ef5cb7a143d739c80442978a1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2581cae87041a26e35cc11d2b36433ea" id="r_a2581cae87041a26e35cc11d2b36433ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">n</a>)</td></tr>
+<tr class="memitem:a2581cae87041a26e35cc11d2b36433ea" id="r_a2581cae87041a26e35cc11d2b36433ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a> (int n)</td></tr>
 <tr class="memdesc:a2581cae87041a26e35cc11d2b36433ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for initializing elapse time [start]  <br /></td></tr>
 <tr class="separator:a2581cae87041a26e35cc11d2b36433ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a401c1e932bb7ff998602ee237fbecd" id="r_a7a401c1e932bb7ff998602ee237fbecd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a> <a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">n</a>)</td></tr>
+<tr class="memitem:a7a401c1e932bb7ff998602ee237fbecd" id="r_a7a401c1e932bb7ff998602ee237fbecd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a> (int n)</td></tr>
 <tr class="memdesc:a7a401c1e932bb7ff998602ee237fbecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for calculating elapse time [elapse time=StartTimer-StopTimer]  <br /></td></tr>
 <tr class="separator:a7a401c1e932bb7ff998602ee237fbecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60afd43e6c53eb214d9b9111a6522365" id="r_a60afd43e6c53eb214d9b9111a6522365"><td class="memItemLeft" align="right" valign="top"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a60afd43e6c53eb214d9b9111a6522365">OutputTimer</a> (<a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memitem:a60afd43e6c53eb214d9b9111a6522365" id="r_a60afd43e6c53eb214d9b9111a6522365"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time_8c.html#a60afd43e6c53eb214d9b9111a6522365">OutputTimer</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a60afd43e6c53eb214d9b9111a6522365"><td class="mdescLeft">&#160;</td><td class="mdescRight">function for outputting elapse time for each function  <br /></td></tr>
 <tr class="separator:a60afd43e6c53eb214d9b9111a6522365"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="abad2c3abc861195838e896ff413f175a" name="abad2c3abc861195838e896ff413f175a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abad2c3abc861195838e896ff413f175a">&#9670;&#160;</a></span>HashSymmetryBytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned long long HashSymmetryBytes </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long long&#160;</td>
+          <td class="paramname"><em>hash</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00036">36</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="time_8c_source.html#l00049">SymmetryBasisDigest()</a>.</p>
+
+</div>
+</div>
 <a id="aded9b0ef5cb7a143d739c80442978a1d" name="aded9b0ef5cb7a143d739c80442978a1d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aded9b0ef5cb7a143d739c80442978a1d">&#9670;&#160;</a></span>InitTimer()</h2>
 
@@ -154,7 +208,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> InitTimer </td>
+          <td class="memname">void InitTimer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -165,11 +219,43 @@ Functions</h2></td></tr>
 <p>function for initializing Timer[] </p>
 <dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00053">53</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00209">209</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00173">Timer</a>, and <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00173">Timer</a>, and <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
+
+</div>
+</div>
+<a id="a06074713e7e24505425960f024922bc5" name="a06074713e7e24505425960f024922bc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06074713e7e24505425960f024922bc5">&#9670;&#160;</a></span>OutputSymmetryRankStats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void OutputSymmetryRankStats </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00072">72</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+
+<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SymmetryMatvecPlan::nnz</a>, <a class="el" href="global_8c_source.html#l00189">nproc</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00017">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="time_8c_source.html#l00049">SymmetryBasisDigest()</a>, <a class="el" href="global_8c_source.html#l00173">Timer</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="time_8c_source.html#l00251">OutputTimer()</a>.</p>
 
 </div>
 </div>
@@ -180,9 +266,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> OutputTimer </td>
+          <td class="memname">void OutputTimer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">struct</a> <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em></td><td>)</td>
           <td></td>
         </tr>
@@ -192,9 +278,9 @@ Functions</h2></td></tr>
 <p>function for outputting elapse time for each function </p>
 <dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00095">95</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00251">251</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
 
-<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00068">CALCSPEC_NOT</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="time_8c_source.html#l00039">StampTime()</a>, <a class="el" href="global_8c_source.html#l00173">Timer</a>, <a class="el" href="global_8c_source.html#l00174">TimerStart</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00068">CALCSPEC_NOT</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="time_8c_source.html#l00072">OutputSymmetryRankStats()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="time_8c_source.html#l00195">StampTime()</a>, <a class="el" href="global_8c_source.html#l00173">Timer</a>, <a class="el" href="global_8c_source.html#l00174">TimerStart</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -207,21 +293,21 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> StampTime </td>
+          <td class="memname">void StampTime </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">FILE</a> *&#160;</td>
+          <td class="paramtype">FILE *&#160;</td>
           <td class="paramname"><em>fp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">char</a> *&#160;</td>
+          <td class="paramtype">char *&#160;</td>
           <td class="paramname"><em>str</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>num</em>&#160;</td>
         </tr>
         <tr>
@@ -235,11 +321,11 @@ Functions</h2></td></tr>
 <p>function for displaying elapse time </p>
 <dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00039">39</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00195">195</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8c_source.html#l00173">Timer</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00173">Timer</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="time_8c_source.html#l00095">OutputTimer()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="time_8c_source.html#l00251">OutputTimer()</a>.</p>
 
 </div>
 </div>
@@ -250,9 +336,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> StartTimer </td>
+          <td class="memname">void StartTimer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
           <td></td>
         </tr>
@@ -262,11 +348,11 @@ Functions</h2></td></tr>
 <p>function for initializing elapse time [start] </p>
 <dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00071">71</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00227">227</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CG__EigenVector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00044">finalize_lanczos_ritz()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00137">Lanczos_EigenValue()</a>, <a class="el" href="Lanczos__EigenVector_8c_source.html#l00087">Lanczos_EigenVector()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="MakeIniVec_8c_source.html#l00041">MakeIniVec()</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="mltplySpin_8c_source.html#l00345">mltplyGeneralSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00907">mltplyGeneralSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00468">mltplyGeneralSpinGC_mini()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l01110">mltplySpinGCBoost()</a>, <a class="el" href="mltplySpinless_8c_source.html#l00115">mltplySpinlessFermion()</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00776">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CG__EigenVector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00044">finalize_lanczos_ritz()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00137">Lanczos_EigenValue()</a>, <a class="el" href="Lanczos__EigenVector_8c_source.html#l00087">Lanczos_EigenVector()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="MakeIniVec_8c_source.html#l00041">MakeIniVec()</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="mltplySpin_8c_source.html#l00345">mltplyGeneralSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00907">mltplyGeneralSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00468">mltplyGeneralSpinGC_mini()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l01110">mltplySpinGCBoost()</a>, <a class="el" href="mltplySpinless_8c_source.html#l00115">mltplySpinlessFermion()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>, and <a class="el" href="Lanczos__EigenValue_8c_source.html#l00647">SetInitialVector()</a>.</p>
 
 </div>
 </div>
@@ -277,9 +363,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">void</a> StopTimer </td>
+          <td class="memname">void StopTimer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">int</a>&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
           <td></td>
         </tr>
@@ -289,11 +375,43 @@ Functions</h2></td></tr>
 <p>function for calculating elapse time [elapse time=StartTimer-StopTimer] </p>
 <dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00083">83</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00239">239</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00173">Timer</a>, and <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00173">Timer</a>, and <a class="el" href="global_8c_source.html#l00174">TimerStart</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CG__EigenVector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00044">finalize_lanczos_ritz()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00137">Lanczos_EigenValue()</a>, <a class="el" href="Lanczos__EigenVector_8c_source.html#l00087">Lanczos_EigenVector()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="MakeIniVec_8c_source.html#l00041">MakeIniVec()</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="mltplySpin_8c_source.html#l00345">mltplyGeneralSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00907">mltplyGeneralSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00468">mltplyGeneralSpinGC_mini()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l01110">mltplySpinGCBoost()</a>, <a class="el" href="mltplySpinless_8c_source.html#l00115">mltplySpinlessFermion()</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00776">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00240">BuildSymmetryMatvecPlan()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="CG__EigenVector_8c_source.html#l00030">CG_EigenVector()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00044">finalize_lanczos_ritz()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, <a class="el" href="Lanczos__EigenValue_8c_source.html#l00137">Lanczos_EigenValue()</a>, <a class="el" href="Lanczos__EigenVector_8c_source.html#l00087">Lanczos_EigenVector()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="MakeIniVec_8c_source.html#l00041">MakeIniVec()</a>, <a class="el" href="mltply_8c_source.html#l00086">mltply()</a>, <a class="el" href="mltplySpin_8c_source.html#l00345">mltplyGeneralSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00907">mltplyGeneralSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00468">mltplyGeneralSpinGC_mini()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l01110">mltplySpinGCBoost()</a>, <a class="el" href="mltplySpinless_8c_source.html#l00115">mltplySpinlessFermion()</a>, <a class="el" href="mltplySpinSym_8c_source.html#l00084">mltplySpinSym()</a>, and <a class="el" href="Lanczos__EigenValue_8c_source.html#l00647">SetInitialVector()</a>.</p>
+
+</div>
+</div>
+<a id="a7088a912167dc64a8ac1b98b0eda1a63" name="a7088a912167dc64a8ac1b98b0eda1a63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7088a912167dc64a8ac1b98b0eda1a63">&#9670;&#160;</a></span>SymmetryBasisDigest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned long long SymmetryBasisDigest </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryBasisRuntime.html">SymmetryBasisRuntime</a> *&#160;</td>
+          <td class="paramname"><em>sym</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="time_8c_source.html#l00049">49</a> of file <a class="el" href="time_8c_source.html">time.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00038">SymmetryBasisRuntime::basis</a>, <a class="el" href="symmetry__basis_8h_source.html#l00016">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00036">SymmetryBasisRuntime::dim</a>, <a class="el" href="time_8c_source.html#l00036">HashSymmetryBytes()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00014">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__basis_8h_source.html#l00012">SymmetryBasisVector::orbit_size</a>, <a class="el" href="symmetry__basis_8h_source.html#l00011">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__basis_8h_source.html#l00015">SymmetryBasisVector::stabilizer_character_sum</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::stabilizer_size</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="time_8c_source.html#l00072">OutputSymmetryRankStats()</a>.</p>
 
 </div>
 </div>
