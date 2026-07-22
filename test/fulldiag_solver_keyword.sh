@@ -252,4 +252,112 @@ if [ "${HPHI_HAS_ELPA:-0}" = "1" ]; then
   test "`echo "$diff < 0.000001" | bc`" = "1"
 fi
 
+# (8) SpinlessFermion / SpinlessFermionGC + FullDiag must be REJECTED at
+#     startup (src/readdef.c cErrSpinlessFullDiag gate). These models have no
+#     makeHam spinless branch (the Trans hopping is silently dropped from the
+#     FullDiag Hamiltonian) and their FullDiag phys output never populates the
+#     particle number, so a completed run would publish incorrect physics.
+#     Full support is tracked separately; until then HPhi must abort here.
+#     Written as an Expert-mode def set (CalcModel 7/8, CalcType 2): StdFace's
+#     `model = "spinlessfermion"` emits OneBodyG/TwoBodyG rows with spin index 1
+#     that readdef rejects for a spinless model with a DIFFERENT error, which
+#     would mask the gate under test. A minimal hand-authored set (Trans +
+#     CoulombInter only, no Green defs) trips exactly this gate. Runs at np=1 --
+#     a startup rejection needs no MPI, so it is exercised in build_noMPI too.
+reject_spinless_fulldiag() {
+  casedir="$1"
+  calcmodel="$2"
+  cd ..
+  mkdir -p "${casedir}"
+  cd "${casedir}"
+  cat > namelist.def <<EOF
+         ModPara  modpara.def
+         LocSpin  locspn.def
+           Trans  trans.def
+    CoulombInter  coulombinter.def
+         CalcMod  calcmod.def
+EOF
+  cat > calcmod.def <<EOF
+CalcType        2
+CalcModel       ${calcmodel}
+ReStart         0
+CalcSpec        0
+CalcEigenVec    0
+InitialVecType  0
+InputEigenVec   0
+OutputEigenVec  0
+InputHam        0
+OutputHam       0
+EOF
+  cat > modpara.def <<EOF
+--------------------
+Model_Parameters   0
+--------------------
+HPhi_Cal_Parameters
+--------------------
+CDataFileHead  zvo
+CParaFileHead  zqp
+--------------------
+Nsite             4
+Ncond             2
+Lanczos_max       2000
+initial_iv        -1
+exct              1
+LanczosEps        14
+LanczosTarget     2
+LargeValue        12.0
+NumAve            5
+ExpecInterval     20
+EOF
+  cat > locspn.def <<EOF
+================================
+NlocalSpin     0
+================================
+========i_1LocSpn_0IteElc ======
+================================
+    0      0
+    1      0
+    2      0
+    3      0
+EOF
+  cat > trans.def <<EOF
+========================
+NTransfer      8
+========================
+========i_j_s_tijs======
+========================
+0 0 1 0 -1.0 0.0
+1 0 0 0 -1.0 0.0
+1 0 2 0 -1.0 0.0
+2 0 1 0 -1.0 0.0
+2 0 3 0 -1.0 0.0
+3 0 2 0 -1.0 0.0
+3 0 0 0 -1.0 0.0
+0 0 3 0 -1.0 0.0
+EOF
+  cat > coulombinter.def <<EOF
+========================
+NCoulombInter 4
+========================
+========CoulombInter====
+========================
+0 1 2.0
+1 2 2.0
+2 3 2.0
+3 0 2.0
+EOF
+  if ${MPIRUNFC} ../../src/HPhi -e namelist.def > reject.log 2>&1; then
+    echo "ERROR: CalcModel ${calcmodel} (spinless) + FullDiag should have been rejected at startup"
+    cat reject.log
+    exit 1
+  fi
+  grep -q "not currently supported for FullDiag" reject.log || {
+    echo "ERROR: spinless FullDiag rejection log should cite the unsupported-FullDiag message"
+    cat reject.log
+    exit 1
+  }
+}
+reject_spinless_fulldiag spinless_fulldiag_canonical 7
+reject_spinless_fulldiag spinless_fulldiag_gc 8
+
 echo "fulldiag_solver_keyword: OK"

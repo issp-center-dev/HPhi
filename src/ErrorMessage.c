@@ -64,6 +64,7 @@ char *cWarnSolverConflict="Warning in %s\n Legacy keyword \"%s\" conflicts with 
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";
 char *cErrSpectrumFullDiagSolver="Error in %s\n CalcSpec (spectrum calculation) with FullDiag is requested together with Solver %d,\n but CalcSpectrumByFullDiag() reads eigenvectors from L_vec, which this solver does not fill\n (eigenvectors stay distributed). Use \"Solver 0\" (LAPACK), or \"Solver 1\" (ScaLAPACK) with nproc==1.\n";
 char *cErrExpecMode="Error in %s\n ExpecMode: must be 0 (serial), 1 (state-parallel), or 2 (trace kernels),\n and requires CalcType = FullDiag with Solver 1 (ScaLAPACK) or 3 (ELPA).\n";
+char *cErrSpinlessFullDiag="Error in %s\n SpinlessFermion / SpinlessFermionGC are not currently supported for FullDiag (CalcType=2) in this version:\n the hopping (Trans) term is not built into the FullDiag Hamiltonian and the particle-number output is not populated,\n so the results would be incorrect. This is tracked separately and will be addressed in a future release.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";
