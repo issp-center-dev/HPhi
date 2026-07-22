@@ -135,14 +135,24 @@ build_eigen_level_map() {
       if (!finite_num($2)) { printf "build_eigen_level_map: %s Eigenvalue.dat row %d: non-finite/non-numeric energy: \"%s\"\n", s, FNR, $2 > "/dev/stderr"; err=1; exit 3 }
     }
     side == 1 { nA++; idxA[nA] = $1 + 0; eA[nA] = $2 + 0
-                if (nA > 1 && eA[nA] < eA[nA-1] - etol) { printf "build_eigen_level_map: A Eigenvalue.dat not ascending at row %d: %.10g < %.10g\n", FNR, eA[nA], eA[nA-1] > "/dev/stderr"; err=1; exit 3 }
+                # STRICT non-decreasing (any decrease is corrupt output); etol is
+                # used ONLY for degeneracy grouping below, never to tolerate a
+                # backwards energy step here.
+                if (nA > 1 && eA[nA] < eA[nA-1]) { printf "build_eigen_level_map: A Eigenvalue.dat energy decreases at row %d: %.10g < %.10g\n", FNR, eA[nA], eA[nA-1] > "/dev/stderr"; err=1; exit 3 }
                 next }
     side == 2 { nB++; idxB[nB] = $1 + 0; eB[nB] = $2 + 0
-                if (nB > 1 && eB[nB] < eB[nB-1] - etol) { printf "build_eigen_level_map: B Eigenvalue.dat not ascending at row %d: %.10g < %.10g\n", FNR, eB[nB], eB[nB-1] > "/dev/stderr"; err=1; exit 3 } }
+                if (nB > 1 && eB[nB] < eB[nB-1]) { printf "build_eigen_level_map: B Eigenvalue.dat energy decreases at row %d: %.10g < %.10g\n", FNR, eB[nB], eB[nB-1] > "/dev/stderr"; err=1; exit 3 } }
     END {
       if (err) exit 3
       if (nA == 0) { print "build_eigen_level_map: no eigenvalues in A" > "/dev/stderr"; exit 3 }
       if (nA != nB) { printf "build_eigen_level_map: eigenvalue count differs (A=%d B=%d)\n", nA, nB > "/dev/stderr"; exit 3 }
+      # Each sides eigenstate indices must be the contiguous 0-based sequence
+      # 0,1,2,...,n-1 (src/lapack_diag.c writes i=0..i_max-1 in order). This is
+      # validated PER SIDE -- a duplicate/skipped/decreasing index shared by both
+      # files would pass the A==B check yet silently overwrite lev[] and inflate
+      # levsize[] downstream.
+      for (k = 1; k <= nA; k++) if (idxA[k] != k - 1) { printf "build_eigen_level_map: A Eigenvalue.dat index not contiguous 0-based at row %d: got %d, expected %d\n", k, idxA[k], k - 1 > "/dev/stderr"; exit 3 }
+      for (k = 1; k <= nB; k++) if (idxB[k] != k - 1) { printf "build_eigen_level_map: B Eigenvalue.dat index not contiguous 0-based at row %d: got %d, expected %d\n", k, idxB[k], k - 1 > "/dev/stderr"; exit 3 }
       for (k = 1; k <= nA; k++) {
         if (idxA[k] != idxB[k]) { printf "build_eigen_level_map: eigenstate index mismatch at row %d: %d vs %d\n", k, idxA[k], idxB[k] > "/dev/stderr"; exit 3 }
         if (abs(eA[k] - eB[k]) > etol) { printf "build_eigen_level_map: eigenvalue mismatch at index %d: %.10g vs %.10g\n", idxA[k], eA[k], eB[k] > "/dev/stderr"; exit 3 }
@@ -170,12 +180,25 @@ build_eigen_level_map() {
 # the eigenstate index to its level, and accumulate the SUM of each value
 # column over each (opkey, level) for A and B independently. The two tables
 # must have the identical (opkey, value-ordinal, level) key set (a missing/
-# extra key -> fail) and each summed value must agree within ptol*level_size
-# (ptol=2e-6; size-1 levels reduce to the exact per-state check). Value fields
-# are hard-validated numeric and non-nan/inf even if byte-identical, mirroring
-# compare_phys's guard. Returns non-zero (with MISMATCH lines on stderr) on any
-# discrepancy. Order-independent within a level, so line order/count need not
-# match A to B.
+# extra key -> fail) and each summed value must agree within etoleig*level_size.
+# TOLERANCE: unlike zvo_phys (6-decimal %10lf, handled by compare_phys at
+# ptol=2e-6), these aggregate files are written with %.10lf (10 decimals; see
+# GREEN_*_ROW_FORMAT in src/include/green_row_format.h and write_nbodyg_line in
+# src/nbody_correlation.c). The %.10lf per-value rounding is ~5e-11, so a
+# level-size sum's format rounding is ~level_size*1e-10; the dominant term is the
+# ScaLAPACK degenerate-subspace eigenvector error propagated into the sum. We use
+# etoleig = ${tol} = 1e-8 scaled by level size (the SAME 1e-8*level_size that
+# compare_output_trees used per-line for these files before), which stays far
+# below a physically-significant GF perturbation (~1e-6) so a genuine
+# Green-function regression is still rejected -- ptol=2e-6 would have been a
+# ~200x over-relaxation. STRUCTURE: besides the per-(opkey,level) sums, row
+# multiplicity is checked per (opkey, eigenstate-index) on both sides (each such
+# row must appear exactly once per side) so a row dropped for one eigenstate and
+# duplicated for another IN THE SAME LEVEL -- which preserves the per-level count
+# and can preserve the sum -- is still caught. Value fields are hard-validated
+# numeric and non-nan/inf even if byte-identical, mirroring compare_phys's guard.
+# Returns non-zero (with MISMATCH lines on stderr) on any discrepancy.
+# Order-independent within a level, so line order/count need not match A to B.
 compare_eigen_degenerate() {
   fa="$1"
   fb="$2"
@@ -183,7 +206,7 @@ compare_eigen_degenerate() {
   fname="$4"
   [ -s "${fa}" ] || fail "compare_eigen_degenerate: ${fa} is empty"
   [ -s "${fb}" ] || fail "compare_eigen_degenerate: ${fb} is empty"
-  awk -v mapfile="${mapfile}" -v faname="${fa}" -v ptol="2e-6" -v fname="${fname}" '
+  awk -v mapfile="${mapfile}" -v faname="${fa}" -v etoleig="${tol}" -v fname="${fname}" '
     function abs(x){ return x<0?-x:x }
     function classify(tok) {
       if (tok ~ /^[-+]?[0-9]+$/) return "I"
@@ -229,12 +252,18 @@ compare_eigen_degenerate() {
       rk = opkey SUBSEP level
       allrk[rk] = 1
       rklevel[rk] = level
+      # Per (opkey, eigenstate-index): each such row must occur exactly once per
+      # side. This is the fine-grained multiplicity guard -- a row dropped for
+      # one eidx and duplicated for another eidx in the same level keeps the
+      # per-(opkey,level) count/sum but changes these per-eidx counts.
+      ek = opkey SUBSEP eidx
+      alleke[ek] = 1
       if (side == 1) {
-        cntA[rk]++
+        cntA[rk]++; ecntA[ek]++; evcA[ek] = vcount
         if (rk in vcA) { if (vcA[rk] != vcount) { printf "MISMATCH %s side A: inconsistent value-column count for one (operator,level): %d vs %d\n", fname, vcA[rk], vcount; bad = 1 } }
         else vcA[rk] = vcount
       } else {
-        cntB[rk]++
+        cntB[rk]++; ecntB[ek]++; evcB[ek] = vcount
         if (rk in vcB) { if (vcB[rk] != vcount) { printf "MISMATCH %s side B: inconsistent value-column count for one (operator,level): %d vs %d\n", fname, vcB[rk], vcount; bad = 1 } }
         else vcB[rk] = vcount
       }
@@ -248,8 +277,8 @@ compare_eigen_degenerate() {
     }
     END {
       if (bad) exit 1
-      # (i) structural check: same set of (operator,level) with the same row
-      # multiplicity and the same value-column count on both sides.
+      # (i) coarse structural check: same set of (operator,level) with the same
+      # row multiplicity and value-column count on both sides.
       for (rk in allrk) {
         lv = rklevel[rk]
         ca = (rk in cntA) ? cntA[rk] : 0
@@ -259,13 +288,23 @@ compare_eigen_degenerate() {
         if (ca != cb) { printf "MISMATCH %s level %d: (operator,level) row count differs (A=%d B=%d) -- a row was dropped/added\n", fname, lv, ca, cb; bad = 1 }
         if (vcA[rk] != vcB[rk]) { printf "MISMATCH %s level %d: (operator,level) value-column count differs (A=%d B=%d)\n", fname, lv, vcA[rk], vcB[rk]; bad = 1 }
       }
-      # (ii) basis-invariant check: per-level value SUMS.
+      # (ii) fine structural check: every (operator, eigenstate-index) row must
+      # appear EXACTLY ONCE on each side. Catches a drop-one/duplicate-another
+      # within a level that (i) and the per-level sums can miss.
+      for (ek in alleke) {
+        ea = (ek in ecntA) ? ecntA[ek] : 0
+        eb = (ek in ecntB) ? ecntB[ek] : 0
+        if (ea != 1 || eb != 1) { printf "MISMATCH %s: (operator,eigenstate) row multiplicity wrong (A=%d B=%d, expected 1 each) -- a row was dropped/duplicated\n", fname, ea, eb; bad = 1; continue }
+        if (evcA[ek] != evcB[ek]) { printf "MISMATCH %s: (operator,eigenstate) value-column count differs (A=%d B=%d)\n", fname, evcA[ek], evcB[ek]; bad = 1 }
+      }
+      # (iii) basis-invariant NUMERIC check: per-level value SUMS, at the _eigen
+      # output precision (etoleig = ${tol} = 1e-8, scaled by level size).
       for (key in allkeys) {
         if (!(key in seenA)) { printf "MISMATCH %s: (operator,level) key present in B but missing in A\n", fname; bad = 1; continue }
         if (!(key in seenB)) { printf "MISMATCH %s: (operator,level) key present in A but missing in B\n", fname; bad = 1; continue }
         lv = keylevel[key]
         sz = (levsize[lv] > 1) ? levsize[lv] : 1
-        lt = ptol * sz
+        lt = etoleig * sz
         d = abs(sumA[key] - sumB[key])
         if (d > lt) { printf "MISMATCH %s level %d (size %d): sumA=%.10g vs sumB=%.10g (diff %.3e, tol %.3e)\n", fname, lv, sz, sumA[key], sumB[key], d, lt; bad = 1 }
       }
