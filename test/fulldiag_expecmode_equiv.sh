@@ -100,6 +100,126 @@ run_hphi() {
   }
 }
 
+# Build the eigenstate-index -> degenerate-level map from the two output
+# directories' Eigenvalue.dat files (src/lapack_diag.c writes each line as
+# " %ld %.10lf " -- a 0-based index then the eigenvalue, ascending energy).
+# The two files hold the SAME deterministic spectrum (same H matrix); verify
+# they agree per index within etol (a differing count/index/energy is a real
+# spectral difference -> return non-zero), then group consecutive ascending
+# indices whose energies agree within etol into LEVELS. Emits one "idx level"
+# line per eigenstate to $3 (level numbers start at 1). etol=1e-6 matches
+# compare_phys (energies are O(1..10), real gaps O(0.1..1) >> etol).
+build_eigen_level_map() {
+  evA="$1"
+  evB="$2"
+  mapout="$3"
+  awk -v etol="1e-6" '
+    function abs(x){ return x<0?-x:x }
+    FNR==1 { side++ }
+    NF < 2 { next }
+    side == 1 { nA++; idxA[nA] = $1 + 0; eA[nA] = $2 + 0; next }
+    side == 2 { nB++; idxB[nB] = $1 + 0; eB[nB] = $2 + 0 }
+    END {
+      if (nA == 0) { print "build_eigen_level_map: no eigenvalues in A" > "/dev/stderr"; exit 3 }
+      if (nA != nB) { printf "build_eigen_level_map: eigenvalue count differs (A=%d B=%d)\n", nA, nB > "/dev/stderr"; exit 3 }
+      for (k = 1; k <= nA; k++) {
+        if (idxA[k] != idxB[k]) { printf "build_eigen_level_map: eigenstate index mismatch at row %d: %d vs %d\n", k, idxA[k], idxB[k] > "/dev/stderr"; exit 3 }
+        if (abs(eA[k] - eB[k]) > etol) { printf "build_eigen_level_map: eigenvalue mismatch at index %d: %.10g vs %.10g\n", idxA[k], eA[k], eB[k] > "/dev/stderr"; exit 3 }
+      }
+      lvl = 1
+      for (k = 1; k <= nA; k++) {
+        if (k > 1 && abs(eA[k] - eA[k-1]) > etol) lvl++
+        printf "%d %d\n", idxA[k], lvl
+      }
+    }
+  ' "${evA}" "${evB}" > "${mapout}"
+}
+
+# Degeneracy-aware comparison of one per-eigenstate aggregate Green file
+# (*_eigen.dat). Args: fileA fileB levelmap fname. Each row is a LEADING
+# eigenstate index, then integer operator-index columns, then %.10lf value
+# column(s). We classify every column after the first by regex (integer
+# operator index vs float value -- %.10lf always prints a decimal point, an
+# operator index never does), build opkey = the integer operator columns, map
+# the eigenstate index to its level, and accumulate the SUM of each value
+# column over each (opkey, level) for A and B independently. The two tables
+# must have the identical (opkey, value-ordinal, level) key set (a missing/
+# extra key -> fail) and each summed value must agree within ptol*level_size
+# (ptol=2e-6; size-1 levels reduce to the exact per-state check). Value fields
+# are hard-validated numeric and non-nan/inf even if byte-identical, mirroring
+# compare_phys's guard. Returns non-zero (with MISMATCH lines on stderr) on any
+# discrepancy. Order-independent within a level, so line order/count need not
+# match A to B.
+compare_eigen_degenerate() {
+  fa="$1"
+  fb="$2"
+  mapfile="$3"
+  fname="$4"
+  [ -s "${fa}" ] || fail "compare_eigen_degenerate: ${fa} is empty"
+  [ -s "${fb}" ] || fail "compare_eigen_degenerate: ${fb} is empty"
+  awk -v mapfile="${mapfile}" -v faname="${fa}" -v ptol="2e-6" -v fname="${fname}" '
+    function abs(x){ return x<0?-x:x }
+    function classify(tok) {
+      if (tok ~ /^[-+]?[0-9]+$/) return "I"
+      if (tok ~ /^[-+]?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?$/) return "F"
+      if (tok ~ /^[-+]?[0-9]+[eE][-+]?[0-9]+$/) return "F"
+      return ""
+    }
+    BEGIN {
+      while ((getline line < mapfile) > 0) {
+        m = split(line, a, " ")
+        if (m < 2) continue
+        lev[a[1] + 0] = a[2] + 0
+        levsize[a[2] + 0]++
+      }
+      close(mapfile)
+    }
+    {
+      side = (FILENAME == faname) ? 1 : 2
+      sname = (side == 1) ? "A" : "B"
+      if (NF < 2) { printf "MISMATCH %s side %s row %d: too few columns (NF=%d)\n", fname, sname, FNR, NF; bad = 1; next }
+      if (classify($1) != "I") { printf "MISMATCH %s side %s row %d: leading eigenstate index not an integer: \"%s\"\n", fname, sname, FNR, $1; bad = 1; next }
+      eidx = $1 + 0
+      if (!(eidx in lev)) { printf "MISMATCH %s side %s row %d: eigenstate index %d absent from Eigenvalue.dat\n", fname, sname, FNR, eidx; bad = 1; next }
+      level = lev[eidx]
+      opkey = ""; vcount = 0
+      for (i = 2; i <= NF; i++) {
+        c = classify($i)
+        if (c == "I") {
+          opkey = opkey SUBSEP $i
+        } else if (c == "F") {
+          if (tolower($i) ~ /nan|inf/) { printf "MISMATCH %s side %s row %d col %d: nan/inf value not allowed (even if identical): \"%s\"\n", fname, sname, FNR, i, $i; bad = 1; next }
+          vcount++
+          vval[vcount] = $i + 0
+        } else {
+          printf "MISMATCH %s side %s row %d col %d: malformed field: \"%s\"\n", fname, sname, FNR, i, $i; bad = 1; next
+        }
+      }
+      if (vcount == 0) { printf "MISMATCH %s side %s row %d: no value columns\n", fname, sname, FNR; bad = 1; next }
+      for (v = 1; v <= vcount; v++) {
+        key = opkey SUBSEP "V" v SUBSEP level
+        allkeys[key] = 1
+        keylevel[key] = level
+        if (side == 1) { sumA[key] += vval[v]; seenA[key] = 1 }
+        else           { sumB[key] += vval[v]; seenB[key] = 1 }
+      }
+    }
+    END {
+      if (bad) exit 1
+      for (key in allkeys) {
+        if (!(key in seenA)) { printf "MISMATCH %s: (operator,level) key present in B but missing in A\n", fname; bad = 1; continue }
+        if (!(key in seenB)) { printf "MISMATCH %s: (operator,level) key present in A but missing in B\n", fname; bad = 1; continue }
+        lv = keylevel[key]
+        sz = (levsize[lv] > 1) ? levsize[lv] : 1
+        lt = ptol * sz
+        d = abs(sumA[key] - sumB[key])
+        if (d > lt) { printf "MISMATCH %s level %d (size %d): sumA=%.10g vs sumB=%.10g (diff %.3e, tol %.3e)\n", fname, lv, sz, sumA[key], sumB[key], d, lt; bad = 1 }
+      }
+      exit (bad ? 1 : 0)
+    }
+  ' "${fa}" "${fb}"
+}
+
 # Compare every output file that exists under dirA/output against the
 # same-named file under dirB/output, column-by-column, numeric columns to
 # ${tol}, text columns (e.g. header rows' "<H>" labels) exactly. Both
@@ -118,6 +238,35 @@ run_hphi() {
 # block (ceil(N/P) states per rank, rank 0 first), so concatenating parts in
 # rank order reproduces ascending state order exactly, byte-for-byte
 # comparable against Mode 0's own ascending-state-order output.
+#
+# DEGENERACY-AWARE per-eigenstate aggregate handling (blocker-2 fix).
+# The per-eigenstate aggregate Green files (every file whose name ends in
+# "_eigen.dat" -- zvo_cisajs_eigen.dat, zvo_cisajscktalt_eigen.dat,
+# zvo_NBodyG_eigen.dat, zvo_ThreeBody/FourBody/SixBody_eigen.dat, ...; NOT
+# Eigenvalue.dat, NOT zvo_phys*) hold, per row, a LEADING eigenstate index
+# (0-based, = X->Phys.eigen_num, src/green_output.c GreenOutputWriteIndexPrefix
+# family 3), then operator-index columns (integers), then value column(s)
+# (%.10lf floats: Re Im for a complex Green function). Under a DEGENERATE
+# eigenvalue a distributed eigensolver (ScaLAPACK, Solver 1) returns an
+# ARBITRARY orthonormal rotation within the degenerate subspace across two
+# separate HPhi launches (mode0 vs mode1 vs mode2 are separate launches), so
+# the per-state value at a given eigenstate index differs run-to-run even
+# though the physics is identical -- a naive per-line float diff spuriously
+# fails (the maintainer reproduced a fourfold-degenerate E=-1.5 level in
+# case 2's zvo_cisajs_eigen.dat whose per-state S2 differed but whose sum over
+# the four states was 10.0 in both modes -- an allowed rotation, not a physics
+# difference). So for *_eigen.dat files we compare the per-(operator,level) SUM
+# of each value column over each degenerate LEVEL. The sum over a degenerate
+# eigenspace is Tr(P.A.P) with P the level projector -- basis-INVARIANT, equal
+# for any two valid diagonalizations -- while individual per-state values are
+# not. For a non-degenerate level (size 1) this reduces to the exact per-state
+# check. Levels are derived from Eigenvalue.dat (idx->energy, grouped by
+# consecutive energies within etol=1e-6); the two Eigenvalue.dat files must
+# agree per index within etol (else a real spectral difference -> fail). The
+# per-level tolerance is ptol*level_size with ptol=2e-6 (same output-precision-
+# aware value compare_phys uses). Every non-*_eigen.dat file (Eigenvalue.dat,
+# CHECK_*, WarningOnTransfer.dat, aggregate totals, headers) keeps the exact
+# per-line comparison at ${tol}.
 compare_output_trees() {
   dirA="$1"
   dirB="$2"
@@ -131,9 +280,29 @@ compare_output_trees() {
     diff _filesA.lst _filesB.lst >&2
     fail "ExpecMode output file set mismatch"
   }
+  # Build the eigenstate-index -> degenerate-level map ONCE from Eigenvalue.dat
+  # (identical spectrum in both dirs -- verified below). Reused by every
+  # *_eigen.dat file's degeneracy-aware comparison in the loop.
+  evA="${dirA}/output/Eigenvalue.dat"
+  evB="${dirB}/output/Eigenvalue.dat"
+  [ -f "${evA}" ] || fail "compare_output_trees: ${evA} missing -- cannot build the degenerate-level map the *_eigen.dat comparison needs"
+  [ -f "${evB}" ] || fail "compare_output_trees: ${evB} missing -- cannot build the degenerate-level map the *_eigen.dat comparison needs"
+  build_eigen_level_map "${evA}" "${evB}" _eigen_levelmap.txt \
+    || fail "compare_output_trees: Eigenvalue.dat spectra differ between ${dirA} and ${dirB} (see message above) -- genuine spectral mismatch"
   while IFS= read -r f; do
     fa="${dirA}/output/${f}"
     fb="${dirB}/output/${f}"
+    # Per-eigenstate aggregate Green files (*_eigen.dat) are basis-dependent
+    # per state under degeneracy: compare per-(operator,level) SUMS, not per
+    # line (see the DEGENERACY-AWARE note above). Everything else (including
+    # Eigenvalue.dat itself, which is basis-invariant) keeps the exact diff.
+    case "${f}" in
+      *_eigen.dat)
+        compare_eigen_degenerate "${fa}" "${fb}" _eigen_levelmap.txt "${f}" \
+          || fail "ExpecMode 0/1 output mismatch in ${f} (see MISMATCH lines above)"
+        continue
+        ;;
+    esac
     na=$(wc -l < "${fa}")
     nb=$(wc -l < "${fb}")
     [ "${na}" = "${nb}" ] || fail "line count mismatch for ${f}: ${na} (${dirA}) vs ${nb} (${dirB})"

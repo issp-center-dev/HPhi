@@ -1060,11 +1060,25 @@ if(USE_SCALAPACK)
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
                 exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
     )
+    # np=3 specifically exercises non-divisible state-panel ownership AND the
+    # ScaLAPACK degenerate-subspace basis non-reproducibility across separate
+    # launches (blocker-2): the maintainer's flake reproduced only at
+    # ScaLAPACK np=3, which CI previously did not register. The *_eigen.dat
+    # comparison is now degeneracy-safe (per-(operator,level) sums), so this
+    # variant must run repeatedly clean.
+    add_test(
+        NAME fulldiag_expecmode_scalapack_np3
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
     set_tests_properties(
-        fulldiag_expecmode_scalapack_np2
+        fulldiag_expecmode_scalapack_np2 fulldiag_expecmode_scalapack_np3
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;scalapack;expecmode"
     )
     set_property(
         TEST fulldiag_expecmode_scalapack_np2
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
+    set_property(
+        TEST fulldiag_expecmode_scalapack_np3
         APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
 endif(USE_SCALAPACK)
