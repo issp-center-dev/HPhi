@@ -103,34 +103,60 @@ run_hphi() {
 # Build the eigenstate-index -> degenerate-level map from the two output
 # directories' Eigenvalue.dat files (src/lapack_diag.c writes each line as
 # " %ld %.10lf " -- a 0-based index then the eigenvalue, ascending energy).
-# The two files hold the SAME deterministic spectrum (same H matrix); verify
-# they agree per index within etol (a differing count/index/energy is a real
-# spectral difference -> return non-zero), then group consecutive ascending
-# indices whose energies agree within etol into LEVELS. Emits one "idx level"
-# line per eigenstate to $3 (level numbers start at 1). etol=1e-6 matches
-# compare_phys (energies are O(1..10), real gaps O(0.1..1) >> etol).
+# The two files hold the SAME deterministic spectrum (same H matrix); this
+# function HARD-VALIDATES each data row (exactly 2 fields, an integer index, a
+# finite numeric energy -- nan/inf/non-numeric rejected even if identical, and
+# non-decreasing energy), verifies A and B agree per index within etol, then
+# groups consecutive ascending indices whose energies agree within etol into
+# LEVELS. Crucially the grouping is derived INDEPENDENTLY from A and from B and
+# the two groupings must have identical level count AND identical per-level
+# boundaries/sizes (a near-threshold gap -- e.g. 0.9e-6 in A vs 1.1e-6 in B --
+# could group differently while every per-index energy check still passes; that
+# is a genuine spectral-level ambiguity and must fail, not be silently resolved
+# by A). Only the verified-identical map is emitted (one "idx level" line per
+# eigenstate) to $3. etol=1e-6 matches compare_phys (energies are O(1..10),
+# real gaps O(0.1..1) >> etol). Returns non-zero on any of these failures.
 build_eigen_level_map() {
   evA="$1"
   evB="$2"
   mapout="$3"
   awk -v etol="1e-6" '
     function abs(x){ return x<0?-x:x }
+    function finite_num(t) {
+      if (tolower(t) ~ /nan|inf/) return 0
+      return (t ~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/)
+    }
     FNR==1 { side++ }
-    NF < 2 { next }
-    side == 1 { nA++; idxA[nA] = $1 + 0; eA[nA] = $2 + 0; next }
-    side == 2 { nB++; idxB[nB] = $1 + 0; eB[nB] = $2 + 0 }
+    NF == 0 { next }   # skip a trailing blank line
+    {
+      s = (side == 1) ? "A" : "B"
+      if (NF != 2) { printf "build_eigen_level_map: %s Eigenvalue.dat row %d: expected 2 fields, got %d\n", s, FNR, NF > "/dev/stderr"; err=1; exit 3 }
+      if ($1 !~ /^[-+]?[0-9]+$/) { printf "build_eigen_level_map: %s Eigenvalue.dat row %d: eigenstate index not an integer: \"%s\"\n", s, FNR, $1 > "/dev/stderr"; err=1; exit 3 }
+      if (!finite_num($2)) { printf "build_eigen_level_map: %s Eigenvalue.dat row %d: non-finite/non-numeric energy: \"%s\"\n", s, FNR, $2 > "/dev/stderr"; err=1; exit 3 }
+    }
+    side == 1 { nA++; idxA[nA] = $1 + 0; eA[nA] = $2 + 0
+                if (nA > 1 && eA[nA] < eA[nA-1] - etol) { printf "build_eigen_level_map: A Eigenvalue.dat not ascending at row %d: %.10g < %.10g\n", FNR, eA[nA], eA[nA-1] > "/dev/stderr"; err=1; exit 3 }
+                next }
+    side == 2 { nB++; idxB[nB] = $1 + 0; eB[nB] = $2 + 0
+                if (nB > 1 && eB[nB] < eB[nB-1] - etol) { printf "build_eigen_level_map: B Eigenvalue.dat not ascending at row %d: %.10g < %.10g\n", FNR, eB[nB], eB[nB-1] > "/dev/stderr"; err=1; exit 3 } }
     END {
+      if (err) exit 3
       if (nA == 0) { print "build_eigen_level_map: no eigenvalues in A" > "/dev/stderr"; exit 3 }
       if (nA != nB) { printf "build_eigen_level_map: eigenvalue count differs (A=%d B=%d)\n", nA, nB > "/dev/stderr"; exit 3 }
       for (k = 1; k <= nA; k++) {
         if (idxA[k] != idxB[k]) { printf "build_eigen_level_map: eigenstate index mismatch at row %d: %d vs %d\n", k, idxA[k], idxB[k] > "/dev/stderr"; exit 3 }
         if (abs(eA[k] - eB[k]) > etol) { printf "build_eigen_level_map: eigenvalue mismatch at index %d: %.10g vs %.10g\n", idxA[k], eA[k], eB[k] > "/dev/stderr"; exit 3 }
       }
-      lvl = 1
+      # Independent grouping from A and from B (same rule); assign level[k].
+      gA = 1; lvlA[1] = 1
+      for (k = 2; k <= nA; k++) { if (abs(eA[k] - eA[k-1]) > etol) gA++; lvlA[k] = gA }
+      gB = 1; lvlB[1] = 1
+      for (k = 2; k <= nB; k++) { if (abs(eB[k] - eB[k-1]) > etol) gB++; lvlB[k] = gB }
+      if (gA != gB) { printf "build_eigen_level_map: degenerate-level count differs (A=%d B=%d) -- spectral-level ambiguity\n", gA, gB > "/dev/stderr"; exit 3 }
       for (k = 1; k <= nA; k++) {
-        if (k > 1 && abs(eA[k] - eA[k-1]) > etol) lvl++
-        printf "%d %d\n", idxA[k], lvl
+        if (lvlA[k] != lvlB[k]) { printf "build_eigen_level_map: level boundary differs at index %d (A level %d, B level %d) -- spectral-level ambiguity\n", idxA[k], lvlA[k], lvlB[k] > "/dev/stderr"; exit 3 }
       }
+      for (k = 1; k <= nA; k++) printf "%d %d\n", idxA[k], lvlA[k]
     }
   ' "${evA}" "${evB}" > "${mapout}"
 }
@@ -196,6 +222,22 @@ compare_eigen_degenerate() {
         }
       }
       if (vcount == 0) { printf "MISMATCH %s side %s row %d: no value columns\n", fname, sname, FNR; bad = 1; next }
+      # Structural multiplicity: track, per (opkey, level), the COUNT of
+      # contributing rows and the value-column count, PER SIDE, so a dropped
+      # row (even a zero-valued one, or one compensated by another row in the
+      # level) is caught -- the value SUM alone would not notice it.
+      rk = opkey SUBSEP level
+      allrk[rk] = 1
+      rklevel[rk] = level
+      if (side == 1) {
+        cntA[rk]++
+        if (rk in vcA) { if (vcA[rk] != vcount) { printf "MISMATCH %s side A: inconsistent value-column count for one (operator,level): %d vs %d\n", fname, vcA[rk], vcount; bad = 1 } }
+        else vcA[rk] = vcount
+      } else {
+        cntB[rk]++
+        if (rk in vcB) { if (vcB[rk] != vcount) { printf "MISMATCH %s side B: inconsistent value-column count for one (operator,level): %d vs %d\n", fname, vcB[rk], vcount; bad = 1 } }
+        else vcB[rk] = vcount
+      }
       for (v = 1; v <= vcount; v++) {
         key = opkey SUBSEP "V" v SUBSEP level
         allkeys[key] = 1
@@ -206,6 +248,18 @@ compare_eigen_degenerate() {
     }
     END {
       if (bad) exit 1
+      # (i) structural check: same set of (operator,level) with the same row
+      # multiplicity and the same value-column count on both sides.
+      for (rk in allrk) {
+        lv = rklevel[rk]
+        ca = (rk in cntA) ? cntA[rk] : 0
+        cb = (rk in cntB) ? cntB[rk] : 0
+        if (ca == 0) { printf "MISMATCH %s level %d: an (operator,level) group has rows in B but none in A\n", fname, lv; bad = 1; continue }
+        if (cb == 0) { printf "MISMATCH %s level %d: an (operator,level) group has rows in A but none in B\n", fname, lv; bad = 1; continue }
+        if (ca != cb) { printf "MISMATCH %s level %d: (operator,level) row count differs (A=%d B=%d) -- a row was dropped/added\n", fname, lv, ca, cb; bad = 1 }
+        if (vcA[rk] != vcB[rk]) { printf "MISMATCH %s level %d: (operator,level) value-column count differs (A=%d B=%d)\n", fname, lv, vcA[rk], vcB[rk]; bad = 1 }
+      }
+      # (ii) basis-invariant check: per-level value SUMS.
       for (key in allkeys) {
         if (!(key in seenA)) { printf "MISMATCH %s: (operator,level) key present in B but missing in A\n", fname; bad = 1; continue }
         if (!(key in seenB)) { printf "MISMATCH %s: (operator,level) key present in A but missing in B\n", fname; bad = 1; continue }
@@ -289,17 +343,33 @@ compare_output_trees() {
   [ -f "${evB}" ] || fail "compare_output_trees: ${evB} missing -- cannot build the degenerate-level map the *_eigen.dat comparison needs"
   build_eigen_level_map "${evA}" "${evB}" _eigen_levelmap.txt \
     || fail "compare_output_trees: Eigenvalue.dat spectra differ between ${dirA} and ${dirB} (see message above) -- genuine spectral mismatch"
+  # zvo_phys*.dat carries basis-dependent columns (S2, doublon, ...) that flake
+  # under degenerate ScaLAPACK rotations exactly like the *_eigen files, so it
+  # must NOT go through the exact 1e-8 per-line loop. compare_phys() is the
+  # degeneracy-aware comparator for it (it groups rows by its OWN energy column
+  # -- no Eigenvalue.dat needed -- and compares per-level sums); it iterates
+  # every zvo_phys*.dat in the pair itself, so call it once here and SKIP
+  # zvo_phys*.dat in the loop below. Only invoke it when such a file exists
+  # (compare_phys hard-fails on none), keeping compare_output_trees usable for
+  # trees without a zvo_phys file.
+  if grep -Eq '/zvo_phys[^/]*\.dat$' _filesA.lst; then
+    compare_phys "${dirA}" "${dirB}"
+  fi
   while IFS= read -r f; do
     fa="${dirA}/output/${f}"
     fb="${dirB}/output/${f}"
     # Per-eigenstate aggregate Green files (*_eigen.dat) are basis-dependent
     # per state under degeneracy: compare per-(operator,level) SUMS, not per
-    # line (see the DEGENERACY-AWARE note above). Everything else (including
-    # Eigenvalue.dat itself, which is basis-invariant) keeps the exact diff.
+    # line (see the DEGENERACY-AWARE note above). zvo_phys*.dat is likewise
+    # basis-dependent and was already handled above by compare_phys. Everything
+    # else (Eigenvalue.dat itself, CHECK_*, ...) is basis-invariant -> exact diff.
     case "${f}" in
       *_eigen.dat)
         compare_eigen_degenerate "${fa}" "${fb}" _eigen_levelmap.txt "${f}" \
           || fail "ExpecMode 0/1 output mismatch in ${f} (see MISMATCH lines above)"
+        continue
+        ;;
+      zvo_phys*.dat|*/zvo_phys*.dat)
         continue
         ;;
     esac

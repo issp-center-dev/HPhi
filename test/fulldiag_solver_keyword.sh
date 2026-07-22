@@ -351,8 +351,12 @@ EOF
     cat reject.log
     exit 1
   fi
-  grep -q "not currently supported for FullDiag" reject.log || {
-    echo "ERROR: spinless FullDiag rejection log should cite the unsupported-FullDiag message"
+  # Match BOTH the FullDiag-unsupported phrase AND the model-identifying part of
+  # cErrSpinlessFullDiag (src/ErrorMessage.c: "SpinlessFermion /
+  # SpinlessFermionGC are not currently supported for FullDiag ...") so a
+  # reworded but still-present rejection of a DIFFERENT model cannot pass this.
+  grep -q "SpinlessFermion / SpinlessFermionGC are not currently supported for FullDiag" reject.log || {
+    echo "ERROR: spinless FullDiag rejection log should cite the cErrSpinlessFullDiag message (model + unsupported-FullDiag)"
     cat reject.log
     exit 1
   }
