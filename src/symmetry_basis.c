@@ -1086,7 +1086,7 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
     X->Sym->mpi_displs = NULL;
     X->Sym->mpi_full_v1 = NULL;
 #endif
-    X->Sym->vector_exchange_mode = SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
+    X->Sym->vector_exchange_mode = SYMMETRY_VECTOR_EXCHANGE_HALO;
     X->Check.idim_max = X->Sym->local_dim;
     X->Check.idim_maxMPI = X->Sym->dim;
   }

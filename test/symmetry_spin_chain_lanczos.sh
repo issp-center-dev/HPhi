@@ -196,9 +196,7 @@ Ising ising.def
 TransSym qptransidx.def
 EOF
 
-run_hphi symmetry_heisenberg.log env HPHI_SYMMETRY_MATVEC=plan \
-    HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
-    ../../src/HPhi -e namelist_heisenberg.def
+run_hphi symmetry_heisenberg.log ../../src/HPhi -e namelist_heisenberg.def
 sym_heisenberg_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${ref_heisenberg_energy}"
 test -n "${sym_heisenberg_energy}"
@@ -207,6 +205,7 @@ test "${heisenberg_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
 grep -q "Symmetry matvec: mode=plan" symmetry_heisenberg.log
 grep -q "vector_exchange=halo" symmetry_heisenberg.log
+grep -q "columns=local/ghost-slots" symmetry_heisenberg.log
 
 rm -rf output
 write_kpi_over_3_transsym_l6
@@ -217,15 +216,18 @@ complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
 grep -q "Symmetry matvec: mode=plan" symmetry_complex.log
+grep -q "vector_exchange=halo" symmetry_complex.log
+grep -q "columns=local/ghost-slots" symmetry_complex.log
 
 rm -rf output
-run_hphi symmetry_complex_halo.log env HPHI_SYMMETRY_MATVEC=plan \
-    HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+run_hphi symmetry_complex_allgather.log env HPHI_SYMMETRY_MATVEC=plan \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     ../../src/HPhi -e namelist.def
-complex_halo_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
-complex_halo_diff=`awk -v a="${complex_halo_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%.16e", d}'`
-awk -v d="${complex_halo_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
-grep -q "vector_exchange=halo" symmetry_complex_halo.log
+complex_allgather_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+complex_allgather_diff=`awk -v a="${complex_allgather_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%.16e", d}'`
+awk -v d="${complex_allgather_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
+grep -q "vector_exchange=allgather" symmetry_complex_allgather.log
+grep -q "columns=global" symmetry_complex_allgather.log
 
 rm -rf output
 run_hphi symmetry_complex_legacy.log env HPHI_SYMMETRY_MATVEC=legacy ../../src/HPhi -e namelist.def
@@ -234,6 +236,7 @@ test -n "${legacy_energy}"
 legacy_diff=`awk -v a="${legacy_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%.16e", d}'`
 awk -v d="${legacy_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
 grep -q "Symmetry matvec: mode=legacy" symmetry_complex_legacy.log
+grep -q "mode=legacy vector_exchange=allgather" symmetry_complex_legacy.log
 
 rm -rf output
 if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_invalid_mode.log 2>&1; then
@@ -259,15 +262,17 @@ run_mpi_symmetry_case() {
     test "${mpi_diff}" = "0.000000"
     grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
     grep -q "Symmetry matvec: mode=plan" "${log_file}"
+    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "columns=local/ghost-slots" "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym MPI path unexpectedly used site decomposition."
         exit 1
     fi
 
-    log_file="symmetry_${label}_halo_mpi.log"
+    log_file="symmetry_${label}_allgather_mpi.log"
     rm -rf output
     if ! HPHI_SYMMETRY_MATVEC=plan \
-        HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+        HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
@@ -277,7 +282,8 @@ run_mpi_symmetry_case() {
     mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
     test "${mpi_diff}" = "0.000000"
     grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
-    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "vector_exchange=allgather" "${log_file}"
+    grep -q "columns=global" "${log_file}"
 
     log_file="symmetry_${label}_legacy_mpi.log"
     rm -rf output
@@ -322,6 +328,7 @@ EOF
         rank_env_diff=`awk -v a="${rank_env_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
         test "${rank_env_diff}" = "0.000000"
         grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
+        grep -q "vector_exchange=halo" symmetry_rank_env_mpi.log
         if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
             cat symmetry_rank_env_mpi.log
             exit 1

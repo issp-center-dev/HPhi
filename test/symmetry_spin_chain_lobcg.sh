@@ -115,6 +115,8 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry.log
+grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry.log
+grep -q "columns=local/ghost-slots" symmetry.log
 
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
@@ -126,6 +128,8 @@ if [ -n "${MPIRUN}" ]; then
         mpi_diff=`awk -v a="${mpi_energy}" -v b="${sym_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
         test "${mpi_diff}" = "0.000000"
         grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry_mpi.log
+        grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry_mpi.log
+        grep -q "columns=local/ghost-slots" symmetry_mpi.log
         if grep -q "MPI site separation summary" symmetry_mpi.log; then
             echo "TransSym MPI path unexpectedly used site decomposition."
             exit 1

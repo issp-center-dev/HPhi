@@ -232,10 +232,16 @@ static int select_matvec_mode(void)
   return BcastMPI_i(0, mode);
 }
 
-static int parse_vector_exchange_mode(void)
+static int parse_vector_exchange_mode(int matvec_mode)
 {
   const char *value = getenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
-  if (value == NULL || strcmp(value, "allgather") == 0) {
+  if (value == NULL) {
+    /* Keep the one-switch legacy rollback usable while plan uses halo. */
+    return matvec_mode == SYMMETRY_MATVEC_MODE_LEGACY
+               ? SYMMETRY_VECTOR_EXCHANGE_ALLGATHER
+               : SYMMETRY_VECTOR_EXCHANGE_HALO;
+  }
+  if (strcmp(value, "allgather") == 0) {
     return SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
   }
   if (strcmp(value, "halo") == 0) {
@@ -248,10 +254,10 @@ static int parse_vector_exchange_mode(void)
   return -1;
 }
 
-static int select_vector_exchange_mode(void)
+static int select_vector_exchange_mode(int matvec_mode)
 {
   int mode = SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
-  if (myrank == 0) mode = parse_vector_exchange_mode();
+  if (myrank == 0) mode = parse_vector_exchange_mode(matvec_mode);
   return BcastMPI_i(0, mode);
 }
 
@@ -534,7 +540,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
 
   mode = select_matvec_mode();
   if (mode < 0) return -1;
-  vector_exchange_mode = select_vector_exchange_mode();
+  vector_exchange_mode = select_vector_exchange_mode(mode);
   if (vector_exchange_mode < 0) return -1;
   halo_reference_mode = select_halo_reference_mode();
   if (halo_reference_mode < 0) return -1;

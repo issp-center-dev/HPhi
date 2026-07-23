@@ -870,10 +870,13 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   unsigned int *multiplicity;
   struct SymmetryMatvecPlan *plan;
 
-  if (ActivateSymmetryBasisDimension(X) != 0 || BuildSymmetryMatvecPlan(X) != 0) {
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(X) != 0 ||
+      BuildSymmetryMatvecPlan(X) != 0) {
     fprintf(stderr, "%s: plan setup failed\n", label);
     exit(1);
   }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   plan = X->Sym->matvec_plan;
   assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
   assert_ulong_eq(plan->dim, X->Sym->dim, label);
@@ -1000,12 +1003,10 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
 
   memset(output, 0, ((size_t)X->Sym->dim + 1U) * sizeof(*output));
   plan_prdct = 0.0;
-  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "halo", 1) != 0 ||
-      BuildSymmetryMatvecPlan(X) != 0) {
-    fprintf(stderr, "%s: serial halo plan setup failed\n", label);
+  if (BuildSymmetryMatvecPlan(X) != 0) {
+    fprintf(stderr, "%s: default serial halo plan setup failed\n", label);
     exit(1);
   }
-  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   plan = X->Sym->matvec_plan;
   assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
   assert_int_eq(plan->columns_remapped, TRUE, label);
@@ -1240,7 +1241,8 @@ static void assert_parallel_plan_matches_serial(const char *label)
   setup_hubbard_bind(&X, 6, 3, 3, 1);
   setup_hubbard_transfer_ring(&X.Def, 6);
   setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
-  if (BuildSymmetryBasis(&X) != 0 ||
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      BuildSymmetryBasis(&X) != 0 ||
       ActivateSymmetryBasisDimension(&X) != 0 ||
       BuildSymmetryMatvecPlan(&X) != 0) {
     fprintf(stderr, "%s: serial plan setup failed\n", label);
@@ -1275,6 +1277,7 @@ static void assert_parallel_plan_matches_serial(const char *label)
     exit(1);
   }
   parallel_plan = X.Sym->matvec_plan;
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   assert_ulong_eq((unsigned long int)parallel_plan->nnz,
                   (unsigned long int)serial_nnz, label);
   assert_ulong_eq((unsigned long int)parallel_plan->row_nnz_max,
@@ -1389,11 +1392,13 @@ static void assert_remote_topology_plan(const char *label)
   }
   nproc = 4;
   myrank = 0;
-  if (ActivateSymmetryBasisDimension(&X) != 0 ||
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
       BuildSymmetryMatvecPlan(&X) != 0) {
     fprintf(stderr, "%s: remote topology plan setup failed\n", label);
     exit(1);
   }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   plan = X.Sym->matvec_plan;
   assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
   assert_ulong_eq(
@@ -1606,10 +1611,13 @@ static void assert_zero_row_plan(const char *label)
   }
   nproc = 2;
   myrank = 1;
-  if (ActivateSymmetryBasisDimension(&X) != 0 || BuildSymmetryMatvecPlan(&X) != 0) {
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
     fprintf(stderr, "%s: zero-row plan setup failed\n", label);
     exit(1);
   }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   assert_ulong_eq(X.Sym->local_dim, 0UL, label);
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);

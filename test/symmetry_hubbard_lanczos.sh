@@ -263,7 +263,7 @@ assert_rank_stats() {
     log="$3"
     expected_digest="${4:-}"
     expected_reference="${5:-0}"
-    expected_exchange="${6:-allgather}"
+    expected_exchange="${6:-halo}"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -442,7 +442,8 @@ run_mpi_symmetry_case() {
     expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+        HPHI_SYMMETRY_HALO_REFERENCE=1 \
         ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
@@ -453,12 +454,11 @@ run_mpi_symmetry_case() {
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
     assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
-        "${expected_digest}" 1
+        "${expected_digest}" 1 allgather
 
-    log_file="hubbard_${label}_halo_mpi.log"
+    log_file="hubbard_${label}_default_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
-        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+    if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
     fi
@@ -514,6 +514,8 @@ write_sym_namelist yes
 assert_energy_matches_reference "${ref_energy}" hubbard_k0.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_k0.log
+grep -q "vector_exchange=halo" hubbard_k0.log
+grep -q "columns=local/ghost-slots" hubbard_k0.log
 if grep -q "MPI site separation summary" hubbard_k0.log; then
     cat hubbard_k0.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
@@ -532,8 +534,7 @@ expect_failure "symmetry legacy matvec requires" \
     HPHI_SYMMETRY_VECTOR_EXCHANGE=halo ../../src/HPhi -e namelist.def
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE requires" \
     invalid_halo_reference_production.log \
-    env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
-    HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
+    env HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
 
 rm -rf output
 write_kpi2_transsym
@@ -541,6 +542,8 @@ write_sym_namelist no
 ../../src/HPhi -e namelist.def > hubbard_kpi2.log 2>&1
 assert_energy "-2.0" hubbard_kpi2.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_kpi2.log
+grep -q "vector_exchange=halo" hubbard_kpi2.log
+grep -q "columns=local/ghost-slots" hubbard_kpi2.log
 if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     cat hubbard_kpi2.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
@@ -554,20 +557,21 @@ write_calcmod
 write_k0_transsym
 write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
-env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    HPHI_SYMMETRY_HALO_REFERENCE=1 \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-assert_rank_stats 4 1 hubbard_k0_cg.log "" 1
+assert_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
 rm -rf output
-env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
-    ../../src/HPhi -e namelist.def > hubbard_k0_cg_halo.log 2>&1
-assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_halo.log
-assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_halo.log
-assert_symmetry_log 4 hubbard_k0_cg_halo.log
-grep -q "vector_exchange=halo" hubbard_k0_cg_halo.log
-assert_rank_stats 4 1 hubbard_k0_cg_halo.log "" 0 halo
+../../src/HPhi -e namelist.def > hubbard_k0_cg_default.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_default.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_default.log
+assert_symmetry_log 4 hubbard_k0_cg_default.log
+grep -q "vector_exchange=halo" hubbard_k0_cg_default.log
+grep -q "columns=local/ghost-slots" hubbard_k0_cg_default.log
+assert_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 
