@@ -593,37 +593,26 @@ int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
   double complex recv_dummy = 0.0;
   size_t index;
   int mpi_active;
-  int local_error = 0;
 
   mpi_active = halo_mpi_collectives_active();
   if (halo == NULL || halo->ready != TRUE || local_vector == NULL ||
       (halo != NULL && halo->nrank > 1 && mpi_active == FALSE)) {
-    local_error = 1;
+    return -1;
   }
-#ifdef MPI
-  if (mpi_active != FALSE && halo != NULL) {
-    int comm_rank = -1;
-    int comm_size = 0;
-    if (MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank) != MPI_SUCCESS ||
-        MPI_Comm_size(MPI_COMM_WORLD, &comm_size) != MPI_SUCCESS ||
-        comm_rank != halo->rank || comm_size != halo->nrank) {
-      local_error = 1;
-    }
-  }
-#endif
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
 
+  /*
+   * BuildSymmetryVectorHaloPlan() collectively validates every
+   * send_local_index and all count/displacement arrays before setting ready.
+   * The runtime schedule is immutable, so repeating those checks through
+   * scalar error-agreement Allreduces here would add three collectives to
+   * every matvec.
+   */
   StartTimer(1510);
   for (index = 0U; index < halo->send_value_count; index++) {
     unsigned long int local_index = halo->send_local_index[index];
-    if (local_index == 0UL || local_index > halo->local_dim) {
-      local_error = 1;
-      break;
-    }
     halo->send_values[index] = local_vector[local_index];
   }
   StopTimer(1510);
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
 
   StartTimer(1511);
 #ifdef MPI
@@ -632,20 +621,19 @@ int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
         halo->send_value_count > 0U ? halo->send_values : &send_dummy;
     double complex *recv_buffer =
         halo->ghost_count > 0U ? halo->ghost_values : &recv_dummy;
-    local_error =
-        MPI_Alltoallv(send_buffer, halo->send_counts, halo->send_displs,
+    if (MPI_Alltoallv(send_buffer, halo->send_counts, halo->send_displs,
                       MPI_DOUBLE_COMPLEX,
                       recv_buffer, halo->recv_counts, halo->recv_displs,
-                      MPI_DOUBLE_COMPLEX, MPI_COMM_WORLD) == MPI_SUCCESS
-            ? 0
-            : 1;
+                      MPI_DOUBLE_COMPLEX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      StopTimer(1511);
+      return -1;
+    }
   }
 #else
   (void)send_dummy;
   (void)recv_dummy;
 #endif
   StopTimer(1511);
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
   halo->exchange_calls++;
   return 0;
 }
