@@ -863,6 +863,18 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   assert_ulong_eq(plan->dim, X->Sym->dim, label);
   assert_ulong_eq(plan->local_offset, 0UL, label);
   assert_ulong_eq(plan->local_dim, X->Sym->dim, label);
+  assert_ulong_eq((unsigned long int)plan->local_column_nnz,
+                  (unsigned long int)plan->nnz, label);
+  assert_ulong_eq((unsigned long int)plan->remote_column_nnz, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->ghost_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->incoming_peer_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->outgoing_peer_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_nonlocal_values_per_call, 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_payload_bytes_per_call, 0UL, label);
 
   if (plan->dim > SIZE_MAX / plan->dim) {
     fprintf(stderr, "%s: dense matrix size overflow\n", label);
@@ -1213,6 +1225,51 @@ static void assert_parallel_plan_matches_serial(const char *label)
 }
 #endif
 
+static void assert_remote_topology_plan(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryMatvecPlan *plan;
+  setup_bind(&X, 6, 3, 1);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  nproc = 4;
+  myrank = 0;
+  if (ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: remote topology plan setup failed\n", label);
+    exit(1);
+  }
+  plan = X.Sym->matvec_plan;
+  assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)(plan->local_column_nnz + plan->remote_column_nnz),
+      (unsigned long int)plan->nnz, label);
+  assert_int_eq(plan->remote_column_nnz > 0U, 1, label);
+  assert_int_eq(plan->ghost_count > 0U, 1, label);
+  assert_int_eq(plan->ghost_count <= plan->remote_column_nnz, 1, label);
+  assert_int_eq(plan->incoming_peer_count > 0U, 1, label);
+  assert_int_eq(plan->max_recv_from_peer > 0U, 1, label);
+  assert_ulong_eq((unsigned long int)plan->send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->outgoing_peer_count, 0UL, label);
+  assert_int_eq(plan->topology_scratch_bytes > 0U, 1, label);
+  assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_nonlocal_values_per_call,
+      X.Sym->dim - X.Sym->local_dim, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_payload_bytes_per_call,
+      (X.Sym->dim - X.Sym->local_dim) * sizeof(double complex), label);
+  nproc = 1;
+  myrank = 0;
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static void assert_zero_row_plan(const char *label)
 {
   struct BindStruct X;
@@ -1234,6 +1291,12 @@ static void assert_zero_row_plan(const char *label)
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->remote_column_nnz, 0UL, label);
+  assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->ghost_count, 0UL,
+                  label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->column_slot_width, 32UL, label);
   assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
   assert_complex_close(prdct, 0.0, 1.0e-12, label);
   nproc = 1;
@@ -1745,6 +1808,8 @@ int main(void)
   assert_parallel_plan_matches_serial(
       "Hubbard plan CSR is identical for one and four OpenMP threads");
 #endif
+  assert_remote_topology_plan(
+      "local-row plan reports remote-column topology without changing CSR");
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");

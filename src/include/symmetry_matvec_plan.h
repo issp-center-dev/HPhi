@@ -18,6 +18,23 @@ struct SymmetryMatvecPlan {
   size_t *row_ptr;
   unsigned long int *col_index;
   double complex *values;
+  size_t local_column_nnz;
+  size_t remote_column_nnz;
+  size_t ghost_count;
+  size_t send_value_count;
+  size_t incoming_peer_count;
+  size_t outgoing_peer_count;
+  size_t max_recv_from_peer;
+  size_t max_send_to_peer;
+  size_t topology_scratch_bytes;
+  size_t halo_schedule_bytes_estimate;
+  size_t halo_runtime_buffer_bytes_estimate;
+  size_t allgather_nonlocal_values_per_call;
+  size_t allgather_payload_bytes_per_call;
+  unsigned int column_slot_width;
+  unsigned long long matvec_calls;
+  unsigned long long input_allgather_calls;
+  unsigned long long prdct_allreduce_calls;
 };
 
 /**

@@ -73,7 +73,8 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
     1100, 1110, 1115, 1111, 1112, 1113, 1114,
-    1101, 1120, 1121, 1122, 4113
+    1101, 1120, 1121, 1122, 1130, 4113,
+    1, 1501, 1502, 1503, 1513
   };
   static const char *work_keys[] = {
     "basis_raw_states",
@@ -90,10 +91,40 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "basis_gather_bytes",
     "plan_local_rows",
     "plan_local_nnz",
-    "plan_row_nnz_max"
+    "plan_row_nnz_max",
+    "plan_local_column_nnz",
+    "plan_remote_column_nnz",
+    "halo_ghost_count",
+    "halo_send_value_count",
+    "halo_incoming_peer_count",
+    "halo_outgoing_peer_count",
+    "halo_max_recv_from_peer",
+    "halo_max_send_to_peer",
+    "halo_schedule_bytes_estimate",
+    "halo_runtime_buffer_bytes_estimate",
+    "topology_scratch_bytes",
+    "column_slot_width",
+    "input_allgather_nonlocal_values_per_call",
+    "input_allgather_payload_bytes_per_call",
+    "symmetry_matvec_calls",
+    "input_allgather_calls",
+    "prdct_allreduce_calls"
+  };
+  static const char *metric_keys[] = {
+    "plan_remote_column_nnz_ratio",
+    "halo_ghost_global_ratio",
+    "halo_ghost_nonlocal_ratio",
+    "symmetry_matvec_seconds_per_call",
+    "input_allgather_seconds_per_call",
+    "input_allgather_effective_bandwidth_Bps",
+    "plan_apply_seconds_per_call",
+    "prdct_allreduce_seconds_per_call",
+    "matvec_other_seconds",
+    "matvec_other_seconds_per_call"
   };
   const size_t timer_count = sizeof(timer_ids) / sizeof(timer_ids[0]);
   const size_t work_count = sizeof(work_keys) / sizeof(work_keys[0]);
+  const size_t metric_count = sizeof(metric_keys) / sizeof(metric_keys[0]);
   const struct SymmetryMatvecPlan *plan;
   double timer_local[sizeof(timer_ids) / sizeof(timer_ids[0])];
   double timer_min[sizeof(timer_ids) / sizeof(timer_ids[0])];
@@ -103,6 +134,10 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   unsigned long long work_min[sizeof(work_keys) / sizeof(work_keys[0])];
   unsigned long long work_max[sizeof(work_keys) / sizeof(work_keys[0])];
   unsigned long long work_sum[sizeof(work_keys) / sizeof(work_keys[0])];
+  double metric_local[sizeof(metric_keys) / sizeof(metric_keys[0])];
+  double metric_min[sizeof(metric_keys) / sizeof(metric_keys[0])];
+  double metric_max[sizeof(metric_keys) / sizeof(metric_keys[0])];
+  double metric_sum[sizeof(metric_keys) / sizeof(metric_keys[0])];
   double row_mean_local;
   double row_mean_min;
   double row_mean_max;
@@ -135,9 +170,90 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[12] = plan != NULL ? (unsigned long long)plan->local_dim : 0ULL;
   work_local[13] = plan != NULL ? (unsigned long long)plan->nnz : 0ULL;
   work_local[14] = plan != NULL ? (unsigned long long)plan->row_nnz_max : 0ULL;
+  work_local[15] =
+      plan != NULL ? (unsigned long long)plan->local_column_nnz : 0ULL;
+  work_local[16] =
+      plan != NULL ? (unsigned long long)plan->remote_column_nnz : 0ULL;
+  work_local[17] =
+      plan != NULL ? (unsigned long long)plan->ghost_count : 0ULL;
+  work_local[18] =
+      plan != NULL ? (unsigned long long)plan->send_value_count : 0ULL;
+  work_local[19] =
+      plan != NULL ? (unsigned long long)plan->incoming_peer_count : 0ULL;
+  work_local[20] =
+      plan != NULL ? (unsigned long long)plan->outgoing_peer_count : 0ULL;
+  work_local[21] =
+      plan != NULL ? (unsigned long long)plan->max_recv_from_peer : 0ULL;
+  work_local[22] =
+      plan != NULL ? (unsigned long long)plan->max_send_to_peer : 0ULL;
+  work_local[23] = plan != NULL
+                       ? (unsigned long long)plan->halo_schedule_bytes_estimate
+                       : 0ULL;
+  work_local[24] =
+      plan != NULL
+          ? (unsigned long long)plan->halo_runtime_buffer_bytes_estimate
+          : 0ULL;
+  work_local[25] =
+      plan != NULL ? (unsigned long long)plan->topology_scratch_bytes : 0ULL;
+  work_local[26] =
+      plan != NULL ? (unsigned long long)plan->column_slot_width : 0ULL;
+  work_local[27] =
+      plan != NULL
+          ? (unsigned long long)plan->allgather_nonlocal_values_per_call
+          : 0ULL;
+  work_local[28] =
+      plan != NULL
+          ? (unsigned long long)plan->allgather_payload_bytes_per_call
+          : 0ULL;
+  work_local[29] =
+      plan != NULL ? plan->matvec_calls : 0ULL;
+  work_local[30] =
+      plan != NULL ? plan->input_allgather_calls : 0ULL;
+  work_local[31] =
+      plan != NULL ? plan->prdct_allreduce_calls : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
+  metric_local[0] = plan != NULL && plan->nnz > 0U
+                        ? (double)plan->remote_column_nnz / (double)plan->nnz
+                        : 0.0;
+  metric_local[1] = plan != NULL && plan->dim > 0UL
+                        ? (double)plan->ghost_count / (double)plan->dim
+                        : 0.0;
+  metric_local[2] =
+      plan != NULL && plan->allgather_nonlocal_values_per_call > 0U
+          ? (double)plan->ghost_count /
+                (double)plan->allgather_nonlocal_values_per_call
+          : 0.0;
+  metric_local[3] =
+      plan != NULL && plan->matvec_calls > 0ULL
+          ? Timer[1] / (double)plan->matvec_calls
+          : 0.0;
+  metric_local[4] =
+      plan != NULL && plan->input_allgather_calls > 0ULL
+          ? Timer[1501] / (double)plan->input_allgather_calls
+          : 0.0;
+  metric_local[5] =
+      plan != NULL && plan->input_allgather_calls > 0ULL &&
+              Timer[1501] > 0.0
+          ? ((double)plan->allgather_payload_bytes_per_call *
+             (double)plan->input_allgather_calls) /
+                Timer[1501]
+          : 0.0;
+  metric_local[6] =
+      plan != NULL && plan->matvec_calls > 0ULL
+          ? Timer[1503] / (double)plan->matvec_calls
+          : 0.0;
+  metric_local[7] =
+      plan != NULL && plan->prdct_allreduce_calls > 0ULL
+          ? Timer[1513] / (double)plan->prdct_allreduce_calls
+          : 0.0;
+  metric_local[8] =
+      Timer[1] - Timer[1501] - Timer[1502] - Timer[1503] - Timer[1513];
+  metric_local[9] =
+      plan != NULL && plan->matvec_calls > 0ULL
+          ? metric_local[8] / (double)plan->matvec_calls
+          : 0.0;
   basis_digest_local = SymmetryBasisDigest(X->Sym);
 
   MPI_Allreduce(timer_local, timer_min, (int)timer_count, MPI_DOUBLE,
@@ -152,6 +268,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
                 MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(work_local, work_sum, (int)work_count, MPI_UNSIGNED_LONG_LONG,
                 MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(metric_local, metric_min, (int)metric_count, MPI_DOUBLE,
+                MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(metric_local, metric_max, (int)metric_count, MPI_DOUBLE,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(metric_local, metric_sum, (int)metric_count, MPI_DOUBLE,
+                MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(&row_mean_local, &row_mean_min, 1, MPI_DOUBLE,
                 MPI_MIN, MPI_COMM_WORLD);
   MPI_Allreduce(&row_mean_local, &row_mean_max, 1, MPI_DOUBLE,
@@ -165,7 +287,13 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
 
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
-  fprintf(fp, "format=HPhiCalcTimerRankStats version=1 ranks=%d\n", nproc);
+  fprintf(fp,
+          "format=HPhiCalcTimerRankStats version=2 ranks=%d "
+          "basis_layout=replicated matvec_mode=%s vector_exchange=allgather\n",
+          nproc,
+          X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN
+              ? "plan"
+              : "legacy");
   for (i = 0; i < timer_count; i++) {
     fprintf(fp, "timer id=%d ranks=%d min=%.17g max=%.17g mean=%.17g\n",
             timer_ids[i], nproc, timer_min[i], timer_max[i],
@@ -175,6 +303,11 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     fprintf(fp, "work key=%s ranks=%d min=%llu max=%llu mean=%.17g\n",
             work_keys[i], nproc, work_min[i], work_max[i],
             (double)work_sum[i] / (double)nproc);
+  }
+  for (i = 0; i < metric_count; i++) {
+    fprintf(fp, "metric key=%s ranks=%d min=%.17g max=%.17g mean=%.17g\n",
+            metric_keys[i], nproc, metric_min[i], metric_max[i],
+            metric_sum[i] / (double)nproc);
   }
   fprintf(fp,
           "work key=plan_row_nnz_mean ranks=%d min=%.17g max=%.17g mean=%.17g\n",
@@ -270,6 +403,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "    symmetry plan count/prefix", 1120);
   StampTime(fp, "    symmetry plan storage allocation", 1121);
   StampTime(fp, "    symmetry plan fill", 1122);
+  StampTime(fp, "    symmetry plan topology extraction", 1130);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -348,6 +482,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp,"  symmetry input Allgatherv",1501);
   StampTime(fp,"  symmetry legacy beta scan",1502);
   StampTime(fp,"  symmetry local-row plan apply",1503);
+  StampTime(fp,"  symmetry prdct scalar Allreduce",1513);
   StampTime(fp,"  diagonal", 100);
 
   switch(X->Def.iCalcModel){

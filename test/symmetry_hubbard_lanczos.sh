@@ -279,11 +279,16 @@ assert_rank_stats() {
             return parts[2]
         }
         /^format=/ {
+            header_version = value($2)
             header_ranks = value($3)
+            header_basis_layout = value($4)
+            header_matvec_mode = value($5)
+            header_vector_exchange = value($6)
             next
         }
         $1 == "timer" {
             timer_count++
+            id = value($2)
             ranks = value($3)
             min = value($4)
             max = value($5)
@@ -291,6 +296,7 @@ assert_rank_stats() {
             if (ranks != expected_ranks || min > mean || mean > max) bad = 1
             if (expected_ranks == 1 &&
                 (abs(min - max) > 1.0e-15 || abs(min - mean) > 1.0e-15)) bad = 1
+            timer_mean[id] = mean
             next
         }
         $1 == "work" {
@@ -306,6 +312,19 @@ assert_rank_stats() {
             work_mean[key] = mean
             next
         }
+        $1 == "metric" {
+            metric_count++
+            key = value($2)
+            ranks = value($3)
+            min = value($4)
+            max = value($5)
+            mean = value($6)
+            if (ranks != expected_ranks || min > mean || mean > max) bad = 1
+            metric_min[key] = min
+            metric_max[key] = max
+            metric_mean[key] = mean
+            next
+        }
         $1 == "basis_digest" {
             digest_count++
             ranks = value($3)
@@ -316,8 +335,12 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_ranks != expected_ranks || timer_count != 12 ||
-                work_count != 16 || digest_count != 1) bad = 1
+            if (header_version != 2 || header_ranks != expected_ranks ||
+                header_basis_layout != "replicated" ||
+                header_matvec_mode != "plan" ||
+                header_vector_exchange != "allgather" ||
+                timer_count != 18 || work_count != 33 ||
+                metric_count != 10 || digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
@@ -325,6 +348,36 @@ assert_rank_stats() {
             if (abs(work_mean["basis_orbit_metadata_calls"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (work_min["basis_thread_count"] < 1) bad = 1
             if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
+            if (abs(work_mean["plan_local_column_nnz"] + work_mean["plan_remote_column_nnz"] - work_mean["plan_local_nnz"]) > 1.0e-12) bad = 1
+            if (work_max["halo_ghost_count"] > work_max["plan_remote_column_nnz"]) bad = 1
+            if (work_max["halo_incoming_peer_count"] >= expected_ranks ||
+                work_max["halo_outgoing_peer_count"] >= expected_ranks) bad = 1
+            if (work_min["column_slot_width"] != 32 ||
+                work_max["column_slot_width"] != 32) bad = 1
+            if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
+            if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
+            if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
+            if (abs(work_mean["input_allgather_payload_bytes_per_call"] - 16 * work_mean["input_allgather_nonlocal_values_per_call"]) > 1.0e-12) bad = 1
+            if (expected_ranks > 1) {
+                if (abs(work_mean["halo_send_value_count"] - work_mean["halo_ghost_count"]) > 1.0e-12) bad = 1
+                if (work_min["input_allgather_calls"] <= 0) bad = 1
+                if (abs(work_mean["input_allgather_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else {
+                if (work_max["plan_remote_column_nnz"] != 0 ||
+                    work_max["halo_ghost_count"] != 0 ||
+                    work_max["input_allgather_calls"] != 0) bad = 1
+            }
+            if (metric_min["plan_remote_column_nnz_ratio"] < 0 ||
+                metric_max["plan_remote_column_nnz_ratio"] > 1 ||
+                metric_min["halo_ghost_global_ratio"] < 0 ||
+                metric_max["halo_ghost_global_ratio"] > 1 ||
+                metric_min["halo_ghost_nonlocal_ratio"] < 0 ||
+                metric_max["halo_ghost_nonlocal_ratio"] > 1 ||
+                metric_min["symmetry_matvec_seconds_per_call"] < 0 ||
+                metric_min["input_allgather_seconds_per_call"] < 0 ||
+                metric_min["input_allgather_effective_bandwidth_Bps"] < 0 ||
+                metric_min["plan_apply_seconds_per_call"] < 0 ||
+                metric_min["prdct_allreduce_seconds_per_call"] < 0) bad = 1
             exit bad
         }
     ' "${stats}"; then

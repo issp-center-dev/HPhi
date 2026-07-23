@@ -73,6 +73,9 @@ static const double complex *get_full_input_vector(struct BindStruct *X,
                           X->Sym->mpi_displs, MPI_DOUBLE_COMPLEX,
                           MPI_COMM_WORLD);
     if (ierr != MPI_SUCCESS) return NULL;
+    if (X->Sym->matvec_plan != NULL) {
+      X->Sym->matvec_plan->input_allgather_calls++;
+    }
     return X->Sym->mpi_full_v1;
   }
 #else
@@ -112,6 +115,9 @@ int mltplySpinSym(struct BindStruct *X,
     return -1;
   }
 
+  if (X->Sym->matvec_plan != NULL) {
+    X->Sym->matvec_plan->matvec_calls++;
+  }
   X->Large.prdct += prdct;
   return 0;
 }
