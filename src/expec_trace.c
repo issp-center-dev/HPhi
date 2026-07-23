@@ -267,6 +267,14 @@ size_t TraceGbufMaxBytesFromEnv(void) {
 int TraceModelEnergySupported(int iCalcModel) {
   switch (iCalcModel) {
     case Hubbard:
+    /* HubbardNConserved/KondoNConserved/tJNConserved are whitelisted only
+       because sz() remaps each back to its base enum (Hubbard/Kondo/tJ) before
+       the FullDiag output() path runs -- see src/sz.c's "NConserved -> Normal"
+       block (~lines 615-626). The energy kernel (trace_fill_diag /
+       TraceEnergyEvalState in expec_trace_ham.c) and its output therefore only
+       ever see the base enum for these three. If a future change to sz() stops
+       remapping them, these three cases would strand (no base-enum handling
+       downstream) and must be revisited here in lockstep. */
     case HubbardNConserved:
     case Kondo:
     case KondoNConserved:

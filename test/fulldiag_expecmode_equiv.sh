@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Force the C locale so every awk float parse below (`+ 0`, printf %g/%e, the
+# numeric-field regexes) is locale-independent -- a runner with a comma
+# decimal separator (LC_NUMERIC=de_DE, ...) would otherwise mis-parse the
+# "%.10lf" / "%10lf" dot-decimal output HPhi always writes.
+LC_ALL=C; export LC_ALL
+
 solver="${HPHI_FULLDIAG_SOLVER:-3}"
 case "${solver}" in
   1|3) ;;
@@ -435,11 +441,12 @@ compare_output_trees() {
 }
 
 # Phase 3c Task 6: compare ONLY the zvo_phys_* / zvo_phys.dat file(s) between
-# two run directories. Used by the InputHam negative case (case 7) and the
-# spinless energy-demotion cases (cases 8/9), where the observable comparison
-# must run on a DISTRIBUTED solver (ScaLAPACK for case 7; either solver for
-# 8/9 depending on the ctest registration -- Solver 1 under
-# fulldiag_expecmode_scalapack_np2). zvo_phys carries exactly the
+# two run directories. Called DIRECTLY by the InputHam negative case (case 7),
+# where the observable comparison must run on a DISTRIBUTED solver (ScaLAPACK,
+# Solver 1) and only zvo_phys is meaningful; and reached INDIRECTLY by every
+# compare_output_trees() case (1-6, 8-10) that has a zvo_phys*.dat, which
+# invokes compare_phys() on it (see compare_output_trees below). zvo_phys
+# carries exactly the
 # energy/fluctuation quantities (H,N,Sz,S2,D) the ExpecMode demotion paths
 # recompute, so it is the right (and brief-specified) comparison target.
 #
@@ -1175,4 +1182,110 @@ grep -Fxq "  INFO: ExpecMode 2: the energy/fluctuation family uses the ExpecMode
   "${test7}/log_run.txt" \
   || fail "case7: ExpecMode 2 did not report the InputHam energy demotion in ${test7}/log_run.txt"
 compare_phys "${ref7}" "${test7}"
+
+# =========================================================================
+# Cases 8-10 (audit finding: end-to-end coverage for the model families the
+# ExpecMode-2 energy trace kernel activates for but that cases 1-7 never
+# exercise). TraceModelEnergySupported() (src/expec_trace.c) turns the energy
+# kernel ON for the whole Hubbard/Kondo/tJ family (canonical + GC +
+# N-conserved), SpinGC (half AND general spin), and canonical Spin -- but the
+# gc==TRUE branch of trace_fill_diag (HubbardGC-only) and the
+# EnergyFlctCoeff_GeneralSpinGC path had NO distributed end-to-end proof here
+# (only unit-level dense-vs-CSR + coefficient tests, which do run in MPI CI as
+# of 0a8f3e67). These three cases close that gap on the same np=2/np=3 clavius
+# registrations cases 1-7 use.
+#
+# Each fixture's CalcModel + def validity + the aggregate zvo_cisajs_eigen.dat/
+# zvo_cisajscktalt_eigen.dat + zvo_phys*.dat production the comparators need
+# were verified LOCALLY at np=1 (serial LAPACK build_noMPI, ExpecMode 0 --
+# `HPhi -sdry` then a full Solver-0 run of each): HubbardGC -> CalcModel 3,
+# Kondo -> CalcModel 2, general-spin SpinGC (2S=2) -> CalcModel 4 with
+# iFlgGeneralSpin==TRUE (locspn.def LocSpn=2). The ExpecMode-2 plan asserts and
+# the distributed 0/1/2 equivalence are the clavius run's job (np=1 reverts
+# ExpecMode 2->0, so the plan INFO lines never print locally).
+#
+# KondoGC and tJGC are DELIBERATELY not given full cases here: their energy
+# kernel is exercised by test/unit/expec_trace_ham_check.c (dense-vs-CSR +
+# coefficient identity) and their taxonomy-orthogonality by the same helper
+# case 9/10 use, so a distributed case would add runtime without new coverage.
+# =========================================================================
+
+# ------------------------------------------------------------------------
+# Case 8: grand-canonical Hubbard (HubbardGC) chain L=3, one-body + two-body
+# GF. This is the ONLY end-to-end exercise of trace_fill_diag's gc==TRUE
+# branch (EnergyFlctCoeff_HubbardGC). HubbardGC is GF-kernel-supported for
+# BOTH quantities (kTraceCap HubbardGC {1,1}) and defines no multibody GF, so
+# the ExpecMode-2 plan selects the trace kernel for one-body AND two-body --
+# assert_kernel_plan(), exactly as canonical-Hubbard case 1 does.
+# ------------------------------------------------------------------------
+case8="case8_hubbardgc_chain"
+prep_case "${case8}" 'model = "HubbardGC"
+method = "FullDiag"
+lattice = "chain"
+L = 3
+t = 1.0
+U = 4.0
+mu = 0.5
+outputmode = "correlation"'
+run_mode "${case8}" 0
+run_mode "${case8}" 1
+compare_output_trees "${case8}/mode0" "${case8}/mode1"
+run_mode "${case8}" 2
+assert_kernel_plan "${case8}/mode2/log_run.txt"
+compare_output_trees "${case8}/mode1" "${case8}/mode2"
+
+# ------------------------------------------------------------------------
+# Case 9: canonical Kondo (KondoLattice) chain L=2, one-body + two-body GF.
+# Kondo IS energy-kernel-eligible (TraceModelEnergySupported), so the energy
+# family selects the trace kernel; but Kondo is NOT in the GF capability
+# table (kTraceCap has no Kondo row -- is_gc grouping mismatch), so BOTH GF
+# quantities take the unsupported-model ExpecMode-1 fallback. Same taxonomy-
+# orthogonality assertion the tJ case 6 uses:
+# assert_energy_kernel_gf_unsupported(). StdFace `model = "Kondo"` matches the
+# Kondo fixture generation in test/unit/expec_trace_ham_check.c.
+# ------------------------------------------------------------------------
+case9="case9_kondo_chain"
+prep_case "${case9}" 'model = "Kondo"
+method = "FullDiag"
+lattice = "chain"
+L = 2
+t = 1.0
+J = 1.0
+nelec = 2
+2Sz = 0
+outputmode = "correlation"'
+run_mode "${case9}" 0
+run_mode "${case9}" 1
+compare_output_trees "${case9}/mode0" "${case9}/mode1"
+run_mode "${case9}" 2
+assert_energy_kernel_gf_unsupported "${case9}/mode2/log_run.txt"
+compare_output_trees "${case9}/mode1" "${case9}/mode2"
+
+# ------------------------------------------------------------------------
+# Case 10: general-spin SpinGC (S=1, 2S=2) chain L=3, transverse field. This
+# is the ONLY end-to-end exercise of EnergyFlctCoeff_GeneralSpinGC:
+# trace_fill_diag takes the iFlgGeneralSpin==TRUE branch of its n_diag==1
+# path. The energy family is kernel-active (TraceModelEnergySupported(SpinGC)
+# ==1 regardless of general spin); but the GF capability row for SpinGC
+# requires flg_general_spin==0, so with iFlgGeneralSpin==TRUE it does NOT
+# match and BOTH GF quantities fall back (unsupported model) -- same
+# assert_energy_kernel_gf_unsupported() as case 9. (2S=2 sets
+# iFlgGeneralSpin==TRUE via src/readdef.c's LocSpn>LOCSPIN check.)
+# ------------------------------------------------------------------------
+case10="case10_spingc_general_s1"
+prep_case "${case10}" 'model = "SpinGC"
+method = "FullDiag"
+lattice = "chain"
+L = 3
+2S = 2
+J = 1.0
+Gamma = 0.5
+outputmode = "correlation"'
+run_mode "${case10}" 0
+run_mode "${case10}" 1
+compare_output_trees "${case10}/mode0" "${case10}/mode1"
+run_mode "${case10}" 2
+assert_energy_kernel_gf_unsupported "${case10}/mode2/log_run.txt"
+compare_output_trees "${case10}/mode1" "${case10}/mode2"
+
 echo "fulldiag_expecmode_equiv: OK"

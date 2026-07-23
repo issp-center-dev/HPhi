@@ -78,10 +78,18 @@ static void trace_count_sink(long int irow, long int jcol, double complex val) {
   g_rowptr[irow]++;
 }
 
-/* Fill sink: append (jcol, val) into row `irow`'s segment (0-based column). */
+/* Fill sink: append (jcol, val) into row `irow`'s segment (0-based column).
+ * Bounded exactly like trace_count_sink: an out-of-range irow, or a cursor
+ * that has already reached the row's segment end g_rowptr[irow] (the
+ * end-offset representation after the pass-1 prefix sum), means pass 2 is
+ * emitting MORE entries for this row than pass 1 counted -- a pass-1/pass-2
+ * divergence. Flag g_overflow and drop the write rather than clobber the next
+ * row's segment; TraceHamCollect() checks the flag after pass 2 and demotes,
+ * exactly like the pass-1 overflow path. O(1), allocation-free. */
 static void trace_fill_sink(long int irow, long int jcol, double complex val) {
   long int pos;
-  if (irow < 1 || irow > g_n) return;
+  if (irow < 1 || irow > g_n) { g_overflow = 1; return; }
+  if (g_cursor[irow] >= g_rowptr[irow]) { g_overflow = 1; return; }
   pos = g_cursor[irow]++;
   g_colidx[pos] = jcol - 1;
   g_val[pos] = val;
@@ -112,7 +120,11 @@ size_t TraceHamGatedBytes(long int n, long int nnz_raw, long int k_max,
   uintmax_t nn  = (uintmax_t)n;
   uintmax_t nd  = (uintmax_t)(n_diag > 0 ? n_diag : 0);
   uintmax_t km  = (uintmax_t)k_max;
-  uintmax_t ws_elem = (uintmax_t)sizeof(long int) + (uintmax_t)sizeof(double complex);
+  /* One merge-workspace element is a whole TraceEnt (the type the actual
+     alloc at Alloc 4 uses); NOT the bare sizeof(long int)+sizeof(double
+     complex) sum, which undercounts on any ABI that pads TraceEnt (equal on
+     LP64, but the gate must match the real allocation on every ABI). */
+  uintmax_t ws_elem = (uintmax_t)sizeof(TraceEnt);
 
   /* rowptr */
   if (!checked_bytes(np1, sizeof(long int), &t) || !add_size(&total, t)) return SIZE_MAX;
@@ -130,7 +142,7 @@ size_t TraceHamGatedBytes(long int n, long int nnz_raw, long int k_max,
     if (!checked_bytes(nd, nn, &nd_n)) return SIZE_MAX;
     if (!checked_bytes((uintmax_t)nd_n, sizeof(double), &t) || !add_size(&total, t)) return SIZE_MAX;
   }
-  /* sort workspace: k_max * (sizeof(long int) + sizeof(double complex)) */
+  /* sort workspace: k_max * sizeof(TraceEnt) (see ws_elem above) */
   if (!checked_bytes(km, ws_elem, &t) || !add_size(&total, t)) return SIZE_MAX;
 
   return total;
@@ -370,11 +382,37 @@ int TraceHamCollect(struct BindStruct *X, size_t cap_bytes,
 
   /* -------- Pass 2: fill row segments. -------- */
   for (r = 1; r <= n; r++) g_cursor[r] = g_rowptr[r - 1];
+  g_overflow = 0; /* trace_fill_sink raises it on a pass-1/pass-2 divergence */
   hamCollectSink = trace_fill_sink;
   if (makeHam(X) != 0) {
     fprintf(stdoutMPI, "ERROR: ExpecMode 2 Hamiltonian re-enumeration failed\n");
     trace_restore_sink(prev_mode, prev_hook);
     exitMPI(-1);
+  }
+
+  /* Detect a pass-1/pass-2 divergence rather than trust the counts blindly:
+     (1) trace_fill_sink set g_overflow if any row OVER-filled (pass 2 emitted
+         more than pass 1 counted) or saw an out-of-range irow; (2) every
+         row's cursor must now sit exactly at its segment end g_rowptr[r] --
+         a cursor short of the end means pass 2 UNDER-filled that row. Either
+         way the CSR would be malformed, so demote (free everything, restore
+         the sink) exactly like the pass-1 overflow path. Cheap O(N),
+         allocation-free. */
+  if (!g_overflow) {
+    for (r = 1; r <= n; r++) {
+      if (g_cursor[r] != g_rowptr[r]) { g_overflow = 1; break; }
+    }
+  }
+  if (g_overflow) {
+    trace_restore_sink(prev_mode, prev_hook);
+    free(g_rowptr); g_rowptr = NULL;
+    free(g_cursor); g_cursor = NULL;
+    free(g_colidx); g_colidx = NULL;
+    free(g_val);    g_val = NULL;
+    free(ws);
+    free(y);
+    for (di = 0; di < 3; di++) free(diag[di]);
+    return 0;
   }
 
   /* Sinks no longer needed; restore the caller's dense-mode state. */
