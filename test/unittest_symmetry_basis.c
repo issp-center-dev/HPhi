@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_vector_halo.h"
 #include "struct.h"
 
 #ifdef _OPENMP
@@ -866,10 +867,15 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   assert_ulong_eq((unsigned long int)plan->local_column_nnz,
                   (unsigned long int)plan->nnz, label);
   assert_ulong_eq((unsigned long int)plan->remote_column_nnz, 0UL, label);
-  assert_ulong_eq((unsigned long int)plan->ghost_count, 0UL, label);
-  assert_ulong_eq((unsigned long int)plan->send_value_count, 0UL, label);
-  assert_ulong_eq((unsigned long int)plan->incoming_peer_count, 0UL, label);
-  assert_ulong_eq((unsigned long int)plan->outgoing_peer_count, 0UL, label);
+  assert_int_eq(plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(plan->halo.ready, TRUE, label);
+  assert_ulong_eq((unsigned long int)plan->halo.ghost_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.incoming_peer_count, 0UL,
+                  label);
+  assert_ulong_eq((unsigned long int)plan->halo.outgoing_peer_count, 0UL,
+                  label);
+  assert_int_eq(plan->halo.schedule_checksum != 0ULL, 1, label);
   assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
   assert_ulong_eq(
       (unsigned long int)plan->allgather_nonlocal_values_per_call, 0UL, label);
@@ -1225,6 +1231,80 @@ static void assert_parallel_plan_matches_serial(const char *label)
 }
 #endif
 
+static void assert_vector_owner_and_request_layout(const char *label)
+{
+  const unsigned long int columns[] = {5UL, 1UL, 1UL, 4UL,
+                                       8UL, 10UL, 8UL};
+  const unsigned long int expected_ghosts[] = {1UL, 4UL, 8UL, 10UL};
+  struct SymmetryVectorHaloPlan first;
+  struct SymmetryVectorHaloPlan second;
+  size_t local_columns = 0U;
+  size_t remote_columns = 0U;
+  size_t index;
+
+  memset(&first, 0, sizeof(first));
+  memset(&second, 0, sizeof(second));
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 1UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 4UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 5UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 7UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 8UL), 2, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 10UL), 2, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 1UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 2UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 0UL), -1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 3UL), -1, label);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &first, 10UL, 4UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)local_columns, 1UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 6UL, label);
+  assert_int_eq(first.request_layout_ready, TRUE, label);
+  assert_int_eq(first.ready, FALSE, label);
+  assert_ulong_eq((unsigned long int)first.ghost_count, 4UL, label);
+  assert_ulong_eq((unsigned long int)first.incoming_peer_count, 2UL, label);
+  assert_ulong_eq((unsigned long int)first.max_recv_from_peer, 2UL, label);
+  assert_int_eq(first.recv_counts[0], 2, label);
+  assert_int_eq(first.recv_counts[1], 0, label);
+  assert_int_eq(first.recv_counts[2], 2, label);
+  assert_int_eq(first.recv_displs[0], 0, label);
+  assert_int_eq(first.recv_displs[1], 2, label);
+  assert_int_eq(first.recv_displs[2], 2, label);
+  for (index = 0U; index < first.ghost_count; index++) {
+    assert_ulong_eq(first.ghost_global_index[index],
+                    expected_ghosts[index], label);
+  }
+
+  local_columns = 0U;
+  remote_columns = 0U;
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &second, 10UL, 4UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_int_eq(first.schedule_checksum == second.schedule_checksum, 1,
+                label);
+  assert_int_eq(
+      memcmp(first.ghost_global_index, second.ghost_global_index,
+             first.ghost_count * sizeof(*first.ghost_global_index)) == 0,
+      1, label);
+  FreeSymmetryVectorHaloPlan(&first);
+  FreeSymmetryVectorHaloPlan(&second);
+
+  memset(&first, 0, sizeof(first));
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &first, 10UL, 3UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      -1, label);
+}
+
 static void assert_remote_topology_plan(const char *label)
 {
   struct BindStruct X;
@@ -1247,13 +1327,17 @@ static void assert_remote_topology_plan(const char *label)
       (unsigned long int)(plan->local_column_nnz + plan->remote_column_nnz),
       (unsigned long int)plan->nnz, label);
   assert_int_eq(plan->remote_column_nnz > 0U, 1, label);
-  assert_int_eq(plan->ghost_count > 0U, 1, label);
-  assert_int_eq(plan->ghost_count <= plan->remote_column_nnz, 1, label);
-  assert_int_eq(plan->incoming_peer_count > 0U, 1, label);
-  assert_int_eq(plan->max_recv_from_peer > 0U, 1, label);
-  assert_ulong_eq((unsigned long int)plan->send_value_count, 0UL, label);
-  assert_ulong_eq((unsigned long int)plan->outgoing_peer_count, 0UL, label);
-  assert_int_eq(plan->topology_scratch_bytes > 0U, 1, label);
+  assert_int_eq(plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(plan->halo.ready, FALSE, label);
+  assert_int_eq(plan->halo.ghost_count > 0U, 1, label);
+  assert_int_eq(plan->halo.ghost_count <= plan->remote_column_nnz, 1, label);
+  assert_int_eq(plan->halo.incoming_peer_count > 0U, 1, label);
+  assert_int_eq(plan->halo.max_recv_from_peer > 0U, 1, label);
+  assert_ulong_eq((unsigned long int)plan->halo.send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.outgoing_peer_count, 0UL,
+                  label);
+  assert_int_eq(plan->halo.topology_scratch_bytes > 0U, 1, label);
+  assert_int_eq(plan->halo.schedule_checksum != 0ULL, 1, label);
   assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
   assert_ulong_eq(
       (unsigned long int)plan->allgather_nonlocal_values_per_call,
@@ -1293,8 +1377,10 @@ static void assert_zero_row_plan(const char *label)
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
   assert_ulong_eq(
       (unsigned long int)X.Sym->matvec_plan->remote_column_nnz, 0UL, label);
-  assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->ghost_count, 0UL,
-                  label);
+  assert_int_eq(X.Sym->matvec_plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(X.Sym->matvec_plan->halo.ready, FALSE, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->halo.ghost_count, 0UL, label);
   assert_ulong_eq(
       (unsigned long int)X.Sym->matvec_plan->column_slot_width, 32UL, label);
   assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
@@ -1808,6 +1894,8 @@ int main(void)
   assert_parallel_plan_matches_serial(
       "Hubbard plan CSR is identical for one and four OpenMP threads");
 #endif
+  assert_vector_owner_and_request_layout(
+      "halo owner mapping and request layout are deterministic");
   assert_remote_topology_plan(
       "local-row plan reports remote-column topology without changing CSR");
   assert_zero_row_plan("local-row plan supports zero-row rank");

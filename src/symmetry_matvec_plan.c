@@ -10,6 +10,7 @@
 #include "CalcTime.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_vector_halo.h"
 #include "wrapperMPI.h"
 
 static int apply_exchange_halfspin(unsigned long int state,
@@ -231,38 +232,28 @@ static int select_matvec_mode(void)
   return BcastMPI_i(0, mode);
 }
 
-static int checked_size_add(size_t lhs, size_t rhs, size_t *result)
+static int parse_halo_reference_mode(void)
 {
-  if (result == NULL || lhs > SIZE_MAX - rhs) return -1;
-  *result = lhs + rhs;
-  return 0;
-}
-
-static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
-  *result = lhs * rhs;
-  return 0;
-}
-
-static int owner_of_global_index(unsigned long int dim,
-                                 int nrank,
-                                 unsigned long int global_index)
-{
-  unsigned long int base;
-  unsigned long int remainder;
-  unsigned long int zero_index;
-  unsigned long int large_block_end;
-  if (nrank < 1 || global_index == 0UL || global_index > dim) return -1;
-  base = dim / (unsigned long int)nrank;
-  remainder = dim % (unsigned long int)nrank;
-  zero_index = global_index - 1UL;
-  large_block_end = (base + 1UL) * remainder;
-  if (zero_index < large_block_end) {
-    return (int)(zero_index / (base + 1UL));
+  const char *value = getenv("HPHI_SYMMETRY_HALO_REFERENCE");
+  if (value == NULL || strcmp(value, "0") == 0 ||
+      strcmp(value, "off") == 0) {
+    return FALSE;
   }
-  if (base == 0UL) return -1;
-  return (int)(remainder + (zero_index - large_block_end) / base);
+  if (strcmp(value, "1") == 0 || strcmp(value, "on") == 0) {
+    return TRUE;
+  }
+  fprintf(stdoutMPI,
+          "Error: HPHI_SYMMETRY_HALO_REFERENCE must be "
+          "'0'/'off' or '1'/'on', got '%s'.\n",
+          value);
+  return -1;
+}
+
+static int select_halo_reference_mode(void)
+{
+  int enabled = FALSE;
+  if (myrank == 0) enabled = parse_halo_reference_mode();
+  return BcastMPI_i(0, enabled);
 }
 
 static int mpi_collectives_active(void)
@@ -298,206 +289,10 @@ static int agree_plan_error(int mpi_active, int local_error)
 #endif
 }
 
-static int BuildSymmetryMatvecTopology(struct SymmetryMatvecPlan *plan)
-{
-  unsigned char *remote_bits = NULL;
-  unsigned long long *recv_counts = NULL;
-  unsigned long long *send_counts = NULL;
-  unsigned long int first_local;
-  unsigned long int last_local;
-  size_t bitset_bytes = 0U;
-  size_t peer_bytes = 0U;
-  size_t schedule_count_bytes = 0U;
-  size_t p;
-  size_t byte_index;
-  int mpi_active;
-  int local_error = 0;
-  int rank;
-
-  if (plan == NULL || nproc < 1 || myrank < 0 || myrank >= nproc ||
-      plan->local_offset > plan->dim ||
-      plan->local_dim > plan->dim - plan->local_offset) {
-    return -1;
-  }
-  StartTimer(1130);
-  first_local = plan->local_offset + 1UL;
-  last_local = plan->local_offset + plan->local_dim;
-  if (plan->dim - plan->local_dim > (unsigned long int)SIZE_MAX) {
-    local_error = 1;
-  } else {
-    plan->allgather_nonlocal_values_per_call =
-        (size_t)(plan->dim - plan->local_dim);
-    if (checked_size_mul(plan->allgather_nonlocal_values_per_call,
-                         sizeof(double complex),
-                         &plan->allgather_payload_bytes_per_call) != 0) {
-      local_error = 1;
-    }
-  }
-
-  for (p = 0U; p < plan->nnz; p++) {
-    unsigned long int column = plan->col_index[p];
-    if (column == 0UL || column > plan->dim) {
-      local_error = 1;
-      break;
-    }
-    if (plan->local_dim > 0UL &&
-        column >= first_local && column <= last_local) {
-      plan->local_column_nnz++;
-    } else {
-      plan->remote_column_nnz++;
-    }
-  }
-  mpi_active = mpi_collectives_active();
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-  if (mpi_active != FALSE) {
-#ifdef MPI
-    int comm_size = 0;
-    if (MPI_Comm_size(MPI_COMM_WORLD, &comm_size) != MPI_SUCCESS ||
-        comm_size != nproc) {
-      local_error = 1;
-    }
-#endif
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-
-  if (plan->remote_column_nnz > 0U) {
-    if (plan->dim / 8UL > (unsigned long int)SIZE_MAX) {
-      local_error = 1;
-    } else {
-      bitset_bytes = (size_t)(plan->dim / 8UL);
-    }
-    if (local_error == 0 && plan->dim % 8UL != 0UL) {
-      if (bitset_bytes == SIZE_MAX) {
-        local_error = 1;
-      } else {
-        bitset_bytes++;
-      }
-    }
-    if (local_error == 0) {
-      remote_bits = (unsigned char *)calloc(bitset_bytes, sizeof(*remote_bits));
-      if (remote_bits == NULL) local_error = 1;
-    }
-  }
-  if (nproc > 1) {
-    if ((size_t)nproc > SIZE_MAX / sizeof(*recv_counts)) {
-      local_error = 1;
-    } else {
-      recv_counts = (unsigned long long *)calloc((size_t)nproc,
-                                                 sizeof(*recv_counts));
-      send_counts = (unsigned long long *)calloc((size_t)nproc,
-                                                 sizeof(*send_counts));
-      if (recv_counts == NULL || send_counts == NULL) local_error = 1;
-      if (checked_size_mul(2U * sizeof(*recv_counts), (size_t)nproc,
-                           &peer_bytes) != 0) {
-        local_error = 1;
-      }
-    }
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-
-  for (p = 0U; p < plan->nnz; p++) {
-    unsigned long int column = plan->col_index[p];
-    if (plan->local_dim == 0UL ||
-        column < first_local || column > last_local) {
-      unsigned long int zero_index = column - 1UL;
-      remote_bits[(size_t)(zero_index / 8UL)] |=
-          (unsigned char)(1U << (unsigned int)(zero_index % 8UL));
-    }
-  }
-  for (byte_index = 0U; byte_index < bitset_bytes; byte_index++) {
-    unsigned char bits = remote_bits[byte_index];
-    unsigned int bit;
-    for (bit = 0U; bits != 0U && bit < 8U; bit++) {
-      if ((bits & (unsigned char)(1U << bit)) != 0U) {
-        unsigned long int global_index =
-            (unsigned long int)(byte_index * 8U + (size_t)bit + 1U);
-        int owner = owner_of_global_index(plan->dim, nproc, global_index);
-        if (owner < 0 || owner == myrank) {
-          local_error = 1;
-          break;
-        }
-        plan->ghost_count++;
-        recv_counts[owner]++;
-      }
-    }
-    if (local_error != 0) break;
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-
-  for (rank = 0; rank < nproc; rank++) {
-    if (recv_counts != NULL && recv_counts[rank] > 0ULL) {
-      plan->incoming_peer_count++;
-      if (recv_counts[rank] > (unsigned long long)SIZE_MAX) {
-        local_error = 1;
-      } else if ((size_t)recv_counts[rank] > plan->max_recv_from_peer) {
-        plan->max_recv_from_peer = (size_t)recv_counts[rank];
-      }
-    }
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-
-#ifdef MPI
-  if (mpi_active != FALSE && nproc > 1) {
-    local_error =
-        MPI_Alltoall(recv_counts, 1, MPI_UNSIGNED_LONG_LONG,
-                     send_counts, 1, MPI_UNSIGNED_LONG_LONG,
-                     MPI_COMM_WORLD) == MPI_SUCCESS ? 0 : 1;
-  }
-#endif
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-  if (mpi_active != FALSE && nproc > 1) {
-    for (rank = 0; rank < nproc; rank++) {
-      if (send_counts[rank] > 0ULL) {
-        if (send_counts[rank] > (unsigned long long)SIZE_MAX ||
-            plan->send_value_count >
-                SIZE_MAX - (size_t)send_counts[rank]) {
-          local_error = 1;
-          break;
-        }
-        plan->outgoing_peer_count++;
-        plan->send_value_count += (size_t)send_counts[rank];
-        if ((size_t)send_counts[rank] > plan->max_send_to_peer) {
-          plan->max_send_to_peer = (size_t)send_counts[rank];
-        }
-      }
-    }
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-
-  if (checked_size_mul(4U * sizeof(unsigned long long), (size_t)nproc,
-                       &schedule_count_bytes) != 0 ||
-      checked_size_add(bitset_bytes, peer_bytes,
-                       &plan->topology_scratch_bytes) != 0 ||
-      checked_size_add(plan->ghost_count, plan->send_value_count, &p) != 0 ||
-      checked_size_mul(p, sizeof(unsigned long int),
-                       &plan->halo_schedule_bytes_estimate) != 0 ||
-      checked_size_add(plan->halo_schedule_bytes_estimate,
-                       schedule_count_bytes,
-                       &plan->halo_schedule_bytes_estimate) != 0 ||
-      checked_size_mul(p, sizeof(double complex),
-                       &plan->halo_runtime_buffer_bytes_estimate) != 0 ||
-      checked_size_add((size_t)plan->local_dim, plan->ghost_count, &p) != 0) {
-    local_error = 1;
-  }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
-  plan->column_slot_width = p <= (size_t)UINT32_MAX ? 32U : 64U;
-  free(remote_bits);
-  free(recv_counts);
-  free(send_counts);
-  StopTimer(1130);
-  return 0;
-
-fail:
-  free(remote_bits);
-  free(recv_counts);
-  free(send_counts);
-  StopTimer(1130);
-  return -1;
-}
-
 void FreeSymmetryMatvecPlan(struct SymmetryMatvecPlan *plan)
 {
   if (plan == NULL) return;
+  FreeSymmetryVectorHaloPlan(&plan->halo);
   free(plan->row_ptr);
   free(plan->col_index);
   free(plan->values);
@@ -520,6 +315,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   int local_error = 0;
   int mpi_active;
   int mode;
+  int halo_reference_mode;
 
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
   FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
@@ -533,6 +329,8 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
             "Symmetry matvec: mode=legacy (replicated beta scan).\n");
     return 0;
   }
+  halo_reference_mode = select_halo_reference_mode();
+  if (halo_reference_mode < 0) return -1;
 
   mpi_active = mpi_collectives_active();
   plan = (struct SymmetryMatvecPlan *)calloc(1, sizeof(*plan));
@@ -632,7 +430,33 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   StopTimer(1122);
   if (agree_plan_error(mpi_active, fill_error) != 0) goto fail;
 
-  if (BuildSymmetryMatvecTopology(plan) != 0) goto fail;
+  if (plan->dim - plan->local_dim > (unsigned long int)SIZE_MAX ||
+      (size_t)(plan->dim - plan->local_dim) >
+          SIZE_MAX / sizeof(double complex)) {
+    local_error = 1;
+  } else {
+    plan->allgather_nonlocal_values_per_call =
+        (size_t)(plan->dim - plan->local_dim);
+    plan->allgather_payload_bytes_per_call =
+        plan->allgather_nonlocal_values_per_call * sizeof(double complex);
+  }
+  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (BuildSymmetryVectorHaloPlan(
+          &plan->halo, plan->dim, plan->local_offset, plan->local_dim,
+          plan->col_index, plan->nnz, nproc, myrank,
+          &plan->local_column_nnz, &plan->remote_column_nnz) != 0) {
+    goto fail;
+  }
+  plan->halo.reference_enabled = halo_reference_mode;
+  if ((size_t)plan->local_dim >
+      SIZE_MAX - plan->halo.ghost_count) {
+    local_error = 1;
+  } else {
+    size_t slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
+    plan->column_slot_width =
+        slot_count <= (size_t)UINT32_MAX ? 32U : 64U;
+  }
+  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
 
   if (row_ptr_bytes > SIZE_MAX - col_bytes ||
       row_ptr_bytes + col_bytes > SIZE_MAX - value_bytes) {
@@ -648,12 +472,15 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
           "Symmetry matvec: mode=plan local_rows=%lu local_nnz=%zu "
           "row_nnz_min=%zu row_nnz_max=%zu row_nnz_mean=%.3f bytes=%zu "
           "local_column_nnz=%zu remote_column_nnz=%zu ghost_count=%zu "
-          "incoming_peers=%zu outgoing_peers=%zu.\n",
+          "incoming_peers=%zu outgoing_peers=%zu halo_schedule=%s "
+          "halo_reference=%s.\n",
           plan->local_dim, plan->nnz, min_row_nnz, max_row_nnz,
           plan->local_dim > 0UL ? (double)plan->nnz / (double)plan->local_dim : 0.0,
           plan_bytes, plan->local_column_nnz, plan->remote_column_nnz,
-          plan->ghost_count, plan->incoming_peer_count,
-          plan->outgoing_peer_count);
+          plan->halo.ghost_count, plan->halo.incoming_peer_count,
+          plan->halo.outgoing_peer_count,
+          plan->halo.ready == TRUE ? "ready" : "request-layout-only",
+          plan->halo.reference_enabled == TRUE ? "on" : "off");
   return 0;
 
 fail:

@@ -96,6 +96,18 @@ int mltplySpinSym(struct BindStruct *X,
   StopTimer(1501);
   if (full_v1 == NULL) return -1;
 
+  if (X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN &&
+      X->Sym->matvec_plan != NULL &&
+      X->Sym->matvec_plan->halo.reference_enabled == TRUE) {
+    if (ExchangeSymmetryVectorHaloReference(
+            &X->Sym->matvec_plan->halo, tmp_v1, full_v1) != 0) {
+      fprintf(stdoutMPI,
+              "Error: symmetry halo reference exchange did not match "
+              "the gathered input vector.\n");
+      return -1;
+    }
+  }
+
   if (X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_LEGACY) {
     StartTimer(1502);
     if (apply_legacy_scan(X, tmp_v0, full_v1, &prdct) != 0) {

@@ -262,6 +262,7 @@ assert_rank_stats() {
     expected_ranks="$2"
     log="$3"
     expected_digest="${4:-}"
+    expected_reference="${5:-0}"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -272,7 +273,8 @@ assert_rank_stats() {
         exit 1
     fi
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
-        -v expected_digest="${expected_digest}" '
+        -v expected_digest="${expected_digest}" \
+        -v expected_reference="${expected_reference}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
@@ -334,13 +336,23 @@ assert_rank_stats() {
             if (expected_digest != "" && digest_min != expected_digest) bad = 1
             next
         }
+        $1 == "halo_schedule_digest" {
+            schedule_digest_count++
+            ranks = value($3)
+            schedule_digest_xor = value($4)
+            schedule_digest_sum = value($5)
+            if (ranks != expected_ranks ||
+                schedule_digest_xor == "" || schedule_digest_sum == "") bad = 1
+            next
+        }
         END {
-            if (header_version != 2 || header_ranks != expected_ranks ||
+            if (header_version != 3 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != "allgather" ||
-                timer_count != 18 || work_count != 33 ||
-                metric_count != 10 || digest_count != 1) bad = 1
+                timer_count != 22 || work_count != 36 ||
+                metric_count != 13 || digest_count != 1 ||
+                schedule_digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
@@ -354,9 +366,21 @@ assert_rank_stats() {
                 work_max["halo_outgoing_peer_count"] >= expected_ranks) bad = 1
             if (work_min["column_slot_width"] != 32 ||
                 work_max["column_slot_width"] != 32) bad = 1
+            if (work_min["halo_schedule_ready"] != 1 ||
+                work_max["halo_schedule_ready"] != 1) bad = 1
+            if (work_min["halo_schedule_bytes"] <= 0) bad = 1
+            if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
+            if (work_min["halo_reference_enabled"] != expected_reference ||
+                work_max["halo_reference_enabled"] != expected_reference) bad = 1
             if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
             if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
+            if (expected_reference == 1) {
+                if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1
+                if (abs(work_mean["halo_reference_exchange_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else if (work_max["halo_reference_exchange_calls"] != 0) {
+                bad = 1
+            }
             if (abs(work_mean["input_allgather_payload_bytes_per_call"] - 16 * work_mean["input_allgather_nonlocal_values_per_call"]) > 1.0e-12) bad = 1
             if (expected_ranks > 1) {
                 if (abs(work_mean["halo_send_value_count"] - work_mean["halo_ghost_count"]) > 1.0e-12) bad = 1
@@ -377,7 +401,10 @@ assert_rank_stats() {
                 metric_min["input_allgather_seconds_per_call"] < 0 ||
                 metric_min["input_allgather_effective_bandwidth_Bps"] < 0 ||
                 metric_min["plan_apply_seconds_per_call"] < 0 ||
-                metric_min["prdct_allreduce_seconds_per_call"] < 0) bad = 1
+                metric_min["prdct_allreduce_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_pack_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_exchange_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_validation_seconds_per_call"] < 0) bad = 1
             exit bad
         }
     ' "${stats}"; then
@@ -397,7 +424,8 @@ run_mpi_symmetry_case() {
     expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
-    if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+    if ! env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
     fi
@@ -407,7 +435,7 @@ run_mpi_symmetry_case() {
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
     assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
-        "${expected_digest}"
+        "${expected_digest}" 1
 }
 
 run_mpi_if_available() {
@@ -458,6 +486,9 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
 fi
 assert_rank_stats 4 1 hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
+expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
+    invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
+    ../../src/HPhi -e namelist.def
 
 rm -rf output
 write_kpi2_transsym
@@ -478,11 +509,12 @@ write_calcmod
 write_k0_transsym
 write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
-../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
+env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+    ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-assert_rank_stats 4 1 hubbard_k0_cg.log
+assert_rank_stats 4 1 hubbard_k0_cg.log "" 1
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 

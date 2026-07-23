@@ -73,8 +73,8 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
     1100, 1110, 1115, 1111, 1112, 1113, 1114,
-    1101, 1120, 1121, 1122, 1130, 4113,
-    1, 1501, 1502, 1503, 1513
+    1101, 1120, 1121, 1122, 1130, 1131, 4113,
+    1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
   };
   static const char *work_keys[] = {
     "basis_raw_states",
@@ -100,15 +100,18 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "halo_outgoing_peer_count",
     "halo_max_recv_from_peer",
     "halo_max_send_to_peer",
-    "halo_schedule_bytes_estimate",
-    "halo_runtime_buffer_bytes_estimate",
+    "halo_schedule_bytes",
+    "halo_runtime_buffer_bytes",
     "topology_scratch_bytes",
     "column_slot_width",
     "input_allgather_nonlocal_values_per_call",
     "input_allgather_payload_bytes_per_call",
     "symmetry_matvec_calls",
     "input_allgather_calls",
-    "prdct_allreduce_calls"
+    "prdct_allreduce_calls",
+    "halo_schedule_ready",
+    "halo_reference_enabled",
+    "halo_reference_exchange_calls"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -120,7 +123,10 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "plan_apply_seconds_per_call",
     "prdct_allreduce_seconds_per_call",
     "matvec_other_seconds",
-    "matvec_other_seconds_per_call"
+    "matvec_other_seconds_per_call",
+    "halo_reference_pack_seconds_per_call",
+    "halo_reference_exchange_seconds_per_call",
+    "halo_reference_validation_seconds_per_call"
   };
   const size_t timer_count = sizeof(timer_ids) / sizeof(timer_ids[0]);
   const size_t work_count = sizeof(work_keys) / sizeof(work_keys[0]);
@@ -145,6 +151,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   unsigned long long basis_digest_local;
   unsigned long long basis_digest_min;
   unsigned long long basis_digest_max;
+  unsigned long long halo_checksum_local;
+  unsigned long long halo_checksum_xor;
+  unsigned long long halo_checksum_sum;
   char fileName[D_FileNameMax];
   FILE *fp;
   size_t i;
@@ -175,26 +184,28 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[16] =
       plan != NULL ? (unsigned long long)plan->remote_column_nnz : 0ULL;
   work_local[17] =
-      plan != NULL ? (unsigned long long)plan->ghost_count : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.ghost_count : 0ULL;
   work_local[18] =
-      plan != NULL ? (unsigned long long)plan->send_value_count : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.send_value_count : 0ULL;
   work_local[19] =
-      plan != NULL ? (unsigned long long)plan->incoming_peer_count : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.incoming_peer_count : 0ULL;
   work_local[20] =
-      plan != NULL ? (unsigned long long)plan->outgoing_peer_count : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.outgoing_peer_count : 0ULL;
   work_local[21] =
-      plan != NULL ? (unsigned long long)plan->max_recv_from_peer : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.max_recv_from_peer : 0ULL;
   work_local[22] =
-      plan != NULL ? (unsigned long long)plan->max_send_to_peer : 0ULL;
+      plan != NULL ? (unsigned long long)plan->halo.max_send_to_peer : 0ULL;
   work_local[23] = plan != NULL
-                       ? (unsigned long long)plan->halo_schedule_bytes_estimate
+                       ? (unsigned long long)plan->halo.schedule_bytes
                        : 0ULL;
   work_local[24] =
       plan != NULL
-          ? (unsigned long long)plan->halo_runtime_buffer_bytes_estimate
+          ? (unsigned long long)plan->halo.runtime_buffer_bytes
           : 0ULL;
   work_local[25] =
-      plan != NULL ? (unsigned long long)plan->topology_scratch_bytes : 0ULL;
+      plan != NULL
+          ? (unsigned long long)plan->halo.topology_scratch_bytes
+          : 0ULL;
   work_local[26] =
       plan != NULL ? (unsigned long long)plan->column_slot_width : 0ULL;
   work_local[27] =
@@ -211,6 +222,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
       plan != NULL ? plan->input_allgather_calls : 0ULL;
   work_local[31] =
       plan != NULL ? plan->prdct_allreduce_calls : 0ULL;
+  work_local[32] =
+      plan != NULL && plan->halo.ready == TRUE ? 1ULL : 0ULL;
+  work_local[33] =
+      plan != NULL && plan->halo.reference_enabled == TRUE ? 1ULL : 0ULL;
+  work_local[34] =
+      plan != NULL ? plan->halo.reference_exchange_calls : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -218,11 +235,11 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
                         ? (double)plan->remote_column_nnz / (double)plan->nnz
                         : 0.0;
   metric_local[1] = plan != NULL && plan->dim > 0UL
-                        ? (double)plan->ghost_count / (double)plan->dim
+                        ? (double)plan->halo.ghost_count / (double)plan->dim
                         : 0.0;
   metric_local[2] =
       plan != NULL && plan->allgather_nonlocal_values_per_call > 0U
-          ? (double)plan->ghost_count /
+          ? (double)plan->halo.ghost_count /
                 (double)plan->allgather_nonlocal_values_per_call
           : 0.0;
   metric_local[3] =
@@ -249,12 +266,30 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
           ? Timer[1513] / (double)plan->prdct_allreduce_calls
           : 0.0;
   metric_local[8] =
-      Timer[1] - Timer[1501] - Timer[1502] - Timer[1503] - Timer[1513];
+      Timer[1] - Timer[1501] - Timer[1502] - Timer[1503] -
+      Timer[1510] - Timer[1511] - Timer[1512] - Timer[1513];
   metric_local[9] =
       plan != NULL && plan->matvec_calls > 0ULL
           ? metric_local[8] / (double)plan->matvec_calls
           : 0.0;
+  metric_local[10] =
+      plan != NULL && plan->halo.reference_exchange_calls > 0ULL
+          ? Timer[1510] /
+                (double)plan->halo.reference_exchange_calls
+          : 0.0;
+  metric_local[11] =
+      plan != NULL && plan->halo.reference_exchange_calls > 0ULL
+          ? Timer[1511] /
+                (double)plan->halo.reference_exchange_calls
+          : 0.0;
+  metric_local[12] =
+      plan != NULL && plan->halo.reference_exchange_calls > 0ULL
+          ? Timer[1512] /
+                (double)plan->halo.reference_exchange_calls
+          : 0.0;
   basis_digest_local = SymmetryBasisDigest(X->Sym);
+  halo_checksum_local =
+      plan != NULL ? plan->halo.schedule_checksum : 0ULL;
 
   MPI_Allreduce(timer_local, timer_min, (int)timer_count, MPI_DOUBLE,
                 MPI_MIN, MPI_COMM_WORLD);
@@ -284,11 +319,15 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
                 MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
   MPI_Allreduce(&basis_digest_local, &basis_digest_max, 1,
                 MPI_UNSIGNED_LONG_LONG, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&halo_checksum_local, &halo_checksum_xor, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_BXOR, MPI_COMM_WORLD);
+  MPI_Allreduce(&halo_checksum_local, &halo_checksum_sum, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
 
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=2 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=3 ranks=%d "
           "basis_layout=replicated matvec_mode=%s vector_exchange=allgather\n",
           nproc,
           X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN
@@ -315,6 +354,10 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   fprintf(fp,
           "basis_digest algorithm=fnv1a64-fields ranks=%d min=%016llx max=%016llx\n",
           nproc, basis_digest_min, basis_digest_max);
+  fprintf(fp,
+          "halo_schedule_digest algorithm=fnv1a64-layout ranks=%d "
+          "xor=%016llx sum=%016llx\n",
+          nproc, halo_checksum_xor, halo_checksum_sum);
   fclose(fp);
 }
 #endif
@@ -404,6 +447,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "    symmetry plan storage allocation", 1121);
   StampTime(fp, "    symmetry plan fill", 1122);
   StampTime(fp, "    symmetry plan topology extraction", 1130);
+  StampTime(fp, "    symmetry halo request schedule", 1131);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -482,6 +526,9 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp,"  symmetry input Allgatherv",1501);
   StampTime(fp,"  symmetry legacy beta scan",1502);
   StampTime(fp,"  symmetry local-row plan apply",1503);
+  StampTime(fp,"  symmetry halo reference pack",1510);
+  StampTime(fp,"  symmetry halo reference exchange",1511);
+  StampTime(fp,"  symmetry halo reference validation",1512);
   StampTime(fp,"  symmetry prdct scalar Allreduce",1513);
   StampTime(fp,"  diagonal", 100);
 

@@ -50,13 +50,15 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
 target_include_directories(unittest_symmetry_basis
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(unittest_symmetry_basis PRIVATE
     DSFMT_MEXP=19937 HPHI_SYMMETRY_PARITY_VERIFY
-    HPHI_SYMMETRY_CANONICAL_VERIFY HPHI_SYMMETRY_SPIN_VERIFY)
+    HPHI_SYMMETRY_CANONICAL_VERIFY HPHI_SYMMETRY_SPIN_VERIFY
+    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1)
 target_link_libraries(unittest_symmetry_basis m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_basis ${MPI_C_LIBRARIES})
