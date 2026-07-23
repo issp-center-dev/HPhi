@@ -69,6 +69,7 @@
 #include "expec_trace.h"
 #include "expec_trace_ham.h"
 #include "expec_energy_flct.h"
+#include "CalcTime.h"
 
 /* Globals provided by the linked src/global.c (Ham, list_*, v0/v1, sink hooks,
    myrank/nproc/stdoutMPI, iHamPanelActive/iHamSinkMode). */
@@ -290,15 +291,24 @@ static void run_gate_and_injection(void) {
   expect_true("gate: cap == want-1 -> collect demotes (returns 0)", ok == 0);
   expect_true("gate: cap == want-1 -> csr zeroed (rowptr NULL)", csr.rowptr == NULL);
 
-  /* Allocation-failure injection: each of the first six allocations. */
-  for (fa = 0; fa <= 5; fa++) {
-    char nm[128];
-    memset(&csr, 0x5A, sizeof(csr));
-    ok = TraceHamCollect(&X, SIZE_MAX / 2, fa, &csr);
-    snprintf(nm, sizeof(nm), "inject: fail_alloc_at=%d -> returns 0", fa);
-    expect_true(nm, ok == 0);
-    snprintf(nm, sizeof(nm), "inject: fail_alloc_at=%d -> csr zeroed", fa);
-    expect_true(nm, csr.rowptr == NULL);
+  /* Allocation-failure injection: EVERY galloc TraceHamCollect performs must
+     demote cleanly. TraceHamCollect (src/expec_trace_ham.c) does 6 fixed gallocs
+     (0:rowptr 1:cursor 2:colidx 3:val 4:sort-ws 5:y) followed by n_diag
+     coefficient-array gallocs (6..5+n_diag). The Hubbard fixture has n_diag==3,
+     so the highest injectable index is 8 -- covering the diag[] allocations that
+     the old 0..5 loop left untested. */
+  {
+    int max_fa = 5 + n_diag;
+    expect_true("inject: fixture reaches the diag[] allocs (n_diag>0)", n_diag > 0);
+    for (fa = 0; fa <= max_fa; fa++) {
+      char nm[128];
+      memset(&csr, 0x5A, sizeof(csr));
+      ok = TraceHamCollect(&X, SIZE_MAX / 2, fa, &csr);
+      snprintf(nm, sizeof(nm), "inject: fail_alloc_at=%d -> returns 0", fa);
+      expect_true(nm, ok == 0);
+      snprintf(nm, sizeof(nm), "inject: fail_alloc_at=%d -> csr zeroed", fa);
+      expect_true(nm, csr.rowptr == NULL);
+    }
   }
 
   /* Sink must be restored after every injected failure: a normal collect works. */
@@ -712,6 +722,7 @@ static void run_energy_sentinel(void) {
   TraceHamCsr csr;
   long int n, i;
   int ok;
+  double e_dense, var_dense;
   const char *stan =
     "L = 6\nmodel = \"Spin\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
     "J = 1.0\n2Sz = 0\n";
@@ -769,7 +780,11 @@ static void run_energy_sentinel(void) {
                X.Phys.Sz, 0.5 * (double)X.Def.Total2SzMPI, 1e-12);
   expect_true("kernel-sentinel: energy overwritten (!= sentinel)", X.Phys.energy != 1111.0);
   expect_true("kernel-sentinel: var overwritten (!= sentinel)",    X.Phys.var != 2222.0);
-  expect_true("kernel-sentinel: var == <H^2> >= 0", X.Phys.var >= 0.0);
+  /* var == <H^2> checked against the independent dense reference over the SAME
+     state (v1), not merely >= 0 (which is tautological for a sum of squares). */
+  dense_energy_var(n, v1, &e_dense, &var_dense);
+  expect_close("kernel-sentinel", "energy == dense <H>", X.Phys.energy, e_dense, 1e-12);
+  expect_close("kernel-sentinel", "var == dense <H^2>",  X.Phys.var,    var_dense, 1e-12);
 
   TraceHamFree(&csr);
 }
@@ -1079,6 +1094,12 @@ int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+  /* Allocate the timer arrays that the full binary sets up in InitTimer()
+     (called from HPhiMain before any StartTimer). In an MPI build StartTimer()/
+     StopTimer() dereference the global Timer[]/TimerStart[] pointers (NULL until
+     InitTimer runs); the parts 1-3 fixtures reach them via
+     expec_energy_flct(). InitTimer's body is a no-op in the noMPI build. */
+  InitTimer();
 #else
   (void)argc; (void)argv;
 #endif
@@ -1092,15 +1113,18 @@ int main(int argc, char **argv) {
 
   fprintf(stderr, "== expec_trace_ham_check == (rank %d / %d)\n", myrank, nproc);
 
-  /* Parts 1-3 are the serial (noMPI-build) coverage: single-process
-     StdFace/ReadDef/makeHam fixtures plus the streaming-kernel checks. They are
-     compiled ONLY in the non-MPI build -- the heavy setup closure is not
-     MPI-singleton-safe (expec_energy_flct()->StartTimer() dereferences a Timer
-     array the full HPhi InitializeMPI() would allocate, which this test does
-     not call), and they are already fully exercised by the noMPI suite. The MPI
-     build compiles ONLY part 4 (the rank-synchronized finalize), run both as a
-     singleton and, via the mpiexec launcher, at nproc>=2. */
-#ifndef MPI
+  /* Parts 1-3 are the single-process coverage: single-process
+     StdFace/ReadDef/makeHam fixtures plus the streaming-kernel checks. They run
+     whenever nproc == 1 -- in the noMPI build, and also in an MPI build invoked
+     as a singleton (ctest runs the binary directly; OpenMPI/MPICH give it a
+     one-rank MPI_COMM_WORLD). The one thing the singleton needs that the full
+     HPhi binary does via InitTimer() -- allocating Timer[]/TimerStart[] before
+     the StartTimer() calls reached through expec_energy_flct() -- is done in
+     main() above. When nproc >= 2 (the mpiexec launcher) these single-process
+     fixtures are skipped and only part 4 (the rank-synchronized finalize) plus
+     the pure parts 5-6 run. */
+  if (nproc == 1) {
+  fprintf(stderr, "== Parts 1-3 (single-process fixtures) running (nproc==1) ==\n");
 
   run_matrix_fixture("Hubbard L=4 half-filled", "hubbard",
     "L = 4\nmodel = \"Hubbard\"\nmethod = \"FullDiag\"\nlattice = \"chain\"\n"
@@ -1177,7 +1201,10 @@ int main(int argc, char **argv) {
   run_energy_sentinel();
   run_kernel_flct_equiv();
 
-#endif /* !MPI (parts 1-3 are noMPI-build only) */
+  } else {
+    fprintf(stderr, "== Parts 1-3 SKIPPED (nproc==%d > 1; single-process only) ==\n",
+            nproc);
+  } /* if (nproc == 1) : parts 1-3 are single-process coverage */
 
   /* ---- Part 4: TraceFinalizeEnergyPlan (single-rank at nproc==1, the
      rank-synchronized 2-rank demotion under mpiexec). Collective at nproc>=2,

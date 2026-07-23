@@ -53,7 +53,7 @@ jobs:
           MPIRUN: mpiexec --oversubscribe -np 3
         run: |
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
-            -R '^(elpa_eigen_check|elpa_statepanel_zero_owner|fulldiag_expecmode_equiv_np3)$'
+            -R '^(elpa_eigen_check|elpa_statepanel_zero_owner|fulldiag_expecmode_equiv_np3|fulldiag_expecmode_scalapack_np3)$'
 
   ctest:
     runs-on: ${{ matrix.os }}
