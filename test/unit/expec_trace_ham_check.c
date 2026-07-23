@@ -1113,9 +1113,11 @@ int main(int argc, char **argv) {
      directly-executed singleton binary shares the machine with the BLAS
      thread pool (observed on a 64-core host: main thread stuck spinning in
      gomp_team_barrier_wait_end inside calculate_jb_* with num_threads=64,
-     alongside 128 idle OpenBLAS workers). One thread is ample here and keeps
-     every OpenMP code path exercised (serially). */
-  omp_set_num_threads(1);
+     alongside 128 idle OpenBLAS workers). CAP the team size rather than
+     forcing 1: small explicit settings (e.g. the CI matrix's
+     OMP_NUM_THREADS=3 leg) keep exercising the parallel code paths, while
+     an inherited large default is reduced to a safe ceiling. */
+  if (omp_get_max_threads() > 4) omp_set_num_threads(4);
 #endif
 
   if (getcwd(g_base, sizeof(g_base)) == NULL) {
