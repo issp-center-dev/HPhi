@@ -52,6 +52,9 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "struct.h"
 #include "global.h"
@@ -1102,6 +1105,17 @@ int main(int argc, char **argv) {
   InitTimer();
 #else
   (void)argc; (void)argv;
+#endif
+
+#ifdef _OPENMP
+  /* The fixtures are tiny (<= 4 sites); with the default thread count on a
+     large node (e.g. 64), sz()'s OpenMP team barriers livelock/stall when the
+     directly-executed singleton binary shares the machine with the BLAS
+     thread pool (observed on a 64-core host: main thread stuck spinning in
+     gomp_team_barrier_wait_end inside calculate_jb_* with num_threads=64,
+     alongside 128 idle OpenBLAS workers). One thread is ample here and keeps
+     every OpenMP code path exercised (serially). */
+  omp_set_num_threads(1);
 #endif
 
   if (getcwd(g_base, sizeof(g_base)) == NULL) {
