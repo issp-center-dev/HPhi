@@ -73,7 +73,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
     1100, 1110, 1115, 1111, 1112, 1113, 1114,
-    1101, 1120, 1121, 1122, 1130, 1131, 4113,
+    1101, 1120, 1121, 1122, 1130, 1131, 1132, 4113,
     1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
   };
   static const char *work_keys[] = {
@@ -111,7 +111,10 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "prdct_allreduce_calls",
     "halo_schedule_ready",
     "halo_reference_enabled",
-    "halo_reference_exchange_calls"
+    "halo_reference_exchange_calls",
+    "columns_remapped",
+    "full_input_vector_allocated",
+    "halo_exchange_calls"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -126,7 +129,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "matvec_other_seconds_per_call",
     "halo_reference_pack_seconds_per_call",
     "halo_reference_exchange_seconds_per_call",
-    "halo_reference_validation_seconds_per_call"
+    "halo_reference_validation_seconds_per_call",
+    "halo_pack_seconds_per_call",
+    "halo_exchange_seconds_per_call"
   };
   const size_t timer_count = sizeof(timer_ids) / sizeof(timer_ids[0]);
   const size_t work_count = sizeof(work_keys) / sizeof(work_keys[0]);
@@ -228,6 +233,11 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
       plan != NULL && plan->halo.reference_enabled == TRUE ? 1ULL : 0ULL;
   work_local[34] =
       plan != NULL ? plan->halo.reference_exchange_calls : 0ULL;
+  work_local[35] =
+      plan != NULL && plan->columns_remapped == TRUE ? 1ULL : 0ULL;
+  work_local[36] = X->Sym->mpi_full_v1 != NULL ? 1ULL : 0ULL;
+  work_local[37] =
+      plan != NULL ? plan->halo.exchange_calls : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -287,6 +297,14 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
           ? Timer[1512] /
                 (double)plan->halo.reference_exchange_calls
           : 0.0;
+  metric_local[13] =
+      plan != NULL && plan->halo.exchange_calls > 0ULL
+          ? Timer[1510] / (double)plan->halo.exchange_calls
+          : 0.0;
+  metric_local[14] =
+      plan != NULL && plan->halo.exchange_calls > 0ULL
+          ? Timer[1511] / (double)plan->halo.exchange_calls
+          : 0.0;
   basis_digest_local = SymmetryBasisDigest(X->Sym);
   halo_checksum_local =
       plan != NULL ? plan->halo.schedule_checksum : 0ULL;
@@ -327,12 +345,15 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=3 ranks=%d "
-          "basis_layout=replicated matvec_mode=%s vector_exchange=allgather\n",
+          "format=HPhiCalcTimerRankStats version=4 ranks=%d "
+          "basis_layout=replicated matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN
               ? "plan"
-              : "legacy");
+              : "legacy",
+          X->Sym->vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_HALO
+              ? "halo"
+              : "allgather");
   for (i = 0; i < timer_count; i++) {
     fprintf(fp, "timer id=%d ranks=%d min=%.17g max=%.17g mean=%.17g\n",
             timer_ids[i], nproc, timer_min[i], timer_max[i],
@@ -448,6 +469,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "    symmetry plan fill", 1122);
   StampTime(fp, "    symmetry plan topology extraction", 1130);
   StampTime(fp, "    symmetry halo request schedule", 1131);
+  StampTime(fp, "    symmetry CSR column remap", 1132);
   StampTime(fp, "  diagonalcalc", 2000);
   if(X->Def.iFlgCalcSpec == CALCSPEC_NOT){
     if(X->Def.iCalcType==TPQCalc || X->Def.iCalcType==cTPQ) {
@@ -526,8 +548,8 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp,"  symmetry input Allgatherv",1501);
   StampTime(fp,"  symmetry legacy beta scan",1502);
   StampTime(fp,"  symmetry local-row plan apply",1503);
-  StampTime(fp,"  symmetry halo reference pack",1510);
-  StampTime(fp,"  symmetry halo reference exchange",1511);
+  StampTime(fp,"  symmetry halo pack",1510);
+  StampTime(fp,"  symmetry halo exchange",1511);
   StampTime(fp,"  symmetry halo reference validation",1512);
   StampTime(fp,"  symmetry prdct scalar Allreduce",1513);
   StampTime(fp,"  diagonal", 100);

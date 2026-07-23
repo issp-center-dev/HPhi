@@ -263,6 +263,7 @@ assert_rank_stats() {
     log="$3"
     expected_digest="${4:-}"
     expected_reference="${5:-0}"
+    expected_exchange="${6:-allgather}"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -274,7 +275,8 @@ assert_rank_stats() {
     fi
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
         -v expected_digest="${expected_digest}" \
-        -v expected_reference="${expected_reference}" '
+        -v expected_reference="${expected_reference}" \
+        -v expected_exchange="${expected_exchange}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
@@ -346,12 +348,12 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 3 || header_ranks != expected_ranks ||
+            if (header_version != 4 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
-                header_vector_exchange != "allgather" ||
-                timer_count != 22 || work_count != 36 ||
-                metric_count != 13 || digest_count != 1 ||
+                header_vector_exchange != expected_exchange ||
+                timer_count != 23 || work_count != 39 ||
+                metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
@@ -372,6 +374,13 @@ assert_rank_stats() {
             if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
             if (work_min["halo_reference_enabled"] != expected_reference ||
                 work_max["halo_reference_enabled"] != expected_reference) bad = 1
+            expected_remapped = expected_exchange == "halo" ? 1 : 0
+            if (work_min["columns_remapped"] != expected_remapped ||
+                work_max["columns_remapped"] != expected_remapped) bad = 1
+            expected_full = expected_exchange == "allgather" &&
+                            expected_ranks > 1 ? 1 : 0
+            if (work_min["full_input_vector_allocated"] != expected_full ||
+                work_max["full_input_vector_allocated"] != expected_full) bad = 1
             if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
             if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
@@ -381,15 +390,22 @@ assert_rank_stats() {
             } else if (work_max["halo_reference_exchange_calls"] != 0) {
                 bad = 1
             }
+            if (expected_reference == 1 || expected_exchange == "halo") {
+                if (work_min["halo_exchange_calls"] <= 0) bad = 1
+                if (abs(work_mean["halo_exchange_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else if (work_max["halo_exchange_calls"] != 0) {
+                bad = 1
+            }
             if (abs(work_mean["input_allgather_payload_bytes_per_call"] - 16 * work_mean["input_allgather_nonlocal_values_per_call"]) > 1.0e-12) bad = 1
-            if (expected_ranks > 1) {
+            if (expected_ranks > 1 && expected_exchange == "allgather") {
                 if (abs(work_mean["halo_send_value_count"] - work_mean["halo_ghost_count"]) > 1.0e-12) bad = 1
                 if (work_min["input_allgather_calls"] <= 0) bad = 1
                 if (abs(work_mean["input_allgather_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
             } else {
-                if (work_max["plan_remote_column_nnz"] != 0 ||
-                    work_max["halo_ghost_count"] != 0 ||
-                    work_max["input_allgather_calls"] != 0) bad = 1
+                if (work_max["input_allgather_calls"] != 0) bad = 1
+                if (expected_ranks == 1 &&
+                    (work_max["plan_remote_column_nnz"] != 0 ||
+                     work_max["halo_ghost_count"] != 0)) bad = 1
             }
             if (metric_min["plan_remote_column_nnz_ratio"] < 0 ||
                 metric_max["plan_remote_column_nnz_ratio"] > 1 ||
@@ -404,7 +420,9 @@ assert_rank_stats() {
                 metric_min["prdct_allreduce_seconds_per_call"] < 0 ||
                 metric_min["halo_reference_pack_seconds_per_call"] < 0 ||
                 metric_min["halo_reference_exchange_seconds_per_call"] < 0 ||
-                metric_min["halo_reference_validation_seconds_per_call"] < 0) bad = 1
+                metric_min["halo_reference_validation_seconds_per_call"] < 0 ||
+                metric_min["halo_pack_seconds_per_call"] < 0 ||
+                metric_min["halo_exchange_seconds_per_call"] < 0) bad = 1
             exit bad
         }
     ' "${stats}"; then
@@ -436,6 +454,23 @@ run_mpi_symmetry_case() {
     assert_symmetry_log "${expected_dim}" "${log_file}"
     assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 1
+
+    log_file="hubbard_${label}_halo_mpi.log"
+    rm -rf output
+    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+        cat "${log_file}"
+        exit 1
+    fi
+    assert_energy_matches_reference "${expected_energy}" "${log_file}"
+    if [ -n "${expected_doublon}" ]; then
+        assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
+    fi
+    assert_symmetry_log "${expected_dim}" "${log_file}"
+    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "columns=local/ghost-slots" "${log_file}"
+    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+        "${expected_digest}" 0 halo
 }
 
 run_mpi_if_available() {
@@ -489,6 +524,16 @@ run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
     invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
     ../../src/HPhi -e namelist.def
+expect_failure "HPHI_SYMMETRY_VECTOR_EXCHANGE must be" \
+    invalid_vector_exchange.log env HPHI_SYMMETRY_VECTOR_EXCHANGE=invalid \
+    ../../src/HPhi -e namelist.def
+expect_failure "symmetry legacy matvec requires" \
+    invalid_legacy_halo.log env HPHI_SYMMETRY_MATVEC=legacy \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=halo ../../src/HPhi -e namelist.def
+expect_failure "HPHI_SYMMETRY_HALO_REFERENCE requires" \
+    invalid_halo_reference_production.log \
+    env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+    HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
 
 rm -rf output
 write_kpi2_transsym
@@ -515,6 +560,14 @@ assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
 assert_rank_stats 4 1 hubbard_k0_cg.log "" 1
+rm -rf output
+env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+    ../../src/HPhi -e namelist.def > hubbard_k0_cg_halo.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_halo.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_halo.log
+assert_symmetry_log 4 hubbard_k0_cg_halo.log
+grep -q "vector_exchange=halo" hubbard_k0_cg_halo.log
+assert_rank_stats 4 1 hubbard_k0_cg_halo.log "" 0 halo
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 

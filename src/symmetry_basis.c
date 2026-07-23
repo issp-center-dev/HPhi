@@ -1073,7 +1073,6 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
 int ActivateSymmetryBasisDimension(struct BindStruct *X)
 {
   if (X->Sym != NULL && X->Sym->enabled == TRUE) {
-    int rank = 0;
     if (nproc < 1 || myrank < 0 || myrank >= nproc) return -1;
     FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
     X->Sym->matvec_plan = NULL;
@@ -1086,32 +1085,8 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
     X->Sym->mpi_recvcounts = NULL;
     X->Sym->mpi_displs = NULL;
     X->Sym->mpi_full_v1 = NULL;
-    if (nproc > 1) {
-      if (X->Sym->dim > (unsigned long int)INT_MAX) {
-        fprintf(stdoutMPI,
-                "Error: TransSym MPI sector dimension %lu exceeds MPI int count limit.\n",
-                X->Sym->dim);
-        return -1;
-      }
-      X->Sym->mpi_recvcounts = (int *)calloc((size_t)nproc, sizeof(int));
-      X->Sym->mpi_displs = (int *)calloc((size_t)nproc, sizeof(int));
-      X->Sym->mpi_full_v1 = (double complex *)calloc(X->Sym->dim + 1UL,
-                                                     sizeof(double complex));
-      if (X->Sym->mpi_recvcounts == NULL || X->Sym->mpi_displs == NULL ||
-          X->Sym->mpi_full_v1 == NULL) {
-        return -1;
-      }
-      for (rank = 0; rank < nproc; rank++) {
-        unsigned long int offset;
-        unsigned long int count;
-        symmetry_block_range(X->Sym->dim, rank, nproc, &offset, &count);
-        X->Sym->mpi_recvcounts[rank] = (int)count;
-        X->Sym->mpi_displs[rank] = (int)offset;
-      }
-    }
-#else
-    (void)rank;
 #endif
+    X->Sym->vector_exchange_mode = SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
     X->Check.idim_max = X->Sym->local_dim;
     X->Check.idim_maxMPI = X->Sym->dim;
   }

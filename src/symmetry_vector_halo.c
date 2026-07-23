@@ -586,10 +586,8 @@ fail_topology:
   return -1;
 }
 
-int ExchangeSymmetryVectorHaloReference(
-    struct SymmetryVectorHaloPlan *halo,
-    const double complex *local_vector,
-    const double complex *full_vector)
+int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
+                               const double complex *local_vector)
 {
   double complex send_dummy = 0.0;
   double complex recv_dummy = 0.0;
@@ -599,7 +597,6 @@ int ExchangeSymmetryVectorHaloReference(
 
   mpi_active = halo_mpi_collectives_active();
   if (halo == NULL || halo->ready != TRUE || local_vector == NULL ||
-      full_vector == NULL ||
       (halo != NULL && halo->nrank > 1 && mpi_active == FALSE)) {
     local_error = 1;
   }
@@ -649,6 +646,23 @@ int ExchangeSymmetryVectorHaloReference(
 #endif
   StopTimer(1511);
   if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  halo->exchange_calls++;
+  return 0;
+}
+
+int ExchangeSymmetryVectorHaloReference(
+    struct SymmetryVectorHaloPlan *halo,
+    const double complex *local_vector,
+    const double complex *full_vector)
+{
+  size_t index;
+  int mpi_active;
+  int local_error = 0;
+
+  mpi_active = halo_mpi_collectives_active();
+  if (halo == NULL || full_vector == NULL) local_error = 1;
+  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (ExchangeSymmetryVectorHalo(halo, local_vector) != 0) return -1;
 
   StartTimer(1512);
   for (index = 0U; index < halo->ghost_count; index++) {

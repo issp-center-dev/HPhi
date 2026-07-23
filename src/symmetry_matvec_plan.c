@@ -232,6 +232,29 @@ static int select_matvec_mode(void)
   return BcastMPI_i(0, mode);
 }
 
+static int parse_vector_exchange_mode(void)
+{
+  const char *value = getenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
+  if (value == NULL || strcmp(value, "allgather") == 0) {
+    return SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
+  }
+  if (strcmp(value, "halo") == 0) {
+    return SYMMETRY_VECTOR_EXCHANGE_HALO;
+  }
+  fprintf(stdoutMPI,
+          "Error: HPHI_SYMMETRY_VECTOR_EXCHANGE must be "
+          "'allgather' or 'halo', got '%s'.\n",
+          value);
+  return -1;
+}
+
+static int select_vector_exchange_mode(void)
+{
+  int mode = SYMMETRY_VECTOR_EXCHANGE_ALLGATHER;
+  if (myrank == 0) mode = parse_vector_exchange_mode();
+  return BcastMPI_i(0, mode);
+}
+
 static int parse_halo_reference_mode(void)
 {
   const char *value = getenv("HPHI_SYMMETRY_HALO_REFERENCE");
@@ -289,6 +312,141 @@ static int agree_plan_error(int mpi_active, int local_error)
 #endif
 }
 
+static int configure_full_input_vector(struct BindStruct *X,
+                                       int required,
+                                       int mpi_active)
+{
+#ifdef MPI
+  int local_error = 0;
+  int rank;
+  free(X->Sym->mpi_recvcounts);
+  free(X->Sym->mpi_displs);
+  free(X->Sym->mpi_full_v1);
+  X->Sym->mpi_recvcounts = NULL;
+  X->Sym->mpi_displs = NULL;
+  X->Sym->mpi_full_v1 = NULL;
+  if (required == FALSE || nproc <= 1) return 0;
+  if (X->Sym->dim > (unsigned long int)INT_MAX ||
+      X->Sym->dim > (unsigned long int)(SIZE_MAX / sizeof(double complex) -
+                                        1U)) {
+    local_error = 1;
+  } else {
+    X->Sym->mpi_recvcounts =
+        (int *)calloc((size_t)nproc, sizeof(*X->Sym->mpi_recvcounts));
+    X->Sym->mpi_displs =
+        (int *)calloc((size_t)nproc, sizeof(*X->Sym->mpi_displs));
+    X->Sym->mpi_full_v1 =
+        (double complex *)calloc((size_t)X->Sym->dim + 1U,
+                                 sizeof(*X->Sym->mpi_full_v1));
+    if (X->Sym->mpi_recvcounts == NULL || X->Sym->mpi_displs == NULL ||
+        X->Sym->mpi_full_v1 == NULL) {
+      local_error = 1;
+    }
+  }
+  if (agree_plan_error(mpi_active, local_error) != 0) {
+    free(X->Sym->mpi_recvcounts);
+    free(X->Sym->mpi_displs);
+    free(X->Sym->mpi_full_v1);
+    X->Sym->mpi_recvcounts = NULL;
+    X->Sym->mpi_displs = NULL;
+    X->Sym->mpi_full_v1 = NULL;
+    fprintf(stdoutMPI,
+            "Error: failed to allocate the symmetry full input vector.\n");
+    return -1;
+  }
+  for (rank = 0; rank < nproc; rank++) {
+    unsigned long int offset;
+    unsigned long int count;
+    unsigned long int base =
+        X->Sym->dim / (unsigned long int)nproc;
+    unsigned long int remainder =
+        X->Sym->dim % (unsigned long int)nproc;
+    unsigned long int unsigned_rank = (unsigned long int)rank;
+    count = base + (unsigned_rank < remainder ? 1UL : 0UL);
+    offset = base * unsigned_rank +
+             (unsigned_rank < remainder ? unsigned_rank : remainder);
+    X->Sym->mpi_recvcounts[rank] = (int)count;
+    X->Sym->mpi_displs[rank] = (int)offset;
+  }
+#else
+  (void)X;
+  (void)required;
+  (void)mpi_active;
+#endif
+  return 0;
+}
+
+static int find_ghost_position(const struct SymmetryVectorHaloPlan *halo,
+                               unsigned long int global_index,
+                               size_t *position)
+{
+  size_t left = 0U;
+  size_t right = halo->ghost_count;
+  while (left < right) {
+    size_t middle = left + (right - left) / 2U;
+    unsigned long int candidate = halo->ghost_global_index[middle];
+    if (candidate < global_index) {
+      left = middle + 1U;
+    } else {
+      right = middle;
+    }
+  }
+  if (left >= halo->ghost_count ||
+      halo->ghost_global_index[left] != global_index) {
+    return -1;
+  }
+  *position = left;
+  return 0;
+}
+
+int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan)
+{
+  size_t column;
+  size_t slot_count;
+  int remap_error = 0;
+  if (plan == NULL || plan->columns_remapped == TRUE ||
+      plan->local_offset > plan->dim ||
+      plan->local_dim > plan->dim - plan->local_offset ||
+      (plan->nnz > 0U && plan->col_index == NULL) ||
+      (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
+    return -1;
+  }
+  slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
+  StartTimer(1132);
+#pragma omp parallel for default(none) schedule(static) reduction(|:remap_error) \
+  shared(plan, slot_count)
+  for (column = 0U; column < plan->nnz; column++) {
+    unsigned long int global_index = plan->col_index[column];
+    size_t slot = 0U;
+    if (global_index == 0UL || global_index > plan->dim) {
+      remap_error = 1;
+      continue;
+    }
+    if (global_index > plan->local_offset &&
+        global_index <= plan->local_offset + plan->local_dim) {
+      slot = (size_t)(global_index - plan->local_offset - 1UL);
+    } else {
+      size_t ghost_position = 0U;
+      if (find_ghost_position(&plan->halo, global_index,
+                              &ghost_position) != 0 ||
+          (size_t)plan->local_dim > SIZE_MAX - ghost_position) {
+        remap_error = 1;
+        continue;
+      }
+      slot = (size_t)plan->local_dim + ghost_position;
+    }
+    if (slot >= slot_count || slot > (size_t)ULONG_MAX) {
+      remap_error = 1;
+      continue;
+    }
+    plan->col_index[column] = (unsigned long int)slot;
+  }
+  StopTimer(1132);
+  if (remap_error != 0) return -1;
+  plan->columns_remapped = TRUE;
+  return 0;
+}
+
 void FreeSymmetryMatvecPlan(struct SymmetryMatvecPlan *plan)
 {
   if (plan == NULL) return;
@@ -315,6 +473,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   int local_error = 0;
   int mpi_active;
   int mode;
+  int vector_exchange_mode;
   int halo_reference_mode;
 
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
@@ -323,16 +482,40 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
 
   mode = select_matvec_mode();
   if (mode < 0) return -1;
-  X->Sym->matvec_mode = mode;
-  if (mode == SYMMETRY_MATVEC_MODE_LEGACY) {
-    fprintf(stdoutMPI,
-            "Symmetry matvec: mode=legacy (replicated beta scan).\n");
-    return 0;
-  }
+  vector_exchange_mode = select_vector_exchange_mode();
+  if (vector_exchange_mode < 0) return -1;
   halo_reference_mode = select_halo_reference_mode();
   if (halo_reference_mode < 0) return -1;
-
+  if (mode == SYMMETRY_MATVEC_MODE_LEGACY &&
+      vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_HALO) {
+    fprintf(stdoutMPI,
+            "Error: symmetry legacy matvec requires "
+            "HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather.\n");
+    return -1;
+  }
+  if (halo_reference_mode == TRUE &&
+      (mode != SYMMETRY_MATVEC_MODE_PLAN ||
+       vector_exchange_mode != SYMMETRY_VECTOR_EXCHANGE_ALLGATHER)) {
+    fprintf(stdoutMPI,
+            "Error: HPHI_SYMMETRY_HALO_REFERENCE requires "
+            "plan/allgather mode.\n");
+    return -1;
+  }
+  X->Sym->matvec_mode = mode;
+  X->Sym->vector_exchange_mode = vector_exchange_mode;
   mpi_active = mpi_collectives_active();
+  if (configure_full_input_vector(
+          X, vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_ALLGATHER,
+          mpi_active) != 0) {
+    return -1;
+  }
+  if (mode == SYMMETRY_MATVEC_MODE_LEGACY) {
+    fprintf(stdoutMPI,
+            "Symmetry matvec: mode=legacy vector_exchange=allgather "
+            "(replicated beta scan).\n");
+    return 0;
+  }
+
   plan = (struct SymmetryMatvecPlan *)calloc(1, sizeof(*plan));
   local_error = plan == NULL ? 1 : 0;
   if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
@@ -457,6 +640,13 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
         slot_count <= (size_t)UINT32_MAX ? 32U : 64U;
   }
   if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_HALO) {
+    if (plan->halo.ready != TRUE ||
+        RemapSymmetryMatvecPlanColumns(plan) != 0) {
+      local_error = 1;
+    }
+    if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  }
 
   if (row_ptr_bytes > SIZE_MAX - col_bytes ||
       row_ptr_bytes + col_bytes > SIZE_MAX - value_bytes) {
@@ -469,17 +659,22 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   plan->ready = TRUE;
   X->Sym->matvec_plan = plan;
   fprintf(stdoutMPI,
-          "Symmetry matvec: mode=plan local_rows=%lu local_nnz=%zu "
+          "Symmetry matvec: mode=plan vector_exchange=%s "
+          "local_rows=%lu local_nnz=%zu "
           "row_nnz_min=%zu row_nnz_max=%zu row_nnz_mean=%.3f bytes=%zu "
           "local_column_nnz=%zu remote_column_nnz=%zu ghost_count=%zu "
           "incoming_peers=%zu outgoing_peers=%zu halo_schedule=%s "
-          "halo_reference=%s.\n",
+          "columns=%s halo_reference=%s.\n",
+          vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_HALO
+              ? "halo"
+              : "allgather",
           plan->local_dim, plan->nnz, min_row_nnz, max_row_nnz,
           plan->local_dim > 0UL ? (double)plan->nnz / (double)plan->local_dim : 0.0,
           plan_bytes, plan->local_column_nnz, plan->remote_column_nnz,
           plan->halo.ghost_count, plan->halo.incoming_peer_count,
           plan->halo.outgoing_peer_count,
           plan->halo.ready == TRUE ? "ready" : "request-layout-only",
+          plan->columns_remapped == TRUE ? "local/ghost-slots" : "global",
           plan->halo.reference_enabled == TRUE ? "on" : "off");
   return 0;
 
@@ -505,7 +700,8 @@ int ApplySymmetryMatvecPlan(const struct BindStruct *X,
   plan = X->Sym->matvec_plan;
   if (plan == NULL || plan->ready != TRUE || plan->dim != X->Sym->dim ||
       plan->local_offset != X->Sym->local_offset ||
-      plan->local_dim != X->Sym->local_dim) {
+      plan->local_dim != X->Sym->local_dim ||
+      plan->columns_remapped == TRUE) {
     fprintf(stdoutMPI, "Error: symmetry matvec plan does not match the active sector.\n");
     return -1;
   }
@@ -523,6 +719,62 @@ int ApplySymmetryMatvecPlan(const struct BindStruct *X,
     tmp_v0[local_row + 1UL] += sum;
     prdct += conj(full_v1[global_alpha]) * sum;
   }
+  *local_prdct = prdct;
+  return 0;
+}
+
+int ApplySymmetryMatvecPlanHalo(const struct BindStruct *X,
+                                double complex *tmp_v0,
+                                const double complex *local_v1,
+                                double complex *local_prdct)
+{
+  unsigned long int local_row;
+  double complex prdct = 0.0;
+  const struct SymmetryMatvecPlan *plan;
+  size_t slot_count;
+  int apply_error = 0;
+  if (X == NULL || X->Sym == NULL || tmp_v0 == NULL || local_v1 == NULL ||
+      local_prdct == NULL) {
+    return -1;
+  }
+  plan = X->Sym->matvec_plan;
+  if (plan == NULL || plan->ready != TRUE ||
+      plan->columns_remapped != TRUE || plan->halo.ready != TRUE ||
+      plan->dim != X->Sym->dim ||
+      plan->local_offset != X->Sym->local_offset ||
+      plan->local_dim != X->Sym->local_dim ||
+      (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
+    fprintf(stdoutMPI,
+            "Error: symmetry halo matvec plan does not match "
+            "the active sector.\n");
+    return -1;
+  }
+  slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
+
+#pragma omp parallel for default(none) schedule(static) \
+  reduction(+:prdct) reduction(|:apply_error) \
+  shared(plan, tmp_v0, local_v1, slot_count)
+  for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
+    size_t p;
+    double complex sum = 0.0;
+    for (p = plan->row_ptr[local_row];
+         p < plan->row_ptr[local_row + 1UL]; p++) {
+      size_t slot = (size_t)plan->col_index[p];
+      double complex input_value;
+      if (slot >= slot_count) {
+        apply_error = 1;
+        continue;
+      }
+      input_value =
+          slot < (size_t)plan->local_dim
+              ? local_v1[slot + 1U]
+              : plan->halo.ghost_values[slot - (size_t)plan->local_dim];
+      sum += plan->values[p] * input_value;
+    }
+    tmp_v0[local_row + 1UL] += sum;
+    prdct += conj(local_v1[local_row + 1UL]) * sum;
+  }
+  if (apply_error != 0) return -1;
   *local_prdct = prdct;
   return 0;
 }

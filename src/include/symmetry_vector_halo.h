@@ -30,6 +30,7 @@ struct SymmetryVectorHaloPlan {
   size_t schedule_bytes;
   size_t runtime_buffer_bytes;
   unsigned long long schedule_checksum;
+  unsigned long long exchange_calls;
   unsigned long long reference_exchange_calls;
 };
 
@@ -50,6 +51,8 @@ int ExchangeSymmetryVectorHaloReference(
     struct SymmetryVectorHaloPlan *halo,
     const double complex *local_vector,
     const double complex *full_vector);
+int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
+                               const double complex *local_vector);
 void FreeSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo);
 
 #endif /* HPHI_SYMMETRY_VECTOR_HALO_H */

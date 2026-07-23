@@ -9,8 +9,12 @@ struct BindStruct;
 #define SYMMETRY_MATVEC_MODE_PLAN 0
 #define SYMMETRY_MATVEC_MODE_LEGACY 1
 
+#define SYMMETRY_VECTOR_EXCHANGE_ALLGATHER 0
+#define SYMMETRY_VECTOR_EXCHANGE_HALO 1
+
 struct SymmetryMatvecPlan {
   int ready;
+  int columns_remapped;
   unsigned long int dim;
   unsigned long int local_offset;
   unsigned long int local_dim;
@@ -48,6 +52,11 @@ int ApplySymmetryMatvecPlan(const struct BindStruct *X,
                             double complex *tmp_v0,
                             const double complex *full_v1,
                             double complex *local_prdct);
+int ApplySymmetryMatvecPlanHalo(const struct BindStruct *X,
+                                double complex *tmp_v0,
+                                const double complex *local_v1,
+                                double complex *local_prdct);
+int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan);
 void FreeSymmetryMatvecPlan(struct SymmetryMatvecPlan *plan);
 
 #endif /* HPHI_SYMMETRY_MATVEC_PLAN_H */

@@ -970,6 +970,36 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
                 "plan snapshot guard");
   X->Sym->local_offset--;
 
+  memset(output, 0, ((size_t)X->Sym->dim + 1U) * sizeof(*output));
+  plan_prdct = 0.0;
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "halo", 1) != 0 ||
+      BuildSymmetryMatvecPlan(X) != 0) {
+    fprintf(stderr, "%s: serial halo plan setup failed\n", label);
+    exit(1);
+  }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
+  plan = X->Sym->matvec_plan;
+  assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_int_eq(plan->columns_remapped, TRUE, label);
+  assert_int_eq(X->Sym->vector_exchange_mode,
+                SYMMETRY_VECTOR_EXCHANGE_HALO, label);
+  assert_int_eq(X->Sym->mpi_full_v1 == NULL, 1, label);
+  for (p = 0U; p < plan->nnz; p++) {
+    assert_int_eq(plan->col_index[p] <
+                      plan->local_dim + plan->halo.ghost_count,
+                  1, label);
+  }
+  assert_int_eq(ExchangeSymmetryVectorHalo(&plan->halo, input), 0, label);
+  assert_int_eq(ApplySymmetryMatvecPlan(X, output, input, &plan_prdct), -1,
+                "global-column apply rejects remapped plan");
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(X, output, input, &plan_prdct), 0, label);
+  for (alpha = 1UL; alpha <= plan->dim; alpha++) {
+    assert_complex_close(output[alpha], legacy_output[alpha], 1.0e-12, label);
+  }
+  assert_complex_close(plan_prdct, expected_prdct, 1.0e-12, label);
+  assert_ulong_eq((unsigned long int)plan->halo.exchange_calls, 1UL, label);
+
   free(dense);
   free(multiplicity);
   free(input);
@@ -1352,6 +1382,43 @@ static void assert_remote_topology_plan(const char *label)
   free(list_Diagonal);
   list_1 = NULL;
   list_Diagonal = NULL;
+}
+
+static void assert_mixed_column_remap(const char *label)
+{
+  unsigned long int columns[] = {5UL, 1UL, 4UL, 8UL, 10UL, 7UL};
+  const unsigned long int expected_slots[] = {0UL, 3UL, 4UL, 5UL, 6UL, 2UL};
+  unsigned long int missing_ghost_column[] = {9UL};
+  unsigned long int ghosts[] = {1UL, 4UL, 8UL, 10UL};
+  struct SymmetryMatvecPlan plan;
+  struct SymmetryMatvecPlan invalid_plan;
+  size_t index;
+  memset(&plan, 0, sizeof(plan));
+  plan.dim = 10UL;
+  plan.local_offset = 4UL;
+  plan.local_dim = 3UL;
+  plan.nnz = sizeof(columns) / sizeof(columns[0]);
+  plan.col_index = columns;
+  plan.halo.ghost_count = sizeof(ghosts) / sizeof(ghosts[0]);
+  plan.halo.ghost_global_index = ghosts;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), 0, label);
+  assert_int_eq(plan.columns_remapped, TRUE, label);
+  for (index = 0U; index < plan.nnz; index++) {
+    assert_ulong_eq(plan.col_index[index], expected_slots[index], label);
+  }
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), -1,
+                "column remap rejects a second in-place remap");
+
+  memset(&invalid_plan, 0, sizeof(invalid_plan));
+  invalid_plan.dim = plan.dim;
+  invalid_plan.local_offset = plan.local_offset;
+  invalid_plan.local_dim = plan.local_dim;
+  invalid_plan.nnz = 1U;
+  invalid_plan.col_index = missing_ghost_column;
+  invalid_plan.halo.ghost_count = plan.halo.ghost_count;
+  invalid_plan.halo.ghost_global_index = ghosts;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&invalid_plan), -1,
+                "column remap rejects a missing ghost index");
 }
 
 static void assert_zero_row_plan(const char *label)
@@ -1898,6 +1965,8 @@ int main(void)
       "halo owner mapping and request layout are deterministic");
   assert_remote_topology_plan(
       "local-row plan reports remote-column topology without changing CSR");
+  assert_mixed_column_remap(
+      "mixed local/remote columns remap to bounded local/ghost slots");
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");

@@ -233,6 +233,24 @@ run_mpi_symmetry_case() {
         echo "TransSym SpinlessFermion MPI path unexpectedly used site decomposition."
         exit 1
     fi
+
+    log_file="spinless_${label}_halo_mpi.log"
+    rm -rf output
+    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+        cat "${log_file}"
+        exit 1
+    fi
+    mpi_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+    test -n "${mpi_energy}"
+    mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+    if [ "${mpi_diff}" != "0.000000" ]; then
+        cat "${log_file}"
+        echo "MPI halo energy mismatch: got ${mpi_energy}, expected ${expected_energy}"
+        exit 1
+    fi
+    grep -q "Symmetry basis: raw_dim=.* sector_dim=${expected_dim} group_order=4" "${log_file}"
+    grep -q "vector_exchange=halo" "${log_file}"
 }
 
 run_mpi_if_available() {
@@ -281,6 +299,11 @@ write_kpi2_transsym
 ../../src/HPhi -e namelist.def > spinless_kpi2.log 2>&1
 assert_energy "-2.0" spinless_kpi2.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
+rm -rf output
+env HPHI_SYMMETRY_VECTOR_EXCHANGE=halo \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_halo.log 2>&1
+assert_energy "-2.0" spinless_kpi2_halo.log
+grep -q "vector_exchange=halo" spinless_kpi2_halo.log
 run_mpi_if_available kpi2 "-2.0" 2
 
 rm -rf output
