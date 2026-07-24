@@ -52,6 +52,7 @@
 #include "expec_totalspin.h"
 #include "expec_energy_flct.h"
 #include "phys.h"
+#include "symmetry_basis.h"
 #include <math.h>
 #include "./common/setmemory.h"
 
@@ -362,6 +363,7 @@ int LOBPCG_Main(
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   FILE *fp;
   int iconv = -1;
+  int diagonal_status = 0;
   long int idim, i_max;
   int ii, jj, ie, je, nsub, stp, mythread, nsub_cut;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/, 
@@ -369,6 +371,17 @@ int LOBPCG_Main(
     *hsub, *ovlp /*Subspace Hamiltonian and Overlap*/,
     **work;
   double *eig, dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
+
+  i_max = X->Check.idim_max;
+  if (X->Def.PreCG == 1 && i_max > 0) {
+    double diagonal;
+    if (GetOwnedHamiltonianDiagonal(X, 1UL, &diagonal) != 0 ||
+        GetOwnedHamiltonianDiagonal(
+            X, (unsigned long int)i_max, &diagonal) != 0) {
+      diagonal_status = 1;
+    }
+  }
+  if (X->Def.PreCG == 1 && SumMPI_i(diagonal_status) != 0) return -1;
 
   nsub = 3 * X->Def.k_exct;
   eig_pos_shift = LargeValue * X->Def.NsiteMPI;
@@ -378,8 +391,6 @@ int LOBPCG_Main(
   hsub = cd_1d_allocate(nsub*nsub);
   ovlp = cd_1d_allocate(nsub*nsub);
   work = cd_2d_allocate(nthreads, nsub);
-
-  i_max = X->Check.idim_max;
 
   free(v0);
   free(v1);
@@ -451,9 +462,12 @@ int LOBPCG_Main(
         */
         if (X->Def.PreCG == 1) {
           preshift = calc_preshift(eig[ie]+ eig_pos_shift, dnorm, eps_LOBPCG) - eig_pos_shift;
-#pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
+#pragma omp parallel for default(none) shared(wxp,ie,X,preshift,i_max,eps_LOBPCG) private(idim,precon)
           for (idim = 1; idim <= i_max; idim++) {
-            precon = list_Diagonal[idim] - preshift;
+            double diagonal = 0.0;
+            (void)GetOwnedHamiltonianDiagonal(
+                X, (unsigned long int)idim, &diagonal);
+            precon = diagonal - preshift;
             if(fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
           }
         }/*if(X->Def.PreCG == 1)*/

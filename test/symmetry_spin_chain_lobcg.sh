@@ -34,6 +34,7 @@ exct 1
 LanczosEps 12
 LanczosTarget 2
 LargeValue 50
+PreCG 0
 EOF
 
 cat > locspn.def <<EOF

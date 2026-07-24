@@ -1735,6 +1735,9 @@ static void assert_basis_ownership_accessors(const char *label)
                 label);
   assert_int_eq(GetOwnedHamiltonianDiagonal(NULL, 1UL, &diagonal), -1,
                 label);
+  list_Diagonal = NULL;
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 1UL, &diagonal), -1,
+                label);
   list_Diagonal = saved_list_diagonal;
 }
 
