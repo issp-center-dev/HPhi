@@ -49,6 +49,7 @@ endmacro()
 add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c

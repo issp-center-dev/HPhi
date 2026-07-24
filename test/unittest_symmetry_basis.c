@@ -5,6 +5,7 @@
 #include <limits.h>
 #include "DefCommon.h"
 #include "symmetry_basis.h"
+#include "symmetry_diagonal.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_state_enumerator.h"
 #include "symmetry_vector_halo.h"
@@ -820,6 +821,245 @@ static void assert_state_enumerator_exact(void)
                 "null definition rejects");
   assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, NULL), -1,
                 "null enumerator output rejects");
+#ifdef _OPENMP
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+#endif
+}
+
+static void assert_double_bitwise(double got,
+                                  double expected,
+                                  const char *label)
+{
+  uint64_t got_bits;
+  uint64_t expected_bits;
+  memcpy(&got_bits, &got, sizeof(got_bits));
+  memcpy(&expected_bits, &expected, sizeof(expected_bits));
+  if (got_bits != expected_bits) {
+    fprintf(stderr, "%s: got %016llx expected %016llx\n",
+            label,
+            (unsigned long long)got_bits,
+            (unsigned long long)expected_bits);
+    exit(1);
+  }
+}
+
+static double reference_symmetry_diagonal(const struct DefineList *def,
+                                          unsigned long int state)
+{
+  unsigned int index;
+  double value = 0.0;
+  if (def->iCalcModel == Spin) {
+    for (index = 0U; index < def->NCoulombInter; index++) {
+      value += def->ParaCoulombInter[index];
+    }
+    for (index = 0U; index < def->NHundCoupling; index++) {
+      unsigned int site0 = (unsigned int)def->HundCoupling[index][0];
+      unsigned int site1 = (unsigned int)def->HundCoupling[index][1];
+      if (((state >> site0) & 1UL) == ((state >> site1) & 1UL)) {
+        value += -def->ParaHundCoupling[index];
+      }
+    }
+  } else if (def->iCalcModel == SpinlessFermion) {
+    for (index = 0U; index < def->NCoulombInter; index++) {
+      unsigned int site0 = (unsigned int)def->CoulombInter[index][0];
+      unsigned int site1 = (unsigned int)def->CoulombInter[index][1];
+      if (((state >> site0) & 1UL) != 0UL &&
+          ((state >> site1) & 1UL) != 0UL) {
+        value += def->ParaCoulombInter[index];
+      }
+    }
+  } else if (def->iCalcModel == Hubbard) {
+    for (index = 0U; index < def->NCoulombIntra; index++) {
+      unsigned int site = (unsigned int)def->CoulombIntra[index][0];
+      if (((state >> (2U * site)) & 1UL) != 0UL &&
+          ((state >> (2U * site + 1U)) & 1UL) != 0UL) {
+        value += def->ParaCoulombIntra[index];
+      }
+    }
+  }
+  return value;
+}
+
+static void assert_state_diagonal_sequence(const struct DefineList *def,
+                                           int thread_count,
+                                           const char *label)
+{
+  unsigned int bit_count =
+      def->iCalcModel == Hubbard ? 2U * def->Nsite : def->Nsite;
+  unsigned long int limit = 1UL << bit_count;
+  unsigned long int state;
+  double *values = (double *)calloc((size_t)limit, sizeof(*values));
+  int failed = 0;
+  if (values == NULL) {
+    fprintf(stderr, "%s: allocation failed\n", label);
+    exit(1);
+  }
+#ifdef _OPENMP
+  omp_set_dynamic(0);
+  omp_set_num_threads(thread_count);
+#pragma omp parallel for schedule(static) reduction(|:failed)
+#else
+  (void)thread_count;
+#endif
+  for (state = 0UL; state < limit; state++) {
+    if (EvaluateSymmetryStateDiagonal(def, state, &values[state]) != 0) {
+      failed = 1;
+    }
+  }
+  assert_int_eq(failed, 0, label);
+  for (state = 0UL; state < limit; state++) {
+    assert_double_bitwise(
+        values[state], reference_symmetry_diagonal(def, state), label);
+  }
+  free(values);
+}
+
+static void assert_state_diagonal_exact(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(CHAR_BIT * sizeof(unsigned long int));
+  struct DefineList spin_def;
+  struct DefineList spinless_def;
+  struct DefineList hubbard_def;
+  struct DefineList invalid;
+  int spin_coulomb_storage[6][2];
+  int spin_hund_storage[6][2];
+  int *spin_coulomb_rows[6];
+  int *spin_hund_rows[6];
+  double spin_coulomb_parameters[6];
+  double spin_hund_parameters[6];
+  int spinless_storage[6][2];
+  int *spinless_rows[6];
+  double spinless_parameters[6] = {
+      0.125, -0.375, 0.2, 0.0, 1.125, -0.0625};
+  int hubbard_storage[6][1];
+  int *hubbard_rows[6];
+  double hubbard_parameters[6] = {
+      0.25, -0.5, 1.125, 0.0625, -0.125, 0.75};
+  const int spin_pairs[6][2] = {
+      {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 0}, {0, 2}};
+  const int spinless_pairs[6][2] = {
+      {0, 1}, {2, 1}, {2, 3}, {4, 3}, {4, 0}, {1, 4}};
+  const double ising_parameters[6] = {
+      0.3, -0.7, 0.125, 1.1, -0.2, 0.05};
+  const int hubbard_sites[6] = {0, 1, 2, 3, 1, 3};
+  unsigned int index;
+  double diagonal = 19.25;
+  int thread_count;
+#ifdef _OPENMP
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+#endif
+
+  memset(&spin_def, 0, sizeof(spin_def));
+  spin_def.iCalcModel = Spin;
+  spin_def.Nsite = 5U;
+  spin_def.iFlgSzConserved = TRUE;
+  spin_def.NIsingCoupling = 6U;
+  spin_def.NCoulombInter = 6U;
+  spin_def.NHundCoupling = 6U;
+  spin_def.CoulombInter = spin_coulomb_rows;
+  spin_def.ParaCoulombInter = spin_coulomb_parameters;
+  spin_def.HundCoupling = spin_hund_rows;
+  spin_def.ParaHundCoupling = spin_hund_parameters;
+  for (index = 0U; index < 6U; index++) {
+    spin_coulomb_rows[index] = spin_coulomb_storage[index];
+    spin_hund_rows[index] = spin_hund_storage[index];
+    spin_coulomb_storage[index][0] = spin_pairs[index][0];
+    spin_coulomb_storage[index][1] = spin_pairs[index][1];
+    spin_hund_storage[index][0] = spin_pairs[index][0];
+    spin_hund_storage[index][1] = spin_pairs[index][1];
+    spin_coulomb_parameters[index] = -ising_parameters[index] / 4.0;
+    spin_hund_parameters[index] = -ising_parameters[index] / 2.0;
+  }
+
+  memset(&spinless_def, 0, sizeof(spinless_def));
+  spinless_def.iCalcModel = SpinlessFermion;
+  spinless_def.Nsite = 5U;
+  spinless_def.NCoulombInter = 6U;
+  spinless_def.CoulombInter = spinless_rows;
+  spinless_def.ParaCoulombInter = spinless_parameters;
+  for (index = 0U; index < 6U; index++) {
+    spinless_rows[index] = spinless_storage[index];
+    spinless_storage[index][0] = spinless_pairs[index][0];
+    spinless_storage[index][1] = spinless_pairs[index][1];
+  }
+
+  memset(&hubbard_def, 0, sizeof(hubbard_def));
+  hubbard_def.iCalcModel = Hubbard;
+  hubbard_def.Nsite = 4U;
+  hubbard_def.NCoulombIntra = 6U;
+  hubbard_def.CoulombIntra = hubbard_rows;
+  hubbard_def.ParaCoulombIntra = hubbard_parameters;
+  for (index = 0U; index < 6U; index++) {
+    hubbard_rows[index] = hubbard_storage[index];
+    hubbard_storage[index][0] = hubbard_sites[index];
+  }
+
+  for (thread_count = 1; thread_count <= 4; thread_count += 3) {
+    assert_state_diagonal_sequence(
+        &spin_def, thread_count,
+        "Spin single-state diagonal matches diagonalcalc semantics");
+    assert_state_diagonal_sequence(
+        &spinless_def, thread_count,
+        "Spinless single-state diagonal matches diagonalcalc semantics");
+    assert_state_diagonal_sequence(
+        &hubbard_def, thread_count,
+        "Hubbard single-state diagonal matches diagonalcalc semantics");
+  }
+
+  invalid = spinless_def;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(NULL, 0UL, &diagonal), -1,
+                "null diagonal definition rejects");
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, NULL), -1,
+                "null diagonal output rejects");
+  assert_int_eq(
+      EvaluateSymmetryStateDiagonal(
+          &invalid, 1UL << invalid.Nsite, &diagonal),
+      -1, "state bits outside model width reject");
+  invalid.iCalcModel = SpinGC;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "unsupported diagonal model rejects");
+  invalid = spinless_def;
+  invalid.CoulombInter = NULL;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "missing diagonal term storage rejects");
+  invalid = spinless_def;
+  invalid.EDNChemi = 1U;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "unsupported diagonal term family rejects");
+  invalid = spin_def;
+  invalid.iFlgGeneralSpin = TRUE;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "general Spin diagonal rejects");
+  invalid = spin_def;
+  invalid.NHundCoupling--;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "incomplete Ising expansion rejects");
+  invalid = hubbard_def;
+  hubbard_storage[0][0] = (int)hubbard_def.Nsite;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
+                "diagonal term site outside model rejects");
+  hubbard_storage[0][0] = hubbard_sites[0];
+  assert_double_bitwise(diagonal, 19.25,
+                        "failed diagonal evaluation preserves output");
+
+  memset(&invalid, 0, sizeof(invalid));
+  invalid.iCalcModel = Spin;
+  invalid.Nsite = word_bits;
+  assert_int_eq(
+      EvaluateSymmetryStateDiagonal(&invalid, ULONG_MAX, &diagonal), 0,
+      "word-width Spin state evaluates");
+  assert_double_bitwise(diagonal, 0.0,
+                        "empty word-width Spin diagonal is zero");
+  invalid.iCalcModel = Hubbard;
+  invalid.Nsite = word_bits / 2U;
+  assert_int_eq(
+      EvaluateSymmetryStateDiagonal(&invalid, ULONG_MAX, &diagonal), 0,
+      "word-width Hubbard state evaluates");
+  assert_double_bitwise(diagonal, 0.0,
+                        "empty word-width Hubbard diagonal is zero");
 #ifdef _OPENMP
   omp_set_num_threads(saved_threads);
   omp_set_dynamic(saved_dynamic);
@@ -2854,9 +3094,10 @@ int main(int argc, char **argv)
     }
     stdoutMPI = stderr;
     assert_state_enumerator_exact();
+    assert_state_diagonal_exact();
     if (myrank == 0) {
       fprintf(stdout,
-              "allocation-free state enumerator gate: PASS (%d MPI ranks)\n",
+              "allocation-free state primitive gate: PASS (%d MPI ranks)\n",
               nproc);
     }
     if (MPI_Finalize() != MPI_SUCCESS) return 1;
@@ -2885,6 +3126,7 @@ int main(int argc, char **argv)
   int shift4[4] = {1, 2, 3, 0};
   stdoutMPI = stderr;
   assert_state_enumerator_exact();
+  assert_state_diagonal_exact();
   assert_exhaustive_fermion_permutation_parity();
   assert_fermion_parity_word_boundary();
   assert_spin_permutation_word_boundary();
