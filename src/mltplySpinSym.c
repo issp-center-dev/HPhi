@@ -73,6 +73,9 @@ static const double complex *get_full_input_vector(struct BindStruct *X,
                           X->Sym->mpi_displs, MPI_DOUBLE_COMPLEX,
                           MPI_COMM_WORLD);
     if (ierr != MPI_SUCCESS) return NULL;
+    if (X->Sym->matvec_plan != NULL) {
+      X->Sym->matvec_plan->input_allgather_calls++;
+    }
     return X->Sym->mpi_full_v1;
   }
 #else
@@ -86,12 +89,45 @@ int mltplySpinSym(struct BindStruct *X,
                   double complex *tmp_v1)
 {
   double complex prdct = 0.0;
-  const double complex *full_v1;
+  const double complex *full_v1 = NULL;
 
-  StartTimer(1501);
-  full_v1 = get_full_input_vector(X, tmp_v1);
-  StopTimer(1501);
-  if (full_v1 == NULL) return -1;
+  if (X->Sym->vector_exchange_mode ==
+      SYMMETRY_VECTOR_EXCHANGE_ALLGATHER) {
+    StartTimer(1501);
+    full_v1 = get_full_input_vector(X, tmp_v1);
+    StopTimer(1501);
+    if (full_v1 == NULL) return -1;
+
+    if (X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN &&
+        X->Sym->matvec_plan != NULL &&
+        X->Sym->matvec_plan->halo.reference_enabled == TRUE) {
+      if (ExchangeSymmetryVectorHaloReference(
+              &X->Sym->matvec_plan->halo, tmp_v1, full_v1) != 0) {
+        fprintf(stdoutMPI,
+                "Error: symmetry halo reference exchange did not match "
+                "the gathered input vector.\n");
+        return -1;
+      }
+    }
+  } else if (X->Sym->vector_exchange_mode ==
+             SYMMETRY_VECTOR_EXCHANGE_HALO) {
+    if (X->Sym->matvec_mode != SYMMETRY_MATVEC_MODE_PLAN ||
+        X->Sym->matvec_plan == NULL || X->Sym->mpi_full_v1 != NULL ||
+        X->Sym->mpi_recvcounts != NULL || X->Sym->mpi_displs != NULL) {
+      fprintf(stdoutMPI,
+              "Error: invalid symmetry production halo state.\n");
+      return -1;
+    }
+    if (ExchangeSymmetryVectorHalo(
+            &X->Sym->matvec_plan->halo, tmp_v1) != 0) {
+      fprintf(stdoutMPI,
+              "Error: symmetry production halo exchange failed.\n");
+      return -1;
+    }
+  } else {
+    fprintf(stdoutMPI, "Error: invalid symmetry vector exchange mode.\n");
+    return -1;
+  }
 
   if (X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_LEGACY) {
     StartTimer(1502);
@@ -101,8 +137,17 @@ int mltplySpinSym(struct BindStruct *X,
     }
     StopTimer(1502);
   } else if (X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN) {
+    int apply_status;
     StartTimer(1503);
-    if (ApplySymmetryMatvecPlan(X, tmp_v0, full_v1, &prdct) != 0) {
+    if (X->Sym->vector_exchange_mode ==
+        SYMMETRY_VECTOR_EXCHANGE_HALO) {
+      apply_status =
+          ApplySymmetryMatvecPlanHalo(X, tmp_v0, tmp_v1, &prdct);
+    } else {
+      apply_status =
+          ApplySymmetryMatvecPlan(X, tmp_v0, full_v1, &prdct);
+    }
+    if (apply_status != 0) {
       StopTimer(1503);
       return -1;
     }
@@ -112,6 +157,9 @@ int mltplySpinSym(struct BindStruct *X,
     return -1;
   }
 
+  if (X->Sym->matvec_plan != NULL) {
+    X->Sym->matvec_plan->matvec_calls++;
+  }
   X->Large.prdct += prdct;
   return 0;
 }

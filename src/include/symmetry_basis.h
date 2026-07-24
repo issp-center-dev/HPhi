@@ -59,6 +59,7 @@ struct SymmetryBasisRuntime {
   int *mpi_displs;
   double complex *mpi_full_v1;
   int matvec_mode;
+  int vector_exchange_mode;
   struct SymmetryMatvecPlan *matvec_plan;
 };
 

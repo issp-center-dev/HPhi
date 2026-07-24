@@ -99,6 +99,8 @@ run_case() {
     grep -q "CalcModel   7" calcmod.def
     grep -q "Ncond          ${ncond}" modpara.def
     grep -q "Symmetry basis: raw_dim=${expected_raw_dim} sector_dim=${expected_sector_dim} group_order=4" auto.log
+    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" auto.log
+    grep -q "columns=local/ghost-slots" auto.log
     awk -v re0="${char_op1_re}" -v im0="${char_op1_im}" '
       NF == 3 && $1 == 1 {
         found = 1;
@@ -120,6 +122,8 @@ run_case() {
     test -n "${expert_energy}" || { cat expert.log; exit 1; }
     assert_close "${auto_energy}" "${expert_energy}"
     grep -q "Symmetry basis: raw_dim=${expected_raw_dim} sector_dim=${expected_sector_dim} group_order=4" expert.log
+    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" expert.log
+    grep -q "columns=local/ghost-slots" expert.log
     cd ../..
 }
 

@@ -154,6 +154,8 @@ assert_symmetry_log() {
         echo "TransSym Hubbard path unexpectedly used site decomposition."
         exit 1
     fi
+    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
+    grep -q "columns=local/ghost-slots" "${log}"
 }
 
 assert_generated_files() {

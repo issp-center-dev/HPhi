@@ -262,6 +262,8 @@ assert_rank_stats() {
     expected_ranks="$2"
     log="$3"
     expected_digest="${4:-}"
+    expected_reference="${5:-0}"
+    expected_exchange="${6:-halo}"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -272,18 +274,25 @@ assert_rank_stats() {
         exit 1
     fi
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
-        -v expected_digest="${expected_digest}" '
+        -v expected_digest="${expected_digest}" \
+        -v expected_reference="${expected_reference}" \
+        -v expected_exchange="${expected_exchange}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
             return parts[2]
         }
         /^format=/ {
+            header_version = value($2)
             header_ranks = value($3)
+            header_basis_layout = value($4)
+            header_matvec_mode = value($5)
+            header_vector_exchange = value($6)
             next
         }
         $1 == "timer" {
             timer_count++
+            id = value($2)
             ranks = value($3)
             min = value($4)
             max = value($5)
@@ -291,6 +300,7 @@ assert_rank_stats() {
             if (ranks != expected_ranks || min > mean || mean > max) bad = 1
             if (expected_ranks == 1 &&
                 (abs(min - max) > 1.0e-15 || abs(min - mean) > 1.0e-15)) bad = 1
+            timer_mean[id] = mean
             next
         }
         $1 == "work" {
@@ -306,6 +316,19 @@ assert_rank_stats() {
             work_mean[key] = mean
             next
         }
+        $1 == "metric" {
+            metric_count++
+            key = value($2)
+            ranks = value($3)
+            min = value($4)
+            max = value($5)
+            mean = value($6)
+            if (ranks != expected_ranks || min > mean || mean > max) bad = 1
+            metric_min[key] = min
+            metric_max[key] = max
+            metric_mean[key] = mean
+            next
+        }
         $1 == "basis_digest" {
             digest_count++
             ranks = value($3)
@@ -315,9 +338,23 @@ assert_rank_stats() {
             if (expected_digest != "" && digest_min != expected_digest) bad = 1
             next
         }
+        $1 == "halo_schedule_digest" {
+            schedule_digest_count++
+            ranks = value($3)
+            schedule_digest_xor = value($4)
+            schedule_digest_sum = value($5)
+            if (ranks != expected_ranks ||
+                schedule_digest_xor == "" || schedule_digest_sum == "") bad = 1
+            next
+        }
         END {
-            if (header_ranks != expected_ranks || timer_count != 12 ||
-                work_count != 16 || digest_count != 1) bad = 1
+            if (header_version != 4 || header_ranks != expected_ranks ||
+                header_basis_layout != "replicated" ||
+                header_matvec_mode != "plan" ||
+                header_vector_exchange != expected_exchange ||
+                timer_count != 23 || work_count != 39 ||
+                metric_count != 15 || digest_count != 1 ||
+                schedule_digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
@@ -325,6 +362,67 @@ assert_rank_stats() {
             if (abs(work_mean["basis_orbit_metadata_calls"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (work_min["basis_thread_count"] < 1) bad = 1
             if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
+            if (abs(work_mean["plan_local_column_nnz"] + work_mean["plan_remote_column_nnz"] - work_mean["plan_local_nnz"]) > 1.0e-12) bad = 1
+            if (work_max["halo_ghost_count"] > work_max["plan_remote_column_nnz"]) bad = 1
+            if (work_max["halo_incoming_peer_count"] >= expected_ranks ||
+                work_max["halo_outgoing_peer_count"] >= expected_ranks) bad = 1
+            if (work_min["column_slot_width"] != 32 ||
+                work_max["column_slot_width"] != 32) bad = 1
+            if (work_min["halo_schedule_ready"] != 1 ||
+                work_max["halo_schedule_ready"] != 1) bad = 1
+            if (work_min["halo_schedule_bytes"] <= 0) bad = 1
+            if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
+            if (work_min["halo_reference_enabled"] != expected_reference ||
+                work_max["halo_reference_enabled"] != expected_reference) bad = 1
+            expected_remapped = expected_exchange == "halo" ? 1 : 0
+            if (work_min["columns_remapped"] != expected_remapped ||
+                work_max["columns_remapped"] != expected_remapped) bad = 1
+            expected_full = expected_exchange == "allgather" &&
+                            expected_ranks > 1 ? 1 : 0
+            if (work_min["full_input_vector_allocated"] != expected_full ||
+                work_max["full_input_vector_allocated"] != expected_full) bad = 1
+            if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
+            if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
+            if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
+            if (expected_reference == 1) {
+                if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1
+                if (abs(work_mean["halo_reference_exchange_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else if (work_max["halo_reference_exchange_calls"] != 0) {
+                bad = 1
+            }
+            if (expected_reference == 1 || expected_exchange == "halo") {
+                if (work_min["halo_exchange_calls"] <= 0) bad = 1
+                if (abs(work_mean["halo_exchange_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else if (work_max["halo_exchange_calls"] != 0) {
+                bad = 1
+            }
+            if (abs(work_mean["input_allgather_payload_bytes_per_call"] - 16 * work_mean["input_allgather_nonlocal_values_per_call"]) > 1.0e-12) bad = 1
+            if (expected_ranks > 1 && expected_exchange == "allgather") {
+                if (abs(work_mean["halo_send_value_count"] - work_mean["halo_ghost_count"]) > 1.0e-12) bad = 1
+                if (work_min["input_allgather_calls"] <= 0) bad = 1
+                if (abs(work_mean["input_allgather_calls"] - work_mean["symmetry_matvec_calls"]) > 1.0e-12) bad = 1
+            } else {
+                if (work_max["input_allgather_calls"] != 0) bad = 1
+                if (expected_ranks == 1 &&
+                    (work_max["plan_remote_column_nnz"] != 0 ||
+                     work_max["halo_ghost_count"] != 0)) bad = 1
+            }
+            if (metric_min["plan_remote_column_nnz_ratio"] < 0 ||
+                metric_max["plan_remote_column_nnz_ratio"] > 1 ||
+                metric_min["halo_ghost_global_ratio"] < 0 ||
+                metric_max["halo_ghost_global_ratio"] > 1 ||
+                metric_min["halo_ghost_nonlocal_ratio"] < 0 ||
+                metric_max["halo_ghost_nonlocal_ratio"] > 1 ||
+                metric_min["symmetry_matvec_seconds_per_call"] < 0 ||
+                metric_min["input_allgather_seconds_per_call"] < 0 ||
+                metric_min["input_allgather_effective_bandwidth_Bps"] < 0 ||
+                metric_min["plan_apply_seconds_per_call"] < 0 ||
+                metric_min["prdct_allreduce_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_pack_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_exchange_seconds_per_call"] < 0 ||
+                metric_min["halo_reference_validation_seconds_per_call"] < 0 ||
+                metric_min["halo_pack_seconds_per_call"] < 0 ||
+                metric_min["halo_exchange_seconds_per_call"] < 0) bad = 1
             exit bad
         }
     ' "${stats}"; then
@@ -344,7 +442,9 @@ run_mpi_symmetry_case() {
     expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
-    if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+        HPHI_SYMMETRY_HALO_REFERENCE=1 \
+        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
     fi
@@ -354,7 +454,23 @@ run_mpi_symmetry_case() {
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
     assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
-        "${expected_digest}"
+        "${expected_digest}" 1 allgather
+
+    log_file="hubbard_${label}_default_mpi.log"
+    rm -rf output
+    if ! ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+        cat "${log_file}"
+        exit 1
+    fi
+    assert_energy_matches_reference "${expected_energy}" "${log_file}"
+    if [ -n "${expected_doublon}" ]; then
+        assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
+    fi
+    assert_symmetry_log "${expected_dim}" "${log_file}"
+    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "columns=local/ghost-slots" "${log_file}"
+    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+        "${expected_digest}" 0 halo
 }
 
 run_mpi_if_available() {
@@ -398,6 +514,8 @@ write_sym_namelist yes
 assert_energy_matches_reference "${ref_energy}" hubbard_k0.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_k0.log
+grep -q "vector_exchange=halo" hubbard_k0.log
+grep -q "columns=local/ghost-slots" hubbard_k0.log
 if grep -q "MPI site separation summary" hubbard_k0.log; then
     cat hubbard_k0.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
@@ -405,6 +523,18 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
 fi
 assert_rank_stats 4 1 hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
+expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
+    invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
+    ../../src/HPhi -e namelist.def
+expect_failure "HPHI_SYMMETRY_VECTOR_EXCHANGE must be" \
+    invalid_vector_exchange.log env HPHI_SYMMETRY_VECTOR_EXCHANGE=invalid \
+    ../../src/HPhi -e namelist.def
+expect_failure "symmetry legacy matvec requires" \
+    invalid_legacy_halo.log env HPHI_SYMMETRY_MATVEC=legacy \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=halo ../../src/HPhi -e namelist.def
+expect_failure "HPHI_SYMMETRY_HALO_REFERENCE requires" \
+    invalid_halo_reference_production.log \
+    env HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
 
 rm -rf output
 write_kpi2_transsym
@@ -412,6 +542,8 @@ write_sym_namelist no
 ../../src/HPhi -e namelist.def > hubbard_kpi2.log 2>&1
 assert_energy "-2.0" hubbard_kpi2.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_kpi2.log
+grep -q "vector_exchange=halo" hubbard_kpi2.log
+grep -q "columns=local/ghost-slots" hubbard_kpi2.log
 if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     cat hubbard_kpi2.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
@@ -425,11 +557,21 @@ write_calcmod
 write_k0_transsym
 write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
-../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
+env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    HPHI_SYMMETRY_HALO_REFERENCE=1 \
+    ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-assert_rank_stats 4 1 hubbard_k0_cg.log
+assert_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+rm -rf output
+../../src/HPhi -e namelist.def > hubbard_k0_cg_default.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_default.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_default.log
+assert_symmetry_log 4 hubbard_k0_cg_default.log
+grep -q "vector_exchange=halo" hubbard_k0_cg_default.log
+grep -q "columns=local/ghost-slots" hubbard_k0_cg_default.log
+assert_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 

@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_vector_halo.h"
 #include "struct.h"
 
 #ifdef _OPENMP
@@ -655,6 +656,21 @@ static void assert_complex_close(double complex got,
   }
 }
 
+static uint64_t symmetry_plan_column_slot(
+    const struct SymmetryMatvecPlan *plan, size_t column)
+{
+  if (plan->column_slot_width == SYMMETRY_COLUMN_U32 &&
+      plan->column_slot32 != NULL) {
+    return (uint64_t)plan->column_slot32[column];
+  }
+  if (plan->column_slot_width == SYMMETRY_COLUMN_U64 &&
+      plan->column_slot64 != NULL) {
+    return plan->column_slot64[column];
+  }
+  fprintf(stderr, "column slot storage is not initialized\n");
+  exit(1);
+}
+
 static void reference_fermion_permutation(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite,
@@ -854,15 +870,48 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   unsigned int *multiplicity;
   struct SymmetryMatvecPlan *plan;
 
-  if (ActivateSymmetryBasisDimension(X) != 0 || BuildSymmetryMatvecPlan(X) != 0) {
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(X) != 0 ||
+      BuildSymmetryMatvecPlan(X) != 0) {
     fprintf(stderr, "%s: plan setup failed\n", label);
     exit(1);
   }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   plan = X->Sym->matvec_plan;
   assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
   assert_ulong_eq(plan->dim, X->Sym->dim, label);
   assert_ulong_eq(plan->local_offset, 0UL, label);
   assert_ulong_eq(plan->local_dim, X->Sym->dim, label);
+  assert_ulong_eq((unsigned long int)plan->local_column_nnz,
+                  (unsigned long int)plan->nnz, label);
+  assert_ulong_eq((unsigned long int)plan->remote_column_nnz, 0UL, label);
+  assert_int_eq(plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(plan->halo.ready, TRUE, label);
+  assert_ulong_eq((unsigned long int)plan->halo.ghost_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.incoming_peer_count, 0UL,
+                  label);
+  assert_ulong_eq((unsigned long int)plan->halo.outgoing_peer_count, 0UL,
+                  label);
+  assert_int_eq(plan->halo.schedule_checksum != 0ULL, 1, label);
+  assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
+  assert_int_eq(plan->nnz == 0U || plan->col_index != NULL, 1, label);
+  assert_int_eq(plan->column_slot32 == NULL, 1, label);
+  assert_int_eq(plan->column_slot64 == NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->column_storage_bytes,
+      (unsigned long int)(plan->nnz * sizeof(*plan->col_index)), label);
+  assert_ulong_eq(
+      (unsigned long int)plan->matrix_storage_bytes,
+      (unsigned long int)(
+          ((size_t)plan->local_dim + 1U) * sizeof(*plan->row_ptr) +
+          plan->nnz *
+              (sizeof(*plan->col_index) + sizeof(*plan->values))),
+      label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_nonlocal_values_per_call, 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_payload_bytes_per_call, 0UL, label);
 
   if (plan->dim > SIZE_MAX / plan->dim) {
     fprintf(stderr, "%s: dense matrix size overflow\n", label);
@@ -951,6 +1000,49 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   assert_int_eq(ApplySymmetryMatvecPlan(X, output, input, &plan_prdct), -1,
                 "plan snapshot guard");
   X->Sym->local_offset--;
+
+  memset(output, 0, ((size_t)X->Sym->dim + 1U) * sizeof(*output));
+  plan_prdct = 0.0;
+  if (BuildSymmetryMatvecPlan(X) != 0) {
+    fprintf(stderr, "%s: default serial halo plan setup failed\n", label);
+    exit(1);
+  }
+  plan = X->Sym->matvec_plan;
+  assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_int_eq(plan->columns_remapped, TRUE, label);
+  assert_int_eq(X->Sym->vector_exchange_mode,
+                SYMMETRY_VECTOR_EXCHANGE_HALO, label);
+  assert_int_eq(X->Sym->mpi_full_v1 == NULL, 1, label);
+  assert_int_eq(plan->col_index == NULL, 1, label);
+  assert_int_eq(plan->nnz == 0U || plan->column_slot32 != NULL, 1, label);
+  assert_int_eq(plan->column_slot64 == NULL, 1, label);
+  assert_int_eq(plan->halo.ghost_global_index == NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->column_storage_bytes,
+      (unsigned long int)(plan->nnz * sizeof(*plan->column_slot32)), label);
+  assert_ulong_eq(
+      (unsigned long int)plan->matrix_storage_bytes,
+      (unsigned long int)(
+          ((size_t)plan->local_dim + 1U) * sizeof(*plan->row_ptr) +
+          plan->nnz *
+              (sizeof(*plan->column_slot32) + sizeof(*plan->values))),
+      label);
+  for (p = 0U; p < plan->nnz; p++) {
+    assert_int_eq(symmetry_plan_column_slot(plan, p) <
+                      (uint64_t)plan->local_dim +
+                          (uint64_t)plan->halo.ghost_count,
+                  1, label);
+  }
+  assert_int_eq(ExchangeSymmetryVectorHalo(&plan->halo, input), 0, label);
+  assert_int_eq(ApplySymmetryMatvecPlan(X, output, input, &plan_prdct), -1,
+                "global-column apply rejects remapped plan");
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(X, output, input, &plan_prdct), 0, label);
+  for (alpha = 1UL; alpha <= plan->dim; alpha++) {
+    assert_complex_close(output[alpha], legacy_output[alpha], 1.0e-12, label);
+  }
+  assert_complex_close(plan_prdct, expected_prdct, 1.0e-12, label);
+  assert_ulong_eq((unsigned long int)plan->halo.exchange_calls, 1UL, label);
 
   free(dense);
   free(multiplicity);
@@ -1149,7 +1241,8 @@ static void assert_parallel_plan_matches_serial(const char *label)
   setup_hubbard_bind(&X, 6, 3, 3, 1);
   setup_hubbard_transfer_ring(&X.Def, 6);
   setup_hubbard_coulomb_intra(&X.Def, 6, 0.5);
-  if (BuildSymmetryBasis(&X) != 0 ||
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      BuildSymmetryBasis(&X) != 0 ||
       ActivateSymmetryBasisDimension(&X) != 0 ||
       BuildSymmetryMatvecPlan(&X) != 0) {
     fprintf(stderr, "%s: serial plan setup failed\n", label);
@@ -1184,6 +1277,7 @@ static void assert_parallel_plan_matches_serial(const char *label)
     exit(1);
   }
   parallel_plan = X.Sym->matvec_plan;
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   assert_ulong_eq((unsigned long int)parallel_plan->nnz,
                   (unsigned long int)serial_nnz, label);
   assert_ulong_eq((unsigned long int)parallel_plan->row_nnz_max,
@@ -1213,6 +1307,297 @@ static void assert_parallel_plan_matches_serial(const char *label)
 }
 #endif
 
+static void assert_vector_owner_and_request_layout(const char *label)
+{
+  const unsigned long int columns[] = {5UL, 1UL, 1UL, 4UL,
+                                       8UL, 10UL, 8UL};
+  const unsigned long int expected_ghosts[] = {1UL, 4UL, 8UL, 10UL};
+  struct SymmetryVectorHaloPlan first;
+  struct SymmetryVectorHaloPlan second;
+  size_t local_columns = 0U;
+  size_t remote_columns = 0U;
+  size_t index;
+
+  memset(&first, 0, sizeof(first));
+  memset(&second, 0, sizeof(second));
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 1UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 4UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 5UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 7UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 8UL), 2, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 10UL), 2, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 1UL), 0, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 2UL), 1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 0UL), -1, label);
+  assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(2UL, 4, 3UL), -1, label);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &first, 10UL, 4UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)local_columns, 1UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 6UL, label);
+  assert_int_eq(first.request_layout_ready, TRUE, label);
+  assert_int_eq(first.ready, FALSE, label);
+  assert_ulong_eq((unsigned long int)first.ghost_count, 4UL, label);
+  assert_ulong_eq((unsigned long int)first.incoming_peer_count, 2UL, label);
+  assert_ulong_eq((unsigned long int)first.max_recv_from_peer, 2UL, label);
+  assert_int_eq(first.recv_counts[0], 2, label);
+  assert_int_eq(first.recv_counts[1], 0, label);
+  assert_int_eq(first.recv_counts[2], 2, label);
+  assert_int_eq(first.recv_displs[0], 0, label);
+  assert_int_eq(first.recv_displs[1], 2, label);
+  assert_int_eq(first.recv_displs[2], 2, label);
+  for (index = 0U; index < first.ghost_count; index++) {
+    assert_ulong_eq(first.ghost_global_index[index],
+                    expected_ghosts[index], label);
+  }
+
+  local_columns = 0U;
+  remote_columns = 0U;
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &second, 10UL, 4UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_int_eq(first.schedule_checksum == second.schedule_checksum, 1,
+                label);
+  assert_int_eq(
+      memcmp(first.ghost_global_index, second.ghost_global_index,
+             first.ghost_count * sizeof(*first.ghost_global_index)) == 0,
+      1, label);
+  FreeSymmetryVectorHaloPlan(&first);
+  FreeSymmetryVectorHaloPlan(&second);
+
+  memset(&first, 0, sizeof(first));
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &first, 10UL, 3UL, 3UL, columns,
+          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &local_columns, &remote_columns),
+      -1, label);
+}
+
+static void assert_remote_topology_plan(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryMatvecPlan *plan;
+  setup_bind(&X, 6, 3, 1);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  nproc = 4;
+  myrank = 0;
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: remote topology plan setup failed\n", label);
+    exit(1);
+  }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
+  plan = X.Sym->matvec_plan;
+  assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)(plan->local_column_nnz + plan->remote_column_nnz),
+      (unsigned long int)plan->nnz, label);
+  assert_int_eq(plan->remote_column_nnz > 0U, 1, label);
+  assert_int_eq(plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(plan->halo.ready, FALSE, label);
+  assert_int_eq(plan->halo.ghost_count > 0U, 1, label);
+  assert_int_eq(plan->halo.ghost_count <= plan->remote_column_nnz, 1, label);
+  assert_int_eq(plan->halo.incoming_peer_count > 0U, 1, label);
+  assert_int_eq(plan->halo.max_recv_from_peer > 0U, 1, label);
+  assert_ulong_eq((unsigned long int)plan->halo.send_value_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)plan->halo.outgoing_peer_count, 0UL,
+                  label);
+  assert_int_eq(plan->halo.topology_scratch_bytes > 0U, 1, label);
+  assert_int_eq(plan->halo.schedule_checksum != 0ULL, 1, label);
+  assert_ulong_eq((unsigned long int)plan->column_slot_width, 32UL, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_nonlocal_values_per_call,
+      X.Sym->dim - X.Sym->local_dim, label);
+  assert_ulong_eq(
+      (unsigned long int)plan->allgather_payload_bytes_per_call,
+      (X.Sym->dim - X.Sym->local_dim) * sizeof(double complex), label);
+  nproc = 1;
+  myrank = 0;
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_mixed_column_remap(const char *label)
+{
+  const unsigned long int initial_columns[] =
+      {5UL, 1UL, 4UL, 8UL, 10UL, 7UL};
+  const unsigned long int expected_slots[] = {0UL, 3UL, 4UL, 5UL, 6UL, 2UL};
+  unsigned long int missing_ghost_column[] = {9UL};
+  unsigned long int ghosts[] = {1UL, 4UL, 8UL, 10UL};
+  unsigned long int *columns;
+  struct SymmetryMatvecPlan plan;
+  struct SymmetryMatvecPlan invalid_plan;
+  size_t index;
+  columns = (unsigned long int *)malloc(sizeof(initial_columns));
+  if (columns == NULL) {
+    fprintf(stderr, "%s: column allocation failed\n", label);
+    exit(1);
+  }
+  memcpy(columns, initial_columns, sizeof(initial_columns));
+  memset(&plan, 0, sizeof(plan));
+  plan.dim = 10UL;
+  plan.local_offset = 4UL;
+  plan.local_dim = 3UL;
+  plan.nnz = sizeof(initial_columns) / sizeof(initial_columns[0]);
+  plan.col_index = columns;
+  plan.halo.ghost_count = sizeof(ghosts) / sizeof(ghosts[0]);
+  plan.halo.ghost_global_index = ghosts;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), 0, label);
+  assert_int_eq(plan.columns_remapped, TRUE, label);
+  assert_int_eq(plan.col_index == NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)plan.column_slot_width,
+      (unsigned long int)SYMMETRY_COLUMN_U32, label);
+  assert_int_eq(plan.column_slot32 != NULL, 1, label);
+  assert_int_eq(plan.column_slot64 == NULL, 1, label);
+  for (index = 0U; index < plan.nnz; index++) {
+    assert_ulong_eq((unsigned long int)symmetry_plan_column_slot(&plan, index),
+                    expected_slots[index], label);
+  }
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), -1,
+                "column remap rejects a second in-place remap");
+
+  memset(&invalid_plan, 0, sizeof(invalid_plan));
+  invalid_plan.dim = plan.dim;
+  invalid_plan.local_offset = plan.local_offset;
+  invalid_plan.local_dim = plan.local_dim;
+  invalid_plan.nnz = 1U;
+  invalid_plan.col_index = missing_ghost_column;
+  invalid_plan.halo.ghost_count = plan.halo.ghost_count;
+  invalid_plan.halo.ghost_global_index = ghosts;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&invalid_plan), -1,
+                "column remap rejects a missing ghost index");
+  free(plan.column_slot32);
+  free(plan.column_slot64);
+}
+
+static void assert_column_slot_width_boundaries(const char *label)
+{
+  struct SymmetryMatvecPlan plan32;
+  unsigned long int *column32 =
+      (unsigned long int *)malloc(sizeof(*column32));
+  if (column32 == NULL) {
+    fprintf(stderr, "%s: 32-bit boundary allocation failed\n", label);
+    exit(1);
+  }
+  *column32 = (unsigned long int)UINT32_MAX;
+  memset(&plan32, 0, sizeof(plan32));
+  plan32.dim = (unsigned long int)UINT32_MAX;
+  plan32.local_dim = (unsigned long int)UINT32_MAX;
+  plan32.nnz = 1U;
+  plan32.col_index = column32;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan32), 0, label);
+  assert_ulong_eq(
+      (unsigned long int)plan32.column_slot_width,
+      (unsigned long int)SYMMETRY_COLUMN_U32, label);
+  assert_ulong_eq(
+      (unsigned long int)symmetry_plan_column_slot(&plan32, 0U),
+      (unsigned long int)UINT32_MAX - 1UL, label);
+  free(plan32.column_slot32);
+  free(plan32.column_slot64);
+
+#if ULONG_MAX > UINT32_MAX
+  {
+    struct SymmetryMatvecPlan plan64;
+    unsigned long int *column64 =
+        (unsigned long int *)malloc(sizeof(*column64));
+    unsigned long int count64 = (unsigned long int)UINT32_MAX + 2UL;
+    if (column64 == NULL) {
+      fprintf(stderr, "%s: 64-bit boundary allocation failed\n", label);
+      exit(1);
+    }
+    *column64 = count64;
+    memset(&plan64, 0, sizeof(plan64));
+    plan64.dim = count64;
+    plan64.local_dim = count64;
+    plan64.nnz = 1U;
+    plan64.col_index = column64;
+    assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan64), 0, label);
+    assert_ulong_eq(
+        (unsigned long int)plan64.column_slot_width,
+        (unsigned long int)SYMMETRY_COLUMN_U64, label);
+    assert_ulong_eq(
+        (unsigned long int)symmetry_plan_column_slot(&plan64, 0U),
+        (unsigned long int)UINT32_MAX + 1UL, label);
+    free(plan64.column_slot32);
+    free(plan64.column_slot64);
+  }
+#endif
+}
+
+static void assert_u64_column_slot_apply(const char *label)
+{
+#if ULONG_MAX > UINT32_MAX
+  struct BindStruct X;
+  struct SymmetryBasisRuntime sym;
+  struct SymmetryMatvecPlan plan;
+  size_t row_ptr[] = {0U, 1U};
+  uint64_t column_slot64[] = {0U};
+  double complex values[] = {2.0 - I};
+  double complex ghost_value = 3.0 + 4.0 * I;
+  double complex input[] = {0.0, 1.0 + 2.0 * I};
+  double complex output[] = {0.0, 0.0};
+  double complex prdct = 0.0;
+  double complex expected = values[0] * input[1];
+  memset(&X, 0, sizeof(X));
+  memset(&sym, 0, sizeof(sym));
+  memset(&plan, 0, sizeof(plan));
+  X.Sym = &sym;
+  sym.dim = (unsigned long int)UINT32_MAX + 1UL;
+  sym.local_dim = 1UL;
+  sym.matvec_plan = &plan;
+  plan.ready = TRUE;
+  plan.columns_remapped = TRUE;
+  plan.dim = sym.dim;
+  plan.local_dim = sym.local_dim;
+  plan.nnz = 1U;
+  plan.row_ptr = row_ptr;
+  plan.column_slot_width = SYMMETRY_COLUMN_U64;
+  plan.column_slot64 = column_slot64;
+  plan.values = values;
+  plan.halo.ready = TRUE;
+  plan.halo.ghost_count = (size_t)UINT32_MAX;
+  plan.halo.ghost_values = &ghost_value;
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(&X, output, input, &prdct), 0, label);
+  assert_complex_close(output[1], expected, 1.0e-12, label);
+  assert_complex_close(prdct, conj(input[1]) * expected, 1.0e-12, label);
+
+  column_slot64[0] = 1U;
+  output[1] = 0.0;
+  prdct = 0.0;
+  expected = values[0] * ghost_value;
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(&X, output, input, &prdct), 0, label);
+  assert_complex_close(output[1], expected, 1.0e-12, label);
+  assert_complex_close(prdct, conj(input[1]) * expected, 1.0e-12, label);
+
+  column_slot64[0] = (uint64_t)UINT32_MAX + 1ULL;
+  output[1] = 0.0;
+  prdct = 0.0;
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(&X, output, input, &prdct), -1,
+      "64-bit column apply rejects an out-of-range slot");
+#else
+  (void)label;
+#endif
+}
+
 static void assert_zero_row_plan(const char *label)
 {
   struct BindStruct X;
@@ -1226,14 +1611,25 @@ static void assert_zero_row_plan(const char *label)
   }
   nproc = 2;
   myrank = 1;
-  if (ActivateSymmetryBasisDimension(&X) != 0 || BuildSymmetryMatvecPlan(&X) != 0) {
+  if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
     fprintf(stderr, "%s: zero-row plan setup failed\n", label);
     exit(1);
   }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   assert_ulong_eq(X.Sym->local_dim, 0UL, label);
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->remote_column_nnz, 0UL, label);
+  assert_int_eq(X.Sym->matvec_plan->halo.request_layout_ready, TRUE, label);
+  assert_int_eq(X.Sym->matvec_plan->halo.ready, FALSE, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->halo.ghost_count, 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->matvec_plan->column_slot_width, 32UL, label);
   assert_int_eq(ApplySymmetryMatvecPlan(&X, output, input, &prdct), 0, label);
   assert_complex_close(prdct, 0.0, 1.0e-12, label);
   nproc = 1;
@@ -1745,6 +2141,16 @@ int main(void)
   assert_parallel_plan_matches_serial(
       "Hubbard plan CSR is identical for one and four OpenMP threads");
 #endif
+  assert_vector_owner_and_request_layout(
+      "halo owner mapping and request layout are deterministic");
+  assert_remote_topology_plan(
+      "local-row plan reports remote-column topology without changing CSR");
+  assert_mixed_column_remap(
+      "mixed local/remote columns remap to bounded local/ghost slots");
+  assert_column_slot_width_boundaries(
+      "column slot storage switches at the UINT32_MAX boundary");
+  assert_u64_column_slot_apply(
+      "64-bit column slot apply preserves values and bounds checks");
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");

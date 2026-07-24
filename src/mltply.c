@@ -26,6 +26,7 @@
 #include "mltplyCommon.h"
 #include "diagonalcalc.h"
 #include "symmetry_basis.h"
+#include "symmetry_matvec_plan.h"
 
 /**
  * @file   mltply.c
@@ -132,7 +133,12 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       StopTimer(1);
       return -1;
     }
+    StartTimer(1513);
     X->Large.prdct = SumMPI_dc(X->Large.prdct);
+    StopTimer(1513);
+    if (X->Sym->matvec_plan != NULL) {
+      X->Sym->matvec_plan->prdct_allreduce_calls++;
+    }
     StopTimer(1);
     return 0;
   }

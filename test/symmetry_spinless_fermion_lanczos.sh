@@ -229,10 +229,31 @@ run_mpi_symmetry_case() {
         echo "Expected SpinlessFermion symmetry sector_dim=${expected_dim} was not found"
         exit 1
     fi
+    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "columns=local/ghost-slots" "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym SpinlessFermion MPI path unexpectedly used site decomposition."
         exit 1
     fi
+
+    log_file="spinless_${label}_allgather_mpi.log"
+    rm -rf output
+    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+        ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
+        cat "${log_file}"
+        exit 1
+    fi
+    mpi_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+    test -n "${mpi_energy}"
+    mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+    if [ "${mpi_diff}" != "0.000000" ]; then
+        cat "${log_file}"
+        echo "MPI allgather energy mismatch: got ${mpi_energy}, expected ${expected_energy}"
+        exit 1
+    fi
+    grep -q "Symmetry basis: raw_dim=.* sector_dim=${expected_dim} group_order=4" "${log_file}"
+    grep -q "vector_exchange=allgather" "${log_file}"
+    grep -q "columns=global" "${log_file}"
 }
 
 run_mpi_if_available() {
@@ -272,6 +293,8 @@ write_namelist
 ../../src/HPhi -e namelist.def > spinless_k0.log 2>&1
 assert_energy "-2.0" spinless_k0.log
 grep -q "Symmetry basis: raw_dim=4 sector_dim=1 group_order=4" spinless_k0.log
+grep -q "vector_exchange=halo" spinless_k0.log
+grep -q "columns=local/ghost-slots" spinless_k0.log
 run_mpi_if_available k0 "-2.0" 1
 
 rm -rf output
@@ -281,6 +304,14 @@ write_kpi2_transsym
 ../../src/HPhi -e namelist.def > spinless_kpi2.log 2>&1
 assert_energy "-2.0" spinless_kpi2.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
+grep -q "vector_exchange=halo" spinless_kpi2.log
+grep -q "columns=local/ghost-slots" spinless_kpi2.log
+rm -rf output
+env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_allgather.log 2>&1
+assert_energy "-2.0" spinless_kpi2_allgather.log
+grep -q "vector_exchange=allgather" spinless_kpi2_allgather.log
+grep -q "columns=global" spinless_kpi2_allgather.log
 run_mpi_if_available kpi2 "-2.0" 2
 
 rm -rf output
@@ -304,6 +335,7 @@ rm -rf output
 ../../src/HPhi -e namelist.def > spinless_coulombinter.log 2>&1
 assert_energy "0.25" spinless_coulombinter.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=1 group_order=4" spinless_coulombinter.log
+grep -q "vector_exchange=halo" spinless_coulombinter.log
 test -s output/zvo_energy.dat
 run_mpi_if_available coulombinter "0.25" 1
 write_coulombinter
