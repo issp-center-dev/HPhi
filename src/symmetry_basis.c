@@ -1106,6 +1106,23 @@ int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
   return TRUE;
 }
 
+int GetOwnedHamiltonianDiagonal(const struct BindStruct *X,
+                                unsigned long int local_index,
+                                double *diagonal)
+{
+  if (X == NULL || diagonal == NULL || local_index == 0UL) return -1;
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    const struct SymmetryBasisVector *entry =
+        SymmetryBasisLocalEntry(X->Sym, local_index);
+    if (entry == NULL) return -1;
+    *diagonal = entry->diagonal;
+    return 0;
+  }
+  if (list_Diagonal == NULL || local_index > X->Check.idim_max) return -1;
+  *diagonal = list_Diagonal[local_index];
+  return 0;
+}
+
 int ValidateSymmetrySectorOptions(const struct BindStruct *X)
 {
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;

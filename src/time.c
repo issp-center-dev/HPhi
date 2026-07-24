@@ -53,7 +53,9 @@ static unsigned long long SymmetryBasisDigest(
   unsigned long int index;
   hash = HashSymmetryBytes(hash, &sym->dim, sizeof(sym->dim));
   for (index = 1UL; index <= sym->dim; index++) {
-    const struct SymmetryBasisVector *entry = &sym->basis[index];
+    const struct SymmetryBasisVector *entry =
+        SymmetryBasisReplicatedGlobalEntry(sym, index);
+    if (entry == NULL) return 0ULL;
     hash = HashSymmetryBytes(hash, &entry->rep_state,
                              sizeof(entry->rep_state));
     hash = HashSymmetryBytes(hash, &entry->orbit_size,

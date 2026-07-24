@@ -91,14 +91,18 @@ static int emit_canonicalized_transition(const struct BindStruct *X,
                                          SymmetryEntryCallback callback,
                                          void *context)
 {
+  const struct SymmetryBasisVector *source;
+  const struct SymmetryBasisVector *target;
   double norm_factor;
   double complex coefficient;
   struct SymmetryCanonicalResult result;
   if (SymmetryCanonicalizeState(X, to_state, &result) != 0) return -1;
   if (result.found != TRUE) return 0;
-  if (X->Sym->basis[beta].norm == 0.0) return -1;
-  norm_factor = X->Sym->basis[result.basis_index].norm /
-                X->Sym->basis[beta].norm;
+  source = SymmetryBasisReplicatedGlobalEntry(X->Sym, beta);
+  target =
+      SymmetryBasisReplicatedGlobalEntry(X->Sym, result.basis_index);
+  if (source == NULL || target == NULL || source->norm == 0.0) return -1;
+  norm_factor = target->norm / source->norm;
   coefficient = hval * result.phase * norm_factor;
   return callback(result.basis_index, coefficient, context);
 }
@@ -108,18 +112,21 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
                             SymmetryEntryCallback callback,
                             void *context)
 {
+  const struct SymmetryBasisVector *source;
   unsigned int p;
   if (X == NULL || X->Sym == NULL || callback == NULL || beta == 0UL ||
       beta > X->Sym->dim || X->Sym->sym_diagonal == NULL) {
     return -1;
   }
+  source = SymmetryBasisReplicatedGlobalEntry(X->Sym, beta);
+  if (source == NULL) return -1;
 
   if (callback(beta, X->Sym->sym_diagonal[beta], context) != 0) return -1;
 
   if (X->Def.iCalcModel == Spin) {
     for (p = 0; p < X->Def.NExchangeCoupling; p++) {
       unsigned long int out_state;
-      if (apply_exchange_halfspin(X->Sym->basis[beta].rep_state,
+      if (apply_exchange_halfspin(source->rep_state,
                                   X->Def.ExchangeCoupling[p][0],
                                   X->Def.ExchangeCoupling[p][1],
                                   &out_state) == TRUE &&
@@ -139,7 +146,7 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
       double complex trans = -X->Def.EDParaGeneralTransfer[p];
       unsigned int site1 = (unsigned int)X->Def.EDGeneralTransfer[p][0];
       unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
-      if (apply_spinless_hopping_hermite(X->Sym->basis[beta].rep_state,
+      if (apply_spinless_hopping_hermite(source->rep_state,
                                          site1, site2, trans,
                                          &out_state, &hval) == TRUE &&
           emit_canonicalized_transition(X, beta, out_state, hval,
@@ -159,7 +166,7 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
       unsigned int spin1 = (unsigned int)X->Def.EDGeneralTransfer[p][1];
       unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
       unsigned int spin2 = (unsigned int)X->Def.EDGeneralTransfer[p][3];
-      if (apply_hubbard_hopping_hermite(X->Sym->basis[beta].rep_state,
+      if (apply_hubbard_hopping_hermite(source->rep_state,
                                         site1, spin1, site2, spin2, trans,
                                         &out_state, &hval) == TRUE &&
           emit_canonicalized_transition(X, beta, out_state, hval,

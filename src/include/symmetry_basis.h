@@ -63,6 +63,35 @@ struct SymmetryBasisRuntime {
   struct SymmetryMatvecPlan *matvec_plan;
 };
 
+static inline const struct SymmetryBasisVector *SymmetryBasisLocalEntry(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int local_index)
+{
+  unsigned long int global_index;
+  if (sym == NULL || sym->enabled != TRUE || sym->basis == NULL ||
+      local_index == 0UL || local_index > sym->local_dim ||
+      sym->local_offset > sym->dim ||
+      sym->local_dim > sym->dim - sym->local_offset) {
+    return NULL;
+  }
+  global_index = sym->local_offset + local_index;
+  if (global_index > sym->capacity) return NULL;
+  return &sym->basis[global_index];
+}
+
+static inline const struct SymmetryBasisVector *
+SymmetryBasisReplicatedGlobalEntry(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int global_index)
+{
+  if (sym == NULL || sym->enabled != TRUE || sym->basis == NULL ||
+      global_index == 0UL || global_index > sym->dim ||
+      global_index > sym->capacity) {
+    return NULL;
+  }
+  return &sym->basis[global_index];
+}
+
 int ValidateSymmetryGroupInput(const struct DefineList *def);
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
@@ -82,6 +111,9 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X);
 int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
                                unsigned long int global_index,
                                unsigned long int *local_index);
+int GetOwnedHamiltonianDiagonal(const struct BindStruct *X,
+                                unsigned long int local_index,
+                                double *diagonal);
 int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
 

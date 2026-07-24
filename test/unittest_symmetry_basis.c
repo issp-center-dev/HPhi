@@ -1641,6 +1641,103 @@ static void assert_zero_row_plan(const char *label)
   list_Diagonal = NULL;
 }
 
+static void assert_basis_ownership_accessors(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisRuntime sym;
+  struct SymmetryBasisVector basis[5];
+  const struct SymmetryBasisVector *entry;
+  double raw_diagonal[3] = {0.0, -41.25, 73.5};
+  double *saved_list_diagonal = list_Diagonal;
+  double diagonal = 0.0;
+
+  memset(&X, 0, sizeof(X));
+  memset(&sym, 0, sizeof(sym));
+  memset(basis, 0, sizeof(basis));
+  sym.enabled = TRUE;
+  sym.dim = 4UL;
+  sym.capacity = 4UL;
+  sym.local_offset = 1UL;
+  sym.local_dim = 2UL;
+  sym.basis = basis;
+  basis[1].rep_state = 0x1UL;
+  basis[2].rep_state = 0x2UL;
+  basis[2].diagonal = 17.25;
+  basis[3].rep_state = 0x4UL;
+  basis[3].diagonal = -9.5;
+  basis[4].rep_state = 0x8UL;
+
+  entry = SymmetryBasisLocalEntry(&sym, 1UL);
+  assert_int_eq(entry == &basis[2], 1, label);
+  entry = SymmetryBasisLocalEntry(&sym, 2UL);
+  assert_int_eq(entry == &basis[3], 1, label);
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 0UL) == NULL, 1, label);
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 3UL) == NULL, 1, label);
+  assert_int_eq(SymmetryBasisLocalEntry(NULL, 1UL) == NULL, 1, label);
+
+  entry = SymmetryBasisReplicatedGlobalEntry(&sym, 1UL);
+  assert_int_eq(entry == &basis[1], 1, label);
+  entry = SymmetryBasisReplicatedGlobalEntry(&sym, 4UL);
+  assert_int_eq(entry == &basis[4], 1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(&sym, 0UL) == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(&sym, 5UL) == NULL, 1, label);
+  sym.capacity = 1UL;
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 1UL) == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(&sym, 2UL) == NULL, 1, label);
+  sym.capacity = 4UL;
+
+  sym.local_dim = 0UL;
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 1UL) == NULL, 1, label);
+  sym.local_dim = 2UL;
+  sym.local_offset = 4UL;
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 1UL) == NULL, 1, label);
+  sym.local_offset = 1UL;
+  sym.basis = NULL;
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 1UL) == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(&sym, 1UL) == NULL, 1, label);
+  sym.basis = basis;
+  sym.enabled = FALSE;
+  assert_int_eq(SymmetryBasisLocalEntry(&sym, 1UL) == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(&sym, 1UL) == NULL, 1, label);
+  sym.enabled = TRUE;
+
+  list_Diagonal = raw_diagonal;
+  X.Def.iFlgSymmetryBasis = TRUE;
+  X.Check.idim_max = sym.local_dim;
+  X.Sym = &sym;
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 1UL, &diagonal), 0,
+                label);
+  assert_complex_close(diagonal, basis[2].diagonal, 0.0, label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 2UL, &diagonal), 0,
+                label);
+  assert_complex_close(diagonal, basis[3].diagonal, 0.0, label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 0UL, &diagonal), -1,
+                label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 3UL, &diagonal), -1,
+                label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 1UL, NULL), -1, label);
+
+  X.Def.iFlgSymmetryBasis = FALSE;
+  X.Sym = NULL;
+  X.Check.idim_max = 2UL;
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 1UL, &diagonal), 0,
+                label);
+  assert_complex_close(diagonal, raw_diagonal[1], 0.0, label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 2UL, &diagonal), 0,
+                label);
+  assert_complex_close(diagonal, raw_diagonal[2], 0.0, label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(&X, 3UL, &diagonal), -1,
+                label);
+  assert_int_eq(GetOwnedHamiltonianDiagonal(NULL, 1UL, &diagonal), -1,
+                label);
+  list_Diagonal = saved_list_diagonal;
+}
+
 static void assert_symmetry_dim(unsigned int nsite,
                                 unsigned int nup,
                                 unsigned int momentum_index,
@@ -1992,6 +2089,8 @@ int main(void)
                          "hubbard mixed-spin wrap translation sign");
   }
   assert_int_eq(1, 1, "unit harness still running");
+  assert_basis_ownership_accessors(
+      "basis ownership accessors enforce local/global ranges");
   {
     struct DefineList def;
     setup_c4_def(&def);

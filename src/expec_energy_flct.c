@@ -377,7 +377,11 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     if (use_symmetry_basis == TRUE &&
         (X->Sym == NULL || X->Sym->enabled != TRUE || X->Sym->basis == NULL ||
          X->Sym->local_offset > X->Sym->dim ||
-         i_max > X->Sym->dim - X->Sym->local_offset)) {
+         X->Sym->local_dim > X->Sym->dim - X->Sym->local_offset ||
+         i_max != X->Sym->local_dim ||
+         (i_max > 0UL &&
+          (SymmetryBasisLocalEntry(X->Sym, 1UL) == NULL ||
+           SymmetryBasisLocalEntry(X->Sym, i_max) == NULL)))) {
         return -1;
     }
 
@@ -414,8 +418,9 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
         bit_down = 0;
         bit_D = 0;
         if (use_symmetry_basis == TRUE) {
-            unsigned long int global_index = X->Sym->local_offset + j;
-            tmp_list_1 = X->Sym->basis[global_index].rep_state;
+            const struct SymmetryBasisVector *entry =
+                SymmetryBasisLocalEntry(X->Sym, j);
+            tmp_list_1 = entry->rep_state;
         } else {
             tmp_list_1 = list_1[j];
         }
