@@ -35,5 +35,6 @@ var searchData=
   ['phys_32',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
   ['plan_33',['plan',['../structFillEntriesContext.html#a2fe68b4d2dcd3bb80ad3be03df8f5a52',1,'FillEntriesContext']]],
   ['prdct_34',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
-  ['precg_35',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
+  ['prdct_5fallreduce_5fcalls_35',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
+  ['precg_36',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
 ];

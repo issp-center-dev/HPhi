@@ -6,5 +6,6 @@ var searchData=
   ['symmetrybasisvector_3',['SymmetryBasisVector',['../structSymmetryBasisVector.html',1,'']]],
   ['symmetrycanonicalresult_4',['SymmetryCanonicalResult',['../structSymmetryCanonicalResult.html',1,'']]],
   ['symmetrymatvecplan_5',['SymmetryMatvecPlan',['../structSymmetryMatvecPlan.html',1,'']]],
-  ['symmetrytransformresult_6',['SymmetryTransformResult',['../structSymmetryTransformResult.html',1,'']]]
+  ['symmetrytransformresult_6',['SymmetryTransformResult',['../structSymmetryTransformResult.html',1,'']]],
+  ['symmetryvectorhaloplan_7',['SymmetryVectorHaloPlan',['../structSymmetryVectorHaloPlan.html',1,'']]]
 ];

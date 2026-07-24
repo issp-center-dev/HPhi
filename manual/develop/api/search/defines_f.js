@@ -8,5 +8,7 @@ var searchData=
   ['standard_5fmode_5',['STANDARD_MODE',['../readdef_8h.html#a23b69654944d1c87648c834b701467fa',1,'readdef.h']]],
   ['symmetry_5fbasis_5fdistribution_5fchunk_6',['SYMMETRY_BASIS_DISTRIBUTION_CHUNK',['../symmetry__basis_8c.html#a76b48276c539e0bfd3d8a518ad0829f9',1,'symmetry_basis.c']]],
   ['symmetry_5fmatvec_5fmode_5flegacy_7',['SYMMETRY_MATVEC_MODE_LEGACY',['../symmetry__matvec__plan_8h.html#a11a6d01ef1dfccdf1c3a74bd2a410e37',1,'symmetry_matvec_plan.h']]],
-  ['symmetry_5fmatvec_5fmode_5fplan_8',['SYMMETRY_MATVEC_MODE_PLAN',['../symmetry__matvec__plan_8h.html#a81e862e329583c1e247ba44490c9ef23',1,'symmetry_matvec_plan.h']]]
+  ['symmetry_5fmatvec_5fmode_5fplan_8',['SYMMETRY_MATVEC_MODE_PLAN',['../symmetry__matvec__plan_8h.html#a81e862e329583c1e247ba44490c9ef23',1,'symmetry_matvec_plan.h']]],
+  ['symmetry_5fvector_5fexchange_5fallgather_9',['SYMMETRY_VECTOR_EXCHANGE_ALLGATHER',['../symmetry__matvec__plan_8h.html#ae697bbbac42f61003a4d126311aa6aa6',1,'symmetry_matvec_plan.h']]],
+  ['symmetry_5fvector_5fexchange_5fhalo_10',['SYMMETRY_VECTOR_EXCHANGE_HALO',['../symmetry__matvec__plan_8h.html#a4a2e0da243f1d419e7cac98931feaa06',1,'symmetry_matvec_plan.h']]]
 ];

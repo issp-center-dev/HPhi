@@ -29,6 +29,7 @@ var annotated_dup =
     [ "SymmetryCanonicalResult", "structSymmetryCanonicalResult.html", "structSymmetryCanonicalResult" ],
     [ "SymmetryMatvecPlan", "structSymmetryMatvecPlan.html", "structSymmetryMatvecPlan" ],
     [ "SymmetryTransformResult", "structSymmetryTransformResult.html", "structSymmetryTransformResult" ],
+    [ "SymmetryVectorHaloPlan", "structSymmetryVectorHaloPlan.html", "structSymmetryVectorHaloPlan" ],
     [ "TimeKeepStruct", "structTimeKeepStruct.html", "structTimeKeepStruct" ],
     [ "W128_T", "unionW128__T.html", "unionW128__T" ]
 ];

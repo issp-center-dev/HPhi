@@ -30,5 +30,6 @@ var structSymmetryBasisRuntime =
     [ "rep_hash_keys", "structSymmetryBasisRuntime.html#add5a21e60bf354231d93f5dd6c6bda7f", null ],
     [ "rep_hash_size", "structSymmetryBasisRuntime.html#aff54198265f1716ab66713830f3fbd8f", null ],
     [ "rep_hash_values", "structSymmetryBasisRuntime.html#a3a26aaa8d51ae244960712c28b7101f9", null ],
-    [ "sym_diagonal", "structSymmetryBasisRuntime.html#afbc23f5de898b89a2c156d52b235ba61", null ]
+    [ "sym_diagonal", "structSymmetryBasisRuntime.html#afbc23f5de898b89a2c156d52b235ba61", null ],
+    [ "vector_exchange_mode", "structSymmetryBasisRuntime.html#aeea93f387e1700ed32575b45dd8a7dd9", null ]
 ];

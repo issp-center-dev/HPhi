@@ -78,6 +78,7 @@ var files_dup =
     [ "symmetry_basis.c", "symmetry__basis_8c.html", "symmetry__basis_8c" ],
     [ "symmetry_basis_io.c", "symmetry__basis__io_8c.html", "symmetry__basis__io_8c" ],
     [ "symmetry_matvec_plan.c", "symmetry__matvec__plan_8c.html", "symmetry__matvec__plan_8c" ],
+    [ "symmetry_vector_halo.c", "symmetry__vector__halo_8c.html", "symmetry__vector__halo_8c" ],
     [ "sz.c", "sz_8c.html", "sz_8c" ],
     [ "time.c", "time_8c.html", "time_8c" ],
     [ "vec12.c", "vec12_8c.html", "vec12_8c" ],

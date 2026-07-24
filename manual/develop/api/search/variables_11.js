@@ -25,10 +25,11 @@ var searchData=
   ['tmp_5fv_22',['tmp_V',['../structLargeList.html#ad706dd1a7ccaaa6f4e50cdcde74382a9',1,'LargeList']]],
   ['tmp_5fv0_23',['tmp_v0',['../structLegacyApplyContext.html#ad4ef8b65cbae89c6ad166b0328a94456',1,'LegacyApplyContext']]],
   ['tnow_24',['tnow',['../structTimeKeepStruct.html#a353c263a43f26f4953b3c2b6afc3f99f',1,'TimeKeepStruct']]],
-  ['total2sz_25',['Total2Sz',['../structDefineList.html#ac8b32c2127bcd2478184176e302746c0',1,'DefineList']]],
-  ['total2szmpi_26',['Total2SzMPI',['../structDefineList.html#abdd643fce4f7c700323b8cf53e6a13bb',1,'DefineList']]],
-  ['tpow_27',['Tpow',['../structDefineList.html#add52f995b8c9ac337a079d0bbf8ae095',1,'DefineList']]],
-  ['transfer_5findices_28',['transfer_indices',['../structMPITransferGroup.html#a29a914bf7ed28d61c79917f3dc440a7b',1,'MPITransferGroup::transfer_indices'],['../structMPIDoubleTransferGroup.html#ace19ce60d0c378bfea1b615f7424caec',1,'MPIDoubleTransferGroup::transfer_indices']]],
-  ['transform_5fcalls_29',['transform_calls',['../structSymmetryBasisCollector.html#a78a9e67c1d4f47e53057d0aa13307d37',1,'SymmetryBasisCollector']]],
-  ['tstart_30',['tstart',['../structTimeKeepStruct.html#abb4d510ac3897933e41b1d6610d5807d',1,'TimeKeepStruct']]]
+  ['topology_5fscratch_5fbytes_25',['topology_scratch_bytes',['../structSymmetryVectorHaloPlan.html#ac4deb6c576c64a66fd1c53dacd96743c',1,'SymmetryVectorHaloPlan']]],
+  ['total2sz_26',['Total2Sz',['../structDefineList.html#ac8b32c2127bcd2478184176e302746c0',1,'DefineList']]],
+  ['total2szmpi_27',['Total2SzMPI',['../structDefineList.html#abdd643fce4f7c700323b8cf53e6a13bb',1,'DefineList']]],
+  ['tpow_28',['Tpow',['../structDefineList.html#add52f995b8c9ac337a079d0bbf8ae095',1,'DefineList']]],
+  ['transfer_5findices_29',['transfer_indices',['../structMPITransferGroup.html#a29a914bf7ed28d61c79917f3dc440a7b',1,'MPITransferGroup::transfer_indices'],['../structMPIDoubleTransferGroup.html#ace19ce60d0c378bfea1b615f7424caec',1,'MPIDoubleTransferGroup::transfer_indices']]],
+  ['transform_5fcalls_30',['transform_calls',['../structSymmetryBasisCollector.html#a78a9e67c1d4f47e53057d0aa13307d37',1,'SymmetryBasisCollector']]],
+  ['tstart_31',['tstart',['../structTimeKeepStruct.html#abb4d510ac3897933e41b1d6610d5807d',1,'TimeKeepStruct']]]
 ];

@@ -152,7 +152,8 @@ var NAVTREEINDEX =
 "page_log.html#sec_log_error",
 "structDefineList.html#a09fa2f50f7daaa648426f773af18e18d",
 "structMPIBatchedTransfers.html#a0e4ca180e159ab059039d1ef374d08eb",
-"symmetry__matvec__plan_8c.html#a454cc0bdddc7b0d2c7a09f63256e2ef1"
+"symmetry__basis_8h.html#a974a6f9fc737d8164c388631556112e3",
+"xsetmem_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
