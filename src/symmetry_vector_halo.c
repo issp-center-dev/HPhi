@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 struct BindStruct;
 #include "CalcTime.h"
+#include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 
 #ifndef HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES
@@ -24,39 +25,6 @@ static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
   if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
   *result = lhs * rhs;
   return 0;
-}
-
-static int halo_mpi_collectives_active(void)
-{
-#ifdef MPI
-  int initialized = 0;
-  int finalized = 0;
-  if (MPI_Initialized(&initialized) != MPI_SUCCESS || initialized == 0) {
-    return FALSE;
-  }
-  if (MPI_Finalized(&finalized) != MPI_SUCCESS || finalized != 0) {
-    return FALSE;
-  }
-  return TRUE;
-#else
-  return FALSE;
-#endif
-}
-
-static int agree_halo_error(int mpi_active, int local_error)
-{
-#ifdef MPI
-  int global_error = local_error;
-  if (mpi_active != FALSE &&
-      MPI_Allreduce(&local_error, &global_error, 1, MPI_INT, MPI_MAX,
-                    MPI_COMM_WORLD) != MPI_SUCCESS) {
-    return -1;
-  }
-  return global_error;
-#else
-  (void)mpi_active;
-  return local_error;
-#endif
 }
 
 static unsigned long long hash_bytes(unsigned long long hash,
@@ -183,7 +151,7 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   int owner;
   int peer;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || local_column_count == NULL ||
       remote_column_count == NULL || nrank < 1 || rank < 0 || rank >= nrank ||
       local_offset > dim || local_dim > dim - local_offset ||
@@ -208,7 +176,7 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
 
   block_base = dim / (unsigned long int)nrank;
   block_remainder = dim % (unsigned long int)nrank;
@@ -222,7 +190,7 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       local_dim != expected_local_dim) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
 
   memset(halo, 0, sizeof(*halo));
   *local_column_count = 0U;
@@ -260,7 +228,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
     if (local_error != 0) break;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
   if (*remote_column_count > 0U) {
     size_t bitset_cap = (size_t)HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES;
     if (bitset_cap == 0U) {
@@ -310,7 +279,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                        &count_int_bytes) != 0) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   window_zero = 0UL;
   while (window_zero < dim && *remote_column_count > 0U) {
@@ -362,7 +332,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     if (local_error != 0) break;
     window_zero += window_dim;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   if (halo->ghost_count > 0U) {
     if (halo->ghost_count >
@@ -374,7 +345,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       if (halo->ghost_global_index == NULL) local_error = 1;
     }
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   window_zero = 0UL;
   while (window_zero < dim && *remote_column_count > 0U) {
@@ -438,7 +410,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                        &halo->topology_scratch_bytes) != 0) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
   halo->request_layout_ready = TRUE;
   free(remote_bits);
   remote_bits = NULL;
@@ -460,7 +433,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                      MPI_COMM_WORLD) == MPI_SUCCESS ? 0 : 1;
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   total_count = 0U;
   for (peer = 0; peer < nrank; peer++) {
@@ -480,7 +454,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
   halo->send_value_count = total_count;
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   if (halo->send_value_count > 0U) {
     if (halo->send_value_count >
@@ -497,7 +472,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       }
     }
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
@@ -514,7 +490,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
             : 1;
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   for (column = 0U; column < halo->send_value_count; column++) {
     unsigned long int global_index = requested_global_index[column];
@@ -526,7 +503,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
     halo->send_local_index[column] = global_index - local_offset;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
@@ -547,7 +525,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   if (halo->send_value_count > 0U) {
     halo->send_values = (double complex *)malloc(
@@ -577,7 +556,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   if (schedule_scratch_bytes > halo->topology_scratch_bytes) {
     halo->topology_scratch_bytes = schedule_scratch_bytes;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
   halo->ready = TRUE;
   halo->schedule_checksum = halo_schedule_checksum(halo);
   free(requested_global_index);
@@ -611,7 +591,7 @@ int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
   size_t index;
   int mpi_active;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || halo->ready != TRUE || local_vector == NULL ||
       (halo != NULL && halo->nrank > 1 && mpi_active == FALSE)) {
     return -1;
@@ -664,9 +644,9 @@ int ExchangeSymmetryVectorHaloReference(
   int mpi_active;
   int local_error = 0;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || full_vector == NULL) local_error = 1;
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
   if (ExchangeSymmetryVectorHalo(halo, local_vector) != 0) return -1;
 
   StartTimer(1512);
@@ -679,7 +659,7 @@ int ExchangeSymmetryVectorHaloReference(
     }
   }
   StopTimer(1512);
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
   halo->reference_exchange_calls++;
   return 0;
 }

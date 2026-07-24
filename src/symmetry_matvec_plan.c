@@ -10,6 +10,7 @@
 #include "CalcTime.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 #include "wrapperMPI.h"
 
@@ -292,39 +293,6 @@ static int select_halo_reference_mode(void)
   return BcastMPI_i(0, enabled);
 }
 
-static int mpi_collectives_active(void)
-{
-#ifdef MPI
-  int initialized = 0;
-  int finalized = 0;
-  if (MPI_Initialized(&initialized) != MPI_SUCCESS || initialized == 0) {
-    return FALSE;
-  }
-  if (MPI_Finalized(&finalized) != MPI_SUCCESS || finalized != 0) {
-    return FALSE;
-  }
-  return TRUE;
-#else
-  return FALSE;
-#endif
-}
-
-static int agree_plan_error(int mpi_active, int local_error)
-{
-#ifdef MPI
-  int global_error = local_error;
-  if (mpi_active != FALSE &&
-      MPI_Allreduce(&local_error, &global_error, 1, MPI_INT, MPI_MAX,
-                    MPI_COMM_WORLD) != MPI_SUCCESS) {
-    return -1;
-  }
-  return global_error;
-#else
-  (void)mpi_active;
-  return local_error;
-#endif
-}
-
 static int configure_full_input_vector(struct BindStruct *X,
                                        int required,
                                        int mpi_active)
@@ -356,7 +324,7 @@ static int configure_full_input_vector(struct BindStruct *X,
       local_error = 1;
     }
   }
-  if (agree_plan_error(mpi_active, local_error) != 0) {
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) {
     free(X->Sym->mpi_recvcounts);
     free(X->Sym->mpi_displs);
     free(X->Sym->mpi_full_v1);
@@ -641,7 +609,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   }
   X->Sym->matvec_mode = mode;
   X->Sym->vector_exchange_mode = vector_exchange_mode;
-  mpi_active = mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (configure_full_input_vector(
           X, vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_ALLGATHER,
           mpi_active) != 0) {
@@ -656,7 +624,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
 
   plan = (struct SymmetryMatvecPlan *)calloc(1, sizeof(*plan));
   local_error = plan == NULL ? 1 : 0;
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   plan->dim = X->Sym->dim;
   plan->local_offset = X->Sym->local_offset;
   plan->local_dim = X->Sym->local_dim;
@@ -682,7 +650,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
                                  sizeof(*row_counts));
     if (row_counts == NULL) local_error = 1;
   }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
 
   StartTimer(1120);
 #pragma omp parallel for default(none) schedule(static) reduction(|:count_error) \
@@ -710,7 +678,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     }
   }
   StopTimer(1120);
-  if (agree_plan_error(mpi_active, count_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, count_error) != 0) goto fail;
   free(row_counts);
   row_counts = NULL;
   plan->nnz = plan->row_ptr[plan->local_dim];
@@ -732,7 +700,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     }
   }
   StopTimer(1121);
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
 
   StartTimer(1122);
 #pragma omp parallel for default(none) schedule(static) reduction(|:fill_error) \
@@ -749,7 +717,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     }
   }
   StopTimer(1122);
-  if (agree_plan_error(mpi_active, fill_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, fill_error) != 0) goto fail;
 
   if (plan->dim - plan->local_dim > (unsigned long int)SIZE_MAX ||
       (size_t)(plan->dim - plan->local_dim) >
@@ -761,7 +729,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     plan->allgather_payload_bytes_per_call =
         plan->allgather_nonlocal_values_per_call * sizeof(double complex);
   }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   column_span.columns = plan->col_index;
   column_span.count = plan->nnz;
   if (BuildSymmetryVectorHaloPlan(
@@ -780,13 +748,13 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
         slot_count <= (size_t)UINT32_MAX ? SYMMETRY_COLUMN_U32
                                          : SYMMETRY_COLUMN_U64;
   }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   if (vector_exchange_mode == SYMMETRY_VECTOR_EXCHANGE_HALO) {
     if (plan->halo.ready != TRUE ||
         RemapSymmetryMatvecPlanColumns(plan) != 0) {
       local_error = 1;
     }
-    if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+    if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
     if (plan->column_slot_width == SYMMETRY_COLUMN_U32) {
       col_bytes = plan->nnz * sizeof(*plan->column_slot32);
     } else {
@@ -800,7 +768,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
           plan->halo.ghost_count * sizeof(*plan->halo.ghost_global_index);
       if (ghost_index_bytes > plan->halo.schedule_bytes) local_error = 1;
     }
-    if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+    if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
     free(plan->halo.ghost_global_index);
     plan->halo.ghost_global_index = NULL;
     plan->halo.schedule_bytes -= ghost_index_bytes;
@@ -812,7 +780,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   } else {
     plan_bytes = row_ptr_bytes + col_bytes + value_bytes;
   }
-  if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   plan->column_storage_bytes = col_bytes;
   plan->matrix_storage_bytes = plan_bytes;
   if (plan->local_dim == 0UL) min_row_nnz = 0U;

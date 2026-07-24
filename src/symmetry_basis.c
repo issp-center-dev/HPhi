@@ -6,6 +6,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_mpi_exchange.h"
 #include "symmetry_state_enumerator.h"
 #include "struct.h"
 #include "CalcTime.h"
@@ -658,46 +659,6 @@ static void free_basis_collectors(struct SymmetryBasisCollector *collectors,
   free(collectors);
 }
 
-#ifdef MPI
-static int create_symmetry_basis_vector_type(MPI_Datatype *vector_type)
-{
-  struct SymmetryBasisVector sample;
-  int block_lengths[6] = {1, 1, 1, 1, 1, 1};
-  MPI_Aint base;
-  MPI_Aint displacements[6];
-  MPI_Datatype member_types[6] = {
-    MPI_UNSIGNED_LONG, MPI_UNSIGNED, MPI_UNSIGNED,
-    MPI_DOUBLE, MPI_DOUBLE_COMPLEX, MPI_DOUBLE
-  };
-  MPI_Datatype packed_type;
-  int ierr;
-
-  MPI_Get_address(&sample, &base);
-  MPI_Get_address(&sample.rep_state, &displacements[0]);
-  MPI_Get_address(&sample.orbit_size, &displacements[1]);
-  MPI_Get_address(&sample.stabilizer_size, &displacements[2]);
-  MPI_Get_address(&sample.norm, &displacements[3]);
-  MPI_Get_address(&sample.stabilizer_character_sum, &displacements[4]);
-  MPI_Get_address(&sample.diagonal, &displacements[5]);
-  for (ierr = 0; ierr < 6; ierr++) displacements[ierr] -= base;
-
-  ierr = MPI_Type_create_struct(6, block_lengths, displacements, member_types,
-                                &packed_type);
-  if (ierr != MPI_SUCCESS) return -1;
-  ierr = MPI_Type_create_resized(packed_type, 0,
-                                 (MPI_Aint)sizeof(struct SymmetryBasisVector),
-                                 vector_type);
-  MPI_Type_free(&packed_type);
-  if (ierr != MPI_SUCCESS) return -1;
-  ierr = MPI_Type_commit(vector_type);
-  if (ierr != MPI_SUCCESS) {
-    MPI_Type_free(vector_type);
-    return -1;
-  }
-  return 0;
-}
-#endif
-
 static int gather_symmetry_basis(struct SymmetryBasisRuntime *sym)
 {
   if (nproc <= 1) return 0;
@@ -743,7 +704,7 @@ static int gather_symmetry_basis(struct SymmetryBasisRuntime *sym)
         (size_t)total_count + 1U, sizeof(*global_basis));
     if (global_basis == NULL) local_error = 1;
   }
-  if (create_symmetry_basis_vector_type(&vector_type) != 0) local_error = 1;
+  if (SymmetryMpiCreateBasisVectorType(&vector_type) != 0) local_error = 1;
   global_error = SumMPI_i(local_error);
   if (global_error != 0) goto fail;
 

@@ -51,6 +51,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
@@ -72,6 +73,25 @@ add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
+
+add_executable(unittest_symmetry_distribution
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
+target_include_directories(unittest_symmetry_distribution
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_distribution PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_distribution m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_distribution ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_distribution
+    COMMAND unittest_symmetry_distribution)
+set_tests_properties(unittest_symmetry_distribution
+    PROPERTIES LABELS "unit;symmetry")
+add_hphi_mpi_test(symmetry_distribution_mpi min:2)
+set_tests_properties(symmetry_distribution_mpi
+    PROPERTIES LABELS "symmetry;mpi")
 
 #
 # Lanczos
