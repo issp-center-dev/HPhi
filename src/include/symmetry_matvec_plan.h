@@ -24,6 +24,7 @@ struct SymmetryMatvecPlan {
   unsigned long int dim;
   unsigned long int local_offset;
   unsigned long int local_dim;
+  size_t block_count;
   size_t nnz;
   size_t row_nnz_max;
   size_t *row_ptr;
@@ -46,6 +47,17 @@ struct SymmetryMatvecPlan {
   struct SymmetryVectorHaloPlan halo;
 };
 
+struct SymmetryMatvecBlockView {
+  unsigned long int local_row_begin;
+  unsigned long int local_row_count;
+  size_t nnz;
+  const size_t *row_ptr;
+  const unsigned long int *global_columns;
+  const uint32_t *column_slot32;
+  const uint64_t *column_slot64;
+  const double complex *values;
+};
+
 /**
  * Receive one matrix entry H(out_index, beta) from SymmetryEnumerateColumn().
  * coefficient includes the canonical phase and norm[out_index]/norm[beta],
@@ -60,6 +72,12 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
                             SymmetryEntryCallback callback,
                             void *context);
 int BuildSymmetryMatvecPlan(struct BindStruct *X);
+size_t SymmetryMatvecPlanBlockCount(
+    const struct SymmetryMatvecPlan *plan);
+int SymmetryMatvecPlanGetBlockView(
+    const struct SymmetryMatvecPlan *plan,
+    size_t block_index,
+    struct SymmetryMatvecBlockView *view);
 int ApplySymmetryMatvecPlan(const struct BindStruct *X,
                             double complex *tmp_v0,
                             const double complex *full_v1,

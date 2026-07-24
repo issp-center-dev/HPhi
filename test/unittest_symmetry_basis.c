@@ -656,6 +656,26 @@ static void assert_complex_close(double complex got,
   }
 }
 
+static void assert_complex_bitwise(double complex got,
+                                   double complex expected,
+                                   const char *label)
+{
+  uint64_t got_bits[2];
+  uint64_t expected_bits[2];
+  memcpy(got_bits, &got, sizeof(got_bits));
+  memcpy(expected_bits, &expected, sizeof(expected_bits));
+  if (memcmp(got_bits, expected_bits, sizeof(got_bits)) != 0) {
+    fprintf(stderr,
+            "%s: got %016llx %016llx expected %016llx %016llx\n",
+            label,
+            (unsigned long long)got_bits[0],
+            (unsigned long long)got_bits[1],
+            (unsigned long long)expected_bits[0],
+            (unsigned long long)expected_bits[1]);
+    exit(1);
+  }
+}
+
 static uint64_t symmetry_plan_column_slot(
     const struct SymmetryMatvecPlan *plan, size_t column)
 {
@@ -669,6 +689,121 @@ static uint64_t symmetry_plan_column_slot(
   }
   fprintf(stderr, "column slot storage is not initialized\n");
   exit(1);
+}
+
+static int apply_direct_flat_global(
+    const struct SymmetryMatvecPlan *plan,
+    double complex *output,
+    const double complex *input,
+    double complex *prdct_out)
+{
+  unsigned long int local_row;
+  double complex prdct = 0.0;
+  if (plan == NULL || output == NULL || input == NULL || prdct_out == NULL ||
+      plan->columns_remapped == TRUE ||
+      (plan->nnz > 0U &&
+       (plan->col_index == NULL || plan->values == NULL))) {
+    return -1;
+  }
+#pragma omp parallel for default(none) schedule(static) reduction(+:prdct) \
+  shared(plan, output, input)
+  for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
+    size_t p;
+    double complex sum = 0.0;
+    unsigned long int global_alpha =
+        plan->local_offset + local_row + 1UL;
+    for (p = plan->row_ptr[local_row];
+         p < plan->row_ptr[local_row + 1UL]; p++) {
+      sum += plan->values[p] * input[plan->col_index[p]];
+    }
+    output[local_row + 1UL] += sum;
+    prdct += conj(input[global_alpha]) * sum;
+  }
+  *prdct_out = prdct;
+  return 0;
+}
+
+static int apply_direct_flat_halo(
+    const struct SymmetryMatvecPlan *plan,
+    double complex *output,
+    const double complex *input,
+    double complex *prdct_out)
+{
+  unsigned long int local_row;
+  double complex prdct = 0.0;
+  int apply_error = 0;
+  size_t slot_count;
+  if (plan == NULL || output == NULL || input == NULL || prdct_out == NULL ||
+      plan->columns_remapped != TRUE ||
+      (plan->nnz > 0U && plan->values == NULL) ||
+      (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
+    return -1;
+  }
+  if ((plan->column_slot_width == SYMMETRY_COLUMN_U32 &&
+       (plan->column_slot64 != NULL ||
+        (plan->nnz > 0U && plan->column_slot32 == NULL))) ||
+      (plan->column_slot_width == SYMMETRY_COLUMN_U64 &&
+       (plan->column_slot32 != NULL ||
+        (plan->nnz > 0U && plan->column_slot64 == NULL))) ||
+      (plan->column_slot_width != SYMMETRY_COLUMN_U32 &&
+       plan->column_slot_width != SYMMETRY_COLUMN_U64)) {
+    return -1;
+  }
+  slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
+  if (plan->column_slot_width == SYMMETRY_COLUMN_U32) {
+#pragma omp parallel for default(none) schedule(static) \
+  reduction(+:prdct) reduction(|:apply_error) \
+  shared(plan, output, input, slot_count)
+    for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
+      size_t p;
+      double complex sum = 0.0;
+      for (p = plan->row_ptr[local_row];
+           p < plan->row_ptr[local_row + 1UL]; p++) {
+        size_t slot = (size_t)plan->column_slot32[p];
+        double complex input_value;
+        if (slot >= slot_count) {
+          apply_error = 1;
+          continue;
+        }
+        input_value =
+            slot < (size_t)plan->local_dim
+                ? input[slot + 1U]
+                : plan->halo.ghost_values[slot - (size_t)plan->local_dim];
+        sum += plan->values[p] * input_value;
+      }
+      output[local_row + 1UL] += sum;
+      prdct += conj(input[local_row + 1UL]) * sum;
+    }
+  } else {
+#pragma omp parallel for default(none) schedule(static) \
+  reduction(+:prdct) reduction(|:apply_error) \
+  shared(plan, output, input, slot_count)
+    for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
+      size_t p;
+      double complex sum = 0.0;
+      for (p = plan->row_ptr[local_row];
+           p < plan->row_ptr[local_row + 1UL]; p++) {
+        uint64_t raw_slot = plan->column_slot64[p];
+        size_t slot;
+        double complex input_value;
+        if (raw_slot >= (uint64_t)slot_count) {
+          apply_error = 1;
+          continue;
+        }
+        slot = (size_t)raw_slot;
+        input_value =
+            slot < (size_t)plan->local_dim
+                ? input[slot + 1U]
+                : plan->halo.ghost_values[slot - (size_t)plan->local_dim];
+        sum += plan->values[p] * input_value;
+      }
+      output[local_row + 1UL] += sum;
+      prdct += conj(input[local_row + 1UL]) * sum;
+    }
+  }
+  if (apply_error != 0) return -1;
+  *prdct_out = prdct;
+  return 0;
 }
 
 static void reference_fermion_permutation(unsigned long int state,
@@ -862,13 +997,27 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   double difference_norm2 = 0.0;
   double legacy_norm2 = 0.0;
   double complex expected_prdct = 0.0;
+  double complex flat_prdct = 0.0;
   double complex plan_prdct = 0.0;
   double complex *dense;
   double complex *input;
+  double complex *flat_output;
   double complex *legacy_output;
   double complex *output;
   unsigned int *multiplicity;
+  struct SymmetryMatvecBlockView view;
   struct SymmetryMatvecPlan *plan;
+#ifdef _OPENMP
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+  /*
+   * Compare the two kernels with one deterministic reduction partition.
+   * The dedicated OpenMP regression below exercises block-view build/apply
+   * with both one and four threads.
+   */
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+#endif
 
   if (setenv("HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
       ActivateSymmetryBasisDimension(X) != 0 ||
@@ -879,6 +1028,15 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   plan = X->Sym->matvec_plan;
   assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(plan), 1UL, label);
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(NULL), 0UL, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(plan, 0U, &view), 0, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(plan, 1U, &view), -1, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(NULL, 0U, &view), -1, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(plan, 0U, NULL), -1, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(plan, 0U, &view), 0, label);
   assert_ulong_eq(plan->dim, X->Sym->dim, label);
   assert_ulong_eq(plan->local_offset, 0UL, label);
   assert_ulong_eq(plan->local_dim, X->Sym->dim, label);
@@ -912,6 +1070,19 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
       (unsigned long int)plan->allgather_nonlocal_values_per_call, 0UL, label);
   assert_ulong_eq(
       (unsigned long int)plan->allgather_payload_bytes_per_call, 0UL, label);
+  assert_ulong_eq(view.local_row_begin, 0UL, label);
+  assert_ulong_eq(view.local_row_count, plan->local_dim, label);
+  assert_ulong_eq((unsigned long int)view.nnz,
+                  (unsigned long int)plan->nnz, label);
+  assert_int_eq(view.row_ptr == plan->row_ptr, 1, label);
+  assert_int_eq(view.global_columns == plan->col_index, 1, label);
+  assert_int_eq(view.column_slot32 == NULL, 1, label);
+  assert_int_eq(view.column_slot64 == NULL, 1, label);
+  assert_int_eq(view.values == plan->values, 1, label);
+  assert_ulong_eq((unsigned long int)view.row_ptr[0], 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)view.row_ptr[view.local_row_count],
+      (unsigned long int)view.nnz, label);
 
   if (plan->dim > SIZE_MAX / plan->dim) {
     fprintf(stderr, "%s: dense matrix size overflow\n", label);
@@ -921,10 +1092,13 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   dense = (double complex *)calloc(matrix_size, sizeof(*dense));
   multiplicity = (unsigned int *)calloc(matrix_size, sizeof(*multiplicity));
   input = (double complex *)calloc((size_t)plan->dim + 1U, sizeof(*input));
+  flat_output = (double complex *)calloc(
+      (size_t)plan->dim + 1U, sizeof(*flat_output));
   legacy_output = (double complex *)calloc((size_t)plan->dim + 1U,
                                            sizeof(*legacy_output));
   output = (double complex *)calloc((size_t)plan->dim + 1U, sizeof(*output));
   if (dense == NULL || multiplicity == NULL || input == NULL ||
+      flat_output == NULL ||
       legacy_output == NULL || output == NULL) {
     fprintf(stderr, "%s: dense test allocation failed\n", label);
     exit(1);
@@ -974,10 +1148,21 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
       }
     }
   }
+  if (apply_direct_flat_global(plan, flat_output, input, &flat_prdct) != 0) {
+    fprintf(stderr, "%s: direct-flat apply failed\n", label);
+    exit(1);
+  }
   if (ApplySymmetryMatvecPlan(X, output, input, &plan_prdct) != 0) {
     fprintf(stderr, "%s: plan apply failed\n", label);
     exit(1);
   }
+  assert_int_eq(
+      memcmp(output, flat_output,
+             ((size_t)plan->dim + 1U) * sizeof(*output)) == 0,
+      1, "direct-flat/global block-view output is bitwise identical");
+  assert_complex_bitwise(
+      plan_prdct, flat_prdct,
+      "direct-flat/global block-view prdct is bitwise identical");
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
     double complex expected = 0.0;
     for (beta = 1UL; beta <= plan->dim; beta++) {
@@ -1002,6 +1187,9 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   X->Sym->local_offset--;
 
   memset(output, 0, ((size_t)X->Sym->dim + 1U) * sizeof(*output));
+  memset(flat_output, 0,
+         ((size_t)X->Sym->dim + 1U) * sizeof(*flat_output));
+  flat_prdct = 0.0;
   plan_prdct = 0.0;
   if (BuildSymmetryMatvecPlan(X) != 0) {
     fprintf(stderr, "%s: default serial halo plan setup failed\n", label);
@@ -1017,6 +1205,22 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   assert_int_eq(plan->nnz == 0U || plan->column_slot32 != NULL, 1, label);
   assert_int_eq(plan->column_slot64 == NULL, 1, label);
   assert_int_eq(plan->halo.ghost_global_index == NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(plan), 1UL, label);
+  assert_int_eq(SymmetryMatvecPlanGetBlockView(plan, 0U, &view), 0, label);
+  assert_ulong_eq(view.local_row_begin, 0UL, label);
+  assert_ulong_eq(view.local_row_count, plan->local_dim, label);
+  assert_ulong_eq((unsigned long int)view.nnz,
+                  (unsigned long int)plan->nnz, label);
+  assert_int_eq(view.row_ptr == plan->row_ptr, 1, label);
+  assert_int_eq(view.global_columns == NULL, 1, label);
+  assert_int_eq(view.column_slot32 == plan->column_slot32, 1, label);
+  assert_int_eq(view.column_slot64 == plan->column_slot64, 1, label);
+  assert_int_eq(view.values == plan->values, 1, label);
+  assert_ulong_eq((unsigned long int)view.row_ptr[0], 0UL, label);
+  assert_ulong_eq(
+      (unsigned long int)view.row_ptr[view.local_row_count],
+      (unsigned long int)view.nnz, label);
   assert_ulong_eq(
       (unsigned long int)plan->column_storage_bytes,
       (unsigned long int)(plan->nnz * sizeof(*plan->column_slot32)), label);
@@ -1034,10 +1238,22 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
                   1, label);
   }
   assert_int_eq(ExchangeSymmetryVectorHalo(&plan->halo, input), 0, label);
+  if (apply_direct_flat_halo(
+          plan, flat_output, input, &flat_prdct) != 0) {
+    fprintf(stderr, "%s: direct-flat halo apply failed\n", label);
+    exit(1);
+  }
   assert_int_eq(ApplySymmetryMatvecPlan(X, output, input, &plan_prdct), -1,
                 "global-column apply rejects remapped plan");
   assert_int_eq(
       ApplySymmetryMatvecPlanHalo(X, output, input, &plan_prdct), 0, label);
+  assert_int_eq(
+      memcmp(output, flat_output,
+             ((size_t)plan->dim + 1U) * sizeof(*output)) == 0,
+      1, "direct-flat/halo block-view output is bitwise identical");
+  assert_complex_bitwise(
+      plan_prdct, flat_prdct,
+      "direct-flat/halo block-view prdct is bitwise identical");
   for (alpha = 1UL; alpha <= plan->dim; alpha++) {
     assert_complex_close(output[alpha], legacy_output[alpha], 1.0e-12, label);
   }
@@ -1047,8 +1263,13 @@ static void assert_plan_matches_canonicalized_matrix(struct BindStruct *X,
   free(dense);
   free(multiplicity);
   free(input);
+  free(flat_output);
   free(legacy_output);
   free(output);
+#ifdef _OPENMP
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+#endif
 }
 
 static void assert_spin_plan(unsigned int nsite,
@@ -1227,11 +1448,18 @@ static void assert_parallel_plan_matches_serial(const char *label)
 {
   struct BindStruct X;
   struct SymmetryMatvecPlan *parallel_plan;
+  unsigned long int index;
   size_t row_ptr_count;
   size_t serial_nnz;
   size_t serial_row_nnz_max;
+  size_t vector_count;
   size_t *serial_row_ptr;
   unsigned long int *serial_col_index;
+  double complex parallel_prdct = 0.0;
+  double complex serial_prdct = 0.0;
+  double complex *input;
+  double complex *parallel_output;
+  double complex *serial_output;
   double complex *serial_values;
   int saved_dynamic = omp_get_dynamic();
   int saved_threads = omp_get_max_threads();
@@ -1256,7 +1484,14 @@ static void assert_parallel_plan_matches_serial(const char *label)
   serial_col_index = (unsigned long int *)malloc(
       serial_nnz * sizeof(*serial_col_index));
   serial_values = (double complex *)malloc(serial_nnz * sizeof(*serial_values));
+  vector_count = (size_t)X.Sym->matvec_plan->local_dim + 1U;
+  input = (double complex *)calloc(vector_count, sizeof(*input));
+  serial_output =
+      (double complex *)calloc(vector_count, sizeof(*serial_output));
+  parallel_output =
+      (double complex *)calloc(vector_count, sizeof(*parallel_output));
   if (serial_row_ptr == NULL ||
+      input == NULL || serial_output == NULL || parallel_output == NULL ||
       (serial_nnz > 0U &&
        (serial_col_index == NULL || serial_values == NULL))) {
     fprintf(stderr, "%s: serial plan snapshot allocation failed\n", label);
@@ -1269,6 +1504,15 @@ static void assert_parallel_plan_matches_serial(const char *label)
            serial_nnz * sizeof(*serial_col_index));
     memcpy(serial_values, X.Sym->matvec_plan->values,
            serial_nnz * sizeof(*serial_values));
+  }
+  for (index = 1UL; index <= X.Sym->matvec_plan->local_dim; index++) {
+    input[index] =
+        0.125 * (double)index + I * 0.0625 * (double)(index + 1UL);
+  }
+  if (ApplySymmetryMatvecPlan(
+          &X, serial_output, input, &serial_prdct) != 0) {
+    fprintf(stderr, "%s: serial block-view apply failed\n", label);
+    exit(1);
   }
 
   omp_set_num_threads(4);
@@ -1293,10 +1537,25 @@ static void assert_parallel_plan_matches_serial(const char *label)
                          serial_nnz * sizeof(*serial_values)) == 0,
                   1, label);
   }
+  if (ApplySymmetryMatvecPlan(
+          &X, parallel_output, input, &parallel_prdct) != 0) {
+    fprintf(stderr, "%s: parallel block-view apply failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(
+      memcmp(serial_output, parallel_output,
+             vector_count * sizeof(*serial_output)) == 0,
+      1, "OpenMP 1/4 block-view output is bitwise identical");
+  assert_complex_close(
+      parallel_prdct, serial_prdct, 1.0e-12,
+      "OpenMP 1/4 block-view prdct is numerically identical");
 
   free(serial_row_ptr);
   free(serial_col_index);
   free(serial_values);
+  free(input);
+  free(serial_output);
+  free(parallel_output);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -1545,6 +1804,7 @@ static void assert_u64_column_slot_apply(const char *label)
 #if ULONG_MAX > UINT32_MAX
   struct BindStruct X;
   struct SymmetryBasisRuntime sym;
+  struct SymmetryMatvecBlockView view;
   struct SymmetryMatvecPlan plan;
   size_t row_ptr[] = {0U, 1U};
   uint64_t column_slot64[] = {0U};
@@ -1562,6 +1822,7 @@ static void assert_u64_column_slot_apply(const char *label)
   sym.local_dim = 1UL;
   sym.matvec_plan = &plan;
   plan.ready = TRUE;
+  plan.block_count = 1U;
   plan.columns_remapped = TRUE;
   plan.dim = sym.dim;
   plan.local_dim = sym.local_dim;
@@ -1573,6 +1834,12 @@ static void assert_u64_column_slot_apply(const char *label)
   plan.halo.ready = TRUE;
   plan.halo.ghost_count = (size_t)UINT32_MAX;
   plan.halo.ghost_values = &ghost_value;
+  assert_int_eq(
+      SymmetryMatvecPlanGetBlockView(&plan, 0U, &view), 0, label);
+  assert_int_eq(view.global_columns == NULL, 1, label);
+  assert_int_eq(view.column_slot32 == NULL, 1, label);
+  assert_int_eq(view.column_slot64 == column_slot64, 1, label);
+  assert_int_eq(view.values == values, 1, label);
   assert_int_eq(
       ApplySymmetryMatvecPlanHalo(&X, output, input, &prdct), 0, label);
   assert_complex_close(output[1], expected, 1.0e-12, label);
@@ -1601,6 +1868,7 @@ static void assert_u64_column_slot_apply(const char *label)
 static void assert_zero_row_plan(const char *label)
 {
   struct BindStruct X;
+  struct SymmetryMatvecBlockView view;
   double complex input[2] = {0.0, 1.0};
   double complex output[1] = {0.0};
   double complex prdct = 1.0;
@@ -1620,6 +1888,19 @@ static void assert_zero_row_plan(const char *label)
   unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   assert_ulong_eq(X.Sym->local_dim, 0UL, label);
   assert_int_eq(X.Sym->matvec_plan != NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(
+          X.Sym->matvec_plan),
+      1UL, label);
+  assert_int_eq(
+      SymmetryMatvecPlanGetBlockView(X.Sym->matvec_plan, 0U, &view),
+      0, label);
+  assert_ulong_eq(view.local_row_begin, 0UL, label);
+  assert_ulong_eq(view.local_row_count, 0UL, label);
+  assert_ulong_eq((unsigned long int)view.nnz, 0UL, label);
+  assert_int_eq(view.row_ptr == X.Sym->matvec_plan->row_ptr, 1, label);
+  assert_int_eq(view.row_ptr != NULL, 1, label);
+  assert_ulong_eq((unsigned long int)view.row_ptr[0], 0UL, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->nnz, 0UL, label);
   assert_ulong_eq((unsigned long int)X.Sym->matvec_plan->row_nnz_max, 0UL, label);
   assert_ulong_eq(
