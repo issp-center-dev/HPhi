@@ -412,56 +412,20 @@ static int find_ghost_position(const struct SymmetryVectorHaloPlan *halo,
   return 0;
 }
 
-int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan)
+static int remap_symmetry_matvec_block_columns(
+    const struct SymmetryMatvecPlan *plan,
+    const struct SymmetryMatvecBlockView *view,
+    size_t slot_count,
+    enum SymmetryColumnWidth column_width,
+    uint32_t *column_slot32,
+    uint64_t *column_slot64)
 {
   size_t column;
-  size_t slot_count;
-  uint32_t *column_slot32 = NULL;
-  uint64_t *column_slot64 = NULL;
-  enum SymmetryColumnWidth column_width;
   int remap_error = 0;
-  if (plan == NULL || plan->columns_remapped == TRUE ||
-      plan->local_offset > plan->dim ||
-      plan->local_dim > plan->dim - plan->local_offset ||
-      (plan->nnz > 0U && plan->col_index == NULL) ||
-      plan->column_slot32 != NULL || plan->column_slot64 != NULL ||
-      (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
-    return -1;
-  }
-  slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
-  column_width =
-      slot_count <= (size_t)UINT32_MAX ? SYMMETRY_COLUMN_U32
-                                       : SYMMETRY_COLUMN_U64;
-  StartTimer(1132);
-  if (plan->nnz > 0U) {
-    if (column_width == SYMMETRY_COLUMN_U32) {
-      if (plan->nnz > SIZE_MAX / sizeof(*column_slot32)) {
-        remap_error = 1;
-      } else {
-        column_slot32 =
-            (uint32_t *)malloc(plan->nnz * sizeof(*column_slot32));
-        if (column_slot32 == NULL) remap_error = 1;
-      }
-    } else {
-      if (plan->nnz > SIZE_MAX / sizeof(*column_slot64)) {
-        remap_error = 1;
-      } else {
-        column_slot64 =
-            (uint64_t *)malloc(plan->nnz * sizeof(*column_slot64));
-        if (column_slot64 == NULL) remap_error = 1;
-      }
-    }
-  }
-  if (remap_error != 0) {
-    StopTimer(1132);
-    free(column_slot32);
-    free(column_slot64);
-    return -1;
-  }
 #pragma omp parallel for default(none) schedule(static) reduction(|:remap_error) \
-  shared(plan, slot_count, column_width, column_slot32, column_slot64)
-  for (column = 0U; column < plan->nnz; column++) {
-    unsigned long int global_index = plan->col_index[column];
+  shared(plan, view, slot_count, column_width, column_slot32, column_slot64)
+  for (column = 0U; column < view->nnz; column++) {
+    unsigned long int global_index = view->global_columns[column];
     size_t slot = 0U;
     if (global_index == 0UL || global_index > plan->dim) {
       remap_error = 1;
@@ -493,6 +457,66 @@ int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan)
     } else {
       column_slot64[column] = (uint64_t)slot;
     }
+  }
+  return remap_error == 0 ? 0 : -1;
+}
+
+int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan)
+{
+  size_t slot_count;
+  uint32_t *column_slot32 = NULL;
+  uint64_t *column_slot64 = NULL;
+  enum SymmetryColumnWidth column_width;
+  struct SymmetryMatvecBlockView view;
+  int remap_error = 0;
+  if (plan == NULL || plan->columns_remapped == TRUE ||
+      plan->local_offset > plan->dim ||
+      plan->local_dim > plan->dim - plan->local_offset ||
+      (plan->nnz > 0U && plan->col_index == NULL) ||
+      plan->column_slot32 != NULL || plan->column_slot64 != NULL ||
+      (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
+    return -1;
+  }
+  slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
+  column_width =
+      slot_count <= (size_t)UINT32_MAX ? SYMMETRY_COLUMN_U32
+                                       : SYMMETRY_COLUMN_U64;
+  memset(&view, 0, sizeof(view));
+  view.local_row_count = plan->local_dim;
+  view.nnz = plan->nnz;
+  view.row_ptr = plan->row_ptr;
+  view.global_columns = plan->col_index;
+  view.values = plan->values;
+  StartTimer(1132);
+  if (plan->nnz > 0U) {
+    if (column_width == SYMMETRY_COLUMN_U32) {
+      if (plan->nnz > SIZE_MAX / sizeof(*column_slot32)) {
+        remap_error = 1;
+      } else {
+        column_slot32 =
+            (uint32_t *)malloc(plan->nnz * sizeof(*column_slot32));
+        if (column_slot32 == NULL) remap_error = 1;
+      }
+    } else {
+      if (plan->nnz > SIZE_MAX / sizeof(*column_slot64)) {
+        remap_error = 1;
+      } else {
+        column_slot64 =
+            (uint64_t *)malloc(plan->nnz * sizeof(*column_slot64));
+        if (column_slot64 == NULL) remap_error = 1;
+      }
+    }
+  }
+  if (remap_error != 0) {
+    StopTimer(1132);
+    free(column_slot32);
+    free(column_slot64);
+    return -1;
+  }
+  if (remap_symmetry_matvec_block_columns(
+          plan, &view, slot_count, column_width,
+          column_slot32, column_slot64) != 0) {
+    remap_error = 1;
   }
   StopTimer(1132);
   if (remap_error != 0) {
@@ -580,6 +604,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   size_t min_row_nnz = SIZE_MAX;
   size_t max_row_nnz = 0U;
   size_t *row_counts = NULL;
+  struct SymmetryGlobalColumnSpan column_span;
   struct SymmetryMatvecPlan *plan = NULL;
   int count_error = 0;
   int fill_error = 0;
@@ -737,9 +762,11 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
         plan->allgather_nonlocal_values_per_call * sizeof(double complex);
   }
   if (agree_plan_error(mpi_active, local_error) != 0) goto fail;
+  column_span.columns = plan->col_index;
+  column_span.count = plan->nnz;
   if (BuildSymmetryVectorHaloPlan(
           &plan->halo, plan->dim, plan->local_offset, plan->local_dim,
-          plan->col_index, plan->nnz, nproc, myrank,
+          &column_span, 1U, nproc, myrank,
           &plan->local_column_nnz, &plan->remote_column_nnz) != 0) {
     goto fail;
   }

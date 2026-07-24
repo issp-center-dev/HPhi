@@ -9,6 +9,10 @@
 #include "symmetry_vector_halo.h"
 #include "struct.h"
 
+#ifdef MPI
+#include <mpi.h>
+#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1566,19 +1570,320 @@ static void assert_parallel_plan_matches_serial(const char *label)
 }
 #endif
 
+static void assert_halo_plan_exact(
+    const struct SymmetryVectorHaloPlan *got,
+    const struct SymmetryVectorHaloPlan *expected,
+    const char *label)
+{
+  size_t rank_bytes;
+  assert_int_eq(got->request_layout_ready, expected->request_layout_ready,
+                label);
+  assert_int_eq(got->ready, expected->ready, label);
+  assert_int_eq(got->nrank, expected->nrank, label);
+  assert_int_eq(got->rank, expected->rank, label);
+  assert_ulong_eq(got->dim, expected->dim, label);
+  assert_ulong_eq(got->local_offset, expected->local_offset, label);
+  assert_ulong_eq(got->local_dim, expected->local_dim, label);
+  assert_ulong_eq((unsigned long int)got->ghost_count,
+                  (unsigned long int)expected->ghost_count, label);
+  assert_ulong_eq((unsigned long int)got->send_value_count,
+                  (unsigned long int)expected->send_value_count, label);
+  assert_ulong_eq((unsigned long int)got->incoming_peer_count,
+                  (unsigned long int)expected->incoming_peer_count, label);
+  assert_ulong_eq((unsigned long int)got->outgoing_peer_count,
+                  (unsigned long int)expected->outgoing_peer_count, label);
+  assert_ulong_eq((unsigned long int)got->max_recv_from_peer,
+                  (unsigned long int)expected->max_recv_from_peer, label);
+  assert_ulong_eq((unsigned long int)got->max_send_to_peer,
+                  (unsigned long int)expected->max_send_to_peer, label);
+  assert_ulong_eq((unsigned long int)got->topology_scratch_bytes,
+                  (unsigned long int)expected->topology_scratch_bytes, label);
+  assert_ulong_eq((unsigned long int)got->schedule_bytes,
+                  (unsigned long int)expected->schedule_bytes, label);
+  assert_ulong_eq((unsigned long int)got->runtime_buffer_bytes,
+                  (unsigned long int)expected->runtime_buffer_bytes, label);
+  assert_int_eq(got->schedule_checksum == expected->schedule_checksum,
+                1, label);
+  rank_bytes = (size_t)got->nrank * sizeof(*got->recv_counts);
+  assert_int_eq(memcmp(got->recv_counts, expected->recv_counts,
+                       rank_bytes) == 0, 1, label);
+  assert_int_eq(memcmp(got->recv_displs, expected->recv_displs,
+                       rank_bytes) == 0, 1, label);
+  assert_int_eq(memcmp(got->send_counts, expected->send_counts,
+                       rank_bytes) == 0, 1, label);
+  assert_int_eq(memcmp(got->send_displs, expected->send_displs,
+                       rank_bytes) == 0, 1, label);
+  if (got->ghost_count > 0U) {
+    assert_int_eq(
+        memcmp(got->ghost_global_index, expected->ghost_global_index,
+               got->ghost_count * sizeof(*got->ghost_global_index)) == 0,
+        1, label);
+  }
+  if (got->send_value_count > 0U) {
+    assert_int_eq(
+        memcmp(got->send_local_index, expected->send_local_index,
+               got->send_value_count * sizeof(*got->send_local_index)) == 0,
+        1, label);
+  }
+}
+
+#ifdef MPI
+static void assert_mpi_column_spans_exact(const char *label)
+{
+  const unsigned long int dim = 10UL;
+  struct SymmetryVectorHaloPlan flat_halo;
+  struct SymmetryVectorHaloPlan split_halo;
+  struct SymmetryMatvecPlan flat_plan;
+  struct SymmetryMatvecPlan split_plan;
+  struct SymmetryBasisRuntime sym;
+  struct BindStruct X;
+  struct SymmetryGlobalColumnSpan flat_span;
+  struct SymmetryGlobalColumnSpan split_spans[7];
+  unsigned long int base;
+  unsigned long int remainder;
+  unsigned long int local_offset;
+  unsigned long int local_dim;
+  unsigned long int local_row;
+  unsigned long int *columns = NULL;
+  unsigned long int *flat_columns = NULL;
+  unsigned long int *split_columns = NULL;
+  size_t *row_ptr = NULL;
+  double complex *values = NULL;
+  double complex *local_vector = NULL;
+  double complex *flat_output = NULL;
+  double complex *split_output = NULL;
+  double complex flat_prdct = 0.0;
+  double complex split_prdct = 0.0;
+  size_t flat_local_columns = 0U;
+  size_t flat_remote_columns = 0U;
+  size_t split_local_columns = 0U;
+  size_t split_remote_columns = 0U;
+  size_t nnz;
+  size_t first_count;
+  size_t middle_count;
+  size_t last_count;
+  size_t index;
+#ifdef _OPENMP
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+#endif
+
+  memset(&flat_halo, 0, sizeof(flat_halo));
+  memset(&split_halo, 0, sizeof(split_halo));
+  memset(&flat_plan, 0, sizeof(flat_plan));
+  memset(&split_plan, 0, sizeof(split_plan));
+  memset(&sym, 0, sizeof(sym));
+  memset(&X, 0, sizeof(X));
+  base = dim / (unsigned long int)nproc;
+  remainder = dim % (unsigned long int)nproc;
+  local_dim =
+      base + ((unsigned long int)myrank < remainder ? 1UL : 0UL);
+  local_offset =
+      base * (unsigned long int)myrank +
+      ((unsigned long int)myrank < remainder
+           ? (unsigned long int)myrank
+           : remainder);
+  nnz = (size_t)local_dim * 3U;
+  row_ptr = (size_t *)calloc((size_t)local_dim + 1U, sizeof(*row_ptr));
+  local_vector = (double complex *)calloc(
+      (size_t)local_dim + 1U, sizeof(*local_vector));
+  flat_output = (double complex *)calloc(
+      (size_t)local_dim + 1U, sizeof(*flat_output));
+  split_output = (double complex *)calloc(
+      (size_t)local_dim + 1U, sizeof(*split_output));
+  if (nnz > 0U) {
+    columns = (unsigned long int *)malloc(nnz * sizeof(*columns));
+    flat_columns =
+        (unsigned long int *)malloc(nnz * sizeof(*flat_columns));
+    split_columns =
+        (unsigned long int *)malloc(nnz * sizeof(*split_columns));
+    values = (double complex *)malloc(nnz * sizeof(*values));
+  }
+  if (row_ptr == NULL || local_vector == NULL || flat_output == NULL ||
+      split_output == NULL ||
+      (nnz > 0U && (columns == NULL || flat_columns == NULL ||
+                    split_columns == NULL || values == NULL))) {
+    fprintf(stderr, "%s: MPI column-span allocation failed\n", label);
+    exit(1);
+  }
+  for (local_row = 0UL; local_row < local_dim; local_row++) {
+    unsigned long int global_row = local_offset + local_row + 1UL;
+    size_t row_begin = (size_t)local_row * 3U;
+    row_ptr[local_row] = row_begin;
+    columns[row_begin] = global_row;
+    columns[row_begin + 1U] = global_row == dim ? 1UL : global_row + 1UL;
+    columns[row_begin + 2U] = global_row;
+    local_vector[local_row + 1UL] =
+        0.25 * (double)global_row +
+        I * 0.125 * (double)(global_row + 1UL);
+  }
+  row_ptr[local_dim] = nnz;
+  for (index = 0U; index < nnz; index++) {
+    values[index] =
+        1.0 + 0.03125 * (double)(index + 1U) +
+        I * 0.015625 * (double)(index + 2U);
+  }
+  if (nnz > 0U) {
+    memcpy(flat_columns, columns, nnz * sizeof(*columns));
+    memcpy(split_columns, columns, nnz * sizeof(*columns));
+  }
+
+  first_count = nnz < 2U ? nnz : 2U;
+  last_count = nnz > first_count ? 1U : 0U;
+  middle_count = nnz - first_count - last_count;
+  flat_span.columns = columns;
+  flat_span.count = nnz;
+  split_spans[0].columns = NULL;
+  split_spans[0].count = 0U;
+  split_spans[1].columns = first_count > 0U ? columns : NULL;
+  split_spans[1].count = first_count;
+  split_spans[2].columns = NULL;
+  split_spans[2].count = 0U;
+  split_spans[3].columns =
+      middle_count > 0U ? columns + first_count : NULL;
+  split_spans[3].count = middle_count;
+  split_spans[4].columns = NULL;
+  split_spans[4].count = 0U;
+  split_spans[5].columns =
+      last_count > 0U ? columns + nnz - last_count : NULL;
+  split_spans[5].count = last_count;
+  split_spans[6].columns = NULL;
+  split_spans[6].count = 0U;
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &flat_halo, dim, local_offset, local_dim,
+          &flat_span, 1U, nproc, myrank,
+          &flat_local_columns, &flat_remote_columns),
+      0, label);
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &split_halo, dim, local_offset, local_dim,
+          split_spans, sizeof(split_spans) / sizeof(split_spans[0]),
+          nproc, myrank, &split_local_columns, &split_remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)split_local_columns,
+                  (unsigned long int)flat_local_columns, label);
+  assert_ulong_eq((unsigned long int)split_remote_columns,
+                  (unsigned long int)flat_remote_columns, label);
+  assert_halo_plan_exact(&split_halo, &flat_halo, label);
+  assert_int_eq(
+      ExchangeSymmetryVectorHalo(&flat_halo, local_vector), 0, label);
+  assert_int_eq(
+      ExchangeSymmetryVectorHalo(&split_halo, local_vector), 0, label);
+  if (flat_halo.ghost_count > 0U) {
+    assert_int_eq(
+        memcmp(split_halo.ghost_values, flat_halo.ghost_values,
+               flat_halo.ghost_count *
+                   sizeof(*flat_halo.ghost_values)) == 0,
+        1, label);
+  }
+
+  flat_plan.ready = TRUE;
+  flat_plan.columns_remapped = FALSE;
+  flat_plan.dim = dim;
+  flat_plan.local_offset = local_offset;
+  flat_plan.local_dim = local_dim;
+  flat_plan.block_count = 1U;
+  flat_plan.nnz = nnz;
+  flat_plan.row_ptr = row_ptr;
+  flat_plan.col_index = flat_columns;
+  flat_plan.values = values;
+  flat_plan.halo = flat_halo;
+  split_plan = flat_plan;
+  split_plan.col_index = split_columns;
+  split_plan.halo = split_halo;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&flat_plan), 0, label);
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&split_plan), 0, label);
+  assert_ulong_eq((unsigned long int)split_plan.column_slot_width,
+                  (unsigned long int)flat_plan.column_slot_width, label);
+  if (flat_plan.column_slot_width == SYMMETRY_COLUMN_U32 && nnz > 0U) {
+    assert_int_eq(
+        memcmp(split_plan.column_slot32, flat_plan.column_slot32,
+               nnz * sizeof(*flat_plan.column_slot32)) == 0,
+        1, label);
+  } else if (nnz > 0U) {
+    assert_int_eq(
+        memcmp(split_plan.column_slot64, flat_plan.column_slot64,
+               nnz * sizeof(*flat_plan.column_slot64)) == 0,
+        1, label);
+  }
+
+  sym.enabled = TRUE;
+  sym.dim = dim;
+  sym.local_offset = local_offset;
+  sym.local_dim = local_dim;
+  X.Sym = &sym;
+  sym.matvec_plan = &flat_plan;
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(
+          &X, flat_output, local_vector, &flat_prdct),
+      0, label);
+  sym.matvec_plan = &split_plan;
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(
+          &X, split_output, local_vector, &split_prdct),
+      0, label);
+  assert_int_eq(
+      memcmp(split_output, flat_output,
+             ((size_t)local_dim + 1U) * sizeof(*flat_output)) == 0,
+      1, label);
+  assert_complex_bitwise(split_prdct, flat_prdct, label);
+
+  free(flat_plan.column_slot32);
+  free(flat_plan.column_slot64);
+  free(split_plan.column_slot32);
+  free(split_plan.column_slot64);
+  free(columns);
+  free(row_ptr);
+  free(values);
+  free(local_vector);
+  free(flat_output);
+  free(split_output);
+  FreeSymmetryVectorHaloPlan(&flat_halo);
+  FreeSymmetryVectorHaloPlan(&split_halo);
+#ifdef _OPENMP
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+#endif
+}
+#endif
+
 static void assert_vector_owner_and_request_layout(const char *label)
 {
   const unsigned long int columns[] = {5UL, 1UL, 1UL, 4UL,
                                        8UL, 10UL, 8UL};
+  const unsigned long int local_columns_only[] = {5UL, 6UL, 7UL};
+  const unsigned long int remote_columns_only[] = {1UL, 4UL, 8UL, 10UL};
   const unsigned long int expected_ghosts[] = {1UL, 4UL, 8UL, 10UL};
+  const struct SymmetryGlobalColumnSpan flat_span = {
+      columns, sizeof(columns) / sizeof(columns[0])};
+  const struct SymmetryGlobalColumnSpan split_spans[] = {
+      {NULL, 0U},
+      {columns, 2U},
+      {NULL, 0U},
+      {columns + 2U, 3U},
+      {columns + 5U, 2U},
+      {NULL, 0U}};
+  const struct SymmetryGlobalColumnSpan local_span = {
+      local_columns_only,
+      sizeof(local_columns_only) / sizeof(local_columns_only[0])};
+  const struct SymmetryGlobalColumnSpan remote_span = {
+      remote_columns_only,
+      sizeof(remote_columns_only) / sizeof(remote_columns_only[0])};
+  const struct SymmetryGlobalColumnSpan invalid_span = {NULL, 1U};
   struct SymmetryVectorHaloPlan first;
   struct SymmetryVectorHaloPlan second;
+  struct SymmetryVectorHaloPlan empty;
   size_t local_columns = 0U;
   size_t remote_columns = 0U;
   size_t index;
 
   memset(&first, 0, sizeof(first));
   memset(&second, 0, sizeof(second));
+  memset(&empty, 0, sizeof(empty));
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 1UL), 0, label);
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 4UL), 0, label);
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 5UL), 1, label);
@@ -1592,8 +1897,7 @@ static void assert_vector_owner_and_request_layout(const char *label)
 
   assert_int_eq(
       BuildSymmetryVectorHaloPlan(
-          &first, 10UL, 4UL, 3UL, columns,
-          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &first, 10UL, 4UL, 3UL, &flat_span, 1U, 3, 1,
           &local_columns, &remote_columns),
       0, label);
   assert_ulong_eq((unsigned long int)local_columns, 1UL, label);
@@ -1618,24 +1922,56 @@ static void assert_vector_owner_and_request_layout(const char *label)
   remote_columns = 0U;
   assert_int_eq(
       BuildSymmetryVectorHaloPlan(
-          &second, 10UL, 4UL, 3UL, columns,
-          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &second, 10UL, 4UL, 3UL, split_spans,
+          sizeof(split_spans) / sizeof(split_spans[0]), 3, 1,
           &local_columns, &remote_columns),
       0, label);
-  assert_int_eq(first.schedule_checksum == second.schedule_checksum, 1,
-                label);
-  assert_int_eq(
-      memcmp(first.ghost_global_index, second.ghost_global_index,
-             first.ghost_count * sizeof(*first.ghost_global_index)) == 0,
-      1, label);
+  assert_ulong_eq((unsigned long int)local_columns, 1UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 6UL, label);
+  assert_halo_plan_exact(&second, &first, label);
   FreeSymmetryVectorHaloPlan(&first);
   FreeSymmetryVectorHaloPlan(&second);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &empty, 10UL, 4UL, 3UL, NULL, 0U, 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)local_columns, 0UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 0UL, label);
+  assert_ulong_eq((unsigned long int)empty.ghost_count, 0UL, label);
+  FreeSymmetryVectorHaloPlan(&empty);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &empty, 10UL, 4UL, 3UL, &local_span, 1U, 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)local_columns, 3UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 0UL, label);
+  assert_ulong_eq((unsigned long int)empty.ghost_count, 0UL, label);
+  FreeSymmetryVectorHaloPlan(&empty);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &empty, 10UL, 4UL, 3UL, &remote_span, 1U, 3, 1,
+          &local_columns, &remote_columns),
+      0, label);
+  assert_ulong_eq((unsigned long int)local_columns, 0UL, label);
+  assert_ulong_eq((unsigned long int)remote_columns, 4UL, label);
+  assert_ulong_eq((unsigned long int)empty.ghost_count, 4UL, label);
+  FreeSymmetryVectorHaloPlan(&empty);
+
+  assert_int_eq(
+      BuildSymmetryVectorHaloPlan(
+          &empty, 10UL, 4UL, 3UL, &invalid_span, 1U, 3, 1,
+          &local_columns, &remote_columns),
+      -1, label);
 
   memset(&first, 0, sizeof(first));
   assert_int_eq(
       BuildSymmetryVectorHaloPlan(
-          &first, 10UL, 3UL, 3UL, columns,
-          sizeof(columns) / sizeof(columns[0]), 3, 1,
+          &first, 10UL, 3UL, 3UL, &flat_span, 1U, 3, 1,
           &local_columns, &remote_columns),
       -1, label);
 }
@@ -2328,8 +2664,30 @@ static void assert_hash_probe_lookup_handles_collision(const char *label)
   }
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+#ifdef MPI
+  if (argc == 2 && strcmp(argv[1], "--mpi-column-spans") == 0) {
+    if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
+        MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
+      fprintf(stderr, "MPI column-span test initialization failed\n");
+      return 1;
+    }
+    assert_mpi_column_spans_exact(
+        "single-span and multi-span MPI halo plans are exact");
+    if (myrank == 0) {
+      fprintf(stdout,
+              "single/multi-span halo exact gate: PASS (%d MPI ranks)\n",
+              nproc);
+    }
+    if (MPI_Finalize() != MPI_SUCCESS) return 1;
+    return 0;
+  }
+#else
+  (void)argc;
+  (void)argv;
+#endif
   int shift4[4] = {1, 2, 3, 0};
   stdoutMPI = stderr;
   assert_exhaustive_fermion_permutation_parity();

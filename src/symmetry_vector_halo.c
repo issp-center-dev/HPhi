@@ -142,8 +142,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                                 unsigned long int dim,
                                 unsigned long int local_offset,
                                 unsigned long int local_dim,
-                                const unsigned long int *global_columns,
-                                size_t column_count,
+                                const struct SymmetryGlobalColumnSpan *spans,
+                                size_t span_count,
                                 int nrank,
                                 int rank,
                                 size_t *local_column_count,
@@ -174,6 +174,7 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   size_t index_bytes = 0U;
   size_t schedule_scratch_bytes = 0U;
   size_t total_count;
+  size_t span_index;
   size_t column;
   size_t ghost_position = 0U;
   size_t byte_index;
@@ -186,8 +187,17 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   if (halo == NULL || local_column_count == NULL ||
       remote_column_count == NULL || nrank < 1 || rank < 0 || rank >= nrank ||
       local_offset > dim || local_dim > dim - local_offset ||
-      (column_count > 0U && global_columns == NULL)) {
+      (span_count > 0U && spans == NULL)) {
     local_error = 1;
+  }
+  if (local_error == 0) {
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      if (spans[span_index].count > 0U &&
+          spans[span_index].columns == NULL) {
+        local_error = 1;
+        break;
+      }
+    }
   }
 #ifdef MPI
   if (mpi_active != FALSE) {
@@ -226,26 +236,29 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   last_local = local_offset + local_dim;
 
   StartTimer(1130);
-  for (column = 0U; column < column_count; column++) {
-    unsigned long int global_index = global_columns[column];
-    if (global_index == 0UL || global_index > dim) {
-      local_error = 1;
-      break;
-    }
-    if (local_dim > 0UL &&
-        global_index >= first_local && global_index <= last_local) {
-      if (*local_column_count == SIZE_MAX) {
+  for (span_index = 0U; span_index < span_count; span_index++) {
+    for (column = 0U; column < spans[span_index].count; column++) {
+      unsigned long int global_index = spans[span_index].columns[column];
+      if (global_index == 0UL || global_index > dim) {
         local_error = 1;
         break;
       }
-      (*local_column_count)++;
-    } else {
-      if (*remote_column_count == SIZE_MAX) {
-        local_error = 1;
-        break;
+      if (local_dim > 0UL &&
+          global_index >= first_local && global_index <= last_local) {
+        if (*local_column_count == SIZE_MAX) {
+          local_error = 1;
+          break;
+        }
+        (*local_column_count)++;
+      } else {
+        if (*remote_column_count == SIZE_MAX) {
+          local_error = 1;
+          break;
+        }
+        (*remote_column_count)++;
       }
-      (*remote_column_count)++;
     }
+    if (local_error != 0) break;
   }
   if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
   if (*remote_column_count > 0U) {
@@ -307,17 +320,19 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     window_bytes = (size_t)(window_dim / 8UL);
     if (window_dim % 8UL != 0UL) window_bytes++;
     memset(remote_bits, 0, bitset_bytes);
-    for (column = 0U; column < column_count; column++) {
-      unsigned long int global_index = global_columns[column];
-      if (local_dim == 0UL ||
-          global_index < first_local || global_index > last_local) {
-        unsigned long int zero_index = global_index - 1UL;
-        if (zero_index >= window_zero &&
-            zero_index - window_zero < window_dim) {
-          unsigned long int relative_index = zero_index - window_zero;
-          remote_bits[(size_t)(relative_index / 8UL)] |=
-              (unsigned char)(1U <<
-                              (unsigned int)(relative_index % 8UL));
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      for (column = 0U; column < spans[span_index].count; column++) {
+        unsigned long int global_index = spans[span_index].columns[column];
+        if (local_dim == 0UL ||
+            global_index < first_local || global_index > last_local) {
+          unsigned long int zero_index = global_index - 1UL;
+          if (zero_index >= window_zero &&
+              zero_index - window_zero < window_dim) {
+            unsigned long int relative_index = zero_index - window_zero;
+            remote_bits[(size_t)(relative_index / 8UL)] |=
+                (unsigned char)(1U <<
+                                (unsigned int)(relative_index % 8UL));
+          }
         }
       }
     }
@@ -369,17 +384,19 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     window_bytes = (size_t)(window_dim / 8UL);
     if (window_dim % 8UL != 0UL) window_bytes++;
     memset(remote_bits, 0, bitset_bytes);
-    for (column = 0U; column < column_count; column++) {
-      unsigned long int global_index = global_columns[column];
-      if (local_dim == 0UL ||
-          global_index < first_local || global_index > last_local) {
-        unsigned long int zero_index = global_index - 1UL;
-        if (zero_index >= window_zero &&
-            zero_index - window_zero < window_dim) {
-          unsigned long int relative_index = zero_index - window_zero;
-          remote_bits[(size_t)(relative_index / 8UL)] |=
-              (unsigned char)(1U <<
-                              (unsigned int)(relative_index % 8UL));
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      for (column = 0U; column < spans[span_index].count; column++) {
+        unsigned long int global_index = spans[span_index].columns[column];
+        if (local_dim == 0UL ||
+            global_index < first_local || global_index > last_local) {
+          unsigned long int zero_index = global_index - 1UL;
+          if (zero_index >= window_zero &&
+              zero_index - window_zero < window_dim) {
+            unsigned long int relative_index = zero_index - window_zero;
+            remote_bits[(size_t)(relative_index / 8UL)] |=
+                (unsigned char)(1U <<
+                                (unsigned int)(relative_index % 8UL));
+          }
         }
       }
     }
