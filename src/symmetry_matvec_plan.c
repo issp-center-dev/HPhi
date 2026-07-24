@@ -115,13 +115,13 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
   const struct SymmetryBasisVector *source;
   unsigned int p;
   if (X == NULL || X->Sym == NULL || callback == NULL || beta == 0UL ||
-      beta > X->Sym->dim || X->Sym->sym_diagonal == NULL) {
+      beta > X->Sym->dim) {
     return -1;
   }
   source = SymmetryBasisReplicatedGlobalEntry(X->Sym, beta);
   if (source == NULL) return -1;
 
-  if (callback(beta, X->Sym->sym_diagonal[beta], context) != 0) return -1;
+  if (callback(beta, source->diagonal, context) != 0) return -1;
 
   if (X->Def.iCalcModel == Spin) {
     for (p = 0; p < X->Def.NExchangeCoupling; p++) {

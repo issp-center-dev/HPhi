@@ -36,7 +36,6 @@ struct SymmetryBasisRuntime {
   unsigned long int dim;
   unsigned long int capacity;
   struct SymmetryBasisVector *basis;
-  double *sym_diagonal;
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;

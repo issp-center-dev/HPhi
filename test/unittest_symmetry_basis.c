@@ -74,6 +74,9 @@ static double coulomb_intra_params[8];
 static int coulomb_storage[12][2];
 static int *coulomb_rows[12];
 static double coulomb_params[12];
+static int hund_storage[12][2];
+static int *hund_rows[12];
+static double hund_params[12];
 
 static int popcount_ulong(unsigned long int x)
 {
@@ -171,25 +174,41 @@ static unsigned long int raw_index_for_state(unsigned long int state)
   return 0;
 }
 
-static double spin_ising_pair_energy(unsigned long int state,
-                                     unsigned int site0,
-                                     unsigned int site1,
-                                     double coupling)
-{
-  unsigned long int bit0 = (state >> site0) & 1UL;
-  unsigned long int bit1 = (state >> site1) & 1UL;
-  if (bit0 == bit1) return 0.25 * coupling;
-  return -0.25 * coupling;
-}
-
-static void set_ising_ring_diagonal(unsigned int nsite, double coupling)
+static void set_ising_ring_diagonal(struct DefineList *def,
+                                    unsigned int nsite,
+                                    double coupling)
 {
   unsigned long int raw;
+  unsigned int site;
+  def->NIsingCoupling = nsite;
+  def->NCoulombInter = nsite;
+  def->CoulombInter = coulomb_rows;
+  def->ParaCoulombInter = coulomb_params;
+  def->NHundCoupling = nsite;
+  def->HundCoupling = hund_rows;
+  def->ParaHundCoupling = hund_params;
+  for (site = 0U; site < nsite; site++) {
+    unsigned int next = (site + 1U) % nsite;
+    coulomb_rows[site] = coulomb_storage[site];
+    coulomb_storage[site][0] = (int)site;
+    coulomb_storage[site][1] = (int)next;
+    coulomb_params[site] = -coupling / 4.0;
+    hund_rows[site] = hund_storage[site];
+    hund_storage[site][0] = (int)site;
+    hund_storage[site][1] = (int)next;
+    hund_params[site] = -coupling / 2.0;
+  }
   for (raw = 1; raw <= test_raw_dim; raw++) {
-    unsigned int site;
     double diagonal = 0.0;
-    for (site = 0; site < nsite; site++) {
-      diagonal += spin_ising_pair_energy(list_1[raw], site, (site + 1U) % nsite, coupling);
+    for (site = 0U; site < nsite; site++) {
+      diagonal += coulomb_params[site];
+    }
+    for (site = 0U; site < nsite; site++) {
+      unsigned int next = (site + 1U) % nsite;
+      if (((list_1[raw] >> site) & 1UL) ==
+          ((list_1[raw] >> next) & 1UL)) {
+        diagonal += -hund_params[site];
+      }
     }
     list_Diagonal[raw] = diagonal;
   }
@@ -272,6 +291,10 @@ static void setup_bind(struct BindStruct *X,
 {
   memset(X, 0, sizeof(*X));
   setup_cyclic_def(&X->Def, nsite, momentum_index);
+  X->Def.Nup = nup;
+  X->Def.Ndown = nsite - nup;
+  X->Def.Ne = nup;
+  X->Def.iFlgSzConserved = TRUE;
   setup_exchange_ring(&X->Def, nsite);
   X->Check.idim_max = setup_fixed_sz_basis(nsite, nup);
 }
@@ -565,8 +588,8 @@ static double complex canonicalized_matrix_element(const struct BindStruct *X,
 {
   unsigned int term;
   double complex value = 0.0;
-  if (alpha == beta && X->Sym->sym_diagonal != NULL) {
-    value += X->Sym->sym_diagonal[beta];
+  if (alpha == beta) {
+    value += X->Sym->basis[beta].diagonal;
   }
   if (X->Def.iCalcModel == Spin) {
     for (term = 0; term < X->Def.NExchangeCoupling; term++) {
@@ -1702,7 +1725,8 @@ static void assert_spin_plan(unsigned int nsite,
 {
   struct BindStruct X;
   setup_bind(&X, nsite, nup, momentum_index);
-  if (diagonal_coupling != 0.0) set_ising_ring_diagonal(nsite, diagonal_coupling);
+  if (diagonal_coupling != 0.0)
+    set_ising_ring_diagonal(&X.Def, nsite, diagonal_coupling);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -1720,7 +1744,7 @@ static void assert_spin_diagonal_only_plan(const char *label)
   struct BindStruct X;
   setup_bind(&X, 6, 3, 1);
   X.Def.NExchangeCoupling = 0U;
-  set_ising_ring_diagonal(6, 0.37);
+  set_ising_ring_diagonal(&X.Def, 6, 0.37);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -2849,6 +2873,52 @@ static void assert_hubbard_symmetry_dim(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+static void discard_raw_basis_storage(void)
+{
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_streaming_basis_without_raw_lists(void)
+{
+  struct BindStruct X;
+
+  setup_bind(&X, 6U, 3U, 1U);
+  set_ising_ring_diagonal(&X.Def, 6U, 0.37);
+  discard_raw_basis_storage();
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "Spin streaming basis build failed\n");
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, 3UL,
+                  "Spin basis builds without list_1/list_Diagonal");
+  FreeSymmetryBasis(X.Sym);
+
+  setup_spinless_bind(&X, 4U, 2U, 1U);
+  setup_spinless_coulomb_ring(&X.Def, 4U, 0.25);
+  discard_raw_basis_storage();
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "Spinless streaming basis build failed\n");
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, 2UL,
+                  "Spinless basis builds without list_1/list_Diagonal");
+  FreeSymmetryBasis(X.Sym);
+
+  setup_hubbard_bind(&X, 4U, 1U, 1U, 0U);
+  setup_hubbard_coulomb_intra(&X.Def, 4U, 0.5);
+  discard_raw_basis_storage();
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "Hubbard streaming basis build failed\n");
+    exit(1);
+  }
+  assert_ulong_eq(X.Sym->dim, 4UL,
+                  "Hubbard basis builds without list_1/list_Diagonal");
+  FreeSymmetryBasis(X.Sym);
+}
+
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
@@ -2858,7 +2928,8 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
   struct BindStruct X;
   unsigned long int alpha, beta;
   setup_bind(&X, nsite, nup, momentum_index);
-  if (diagonal_coupling != 0.0) set_ising_ring_diagonal(nsite, diagonal_coupling);
+  if (diagonal_coupling != 0.0)
+    set_ising_ring_diagonal(&X.Def, nsite, diagonal_coupling);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
@@ -2950,14 +3021,14 @@ static void assert_orbit_diagonal_is_representative(unsigned int nsite,
   struct BindStruct X;
   unsigned long int beta;
   setup_bind(&X, nsite, nup, momentum_index);
-  set_ising_ring_diagonal(nsite, diagonal_coupling);
+  set_ising_ring_diagonal(&X.Def, nsite, diagonal_coupling);
   if (BuildSymmetryBasis(&X) != 0) {
     fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
     exit(1);
   }
   for (beta = 1; beta <= X.Sym->dim; beta++) {
     unsigned int g;
-    double representative_diagonal = X.Sym->sym_diagonal[beta];
+    double representative_diagonal = X.Sym->basis[beta].diagonal;
     for (g = 0; g < X.Def.NSymTrans; g++) {
       unsigned long int moved = SymmetryApplyToSpinBits(X.Sym->basis[beta].rep_state,
                                                         X.Def.SymTrans[g],
@@ -3207,6 +3278,7 @@ int main(int argc, char **argv)
                               "Hubbard C4 k=0 sector dimension");
   assert_hubbard_symmetry_dim(4, 1, 1, 1, 4,
                               "Hubbard C4 k=pi/2 sector dimension");
+  assert_streaming_basis_without_raw_lists();
   {
     struct BindStruct X;
     unsigned long int raw;

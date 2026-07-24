@@ -4,7 +4,9 @@
 #include "DefCommon.h"
 #include "global.h"
 #include "symmetry_basis.h"
+#include "symmetry_diagonal.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_state_enumerator.h"
 #include "struct.h"
 #include "CalcTime.h"
 #include "wrapperMPI.h"
@@ -775,7 +777,7 @@ fail:
 
 int BuildSymmetryBasis(struct BindStruct *X)
 {
-  unsigned long int raw, full_dim;
+  unsigned long int full_dim;
   unsigned long int local_raw_index;
   unsigned long int rank_raw_count;
   unsigned long int distribution_chunk;
@@ -788,6 +790,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
   int thread;
   struct SymmetryBasisCollector *collectors = NULL;
   struct SymmetryBasisRuntime *sym;
+  struct SymmetryStateEnumerator enumerator;
 
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
   full_dim = X->Check.idim_max;
@@ -802,6 +805,10 @@ int BuildSymmetryBasis(struct BindStruct *X)
   sym->nsite = X->Def.Nsite;
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
+  local_error =
+      InitSymmetryStateEnumerator(&X->Def, full_dim, &enumerator) != 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
   local_error = build_group_inverse(&X->Def, sym) != 0 ? 1 : 0;
   global_error = SumMPI_i(local_error);
   if (global_error != 0) goto fail;
@@ -820,7 +827,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
 
   StartTimer(1110);
 #ifdef _OPENMP
-#pragma omp parallel shared(actual_thread_count, collectors, X, rank_raw_count, distribution_chunk)
+#pragma omp parallel shared(actual_thread_count, collectors, X, enumerator, rank_raw_count, distribution_chunk)
 #endif
   {
     int thread_id = 0;
@@ -833,7 +840,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
     collector = &collectors[thread_id];
 #ifdef _OPENMP
     /* Cyclic chunks spread representative-heavy regions while retaining
-       locality in list_1 and list_Diagonal. */
+       locality in the enumerator's numeric raw-state order. */
 #pragma omp for schedule(static, distribution_chunk)
 #endif
     for (local_raw_index = 0UL; local_raw_index < rank_raw_count;
@@ -849,8 +856,13 @@ int BuildSymmetryBasis(struct BindStruct *X)
       collector->raw_states++;
       raw_index = symmetry_rank_raw_index(local_raw_index, distribution_chunk,
                                           myrank, nproc);
-      state = list_1[raw_index];
-      diagonal = (list_Diagonal != NULL) ? list_Diagonal[raw_index] : 0.0;
+      if (SymmetryStateEnumeratorStateAt(
+              &enumerator, raw_index, &state) != 0 ||
+          EvaluateSymmetryStateDiagonal(
+              &X->Def, state, &diagonal) != 0) {
+        collector->error = 1;
+        continue;
+      }
       if (analyze_basis_candidate(&X->Def, state, &is_representative,
                                   &orbit_size, &stabilizer_size,
                                   &stabilizer_sum,
@@ -958,24 +970,6 @@ int BuildSymmetryBasis(struct BindStruct *X)
     goto fail;
   }
   StopTimer(1112);
-
-  StartTimer(1113);
-  if (sym->dim > SIZE_MAX / sizeof(*sym->sym_diagonal) - 1UL) {
-    StopTimer(1113);
-    goto fail;
-  }
-  sym->sym_diagonal = (double *)calloc((size_t)sym->dim + 1U,
-                                      sizeof(*sym->sym_diagonal));
-  local_error = sym->sym_diagonal == NULL ? 1 : 0;
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) {
-    StopTimer(1113);
-    goto fail;
-  }
-  for (raw = 1; raw <= sym->dim; raw++) {
-    sym->sym_diagonal[raw] = sym->basis[raw].diagonal;
-  }
-  StopTimer(1113);
 
   fprintf(stdoutMPI, "Symmetry basis: raw_dim=%lu sector_dim=%lu group_order=%u\n",
           sym->full_dim, sym->dim, sym->group_order);
@@ -1141,7 +1135,6 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
   if (sym == NULL) return;
   FreeSymmetryMatvecPlan(sym->matvec_plan);
   free(sym->basis);
-  free(sym->sym_diagonal);
   free(sym->rep_hash_keys);
   free(sym->rep_hash_values);
   free(sym->group_inverse);
