@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_state_enumerator.h"
 #include "symmetry_vector_halo.h"
 #include "struct.h"
 
@@ -646,6 +647,183 @@ static void assert_int_eq(int got, int expected, const char *label)
     fprintf(stderr, "%s: got %d expected %d\n", label, got, expected);
     exit(1);
   }
+}
+
+static int state_matches_sector(int model,
+                                unsigned long int state,
+                                unsigned int nsite,
+                                unsigned int nup,
+                                unsigned int ndown)
+{
+  if (model == Hubbard) {
+    return (unsigned int)count_hubbard_spin(state, nsite, 0U) == nup &&
+           (unsigned int)count_hubbard_spin(state, nsite, 1U) == ndown;
+  }
+  return (unsigned int)popcount_ulong(state) == nup;
+}
+
+static void assert_state_enumerator_sequence(int model,
+                                             unsigned int nsite,
+                                             unsigned int nup,
+                                             unsigned int ndown,
+                                             int thread_count,
+                                             const char *label)
+{
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned long int limit = 1UL << (model == Hubbard ? 2U * nsite : nsite);
+  unsigned long int state, raw, dim = 0UL;
+  unsigned long int *states;
+  int failed = 0;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = model;
+  def.Nsite = nsite;
+  def.Nup = nup;
+  def.Ndown = ndown;
+  def.Ne = model == SpinlessFermion ? nup : nup + ndown;
+  if (model == Spin) def.iFlgSzConserved = TRUE;
+  for (state = 0UL; state < limit; state++) {
+    if (state_matches_sector(model, state, nsite, nup, ndown)) dim++;
+  }
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dim, &enumerator), 0, label);
+  assert_ulong_eq(enumerator.raw_dim, dim, label);
+  states = (unsigned long int *)calloc(dim + 1UL, sizeof(*states));
+  if (states == NULL) {
+    fprintf(stderr, "%s: allocation failed\n", label);
+    exit(1);
+  }
+#ifdef _OPENMP
+  omp_set_dynamic(0);
+  omp_set_num_threads(thread_count);
+#pragma omp parallel for schedule(static) reduction(|:failed)
+#else
+  (void)thread_count;
+#endif
+  for (raw = 1UL; raw <= dim; raw++) {
+    if (SymmetryStateEnumeratorStateAt(&enumerator, raw, &states[raw]) != 0) {
+      failed = 1;
+    }
+  }
+  assert_int_eq(failed, 0, label);
+  raw = 0UL;
+  for (state = 0UL; state < limit; state++) {
+    if (!state_matches_sector(model, state, nsite, nup, ndown)) continue;
+    raw++;
+    assert_ulong_eq(states[raw], state, label);
+    if (raw > 1UL) assert_int_eq(states[raw] > states[raw - 1UL], 1, label);
+  }
+  assert_ulong_eq(raw, dim, label);
+  free(states);
+}
+
+static void assert_state_enumerator_exact(void)
+{
+  const unsigned int word_bits =
+      (unsigned int)(CHAR_BIT * sizeof(unsigned long int));
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned int nsite, nup, ndown;
+  unsigned long int state = 123UL;
+  int thread_count;
+#ifdef _OPENMP
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+#endif
+  for (thread_count = 1; thread_count <= 4; thread_count += 3) {
+    for (nsite = 1U; nsite <= 8U; nsite++) {
+      for (nup = 0U; nup <= nsite; nup++) {
+        assert_state_enumerator_sequence(
+            Spin, nsite, nup, nsite - nup, thread_count,
+            "Spin raw-state enumerator matches numeric list_1 order");
+        assert_state_enumerator_sequence(
+            SpinlessFermion, nsite, nup, 0U, thread_count,
+            "Spinless raw-state enumerator matches numeric list_1 order");
+      }
+    }
+    for (nsite = 1U; nsite <= 5U; nsite++) {
+      for (nup = 0U; nup <= nsite; nup++) {
+        for (ndown = 0U; ndown <= nsite; ndown++) {
+          assert_state_enumerator_sequence(
+              Hubbard, nsite, nup, ndown, thread_count,
+              "Hubbard raw-state enumerator matches numeric list_1 order");
+        }
+      }
+    }
+  }
+
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = Spin;
+  def.Nsite = 4U;
+  def.Nup = 2U;
+  def.Ndown = 2U;
+  def.iFlgSzConserved = TRUE;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 6UL, &enumerator), 0,
+                "valid enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 0UL, &state), -1,
+                "raw index zero rejects");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 7UL, &state), -1,
+                "raw index above dimension rejects");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(NULL, 1UL, &state), -1,
+                "null enumerator rejects");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, NULL), -1,
+                "null state output rejects");
+  assert_ulong_eq(state, 123UL, "failed enumeration preserves output");
+  enumerator.bit_count++;
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), -1,
+                "inconsistent enumerator metadata rejects");
+  assert_ulong_eq(state, 123UL, "invalid enumerator preserves output");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 5UL, &enumerator), -1,
+                "dimension mismatch rejects");
+  def.iFlgGeneralSpin = TRUE;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 6UL, &enumerator), -1,
+                "general Spin rejects");
+  def.iFlgGeneralSpin = FALSE;
+  def.iCalcModel = SpinGC;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 16UL, &enumerator), -1,
+                "unsupported model rejects");
+  def.iCalcModel = Spin;
+  def.Nsite = word_bits + 1U;
+  def.Nup = 0U;
+  def.Ndown = def.Nsite;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "Spin state wider than unsigned long rejects");
+  def.iCalcModel = Hubbard;
+  def.Nsite = word_bits / 2U + 1U;
+  def.Nup = 0U;
+  def.Ndown = 0U;
+  def.Ne = 0U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "Hubbard state wider than unsigned long rejects");
+
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = Spin;
+  def.Nsite = word_bits;
+  def.Nup = word_bits;
+  def.Ndown = 0U;
+  def.iFlgSzConserved = TRUE;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "full Spin sector at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "full Spin sector at word width enumerates");
+  assert_ulong_eq(state, ULONG_MAX, "full Spin word-width state is exact");
+  def.iCalcModel = Hubbard;
+  def.Nsite = word_bits / 2U;
+  def.Nup = def.Nsite;
+  def.Ndown = def.Nsite;
+  def.Ne = def.Nup + def.Ndown;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "full Hubbard sector at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "full Hubbard sector at word width enumerates");
+  assert_ulong_eq(state, ULONG_MAX, "full Hubbard word-width state is exact");
+  assert_int_eq(InitSymmetryStateEnumerator(NULL, 1UL, &enumerator), -1,
+                "null definition rejects");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, NULL), -1,
+                "null enumerator output rejects");
+#ifdef _OPENMP
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
+#endif
 }
 
 static void assert_complex_close(double complex got,
@@ -2667,7 +2845,23 @@ static void assert_hash_probe_lookup_handles_collision(const char *label)
 int main(int argc, char **argv)
 {
 #ifdef MPI
-  if (argc == 2 && strcmp(argv[1], "--mpi-column-spans") == 0) {
+  if (argc == 2 && strcmp(argv[1], "--mpi-state-enumerator") == 0) {
+    if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
+        MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
+      fprintf(stderr, "MPI state-enumerator test initialization failed\n");
+      return 1;
+    }
+    stdoutMPI = stderr;
+    assert_state_enumerator_exact();
+    if (myrank == 0) {
+      fprintf(stdout,
+              "allocation-free state enumerator gate: PASS (%d MPI ranks)\n",
+              nproc);
+    }
+    if (MPI_Finalize() != MPI_SUCCESS) return 1;
+    return 0;
+  } else if (argc == 2 && strcmp(argv[1], "--mpi-column-spans") == 0) {
     if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
         MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
@@ -2690,6 +2884,7 @@ int main(int argc, char **argv)
 #endif
   int shift4[4] = {1, 2, 3, 0};
   stdoutMPI = stderr;
+  assert_state_enumerator_exact();
   assert_exhaustive_fermion_permutation_parity();
   assert_fermion_parity_word_boundary();
   assert_spin_permutation_word_boundary();
