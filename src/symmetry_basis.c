@@ -353,6 +353,8 @@ struct SymmetryBasisCollector {
   unsigned long long representative_candidates;
   unsigned long long compatible_survivors;
   unsigned long long transform_calls;
+  unsigned long long state_enumerator_calls;
+  unsigned long long diagonal_evaluator_calls;
   int error;
 };
 
@@ -856,9 +858,14 @@ int BuildSymmetryBasis(struct BindStruct *X)
       collector->raw_states++;
       raw_index = symmetry_rank_raw_index(local_raw_index, distribution_chunk,
                                           myrank, nproc);
+      collector->state_enumerator_calls++;
       if (SymmetryStateEnumeratorStateAt(
-              &enumerator, raw_index, &state) != 0 ||
-          EvaluateSymmetryStateDiagonal(
+              &enumerator, raw_index, &state) != 0) {
+        collector->error = 1;
+        continue;
+      }
+      collector->diagonal_evaluator_calls++;
+      if (EvaluateSymmetryStateDiagonal(
               &X->Def, state, &diagonal) != 0) {
         collector->error = 1;
         continue;
@@ -895,6 +902,10 @@ int BuildSymmetryBasis(struct BindStruct *X)
         collector->representative_candidates;
     sym->basis_compatible_survivors += collector->compatible_survivors;
     sym->basis_transform_calls += collector->transform_calls;
+    sym->basis_state_enumerator_calls +=
+        collector->state_enumerator_calls;
+    sym->basis_diagonal_evaluator_calls +=
+        collector->diagonal_evaluator_calls;
     if (collector->raw_states > sym->basis_thread_raw_states_max)
       sym->basis_thread_raw_states_max = collector->raw_states;
     if (collector->representative_candidates >

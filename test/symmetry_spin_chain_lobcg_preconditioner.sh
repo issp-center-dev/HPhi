@@ -95,6 +95,7 @@ run_case()
     label=$1
     precondition=$2
     namelist=$3
+    eigenstates=${4:-1}
 
     cat > modpara.def <<EOF
 --------------------
@@ -109,7 +110,7 @@ Nsite 8
 2Sz 0
 Lanczos_max 100
 initial_iv 1
-exct 1
+exct ${eigenstates}
 LanczosEps 12
 LanczosTarget 2
 LargeValue 50
@@ -160,29 +161,53 @@ check_energy_close()
 run_case normal_precg0 0 namelist_normal.def
 run_case symmetry_precg0 0 namelist_symmetry.def
 run_case symmetry_precg1 1 namelist_symmetry.def
+run_case symmetry_exct4_precg0 0 namelist_symmetry.def 4
+run_case symmetry_exct4_precg1 1 namelist_symmetry.def 4
 
 check_convergence normal_precg0_steps.dat
 check_convergence symmetry_precg0_steps.dat
 check_convergence symmetry_precg1_steps.dat
+check_convergence symmetry_exct4_precg0_steps.dat
+check_convergence symmetry_exct4_precg1_steps.dat
 
 normal_energy=$(extract_energy normal_precg0_energy.dat)
 symmetry_precg0_energy=$(extract_energy symmetry_precg0_energy.dat)
 symmetry_precg1_energy=$(extract_energy symmetry_precg1_energy.dat)
+symmetry_exct4_precg0_energy=$(extract_energy symmetry_exct4_precg0_energy.dat)
+symmetry_exct4_precg1_energy=$(extract_energy symmetry_exct4_precg1_energy.dat)
 test -n "${normal_energy}"
 test -n "${symmetry_precg0_energy}"
 test -n "${symmetry_precg1_energy}"
+test -n "${symmetry_exct4_precg0_energy}"
+test -n "${symmetry_exct4_precg1_energy}"
 
 check_energy_close "${symmetry_precg0_energy}" "${symmetry_precg1_energy}"
 check_energy_close "${normal_energy}" "${symmetry_precg0_energy}"
 check_energy_close "${normal_energy}" "${symmetry_precg1_energy}"
+check_energy_close "${normal_energy}" "${symmetry_exct4_precg0_energy}"
+check_energy_close "${normal_energy}" "${symmetry_exct4_precg1_energy}"
 
 for log in symmetry_precg0.log symmetry_precg1.log; do
     grep -q \
         "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
+    grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
+    grep -Eq \
+        "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=1 workspace_vector_elements=[1-9][0-9]*" \
+        "${log}"
     grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
     grep -q "columns=local/ghost-slots" "${log}"
     if grep -q "MPI site separation summary" "${log}"; then
         echo "TransSym MPI path unexpectedly used site decomposition."
         exit 1
     fi
+done
+
+for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
+    grep -q \
+        "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
+    grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
+    grep -Eq \
+        "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=4 workspace_vector_elements=[1-9][0-9]*" \
+        "${log}"
+    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
 done

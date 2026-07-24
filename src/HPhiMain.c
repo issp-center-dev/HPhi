@@ -746,26 +746,6 @@ int main(int argc, char* argv[]){
     if(check(&(X.Bind))==MPIFALSE){
      exitMPI(-1);
     }
-    
-    /*LARGE VECTORS ARE ALLOCATED*/
-    if (setmem_large(&X.Bind) != 0) {
-      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
-      exitMPI(-1);
-    }
-    
-    StartTimer(1000);
-    if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){
-      exitMPI(-1);
-    }
-
-    StopTimer(1000);
-    if(X.Bind.Def.WRITE==1){
-      output_list(&(X.Bind));
-      exitMPI(-2);
-    }
-    StartTimer(2000);
-    diagonalcalc(&(X.Bind));
-    StopTimer(2000);
 
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StartTimer(1100);
@@ -786,12 +766,37 @@ int main(int argc, char* argv[]){
       }
       StopTimer(1114);
       StopTimer(1100);
+      StartTimer(1113);
+    }
+
+    /* LARGE VECTORS ARE ALLOCATED AFTER THE ACTIVE BASIS DIMENSION IS KNOWN. */
+    if (setmem_large(&X.Bind) != 0) {
+      if (X.Bind.Def.iFlgSymmetryBasis == TRUE) StopTimer(1113);
+      fprintf(stdoutMPI, cErrLargeMem, iErrCodeMem);
+      exitMPI(-1);
+    }
+    if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
+      StopTimer(1113);
       StartTimer(1101);
       if (BuildSymmetryMatvecPlan(&(X.Bind)) != 0) {
         StopTimer(1101);
         exitMPI(-1);
       }
       StopTimer(1101);
+    } else {
+      StartTimer(1000);
+      if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){
+        exitMPI(-1);
+      }
+
+      StopTimer(1000);
+      if(X.Bind.Def.WRITE==1){
+        output_list(&(X.Bind));
+        exitMPI(-2);
+      }
+      StartTimer(2000);
+      diagonalcalc(&(X.Bind));
+      StopTimer(2000);
     }
       
     switch (X.Bind.Def.iCalcType) {

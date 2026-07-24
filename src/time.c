@@ -116,7 +116,15 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "halo_reference_exchange_calls",
     "columns_remapped",
     "full_input_vector_allocated",
-    "halo_exchange_calls"
+    "halo_exchange_calls",
+    "allocation_raw_basis_list_elements",
+    "allocation_raw_diagonal_elements",
+    "allocation_initial_vector_elements",
+    "allocation_mpi_vector_buffer_elements",
+    "allocation_auxiliary_vector_elements",
+    "allocation_lobpcg_workspace_elements",
+    "basis_state_enumerator_calls",
+    "basis_diagonal_evaluator_calls"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -240,6 +248,14 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[36] = X->Sym->mpi_full_v1 != NULL ? 1ULL : 0ULL;
   work_local[37] =
       plan != NULL ? plan->halo.exchange_calls : 0ULL;
+  work_local[38] = X->Sym->allocation_raw_basis_list_elements;
+  work_local[39] = X->Sym->allocation_raw_diagonal_elements;
+  work_local[40] = X->Sym->allocation_initial_vector_elements;
+  work_local[41] = X->Sym->allocation_mpi_vector_buffer_elements;
+  work_local[42] = X->Sym->allocation_auxiliary_vector_elements;
+  work_local[43] = X->Sym->allocation_lobpcg_workspace_elements;
+  work_local[44] = X->Sym->basis_state_enumerator_calls;
+  work_local[45] = X->Sym->basis_diagonal_evaluator_calls;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -347,7 +363,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=4 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=5 ranks=%d "
           "basis_layout=replicated matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN
@@ -463,7 +479,7 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "      symmetry basis MPI gather/reduction", 1115);
   StampTime(fp, "    symmetry basis sort/merge", 1111);
   StampTime(fp, "    symmetry representative hash build", 1112);
-  StampTime(fp, "    symmetry diagonal materialization", 1113);
+  StampTime(fp, "  symmetry solver storage allocation", 1113);
   StampTime(fp, "    symmetry dimension activation/validation", 1114);
   StampTime(fp, "  symmetry matvec plan build", 1101);
   StampTime(fp, "    symmetry plan count/prefix", 1120);

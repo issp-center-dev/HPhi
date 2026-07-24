@@ -264,6 +264,10 @@ assert_rank_stats() {
     expected_digest="${4:-}"
     expected_reference="${5:-0}"
     expected_exchange="${6:-halo}"
+    expected_lobpcg=0
+    if grep -q "Symmetry LOBPCG allocation:" "${log}"; then
+        expected_lobpcg=1
+    fi
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -276,7 +280,8 @@ assert_rank_stats() {
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
         -v expected_digest="${expected_digest}" \
         -v expected_reference="${expected_reference}" \
-        -v expected_exchange="${expected_exchange}" '
+        -v expected_exchange="${expected_exchange}" \
+        -v expected_lobpcg="${expected_lobpcg}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
@@ -348,14 +353,16 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 4 || header_ranks != expected_ranks ||
+            if (header_version != 5 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 23 || work_count != 39 ||
+                timer_count != 23 || work_count != 47 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_state_enumerator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_diagonal_evaluator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
             if (work_min["basis_transform_calls"] <= 0) bad = 1
@@ -383,6 +390,14 @@ assert_rank_stats() {
                 work_max["full_input_vector_allocated"] != expected_full) bad = 1
             if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
             if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
+            if (work_max["allocation_raw_basis_list_elements"] != 0 ||
+                work_max["allocation_raw_diagonal_elements"] != 0) bad = 1
+            if (work_min["allocation_initial_vector_elements"] < 3 ||
+                work_max["allocation_auxiliary_vector_elements"] != 1) bad = 1
+            workspace_delta = work_mean["allocation_lobpcg_workspace_elements"] - 2 * work_mean["allocation_initial_vector_elements"]
+            if (expected_lobpcg == 1 && abs(workspace_delta) > 1.0e-12) bad = 1
+            if (expected_lobpcg == 0 &&
+                work_max["allocation_lobpcg_workspace_elements"] != 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
             if (expected_reference == 1) {
                 if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1

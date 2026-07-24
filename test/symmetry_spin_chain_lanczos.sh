@@ -171,7 +171,13 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
+grep -q "Symmetry allocation: raw_dim=20 global_dim=4 local_dim=4 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=15" symmetry.log
 grep -q "Symmetry matvec: mode=plan" symmetry.log
+basis_line=`awk '/Symmetry basis:/{print NR; exit}' symmetry.log`
+allocation_line=`awk '/Symmetry allocation:/{print NR; exit}' symmetry.log`
+test -n "${basis_line}"
+test -n "${allocation_line}"
+test "${basis_line}" -lt "${allocation_line}"
 
 cat > namelist_heisenberg_ref.def <<EOF
 CalcMod calcmod.def
@@ -203,6 +209,7 @@ test -n "${sym_heisenberg_energy}"
 heisenberg_diff=`awk -v a="${sym_heisenberg_energy}" -v b="${ref_heisenberg_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${heisenberg_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
+grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_heisenberg.log
 grep -q "Symmetry matvec: mode=plan" symmetry_heisenberg.log
 grep -q "vector_exchange=halo" symmetry_heisenberg.log
 grep -q "columns=local/ghost-slots" symmetry_heisenberg.log
@@ -215,6 +222,7 @@ test -n "${complex_energy}"
 complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
+grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_complex.log
 grep -q "Symmetry matvec: mode=plan" symmetry_complex.log
 grep -q "vector_exchange=halo" symmetry_complex.log
 grep -q "columns=local/ghost-slots" symmetry_complex.log

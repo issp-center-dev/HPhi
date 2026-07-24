@@ -116,6 +116,8 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry.log
+grep -q "Symmetry allocation: raw_dim=6 global_dim=2 local_dim=2 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=9" symmetry.log
+grep -q "Symmetry LOBPCG allocation: local_dim=2 exct=1 workspace_vector_elements=18" symmetry.log
 grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry.log
 grep -q "columns=local/ghost-slots" symmetry.log
 
@@ -129,6 +131,8 @@ if [ -n "${MPIRUN}" ]; then
         mpi_diff=`awk -v a="${mpi_energy}" -v b="${sym_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
         test "${mpi_diff}" = "0.000000"
         grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry_mpi.log
+        grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_mpi.log
+        grep -Eq "Symmetry LOBPCG allocation: local_dim=[01] exct=1 workspace_vector_elements=(6|12)" symmetry_mpi.log
         grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry_mpi.log
         grep -q "columns=local/ghost-slots" symmetry_mpi.log
         if grep -q "MPI site separation summary" symmetry_mpi.log; then

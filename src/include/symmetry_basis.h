@@ -47,6 +47,8 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_compatible_survivors;
   unsigned long long basis_transform_calls;
   unsigned long long basis_orbit_metadata_calls;
+  unsigned long long basis_state_enumerator_calls;
+  unsigned long long basis_diagonal_evaluator_calls;
   unsigned int basis_thread_count;
   unsigned long long basis_thread_raw_states_max;
   unsigned long long basis_thread_representative_candidates_max;
@@ -54,6 +56,12 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_thread_transform_calls_max;
   unsigned long long basis_gather_entries;
   unsigned long long basis_gather_bytes;
+  unsigned long long allocation_raw_basis_list_elements;
+  unsigned long long allocation_raw_diagonal_elements;
+  unsigned long long allocation_initial_vector_elements;
+  unsigned long long allocation_mpi_vector_buffer_elements;
+  unsigned long long allocation_auxiliary_vector_elements;
+  unsigned long long allocation_lobpcg_workspace_elements;
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;

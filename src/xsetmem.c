@@ -47,8 +47,11 @@
  */
 #include "Common.h"
 #include "common/setmemory.h"
+#include "symmetry_basis.h"
 #include "xsetmem.h"
 #include "wrapperMPI.h"
+#include <limits.h>
+#include <stdint.h>
 
 /**
  * @brief Allocate memory for output file name headers
@@ -227,11 +230,41 @@ int setmem_large
  ) {
 
   unsigned long int j = 0;
+#ifdef MPI
   unsigned long int idim_maxMPI;
+#endif
+  unsigned long long vector_length;
+  int use_symmetry_storage;
 
+#ifdef MPI
   idim_maxMPI = MaxMPI_li(X->Check.idim_max);
+#endif
+  use_symmetry_storage = X->Def.iFlgSymmetryBasis == TRUE;
 
-  if (GetlistSize(X) == TRUE) {
+  if (use_symmetry_storage) {
+    if (X->Sym == NULL || X->Sym->enabled != TRUE ||
+        X->Check.idim_max != X->Sym->local_dim ||
+        X->Check.idim_maxMPI != X->Sym->dim ||
+        X->Check.idim_max == ULONG_MAX ||
+        list_1 != NULL || list_1buf != NULL ||
+        list_2_1 != NULL || list_2_2 != NULL ||
+        list_Diagonal != NULL) {
+      return -1;
+    }
+    vector_length = (unsigned long long)X->Check.idim_max + 1ULL;
+    if (vector_length > ULLONG_MAX / 3ULL) return -1;
+    X->Sym->allocation_raw_basis_list_elements = 0ULL;
+    X->Sym->allocation_raw_diagonal_elements = 0ULL;
+    X->Sym->allocation_initial_vector_elements = 3ULL * vector_length;
+#ifdef MPI
+    X->Sym->allocation_mpi_vector_buffer_elements = 1ULL;
+#else
+    X->Sym->allocation_mpi_vector_buffer_elements = 0ULL;
+#endif
+    X->Sym->allocation_auxiliary_vector_elements = 1ULL;
+  }
+
+  if (!use_symmetry_storage && GetlistSize(X) == TRUE) {
       list_1 = lui_1d_allocate(X->Check.idim_max + 1);
 #ifdef MPI
       list_1buf = lui_1d_allocate(idim_maxMPI + 1);
@@ -246,7 +279,9 @@ int setmem_large
       }
   }
 
+  if (!use_symmetry_storage) {
     list_Diagonal = d_1d_allocate(X->Check.idim_max + 1);
+  }
     v0 = cd_1d_allocate(X->Check.idim_max + 1);
     v1 = cd_1d_allocate(X->Check.idim_max + 1);
   if (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ) {
@@ -255,7 +290,11 @@ int setmem_large
       v2 = cd_1d_allocate(1);
   }
 #ifdef MPI
+  if (use_symmetry_storage) {
+    v1buf = cd_1d_allocate(1);
+  } else {
     v1buf = cd_1d_allocate(idim_maxMPI + 1);
+  }
 #endif // MPI
   if (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ) {
       vg = cd_1d_allocate(1);
@@ -266,10 +305,14 @@ int setmem_large
     beta = d_1d_allocate(X->Def.Lanczos_max + 1);
 
   if (
-          list_Diagonal == NULL
+          (!use_symmetry_storage && list_Diagonal == NULL)
           || v0 == NULL
           || v1 == NULL
           || vg == NULL
+          || (use_symmetry_storage && v2 == NULL)
+#ifdef MPI
+          || (use_symmetry_storage && v1buf == NULL)
+#endif
           ) {
     return -1;
   }
@@ -314,6 +357,17 @@ int setmem_large
       X->Phys.all_doublon = d_1d_allocate(X->Def.k_exct);
       X->Phys.all_sz = d_1d_allocate(X->Def.k_exct);
       X->Phys.all_s2 = d_1d_allocate( X->Def.k_exct);
+  }
+  if (use_symmetry_storage) {
+    fprintf(stdoutMPI,
+            "Symmetry allocation: raw_dim=%lu global_dim=%lu local_dim=%lu "
+            "raw_basis_list_elements=0 raw_diagonal_elements=0 "
+            "initial_vector_elements=%llu mpi_vector_buffer_elements=%llu "
+            "auxiliary_vector_elements=%llu\n",
+            X->Sym->full_dim, X->Sym->dim, X->Sym->local_dim,
+            X->Sym->allocation_initial_vector_elements,
+            X->Sym->allocation_mpi_vector_buffer_elements,
+            X->Sym->allocation_auxiliary_vector_elements);
   }
   fprintf(stdoutMPI, "%s", cProFinishAlloc);
   return 0;
