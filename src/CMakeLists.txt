@@ -20,7 +20,7 @@ target_sources(HPhi PRIVATE
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
   nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
-  symmetry_diagonal.c symmetry_distribution.c symmetry_matvec_plan.c
+  symmetry_diagonal.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_mpi_exchange.c
   symmetry_state_enumerator.c
   symmetry_vector_halo.c

@@ -109,6 +109,22 @@ if(MPI_FOUND)
         PROPERTIES LABELS "symmetry;mpi")
 endif()
 
+add_executable(unittest_symmetry_directory
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c)
+target_include_directories(unittest_symmetry_directory
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_directory PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_directory m)
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_directory OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_directory
+    COMMAND unittest_symmetry_directory)
+set_tests_properties(unittest_symmetry_directory
+    PROPERTIES LABELS "unit;symmetry")
+
 #
 # Lanczos
 #
