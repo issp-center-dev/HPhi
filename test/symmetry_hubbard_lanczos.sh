@@ -370,7 +370,9 @@ assert_rank_stats() {
             if (abs(work_mean["basis_diagonal_evaluator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
-            if (work_min["basis_transform_calls"] <= 0) bad = 1
+            if (work_max["basis_transform_calls"] <= 0) bad = 1
+            if (work_min["basis_raw_states"] > 0 &&
+                work_min["basis_transform_calls"] <= 0) bad = 1
             if (abs(work_mean["basis_orbit_metadata_calls"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (work_min["basis_thread_count"] < 1) bad = 1
             if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1

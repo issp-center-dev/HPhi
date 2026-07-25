@@ -6,6 +6,16 @@ cd symmetry_spin_chain_lobcg_preconditioner
 HPHI=../../src/HPhi
 RUNNER=${MPIRUN:-}
 
+run_hphi()
+{
+    log=$1
+    shift
+    "$@" > "${log}" 2>&1 || {
+        cat "${log}"
+        exit 1
+    }
+}
+
 cat > calcmod.def <<EOF
 CalcType 3
 CalcModel 1
@@ -96,6 +106,7 @@ run_case()
     precondition=$2
     namelist=$3
     eigenstates=${4:-1}
+    execution=${5:-mpi}
 
     cat > modpara.def <<EOF
 --------------------
@@ -118,7 +129,13 @@ PreCG ${precondition}
 EOF
 
     rm -rf output
-    ${RUNNER} "${HPHI}" -e "${namelist}" > "${label}.log" 2>&1
+    if [ "${execution}" = "serial" ]; then
+        run_hphi "${label}.log" "${HPHI}" -e "${namelist}"
+    else
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" ${RUNNER} "${HPHI}" -e "${namelist}"
+    fi
     test -s output/zvo_energy.dat
     test -s output/zvo_Lanczos_Step.dat
     cp output/zvo_energy.dat "${label}_energy.dat"
@@ -158,7 +175,10 @@ check_energy_close()
     '
 }
 
-run_case normal_precg0 0 namelist_normal.def
+# The normal-basis run is an energy reference.  Run it in serial because its
+# site decomposition requires a power-of-two MPI size, while TransSym supports
+# arbitrary MPI sizes and is the path under test here.
+run_case normal_precg0 0 namelist_normal.def 1 serial
 run_case symmetry_precg0 0 namelist_symmetry.def
 run_case symmetry_precg1 1 namelist_symmetry.def
 run_case symmetry_exct4_precg0 0 namelist_symmetry.def 4
