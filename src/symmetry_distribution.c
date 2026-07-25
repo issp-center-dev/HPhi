@@ -11,6 +11,7 @@
 
 #include "DefCommon.h"
 #include "symmetry_basis.h"
+#include "symmetry_checked.h"
 #include "symmetry_distribution.h"
 #include "symmetry_mpi_exchange.h"
 
@@ -85,6 +86,11 @@ static int agree_distribution_limit_failure(
 }
 
 #ifdef MPI
+/*
+ * A failed MPI collective cannot safely be followed by another collective
+ * agreement. MPI's default error handler is fatal; if a caller installs a
+ * returning handler, emit the failing rank and unwind local ownership.
+ */
 static void report_distribution_operation_failure(
     int rank,
     const char *stage,
@@ -96,54 +102,6 @@ static void report_distribution_operation_failure(
   fflush(stderr);
 }
 #endif
-
-static int checked_u64_add(uint64_t lhs, uint64_t rhs, uint64_t *result)
-{
-  if (result == NULL || lhs > UINT64_MAX - rhs) return -1;
-  *result = lhs + rhs;
-  return 0;
-}
-
-static int checked_u64_mul(uint64_t lhs, uint64_t rhs, uint64_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > UINT64_MAX / lhs)) return -1;
-  *result = lhs * rhs;
-  return 0;
-}
-
-static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
-  *result = lhs * rhs;
-  return 0;
-}
-
-static int checked_u64_to_size(uint64_t value, size_t *result)
-{
-  if (result == NULL || value > (uint64_t)SIZE_MAX) return -1;
-  *result = (size_t)value;
-  return 0;
-}
-
-static int checked_ulong_to_u64(unsigned long int value, uint64_t *result)
-{
-  uint64_t converted;
-  if (result == NULL) return -1;
-  converted = (uint64_t)value;
-  if ((unsigned long int)converted != value) return -1;
-  *result = converted;
-  return 0;
-}
-
-static int symmetry_basis_run_is_valid(const struct SymmetryBasisRun *run)
-{
-  if (run == NULL) return FALSE;
-  if (run->entries == NULL) {
-    return run->count == 0UL && run->capacity == 0UL;
-  }
-  if (run->count == ULONG_MAX || run->capacity == 0UL) return FALSE;
-  return run->capacity >= run->count + 1UL;
-}
 
 int SymmetryBlockRange(
     unsigned long int dim,
@@ -240,7 +198,7 @@ static int build_regular_samples(
   size_t sample_bytes;
 
   if (samples == NULL || sample_count == NULL || local_gap == NULL ||
-      checked_ulong_to_u64(run->count, &count) != 0) {
+      SymmetryCheckedUlongToU64(run->count, &count) != 0) {
     return -1;
   }
   *samples = NULL;
@@ -251,7 +209,7 @@ static int build_regular_samples(
 
   selected = count < samples_per_nonempty_rank
       ? count : samples_per_nonempty_rank;
-  if (checked_size_mul((size_t)selected, sizeof(**samples),
+  if (SymmetryCheckedSizeMul((size_t)selected, sizeof(**samples),
                        &sample_bytes) != 0) {
     return -1;
   }
@@ -263,7 +221,7 @@ static int build_regular_samples(
   for (index = 0U; index < selected; index++) {
     uint64_t position;
     uint64_t gap;
-    if (checked_u64_add(offset, 1U, &position) != 0 ||
+    if (SymmetryCheckedU64Add(offset, 1U, &position) != 0 ||
         position == 0U || position > count ||
         position > (uint64_t)ULONG_MAX) {
       free(*samples);
@@ -277,15 +235,15 @@ static int build_regular_samples(
     if (gap > gap_max) gap_max = gap;
     previous_position = position;
     if (index + 1U < selected) {
-      if (checked_u64_add(offset, base_step, &offset) != 0 ||
-          checked_u64_add(remainder_accumulator, step_remainder,
+      if (SymmetryCheckedU64Add(offset, base_step, &offset) != 0 ||
+          SymmetryCheckedU64Add(remainder_accumulator, step_remainder,
                           &remainder_accumulator) != 0) {
         free(*samples);
         *samples = NULL;
         return -1;
       }
       if (remainder_accumulator >= selected) {
-        if (checked_u64_add(offset, 1U, &offset) != 0) {
+        if (SymmetryCheckedU64Add(offset, 1U, &offset) != 0) {
           free(*samples);
           *samples = NULL;
           return -1;
@@ -297,7 +255,7 @@ static int build_regular_samples(
   {
     uint64_t endpoint;
     uint64_t suffix_gap;
-    if (checked_u64_add(count, 1U, &endpoint) != 0) {
+    if (SymmetryCheckedU64Add(count, 1U, &endpoint) != 0) {
       free(*samples);
       *samples = NULL;
       return -1;
@@ -442,7 +400,7 @@ static int calculate_range_temporary_peak(
   uint64_t chunk_transport_overhead =
       UINT64_C(9) * (uint64_t)sizeof(uint64_t);
 #ifdef MPI
-  if (checked_u64_add(
+  if (SymmetryCheckedU64Add(
           chunk_transport_overhead,
           UINT64_C(2) * (uint64_t)sizeof(MPI_Request),
           &chunk_transport_overhead) != 0) {
@@ -456,34 +414,34 @@ static int calculate_range_temporary_peak(
     exchange_overhead_per_rank = chunk_transport_overhead;
   }
   if (nrank < 1 ||
-      checked_u64_add(input_count, 1U, &input_elements) != 0 ||
-      checked_u64_mul(input_elements,
+      SymmetryCheckedU64Add(input_count, 1U, &input_elements) != 0 ||
+      SymmetryCheckedU64Mul(input_elements,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &input_bytes) != 0 ||
-      checked_u64_mul(receive_count,
+      SymmetryCheckedU64Mul(receive_count,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &receive_bytes) != 0 ||
-      checked_u64_add(receive_count, 1U, &output_elements) != 0 ||
-      checked_u64_mul(output_elements,
+      SymmetryCheckedU64Add(receive_count, 1U, &output_elements) != 0 ||
+      SymmetryCheckedU64Mul(output_elements,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &output_bytes) != 0 ||
-      checked_u64_mul((uint64_t)nrank,
+      SymmetryCheckedU64Mul((uint64_t)nrank,
                       UINT64_C(5) * (uint64_t)sizeof(uint64_t),
                       &schedule_bytes) != 0 ||
-      checked_u64_mul((uint64_t)nrank,
+      SymmetryCheckedU64Mul((uint64_t)nrank,
                       (uint64_t)sizeof(struct SymmetryMergeNode),
                       &heap_bytes) != 0 ||
-      checked_u64_add(input_bytes, receive_bytes, &merge_peak) != 0 ||
-      checked_u64_add(merge_peak, output_bytes, &merge_peak) != 0 ||
-      checked_u64_add(merge_peak, schedule_bytes, &merge_peak) != 0 ||
-      checked_u64_add(merge_peak, heap_bytes, &merge_peak) != 0 ||
-      checked_u64_mul((uint64_t)nrank, exchange_overhead_per_rank,
+      SymmetryCheckedU64Add(input_bytes, receive_bytes, &merge_peak) != 0 ||
+      SymmetryCheckedU64Add(merge_peak, output_bytes, &merge_peak) != 0 ||
+      SymmetryCheckedU64Add(merge_peak, schedule_bytes, &merge_peak) != 0 ||
+      SymmetryCheckedU64Add(merge_peak, heap_bytes, &merge_peak) != 0 ||
+      SymmetryCheckedU64Mul((uint64_t)nrank, exchange_overhead_per_rank,
                       &exchange_overhead) != 0 ||
-      checked_u64_add(input_bytes, receive_bytes,
+      SymmetryCheckedU64Add(input_bytes, receive_bytes,
                       &exchange_peak) != 0) {
     return -1;
   }
-  if (checked_u64_add(exchange_peak, exchange_overhead,
+  if (SymmetryCheckedU64Add(exchange_peak, exchange_overhead,
                       &exchange_peak) != 0) {
     return -1;
   }
@@ -503,10 +461,12 @@ int SymmetrySampleSortBasisRun(
   struct SymmetryMergeNode *merge_heap = NULL;
   struct SymmetryMpiExchangeResult sample_result;
   struct SymmetryMpiExchangeResult range_result;
+  struct SymmetryMpiExchangeStats range_exchange_stats;
   struct SymmetryMpiExchangeLayout sample_layout;
   struct SymmetryMpiExchangeLayout range_layout;
   uint64_t *all_counts = NULL;
   uint64_t *all_gaps = NULL;
+  uint64_t *all_first_keys = NULL;
   uint64_t *all_last_keys = NULL;
   uint64_t *sample_send_counts = NULL;
   uint64_t *sample_send_displacements = NULL;
@@ -528,6 +488,7 @@ int SymmetrySampleSortBasisRun(
   uint64_t bucket_upper_bound = 0U;
   uint64_t sample_peak = 0U;
   uint64_t temporary_peak = 0U;
+  uint64_t entry_index;
   uint64_t merged_count = 0U;
   uint64_t range_global_count = 0U;
   uint64_t range_max_count = 0U;
@@ -550,6 +511,7 @@ int SymmetrySampleSortBasisRun(
   memset(&next_stats, 0, sizeof(next_stats));
   memset(&sample_result, 0, sizeof(sample_result));
   memset(&range_result, 0, sizeof(range_result));
+  memset(&range_exchange_stats, 0, sizeof(range_exchange_stats));
   if (stats != NULL) memset(stats, 0, sizeof(*stats));
   mpi_active = SymmetryMpiCollectivesActive();
 
@@ -570,7 +532,7 @@ int SymmetrySampleSortBasisRun(
   if (rank != 0 || nrank != 1) local_error = 1;
 #endif
   if (nrank > 0 &&
-      checked_size_mul((size_t)nrank, sizeof(uint64_t),
+      SymmetryCheckedSizeMul((size_t)nrank, sizeof(uint64_t),
                        &rank_array_bytes) != 0) {
     local_error = 1;
   }
@@ -578,8 +540,8 @@ int SymmetrySampleSortBasisRun(
       mpi_active, rank, "sample sort", "invalid rank or communicator",
       local_error);
   if (global_error != 0) return -1;
-  if (symmetry_basis_run_is_valid(run) != TRUE ||
-      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
+  if (SymmetryBasisRunIsValid(run) != TRUE ||
+      SymmetryCheckedUlongToU64(run != NULL ? run->count : 0UL,
                            &local_count) != 0 ||
       local_count > (uint64_t)(SIZE_MAX /
           sizeof(struct SymmetryBasisVector)) - 1U ||
@@ -597,9 +559,9 @@ int SymmetrySampleSortBasisRun(
           sizeof(struct SymmetryBasisVector),
           SymmetryCompareBasisRepState);
   }
-  for (merged_count = 1U; merged_count < local_count; merged_count++) {
-    if (run->entries[merged_count].rep_state >=
-        run->entries[merged_count + 1U].rep_state) {
+  for (entry_index = 1U; entry_index < local_count; entry_index++) {
+    if (run->entries[entry_index].rep_state >=
+        run->entries[entry_index + 1U].rep_state) {
       local_error = 1;
       break;
     }
@@ -633,7 +595,7 @@ int SymmetrySampleSortBasisRun(
   }
   for (peer = 0; peer < nrank; peer++) {
     if (all_counts[peer] > 0U) nonempty_ranks++;
-    if (checked_u64_add(global_count, all_counts[peer],
+    if (SymmetryCheckedU64Add(global_count, all_counts[peer],
                         &global_count) != 0) {
       local_error = 1;
       break;
@@ -682,9 +644,9 @@ int SymmetrySampleSortBasisRun(
     uint64_t peer_samples = all_counts[peer] < sample_limit
         ? all_counts[peer] : sample_limit;
     if (all_gaps[peer] > global_gap_max) global_gap_max = all_gaps[peer];
-    if (checked_u64_add(global_gap_sum, all_gaps[peer],
+    if (SymmetryCheckedU64Add(global_gap_sum, all_gaps[peer],
                         &global_gap_sum) != 0 ||
-        checked_u64_add(global_sample_count, peer_samples,
+        SymmetryCheckedU64Add(global_sample_count, peer_samples,
                         &global_sample_count) != 0) {
       local_error = 1;
       break;
@@ -709,7 +671,7 @@ int SymmetrySampleSortBasisRun(
     sample_send_counts[0] = local_sample_count;
     for (peer = 0; peer < nrank; peer++) {
       sample_send_displacements[peer] = displacement;
-      if (checked_u64_add(displacement, sample_send_counts[peer],
+      if (SymmetryCheckedU64Add(displacement, sample_send_counts[peer],
                           &displacement) != 0) {
         local_error = 1;
         break;
@@ -743,7 +705,7 @@ int SymmetrySampleSortBasisRun(
 
   splitter_count = nrank - 1;
   if (splitter_count > 0 &&
-      checked_size_mul((size_t)splitter_count, sizeof(*splitters),
+      SymmetryCheckedSizeMul((size_t)splitter_count, sizeof(*splitters),
                        &splitter_bytes) != 0) {
     local_error = 1;
   }
@@ -807,7 +769,7 @@ int SymmetrySampleSortBasisRun(
   {
     uint64_t sample_count_check = 0U;
     for (peer = 0; peer < nrank; peer++) {
-      if (checked_u64_add(sample_count_check,
+      if (SymmetryCheckedU64Add(sample_count_check,
                           bucket_sample_counts[peer],
                           &sample_count_check) != 0) {
         local_error = 1;
@@ -831,37 +793,37 @@ int SymmetrySampleSortBasisRun(
     uint64_t overhead_per_rank =
         UINT64_C(8) * (uint64_t)sizeof(uint64_t);
 #ifdef MPI
-    if (checked_u64_add(
+    if (SymmetryCheckedU64Add(
             overhead_per_rank,
             UINT64_C(2) * (uint64_t)sizeof(MPI_Request),
             &overhead_per_rank) != 0) {
       local_error = 1;
     }
 #endif
-    if (checked_u64_add(local_count, 1U, &input_elements) != 0 ||
-        checked_u64_mul(input_elements,
+    if (SymmetryCheckedU64Add(local_count, 1U, &input_elements) != 0 ||
+        SymmetryCheckedU64Mul(input_elements,
                         (uint64_t)sizeof(*run->entries),
                         &input_bytes) != 0 ||
-        checked_u64_mul(local_sample_count,
+        SymmetryCheckedU64Mul(local_sample_count,
                         (uint64_t)sizeof(*local_samples),
                         &sample_bytes) != 0 ||
-        checked_u64_mul(sample_result.count,
+        SymmetryCheckedU64Mul(sample_result.count,
                         (uint64_t)sizeof(*sample_result.entries),
                         &sample_receive_bytes) != 0 ||
-        checked_u64_mul((uint64_t)nrank, overhead_per_rank,
+        SymmetryCheckedU64Mul((uint64_t)nrank, overhead_per_rank,
                         &schedule_bytes) != 0 ||
-        checked_u64_add((uint64_t)splitter_bytes,
+        SymmetryCheckedU64Add((uint64_t)splitter_bytes,
                         (uint64_t)rank_array_bytes,
                         &splitter_and_bucket_bytes) != 0 ||
-        checked_u64_add(input_bytes, sample_bytes,
+        SymmetryCheckedU64Add(input_bytes, sample_bytes,
                         &sample_peak) != 0 ||
-        checked_u64_add(sample_peak, sample_receive_bytes,
+        SymmetryCheckedU64Add(sample_peak, sample_receive_bytes,
                         &sample_peak) != 0 ||
-        checked_u64_add(sample_peak, schedule_bytes,
+        SymmetryCheckedU64Add(sample_peak, schedule_bytes,
                         &sample_peak) != 0 ||
-        checked_u64_add(sample_peak, splitter_and_bucket_bytes,
+        SymmetryCheckedU64Add(sample_peak, splitter_and_bucket_bytes,
                         &sample_peak) != 0 ||
-        checked_u64_to_size(sample_peak, &sample_peak_size) != 0) {
+        SymmetryCheckedU64ToSize(sample_peak, &sample_peak_size) != 0) {
       local_error = 1;
     }
   }
@@ -894,16 +856,16 @@ int SymmetrySampleSortBasisRun(
       local_error);
   if (global_error != 0) goto fail;
 
-  for (merged_count = 0U; merged_count < local_count; merged_count++) {
+  for (entry_index = 0U; entry_index < local_count; entry_index++) {
     unsigned long int bucket = symmetry_splitter_bucket(
         splitters, splitter_count,
-        run->entries[merged_count + 1U].rep_state);
+        run->entries[entry_index + 1U].rep_state);
     send_counts[bucket]++;
   }
   receive_count = 0U;
   for (peer = 0; peer < nrank; peer++) {
     send_displacements[peer] = receive_count;
-    if (checked_u64_add(receive_count, send_counts[peer],
+    if (SymmetryCheckedU64Add(receive_count, send_counts[peer],
                         &receive_count) != 0) {
       local_error = 1;
       break;
@@ -931,7 +893,7 @@ int SymmetrySampleSortBasisRun(
     preflight_recv_counts[0] = send_counts[0];
   }
   for (peer = 0; peer < nrank; peer++) {
-    if (checked_u64_add(receive_count, preflight_recv_counts[peer],
+    if (SymmetryCheckedU64Add(receive_count, preflight_recv_counts[peer],
                         &receive_count) != 0) {
       local_error = 1;
       break;
@@ -943,10 +905,10 @@ int SymmetrySampleSortBasisRun(
   if (global_error != 0) goto fail;
   {
     uint64_t sampled_gap_bound;
-    if (checked_u64_mul(bucket_sample_counts[rank],
+    if (SymmetryCheckedU64Mul(bucket_sample_counts[rank],
                         global_gap_max,
                         &sampled_gap_bound) != 0 ||
-        checked_u64_add(sampled_gap_bound, global_gap_sum,
+        SymmetryCheckedU64Add(sampled_gap_bound, global_gap_sum,
                         &bucket_upper_bound) != 0) {
       local_error = 1;
     }
@@ -997,7 +959,7 @@ int SymmetrySampleSortBasisRun(
       (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
   next_stats.splitter_digest =
       digest_splitters(splitters, splitter_count);
-  next_stats.sample_temporary_peak_bytes = sample_peak_size;
+  next_stats.sort_temporary_peak_bytes = sample_peak_size;
 
   FreeSymmetryMpiExchangeResult(&sample_result);
   free(local_samples);
@@ -1010,6 +972,8 @@ int SymmetrySampleSortBasisRun(
   splitters = NULL;
   free(bucket_sample_counts);
   bucket_sample_counts = NULL;
+  free(all_gaps);
+  all_gaps = NULL;
 
   range_layout.nrank = nrank;
   range_layout.count = local_count;
@@ -1018,7 +982,7 @@ int SymmetrySampleSortBasisRun(
   if (SymmetryMpiExchangeBasisVectors(
           local_count > 0U ? run->entries + 1 : run->entries,
           &range_layout, rank, nrank, NULL,
-          &range_result, NULL) != 0) {
+          &range_result, &range_exchange_stats) != 0) {
     (void)agree_distribution_failure(
         mpi_active, rank, "sample sort", "range exchange", 1);
     goto fail;
@@ -1045,16 +1009,16 @@ int SymmetrySampleSortBasisRun(
   {
     uint64_t merged_elements;
     uint64_t merged_byte_count;
-    if (checked_u64_add(receive_count, 1U, &merged_elements) != 0 ||
-        checked_u64_mul(merged_elements,
+    if (SymmetryCheckedU64Add(receive_count, 1U, &merged_elements) != 0 ||
+        SymmetryCheckedU64Mul(merged_elements,
                         (uint64_t)sizeof(*merged_entries),
                         &merged_byte_count) != 0 ||
-        checked_u64_to_size(merged_byte_count, &merged_bytes) != 0) {
+        SymmetryCheckedU64ToSize(merged_byte_count, &merged_bytes) != 0) {
       local_error = 1;
     }
   }
   if (local_error != 0 ||
-      checked_size_mul((size_t)nrank, sizeof(*merge_heap),
+      SymmetryCheckedSizeMul((size_t)nrank, sizeof(*merge_heap),
                        &heap_bytes) != 0) {
     local_error = 1;
   } else {
@@ -1062,9 +1026,10 @@ int SymmetrySampleSortBasisRun(
         (struct SymmetryBasisVector *)calloc(1U, merged_bytes);
     merge_heap =
         (struct SymmetryMergeNode *)malloc(heap_bytes);
+    all_first_keys = (uint64_t *)malloc(rank_array_bytes);
     all_last_keys = (uint64_t *)malloc(rank_array_bytes);
     if (merged_entries == NULL || merge_heap == NULL ||
-        all_last_keys == NULL) {
+        all_first_keys == NULL || all_last_keys == NULL) {
       local_error = 1;
     }
   }
@@ -1127,7 +1092,7 @@ int SymmetrySampleSortBasisRun(
                         all_counts, 1, MPI_UINT64_T,
                         MPI_COMM_WORLD) != MPI_SUCCESS ||
           MPI_Allgather(&first_key, 1, MPI_UINT64_T,
-                        all_gaps, 1, MPI_UINT64_T,
+                        all_first_keys, 1, MPI_UINT64_T,
                         MPI_COMM_WORLD) != MPI_SUCCESS ||
           MPI_Allgather(&last_key, 1, MPI_UINT64_T,
                         all_last_keys, 1, MPI_UINT64_T,
@@ -1140,7 +1105,7 @@ int SymmetrySampleSortBasisRun(
 #endif
     {
       all_counts[0] = receive_count;
-      all_gaps[0] = first_key;
+      all_first_keys[0] = first_key;
       all_last_keys[0] = last_key;
     }
   }
@@ -1148,7 +1113,7 @@ int SymmetrySampleSortBasisRun(
     int have_previous = FALSE;
     uint64_t previous_last = 0U;
     for (peer = 0; peer < nrank; peer++) {
-      if (checked_u64_add(range_global_count, all_counts[peer],
+      if (SymmetryCheckedU64Add(range_global_count, all_counts[peer],
                           &range_global_count) != 0) {
         local_error = 1;
         break;
@@ -1158,7 +1123,7 @@ int SymmetrySampleSortBasisRun(
       }
       if (all_counts[peer] == 0U) continue;
       if (have_previous != FALSE &&
-          previous_last >= all_gaps[peer]) {
+          previous_last >= all_first_keys[peer]) {
         local_error = 1;
         break;
       }
@@ -1175,15 +1140,21 @@ int SymmetrySampleSortBasisRun(
 
   next_stats.range_entries = receive_count;
   next_stats.range_max_entries = range_max_count;
-  next_stats.sample_send_entries = local_count;
-  next_stats.sample_recv_entries = receive_count;
+  next_stats.range_send_entries = local_count;
+  next_stats.range_recv_entries = receive_count;
+  next_stats.range_exchange_used_chunked =
+      range_exchange_stats.used_chunked;
+  next_stats.range_exchange_message_byte_limit =
+      range_exchange_stats.message_byte_limit;
+  next_stats.range_exchange_max_message_bytes =
+      range_exchange_stats.max_message_bytes;
   next_stats.range_max_over_mean = global_count > 0U
       ? ((double)range_max_count * (double)nrank) /
           (double)global_count
       : 0.0;
   next_stats.range_digest =
       digest_basis_run(merged_entries + 1, receive_count);
-  next_stats.sample_temporary_peak_bytes = sample_peak_size >
+  next_stats.sort_temporary_peak_bytes = sample_peak_size >
       (size_t)temporary_peak
       ? sample_peak_size : (size_t)temporary_peak;
 
@@ -1198,6 +1169,7 @@ int SymmetrySampleSortBasisRun(
   free(merge_heap);
   free(all_counts);
   free(all_gaps);
+  free(all_first_keys);
   free(all_last_keys);
   return 0;
 
@@ -1209,6 +1181,7 @@ fail:
   free(merge_heap);
   free(all_counts);
   free(all_gaps);
+  free(all_first_keys);
   free(all_last_keys);
   free(sample_send_counts);
   free(sample_send_displacements);
@@ -1236,37 +1209,37 @@ static int calculate_rebalance_temporary_peak(
   uint64_t request_bytes = 0U;
   uint64_t peak;
   if (peak_bytes == NULL || nrank < 1 ||
-      checked_u64_add(input_count, 1U, &input_elements) != 0 ||
-      checked_u64_mul(input_elements,
+      SymmetryCheckedU64Add(input_count, 1U, &input_elements) != 0 ||
+      SymmetryCheckedU64Mul(input_elements,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &input_bytes) != 0 ||
-      checked_u64_mul(receive_count,
+      SymmetryCheckedU64Mul(receive_count,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &receive_bytes) != 0 ||
-      checked_u64_add(receive_count, 1U, &output_elements) != 0 ||
-      checked_u64_mul(output_elements,
+      SymmetryCheckedU64Add(receive_count, 1U, &output_elements) != 0 ||
+      SymmetryCheckedU64Mul(output_elements,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &output_bytes) != 0 ||
-      checked_u64_mul((uint64_t)nrank, UINT64_C(10),
+      SymmetryCheckedU64Mul((uint64_t)nrank, UINT64_C(10),
                       &rank_elements) != 0 ||
-      checked_u64_add(rank_elements, 4U, &rank_elements) != 0 ||
-      checked_u64_mul(rank_elements, (uint64_t)sizeof(uint64_t),
+      SymmetryCheckedU64Add(rank_elements, 4U, &rank_elements) != 0 ||
+      SymmetryCheckedU64Mul(rank_elements, (uint64_t)sizeof(uint64_t),
                       &schedule_bytes) != 0) {
     return -1;
   }
 #ifdef MPI
-  if (checked_u64_mul(
+  if (SymmetryCheckedU64Mul(
           (uint64_t)nrank,
           UINT64_C(2) * (uint64_t)sizeof(MPI_Request),
           &request_bytes) != 0) {
     return -1;
   }
 #endif
-  if (checked_u64_add(input_bytes, receive_bytes, &peak) != 0 ||
-      checked_u64_add(peak, output_bytes, &peak) != 0 ||
-      checked_u64_add(peak, schedule_bytes, &peak) != 0 ||
-      checked_u64_add(peak, request_bytes, &peak) != 0 ||
-      checked_u64_to_size(peak, peak_bytes) != 0) {
+  if (SymmetryCheckedU64Add(input_bytes, receive_bytes, &peak) != 0 ||
+      SymmetryCheckedU64Add(peak, output_bytes, &peak) != 0 ||
+      SymmetryCheckedU64Add(peak, schedule_bytes, &peak) != 0 ||
+      SymmetryCheckedU64Add(peak, request_bytes, &peak) != 0 ||
+      SymmetryCheckedU64ToSize(peak, peak_bytes) != 0) {
     return -1;
   }
   return 0;
@@ -1297,8 +1270,9 @@ int SymmetryExactRebalanceBasisRun(
   uint64_t source_end;
   uint64_t target_begin;
   uint64_t target_end;
-  uint64_t send_total = 0U;
+  uint64_t send_schedule_total = 0U;
   uint64_t receive_total = 0U;
+  uint64_t receive_displacement = 0U;
   unsigned long int global_dim = 0UL;
   unsigned long int local_offset = 0UL;
   unsigned long int local_dim = 0UL;
@@ -1343,14 +1317,14 @@ int SymmetryExactRebalanceBasisRun(
   if (rank != 0 || nrank != 1) local_error = 1;
 #endif
   if (nrank > 0 &&
-      (checked_size_mul((size_t)nrank, sizeof(uint64_t),
+      (SymmetryCheckedSizeMul((size_t)nrank, sizeof(uint64_t),
                         &rank_bytes) != 0 ||
-       checked_size_mul((size_t)nrank, sizeof(unsigned long int),
+       SymmetryCheckedSizeMul((size_t)nrank, sizeof(unsigned long int),
                         &key_rank_bytes) != 0 ||
        (size_t)nrank == SIZE_MAX ||
-       checked_size_mul((size_t)nrank + 1U, sizeof(uint64_t),
+       SymmetryCheckedSizeMul((size_t)nrank + 1U, sizeof(uint64_t),
                         &offset_bytes) != 0 ||
-       checked_size_mul((size_t)nrank + 1U,
+       SymmetryCheckedSizeMul((size_t)nrank + 1U,
                         sizeof(unsigned long int),
                         &ownership_bytes) != 0)) {
     local_error = 1;
@@ -1359,8 +1333,8 @@ int SymmetryExactRebalanceBasisRun(
       mpi_active, rank, "exact rebalance",
       "invalid rank or communicator", local_error);
   if (global_error != 0) return -1;
-  if (symmetry_basis_run_is_valid(run) != TRUE ||
-      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
+  if (SymmetryBasisRunIsValid(run) != TRUE ||
+      SymmetryCheckedUlongToU64(run != NULL ? run->count : 0UL,
                            &local_count) != 0 ||
       HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
     local_error = 1;
@@ -1437,7 +1411,7 @@ int SymmetryExactRebalanceBasisRun(
     int have_previous = FALSE;
     unsigned long int previous_last = 0UL;
     for (peer = 0; peer < nrank; peer++) {
-      if (checked_u64_add(source_offsets[peer], all_counts[peer],
+      if (SymmetryCheckedU64Add(source_offsets[peer], all_counts[peer],
                           &source_offsets[peer + 1]) != 0) {
         local_error = 1;
         break;
@@ -1528,17 +1502,18 @@ int SymmetryExactRebalanceBasisRun(
         source_end < block_end ? source_end : block_end;
     uint64_t intersection_count = intersection_end > intersection_begin
         ? intersection_end - intersection_begin : 0U;
-    send_displacements[peer] = send_total;
+    send_displacements[peer] = send_schedule_total;
     send_counts[peer] = intersection_count;
     if ((intersection_count > 0U &&
-         intersection_begin - source_begin != send_total) ||
-        checked_u64_add(send_total, intersection_count,
-                        &send_total) != 0) {
+         intersection_begin - source_begin != send_schedule_total) ||
+        SymmetryCheckedU64Add(
+            send_schedule_total, intersection_count,
+            &send_schedule_total) != 0) {
       local_error = 1;
       break;
     }
   }
-  if (send_total != local_count) local_error = 1;
+  if (send_schedule_total != local_count) local_error = 1;
   global_error = agree_distribution_failure(
       mpi_active, rank, "exact rebalance",
       "destination send slices do not form a contiguous source range",
@@ -1573,7 +1548,7 @@ int SymmetryExactRebalanceBasisRun(
     uint64_t expected_count = intersection_end > intersection_begin
         ? intersection_end - intersection_begin : 0U;
     if (preflight_recv_counts[peer] != expected_count ||
-        checked_u64_add(receive_total, preflight_recv_counts[peer],
+        SymmetryCheckedU64Add(receive_total, preflight_recv_counts[peer],
                         &receive_total) != 0) {
       local_error = 1;
       break;
@@ -1622,17 +1597,18 @@ int SymmetryExactRebalanceBasisRun(
       exchange_stats.recv_entries != receive_total) {
     local_error = 1;
   }
-  send_total = 0U;
+  receive_displacement = 0U;
   for (peer = 0; peer < nrank; peer++) {
     if (result.counts[peer] != preflight_recv_counts[peer] ||
-        result.displacements[peer] != send_total ||
-        checked_u64_add(send_total, result.counts[peer],
-                        &send_total) != 0) {
+        result.displacements[peer] != receive_displacement ||
+        SymmetryCheckedU64Add(
+            receive_displacement, result.counts[peer],
+            &receive_displacement) != 0) {
       local_error = 1;
       break;
     }
   }
-  if (send_total != receive_total) local_error = 1;
+  if (receive_displacement != receive_total) local_error = 1;
   global_error = agree_distribution_failure(
       mpi_active, rank, "exact rebalance",
       "receive count or source-rank segment layout", local_error);
@@ -1640,13 +1616,13 @@ int SymmetryExactRebalanceBasisRun(
 
   {
     uint64_t output_element_count;
-    if (checked_u64_add(receive_total, 1U, &output_element_count) != 0 ||
-        checked_u64_to_size(output_element_count, &output_elements) != 0) {
+    if (SymmetryCheckedU64Add(receive_total, 1U, &output_element_count) != 0 ||
+        SymmetryCheckedU64ToSize(output_element_count, &output_elements) != 0) {
       local_error = 1;
     }
   }
   if (local_error != 0 ||
-      checked_size_mul(output_elements, sizeof(*next_entries),
+      SymmetryCheckedSizeMul(output_elements, sizeof(*next_entries),
                        &output_bytes) != 0) {
     local_error = 1;
   } else {
@@ -1662,9 +1638,9 @@ int SymmetryExactRebalanceBasisRun(
     memcpy(next_entries + 1, result.entries,
            (size_t)receive_total * sizeof(*next_entries));
   }
-  for (send_total = 1U; send_total < receive_total; send_total++) {
-    if (next_entries[send_total].rep_state >=
-        next_entries[send_total + 1U].rep_state) {
+  for (entry_index = 1U; entry_index < receive_total; entry_index++) {
+    if (next_entries[entry_index].rep_state >=
+        next_entries[entry_index + 1U].rep_state) {
       local_error = 1;
       break;
     }
@@ -1709,7 +1685,7 @@ int SymmetryExactRebalanceBasisRun(
           (uint64_t)next_ownership.rank_offsets[peer + 1] -
           (uint64_t)next_ownership.rank_offsets[peer];
       if (all_counts[peer] != expected_count ||
-          checked_u64_add(verified_global_count, all_counts[peer],
+          SymmetryCheckedU64Add(verified_global_count, all_counts[peer],
                           &verified_global_count) != 0) {
         local_error = 1;
         break;
@@ -1744,6 +1720,12 @@ int SymmetryExactRebalanceBasisRun(
   if (stats != NULL) {
     stats->rebalance_send_entries = local_count;
     stats->rebalance_recv_entries = receive_total;
+    stats->rebalance_exchange_used_chunked =
+        exchange_stats.used_chunked;
+    stats->rebalance_exchange_message_byte_limit =
+        exchange_stats.message_byte_limit;
+    stats->rebalance_exchange_max_message_bytes =
+        exchange_stats.max_message_bytes;
     stats->rebalance_temporary_peak_bytes = temporary_peak;
   }
 

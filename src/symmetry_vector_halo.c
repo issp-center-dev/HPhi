@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 struct BindStruct;
 #include "CalcTime.h"
+#include "symmetry_checked.h"
 #include "symmetry_distribution.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
@@ -18,13 +19,6 @@ static int checked_size_add(size_t lhs, size_t rhs, size_t *result)
 {
   if (result == NULL || lhs > SIZE_MAX - rhs) return -1;
   *result = lhs + rhs;
-  return 0;
-}
-
-static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
-  *result = lhs * rhs;
   return 0;
 }
 
@@ -265,9 +259,9 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       local_error = 1;
     }
   }
-  if (checked_size_mul(2U * sizeof(*request_counts), (size_t)nrank,
+  if (SymmetryCheckedSizeMul(2U * sizeof(*request_counts), (size_t)nrank,
                        &count64_bytes) != 0 ||
-      checked_size_mul(4U * sizeof(*halo->recv_counts), (size_t)nrank,
+      SymmetryCheckedSizeMul(4U * sizeof(*halo->recv_counts), (size_t)nrank,
                        &count_int_bytes) != 0) {
     local_error = 1;
   }
@@ -532,13 +526,13 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   }
   if (checked_size_add(halo->ghost_count, halo->send_value_count,
                        &total_count) != 0 ||
-      checked_size_mul(total_count, sizeof(unsigned long int),
+      SymmetryCheckedSizeMul(total_count, sizeof(unsigned long int),
                        &index_bytes) != 0 ||
       checked_size_add(count_int_bytes, index_bytes,
                        &halo->schedule_bytes) != 0 ||
-      checked_size_mul(total_count, sizeof(double complex),
+      SymmetryCheckedSizeMul(total_count, sizeof(double complex),
                        &halo->runtime_buffer_bytes) != 0 ||
-      checked_size_mul(halo->send_value_count,
+      SymmetryCheckedSizeMul(halo->send_value_count,
                        sizeof(*requested_global_index),
                        &request_bytes) != 0 ||
       checked_size_add(count64_bytes, request_bytes,

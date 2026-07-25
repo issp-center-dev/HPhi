@@ -9,6 +9,7 @@
 
 #include "DefCommon.h"
 #include "symmetry_basis.h"
+#include "symmetry_checked.h"
 #include "symmetry_mpi_exchange.h"
 
 #define SYMMETRY_BASIS_EXCHANGE_TAG 23173
@@ -47,20 +48,6 @@ int SymmetryMpiAgreeError(int mpi_active, int local_error)
 #endif
 }
 
-static int checked_u64_add(uint64_t lhs, uint64_t rhs, uint64_t *result)
-{
-  if (result == NULL || lhs > UINT64_MAX - rhs) return -1;
-  *result = lhs + rhs;
-  return 0;
-}
-
-static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
-  *result = lhs * rhs;
-  return 0;
-}
-
 static int get_message_limits(uint64_t *entry_limit, uint64_t *byte_limit)
 {
   const uint64_t configured_bytes =
@@ -96,7 +83,7 @@ static int validate_layout(const struct SymmetryMpiExchangeLayout *layout,
   }
   for (peer = 0; peer < nrank; peer++) {
     if (layout->displacements[peer] != total ||
-        checked_u64_add(total, layout->counts[peer], &total) != 0) {
+        SymmetryCheckedU64Add(total, layout->counts[peer], &total) != 0) {
       return -1;
     }
   }
@@ -221,7 +208,7 @@ static int exchange_alltoallv(
   int peer;
   int ierr;
 
-  if (checked_size_mul((size_t)send_layout->nrank, sizeof(*send_counts),
+  if (SymmetryCheckedSizeMul((size_t)send_layout->nrank, sizeof(*send_counts),
                        &array_bytes) != 0) {
     return -1;
   }
@@ -279,11 +266,11 @@ static int exchange_chunked(
   int ierr;
 
   if (send_layout->nrank > INT_MAX / 2 ||
-      checked_size_mul((size_t)send_layout->nrank, sizeof(*send_progress),
+      SymmetryCheckedSizeMul((size_t)send_layout->nrank, sizeof(*send_progress),
                        &progress_bytes) != 0 ||
-      checked_size_mul((size_t)send_layout->nrank, 2U,
+      SymmetryCheckedSizeMul((size_t)send_layout->nrank, 2U,
                        &request_count_max) != 0 ||
-      checked_size_mul(request_count_max, sizeof(*requests),
+      SymmetryCheckedSizeMul(request_count_max, sizeof(*requests),
                        &request_bytes) != 0) {
     return -1;
   }
@@ -438,7 +425,7 @@ int SymmetryMpiExchangeBasisVectors(
   if (nrank != 1 || rank != 0) local_error = 1;
   (void)force_chunked;
 #endif
-  if (checked_size_mul((size_t)nrank, sizeof(*next_result.counts),
+  if (SymmetryCheckedSizeMul((size_t)nrank, sizeof(*next_result.counts),
                        &schedule_bytes) != 0) {
     local_error = 1;
   }
@@ -478,7 +465,7 @@ int SymmetryMpiExchangeBasisVectors(
 
   for (peer = 0; peer < nrank; peer++) {
     next_result.displacements[peer] = recv_total;
-    if (checked_u64_add(recv_total, next_result.counts[peer],
+    if (SymmetryCheckedU64Add(recv_total, next_result.counts[peer],
                         &recv_total) != 0) {
       local_error = 1;
       break;

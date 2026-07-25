@@ -767,11 +767,16 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                        first_stats.global_sample_gap_sum &&
                    first_stats.distribution_memory_byte_limit ==
                        HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
-                   first_stats.sample_send_entries ==
+                   first_stats.range_send_entries ==
                        first_stats.local_survivor_entries &&
-                   first_stats.sample_recv_entries ==
+                   first_stats.range_recv_entries ==
                        first_stats.range_entries &&
-                   first_stats.sample_temporary_peak_bytes <=
+                   first_stats.range_exchange_message_byte_limit ==
+                       test_message_entry_limit *
+                           sizeof(struct SymmetryBasisVector) &&
+                   first_stats.range_exchange_max_message_bytes <=
+                       first_stats.range_exchange_message_byte_limit &&
+                   first_stats.sort_temporary_peak_bytes <=
                        HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
                    first_stats.rebalance_send_entries == 0U &&
                    first_stats.rebalance_recv_entries == 0U &&
@@ -780,7 +785,9 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
   if (fixture == SAMPLE_SORT_ONE_RANK_ONLY) {
     require_true(first_stats.samples_per_nonempty_rank == 64U &&
                      first_stats.global_sample_entries == 64U &&
-                     first_stats.global_sample_gap_max > 1U,
+                     first_stats.global_sample_gap_max > 1U &&
+                     (test_nrank == 1 ||
+                      first_stats.range_exchange_used_chunked == TRUE),
                  "regular sample gap fixture did not downsample");
   }
   require_all_ranks_u64_equal(
@@ -805,10 +812,16 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
               second_stats.bucket_sample_entries &&
           first_stats.bucket_entry_upper_bound ==
               second_stats.bucket_entry_upper_bound &&
-          first_stats.sample_send_entries ==
-              second_stats.sample_send_entries &&
-          first_stats.sample_recv_entries ==
-              second_stats.sample_recv_entries &&
+          first_stats.range_send_entries ==
+              second_stats.range_send_entries &&
+          first_stats.range_recv_entries ==
+              second_stats.range_recv_entries &&
+          first_stats.range_exchange_used_chunked ==
+              second_stats.range_exchange_used_chunked &&
+          first_stats.range_exchange_message_byte_limit ==
+              second_stats.range_exchange_message_byte_limit &&
+          first_stats.range_exchange_max_message_bytes ==
+              second_stats.range_exchange_max_message_bytes &&
           first_stats.splitter_digest == second_stats.splitter_digest &&
           first_stats.range_digest == second_stats.range_digest,
       "sample-sort determinism stats mismatch");
@@ -1037,9 +1050,12 @@ static void assert_exact_rebalance_fixture(uint64_t global_count,
   memset(&ownership, 0, sizeof(ownership));
   memset(&stats, 0, sizeof(stats));
   stats.global_entries = global_count;
-  stats.sample_send_entries = UINT64_C(101);
-  stats.sample_recv_entries = UINT64_C(103);
-  stats.sample_temporary_peak_bytes = 107U;
+  stats.range_send_entries = UINT64_C(101);
+  stats.range_recv_entries = UINT64_C(103);
+  stats.range_exchange_used_chunked = TRUE;
+  stats.range_exchange_message_byte_limit = UINT64_C(105);
+  stats.range_exchange_max_message_bytes = UINT64_C(106);
+  stats.sort_temporary_peak_bytes = 107U;
   stats.splitter_digest = UINT64_C(109);
   stats.range_digest = UINT64_C(113);
 
@@ -1082,14 +1098,24 @@ static void assert_exact_rebalance_fixture(uint64_t global_count,
                  label);
   }
   require_true(stats.global_entries == global_count &&
-                   stats.sample_send_entries == UINT64_C(101) &&
-                   stats.sample_recv_entries == UINT64_C(103) &&
-                   stats.sample_temporary_peak_bytes == 107U &&
+                   stats.range_send_entries == UINT64_C(101) &&
+                   stats.range_recv_entries == UINT64_C(103) &&
+                   stats.range_exchange_used_chunked == TRUE &&
+                   stats.range_exchange_message_byte_limit ==
+                       UINT64_C(105) &&
+                   stats.range_exchange_max_message_bytes ==
+                       UINT64_C(106) &&
+                   stats.sort_temporary_peak_bytes == 107U &&
                    stats.splitter_digest == UINT64_C(109) &&
                    stats.range_digest == UINT64_C(113) &&
                    stats.rebalance_send_entries == input_count &&
                    stats.rebalance_recv_entries ==
                        (uint64_t)expected_count &&
+                   stats.rebalance_exchange_message_byte_limit ==
+                       test_message_entry_limit *
+                           sizeof(struct SymmetryBasisVector) &&
+                   stats.rebalance_exchange_max_message_bytes <=
+                       stats.rebalance_exchange_message_byte_limit &&
                    stats.rebalance_temporary_peak_bytes >=
                        ((size_t)input_count +
                         (size_t)expected_count * 2U + 2U) *
@@ -1099,7 +1125,8 @@ static void assert_exact_rebalance_fixture(uint64_t global_count,
       global_count > (uint64_t)test_nrank *
           test_message_entry_limit) {
     require_true(
-        (uint64_t)expected_count > test_message_entry_limit,
+        (uint64_t)expected_count > test_message_entry_limit &&
+            stats.rebalance_exchange_used_chunked == TRUE,
         "exact deep-chunk fixture did not exceed the message cap");
   }
   validate_exact_global_result(&run, global_count, label);

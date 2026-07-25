@@ -4,6 +4,7 @@
 #include "DefCommon.h"
 #include "global.h"
 #include "symmetry_basis.h"
+#include "symmetry_checked.h"
 #include "symmetry_diagonal.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
@@ -374,18 +375,6 @@ static int symmetry_basis_run_is_empty(const struct SymmetryBasisRun *run)
   return run != NULL && run->entries == NULL &&
       run->count == 0UL && run->capacity == 0UL;
 }
-
-#ifdef MPI
-static int symmetry_basis_run_is_valid(const struct SymmetryBasisRun *run)
-{
-  if (run == NULL) return FALSE;
-  if (run->entries == NULL) {
-    return run->count == 0UL && run->capacity == 0UL;
-  }
-  if (run->capacity == 0UL || run->count == ULONG_MAX) return FALSE;
-  return run->capacity >= run->count + 1UL;
-}
-#endif
 
 static unsigned long int symmetry_distribution_chunk(unsigned long int full_dim,
                                                      int nrank)
@@ -899,7 +888,7 @@ static int gather_symmetry_basis(struct SymmetryBasisRun *run,
   MPI_Datatype vector_type = MPI_DATATYPE_NULL;
 
   local_error =
-      symmetry_basis_run_is_valid(run) != TRUE ||
+      SymmetryBasisRunIsValid(run) != TRUE ||
       run->count > (unsigned long int)INT_MAX ? 1 : 0;
   counts = (int *)malloc((size_t)nproc * sizeof(*counts));
   displacements = (int *)malloc((size_t)nproc * sizeof(*displacements));

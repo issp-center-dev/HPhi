@@ -2082,8 +2082,6 @@ static void assert_mpi_column_spans_exact(const char *label)
   struct BindStruct X;
   struct SymmetryGlobalColumnSpan flat_span;
   struct SymmetryGlobalColumnSpan split_spans[7];
-  unsigned long int base;
-  unsigned long int remainder;
   unsigned long int local_offset;
   unsigned long int local_dim;
   unsigned long int local_row;
@@ -2119,15 +2117,10 @@ static void assert_mpi_column_spans_exact(const char *label)
   memset(&split_plan, 0, sizeof(split_plan));
   memset(&sym, 0, sizeof(sym));
   memset(&X, 0, sizeof(X));
-  base = dim / (unsigned long int)nproc;
-  remainder = dim % (unsigned long int)nproc;
-  local_dim =
-      base + ((unsigned long int)myrank < remainder ? 1UL : 0UL);
-  local_offset =
-      base * (unsigned long int)myrank +
-      ((unsigned long int)myrank < remainder
-           ? (unsigned long int)myrank
-           : remainder);
+  assert_int_eq(
+      SymmetryBlockRange(
+          dim, myrank, nproc, &local_offset, &local_dim),
+      0, label);
   nnz = (size_t)local_dim * 3U;
   row_ptr = (size_t *)calloc((size_t)local_dim + 1U, sizeof(*row_ptr));
   local_vector = (double complex *)calloc(
@@ -2294,6 +2287,43 @@ static void assert_mpi_column_spans_exact(const char *label)
 }
 #endif
 
+static void assert_vector_owner_inverse_contract(const char *label)
+{
+  unsigned long int dim;
+  int nrank;
+  for (nrank = 1; nrank <= 24; nrank++) {
+    for (dim = 0UL; dim <= 200UL; dim++) {
+      int rank;
+      unsigned long int covered = 0UL;
+      for (rank = 0; rank < nrank; rank++) {
+        unsigned long int offset;
+        unsigned long int count;
+        unsigned long int local_index;
+        assert_int_eq(
+            SymmetryBlockRange(dim, rank, nrank, &offset, &count),
+            0, label);
+        assert_ulong_eq(offset, covered, label);
+        for (local_index = 0UL; local_index < count; local_index++) {
+          assert_int_eq(
+              SymmetryVectorOwnerOfGlobalIndex(
+                  dim, nrank, offset + local_index + 1UL),
+              rank, label);
+        }
+        covered = offset + count;
+      }
+      assert_ulong_eq(covered, dim, label);
+      assert_int_eq(
+          SymmetryVectorOwnerOfGlobalIndex(dim, nrank, 0UL),
+          -1, label);
+      if (dim < ULONG_MAX) {
+        assert_int_eq(
+            SymmetryVectorOwnerOfGlobalIndex(dim, nrank, dim + 1UL),
+            -1, label);
+      }
+    }
+  }
+}
+
 static void assert_vector_owner_and_request_layout(const char *label)
 {
   const unsigned long int columns[] = {5UL, 1UL, 1UL, 4UL,
@@ -2327,6 +2357,7 @@ static void assert_vector_owner_and_request_layout(const char *label)
   memset(&first, 0, sizeof(first));
   memset(&second, 0, sizeof(second));
   memset(&empty, 0, sizeof(empty));
+  assert_vector_owner_inverse_contract(label);
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 1UL), 0, label);
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 4UL), 0, label);
   assert_int_eq(SymmetryVectorOwnerOfGlobalIndex(10UL, 3, 5UL), 1, label);

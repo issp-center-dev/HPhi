@@ -62,7 +62,8 @@ target_include_directories(unittest_symmetry_basis
 target_compile_definitions(unittest_symmetry_basis PRIVATE
     DSFMT_MEXP=19937 HPHI_SYMMETRY_PARITY_VERIFY
     HPHI_SYMMETRY_CANONICAL_VERIFY HPHI_SYMMETRY_SPIN_VERIFY
-    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1)
+    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
 target_link_libraries(unittest_symmetry_basis m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_basis ${MPI_C_LIBRARIES})
