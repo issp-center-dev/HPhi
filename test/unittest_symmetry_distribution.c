@@ -342,6 +342,40 @@ static void assert_collective_validation_failure(void)
   free_layout(entries, counts, displacements);
 }
 
+static void assert_chunk_limit_agreement(void)
+{
+  struct SymmetryBasisVector *entries = NULL;
+  uint64_t *counts = NULL;
+  uint64_t *displacements = NULL;
+  struct SymmetryMpiExchangeLayout layout;
+  struct SymmetryMpiExchangeOptions options;
+  struct SymmetryMpiExchangeResult result;
+  int status;
+
+  if (test_nrank < 2) return;
+  memset(&result, 0, sizeof(result));
+  build_layout(asymmetric_count, &entries, &counts, &displacements, &layout);
+  options.chunk_limit = test_rank == 0 ? 2U : 3U;
+  options.force_chunked = TRUE;
+  status = SymmetryMpiExchangeBasisVectors(
+      entries, &layout, test_rank, test_nrank, &options, &result, NULL);
+  require_all_ranks_failed(status,
+                           "chunk limit mismatch was not rejected");
+  require_true(result.entries == NULL && result.counts == NULL &&
+                   result.displacements == NULL,
+               "chunk limit mismatch published partial result");
+
+  options.chunk_limit = 2U;
+  require_true(
+      SymmetryMpiExchangeBasisVectors(
+          entries, &layout, test_rank, test_nrank, &options, &result,
+          NULL) == 0,
+      "valid exchange after chunk limit mismatch failed");
+  validate_asymmetric_result(&result);
+  FreeSymmetryMpiExchangeResult(&result);
+  free_layout(entries, counts, displacements);
+}
+
 static void assert_overflow_and_option_validation(void)
 {
   struct SymmetryBasisVector dummy;
@@ -417,6 +451,7 @@ int main(int argc, char **argv)
   assert_asymmetric_fast_and_chunked();
   assert_empty_and_self_only();
   assert_collective_validation_failure();
+  assert_chunk_limit_agreement();
   assert_overflow_and_option_validation();
 
   if (test_rank == 0) {

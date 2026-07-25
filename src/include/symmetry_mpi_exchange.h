@@ -18,7 +18,11 @@ struct SymmetryMpiExchangeLayout {
 };
 
 struct SymmetryMpiExchangeOptions {
-  /* Zero selects INT_MAX. Nonzero values must fit int MPI counts. */
+  /*
+   * Zero selects INT_MAX. Nonzero values must fit int MPI counts.
+   * The effective value must be identical on every active MPI rank;
+   * the exchange checks this collectively and rejects a mismatch.
+   */
   uint64_t chunk_limit;
   /* Internal/test control. Production callers normally pass FALSE. */
   int force_chunked;

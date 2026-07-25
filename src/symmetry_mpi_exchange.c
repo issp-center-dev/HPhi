@@ -363,6 +363,8 @@ int SymmetryMpiExchangeBasisVectors(
 #ifdef MPI
   int comm_rank = 0;
   int comm_size = 1;
+  uint64_t chunk_limit_min = 0U;
+  uint64_t chunk_limit_max = 0U;
   int use_chunked = FALSE;
   int global_use_chunked = FALSE;
   MPI_Datatype vector_type = MPI_DATATYPE_NULL;
@@ -410,6 +412,18 @@ int SymmetryMpiExchangeBasisVectors(
     local_error = 1;
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+
+#ifdef MPI
+  if (mpi_active != FALSE && nrank > 1) {
+    if (MPI_Allreduce(&chunk_limit, &chunk_limit_min, 1, MPI_UINT64_T,
+                      MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&chunk_limit, &chunk_limit_max, 1, MPI_UINT64_T,
+                      MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      return -1;
+    }
+    if (chunk_limit_min != chunk_limit_max) return -1;
+  }
+#endif
 
   next_result.counts = (uint64_t *)malloc(schedule_bytes);
   next_result.displacements = (uint64_t *)malloc(schedule_bytes);
