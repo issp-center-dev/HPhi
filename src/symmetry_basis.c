@@ -6,6 +6,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_checked.h"
 #include "symmetry_diagonal.h"
+#include "symmetry_directory.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
@@ -1095,6 +1096,19 @@ int BuildSymmetryBasisForLayout(
     FreeSymmetryBasis(sym);
     return -1;
   }
+  if (layout == SYMMETRY_BASIS_DISTRIBUTED) {
+    if (BuildSymmetryRepresentativeDirectory(
+            sym->local_basis, sym->dim, sym->local_dim,
+            sym->local_capacity, sym->local_offset,
+            sym->rank_offsets, myrank, nproc,
+            &sym->representative_directory) != 0) {
+      goto fail;
+    }
+    local_error =
+        SymmetryBasisRepresentativeDirectoryReady(sym) != TRUE ? 1 : 0;
+    global_error = SumMPI_i(local_error);
+    if (global_error != 0) goto fail;
+  }
   X->Sym = sym;
   return 0;
 
@@ -1215,7 +1229,8 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
     if (X->Sym->basis_layout == SYMMETRY_BASIS_REPLICATED) {
       if (X->Sym->local_basis != NULL ||
           X->Sym->local_capacity != 0UL ||
-          X->Sym->rank_offsets != NULL) {
+          X->Sym->rank_offsets != NULL ||
+          X->Sym->representative_directory != NULL) {
         return -1;
       }
       X->Sym->local_offset = expected_offset;
@@ -1225,6 +1240,7 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
           X->Sym->local_dim != expected_dim ||
           SymmetryBasisOwnedStorageReady(
               X->Sym, expected_dim) != TRUE ||
+          SymmetryBasisRepresentativeDirectoryReady(X->Sym) != TRUE ||
           X->Sym->mpi_recvcounts != NULL ||
           X->Sym->mpi_displs != NULL ||
           X->Sym->mpi_full_v1 != NULL) {
@@ -1338,6 +1354,27 @@ int SymmetryBasisOwnedStorageReady(
   return TRUE;
 }
 
+int SymmetryBasisRepresentativeDirectoryReady(
+    const struct SymmetryBasisRuntime *sym)
+{
+  struct SymmetryRepresentativeDirectoryInfo info;
+  if (sym == NULL || sym->enabled != TRUE ||
+      sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED ||
+      sym->representative_directory == NULL ||
+      SymmetryRepresentativeDirectoryReady(
+          sym->representative_directory) == 0 ||
+      GetSymmetryRepresentativeDirectoryInfo(
+          sym->representative_directory, &info) != 0 ||
+      nproc < 1 || myrank < 0 || myrank >= nproc) {
+    return FALSE;
+  }
+  return info.dim == sym->dim &&
+      info.local_offset == sym->local_offset &&
+      info.local_dim == sym->local_dim &&
+      info.rank == myrank &&
+      info.nrank == nproc;
+}
+
 static uint64_t hash_symmetry_bytes(
     uint64_t hash,
     const void *data,
@@ -1441,6 +1478,7 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
 {
   if (sym == NULL) return;
   FreeSymmetryMatvecPlan(sym->matvec_plan);
+  FreeSymmetryRepresentativeDirectory(sym->representative_directory);
   if (sym->local_basis != sym->basis) free(sym->local_basis);
   free(sym->basis);
   free(sym->rank_offsets);

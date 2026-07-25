@@ -7,6 +7,7 @@
 struct BindStruct;
 struct DefineList;
 struct SymmetryMatvecPlan;
+struct SymmetryRepresentativeDirectory;
 
 struct SymmetryBasisVector {
   unsigned long int rep_state;
@@ -66,6 +67,7 @@ struct SymmetryBasisRuntime {
   unsigned long int local_capacity;
   struct SymmetryBasisVector *local_basis;
   unsigned long int *rank_offsets;
+  struct SymmetryRepresentativeDirectory *representative_directory;
   struct SymmetryBasisDistributionStats distribution_stats;
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
@@ -180,6 +182,8 @@ int GetOwnedHamiltonianDiagonal(const struct BindStruct *X,
 int SymmetryBasisOwnedStorageReady(
     const struct SymmetryBasisRuntime *sym,
     unsigned long int expected_local_dim);
+int SymmetryBasisRepresentativeDirectoryReady(
+    const struct SymmetryBasisRuntime *sym);
 int ComputeSymmetryBasisDigest(
     const struct SymmetryBasisRuntime *sym,
     struct SymmetryBasisDigest *digest);

@@ -3596,7 +3596,6 @@ static void assert_c5_directory_transition_batch(
     unsigned long int target_count,
     const char *label)
 {
-  struct SymmetryRepresentativeDirectory *directory = NULL;
   unsigned long int *keys;
   unsigned long int *global_beta;
   double *norm;
@@ -3620,12 +3619,10 @@ static void assert_c5_directory_transition_batch(
     global_beta[index] = ULONG_MAX;
     norm[index] = -1.0;
   }
-  if (BuildSymmetryRepresentativeDirectory(
-          X->Sym->local_basis, X->Sym->dim, X->Sym->local_dim,
-          X->Sym->local_capacity, X->Sym->local_offset,
-          X->Sym->rank_offsets, myrank, nproc, &directory) != 0 ||
+  if (SymmetryBasisRepresentativeDirectoryReady(X->Sym) != TRUE ||
       SymmetryResolveRepresentativeBatch(
-          directory, keys, (uint64_t)target_count,
+          X->Sym->representative_directory,
+          keys, (uint64_t)target_count,
           global_beta, norm) != 0) {
     fprintf(stderr, "%s: distributed transition batch failed\n", label);
     exit(1);
@@ -3640,10 +3637,125 @@ static void assert_c5_directory_transition_batch(
       exit(1);
     }
   }
-  FreeSymmetryRepresentativeDirectory(directory);
   free(keys);
   free(global_beta);
   free(norm);
+}
+
+static void assert_c6_full_basis_directory_batch(
+    struct SymmetryBasisRuntime *sym,
+    const struct SymmetryBasisVector *reference_basis,
+    const char *label)
+{
+  struct SymmetryRepresentativeBatchOptions options;
+  unsigned long int *keys;
+  unsigned long int *global_beta;
+  double *norm;
+  unsigned long int missing_key = 0UL;
+  unsigned long int index;
+  int pass;
+  if (sym == NULL || reference_basis == NULL || sym->dim == 0UL ||
+      sym->dim > (unsigned long int)(SIZE_MAX / sizeof(*keys)) ||
+      sym->dim > (unsigned long int)(SIZE_MAX / sizeof(*norm))) {
+    fprintf(stderr, "%s: invalid full-basis directory fixture\n", label);
+    exit(1);
+  }
+  keys = (unsigned long int *)malloc((size_t)sym->dim * sizeof(*keys));
+  global_beta =
+      (unsigned long int *)malloc((size_t)sym->dim *
+                                  sizeof(*global_beta));
+  norm = (double *)malloc((size_t)sym->dim * sizeof(*norm));
+  if (keys == NULL || global_beta == NULL || norm == NULL) {
+    fprintf(stderr, "%s: full-basis directory allocation failed\n", label);
+    exit(1);
+  }
+  for (index = 1UL; index <= sym->dim; index++) {
+    keys[index - 1UL] = reference_basis[index].rep_state;
+  }
+  memset(&options, 0, sizeof(options));
+  options.corrupt_response_rank = -1;
+  for (pass = 0; pass < 2; pass++) {
+    int status;
+    for (index = 0UL; index < sym->dim; index++) {
+      global_beta[index] = ULONG_MAX;
+      norm[index] = -1.0;
+    }
+    if (pass == 0) {
+      status = SymmetryResolveRepresentativeBatch(
+          sym->representative_directory, keys, (uint64_t)sym->dim,
+          global_beta, norm);
+    } else {
+      options.force_chunked = 1;
+      options.chunk_limit = 1U;
+      options.debug_echo = 1;
+      status = SymmetryResolveRepresentativeBatchWithOptions(
+          sym->representative_directory, keys, (uint64_t)sym->dim,
+          global_beta, norm, &options);
+    }
+    if (status != 0) {
+      fprintf(stderr, "%s: full-basis directory batch failed\n", label);
+      exit(1);
+    }
+    for (index = 1UL; index <= sym->dim; index++) {
+      if (global_beta[index - 1UL] != index ||
+          memcmp(&norm[index - 1UL], &reference_basis[index].norm,
+                 sizeof(norm[index - 1UL])) != 0) {
+        fprintf(stderr,
+                "%s: full-basis directory mismatch at beta %lu pass %d\n",
+                label, index, pass);
+        exit(1);
+      }
+    }
+  }
+  for (index = 1UL; index <= sym->dim; index++) {
+    if (missing_key < reference_basis[index].rep_state) break;
+    if (missing_key == reference_basis[index].rep_state) {
+      if (missing_key == ULONG_MAX) {
+        fprintf(stderr, "%s: missing-key search overflow\n", label);
+        exit(1);
+      }
+      missing_key++;
+    }
+  }
+  {
+    unsigned long int missing_beta = ULONG_MAX;
+    double missing_norm = -1.0;
+    const double positive_zero = 0.0;
+    if (SymmetryResolveRepresentativeBatch(
+            sym->representative_directory, &missing_key, 1U,
+            &missing_beta, &missing_norm) != 0 ||
+        missing_beta != 0UL ||
+        memcmp(&missing_norm, &positive_zero,
+               sizeof(missing_norm)) != 0) {
+      fprintf(stderr, "%s: nonexistent representative mismatch\n", label);
+      exit(1);
+    }
+  }
+  free(keys);
+  free(global_beta);
+  free(norm);
+}
+
+static struct SymmetryRepresentativeDirectory *
+build_c6_zero_dimension_directory(const char *label)
+{
+  struct SymmetryRepresentativeDirectory *directory = NULL;
+  unsigned long int *rank_offsets =
+      (unsigned long int *)calloc((size_t)nproc + 1U,
+                                  sizeof(*rank_offsets));
+  if (SumMPI_i(rank_offsets == NULL ? 1 : 0) != 0) {
+    fprintf(stderr, "%s: zero-dimension offset allocation failed\n", label);
+    exit(1);
+  }
+  if (BuildSymmetryRepresentativeDirectory(
+          NULL, 0UL, 0UL, 0UL, 0UL, rank_offsets,
+          myrank, nproc, &directory) != 0 ||
+      SymmetryRepresentativeDirectoryReady(directory) == 0) {
+    fprintf(stderr, "%s: zero-dimension directory build failed\n", label);
+    exit(1);
+  }
+  free(rank_offsets);
+  return directory;
 }
 
 static void assert_c5_distributed_layout_model(
@@ -3678,6 +3790,9 @@ static void assert_c5_distributed_layout_model(
     exit(1);
   }
   assert_int_eq(X.Sym->basis_layout, SYMMETRY_BASIS_REPLICATED, label);
+  assert_int_eq(X.Sym->representative_directory == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisRepresentativeDirectoryReady(X.Sym), FALSE, label);
   assert_int_eq(
       ComputeSymmetryBasisDigest(X.Sym, &replicated_digest), 0, label);
   assert_int_eq(
@@ -3721,6 +3836,13 @@ static void assert_c5_distributed_layout_model(
                     X.Sym->rep_hash_values == NULL,
                 1, label);
   assert_int_eq(X.Sym->rank_offsets != NULL, 1, label);
+  assert_int_eq(X.Sym->representative_directory != NULL, 1, label);
+  assert_int_eq(
+      SymmetryRepresentativeDirectoryReady(
+          X.Sym->representative_directory),
+      1, label);
+  assert_int_eq(
+      SymmetryBasisRepresentativeDirectoryReady(X.Sym), TRUE, label);
   assert_ulong_eq(X.Sym->rank_offsets[0], 0UL, label);
   assert_ulong_eq(X.Sym->rank_offsets[nproc], dim, label);
   assert_ulong_eq(X.Sym->rank_offsets[myrank],
@@ -3755,6 +3877,9 @@ static void assert_c5_distributed_layout_model(
     const struct SymmetryBasisVector *entry =
         SymmetryBasisLocalEntry(X.Sym, local_index);
     unsigned long int global_beta = X.Sym->local_offset + local_index;
+    unsigned long int lookup_local_index = ULONG_MAX;
+    unsigned long int lookup_global_beta = ULONG_MAX;
+    double lookup_norm = -1.0;
     assert_int_eq(entry != NULL, 1, label);
     assert_int_eq(c1_basis_vector_fields_equal(
                       entry, &reference_basis[global_beta]),
@@ -3763,6 +3888,41 @@ static void assert_c5_distributed_layout_model(
         GetOwnedHamiltonianDiagonal(&X, local_index, &diagonal), 0, label);
     assert_complex_close(
         diagonal, reference_basis[global_beta].diagonal, 0.0, label);
+    assert_int_eq(
+        SymmetryLookupDirectoryLocalRepresentative(
+            X.Sym->representative_directory, entry->rep_state,
+            &lookup_local_index, &lookup_global_beta,
+            &lookup_norm, NULL),
+        0, label);
+    assert_ulong_eq(lookup_local_index, local_index, label);
+    assert_ulong_eq(lookup_global_beta, global_beta, label);
+    assert_int_eq(
+        memcmp(&lookup_norm, &reference_basis[global_beta].norm,
+               sizeof(lookup_norm)) == 0,
+        1, label);
+  }
+  if (X.Sym->local_dim < dim) {
+    unsigned long int remote_beta =
+        X.Sym->local_offset > 0UL
+            ? 1UL
+            : X.Sym->local_offset + X.Sym->local_dim + 1UL;
+    unsigned long int lookup_local_index = ULONG_MAX;
+    unsigned long int lookup_global_beta = ULONG_MAX;
+    double lookup_norm = -1.0;
+    const double positive_zero = 0.0;
+    assert_int_eq(remote_beta >= 1UL && remote_beta <= dim, 1, label);
+    assert_int_eq(
+        SymmetryLookupDirectoryLocalRepresentative(
+            X.Sym->representative_directory,
+            reference_basis[remote_beta].rep_state,
+            &lookup_local_index, &lookup_global_beta,
+            &lookup_norm, NULL),
+        0, label);
+    assert_ulong_eq(lookup_local_index, 0UL, label);
+    assert_ulong_eq(lookup_global_beta, 0UL, label);
+    assert_int_eq(
+        memcmp(&lookup_norm, &positive_zero, sizeof(lookup_norm)) == 0,
+        1, label);
   }
   assert_int_eq(SymmetryBasisLocalEntry(X.Sym, 0UL) == NULL, 1, label);
   assert_int_eq(
@@ -3777,6 +3937,7 @@ static void assert_c5_distributed_layout_model(
       label);
   assert_int_eq(
       representative.op_rep_to_state < X.Def.NSymTrans, 1, label);
+  assert_c6_full_basis_directory_batch(X.Sym, reference_basis, label);
   assert_c5_directory_transition_batch(
       &X, model, directory_targets, directory_target_count, label);
 
@@ -3848,6 +4009,10 @@ static void assert_c5_distributed_layout_model(
     struct SymmetryBasisVector *saved_local_basis = X.Sym->local_basis;
     unsigned long int saved_local_capacity = X.Sym->local_capacity;
     unsigned long int saved_rank_end = X.Sym->rank_offsets[nproc];
+    struct SymmetryRepresentativeDirectory *saved_directory =
+        X.Sym->representative_directory;
+    struct SymmetryRepresentativeDirectory *mismatched_directory;
+    struct SymmetryBasisRuntime *partial_runtime;
     X.Sym->local_basis = NULL;
     assert_int_eq(
         SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
@@ -3875,14 +4040,46 @@ static void assert_c5_distributed_layout_model(
     assert_int_eq(
         SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
         TRUE, label);
+    X.Sym->representative_directory = NULL;
+    assert_int_eq(
+        SymmetryBasisRepresentativeDirectoryReady(X.Sym), FALSE, label);
+    assert_int_eq(ActivateSymmetryBasisDimension(&X), -1, label);
+    assert_ulong_eq(X.Check.idim_max, raw_dim, label);
+    X.Sym->representative_directory = saved_directory;
+    mismatched_directory = build_c6_zero_dimension_directory(label);
+    X.Sym->representative_directory = mismatched_directory;
+    assert_int_eq(
+        SymmetryBasisRepresentativeDirectoryReady(X.Sym), FALSE, label);
+    assert_int_eq(ActivateSymmetryBasisDimension(&X), -1, label);
+    assert_ulong_eq(X.Check.idim_max, raw_dim, label);
+    X.Sym->representative_directory = saved_directory;
+    partial_runtime =
+        (struct SymmetryBasisRuntime *)calloc(1U,
+                                              sizeof(*partial_runtime));
+    if (partial_runtime == NULL) {
+      fprintf(stderr, "%s: partial runtime allocation failed\n", label);
+      exit(1);
+    }
+    partial_runtime->representative_directory = mismatched_directory;
+    FreeSymmetryBasis(partial_runtime);
+    assert_int_eq(
+        SymmetryBasisRepresentativeDirectoryReady(X.Sym), TRUE, label);
   }
 
-  assert_int_eq(ActivateSymmetryBasisDimension(&X), 0, label);
+  {
+    struct SymmetryRepresentativeDirectory *saved_directory =
+        X.Sym->representative_directory;
+    assert_int_eq(ActivateSymmetryBasisDimension(&X), 0, label);
+    assert_int_eq(
+        X.Sym->representative_directory == saved_directory, 1, label);
+  }
   assert_ulong_eq(X.Check.idim_max, X.Sym->local_dim, label);
   assert_ulong_eq(X.Check.idim_maxMPI, dim, label);
   assert_int_eq(
       SymmetryBasisOwnedStorageReady(X.Sym, X.Check.idim_max),
       TRUE, label);
+  assert_int_eq(
+      SymmetryBasisRepresentativeDirectoryReady(X.Sym), TRUE, label);
   assert_int_eq(
       SymmetryCanonicalizeState(&X, 0UL, &canonical), -1, label);
   assert_int_eq(
