@@ -50,6 +50,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
@@ -79,12 +80,14 @@ set_tests_properties(symmetry_rank_local_run_mpi
 
 add_executable(unittest_symmetry_distribution
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
 target_include_directories(unittest_symmetry_distribution
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(unittest_symmetry_distribution PRIVATE
     DSFMT_MEXP=19937
-    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256)
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
+    HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES=16384)
 target_link_libraries(unittest_symmetry_distribution m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_distribution ${MPI_C_LIBRARIES})

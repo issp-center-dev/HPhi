@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
+#define HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES UINT64_C(1073741824)
+#endif
+
 struct BindStruct;
 struct SymmetryBasisRuntime;
 struct SymmetryBasisVector;
@@ -31,12 +35,31 @@ struct SymmetryBasisOwnership {
 
 struct SymmetryBasisDistributionStats {
   uint64_t local_survivor_entries;
+  uint64_t nonempty_rank_count;
+  uint64_t samples_per_nonempty_rank;
+  uint64_t local_sample_entries;
+  uint64_t global_sample_entries;
+  /* C3 sample-sort range redistribution. */
   uint64_t sample_send_entries;
   uint64_t sample_recv_entries;
+  uint64_t local_sample_gap;
+  uint64_t global_sample_gap_max;
+  uint64_t global_sample_gap_sum;
+  uint64_t bucket_sample_entries;
+  uint64_t bucket_entry_upper_bound;
+  uint64_t global_entries;
   uint64_t range_entries;
+  uint64_t range_max_entries;
+  /* C4 exact block rebalance; left zero by C3. */
   uint64_t rebalance_send_entries;
   uint64_t rebalance_recv_entries;
+  uint64_t sample_sort_memory_byte_limit;
+  uint64_t splitter_digest;
+  uint64_t range_digest;
+  double range_max_over_mean;
+  /* Complete C3 temporary peak, including sampling and range merge. */
   size_t sample_temporary_peak_bytes;
+  /* C4 exact block rebalance temporary peak; left zero by C3. */
   size_t rebalance_temporary_peak_bytes;
 };
 
@@ -50,6 +73,21 @@ int BuildRankLocalSymmetryBasisRun(
     const struct BindStruct *X,
     struct SymmetryBasisRuntime *sym,
     struct SymmetryBasisRun *run);
+
+/* Shared qsort comparator for replicated and distributed basis ordering. */
+int SymmetryCompareBasisRepState(const void *lhs, const void *rhs);
+
+/*
+ * Sorts a valid run locally and redistributes it into deterministic
+ * rep_state ranges.  On success the old storage is freed and run owns the
+ * new sentinel-based range.  On failure run retains its storage and count,
+ * but its entries may have been locally sorted.
+ */
+int SymmetrySampleSortBasisRun(
+    struct SymmetryBasisRun *run,
+    int rank,
+    int nrank,
+    struct SymmetryBasisDistributionStats *stats);
 
 void FreeSymmetryBasisRun(struct SymmetryBasisRun *run);
 void FreeSymmetryBasisOwnership(

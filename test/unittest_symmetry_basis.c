@@ -3303,6 +3303,62 @@ static void assert_rank_local_basis_run_contract(const char *label)
     assert_ulong_eq(presence[index], 1UL, label);
   }
 
+  memset(presence, 0,
+         ((size_t)X.Sym->dim + 1U) * sizeof(*presence));
+  {
+    struct SymmetryBasisDistributionStats distribution_stats;
+    if (SymmetrySampleSortBasisRun(
+            &run, myrank, nproc, &distribution_stats) != 0) {
+      fprintf(stderr, "%s: distributed sample sort failed\n", label);
+      exit(1);
+    }
+    assert_ulong_eq(
+        (unsigned long int)distribution_stats.global_entries,
+        X.Sym->dim, label);
+    assert_ulong_eq(
+        (unsigned long int)distribution_stats.range_entries,
+        run.count, label);
+    assert_int_eq(
+        distribution_stats.range_entries <=
+            distribution_stats.bucket_entry_upper_bound,
+        1, label);
+  }
+  for (index = 1UL; index <= run.count; index++) {
+    unsigned long int beta;
+    int found = FALSE;
+    if (index > 1UL) {
+      assert_int_eq(run.entries[index - 1UL].rep_state <
+                        run.entries[index].rep_state,
+                    1, label);
+    }
+    for (beta = 1UL; beta <= X.Sym->dim; beta++) {
+      if (run.entries[index].rep_state !=
+          X.Sym->basis[beta].rep_state) {
+        continue;
+      }
+      assert_int_eq(c1_basis_vector_fields_equal(
+                        &run.entries[index], &X.Sym->basis[beta]),
+                    1, label);
+      presence[beta]++;
+      found = TRUE;
+      break;
+    }
+    assert_int_eq(found, TRUE, label);
+  }
+#ifdef MPI
+  if (nproc > 1) {
+    if (MPI_Allreduce(MPI_IN_PLACE, presence, (int)(X.Sym->dim + 1UL),
+                      MPI_UNSIGNED_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: sample-sort presence reduction failed\n", label);
+      exit(1);
+    }
+  }
+#endif
+  for (index = 1UL; index <= X.Sym->dim; index++) {
+    assert_ulong_eq(presence[index], 1UL, label);
+  }
+
   free(presence);
   FreeSymmetryBasisRun(&run);
   assert_int_eq(run.entries == NULL && run.count == 0UL &&
@@ -3331,6 +3387,20 @@ static void assert_empty_rank_local_basis_run(const char *label)
   assert_ulong_eq(run.count, 0UL, label);
   assert_ulong_eq(run.capacity, 1UL, label);
   assert_int_eq(run.entries != NULL, 1, label);
+  {
+    struct SymmetryBasisDistributionStats distribution_stats;
+    if (SymmetrySampleSortBasisRun(
+            &run, myrank, nproc, &distribution_stats) != 0) {
+      fprintf(stderr, "%s: empty sample sort failed\n", label);
+      exit(1);
+    }
+    assert_ulong_eq(run.count, 0UL, label);
+    assert_ulong_eq(run.capacity, 1UL, label);
+    assert_int_eq(run.entries != NULL, 1, label);
+    assert_ulong_eq(
+        (unsigned long int)distribution_stats.global_entries,
+        0UL, label);
+  }
   global_count = run.count;
 #ifdef MPI
   if (nproc > 1) {

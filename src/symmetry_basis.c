@@ -387,26 +387,6 @@ static int symmetry_basis_run_is_valid(const struct SymmetryBasisRun *run)
 }
 #endif
 
-void FreeSymmetryBasisRun(struct SymmetryBasisRun *run)
-{
-  if (run == NULL) return;
-  free(run->entries);
-  run->entries = NULL;
-  run->count = 0UL;
-  run->capacity = 0UL;
-}
-
-void FreeSymmetryBasisOwnership(
-    struct SymmetryBasisOwnership *ownership)
-{
-  if (ownership == NULL) return;
-  free(ownership->rank_offsets);
-  ownership->rank_offsets = NULL;
-  ownership->dim = 0UL;
-  ownership->local_offset = 0UL;
-  ownership->local_dim = 0UL;
-}
-
 static unsigned long int symmetry_distribution_chunk(unsigned long int full_dim,
                                                      int nrank)
 {
@@ -466,15 +446,6 @@ static int ensure_collector_capacity(struct SymmetryBasisCollector *collector,
   if (next == NULL) return -1;
   collector->entries = next;
   collector->capacity = next_capacity;
-  return 0;
-}
-
-static int compare_basis_rep_state(const void *lhs, const void *rhs)
-{
-  const struct SymmetryBasisVector *a = (const struct SymmetryBasisVector *)lhs;
-  const struct SymmetryBasisVector *b = (const struct SymmetryBasisVector *)rhs;
-  if (a->rep_state < b->rep_state) return -1;
-  if (a->rep_state > b->rep_state) return 1;
   return 0;
 }
 
@@ -1064,7 +1035,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
   StartTimer(1111);
   if (sym->dim > 1) {
     qsort(sym->basis + 1, sym->dim, sizeof(struct SymmetryBasisVector),
-          compare_basis_rep_state);
+          SymmetryCompareBasisRepState);
   }
   StopTimer(1111);
   StartTimer(1112);
