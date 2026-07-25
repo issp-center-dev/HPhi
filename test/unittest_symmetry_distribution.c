@@ -17,6 +17,8 @@
 static int test_rank = 0;
 static int test_nrank = 1;
 static uint64_t test_message_entry_limit = 0U;
+static uint64_t test_request_message_entry_limit = 0U;
+static uint64_t test_response_message_entry_limit = 0U;
 #ifdef MPI
 static int test_mpi_active = FALSE;
 #endif
@@ -527,6 +529,552 @@ static void assert_overflow_and_option_validation(void)
   require_all_ranks_failed(
       status, "chunk limit above compiled message cap did not fail");
 
+  free(counts);
+  free(displacements);
+}
+
+static unsigned long int make_request_entry(int source,
+                                            int destination,
+                                            uint64_t index,
+                                            unsigned int generation)
+{
+  return 1UL +
+      (unsigned long int)generation * 100000000UL +
+      (unsigned long int)source * 100000UL +
+      (unsigned long int)destination * 1000UL +
+      (unsigned long int)index;
+}
+
+static struct SymmetryMpiLookupResponse make_lookup_response(
+    unsigned long int request)
+{
+  struct SymmetryMpiLookupResponse response;
+  memset(&response, 0, sizeof(response));
+  response.global_beta = request + 17UL;
+  response.norm = (double)request * 0.125 + 0.375;
+  return response;
+}
+
+static int lookup_response_bits_equal(
+    const struct SymmetryMpiLookupResponse *lhs,
+    const struct SymmetryMpiLookupResponse *rhs)
+{
+  return memcmp(&lhs->global_beta, &rhs->global_beta,
+                sizeof(lhs->global_beta)) == 0 &&
+         memcmp(&lhs->norm, &rhs->norm, sizeof(lhs->norm)) == 0;
+}
+
+static void build_unsigned_long_layout(
+    uint64_t (*count_function)(int, int),
+    unsigned int generation,
+    unsigned long int **entries,
+    uint64_t **counts,
+    uint64_t **displacements,
+    struct SymmetryMpiExchangeLayout *layout)
+{
+  uint64_t total = 0U;
+  int destination;
+  *counts = (uint64_t *)calloc((size_t)test_nrank, sizeof(**counts));
+  *displacements =
+      (uint64_t *)calloc((size_t)test_nrank, sizeof(**displacements));
+  require_true(*counts != NULL && *displacements != NULL,
+               "typed request layout allocation failed");
+  for (destination = 0; destination < test_nrank; destination++) {
+    (*counts)[destination] =
+        count_function(test_rank, destination);
+    (*displacements)[destination] = total;
+    total += (*counts)[destination];
+  }
+  *entries = total > 0U
+      ? (unsigned long int *)malloc((size_t)total * sizeof(**entries))
+      : NULL;
+  require_true(total == 0U || *entries != NULL,
+               "typed request entry allocation failed");
+  for (destination = 0; destination < test_nrank; destination++) {
+    uint64_t index;
+    for (index = 0U; index < (*counts)[destination]; index++) {
+      (*entries)[(*displacements)[destination] + index] =
+          make_request_entry(test_rank, destination, index, generation);
+    }
+  }
+  layout->nrank = test_nrank;
+  layout->count = total;
+  layout->counts = *counts;
+  layout->displacements = *displacements;
+}
+
+static void validate_unsigned_long_result(
+    const struct SymmetryMpiUnsignedLongResult *result,
+    uint64_t (*count_function)(int, int),
+    unsigned int generation)
+{
+  uint64_t total = 0U;
+  int source;
+  require_true(result->nrank == test_nrank,
+               "typed request receive rank count mismatch");
+  for (source = 0; source < test_nrank; source++) {
+    uint64_t expected_count = count_function(source, test_rank);
+    uint64_t index;
+    require_true(result->counts[source] == expected_count,
+                 "typed request receive peer count mismatch");
+    require_true(result->displacements[source] == total,
+                 "typed request source-rank segment order mismatch");
+    for (index = 0U; index < expected_count; index++) {
+      unsigned long int expected =
+          make_request_entry(source, test_rank, index, generation);
+      require_true(
+          result->entries[result->displacements[source] + index] == expected,
+          "typed request payload mismatch");
+    }
+    total += expected_count;
+  }
+  require_true(result->count == total,
+               "typed request receive total mismatch");
+}
+
+static struct SymmetryMpiLookupResponse *build_lookup_responses(
+    const struct SymmetryMpiUnsignedLongResult *requests)
+{
+  struct SymmetryMpiLookupResponse *responses =
+      requests->count > 0U
+          ? (struct SymmetryMpiLookupResponse *)malloc(
+                (size_t)requests->count * sizeof(*responses))
+          : NULL;
+  uint64_t index;
+  require_true(requests->count == 0U || responses != NULL,
+               "typed response allocation failed");
+  for (index = 0U; index < requests->count; index++) {
+    responses[index] = make_lookup_response(requests->entries[index]);
+  }
+  return responses;
+}
+
+static void validate_lookup_response_result(
+    const struct SymmetryMpiLookupResponseResult *result,
+    const unsigned long int *original_requests,
+    const struct SymmetryMpiExchangeLayout *original_layout)
+{
+  uint64_t total = 0U;
+  int source;
+  require_true(result->nrank == test_nrank &&
+                   result->count == original_layout->count,
+               "typed response result shape mismatch");
+  for (source = 0; source < test_nrank; source++) {
+    uint64_t index;
+    require_true(
+        result->counts[source] == original_layout->counts[source] &&
+            result->displacements[source] ==
+                original_layout->displacements[source] &&
+            result->displacements[source] == total,
+        "typed response known source-rank layout mismatch");
+    for (index = 0U; index < result->counts[source]; index++) {
+      uint64_t offset = result->displacements[source] + index;
+      struct SymmetryMpiLookupResponse expected =
+          make_lookup_response(original_requests[offset]);
+      require_true(
+          lookup_response_bits_equal(&result->entries[offset], &expected),
+          "typed response payload mismatch");
+    }
+    total += result->counts[source];
+  }
+  require_true(total == result->count,
+               "typed response total mismatch");
+}
+
+static void validate_unsigned_long_results_equal(
+    const struct SymmetryMpiUnsignedLongResult *lhs,
+    const struct SymmetryMpiUnsignedLongResult *rhs)
+{
+  uint64_t index;
+  int peer;
+  require_true(lhs->nrank == rhs->nrank && lhs->count == rhs->count,
+               "typed request fast/chunk shape mismatch");
+  for (peer = 0; peer < lhs->nrank; peer++) {
+    require_true(lhs->counts[peer] == rhs->counts[peer] &&
+                     lhs->displacements[peer] ==
+                         rhs->displacements[peer],
+                 "typed request fast/chunk schedule mismatch");
+  }
+  for (index = 0U; index < lhs->count; index++) {
+    require_true(lhs->entries[index] == rhs->entries[index],
+                 "typed request fast/chunk payload mismatch");
+  }
+}
+
+static void validate_lookup_response_results_equal(
+    const struct SymmetryMpiLookupResponseResult *lhs,
+    const struct SymmetryMpiLookupResponseResult *rhs)
+{
+  uint64_t index;
+  int peer;
+  require_true(lhs->nrank == rhs->nrank && lhs->count == rhs->count,
+               "typed response fast/chunk shape mismatch");
+  for (peer = 0; peer < lhs->nrank; peer++) {
+    require_true(lhs->counts[peer] == rhs->counts[peer] &&
+                     lhs->displacements[peer] ==
+                         rhs->displacements[peer],
+                 "typed response fast/chunk schedule mismatch");
+  }
+  for (index = 0U; index < lhs->count; index++) {
+    require_true(
+        lookup_response_bits_equal(&lhs->entries[index],
+                                   &rhs->entries[index]),
+        "typed response fast/chunk payload mismatch");
+  }
+}
+
+static void execute_typed_roundtrip(
+    uint64_t (*count_function)(int, int),
+    unsigned int generation,
+    const struct SymmetryMpiExchangeOptions *request_options,
+    const struct SymmetryMpiExchangeOptions *response_options,
+    struct SymmetryMpiUnsignedLongResult *request_result,
+    struct SymmetryMpiLookupResponseResult *response_result,
+    struct SymmetryMpiExchangeStats *request_stats,
+    struct SymmetryMpiExchangeStats *response_stats)
+{
+  unsigned long int *request_entries = NULL;
+  struct SymmetryMpiLookupResponse *response_entries = NULL;
+  uint64_t *counts = NULL;
+  uint64_t *displacements = NULL;
+  struct SymmetryMpiExchangeLayout request_layout;
+  struct SymmetryMpiExchangeLayout response_send_layout;
+
+  build_unsigned_long_layout(
+      count_function, generation, &request_entries,
+      &counts, &displacements, &request_layout);
+  require_true(
+      SymmetryMpiExchangeUnsignedLongs(
+          request_entries, &request_layout, test_rank, test_nrank,
+          request_options, request_result, request_stats) == 0,
+      "typed request exchange failed");
+  validate_unsigned_long_result(
+      request_result, count_function, generation);
+
+  response_entries = build_lookup_responses(request_result);
+  response_send_layout.nrank = request_result->nrank;
+  response_send_layout.count = request_result->count;
+  response_send_layout.counts = request_result->counts;
+  response_send_layout.displacements = request_result->displacements;
+  require_true(
+      SymmetryMpiExchangeLookupResponsesKnownLayout(
+          response_entries, &response_send_layout, &request_layout,
+          test_rank, test_nrank, response_options,
+          response_result, response_stats) == 0,
+      "typed known-layout response exchange failed");
+  validate_lookup_response_result(
+      response_result, request_entries, &request_layout);
+
+  free(response_entries);
+  free(request_entries);
+  free(counts);
+  free(displacements);
+}
+
+static void assert_typed_fast_and_chunked(void)
+{
+  struct SymmetryMpiUnsignedLongResult fast_requests;
+  struct SymmetryMpiUnsignedLongResult chunk_requests;
+  struct SymmetryMpiLookupResponseResult fast_responses;
+  struct SymmetryMpiLookupResponseResult chunk_responses;
+  struct SymmetryMpiExchangeOptions fast_options;
+  struct SymmetryMpiExchangeOptions chunk_options;
+  struct SymmetryMpiExchangeStats fast_request_stats;
+  struct SymmetryMpiExchangeStats chunk_request_stats;
+  struct SymmetryMpiExchangeStats fast_response_stats;
+  struct SymmetryMpiExchangeStats chunk_response_stats;
+
+  memset(&fast_requests, 0, sizeof(fast_requests));
+  memset(&chunk_requests, 0, sizeof(chunk_requests));
+  memset(&fast_responses, 0, sizeof(fast_responses));
+  memset(&chunk_responses, 0, sizeof(chunk_responses));
+  fast_options.chunk_limit = 0U;
+  fast_options.force_chunked = FALSE;
+  chunk_options.chunk_limit = 2U;
+  chunk_options.force_chunked = TRUE;
+
+  execute_typed_roundtrip(
+      asymmetric_count, 0U, &fast_options, &fast_options,
+      &fast_requests, &fast_responses,
+      &fast_request_stats, &fast_response_stats);
+  execute_typed_roundtrip(
+      asymmetric_count, 0U, &chunk_options, &chunk_options,
+      &chunk_requests, &chunk_responses,
+      &chunk_request_stats, &chunk_response_stats);
+  validate_unsigned_long_results_equal(&fast_requests, &chunk_requests);
+  validate_lookup_response_results_equal(&fast_responses, &chunk_responses);
+  require_true(
+      fast_request_stats.message_entry_limit ==
+          test_request_message_entry_limit &&
+          fast_response_stats.message_entry_limit ==
+              test_response_message_entry_limit &&
+          fast_request_stats.message_byte_limit ==
+              test_request_message_entry_limit *
+                  sizeof(unsigned long int) &&
+          fast_response_stats.message_byte_limit ==
+              test_response_message_entry_limit *
+                  sizeof(struct SymmetryMpiLookupResponse),
+      "typed message byte cap stats mismatch");
+  if (test_nrank > 1) {
+    require_true(
+        fast_request_stats.used_chunked == FALSE &&
+            fast_response_stats.used_chunked == FALSE &&
+            chunk_request_stats.used_chunked == TRUE &&
+            chunk_response_stats.used_chunked == TRUE &&
+            chunk_request_stats.max_message_bytes <=
+                chunk_request_stats.message_byte_limit &&
+            chunk_response_stats.max_message_bytes <=
+                chunk_response_stats.message_byte_limit,
+        "typed fast/chunk stats mismatch");
+  }
+
+  FreeSymmetryMpiUnsignedLongResult(&fast_requests);
+  FreeSymmetryMpiUnsignedLongResult(&chunk_requests);
+  FreeSymmetryMpiLookupResponseResult(&fast_responses);
+  FreeSymmetryMpiLookupResponseResult(&chunk_responses);
+}
+
+static uint64_t typed_deep_chunk_count(int source, int destination)
+{
+  uint64_t extra_round;
+  if (source == destination) return 0U;
+  extra_round =
+      source % 2 == 0 ? 0U : test_response_message_entry_limit;
+  return 3U * test_response_message_entry_limit + 1U + extra_round;
+}
+
+static void assert_typed_deep_chunks(void)
+{
+  struct SymmetryMpiUnsignedLongResult requests;
+  struct SymmetryMpiLookupResponseResult responses;
+  struct SymmetryMpiExchangeStats request_stats;
+  struct SymmetryMpiExchangeStats response_stats;
+
+  memset(&requests, 0, sizeof(requests));
+  memset(&responses, 0, sizeof(responses));
+  execute_typed_roundtrip(
+      typed_deep_chunk_count, 1U, NULL, NULL,
+      &requests, &responses, &request_stats, &response_stats);
+  if (test_nrank > 1) {
+    require_true(
+        request_stats.used_chunked == TRUE &&
+            response_stats.used_chunked == TRUE &&
+            request_stats.max_message_entries ==
+                test_request_message_entry_limit &&
+            response_stats.max_message_entries ==
+                test_response_message_entry_limit &&
+            request_stats.max_message_bytes <=
+                HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES &&
+            response_stats.max_message_bytes <=
+                HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES,
+        "typed deep chunk stats mismatch");
+  }
+  FreeSymmetryMpiUnsignedLongResult(&requests);
+  FreeSymmetryMpiLookupResponseResult(&responses);
+}
+
+static void assert_typed_empty_and_self_only(void)
+{
+  uint64_t (*fixtures[2])(int, int) = {empty_count, self_count};
+  int fixture;
+  for (fixture = 0; fixture < 2; fixture++) {
+    struct SymmetryMpiUnsignedLongResult requests;
+    struct SymmetryMpiLookupResponseResult responses;
+    struct SymmetryMpiExchangeOptions options;
+    struct SymmetryMpiExchangeStats request_stats;
+    struct SymmetryMpiExchangeStats response_stats;
+    memset(&requests, 0, sizeof(requests));
+    memset(&responses, 0, sizeof(responses));
+    options.chunk_limit = 1U;
+    options.force_chunked = TRUE;
+    execute_typed_roundtrip(
+        fixtures[fixture], (unsigned int)(fixture + 2),
+        &options, &options, &requests, &responses,
+        &request_stats, &response_stats);
+    require_true(
+        request_stats.send_messages == 0U &&
+            request_stats.recv_messages == 0U &&
+            response_stats.send_messages == 0U &&
+            response_stats.recv_messages == 0U,
+        "typed empty/self exchange posted remote messages");
+    if (fixture == 0) {
+      require_true(
+          requests.entries == NULL && requests.count == 0U &&
+              responses.entries == NULL && responses.count == 0U,
+          "typed all-empty result mismatch");
+    } else {
+      require_true(
+          requests.count == 5U && responses.count == 5U,
+          "typed self-only result count mismatch");
+    }
+    FreeSymmetryMpiUnsignedLongResult(&requests);
+    FreeSymmetryMpiLookupResponseResult(&responses);
+  }
+}
+
+static void assert_typed_failure_recovery(void)
+{
+  unsigned long int *request_entries = NULL;
+  struct SymmetryMpiLookupResponse *response_entries = NULL;
+  uint64_t *counts = NULL;
+  uint64_t *displacements = NULL;
+  uint64_t *known_counts = NULL;
+  uint64_t *known_displacements = NULL;
+  struct SymmetryMpiExchangeLayout request_layout;
+  struct SymmetryMpiExchangeLayout response_send_layout;
+  struct SymmetryMpiExchangeLayout known_receive_layout;
+  struct SymmetryMpiUnsignedLongResult requests;
+  struct SymmetryMpiLookupResponseResult responses;
+  struct SymmetryMpiExchangeOptions options;
+  uint64_t saved_displacement;
+  int failing_rank = test_nrank > 1 ? 1 : 0;
+  int variant;
+  int status;
+
+  memset(&requests, 0, sizeof(requests));
+  memset(&responses, 0, sizeof(responses));
+  build_unsigned_long_layout(
+      asymmetric_count, 4U, &request_entries,
+      &counts, &displacements, &request_layout);
+  saved_displacement = displacements[0];
+  if (test_rank == failing_rank) displacements[0] = 1U;
+  status = SymmetryMpiExchangeUnsignedLongs(
+      request_entries, &request_layout, test_rank, test_nrank,
+      NULL, &requests, NULL);
+  require_all_ranks_failed(
+      status, "typed request one-rank layout failure was not agreed");
+  require_true(
+      requests.entries == NULL && requests.counts == NULL &&
+          requests.displacements == NULL,
+      "typed request failure published partial result");
+  displacements[0] = saved_displacement;
+
+  if (test_nrank > 1) {
+    options.chunk_limit = test_rank == 0 ? 1U : 2U;
+    options.force_chunked = TRUE;
+    status = SymmetryMpiExchangeUnsignedLongs(
+        request_entries, &request_layout, test_rank, test_nrank,
+        &options, &requests, NULL);
+    require_all_ranks_failed(
+        status, "typed request option mismatch was not rejected");
+    require_true(
+        requests.entries == NULL && requests.counts == NULL &&
+            requests.displacements == NULL,
+        "typed request option failure published partial result");
+  }
+
+  options.chunk_limit = 1U;
+  options.force_chunked = TRUE;
+  require_true(
+      SymmetryMpiExchangeUnsignedLongs(
+          request_entries, &request_layout, test_rank, test_nrank,
+          &options, &requests, NULL) == 0,
+      "valid typed request after collective failure failed");
+  validate_unsigned_long_result(&requests, asymmetric_count, 4U);
+  response_entries = build_lookup_responses(&requests);
+  response_send_layout.nrank = requests.nrank;
+  response_send_layout.count = requests.count;
+  response_send_layout.counts = requests.counts;
+  response_send_layout.displacements = requests.displacements;
+
+  known_counts =
+      (uint64_t *)malloc((size_t)test_nrank * sizeof(*known_counts));
+  known_displacements = (uint64_t *)malloc(
+      (size_t)test_nrank * sizeof(*known_displacements));
+  require_true(known_counts != NULL && known_displacements != NULL,
+               "known response layout copy allocation failed");
+  memcpy(known_counts, counts,
+         (size_t)test_nrank * sizeof(*known_counts));
+  memcpy(known_displacements, displacements,
+         (size_t)test_nrank * sizeof(*known_displacements));
+  known_receive_layout.nrank = test_nrank;
+  known_receive_layout.count = request_layout.count;
+  known_receive_layout.counts = known_counts;
+  known_receive_layout.displacements = known_displacements;
+
+  for (variant = 0; variant < 4; variant++) {
+    if (test_rank == failing_rank) {
+      if (variant == 0) {
+        int peer;
+        known_counts[test_rank]++;
+        for (peer = test_rank + 1; peer < test_nrank; peer++) {
+          known_displacements[peer]++;
+        }
+        known_receive_layout.count++;
+      } else if (variant == 1) {
+        known_displacements[0] = 1U;
+      } else if (variant == 2) {
+        known_receive_layout.count++;
+      } else {
+        known_receive_layout.nrank = test_nrank + 1;
+      }
+    }
+    status = SymmetryMpiExchangeLookupResponsesKnownLayout(
+        response_entries, &response_send_layout, &known_receive_layout,
+        test_rank, test_nrank, &options, &responses, NULL);
+    require_all_ranks_failed(
+        status, "invalid known response layout was not rejected");
+    require_true(
+        responses.entries == NULL && responses.counts == NULL &&
+            responses.displacements == NULL,
+        "known response layout failure published partial result");
+    known_receive_layout.nrank = test_nrank;
+    known_receive_layout.count = request_layout.count;
+    memcpy(known_counts, counts,
+           (size_t)test_nrank * sizeof(*known_counts));
+    memcpy(known_displacements, displacements,
+           (size_t)test_nrank * sizeof(*known_displacements));
+  }
+
+  require_true(
+      SymmetryMpiExchangeLookupResponsesKnownLayout(
+          response_entries, &response_send_layout, &known_receive_layout,
+          test_rank, test_nrank, &options, &responses, NULL) == 0,
+      "valid known response exchange after failure failed");
+  validate_lookup_response_result(
+      &responses, request_entries, &request_layout);
+
+  FreeSymmetryMpiLookupResponseResult(&responses);
+  FreeSymmetryMpiUnsignedLongResult(&requests);
+  free(response_entries);
+  free(known_counts);
+  free(known_displacements);
+  free(request_entries);
+  free(counts);
+  free(displacements);
+}
+
+static void assert_typed_overflow_failure(void)
+{
+  unsigned long int dummy = 0UL;
+  uint64_t *counts =
+      (uint64_t *)calloc((size_t)test_nrank, sizeof(*counts));
+  uint64_t *displacements =
+      (uint64_t *)calloc((size_t)test_nrank, sizeof(*displacements));
+  struct SymmetryMpiExchangeLayout layout;
+  struct SymmetryMpiUnsignedLongResult result;
+  int peer;
+  int status;
+
+  require_true(counts != NULL && displacements != NULL,
+               "typed overflow fixture allocation failed");
+  memset(&result, 0, sizeof(result));
+  counts[0] = UINT64_MAX;
+  for (peer = 1; peer < test_nrank; peer++) {
+    displacements[peer] = UINT64_MAX;
+  }
+  layout.nrank = test_nrank;
+  layout.count = UINT64_MAX;
+  layout.counts = counts;
+  layout.displacements = displacements;
+  status = SymmetryMpiExchangeUnsignedLongs(
+      &dummy, &layout, test_rank, test_nrank, NULL, &result, NULL);
+  require_all_ranks_failed(status,
+                           "typed request byte overflow did not fail");
+  require_true(
+      result.entries == NULL && result.counts == NULL &&
+          result.displacements == NULL,
+      "typed overflow failure published partial result");
   free(counts);
   free(displacements);
 }
@@ -1384,8 +1932,18 @@ int main(int argc, char **argv)
   test_message_entry_limit =
       HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES /
       sizeof(struct SymmetryBasisVector);
+  test_request_message_entry_limit =
+      HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES /
+      sizeof(unsigned long int);
+  test_response_message_entry_limit =
+      HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES /
+      sizeof(struct SymmetryMpiLookupResponse);
   require_true(test_message_entry_limit > 0U &&
-                   test_message_entry_limit < (uint64_t)INT_MAX,
+                   test_message_entry_limit < (uint64_t)INT_MAX &&
+                   test_request_message_entry_limit > 0U &&
+                   test_request_message_entry_limit < (uint64_t)INT_MAX &&
+                   test_response_message_entry_limit > 0U &&
+                   test_response_message_entry_limit < (uint64_t)INT_MAX,
                "invalid test message byte cap");
   assert_asymmetric_fast_and_chunked();
   assert_byte_cap_boundary_and_deep_chunks();
@@ -1393,6 +1951,11 @@ int main(int argc, char **argv)
   assert_collective_validation_failure();
   assert_chunk_limit_agreement();
   assert_overflow_and_option_validation();
+  assert_typed_fast_and_chunked();
+  assert_typed_deep_chunks();
+  assert_typed_empty_and_self_only();
+  assert_typed_failure_recovery();
+  assert_typed_overflow_failure();
   assert_sample_sort_fixture(
       SAMPLE_SORT_RANDOM, "unique random sample sort mismatch");
   assert_sample_sort_fixture(
