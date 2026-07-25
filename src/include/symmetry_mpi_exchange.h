@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifndef HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES
+#define HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES UINT64_C(1073741824)
+#endif
+
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -19,7 +23,8 @@ struct SymmetryMpiExchangeLayout {
 
 struct SymmetryMpiExchangeOptions {
   /*
-   * Zero selects INT_MAX. Nonzero values must fit int MPI counts.
+   * Zero selects the entry limit derived from the compile-time message byte
+   * cap. A nonzero value may lower, but not raise, that limit.
    * The effective value must be identical on every active MPI rank;
    * the exchange checks this collectively and rejects a mismatch.
    */
@@ -34,6 +39,10 @@ struct SymmetryMpiExchangeStats {
   uint64_t recv_entries;
   uint64_t send_messages;
   uint64_t recv_messages;
+  uint64_t message_entry_limit;
+  uint64_t message_byte_limit;
+  uint64_t max_message_entries;
+  uint64_t max_message_bytes;
 };
 
 struct SymmetryMpiExchangeResult {

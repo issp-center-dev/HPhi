@@ -15,6 +15,7 @@
 
 static int test_rank = 0;
 static int test_nrank = 1;
+static uint64_t test_message_entry_limit = 0U;
 #ifdef MPI
 static int test_mpi_active = FALSE;
 #endif
@@ -123,15 +124,16 @@ static void free_layout(struct SymmetryBasisVector *entries,
   free(displacements);
 }
 
-static void validate_asymmetric_result(
-    const struct SymmetryMpiExchangeResult *result)
+static void validate_result(
+    const struct SymmetryMpiExchangeResult *result,
+    uint64_t (*count_function)(int, int))
 {
   uint64_t total = 0U;
   int source;
   require_true(result->nrank == test_nrank,
                "receive rank count mismatch");
   for (source = 0; source < test_nrank; source++) {
-    uint64_t expected_count = asymmetric_count(source, test_rank);
+    uint64_t expected_count = count_function(source, test_rank);
     uint64_t index;
     require_true(result->counts[source] == expected_count,
                  "receive peer count mismatch");
@@ -149,6 +151,12 @@ static void validate_asymmetric_result(
     total += expected_count;
   }
   require_true(result->count == total, "receive total mismatch");
+}
+
+static void validate_asymmetric_result(
+    const struct SymmetryMpiExchangeResult *result)
+{
+  validate_result(result, asymmetric_count);
 }
 
 static void validate_results_equal(
@@ -189,7 +197,7 @@ static void assert_asymmetric_fast_and_chunked(void)
 
   memset(&fast_result, 0, sizeof(fast_result));
   memset(&chunk_result, 0, sizeof(chunk_result));
-  fast_options.chunk_limit = 2U;
+  fast_options.chunk_limit = 0U;
   fast_options.force_chunked = FALSE;
   chunk_options.chunk_limit = 2U;
   chunk_options.force_chunked = TRUE;
@@ -230,6 +238,90 @@ static void assert_asymmetric_fast_and_chunked(void)
 
   FreeSymmetryMpiExchangeResult(&fast_result);
   FreeSymmetryMpiExchangeResult(&chunk_result);
+  free_layout(entries, counts, displacements);
+}
+
+static uint64_t byte_cap_boundary_count(int source, int destination)
+{
+  return source == destination ? 0U : test_message_entry_limit;
+}
+
+static uint64_t deep_chunk_count(int source, int destination)
+{
+  uint64_t extra_round;
+  if (source == destination) return 0U;
+  extra_round = source % 2 == 0 ? 0U : test_message_entry_limit;
+  return 3U * test_message_entry_limit + 1U + extra_round;
+}
+
+static void assert_byte_cap_boundary_and_deep_chunks(void)
+{
+  struct SymmetryBasisVector *entries = NULL;
+  uint64_t *counts = NULL;
+  uint64_t *displacements = NULL;
+  struct SymmetryMpiExchangeLayout layout;
+  struct SymmetryMpiExchangeResult result;
+  struct SymmetryMpiExchangeStats stats;
+  uint64_t expected_send_messages = 0U;
+  uint64_t expected_recv_messages = 0U;
+  int peer;
+
+  memset(&result, 0, sizeof(result));
+  build_layout(byte_cap_boundary_count, &entries, &counts, &displacements,
+               &layout);
+  require_true(
+      SymmetryMpiExchangeBasisVectors(
+          entries, &layout, test_rank, test_nrank, NULL, &result,
+          &stats) == 0,
+      "message byte cap boundary exchange failed");
+  validate_result(&result, byte_cap_boundary_count);
+  require_true(stats.message_entry_limit == test_message_entry_limit &&
+                   stats.message_byte_limit ==
+                       test_message_entry_limit *
+                           sizeof(struct SymmetryBasisVector) &&
+                   stats.message_byte_limit <=
+                       HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES,
+               "message byte cap stats mismatch");
+  require_true(stats.used_chunked == FALSE,
+               "message byte cap boundary unexpectedly used chunking");
+  FreeSymmetryMpiExchangeResult(&result);
+  free_layout(entries, counts, displacements);
+
+  entries = NULL;
+  counts = NULL;
+  displacements = NULL;
+  memset(&result, 0, sizeof(result));
+  build_layout(deep_chunk_count, &entries, &counts, &displacements, &layout);
+  require_true(
+      SymmetryMpiExchangeBasisVectors(
+          entries, &layout, test_rank, test_nrank, NULL, &result,
+          &stats) == 0,
+      "automatic message byte chunking failed");
+  validate_result(&result, deep_chunk_count);
+  if (test_nrank > 1) {
+    for (peer = 0; peer < test_nrank; peer++) {
+      if (peer == test_rank) continue;
+      expected_send_messages +=
+          (counts[peer] + test_message_entry_limit - 1U) /
+          test_message_entry_limit;
+      expected_recv_messages +=
+          (deep_chunk_count(peer, test_rank) +
+           test_message_entry_limit - 1U) /
+          test_message_entry_limit;
+    }
+    require_true(stats.used_chunked == TRUE,
+                 "byte cap overflow did not select chunking");
+    require_true(stats.send_messages == expected_send_messages &&
+                     stats.recv_messages == expected_recv_messages,
+                 "deep chunk message count mismatch");
+    require_true(stats.max_message_entries == test_message_entry_limit &&
+                     stats.max_message_bytes ==
+                         test_message_entry_limit *
+                             sizeof(struct SymmetryBasisVector) &&
+                     stats.max_message_bytes <= stats.message_byte_limit,
+                 "deep chunk maximum message size mismatch");
+  }
+  FreeSymmetryMpiExchangeResult(&result);
   free_layout(entries, counts, displacements);
 }
 
@@ -427,6 +519,13 @@ static void assert_overflow_and_option_validation(void)
       NULL, &layout, test_rank, test_nrank, &options, &result, NULL);
   require_all_ranks_failed(status, "invalid chunk limit did not fail");
 
+  options.chunk_limit = test_message_entry_limit + 1U;
+  options.force_chunked = FALSE;
+  status = SymmetryMpiExchangeBasisVectors(
+      NULL, &layout, test_rank, test_nrank, &options, &result, NULL);
+  require_all_ranks_failed(
+      status, "chunk limit above compiled message cap did not fail");
+
   free(counts);
   free(displacements);
 }
@@ -448,7 +547,14 @@ int main(int argc, char **argv)
   }
 #endif
 
+  test_message_entry_limit =
+      HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES /
+      sizeof(struct SymmetryBasisVector);
+  require_true(test_message_entry_limit > 0U &&
+                   test_message_entry_limit < (uint64_t)INT_MAX,
+               "invalid test message byte cap");
   assert_asymmetric_fast_and_chunked();
+  assert_byte_cap_boundary_and_deep_chunks();
   assert_empty_and_self_only();
   assert_collective_validation_failure();
   assert_chunk_limit_agreement();

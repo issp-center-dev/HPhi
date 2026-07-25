@@ -80,7 +80,8 @@ add_executable(unittest_symmetry_distribution
 target_include_directories(unittest_symmetry_distribution
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_compile_definitions(unittest_symmetry_distribution PRIVATE
-    DSFMT_MEXP=19937)
+    DSFMT_MEXP=19937
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256)
 target_link_libraries(unittest_symmetry_distribution m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_distribution ${MPI_C_LIBRARIES})

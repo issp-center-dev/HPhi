@@ -61,6 +61,29 @@ static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
   return 0;
 }
 
+static int get_message_limits(uint64_t *entry_limit, uint64_t *byte_limit)
+{
+  const uint64_t configured_bytes =
+      (uint64_t)HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES;
+  uint64_t entries;
+  if (entry_limit == NULL || byte_limit == NULL ||
+      configured_bytes < (uint64_t)sizeof(struct SymmetryBasisVector)) {
+    return -1;
+  }
+  entries = configured_bytes /
+      (uint64_t)sizeof(struct SymmetryBasisVector);
+  if (entries > (uint64_t)INT_MAX) entries = (uint64_t)INT_MAX;
+  if (entries == 0U ||
+      entries > UINT64_MAX /
+          (uint64_t)sizeof(struct SymmetryBasisVector)) {
+    return -1;
+  }
+  *entry_limit = entries;
+  *byte_limit =
+      entries * (uint64_t)sizeof(struct SymmetryBasisVector);
+  return 0;
+}
+
 static int validate_layout(const struct SymmetryMpiExchangeLayout *layout,
                            const struct SymmetryBasisVector *entries,
                            int nrank)
@@ -162,14 +185,15 @@ int SymmetryMpiCreateBasisVectorType(MPI_Datatype *vector_type)
 static int layout_requires_chunking(
     const struct SymmetryMpiExchangeLayout *send_layout,
     const struct SymmetryMpiExchangeResult *recv_result,
+    uint64_t chunk_limit,
     int force_chunked)
 {
   int peer;
   if (force_chunked != FALSE) return TRUE;
   for (peer = 0; peer < send_layout->nrank; peer++) {
-    if (send_layout->counts[peer] > (uint64_t)INT_MAX ||
+    if (send_layout->counts[peer] > chunk_limit ||
+        recv_result->counts[peer] > chunk_limit ||
         send_layout->displacements[peer] > (uint64_t)INT_MAX ||
-        recv_result->counts[peer] > (uint64_t)INT_MAX ||
         recv_result->displacements[peer] > (uint64_t)INT_MAX) {
       return TRUE;
     }
@@ -354,7 +378,8 @@ int SymmetryMpiExchangeBasisVectors(
 {
   struct SymmetryMpiExchangeResult next_result;
   uint64_t recv_total = 0U;
-  uint64_t chunk_limit = (uint64_t)INT_MAX;
+  uint64_t chunk_limit = 0U;
+  uint64_t message_byte_limit = 0U;
   size_t schedule_bytes = 0U;
   int force_chunked = FALSE;
   int mpi_active;
@@ -373,6 +398,9 @@ int SymmetryMpiExchangeBasisVectors(
   reset_result(&next_result);
   reset_stats(stats);
   mpi_active = SymmetryMpiCollectivesActive();
+  if (get_message_limits(&chunk_limit, &message_byte_limit) != 0) {
+    local_error = 1;
+  }
   if (result == NULL ||
       (result != NULL &&
        (result->entries != NULL || result->count != 0U ||
@@ -385,12 +413,16 @@ int SymmetryMpiExchangeBasisVectors(
   if (options != NULL) {
     if ((options->force_chunked != FALSE &&
          options->force_chunked != TRUE) ||
-        options->chunk_limit > (uint64_t)INT_MAX) {
+        options->chunk_limit > chunk_limit) {
       local_error = 1;
     } else {
       force_chunked = options->force_chunked;
       if (options->chunk_limit > 0U) chunk_limit = options->chunk_limit;
     }
+  }
+  if (chunk_limit > 0U) {
+    message_byte_limit =
+        chunk_limit * (uint64_t)sizeof(struct SymmetryBasisVector);
   }
 #ifdef MPI
   if (mpi_active != FALSE) {
@@ -404,7 +436,6 @@ int SymmetryMpiExchangeBasisVectors(
   }
 #else
   if (nrank != 1 || rank != 0) local_error = 1;
-  (void)chunk_limit;
   (void)force_chunked;
 #endif
   if (checked_size_mul((size_t)nrank, sizeof(*next_result.counts),
@@ -467,17 +498,44 @@ int SymmetryMpiExchangeBasisVectors(
   if (stats != NULL) {
     stats->send_entries = send_layout->count;
     stats->recv_entries = recv_total;
+    stats->message_entry_limit = chunk_limit;
+    stats->message_byte_limit = message_byte_limit;
   }
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
     use_chunked =
-        layout_requires_chunking(send_layout, &next_result, force_chunked);
+        layout_requires_chunking(send_layout, &next_result, chunk_limit,
+                                 force_chunked);
     if (MPI_Allreduce(&use_chunked, &global_use_chunked, 1, MPI_INT, MPI_MAX,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
       goto fail;
     }
     use_chunked = global_use_chunked;
+    if (stats != NULL) {
+      uint64_t max_message_entries = 0U;
+      for (peer = 0; peer < nrank; peer++) {
+        uint64_t send_count;
+        uint64_t recv_count;
+        if (peer == rank) continue;
+        send_count = send_layout->counts[peer];
+        recv_count = next_result.counts[peer];
+        if (use_chunked != FALSE) {
+          if (send_count > chunk_limit) send_count = chunk_limit;
+          if (recv_count > chunk_limit) recv_count = chunk_limit;
+        }
+        if (send_count > max_message_entries) {
+          max_message_entries = send_count;
+        }
+        if (recv_count > max_message_entries) {
+          max_message_entries = recv_count;
+        }
+      }
+      stats->max_message_entries = max_message_entries;
+      stats->max_message_bytes =
+          max_message_entries *
+          (uint64_t)sizeof(struct SymmetryBasisVector);
+    }
     if (SymmetryMpiCreateBasisVectorType(&vector_type) != 0) local_error = 1;
     if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
     if (use_chunked != FALSE) {
