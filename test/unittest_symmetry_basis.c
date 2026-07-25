@@ -4,6 +4,7 @@
 #include <math.h>
 #include <limits.h>
 #include "DefCommon.h"
+#include "mltplySpinSym.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
 #include "symmetry_distribution.h"
@@ -3200,6 +3201,293 @@ static int c1_basis_vector_fields_equal(
              sizeof(lhs->diagonal)) == 0;
 }
 
+enum C5ReferenceModel {
+  C5_REFERENCE_SPIN = 0,
+  C5_REFERENCE_SPINLESS = 1,
+  C5_REFERENCE_HUBBARD = 2
+};
+
+static void setup_c5_reference_bind(
+    struct BindStruct *X,
+    enum C5ReferenceModel model)
+{
+  if (model == C5_REFERENCE_SPIN) {
+    setup_bind(X, 6U, 3U, 1U);
+    set_ising_ring_diagonal(&X->Def, 6U, 0.37);
+  } else if (model == C5_REFERENCE_SPINLESS) {
+    setup_spinless_bind(X, 4U, 2U, 1U);
+    setup_spinless_coulomb_ring(&X->Def, 4U, 0.25);
+  } else {
+    setup_hubbard_bind(X, 4U, 1U, 1U, 0U);
+    setup_hubbard_coulomb_intra(&X->Def, 4U, 0.5);
+  }
+}
+
+static int c5_noop_entry(
+    unsigned long int out_index,
+    double complex coefficient,
+    void *context)
+{
+  (void)out_index;
+  (void)coefficient;
+  (void)context;
+  return 0;
+}
+
+static void assert_c5_distributed_layout_model(
+    enum C5ReferenceModel model,
+    const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisDigest replicated_digest;
+  struct SymmetryBasisDigest distributed_digest;
+  struct SymmetryBasisDigest reference_digest;
+  struct SymmetryBasisRuntime reference_sym;
+  struct SymmetryCanonicalResult canonical;
+  struct SymmetryBasisVector *reference_basis;
+  unsigned long int raw_dim;
+  unsigned long int dim;
+  unsigned long int local_index;
+  unsigned long long global_digest_count;
+  unsigned long long global_digest_xor;
+  unsigned long long global_digest_sum;
+  double diagonal;
+
+  setup_c5_reference_bind(&X, model);
+  raw_dim = X.Check.idim_max;
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: replicated reference build failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(X.Sym->basis_layout, SYMMETRY_BASIS_REPLICATED, label);
+  assert_int_eq(
+      ComputeSymmetryBasisDigest(X.Sym, &replicated_digest), 0, label);
+  assert_int_eq(
+      replicated_digest.algorithm ==
+          SYMMETRY_BASIS_DIGEST_REPLICATED_FNV1A64,
+      1, label);
+  assert_int_eq(replicated_digest.fnv1a64 != 0U, 1, label);
+  dim = X.Sym->dim;
+  reference_basis = (struct SymmetryBasisVector *)malloc(
+      ((size_t)dim + 1U) * sizeof(*reference_basis));
+  if (reference_basis == NULL) {
+    fprintf(stderr, "%s: reference basis allocation failed\n", label);
+    exit(1);
+  }
+  memcpy(reference_basis, X.Sym->basis,
+         ((size_t)dim + 1U) * sizeof(*reference_basis));
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+
+  setup_c5_reference_bind(&X, model);
+  assert_ulong_eq(X.Check.idim_max, raw_dim, label);
+  if (BuildSymmetryBasisForLayout(
+          &X, SYMMETRY_BASIS_DISTRIBUTED) != 0) {
+    fprintf(stderr, "%s: distributed layout build failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(X.Sym->basis_layout, SYMMETRY_BASIS_DISTRIBUTED, label);
+  assert_ulong_eq(X.Sym->dim, dim, label);
+  assert_int_eq(X.Sym->basis == NULL, 1, label);
+  assert_ulong_eq(X.Sym->capacity, 0UL, label);
+  assert_int_eq(X.Sym->rep_hash_size == 0UL &&
+                    X.Sym->rep_hash_keys == NULL &&
+                    X.Sym->rep_hash_values == NULL,
+                1, label);
+  assert_int_eq(X.Sym->rank_offsets != NULL, 1, label);
+  assert_ulong_eq(X.Sym->rank_offsets[0], 0UL, label);
+  assert_ulong_eq(X.Sym->rank_offsets[nproc], dim, label);
+  assert_ulong_eq(X.Sym->rank_offsets[myrank],
+                  X.Sym->local_offset, label);
+  assert_ulong_eq(X.Sym->rank_offsets[myrank + 1] -
+                      X.Sym->rank_offsets[myrank],
+                  X.Sym->local_dim, label);
+  assert_int_eq(
+      SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
+      TRUE, label);
+  assert_int_eq(
+      X.Sym->local_dim == 0UL ||
+          (X.Sym->local_basis != NULL &&
+           X.Sym->local_capacity >= X.Sym->local_dim + 1UL),
+      1, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->distribution_stats.global_entries,
+      dim, label);
+  assert_ulong_eq(
+      (unsigned long int)X.Sym->distribution_stats.rebalance_recv_entries,
+      X.Sym->local_dim, label);
+  assert_int_eq(
+      (unsigned long long)X.Sym->local_capacity *
+              (unsigned long long)sizeof(*X.Sym->local_basis) >=
+          (unsigned long long)(X.Sym->local_dim + 1UL) *
+              (unsigned long long)sizeof(*X.Sym->local_basis),
+      1, label);
+
+  for (local_index = 1UL;
+       local_index <= X.Sym->local_dim;
+       local_index++) {
+    const struct SymmetryBasisVector *entry =
+        SymmetryBasisLocalEntry(X.Sym, local_index);
+    unsigned long int global_beta = X.Sym->local_offset + local_index;
+    assert_int_eq(entry != NULL, 1, label);
+    assert_int_eq(c1_basis_vector_fields_equal(
+                      entry, &reference_basis[global_beta]),
+                  1, label);
+    assert_int_eq(
+        GetOwnedHamiltonianDiagonal(&X, local_index, &diagonal), 0, label);
+    assert_complex_close(
+        diagonal, reference_basis[global_beta].diagonal, 0.0, label);
+  }
+  assert_int_eq(SymmetryBasisLocalEntry(X.Sym, 0UL) == NULL, 1, label);
+  assert_int_eq(
+      SymmetryBasisLocalEntry(
+          X.Sym, X.Sym->local_dim + 1UL) == NULL,
+      1, label);
+  assert_int_eq(
+      SymmetryBasisReplicatedGlobalEntry(X.Sym, 1UL) == NULL,
+      1, label);
+
+  assert_int_eq(
+      ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), 0, label);
+  memset(&reference_sym, 0, sizeof(reference_sym));
+  reference_sym.enabled = TRUE;
+  reference_sym.basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
+  reference_sym.dim = dim;
+  reference_sym.local_offset = X.Sym->local_offset;
+  reference_sym.local_dim = X.Sym->local_dim;
+  reference_sym.local_capacity = X.Sym->local_dim + 1UL;
+  reference_sym.local_basis = reference_basis + X.Sym->local_offset;
+  reference_sym.rank_offsets = X.Sym->rank_offsets;
+  assert_int_eq(
+      ComputeSymmetryBasisDigest(&reference_sym, &reference_digest),
+      0, label);
+  assert_int_eq(
+      distributed_digest.algorithm ==
+          SYMMETRY_BASIS_DIGEST_DISTRIBUTED_GLOBAL_BETA,
+      1, label);
+  assert_ulong_eq(
+      (unsigned long int)distributed_digest.count,
+      X.Sym->local_dim, label);
+  assert_int_eq(
+      distributed_digest.xor_hash == reference_digest.xor_hash &&
+          distributed_digest.sum_hash == reference_digest.sum_hash,
+      1, label);
+  global_digest_count = distributed_digest.count;
+  global_digest_xor = distributed_digest.xor_hash;
+  global_digest_sum = distributed_digest.sum_hash;
+#ifdef MPI
+  if (nproc > 1) {
+    unsigned long long reduced_count;
+    unsigned long long reduced_xor;
+    unsigned long long reduced_sum;
+    if (MPI_Allreduce(&global_digest_count, &reduced_count, 1,
+                      MPI_UNSIGNED_LONG_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&global_digest_xor, &reduced_xor, 1,
+                      MPI_UNSIGNED_LONG_LONG, MPI_BXOR,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&global_digest_sum, &reduced_sum, 1,
+                      MPI_UNSIGNED_LONG_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: distributed digest reduction failed\n", label);
+      exit(1);
+    }
+    global_digest_count = reduced_count;
+    global_digest_xor = reduced_xor;
+    global_digest_sum = reduced_sum;
+  }
+#endif
+  assert_ulong_eq((unsigned long int)global_digest_count, dim, label);
+  assert_int_eq(dim == 0UL ||
+                    global_digest_xor != 0ULL ||
+                    global_digest_sum != 0ULL,
+                1, label);
+  if (model == C5_REFERENCE_SPIN && sizeof(unsigned long int) == 8U) {
+    assert_int_eq(
+        global_digest_xor == UINT64_C(0x2f0fbd0254a21ba5),
+        1, "C5 distributed Spin XOR literal");
+    assert_int_eq(
+        global_digest_sum == UINT64_C(0x10f042f5739b5c59),
+        1, "C5 distributed Spin SUM literal");
+  }
+
+  {
+    struct SymmetryBasisVector *saved_local_basis = X.Sym->local_basis;
+    unsigned long int saved_local_capacity = X.Sym->local_capacity;
+    unsigned long int saved_rank_end = X.Sym->rank_offsets[nproc];
+    X.Sym->local_basis = NULL;
+    assert_int_eq(
+        SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
+        FALSE, label);
+    assert_int_eq(
+        ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), -1, label);
+    X.Sym->local_basis = saved_local_basis;
+    X.Sym->local_capacity = X.Sym->local_dim;
+    assert_int_eq(
+        SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
+        FALSE, label);
+    assert_int_eq(
+        ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), -1, label);
+    assert_int_eq(ActivateSymmetryBasisDimension(&X), -1, label);
+    assert_ulong_eq(X.Check.idim_max, raw_dim, label);
+    X.Sym->local_capacity = saved_local_capacity;
+    X.Sym->rank_offsets[nproc] =
+        saved_rank_end == 0UL ? 1UL : saved_rank_end - 1UL;
+    assert_int_eq(
+        SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
+        FALSE, label);
+    assert_int_eq(
+        ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), -1, label);
+    X.Sym->rank_offsets[nproc] = saved_rank_end;
+    assert_int_eq(
+        SymmetryBasisOwnedStorageReady(X.Sym, X.Sym->local_dim),
+        TRUE, label);
+  }
+
+  assert_int_eq(ActivateSymmetryBasisDimension(&X), 0, label);
+  assert_ulong_eq(X.Check.idim_max, X.Sym->local_dim, label);
+  assert_ulong_eq(X.Check.idim_maxMPI, dim, label);
+  assert_int_eq(
+      SymmetryBasisOwnedStorageReady(X.Sym, X.Check.idim_max),
+      TRUE, label);
+  assert_int_eq(
+      SymmetryCanonicalizeState(&X, 0UL, &canonical), -1, label);
+  assert_int_eq(
+      SymmetryEnumerateColumn(&X, 1UL, c5_noop_entry, NULL), -1, label);
+  assert_int_eq(BuildSymmetryMatvecPlan(&X), -1, label);
+  assert_int_eq(mltplySpinSym(&X, NULL, NULL), -1, label);
+  assert_int_eq(X.Sym->matvec_plan == NULL &&
+                    X.Sym->mpi_full_v1 == NULL &&
+                    X.Sym->mpi_recvcounts == NULL &&
+                    X.Sym->mpi_displs == NULL,
+                1, label);
+
+  if (model == C5_REFERENCE_SPIN && sizeof(unsigned long int) == 8U) {
+    assert_ulong_eq(
+        (unsigned long int)replicated_digest.fnv1a64,
+        (unsigned long int)UINT64_C(0x14692a2818afe9ba),
+        "C5 replicated FNV literal");
+  }
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+  free(reference_basis);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_c5_distributed_layout(const char *label)
+{
+  assert_c5_distributed_layout_model(C5_REFERENCE_SPIN, label);
+  assert_c5_distributed_layout_model(C5_REFERENCE_SPINLESS, label);
+  assert_c5_distributed_layout_model(C5_REFERENCE_HUBBARD, label);
+}
+
 static void assert_rank_local_basis_run_contract(const char *label)
 {
   struct BindStruct X;
@@ -3532,6 +3820,11 @@ static void assert_empty_rank_local_basis_run(const char *label)
   assert_int_eq(BuildSymmetryBasis(&X), -1,
                 "replicated wrapper rejects zero-dimensional sector");
   assert_int_eq(X.Sym == NULL, 1, label);
+  assert_int_eq(
+      BuildSymmetryBasisForLayout(
+          &X, SYMMETRY_BASIS_DISTRIBUTED),
+      -1, "distributed builder rejects zero-dimensional sector");
+  assert_int_eq(X.Sym == NULL, 1, label);
   FreeSymmetryBasisOwnership(&ownership);
   FreeSymmetryBasisRun(&run);
   free(list_1);
@@ -3558,6 +3851,25 @@ int main(int argc, char **argv)
     if (myrank == 0) {
       fprintf(stdout,
               "rank-local symmetry basis run gate: PASS (%d MPI ranks)\n",
+              nproc);
+    }
+    if (MPI_Finalize() != MPI_SUCCESS) return 1;
+    return 0;
+  } else if (argc == 2 &&
+             strcmp(argv[1], "--mpi-distributed-basis") == 0) {
+    if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
+        MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
+      fprintf(stderr, "MPI distributed-basis test initialization failed\n");
+      return 1;
+    }
+    stdoutMPI = stderr;
+    assert_c5_distributed_layout(
+        "staged distributed basis matches replicated reference");
+    if (myrank == 0) {
+      fprintf(stdout,
+              "staged distributed symmetry basis gate: PASS "
+              "(%d MPI ranks)\n",
               nproc);
     }
     if (MPI_Finalize() != MPI_SUCCESS) return 1;
@@ -3651,6 +3963,8 @@ int main(int argc, char **argv)
       "serial rank-local distribution accepts an empty global sector");
   assert_basis_ownership_accessors(
       "basis ownership accessors enforce local/global ranges");
+  assert_c5_distributed_layout(
+      "serial staged distributed basis matches replicated reference");
   {
     struct DefineList def;
     setup_c4_def(&def);

@@ -120,6 +120,12 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
       beta > X->Sym->dim) {
     return -1;
   }
+  if (X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
+    fprintf(stdoutMPI,
+            "Error: distributed symmetry basis column enumeration is "
+            "staged for the B4 block plan.\n");
+    return -1;
+  }
   source = SymmetryBasisReplicatedGlobalEntry(X->Sym, beta);
   if (source == NULL) return -1;
 
@@ -580,6 +586,12 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   int halo_reference_mode;
 
   if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
+  if (X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
+    fprintf(stdoutMPI,
+            "Error: distributed symmetry basis plan construction is "
+            "staged for B4 and cannot allocate legacy/allgather state.\n");
+    return -1;
+  }
   FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
   X->Sym->matvec_plan = NULL;
 

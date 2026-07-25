@@ -33,49 +33,12 @@
 #endif
 
 #ifdef MPI
-static unsigned long long HashSymmetryBytes(unsigned long long hash,
-                                            const void *data,
-                                            size_t size)
-{
-  const unsigned char *bytes = (const unsigned char *)data;
-  size_t i;
-  for (i = 0U; i < size; i++) {
-    hash ^= (unsigned long long)bytes[i];
-    hash *= 1099511628211ULL;
-  }
-  return hash;
-}
-
-static unsigned long long SymmetryBasisDigest(
-    const struct SymmetryBasisRuntime *sym)
-{
-  unsigned long long hash = 14695981039346656037ULL;
-  unsigned long int index;
-  hash = HashSymmetryBytes(hash, &sym->dim, sizeof(sym->dim));
-  for (index = 1UL; index <= sym->dim; index++) {
-    const struct SymmetryBasisVector *entry =
-        SymmetryBasisReplicatedGlobalEntry(sym, index);
-    if (entry == NULL) return 0ULL;
-    hash = HashSymmetryBytes(hash, &entry->rep_state,
-                             sizeof(entry->rep_state));
-    hash = HashSymmetryBytes(hash, &entry->orbit_size,
-                             sizeof(entry->orbit_size));
-    hash = HashSymmetryBytes(hash, &entry->stabilizer_size,
-                             sizeof(entry->stabilizer_size));
-    hash = HashSymmetryBytes(hash, &entry->norm, sizeof(entry->norm));
-    hash = HashSymmetryBytes(hash, &entry->stabilizer_character_sum,
-                             sizeof(entry->stabilizer_character_sum));
-    hash = HashSymmetryBytes(hash, &entry->diagonal,
-                             sizeof(entry->diagonal));
-  }
-  return hash;
-}
-
 static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
     1100, 1110, 1115, 1111, 1112, 1113, 1114,
-    1101, 1120, 1121, 1122, 1130, 1131, 1132, 4113,
+    1101, 1120, 1121, 1122, 1130, 1131, 1132,
+    1133, 1134, 1135, 4113,
     1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
   };
   static const char *work_keys[] = {
@@ -124,7 +87,31 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "allocation_auxiliary_vector_elements",
     "allocation_lobpcg_workspace_elements",
     "basis_state_enumerator_calls",
-    "basis_diagonal_evaluator_calls"
+    "basis_diagonal_evaluator_calls",
+    "local_basis_capacity_entries",
+    "local_basis_bytes",
+    "rank_offset_entries",
+    "distribution_local_survivor_entries",
+    "distribution_local_sample_entries",
+    "distribution_global_sample_entries",
+    "distribution_range_send_entries",
+    "distribution_range_recv_entries",
+    "distribution_rebalance_send_entries",
+    "distribution_rebalance_recv_entries",
+    "distribution_global_entries",
+    "distribution_range_entries",
+    "distribution_sample_gather_used_chunked",
+    "distribution_sample_gather_message_byte_limit",
+    "distribution_sample_gather_max_message_bytes",
+    "distribution_range_exchange_used_chunked",
+    "distribution_range_exchange_message_byte_limit",
+    "distribution_range_exchange_max_message_bytes",
+    "distribution_rebalance_exchange_used_chunked",
+    "distribution_rebalance_exchange_message_byte_limit",
+    "distribution_rebalance_exchange_max_message_bytes",
+    "distribution_memory_byte_limit",
+    "distribution_sort_temporary_peak_bytes",
+    "distribution_rebalance_temporary_peak_bytes"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -163,9 +150,21 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   double row_mean_min;
   double row_mean_max;
   double row_mean_sum;
+  struct SymmetryBasisDigest basis_digest;
+  int basis_digest_status_local;
+  int basis_digest_status_global;
+  int basis_digest_algorithm_local;
+  int basis_digest_algorithm_min;
+  int basis_digest_algorithm_max;
+  unsigned long long basis_digest_count_local;
+  unsigned long long basis_digest_count_sum;
   unsigned long long basis_digest_local;
   unsigned long long basis_digest_min;
   unsigned long long basis_digest_max;
+  unsigned long long basis_digest_xor_local;
+  unsigned long long basis_digest_xor;
+  unsigned long long basis_digest_sum_local;
+  unsigned long long basis_digest_sum;
   unsigned long long halo_checksum_local;
   unsigned long long halo_checksum_xor;
   unsigned long long halo_checksum_sum;
@@ -256,6 +255,53 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[43] = X->Sym->allocation_lobpcg_workspace_elements;
   work_local[44] = X->Sym->basis_state_enumerator_calls;
   work_local[45] = X->Sym->basis_diagonal_evaluator_calls;
+  work_local[46] = (unsigned long long)X->Sym->local_capacity;
+  work_local[47] =
+      (unsigned long long)X->Sym->local_capacity *
+      (unsigned long long)sizeof(*X->Sym->local_basis);
+  work_local[48] =
+      X->Sym->rank_offsets != NULL ? (unsigned long long)nproc + 1ULL : 0ULL;
+  work_local[49] = X->Sym->distribution_stats.local_survivor_entries;
+  work_local[50] = X->Sym->distribution_stats.local_sample_entries;
+  work_local[51] = X->Sym->distribution_stats.global_sample_entries;
+  work_local[52] = X->Sym->distribution_stats.range_send_entries;
+  work_local[53] = X->Sym->distribution_stats.range_recv_entries;
+  work_local[54] = X->Sym->distribution_stats.rebalance_send_entries;
+  work_local[55] = X->Sym->distribution_stats.rebalance_recv_entries;
+  work_local[56] = X->Sym->distribution_stats.global_entries;
+  work_local[57] = X->Sym->distribution_stats.range_entries;
+  work_local[58] =
+      X->Sym->distribution_stats.sample_gather_used_chunked != FALSE
+          ? 1ULL
+          : 0ULL;
+  work_local[59] =
+      X->Sym->distribution_stats.sample_gather_message_byte_limit;
+  work_local[60] =
+      X->Sym->distribution_stats.sample_gather_max_message_bytes;
+  work_local[61] =
+      X->Sym->distribution_stats.range_exchange_used_chunked != FALSE
+          ? 1ULL
+          : 0ULL;
+  work_local[62] =
+      X->Sym->distribution_stats.range_exchange_message_byte_limit;
+  work_local[63] =
+      X->Sym->distribution_stats.range_exchange_max_message_bytes;
+  work_local[64] =
+      X->Sym->distribution_stats.rebalance_exchange_used_chunked != FALSE
+          ? 1ULL
+          : 0ULL;
+  work_local[65] =
+      X->Sym->distribution_stats.rebalance_exchange_message_byte_limit;
+  work_local[66] =
+      X->Sym->distribution_stats.rebalance_exchange_max_message_bytes;
+  work_local[67] =
+      X->Sym->distribution_stats.distribution_memory_byte_limit;
+  work_local[68] =
+      (unsigned long long)
+          X->Sym->distribution_stats.sort_temporary_peak_bytes;
+  work_local[69] =
+      (unsigned long long)
+          X->Sym->distribution_stats.rebalance_temporary_peak_bytes;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -323,7 +369,13 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
       plan != NULL && plan->halo.exchange_calls > 0ULL
           ? Timer[1511] / (double)plan->halo.exchange_calls
           : 0.0;
-  basis_digest_local = SymmetryBasisDigest(X->Sym);
+  basis_digest_status_local =
+      ComputeSymmetryBasisDigest(X->Sym, &basis_digest) == 0 ? 0 : 1;
+  basis_digest_algorithm_local = (int)basis_digest.algorithm;
+  basis_digest_count_local = basis_digest.count;
+  basis_digest_local = basis_digest.fnv1a64;
+  basis_digest_xor_local = basis_digest.xor_hash;
+  basis_digest_sum_local = basis_digest.sum_hash;
   halo_checksum_local =
       plan != NULL ? plan->halo.schedule_checksum : 0ULL;
 
@@ -351,10 +403,22 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
                 MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(&row_mean_local, &row_mean_sum, 1, MPI_DOUBLE,
                 MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_status_local, &basis_digest_status_global,
+                1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_algorithm_local, &basis_digest_algorithm_min,
+                1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_algorithm_local, &basis_digest_algorithm_max,
+                1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_count_local, &basis_digest_count_sum, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(&basis_digest_local, &basis_digest_min, 1,
                 MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
   MPI_Allreduce(&basis_digest_local, &basis_digest_max, 1,
                 MPI_UNSIGNED_LONG_LONG, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_xor_local, &basis_digest_xor, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_BXOR, MPI_COMM_WORLD);
+  MPI_Allreduce(&basis_digest_sum_local, &basis_digest_sum, 1,
+                MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(&halo_checksum_local, &halo_checksum_xor, 1,
                 MPI_UNSIGNED_LONG_LONG, MPI_BXOR, MPI_COMM_WORLD);
   MPI_Allreduce(&halo_checksum_local, &halo_checksum_sum, 1,
@@ -363,9 +427,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=5 ranks=%d "
-          "basis_layout=replicated matvec_mode=%s vector_exchange=%s\n",
+          "format=HPhiCalcTimerRankStats version=6 ranks=%d "
+          "basis_layout=%s matvec_mode=%s vector_exchange=%s\n",
           nproc,
+          X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED
+              ? "distributed"
+              : "replicated",
           X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN
               ? "plan"
               : "legacy",
@@ -390,9 +457,30 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   fprintf(fp,
           "work key=plan_row_nnz_mean ranks=%d min=%.17g max=%.17g mean=%.17g\n",
           nproc, row_mean_min, row_mean_max, row_mean_sum / (double)nproc);
-  fprintf(fp,
-          "basis_digest algorithm=fnv1a64-fields ranks=%d min=%016llx max=%016llx\n",
-          nproc, basis_digest_min, basis_digest_max);
+  if (basis_digest_status_global != 0 ||
+      basis_digest_algorithm_min != basis_digest_algorithm_max) {
+    fprintf(fp,
+            "basis_digest algorithm=invalid ranks=%d status=error\n",
+            nproc);
+  } else if (basis_digest_algorithm_min ==
+             SYMMETRY_BASIS_DIGEST_REPLICATED_FNV1A64) {
+    fprintf(fp,
+            "basis_digest algorithm=fnv1a64-fields ranks=%d "
+            "min=%016llx max=%016llx count=%llu status=ok\n",
+            nproc, basis_digest_min, basis_digest_max,
+            basis_digest_count_local);
+  } else if (basis_digest_algorithm_min ==
+             SYMMETRY_BASIS_DIGEST_DISTRIBUTED_GLOBAL_BETA) {
+    fprintf(fp,
+            "basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum "
+            "ranks=%d xor=%016llx sum=%016llx count=%llu status=ok\n",
+            nproc, basis_digest_xor, basis_digest_sum,
+            basis_digest_count_sum);
+  } else {
+    fprintf(fp,
+            "basis_digest algorithm=invalid ranks=%d status=error\n",
+            nproc);
+  }
   fprintf(fp,
           "halo_schedule_digest algorithm=fnv1a64-layout ranks=%d "
           "xor=%016llx sum=%016llx\n",

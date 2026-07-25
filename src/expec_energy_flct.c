@@ -375,13 +375,7 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
 
     use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
     if (use_symmetry_basis == TRUE &&
-        (X->Sym == NULL || X->Sym->enabled != TRUE || X->Sym->basis == NULL ||
-         X->Sym->local_offset > X->Sym->dim ||
-         X->Sym->local_dim > X->Sym->dim - X->Sym->local_offset ||
-         i_max != X->Sym->local_dim ||
-         (i_max > 0UL &&
-          (SymmetryBasisLocalEntry(X->Sym, 1UL) == NULL ||
-           SymmetryBasisLocalEntry(X->Sym, i_max) == NULL)))) {
+        SymmetryBasisOwnedStorageReady(X->Sym, i_max) != TRUE) {
         return -1;
     }
 

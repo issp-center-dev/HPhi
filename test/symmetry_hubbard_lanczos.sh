@@ -336,10 +336,15 @@ assert_rank_stats() {
         }
         $1 == "basis_digest" {
             digest_count++
+            digest_algorithm = value($2)
             ranks = value($3)
             digest_min = value($4)
             digest_max = value($5)
-            if (ranks != expected_ranks || digest_min != digest_max) bad = 1
+            digest_entries = value($6)
+            digest_status = value($7)
+            if (digest_algorithm != "fnv1a64-fields" ||
+                ranks != expected_ranks || digest_min != digest_max ||
+                digest_entries != expected_dim || digest_status != "ok") bad = 1
             if (expected_digest != "" && digest_min != expected_digest) bad = 1
             next
         }
@@ -353,11 +358,11 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 5 || header_ranks != expected_ranks ||
+            if (header_version != 6 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 23 || work_count != 47 ||
+                timer_count != 26 || work_count != 71 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
@@ -398,6 +403,30 @@ assert_rank_stats() {
             if (expected_lobpcg == 1 && abs(workspace_delta) > 1.0e-12) bad = 1
             if (expected_lobpcg == 0 &&
                 work_max["allocation_lobpcg_workspace_elements"] != 0) bad = 1
+            if (work_max["local_basis_capacity_entries"] != 0 ||
+                work_max["local_basis_bytes"] != 0 ||
+                work_max["rank_offset_entries"] != 0 ||
+                work_max["distribution_local_survivor_entries"] != 0 ||
+                work_max["distribution_local_sample_entries"] != 0 ||
+                work_max["distribution_global_sample_entries"] != 0 ||
+                work_max["distribution_range_send_entries"] != 0 ||
+                work_max["distribution_range_recv_entries"] != 0 ||
+                work_max["distribution_rebalance_send_entries"] != 0 ||
+                work_max["distribution_rebalance_recv_entries"] != 0 ||
+                work_max["distribution_global_entries"] != 0 ||
+                work_max["distribution_range_entries"] != 0 ||
+                work_max["distribution_sample_gather_used_chunked"] != 0 ||
+                work_max["distribution_sample_gather_message_byte_limit"] != 0 ||
+                work_max["distribution_sample_gather_max_message_bytes"] != 0 ||
+                work_max["distribution_range_exchange_used_chunked"] != 0 ||
+                work_max["distribution_range_exchange_message_byte_limit"] != 0 ||
+                work_max["distribution_range_exchange_max_message_bytes"] != 0 ||
+                work_max["distribution_rebalance_exchange_used_chunked"] != 0 ||
+                work_max["distribution_rebalance_exchange_message_byte_limit"] != 0 ||
+                work_max["distribution_rebalance_exchange_max_message_bytes"] != 0 ||
+                work_max["distribution_memory_byte_limit"] != 0 ||
+                work_max["distribution_sort_temporary_peak_bytes"] != 0 ||
+                work_max["distribution_rebalance_temporary_peak_bytes"] != 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
             if (expected_reference == 1) {
                 if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1

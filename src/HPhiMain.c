@@ -753,6 +753,14 @@ int main(int argc, char* argv[]){
         StopTimer(1100);
         exitMPI(-1);
       }
+      if (X.Bind.Sym == NULL ||
+          X.Bind.Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
+        fprintf(stdoutMPI,
+                "Error: production symmetry basis must remain replicated "
+                "until the B3/B4 lookup and block plan are active.\n");
+        StopTimer(1100);
+        exitMPI(-1);
+      }
       StartTimer(1114);
       if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
         StopTimer(1114);

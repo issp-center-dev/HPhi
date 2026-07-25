@@ -55,6 +55,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
 target_include_directories(unittest_symmetry_basis
@@ -77,6 +78,9 @@ set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
 add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
 set_tests_properties(symmetry_rank_local_run_mpi
+    PROPERTIES LABELS "symmetry;mpi")
+add_hphi_mpi_test(symmetry_distributed_basis_mpi min:2)
+set_tests_properties(symmetry_distributed_basis_mpi
     PROPERTIES LABELS "symmetry;mpi")
 
 add_executable(unittest_symmetry_distribution

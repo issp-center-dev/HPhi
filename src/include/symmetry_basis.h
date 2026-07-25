@@ -2,6 +2,7 @@
 #define HPHI_SYMMETRY_BASIS_H
 
 #include "Common.h"
+#include "symmetry_distribution.h"
 
 struct BindStruct;
 struct DefineList;
@@ -28,14 +29,38 @@ struct SymmetryTransformResult {
   double complex amplitude;
 };
 
+enum SymmetryBasisLayout {
+  SYMMETRY_BASIS_REPLICATED = 0,
+  SYMMETRY_BASIS_DISTRIBUTED = 1
+};
+
+enum SymmetryBasisDigestAlgorithm {
+  SYMMETRY_BASIS_DIGEST_INVALID = 0,
+  SYMMETRY_BASIS_DIGEST_REPLICATED_FNV1A64 = 1,
+  SYMMETRY_BASIS_DIGEST_DISTRIBUTED_GLOBAL_BETA = 2
+};
+
+struct SymmetryBasisDigest {
+  enum SymmetryBasisDigestAlgorithm algorithm;
+  uint64_t count;
+  uint64_t fnv1a64;
+  uint64_t xor_hash;
+  uint64_t sum_hash;
+};
+
 struct SymmetryBasisRuntime {
   int enabled;
+  enum SymmetryBasisLayout basis_layout;
   unsigned int nsite;
   unsigned int group_order;
   unsigned long int full_dim;
   unsigned long int dim;
   unsigned long int capacity;
   struct SymmetryBasisVector *basis;
+  unsigned long int local_capacity;
+  struct SymmetryBasisVector *local_basis;
+  unsigned long int *rank_offsets;
+  struct SymmetryBasisDistributionStats distribution_stats;
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;
@@ -75,10 +100,21 @@ static inline const struct SymmetryBasisVector *SymmetryBasisLocalEntry(
     unsigned long int local_index)
 {
   unsigned long int global_index;
-  if (sym == NULL || sym->enabled != TRUE || sym->basis == NULL ||
+  if (sym == NULL || sym->enabled != TRUE ||
       local_index == 0UL || local_index > sym->local_dim ||
       sym->local_offset > sym->dim ||
       sym->local_dim > sym->dim - sym->local_offset) {
+    return NULL;
+  }
+  if (sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED) {
+    if (sym->basis != NULL || sym->local_basis == NULL ||
+        sym->local_capacity <= local_index) {
+      return NULL;
+    }
+    return &sym->local_basis[local_index];
+  }
+  if (sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      sym->basis == NULL) {
     return NULL;
   }
   global_index = sym->local_offset + local_index;
@@ -91,7 +127,9 @@ SymmetryBasisReplicatedGlobalEntry(
     const struct SymmetryBasisRuntime *sym,
     unsigned long int global_index)
 {
-  if (sym == NULL || sym->enabled != TRUE || sym->basis == NULL ||
+  if (sym == NULL || sym->enabled != TRUE ||
+      sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      sym->basis == NULL ||
       global_index == 0UL || global_index > sym->dim ||
       global_index > sym->capacity) {
     return NULL;
@@ -108,6 +146,9 @@ int SymmetryApplyToState(const struct DefineList *def,
                          unsigned int op,
                          struct SymmetryTransformResult *result);
 int BuildSymmetryBasis(struct BindStruct *X);
+int BuildSymmetryBasisForLayout(
+    struct BindStruct *X,
+    enum SymmetryBasisLayout layout);
 int SymmetryCanonicalizeState(const struct BindStruct *X,
                               unsigned long int state,
                               struct SymmetryCanonicalResult *result);
@@ -121,6 +162,12 @@ int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
 int GetOwnedHamiltonianDiagonal(const struct BindStruct *X,
                                 unsigned long int local_index,
                                 double *diagonal);
+int SymmetryBasisOwnedStorageReady(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int expected_local_dim);
+int ComputeSymmetryBasisDigest(
+    const struct SymmetryBasisRuntime *sym,
+    struct SymmetryBasisDigest *digest);
 int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
 
