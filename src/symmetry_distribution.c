@@ -461,6 +461,7 @@ int SymmetrySampleSortBasisRun(
   struct SymmetryMergeNode *merge_heap = NULL;
   struct SymmetryMpiExchangeResult sample_result;
   struct SymmetryMpiExchangeResult range_result;
+  struct SymmetryMpiExchangeStats sample_exchange_stats;
   struct SymmetryMpiExchangeStats range_exchange_stats;
   struct SymmetryMpiExchangeLayout sample_layout;
   struct SymmetryMpiExchangeLayout range_layout;
@@ -511,6 +512,7 @@ int SymmetrySampleSortBasisRun(
   memset(&next_stats, 0, sizeof(next_stats));
   memset(&sample_result, 0, sizeof(sample_result));
   memset(&range_result, 0, sizeof(range_result));
+  memset(&sample_exchange_stats, 0, sizeof(sample_exchange_stats));
   memset(&range_exchange_stats, 0, sizeof(range_exchange_stats));
   if (stats != NULL) memset(stats, 0, sizeof(*stats));
   mpi_active = SymmetryMpiCollectivesActive();
@@ -689,7 +691,7 @@ int SymmetrySampleSortBasisRun(
   sample_layout.displacements = sample_send_displacements;
   if (SymmetryMpiExchangeBasisVectors(
           local_samples, &sample_layout, rank, nrank, NULL,
-          &sample_result, NULL) != 0) {
+          &sample_result, &sample_exchange_stats) != 0) {
     (void)agree_distribution_failure(
         mpi_active, rank, "sample sort", "sample gather exchange", 1);
     goto fail;
@@ -949,6 +951,12 @@ int SymmetrySampleSortBasisRun(
   next_stats.samples_per_nonempty_rank = sample_limit;
   next_stats.local_sample_entries = local_sample_count;
   next_stats.global_sample_entries = global_sample_count;
+  next_stats.sample_gather_used_chunked =
+      sample_exchange_stats.used_chunked;
+  next_stats.sample_gather_message_byte_limit =
+      sample_exchange_stats.message_byte_limit;
+  next_stats.sample_gather_max_message_bytes =
+      sample_exchange_stats.max_message_bytes;
   next_stats.local_sample_gap = local_gap;
   next_stats.global_sample_gap_max = global_gap_max;
   next_stats.global_sample_gap_sum = global_gap_sum;

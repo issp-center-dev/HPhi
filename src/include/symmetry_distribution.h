@@ -53,6 +53,9 @@ struct SymmetryBasisDistributionStats {
   uint64_t samples_per_nonempty_rank;
   uint64_t local_sample_entries;
   uint64_t global_sample_entries;
+  int sample_gather_used_chunked;
+  uint64_t sample_gather_message_byte_limit;
+  uint64_t sample_gather_max_message_bytes;
   /* C3 range redistribution after splitter selection. */
   uint64_t range_send_entries;
   uint64_t range_recv_entries;

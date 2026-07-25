@@ -767,6 +767,11 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                        first_stats.global_sample_gap_sum &&
                    first_stats.distribution_memory_byte_limit ==
                        HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
+                   first_stats.sample_gather_message_byte_limit ==
+                       test_message_entry_limit *
+                           sizeof(struct SymmetryBasisVector) &&
+                   first_stats.sample_gather_max_message_bytes <=
+                       first_stats.sample_gather_message_byte_limit &&
                    first_stats.range_send_entries ==
                        first_stats.local_survivor_entries &&
                    first_stats.range_recv_entries ==
@@ -787,7 +792,8 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                      first_stats.global_sample_entries == 64U &&
                      first_stats.global_sample_gap_max > 1U &&
                      (test_nrank == 1 ||
-                      first_stats.range_exchange_used_chunked == TRUE),
+                      (first_stats.sample_gather_used_chunked == TRUE &&
+                       first_stats.range_exchange_used_chunked == TRUE)),
                  "regular sample gap fixture did not downsample");
   }
   require_all_ranks_u64_equal(
@@ -807,6 +813,12 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
               second_stats.samples_per_nonempty_rank &&
           first_stats.global_sample_entries ==
               second_stats.global_sample_entries &&
+          first_stats.sample_gather_used_chunked ==
+              second_stats.sample_gather_used_chunked &&
+          first_stats.sample_gather_message_byte_limit ==
+              second_stats.sample_gather_message_byte_limit &&
+          first_stats.sample_gather_max_message_bytes ==
+              second_stats.sample_gather_max_message_bytes &&
           first_stats.local_sample_gap == second_stats.local_sample_gap &&
           first_stats.bucket_sample_entries ==
               second_stats.bucket_sample_entries &&
