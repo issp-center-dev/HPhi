@@ -95,7 +95,9 @@ int SymmetryCompareBasisRepState(const void *lhs, const void *rhs);
  * Sorts a valid run locally and redistributes it into deterministic
  * rep_state ranges.  On success the old storage is freed and run owns the
  * new sentinel-based range.  On failure run retains its storage and count,
- * but its entries may have been locally sorted.
+ * but its entries may have been locally sorted. Collective invariant
+ * failures emit one diagnostic from rank zero; memory-limit diagnostics
+ * include the maximum observed bytes and the configured limit.
  */
 int SymmetrySampleSortBasisRun(
     struct SymmetryBasisRun *run,
@@ -117,7 +119,8 @@ int SymmetryBlockRange(
  * The configured distribution memory limit is enforced collectively before
  * the data exchange. On failure run, ownership, and stats retain their input
  * ownership/values. On success C4 updates only the rebalance_* fields; other
- * stats fields retain their C3-provided or caller-provided values.
+ * stats fields retain their C3-provided or caller-provided values. Collective
+ * invariant failures use the same rank-zero diagnostic contract as C3.
  */
 int SymmetryExactRebalanceBasisRun(
     struct SymmetryBasisRun *run,

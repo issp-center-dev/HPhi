@@ -1,5 +1,7 @@
+#include <inttypes.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,6 +21,81 @@ struct SymmetryMergeNode {
   int source;
   uint64_t offset;
 };
+
+static int agree_distribution_failure(
+    int mpi_active,
+    int rank,
+    const char *stage,
+    const char *invariant,
+    int local_error)
+{
+  int global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0 && rank == 0) {
+    if (global_error < 0) {
+      fprintf(stderr,
+              "HPhi symmetry distribution %s failed: "
+              "MPI error agreement failed while checking %s.\n",
+              stage, invariant);
+    } else {
+      fprintf(stderr,
+              "HPhi symmetry distribution %s failed: %s.\n",
+              stage, invariant);
+    }
+    fflush(stderr);
+  }
+  return global_error;
+}
+
+static int agree_distribution_limit_failure(
+    int mpi_active,
+    int rank,
+    const char *stage,
+    const char *invariant,
+    int local_error,
+    uint64_t observed,
+    uint64_t limit)
+{
+  int global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  uint64_t maximum_observed = observed;
+  if (global_error == 0) return 0;
+#ifdef MPI
+  if (global_error > 0 && mpi_active != FALSE &&
+      MPI_Allreduce(&observed, &maximum_observed, 1, MPI_UINT64_T,
+                    MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+    global_error = -1;
+  }
+#else
+  (void)mpi_active;
+#endif
+  if (rank == 0) {
+    if (global_error < 0) {
+      fprintf(stderr,
+              "HPhi symmetry distribution %s failed: "
+              "MPI error agreement failed while checking %s.\n",
+              stage, invariant);
+    } else {
+      fprintf(stderr,
+              "HPhi symmetry distribution %s failed: %s "
+              "(maximum observed=%" PRIu64 ", limit=%" PRIu64 ").\n",
+              stage, invariant, maximum_observed, limit);
+    }
+    fflush(stderr);
+  }
+  return global_error;
+}
+
+#ifdef MPI
+static void report_distribution_operation_failure(
+    int rank,
+    const char *stage,
+    const char *operation)
+{
+  fprintf(stderr,
+          "HPhi symmetry distribution %s failed on rank %d: %s.\n",
+          stage, rank, operation);
+  fflush(stderr);
+}
+#endif
 
 static int checked_u64_add(uint64_t lhs, uint64_t rhs, uint64_t *result)
 {
@@ -449,6 +526,7 @@ int SymmetrySampleSortBasisRun(
   uint64_t nonempty_ranks = 0U;
   uint64_t receive_count = 0U;
   uint64_t bucket_upper_bound = 0U;
+  uint64_t sample_peak = 0U;
   uint64_t temporary_peak = 0U;
   uint64_t merged_count = 0U;
   uint64_t range_global_count = 0U;
@@ -475,13 +553,7 @@ int SymmetrySampleSortBasisRun(
   if (stats != NULL) memset(stats, 0, sizeof(*stats));
   mpi_active = SymmetryMpiCollectivesActive();
 
-  if (symmetry_basis_run_is_valid(run) != TRUE ||
-      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
-                           &local_count) != 0 ||
-      local_count > (uint64_t)(SIZE_MAX /
-          sizeof(struct SymmetryBasisVector)) - 1U ||
-      rank < 0 || nrank < 1 || rank >= nrank ||
-      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+  if (rank < 0 || nrank < 1 || rank >= nrank) {
     local_error = 1;
   }
 #ifdef MPI
@@ -502,7 +574,22 @@ int SymmetrySampleSortBasisRun(
                        &rank_array_bytes) != 0) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "invalid rank or communicator",
+      local_error);
+  if (global_error != 0) return -1;
+  if (symmetry_basis_run_is_valid(run) != TRUE ||
+      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
+                           &local_count) != 0 ||
+      local_count > (uint64_t)(SIZE_MAX /
+          sizeof(struct SymmetryBasisVector)) - 1U ||
+      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+    local_error = 1;
+  }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "invalid input run or distribution memory configuration",
+      local_error);
   if (global_error != 0) return -1;
 
   if (local_count > 1U) {
@@ -517,13 +604,17 @@ int SymmetrySampleSortBasisRun(
       break;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "local input keys are not strictly increasing", local_error);
   if (global_error != 0) return -1;
 
   all_counts = (uint64_t *)malloc(rank_array_bytes);
   all_gaps = (uint64_t *)malloc(rank_array_bytes);
   if (all_counts == NULL || all_gaps == NULL) local_error = 1;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "rank metadata allocation",
+      local_error);
   if (global_error != 0) goto fail;
 
 #ifdef MPI
@@ -531,6 +622,8 @@ int SymmetrySampleSortBasisRun(
     if (MPI_Allgather(&local_count, 1, MPI_UINT64_T,
                       all_counts, 1, MPI_UINT64_T,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "sample sort", "MPI_Allgather of local entry counts");
       goto fail;
     }
   } else
@@ -557,14 +650,18 @@ int SymmetrySampleSortBasisRun(
       if (sample_limit == 0U) sample_limit = 1U;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "global entry count or sampling limit", local_error);
   if (global_error != 0) goto fail;
 
   if (build_regular_samples(run, sample_limit, &local_samples,
                             &local_sample_count, &local_gap) != 0) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "regular sample construction",
+      local_error);
   if (global_error != 0) goto fail;
 
 #ifdef MPI
@@ -572,6 +669,8 @@ int SymmetrySampleSortBasisRun(
     if (MPI_Allgather(&local_gap, 1, MPI_UINT64_T,
                       all_gaps, 1, MPI_UINT64_T,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "sample sort", "MPI_Allgather of sample gaps");
       goto fail;
     }
   } else
@@ -594,7 +693,9 @@ int SymmetrySampleSortBasisRun(
   if (global_sample_count > SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "global sample count or gap arithmetic", local_error);
   if (global_error != 0) goto fail;
 
   sample_send_counts = (uint64_t *)calloc(
@@ -615,7 +716,9 @@ int SymmetrySampleSortBasisRun(
       }
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "sample gather schedule",
+      local_error);
   if (global_error != 0) goto fail;
 
   sample_layout.nrank = nrank;
@@ -625,12 +728,18 @@ int SymmetrySampleSortBasisRun(
   if (SymmetryMpiExchangeBasisVectors(
           local_samples, &sample_layout, rank, nrank, NULL,
           &sample_result, NULL) != 0) {
+    (void)agree_distribution_failure(
+        mpi_active, rank, "sample sort", "sample gather exchange", 1);
     goto fail;
   }
   if ((rank == 0 && sample_result.count != global_sample_count) ||
       (rank != 0 && sample_result.count != 0U)) {
     local_error = 1;
   }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "sample gather receive count",
+      local_error);
+  if (global_error != 0) goto fail;
 
   splitter_count = nrank - 1;
   if (splitter_count > 0 &&
@@ -646,7 +755,9 @@ int SymmetrySampleSortBasisRun(
       bucket_sample_counts == NULL) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "splitter allocation",
+      local_error);
   if (global_error != 0) goto fail;
 
   if (rank == 0) {
@@ -687,6 +798,8 @@ int SymmetrySampleSortBasisRun(
                    0, MPI_COMM_WORLD) != MPI_SUCCESS) ||
         MPI_Bcast(bucket_sample_counts, nrank, MPI_UINT64_T,
                   0, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "sample sort", "MPI_Bcast of splitters or bucket counts");
       goto fail;
     }
   }
@@ -703,7 +816,9 @@ int SymmetrySampleSortBasisRun(
     }
     if (sample_count_check != global_sample_count) local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "splitter bucket sample count", local_error);
   if (global_error != 0) goto fail;
 
   {
@@ -713,7 +828,6 @@ int SymmetrySampleSortBasisRun(
     uint64_t input_bytes = 0U;
     uint64_t schedule_bytes = 0U;
     uint64_t splitter_and_bucket_bytes = 0U;
-    uint64_t sample_peak = 0U;
     uint64_t overhead_per_rank =
         UINT64_C(8) * (uint64_t)sizeof(uint64_t);
 #ifdef MPI
@@ -747,13 +861,23 @@ int SymmetrySampleSortBasisRun(
                         &sample_peak) != 0 ||
         checked_u64_add(sample_peak, splitter_and_bucket_bytes,
                         &sample_peak) != 0 ||
-        checked_u64_to_size(sample_peak, &sample_peak_size) != 0 ||
-        sample_peak >
-            (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES) {
+        checked_u64_to_size(sample_peak, &sample_peak_size) != 0) {
       local_error = 1;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "sample-stage temporary memory arithmetic", local_error);
+  if (global_error != 0) goto fail;
+  local_error =
+      sample_peak >
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
+  global_error = agree_distribution_limit_failure(
+      mpi_active, rank, "sample sort",
+      "sample-stage temporary memory limit exceeded; increase MPI ranks "
+      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
+      sample_peak,
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
   if (global_error != 0) goto fail;
 
   send_counts = (uint64_t *)calloc((size_t)nrank, sizeof(*send_counts));
@@ -765,7 +889,9 @@ int SymmetrySampleSortBasisRun(
       preflight_recv_counts == NULL) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "range schedule allocation",
+      local_error);
   if (global_error != 0) goto fail;
 
   for (merged_count = 0U; merged_count < local_count; merged_count++) {
@@ -784,6 +910,10 @@ int SymmetrySampleSortBasisRun(
     }
   }
   if (receive_count != local_count) local_error = 1;
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "range send schedule arithmetic",
+      local_error);
+  if (global_error != 0) goto fail;
   receive_count = 0U;
 
 #ifdef MPI
@@ -791,6 +921,8 @@ int SymmetrySampleSortBasisRun(
     if (MPI_Alltoall(send_counts, 1, MPI_UINT64_T,
                      preflight_recv_counts, 1, MPI_UINT64_T,
                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "sample sort", "MPI_Alltoall range preflight");
       goto fail;
     }
   } else
@@ -805,24 +937,49 @@ int SymmetrySampleSortBasisRun(
       break;
     }
   }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "range receive count arithmetic", local_error);
+  if (global_error != 0) goto fail;
   {
     uint64_t sampled_gap_bound;
     if (checked_u64_mul(bucket_sample_counts[rank],
                         global_gap_max,
                         &sampled_gap_bound) != 0 ||
         checked_u64_add(sampled_gap_bound, global_gap_sum,
-                        &bucket_upper_bound) != 0 ||
-        receive_count > bucket_upper_bound ||
-        calculate_range_temporary_peak(
-            local_count, receive_count, nrank, &temporary_peak) != 0 ||
-        temporary_peak >
-            (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES ||
-        temporary_peak > (uint64_t)SIZE_MAX ||
-        receive_count >= (uint64_t)ULONG_MAX) {
+                        &bucket_upper_bound) != 0) {
       local_error = 1;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "sample-derived bucket upper-bound arithmetic", local_error);
+  if (global_error != 0) goto fail;
+  local_error = receive_count > bucket_upper_bound;
+  global_error = agree_distribution_limit_failure(
+      mpi_active, rank, "sample sort",
+      "range receive count exceeds the sample-derived bucket bound",
+      local_error, receive_count, bucket_upper_bound);
+  if (global_error != 0) goto fail;
+  if (calculate_range_temporary_peak(
+          local_count, receive_count, nrank, &temporary_peak) != 0 ||
+      temporary_peak > (uint64_t)SIZE_MAX ||
+      receive_count >= (uint64_t)ULONG_MAX) {
+    local_error = 1;
+  }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "range-stage size or temporary memory arithmetic", local_error);
+  if (global_error != 0) goto fail;
+  local_error =
+      temporary_peak >
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
+  global_error = agree_distribution_limit_failure(
+      mpi_active, rank, "sample sort",
+      "range-stage temporary memory limit exceeded; increase MPI ranks "
+      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
+      temporary_peak,
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
   if (global_error != 0) goto fail;
 
   next_stats.local_survivor_entries = local_count;
@@ -862,6 +1019,8 @@ int SymmetrySampleSortBasisRun(
           local_count > 0U ? run->entries + 1 : run->entries,
           &range_layout, rank, nrank, NULL,
           &range_result, NULL) != 0) {
+    (void)agree_distribution_failure(
+        mpi_active, rank, "sample sort", "range exchange", 1);
     goto fail;
   }
   if (range_result.count != receive_count) local_error = 1;
@@ -871,7 +1030,9 @@ int SymmetrySampleSortBasisRun(
       break;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "range exchange receive schedule", local_error);
   if (global_error != 0) goto fail;
 
   free(send_counts);
@@ -907,7 +1068,9 @@ int SymmetrySampleSortBasisRun(
       local_error = 1;
     }
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort", "range merge allocation",
+      local_error);
   if (global_error != 0) goto fail;
 
   for (peer = 0; peer < nrank; peer++) {
@@ -938,7 +1101,9 @@ int SymmetrySampleSortBasisRun(
     }
   }
   if (merged_count != receive_count) local_error = 1;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "merged keys are not globally strictly increasing", local_error);
   if (global_error != 0) goto fail;
 
   {
@@ -952,7 +1117,9 @@ int SymmetrySampleSortBasisRun(
         (unsigned long int)last_key != last_key_ulong) {
       local_error = 1;
     }
-    global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+    global_error = agree_distribution_failure(
+        mpi_active, rank, "sample sort",
+        "range boundary key representation", local_error);
     if (global_error != 0) goto fail;
 #ifdef MPI
     if (mpi_active != FALSE && nrank > 1) {
@@ -965,6 +1132,8 @@ int SymmetrySampleSortBasisRun(
           MPI_Allgather(&last_key, 1, MPI_UINT64_T,
                         all_last_keys, 1, MPI_UINT64_T,
                         MPI_COMM_WORLD) != MPI_SUCCESS) {
+        report_distribution_operation_failure(
+            rank, "sample sort", "MPI_Allgather of range boundaries");
         goto fail;
       }
     } else
@@ -998,7 +1167,10 @@ int SymmetrySampleSortBasisRun(
     }
     if (range_global_count != global_count) local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "sample sort",
+      "global range count or adjacent-rank boundary ordering",
+      local_error);
   if (global_error != 0) goto fail;
 
   next_stats.range_entries = receive_count;
@@ -1154,14 +1326,7 @@ int SymmetryExactRebalanceBasisRun(
   memset(&exchange_stats, 0, sizeof(exchange_stats));
   mpi_active = SymmetryMpiCollectivesActive();
 
-  if (symmetry_basis_run_is_valid(run) != TRUE ||
-      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
-                           &local_count) != 0 ||
-      ownership == NULL || ownership->dim != 0UL ||
-      ownership->local_offset != 0UL || ownership->local_dim != 0UL ||
-      ownership->rank_offsets != NULL ||
-      rank < 0 || nrank < 1 || rank >= nrank ||
-      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+  if (rank < 0 || nrank < 1 || rank >= nrank) {
     local_error = 1;
   }
 #ifdef MPI
@@ -1190,7 +1355,29 @@ int SymmetryExactRebalanceBasisRun(
                         &ownership_bytes) != 0)) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "invalid rank or communicator", local_error);
+  if (global_error != 0) return -1;
+  if (symmetry_basis_run_is_valid(run) != TRUE ||
+      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
+                           &local_count) != 0 ||
+      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+    local_error = 1;
+  }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "invalid input run or distribution memory configuration",
+      local_error);
+  if (global_error != 0) return -1;
+  if (ownership == NULL || ownership->dim != 0UL ||
+      ownership->local_offset != 0UL || ownership->local_dim != 0UL ||
+      ownership->rank_offsets != NULL) {
+    local_error = 1;
+  }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "ownership must be empty on entry", local_error);
   if (global_error != 0) return -1;
 
   for (entry_index = 1U; entry_index < local_count; entry_index++) {
@@ -1203,7 +1390,9 @@ int SymmetryExactRebalanceBasisRun(
   first_key = local_count > 0U ? run->entries[1].rep_state : 0UL;
   last_key = local_count > 0U
       ? run->entries[(unsigned long int)local_count].rep_state : 0UL;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "local input keys are not strictly increasing", local_error);
   if (global_error != 0) return -1;
 
   all_counts = (uint64_t *)malloc(rank_bytes);
@@ -1214,7 +1403,9 @@ int SymmetryExactRebalanceBasisRun(
       all_first_keys == NULL || all_last_keys == NULL) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance", "rank metadata allocation",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
 #ifdef MPI
@@ -1228,6 +1419,9 @@ int SymmetryExactRebalanceBasisRun(
         MPI_Allgather(&last_key, 1, MPI_UNSIGNED_LONG,
                       all_last_keys, 1, MPI_UNSIGNED_LONG,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "exact rebalance",
+          "MPI_Allgather of input counts or boundaries");
       goto fail_rebalance;
     }
   } else
@@ -1266,13 +1460,18 @@ int SymmetryExactRebalanceBasisRun(
   } else if (local_error == 0) {
     global_dim = (unsigned long int)global_count;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "global input count or adjacent-rank boundary ordering",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   next_ownership.rank_offsets =
       (unsigned long int *)malloc(ownership_bytes);
   if (next_ownership.rank_offsets == NULL) local_error = 1;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance", "ownership offset allocation",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   for (peer = 0; peer < nrank; peer++) {
@@ -1297,7 +1496,9 @@ int SymmetryExactRebalanceBasisRun(
        local_dim == ULONG_MAX)) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance", "exact block range construction",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   send_counts = (uint64_t *)calloc((size_t)nrank, sizeof(*send_counts));
@@ -1309,7 +1510,9 @@ int SymmetryExactRebalanceBasisRun(
       preflight_recv_counts == NULL) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance", "exchange schedule allocation",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   source_begin = source_offsets[rank];
@@ -1336,7 +1539,10 @@ int SymmetryExactRebalanceBasisRun(
     }
   }
   if (send_total != local_count) local_error = 1;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "destination send slices do not form a contiguous source range",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
 #ifdef MPI
@@ -1344,6 +1550,8 @@ int SymmetryExactRebalanceBasisRun(
     if (MPI_Alltoall(send_counts, 1, MPI_UINT64_T,
                      preflight_recv_counts, 1, MPI_UINT64_T,
                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "exact rebalance", "MPI_Alltoall exchange preflight");
       goto fail_rebalance;
     }
   } else
@@ -1371,14 +1579,31 @@ int SymmetryExactRebalanceBasisRun(
       break;
     }
   }
-  if (receive_total != (uint64_t)local_dim ||
-      calculate_rebalance_temporary_peak(
-          local_count, receive_total, nrank, &temporary_peak) != 0 ||
-      (uint64_t)temporary_peak >
-          (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES) {
+  if (receive_total != (uint64_t)local_dim) {
     local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "source receive slices do not match the exact local block",
+      local_error);
+  if (global_error != 0) goto fail_rebalance;
+  if (calculate_rebalance_temporary_peak(
+          local_count, receive_total, nrank, &temporary_peak) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "temporary memory arithmetic", local_error);
+  if (global_error != 0) goto fail_rebalance;
+  local_error =
+      (uint64_t)temporary_peak >
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
+  global_error = agree_distribution_limit_failure(
+      mpi_active, rank, "exact rebalance",
+      "temporary memory limit exceeded; increase MPI ranks "
+      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
+      (uint64_t)temporary_peak,
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
   if (global_error != 0) goto fail_rebalance;
 
   layout.nrank = nrank;
@@ -1388,6 +1613,8 @@ int SymmetryExactRebalanceBasisRun(
   if (SymmetryMpiExchangeBasisVectors(
           local_count > 0U ? run->entries + 1 : run->entries,
           &layout, rank, nrank, NULL, &result, &exchange_stats) != 0) {
+    (void)agree_distribution_failure(
+        mpi_active, rank, "exact rebalance", "basis exchange", 1);
     goto fail_rebalance;
   }
   if (result.count != receive_total ||
@@ -1406,7 +1633,9 @@ int SymmetryExactRebalanceBasisRun(
     }
   }
   if (send_total != receive_total) local_error = 1;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "receive count or source-rank segment layout", local_error);
   if (global_error != 0) goto fail_rebalance;
 
   {
@@ -1424,7 +1653,9 @@ int SymmetryExactRebalanceBasisRun(
     next_entries = (struct SymmetryBasisVector *)calloc(1U, output_bytes);
     if (next_entries == NULL) local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance", "output allocation",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   if (receive_total > 0U) {
@@ -1441,7 +1672,9 @@ int SymmetryExactRebalanceBasisRun(
   first_key = receive_total > 0U ? next_entries[1].rep_state : 0UL;
   last_key = receive_total > 0U
       ? next_entries[(unsigned long int)receive_total].rep_state : 0UL;
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "received keys are not strictly increasing", local_error);
   if (global_error != 0) goto fail_rebalance;
 
 #ifdef MPI
@@ -1455,6 +1688,9 @@ int SymmetryExactRebalanceBasisRun(
         MPI_Allgather(&last_key, 1, MPI_UNSIGNED_LONG,
                       all_last_keys, 1, MPI_UNSIGNED_LONG,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
+      report_distribution_operation_failure(
+          rank, "exact rebalance",
+          "MPI_Allgather of output counts or boundaries");
       goto fail_rebalance;
     }
   } else
@@ -1489,7 +1725,10 @@ int SymmetryExactRebalanceBasisRun(
     }
     if (verified_global_count != global_count) local_error = 1;
   }
-  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  global_error = agree_distribution_failure(
+      mpi_active, rank, "exact rebalance",
+      "final exact counts or adjacent-rank boundary ordering",
+      local_error);
   if (global_error != 0) goto fail_rebalance;
 
   next_ownership.dim = global_dim;
