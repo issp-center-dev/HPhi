@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#ifdef MPI
+#include <mpi.h>
+#endif
+
 #include "symmetry_basis.h"
 #include "symmetry_directory.h"
 
@@ -14,6 +18,18 @@ struct SymmetryLocalRepresentativeIndex {
   unsigned long int *keys;
   unsigned long int *values;
   struct SymmetryLocalRepresentativeIndexStats stats;
+};
+
+struct SymmetryRepresentativeDirectory {
+  int ready;
+  unsigned long int dim;
+  unsigned long int local_offset;
+  unsigned long int local_dim;
+  int rank;
+  int nrank;
+  int nonempty_rank_count;
+  unsigned long int *rank_first_rep;
+  struct SymmetryLocalRepresentativeIndex *local_index;
 };
 
 static unsigned long int local_rep_state_hash(unsigned long int state)
@@ -260,4 +276,366 @@ int GetSymmetryLocalRepresentativeIndexStats(
   next = index->stats;
   *stats = next;
   return 0;
+}
+
+static int directory_mpi_context(int *mpi_active,
+                                 int *comm_rank,
+                                 int *comm_size)
+{
+  if (mpi_active == NULL || comm_rank == NULL || comm_size == NULL) return -1;
+  *mpi_active = 0;
+  *comm_rank = 0;
+  *comm_size = 1;
+#ifdef MPI
+  {
+    int initialized = 0;
+    int finalized = 0;
+    if (MPI_Initialized(&initialized) != MPI_SUCCESS) return -1;
+    if (initialized == 0) return 0;
+    if (MPI_Finalized(&finalized) != MPI_SUCCESS) return -1;
+    if (finalized != 0) return 0;
+    if (MPI_Comm_rank(MPI_COMM_WORLD, comm_rank) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, comm_size) != MPI_SUCCESS) {
+      return -1;
+    }
+    *mpi_active = 1;
+  }
+#endif
+  return 0;
+}
+
+static int agree_directory_failure(int mpi_active, int local_error)
+{
+  int error_flag = local_error != 0 ? 1 : 0;
+#ifdef MPI
+  int global_error = error_flag;
+  if (mpi_active != 0 &&
+      MPI_Allreduce(&error_flag, &global_error, 1, MPI_INT, MPI_MAX,
+                    MPI_COMM_WORLD) != MPI_SUCCESS) {
+    return -1;
+  }
+  return global_error;
+#else
+  (void)mpi_active;
+  return error_flag;
+#endif
+}
+
+static int directory_block_range(unsigned long int dim,
+                                 int rank,
+                                 int nrank,
+                                 unsigned long int *offset,
+                                 unsigned long int *count)
+{
+  unsigned long int quotient;
+  unsigned long int remainder;
+  unsigned long int rank_value;
+  if (rank < 0 || nrank < 1 || rank >= nrank ||
+      offset == NULL || count == NULL) {
+    return -1;
+  }
+  rank_value = (unsigned long int)rank;
+  quotient = dim / (unsigned long int)nrank;
+  remainder = dim % (unsigned long int)nrank;
+  *offset = quotient * rank_value +
+      (rank_value < remainder ? rank_value : remainder);
+  *count = quotient + (rank_value < remainder ? 1UL : 0UL);
+  return 0;
+}
+
+static int validate_directory_layout(unsigned long int dim,
+                                     unsigned long int local_offset,
+                                     unsigned long int local_dim,
+                                     const unsigned long int *rank_offsets,
+                                     int rank,
+                                     int nrank)
+{
+  int peer;
+  if (rank_offsets == NULL || rank < 0 || nrank < 1 || rank >= nrank ||
+      rank_offsets[0] != 0UL || rank_offsets[nrank] != dim) {
+    return -1;
+  }
+  for (peer = 0; peer < nrank; peer++) {
+    unsigned long int expected_offset;
+    unsigned long int expected_count;
+    if (directory_block_range(dim, peer, nrank,
+                              &expected_offset, &expected_count) != 0 ||
+        rank_offsets[peer] != expected_offset ||
+        rank_offsets[peer + 1] != expected_offset + expected_count) {
+      return -1;
+    }
+    if (peer == rank &&
+        (local_offset != expected_offset || local_dim != expected_count)) {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+static int directory_nonempty_rank_count(unsigned long int dim, int nrank)
+{
+  if (nrank < 1) return -1;
+  if (dim < (unsigned long int)nrank) return (int)dim;
+  return nrank;
+}
+
+void FreeSymmetryRepresentativeDirectory(
+    struct SymmetryRepresentativeDirectory *directory)
+{
+  if (directory == NULL) return;
+  FreeSymmetryLocalRepresentativeIndex(directory->local_index);
+  free(directory->rank_first_rep);
+  free(directory);
+}
+
+int BuildSymmetryRepresentativeDirectory(
+    const struct SymmetryBasisVector *local_basis,
+    unsigned long int dim,
+    unsigned long int local_dim,
+    unsigned long int local_capacity,
+    unsigned long int local_offset,
+    const unsigned long int *rank_offsets,
+    int rank,
+    int nrank,
+    struct SymmetryRepresentativeDirectory **directory_out)
+{
+  struct SymmetryLocalRepresentativeIndex *local_index = NULL;
+  struct SymmetryRepresentativeDirectory *next = NULL;
+  unsigned long int local_boundary[2] = {0UL, 0UL};
+  unsigned long int *all_boundaries = NULL;
+  size_t boundary_elements = 0U;
+  size_t boundary_bytes = 0U;
+  size_t splitter_bytes = 0U;
+  int mpi_active;
+  int comm_rank;
+  int comm_size;
+  int nonempty_rank_count = 0;
+  int local_error = 0;
+  int global_error;
+  int peer;
+
+  if (directory_mpi_context(&mpi_active, &comm_rank, &comm_size) != 0) {
+    return -1;
+  }
+  if (directory_out == NULL || *directory_out != NULL ||
+      rank < 0 || nrank < 1 || rank >= nrank ||
+      (mpi_active != 0 &&
+       (rank != comm_rank || nrank != comm_size)) ||
+      (mpi_active == 0 && (rank != 0 || nrank != 1)) ||
+      validate_directory_layout(dim, local_offset, local_dim,
+                                rank_offsets, rank, nrank) != 0) {
+    local_error = 1;
+  }
+  if (local_error == 0 &&
+      BuildSymmetryLocalRepresentativeIndex(
+          local_basis, local_dim, local_capacity, local_offset,
+          &local_index) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) {
+    FreeSymmetryLocalRepresentativeIndex(local_index);
+    return -1;
+  }
+
+  nonempty_rank_count = directory_nonempty_rank_count(dim, nrank);
+  if (nonempty_rank_count < 0 ||
+      (size_t)nrank > SIZE_MAX / 2U) {
+    local_error = 1;
+  } else {
+    boundary_elements = (size_t)nrank * 2U;
+    if (boundary_elements > SIZE_MAX / sizeof(*all_boundaries)) {
+      local_error = 1;
+    } else {
+      boundary_bytes = boundary_elements * sizeof(*all_boundaries);
+    }
+    if ((size_t)nonempty_rank_count >
+        SIZE_MAX / sizeof(unsigned long int)) {
+      local_error = 1;
+    } else {
+      splitter_bytes =
+          (size_t)nonempty_rank_count * sizeof(unsigned long int);
+    }
+  }
+  if (local_error == 0) {
+    next = (struct SymmetryRepresentativeDirectory *)calloc(1U,
+                                                             sizeof(*next));
+    all_boundaries =
+        (unsigned long int *)malloc(boundary_bytes);
+    if (next == NULL || all_boundaries == NULL) local_error = 1;
+  }
+  if (next != NULL) {
+    next->dim = dim;
+    next->local_offset = local_offset;
+    next->local_dim = local_dim;
+    next->rank = rank;
+    next->nrank = nrank;
+    next->nonempty_rank_count = nonempty_rank_count;
+    next->local_index = local_index;
+    local_index = NULL;
+    if (nonempty_rank_count > 0) {
+      next->rank_first_rep =
+          (unsigned long int *)malloc(splitter_bytes);
+      if (next->rank_first_rep == NULL) local_error = 1;
+    }
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) {
+    free(all_boundaries);
+    FreeSymmetryRepresentativeDirectory(next);
+    FreeSymmetryLocalRepresentativeIndex(local_index);
+    return -1;
+  }
+
+  if (local_dim > 0UL) {
+    local_boundary[0] = local_basis[1].rep_state;
+    local_boundary[1] = local_basis[local_dim].rep_state;
+  }
+#ifdef MPI
+  if (mpi_active != 0) {
+    if (MPI_Allgather(local_boundary, 2, MPI_UNSIGNED_LONG,
+                      all_boundaries, 2, MPI_UNSIGNED_LONG,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      free(all_boundaries);
+      FreeSymmetryRepresentativeDirectory(next);
+      return -1;
+    }
+  } else
+#endif
+  {
+    all_boundaries[0] = local_boundary[0];
+    all_boundaries[1] = local_boundary[1];
+  }
+
+  {
+    unsigned long int previous_last = 0UL;
+    int have_previous = 0;
+    for (peer = 0; peer < nrank; peer++) {
+      unsigned long int expected_offset;
+      unsigned long int expected_count;
+      unsigned long int first = all_boundaries[(size_t)peer * 2U];
+      unsigned long int last = all_boundaries[(size_t)peer * 2U + 1U];
+      if (directory_block_range(dim, peer, nrank,
+                                &expected_offset, &expected_count) != 0) {
+        local_error = 1;
+        break;
+      }
+      (void)expected_offset;
+      if (expected_count == 0UL) {
+        if (first != 0UL || last != 0UL ||
+            peer < nonempty_rank_count) {
+          local_error = 1;
+          break;
+        }
+        continue;
+      }
+      if (peer >= nonempty_rank_count || first > last ||
+          (have_previous != 0 && previous_last >= first)) {
+        local_error = 1;
+        break;
+      }
+      next->rank_first_rep[peer] = first;
+      previous_last = last;
+      have_previous = 1;
+    }
+  }
+  free(all_boundaries);
+  all_boundaries = NULL;
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) {
+    FreeSymmetryRepresentativeDirectory(next);
+    return -1;
+  }
+  next->ready = 1;
+  *directory_out = next;
+  return 0;
+}
+
+int SymmetryRepresentativeDirectoryReady(
+    const struct SymmetryRepresentativeDirectory *directory)
+{
+  return directory != NULL && directory->ready == 1 &&
+      directory->rank >= 0 && directory->nrank > 0 &&
+      directory->rank < directory->nrank &&
+      directory->nonempty_rank_count >= 0 &&
+      directory->nonempty_rank_count <= directory->nrank &&
+      directory->local_index != NULL &&
+      (directory->nonempty_rank_count == 0
+           ? directory->rank_first_rep == NULL
+           : directory->rank_first_rep != NULL);
+}
+
+int SymmetryRepresentativeOwner(
+    const struct SymmetryRepresentativeDirectory *directory,
+    unsigned long int rep_state,
+    int *owner)
+{
+  int next_owner = -1;
+  int lo;
+  int hi;
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0 ||
+      owner == NULL) {
+    return -1;
+  }
+  lo = 0;
+  hi = directory->nonempty_rank_count;
+  while (lo < hi) {
+    int mid = lo + (hi - lo) / 2;
+    if (directory->rank_first_rep[mid] <= rep_state) {
+      lo = mid + 1;
+    } else {
+      hi = mid;
+    }
+  }
+  if (directory->nonempty_rank_count > 0) {
+    next_owner = lo == 0 ? 0 : lo - 1;
+  }
+  *owner = next_owner;
+  return 0;
+}
+
+int SymmetryLookupDirectoryLocalRepresentative(
+    const struct SymmetryRepresentativeDirectory *directory,
+    unsigned long int rep_state,
+    unsigned long int *local_index,
+    unsigned long int *global_beta,
+    double *norm,
+    uint64_t *probe_count)
+{
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0) return -1;
+  return SymmetryLookupLocalRepresentative(
+      directory->local_index, rep_state, local_index,
+      global_beta, norm, probe_count);
+}
+
+int GetSymmetryRepresentativeDirectoryInfo(
+    const struct SymmetryRepresentativeDirectory *directory,
+    struct SymmetryRepresentativeDirectoryInfo *info)
+{
+  struct SymmetryRepresentativeDirectoryInfo next;
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0 ||
+      info == NULL ||
+      (size_t)directory->nonempty_rank_count >
+          SIZE_MAX / sizeof(unsigned long int)) {
+    return -1;
+  }
+  next.dim = directory->dim;
+  next.local_offset = directory->local_offset;
+  next.local_dim = directory->local_dim;
+  next.rank = directory->rank;
+  next.nrank = directory->nrank;
+  next.nonempty_rank_count = directory->nonempty_rank_count;
+  next.splitter_bytes =
+      (size_t)directory->nonempty_rank_count * sizeof(unsigned long int);
+  *info = next;
+  return 0;
+}
+
+int GetSymmetryRepresentativeDirectoryLocalIndexStats(
+    const struct SymmetryRepresentativeDirectory *directory,
+    struct SymmetryLocalRepresentativeIndexStats *stats)
+{
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0) return -1;
+  return GetSymmetryLocalRepresentativeIndexStats(
+      directory->local_index, stats);
 }

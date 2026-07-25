@@ -117,6 +117,9 @@ target_include_directories(unittest_symmetry_directory
 target_compile_definitions(unittest_symmetry_directory PRIVATE
     DSFMT_MEXP=19937)
 target_link_libraries(unittest_symmetry_directory m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_directory ${MPI_C_LIBRARIES})
+endif()
 if(TARGET OpenMP::OpenMP_C)
     target_link_libraries(unittest_symmetry_directory OpenMP::OpenMP_C)
 endif()
@@ -124,6 +127,11 @@ add_test(NAME unittest_symmetry_directory
     COMMAND unittest_symmetry_directory)
 set_tests_properties(unittest_symmetry_directory
     PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_directory_mpi min:2)
+    set_tests_properties(symmetry_directory_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
 
 #
 # Lanczos
