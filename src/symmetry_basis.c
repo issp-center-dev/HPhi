@@ -5,6 +5,7 @@
 #include "global.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
+#include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_state_enumerator.h"
@@ -359,6 +360,53 @@ struct SymmetryBasisCollector {
   int error;
 };
 
+static int checked_ull_add(unsigned long long lhs,
+                           unsigned long long rhs,
+                           unsigned long long *result)
+{
+  if (result == NULL || lhs > ULLONG_MAX - rhs) return -1;
+  *result = lhs + rhs;
+  return 0;
+}
+
+static int symmetry_basis_run_is_empty(const struct SymmetryBasisRun *run)
+{
+  return run != NULL && run->entries == NULL &&
+      run->count == 0UL && run->capacity == 0UL;
+}
+
+#ifdef MPI
+static int symmetry_basis_run_is_valid(const struct SymmetryBasisRun *run)
+{
+  if (run == NULL) return FALSE;
+  if (run->entries == NULL) {
+    return run->count == 0UL && run->capacity == 0UL;
+  }
+  if (run->capacity == 0UL || run->count == ULONG_MAX) return FALSE;
+  return run->capacity >= run->count + 1UL;
+}
+#endif
+
+void FreeSymmetryBasisRun(struct SymmetryBasisRun *run)
+{
+  if (run == NULL) return;
+  free(run->entries);
+  run->entries = NULL;
+  run->count = 0UL;
+  run->capacity = 0UL;
+}
+
+void FreeSymmetryBasisOwnership(
+    struct SymmetryBasisOwnership *ownership)
+{
+  if (ownership == NULL) return;
+  free(ownership->rank_offsets);
+  ownership->rank_offsets = NULL;
+  ownership->dim = 0UL;
+  ownership->local_offset = 0UL;
+  ownership->local_dim = 0UL;
+}
+
 static unsigned long int symmetry_distribution_chunk(unsigned long int full_dim,
                                                      int nrank)
 {
@@ -659,136 +707,70 @@ static void free_basis_collectors(struct SymmetryBasisCollector *collectors,
   free(collectors);
 }
 
-static int gather_symmetry_basis(struct SymmetryBasisRuntime *sym)
+int BuildRankLocalSymmetryBasisRun(
+    const struct BindStruct *X,
+    struct SymmetryBasisRuntime *sym,
+    struct SymmetryBasisRun *run)
 {
-  if (nproc <= 1) return 0;
-#ifdef MPI
-  int local_count;
-  int total_count = 0;
-  int local_error;
-  int global_error;
-  int ierr;
-  int rank;
-  int *counts = NULL;
-  int *displacements = NULL;
-  struct SymmetryBasisVector *global_basis = NULL;
-  MPI_Datatype vector_type = MPI_DATATYPE_NULL;
-
-  local_error = sym->dim > (unsigned long int)INT_MAX ? 1 : 0;
-  counts = (int *)malloc((size_t)nproc * sizeof(*counts));
-  displacements = (int *)malloc((size_t)nproc * sizeof(*displacements));
-  if (counts == NULL || displacements == NULL) local_error = 1;
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) goto fail;
-
-  local_count = (int)sym->dim;
-  ierr = MPI_Allgather(&local_count, 1, MPI_INT,
-                       counts, 1, MPI_INT, MPI_COMM_WORLD);
-  if (ierr != MPI_SUCCESS) goto fail;
-  for (rank = 0; rank < nproc; rank++) {
-    if (counts[rank] < 0 || counts[rank] > INT_MAX - total_count) {
-      local_error = 1;
-      break;
-    }
-    displacements[rank] = total_count;
-    total_count += counts[rank];
-  }
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) goto fail;
-
-  if ((unsigned long int)total_count >
-      SIZE_MAX / sizeof(*global_basis) - 1UL) {
-    local_error = 1;
-  } else {
-    global_basis = (struct SymmetryBasisVector *)calloc(
-        (size_t)total_count + 1U, sizeof(*global_basis));
-    if (global_basis == NULL) local_error = 1;
-  }
-  if (SymmetryMpiCreateBasisVectorType(&vector_type) != 0) local_error = 1;
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) goto fail;
-
-  ierr = MPI_Allgatherv(local_count > 0 ? sym->basis + 1 : sym->basis,
-                        local_count, vector_type,
-                        global_basis + 1, counts, displacements, vector_type,
-                        MPI_COMM_WORLD);
-  if (ierr != MPI_SUCCESS) goto fail;
-
-  MPI_Type_free(&vector_type);
-  free(counts);
-  free(displacements);
-  free(sym->basis);
-  sym->basis = global_basis;
-  sym->dim = (unsigned long int)total_count;
-  sym->capacity = sym->dim;
-  sym->basis_gather_entries = (unsigned long long)total_count;
-  sym->basis_gather_bytes =
-      (unsigned long long)total_count * sizeof(*global_basis);
-  return 0;
-
-fail:
-  if (vector_type != MPI_DATATYPE_NULL) MPI_Type_free(&vector_type);
-  free(global_basis);
-  free(counts);
-  free(displacements);
-  return -1;
-#else
-  (void)sym;
-  return -1;
-#endif
-}
-
-int BuildSymmetryBasis(struct BindStruct *X)
-{
-  unsigned long int full_dim;
+  unsigned long int full_dim = 0UL;
   unsigned long int local_raw_index;
-  unsigned long int rank_raw_count;
-  unsigned long int distribution_chunk;
-  unsigned long int basis_offset;
-  unsigned long int global_representative_candidates;
+  unsigned long int rank_raw_count = 0UL;
+  unsigned long int distribution_chunk = 0UL;
+  unsigned long int run_count = 0UL;
+  unsigned long int run_capacity = 0UL;
+  unsigned long int basis_offset = 1UL;
+  unsigned long long raw_states = 0ULL;
+  unsigned long long representative_candidates = 0ULL;
+  unsigned long long compatible_survivors = 0ULL;
+  unsigned long long transform_calls = 0ULL;
+  unsigned long long state_enumerator_calls = 0ULL;
+  unsigned long long diagonal_evaluator_calls = 0ULL;
+  unsigned long long thread_raw_states_max = 0ULL;
+  unsigned long long thread_representative_candidates_max = 0ULL;
+  unsigned long long thread_compatible_survivors_max = 0ULL;
+  unsigned long long thread_transform_calls_max = 0ULL;
   int collector_count = 1;
   int actual_thread_count = 1;
   int local_error = 0;
   int global_error;
   int thread;
+  struct SymmetryBasisVector *run_entries = NULL;
   struct SymmetryBasisCollector *collectors = NULL;
-  struct SymmetryBasisRuntime *sym;
   struct SymmetryStateEnumerator enumerator;
 
-  if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
-  full_dim = X->Check.idim_max;
-  sym = (struct SymmetryBasisRuntime *)calloc(1, sizeof(*sym));
-  global_error = SumMPI_i(sym == NULL ? 1 : 0);
-  if (global_error != 0) {
-    free(sym);
-    return -1;
+  if (X == NULL || sym == NULL ||
+      symmetry_basis_run_is_empty(run) != TRUE ||
+      X->Def.iFlgSymmetryBasis == FALSE ||
+      nproc < 1 || myrank < 0 || myrank >= nproc) {
+    local_error = 1;
+  } else {
+    full_dim = X->Check.idim_max;
+    if (InitSymmetryStateEnumerator(
+            &X->Def, full_dim, &enumerator) != 0) {
+      local_error = 1;
+    }
   }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) return -1;
 
-  sym->enabled = TRUE;
-  sym->nsite = X->Def.Nsite;
-  sym->group_order = X->Def.NSymTrans;
-  sym->full_dim = full_dim;
-  local_error =
-      InitSymmetryStateEnumerator(&X->Def, full_dim, &enumerator) != 0;
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) goto fail;
-  local_error = build_group_inverse(&X->Def, sym) != 0 ? 1 : 0;
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) goto fail;
   distribution_chunk = symmetry_distribution_chunk(full_dim, nproc);
   rank_raw_count = symmetry_rank_raw_count(full_dim, distribution_chunk,
                                            myrank, nproc);
-
 #ifdef _OPENMP
   collector_count = omp_get_max_threads();
 #endif
-  if (collector_count < 1) goto fail;
-  collectors = (struct SymmetryBasisCollector *)calloc(
-      (size_t)collector_count, sizeof(*collectors));
-  global_error = SumMPI_i(collectors == NULL ? 1 : 0);
+  if (collector_count < 1 ||
+      (size_t)collector_count > SIZE_MAX / sizeof(*collectors)) {
+    local_error = 1;
+  }
+  if (local_error == 0) {
+    collectors = (struct SymmetryBasisCollector *)calloc(
+        (size_t)collector_count, sizeof(*collectors));
+    if (collectors == NULL) local_error = 1;
+  }
+  global_error = SumMPI_i(local_error);
   if (global_error != 0) goto fail;
 
-  StartTimer(1110);
 #ifdef _OPENMP
 #pragma omp parallel shared(actual_thread_count, collectors, X, enumerator, rank_raw_count, distribution_chunk)
 #endif
@@ -802,8 +784,10 @@ int BuildSymmetryBasis(struct BindStruct *X)
 #endif
     collector = &collectors[thread_id];
 #ifdef _OPENMP
-    /* Cyclic chunks spread representative-heavy regions while retaining
-       locality in the enumerator's numeric raw-state order. */
+    /*
+     * Cyclic chunks spread representative-heavy regions while retaining
+     * locality in the enumerator's numeric raw-state order.
+     */
 #pragma omp for schedule(static, distribution_chunk)
 #endif
     for (local_raw_index = 0UL; local_raw_index < rank_raw_count;
@@ -811,8 +795,8 @@ int BuildSymmetryBasis(struct BindStruct *X)
       unsigned long int raw_index;
       unsigned long int state;
       int is_representative = FALSE;
-      unsigned int orbit_size = 0;
-      unsigned int stabilizer_size = 0;
+      unsigned int orbit_size = 0U;
+      unsigned int stabilizer_size = 0U;
       double complex stabilizer_sum = 0.0;
       double diagonal;
       if (collector->error != 0) continue;
@@ -850,75 +834,217 @@ int BuildSymmetryBasis(struct BindStruct *X)
     }
   }
 
+  if (actual_thread_count < 1 ||
+      actual_thread_count > collector_count) {
+    local_error = 1;
+    actual_thread_count = 0;
+  }
   for (thread = 0; thread < actual_thread_count; thread++) {
-    struct SymmetryBasisCollector *collector = &collectors[thread];
+    const struct SymmetryBasisCollector *collector = &collectors[thread];
     if (collector->error != 0 ||
-        sym->dim > ULONG_MAX - collector->count) {
+        run_count > ULONG_MAX - collector->count ||
+        checked_ull_add(raw_states, collector->raw_states,
+                        &raw_states) != 0 ||
+        checked_ull_add(representative_candidates,
+                        collector->representative_candidates,
+                        &representative_candidates) != 0 ||
+        checked_ull_add(compatible_survivors,
+                        collector->compatible_survivors,
+                        &compatible_survivors) != 0 ||
+        checked_ull_add(transform_calls, collector->transform_calls,
+                        &transform_calls) != 0 ||
+        checked_ull_add(state_enumerator_calls,
+                        collector->state_enumerator_calls,
+                        &state_enumerator_calls) != 0 ||
+        checked_ull_add(diagonal_evaluator_calls,
+                        collector->diagonal_evaluator_calls,
+                        &diagonal_evaluator_calls) != 0) {
       local_error = 1;
       continue;
     }
-    sym->dim += collector->count;
-    sym->basis_raw_states += collector->raw_states;
-    sym->basis_representative_candidates +=
-        collector->representative_candidates;
-    sym->basis_compatible_survivors += collector->compatible_survivors;
-    sym->basis_transform_calls += collector->transform_calls;
-    sym->basis_state_enumerator_calls +=
-        collector->state_enumerator_calls;
-    sym->basis_diagonal_evaluator_calls +=
-        collector->diagonal_evaluator_calls;
-    if (collector->raw_states > sym->basis_thread_raw_states_max)
-      sym->basis_thread_raw_states_max = collector->raw_states;
+    run_count += collector->count;
+    if (collector->raw_states > thread_raw_states_max)
+      thread_raw_states_max = collector->raw_states;
     if (collector->representative_candidates >
-        sym->basis_thread_representative_candidates_max)
-      sym->basis_thread_representative_candidates_max =
+        thread_representative_candidates_max)
+      thread_representative_candidates_max =
           collector->representative_candidates;
     if (collector->compatible_survivors >
-        sym->basis_thread_compatible_survivors_max)
-      sym->basis_thread_compatible_survivors_max =
+        thread_compatible_survivors_max)
+      thread_compatible_survivors_max =
           collector->compatible_survivors;
-    if (collector->transform_calls > sym->basis_thread_transform_calls_max)
-      sym->basis_thread_transform_calls_max = collector->transform_calls;
+    if (collector->transform_calls > thread_transform_calls_max)
+      thread_transform_calls_max = collector->transform_calls;
   }
-  global_error = SumMPI_i(local_error);
-  if (global_error != 0) {
-    StopTimer(1110);
-    free_basis_collectors(collectors, collector_count);
-    collectors = NULL;
-    goto fail;
-  }
-  sym->basis_thread_count = (unsigned int)actual_thread_count;
-  sym->basis_orbit_metadata_calls =
-      sym->basis_representative_candidates;
-
-  if (sym->dim > SIZE_MAX / sizeof(*sym->basis) - 1UL) {
+  if (run_count == ULONG_MAX ||
+      run_count + 1UL > SIZE_MAX / sizeof(*run_entries)) {
     local_error = 1;
   } else {
-    sym->basis = (struct SymmetryBasisVector *)calloc(
-        (size_t)sym->dim + 1U, sizeof(*sym->basis));
-    if (sym->basis == NULL) local_error = 1;
+    run_capacity = run_count + 1UL;
+    run_entries = (struct SymmetryBasisVector *)calloc(
+        (size_t)run_capacity, sizeof(*run_entries));
+    if (run_entries == NULL) local_error = 1;
   }
   global_error = SumMPI_i(local_error);
-  if (global_error != 0) {
-    StopTimer(1110);
-    free_basis_collectors(collectors, collector_count);
-    collectors = NULL;
-    goto fail;
-  }
-  sym->capacity = sym->dim;
-  basis_offset = 1UL;
+  if (global_error != 0) goto fail;
+
   for (thread = 0; thread < actual_thread_count; thread++) {
-    struct SymmetryBasisCollector *collector = &collectors[thread];
+    const struct SymmetryBasisCollector *collector = &collectors[thread];
     if (collector->count > 0UL) {
-      memcpy(sym->basis + basis_offset, collector->entries,
-             (size_t)collector->count * sizeof(*sym->basis));
+      memcpy(run_entries + basis_offset, collector->entries,
+             (size_t)collector->count * sizeof(*run_entries));
       basis_offset += collector->count;
     }
   }
+  if (basis_offset != run_count + 1UL) {
+    local_error = 1;
+  }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
   free_basis_collectors(collectors, collector_count);
   collectors = NULL;
+  run->entries = run_entries;
+  run->count = run_count;
+  run->capacity = run_capacity;
+  sym->basis_raw_states = raw_states;
+  sym->basis_representative_candidates = representative_candidates;
+  sym->basis_compatible_survivors = compatible_survivors;
+  sym->basis_transform_calls = transform_calls;
+  sym->basis_orbit_metadata_calls = representative_candidates;
+  sym->basis_state_enumerator_calls = state_enumerator_calls;
+  sym->basis_diagonal_evaluator_calls = diagonal_evaluator_calls;
+  sym->basis_thread_count = (unsigned int)actual_thread_count;
+  sym->basis_thread_raw_states_max = thread_raw_states_max;
+  sym->basis_thread_representative_candidates_max =
+      thread_representative_candidates_max;
+  sym->basis_thread_compatible_survivors_max =
+      thread_compatible_survivors_max;
+  sym->basis_thread_transform_calls_max = thread_transform_calls_max;
+  return 0;
+
+fail:
+  free(run_entries);
+  free_basis_collectors(collectors, collector_count);
+  return -1;
+}
+
+static int gather_symmetry_basis(struct SymmetryBasisRun *run,
+                                 struct SymmetryBasisRuntime *sym)
+{
+  if (nproc <= 1) return 0;
+#ifdef MPI
+  int local_count;
+  int total_count = 0;
+  int local_error;
+  int global_error;
+  int ierr;
+  int rank;
+  int *counts = NULL;
+  int *displacements = NULL;
+  struct SymmetryBasisVector *global_basis = NULL;
+  MPI_Datatype vector_type = MPI_DATATYPE_NULL;
+
+  local_error =
+      symmetry_basis_run_is_valid(run) != TRUE ||
+      run->count > (unsigned long int)INT_MAX ? 1 : 0;
+  counts = (int *)malloc((size_t)nproc * sizeof(*counts));
+  displacements = (int *)malloc((size_t)nproc * sizeof(*displacements));
+  if (counts == NULL || displacements == NULL) local_error = 1;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  local_count = (int)run->count;
+  ierr = MPI_Allgather(&local_count, 1, MPI_INT,
+                       counts, 1, MPI_INT, MPI_COMM_WORLD);
+  if (ierr != MPI_SUCCESS) goto fail;
+  for (rank = 0; rank < nproc; rank++) {
+    if (counts[rank] < 0 || counts[rank] > INT_MAX - total_count) {
+      local_error = 1;
+      break;
+    }
+    displacements[rank] = total_count;
+    total_count += counts[rank];
+  }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  if ((unsigned long int)total_count >
+      SIZE_MAX / sizeof(*global_basis) - 1UL) {
+    local_error = 1;
+  } else {
+    global_basis = (struct SymmetryBasisVector *)calloc(
+        (size_t)total_count + 1U, sizeof(*global_basis));
+    if (global_basis == NULL) local_error = 1;
+  }
+  if (SymmetryMpiCreateBasisVectorType(&vector_type) != 0) local_error = 1;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  ierr = MPI_Allgatherv(local_count > 0 ? run->entries + 1 : run->entries,
+                        local_count, vector_type,
+                        global_basis + 1, counts, displacements, vector_type,
+                        MPI_COMM_WORLD);
+  if (ierr != MPI_SUCCESS) goto fail;
+
+  MPI_Type_free(&vector_type);
+  free(counts);
+  free(displacements);
+  free(run->entries);
+  run->entries = global_basis;
+  run->count = (unsigned long int)total_count;
+  run->capacity = run->count + 1UL;
+  sym->basis_gather_entries = (unsigned long long)total_count;
+  sym->basis_gather_bytes =
+      (unsigned long long)total_count * sizeof(*global_basis);
+  return 0;
+
+fail:
+  if (vector_type != MPI_DATATYPE_NULL) MPI_Type_free(&vector_type);
+  free(global_basis);
+  free(counts);
+  free(displacements);
+  return -1;
+#else
+  (void)run;
+  (void)sym;
+  return -1;
+#endif
+}
+
+int BuildSymmetryBasis(struct BindStruct *X)
+{
+  unsigned long int full_dim;
+  unsigned long int global_representative_candidates;
+  int local_error = 0;
+  int global_error;
+  struct SymmetryBasisRun run = {NULL, 0UL, 0UL};
+  struct SymmetryBasisRuntime *sym;
+
+  if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
+  full_dim = X->Check.idim_max;
+  sym = (struct SymmetryBasisRuntime *)calloc(1, sizeof(*sym));
+  global_error = SumMPI_i(sym == NULL ? 1 : 0);
+  if (global_error != 0) {
+    free(sym);
+    return -1;
+  }
+
+  sym->enabled = TRUE;
+  sym->nsite = X->Def.Nsite;
+  sym->group_order = X->Def.NSymTrans;
+  sym->full_dim = full_dim;
+  local_error = build_group_inverse(&X->Def, sym) != 0 ? 1 : 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
+
+  StartTimer(1110);
+  if (BuildRankLocalSymmetryBasisRun(X, sym, &run) != 0) {
+    StopTimer(1110);
+    goto fail;
+  }
   StartTimer(1115);
-  if (gather_symmetry_basis(sym) != 0) {
+  if (gather_symmetry_basis(&run, sym) != 0) {
     StopTimer(1115);
     StopTimer(1110);
     goto fail;
@@ -927,6 +1053,13 @@ int BuildSymmetryBasis(struct BindStruct *X)
       (unsigned long int)sym->basis_representative_candidates);
   StopTimer(1115);
   StopTimer(1110);
+
+  sym->basis = run.entries;
+  sym->dim = run.count;
+  sym->capacity = run.count;
+  run.entries = NULL;
+  run.count = 0UL;
+  run.capacity = 0UL;
 
   StartTimer(1111);
   if (sym->dim > 1) {
@@ -959,7 +1092,7 @@ int BuildSymmetryBasis(struct BindStruct *X)
   return 0;
 
 fail:
-  free_basis_collectors(collectors, collector_count);
+  FreeSymmetryBasisRun(&run);
   FreeSymmetryBasis(sym);
   return -1;
 }

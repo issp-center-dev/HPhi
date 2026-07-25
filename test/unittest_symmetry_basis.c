@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
+#include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_state_enumerator.h"
 #include "symmetry_vector_halo.h"
@@ -3153,10 +3154,229 @@ static void assert_hash_probe_lookup_handles_collision(const char *label)
   }
 }
 
+static int c1_basis_vector_fields_equal(
+    const struct SymmetryBasisVector *lhs,
+    const struct SymmetryBasisVector *rhs)
+{
+  return lhs->rep_state == rhs->rep_state &&
+      lhs->orbit_size == rhs->orbit_size &&
+      lhs->stabilizer_size == rhs->stabilizer_size &&
+      memcmp(&lhs->norm, &rhs->norm, sizeof(lhs->norm)) == 0 &&
+      memcmp(&lhs->stabilizer_character_sum,
+             &rhs->stabilizer_character_sum,
+             sizeof(lhs->stabilizer_character_sum)) == 0 &&
+      memcmp(&lhs->diagonal, &rhs->diagonal,
+             sizeof(lhs->diagonal)) == 0;
+}
+
+static void assert_rank_local_basis_run_contract(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisRuntime local_sym;
+  struct SymmetryBasisRun run = {NULL, 0UL, 0UL};
+  struct SymmetryBasisRun invalid_run;
+  struct SymmetryBasisVector *invalid_entries;
+  unsigned long int *presence;
+  unsigned long int global_count;
+  unsigned long long global_raw_states;
+  unsigned long int index;
+  int empty_rank_count;
+
+  setup_spinless_bind(&X, 4U, 2U, 1U);
+  memset(&local_sym, 0, sizeof(local_sym));
+  invalid_entries = (struct SymmetryBasisVector *)calloc(
+      1U, sizeof(*invalid_entries));
+  if (invalid_entries == NULL) {
+    fprintf(stderr, "%s: invalid-run fixture allocation failed\n", label);
+    exit(1);
+  }
+  invalid_run.entries = invalid_entries;
+  invalid_run.count = 0UL;
+  invalid_run.capacity = 0UL;
+  assert_int_eq(
+      BuildRankLocalSymmetryBasisRun(&X, &local_sym, &invalid_run),
+      -1, "invalid rank-local run is rejected");
+  assert_int_eq(invalid_run.entries == invalid_entries &&
+                    invalid_run.count == 0UL &&
+                    invalid_run.capacity == 0UL,
+                1, "failed rank-local build preserves caller ownership");
+  free(invalid_entries);
+
+  if (BuildRankLocalSymmetryBasisRun(&X, &local_sym, &run) != 0) {
+    fprintf(stderr, "%s: rank-local run build failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(run.entries != NULL, 1, label);
+  assert_ulong_eq(run.capacity, run.count + 1UL, label);
+  assert_ulong_eq(run.entries[0].rep_state, 0UL, label);
+  assert_int_eq(run.entries[0].orbit_size == 0U &&
+                    run.entries[0].stabilizer_size == 0U,
+                1, label);
+  assert_complex_close(run.entries[0].norm, 0.0, 0.0, label);
+  assert_complex_close(run.entries[0].stabilizer_character_sum,
+                       0.0, 0.0, label);
+  assert_complex_close(run.entries[0].diagonal, 0.0, 0.0, label);
+
+  global_count = run.count;
+  global_raw_states = local_sym.basis_raw_states;
+  empty_rank_count = run.count == 0UL ? 1 : 0;
+#ifdef MPI
+  if (nproc > 1) {
+    unsigned long int reduced_count = 0UL;
+    unsigned long long reduced_raw_states = 0ULL;
+    int reduced_empty_ranks = 0;
+    if (MPI_Allreduce(&global_count, &reduced_count, 1, MPI_UNSIGNED_LONG,
+                      MPI_SUM, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&global_raw_states, &reduced_raw_states, 1,
+                      MPI_UNSIGNED_LONG_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&empty_rank_count, &reduced_empty_ranks, 1, MPI_INT,
+                      MPI_SUM, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: rank-local count reduction failed\n", label);
+      exit(1);
+    }
+    global_count = reduced_count;
+    global_raw_states = reduced_raw_states;
+    empty_rank_count = reduced_empty_ranks;
+  }
+#endif
+  assert_ulong_eq((unsigned long int)global_raw_states,
+                  X.Check.idim_max, label);
+
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: replicated compatibility build failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(global_count, X.Sym->dim, label);
+  assert_int_eq(local_sym.basis_raw_states == X.Sym->basis_raw_states &&
+                    local_sym.basis_representative_candidates ==
+                        X.Sym->basis_representative_candidates &&
+                    local_sym.basis_compatible_survivors ==
+                        X.Sym->basis_compatible_survivors &&
+                    local_sym.basis_transform_calls ==
+                        X.Sym->basis_transform_calls &&
+                    local_sym.basis_state_enumerator_calls ==
+                        X.Sym->basis_state_enumerator_calls &&
+                    local_sym.basis_diagonal_evaluator_calls ==
+                        X.Sym->basis_diagonal_evaluator_calls,
+                1, label);
+  if (nproc > 1 && (unsigned long int)nproc > X.Sym->dim) {
+    assert_int_eq(
+        empty_rank_count >= nproc - (int)X.Sym->dim, 1, label);
+  }
+
+  presence = (unsigned long int *)calloc(
+      (size_t)X.Sym->dim + 1U, sizeof(*presence));
+  if (presence == NULL) {
+    fprintf(stderr, "%s: presence allocation failed\n", label);
+    exit(1);
+  }
+  for (index = 1UL; index <= run.count; index++) {
+    unsigned long int beta;
+    int found = FALSE;
+    for (beta = 1UL; beta <= X.Sym->dim; beta++) {
+      if (run.entries[index].rep_state !=
+          X.Sym->basis[beta].rep_state) {
+        continue;
+      }
+      assert_int_eq(c1_basis_vector_fields_equal(
+                        &run.entries[index], &X.Sym->basis[beta]),
+                    1, label);
+      presence[beta]++;
+      found = TRUE;
+      break;
+    }
+    assert_int_eq(found, TRUE, label);
+  }
+#ifdef MPI
+  if (nproc > 1) {
+    if (X.Sym->dim + 1UL > (unsigned long int)INT_MAX ||
+        MPI_Allreduce(MPI_IN_PLACE, presence, (int)(X.Sym->dim + 1UL),
+                      MPI_UNSIGNED_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: rank-local presence reduction failed\n", label);
+      exit(1);
+    }
+  }
+#endif
+  for (index = 1UL; index <= X.Sym->dim; index++) {
+    assert_ulong_eq(presence[index], 1UL, label);
+  }
+
+  free(presence);
+  FreeSymmetryBasisRun(&run);
+  assert_int_eq(run.entries == NULL && run.count == 0UL &&
+                    run.capacity == 0UL,
+                1, label);
+  FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_empty_rank_local_basis_run(const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisRuntime local_sym;
+  struct SymmetryBasisRun run = {NULL, 0UL, 0UL};
+  unsigned long int global_count;
+
+  setup_bind(&X, 4U, 0U, 1U);
+  memset(&local_sym, 0, sizeof(local_sym));
+  if (BuildRankLocalSymmetryBasisRun(&X, &local_sym, &run) != 0) {
+    fprintf(stderr, "%s: empty rank-local run build failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(run.count, 0UL, label);
+  assert_ulong_eq(run.capacity, 1UL, label);
+  assert_int_eq(run.entries != NULL, 1, label);
+  global_count = run.count;
+#ifdef MPI
+  if (nproc > 1) {
+    unsigned long int reduced_count = 1UL;
+    if (MPI_Allreduce(&global_count, &reduced_count, 1, MPI_UNSIGNED_LONG,
+                      MPI_SUM, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: empty-run count reduction failed\n", label);
+      exit(1);
+    }
+    global_count = reduced_count;
+  }
+#endif
+  assert_ulong_eq(global_count, 0UL, label);
+  assert_int_eq(BuildSymmetryBasis(&X), -1,
+                "replicated wrapper rejects zero-dimensional sector");
+  assert_int_eq(X.Sym == NULL, 1, label);
+  FreeSymmetryBasisRun(&run);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 int main(int argc, char **argv)
 {
 #ifdef MPI
-  if (argc == 2 && strcmp(argv[1], "--mpi-state-enumerator") == 0) {
+  if (argc == 2 && strcmp(argv[1], "--mpi-rank-local-run") == 0) {
+    if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
+        MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
+      fprintf(stderr, "MPI rank-local run test initialization failed\n");
+      return 1;
+    }
+    stdoutMPI = stderr;
+    assert_rank_local_basis_run_contract(
+        "rank-local run union matches replicated compatibility basis");
+    assert_empty_rank_local_basis_run(
+        "rank-local distribution accepts an empty global sector");
+    if (myrank == 0) {
+      fprintf(stdout,
+              "rank-local symmetry basis run gate: PASS (%d MPI ranks)\n",
+              nproc);
+    }
+    if (MPI_Finalize() != MPI_SUCCESS) return 1;
+    return 0;
+  } else if (argc == 2 && strcmp(argv[1], "--mpi-state-enumerator") == 0) {
     if (MPI_Init(&argc, &argv) != MPI_SUCCESS ||
         MPI_Comm_size(MPI_COMM_WORLD, &nproc) != MPI_SUCCESS ||
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank) != MPI_SUCCESS) {
@@ -3239,6 +3459,10 @@ int main(int argc, char **argv)
                          "hubbard mixed-spin wrap translation sign");
   }
   assert_int_eq(1, 1, "unit harness still running");
+  assert_rank_local_basis_run_contract(
+      "serial rank-local run matches replicated compatibility basis");
+  assert_empty_rank_local_basis_run(
+      "serial rank-local distribution accepts an empty global sector");
   assert_basis_ownership_accessors(
       "basis ownership accessors enforce local/global ranges");
   {
