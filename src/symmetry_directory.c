@@ -2,13 +2,16 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef MPI
 #include <mpi.h>
 #endif
 
 #include "symmetry_basis.h"
+#include "symmetry_checked.h"
 #include "symmetry_directory.h"
+#include "symmetry_mpi_exchange.h"
 
 struct SymmetryLocalRepresentativeIndex {
   const struct SymmetryBasisVector *local_basis;
@@ -30,6 +33,7 @@ struct SymmetryRepresentativeDirectory {
   int nonempty_rank_count;
   unsigned long int *rank_first_rep;
   struct SymmetryLocalRepresentativeIndex *local_index;
+  struct SymmetryRepresentativeBatchStats batch_stats;
 };
 
 static unsigned long int local_rep_state_hash(unsigned long int state)
@@ -419,6 +423,9 @@ int BuildSymmetryRepresentativeDirectory(
   }
   if (directory_out == NULL || *directory_out != NULL ||
       rank < 0 || nrank < 1 || rank >= nrank ||
+      (uint64_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES == 0U ||
+      (uint64_t)(size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES !=
+          (uint64_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES ||
       (mpi_active != 0 &&
        (rank != comm_rank || nrank != comm_size)) ||
       (mpi_active == 0 && (rank != 0 || nrank != 1)) ||
@@ -472,6 +479,8 @@ int BuildSymmetryRepresentativeDirectory(
     next->nrank = nrank;
     next->nonempty_rank_count = nonempty_rank_count;
     next->local_index = local_index;
+    next->batch_stats.directory_batch_memory_byte_limit =
+        (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
     local_index = NULL;
     if (nonempty_rank_count > 0) {
       next->rank_first_rep =
@@ -606,6 +615,698 @@ int SymmetryLookupDirectoryLocalRepresentative(
   return SymmetryLookupLocalRepresentative(
       directory->local_index, rep_state, local_index,
       global_beta, norm, probe_count);
+}
+
+static int directory_memory_add(size_t live_bytes,
+                                size_t additional_bytes,
+                                size_t byte_limit,
+                                size_t *next_live)
+{
+  size_t next;
+  if (next_live == NULL ||
+      SymmetryCheckedSizeAdd(live_bytes, additional_bytes, &next) != 0 ||
+      next > byte_limit) {
+    return -1;
+  }
+  *next_live = next;
+  return 0;
+}
+
+static int directory_exchange_owned_bytes(uint64_t count,
+                                          size_t extent,
+                                          int nrank,
+                                          size_t *owned_bytes)
+{
+  size_t schedule_bytes;
+  size_t payload_bytes;
+  size_t total;
+  size_t count_size;
+  if (owned_bytes == NULL || nrank < 1 ||
+      SymmetryCheckedU64ToSize(count, &count_size) != 0 ||
+      SymmetryCheckedSizeMul((size_t)nrank, sizeof(uint64_t),
+                             &schedule_bytes) != 0 ||
+      SymmetryCheckedSizeMul(schedule_bytes, 2U, &schedule_bytes) != 0 ||
+      SymmetryCheckedSizeMul(count_size, extent, &payload_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(schedule_bytes, payload_bytes, &total) != 0) {
+    return -1;
+  }
+  *owned_bytes = total;
+  return 0;
+}
+
+static int directory_exchange_workspace_bytes(
+    int mpi_active,
+    int nrank,
+    const struct SymmetryMpiExchangeStats *stats,
+    size_t *workspace_bytes)
+{
+#ifdef MPI
+  size_t one_array;
+  size_t request_count;
+  size_t request_bytes;
+  size_t total;
+#endif
+  if (stats == NULL || workspace_bytes == NULL || nrank < 1) return -1;
+  *workspace_bytes = 0U;
+#ifdef MPI
+  if (mpi_active == 0 || nrank == 1) return 0;
+  if (stats->used_chunked != 0) {
+    if (SymmetryCheckedSizeMul((size_t)nrank, sizeof(uint64_t),
+                               &one_array) != 0 ||
+        SymmetryCheckedSizeMul((size_t)nrank, 2U, &request_count) != 0 ||
+        SymmetryCheckedSizeMul(request_count, sizeof(MPI_Request),
+                               &request_bytes) != 0 ||
+        SymmetryCheckedSizeAdd(one_array, one_array, &total) != 0 ||
+        SymmetryCheckedSizeAdd(total, request_bytes, &total) != 0) {
+      return -1;
+    }
+  } else {
+    if (SymmetryCheckedSizeMul((size_t)nrank, sizeof(int),
+                               &one_array) != 0 ||
+        SymmetryCheckedSizeMul(one_array, 4U, &total) != 0) {
+      return -1;
+    }
+  }
+  *workspace_bytes = total;
+#else
+  (void)mpi_active;
+#endif
+  return 0;
+}
+
+static int directory_record_exchange_peak(
+    size_t caller_live,
+    uint64_t result_count,
+    size_t extent,
+    int mpi_active,
+    int nrank,
+    const struct SymmetryMpiExchangeStats *exchange_stats,
+    size_t *batch_peak)
+{
+  size_t owned_bytes;
+  size_t workspace_bytes;
+  size_t peak;
+  if (batch_peak == NULL ||
+      directory_exchange_owned_bytes(result_count, extent, nrank,
+                                     &owned_bytes) != 0 ||
+      directory_exchange_workspace_bytes(
+          mpi_active, nrank, exchange_stats, &workspace_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(caller_live, owned_bytes, &peak) != 0 ||
+      SymmetryCheckedSizeAdd(peak, workspace_bytes, &peak) != 0) {
+    return -1;
+  }
+  if (peak > *batch_peak) *batch_peak = peak;
+  return 0;
+}
+
+static int directory_batch_options(
+    int mpi_active,
+    int nrank,
+    const struct SymmetryRepresentativeBatchOptions *options,
+    struct SymmetryRepresentativeBatchOptions *next)
+{
+  uint64_t configured_entry_limit =
+      (uint64_t)HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES /
+      (uint64_t)sizeof(struct SymmetryMpiLookupResponse);
+  int local_error = 0;
+  if (next == NULL || nrank < 1 || configured_entry_limit == 0U) return -1;
+  memset(next, 0, sizeof(*next));
+  next->corrupt_response_rank = -1;
+  if (options != NULL) *next = *options;
+  if (configured_entry_limit > (uint64_t)INT_MAX) {
+    configured_entry_limit = (uint64_t)INT_MAX;
+  }
+  if ((next->force_chunked != 0 && next->force_chunked != 1) ||
+      (next->debug_echo != 0 && next->debug_echo != 1) ||
+      next->corrupt_response_rank < -1 ||
+      next->corrupt_response_rank >= nrank ||
+      next->chunk_limit > configured_entry_limit) {
+    local_error = 1;
+  }
+  if (agree_directory_failure(mpi_active, local_error) != 0) return -1;
+#ifdef MPI
+  if (mpi_active != 0 && nrank > 1) {
+    uint64_t chunk_min;
+    uint64_t chunk_max;
+    int force_min;
+    int force_max;
+    int echo_min;
+    int echo_max;
+    int corrupt_min;
+    int corrupt_max;
+    if (MPI_Allreduce(&next->chunk_limit, &chunk_min, 1, MPI_UINT64_T,
+                      MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->chunk_limit, &chunk_max, 1, MPI_UINT64_T,
+                      MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->force_chunked, &force_min, 1, MPI_INT,
+                      MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->force_chunked, &force_max, 1, MPI_INT,
+                      MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->debug_echo, &echo_min, 1, MPI_INT,
+                      MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->debug_echo, &echo_max, 1, MPI_INT,
+                      MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->corrupt_response_rank, &corrupt_min, 1, MPI_INT,
+                      MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allreduce(&next->corrupt_response_rank, &corrupt_max, 1, MPI_INT,
+                      MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+      return -1;
+    }
+    if (chunk_min != chunk_max || force_min != force_max ||
+        echo_min != echo_max || corrupt_min != corrupt_max) {
+      return -1;
+    }
+  }
+#else
+  (void)mpi_active;
+#endif
+  return 0;
+}
+
+static uint64_t directory_peer_count_max(const uint64_t *counts, int nrank)
+{
+  uint64_t maximum = 0U;
+  int peer;
+  if (counts == NULL || nrank < 1) return 0U;
+  for (peer = 0; peer < nrank; peer++) {
+    if (counts[peer] > maximum) maximum = counts[peer];
+  }
+  return maximum;
+}
+
+static int directory_include_exchange_stats(
+    struct SymmetryRepresentativeBatchStats *batch,
+    const struct SymmetryMpiExchangeStats *exchange)
+{
+  uint64_t next;
+  if (batch == NULL || exchange == NULL ||
+      checked_u64_add(batch->directory_exchange_send_messages,
+                      exchange->send_messages, &next) != 0) {
+    return -1;
+  }
+  batch->directory_exchange_send_messages = next;
+  if (checked_u64_add(batch->directory_exchange_recv_messages,
+                      exchange->recv_messages, &next) != 0) {
+    return -1;
+  }
+  batch->directory_exchange_recv_messages = next;
+  if (batch->directory_exchange_message_byte_limit == 0U ||
+      exchange->message_byte_limit <
+          batch->directory_exchange_message_byte_limit) {
+    batch->directory_exchange_message_byte_limit =
+        exchange->message_byte_limit;
+  }
+  if (exchange->max_message_bytes >
+      batch->directory_exchange_max_message_bytes) {
+    batch->directory_exchange_max_message_bytes =
+        exchange->max_message_bytes;
+  }
+  if (exchange->used_chunked != 0) {
+    batch->directory_exchange_used_chunked = 1;
+  }
+  return 0;
+}
+
+static int directory_publish_batch_stats(
+    struct SymmetryRepresentativeDirectory *directory,
+    const struct SymmetryRepresentativeBatchStats *call_stats,
+    size_t batch_peak,
+    struct SymmetryRepresentativeBatchStats *next_stats)
+{
+  uint64_t next;
+  if (directory == NULL || call_stats == NULL || next_stats == NULL) {
+    return -1;
+  }
+  *next_stats = directory->batch_stats;
+#define DIRECTORY_ADD_STAT(field)                                             \
+  do {                                                                        \
+    if (checked_u64_add(next_stats->field, call_stats->field, &next) != 0) {  \
+      return -1;                                                              \
+    }                                                                         \
+    next_stats->field = next;                                                 \
+  } while (0)
+  DIRECTORY_ADD_STAT(directory_batch_calls);
+  DIRECTORY_ADD_STAT(directory_request_entries_sent);
+  DIRECTORY_ADD_STAT(directory_request_entries_received);
+  DIRECTORY_ADD_STAT(directory_found_entries);
+  DIRECTORY_ADD_STAT(directory_not_found_entries);
+  DIRECTORY_ADD_STAT(directory_lookup_probe_count);
+  DIRECTORY_ADD_STAT(directory_exchange_send_messages);
+  DIRECTORY_ADD_STAT(directory_exchange_recv_messages);
+#undef DIRECTORY_ADD_STAT
+  if (call_stats->directory_lookup_max_probe >
+      next_stats->directory_lookup_max_probe) {
+    next_stats->directory_lookup_max_probe =
+        call_stats->directory_lookup_max_probe;
+  }
+  if (call_stats->directory_owner_peer_count_max >
+      next_stats->directory_owner_peer_count_max) {
+    next_stats->directory_owner_peer_count_max =
+        call_stats->directory_owner_peer_count_max;
+  }
+  if (call_stats->directory_requester_peer_count_max >
+      next_stats->directory_requester_peer_count_max) {
+    next_stats->directory_requester_peer_count_max =
+        call_stats->directory_requester_peer_count_max;
+  }
+  if (call_stats->directory_exchange_used_chunked != 0) {
+    next_stats->directory_exchange_used_chunked = 1;
+  }
+  if (next_stats->directory_exchange_message_byte_limit == 0U ||
+      (call_stats->directory_exchange_message_byte_limit != 0U &&
+       call_stats->directory_exchange_message_byte_limit <
+           next_stats->directory_exchange_message_byte_limit)) {
+    next_stats->directory_exchange_message_byte_limit =
+        call_stats->directory_exchange_message_byte_limit;
+  }
+  if (call_stats->directory_exchange_max_message_bytes >
+      next_stats->directory_exchange_max_message_bytes) {
+    next_stats->directory_exchange_max_message_bytes =
+        call_stats->directory_exchange_max_message_bytes;
+  }
+  if (batch_peak > next_stats->directory_batch_temporary_peak_bytes) {
+    next_stats->directory_batch_temporary_peak_bytes = batch_peak;
+  }
+  next_stats->directory_batch_memory_byte_limit =
+      (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
+  return 0;
+}
+
+int SymmetryResolveRepresentativeBatchWithOptions(
+    struct SymmetryRepresentativeDirectory *directory,
+    const unsigned long int *request_keys,
+    uint64_t request_count,
+    unsigned long int *global_beta,
+    double *norm,
+    const struct SymmetryRepresentativeBatchOptions *options)
+{
+  struct SymmetryRepresentativeBatchOptions batch_options;
+  struct SymmetryMpiExchangeOptions exchange_options;
+  struct SymmetryMpiExchangeMemoryBudget exchange_budget;
+  struct SymmetryMpiExchangeLayout request_send_layout;
+  struct SymmetryMpiExchangeLayout response_send_layout;
+  struct SymmetryMpiExchangeLayout response_receive_layout;
+  struct SymmetryMpiUnsignedLongResult received_requests;
+  struct SymmetryMpiLookupResponseResult received_responses;
+  struct SymmetryMpiUnsignedLongResult received_echoes;
+  struct SymmetryMpiExchangeStats request_exchange_stats;
+  struct SymmetryMpiExchangeStats response_exchange_stats;
+  struct SymmetryMpiExchangeStats echo_exchange_stats;
+  struct SymmetryRepresentativeBatchStats call_stats;
+  struct SymmetryRepresentativeBatchStats next_stats;
+  struct SymmetryMpiLookupResponse *owner_responses = NULL;
+  unsigned long int *packed_requests = NULL;
+  uint64_t *send_counts = NULL;
+  uint64_t *send_displacements = NULL;
+  size_t byte_limit = (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
+  size_t request_count_size = 0U;
+  size_t schedule_bytes = 0U;
+  size_t packed_bytes = 0U;
+  size_t owner_response_bytes = 0U;
+  size_t received_request_bytes = 0U;
+  size_t received_response_bytes = 0U;
+  size_t received_echo_bytes = 0U;
+  size_t live_bytes = 0U;
+  size_t batch_peak = 0U;
+  int mpi_active;
+  int comm_rank;
+  int comm_size;
+  int local_error = 0;
+  int global_error;
+  int owner = -1;
+  int previous_owner = -1;
+  int peer;
+  uint64_t index;
+
+  memset(&received_requests, 0, sizeof(received_requests));
+  memset(&received_responses, 0, sizeof(received_responses));
+  memset(&received_echoes, 0, sizeof(received_echoes));
+  memset(&request_exchange_stats, 0, sizeof(request_exchange_stats));
+  memset(&response_exchange_stats, 0, sizeof(response_exchange_stats));
+  memset(&echo_exchange_stats, 0, sizeof(echo_exchange_stats));
+  memset(&call_stats, 0, sizeof(call_stats));
+  memset(&next_stats, 0, sizeof(next_stats));
+  memset(&request_send_layout, 0, sizeof(request_send_layout));
+  memset(&response_send_layout, 0, sizeof(response_send_layout));
+  memset(&response_receive_layout, 0, sizeof(response_receive_layout));
+
+  if (directory_mpi_context(&mpi_active, &comm_rank, &comm_size) != 0) {
+    return -1;
+  }
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0 ||
+      directory->rank != comm_rank || directory->nrank != comm_size ||
+      (request_count > 0U &&
+       (request_keys == NULL || global_beta == NULL || norm == NULL)) ||
+      SymmetryCheckedU64ToSize(request_count, &request_count_size) != 0 ||
+      request_count_size > SIZE_MAX / sizeof(unsigned long int) ||
+      request_count_size > SIZE_MAX / sizeof(double)) {
+    local_error = 1;
+  }
+  if (local_error == 0) {
+    for (index = 1U; index < request_count; index++) {
+      if (request_keys[index - 1U] >= request_keys[index]) {
+        local_error = 1;
+        break;
+      }
+    }
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) return -1;
+  if (directory_batch_options(
+          mpi_active, directory->nrank, options, &batch_options) != 0) {
+    return -1;
+  }
+  exchange_options.chunk_limit = batch_options.chunk_limit;
+  exchange_options.force_chunked = batch_options.force_chunked;
+
+  call_stats.directory_batch_calls = 1U;
+  call_stats.directory_batch_memory_byte_limit = byte_limit;
+  if (directory->dim == 0UL) {
+    call_stats.directory_not_found_entries = request_count;
+    if (directory_publish_batch_stats(
+            directory, &call_stats, 0U, &next_stats) != 0) {
+      local_error = 1;
+    }
+    global_error = agree_directory_failure(mpi_active, local_error);
+    if (global_error != 0) return -1;
+    for (index = 0U; index < request_count; index++) {
+      global_beta[index] = 0UL;
+      norm[index] = 0.0;
+    }
+    directory->batch_stats = next_stats;
+    return 0;
+  }
+
+  if (SymmetryCheckedSizeMul((size_t)directory->nrank, sizeof(uint64_t),
+                             &schedule_bytes) != 0 ||
+      SymmetryCheckedSizeMul(request_count_size, sizeof(unsigned long int),
+                             &packed_bytes) != 0 ||
+      SymmetryCheckedSizeMul(schedule_bytes, 2U, &live_bytes) != 0 ||
+      directory_memory_add(live_bytes, packed_bytes, byte_limit,
+                           &live_bytes) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+  send_counts = (uint64_t *)calloc((size_t)directory->nrank,
+                                   sizeof(*send_counts));
+  send_displacements = (uint64_t *)malloc(schedule_bytes);
+  if (packed_bytes > 0U) {
+    packed_requests = (unsigned long int *)malloc(packed_bytes);
+  }
+  if (send_counts == NULL || send_displacements == NULL ||
+      (packed_bytes > 0U && packed_requests == NULL)) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+  batch_peak = live_bytes;
+
+  for (index = 0U; index < request_count; index++) {
+    if (SymmetryRepresentativeOwner(
+            directory, request_keys[index], &owner) != 0 ||
+        owner < 0 || owner >= directory->nrank ||
+        owner < previous_owner ||
+        send_counts[owner] == UINT64_MAX) {
+      local_error = 1;
+      break;
+    }
+    send_counts[owner]++;
+    packed_requests[index] = request_keys[index];
+    previous_owner = owner;
+  }
+  {
+    uint64_t prefix = 0U;
+    for (peer = 0; peer < directory->nrank; peer++) {
+      send_displacements[peer] = prefix;
+      if (checked_u64_add(prefix, send_counts[peer], &prefix) != 0) {
+        local_error = 1;
+        break;
+      }
+    }
+    if (prefix != request_count) local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+
+  request_send_layout.nrank = directory->nrank;
+  request_send_layout.count = request_count;
+  request_send_layout.counts = send_counts;
+  request_send_layout.displacements = send_displacements;
+  exchange_budget.live_bytes = live_bytes;
+  exchange_budget.byte_limit = byte_limit;
+  if (SymmetryMpiExchangeUnsignedLongsWithBudget(
+          packed_requests, &request_send_layout,
+          directory->rank, directory->nrank, &exchange_options,
+          &exchange_budget, &received_requests,
+          &request_exchange_stats) != 0) {
+    goto fail;
+  }
+  if (directory_record_exchange_peak(
+          live_bytes, received_requests.count, sizeof(unsigned long int),
+          mpi_active, directory->nrank, &request_exchange_stats,
+          &batch_peak) != 0 ||
+      directory_exchange_owned_bytes(
+          received_requests.count, sizeof(unsigned long int),
+          directory->nrank, &received_request_bytes) != 0 ||
+      directory_memory_add(live_bytes, received_request_bytes, byte_limit,
+                           &live_bytes) != 0 ||
+      SymmetryCheckedU64ToSize(received_requests.count,
+                              &request_count_size) != 0 ||
+      SymmetryCheckedSizeMul(request_count_size,
+                             sizeof(*owner_responses),
+                             &owner_response_bytes) != 0 ||
+      directory_memory_add(live_bytes, owner_response_bytes, byte_limit,
+                           &live_bytes) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+  if (owner_response_bytes > 0U) {
+    owner_responses =
+        (struct SymmetryMpiLookupResponse *)malloc(owner_response_bytes);
+    if (owner_responses == NULL) local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+  if (live_bytes > batch_peak) batch_peak = live_bytes;
+
+  for (index = 0U; index < received_requests.count; index++) {
+    uint64_t probe_count = 0U;
+    int request_owner = -1;
+    if (SymmetryRepresentativeOwner(
+            directory, received_requests.entries[index],
+            &request_owner) != 0 ||
+        request_owner != directory->rank ||
+        SymmetryLookupDirectoryLocalRepresentative(
+            directory, received_requests.entries[index], NULL,
+            &owner_responses[index].global_beta,
+            &owner_responses[index].norm, &probe_count) != 0 ||
+        checked_u64_add(call_stats.directory_lookup_probe_count,
+                        probe_count,
+                        &call_stats.directory_lookup_probe_count) != 0) {
+      local_error = 1;
+      break;
+    }
+    if (probe_count > call_stats.directory_lookup_max_probe) {
+      call_stats.directory_lookup_max_probe = probe_count;
+    }
+    if (owner_responses[index].global_beta == 0UL) {
+      if (owner_responses[index].norm != 0.0 ||
+          signbit(owner_responses[index].norm) ||
+          call_stats.directory_not_found_entries == UINT64_MAX) {
+        local_error = 1;
+        break;
+      }
+      call_stats.directory_not_found_entries++;
+    } else {
+      if (!isfinite(owner_responses[index].norm) ||
+          owner_responses[index].norm <= 0.0 ||
+          call_stats.directory_found_entries == UINT64_MAX) {
+        local_error = 1;
+        break;
+      }
+      call_stats.directory_found_entries++;
+    }
+  }
+  if (batch_options.corrupt_response_rank == directory->rank) {
+    if (received_requests.count == 0U) {
+      local_error = 1;
+    } else {
+      owner_responses[0].global_beta = ULONG_MAX;
+      owner_responses[0].norm = -1.0;
+    }
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+
+  response_send_layout.nrank = directory->nrank;
+  response_send_layout.count = received_requests.count;
+  response_send_layout.counts = received_requests.counts;
+  response_send_layout.displacements = received_requests.displacements;
+  response_receive_layout = request_send_layout;
+  exchange_budget.live_bytes = live_bytes;
+  if (SymmetryMpiExchangeLookupResponsesKnownLayoutWithBudget(
+          owner_responses, &response_send_layout, &response_receive_layout,
+          directory->rank, directory->nrank, &exchange_options,
+          &exchange_budget, &received_responses,
+          &response_exchange_stats) != 0) {
+    goto fail;
+  }
+  if (directory_record_exchange_peak(
+          live_bytes, received_responses.count,
+          sizeof(struct SymmetryMpiLookupResponse),
+          mpi_active, directory->nrank, &response_exchange_stats,
+          &batch_peak) != 0 ||
+      directory_exchange_owned_bytes(
+          received_responses.count,
+          sizeof(struct SymmetryMpiLookupResponse),
+          directory->nrank, &received_response_bytes) != 0 ||
+      directory_memory_add(live_bytes, received_response_bytes, byte_limit,
+                           &live_bytes) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+  free(owner_responses);
+  owner_responses = NULL;
+  live_bytes -= owner_response_bytes;
+  owner_response_bytes = 0U;
+
+  if (batch_options.debug_echo != 0) {
+    exchange_budget.live_bytes = live_bytes;
+    if (SymmetryMpiExchangeUnsignedLongEchoesKnownLayoutWithBudget(
+            received_requests.entries, &response_send_layout,
+            &response_receive_layout, directory->rank, directory->nrank,
+            &exchange_options, &exchange_budget, &received_echoes,
+            &echo_exchange_stats) != 0) {
+      goto fail;
+    }
+    if (directory_record_exchange_peak(
+            live_bytes, received_echoes.count, sizeof(unsigned long int),
+            mpi_active, directory->nrank, &echo_exchange_stats,
+            &batch_peak) != 0 ||
+        directory_exchange_owned_bytes(
+            received_echoes.count, sizeof(unsigned long int),
+            directory->nrank, &received_echo_bytes) != 0 ||
+        directory_memory_add(live_bytes, received_echo_bytes, byte_limit,
+                             &live_bytes) != 0) {
+      local_error = 1;
+    }
+    global_error = agree_directory_failure(mpi_active, local_error);
+    if (global_error != 0) goto fail;
+  }
+
+  if (received_responses.count != request_count ||
+      received_responses.nrank != directory->nrank ||
+      (batch_options.debug_echo != 0 &&
+       (received_echoes.count != request_count ||
+        received_echoes.nrank != directory->nrank))) {
+    local_error = 1;
+  }
+  for (peer = 0; local_error == 0 && peer < directory->nrank; peer++) {
+    if (received_responses.counts[peer] != send_counts[peer] ||
+        received_responses.displacements[peer] != send_displacements[peer] ||
+        (batch_options.debug_echo != 0 &&
+         (received_echoes.counts[peer] != send_counts[peer] ||
+          received_echoes.displacements[peer] !=
+              send_displacements[peer]))) {
+      local_error = 1;
+    }
+  }
+  for (index = 0U; local_error == 0 && index < request_count; index++) {
+    unsigned long int block_offset;
+    unsigned long int block_count;
+    const struct SymmetryMpiLookupResponse *response =
+        &received_responses.entries[index];
+    if (SymmetryRepresentativeOwner(
+            directory, request_keys[index], &owner) != 0 ||
+        directory_block_range(directory->dim, owner, directory->nrank,
+                              &block_offset, &block_count) != 0 ||
+        (batch_options.debug_echo != 0 &&
+         received_echoes.entries[index] != request_keys[index])) {
+      local_error = 1;
+      break;
+    }
+    if (response->global_beta == 0UL) {
+      if (response->norm != 0.0 || signbit(response->norm)) {
+        local_error = 1;
+      }
+    } else if (block_count == 0UL ||
+               response->global_beta <= block_offset ||
+               response->global_beta > block_offset + block_count ||
+               !isfinite(response->norm) || response->norm <= 0.0) {
+      local_error = 1;
+    }
+  }
+
+  call_stats.directory_request_entries_sent = request_count;
+  call_stats.directory_request_entries_received = received_requests.count;
+  call_stats.directory_owner_peer_count_max =
+      directory_peer_count_max(received_requests.counts, directory->nrank);
+  call_stats.directory_requester_peer_count_max =
+      directory_peer_count_max(send_counts, directory->nrank);
+  if (directory_include_exchange_stats(
+          &call_stats, &request_exchange_stats) != 0 ||
+      directory_include_exchange_stats(
+          &call_stats, &response_exchange_stats) != 0 ||
+      (batch_options.debug_echo != 0 &&
+       directory_include_exchange_stats(
+           &call_stats, &echo_exchange_stats) != 0) ||
+      directory_publish_batch_stats(
+          directory, &call_stats, batch_peak, &next_stats) != 0) {
+    local_error = 1;
+  }
+  global_error = agree_directory_failure(mpi_active, local_error);
+  if (global_error != 0) goto fail;
+
+  for (index = 0U; index < request_count; index++) {
+    global_beta[index] = received_responses.entries[index].global_beta;
+    norm[index] = received_responses.entries[index].norm;
+  }
+  directory->batch_stats = next_stats;
+  FreeSymmetryMpiUnsignedLongResult(&received_echoes);
+  FreeSymmetryMpiLookupResponseResult(&received_responses);
+  FreeSymmetryMpiUnsignedLongResult(&received_requests);
+  free(packed_requests);
+  free(send_counts);
+  free(send_displacements);
+  return 0;
+
+fail:
+  free(owner_responses);
+  FreeSymmetryMpiUnsignedLongResult(&received_echoes);
+  FreeSymmetryMpiLookupResponseResult(&received_responses);
+  FreeSymmetryMpiUnsignedLongResult(&received_requests);
+  free(packed_requests);
+  free(send_counts);
+  free(send_displacements);
+  return -1;
+}
+
+int SymmetryResolveRepresentativeBatch(
+    struct SymmetryRepresentativeDirectory *directory,
+    const unsigned long int *request_keys,
+    uint64_t request_count,
+    unsigned long int *global_beta,
+    double *norm)
+{
+  return SymmetryResolveRepresentativeBatchWithOptions(
+      directory, request_keys, request_count, global_beta, norm, NULL);
+}
+
+int GetSymmetryRepresentativeDirectoryBatchStats(
+    const struct SymmetryRepresentativeDirectory *directory,
+    struct SymmetryRepresentativeBatchStats *stats)
+{
+  struct SymmetryRepresentativeBatchStats next;
+  if (SymmetryRepresentativeDirectoryReady(directory) == 0 ||
+      stats == NULL) {
+    return -1;
+  }
+  next = directory->batch_stats;
+  *stats = next;
+  return 0;
 }
 
 int GetSymmetryRepresentativeDirectoryInfo(

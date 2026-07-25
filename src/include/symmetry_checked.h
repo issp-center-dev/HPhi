@@ -37,6 +37,16 @@ static inline int SymmetryCheckedSizeMul(
   return 0;
 }
 
+static inline int SymmetryCheckedSizeAdd(
+    size_t lhs,
+    size_t rhs,
+    size_t *result)
+{
+  if (result == NULL || lhs > SIZE_MAX - rhs) return -1;
+  *result = lhs + rhs;
+  return 0;
+}
+
 static inline int SymmetryCheckedU64ToSize(
     uint64_t value,
     size_t *result)

@@ -15,6 +15,7 @@
 #define SYMMETRY_BASIS_EXCHANGE_TAG 23173
 #define SYMMETRY_UNSIGNED_LONG_EXCHANGE_TAG 23180
 #define SYMMETRY_LOOKUP_RESPONSE_EXCHANGE_TAG 23181
+#define SYMMETRY_UNSIGNED_LONG_ECHO_EXCHANGE_TAG 23182
 
 struct SymmetryMpiRawResult {
   void *entries;
@@ -32,6 +33,64 @@ struct SymmetryMpiPayloadDescriptor {
   int (*create_type)(MPI_Datatype *);
 #endif
 };
+
+static int checked_budget_peak(
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    size_t result_bytes,
+    size_t workspace_bytes)
+{
+  size_t peak;
+  if (budget == NULL) return 0;
+  if (budget->byte_limit == 0U ||
+      budget->live_bytes > budget->byte_limit ||
+      SymmetryCheckedSizeAdd(budget->live_bytes, result_bytes, &peak) != 0 ||
+      SymmetryCheckedSizeAdd(peak, workspace_bytes, &peak) != 0 ||
+      peak > budget->byte_limit) {
+    return -1;
+  }
+  return 0;
+}
+
+static int exchange_workspace_bytes(int nrank,
+                                    int mpi_active,
+                                    int use_chunked,
+                                    size_t *workspace_bytes)
+{
+#ifdef MPI
+  size_t one_array;
+  size_t request_count;
+  size_t request_bytes;
+  size_t total;
+#endif
+  if (workspace_bytes == NULL || nrank < 1) return -1;
+  *workspace_bytes = 0U;
+#ifdef MPI
+  if (mpi_active == FALSE || nrank == 1) return 0;
+  if (use_chunked != FALSE) {
+    if (SymmetryCheckedSizeMul((size_t)nrank, sizeof(uint64_t),
+                               &one_array) != 0 ||
+        SymmetryCheckedSizeMul((size_t)nrank, 2U, &request_count) != 0 ||
+        SymmetryCheckedSizeMul(request_count, sizeof(MPI_Request),
+                               &request_bytes) != 0 ||
+        SymmetryCheckedSizeAdd(one_array, one_array, &total) != 0 ||
+        SymmetryCheckedSizeAdd(total, request_bytes, &total) != 0) {
+      return -1;
+    }
+  } else {
+    if (SymmetryCheckedSizeMul((size_t)nrank, sizeof(int),
+                               &one_array) != 0 ||
+        SymmetryCheckedSizeMul(one_array, 4U, &total) != 0) {
+      return -1;
+    }
+  }
+  *workspace_bytes = total;
+  return 0;
+#else
+  (void)mpi_active;
+  (void)use_chunked;
+  return 0;
+#endif
+}
 
 int SymmetryMpiCollectivesActive(void)
 {
@@ -502,6 +561,7 @@ static int exchange_checked_payload(
     int rank,
     int nrank,
     const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
     int output_is_empty,
     const struct SymmetryMpiPayloadDescriptor *descriptor,
     struct SymmetryMpiRawResult *result,
@@ -513,9 +573,12 @@ static int exchange_checked_payload(
   uint64_t chunk_limit = 0U;
   uint64_t message_byte_limit = 0U;
   size_t schedule_bytes = 0U;
+  size_t result_bytes = 0U;
   size_t payload_bytes = 0U;
+  size_t workspace_bytes = 0U;
   int force_chunked = FALSE;
   int mpi_active;
+  int use_chunked = FALSE;
   int local_error = 0;
   int peer;
 #ifdef MPI
@@ -523,7 +586,6 @@ static int exchange_checked_payload(
   int comm_size = 1;
   uint64_t chunk_limit_min = 0U;
   uint64_t chunk_limit_max = 0U;
-  int use_chunked = FALSE;
   int global_use_chunked = FALSE;
   int owns_payload_type = FALSE;
   MPI_Aint type_lower_bound = 0;
@@ -574,6 +636,11 @@ static int exchange_checked_payload(
       if (options->chunk_limit > 0U) chunk_limit = options->chunk_limit;
     }
   }
+  if (budget != NULL &&
+      (budget->byte_limit == 0U ||
+       budget->live_bytes > budget->byte_limit)) {
+    local_error = 1;
+  }
   if (descriptor != NULL && chunk_limit > 0U) {
     message_byte_limit =
         chunk_limit * (uint64_t)descriptor->extent;
@@ -594,7 +661,10 @@ static int exchange_checked_payload(
 #endif
   if (nrank < 1 ||
       SymmetryCheckedSizeMul((size_t)nrank, sizeof(*next_result.counts),
-                             &schedule_bytes) != 0) {
+                             &schedule_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(schedule_bytes, schedule_bytes,
+                             &result_bytes) != 0 ||
+      checked_budget_peak(budget, result_bytes, 0U) != 0) {
     local_error = 1;
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
@@ -662,18 +732,9 @@ static int exchange_checked_payload(
                              descriptor != NULL ? descriptor->extent : 0U,
                              &payload_bytes) != 0) {
     local_error = 1;
-  } else if (payload_bytes > 0U) {
-    next_result.entries = malloc(payload_bytes);
-    if (next_result.entries == NULL) local_error = 1;
   }
-  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   next_result.count = recv_total;
   next_result.nrank = nrank;
-
-  next_stats.send_entries = send_layout->count;
-  next_stats.recv_entries = recv_total;
-  next_stats.message_entry_limit = chunk_limit;
-  next_stats.message_byte_limit = message_byte_limit;
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
@@ -685,6 +746,29 @@ static int exchange_checked_payload(
       goto fail;
     }
     use_chunked = global_use_chunked;
+  }
+#endif
+  if (SymmetryCheckedSizeAdd(result_bytes, payload_bytes,
+                             &result_bytes) != 0 ||
+      exchange_workspace_bytes(nrank, mpi_active, use_chunked,
+                               &workspace_bytes) != 0 ||
+      checked_budget_peak(budget, result_bytes, workspace_bytes) != 0) {
+    local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
+  if (payload_bytes > 0U) {
+    next_result.entries = malloc(payload_bytes);
+    if (next_result.entries == NULL) local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
+
+  next_stats.send_entries = send_layout->count;
+  next_stats.recv_entries = recv_total;
+  next_stats.message_entry_limit = chunk_limit;
+  next_stats.message_byte_limit = message_byte_limit;
+
+#ifdef MPI
+  if (mpi_active != FALSE && nrank > 1) {
     {
       uint64_t max_message_entries = 0U;
       for (peer = 0; peer < nrank; peer++) {
@@ -815,7 +899,7 @@ int SymmetryMpiExchangeBasisVectors(
 #endif
   reset_raw_result(&raw_result);
   status = exchange_checked_payload(
-      send_entries, send_layout, NULL, rank, nrank, options,
+      send_entries, send_layout, NULL, rank, nrank, options, NULL,
       basis_result_is_empty(result), &descriptor, &raw_result, stats);
   if (status != 0) return -1;
   result->entries = (struct SymmetryBasisVector *)raw_result.entries;
@@ -835,6 +919,20 @@ int SymmetryMpiExchangeUnsignedLongs(
     struct SymmetryMpiUnsignedLongResult *result,
     struct SymmetryMpiExchangeStats *stats)
 {
+  return SymmetryMpiExchangeUnsignedLongsWithBudget(
+      send_entries, send_layout, rank, nrank, options, NULL, result, stats);
+}
+
+int SymmetryMpiExchangeUnsignedLongsWithBudget(
+    const unsigned long int *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiUnsignedLongResult *result,
+    struct SymmetryMpiExchangeStats *stats)
+{
   struct SymmetryMpiPayloadDescriptor descriptor;
   struct SymmetryMpiRawResult raw_result;
   int status;
@@ -847,7 +945,7 @@ int SymmetryMpiExchangeUnsignedLongs(
 #endif
   reset_raw_result(&raw_result);
   status = exchange_checked_payload(
-      send_entries, send_layout, NULL, rank, nrank, options,
+      send_entries, send_layout, NULL, rank, nrank, options, budget,
       unsigned_long_result_is_empty(result), &descriptor, &raw_result, stats);
   if (status != 0) return -1;
   result->entries = (unsigned long int *)raw_result.entries;
@@ -868,6 +966,22 @@ int SymmetryMpiExchangeLookupResponsesKnownLayout(
     struct SymmetryMpiLookupResponseResult *result,
     struct SymmetryMpiExchangeStats *stats)
 {
+  return SymmetryMpiExchangeLookupResponsesKnownLayoutWithBudget(
+      send_entries, send_layout, known_receive_layout,
+      rank, nrank, options, NULL, result, stats);
+}
+
+int SymmetryMpiExchangeLookupResponsesKnownLayoutWithBudget(
+    const struct SymmetryMpiLookupResponse *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    const struct SymmetryMpiExchangeLayout *known_receive_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiLookupResponseResult *result,
+    struct SymmetryMpiExchangeStats *stats)
+{
   struct SymmetryMpiPayloadDescriptor descriptor;
   struct SymmetryMpiRawResult raw_result;
   int status;
@@ -881,11 +995,46 @@ int SymmetryMpiExchangeLookupResponsesKnownLayout(
   reset_raw_result(&raw_result);
   status = exchange_checked_payload(
       send_entries, send_layout, known_receive_layout,
-      rank, nrank, options, lookup_response_result_is_empty(result),
+      rank, nrank, options, budget, lookup_response_result_is_empty(result),
       &descriptor, &raw_result, stats);
   if (status != 0) return -1;
   result->entries =
       (struct SymmetryMpiLookupResponse *)raw_result.entries;
+  result->count = raw_result.count;
+  result->counts = raw_result.counts;
+  result->displacements = raw_result.displacements;
+  result->nrank = raw_result.nrank;
+  return 0;
+}
+
+int SymmetryMpiExchangeUnsignedLongEchoesKnownLayoutWithBudget(
+    const unsigned long int *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    const struct SymmetryMpiExchangeLayout *known_receive_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiUnsignedLongResult *result,
+    struct SymmetryMpiExchangeStats *stats)
+{
+  struct SymmetryMpiPayloadDescriptor descriptor;
+  struct SymmetryMpiRawResult raw_result;
+  int status;
+  memset(&descriptor, 0, sizeof(descriptor));
+  descriptor.extent = sizeof(*send_entries);
+  descriptor.tag = SYMMETRY_UNSIGNED_LONG_ECHO_EXCHANGE_TAG;
+#ifdef MPI
+  descriptor.builtin_type = MPI_UNSIGNED_LONG;
+  descriptor.create_type = NULL;
+#endif
+  reset_raw_result(&raw_result);
+  status = exchange_checked_payload(
+      send_entries, send_layout, known_receive_layout,
+      rank, nrank, options, budget, unsigned_long_result_is_empty(result),
+      &descriptor, &raw_result, stats);
+  if (status != 0) return -1;
+  result->entries = (unsigned long int *)raw_result.entries;
   result->count = raw_result.count;
   result->counts = raw_result.counts;
   result->displacements = raw_result.displacements;

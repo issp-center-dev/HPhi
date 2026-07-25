@@ -1,6 +1,7 @@
 #ifndef HPHI_SYMMETRY_MPI_EXCHANGE_H
 #define HPHI_SYMMETRY_MPI_EXCHANGE_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifndef HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES
@@ -31,6 +32,13 @@ struct SymmetryMpiExchangeOptions {
   uint64_t chunk_limit;
   /* Internal/test control. Production callers normally pass FALSE. */
   int force_chunked;
+};
+
+struct SymmetryMpiExchangeMemoryBudget {
+  /* Bytes already live in the caller while the exchange is in progress. */
+  size_t live_bytes;
+  /* Maximum caller-live plus exchange-result plus exchange-workspace bytes. */
+  size_t byte_limit;
 };
 
 struct SymmetryMpiExchangeStats {
@@ -115,6 +123,16 @@ int SymmetryMpiExchangeUnsignedLongs(
     struct SymmetryMpiUnsignedLongResult *result,
     struct SymmetryMpiExchangeStats *stats);
 
+int SymmetryMpiExchangeUnsignedLongsWithBudget(
+    const unsigned long int *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiUnsignedLongResult *result,
+    struct SymmetryMpiExchangeStats *stats);
+
 void FreeSymmetryMpiUnsignedLongResult(
     struct SymmetryMpiUnsignedLongResult *result);
 
@@ -134,6 +152,33 @@ int SymmetryMpiExchangeLookupResponsesKnownLayout(
     int nrank,
     const struct SymmetryMpiExchangeOptions *options,
     struct SymmetryMpiLookupResponseResult *result,
+    struct SymmetryMpiExchangeStats *stats);
+
+int SymmetryMpiExchangeLookupResponsesKnownLayoutWithBudget(
+    const struct SymmetryMpiLookupResponse *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    const struct SymmetryMpiExchangeLayout *known_receive_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiLookupResponseResult *result,
+    struct SymmetryMpiExchangeStats *stats);
+
+/*
+ * Test/debug echo path for checking that response order is the exact reverse
+ * of a request schedule. It uses the reserved tag 23182 and performs no
+ * receive-count exchange.
+ */
+int SymmetryMpiExchangeUnsignedLongEchoesKnownLayoutWithBudget(
+    const unsigned long int *send_entries,
+    const struct SymmetryMpiExchangeLayout *send_layout,
+    const struct SymmetryMpiExchangeLayout *known_receive_layout,
+    int rank,
+    int nrank,
+    const struct SymmetryMpiExchangeOptions *options,
+    const struct SymmetryMpiExchangeMemoryBudget *budget,
+    struct SymmetryMpiUnsignedLongResult *result,
     struct SymmetryMpiExchangeStats *stats);
 
 void FreeSymmetryMpiLookupResponseResult(

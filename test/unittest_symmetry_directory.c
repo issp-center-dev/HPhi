@@ -465,6 +465,52 @@ static void free_directory_fixture(struct DirectoryFixture *fixture)
   memset(fixture, 0, sizeof(*fixture));
 }
 
+static void init_explicit_directory_fixture(
+    const unsigned long int *global_keys,
+    unsigned long int dim,
+    struct DirectoryFixture *fixture)
+{
+  int peer;
+  memset(fixture, 0, sizeof(*fixture));
+  fixture->dim = dim;
+  fixture->rank_offsets = (unsigned long int *)calloc(
+      (size_t)test_nrank + 1U, sizeof(*fixture->rank_offsets));
+  require_true(global_keys != NULL && dim > 0UL &&
+                   fixture->rank_offsets != NULL,
+               "explicit directory fixture allocation failed");
+  for (peer = 0; peer < test_nrank; peer++) {
+    unsigned long int offset;
+    unsigned long int count;
+    require_true(test_block_range(dim, peer, test_nrank,
+                                  &offset, &count) == 0,
+                 "explicit directory block range failed");
+    fixture->rank_offsets[peer] = offset;
+    fixture->rank_offsets[peer + 1] = offset + count;
+    if (peer == test_rank) {
+      fixture->local_offset = offset;
+      fixture->local_dim = count;
+    }
+  }
+  if (fixture->local_dim == 0UL && (test_rank % 2) == 0) {
+    fixture->basis = NULL;
+    fixture->local_capacity = 0UL;
+  } else {
+    unsigned long int local_index;
+    fixture->basis = make_basis(fixture->local_dim);
+    require_true(fixture->basis != NULL,
+                 "explicit local basis allocation failed");
+    fixture->local_capacity = fixture->local_dim + 1UL;
+    for (local_index = 1UL;
+         local_index <= fixture->local_dim;
+         local_index++) {
+      unsigned long int ordinal =
+          fixture->local_offset + local_index - 1UL;
+      set_entry(&fixture->basis[local_index], global_keys[ordinal],
+                1.0 + 0.125 * (double)ordinal);
+    }
+  }
+}
+
 static int expected_owner_for_ordinal(
     const struct DirectoryFixture *fixture,
     unsigned long int ordinal)
@@ -757,6 +803,492 @@ static void assert_directory_failure_recovery(void)
   }
 }
 
+static struct SymmetryRepresentativeDirectory *build_batch_directory(
+    struct DirectoryFixture *fixture,
+    unsigned long int dim,
+    unsigned long int key_base,
+    const char *label)
+{
+  struct SymmetryRepresentativeDirectory *directory = NULL;
+  init_directory_fixture(dim, key_base, fixture);
+  require_true(BuildSymmetryRepresentativeDirectory(
+                   fixture->basis, fixture->dim, fixture->local_dim,
+                   fixture->local_capacity, fixture->local_offset,
+                   fixture->rank_offsets, test_rank, test_nrank,
+                   &directory) == 0 &&
+                   SymmetryRepresentativeDirectoryReady(directory) != 0,
+               label);
+  return directory;
+}
+
+static void assert_batch_result(
+    const struct DirectoryFixture *fixture,
+    const unsigned long int *keys,
+    uint64_t count,
+    const unsigned long int *global_beta,
+    const double *norm,
+    const char *label)
+{
+  uint64_t index;
+  for (index = 0U; index < count; index++) {
+    unsigned long int expected_beta = 0UL;
+    double expected_norm = 0.0;
+    if (keys[index] >= fixture->key_base) {
+      unsigned long int delta = keys[index] - fixture->key_base;
+      if (delta % 10UL == 0UL &&
+          delta / 10UL < fixture->dim) {
+        unsigned long int ordinal = delta / 10UL;
+        expected_beta = ordinal + 1UL;
+        expected_norm = 0.5 + (double)ordinal;
+      }
+    }
+    if (global_beta[index] != expected_beta ||
+        memcmp(&norm[index], &expected_norm, sizeof(expected_norm)) != 0 ||
+        (expected_beta == 0UL &&
+         (norm[index] != 0.0 || signbit(norm[index])))) {
+      fail_test(label);
+    }
+  }
+}
+
+static void assert_batch_resolution(void)
+{
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory;
+  struct SymmetryRepresentativeBatchOptions options;
+  struct SymmetryRepresentativeBatchStats first_stats;
+  struct SymmetryRepresentativeBatchStats second_stats;
+  struct SymmetryRepresentativeBatchStats third_stats;
+  unsigned long int dim = (unsigned long int)test_nrank * 4UL + 1UL;
+  unsigned long int key_base = 100UL;
+  uint64_t count = (uint64_t)dim * UINT64_C(2) + UINT64_C(1);
+  unsigned long int *keys =
+      (unsigned long int *)malloc((size_t)count * sizeof(*keys));
+  unsigned long int *global_beta =
+      (unsigned long int *)malloc((size_t)count * sizeof(*global_beta));
+  double *norm = (double *)malloc((size_t)count * sizeof(*norm));
+  uint64_t index = 0U;
+  unsigned long int ordinal;
+  require_true(keys != NULL && global_beta != NULL && norm != NULL,
+               "batch fixture allocation failed");
+  directory = build_batch_directory(
+      &fixture, dim, key_base, "batch directory build failed");
+
+  keys[index++] = key_base - 1UL;
+  for (ordinal = 0UL; ordinal < dim; ordinal++) {
+    keys[index++] = fixture_key(key_base, ordinal);
+    if (ordinal + 1UL < dim) {
+      keys[index++] = fixture_key(key_base, ordinal) + 1UL;
+    }
+  }
+  keys[index++] = fixture_key(key_base, dim - 1UL) + 1UL;
+  require_true(index == count, "batch request fixture count mismatch");
+  for (index = 0U; index < count; index++) {
+    global_beta[index] = ULONG_MAX;
+    norm[index] = -1.0;
+  }
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, keys, count, global_beta, norm) == 0,
+               "batch fast resolution failed");
+  assert_batch_result(
+      &fixture, keys, count, global_beta, norm,
+      "batch fast result mismatch");
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &first_stats) == 0 &&
+                   first_stats.directory_batch_calls == UINT64_C(1) &&
+                   first_stats.directory_request_entries_sent == count &&
+                   first_stats.directory_request_entries_received > 0U &&
+                   first_stats.directory_found_entries > 0U &&
+                   first_stats.directory_not_found_entries > 0U &&
+                   first_stats.directory_lookup_probe_count > 0U &&
+                   first_stats.directory_lookup_max_probe > 0U &&
+                   first_stats.directory_owner_peer_count_max > 0U &&
+                   first_stats.directory_requester_peer_count_max > 0U &&
+                   first_stats.directory_exchange_message_byte_limit > 0U &&
+                   first_stats.directory_batch_temporary_peak_bytes > 0U &&
+                   first_stats.directory_batch_temporary_peak_bytes <=
+                       first_stats.directory_batch_memory_byte_limit &&
+                   first_stats.directory_batch_memory_byte_limit ==
+                       (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES,
+               "batch fast stats mismatch");
+
+  memset(&options, 0, sizeof(options));
+  options.force_chunked = 1;
+  options.debug_echo = 1;
+  options.corrupt_response_rank = -1;
+  for (index = 0U; index < count; index++) {
+    global_beta[index] = ULONG_MAX;
+    norm[index] = -1.0;
+  }
+  require_true(SymmetryResolveRepresentativeBatchWithOptions(
+                   directory, keys, count, global_beta, norm,
+                   &options) == 0,
+               "batch forced-chunk resolution failed");
+  assert_batch_result(
+      &fixture, keys, count, global_beta, norm,
+      "batch forced-chunk result mismatch");
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &second_stats) == 0 &&
+                   second_stats.directory_batch_calls == UINT64_C(2) &&
+                   second_stats.directory_request_entries_sent ==
+                       count * UINT64_C(2) &&
+                   second_stats.directory_request_entries_received ==
+                       first_stats.directory_request_entries_received *
+                           UINT64_C(2) &&
+                   second_stats.directory_found_entries ==
+                       first_stats.directory_found_entries * UINT64_C(2) &&
+                   second_stats.directory_not_found_entries ==
+                       first_stats.directory_not_found_entries * UINT64_C(2) &&
+                   second_stats.directory_batch_temporary_peak_bytes >=
+                       first_stats.directory_batch_temporary_peak_bytes &&
+                   (test_nrank == 1 ||
+                    second_stats.directory_exchange_used_chunked == 1),
+               "batch forced-chunk stats mismatch");
+
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, NULL, 0U, NULL, NULL) == 0,
+               "zero-request batch failed");
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &third_stats) == 0 &&
+                   third_stats.directory_batch_calls == UINT64_C(3) &&
+                   third_stats.directory_batch_temporary_peak_bytes ==
+                       second_stats.directory_batch_temporary_peak_bytes,
+               "zero-request batch stats mismatch");
+
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+  free(keys);
+  free(global_beta);
+  free(norm);
+}
+
+static void assert_zero_dimension_batch(void)
+{
+  const unsigned long int keys[3] = {0UL, 7UL, ULONG_MAX};
+  unsigned long int global_beta[3] = {11UL, 12UL, 13UL};
+  double norm[3] = {-1.0, -2.0, -3.0};
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory =
+      build_batch_directory(
+          &fixture, 0UL, 0UL, "zero-dimension batch directory failed");
+  struct SymmetryRepresentativeBatchStats stats;
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, keys, UINT64_C(3),
+                   global_beta, norm) == 0,
+               "zero-dimension batch resolution failed");
+  require_true(global_beta[0] == 0UL && global_beta[1] == 0UL &&
+                   global_beta[2] == 0UL &&
+                   norm[0] == 0.0 && !signbit(norm[0]) &&
+                   norm[1] == 0.0 && !signbit(norm[1]) &&
+                   norm[2] == 0.0 && !signbit(norm[2]) &&
+                   GetSymmetryRepresentativeDirectoryBatchStats(
+                       directory, &stats) == 0 &&
+                   stats.directory_batch_calls == UINT64_C(1) &&
+                   stats.directory_not_found_entries == UINT64_C(3) &&
+                   stats.directory_request_entries_sent == 0U &&
+                   stats.directory_request_entries_received == 0U &&
+                   stats.directory_batch_temporary_peak_bytes == 0U,
+               "zero-dimension batch result or stats mismatch");
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+}
+
+static void assert_mixed_zero_request_batch(void)
+{
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory;
+  struct SymmetryRepresentativeBatchStats stats;
+  unsigned long int key = 700UL;
+  unsigned long int global_beta = ULONG_MAX;
+  double norm = -1.0;
+  uint64_t count = (test_nrank == 1 || (test_rank % 2) == 0)
+                       ? UINT64_C(1)
+                       : UINT64_C(0);
+  directory = build_batch_directory(
+      &fixture, (unsigned long int)test_nrank * 2UL, key,
+      "mixed-zero batch directory failed");
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, count > 0U ? &key : NULL, count,
+                   count > 0U ? &global_beta : NULL,
+                   count > 0U ? &norm : NULL) == 0,
+               "mixed-zero batch resolution failed");
+  if (count > 0U) {
+    require_true(global_beta == 1UL && norm == 0.5,
+                 "mixed-zero batch result mismatch");
+  }
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &stats) == 0 &&
+                   stats.directory_batch_calls == UINT64_C(1) &&
+                   stats.directory_request_entries_sent == count,
+               "mixed-zero batch stats mismatch");
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+}
+
+static void assert_batch_failure_atomicity(void)
+{
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory;
+  struct SymmetryRepresentativeBatchStats before;
+  struct SymmetryRepresentativeBatchStats after;
+  struct SymmetryRepresentativeBatchOptions options;
+  unsigned long int dim = (unsigned long int)test_nrank * 4UL;
+  unsigned long int first_key = 1000UL;
+  unsigned long int invalid_keys[2];
+  unsigned long int global_beta[2] = {71UL, 72UL};
+  double norm[2] = {-73.0, -74.0};
+  int failing_rank = test_nrank > 1 ? 1 : 0;
+  directory = build_batch_directory(
+      &fixture, dim, first_key, "atomic batch directory build failed");
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &before) == 0,
+               "atomic batch initial stats failed");
+
+  if (test_rank == failing_rank) {
+    invalid_keys[0] = fixture_key(first_key, 1UL);
+    invalid_keys[1] = fixture_key(first_key, 0UL);
+  } else {
+    invalid_keys[0] = fixture_key(first_key, 0UL);
+    invalid_keys[1] = fixture_key(first_key, 1UL);
+  }
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, invalid_keys, UINT64_C(2),
+                   global_beta, norm) != 0 &&
+                   global_beta[0] == 71UL && global_beta[1] == 72UL &&
+                   norm[0] == -73.0 && norm[1] == -74.0 &&
+                   GetSymmetryRepresentativeDirectoryBatchStats(
+                       directory, &after) == 0 &&
+                   memcmp(&before, &after, sizeof(before)) == 0,
+               "unsorted batch failure was not atomic");
+
+  if (test_rank == failing_rank) {
+    invalid_keys[0] = fixture_key(first_key, 0UL);
+    invalid_keys[1] = fixture_key(first_key, 0UL);
+  }
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, invalid_keys, UINT64_C(2),
+                   global_beta, norm) != 0 &&
+                   global_beta[0] == 71UL && global_beta[1] == 72UL &&
+                   norm[0] == -73.0 && norm[1] == -74.0 &&
+                   GetSymmetryRepresentativeDirectoryBatchStats(
+                       directory, &after) == 0 &&
+                   memcmp(&before, &after, sizeof(before)) == 0,
+               "duplicate batch failure was not atomic");
+
+  invalid_keys[0] = first_key;
+  memset(&options, 0, sizeof(options));
+  options.corrupt_response_rank = 0;
+  require_true(SymmetryResolveRepresentativeBatchWithOptions(
+                   directory, invalid_keys, UINT64_C(1),
+                   global_beta, norm, &options) != 0 &&
+                   global_beta[0] == 71UL && norm[0] == -73.0 &&
+                   GetSymmetryRepresentativeDirectoryBatchStats(
+                       directory, &after) == 0 &&
+                   memcmp(&before, &after, sizeof(before)) == 0,
+               "corrupt response failure was not atomic");
+
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, invalid_keys, UINT64_C(1),
+                   global_beta, norm) == 0 &&
+                   global_beta[0] == 1UL && norm[0] == 0.5,
+               "valid batch recovery after failures failed");
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+}
+
+static void assert_batch_memory_cap_recovery(void)
+{
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory;
+  struct SymmetryRepresentativeBatchStats before;
+  struct SymmetryRepresentativeBatchStats after;
+  uint64_t count =
+      test_nrank == 1 ? UINT64_C(2050) : UINT64_C(300);
+  unsigned long int *keys =
+      (unsigned long int *)malloc((size_t)count * sizeof(*keys));
+  unsigned long int *global_beta =
+      (unsigned long int *)malloc((size_t)count * sizeof(*global_beta));
+  double *norm = (double *)malloc((size_t)count * sizeof(*norm));
+  uint64_t index;
+  require_true(keys != NULL && global_beta != NULL && norm != NULL,
+               "cap fixture allocation failed");
+  directory = build_batch_directory(
+      &fixture, (unsigned long int)test_nrank * 4UL, 100000UL,
+      "cap directory build failed");
+  for (index = 0U; index < count; index++) {
+    keys[index] = (unsigned long int)index;
+    global_beta[index] = ULONG_MAX;
+    norm[index] = -1.0;
+  }
+  require_true(GetSymmetryRepresentativeDirectoryBatchStats(
+                   directory, &before) == 0 &&
+                   SymmetryResolveRepresentativeBatch(
+                       directory, keys, count, global_beta, norm) != 0 &&
+                   global_beta[0] == ULONG_MAX &&
+                   global_beta[count - 1U] == ULONG_MAX &&
+                   norm[0] == -1.0 && norm[count - 1U] == -1.0 &&
+                   GetSymmetryRepresentativeDirectoryBatchStats(
+                       directory, &after) == 0 &&
+                   memcmp(&before, &after, sizeof(before)) == 0,
+               "batch memory cap failure was not atomic");
+  keys[0] = 100000UL;
+  require_true(SymmetryResolveRepresentativeBatch(
+                   directory, keys, UINT64_C(1),
+                   global_beta, norm) == 0 &&
+                   global_beta[0] == 1UL && norm[0] == 0.5,
+               "batch recovery after cap failure failed");
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+  free(keys);
+  free(global_beta);
+  free(norm);
+}
+
+static unsigned long int apply_hamiltonian_hop(
+    unsigned long int state,
+    unsigned int from,
+    unsigned int to,
+    const char *label)
+{
+  unsigned long int from_mask;
+  unsigned long int to_mask;
+  require_true(from < sizeof(state) * CHAR_BIT &&
+                   to < sizeof(state) * CHAR_BIT && from != to,
+               label);
+  from_mask = 1UL << from;
+  to_mask = 1UL << to;
+  require_true((state & from_mask) != 0UL &&
+                   (state & to_mask) == 0UL,
+               label);
+  return state ^ from_mask ^ to_mask;
+}
+
+static void replicated_canonical_lookup(
+    const unsigned long int *basis_keys,
+    unsigned long int dim,
+    unsigned long int target,
+    unsigned long int *global_beta,
+    double *norm)
+{
+  unsigned long int lo = 0UL;
+  unsigned long int hi = dim;
+  *global_beta = 0UL;
+  *norm = 0.0;
+  while (lo < hi) {
+    unsigned long int mid = lo + (hi - lo) / 2UL;
+    if (basis_keys[mid] < target) {
+      lo = mid + 1UL;
+    } else {
+      hi = mid;
+    }
+  }
+  if (lo < dim && basis_keys[lo] == target) {
+    *global_beta = lo + 1UL;
+    *norm = 1.0 + 0.125 * (double)lo;
+  }
+}
+
+static void assert_transition_model_batch(
+    const unsigned long int *basis_keys,
+    unsigned long int dim,
+    const unsigned long int targets[3],
+    const char *label)
+{
+  struct DirectoryFixture fixture;
+  struct SymmetryRepresentativeDirectory *directory = NULL;
+  unsigned long int global_beta[3] = {ULONG_MAX, ULONG_MAX, ULONG_MAX};
+  double norm[3] = {-1.0, -1.0, -1.0};
+  int category_count[3] = {0, 0, 0};
+  uint64_t index;
+  init_explicit_directory_fixture(basis_keys, dim, &fixture);
+  require_true(BuildSymmetryRepresentativeDirectory(
+                   fixture.basis, fixture.dim, fixture.local_dim,
+                   fixture.local_capacity, fixture.local_offset,
+                   fixture.rank_offsets, test_rank, test_nrank,
+                   &directory) == 0,
+               label);
+  require_true(targets[0] < targets[1] && targets[1] < targets[2] &&
+                   SymmetryResolveRepresentativeBatch(
+                       directory, targets, UINT64_C(3),
+                       global_beta, norm) == 0,
+               label);
+  for (index = 0U; index < UINT64_C(3); index++) {
+    unsigned long int expected_beta;
+    double expected_norm;
+    replicated_canonical_lookup(
+        basis_keys, dim, targets[index], &expected_beta, &expected_norm);
+    require_true(global_beta[index] == expected_beta &&
+                     memcmp(&norm[index], &expected_norm,
+                            sizeof(expected_norm)) == 0,
+                 label);
+    if (expected_beta != 0UL) {
+      category_count[0]++;
+    } else if (targets[index] > basis_keys[0] &&
+               targets[index] < basis_keys[dim - 1UL]) {
+      category_count[1]++;
+    } else {
+      category_count[2]++;
+    }
+  }
+  require_true(category_count[0] > 0 &&
+                   category_count[1] > 0 &&
+                   category_count[2] > 0,
+               label);
+  FreeSymmetryRepresentativeDirectory(directory);
+  free_directory_fixture(&fixture);
+}
+
+static void assert_hamiltonian_transition_batches(void)
+{
+  static const unsigned long int spin_basis[] = {
+      5UL, 9UL, 10UL, 12UL};
+  static const unsigned long int spinless_basis[] = {
+      6UL, 9UL, 12UL, 17UL, 18UL, 20UL, 24UL};
+  static const unsigned long int hubbard_basis[] = {
+      10UL, 12UL, 17UL, 18UL, 24UL, 33UL, 34UL, 40UL, 48UL};
+  unsigned long int spin_targets[3];
+  unsigned long int spinless_targets[3];
+  unsigned long int hubbard_targets[3];
+
+  /*
+   * Identity canonicalization makes each Hamiltonian target its own
+   * representative. The sparse replicated lists intentionally contain one
+   * found target, one sector/stabilizer-incompatible interior target, and one
+   * target outside the represented range for each model.
+   */
+  spin_targets[0] = apply_hamiltonian_hop(
+      10UL, 3U, 0U, "spin range transition failed");
+  spin_targets[1] = apply_hamiltonian_hop(
+      9UL, 3U, 2U, "spin found transition failed");
+  spin_targets[2] = apply_hamiltonian_hop(
+      5UL, 0U, 1U, "spin interior transition failed");
+
+  spinless_targets[0] = apply_hamiltonian_hop(
+      17UL, 4U, 1U, "spinless range transition failed");
+  spinless_targets[1] = apply_hamiltonian_hop(
+      18UL, 4U, 3U, "spinless interior transition failed");
+  spinless_targets[2] = apply_hamiltonian_hop(
+      6UL, 1U, 3U, "spinless found transition failed");
+
+  hubbard_targets[0] = apply_hamiltonian_hop(
+      17UL, 4U, 3U, "Hubbard range transition failed");
+  hubbard_targets[1] = apply_hamiltonian_hop(
+      10UL, 1U, 2U, "Hubbard found transition failed");
+  hubbard_targets[2] = apply_hamiltonian_hop(
+      18UL, 1U, 2U, "Hubbard interior transition failed");
+
+  assert_transition_model_batch(
+      spin_basis, sizeof(spin_basis) / sizeof(spin_basis[0]),
+      spin_targets, "spin transition batch mismatch");
+  assert_transition_model_batch(
+      spinless_basis,
+      sizeof(spinless_basis) / sizeof(spinless_basis[0]),
+      spinless_targets, "spinless transition batch mismatch");
+  assert_transition_model_batch(
+      hubbard_basis, sizeof(hubbard_basis) / sizeof(hubbard_basis[0]),
+      hubbard_targets, "Hubbard transition batch mismatch");
+}
+
 int main(int argc, char **argv)
 {
   int mpi_requested =
@@ -809,8 +1341,14 @@ int main(int argc, char **argv)
         10UL, "intermediate-remainder directory build failed");
   }
   assert_directory_failure_recovery();
+  assert_zero_dimension_batch();
+  assert_mixed_zero_request_batch();
+  assert_batch_resolution();
+  assert_batch_failure_atomicity();
+  assert_batch_memory_cap_recovery();
+  assert_hamiltonian_transition_batches();
   if (test_rank == 0) {
-    printf("symmetry directory metadata gate: PASS (%d rank%s)\n",
+    printf("symmetry directory batch gate: PASS (%d rank%s)\n",
            test_nrank, test_nrank == 1 ? "" : "s");
   }
 #ifdef MPI

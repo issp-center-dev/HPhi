@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES
+#define HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES UINT64_C(1073741824)
+#endif
+
 struct SymmetryBasisVector;
 struct SymmetryLocalRepresentativeIndex;
 struct SymmetryRepresentativeDirectory;
@@ -72,6 +76,33 @@ struct SymmetryRepresentativeDirectoryInfo {
   size_t splitter_bytes;
 };
 
+struct SymmetryRepresentativeBatchOptions {
+  uint64_t chunk_limit;
+  int force_chunked;
+  /* Internal/test controls. debug_echo is boolean; -1 disables corruption. */
+  int debug_echo;
+  int corrupt_response_rank;
+};
+
+struct SymmetryRepresentativeBatchStats {
+  uint64_t directory_batch_calls;
+  uint64_t directory_request_entries_sent;
+  uint64_t directory_request_entries_received;
+  uint64_t directory_found_entries;
+  uint64_t directory_not_found_entries;
+  uint64_t directory_lookup_probe_count;
+  uint64_t directory_lookup_max_probe;
+  uint64_t directory_owner_peer_count_max;
+  uint64_t directory_requester_peer_count_max;
+  int directory_exchange_used_chunked;
+  uint64_t directory_exchange_message_byte_limit;
+  uint64_t directory_exchange_max_message_bytes;
+  uint64_t directory_exchange_send_messages;
+  uint64_t directory_exchange_recv_messages;
+  size_t directory_batch_temporary_peak_bytes;
+  size_t directory_batch_memory_byte_limit;
+};
+
 /**
  * @brief Collectively build a representative owner map.
  *
@@ -113,6 +144,33 @@ int SymmetryLookupDirectoryLocalRepresentative(
     unsigned long int *global_beta,
     double *norm,
     uint64_t *probe_count);
+
+/**
+ * @brief Resolve a sorted unique batch collectively.
+ *
+ * Results preserve request order. A miss is exactly {0, 0.0}. With active
+ * MPI every rank must call this routine in the same collective sequence,
+ * including ranks with request_count == 0. Failure leaves outputs and
+ * cumulative directory statistics unchanged.
+ */
+int SymmetryResolveRepresentativeBatch(
+    struct SymmetryRepresentativeDirectory *directory,
+    const unsigned long int *request_keys,
+    uint64_t request_count,
+    unsigned long int *global_beta,
+    double *norm);
+
+int SymmetryResolveRepresentativeBatchWithOptions(
+    struct SymmetryRepresentativeDirectory *directory,
+    const unsigned long int *request_keys,
+    uint64_t request_count,
+    unsigned long int *global_beta,
+    double *norm,
+    const struct SymmetryRepresentativeBatchOptions *options);
+
+int GetSymmetryRepresentativeDirectoryBatchStats(
+    const struct SymmetryRepresentativeDirectory *directory,
+    struct SymmetryRepresentativeBatchStats *stats);
 
 int GetSymmetryRepresentativeDirectoryInfo(
     const struct SymmetryRepresentativeDirectory *directory,

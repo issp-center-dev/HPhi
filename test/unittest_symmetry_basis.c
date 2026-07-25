@@ -7,6 +7,7 @@
 #include "mltplySpinSym.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
+#include "symmetry_directory.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_state_enumerator.h"
@@ -59,14 +60,14 @@ unsigned long int SumMPI_li(unsigned long int value)
   return value;
 }
 
-static int perm_storage[6][6];
-static int anti_storage[6][6];
-static int *perm_rows[6];
-static int *anti_rows[6];
-static double complex chars_storage[6];
-static int exchange_storage[6][2];
-static int *exchange_rows[6];
-static double exchange_params[6];
+static int perm_storage[8][8];
+static int anti_storage[8][8];
+static int *perm_rows[8];
+static int *anti_rows[8];
+static double complex chars_storage[8];
+static int exchange_storage[8][2];
+static int *exchange_rows[8];
+static double exchange_params[8];
 static int transfer_storage[24][4];
 static int *transfer_rows[24];
 static double complex transfer_params[24];
@@ -3216,9 +3217,11 @@ static void setup_c5_reference_bind(
     set_ising_ring_diagonal(&X->Def, 6U, 0.37);
   } else if (model == C5_REFERENCE_SPINLESS) {
     setup_spinless_bind(X, 4U, 2U, 1U);
+    setup_spinless_transfer_ring(&X->Def, 4U);
     setup_spinless_coulomb_ring(&X->Def, 4U, 0.25);
   } else {
     setup_hubbard_bind(X, 4U, 1U, 1U, 0U);
+    setup_hubbard_transfer_ring(&X->Def, 4U);
     setup_hubbard_coulomb_intra(&X->Def, 4U, 0.5);
   }
 }
@@ -3409,6 +3412,240 @@ static int c5_noop_entry(
   return 0;
 }
 
+struct C5DirectoryTarget {
+  unsigned long int rep_state;
+  unsigned long int global_beta;
+  double norm;
+};
+
+static int compare_c5_directory_target(const void *lhs, const void *rhs)
+{
+  const struct C5DirectoryTarget *left =
+      (const struct C5DirectoryTarget *)lhs;
+  const struct C5DirectoryTarget *right =
+      (const struct C5DirectoryTarget *)rhs;
+  if (left->rep_state < right->rep_state) return -1;
+  if (left->rep_state > right->rep_state) return 1;
+  return 0;
+}
+
+static int c5_transition_state(
+    const struct BindStruct *X,
+    enum C5ReferenceModel model,
+    unsigned long int state,
+    unsigned int term,
+    unsigned long int *out_state)
+{
+  if (X == NULL || out_state == NULL) return -1;
+  if (model == C5_REFERENCE_SPIN) {
+    return apply_exchange_halfspin_test(
+        state, X->Def.ExchangeCoupling[term][0],
+        X->Def.ExchangeCoupling[term][1], out_state);
+  }
+  if (model == C5_REFERENCE_SPINLESS) {
+    double complex hval;
+    double complex trans = -X->Def.EDParaGeneralTransfer[term];
+    return apply_spinless_hopping_hermite_test(
+        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
+        (unsigned int)X->Def.EDGeneralTransfer[term][2],
+        trans, out_state, &hval);
+  }
+  {
+    double complex hval;
+    double complex trans = -X->Def.EDParaGeneralTransfer[term];
+    return apply_hubbard_hopping_hermite_test(
+        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
+        (unsigned int)X->Def.EDGeneralTransfer[term][1],
+        (unsigned int)X->Def.EDGeneralTransfer[term][2],
+        (unsigned int)X->Def.EDGeneralTransfer[term][3],
+        trans, out_state, &hval);
+  }
+}
+
+static struct C5DirectoryTarget *collect_c5_directory_targets(
+    const struct BindStruct *X,
+    enum C5ReferenceModel model,
+    unsigned long int *target_count,
+    int *found_count,
+    int *interior_miss_count,
+    int *range_miss_count,
+    const char *label)
+{
+  struct C5DirectoryTarget *targets;
+  unsigned long int count = 0UL;
+  unsigned long int maximum;
+  unsigned long int beta;
+  unsigned int term_count;
+  unsigned int term_step;
+  if (X == NULL || X->Sym == NULL || X->Sym->dim == 0UL ||
+      target_count == NULL || found_count == NULL ||
+      interior_miss_count == NULL || range_miss_count == NULL) {
+    fprintf(stderr, "%s: invalid transition target collector input\n", label);
+    exit(1);
+  }
+  if (model == C5_REFERENCE_SPIN) {
+    term_count = X->Def.NExchangeCoupling;
+    term_step = 1U;
+  } else {
+    term_count = X->Def.EDNTransfer;
+    term_step = 2U;
+  }
+  if (term_count == 0U ||
+      X->Sym->dim > ULONG_MAX / (unsigned long int)term_count) {
+    fprintf(stderr, "%s: transition target capacity overflow\n", label);
+    exit(1);
+  }
+  maximum = X->Sym->dim * (unsigned long int)term_count;
+  if (maximum > (unsigned long int)(SIZE_MAX / sizeof(*targets))) {
+    fprintf(stderr, "%s: transition target byte overflow\n", label);
+    exit(1);
+  }
+  targets = (struct C5DirectoryTarget *)malloc(
+      (size_t)maximum * sizeof(*targets));
+  if (targets == NULL) {
+    fprintf(stderr, "%s: transition target allocation failed\n", label);
+    exit(1);
+  }
+  for (beta = 1UL; beta <= X->Sym->dim; beta++) {
+    unsigned int term;
+    for (term = 0U; term < term_count; term += term_step) {
+      struct SymmetryRepresentativeResult representative;
+      struct SymmetryCanonicalResult canonical;
+      unsigned long int out_state;
+      int applied = c5_transition_state(
+          X, model, X->Sym->basis[beta].rep_state, term, &out_state);
+      if (applied < 0) {
+        fprintf(stderr, "%s: Hamiltonian transition failed\n", label);
+        exit(1);
+      }
+      if (applied == 0) continue;
+      if (SymmetryFindRepresentative(
+              X, out_state, &representative) != 0 ||
+          SymmetryCanonicalizeState(X, out_state, &canonical) != 0) {
+        fprintf(stderr, "%s: transition canonicalization failed\n", label);
+        exit(1);
+      }
+      targets[count].rep_state = representative.rep_state;
+      if (canonical.found != 0) {
+        if (canonical.basis_index == 0UL ||
+            canonical.basis_index > X->Sym->dim ||
+            X->Sym->basis[canonical.basis_index].rep_state !=
+                representative.rep_state) {
+          fprintf(stderr, "%s: transition canonical result mismatch\n",
+                  label);
+          exit(1);
+        }
+        targets[count].global_beta = canonical.basis_index;
+        targets[count].norm = X->Sym->basis[canonical.basis_index].norm;
+      } else {
+        targets[count].global_beta = 0UL;
+        targets[count].norm = 0.0;
+      }
+      count++;
+    }
+  }
+  qsort(targets, (size_t)count, sizeof(*targets),
+        compare_c5_directory_target);
+  {
+    unsigned long int input;
+    unsigned long int output = 0UL;
+    for (input = 0UL; input < count; input++) {
+      if (output > 0UL &&
+          targets[output - 1UL].rep_state == targets[input].rep_state) {
+        if (targets[output - 1UL].global_beta !=
+                targets[input].global_beta ||
+            memcmp(&targets[output - 1UL].norm, &targets[input].norm,
+                   sizeof(targets[input].norm)) != 0) {
+          fprintf(stderr, "%s: duplicate transition oracle mismatch\n",
+                  label);
+          exit(1);
+        }
+        continue;
+      }
+      targets[output++] = targets[input];
+    }
+    count = output;
+  }
+  *found_count = 0;
+  *interior_miss_count = 0;
+  *range_miss_count = 0;
+  for (beta = 0UL; beta < count; beta++) {
+    if (targets[beta].global_beta != 0UL) {
+      (*found_count)++;
+    } else if (targets[beta].rep_state >
+                   X->Sym->basis[1].rep_state &&
+               targets[beta].rep_state <
+                   X->Sym->basis[X->Sym->dim].rep_state) {
+      (*interior_miss_count)++;
+    } else {
+      (*range_miss_count)++;
+    }
+  }
+  if (count == 0UL || *found_count == 0) {
+    fprintf(stderr, "%s: transition oracle lacks found entries\n", label);
+    exit(1);
+  }
+  *target_count = count;
+  return targets;
+}
+
+static void assert_c5_directory_transition_batch(
+    const struct BindStruct *X,
+    enum C5ReferenceModel model,
+    const struct C5DirectoryTarget *targets,
+    unsigned long int target_count,
+    const char *label)
+{
+  struct SymmetryRepresentativeDirectory *directory = NULL;
+  unsigned long int *keys;
+  unsigned long int *global_beta;
+  double *norm;
+  unsigned long int index;
+  if (target_count > (unsigned long int)(SIZE_MAX / sizeof(*keys)) ||
+      target_count > (unsigned long int)(SIZE_MAX / sizeof(*norm))) {
+    fprintf(stderr, "%s: directory output capacity overflow\n", label);
+    exit(1);
+  }
+  keys = (unsigned long int *)malloc((size_t)target_count * sizeof(*keys));
+  global_beta =
+      (unsigned long int *)malloc((size_t)target_count *
+                                  sizeof(*global_beta));
+  norm = (double *)malloc((size_t)target_count * sizeof(*norm));
+  if (keys == NULL || global_beta == NULL || norm == NULL) {
+    fprintf(stderr, "%s: directory output allocation failed\n", label);
+    exit(1);
+  }
+  for (index = 0UL; index < target_count; index++) {
+    keys[index] = targets[index].rep_state;
+    global_beta[index] = ULONG_MAX;
+    norm[index] = -1.0;
+  }
+  if (BuildSymmetryRepresentativeDirectory(
+          X->Sym->local_basis, X->Sym->dim, X->Sym->local_dim,
+          X->Sym->local_capacity, X->Sym->local_offset,
+          X->Sym->rank_offsets, myrank, nproc, &directory) != 0 ||
+      SymmetryResolveRepresentativeBatch(
+          directory, keys, (uint64_t)target_count,
+          global_beta, norm) != 0) {
+    fprintf(stderr, "%s: distributed transition batch failed\n", label);
+    exit(1);
+  }
+  for (index = 0UL; index < target_count; index++) {
+    if (global_beta[index] != targets[index].global_beta ||
+        memcmp(&norm[index], &targets[index].norm,
+               sizeof(norm[index])) != 0) {
+      fprintf(stderr,
+              "%s: transition batch mismatch for model %d key %lu\n",
+              label, (int)model, keys[index]);
+      exit(1);
+    }
+  }
+  FreeSymmetryRepresentativeDirectory(directory);
+  free(keys);
+  free(global_beta);
+  free(norm);
+}
+
 static void assert_c5_distributed_layout_model(
     enum C5ReferenceModel model,
     const char *label)
@@ -3421,13 +3658,18 @@ static void assert_c5_distributed_layout_model(
   struct SymmetryCanonicalResult canonical;
   struct SymmetryRepresentativeResult representative;
   struct SymmetryBasisVector *reference_basis;
+  struct C5DirectoryTarget *directory_targets;
   unsigned long int raw_dim;
   unsigned long int dim;
+  unsigned long int directory_target_count;
   unsigned long int local_index;
   unsigned long long global_digest_count;
   unsigned long long global_digest_xor;
   unsigned long long global_digest_sum;
   double diagonal;
+  int transition_found_count;
+  int transition_interior_miss_count;
+  int transition_range_miss_count;
 
   setup_c5_reference_bind(&X, model);
   raw_dim = X.Check.idim_max;
@@ -3444,6 +3686,10 @@ static void assert_c5_distributed_layout_model(
       1, label);
   assert_int_eq(replicated_digest.fnv1a64 != 0U, 1, label);
   dim = X.Sym->dim;
+  directory_targets = collect_c5_directory_targets(
+      &X, model, &directory_target_count,
+      &transition_found_count, &transition_interior_miss_count,
+      &transition_range_miss_count, label);
   reference_basis = (struct SymmetryBasisVector *)malloc(
       ((size_t)dim + 1U) * sizeof(*reference_basis));
   if (reference_basis == NULL) {
@@ -3531,6 +3777,8 @@ static void assert_c5_distributed_layout_model(
       label);
   assert_int_eq(
       representative.op_rep_to_state < X.Def.NSymTrans, 1, label);
+  assert_c5_directory_transition_batch(
+      &X, model, directory_targets, directory_target_count, label);
 
   assert_int_eq(
       ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), 0, label);
@@ -3656,6 +3904,55 @@ static void assert_c5_distributed_layout_model(
   FreeSymmetryBasis(X.Sym);
   X.Sym = NULL;
   free(reference_basis);
+  free(directory_targets);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static void assert_c5_spin_interior_transition_batch(const char *label)
+{
+  struct BindStruct X;
+  struct C5DirectoryTarget *targets;
+  unsigned long int target_count;
+  int found_count;
+  int interior_miss_count;
+  int range_miss_count;
+
+  setup_bind(&X, 8U, 4U, 1U);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: replicated Spin interior fixture failed\n", label);
+    exit(1);
+  }
+  targets = collect_c5_directory_targets(
+      &X, C5_REFERENCE_SPIN, &target_count,
+      &found_count, &interior_miss_count, &range_miss_count, label);
+  if (found_count == 0 || interior_miss_count == 0 ||
+      range_miss_count == 0) {
+    fprintf(stderr,
+            "%s: Spin transition categories found=%d interior=%d range=%d\n",
+            label, found_count, interior_miss_count, range_miss_count);
+    exit(1);
+  }
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+
+  setup_bind(&X, 8U, 4U, 1U);
+  if (BuildSymmetryBasisForLayout(
+          &X, SYMMETRY_BASIS_DISTRIBUTED) != 0) {
+    fprintf(stderr, "%s: distributed Spin interior fixture failed\n", label);
+    exit(1);
+  }
+  assert_c5_directory_transition_batch(
+      &X, C5_REFERENCE_SPIN, targets, target_count, label);
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+  free(targets);
   free(list_1);
   free(list_Diagonal);
   list_1 = NULL;
@@ -3667,6 +3964,7 @@ static void assert_c5_distributed_layout(const char *label)
   assert_c5_distributed_layout_model(C5_REFERENCE_SPIN, label);
   assert_c5_distributed_layout_model(C5_REFERENCE_SPINLESS, label);
   assert_c5_distributed_layout_model(C5_REFERENCE_HUBBARD, label);
+  assert_c5_spin_interior_transition_batch(label);
 }
 
 static void assert_rank_local_basis_run_contract(const char *label)
