@@ -76,12 +76,14 @@ add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
-add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
-set_tests_properties(symmetry_rank_local_run_mpi
-    PROPERTIES LABELS "symmetry;mpi")
-add_hphi_mpi_test(symmetry_distributed_basis_mpi min:2)
-set_tests_properties(symmetry_distributed_basis_mpi
-    PROPERTIES LABELS "symmetry;mpi")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
+    set_tests_properties(symmetry_rank_local_run_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+    add_hphi_mpi_test(symmetry_distributed_basis_mpi min:2)
+    set_tests_properties(symmetry_distributed_basis_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
 
 add_executable(unittest_symmetry_distribution
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
@@ -101,9 +103,11 @@ add_test(NAME unittest_symmetry_distribution
     COMMAND unittest_symmetry_distribution)
 set_tests_properties(unittest_symmetry_distribution
     PROPERTIES LABELS "unit;symmetry")
-add_hphi_mpi_test(symmetry_distribution_mpi min:2)
-set_tests_properties(symmetry_distribution_mpi
-    PROPERTIES LABELS "symmetry;mpi")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_distribution_mpi min:2)
+    set_tests_properties(symmetry_distribution_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
 
 #
 # Lanczos
@@ -466,9 +470,11 @@ set_tests_properties(unittest_komega_bicg_nonfinite
     PROPERTIES LABELS "unit;spectrum")
 
 # MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
-add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
-set_tests_properties(spectrum_hubbard_offdiag_single_mpi
-    PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
+if(MPI_FOUND)
+    add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
+    set_tests_properties(spectrum_hubbard_offdiag_single_mpi
+        PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
+endif()
 set_tests_properties(
     spectrum_kondo_chain spectrum_kondogc_chain
     PROPERTIES LABELS "spectrum;kondo")
