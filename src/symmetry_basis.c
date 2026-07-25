@@ -1105,13 +1105,73 @@ fail:
   return -1;
 }
 
-int SymmetryCanonicalizeState(const struct BindStruct *X,
-                              unsigned long int state,
-                              struct SymmetryCanonicalResult *result)
+int SymmetryFindRepresentative(
+    const struct BindStruct *X,
+    unsigned long int state,
+    struct SymmetryRepresentativeResult *result)
 {
   unsigned int g;
   unsigned int op_rep_to_state;
   unsigned long int rep_state;
+  if (result == NULL) return -1;
+  memset(result, 0, sizeof(*result));
+  if (X == NULL || X->Sym == NULL || X->Sym->enabled != TRUE) return -1;
+
+  if (find_representative_state(&X->Def, X->Sym, state, &rep_state,
+                                &op_rep_to_state, NULL) != 0) {
+    return -1;
+  }
+
+  if (op_rep_to_state != UINT_MAX &&
+      op_rep_to_state < X->Def.NSymTrans) {
+    struct SymmetryTransformResult moved;
+    double complex phase;
+    if (SymmetryApplyToState(&X->Def, rep_state, op_rep_to_state,
+                             &moved) != 0 || moved.state != state) {
+      return -1;
+    }
+    phase = X->Def.SymTransChar[op_rep_to_state] * moved.amplitude;
+#ifdef HPHI_SYMMETRY_CANONICAL_VERIFY
+    for (g = 0U; g < X->Def.NSymTrans; g++) {
+      struct SymmetryTransformResult reference;
+      if (SymmetryApplyToState(&X->Def, rep_state, g, &reference) != 0) {
+        return -1;
+      }
+      if (reference.state == state) {
+        double complex reference_phase =
+            X->Def.SymTransChar[g] * reference.amplitude;
+        if (g != op_rep_to_state || reference_phase != phase) {
+          return -1;
+        }
+        break;
+      }
+    }
+    if (g == X->Def.NSymTrans) return -1;
+#endif
+    result->rep_state = rep_state;
+    result->op_rep_to_state = op_rep_to_state;
+    result->phase = phase;
+    return 0;
+  }
+
+  for (g = 0; g < X->Def.NSymTrans; g++) {
+    struct SymmetryTransformResult moved;
+    if (SymmetryApplyToState(&X->Def, rep_state, g, &moved) != 0) return -1;
+    if (moved.state == state) {
+      result->rep_state = rep_state;
+      result->op_rep_to_state = g;
+      result->phase = X->Def.SymTransChar[g] * moved.amplitude;
+      return 0;
+    }
+  }
+  return -1;
+}
+
+int SymmetryCanonicalizeState(const struct BindStruct *X,
+                              unsigned long int state,
+                              struct SymmetryCanonicalResult *result)
+{
+  struct SymmetryRepresentativeResult representative;
   unsigned long int basis_index;
   if (result == NULL) return -1;
   memset(result, 0, sizeof(*result));
@@ -1122,57 +1182,16 @@ int SymmetryCanonicalizeState(const struct BindStruct *X,
             "for the B3/B4 directory and block plan.\n");
     return -1;
   }
-
-  if (find_representative_state(&X->Def, X->Sym, state, &rep_state,
-                                &op_rep_to_state, NULL) != 0) {
+  if (SymmetryFindRepresentative(X, state, &representative) != 0) {
     return -1;
   }
-  basis_index = find_basis_index_by_rep(X->Sym, rep_state);
+  basis_index = find_basis_index_by_rep(X->Sym,
+                                       representative.rep_state);
   if (basis_index == 0) return 0;
-
-  if (op_rep_to_state != UINT_MAX &&
-      op_rep_to_state < X->Def.NSymTrans) {
-    struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(&X->Def, rep_state, op_rep_to_state,
-                             &moved) != 0 || moved.state != state) {
-      return -1;
-    }
-    result->found = TRUE;
-    result->basis_index = basis_index;
-    result->op_rep_to_state = op_rep_to_state;
-    result->phase = X->Def.SymTransChar[op_rep_to_state] * moved.amplitude;
-#ifdef HPHI_SYMMETRY_CANONICAL_VERIFY
-    for (g = 0U; g < X->Def.NSymTrans; g++) {
-      struct SymmetryTransformResult reference;
-      if (SymmetryApplyToState(&X->Def, rep_state, g, &reference) != 0) {
-        return -1;
-      }
-      if (reference.state == state) {
-        double complex reference_phase =
-            X->Def.SymTransChar[g] * reference.amplitude;
-        if (g != result->op_rep_to_state ||
-            reference_phase != result->phase) {
-          return -1;
-        }
-        break;
-      }
-    }
-    if (g == X->Def.NSymTrans) return -1;
-#endif
-    return 0;
-  }
-
-  for (g = 0; g < X->Def.NSymTrans; g++) {
-    struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(&X->Def, rep_state, g, &moved) != 0) return -1;
-    if (moved.state == state) {
-      result->found = TRUE;
-      result->basis_index = basis_index;
-      result->op_rep_to_state = g;
-      result->phase = X->Def.SymTransChar[g] * moved.amplitude;
-      return 0;
-    }
-  }
+  result->found = TRUE;
+  result->basis_index = basis_index;
+  result->op_rep_to_state = representative.op_rep_to_state;
+  result->phase = representative.phase;
   return 0;
 }
 

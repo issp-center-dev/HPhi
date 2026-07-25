@@ -3223,6 +3223,181 @@ static void setup_c5_reference_bind(
   }
 }
 
+static void assert_representative_discovery_model(
+    enum C5ReferenceModel model,
+    const char *label)
+{
+  struct BindStruct X;
+  struct SymmetryBasisRuntime *saved_sym;
+  struct SymmetryRepresentativeResult representative;
+  struct SymmetryRepresentativeResult fallback;
+  struct SymmetryRepresentativeResult zero_result;
+  unsigned int saved_enabled;
+  unsigned long int raw;
+  unsigned long int member_count = 0UL;
+  unsigned long int nonmember_count = 0UL;
+  unsigned long int identity_count = 0UL;
+  unsigned long int nontrivial_count = 0UL;
+  unsigned long int stabilizer_count = 0UL;
+
+  setup_c5_reference_bind(&X, model);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: basis build failed\n", label);
+    exit(1);
+  }
+
+  memset(&zero_result, 0, sizeof(zero_result));
+  memset(&representative, 0xa5, sizeof(representative));
+  assert_int_eq(
+      SymmetryFindRepresentative(NULL, 0UL, &representative), -1, label);
+  assert_int_eq(
+      memcmp(&representative, &zero_result, sizeof(representative)), 0,
+      label);
+  assert_int_eq(
+      SymmetryFindRepresentative(&X, 0UL, NULL), -1, label);
+
+  saved_sym = X.Sym;
+  X.Sym = NULL;
+  memset(&representative, 0xa5, sizeof(representative));
+  assert_int_eq(
+      SymmetryFindRepresentative(&X, 0UL, &representative), -1, label);
+  assert_int_eq(
+      memcmp(&representative, &zero_result, sizeof(representative)), 0,
+      label);
+  X.Sym = saved_sym;
+
+  saved_enabled = (unsigned int)X.Sym->enabled;
+  X.Sym->enabled = FALSE;
+  memset(&representative, 0xa5, sizeof(representative));
+  assert_int_eq(
+      SymmetryFindRepresentative(&X, 0UL, &representative), -1, label);
+  assert_int_eq(
+      memcmp(&representative, &zero_result, sizeof(representative)), 0,
+      label);
+  X.Sym->enabled = (int)saved_enabled;
+
+  assert_int_eq(
+      SymmetryFindRepresentative(&X, 0UL, &representative), 0, label);
+  assert_ulong_eq(representative.rep_state, 0UL, label);
+  assert_int_eq(representative.op_rep_to_state, 0U, label);
+  assert_complex_bitwise(representative.phase, 1.0, label);
+#ifdef HPHI_SYMMETRY_CANONICAL_VERIFY
+  {
+    unsigned int saved_inverse = X.Sym->group_inverse[0];
+    X.Sym->group_inverse[0] = 1U;
+    memset(&representative, 0xa5, sizeof(representative));
+    assert_int_eq(
+        SymmetryFindRepresentative(&X, 0UL, &representative), -1, label);
+    assert_int_eq(
+        memcmp(&representative, &zero_result, sizeof(representative)), 0,
+        label);
+    X.Sym->group_inverse[0] = saved_inverse;
+  }
+#endif
+
+  for (raw = 1UL; raw <= X.Check.idim_max; raw++) {
+    struct SymmetryCanonicalResult canonical;
+    unsigned long int state = list_1[raw];
+    unsigned long int expected_rep = state;
+    unsigned long int expected_basis_index = 0UL;
+    unsigned int expected_op = UINT_MAX;
+    double complex expected_phase = 0.0;
+    unsigned int g;
+    unsigned int stabilizer_size = 0U;
+    unsigned long int beta;
+
+    for (g = 0U; g < X.Def.NSymTrans; g++) {
+      struct SymmetryTransformResult moved;
+      assert_int_eq(
+          SymmetryApplyToState(&X.Def, state, g, &moved), 0, label);
+      if (moved.state < expected_rep) expected_rep = moved.state;
+      if (moved.state == state) stabilizer_size++;
+    }
+    for (g = 0U; g < X.Def.NSymTrans; g++) {
+      struct SymmetryTransformResult moved;
+      assert_int_eq(
+          SymmetryApplyToState(&X.Def, expected_rep, g, &moved), 0,
+          label);
+      if (moved.state == state) {
+        expected_op = g;
+        expected_phase = X.Def.SymTransChar[g] * moved.amplitude;
+        break;
+      }
+    }
+    assert_int_eq(expected_op != UINT_MAX, 1, label);
+    if (expected_op == 0U) {
+      identity_count++;
+    } else {
+      nontrivial_count++;
+    }
+    if (stabilizer_size > 1U) stabilizer_count++;
+
+    assert_int_eq(
+        SymmetryFindRepresentative(&X, state, &representative), 0,
+        label);
+    assert_ulong_eq(representative.rep_state, expected_rep, label);
+    assert_int_eq(representative.op_rep_to_state, expected_op, label);
+    assert_complex_bitwise(representative.phase, expected_phase, label);
+
+    for (beta = 1UL; beta <= X.Sym->dim; beta++) {
+      if (X.Sym->basis[beta].rep_state == expected_rep) {
+        expected_basis_index = beta;
+        break;
+      }
+    }
+    assert_int_eq(
+        SymmetryCanonicalizeState(&X, state, &canonical), 0, label);
+    if (expected_basis_index != 0UL) {
+      member_count++;
+      assert_int_eq(canonical.found, TRUE, label);
+      assert_ulong_eq(canonical.basis_index, expected_basis_index, label);
+      assert_int_eq(
+          canonical.op_rep_to_state, representative.op_rep_to_state,
+          label);
+      assert_complex_bitwise(
+          canonical.phase, representative.phase, label);
+    } else {
+      nonmember_count++;
+      assert_int_eq(canonical.found, FALSE, label);
+      assert_ulong_eq(canonical.basis_index, 0UL, label);
+      assert_int_eq(canonical.op_rep_to_state, 0U, label);
+      assert_complex_bitwise(canonical.phase, 0.0, label);
+    }
+  }
+  assert_int_eq(member_count > 0UL, 1, label);
+  assert_int_eq(identity_count > 0UL, 1, label);
+  assert_int_eq(nontrivial_count > 0UL, 1, label);
+  if (model == C5_REFERENCE_SPIN) {
+    assert_int_eq(nonmember_count > 0UL, 1, label);
+    assert_int_eq(stabilizer_count > 0UL, 1, label);
+  }
+
+  assert_int_eq(
+      SymmetryFindRepresentative(
+          &X, list_1[X.Check.idim_max], &representative),
+      0, label);
+  {
+    unsigned int *saved_group_inverse = X.Sym->group_inverse;
+    X.Sym->group_inverse = NULL;
+    assert_int_eq(
+        SymmetryFindRepresentative(
+            &X, list_1[X.Check.idim_max], &fallback),
+        0, label);
+    X.Sym->group_inverse = saved_group_inverse;
+  }
+  assert_ulong_eq(fallback.rep_state, representative.rep_state, label);
+  assert_int_eq(
+      fallback.op_rep_to_state, representative.op_rep_to_state, label);
+  assert_complex_bitwise(fallback.phase, representative.phase, label);
+
+  FreeSymmetryBasis(X.Sym);
+  X.Sym = NULL;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static int c5_noop_entry(
     unsigned long int out_index,
     double complex coefficient,
@@ -3244,6 +3419,7 @@ static void assert_c5_distributed_layout_model(
   struct SymmetryBasisDigest reference_digest;
   struct SymmetryBasisRuntime reference_sym;
   struct SymmetryCanonicalResult canonical;
+  struct SymmetryRepresentativeResult representative;
   struct SymmetryBasisVector *reference_basis;
   unsigned long int raw_dim;
   unsigned long int dim;
@@ -3350,6 +3526,11 @@ static void assert_c5_distributed_layout_model(
   assert_int_eq(
       SymmetryBasisReplicatedGlobalEntry(X.Sym, 1UL) == NULL,
       1, label);
+  assert_int_eq(
+      SymmetryFindRepresentative(&X, list_1[1], &representative), 0,
+      label);
+  assert_int_eq(
+      representative.op_rep_to_state < X.Def.NSymTrans, 1, label);
 
   assert_int_eq(
       ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), 0, label);
@@ -3963,6 +4144,15 @@ int main(int argc, char **argv)
       "serial rank-local distribution accepts an empty global sector");
   assert_basis_ownership_accessors(
       "basis ownership accessors enforce local/global ranges");
+  assert_representative_discovery_model(
+      C5_REFERENCE_SPIN,
+      "Spin representative discovery is basis-layout independent");
+  assert_representative_discovery_model(
+      C5_REFERENCE_SPINLESS,
+      "SpinlessFermion representative discovery preserves phase bits");
+  assert_representative_discovery_model(
+      C5_REFERENCE_HUBBARD,
+      "Hubbard representative discovery preserves phase bits");
   assert_c5_distributed_layout(
       "serial staged distributed basis matches replicated reference");
   {

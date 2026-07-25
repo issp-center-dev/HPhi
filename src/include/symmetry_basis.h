@@ -24,6 +24,12 @@ struct SymmetryCanonicalResult {
   double complex phase;
 };
 
+struct SymmetryRepresentativeResult {
+  unsigned long int rep_state;
+  unsigned int op_rep_to_state;
+  double complex phase;
+};
+
 struct SymmetryTransformResult {
   unsigned long int state;
   double complex amplitude;
@@ -149,6 +155,15 @@ int BuildSymmetryBasis(struct BindStruct *X);
 int BuildSymmetryBasisForLayout(
     struct BindStruct *X,
     enum SymmetryBasisLayout layout);
+/**
+ * @brief Find a symmetry representative without consulting basis storage.
+ *
+ * @return 0 on success, or -1 after zeroing result on invalid input.
+ */
+int SymmetryFindRepresentative(
+    const struct BindStruct *X,
+    unsigned long int state,
+    struct SymmetryRepresentativeResult *result);
 int SymmetryCanonicalizeState(const struct BindStruct *X,
                               unsigned long int state,
                               struct SymmetryCanonicalResult *result);
