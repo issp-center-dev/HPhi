@@ -68,6 +68,29 @@ static int symmetry_basis_run_is_valid(const struct SymmetryBasisRun *run)
   return run->capacity >= run->count + 1UL;
 }
 
+int SymmetryBlockRange(
+    unsigned long int dim,
+    int rank,
+    int nrank,
+    unsigned long int *offset,
+    unsigned long int *count)
+{
+  unsigned long int base;
+  unsigned long int remainder;
+  unsigned long int unsigned_rank;
+  if (rank < 0 || nrank < 1 || rank >= nrank ||
+      offset == NULL || count == NULL) {
+    return -1;
+  }
+  base = dim / (unsigned long int)nrank;
+  remainder = dim % (unsigned long int)nrank;
+  unsigned_rank = (unsigned long int)rank;
+  *count = base + (unsigned_rank < remainder ? 1UL : 0UL);
+  *offset = base * unsigned_rank +
+      (unsigned_rank < remainder ? unsigned_rank : remainder);
+  return 0;
+}
+
 int SymmetryCompareBasisRepState(const void *lhs, const void *rhs)
 {
   const struct SymmetryBasisVector *a =
@@ -1002,5 +1025,486 @@ fail:
   free(send_displacements);
   free(preflight_recv_counts);
   free(splitters);
+  return -1;
+}
+
+static int calculate_rebalance_temporary_peak(
+    uint64_t input_count,
+    uint64_t receive_count,
+    int nrank,
+    size_t *peak_bytes)
+{
+  uint64_t input_elements;
+  uint64_t input_bytes;
+  uint64_t receive_bytes;
+  uint64_t output_elements;
+  uint64_t output_bytes;
+  uint64_t rank_elements;
+  uint64_t schedule_bytes;
+  uint64_t request_bytes = 0U;
+  uint64_t peak;
+  if (peak_bytes == NULL || nrank < 1 ||
+      checked_u64_add(input_count, 1U, &input_elements) != 0 ||
+      checked_u64_mul(input_elements,
+                      (uint64_t)sizeof(struct SymmetryBasisVector),
+                      &input_bytes) != 0 ||
+      checked_u64_mul(receive_count,
+                      (uint64_t)sizeof(struct SymmetryBasisVector),
+                      &receive_bytes) != 0 ||
+      checked_u64_add(receive_count, 1U, &output_elements) != 0 ||
+      checked_u64_mul(output_elements,
+                      (uint64_t)sizeof(struct SymmetryBasisVector),
+                      &output_bytes) != 0 ||
+      checked_u64_mul((uint64_t)nrank, UINT64_C(10),
+                      &rank_elements) != 0 ||
+      checked_u64_add(rank_elements, 4U, &rank_elements) != 0 ||
+      checked_u64_mul(rank_elements, (uint64_t)sizeof(uint64_t),
+                      &schedule_bytes) != 0) {
+    return -1;
+  }
+#ifdef MPI
+  if (checked_u64_mul(
+          (uint64_t)nrank,
+          UINT64_C(2) * (uint64_t)sizeof(MPI_Request),
+          &request_bytes) != 0) {
+    return -1;
+  }
+#endif
+  if (checked_u64_add(input_bytes, receive_bytes, &peak) != 0 ||
+      checked_u64_add(peak, output_bytes, &peak) != 0 ||
+      checked_u64_add(peak, schedule_bytes, &peak) != 0 ||
+      checked_u64_add(peak, request_bytes, &peak) != 0 ||
+      checked_u64_to_size(peak, peak_bytes) != 0) {
+    return -1;
+  }
+  return 0;
+}
+
+int SymmetryExactRebalanceBasisRun(
+    struct SymmetryBasisRun *run,
+    int rank,
+    int nrank,
+    struct SymmetryBasisOwnership *ownership,
+    struct SymmetryBasisDistributionStats *stats)
+{
+  struct SymmetryBasisOwnership next_ownership;
+  struct SymmetryMpiExchangeLayout layout;
+  struct SymmetryMpiExchangeResult result;
+  struct SymmetryMpiExchangeStats exchange_stats;
+  struct SymmetryBasisVector *next_entries = NULL;
+  uint64_t *all_counts = NULL;
+  uint64_t *source_offsets = NULL;
+  uint64_t *send_counts = NULL;
+  uint64_t *send_displacements = NULL;
+  uint64_t *preflight_recv_counts = NULL;
+  unsigned long int *all_first_keys = NULL;
+  unsigned long int *all_last_keys = NULL;
+  uint64_t local_count = 0U;
+  uint64_t global_count = 0U;
+  uint64_t source_begin;
+  uint64_t source_end;
+  uint64_t target_begin;
+  uint64_t target_end;
+  uint64_t send_total = 0U;
+  uint64_t receive_total = 0U;
+  unsigned long int global_dim = 0UL;
+  unsigned long int local_offset = 0UL;
+  unsigned long int local_dim = 0UL;
+  unsigned long int first_key = 0UL;
+  unsigned long int last_key = 0UL;
+  size_t rank_bytes = 0U;
+  size_t offset_bytes = 0U;
+  size_t key_rank_bytes = 0U;
+  size_t ownership_bytes = 0U;
+  size_t output_elements = 0U;
+  size_t output_bytes = 0U;
+  size_t temporary_peak = 0U;
+  uint64_t entry_index;
+  int mpi_active;
+  int local_error = 0;
+  int global_error;
+  int peer;
+#ifdef MPI
+  int comm_rank = 0;
+  int comm_size = 1;
+#endif
+
+  memset(&next_ownership, 0, sizeof(next_ownership));
+  memset(&result, 0, sizeof(result));
+  memset(&exchange_stats, 0, sizeof(exchange_stats));
+  mpi_active = SymmetryMpiCollectivesActive();
+
+  if (symmetry_basis_run_is_valid(run) != TRUE ||
+      checked_ulong_to_u64(run != NULL ? run->count : 0UL,
+                           &local_count) != 0 ||
+      ownership == NULL || ownership->dim != 0UL ||
+      ownership->local_offset != 0UL || ownership->local_dim != 0UL ||
+      ownership->rank_offsets != NULL ||
+      rank < 0 || nrank < 1 || rank >= nrank) {
+    local_error = 1;
+  }
+#ifdef MPI
+  if (mpi_active != FALSE) {
+    if (MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank) != MPI_SUCCESS ||
+        MPI_Comm_size(MPI_COMM_WORLD, &comm_size) != MPI_SUCCESS ||
+        comm_rank != rank || comm_size != nrank) {
+      local_error = 1;
+    }
+  } else if (rank != 0 || nrank != 1) {
+    local_error = 1;
+  }
+#else
+  if (rank != 0 || nrank != 1) local_error = 1;
+#endif
+  if (nrank > 0 &&
+      (checked_size_mul((size_t)nrank, sizeof(uint64_t),
+                        &rank_bytes) != 0 ||
+       checked_size_mul((size_t)nrank, sizeof(unsigned long int),
+                        &key_rank_bytes) != 0 ||
+       (size_t)nrank == SIZE_MAX ||
+       checked_size_mul((size_t)nrank + 1U, sizeof(uint64_t),
+                        &offset_bytes) != 0 ||
+       checked_size_mul((size_t)nrank + 1U,
+                        sizeof(unsigned long int),
+                        &ownership_bytes) != 0)) {
+    local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) return -1;
+
+  for (entry_index = 1U; entry_index < local_count; entry_index++) {
+    if (run->entries[entry_index].rep_state >=
+        run->entries[entry_index + 1U].rep_state) {
+      local_error = 1;
+      break;
+    }
+  }
+  first_key = local_count > 0U ? run->entries[1].rep_state : 0UL;
+  last_key = local_count > 0U
+      ? run->entries[(unsigned long int)local_count].rep_state : 0UL;
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) return -1;
+
+  all_counts = (uint64_t *)malloc(rank_bytes);
+  source_offsets = (uint64_t *)malloc(offset_bytes);
+  all_first_keys = (unsigned long int *)malloc(key_rank_bytes);
+  all_last_keys = (unsigned long int *)malloc(key_rank_bytes);
+  if (all_counts == NULL || source_offsets == NULL ||
+      all_first_keys == NULL || all_last_keys == NULL) {
+    local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+#ifdef MPI
+  if (mpi_active != FALSE && nrank > 1) {
+    if (MPI_Allgather(&local_count, 1, MPI_UINT64_T,
+                      all_counts, 1, MPI_UINT64_T,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allgather(&first_key, 1, MPI_UNSIGNED_LONG,
+                      all_first_keys, 1, MPI_UNSIGNED_LONG,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allgather(&last_key, 1, MPI_UNSIGNED_LONG,
+                      all_last_keys, 1, MPI_UNSIGNED_LONG,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      goto fail_rebalance;
+    }
+  } else
+#endif
+  {
+    all_counts[0] = local_count;
+    all_first_keys[0] = first_key;
+    all_last_keys[0] = last_key;
+  }
+
+  source_offsets[0] = 0U;
+  {
+    int have_previous = FALSE;
+    unsigned long int previous_last = 0UL;
+    for (peer = 0; peer < nrank; peer++) {
+      if (checked_u64_add(source_offsets[peer], all_counts[peer],
+                          &source_offsets[peer + 1]) != 0) {
+        local_error = 1;
+        break;
+      }
+      if (all_counts[peer] == 0U) continue;
+      if (have_previous != FALSE &&
+          previous_last >= all_first_keys[peer]) {
+        local_error = 1;
+        break;
+      }
+      previous_last = all_last_keys[peer];
+      have_previous = TRUE;
+    }
+  }
+  if (local_error == 0) global_count = source_offsets[nrank];
+  if (local_error == 0 &&
+      (global_count > (uint64_t)ULONG_MAX ||
+       (uint64_t)(unsigned long int)global_count != global_count)) {
+    local_error = 1;
+  } else if (local_error == 0) {
+    global_dim = (unsigned long int)global_count;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  next_ownership.rank_offsets =
+      (unsigned long int *)malloc(ownership_bytes);
+  if (next_ownership.rank_offsets == NULL) local_error = 1;
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  for (peer = 0; peer < nrank; peer++) {
+    unsigned long int offset;
+    unsigned long int count;
+    if (SymmetryBlockRange(global_dim, peer, nrank,
+                           &offset, &count) != 0 ||
+        offset > global_dim || count > global_dim - offset) {
+      local_error = 1;
+      break;
+    }
+    next_ownership.rank_offsets[peer] = offset;
+    if (peer + 1 == nrank) {
+      next_ownership.rank_offsets[peer + 1] = offset + count;
+    }
+  }
+  if (local_error == 0 &&
+      (next_ownership.rank_offsets[0] != 0UL ||
+       next_ownership.rank_offsets[nrank] != global_dim ||
+       SymmetryBlockRange(global_dim, rank, nrank,
+                          &local_offset, &local_dim) != 0 ||
+       local_dim == ULONG_MAX)) {
+    local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  send_counts = (uint64_t *)calloc((size_t)nrank, sizeof(*send_counts));
+  send_displacements = (uint64_t *)calloc(
+      (size_t)nrank, sizeof(*send_displacements));
+  preflight_recv_counts = (uint64_t *)calloc(
+      (size_t)nrank, sizeof(*preflight_recv_counts));
+  if (send_counts == NULL || send_displacements == NULL ||
+      preflight_recv_counts == NULL) {
+    local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  source_begin = source_offsets[rank];
+  source_end = source_offsets[rank + 1];
+  for (peer = 0; peer < nrank; peer++) {
+    uint64_t block_begin =
+        (uint64_t)next_ownership.rank_offsets[peer];
+    uint64_t block_end =
+        (uint64_t)next_ownership.rank_offsets[peer + 1];
+    uint64_t intersection_begin =
+        source_begin > block_begin ? source_begin : block_begin;
+    uint64_t intersection_end =
+        source_end < block_end ? source_end : block_end;
+    uint64_t intersection_count = intersection_end > intersection_begin
+        ? intersection_end - intersection_begin : 0U;
+    send_displacements[peer] = send_total;
+    send_counts[peer] = intersection_count;
+    if ((intersection_count > 0U &&
+         intersection_begin - source_begin != send_total) ||
+        checked_u64_add(send_total, intersection_count,
+                        &send_total) != 0) {
+      local_error = 1;
+      break;
+    }
+  }
+  if (send_total != local_count) local_error = 1;
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+#ifdef MPI
+  if (mpi_active != FALSE && nrank > 1) {
+    if (MPI_Alltoall(send_counts, 1, MPI_UINT64_T,
+                     preflight_recv_counts, 1, MPI_UINT64_T,
+                     MPI_COMM_WORLD) != MPI_SUCCESS) {
+      goto fail_rebalance;
+    }
+  } else
+#endif
+  {
+    preflight_recv_counts[0] = send_counts[0];
+  }
+
+  target_begin = (uint64_t)local_offset;
+  target_end = target_begin + (uint64_t)local_dim;
+  receive_total = 0U;
+  for (peer = 0; peer < nrank; peer++) {
+    uint64_t peer_begin = source_offsets[peer];
+    uint64_t peer_end = source_offsets[peer + 1];
+    uint64_t intersection_begin =
+        peer_begin > target_begin ? peer_begin : target_begin;
+    uint64_t intersection_end =
+        peer_end < target_end ? peer_end : target_end;
+    uint64_t expected_count = intersection_end > intersection_begin
+        ? intersection_end - intersection_begin : 0U;
+    if (preflight_recv_counts[peer] != expected_count ||
+        checked_u64_add(receive_total, preflight_recv_counts[peer],
+                        &receive_total) != 0) {
+      local_error = 1;
+      break;
+    }
+  }
+  if (receive_total != (uint64_t)local_dim ||
+      calculate_rebalance_temporary_peak(
+          local_count, receive_total, nrank, &temporary_peak) != 0) {
+    local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  layout.nrank = nrank;
+  layout.count = local_count;
+  layout.counts = send_counts;
+  layout.displacements = send_displacements;
+  if (SymmetryMpiExchangeBasisVectors(
+          local_count > 0U ? run->entries + 1 : run->entries,
+          &layout, rank, nrank, NULL, &result, &exchange_stats) != 0) {
+    goto fail_rebalance;
+  }
+  if (result.count != receive_total ||
+      exchange_stats.send_entries != local_count ||
+      exchange_stats.recv_entries != receive_total) {
+    local_error = 1;
+  }
+  send_total = 0U;
+  for (peer = 0; peer < nrank; peer++) {
+    if (result.counts[peer] != preflight_recv_counts[peer] ||
+        result.displacements[peer] != send_total ||
+        checked_u64_add(send_total, result.counts[peer],
+                        &send_total) != 0) {
+      local_error = 1;
+      break;
+    }
+  }
+  if (send_total != receive_total) local_error = 1;
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  {
+    uint64_t output_element_count;
+    if (checked_u64_add(receive_total, 1U, &output_element_count) != 0 ||
+        checked_u64_to_size(output_element_count, &output_elements) != 0) {
+      local_error = 1;
+    }
+  }
+  if (local_error != 0 ||
+      checked_size_mul(output_elements, sizeof(*next_entries),
+                       &output_bytes) != 0) {
+    local_error = 1;
+  } else {
+    next_entries = (struct SymmetryBasisVector *)calloc(1U, output_bytes);
+    if (next_entries == NULL) local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  if (receive_total > 0U) {
+    memcpy(next_entries + 1, result.entries,
+           (size_t)receive_total * sizeof(*next_entries));
+  }
+  for (send_total = 1U; send_total < receive_total; send_total++) {
+    if (next_entries[send_total].rep_state >=
+        next_entries[send_total + 1U].rep_state) {
+      local_error = 1;
+      break;
+    }
+  }
+  first_key = receive_total > 0U ? next_entries[1].rep_state : 0UL;
+  last_key = receive_total > 0U
+      ? next_entries[(unsigned long int)receive_total].rep_state : 0UL;
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+#ifdef MPI
+  if (mpi_active != FALSE && nrank > 1) {
+    if (MPI_Allgather(&receive_total, 1, MPI_UINT64_T,
+                      all_counts, 1, MPI_UINT64_T,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allgather(&first_key, 1, MPI_UNSIGNED_LONG,
+                      all_first_keys, 1, MPI_UNSIGNED_LONG,
+                      MPI_COMM_WORLD) != MPI_SUCCESS ||
+        MPI_Allgather(&last_key, 1, MPI_UNSIGNED_LONG,
+                      all_last_keys, 1, MPI_UNSIGNED_LONG,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      goto fail_rebalance;
+    }
+  } else
+#endif
+  {
+    all_counts[0] = receive_total;
+    all_first_keys[0] = first_key;
+    all_last_keys[0] = last_key;
+  }
+  {
+    uint64_t verified_global_count = 0U;
+    int have_previous = FALSE;
+    unsigned long int previous_last = 0UL;
+    for (peer = 0; peer < nrank; peer++) {
+      uint64_t expected_count =
+          (uint64_t)next_ownership.rank_offsets[peer + 1] -
+          (uint64_t)next_ownership.rank_offsets[peer];
+      if (all_counts[peer] != expected_count ||
+          checked_u64_add(verified_global_count, all_counts[peer],
+                          &verified_global_count) != 0) {
+        local_error = 1;
+        break;
+      }
+      if (all_counts[peer] == 0U) continue;
+      if (have_previous != FALSE &&
+          previous_last >= all_first_keys[peer]) {
+        local_error = 1;
+        break;
+      }
+      previous_last = all_last_keys[peer];
+      have_previous = TRUE;
+    }
+    if (verified_global_count != global_count) local_error = 1;
+  }
+  global_error = SymmetryMpiAgreeError(mpi_active, local_error);
+  if (global_error != 0) goto fail_rebalance;
+
+  next_ownership.dim = global_dim;
+  next_ownership.local_offset = local_offset;
+  next_ownership.local_dim = local_dim;
+  free(run->entries);
+  run->entries = next_entries;
+  run->count = local_dim;
+  run->capacity = local_dim + 1UL;
+  next_entries = NULL;
+  *ownership = next_ownership;
+  next_ownership.rank_offsets = NULL;
+  if (stats != NULL) {
+    stats->rebalance_send_entries = local_count;
+    stats->rebalance_recv_entries = receive_total;
+    stats->rebalance_temporary_peak_bytes = temporary_peak;
+  }
+
+  FreeSymmetryMpiExchangeResult(&result);
+  free(all_counts);
+  free(source_offsets);
+  free(send_counts);
+  free(send_displacements);
+  free(preflight_recv_counts);
+  free(all_first_keys);
+  free(all_last_keys);
+  return 0;
+
+fail_rebalance:
+  FreeSymmetryMpiExchangeResult(&result);
+  free(next_entries);
+  free(next_ownership.rank_offsets);
+  free(all_counts);
+  free(source_offsets);
+  free(send_counts);
+  free(send_displacements);
+  free(preflight_recv_counts);
+  free(all_first_keys);
+  free(all_last_keys);
   return -1;
 }

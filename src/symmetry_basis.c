@@ -513,11 +513,6 @@ static int insert_rep_hash(struct SymmetryBasisRuntime *sym,
                            unsigned long int rep_state,
                            unsigned long int basis_index);
 static int build_rep_hash(struct SymmetryBasisRuntime *sym);
-static void symmetry_block_range(unsigned long int dim,
-                                 int rank,
-                                 int nrank,
-                                 unsigned long int *offset,
-                                 unsigned long int *count);
 
 static unsigned long int find_basis_index_by_rep(const struct SymmetryBasisRuntime *sym,
                                                  unsigned long int rep_state)
@@ -619,19 +614,6 @@ static int build_rep_hash(struct SymmetryBasisRuntime *sym)
     if (insert_rep_hash(sym, sym->basis[i].rep_state, i) != 0) return -1;
   }
   return 0;
-}
-
-static void symmetry_block_range(unsigned long int dim,
-                                 int rank,
-                                 int nrank,
-                                 unsigned long int *offset,
-                                 unsigned long int *count)
-{
-  unsigned long int base = dim / (unsigned long int)nrank;
-  unsigned long int rem = dim % (unsigned long int)nrank;
-  unsigned long int urank = (unsigned long int)rank;
-  *count = base + (urank < rem ? 1UL : 0UL);
-  *offset = base * urank + (urank < rem ? urank : rem);
 }
 
 static void initialize_basis_vector(struct SymmetryBasisVector *entry,
@@ -1146,8 +1128,11 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X)
     if (nproc < 1 || myrank < 0 || myrank >= nproc) return -1;
     FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
     X->Sym->matvec_plan = NULL;
-    symmetry_block_range(X->Sym->dim, myrank, nproc,
-                         &X->Sym->local_offset, &X->Sym->local_dim);
+    if (SymmetryBlockRange(X->Sym->dim, myrank, nproc,
+                           &X->Sym->local_offset,
+                           &X->Sym->local_dim) != 0) {
+      return -1;
+    }
 #ifdef MPI
     free(X->Sym->mpi_recvcounts);
     free(X->Sym->mpi_displs);

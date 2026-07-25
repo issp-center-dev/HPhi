@@ -903,6 +903,383 @@ static void assert_sample_sort_memory_cap_failure(void)
   FreeSymmetryBasisRun(&run);
 }
 
+static void exact_source_range(uint64_t global_count,
+                               int one_rank_only,
+                               int rank,
+                               uint64_t *offset,
+                               uint64_t *count)
+{
+  if (one_rank_only != FALSE) {
+    *offset = 0U;
+    *count = rank == test_nrank - 1 ? global_count : 0U;
+    return;
+  }
+  if (test_nrank == 1) {
+    *offset = 0U;
+    *count = global_count;
+    return;
+  }
+  {
+    uint64_t head = (global_count + 1U) / 2U;
+    unsigned long int tail_offset = 0UL;
+    unsigned long int tail_count = 0UL;
+    if (rank == 0) {
+      *offset = 0U;
+      *count = head;
+      return;
+    }
+    require_true(
+        global_count - head <= (uint64_t)ULONG_MAX &&
+            SymmetryBlockRange(
+                (unsigned long int)(global_count - head),
+                rank - 1, test_nrank - 1,
+                &tail_offset, &tail_count) == 0,
+        "exact source range calculation failed");
+    *offset = head + (uint64_t)tail_offset;
+    *count = (uint64_t)tail_count;
+  }
+}
+
+static void build_exact_range_run(uint64_t global_count,
+                                  int one_rank_only,
+                                  struct SymmetryBasisRun *run)
+{
+  uint64_t offset;
+  uint64_t count;
+  uint64_t index;
+
+  memset(run, 0, sizeof(*run));
+  exact_source_range(global_count, one_rank_only, test_rank,
+                     &offset, &count);
+  require_true(count < (uint64_t)ULONG_MAX &&
+                   count <= (uint64_t)SIZE_MAX /
+                       sizeof(*run->entries) - 1U,
+               "exact range fixture count overflow");
+  if (global_count == 0U && test_rank % 2 == 0) return;
+  run->entries = (struct SymmetryBasisVector *)calloc(
+      (size_t)count + 1U, sizeof(*run->entries));
+  require_true(run->entries != NULL,
+               "exact range fixture allocation failed");
+  run->count = (unsigned long int)count;
+  run->capacity = run->count + 1UL;
+  for (index = 0U; index < count; index++) {
+    run->entries[index + 1U] =
+        make_sample_sort_entry(offset + index);
+  }
+}
+
+static void validate_exact_global_result(
+    const struct SymmetryBasisRun *run,
+    uint64_t global_count,
+    const char *label)
+{
+  struct SymmetryMpiExchangeLayout layout;
+  struct SymmetryMpiExchangeResult result;
+  uint64_t *counts = (uint64_t *)calloc(
+      (size_t)test_nrank, sizeof(*counts));
+  uint64_t *displacements = (uint64_t *)calloc(
+      (size_t)test_nrank, sizeof(*displacements));
+  uint64_t displacement = 0U;
+  uint64_t ordinal;
+  int destination;
+
+  require_true(counts != NULL && displacements != NULL,
+               "exact result gather schedule allocation failed");
+  counts[0] = (uint64_t)run->count;
+  for (destination = 0; destination < test_nrank; destination++) {
+    displacements[destination] = displacement;
+    displacement += counts[destination];
+  }
+  memset(&result, 0, sizeof(result));
+  layout.nrank = test_nrank;
+  layout.count = (uint64_t)run->count;
+  layout.counts = counts;
+  layout.displacements = displacements;
+  require_true(
+      SymmetryMpiExchangeBasisVectors(
+          run->count > 0UL ? run->entries + 1 : run->entries,
+          &layout, test_rank, test_nrank, NULL, &result, NULL) == 0,
+      "exact result gather failed");
+  if (test_rank == 0) {
+    require_true(result.count == global_count, label);
+    for (ordinal = 0U; ordinal < global_count; ordinal++) {
+      struct SymmetryBasisVector expected =
+          make_sample_sort_entry(ordinal);
+      require_true(field_bits_equal(&result.entries[ordinal], &expected),
+                   label);
+    }
+  } else {
+    require_true(result.count == 0U, label);
+  }
+  FreeSymmetryMpiExchangeResult(&result);
+  free(counts);
+  free(displacements);
+}
+
+static void assert_exact_rebalance_fixture(uint64_t global_count,
+                                           int one_rank_only,
+                                           const char *label)
+{
+  struct SymmetryBasisRun run;
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats stats;
+  struct SymmetryBasisVector sentinel;
+  uint64_t input_count;
+  unsigned long int expected_offset;
+  unsigned long int expected_count;
+  unsigned long int index;
+  int peer;
+
+  require_true(global_count <= (uint64_t)ULONG_MAX,
+               "exact fixture global count overflow");
+  build_exact_range_run(global_count, one_rank_only, &run);
+  input_count = (uint64_t)run.count;
+  memset(&ownership, 0, sizeof(ownership));
+  memset(&stats, 0, sizeof(stats));
+  stats.global_entries = global_count;
+  stats.sample_send_entries = UINT64_C(101);
+  stats.sample_recv_entries = UINT64_C(103);
+  stats.sample_temporary_peak_bytes = 107U;
+  stats.splitter_digest = UINT64_C(109);
+  stats.range_digest = UINT64_C(113);
+
+  require_true(
+      SymmetryExactRebalanceBasisRun(
+          &run, test_rank, test_nrank, &ownership, &stats) == 0,
+      label);
+  require_true(
+      SymmetryBlockRange((unsigned long int)global_count,
+                         test_rank, test_nrank,
+                         &expected_offset, &expected_count) == 0,
+      "exact expected block calculation failed");
+  require_true(ownership.dim == (unsigned long int)global_count &&
+                   ownership.local_offset == expected_offset &&
+                   ownership.local_dim == expected_count &&
+                   ownership.rank_offsets != NULL &&
+                   run.count == expected_count &&
+                   run.capacity == expected_count + 1UL &&
+                   run.entries != NULL,
+               "exact ownership contract mismatch");
+  for (peer = 0; peer < test_nrank; peer++) {
+    unsigned long int peer_offset;
+    unsigned long int peer_count;
+    require_true(
+        SymmetryBlockRange((unsigned long int)global_count,
+                           peer, test_nrank,
+                           &peer_offset, &peer_count) == 0 &&
+            ownership.rank_offsets[peer] == peer_offset &&
+            ownership.rank_offsets[peer + 1] ==
+                peer_offset + peer_count,
+        "exact rank offset mismatch");
+  }
+  memset(&sentinel, 0, sizeof(sentinel));
+  require_true(field_bits_equal(&run.entries[0], &sentinel),
+               "exact output sentinel mismatch");
+  for (index = 1UL; index <= run.count; index++) {
+    struct SymmetryBasisVector expected = make_sample_sort_entry(
+        (uint64_t)expected_offset + (uint64_t)index - 1U);
+    require_true(field_bits_equal(&run.entries[index], &expected),
+                 label);
+  }
+  require_true(stats.global_entries == global_count &&
+                   stats.sample_send_entries == UINT64_C(101) &&
+                   stats.sample_recv_entries == UINT64_C(103) &&
+                   stats.sample_temporary_peak_bytes == 107U &&
+                   stats.splitter_digest == UINT64_C(109) &&
+                   stats.range_digest == UINT64_C(113) &&
+                   stats.rebalance_send_entries == input_count &&
+                   stats.rebalance_recv_entries ==
+                       (uint64_t)expected_count &&
+                   stats.rebalance_temporary_peak_bytes >=
+                       ((size_t)input_count +
+                        (size_t)expected_count * 2U + 2U) *
+                           sizeof(struct SymmetryBasisVector),
+               "exact rebalance stats mismatch");
+  if (one_rank_only != FALSE && test_nrank > 1 &&
+      global_count > (uint64_t)test_nrank *
+          test_message_entry_limit) {
+    require_true(
+        (uint64_t)expected_count > test_message_entry_limit,
+        "exact deep-chunk fixture did not exceed the message cap");
+  }
+  validate_exact_global_result(&run, global_count, label);
+
+  FreeSymmetryBasisOwnership(&ownership);
+  require_true(ownership.rank_offsets == NULL &&
+                   ownership.dim == 0UL &&
+                   ownership.local_offset == 0UL &&
+                   ownership.local_dim == 0UL,
+               "exact ownership cleanup mismatch");
+  FreeSymmetryBasisRun(&run);
+}
+
+static void assert_block_range_contract(void)
+{
+  static const unsigned long int dimensions[] = {0UL, 1UL, 7UL, 23UL};
+  size_t dimension_index;
+  for (dimension_index = 0U;
+       dimension_index < sizeof(dimensions) / sizeof(dimensions[0]);
+       dimension_index++) {
+    unsigned long int previous_end = 0UL;
+    int rank;
+    for (rank = 0; rank < test_nrank; rank++) {
+      unsigned long int offset;
+      unsigned long int count;
+      require_true(
+          SymmetryBlockRange(dimensions[dimension_index],
+                             rank, test_nrank,
+                             &offset, &count) == 0 &&
+              offset == previous_end,
+          "block range prefix mismatch");
+      if (rank > 0) {
+        unsigned long int previous_offset;
+        unsigned long int previous_count;
+        require_true(
+            SymmetryBlockRange(dimensions[dimension_index],
+                               rank - 1, test_nrank,
+                               &previous_offset, &previous_count) == 0 &&
+                previous_count >= count,
+            "block range balance mismatch");
+      }
+      previous_end = offset + count;
+    }
+    require_true(previous_end == dimensions[dimension_index],
+                 "block range final dimension mismatch");
+  }
+  {
+    unsigned long int offset = 0UL;
+    unsigned long int count = 0UL;
+    require_true(
+        SymmetryBlockRange(1UL, -1, test_nrank,
+                           &offset, &count) != 0 &&
+            SymmetryBlockRange(1UL, test_nrank, test_nrank,
+                               &offset, &count) != 0 &&
+            SymmetryBlockRange(1UL, 0, 0,
+                               &offset, &count) != 0 &&
+            SymmetryBlockRange(1UL, 0, test_nrank,
+                               NULL, &count) != 0 &&
+            SymmetryBlockRange(1UL, 0, test_nrank,
+                               &offset, NULL) != 0,
+        "invalid block range input was accepted");
+  }
+}
+
+static void assert_exact_rebalance_failure_recovery(void)
+{
+  struct SymmetryBasisRun run;
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats stats;
+  struct SymmetryBasisDistributionStats saved_stats;
+  struct SymmetryBasisVector *saved_entries;
+  unsigned long int saved_count;
+  unsigned long int saved_capacity;
+  uint64_t global_count = (uint64_t)test_nrank * 3U + 1U;
+  int failing_rank = test_nrank > 1 ? 1 : 0;
+  int status;
+
+  build_exact_range_run(global_count, FALSE, &run);
+  saved_entries = run.entries;
+  saved_count = run.count;
+  saved_capacity = run.capacity;
+  memset(&ownership, 0, sizeof(ownership));
+  if (test_rank == failing_rank) {
+    ownership.rank_offsets =
+        (unsigned long int *)calloc(1U, sizeof(*ownership.rank_offsets));
+    require_true(ownership.rank_offsets != NULL,
+                 "invalid ownership fixture allocation failed");
+  }
+  memset(&stats, 0x5a, sizeof(stats));
+  memcpy(&saved_stats, &stats, sizeof(saved_stats));
+  status = SymmetryExactRebalanceBasisRun(
+      &run, test_rank, test_nrank, &ownership, &stats);
+  require_all_ranks_failed(
+      status, "one-rank nonempty ownership was not rejected");
+  require_true(run.entries == saved_entries &&
+                   run.count == saved_count &&
+                   run.capacity == saved_capacity &&
+                   memcmp(&stats, &saved_stats, sizeof(stats)) == 0,
+               "failed exact rebalance changed run or stats");
+  if (test_rank == failing_rank) {
+    require_true(ownership.rank_offsets != NULL,
+                 "failed exact rebalance consumed ownership");
+  } else {
+    require_true(ownership.rank_offsets == NULL,
+                 "failed exact rebalance published ownership");
+  }
+  FreeSymmetryBasisOwnership(&ownership);
+
+  memset(&stats, 0, sizeof(stats));
+  require_true(
+      SymmetryExactRebalanceBasisRun(
+          &run, test_rank, test_nrank, &ownership, &stats) == 0,
+      "valid exact rebalance after ownership failure failed");
+  FreeSymmetryBasisOwnership(&ownership);
+  FreeSymmetryBasisRun(&run);
+}
+
+static void assert_exact_rebalance_order_failure_recovery(void)
+{
+  struct SymmetryBasisRun run;
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats stats;
+  struct SymmetryBasisDistributionStats saved_stats;
+  struct SymmetryBasisVector saved_entry;
+  struct SymmetryBasisVector *saved_entries;
+  uint64_t global_count = (uint64_t)test_nrank * 4U + 3U;
+  uint64_t source_offset;
+  uint64_t source_count;
+  int failing_rank = test_nrank > 1 ? 1 : 0;
+  int status;
+
+  build_exact_range_run(global_count, FALSE, &run);
+  exact_source_range(global_count, FALSE, test_rank,
+                     &source_offset, &source_count);
+  saved_entries = run.entries;
+  memset(&ownership, 0, sizeof(ownership));
+  memset(&stats, 0xa5, sizeof(stats));
+  memcpy(&saved_stats, &stats, sizeof(saved_stats));
+  if (test_rank == failing_rank) {
+    require_true(source_count >= 2U,
+                 "invalid exact order fixture is too short");
+    if (test_nrank > 1) {
+      require_true(source_offset > 0U,
+                   "invalid exact boundary fixture lacks a predecessor");
+      saved_entry = run.entries[1];
+      run.entries[1] =
+          make_sample_sort_entry(source_offset - 1U);
+    } else {
+      saved_entry = run.entries[2];
+      run.entries[2] = run.entries[1];
+    }
+  }
+  status = SymmetryExactRebalanceBasisRun(
+      &run, test_rank, test_nrank, &ownership, &stats);
+  require_all_ranks_failed(
+      status, "globally non-strict exact input was not rejected");
+  require_true(run.entries == saved_entries &&
+                   ownership.rank_offsets == NULL &&
+                   ownership.dim == 0UL &&
+                   ownership.local_offset == 0UL &&
+                   ownership.local_dim == 0UL &&
+                   memcmp(&stats, &saved_stats, sizeof(stats)) == 0,
+               "order failure changed exact ownership or stats");
+  if (test_rank == failing_rank) {
+    if (test_nrank > 1) {
+      run.entries[1] = saved_entry;
+    } else {
+      run.entries[2] = saved_entry;
+    }
+  }
+
+  memset(&stats, 0, sizeof(stats));
+  require_true(
+      SymmetryExactRebalanceBasisRun(
+          &run, test_rank, test_nrank, &ownership, &stats) == 0,
+      "valid exact rebalance after order failure failed");
+  FreeSymmetryBasisOwnership(&ownership);
+  FreeSymmetryBasisRun(&run);
+}
+
 int main(int argc, char **argv)
 {
 #ifdef MPI
@@ -948,6 +1325,33 @@ int main(int argc, char **argv)
       SAMPLE_SORT_ALL_EMPTY, "all-empty sample sort mismatch");
   assert_sample_sort_duplicate_failure();
   assert_sample_sort_memory_cap_failure();
+  assert_block_range_contract();
+  assert_exact_rebalance_fixture(
+      0U, FALSE, "zero-dimension exact rebalance mismatch");
+  assert_exact_rebalance_fixture(
+      1U, TRUE, "one-entry exact rebalance mismatch");
+  if (test_nrank > 1) {
+    assert_exact_rebalance_fixture(
+        (uint64_t)test_nrank - 1U, FALSE,
+        "dimension-below-rank-count exact rebalance mismatch");
+  }
+  assert_exact_rebalance_fixture(
+      (uint64_t)test_nrank * 3U, FALSE,
+      "divisible exact rebalance mismatch");
+  assert_exact_rebalance_fixture(
+      (uint64_t)test_nrank * 3U + 1U, FALSE,
+      "remainder-one exact rebalance mismatch");
+  if (test_nrank > 2) {
+    assert_exact_rebalance_fixture(
+        (uint64_t)test_nrank * 3U +
+            (uint64_t)test_nrank / 2U,
+        FALSE, "intermediate-remainder exact rebalance mismatch");
+  }
+  assert_exact_rebalance_fixture(
+      (uint64_t)test_nrank * 8U + 3U, TRUE,
+      "one-range-rank exact rebalance mismatch");
+  assert_exact_rebalance_failure_recovery();
+  assert_exact_rebalance_order_failure_recovery();
 
   if (test_rank == 0) {
     fprintf(stdout,

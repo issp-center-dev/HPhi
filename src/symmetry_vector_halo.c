@@ -6,6 +6,7 @@
 #include "DefCommon.h"
 struct BindStruct;
 #include "CalcTime.h"
+#include "symmetry_distribution.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 
@@ -128,9 +129,6 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   unsigned long int last_local;
   unsigned long int expected_local_offset;
   unsigned long int expected_local_dim;
-  unsigned long int block_base;
-  unsigned long int block_remainder;
-  unsigned long int unsigned_rank;
   unsigned long int window_capacity;
   unsigned long int window_zero;
   unsigned long int window_dim;
@@ -178,15 +176,9 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
 #endif
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
 
-  block_base = dim / (unsigned long int)nrank;
-  block_remainder = dim % (unsigned long int)nrank;
-  unsigned_rank = (unsigned long int)rank;
-  expected_local_dim =
-      block_base + (unsigned_rank < block_remainder ? 1UL : 0UL);
-  expected_local_offset =
-      block_base * unsigned_rank +
-      (unsigned_rank < block_remainder ? unsigned_rank : block_remainder);
-  if (local_offset != expected_local_offset ||
+  if (SymmetryBlockRange(dim, rank, nrank, &expected_local_offset,
+                         &expected_local_dim) != 0 ||
+      local_offset != expected_local_offset ||
       local_dim != expected_local_dim) {
     local_error = 1;
   }

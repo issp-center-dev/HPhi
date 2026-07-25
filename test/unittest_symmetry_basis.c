@@ -3174,6 +3174,8 @@ static void assert_rank_local_basis_run_contract(const char *label)
   struct BindStruct X;
   struct SymmetryBasisRuntime local_sym;
   struct SymmetryBasisRun run = {NULL, 0UL, 0UL};
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats distribution_stats;
   struct SymmetryBasisRun invalid_run;
   struct SymmetryBasisVector *invalid_entries;
   unsigned long int *presence;
@@ -3184,6 +3186,8 @@ static void assert_rank_local_basis_run_contract(const char *label)
 
   setup_spinless_bind(&X, 4U, 2U, 1U);
   memset(&local_sym, 0, sizeof(local_sym));
+  memset(&ownership, 0, sizeof(ownership));
+  memset(&distribution_stats, 0, sizeof(distribution_stats));
   invalid_entries = (struct SymmetryBasisVector *)calloc(
       1U, sizeof(*invalid_entries));
   if (invalid_entries == NULL) {
@@ -3305,24 +3309,21 @@ static void assert_rank_local_basis_run_contract(const char *label)
 
   memset(presence, 0,
          ((size_t)X.Sym->dim + 1U) * sizeof(*presence));
-  {
-    struct SymmetryBasisDistributionStats distribution_stats;
-    if (SymmetrySampleSortBasisRun(
-            &run, myrank, nproc, &distribution_stats) != 0) {
-      fprintf(stderr, "%s: distributed sample sort failed\n", label);
-      exit(1);
-    }
-    assert_ulong_eq(
-        (unsigned long int)distribution_stats.global_entries,
-        X.Sym->dim, label);
-    assert_ulong_eq(
-        (unsigned long int)distribution_stats.range_entries,
-        run.count, label);
-    assert_int_eq(
-        distribution_stats.range_entries <=
-            distribution_stats.bucket_entry_upper_bound,
-        1, label);
+  if (SymmetrySampleSortBasisRun(
+          &run, myrank, nproc, &distribution_stats) != 0) {
+    fprintf(stderr, "%s: distributed sample sort failed\n", label);
+    exit(1);
   }
+  assert_ulong_eq(
+      (unsigned long int)distribution_stats.global_entries,
+      X.Sym->dim, label);
+  assert_ulong_eq(
+      (unsigned long int)distribution_stats.range_entries,
+      run.count, label);
+  assert_int_eq(
+      distribution_stats.range_entries <=
+          distribution_stats.bucket_entry_upper_bound,
+      1, label);
   for (index = 1UL; index <= run.count; index++) {
     unsigned long int beta;
     int found = FALSE;
@@ -3359,7 +3360,70 @@ static void assert_rank_local_basis_run_contract(const char *label)
     assert_ulong_eq(presence[index], 1UL, label);
   }
 
+  memset(presence, 0,
+         ((size_t)X.Sym->dim + 1U) * sizeof(*presence));
+  if (SymmetryExactRebalanceBasisRun(
+          &run, myrank, nproc, &ownership,
+          &distribution_stats) != 0) {
+    fprintf(stderr, "%s: exact block rebalance failed\n", label);
+    exit(1);
+  }
+  {
+    unsigned long int expected_offset;
+    unsigned long int expected_count;
+    if (SymmetryBlockRange(X.Sym->dim, myrank, nproc,
+                           &expected_offset, &expected_count) != 0) {
+      fprintf(stderr, "%s: local exact block reference failed\n", label);
+      exit(1);
+    }
+    assert_ulong_eq(ownership.dim, X.Sym->dim, label);
+    assert_ulong_eq(ownership.local_offset, expected_offset, label);
+    assert_ulong_eq(ownership.local_dim, expected_count, label);
+    assert_ulong_eq(run.count, expected_count, label);
+  }
+  assert_ulong_eq(run.capacity, run.count + 1UL, label);
+  for (index = 0UL; index <= (unsigned long int)nproc; index++) {
+    unsigned long int expected_offset;
+    unsigned long int expected_count;
+    if (index == (unsigned long int)nproc) {
+      assert_ulong_eq(ownership.rank_offsets[index],
+                      X.Sym->dim, label);
+      continue;
+    }
+    if (SymmetryBlockRange(X.Sym->dim, (int)index, nproc,
+                           &expected_offset, &expected_count) != 0) {
+      fprintf(stderr, "%s: exact ownership reference failed\n", label);
+      exit(1);
+    }
+    assert_ulong_eq(ownership.rank_offsets[index],
+                    expected_offset, label);
+    assert_ulong_eq(ownership.rank_offsets[index + 1UL],
+                    expected_offset + expected_count, label);
+  }
+  for (index = 1UL; index <= run.count; index++) {
+    unsigned long int beta = ownership.local_offset + index;
+    assert_int_eq(c1_basis_vector_fields_equal(
+                      &run.entries[index], &X.Sym->basis[beta]),
+                  1, label);
+    presence[beta]++;
+  }
+#ifdef MPI
+  if (nproc > 1) {
+    if (MPI_Allreduce(MPI_IN_PLACE, presence, (int)(X.Sym->dim + 1UL),
+                      MPI_UNSIGNED_LONG, MPI_SUM,
+                      MPI_COMM_WORLD) != MPI_SUCCESS) {
+      fprintf(stderr, "%s: exact-rebalance presence reduction failed\n",
+              label);
+      exit(1);
+    }
+  }
+#endif
+  for (index = 1UL; index <= X.Sym->dim; index++) {
+    assert_ulong_eq(presence[index], 1UL, label);
+  }
+
   free(presence);
+  FreeSymmetryBasisOwnership(&ownership);
   FreeSymmetryBasisRun(&run);
   assert_int_eq(run.entries == NULL && run.count == 0UL &&
                     run.capacity == 0UL,
@@ -3376,10 +3440,14 @@ static void assert_empty_rank_local_basis_run(const char *label)
   struct BindStruct X;
   struct SymmetryBasisRuntime local_sym;
   struct SymmetryBasisRun run = {NULL, 0UL, 0UL};
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats distribution_stats;
   unsigned long int global_count;
 
   setup_bind(&X, 4U, 0U, 1U);
   memset(&local_sym, 0, sizeof(local_sym));
+  memset(&ownership, 0, sizeof(ownership));
+  memset(&distribution_stats, 0, sizeof(distribution_stats));
   if (BuildRankLocalSymmetryBasisRun(&X, &local_sym, &run) != 0) {
     fprintf(stderr, "%s: empty rank-local run build failed\n", label);
     exit(1);
@@ -3387,19 +3455,35 @@ static void assert_empty_rank_local_basis_run(const char *label)
   assert_ulong_eq(run.count, 0UL, label);
   assert_ulong_eq(run.capacity, 1UL, label);
   assert_int_eq(run.entries != NULL, 1, label);
+  if (SymmetrySampleSortBasisRun(
+          &run, myrank, nproc, &distribution_stats) != 0) {
+    fprintf(stderr, "%s: empty sample sort failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(run.count, 0UL, label);
+  assert_ulong_eq(run.capacity, 1UL, label);
+  assert_int_eq(run.entries != NULL, 1, label);
+  assert_ulong_eq(
+      (unsigned long int)distribution_stats.global_entries,
+      0UL, label);
+  if (SymmetryExactRebalanceBasisRun(
+          &run, myrank, nproc, &ownership,
+          &distribution_stats) != 0) {
+    fprintf(stderr, "%s: empty exact rebalance failed\n", label);
+    exit(1);
+  }
+  assert_ulong_eq(run.count, 0UL, label);
+  assert_ulong_eq(run.capacity, 1UL, label);
+  assert_int_eq(run.entries != NULL, 1, label);
+  assert_ulong_eq(ownership.dim, 0UL, label);
+  assert_ulong_eq(ownership.local_offset, 0UL, label);
+  assert_ulong_eq(ownership.local_dim, 0UL, label);
+  assert_int_eq(ownership.rank_offsets != NULL, 1, label);
   {
-    struct SymmetryBasisDistributionStats distribution_stats;
-    if (SymmetrySampleSortBasisRun(
-            &run, myrank, nproc, &distribution_stats) != 0) {
-      fprintf(stderr, "%s: empty sample sort failed\n", label);
-      exit(1);
+    int peer;
+    for (peer = 0; peer <= nproc; peer++) {
+      assert_ulong_eq(ownership.rank_offsets[peer], 0UL, label);
     }
-    assert_ulong_eq(run.count, 0UL, label);
-    assert_ulong_eq(run.capacity, 1UL, label);
-    assert_int_eq(run.entries != NULL, 1, label);
-    assert_ulong_eq(
-        (unsigned long int)distribution_stats.global_entries,
-        0UL, label);
   }
   global_count = run.count;
 #ifdef MPI
@@ -3417,6 +3501,7 @@ static void assert_empty_rank_local_basis_run(const char *label)
   assert_int_eq(BuildSymmetryBasis(&X), -1,
                 "replicated wrapper rejects zero-dimensional sector");
   assert_int_eq(X.Sym == NULL, 1, label);
+  FreeSymmetryBasisOwnership(&ownership);
   FreeSymmetryBasisRun(&run);
   free(list_1);
   free(list_Diagonal);

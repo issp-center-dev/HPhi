@@ -9,6 +9,7 @@
 #include "struct.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
@@ -338,14 +339,10 @@ static int configure_full_input_vector(struct BindStruct *X,
   for (rank = 0; rank < nproc; rank++) {
     unsigned long int offset;
     unsigned long int count;
-    unsigned long int base =
-        X->Sym->dim / (unsigned long int)nproc;
-    unsigned long int remainder =
-        X->Sym->dim % (unsigned long int)nproc;
-    unsigned long int unsigned_rank = (unsigned long int)rank;
-    count = base + (unsigned_rank < remainder ? 1UL : 0UL);
-    offset = base * unsigned_rank +
-             (unsigned_rank < remainder ? unsigned_rank : remainder);
+    if (SymmetryBlockRange(X->Sym->dim, rank, nproc,
+                           &offset, &count) != 0) {
+      return -1;
+    }
     X->Sym->mpi_recvcounts[rank] = (int)count;
     X->Sym->mpi_displs[rank] = (int)offset;
   }

@@ -59,7 +59,7 @@ struct SymmetryBasisDistributionStats {
   double range_max_over_mean;
   /* Complete C3 temporary peak, including sampling and range merge. */
   size_t sample_temporary_peak_bytes;
-  /* C4 exact block rebalance temporary peak; left zero by C3. */
+  /* C4 peak including the live input run; left zero by C3. */
   size_t rebalance_temporary_peak_bytes;
 };
 
@@ -87,6 +87,26 @@ int SymmetrySampleSortBasisRun(
     struct SymmetryBasisRun *run,
     int rank,
     int nrank,
+    struct SymmetryBasisDistributionStats *stats);
+
+int SymmetryBlockRange(
+    unsigned long int dim,
+    int rank,
+    int nrank,
+    unsigned long int *offset,
+    unsigned long int *count);
+
+/*
+ * Redistributes a globally range-sorted run into the exact block layout.
+ * The caller must pass an empty ownership object. On success run owns the
+ * sentinel-based exact block and ownership owns rank_offsets[0..nrank].
+ * On failure run, ownership, and stats retain their input ownership/values.
+ */
+int SymmetryExactRebalanceBasisRun(
+    struct SymmetryBasisRun *run,
+    int rank,
+    int nrank,
+    struct SymmetryBasisOwnership *ownership,
     struct SymmetryBasisDistributionStats *stats);
 
 void FreeSymmetryBasisRun(struct SymmetryBasisRun *run);
