@@ -87,7 +87,7 @@ target_include_directories(unittest_symmetry_distribution
 target_compile_definitions(unittest_symmetry_distribution PRIVATE
     DSFMT_MEXP=19937
     HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
-    HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES=16384)
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
 target_link_libraries(unittest_symmetry_distribution m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_distribution ${MPI_C_LIBRARIES})

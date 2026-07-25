@@ -4,8 +4,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES
+#ifdef HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
+#define HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES \
+  HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
+#else
+#define HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES UINT64_C(1073741824)
+#endif
+#endif
+
+/*
+ * Compatibility alias for callers that configured the C3-only name before
+ * exact rebalance was placed under the same distribution memory contract.
+ */
 #ifndef HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
-#define HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES UINT64_C(1073741824)
+#define HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES \
+  HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES
 #endif
 
 struct BindStruct;
@@ -53,7 +67,7 @@ struct SymmetryBasisDistributionStats {
   /* C4 exact block rebalance; left zero by C3. */
   uint64_t rebalance_send_entries;
   uint64_t rebalance_recv_entries;
-  uint64_t sample_sort_memory_byte_limit;
+  uint64_t distribution_memory_byte_limit;
   uint64_t splitter_digest;
   uint64_t range_digest;
   double range_max_over_mean;
@@ -100,7 +114,10 @@ int SymmetryBlockRange(
  * Redistributes a globally range-sorted run into the exact block layout.
  * The caller must pass an empty ownership object. On success run owns the
  * sentinel-based exact block and ownership owns rank_offsets[0..nrank].
- * On failure run, ownership, and stats retain their input ownership/values.
+ * The configured distribution memory limit is enforced collectively before
+ * the data exchange. On failure run, ownership, and stats retain their input
+ * ownership/values. On success C4 updates only the rebalance_* fields; other
+ * stats fields retain their C3-provided or caller-provided values.
  */
 int SymmetryExactRebalanceBasisRun(
     struct SymmetryBasisRun *run,

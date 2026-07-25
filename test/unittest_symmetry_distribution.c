@@ -544,7 +544,7 @@ enum SampleSortFixture {
 static uint64_t sample_fixture_count(enum SampleSortFixture fixture)
 {
   if (fixture == SAMPLE_SORT_ALL_EMPTY) return 0U;
-  if (fixture == SAMPLE_SORT_ONE_RANK_ONLY) return 129U;
+  if (fixture == SAMPLE_SORT_ONE_RANK_ONLY) return 96U;
   return (uint64_t)test_nrank * 3U + 11U;
 }
 
@@ -765,14 +765,14 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                        first_stats.bucket_sample_entries *
                            first_stats.global_sample_gap_max +
                        first_stats.global_sample_gap_sum &&
-                   first_stats.sample_sort_memory_byte_limit ==
-                       HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES &&
+                   first_stats.distribution_memory_byte_limit ==
+                       HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
                    first_stats.sample_send_entries ==
                        first_stats.local_survivor_entries &&
                    first_stats.sample_recv_entries ==
                        first_stats.range_entries &&
                    first_stats.sample_temporary_peak_bytes <=
-                       HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES &&
+                       HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
                    first_stats.rebalance_send_entries == 0U &&
                    first_stats.rebalance_recv_entries == 0U &&
                    first_stats.rebalance_temporary_peak_bytes == 0U,
@@ -1280,6 +1280,51 @@ static void assert_exact_rebalance_order_failure_recovery(void)
   FreeSymmetryBasisRun(&run);
 }
 
+static void assert_exact_rebalance_memory_cap_failure(void)
+{
+  struct SymmetryBasisRun run;
+  struct SymmetryBasisOwnership ownership;
+  struct SymmetryBasisDistributionStats stats;
+  struct SymmetryBasisDistributionStats saved_stats;
+  struct SymmetryBasisVector *saved_entries;
+  unsigned long int saved_count;
+  unsigned long int saved_capacity;
+  uint64_t global_count = (uint64_t)test_nrank * UINT64_C(500);
+  int status;
+
+  build_exact_range_run(global_count, FALSE, &run);
+  saved_entries = run.entries;
+  saved_count = run.count;
+  saved_capacity = run.capacity;
+  memset(&ownership, 0, sizeof(ownership));
+  memset(&stats, 0x3c, sizeof(stats));
+  memcpy(&saved_stats, &stats, sizeof(saved_stats));
+
+  status = SymmetryExactRebalanceBasisRun(
+      &run, test_rank, test_nrank, &ownership, &stats);
+  require_all_ranks_failed(
+      status, "exact rebalance memory cap was not rejected collectively");
+  require_true(run.entries == saved_entries &&
+                   run.count == saved_count &&
+                   run.capacity == saved_capacity &&
+                   ownership.rank_offsets == NULL &&
+                   ownership.dim == 0UL &&
+                   ownership.local_offset == 0UL &&
+                   ownership.local_dim == 0UL &&
+                   memcmp(&stats, &saved_stats, sizeof(stats)) == 0,
+               "memory-cap failure changed exact ownership or stats");
+  FreeSymmetryBasisRun(&run);
+
+  build_exact_range_run((uint64_t)test_nrank * 3U + 1U, FALSE, &run);
+  memset(&stats, 0, sizeof(stats));
+  require_true(
+      SymmetryExactRebalanceBasisRun(
+          &run, test_rank, test_nrank, &ownership, &stats) == 0,
+      "valid exact rebalance after memory-cap failure failed");
+  FreeSymmetryBasisOwnership(&ownership);
+  FreeSymmetryBasisRun(&run);
+}
+
 int main(int argc, char **argv)
 {
 #ifdef MPI
@@ -1352,6 +1397,7 @@ int main(int argc, char **argv)
       "one-range-rank exact rebalance mismatch");
   assert_exact_rebalance_failure_recovery();
   assert_exact_rebalance_order_failure_recovery();
+  assert_exact_rebalance_memory_cap_failure();
 
   if (test_rank == 0) {
     fprintf(stdout,

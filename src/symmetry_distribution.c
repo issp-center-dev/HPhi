@@ -346,10 +346,13 @@ static struct SymmetryMergeNode merge_heap_pop(
 }
 
 static int calculate_range_temporary_peak(
+    uint64_t input_count,
     uint64_t receive_count,
     int nrank,
     uint64_t *peak_bytes)
 {
+  uint64_t input_elements;
+  uint64_t input_bytes;
   uint64_t receive_bytes;
   uint64_t output_elements;
   uint64_t output_bytes;
@@ -376,6 +379,10 @@ static int calculate_range_temporary_peak(
     exchange_overhead_per_rank = chunk_transport_overhead;
   }
   if (nrank < 1 ||
+      checked_u64_add(input_count, 1U, &input_elements) != 0 ||
+      checked_u64_mul(input_elements,
+                      (uint64_t)sizeof(struct SymmetryBasisVector),
+                      &input_bytes) != 0 ||
       checked_u64_mul(receive_count,
                       (uint64_t)sizeof(struct SymmetryBasisVector),
                       &receive_bytes) != 0 ||
@@ -389,12 +396,17 @@ static int calculate_range_temporary_peak(
       checked_u64_mul((uint64_t)nrank,
                       (uint64_t)sizeof(struct SymmetryMergeNode),
                       &heap_bytes) != 0 ||
-      checked_u64_add(receive_bytes, output_bytes, &merge_peak) != 0 ||
+      checked_u64_add(input_bytes, receive_bytes, &merge_peak) != 0 ||
+      checked_u64_add(merge_peak, output_bytes, &merge_peak) != 0 ||
       checked_u64_add(merge_peak, schedule_bytes, &merge_peak) != 0 ||
       checked_u64_add(merge_peak, heap_bytes, &merge_peak) != 0 ||
       checked_u64_mul((uint64_t)nrank, exchange_overhead_per_rank,
                       &exchange_overhead) != 0 ||
-      checked_u64_add(receive_bytes, exchange_overhead,
+      checked_u64_add(input_bytes, receive_bytes,
+                      &exchange_peak) != 0) {
+    return -1;
+  }
+  if (checked_u64_add(exchange_peak, exchange_overhead,
                       &exchange_peak) != 0) {
     return -1;
   }
@@ -469,7 +481,7 @@ int SymmetrySampleSortBasisRun(
       local_count > (uint64_t)(SIZE_MAX /
           sizeof(struct SymmetryBasisVector)) - 1U ||
       rank < 0 || nrank < 1 || rank >= nrank ||
-      HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES == 0U) {
+      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
     local_error = 1;
   }
 #ifdef MPI
@@ -697,6 +709,8 @@ int SymmetrySampleSortBasisRun(
   {
     uint64_t sample_bytes = 0U;
     uint64_t sample_receive_bytes = 0U;
+    uint64_t input_elements = 0U;
+    uint64_t input_bytes = 0U;
     uint64_t schedule_bytes = 0U;
     uint64_t splitter_and_bucket_bytes = 0U;
     uint64_t sample_peak = 0U;
@@ -710,7 +724,11 @@ int SymmetrySampleSortBasisRun(
       local_error = 1;
     }
 #endif
-    if (checked_u64_mul(local_sample_count,
+    if (checked_u64_add(local_count, 1U, &input_elements) != 0 ||
+        checked_u64_mul(input_elements,
+                        (uint64_t)sizeof(*run->entries),
+                        &input_bytes) != 0 ||
+        checked_u64_mul(local_sample_count,
                         (uint64_t)sizeof(*local_samples),
                         &sample_bytes) != 0 ||
         checked_u64_mul(sample_result.count,
@@ -721,7 +739,9 @@ int SymmetrySampleSortBasisRun(
         checked_u64_add((uint64_t)splitter_bytes,
                         (uint64_t)rank_array_bytes,
                         &splitter_and_bucket_bytes) != 0 ||
-        checked_u64_add(sample_bytes, sample_receive_bytes,
+        checked_u64_add(input_bytes, sample_bytes,
+                        &sample_peak) != 0 ||
+        checked_u64_add(sample_peak, sample_receive_bytes,
                         &sample_peak) != 0 ||
         checked_u64_add(sample_peak, schedule_bytes,
                         &sample_peak) != 0 ||
@@ -729,7 +749,7 @@ int SymmetrySampleSortBasisRun(
                         &sample_peak) != 0 ||
         checked_u64_to_size(sample_peak, &sample_peak_size) != 0 ||
         sample_peak >
-            (uint64_t)HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES) {
+            (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES) {
       local_error = 1;
     }
   }
@@ -794,9 +814,9 @@ int SymmetrySampleSortBasisRun(
                         &bucket_upper_bound) != 0 ||
         receive_count > bucket_upper_bound ||
         calculate_range_temporary_peak(
-            receive_count, nrank, &temporary_peak) != 0 ||
+            local_count, receive_count, nrank, &temporary_peak) != 0 ||
         temporary_peak >
-            (uint64_t)HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES ||
+            (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES ||
         temporary_peak > (uint64_t)SIZE_MAX ||
         receive_count >= (uint64_t)ULONG_MAX) {
       local_error = 1;
@@ -816,8 +836,8 @@ int SymmetrySampleSortBasisRun(
   next_stats.bucket_sample_entries = bucket_sample_counts[rank];
   next_stats.bucket_entry_upper_bound = bucket_upper_bound;
   next_stats.global_entries = global_count;
-  next_stats.sample_sort_memory_byte_limit =
-      (uint64_t)HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES;
+  next_stats.distribution_memory_byte_limit =
+      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
   next_stats.splitter_digest =
       digest_splitters(splitters, splitter_count);
   next_stats.sample_temporary_peak_bytes = sample_peak_size;
@@ -1140,7 +1160,8 @@ int SymmetryExactRebalanceBasisRun(
       ownership == NULL || ownership->dim != 0UL ||
       ownership->local_offset != 0UL || ownership->local_dim != 0UL ||
       ownership->rank_offsets != NULL ||
-      rank < 0 || nrank < 1 || rank >= nrank) {
+      rank < 0 || nrank < 1 || rank >= nrank ||
+      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
     local_error = 1;
   }
 #ifdef MPI
@@ -1352,7 +1373,9 @@ int SymmetryExactRebalanceBasisRun(
   }
   if (receive_total != (uint64_t)local_dim ||
       calculate_rebalance_temporary_peak(
-          local_count, receive_total, nrank, &temporary_peak) != 0) {
+          local_count, receive_total, nrank, &temporary_peak) != 0 ||
+      (uint64_t)temporary_peak >
+          (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES) {
     local_error = 1;
   }
   global_error = SymmetryMpiAgreeError(mpi_active, local_error);
