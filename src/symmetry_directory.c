@@ -12,6 +12,7 @@
 #include "symmetry_checked.h"
 #include "symmetry_directory.h"
 #include "symmetry_mpi_exchange.h"
+#include "CalcTime.h"
 
 struct SymmetryLocalRepresentativeIndex {
   const struct SymmetryBasisVector *local_basis;
@@ -433,11 +434,14 @@ int BuildSymmetryRepresentativeDirectory(
                                 rank_offsets, rank, nrank) != 0) {
     local_error = 1;
   }
-  if (local_error == 0 &&
-      BuildSymmetryLocalRepresentativeIndex(
-          local_basis, local_dim, local_capacity, local_offset,
-          &local_index) != 0) {
-    local_error = 1;
+  if (local_error == 0) {
+    StartTimer(1112);
+    if (BuildSymmetryLocalRepresentativeIndex(
+            local_basis, local_dim, local_capacity, local_offset,
+            &local_index) != 0) {
+      local_error = 1;
+    }
+    StopTimer(1112);
   }
   global_error = agree_directory_failure(mpi_active, local_error);
   if (global_error != 0) {
@@ -892,7 +896,7 @@ static int directory_publish_batch_stats(
   return 0;
 }
 
-int SymmetryResolveRepresentativeBatchWithOptions(
+static int resolve_representative_batch_with_options(
     struct SymmetryRepresentativeDirectory *directory,
     const unsigned long int *request_keys,
     uint64_t request_count,
@@ -1282,6 +1286,22 @@ fail:
   free(send_counts);
   free(send_displacements);
   return -1;
+}
+
+int SymmetryResolveRepresentativeBatchWithOptions(
+    struct SymmetryRepresentativeDirectory *directory,
+    const unsigned long int *request_keys,
+    uint64_t request_count,
+    unsigned long int *global_beta,
+    double *norm,
+    const struct SymmetryRepresentativeBatchOptions *options)
+{
+  int status;
+  StartTimer(1123);
+  status = resolve_representative_batch_with_options(
+      directory, request_keys, request_count, global_beta, norm, options);
+  StopTimer(1123);
+  return status;
 }
 
 int SymmetryResolveRepresentativeBatch(

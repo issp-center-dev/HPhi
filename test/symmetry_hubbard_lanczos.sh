@@ -277,6 +277,14 @@ assert_rank_stats() {
         echo "Missing ${stats}"
         exit 1
     fi
+    for timer_id in 1112 1123 1133 1134 1135; do
+        timer_description_count=`grep -c "\\[${timer_id}\\]" output/CalcTimer.dat || true`
+        if [ "${timer_description_count}" -ne 1 ]; then
+            cat output/CalcTimer.dat
+            echo "Expected timer ${timer_id} exactly once in CalcTimer.dat"
+            exit 1
+        fi
+    done
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
         -v expected_digest="${expected_digest}" \
         -v expected_reference="${expected_reference}" \
@@ -306,6 +314,7 @@ assert_rank_stats() {
             if (expected_ranks == 1 &&
                 (abs(min - max) > 1.0e-15 || abs(min - mean) > 1.0e-15)) bad = 1
             timer_mean[id] = mean
+            timer_seen[id]++
             next
         }
         $1 == "work" {
@@ -358,13 +367,16 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 6 || header_ranks != expected_ranks ||
+            if (header_version != 7 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 26 || work_count != 71 ||
+                timer_count != 27 || work_count != 95 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
+            if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
+                timer_seen[1133] != 1 || timer_seen[1134] != 1 ||
+                timer_seen[1135] != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_state_enumerator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_diagonal_evaluator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
@@ -428,7 +440,31 @@ assert_rank_stats() {
                 work_max["distribution_rebalance_exchange_max_message_bytes"] != 0 ||
                 work_max["distribution_memory_byte_limit"] != 0 ||
                 work_max["distribution_sort_temporary_peak_bytes"] != 0 ||
-                work_max["distribution_rebalance_temporary_peak_bytes"] != 0) bad = 1
+                work_max["distribution_rebalance_temporary_peak_bytes"] != 0 ||
+                work_max["directory_nonempty_rank_count"] != 0 ||
+                work_max["directory_splitter_entries"] != 0 ||
+                work_max["directory_splitter_bytes"] != 0 ||
+                work_max["directory_local_hash_entries"] != 0 ||
+                work_max["directory_local_hash_table_entries"] != 0 ||
+                work_max["directory_local_hash_bytes"] != 0 ||
+                work_max["directory_hash_build_collisions"] != 0 ||
+                work_max["directory_hash_build_max_probe"] != 0 ||
+                work_max["directory_batch_calls"] != 0 ||
+                work_max["directory_request_entries_sent"] != 0 ||
+                work_max["directory_request_entries_received"] != 0 ||
+                work_max["directory_found_entries"] != 0 ||
+                work_max["directory_not_found_entries"] != 0 ||
+                work_max["directory_lookup_probe_count"] != 0 ||
+                work_max["directory_lookup_max_probe"] != 0 ||
+                work_max["directory_owner_peer_count_max"] != 0 ||
+                work_max["directory_requester_peer_count_max"] != 0 ||
+                work_max["directory_exchange_used_chunked"] != 0 ||
+                work_max["directory_exchange_message_byte_limit"] != 0 ||
+                work_max["directory_exchange_max_message_bytes"] != 0 ||
+                work_max["directory_exchange_send_messages"] != 0 ||
+                work_max["directory_exchange_recv_messages"] != 0 ||
+                work_max["directory_batch_temporary_peak_bytes"] != 0 ||
+                work_max["directory_batch_memory_byte_limit"] != 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
             if (expected_reference == 1) {
                 if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1

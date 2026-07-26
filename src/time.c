@@ -26,6 +26,7 @@
 #include "FileIO.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_directory.h"
 #include "symmetry_matvec_plan.h"
 
 #ifdef MPI
@@ -36,7 +37,7 @@
 static void OutputSymmetryRankStats(const struct BindStruct *X)
 {
   static const int timer_ids[] = {
-    1100, 1110, 1115, 1111, 1112, 1113, 1114,
+    1100, 1110, 1115, 1111, 1112, 1123, 1113, 1114,
     1101, 1120, 1121, 1122, 1130, 1131, 1132,
     1133, 1134, 1135, 4113,
     1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
@@ -111,7 +112,31 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "distribution_rebalance_exchange_max_message_bytes",
     "distribution_memory_byte_limit",
     "distribution_sort_temporary_peak_bytes",
-    "distribution_rebalance_temporary_peak_bytes"
+    "distribution_rebalance_temporary_peak_bytes",
+    "directory_nonempty_rank_count",
+    "directory_splitter_entries",
+    "directory_splitter_bytes",
+    "directory_local_hash_entries",
+    "directory_local_hash_table_entries",
+    "directory_local_hash_bytes",
+    "directory_hash_build_collisions",
+    "directory_hash_build_max_probe",
+    "directory_batch_calls",
+    "directory_request_entries_sent",
+    "directory_request_entries_received",
+    "directory_found_entries",
+    "directory_not_found_entries",
+    "directory_lookup_probe_count",
+    "directory_lookup_max_probe",
+    "directory_owner_peer_count_max",
+    "directory_requester_peer_count_max",
+    "directory_exchange_used_chunked",
+    "directory_exchange_message_byte_limit",
+    "directory_exchange_max_message_bytes",
+    "directory_exchange_send_messages",
+    "directory_exchange_recv_messages",
+    "directory_batch_temporary_peak_bytes",
+    "directory_batch_memory_byte_limit"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -151,6 +176,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   double row_mean_max;
   double row_mean_sum;
   struct SymmetryBasisDigest basis_digest;
+  struct SymmetryRepresentativeDirectoryInfo directory_info;
+  struct SymmetryLocalRepresentativeIndexStats directory_index_stats;
+  struct SymmetryRepresentativeBatchStats directory_batch_stats;
   int basis_digest_status_local;
   int basis_digest_status_global;
   int basis_digest_algorithm_local;
@@ -177,6 +205,23 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     return;
   }
   plan = X->Sym->matvec_plan;
+  memset(&directory_info, 0, sizeof(directory_info));
+  memset(&directory_index_stats, 0, sizeof(directory_index_stats));
+  memset(&directory_batch_stats, 0, sizeof(directory_batch_stats));
+  if (X->Sym->representative_directory != NULL) {
+    if (GetSymmetryRepresentativeDirectoryInfo(
+            X->Sym->representative_directory, &directory_info) != 0 ||
+        GetSymmetryRepresentativeDirectoryLocalIndexStats(
+            X->Sym->representative_directory,
+            &directory_index_stats) != 0 ||
+        GetSymmetryRepresentativeDirectoryBatchStats(
+            X->Sym->representative_directory,
+            &directory_batch_stats) != 0) {
+      memset(&directory_info, 0, sizeof(directory_info));
+      memset(&directory_index_stats, 0, sizeof(directory_index_stats));
+      memset(&directory_batch_stats, 0, sizeof(directory_batch_stats));
+    }
+  }
   for (i = 0; i < timer_count; i++) timer_local[i] = Timer[timer_ids[i]];
   work_local[0] = X->Sym->basis_raw_states;
   work_local[1] = X->Sym->basis_representative_candidates;
@@ -302,6 +347,65 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[69] =
       (unsigned long long)
           X->Sym->distribution_stats.rebalance_temporary_peak_bytes;
+  work_local[70] =
+      (unsigned long long)directory_info.nonempty_rank_count;
+  work_local[71] =
+      (unsigned long long)directory_info.nonempty_rank_count;
+  work_local[72] =
+      (unsigned long long)directory_info.splitter_bytes;
+  work_local[73] =
+      (unsigned long long)directory_info.local_dim;
+  work_local[74] =
+      (unsigned long long)directory_index_stats.table_size;
+  work_local[75] =
+      (unsigned long long)directory_index_stats.table_bytes;
+  work_local[76] =
+      (unsigned long long)directory_index_stats.build_collisions;
+  work_local[77] =
+      (unsigned long long)directory_index_stats.build_max_probe;
+  work_local[78] =
+      (unsigned long long)directory_batch_stats.directory_batch_calls;
+  work_local[79] =
+      (unsigned long long)
+          directory_batch_stats.directory_request_entries_sent;
+  work_local[80] =
+      (unsigned long long)
+          directory_batch_stats.directory_request_entries_received;
+  work_local[81] =
+      (unsigned long long)directory_batch_stats.directory_found_entries;
+  work_local[82] =
+      (unsigned long long)
+          directory_batch_stats.directory_not_found_entries;
+  work_local[83] =
+      (unsigned long long)
+          directory_batch_stats.directory_lookup_probe_count;
+  work_local[84] =
+      (unsigned long long)
+          directory_batch_stats.directory_lookup_max_probe;
+  work_local[85] =
+      (unsigned long long)
+          directory_batch_stats.directory_owner_peer_count_max;
+  work_local[86] =
+      (unsigned long long)
+          directory_batch_stats.directory_requester_peer_count_max;
+  work_local[87] =
+      directory_batch_stats.directory_exchange_used_chunked != FALSE
+          ? 1ULL
+          : 0ULL;
+  work_local[88] =
+      directory_batch_stats.directory_exchange_message_byte_limit;
+  work_local[89] =
+      directory_batch_stats.directory_exchange_max_message_bytes;
+  work_local[90] =
+      directory_batch_stats.directory_exchange_send_messages;
+  work_local[91] =
+      directory_batch_stats.directory_exchange_recv_messages;
+  work_local[92] =
+      (unsigned long long)
+          directory_batch_stats.directory_batch_temporary_peak_bytes;
+  work_local[93] =
+      (unsigned long long)
+          directory_batch_stats.directory_batch_memory_byte_limit;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -427,7 +531,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=6 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=7 ranks=%d "
           "basis_layout=%s matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED
@@ -567,6 +671,10 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "      symmetry basis MPI gather/reduction", 1115);
   StampTime(fp, "    symmetry basis sort/merge", 1111);
   StampTime(fp, "    symmetry representative hash build", 1112);
+  StampTime(fp, "    symmetry distributed sample sort", 1133);
+  StampTime(fp, "    symmetry distributed exact rebalance", 1134);
+  StampTime(fp, "    symmetry distributed storage validation", 1135);
+  StampTime(fp, "    symmetry representative batch directory", 1123);
   StampTime(fp, "  symmetry solver storage allocation", 1113);
   StampTime(fp, "    symmetry dimension activation/validation", 1114);
   StampTime(fp, "  symmetry matvec plan build", 1101);

@@ -14,9 +14,25 @@
 
 static int test_rank = 0;
 static int test_nrank = 1;
+static uint64_t timer_1112_starts = 0U;
+static uint64_t timer_1112_stops = 0U;
+static uint64_t timer_1123_starts = 0U;
+static uint64_t timer_1123_stops = 0U;
 #ifdef MPI
 static int test_mpi_active = 0;
 #endif
+
+void StartTimer(int timer_id)
+{
+  if (timer_id == 1112) timer_1112_starts++;
+  if (timer_id == 1123) timer_1123_starts++;
+}
+
+void StopTimer(int timer_id)
+{
+  if (timer_id == 1112) timer_1112_stops++;
+  if (timer_id == 1123) timer_1123_stops++;
+}
 
 static void fail_test(const char *label)
 {
@@ -1347,6 +1363,12 @@ int main(int argc, char **argv)
   assert_batch_failure_atomicity();
   assert_batch_memory_cap_recovery();
   assert_hamiltonian_transition_batches();
+  require_true(timer_1112_starts > 0U &&
+                   timer_1112_starts == timer_1112_stops,
+               "directory hash timer imbalance");
+  require_true(timer_1123_starts > 0U &&
+                   timer_1123_starts == timer_1123_stops,
+               "directory batch timer imbalance");
   if (test_rank == 0) {
     printf("symmetry directory batch gate: PASS (%d rank%s)\n",
            test_nrank, test_nrank == 1 ? "" : "s");
