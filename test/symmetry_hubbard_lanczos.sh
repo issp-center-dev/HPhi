@@ -523,6 +523,28 @@ assert_rank_stats() {
     fi
 }
 
+assert_distributed_rank_stats() {
+    log="$1"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        cat "${log}"
+        echo "Missing distributed ${stats}"
+        exit 1
+    fi
+    grep -Eq \
+        '^format=HPhiCalcTimerRankStats version=8 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_heavy_storage_released .* min=1 max=1 ' \
+        "${stats}"
+    grep -Eq \
+        '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+        "${stats}"
+}
+
 run_mpi_symmetry_case() {
     label="$1"
     expected_energy="$2"
@@ -654,6 +676,35 @@ assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
 assert_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def > hubbard_k0_cg_distributed.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_distributed.log
+assert_doublon_matches_reference \
+    "${ref_doublon}" hubbard_k0_cg_distributed.log
+grep -q "Symmetry distributed matvec:" hubbard_k0_cg_distributed.log
+assert_distributed_rank_stats hubbard_k0_cg_distributed.log
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" &&
+       [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+            ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > hubbard_k0_cg_distributed_mpi.log 2>&1; then
+            cat hubbard_k0_cg_distributed_mpi.log
+            exit 1
+        fi
+        assert_energy_matches_reference \
+            "${ref_energy}" hubbard_k0_cg_distributed_mpi.log
+        assert_doublon_matches_reference \
+            "${ref_doublon}" hubbard_k0_cg_distributed_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            hubbard_k0_cg_distributed_mpi.log
+        assert_distributed_rank_stats hubbard_k0_cg_distributed_mpi.log
+    fi
+fi
 rm -rf output
 ../../src/HPhi -e namelist.def > hubbard_k0_cg_default.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_default.log

@@ -253,7 +253,6 @@ if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_in
 fi
 grep -q "HPHI_SYMMETRY_MATVEC must be 'plan' or 'legacy'" symmetry_invalid_mode.log
 
-rm -rf output
 if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
        ../../src/HPhi -e namelist.def \
        > symmetry_distributed_lanczos_reject.log 2>&1; then

@@ -283,6 +283,28 @@ expect_failure() {
     fi
 }
 
+assert_distributed_rank_stats() {
+    log="$1"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        cat "${log}"
+        echo "Missing distributed ${stats}"
+        exit 1
+    fi
+    grep -Eq \
+        '^format=HPhiCalcTimerRankStats version=8 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_heavy_storage_released .* min=1 max=1 ' \
+        "${stats}"
+    grep -Eq \
+        '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+        "${stats}"
+}
+
 write_calcmod
 write_locspn
 write_modpara 1
@@ -313,6 +335,33 @@ assert_energy "-2.0" spinless_kpi2_allgather.log
 grep -q "vector_exchange=allgather" spinless_kpi2_allgather.log
 grep -q "columns=global" spinless_kpi2_allgather.log
 run_mpi_if_available kpi2 "-2.0" 2
+
+perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_cg_distributed.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_distributed.log
+grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_distributed.log
+assert_distributed_rank_stats spinless_kpi2_cg_distributed.log
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" &&
+       [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+            ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > spinless_kpi2_cg_distributed_mpi.log 2>&1; then
+            cat spinless_kpi2_cg_distributed_mpi.log
+            exit 1
+        fi
+        assert_energy "-2.0" spinless_kpi2_cg_distributed_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            spinless_kpi2_cg_distributed_mpi.log
+        assert_distributed_rank_stats spinless_kpi2_cg_distributed_mpi.log
+    fi
+fi
+write_calcmod
 
 rm -rf output
 write_k0_transsym
