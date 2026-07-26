@@ -31,3 +31,16 @@ int expec_energy_flct_HalfSpin(struct BindStruct *X);
 int expec_energy_flct_GeneralSpin(struct BindStruct *X);
 
 int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X);
+
+/* Per-basis-state ("per-k") fluctuation coefficient helpers (phase 3c Task 3).
+ * Each returns the RAW quantity the corresponding evaluator loop computes for
+ * basis index k (the 1-based loop index j == CSR row + 1): D(k) the doublon
+ * count, N(k) the particle number, S(k) the raw 2*Sz bit sum. The caller
+ * applies the same scalings it applies today. Shared verbatim by the Mode-1
+ * evaluators and the CSR trace collector so no algebra is reimplemented. */
+void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
+                             double *D, double *N, double *S);
+void EnergyFlctCoeff_HubbardGC(struct BindStruct *X, long int k,
+                               double *D, double *N, double *S);
+void EnergyFlctCoeff_HalfSpinGC(struct BindStruct *X, long int k, double *S);
+void EnergyFlctCoeff_GeneralSpinGC(struct BindStruct *X, long int k, double *S);

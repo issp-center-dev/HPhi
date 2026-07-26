@@ -44,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef MPI
 #include <mpi.h>
 #endif
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,8 +58,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "global.h"
 
 /**
+@brief ExpecLocal mode flag (phase 3a). ON/OFF only via ExpecLocalEnter()/
+ExpecLocalLeave(); every other function in this file must use the
+ExpecLocal*() accessors below, never this variable directly, so the
+invariant (no nesting, no stray writes) stays enforceable in one place.
+*/
+static int iExpecLocal = 0;
+/**
+@brief Sticky ExpecLocal error flag (phase 3a). Set by ExpecLocalSetError()
+when a defensive guard fires during the local per-rank evaluation loop;
+read back by the Mode 1 driver (ExpecLocalError()) to fail that state
+without ever calling exitMPI() from inside the loop. Cleared on
+ExpecLocalEnter().
+*/
+static int iExpecLocalError = 0;
+
+/**
+@brief Enter ExpecLocal mode. Nesting is a programming error and aborts
+(assert). Also clears the sticky error flag for the new local-evaluation
+session.
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+void ExpecLocalEnter(void) {
+  assert(!iExpecLocal);
+  iExpecLocal = 1;
+  iExpecLocalError = 0;
+}/*void ExpecLocalEnter*/
+/**
+@brief Leave ExpecLocal mode. Asserts the mode was actually active (leaving
+without entering is a programming error).
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+void ExpecLocalLeave(void) {
+  assert(iExpecLocal);
+  iExpecLocal = 0;
+}/*void ExpecLocalLeave*/
+/**
+@brief Read whether ExpecLocal mode is currently active.
+@return Non-zero iff ExpecLocal mode is active.
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+int ExpecLocalActive(void) {
+  return iExpecLocal;
+}/*int ExpecLocalActive*/
+/**
+@brief Record a deferred ExpecLocal error (e.g. a defensive raw-MPI guard
+fired). Always defined regardless of ExpecLocalActive(), so guard call
+sites never need to special-case it.
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+void ExpecLocalSetError(void) {
+  iExpecLocalError = 1;
+}/*void ExpecLocalSetError*/
+/**
+@brief Read the sticky ExpecLocal error flag accumulated since the last
+ExpecLocalEnter(). Always defined regardless of ExpecLocalActive().
+@return Non-zero iff ExpecLocalSetError() was called since ExpecLocalEnter().
+@author Kazuyoshi Yoshimi (The University of Tokyo)
+*/
+int ExpecLocalError(void) {
+  return iExpecLocalError;
+}/*int ExpecLocalError*/
+
+/**
 @brief MPI initialization wrapper
-Process ID (::myrank), Number of processes (::nproc), 
+Process ID (::myrank), Number of processes (::nproc),
 Number of threads (::nthreads), and pointer to the standard output
 (::stdoutMPI) are specified here.
 @author Mitsuaki Kawamura (The University of Tokyo)
@@ -143,6 +207,17 @@ FILE* fopenMPI(
 ){
   FILE* fp;
 
+  if (iExpecLocal) {
+    /* ExpecLocal mode: every rank evaluates its own eigenstates
+       independently, so every rank opens the file itself at the calling
+       rank (no rank-0 gate, no /dev/null fallback for non-zero ranks).
+       Callers that need distinct per-rank paths (e.g. green_output partial
+       channels) are responsible for making FileName rank-unique; fopenMPI
+       itself just stops assuming rank 0 is the only writer/reader. */
+    fp = fopen(FileName, mode);
+    return fp;
+  }
+
   if (myrank == 0) fp = fopen(FileName, mode);
   else fp = fopen("/dev/null", "w");
 
@@ -162,6 +237,12 @@ char* fgetsMPI(
   int inull;
   char *ctmp;
 
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it (same
+     style as the other assert-forbidden wrappers below, e.g. BarrierMPI). */
+  assert(!iExpecLocal);
   ctmp = InputString;
   inull = 0;
   if (myrank == 0) {
@@ -193,6 +274,11 @@ char* fgetsMPI(
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void BarrierMPI(){
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it. */
+  assert(!iExpecLocal);
 #ifdef MPI
   MPI_Barrier(MPI_COMM_WORLD);
 #endif
@@ -206,6 +292,11 @@ long integer across processes.
 unsigned long int MaxMPI_li(
   unsigned long int idim//!<[in] Value to be maximized
 ){
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it. */
+  assert(!iExpecLocal);
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -223,6 +314,11 @@ across processes.
 double MaxMPI_d(
   double dvalue//!<[in] Value to be maximized
 ){
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it. */
+  assert(!iExpecLocal);
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &dvalue, 1,
@@ -240,6 +336,12 @@ complex across processes.
 double complex SumMPI_dc(
   double complex norm//!<[in] Value to be summed
 ){
+  /* ExpecLocal mode: each rank evaluates its own eigenstate independently,
+     so this reduction must not touch other ranks -- return the local
+     value unchanged (per docs/superpowers/specs/
+     2026-07-11-expec-call-inventory.md §1, the expec_* layer's dominant
+     call). */
+  if (iExpecLocal) return norm;
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
@@ -257,6 +359,8 @@ across processes.
 double SumMPI_d(
   double norm//!<[in] Value to be summed
 ){
+  /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above). */
+  if (iExpecLocal) return norm;
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &norm, 1,
@@ -274,6 +378,10 @@ long integer across processes.
 unsigned long int SumMPI_li(
   unsigned long int idim//!<[in] Value to be summed
 ){
+  /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above).
+     Not currently called from the expec_* layer, but kept on the frozen
+     ExpecLocal allow-list as harmless headroom. */
+  if (iExpecLocal) return idim;
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -291,6 +399,10 @@ integer across processes.
 int SumMPI_i(
   int idim//!<[in] Value to be summed
 ) {
+  /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above).
+     Not currently called from the expec_* layer, but kept on the frozen
+     ExpecLocal allow-list as harmless headroom. */
+  if (iExpecLocal) return idim;
 #ifdef MPI
   int ierr;
   ierr = MPI_Allreduce(MPI_IN_PLACE, &idim, 1,
@@ -328,6 +440,11 @@ unsigned long int BcastMPI_li(
   unsigned long int idim//!<[in] Value to be broadcasted
 ) {
   unsigned long int idim0;
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it. */
+  assert(!iExpecLocal);
   idim0 = idim;
 #ifdef MPI
     MPI_Bcast(&idim0, 1, MPI_UNSIGNED_LONG, root, MPI_COMM_WORLD);
@@ -346,6 +463,14 @@ double NormMPI_dc(
   double complex cdnorm=0;
   double dnorm =0;
   unsigned long int i;
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it.
+     (The inner SumMPI_dc call below is already a no-op under
+     ExpecLocal, so if this guard is ever relaxed, the reduction itself
+     needs no further change.) */
+  assert(!iExpecLocal);
   //DEBUG
 #pragma omp parallel for default(none) private(i) firstprivate(myrank) shared(_v1, idim) reduction(+: cdnorm)
   for(i=1;i<=idim;i++){
@@ -372,6 +497,14 @@ double complex VecProdMPI(
   long unsigned int idim;
   double complex prod;
 
+  /* Not reachable from the FullDiag expec_* evaluation layer (see
+     docs/superpowers/specs/2026-07-11-expec-call-inventory.md §1); a debug
+     assert catches an accidental future call during ExpecLocal mode
+     instead of inventing untested no-communication semantics for it.
+     (The inner SumMPI_dc call below is already a no-op under
+     ExpecLocal, so if this guard is ever relaxed, the reduction itself
+     needs no further change.) */
+  assert(!iExpecLocal);
   prod = 0.0;
 #pragma omp parallel for default(none) shared(v1,v2,ndim) private(idim) reduction(+: prod)
   for (idim = 1; idim <= ndim; idim++) prod += conj(v1[idim]) * v2[idim];

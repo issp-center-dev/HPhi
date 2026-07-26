@@ -337,6 +337,26 @@ struct DefineList {
     - 1: Use ScaLAPACK
     */
 
+    int iSolver;/**<@brief FullDiag solver backend (CalcMod keyword "Solver")
+    - 0: LAPACK zheev (serial)
+    - 1: ScaLAPACK pzheev
+    - 2: MAGMA (single node multi-GPU)
+    - 3: ELPA (multi-node CPU/GPU)
+    Resolved from legacy keywords when not explicitly given. */
+
+    int iFlgSolverSpec;/**<@brief 1 if the Solver keyword was explicitly given */
+
+    int iFlgNGPUSpec;/**<@brief 1 if the NGPU keyword was explicitly given */
+
+    int iExpecMode;/**<@brief FullDiag observable evaluation mode (CalcMod keyword "ExpecMode")
+    - 0: serial (replicated, existing behavior)
+    - 1: state-parallel
+    - 2: trace kernels
+    Requires CalcType=FullDiag with Solver 1 (ScaLAPACK) or 3 (ELPA) when non-zero.
+    readdef.c demotes 1/2 to 0 for a single MPI process (nproc==1). The 2->1
+    demotion (trace kernels not yet available) happens at the phys dispatch
+    level instead, so introducing real trace kernels later does not require
+    touching readdef again. */
 
     struct ParamList Param;
 

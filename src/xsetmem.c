@@ -291,8 +291,36 @@ int setmem_large
       X->Phys.all_doublon = d_1d_allocate(X->Check.idim_max + 1);
       X->Phys.all_sz = d_1d_allocate(X->Check.idim_max + 1);
       X->Phys.all_s2 = d_1d_allocate(X->Check.idim_max + 1);
-      Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
-      L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+#ifdef _ELPA
+      if (X->Def.iSolver == SOLVER_ELPA && nproc > 1) {
+        /* Distributed-panel mode (design doc sec. 3 phase 2):
+           each rank stores only its owned 1D column block.
+           NC = ceil(N/P); rank p owns 1-based columns
+           [p*NC+1, min((p+1)*NC, N)]. Ham/L_vec stay unallocated. */
+        long int NN = X->Check.idim_max;
+        long int NC = (NN + nproc - 1) / nproc;
+        long int jb = (long int)myrank * NC + 1;
+        long int je = ((long int)myrank + 1) * NC;
+        if (je > NN) je = NN;
+        if (jb > NN) { jb = 1; je = 0; } /* rank owns no column */
+        HamColBegin = jb;
+        HamColEnd = je;
+        HamPanelLd = NN;
+        iHamPanelActive = 1;
+        {
+          long int ncols = (je >= jb) ? (je - jb + 1) : 0;
+          long int nelem = NN * ncols;
+          if (nelem < 1) nelem = 1;
+          Ham_local = (double complex *)malloc(nelem * sizeof(double complex));
+          if (Ham_local == NULL) return -1;
+          for (long int k = 0; k < nelem; k++) Ham_local[k] = 0.0;
+        }
+      } else
+#endif
+      {
+        Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+        L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+      }
 
     if (X->Phys.all_num_down == NULL
         || X->Phys.all_num_up == NULL
@@ -302,9 +330,11 @@ int setmem_large
             ) {
       return -1;
     }
-    for (j = 0; j < X->Check.idim_max + 1; j++) {
-      if (Ham[j] == NULL || L_vec[j] == NULL) {
-        return -1;
+    if (!iHamPanelActive) {
+      for (j = 0; j < X->Check.idim_max + 1; j++) {
+        if (Ham[j] == NULL || L_vec[j] == NULL) {
+          return -1;
+        }
       }
     }
   } else if (X->Def.iCalcType == CG) {

@@ -237,6 +237,114 @@ int GetKWWithIdx(
 }
 
 /**
+ * @brief Resolve the FullDiag solver backend from the Solver keyword and
+ * legacy keywords (ScaLAPACK, NGPU), following the precedence table in
+ * docs/superpowers/specs/2026-07-10-elpa-fulldiag-design.md section 2.
+ * On return X->iSolver is one of SOLVER_*, and X->iNGPU has its
+ * solver-dependent default applied when NGPU was not explicitly given.
+ */
+static int ResolveSolver(struct DefineList *X, const char *defname) {
+  if (X->iFlgSolverSpec == 0) {
+    /* Legacy resolution preserves the established FullDiag precedence.
+       Compile-time NGPU default (2 on _MAGMA builds) applies here. For a
+       non-FullDiag calculation, the deprecated ScaLAPACK flag is ignored
+       below so it cannot disable MPI site decomposition. */
+    if (X->iNGPU > 0) {
+#ifdef _MAGMA
+      X->iSolver = SOLVER_MAGMA;
+#else
+      fprintf(stdoutMPI, "Warning: MAGMA is not used in this calculation.");
+      X->iSolver = SOLVER_LAPACK;
+#endif
+    }
+    else if (X->iFlgScaLAPACK == 1) {
+      X->iSolver = SOLVER_SCALAPACK;
+    }
+    else {
+      X->iSolver = SOLVER_LAPACK;
+    }
+    /* Unlike an explicit Solver value, keep legacy inputs runnable: outside
+       FullDiag, warn and ignore ScaLAPACK instead of turning an input that
+       previously ran into a hard error. Clearing the internal flag restores
+       the normal MPI site decomposition for Lanczos/LOBPCG/TPQ. */
+    if (X->iCalcType != FullDiag && X->iFlgScaLAPACK == 1) {
+      fprintf(stdoutMPI, cWarnScaLAPACKCalcType, defname, X->iCalcType);
+      X->iFlgScaLAPACK = 0;
+      if (X->iSolver == SOLVER_SCALAPACK) X->iSolver = SOLVER_LAPACK;
+    }
+    return 0;
+  }
+
+  /* Explicit Solver always wins; warn about conflicting legacy keywords. */
+  if (ValidateValue(X->iSolver, 0, NUM_SOLVER - 1)) {
+    fprintf(stdoutMPI, cErrSolver, defname);
+    return -1;
+  }
+  /* Solver is an explicit FullDiag backend selector. Without this guard,
+     Solver 1/3 on Lanczos/LOBPCG/TPQ never invokes that backend but still
+     sets iFlgScaLAPACK below, silently disabling MPI site decomposition and
+     replicating the Hilbert space on every rank. Solver 0 remains accepted
+     for compatibility because it is also the default/no-op value. */
+  if (X->iCalcType != FullDiag && X->iSolver != SOLVER_LAPACK) {
+    fprintf(stdoutMPI, cErrSolverCalcType, defname, X->iSolver);
+    return -1;
+  }
+  if (X->iFlgScaLAPACK == 1 && X->iSolver != SOLVER_SCALAPACK) {
+    fprintf(stdoutMPI, cWarnSolverConflict, defname, "ScaLAPACK");
+    X->iFlgScaLAPACK = 0;
+  }
+  if (X->iFlgNGPUSpec == 0) {
+    X->iNGPU = (X->iSolver == SOLVER_MAGMA) ? 2 : 0;
+  }
+#ifndef _SCALAPACK
+  if (X->iSolver == SOLVER_SCALAPACK) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "ScaLAPACK");
+    return -1;
+  }
+#endif
+#ifndef _MAGMA
+  if (X->iSolver == SOLVER_MAGMA) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "MAGMA");
+    return -1;
+  }
+#endif
+#ifndef _ELPA
+  if (X->iSolver == SOLVER_ELPA) {
+    fprintf(stdoutMPI, cErrSolverBuild, defname, X->iSolver, "ELPA (USE_ELPA=ON)");
+    return -1;
+  }
+#endif
+#ifndef _ELPA_GPU
+  if (X->iSolver == SOLVER_ELPA && X->iNGPU >= 1) {
+    fprintf(stdoutMPI, cErrElpaGPUBuild, defname);
+    return -1;
+  }
+#endif
+  /* Explicit Solver 2 (MAGMA) with explicit NGPU 0 passes the generic
+     X->iNGPU < 0 check further below (0 is not negative) but would then
+     fail later inside diag_magma_cmp() at runtime. Reject it here instead.
+     Only reachable on _MAGMA builds: on non-MAGMA builds the #ifndef _MAGMA
+     block above already returns -1 for SOLVER_MAGMA. */
+  if (X->iSolver == SOLVER_MAGMA && X->iNGPU == 0) {
+    fprintf(stdoutMPI, cErrCUDA, defname);
+    return -1;
+  }
+  /* iFlgScaLAPACK now doubles as the internal "distributed-eigenvector
+     FullDiag" flag consumed by the multi-process gates in HPhiMain.c
+     (iCalcType==FullDiag && iFlgScaLAPACK==0 && nproc!=1 -> error),
+     check.c, and CheckMPI.c (iFlgScaLAPACK==1 -> replicated Hilbert-space
+     treatment, NsiteMPI=Nsite, no site separation). The user-facing
+     ScaLAPACK keyword is deprecated in favor of Solver, but this flag must
+     still be derived from the resolved solver so Solver 1 (ScaLAPACK) and
+     Solver 3 (ELPA) reach those gates the same way the legacy ScaLAPACK
+     keyword did. This assignment runs after the conflict-normalization
+     branch above, so an explicit conflicting legacy ScaLAPACK keyword does
+     not survive into the final value. */
+  X->iFlgScaLAPACK = (X->iSolver == SOLVER_SCALAPACK || X->iSolver == SOLVER_ELPA) ? 1 : 0;
+  return 0;
+}
+
+/**
  * @brief Function of Reading calcmod file.
  * @param[in] defname file name to read.
  * @param[out] X Define List for getting flags of calc-mode.
@@ -278,6 +386,10 @@ int ReadcalcmodFile(
 #else
   X->iNGPU=0;
 #endif
+  X->iSolver = -1;      /* unresolved; fixed up by ResolveSolver() below */
+  X->iFlgSolverSpec = 0;
+  X->iFlgNGPUSpec = 0;
+  X->iExpecMode = EXPECMODE_SERIAL;
   /*=======================================================================*/
   fp = fopenMPI(defname, "r");
   if(fp==NULL) return ReadDefFileError(defname);
@@ -334,8 +446,17 @@ int ReadcalcmodFile(
     }
     else if(CheckWords(ctmp, "NGPU")==0){
         X->iNGPU=itmp;
+        X->iFlgNGPUSpec=1;
+    }
+    else if(CheckWords(ctmp, "Solver")==0){
+        X->iSolver=itmp;
+        X->iFlgSolverSpec=1;
+    }
+    else if(CheckWords(ctmp, "ExpecMode")==0){
+        X->iExpecMode=itmp;
     }
     else if(CheckWords(ctmp, "ScaLAPACK")==0){
+      fprintf(stdoutMPI, cWarnScaLAPACKDep, defname);
 #ifdef _SCALAPACK
       X->iFlgScaLAPACK=itmp;
 #endif
@@ -400,6 +521,9 @@ int ReadcalcmodFile(
     fprintf(stdoutMPI, cErrRestart, defname);
     return (-1);
   }
+  if (ResolveSolver(X, defname) != 0) {
+    return (-1);
+  }
   if(X->iNGPU < 0){
     fprintf(stdoutMPI, cErrCUDA, defname);
     return (-1);
@@ -418,6 +542,72 @@ int ReadcalcmodFile(
   if(X->iCalcType !=2 && X->iOutputHam ==TRUE) {
     fprintf(stdoutMPI, cErrOutputHamForFullDiag, defname);
     return (-1);
+  }
+
+  /* SpinlessFermion / SpinlessFermionGC are not supported for FullDiag in this
+     version: makeHam has no spinless branch, so the hopping (Trans) term is
+     silently dropped from the FullDiag Hamiltonian, and the FullDiag phys
+     output never populates the particle number for these models. Both make the
+     published results incorrect, so reject the combination at startup rather
+     than compute (and write out) wrong physics. Full support is tracked
+     separately. */
+  if (X->iCalcType == FullDiag &&
+      (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC)) {
+    fprintf(stdoutMPI, cErrSpinlessFullDiag, defname);
+    return (-1);
+  }
+
+  /* CalcSpectrumByFullDiag() (src/CalcSpectrumByFullDiag.c) reads eigenvectors
+     out of L_vec after calling lapack_diag(). SOLVER_ELPA never fills L_vec
+     (eigenvectors stay distributed in Z_vec; see lapack_diag_elpa()), and
+     SOLVER_SCALAPACK with nproc>1 takes the same distributed-Z_vec path
+     (diag_scalapack_cmp() in lapack_diag()), so both would silently read
+     stale/garbage L_vec. Reject at startup rather than compute wrong spectra.
+     SOLVER_SCALAPACK with nproc==1 is fine: lapack_diag() falls back to the
+     replicated ZHEEVall()/L_vec path in that case. */
+  if (X->iCalcType == FullDiag && X->iFlgCalcSpec != CALCSPEC_NOT) {
+    if (X->iSolver == SOLVER_ELPA ||
+        (X->iSolver == SOLVER_SCALAPACK && nproc > 1)) {
+      fprintf(stdoutMPI, cErrSpectrumFullDiagSolver, defname, X->iSolver);
+      return (-1);
+    }
+  }
+
+  /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
+     as a distributed block-cyclic panel rather than the full replicated
+     matrix. OutputHam/InputHam need the full replicated matrix, so that
+     combination must be rejected at startup. Serial (nproc==1) runs are
+     unaffected: the replicated matrix is still available there. Scoped to
+     FullDiag: the panel path only exists there, and OutputHam/InputHam with
+     other calc types must keep their previous (ignored) behavior. */
+  if (X->iCalcType == FullDiag && X->iSolver == SOLVER_ELPA && nproc > 1
+      && (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
+    fprintf(stdoutMPI, cErrElpaHamIO, defname);
+    return (-1);
+  }
+
+  /* ExpecMode selects the observable-evaluation kernel for FullDiag
+     (distributed-eigenvector solvers only). readdef checks range and
+     CalcType/Solver eligibility, and demotes nproc==1 runs to serial here
+     (single-process results are identical either way). The 3a "trace
+     kernels not available -> demote 2 to 1" downgrade is NOT done here: it
+     happens at the phys dispatch level (Task 6) so that 3b's introduction of
+     real trace kernels does not require touching readdef again. */
+  if (ValidateValue(X->iExpecMode, 0, NUM_EXPECMODE - 1)) {
+    fprintf(stdoutMPI, cErrExpecMode, defname);
+    return (-1);
+  }
+  if (X->iExpecMode != EXPECMODE_SERIAL) {
+    if (X->iCalcType != FullDiag ||
+        (X->iSolver != SOLVER_SCALAPACK && X->iSolver != SOLVER_ELPA)) {
+      fprintf(stdoutMPI, cErrExpecMode, defname);
+      return (-1);
+    }
+    if (nproc == 1) {
+      fprintf(stdoutMPI,
+        "  INFO: ExpecMode reverts to 0 for a single process (results are identical).\n");
+      X->iExpecMode = EXPECMODE_SERIAL;
+    }
   }
 
   return 0;

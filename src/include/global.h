@@ -72,6 +72,23 @@ extern int step_spin;/**< output step for TE calculation.*/
 /*[s] For All Diagonalization*/
 extern double complex**Ham; /**> Hamiltonian for full diagonalization. */
 extern double complex **L_vec;/**> eigen vectors*/
+extern double complex *Ham_local; /* 1D column panel (distributed mode) */
+extern long int HamColBegin;      /* first owned column, 1-based; panel activity is
+                                      signaled by iHamPanelActive, not by this value
+                                      (a zero-column active rank holds jb=1, je=0) */
+extern long int HamColEnd;        /* last owned column, 1-based inclusive */
+extern long int HamPanelLd;       /* leading dimension = idim_max */
+extern int iHamPanelActive;       /* 1: distributed panel mode */
+extern int iHamSinkMode;          /* enum HamSinkMode (hamstore.h): 0 = dense
+                                     replicated, 1 = dense panel, 2 = trace
+                                     collect. Dense modes are derived from
+                                     iHamPanelActive at makeHam entry; only the
+                                     phase-3c trace collector sets TRACE_COLLECT. */
+/* Installed by the phase-3c trace collector; called by AddHamElem in collect
+   mode. Declared with the plain expanded type because global.h is included
+   before hamstore.h defines the HamCollectSinkFn typedef -- the two types are
+   compatible. Keeps global.h self-contained. */
+extern void (*hamCollectSink)(long int irow, long int jcol, double complex val);
 #ifdef _SCALAPACK
 extern double complex *Z_vec; /**> distributed matrix of eigen vector*/
 extern int descZ_vec[9]; /*descriptor for Z_vec*/

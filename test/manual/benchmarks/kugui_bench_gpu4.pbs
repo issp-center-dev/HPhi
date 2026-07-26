@@ -1,0 +1,51 @@
+#!/bin/bash
+#PBS -q F2acc
+#PBS -l select=2:ncpus=64:ngpus=2:mpiprocs=2
+#PBS -l walltime=03:00:00
+#PBS -N hphi_bench_gpu4
+#PBS -j oe
+
+# 4-GPU / 2-node addition to the appendix sweep:
+#   Solver 3, NGPU 2 (per node), np=4 = 2 nodes x 2 ranks, 1 rank per A100.
+# SpinGC chain L=8,10,12,14 (N=2^L), outputmode none.
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi cuda/12.4
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+PREFIX=$HOME/opt/elpa-2025.06-a100
+export LD_LIBRARY_PATH="$PREFIX/lib:$MKLROOT/lib/intel64:$LD_LIBRARY_PATH"
+export I_MPI_ADJUST_GATHERV=3
+HPHI=$HOME/HPhi-elpa/build_kugui_gpu/src/HPhi
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+
+echo "GPU4_SWEEP_START $(date '+%F %T')" >> "$BASE/status_gpu4.log"
+cat "$PBS_NODEFILE" | sort -u >> "$BASE/status_gpu4.log"
+
+for L in 8 10 12 14; do
+  d=$BASE/gpu_L${L}_g4
+  rm -rf "$d"; mkdir -p "$d"; cd "$d" || exit 1
+  cat > stan.in <<EOF
+model = "SpinGC"
+method = "FullDiag"
+lattice = "chain"
+L = $L
+J = 1.0
+Gamma = 0.5
+2S = 1
+outputmode = "none"
+EOF
+  "$HPHI" -sdry stan.in > sdry.log 2>&1
+  printf "Solver 3\nNGPU 2\n" >> calcmod.def
+  export OMP_NUM_THREADS=16
+  t0=$SECONDS
+  mpirun -n 4 -ppn 2 "$HPHI" -e namelist.def > run.log 2>&1
+  rc=$?
+  echo "L=$L tag=g4 rc=$rc wall=$((SECONDS-t0))s" >> "$BASE/status_gpu4.log"
+  cd "$BASE" || exit 1
+done
+echo ALL_DONE_GPU4 >> "$BASE/status_gpu4.log"

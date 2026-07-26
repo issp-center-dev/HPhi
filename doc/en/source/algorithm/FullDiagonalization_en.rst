@@ -15,6 +15,10 @@ In the diagonalization, we use a LAPACK routine, such as ``dsyev`` or ``zheev``.
 We also calculate and output
 the expectation values :math:`A_i \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle`.
 These values are used for the finite-temperature calculations.
+Besides LAPACK, the diagonalization backend can be switched with the
+``Solver`` keyword to ScaLAPACK, MAGMA (GPU), or ELPA (multi-node,
+CPU/GPU). See :ref:`Sec:ParallelFullDiag` for the parallel algorithms
+and a speed comparison.
 
 Finite-temperature calculations
 -------------------------------

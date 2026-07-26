@@ -813,7 +813,8 @@ int main(int argc, char* argv[]){
       case FullDiag:
         StartTimer(5000);
         if (CalcByFullDiag(&X) != TRUE) {
-            FinalizeMPI();
+          StopTimer(5000);
+          exitMPI(-3);
         }
         StopTimer(5000);
       break;

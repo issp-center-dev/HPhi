@@ -19,6 +19,7 @@
 #include "nbody_interall.h"
 #include "mltplyCommon.h"
 #include "wrapperMPI.h"
+#include "hamstore.h"
 
 static int parse_unsigned_token(const char **pp, unsigned int *value)
 {
@@ -1827,12 +1828,18 @@ int AddNBodyInterAllToHamHubbard(struct BindStruct *X)
 {
   unsigned int p;
   unsigned long int j;
+  /* This function is only invoked from makeHam() (M_Ham / FullDiag path),
+     never from the Lanczos/TPQ matvec (Multiply*) entry points above, so
+     restricting the loop to the owned-column range is safe unconditionally
+     on iHamPanelActive. */
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (nbody_uses_hubbard_list_path(&X->Def) == FALSE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
-    for (j = 1; j <= X->Check.idim_max; j++) {
+    for (j = hs_jb; j <= hs_je; j++) {
       unsigned long int local_out = 0;
       unsigned long int j_out = 0;
       int rank_out = 0;
@@ -1848,7 +1855,7 @@ int AddNBodyInterAllToHamHubbard(struct BindStruct *X)
         in_sector = GetOffComp(list_2_1, list_2_2, local_out,
                                X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out);
         if (in_sector == TRUE) {
-          Ham[j_out][j] += X->Def.ParaNBodyInterAll[term] * sign;
+          AddHamElem(j_out, j, X->Def.ParaNBodyInterAll[term] * sign);
         }
       }
     }
@@ -1860,12 +1867,14 @@ int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X)
 {
   unsigned int p;
   unsigned long int j;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (X->Def.iCalcModel != HubbardGC) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
-    for (j = 1; j <= X->Check.idim_max; j++) {
+    for (j = hs_jb; j <= hs_je; j++) {
       unsigned long int local_out = 0;
       int rank_out = 0;
       int sign = 1;
@@ -1876,7 +1885,7 @@ int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X)
           fprintf(stdoutMPI, "Error: FullDiag NBodyInterAll cannot handle inter-process output.\n");
           return -1;
         }
-        Ham[local_out + 1][j] += X->Def.ParaNBodyInterAll[term] * sign;
+        AddHamElem(local_out + 1, j, X->Def.ParaNBodyInterAll[term] * sign);
       }
     }
   }
@@ -1887,13 +1896,15 @@ int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
 {
   unsigned int p;
   unsigned long int j;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
   if (nbody_is_supported_spin_model(&X->Def) == FALSE) return -1;
   if (nbody_is_hubbard_model(&X->Def) == TRUE) return -1;
 
   for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
     const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
-    for (j = 1; j <= X->Check.idim_max; j++) {
+    for (j = hs_jb; j <= hs_je; j++) {
       unsigned long int local_out = 0;
       int rank_out = 0;
       double complex me = 0.0;
@@ -1911,11 +1922,11 @@ int AddNBodyInterAllToHamSpinGC(struct BindStruct *X)
             GetOffComp(list_2_1, list_2_2, local_out,
                        X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out);
           if (in_sector == TRUE) {
-            Ham[j_out][j] += me;
+            AddHamElem(j_out, j, me);
           }
         }
         else {
-          Ham[local_out + 1][j] += me;
+          AddHamElem(local_out + 1, j, me);
         }
       }
     }

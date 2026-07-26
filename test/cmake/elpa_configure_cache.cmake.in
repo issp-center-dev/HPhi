@@ -1,0 +1,11 @@
+# Preload the toolchain and the already-validated ELPA/ScaLAPACK locations
+# from the parent build. This keeps the nested configure regression tests
+# independent of system-wide default search paths.
+set(CMAKE_C_COMPILER "@CMAKE_C_COMPILER@" CACHE FILEPATH "")
+set(CMAKE_Fortran_COMPILER "@CMAKE_Fortran_COMPILER@" CACHE FILEPATH "")
+set(CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@" CACHE STRING "")
+set(ELPA_ROOT "@ELPA_ROOT@" CACHE PATH "")
+set(ELPA_INCLUDE_DIR "@ELPA_INCLUDE_DIR@" CACHE PATH "")
+set(ELPA_LIBRARY "@ELPA_LIBRARY@" CACHE FILEPATH "")
+set(SCALAPACK_LIBRARIES "@SCALAPACK_LIBRARIES@" CACHE STRING "")
+set(HPHI_VALID_ELPA_INCLUDE_DIRS "@ELPA_INCLUDE_DIRS@")

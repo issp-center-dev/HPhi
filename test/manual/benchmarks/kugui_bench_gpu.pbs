@@ -1,0 +1,57 @@
+#!/bin/bash
+#PBS -q F2acc
+#PBS -l select=1:ncpus=64:ngpus=2:mpiprocs=64
+#PBS -l walltime=04:00:00
+#PBS -N hphi_bench_gpu
+#PBS -j oe
+
+# Manual-appendix GPU sweep on kugui acc node (EPYC 7763 + 2x A100-SXM4-40GB):
+#   g1 = Solver 3, NGPU 1, np=1;  g2 = Solver 3, NGPU 2, np=2 (1 rank/GPU).
+# SpinGC chain L=8,10,12,14 (N=2^L), outputmode none (diag benchmark).
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi cuda/12.4
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+PREFIX=$HOME/opt/elpa-2025.06-a100
+export LD_LIBRARY_PATH="$PREFIX/lib:$MKLROOT/lib/intel64:$LD_LIBRARY_PATH"
+export I_MPI_ADJUST_GATHERV=3
+HPHI=$HOME/HPhi-elpa/build_kugui_gpu/src/HPhi
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+
+echo "GPU_SWEEP_START $(date '+%F %T')" >> "$BASE/status_gpu.log"
+nvidia-smi --query-gpu=index,name --format=csv,noheader >> "$BASE/status_gpu.log"
+
+run_one () {
+  local L=$1 tag=$2 np=$3 ngpu=$4 omp=$5
+  local d=$BASE/gpu_L${L}_${tag}
+  rm -rf "$d"; mkdir -p "$d"; cd "$d" || return 1
+  cat > stan.in <<EOF
+model = "SpinGC"
+method = "FullDiag"
+lattice = "chain"
+L = $L
+J = 1.0
+Gamma = 0.5
+2S = 1
+outputmode = "none"
+EOF
+  "$HPHI" -sdry stan.in > sdry.log 2>&1
+  printf "Solver 3\nNGPU %d\n" "$ngpu" >> calcmod.def
+  export OMP_NUM_THREADS=$omp
+  local t0=$SECONDS
+  mpirun -n "$np" "$HPHI" -e namelist.def > run.log 2>&1
+  local rc=$?
+  echo "L=$L tag=$tag rc=$rc wall=$((SECONDS-t0))s" >> "$BASE/status_gpu.log"
+  cd "$BASE" || return 1
+}
+
+for L in 8 10 12 14; do
+  run_one "$L" g1 1 1 16
+  run_one "$L" g2 2 2 16
+done
+echo ALL_DONE_GPU >> "$BASE/status_gpu.log"

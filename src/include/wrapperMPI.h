@@ -39,4 +39,30 @@ unsigned long int BcastMPI_li(int root, unsigned long int idim);
 double NormMPI_dc(unsigned long int idim, double complex *_v1);
 double complex VecProdMPI(long unsigned int ndim, double complex *v1, double complex *v2);
 
+/**
+ * @brief ExpecLocal mode: per-rank, no-communication evaluation of FullDiag
+ * observables (phase 3a). While active (between ExpecLocalEnter() and
+ * ExpecLocalLeave()), the wrapperMPI reduction/broadcast helpers reachable
+ * from the expec_* layer become no-communication pass-throughs and
+ * fopenMPI() opens files at the calling rank instead of gating to rank 0.
+ * See docs/superpowers/specs/2026-07-11-expec-call-inventory.md for the
+ * frozen contract of which calls are hooked this way.
+ *
+ * The flag itself is a private static in wrapperMPI.c; only these
+ * accessors may read or write it.
+ */
+/** @brief Enter ExpecLocal mode. Nesting is a programming error (asserts).
+    Also clears the sticky ExpecLocal error flag. */
+void ExpecLocalEnter(void);
+/** @brief Leave ExpecLocal mode. Asserts the mode was active. */
+void ExpecLocalLeave(void);
+/** @brief @return non-zero iff ExpecLocal mode is currently active. */
+int  ExpecLocalActive(void);
+/** @brief Record a deferred ExpecLocal error (e.g. a defensive guard fired).
+    Always defined, regardless of ExpecLocalActive(). */
+void ExpecLocalSetError(void);
+/** @brief @return non-zero iff ExpecLocalSetError() was called since the
+    last ExpecLocalEnter(). Always defined. */
+int  ExpecLocalError(void);
+
 #endif

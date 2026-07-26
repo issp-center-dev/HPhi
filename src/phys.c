@@ -49,6 +49,9 @@
 #include "anomalous_pair.h"
 #include "green_output.h"
 #include "wrapperMPI.h"
+#include "DefCommon.h"
+#include "phys_distributed.h"
+#include <assert.h>
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
@@ -83,9 +86,17 @@ void phys(struct BindStruct *X, //!<[inout]
   i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
-  int ictxt, ierr, rank;
+  int rank;
+  if (use_scalapack && X->Def.iExpecMode != EXPECMODE_SERIAL) {
+    int phys_rc = phys_stateparallel(X, neig);
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+    if (phys_rc != 0) exitMPI(-1);
+    assert(!ExpecLocalActive());
+    return;
+  }
   if(use_scalapack){
-  fprintf(stdoutMPI, "In scalapack fulldiag, total spin is not calculated !\n");
+  /* S2/Sz are now computed on rank 0 in the state loop below (ExpecLocal-
+     wrapped), so the former "total spin is not calculated" notice is gone. */
   vec_tmp = malloc(i_max*sizeof(double complex));
   }
 #endif
@@ -100,7 +111,15 @@ void phys(struct BindStruct *X, //!<[inout]
     }
     if(use_scalapack){
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#ifdef _ELPA
+      if (X->Def.iSolver == SOLVER_ELPA) {
+        GetEigenVectorBlock(i, i_max, Z_vec, descZ_vec, vec_tmp);
+      } else {
+        GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
+      }
+#else
       GetEigenVector(i, i_max, Z_vec, descZ_vec, vec_tmp);
+#endif
       if(rank == 0) {
         for (j = 0; j < i_max; j++) {
           v0[j + 1] = vec_tmp[j];
@@ -156,8 +175,19 @@ void phys(struct BindStruct *X, //!<[inout]
 #ifdef _SCALAPACK
     if(use_scalapack){
       if (X->Def.iCalcType == FullDiag) {
-        X->Phys.s2=0.0;
-        X->Phys.Sz=0.0;
+        /* Mode 0 (distributed) S2/Sz unification: rank 0 holds the gathered
+           eigenvector in v1 (moved there from v0 by expec_energy_flct), so
+           compute totalspin locally under an ExpecLocal wrapper (reductions
+           become no-communication pass-throughs). Other ranks hold a zeroed
+           vector; their values are not used (display/all_* take rank 0's). */
+        ExpecLocalEnter();
+        if (myrank == 0) {
+          if (expec_totalspin(X, v1) != 0) { ExpecLocalLeave(); exitMPI(-1); }
+        } else {
+          X->Phys.s2 = 0.0;
+          X->Phys.Sz = 0.0;
+        }
+        ExpecLocalLeave();
       }
     }else{
       if (X->Def.iCalcType == FullDiag) {
@@ -183,20 +213,11 @@ void phys(struct BindStruct *X, //!<[inout]
     }
 
     if (X->Def.iCalcType == FullDiag){
-#ifdef _SCALAPACK
-      if (use_scalapack){
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-                X->Phys.Sz, X->Phys.doublon);
-      }
-      else{
-        fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
-                X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
-      }
-#else
+      /* Unified serial format (S2 column) for both distributed and
+         non-distributed paths: distributed Mode 0 now computes S2/Sz on
+         rank 0 above rather than zero-filling. */
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf S2=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
               X->Phys.Sz, X->Phys.s2, X->Phys.doublon);
-      
-#endif      
     }
     else if (X->Def.iCalcType == CG)
       fprintf(stdoutMPI, "i=%5ld Energy=%10lf N=%10lf Sz=%10lf Doublon=%10lf \n", i, X->Phys.energy, tmp_N,
@@ -209,6 +230,10 @@ void phys(struct BindStruct *X, //!<[inout]
     X->Phys.all_num_down[i] = X->Phys.num_down;
   }
 #ifdef _SCALAPACK
-  if(use_scalapack) free(vec_tmp);
-#endif  
+  if(use_scalapack) {
+    free(vec_tmp);
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+  }
+#endif
+  assert(!ExpecLocalActive());
 }
