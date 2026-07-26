@@ -676,6 +676,45 @@ static void assert_int_eq(int got, int expected, const char *label)
   }
 }
 
+static int representative_batch_stats_equal(
+    const struct SymmetryRepresentativeBatchStats *left,
+    const struct SymmetryRepresentativeBatchStats *right)
+{
+  /* Field-wise comparison avoids reading implementation-defined padding. */
+  return left->directory_batch_calls ==
+             right->directory_batch_calls &&
+      left->directory_request_entries_sent ==
+          right->directory_request_entries_sent &&
+      left->directory_request_entries_received ==
+          right->directory_request_entries_received &&
+      left->directory_found_entries ==
+          right->directory_found_entries &&
+      left->directory_not_found_entries ==
+          right->directory_not_found_entries &&
+      left->directory_lookup_probe_count ==
+          right->directory_lookup_probe_count &&
+      left->directory_lookup_max_probe ==
+          right->directory_lookup_max_probe &&
+      left->directory_owner_peer_count_max ==
+          right->directory_owner_peer_count_max &&
+      left->directory_requester_peer_count_max ==
+          right->directory_requester_peer_count_max &&
+      left->directory_exchange_used_chunked ==
+          right->directory_exchange_used_chunked &&
+      left->directory_exchange_message_byte_limit ==
+          right->directory_exchange_message_byte_limit &&
+      left->directory_exchange_max_message_bytes ==
+          right->directory_exchange_max_message_bytes &&
+      left->directory_exchange_send_messages ==
+          right->directory_exchange_send_messages &&
+      left->directory_exchange_recv_messages ==
+          right->directory_exchange_recv_messages &&
+      left->directory_batch_temporary_peak_bytes ==
+          right->directory_batch_temporary_peak_bytes &&
+      left->directory_batch_memory_byte_limit ==
+          right->directory_batch_memory_byte_limit;
+}
+
 static int state_matches_sector(int model,
                                 unsigned long int state,
                                 unsigned int nsite,
@@ -4054,7 +4093,7 @@ static void assert_c3_plan_matches_replicated(
           X->Sym->representative_directory, &after),
       0, label);
   assert_int_eq(
-      memcmp(&after, &before, sizeof(after)) == 0,
+      representative_batch_stats_equal(&after, &before),
       1, "pre-batch block cap failure preserves directory stats");
 
   options.block_memory_byte_limit =
@@ -4655,7 +4694,7 @@ static void assert_c5_distributed_layout_model(
             X.Sym->representative_directory, &after),
         0, label);
     assert_int_eq(
-        memcmp(&after, &before, sizeof(after)) == 0,
+        representative_batch_stats_equal(&after, &before),
         1, "unresolved block build performs no directory batch");
   }
   assert_c3_plan_matches_replicated(
