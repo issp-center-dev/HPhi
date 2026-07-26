@@ -157,6 +157,9 @@ EOF
     test -s output/zvo_Lanczos_Step.dat
     cp output/zvo_energy.dat "${label}_energy.dat"
     cp output/zvo_Lanczos_Step.dat "${label}_steps.dat"
+    if [ -f output/CalcTimerRankStats.dat ]; then
+        cp output/CalcTimerRankStats.dat "${label}_rank_stats.dat"
+    fi
 }
 
 check_convergence()
@@ -268,6 +271,38 @@ if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
    grep -q "MPI site separation summary" symmetry_staged_precg0.log; then
     echo "Staged TransSym run entered an incompatible matvec path."
     exit 1
+fi
+if [ -f symmetry_staged_precg0_rank_stats.dat ]; then
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        /^format=/ {
+            version = value($2)
+            layout = value($4)
+            next
+        }
+        $1 == "work" {
+            count++
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            if (version != 8 || layout != "distributed" ||
+                count != 100 ||
+                min["directory_build_heavy_bytes"] <= 0 ||
+                min["directory_steady_heavy_bytes"] != 0 ||
+                max["directory_steady_heavy_bytes"] != 0 ||
+                min["directory_heavy_storage_released"] != 1 ||
+                max["directory_heavy_storage_released"] != 1 ||
+                min["plan_matrix_storage_bytes"] <= 0 ||
+                max["plan_column_storage_bytes"] <= 0) {
+                exit 1
+            }
+        }
+    ' symmetry_staged_precg0_rank_stats.dat
 fi
 if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
        HPHI_SYMMETRY_MATVEC=legacy \

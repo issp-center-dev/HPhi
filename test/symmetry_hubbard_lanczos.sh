@@ -367,11 +367,11 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 7 || header_ranks != expected_ranks ||
+            if (header_version != 8 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 27 || work_count != 95 ||
+                timer_count != 27 || work_count != 100 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
@@ -396,6 +396,14 @@ assert_rank_stats() {
                 work_max["column_slot_width"] != 32) bad = 1
             if (work_min["halo_schedule_ready"] != 1 ||
                 work_max["halo_schedule_ready"] != 1) bad = 1
+            if (work_min["plan_matrix_storage_bytes"] <= 0 ||
+                work_max["plan_column_storage_bytes"] <= 0) bad = 1
+            if (work_min["directory_build_heavy_bytes"] != 0 ||
+                work_max["directory_build_heavy_bytes"] != 0 ||
+                work_min["directory_steady_heavy_bytes"] != 0 ||
+                work_max["directory_steady_heavy_bytes"] != 0 ||
+                work_min["directory_heavy_storage_released"] != 0 ||
+                work_max["directory_heavy_storage_released"] != 0) bad = 1
             if (work_min["halo_schedule_bytes"] <= 0) bad = 1
             if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
             if (work_min["halo_reference_enabled"] != expected_reference ||

@@ -4234,6 +4234,24 @@ static void assert_c4_distributed_solver_plan(
           X->Sym->mpi_recvcounts == NULL &&
           X->Sym->mpi_displs == NULL,
       1, "distributed solver plan allocates no full vector state");
+  assert_int_eq(
+      X->Sym->representative_directory == NULL &&
+          X->Sym->representative_directory_stats_ready == TRUE &&
+          X->Sym->representative_directory_heavy_storage_released == TRUE,
+      1, "distributed solver releases representative directory storage");
+  assert_int_eq(
+      X->Sym->representative_directory_info.splitter_bytes > 0U &&
+          (X->Sym->local_dim == 0UL
+               ? X->Sym->representative_directory_index_stats
+                         .table_bytes == 0U
+               : X->Sym->representative_directory_index_stats
+                         .table_bytes > 0U) &&
+          X->Sym->representative_directory_batch_stats
+                  .directory_batch_calls > 0U,
+      1, "distributed solver retains lightweight directory statistics");
+  assert_int_eq(
+      X->Sym->matvec_plan->halo.ghost_global_index == NULL,
+      1, "distributed solver releases remap-only ghost global indices");
   assert_ulong_eq(
       (unsigned long int)SymmetryMatvecPlanBlockCount(
           X->Sym->matvec_plan),
@@ -4251,9 +4269,23 @@ static void assert_c4_distributed_solver_plan(
   assert_complex_close(
       X->Large.prdct, expected_prdct, 1.0e-13,
       "distributed halo local prdct");
+  memset(output, 0, vector_count * sizeof(*output));
+  X->Large.prdct = 0.0;
+  assert_int_eq(mltplySpinSym(X, output, input), 0,
+                "released directory supports repeated distributed matvec");
+  for (local_row = 0UL;
+       local_row < reference_local_dim; local_row++) {
+    assert_complex_bitwise(
+        output[local_row + 1UL],
+        expected[local_row + 1UL],
+        "repeated distributed halo Hv is bitwise exact");
+  }
+  assert_complex_close(
+      X->Large.prdct, expected_prdct, 1.0e-13,
+      "repeated distributed halo local prdct");
   assert_int_eq(
-      X->Sym->matvec_plan->matvec_calls == 1ULL &&
-          X->Sym->matvec_plan->halo.exchange_calls == 1ULL &&
+      X->Sym->matvec_plan->matvec_calls == 2ULL &&
+          X->Sym->matvec_plan->halo.exchange_calls == 2ULL &&
           X->Sym->matvec_plan->input_allgather_calls == 0ULL,
       1, label);
   FreeSymmetryMatvecPlan(X->Sym->matvec_plan);

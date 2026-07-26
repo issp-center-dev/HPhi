@@ -2,12 +2,12 @@
 #define HPHI_SYMMETRY_BASIS_H
 
 #include "Common.h"
+#include "symmetry_directory.h"
 #include "symmetry_distribution.h"
 
 struct BindStruct;
 struct DefineList;
 struct SymmetryMatvecPlan;
-struct SymmetryRepresentativeDirectory;
 
 struct SymmetryBasisVector {
   unsigned long int rep_state;
@@ -68,6 +68,13 @@ struct SymmetryBasisRuntime {
   struct SymmetryBasisVector *local_basis;
   unsigned long int *rank_offsets;
   struct SymmetryRepresentativeDirectory *representative_directory;
+  int representative_directory_stats_ready;
+  int representative_directory_heavy_storage_released;
+  struct SymmetryRepresentativeDirectoryInfo representative_directory_info;
+  struct SymmetryLocalRepresentativeIndexStats
+      representative_directory_index_stats;
+  struct SymmetryRepresentativeBatchStats
+      representative_directory_batch_stats;
   struct SymmetryBasisDistributionStats distribution_stats;
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
@@ -184,6 +191,12 @@ int SymmetryBasisOwnedStorageReady(
     unsigned long int expected_local_dim);
 int SymmetryBasisRepresentativeDirectoryReady(
     const struct SymmetryBasisRuntime *sym);
+/**
+ * Snapshot directory diagnostics and collectively release the local hash and
+ * owner splitter after the distributed solver plan no longer needs lookups.
+ */
+int ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage(
+    struct SymmetryBasisRuntime *sym);
 int ComputeSymmetryBasisDigest(
     const struct SymmetryBasisRuntime *sym,
     struct SymmetryBasisDigest *digest);

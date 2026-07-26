@@ -1375,6 +1375,47 @@ int SymmetryBasisRepresentativeDirectoryReady(
       info.nrank == nproc;
 }
 
+int ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage(
+    struct SymmetryBasisRuntime *sym)
+{
+  struct SymmetryRepresentativeDirectoryInfo info;
+  struct SymmetryLocalRepresentativeIndexStats index_stats;
+  struct SymmetryRepresentativeBatchStats batch_stats;
+  int local_error = 0;
+  int global_error;
+  memset(&info, 0, sizeof(info));
+  memset(&index_stats, 0, sizeof(index_stats));
+  memset(&batch_stats, 0, sizeof(batch_stats));
+  if (sym == NULL ||
+      sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED ||
+      sym->representative_directory == NULL ||
+      sym->representative_directory_stats_ready != FALSE ||
+      sym->representative_directory_heavy_storage_released != FALSE ||
+      GetSymmetryRepresentativeDirectoryInfo(
+          sym->representative_directory, &info) != 0 ||
+      GetSymmetryRepresentativeDirectoryLocalIndexStats(
+          sym->representative_directory, &index_stats) != 0 ||
+      GetSymmetryRepresentativeDirectoryBatchStats(
+          sym->representative_directory, &batch_stats) != 0 ||
+      info.dim != sym->dim ||
+      info.local_offset != sym->local_offset ||
+      info.local_dim != sym->local_dim ||
+      info.rank != myrank ||
+      info.nrank != nproc) {
+    local_error = 1;
+  }
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) return -1;
+  sym->representative_directory_info = info;
+  sym->representative_directory_index_stats = index_stats;
+  sym->representative_directory_batch_stats = batch_stats;
+  sym->representative_directory_stats_ready = TRUE;
+  FreeSymmetryRepresentativeDirectory(sym->representative_directory);
+  sym->representative_directory = NULL;
+  sym->representative_directory_heavy_storage_released = TRUE;
+  return 0;
+}
+
 static uint64_t hash_symmetry_bytes(
     uint64_t hash,
     const void *data,

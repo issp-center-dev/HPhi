@@ -136,7 +136,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "directory_exchange_send_messages",
     "directory_exchange_recv_messages",
     "directory_batch_temporary_peak_bytes",
-    "directory_batch_memory_byte_limit"
+    "directory_batch_memory_byte_limit",
+    "plan_matrix_storage_bytes",
+    "plan_column_storage_bytes",
+    "directory_build_heavy_bytes",
+    "directory_steady_heavy_bytes",
+    "directory_heavy_storage_released"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -221,6 +226,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
       memset(&directory_index_stats, 0, sizeof(directory_index_stats));
       memset(&directory_batch_stats, 0, sizeof(directory_batch_stats));
     }
+  } else if (X->Sym->representative_directory_stats_ready == TRUE) {
+    directory_info = X->Sym->representative_directory_info;
+    directory_index_stats =
+        X->Sym->representative_directory_index_stats;
+    directory_batch_stats =
+        X->Sym->representative_directory_batch_stats;
   }
   for (i = 0; i < timer_count; i++) timer_local[i] = Timer[timer_ids[i]];
   work_local[0] = X->Sym->basis_raw_states;
@@ -406,6 +417,23 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[93] =
       (unsigned long long)
           directory_batch_stats.directory_batch_memory_byte_limit;
+  work_local[94] =
+      plan != NULL
+          ? (unsigned long long)plan->matrix_storage_bytes
+          : 0ULL;
+  work_local[95] =
+      plan != NULL
+          ? (unsigned long long)plan->column_storage_bytes
+          : 0ULL;
+  work_local[96] =
+      (unsigned long long)directory_info.splitter_bytes +
+      (unsigned long long)directory_index_stats.table_bytes;
+  work_local[97] =
+      X->Sym->representative_directory != NULL
+          ? work_local[96] : 0ULL;
+  work_local[98] =
+      X->Sym->representative_directory_heavy_storage_released == TRUE
+          ? 1ULL : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -531,7 +559,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=7 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=8 ranks=%d "
           "basis_layout=%s matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED
