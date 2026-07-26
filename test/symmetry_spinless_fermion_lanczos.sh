@@ -284,6 +284,9 @@ expect_failure() {
 }
 
 assert_distributed_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
     log="$1"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f "${stats}" ]; then

@@ -258,6 +258,9 @@ assert_symmetry_log() {
 }
 
 assert_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
     expected_dim="$1"
     expected_ranks="$2"
     log="$3"
@@ -524,6 +527,9 @@ assert_rank_stats() {
 }
 
 assert_distributed_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
     log="$1"
     stats=output/CalcTimerRankStats.dat
     if [ ! -f "${stats}" ]; then
