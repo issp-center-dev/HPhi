@@ -647,9 +647,57 @@ For Hubbard model: \f$D = \binom{N_s}{N_\uparrow}\binom{N_s}{N_\downarrow}\f$
  * @retval -1 fail the calculation.
  * @retval 0 succeed the calculation.
  */
+static int parse_staged_distributed_symmetry(void)
+{
+  const char *value = getenv("HPHI_SYMMETRY_STAGED_DISTRIBUTED");
+  const char *matvec = getenv("HPHI_SYMMETRY_MATVEC");
+  const char *exchange = getenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
+  const char *reference = getenv("HPHI_SYMMETRY_HALO_REFERENCE");
+
+  if (value == NULL || strcmp(value, "0") == 0 ||
+      strcmp(value, "off") == 0) {
+    return FALSE;
+  }
+  if (strcmp(value, "1") != 0 && strcmp(value, "on") != 0) {
+    fprintf(stdoutMPI,
+            "Error: HPHI_SYMMETRY_STAGED_DISTRIBUTED must be "
+            "'0'/'off' or '1'/'on', got '%s'.\n",
+            value);
+    return -1;
+  }
+  if (matvec != NULL && strcmp(matvec, "plan") != 0) {
+    fprintf(stdoutMPI,
+            "Error: staged distributed symmetry requires "
+            "HPHI_SYMMETRY_MATVEC=plan.\n");
+    return -1;
+  }
+  if (exchange != NULL && strcmp(exchange, "halo") != 0) {
+    fprintf(stdoutMPI,
+            "Error: staged distributed symmetry requires "
+            "HPHI_SYMMETRY_VECTOR_EXCHANGE=halo.\n");
+    return -1;
+  }
+  if (reference != NULL && strcmp(reference, "0") != 0 &&
+      strcmp(reference, "off") != 0) {
+    fprintf(stdoutMPI,
+            "Error: staged distributed symmetry does not support "
+            "HPHI_SYMMETRY_HALO_REFERENCE.\n");
+    return -1;
+  }
+  return TRUE;
+}
+
+static int select_staged_distributed_symmetry(void)
+{
+  int enabled = FALSE;
+  if (myrank == 0) enabled = parse_staged_distributed_symmetry();
+  return BcastMPI_i(0, enabled);
+}
+
 int main(int argc, char* argv[]){
 
   int mode=0;
+  int staged_distributed_symmetry = FALSE;
   char cFileListName[D_FileNameMax];
 
   stdoutMPI = stdout;
@@ -723,6 +771,19 @@ int main(int argc, char* argv[]){
   if (ValidateSymmetryRuntimeOptions(&(X.Bind)) != 0) {
     exitMPI(-1);
   }
+  staged_distributed_symmetry =
+      select_staged_distributed_symmetry();
+  if (staged_distributed_symmetry < 0) {
+    exitMPI(-1);
+  }
+  if (staged_distributed_symmetry == TRUE &&
+      (X.Bind.Def.iFlgSymmetryBasis != TRUE ||
+       X.Bind.Def.iCalcType != CG)) {
+    fprintf(stdoutMPI,
+            "Error: HPHI_SYMMETRY_STAGED_DISTRIBUTED is a B4 "
+            "developer/test opt-in for TransSym CG runs only.\n");
+    exitMPI(-1);
+  }
 
   if (X.Bind.Def.iCalcType == FullDiag
       && X.Bind.Def.iFlgScaLAPACK ==0
@@ -749,15 +810,21 @@ int main(int argc, char* argv[]){
 
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StartTimer(1100);
-      if (BuildSymmetryBasis(&(X.Bind)) != 0) {
+      if ((staged_distributed_symmetry == TRUE
+               ? BuildSymmetryBasisForLayout(
+                     &(X.Bind), SYMMETRY_BASIS_DISTRIBUTED)
+               : BuildSymmetryBasis(&(X.Bind))) != 0) {
         StopTimer(1100);
         exitMPI(-1);
       }
       if (X.Bind.Sym == NULL ||
-          X.Bind.Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
+          X.Bind.Sym->basis_layout !=
+              (staged_distributed_symmetry == TRUE
+                   ? SYMMETRY_BASIS_DISTRIBUTED
+                   : SYMMETRY_BASIS_REPLICATED)) {
         fprintf(stdoutMPI,
-                "Error: production symmetry basis must remain replicated "
-                "until the B3/B4 lookup and block plan are active.\n");
+                "Error: symmetry basis layout does not match the "
+                "selected B4 staged runtime.\n");
         StopTimer(1100);
         exitMPI(-1);
       }
@@ -786,7 +853,9 @@ int main(int argc, char* argv[]){
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StopTimer(1113);
       StartTimer(1101);
-      if (BuildSymmetryMatvecPlan(&(X.Bind)) != 0) {
+      if ((staged_distributed_symmetry == TRUE
+               ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
+               : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
         StopTimer(1101);
         exitMPI(-1);
       }

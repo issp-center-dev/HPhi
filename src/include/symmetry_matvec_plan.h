@@ -154,6 +154,10 @@ void FreeSymmetryUnresolvedMatvecBlock(
 int BuildSymmetryDistributedMatvecPlanWithOptions(
     struct BindStruct *X,
     const struct SymmetryDistributedMatvecPlanOptions *options);
+int BuildSymmetryDistributedMatvecPlanForSolverWithOptions(
+    struct BindStruct *X,
+    const struct SymmetryDistributedMatvecPlanOptions *options);
+int BuildSymmetryDistributedMatvecPlan(struct BindStruct *X);
 int BuildSymmetryMatvecPlan(struct BindStruct *X);
 size_t SymmetryMatvecPlanBlockCount(
     const struct SymmetryMatvecPlan *plan);

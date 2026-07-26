@@ -107,6 +107,7 @@ run_case()
     namelist=$3
     eigenstates=${4:-1}
     execution=${5:-mpi}
+    staged=${6:-replicated}
 
     cat > modpara.def <<EOF
 --------------------
@@ -130,7 +131,19 @@ EOF
 
     rm -rf output
     if [ "${execution}" = "serial" ]; then
-        run_hphi "${label}.log" "${HPHI}" -e "${namelist}"
+        if [ "${staged}" = "distributed" ]; then
+            run_hphi "${label}.log" env \
+                HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+                "${HPHI}" -e "${namelist}"
+        else
+            run_hphi "${label}.log" "${HPHI}" -e "${namelist}"
+        fi
+    elif [ "${staged}" = "distributed" ]; then
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" env \
+            HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
     else
         # RUNNER is intentionally word-split because MPIRUN contains options.
         # shellcheck disable=SC2086
@@ -162,6 +175,11 @@ extract_energy()
     awk '$1 == "Energy" {print $2; exit}' "$1"
 }
 
+extract_residual()
+{
+    awk '$1 ~ /^[0-9]+$/ {residual = $2} END {print residual}' "$1"
+}
+
 check_energy_close()
 {
     left=$1
@@ -180,28 +198,41 @@ check_energy_close()
 # arbitrary MPI sizes and is the path under test here.
 run_case normal_precg0 0 namelist_normal.def 1 serial
 run_case symmetry_precg0 0 namelist_symmetry.def
+run_case symmetry_staged_precg0 0 namelist_symmetry.def 1 mpi distributed
 run_case symmetry_precg1 1 namelist_symmetry.def
 run_case symmetry_exct4_precg0 0 namelist_symmetry.def 4
 run_case symmetry_exct4_precg1 1 namelist_symmetry.def 4
 
 check_convergence normal_precg0_steps.dat
 check_convergence symmetry_precg0_steps.dat
+check_convergence symmetry_staged_precg0_steps.dat
 check_convergence symmetry_precg1_steps.dat
 check_convergence symmetry_exct4_precg0_steps.dat
 check_convergence symmetry_exct4_precg1_steps.dat
 
 normal_energy=$(extract_energy normal_precg0_energy.dat)
 symmetry_precg0_energy=$(extract_energy symmetry_precg0_energy.dat)
+symmetry_staged_precg0_energy=$(extract_energy symmetry_staged_precg0_energy.dat)
 symmetry_precg1_energy=$(extract_energy symmetry_precg1_energy.dat)
 symmetry_exct4_precg0_energy=$(extract_energy symmetry_exct4_precg0_energy.dat)
 symmetry_exct4_precg1_energy=$(extract_energy symmetry_exct4_precg1_energy.dat)
+symmetry_precg0_residual=$(extract_residual symmetry_precg0_steps.dat)
+symmetry_staged_precg0_residual=$(
+    extract_residual symmetry_staged_precg0_steps.dat
+)
 test -n "${normal_energy}"
 test -n "${symmetry_precg0_energy}"
+test -n "${symmetry_staged_precg0_energy}"
 test -n "${symmetry_precg1_energy}"
 test -n "${symmetry_exct4_precg0_energy}"
 test -n "${symmetry_exct4_precg1_energy}"
+test -n "${symmetry_precg0_residual}"
+test -n "${symmetry_staged_precg0_residual}"
 
 check_energy_close "${symmetry_precg0_energy}" "${symmetry_precg1_energy}"
+check_energy_close "${symmetry_precg0_energy}" "${symmetry_staged_precg0_energy}"
+check_energy_close \
+    "${symmetry_precg0_residual}" "${symmetry_staged_precg0_residual}"
 check_energy_close "${normal_energy}" "${symmetry_precg0_energy}"
 check_energy_close "${normal_energy}" "${symmetry_precg1_energy}"
 check_energy_close "${normal_energy}" "${symmetry_exct4_precg0_energy}"
@@ -221,6 +252,29 @@ for log in symmetry_precg0.log symmetry_precg1.log; do
         exit 1
     fi
 done
+
+grep -q \
+    "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" \
+    symmetry_staged_precg0.log
+grep -q \
+    "Symmetry staged distributed matvec: global_rows=10" \
+    symmetry_staged_precg0.log
+grep -q "columns=local/ghost-slots" symmetry_staged_precg0.log
+if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
+   grep -q "MPI site separation summary" symmetry_staged_precg0.log; then
+    echo "Staged TransSym run entered an incompatible matvec path."
+    exit 1
+fi
+if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+       HPHI_SYMMETRY_MATVEC=legacy \
+       "${HPHI}" -e namelist_symmetry.def \
+       > staged_legacy_reject.log 2>&1; then
+    echo "Staged distributed symmetry unexpectedly accepted legacy matvec."
+    exit 1
+fi
+grep -q \
+    "staged distributed symmetry requires HPHI_SYMMETRY_MATVEC=plan" \
+    staged_legacy_reject.log
 
 for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
     grep -q \

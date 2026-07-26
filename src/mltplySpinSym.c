@@ -91,11 +91,24 @@ int mltplySpinSym(struct BindStruct *X,
   double complex prdct = 0.0;
   const double complex *full_v1 = NULL;
 
-  if (X == NULL || X->Sym == NULL ||
-      X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
+  if (X == NULL || X->Sym == NULL) {
+    return -1;
+  }
+  if (X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED &&
+      !(X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN &&
+        X->Sym->vector_exchange_mode ==
+            SYMMETRY_VECTOR_EXCHANGE_HALO &&
+        X->Sym->matvec_plan != NULL &&
+        X->Sym->matvec_plan->ready == TRUE &&
+        X->Sym->matvec_plan->columns_remapped == TRUE &&
+        X->Sym->matvec_plan->halo.ready == TRUE)) {
     fprintf(stdoutMPI,
-            "Error: distributed symmetry basis matvec is staged for "
-            "the B4 block plan.\n");
+            "Error: distributed symmetry basis matvec requires a "
+            "ready staged block plan and halo.\n");
+    return -1;
+  }
+  if (X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED &&
+      X->Sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED) {
     return -1;
   }
 

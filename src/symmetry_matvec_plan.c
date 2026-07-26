@@ -1332,6 +1332,94 @@ static int build_symmetry_matvec_plan_halo(
   return status;
 }
 
+static int finalize_distributed_plan_for_solver(
+    struct BindStruct *X)
+{
+  struct SymmetryMatvecPlan *plan;
+  size_t remapped_column_bytes;
+  size_t slot_bytes;
+  int mpi_active = SymmetryMpiCollectivesActive();
+  int local_error = 0;
+  if (X == NULL || X->Sym == NULL ||
+      X->Sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED ||
+      X->Check.idim_max != X->Sym->local_dim ||
+      X->Check.idim_maxMPI != X->Sym->dim ||
+      X->Sym->mpi_full_v1 != NULL ||
+      X->Sym->mpi_recvcounts != NULL ||
+      X->Sym->mpi_displs != NULL) {
+    local_error = 1;
+  }
+  plan = local_error == 0 ? X->Sym->matvec_plan : NULL;
+  if (plan == NULL || plan->ready != TRUE ||
+      plan->columns_remapped == TRUE ||
+      plan->halo.ready == TRUE ||
+      plan->dim != X->Sym->dim ||
+      plan->local_offset != X->Sym->local_offset ||
+      plan->local_dim != X->Sym->local_dim) {
+    local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+  if (build_symmetry_matvec_plan_halo(
+          plan, nproc, myrank) != 0) {
+    return -1;
+  }
+  if (RemapSymmetryMatvecPlanColumns(plan) != 0) {
+    local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+  slot_bytes =
+      plan->column_slot_width == SYMMETRY_COLUMN_U32
+          ? sizeof(uint32_t) : sizeof(uint64_t);
+  if (SymmetryCheckedSizeMul(
+          plan->nnz, slot_bytes,
+          &remapped_column_bytes) != 0 ||
+      plan->matrix_storage_bytes <
+          plan->column_storage_bytes ||
+      plan->matrix_storage_bytes -
+              plan->column_storage_bytes >
+          SIZE_MAX - remapped_column_bytes) {
+    local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+  plan->matrix_storage_bytes =
+      plan->matrix_storage_bytes -
+      plan->column_storage_bytes +
+      remapped_column_bytes;
+  plan->column_storage_bytes = remapped_column_bytes;
+  X->Sym->matvec_mode = SYMMETRY_MATVEC_MODE_PLAN;
+  X->Sym->vector_exchange_mode =
+      SYMMETRY_VECTOR_EXCHANGE_HALO;
+  fprintf(stdoutMPI,
+          "Symmetry staged distributed matvec: "
+          "global_rows=%lu local_rows=%lu blocks=%zu local_nnz=%zu "
+          "ghost_count=%zu columns=local/ghost-slots.\n",
+          plan->dim, plan->local_dim, plan->block_count,
+          plan->nnz, plan->halo.ghost_count);
+  return 0;
+}
+
+int BuildSymmetryDistributedMatvecPlanForSolverWithOptions(
+    struct BindStruct *X,
+    const struct SymmetryDistributedMatvecPlanOptions *options)
+{
+  if (BuildSymmetryDistributedMatvecPlanWithOptions(
+          X, options) != 0) {
+    return -1;
+  }
+  if (finalize_distributed_plan_for_solver(X) != 0) {
+    FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
+    X->Sym->matvec_plan = NULL;
+    return -1;
+  }
+  return 0;
+}
+
+int BuildSymmetryDistributedMatvecPlan(struct BindStruct *X)
+{
+  return BuildSymmetryDistributedMatvecPlanForSolverWithOptions(
+      X, NULL);
+}
+
 static int remap_symmetry_matvec_block_columns(
     const struct SymmetryMatvecPlan *plan,
     const struct SymmetryMatvecBlockView *view,

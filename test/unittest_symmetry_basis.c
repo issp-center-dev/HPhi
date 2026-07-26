@@ -4160,6 +4160,109 @@ static void assert_c3_plan_matches_replicated(
   }
 }
 
+static double complex c4_fixed_input_value(
+    unsigned long int global_beta)
+{
+  return 0.125 * (double)global_beta +
+      I * 0.0625 * (double)(global_beta + 1UL);
+}
+
+static void assert_c4_distributed_solver_plan(
+    struct BindStruct *X,
+    const size_t *reference_row_ptr,
+    const unsigned long int *reference_columns,
+    const double complex *reference_values,
+    unsigned long int reference_local_offset,
+    unsigned long int reference_local_dim,
+    const char *label)
+{
+  struct SymmetryDistributedMatvecPlanOptions options;
+  double complex *input;
+  double complex *output;
+  double complex *expected;
+  double complex expected_prdct = 0.0;
+  unsigned long int local_row;
+  size_t vector_count =
+      reference_local_dim == 0UL
+          ? 1U : (size_t)reference_local_dim + 1U;
+  memset(&options, 0, sizeof(options));
+  options.global_rows_per_block = 1UL;
+  options.block_memory_byte_limit =
+      HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
+  input = (double complex *)calloc(vector_count, sizeof(*input));
+  output = (double complex *)calloc(vector_count, sizeof(*output));
+  expected = (double complex *)calloc(vector_count, sizeof(*expected));
+  if (input == NULL || output == NULL || expected == NULL) {
+    fprintf(stderr, "%s: C4 fixed-vector allocation failed\n", label);
+    exit(1);
+  }
+  for (local_row = 0UL;
+       local_row < reference_local_dim; local_row++) {
+    size_t p;
+    unsigned long int global_alpha =
+        reference_local_offset + local_row + 1UL;
+    input[local_row + 1UL] =
+        c4_fixed_input_value(global_alpha);
+    for (p = reference_row_ptr[local_row];
+         p < reference_row_ptr[local_row + 1UL]; p++) {
+      expected[local_row + 1UL] +=
+          reference_values[p] *
+          c4_fixed_input_value(reference_columns[p]);
+    }
+    expected_prdct +=
+        conj(input[local_row + 1UL]) *
+        expected[local_row + 1UL];
+  }
+  if (BuildSymmetryDistributedMatvecPlanForSolverWithOptions(
+          X, &options) != 0) {
+    fprintf(stderr, "%s: C4 solver plan build failed\n", label);
+    exit(1);
+  }
+  assert_int_eq(
+      X->Sym->matvec_plan != NULL &&
+          X->Sym->matvec_plan->ready == TRUE &&
+          X->Sym->matvec_plan->columns_remapped == TRUE &&
+          X->Sym->matvec_plan->halo.ready == TRUE,
+      1, label);
+  assert_int_eq(
+      X->Sym->matvec_mode == SYMMETRY_MATVEC_MODE_PLAN &&
+          X->Sym->vector_exchange_mode ==
+              SYMMETRY_VECTOR_EXCHANGE_HALO,
+      1, label);
+  assert_int_eq(
+      X->Sym->mpi_full_v1 == NULL &&
+          X->Sym->mpi_recvcounts == NULL &&
+          X->Sym->mpi_displs == NULL,
+      1, "distributed solver plan allocates no full vector state");
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(
+          X->Sym->matvec_plan),
+      reference_local_dim == 0UL ? 1UL : reference_local_dim,
+      label);
+  X->Large.prdct = 0.0;
+  assert_int_eq(mltplySpinSym(X, output, input), 0, label);
+  for (local_row = 0UL;
+       local_row < reference_local_dim; local_row++) {
+    assert_complex_bitwise(
+        output[local_row + 1UL],
+        expected[local_row + 1UL],
+        "distributed halo Hv is bitwise exact");
+  }
+  assert_complex_close(
+      X->Large.prdct, expected_prdct, 1.0e-13,
+      "distributed halo local prdct");
+  assert_int_eq(
+      X->Sym->matvec_plan->matvec_calls == 1ULL &&
+          X->Sym->matvec_plan->halo.exchange_calls == 1ULL &&
+          X->Sym->matvec_plan->input_allgather_calls == 0ULL,
+      1, label);
+  FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
+  X->Sym->matvec_plan = NULL;
+  free(input);
+  free(output);
+  free(expected);
+}
+
 static void assert_c6_full_basis_directory_batch(
     struct SymmetryBasisRuntime *sym,
     const struct SymmetryBasisVector *reference_basis,
@@ -4667,6 +4770,10 @@ static void assert_c5_distributed_layout_model(
       TRUE, label);
   assert_int_eq(
       SymmetryBasisRepresentativeDirectoryReady(X.Sym), TRUE, label);
+  assert_c4_distributed_solver_plan(
+      &X, reference_row_ptr, reference_columns,
+      reference_values, reference_local_offset,
+      reference_local_dim, label);
   assert_int_eq(
       SymmetryCanonicalizeState(&X, 0UL, &canonical), -1, label);
   assert_int_eq(
