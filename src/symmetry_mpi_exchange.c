@@ -739,8 +739,10 @@ static int exchange_checked_payload(
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
     use_chunked =
-        layout_requires_chunking(send_layout, &next_result, chunk_limit,
-                                 force_chunked);
+        local_error == 0
+            ? layout_requires_chunking(send_layout, &next_result, chunk_limit,
+                                       force_chunked)
+            : TRUE;
     if (MPI_Allreduce(&use_chunked, &global_use_chunked, 1, MPI_INT, MPI_MAX,
                       MPI_COMM_WORLD) != MPI_SUCCESS) {
       goto fail;

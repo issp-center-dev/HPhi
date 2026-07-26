@@ -923,7 +923,8 @@ static int resolve_representative_batch_with_options(
   uint64_t *send_counts = NULL;
   uint64_t *send_displacements = NULL;
   size_t byte_limit = (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
-  size_t request_count_size = 0U;
+  size_t input_request_count_size = 0U;
+  size_t received_request_count_size = 0U;
   size_t schedule_bytes = 0U;
   size_t packed_bytes = 0U;
   size_t owner_response_bytes = 0U;
@@ -961,9 +962,10 @@ static int resolve_representative_batch_with_options(
       directory->rank != comm_rank || directory->nrank != comm_size ||
       (request_count > 0U &&
        (request_keys == NULL || global_beta == NULL || norm == NULL)) ||
-      SymmetryCheckedU64ToSize(request_count, &request_count_size) != 0 ||
-      request_count_size > SIZE_MAX / sizeof(unsigned long int) ||
-      request_count_size > SIZE_MAX / sizeof(double)) {
+      SymmetryCheckedU64ToSize(
+          request_count, &input_request_count_size) != 0 ||
+      input_request_count_size > SIZE_MAX / sizeof(unsigned long int) ||
+      input_request_count_size > SIZE_MAX / sizeof(double)) {
     local_error = 1;
   }
   if (local_error == 0) {
@@ -1003,7 +1005,8 @@ static int resolve_representative_batch_with_options(
 
   if (SymmetryCheckedSizeMul((size_t)directory->nrank, sizeof(uint64_t),
                              &schedule_bytes) != 0 ||
-      SymmetryCheckedSizeMul(request_count_size, sizeof(unsigned long int),
+      SymmetryCheckedSizeMul(input_request_count_size,
+                             sizeof(unsigned long int),
                              &packed_bytes) != 0 ||
       SymmetryCheckedSizeMul(schedule_bytes, 2U, &live_bytes) != 0 ||
       directory_memory_add(live_bytes, packed_bytes, byte_limit,
@@ -1076,8 +1079,8 @@ static int resolve_representative_batch_with_options(
       directory_memory_add(live_bytes, received_request_bytes, byte_limit,
                            &live_bytes) != 0 ||
       SymmetryCheckedU64ToSize(received_requests.count,
-                              &request_count_size) != 0 ||
-      SymmetryCheckedSizeMul(request_count_size,
+                              &received_request_count_size) != 0 ||
+      SymmetryCheckedSizeMul(received_request_count_size,
                              sizeof(*owner_responses),
                              &owner_response_bytes) != 0 ||
       directory_memory_add(live_bytes, owner_response_bytes, byte_limit,
