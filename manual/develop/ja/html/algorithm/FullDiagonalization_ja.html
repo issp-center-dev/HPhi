@@ -46,7 +46,11 @@
 固有ベクトル<span class="math notranslate nohighlight">\(|\Phi_i\rangle\)</span>を求める
 ことができます(<span class="math notranslate nohighlight">\(i=1 \cdots N\)</span>)。なお、対角化ではlapackの<strong>dsyev</strong>また
 <strong>zheev</strong>を用いています。 また、有限温度計算用に各固有エネルギー状態の
-期待値<span class="math notranslate nohighlight">\(\langle A_i\rangle \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle\)</span>を計算・出力するようにしています。</p>
+期待値<span class="math notranslate nohighlight">\(\langle A_i\rangle \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle\)</span>を計算・出力するようにしています。
+対角化バックエンドとして、LAPACKのほかにScaLAPACK、MAGMA (GPU)、
+ELPA (マルチノード対応、CPU/GPU) を <code class="docutils literal notranslate"><span class="pre">Solver</span></code> キーワードで選択できます。
+並列アルゴリズムの詳細と速度比較は <a class="reference internal" href="../technical/parallel_fulldiag_ja.html#sec-parallelfulldiag"><span class="std std-ref">並列全対角化</span></a> を
+参照してください。</p>
 </section>
 <section id="id3">
 <h2><span class="section-number">5.2.2. </span>有限温度物理量の計算<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>

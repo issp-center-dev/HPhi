@@ -1,13 +1,22 @@
 var green__output_8c =
 [
+    [ "GreenOutputManifestRecord", "structGreenOutputManifestRecord.html", "structGreenOutputManifestRecord" ],
+    [ "GREEN_OUTPUT_NKIND", "green__output_8c.html#a82c93e3ba00ed7645a89dd5afb3a7281", null ],
+    [ "GreenOutputRename", "green__output_8c.html#a722964aa85f2e0494c630d8116257037", null ],
     [ "GreenOutputAggregateFamily", "green__output_8c.html#a08a6a0ee1229019d29f7590260fbb537", null ],
+    [ "GreenOutputClearPartialSuffix", "green__output_8c.html#a63d8bd642c886bc2140f01cfe8ae9b78", null ],
+    [ "GreenOutputCloseAggregate", "green__output_8c.html#a5983b362c0f4febffcbc812c4d83eeab", null ],
     [ "GreenOutputFileName", "green__output_8c.html#a3858a1bf63c520cb94639ff6677bf8e4", null ],
     [ "GreenOutputFormatForFamily", "green__output_8c.html#af62151627ba837cb3ec074278b90d1c9", null ],
     [ "GreenOutputInitializeAggregateFiles", "green__output_8c.html#aee427ef00f9bdb2ce7e8c9b0c8887181", null ],
     [ "GreenOutputInitializeTPQDataAggregateFiles", "green__output_8c.html#a165d3b65f33c24add58d5377333666a1", null ],
     [ "GreenOutputInitializeTPQDataFile", "green__output_8c.html#a9023f44be68f14e2cca1ca766d9711f2", null ],
+    [ "GreenOutputJoinOutputPath", "green__output_8c.html#ab6af121ff74d44473f928d07ed74e080", null ],
     [ "GreenOutputKindUsesAggregate", "green__output_8c.html#a44a8d4d2fe72879147da82a9cb0c3f6d", null ],
+    [ "GreenOutputMergePartials", "green__output_8c.html#aecc17bf744e454e3022d340f316b9089", null ],
+    [ "GreenOutputOpenAggregate", "green__output_8c.html#add6be1b5e588d731466598c946040b88", null ],
     [ "GreenOutputOpenMode", "green__output_8c.html#a78630330b0df26ce2486679925226ddb", null ],
+    [ "GreenOutputSetPartialSuffix", "green__output_8c.html#a347aee615816580da90186164f5b6a34", null ],
     [ "GreenOutputTPQDataBaseName", "green__output_8c.html#a094be63db73ef40cedd85c99317a8dcc", null ],
     [ "GreenOutputTPQDataFileName", "green__output_8c.html#a1c4072927fb1f19e96de20149422dec3", null ],
     [ "GreenOutputTPQDataHeader", "green__output_8c.html#a592cbde5a88f8e42ef10952cf7745919", null ],
@@ -17,5 +26,9 @@ var green__output_8c =
     [ "GreenOutputWriteIndexPrefix", "green__output_8c.html#ab8d4a5290861d4720b54ab23cd37e168", null ],
     [ "GreenOutputWriteTPQFlctRow", "green__output_8c.html#a4bfdab51b2a3f4fee2dbcdf4e0396164", null ],
     [ "GreenOutputWriteTPQNormRow", "green__output_8c.html#a90a8804f9a8b067aded14341246cb2db", null ],
-    [ "GreenOutputWriteTPQSSRow", "green__output_8c.html#a7c9cca6dea4cc3431c69b6eed7d9a87c", null ]
+    [ "GreenOutputWriteTPQSSRow", "green__output_8c.html#a7c9cca6dea4cc3431c69b6eed7d9a87c", null ],
+    [ "g_greenOutputCloseFailed", "green__output_8c.html#a07003ebe9ad6394ef111c1d3820fe971", null ],
+    [ "g_greenOutputManifest", "green__output_8c.html#abb40acb31fd324c892d5da598f285a3e", null ],
+    [ "g_greenOutputPartialActive", "green__output_8c.html#a54de61e292d3f09821834ee4430efcad", null ],
+    [ "g_greenOutputPartialRank", "green__output_8c.html#a26c7d7392aba9b3ecf30d797bd4db5ee", null ]
 ];

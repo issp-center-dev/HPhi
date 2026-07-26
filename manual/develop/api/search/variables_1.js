@@ -36,5 +36,6 @@ var searchData=
   ['beta_33',['beta',['../global_8c.html#a5c7b96103ba8c775791fd817c42782ae',1,'beta:&#160;global.c'],['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'beta:&#160;global.h']]],
   ['bind_34',['Bind',['../structEDMainCalStruct.html#ac28ad147bf75b9b2864d9feb74bd4d29',1,'EDMainCalStruct']]],
   ['bit1diff_35',['bit1diff',['../structMPITransferGroup.html#a9c421c95245ae78449b9b4ffc00014e5',1,'MPITransferGroup']]],
-  ['boost_36',['Boost',['../structBindStruct.html#ad957788ed202e9244b96c1a6e531ff15',1,'BindStruct']]]
+  ['boost_36',['Boost',['../structBindStruct.html#ad957788ed202e9244b96c1a6e531ff15',1,'BindStruct']]],
+  ['bytes_37',['bytes',['../structGreenOutputManifestRecord.html#a1e64ffc6533b6e10d251fa26d7f6e2e1',1,'GreenOutputManifestRecord']]]
 ];

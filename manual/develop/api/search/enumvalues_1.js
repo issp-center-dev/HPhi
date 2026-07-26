@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['offdiag_5fshift_5fmodel_5fnot_5fallowed_0',['OFFDIAG_SHIFT_MODEL_NOT_ALLOWED',['../ExcitationSectorShift_8h.html#a8b74493070ccaced5cc7a67292d9e71fa3155731fd0bddd82fc746bea079b2dc1',1,'ExcitationSectorShift.h']]],
-  ['offdiag_5fshift_5fok_1',['OFFDIAG_SHIFT_OK',['../ExcitationSectorShift_8h.html#a8b74493070ccaced5cc7a67292d9e71fa5c75d04dc501499cd72dc316d6c17c9c',1,'ExcitationSectorShift.h']]],
-  ['offdiag_5fshift_5fset_5finconsistent_2',['OFFDIAG_SHIFT_SET_INCONSISTENT',['../ExcitationSectorShift_8h.html#a8b74493070ccaced5cc7a67292d9e71fa0f0e67f93241fa2cd014a034914cf08d',1,'ExcitationSectorShift.h']]]
+  ['ham_5fsink_5fdense_5fpanel_0',['HAM_SINK_DENSE_PANEL',['../hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a66b511bf37d385b2a676101e644bad48',1,'hamstore.h']]],
+  ['ham_5fsink_5fdense_5freplicated_1',['HAM_SINK_DENSE_REPLICATED',['../hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a028d2b12563c573a0f3a60e7a8d4d2fc',1,'hamstore.h']]],
+  ['ham_5fsink_5ftrace_5fcollect_2',['HAM_SINK_TRACE_COLLECT',['../hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96',1,'hamstore.h']]]
 ];

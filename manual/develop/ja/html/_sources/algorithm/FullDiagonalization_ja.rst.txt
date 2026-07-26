@@ -14,6 +14,10 @@
 ことができます(\ :math:`i=1 \cdots N`)。なお、対角化ではlapackの\ **dsyev**\ また
 **zheev**\ を用いています。 また、有限温度計算用に各固有エネルギー状態の
 期待値\ :math:`\langle A_i\rangle \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle`\ を計算・出力するようにしています。
+対角化バックエンドとして、LAPACKのほかにScaLAPACK、MAGMA (GPU)、
+ELPA (マルチノード対応、CPU/GPU) を ``Solver`` キーワードで選択できます。
+並列アルゴリズムの詳細と速度比較は :ref:`Sec:ParallelFullDiag` を
+参照してください。
 
 有限温度物理量の計算
 ~~~~~~~~~~~~~~~~~~~~

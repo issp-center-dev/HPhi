@@ -10,6 +10,7 @@ var annotated_dup =
     [ "EDMainCalStruct", "structEDMainCalStruct.html", "structEDMainCalStruct" ],
     [ "ExcitationOperatorSet", "structExcitationOperatorSet.html", "structExcitationOperatorSet" ],
     [ "FillEntriesContext", "structFillEntriesContext.html", "structFillEntriesContext" ],
+    [ "GreenOutputManifestRecord", "structGreenOutputManifestRecord.html", "structGreenOutputManifestRecord" ],
     [ "LargeList", "structLargeList.html", "structLargeList" ],
     [ "LegacyApplyContext", "structLegacyApplyContext.html", "structLegacyApplyContext" ],
     [ "MPIBatchedDoubleTransfers", "structMPIBatchedDoubleTransfers.html", "structMPIBatchedDoubleTransfers" ],
@@ -31,5 +32,10 @@ var annotated_dup =
     [ "SymmetryTransformResult", "structSymmetryTransformResult.html", "structSymmetryTransformResult" ],
     [ "SymmetryVectorHaloPlan", "structSymmetryVectorHaloPlan.html", "structSymmetryVectorHaloPlan" ],
     [ "TimeKeepStruct", "structTimeKeepStruct.html", "structTimeKeepStruct" ],
+    [ "TraceCap", "structTraceCap.html", "structTraceCap" ],
+    [ "TraceEnt", "structTraceEnt.html", "structTraceEnt" ],
+    [ "TraceExecutionPlan", "structTraceExecutionPlan.html", "structTraceExecutionPlan" ],
+    [ "TraceHamCsr", "structTraceHamCsr.html", "structTraceHamCsr" ],
+    [ "TraceMap", "structTraceMap.html", "structTraceMap" ],
     [ "W128_T", "unionW128__T.html", "unionW128__T" ]
 ];

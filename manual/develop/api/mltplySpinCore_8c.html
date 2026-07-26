@@ -129,6 +129,7 @@ $(document).ready(function(){initNavTree('mltplySpinCore_8c.html',''); initResiz
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mltplyCommon_8h_source.html">mltplyCommon.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mltplySpinCore_8h_source.html">mltplySpinCore.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="expec__trace__internal_8h_source.html">expec_trace_internal.h</a>&quot;</code><br />
 </div>
 <p><a href="mltplySpinCore_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -155,9 +156,21 @@ Functions</h2></td></tr>
 <tr class="memitem:a41916bf1a6d03cf600325cff1761e93b" id="r_a41916bf1a6d03cf600325cff1761e93b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a41916bf1a6d03cf600325cff1761e93b">child_SpinGC_CisAit</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int sigma2, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a41916bf1a6d03cf600325cff1761e93b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute index of final wavefunction by \(c_{is}^\dagger c_{it}\) term (grandcanonical).  <br /></td></tr>
 <tr class="separator:a41916bf1a6d03cf600325cff1761e93b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dbad07e3c69e553d6fb89033b249484" id="r_a2dbad07e3c69e553d6fb89033b249484"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a2dbad07e3c69e553d6fb89033b249484">child_Spin_CisAis_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int sigma1, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a2dbad07e3c69e553d6fb89033b249484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#afa391aad3a8b7239d8feb010f2e51724" title="Compute the spin state with bit mask is1_spin.">child_Spin_CisAis</a> (canonical half-spin diagonal one-body). The underlying function is already a pure map, so the probe simply reports it: diagonal, always returns 1 with *kprime_out = j-1 and *amp_out the 0/1 spin match.  <br /></td></tr>
+<tr class="separator:a2dbad07e3c69e553d6fb89033b249484"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2e22ef753aee456959c4f4b5dc06e2c" id="r_ab2e22ef753aee456959c4f4b5dc06e2c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#ab2e22ef753aee456959c4f4b5dc06e2c">child_SpinGC_CisAis_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int sigma1, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ab2e22ef753aee456959c4f4b5dc06e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a4feba938bc2bbe410ee848a831c24032" title="Compute the grandcanonical spin state with bit mask is1_spin.">child_SpinGC_CisAis</a> (grand-canonical half-spin diagonal one-body).  <br /></td></tr>
+<tr class="separator:ab2e22ef753aee456959c4f4b5dc06e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7db368627c24d0c750ebf9ac4885b84" id="r_ae7db368627c24d0c750ebf9ac4885b84"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#ae7db368627c24d0c750ebf9ac4885b84">child_SpinGC_CisAit_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int sigma2, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ae7db368627c24d0c750ebf9ac4885b84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a41916bf1a6d03cf600325cff1761e93b" title="Compute index of final wavefunction by  term (grandcanonical).">child_SpinGC_CisAit</a> (grand-canonical half-spin transverse off-diagonal one-body). Bare-bit flip: on a surviving flip *kprime_out = tmp_off (0-based) and *amp_out = the sign (+1); otherwise annihilated.  <br /></td></tr>
+<tr class="separator:ae7db368627c24d0c750ebf9ac4885b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8d9ff66fbba2ea1e0292ed3513eb5a2" id="r_af8d9ff66fbba2ea1e0292ed3513eb5a2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#af8d9ff66fbba2ea1e0292ed3513eb5a2">child_exchange_spin_element</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int isA_up, long unsigned int isB_up, long unsigned int sigmaA, long unsigned int sigmaB, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:af8d9ff66fbba2ea1e0292ed3513eb5a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute index of final wavefunction associated to spin-exchange term.  <br /></td></tr>
 <tr class="separator:af8d9ff66fbba2ea1e0292ed3513eb5a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7606c8ccfb476f1a3beb0d040719cb0" id="r_ad7606c8ccfb476f1a3beb0d040719cb0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#ad7606c8ccfb476f1a3beb0d040719cb0">child_exchange_spin_element_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int isA_up, long unsigned int isB_up, long unsigned int sigmaA, long unsigned int sigmaB, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ad7606c8ccfb476f1a3beb0d040719cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#af8d9ff66fbba2ea1e0292ed3513eb5a2" title="Compute index of final wavefunction associated to spin-exchange term.">child_exchange_spin_element</a> (canonical half-spin two-body EXCHANGE branch). The underlying function is already a pure map (GetOffComp yields a 1-based canonical index), so the probe reports kprime_out = tmp_off-1 and *amp_out = the 0/1 exchange sign. NOTE: the Mode-1 caller (expec_cisajscktalt_SpinHalf's exchange branch) multiplies this contribution by the raw sign ONLY, deliberately NOT by tmp_V &ndash; so this probe reports the bare sign and the extraction driver does not reintroduce tmp_V. See docs/superpowers/specs/2026-07-11-expec-call-inventory.md 2c.  <br /></td></tr>
+<tr class="separator:ad7606c8ccfb476f1a3beb0d040719cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdf3cb4929eee3b1879224a708802486" id="r_acdf3cb4929eee3b1879224a708802486"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#acdf3cb4929eee3b1879224a708802486">exchange_spin_element</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:acdf3cb4929eee3b1879224a708802486"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply Hamiltonian of exchange term of canonical spin system.  <br /></td></tr>
 <tr class="separator:acdf3cb4929eee3b1879224a708802486"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,21 +180,46 @@ Functions</h2></td></tr>
 <tr class="memitem:a36740b19457d534ed5accece1cb7191e" id="r_a36740b19457d534ed5accece1cb7191e"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a36740b19457d534ed5accece1cb7191e">GC_pairlift_spin_element</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a36740b19457d534ed5accece1cb7191e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply Hamiltonian of pairlift term of grandcanonical spin system.  <br /></td></tr>
 <tr class="separator:a36740b19457d534ed5accece1cb7191e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94e13abc311abd6e8775a12d542d90eb" id="r_a94e13abc311abd6e8775a12d542d90eb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a94e13abc311abd6e8775a12d542d90eb">CisAisCisAis_spin_element_map</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out)</td></tr>
+<tr class="memdesc:a94e13abc311abd6e8775a12d542d90eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical spsin system.  <br /></td></tr>
+<tr class="separator:a94e13abc311abd6e8775a12d542d90eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71ab37f19c6244a83c3d2d6c275452a8" id="r_a71ab37f19c6244a83c3d2d6c275452a8"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a71ab37f19c6244a83c3d2d6c275452a8">CisAisCisAis_spin_element</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
-<tr class="memdesc:a71ab37f19c6244a83c3d2d6c275452a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical spsin system.  <br /></td></tr>
 <tr class="separator:a71ab37f19c6244a83c3d2d6c275452a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc9f2bbb831cc2b2ccb69890405f2e8b" id="r_adc9f2bbb831cc2b2ccb69890405f2e8b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#adc9f2bbb831cc2b2ccb69890405f2e8b">CisAisCisAis_spin_element_TraceProbe</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:adc9f2bbb831cc2b2ccb69890405f2e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a71ab37f19c6244a83c3d2d6c275452a8">CisAisCisAis_spin_element</a> (canonical half-spin diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match.  <br /></td></tr>
+<tr class="separator:adc9f2bbb831cc2b2ccb69890405f2e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93aab9985d18fab7601f27ea0c03fe89" id="r_a93aab9985d18fab7601f27ea0c03fe89"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a93aab9985d18fab7601f27ea0c03fe89">GC_CisAisCisAis_spin_element_map</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out)</td></tr>
+<tr class="memdesc:a93aab9985d18fab7601f27ea0c03fe89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical spsin system.  <br /></td></tr>
+<tr class="separator:a93aab9985d18fab7601f27ea0c03fe89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34add9562270d08b67c2f8479d02e5e4" id="r_a34add9562270d08b67c2f8479d02e5e4"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a34add9562270d08b67c2f8479d02e5e4">GC_CisAisCisAis_spin_element</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
-<tr class="memdesc:a34add9562270d08b67c2f8479d02e5e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical spsin system.  <br /></td></tr>
 <tr class="separator:a34add9562270d08b67c2f8479d02e5e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60216f3756e43f9af0d00299a7fdefc9" id="r_a60216f3756e43f9af0d00299a7fdefc9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a60216f3756e43f9af0d00299a7fdefc9">GC_CisAisCisAis_spin_element_TraceProbe</a> (long unsigned int j, long unsigned int isA_up, long unsigned int isB_up, long unsigned int org_sigma2, long unsigned int org_sigma4, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a60216f3756e43f9af0d00299a7fdefc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a34add9562270d08b67c2f8479d02e5e4">GC_CisAisCisAis_spin_element</a> (SpinGC-half diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match. The H_CORR branch is never used by extraction (M_CORR only).  <br /></td></tr>
+<tr class="separator:a60216f3756e43f9af0d00299a7fdefc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb9f4b04962db69ce619ca66a7241d92" id="r_acb9f4b04962db69ce619ca66a7241d92"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#acb9f4b04962db69ce619ca66a7241d92">GC_CisAisCitAiu_spin_element_map</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:acb9f4b04962db69ce619ca66a7241d92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}\) term of grandcanonical spsin system.  <br /></td></tr>
+<tr class="separator:acb9f4b04962db69ce619ca66a7241d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7662bcf7b09d3bf784ef7d30d4b6407" id="r_ad7662bcf7b09d3bf784ef7d30d4b6407"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#ad7662bcf7b09d3bf784ef7d30d4b6407">GC_CisAisCitAiu_spin_element</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:ad7662bcf7b09d3bf784ef7d30d4b6407"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}\) term of grandcanonical spsin system.  <br /></td></tr>
 <tr class="separator:ad7662bcf7b09d3bf784ef7d30d4b6407"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21a1b12e729474506c6738df91b1ade7" id="r_a21a1b12e729474506c6738df91b1ade7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a21a1b12e729474506c6738df91b1ade7">GC_CisAisCitAiu_spin_element_TraceProbe</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a21a1b12e729474506c6738df91b1ade7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#ad7662bcf7b09d3bf784ef7d30d4b6407">GC_CisAisCitAiu_spin_element</a> (SpinGC-half two-body).  <br /></td></tr>
+<tr class="separator:a21a1b12e729474506c6738df91b1ade7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a317ba317e16c612364a976a079e18951" id="r_a317ba317e16c612364a976a079e18951"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a317ba317e16c612364a976a079e18951">GC_CisAitCiuAiu_spin_element_map</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:a317ba317e16c612364a976a079e18951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}\) term of grandcanonical spsin system.  <br /></td></tr>
+<tr class="separator:a317ba317e16c612364a976a079e18951"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a8d0dd431bf41ac40dea976ff35d505" id="r_a4a8d0dd431bf41ac40dea976ff35d505"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a4a8d0dd431bf41ac40dea976ff35d505">GC_CisAitCiuAiu_spin_element</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:a4a8d0dd431bf41ac40dea976ff35d505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}\) term of grandcanonical spsin system.  <br /></td></tr>
 <tr class="separator:a4a8d0dd431bf41ac40dea976ff35d505"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac9ae65a7750e84840c6ab47601fb431" id="r_aac9ae65a7750e84840c6ab47601fb431"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#aac9ae65a7750e84840c6ab47601fb431">GC_CisAitCiuAiu_spin_element_TraceProbe</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:aac9ae65a7750e84840c6ab47601fb431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a4a8d0dd431bf41ac40dea976ff35d505">GC_CisAitCiuAiu_spin_element</a> (SpinGC-half two-body).  <br /></td></tr>
+<tr class="separator:aac9ae65a7750e84840c6ab47601fb431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a314c078d1abfc494e8748e236c81ebb1" id="r_a314c078d1abfc494e8748e236c81ebb1"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a314c078d1abfc494e8748e236c81ebb1">GC_CisAitCiuAiv_spin_element_map</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2, long int *kprime_out)</td></tr>
+<tr class="memdesc:a314c078d1abfc494e8748e236c81ebb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}\) term of grandcanonical spsin system.  <br /></td></tr>
+<tr class="separator:a314c078d1abfc494e8748e236c81ebb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa65099432ed6d81a10637f5007139732" id="r_aa65099432ed6d81a10637f5007139732"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#aa65099432ed6d81a10637f5007139732">GC_CisAitCiuAiv_spin_element</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2)</td></tr>
-<tr class="memdesc:aa65099432ed6d81a10637f5007139732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}\) term of grandcanonical spsin system.  <br /></td></tr>
 <tr class="separator:aa65099432ed6d81a10637f5007139732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a985984475e5ecc98d5017d8fda3bc260" id="r_a985984475e5ecc98d5017d8fda3bc260"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplySpinCore_8c.html#a985984475e5ecc98d5017d8fda3bc260">GC_CisAitCiuAiv_spin_element_TraceProbe</a> (long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4, long unsigned int isA_up, long unsigned int isB_up, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a985984475e5ecc98d5017d8fda3bc260"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#aa65099432ed6d81a10637f5007139732">GC_CisAitCiuAiv_spin_element</a> (SpinGC-half two-body).  <br /></td></tr>
+<tr class="separator:a985984475e5ecc98d5017d8fda3bc260"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Core functions for spin model Hamiltonian operations. </p>
@@ -286,11 +324,83 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00283">283</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00334">334</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00963">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01224">general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00372">child_exchange_spin_element_TraceProbe()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00847">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01224">general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="ad7606c8ccfb476f1a3beb0d040719cb0" name="ad7606c8ccfb476f1a3beb0d040719cb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7606c8ccfb476f1a3beb0d040719cb0">&#9670;&#160;</a></span>child_exchange_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int child_exchange_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sigmaA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sigmaB</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#af8d9ff66fbba2ea1e0292ed3513eb5a2" title="Compute index of final wavefunction associated to spin-exchange term.">child_exchange_spin_element</a> (canonical half-spin two-body EXCHANGE branch). The underlying function is already a pure map (GetOffComp yields a 1-based canonical index), so the probe reports kprime_out = tmp_off-1 and *amp_out = the 0/1 exchange sign. NOTE: the Mode-1 caller (expec_cisajscktalt_SpinHalf's exchange branch) multiplies this contribution by the raw sign ONLY, deliberately NOT by tmp_V &ndash; so this probe reports the bare sign and the extraction driver does not reintroduce tmp_V. See docs/superpowers/specs/2026-07-11-expec-call-inventory.md 2c. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00372">372</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00334">child_exchange_spin_element()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -347,11 +457,71 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00210">210</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00211">211</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00141">list_1</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00436">CisAisCisAis_spin_element()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00524">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00963">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="PairExSpin_8c_source.html#l00267">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01295">SetDiagonalInterAll()</a>, and <a class="el" href="diagonalcalc_8c_source.html#l01682">SetDiagonalTEInterAll()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00280">child_Spin_CisAis_TraceProbe()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00518">CisAisCisAis_spin_element_map()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00530">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00847">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="PairExSpin_8c_source.html#l00267">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01295">SetDiagonalInterAll()</a>, and <a class="el" href="diagonalcalc_8c_source.html#l01682">SetDiagonalTEInterAll()</a>.</p>
+
+</div>
+</div>
+<a id="a2dbad07e3c69e553d6fb89033b249484" name="a2dbad07e3c69e553d6fb89033b249484"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dbad07e3c69e553d6fb89033b249484">&#9670;&#160;</a></span>child_Spin_CisAis_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int child_Spin_CisAis_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sigma1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#afa391aad3a8b7239d8feb010f2e51724" title="Compute the spin state with bit mask is1_spin.">child_Spin_CisAis</a> (canonical half-spin diagonal one-body). The underlying function is already a pure map, so the probe simply reports it: diagonal, always returns 1 with *kprime_out = j-1 and *amp_out the 0/1 spin match. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00280">280</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00211">child_Spin_CisAis()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>, and <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -436,9 +606,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00182">182</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00183">183</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00247">child_SpinGC_CisAit()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="PairExSpin_8c_source.html#l00267">GetPairExcitedStateHalfSpin()</a>.</p>
 
@@ -497,9 +667,69 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00227">227</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00228">228</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyMPISpinCore_8c_source.html#l00413">child_GC_CisAisCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00469">child_GC_CisAisCjuAju_spin_MPIsingle()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00217">child_GC_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00320">child_GC_CisAitCjuAju_spin_MPIdouble()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00670">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00524">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00963">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00471">GC_CisAisCisAis_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00510">GC_CisAisCitAiu_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00549">GC_CisAitCiuAiu_spin_element()</a>, <a class="el" href="PairExSpin_8c_source.html#l00267">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="PairExSpin_8c_source.html#l00067">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00570">mltplyHalfSpinGC_mini()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01295">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01682">SetDiagonalTEInterAll()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00261">totalspin_Spin()</a>, and <a class="el" href="expec__totalspin_8c_source.html#l00454">totalspin_SpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyMPISpinCore_8c_source.html#l00413">child_GC_CisAisCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00469">child_GC_CisAisCjuAju_spin_MPIsingle()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00217">child_GC_CisAisCjuAjv_spin_MPIdouble()</a>, <a class="el" href="mltplyMPISpinCore_8c_source.html#l00320">child_GC_CisAitCjuAju_spin_MPIdouble()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00293">child_SpinGC_CisAis_TraceProbe()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00676">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00530">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00847">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00582">GC_CisAisCisAis_spin_element_map()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00650">GC_CisAisCitAiu_spin_element_map()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00728">GC_CisAitCiuAiu_spin_element_map()</a>, <a class="el" href="PairExSpin_8c_source.html#l00267">GetPairExcitedStateHalfSpin()</a>, <a class="el" href="PairExSpin_8c_source.html#l00067">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="mltplySpin_8c_source.html#l00570">mltplyHalfSpinGC_mini()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01295">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01682">SetDiagonalTEInterAll()</a>, <a class="el" href="expec__totalspin_8c_source.html#l00261">totalspin_Spin()</a>, and <a class="el" href="expec__totalspin_8c_source.html#l00454">totalspin_SpinGC()</a>.</p>
+
+</div>
+</div>
+<a id="ab2e22ef753aee456959c4f4b5dc06e2c" name="ab2e22ef753aee456959c4f4b5dc06e2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2e22ef753aee456959c4f4b5dc06e2c">&#9670;&#160;</a></span>child_SpinGC_CisAis_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int child_SpinGC_CisAis_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sigma1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a4feba938bc2bbe410ee848a831c24032" title="Compute the grandcanonical spin state with bit mask is1_spin.">child_SpinGC_CisAis</a> (grand-canonical half-spin diagonal one-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00293">293</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00228">child_SpinGC_CisAis()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -563,9 +793,69 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00247">247</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00248">248</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyMPISpinCore_8c_source.html#l00550">child_GC_CisAitCiuAiv_spin_MPIsingle()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00182">child_Spin_CisAit()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00670">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00510">GC_CisAisCitAiu_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00549">GC_CisAitCiuAiu_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00588">GC_CisAitCiuAiv_spin_element()</a>, <a class="el" href="PairExSpin_8c_source.html#l00067">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00570">mltplyHalfSpinGC_mini()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyMPISpinCore_8c_source.html#l00550">child_GC_CisAitCiuAiv_spin_MPIsingle()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00183">child_Spin_CisAit()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00307">child_SpinGC_CisAit_TraceProbe()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00676">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00650">GC_CisAisCitAiu_spin_element_map()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00728">GC_CisAitCiuAiu_spin_element_map()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00807">GC_CisAitCiuAiv_spin_element_map()</a>, <a class="el" href="PairExSpin_8c_source.html#l00067">GetPairExcitedStateHalfSpinGC()</a>, <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00570">mltplyHalfSpinGC_mini()</a>.</p>
+
+</div>
+</div>
+<a id="ae7db368627c24d0c750ebf9ac4885b84" name="ae7db368627c24d0c750ebf9ac4885b84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7db368627c24d0c750ebf9ac4885b84">&#9670;&#160;</a></span>child_SpinGC_CisAit_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int child_SpinGC_CisAit_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a41916bf1a6d03cf600325cff1761e93b" title="Compute index of final wavefunction by  term (grandcanonical).">child_SpinGC_CisAit</a> (grand-canonical half-spin transverse off-diagonal one-body). Bare-bit flip: on a surviving flip *kprime_out = tmp_off (0-based) and *amp_out = the sign (+1); otherwise annihilated. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00307">307</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -636,12 +926,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical spsin system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -657,11 +941,168 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00436">436</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00529">529</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00210">child_Spin_CisAis()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00518">CisAisCisAis_spin_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00963">expec_cisajscktalt_SpinHalf()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00847">expec_cisajscktalt_SpinHalf()</a>.</p>
+
+</div>
+</div>
+<a id="a94e13abc311abd6e8775a12d542d90eb" name="a94e13abc311abd6e8775a12d542d90eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94e13abc311abd6e8775a12d542d90eb">&#9670;&#160;</a></span>CisAisCisAis_spin_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAisCisAis_spin_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical spsin system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplySpinCore_8c.html#a71ab37f19c6244a83c3d2d6c275452a8">CisAisCisAis_spin_element</a> (canonical half-spin diagonal). </p><dl class="section return"><dt>Returns</dt><dd>signed spin-match product (0/1); kprime_out = j-1 (always valid). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00518">518</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00211">child_Spin_CisAis()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00529">CisAisCisAis_spin_element()</a>, and <a class="el" href="mltplySpinCore_8c_source.html#l00557">CisAisCisAis_spin_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="adc9f2bbb831cc2b2ccb69890405f2e8b" name="adc9f2bbb831cc2b2ccb69890405f2e8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc9f2bbb831cc2b2ccb69890405f2e8b">&#9670;&#160;</a></span>CisAisCisAis_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAisCisAis_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a71ab37f19c6244a83c3d2d6c275452a8">CisAisCisAis_spin_element</a> (canonical half-spin diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00557">557</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00518">CisAisCisAis_spin_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -725,11 +1166,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00317">317</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00395">395</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01158">exchange_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01158">exchange_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -789,11 +1230,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00079">79</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00080">80</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -864,12 +1305,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical spsin system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -885,11 +1320,168 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00471">471</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00593">593</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00227">child_SpinGC_CisAis()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00582">GC_CisAisCisAis_spin_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01913">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01607">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01383">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01769">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01797">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01491">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01267">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01653">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a93aab9985d18fab7601f27ea0c03fe89" name="a93aab9985d18fab7601f27ea0c03fe89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93aab9985d18fab7601f27ea0c03fe89">&#9670;&#160;</a></span>GC_CisAisCisAis_spin_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAisCisAis_spin_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical spsin system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplySpinCore_8c.html#a34add9562270d08b67c2f8479d02e5e4">GC_CisAisCisAis_spin_element</a> (grand-canonical diagonal). </p><dl class="section return"><dt>Returns</dt><dd>signed spin-match product (0/1); kprime_out = j-1 (always valid). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00582">582</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00228">child_SpinGC_CisAis()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00593">GC_CisAisCisAis_spin_element()</a>, and <a class="el" href="mltplySpinCore_8c_source.html#l00628">GC_CisAisCisAis_spin_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a60216f3756e43f9af0d00299a7fdefc9" name="a60216f3756e43f9af0d00299a7fdefc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60216f3756e43f9af0d00299a7fdefc9">&#9670;&#160;</a></span>GC_CisAisCisAis_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAisCisAis_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a34add9562270d08b67c2f8479d02e5e4">GC_CisAisCisAis_spin_element</a> (SpinGC-half diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match. The H_CORR branch is never used by extraction (M_CORR only). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00628">628</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00582">GC_CisAisCisAis_spin_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -966,12 +1558,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}\) term of grandcanonical spsin system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -988,11 +1574,174 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00510">510</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00667">667</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00227">child_SpinGC_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00247">child_SpinGC_CisAit()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00650">GC_CisAisCitAiu_spin_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01913">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01607">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01383">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01769">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01797">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01491">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01267">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01653">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="acb9f4b04962db69ce619ca66a7241d92" name="acb9f4b04962db69ce619ca66a7241d92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb9f4b04962db69ce619ca66a7241d92">&#9670;&#160;</a></span>GC_CisAisCitAiu_spin_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAisCitAiu_spin_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}\) term of grandcanonical spsin system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplySpinCore_8c.html#ad7662bcf7b09d3bf784ef7d30d4b6407">GC_CisAisCitAiu_spin_element</a>. child_SpinGC_CisAit (bare-bit *tmp_off) gated by child_SpinGC_CisAis. </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00650">650</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00228">child_SpinGC_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00667">GC_CisAisCitAiu_spin_element()</a>, and <a class="el" href="mltplySpinCore_8c_source.html#l00701">GC_CisAisCitAiu_spin_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a21a1b12e729474506c6738df91b1ade7" name="a21a1b12e729474506c6738df91b1ade7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21a1b12e729474506c6738df91b1ade7">&#9670;&#160;</a></span>GC_CisAisCitAiu_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAisCitAiu_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#ad7662bcf7b09d3bf784ef7d30d4b6407">GC_CisAisCitAiu_spin_element</a> (SpinGC-half two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00701">701</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00650">GC_CisAisCitAiu_spin_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1069,12 +1818,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}\) term of grandcanonical spsin system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1091,11 +1834,174 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00549">549</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00745">745</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00227">child_SpinGC_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00247">child_SpinGC_CisAit()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00728">GC_CisAitCiuAiu_spin_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01913">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01607">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01383">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01769">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01797">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01491">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01267">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01653">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a317ba317e16c612364a976a079e18951" name="a317ba317e16c612364a976a079e18951"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a317ba317e16c612364a976a079e18951">&#9670;&#160;</a></span>GC_CisAitCiuAiu_spin_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAitCiuAiu_spin_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}\) term of grandcanonical spsin system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplySpinCore_8c.html#a4a8d0dd431bf41ac40dea976ff35d505">GC_CisAitCiuAiu_spin_element</a>. child_SpinGC_CisAis gate then child_SpinGC_CisAit (bare-bit *tmp_off). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00728">728</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00228">child_SpinGC_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00745">GC_CisAitCiuAiu_spin_element()</a>, and <a class="el" href="mltplySpinCore_8c_source.html#l00779">GC_CisAitCiuAiu_spin_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="aac9ae65a7750e84840c6ab47601fb431" name="aac9ae65a7750e84840c6ab47601fb431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac9ae65a7750e84840c6ab47601fb431">&#9670;&#160;</a></span>GC_CisAitCiuAiu_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAitCiuAiu_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#a4a8d0dd431bf41ac40dea976ff35d505">GC_CisAitCiuAiu_spin_element</a> (SpinGC-half two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00779">779</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00728">GC_CisAitCiuAiu_spin_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1172,12 +2078,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}\) term of grandcanonical spsin system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1194,11 +2094,174 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00588">588</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00825">825</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00247">child_SpinGC_CisAit()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00807">GC_CisAitCiuAiv_spin_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00026">H_CORR</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01913">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01607">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01383">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01769">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01797">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01491">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01267">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01653">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="mltplySpin_8c_source.html#l01262">GC_general_int_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a314c078d1abfc494e8748e236c81ebb1" name="a314c078d1abfc494e8748e236c81ebb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a314c078d1abfc494e8748e236c81ebb1">&#9670;&#160;</a></span>GC_CisAitCiuAiv_spin_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAitCiuAiv_spin_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off_2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}\) term of grandcanonical spsin system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this}|v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplySpinCore_8c.html#aa65099432ed6d81a10637f5007139732">GC_CisAitCiuAiv_spin_element</a>. Two chained child_SpinGC_CisAit (intermediate bare-bit tmp_off_1, final bare-bit tmp_off_2). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off_2 on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00807">807</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplySpinCore_8c_source.html#l00825">GC_CisAitCiuAiv_spin_element()</a>, and <a class="el" href="mltplySpinCore_8c_source.html#l00859">GC_CisAitCiuAiv_spin_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a985984475e5ecc98d5017d8fda3bc260" name="a985984475e5ecc98d5017d8fda3bc260"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a985984475e5ecc98d5017d8fda3bc260">&#9670;&#160;</a></span>GC_CisAitCiuAiv_spin_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAitCiuAiv_spin_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>org_sigma4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isA_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isB_up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplySpinCore_8c.html#aa65099432ed6d81a10637f5007139732">GC_CisAitCiuAiv_spin_element</a> (SpinGC-half two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00859">859</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplySpinCore_8c_source.html#l00807">GC_CisAitCiuAiv_spin_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1262,11 +2325,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00358">358</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00436">436</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01180">GC_exchange_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01180">GC_exchange_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -1330,11 +2393,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00396">396</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00474">474</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01202">GC_pairlift_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpin_8c_source.html#l01202">GC_pairlift_spin()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -1422,11 +2485,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00135">135</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00136">136</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00203">mltplyHalfSpin()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
 
 </div>
 </div>
@@ -1465,11 +2528,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <p>Set the bit mask for computing spin state of both site (<a class="el" href="structLargeList.html#a16e7cecab631ea06d5cbb8cf89981a76" title="Mask used in the bit oeration.">LargeList::is1_up</a>, <a class="el" href="structLargeList.html#a652c1dca60b7624974f649e0dcec75c4" title="Mask used in the bit oeration.">LargeList::is2_up</a>)</p>
 <p>Set the bit mask for exchange 2 spins (<a class="el" href="structLargeList.html#a8bd46afee09b313f7f938418c32a301f" title="Mask used in the bit oeration.">LargeList::isA_spin</a>)</p>
 
-<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00107">107</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplySpinCore_8c_source.html#l00108">108</a> of file <a class="el" href="mltplySpinCore_8c_source.html">mltplySpinCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, and <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>.</p>
 
 </div>
 </div>

@@ -117,6 +117,7 @@ $(document).ready(function(){initNavTree('makeHam_8c.html',''); initResizable();
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">makeHam.c File Reference</div></div>
 </div><!--header-->
@@ -132,9 +133,17 @@ $(document).ready(function(){initNavTree('makeHam_8c.html',''); initResizable();
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="nbody__interall_8h_source.html">nbody_interall.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="anomalous__pair_8h_source.html">anomalous_pair.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hamstore_8h_source.html">hamstore.h</a>&quot;</code><br />
 </div>
 <p><a href="makeHam_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:aa3bafdd239756b7f24e6eeecb249a354" id="r_aa3bafdd239756b7f24e6eeecb249a354"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="makeHam_8c.html#aa3bafdd239756b7f24e6eeecb249a354">HS_JB</a>()&#160;&#160;&#160;  ((<a class="el" href="global_8c.html#a780b60b666159b4b52d234701a4a14bd">iHamPanelActive</a> &amp;&amp; <a class="el" href="global_8c.html#a2f8deae182568cb7518359510e745d52">iHamSinkMode</a> != <a class="el" href="hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96">HAM_SINK_TRACE_COLLECT</a>) ? <a class="el" href="global_8c.html#aee0fd92422824ab447d18ccc6c2348c5">HamColBegin</a> : 1)</td></tr>
+<tr class="separator:aa3bafdd239756b7f24e6eeecb249a354"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a812abc05ff87e8cc2d14262734e38ec8" id="r_a812abc05ff87e8cc2d14262734e38ec8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="makeHam_8c.html#a812abc05ff87e8cc2d14262734e38ec8">HS_JE</a>(full)</td></tr>
+<tr class="separator:a812abc05ff87e8cc2d14262734e38ec8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a460d5b90ee970a19d8b66c2b30c8cb0b" id="r_a460d5b90ee970a19d8b66c2b30c8cb0b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="makeHam_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b">makeHam</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
@@ -152,7 +161,53 @@ The Hamiltonian is stored in the two dimensional array \( \verb|Ham| \).  <br />
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="makeHam_8c_source.html">makeHam.c</a>.</p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aa3bafdd239756b7f24e6eeecb249a354" name="aa3bafdd239756b7f24e6eeecb249a354"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3bafdd239756b7f24e6eeecb249a354">&#9670;&#160;</a></span>HS_JB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HS_JB</td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td>&#160;&#160;&#160;  ((<a class="el" href="global_8c.html#a780b60b666159b4b52d234701a4a14bd">iHamPanelActive</a> &amp;&amp; <a class="el" href="global_8c.html#a2f8deae182568cb7518359510e745d52">iHamSinkMode</a> != <a class="el" href="hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96">HAM_SINK_TRACE_COLLECT</a>) ? <a class="el" href="global_8c.html#aee0fd92422824ab447d18ccc6c2348c5">HamColBegin</a> : 1)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="makeHam_8c_source.html#l00034">34</a> of file <a class="el" href="makeHam_8c_source.html">makeHam.c</a>.</p>
+
+</div>
+</div>
+<a id="a812abc05ff87e8cc2d14262734e38ec8" name="a812abc05ff87e8cc2d14262734e38ec8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a812abc05ff87e8cc2d14262734e38ec8">&#9670;&#160;</a></span>HS_JE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HS_JE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">full</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  ((<a class="code hl_variable" href="global_8c.html#a780b60b666159b4b52d234701a4a14bd">iHamPanelActive</a> &amp;&amp; <a class="code hl_variable" href="global_8c.html#a2f8deae182568cb7518359510e745d52">iHamSinkMode</a> != <a class="code hl_enumvalue" href="hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96">HAM_SINK_TRACE_COLLECT</a>) \</div>
+<div class="line">     ? <a class="code hl_variable" href="global_8c.html#aa6c381afcd5507467f72aad4fb6467b6">HamColEnd</a> : (long int)(full))</div>
+<div class="ttc" id="aglobal_8c_html_a2f8deae182568cb7518359510e745d52"><div class="ttname"><a href="global_8c.html#a2f8deae182568cb7518359510e745d52">iHamSinkMode</a></div><div class="ttdeci">int iHamSinkMode</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00172">global.c:172</a></div></div>
+<div class="ttc" id="aglobal_8c_html_a780b60b666159b4b52d234701a4a14bd"><div class="ttname"><a href="global_8c.html#a780b60b666159b4b52d234701a4a14bd">iHamPanelActive</a></div><div class="ttdeci">int iHamPanelActive</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00171">global.c:171</a></div></div>
+<div class="ttc" id="aglobal_8c_html_aa6c381afcd5507467f72aad4fb6467b6"><div class="ttname"><a href="global_8c.html#aa6c381afcd5507467f72aad4fb6467b6">HamColEnd</a></div><div class="ttdeci">long int HamColEnd</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00169">global.c:169</a></div></div>
+<div class="ttc" id="ahamstore_8h_html_a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96"><div class="ttname"><a href="hamstore_8h.html#a93afae9febac18e27c75aa3ef2116424a61ad74e165b8a5ecddd6151eb93d2c96">HAM_SINK_TRACE_COLLECT</a></div><div class="ttdeci">@ HAM_SINK_TRACE_COLLECT</div><div class="ttdef"><b>Definition</b> <a href="hamstore_8h_source.html#l00047">hamstore.h:46</a></div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="makeHam_8c_source.html#l00036">36</a> of file <a class="el" href="makeHam_8c_source.html">makeHam.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="a460d5b90ee970a19d8b66c2b30c8cb0b" name="a460d5b90ee970a19d8b66c2b30c8cb0b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a460d5b90ee970a19d8b66c2b30c8cb0b">&#9670;&#160;</a></span>makeHam()</h2>
 
@@ -191,11 +246,11 @@ The Hamiltonian is stored in the two dimensional array \( \verb|Ham| \). </p>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="makeHam_8c_source.html#l00057">57</a> of file <a class="el" href="makeHam_8c_source.html">makeHam.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="makeHam_8c_source.html#l00071">71</a> of file <a class="el" href="makeHam_8c_source.html">makeHam.c</a>.</p>
 
-<p class="reference">References <a class="el" href="anomalous__pair_8c_source.html#l00426">AddAnomalousTermToHamHubbardGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l01826">AddNBodyInterAllToHamHubbard()</a>, <a class="el" href="nbody__interall_8c_source.html#l01859">AddNBodyInterAllToHamHubbardGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l01886">AddNBodyInterAllToHamSpinGC()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">child_CisAjt()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00283">child_exchange_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00210">child_Spin_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00247">child_SpinGC_CisAit()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00738">CisAisCisAis_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00767">CisAisCjtAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00803">CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00840">CisAjtCkuAlv_element()</a>, <a class="el" href="bitcalc_8c_source.html#l00315">ConvertToList1GeneralSpin()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00521">exchange_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00246">exchange_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00317">exchange_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00079">exchange_spin_GetInfo()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00883">GC_CisAisCisAis_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00471">GC_CisAisCisAis_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00510">GC_CisAisCitAiu_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00914">GC_CisAisCjtAku_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00549">GC_CisAitCiuAiu_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00588">GC_CisAitCiuAiv_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00403">GC_CisAjt()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00950">GC_CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00986">GC_CisAjtCkuAlv_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00631">GC_exchange_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00358">GC_exchange_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00689">GC_pairhopp_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00396">GC_pairlift_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00083">general_hopp_GetInfo()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00125">general_int_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00135">general_int_spin_GetInfo()</a>, <a class="el" href="bitcalc_8c_source.html#l00273">GetOffCompGeneralSpin()</a>, <a class="el" href="bitcalc_8c_source.html#l00091">GetSplitBitByModel()</a>, <a class="el" href="global_8c_source.html#l00165">Ham</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00140">list_Diagonal</a>, <a class="el" href="mltplyCommon_8h_source.html#l00022">M_Ham</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00582">pairhopp_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00218">pairhopp_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00107">pairlift_spin_GetInfo()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="anomalous__pair_8c_source.html#l00438">AddAnomalousTermToHamHubbardGC()</a>, <a class="el" href="hamstore_8h_source.html#l00083">AddHamElem</a>, <a class="el" href="nbody__interall_8c_source.html#l01827">AddNBodyInterAllToHamHubbard()</a>, <a class="el" href="nbody__interall_8c_source.html#l01866">AddNBodyInterAllToHamHubbardGC()</a>, <a class="el" href="nbody__interall_8c_source.html#l01895">AddNBodyInterAllToHamSpinGC()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">child_CisAjt()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00334">child_exchange_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00211">child_Spin_CisAis()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00248">child_SpinGC_CisAit()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00851">CisAisCisAis_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00917">CisAisCjtAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00992">CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01070">CisAjtCkuAlv_element()</a>, <a class="el" href="bitcalc_8c_source.html#l00315">ConvertToList1GeneralSpin()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00620">exchange_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00247">exchange_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00395">exchange_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00080">exchange_spin_GetInfo()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01142">GC_CisAisCisAis_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00593">GC_CisAisCisAis_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00667">GC_CisAisCitAiu_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01209">GC_CisAisCjtAku_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00745">GC_CisAitCiuAiu_spin_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00825">GC_CisAitCiuAiv_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00492">GC_CisAjt()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01285">GC_CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01363">GC_CisAjtCkuAlv_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00730">GC_exchange_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00436">GC_exchange_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00788">GC_pairhopp_element()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00474">GC_pairlift_spin_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00084">general_hopp_GetInfo()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00126">general_int_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00136">general_int_spin_GetInfo()</a>, <a class="el" href="bitcalc_8c_source.html#l00273">GetOffCompGeneralSpin()</a>, <a class="el" href="bitcalc_8c_source.html#l00091">GetSplitBitByModel()</a>, <a class="el" href="global_8c_source.html#l00165">Ham</a>, <a class="el" href="global_8c_source.html#l00167">Ham_local</a>, <a class="el" href="hamstore_8h_source.html#l00070">HAM_OWNED_COL</a>, <a class="el" href="hamstore_8h_source.html#l00046">HAM_SINK_TRACE_COLLECT</a>, <a class="el" href="global_8c_source.html#l00168">HamColBegin</a>, <a class="el" href="global_8c_source.html#l00169">HamColEnd</a>, <a class="el" href="global_8c_source.html#l00173">hamCollectSink</a>, <a class="el" href="global_8c_source.html#l00170">HamPanelLd</a>, <a class="el" href="makeHam_8c_source.html#l00034">HS_JB</a>, <a class="el" href="makeHam_8c_source.html#l00036">HS_JE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="global_8c_source.html#l00171">iHamPanelActive</a>, <a class="el" href="global_8c_source.html#l00172">iHamSinkMode</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00140">list_Diagonal</a>, <a class="el" href="mltplyCommon_8h_source.html#l00022">M_Ham</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00681">pairhopp_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00219">pairhopp_GetInfo()</a>, <a class="el" href="mltplySpinCore_8c_source.html#l00108">pairlift_spin_GetInfo()</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, and <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>, and <a class="el" href="expec__trace__ham_8c_source.html#l00277">TraceHamCollect()</a>.</p>
 
 </div>
 </div>

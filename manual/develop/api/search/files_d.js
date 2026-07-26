@@ -10,8 +10,11 @@ var searchData=
   ['pairexspinless_2eh_7',['PairExSpinless.h',['../PairExSpinless_8h.html',1,'']]],
   ['phys_2ec_8',['phys.c',['../phys_8c.html',1,'']]],
   ['phys_2eh_9',['phys.h',['../phys_8h.html',1,'']]],
-  ['powerlanczos_2ec_10',['PowerLanczos.c',['../PowerLanczos_8c.html',1,'']]],
-  ['powerlanczos_2eh_11',['PowerLanczos.h',['../PowerLanczos_8h.html',1,'']]],
-  ['progressmessage_2ec_12',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
-  ['progressmessage_2eh_13',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
+  ['phys_5fdistributed_2ec_10',['phys_distributed.c',['../phys__distributed_8c.html',1,'']]],
+  ['phys_5fdistributed_2eh_11',['phys_distributed.h',['../phys__distributed_8h.html',1,'']]],
+  ['phys_5fdistributed_5flocal_2ec_12',['phys_distributed_local.c',['../phys__distributed__local_8c.html',1,'']]],
+  ['powerlanczos_2ec_13',['PowerLanczos.c',['../PowerLanczos_8c.html',1,'']]],
+  ['powerlanczos_2eh_14',['PowerLanczos.h',['../PowerLanczos_8h.html',1,'']]],
+  ['progressmessage_2ec_15',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
+  ['progressmessage_2eh_16',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
 ];

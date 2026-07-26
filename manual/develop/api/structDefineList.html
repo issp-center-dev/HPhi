@@ -608,6 +608,18 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <tr class="memitem:a632bce9eee2252cb4a7f184a5bb749d5" id="r_a632bce9eee2252cb4a7f184a5bb749d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a632bce9eee2252cb4a7f184a5bb749d5">iFlgScaLAPACK</a></td></tr>
 <tr class="memdesc:a632bce9eee2252cb4a7f184a5bb749d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">ScaLAPACK mode ( only for FullDiag )  <br /></td></tr>
 <tr class="separator:a632bce9eee2252cb4a7f184a5bb749d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26175e12b4980067b46366a305501a3f" id="r_a26175e12b4980067b46366a305501a3f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a26175e12b4980067b46366a305501a3f">iSolver</a></td></tr>
+<tr class="memdesc:a26175e12b4980067b46366a305501a3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">FullDiag solver backend (CalcMod keyword "Solver")  <br /></td></tr>
+<tr class="separator:a26175e12b4980067b46366a305501a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5110ef8231931ef6e10104c4802cf250" id="r_a5110ef8231931ef6e10104c4802cf250"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a5110ef8231931ef6e10104c4802cf250">iFlgSolverSpec</a></td></tr>
+<tr class="memdesc:a5110ef8231931ef6e10104c4802cf250"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 if the Solver keyword was explicitly given  <br /></td></tr>
+<tr class="separator:a5110ef8231931ef6e10104c4802cf250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfb69072015c01f9eae6365c97851b84" id="r_adfb69072015c01f9eae6365c97851b84"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#adfb69072015c01f9eae6365c97851b84">iFlgNGPUSpec</a></td></tr>
+<tr class="memdesc:adfb69072015c01f9eae6365c97851b84"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 if the NGPU keyword was explicitly given  <br /></td></tr>
+<tr class="separator:adfb69072015c01f9eae6365c97851b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12626184d77535fd346fa072791f70ae" id="r_a12626184d77535fd346fa072791f70ae"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a12626184d77535fd346fa072791f70ae">iExpecMode</a></td></tr>
+<tr class="memdesc:a12626184d77535fd346fa072791f70ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">FullDiag observable evaluation mode (CalcMod keyword "ExpecMode")  <br /></td></tr>
+<tr class="separator:a12626184d77535fd346fa072791f70ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0e249d3ea936a8caaa3b249280c5a3f" id="r_ad0e249d3ea936a8caaa3b249280c5a3f"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structParamList.html">ParamList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#ad0e249d3ea936a8caaa3b249280c5a3f">Param</a></td></tr>
 <tr class="separator:ad0e249d3ea936a8caaa3b249280c5a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10f5f7c6046b1fbca316e331cf2917d9" id="r_a10f5f7c6046b1fbca316e331cf2917d9"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDefineList.html#a10f5f7c6046b1fbca316e331cf2917d9">NTETimeSteps</a></td></tr>
@@ -684,7 +696,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00215">215</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00132">validate_anomalous_scope_common()</a>, and <a class="el" href="anomalous__pair_8c_source.html#l00522">write_anomalousg_line()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00133">validate_anomalous_scope_common()</a>, and <a class="el" href="anomalous__pair_8c_source.html#l00550">write_anomalousg_line()</a>.</p>
 
 </div>
 </div>
@@ -704,7 +716,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00212">212</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00170">CheckAnomalousTermHermitePairs()</a>, and <a class="el" href="anomalous__pair_8c_source.html#l00132">validate_anomalous_scope_common()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00171">CheckAnomalousTermHermitePairs()</a>, and <a class="el" href="anomalous__pair_8c_source.html#l00133">validate_anomalous_scope_common()</a>.</p>
 
 </div>
 </div>
@@ -1181,7 +1193,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00271">271</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00356">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00202">has_fixed_hubbard_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00186">has_fixed_spin_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00197">has_fixed_spinless_sector()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00134">nbody_is_hubbard_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00148">nbody_is_kondo_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00155">nbody_is_spinless_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00173">nbody_is_supported_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00125">nbody_is_supported_spin_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00141">nbody_is_tj_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00193">nbody_requires_spinful_conservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00181">nbody_uses_hubbard_list_path()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00169">nbodyg_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00103">nbodyg_is_hubbard_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00117">nbodyg_is_kondo_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00124">nbodyg_is_spinless_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00142">nbodyg_is_supported_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00110">nbodyg_is_tj_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00162">nbodyg_requires_spinful_conservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00150">nbodyg_uses_hubbard_list_path()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00156">SymmetryApplyToState()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00132">validate_anomalous_scope_common()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00687">ValidateSymmetryHamiltonian()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00356">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00202">has_fixed_hubbard_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00186">has_fixed_spin_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00197">has_fixed_spinless_sector()</a>, <a class="el" href="nbody__interall_8c_source.html#l00201">nbody_is_general_spin()</a>, <a class="el" href="nbody__interall_8c_source.html#l00135">nbody_is_hubbard_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00149">nbody_is_kondo_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00156">nbody_is_spinless_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00174">nbody_is_supported_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00126">nbody_is_supported_spin_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00142">nbody_is_tj_model()</a>, <a class="el" href="nbody__interall_8c_source.html#l00194">nbody_requires_spinful_conservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00182">nbody_uses_hubbard_list_path()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00169">nbodyg_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00103">nbodyg_is_hubbard_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00117">nbodyg_is_kondo_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00124">nbodyg_is_spinless_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00142">nbodyg_is_supported_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00110">nbodyg_is_tj_model()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00162">nbodyg_requires_spinful_conservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00150">nbodyg_uses_hubbard_list_path()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00156">SymmetryApplyToState()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00133">validate_anomalous_scope_common()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00687">ValidateSymmetryHamiltonian()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
 
 </div>
 </div>
@@ -1201,7 +1213,30 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00265">265</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00132">validate_anomalous_scope_common()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00155">ValidateAnomalousTermScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00098">CalcOneSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00632">CalcSpectrumMultiBra()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00133">validate_anomalous_scope_common()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00156">ValidateAnomalousTermScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+
+</div>
+</div>
+<a id="a12626184d77535fd346fa072791f70ae" name="a12626184d77535fd346fa072791f70ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12626184d77535fd346fa072791f70ae">&#9670;&#160;</a></span>iExpecMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DefineList::iExpecMode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>FullDiag observable evaluation mode (CalcMod keyword "ExpecMode") </p>
+<ul>
+<li>0: serial (replicated, existing behavior)</li>
+<li>1: state-parallel</li>
+<li>2: trace kernels Requires CalcType=FullDiag with Solver 1 (ScaLAPACK) or 3 (ELPA) when non-zero. <a class="el" href="readdef_8c.html" title="File to define functions of reading input files.">readdef.c</a> demotes 1/2 to 0 for a single MPI process (nproc==1). The 2-&gt;1 demotion (trace kernels not yet available) happens at the phys dispatch level instead, so introducing real trace kernels later does not require touching readdef again. </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00351">351</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -1241,7 +1276,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00316">316</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00445">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00270">ReadTMComponents_BiCG()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00132">validate_anomalous_scope_common()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00445">CalcSpectrumByBiCG()</a>, <a class="el" href="CalcSpectrumByLanczos_8c_source.html#l00043">CalcSpectrumByLanczos()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>, <a class="el" href="CalcSpectrumByBiCG_8c_source.html#l00270">ReadTMComponents_BiCG()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00133">validate_anomalous_scope_common()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1314,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00095">95</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="nbody__interall_8c_source.html#l00200">nbody_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00169">nbodyg_is_general_spin()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="nbody__interall_8c_source.html#l00201">nbody_is_general_spin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00169">nbodyg_is_general_spin()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
 
 </div>
 </div>
@@ -1323,6 +1358,24 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 </div>
 </div>
+<a id="adfb69072015c01f9eae6365c97851b84" name="adfb69072015c01f9eae6365c97851b84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfb69072015c01f9eae6365c97851b84">&#9670;&#160;</a></span>iFlgNGPUSpec</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DefineList::iFlgNGPUSpec</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>1 if the NGPU keyword was explicitly given </p>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00349">349</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+
+</div>
+</div>
 <a id="a632bce9eee2252cb4a7f184a5bb749d5" name="a632bce9eee2252cb4a7f184a5bb749d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a632bce9eee2252cb4a7f184a5bb749d5">&#9670;&#160;</a></span>iFlgScaLAPACK</h2>
 
@@ -1344,6 +1397,24 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00335">335</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
+
+</div>
+</div>
+<a id="a5110ef8231931ef6e10104c4802cf250" name="a5110ef8231931ef6e10104c4802cf250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5110ef8231931ef6e10104c4802cf250">&#9670;&#160;</a></span>iFlgSolverSpec</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DefineList::iFlgSolverSpec</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>1 if the Solver keyword was explicitly given </p>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00347">347</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -1769,6 +1840,30 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 </div>
 </div>
+<a id="a26175e12b4980067b46366a305501a3f" name="a26175e12b4980067b46366a305501a3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26175e12b4980067b46366a305501a3f">&#9670;&#160;</a></span>iSolver</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DefineList::iSolver</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>FullDiag solver backend (CalcMod keyword "Solver") </p>
+<ul>
+<li>0: LAPACK zheev (serial)</li>
+<li>1: ScaLAPACK pzheev</li>
+<li>2: MAGMA (single node multi-GPU)</li>
+<li>3: ELPA (multi-node CPU/GPU) Resolved from legacy keywords when not explicitly given. </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00340">340</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+
+</div>
+</div>
 <a id="adc11ba7b2a9ff6d545205ff2621dca36" name="adc11ba7b2a9ff6d545205ff2621dca36"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adc11ba7b2a9ff6d545205ff2621dca36">&#9670;&#160;</a></span>iSpectrumLoopExct</h2>
 
@@ -1961,7 +2056,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00091">91</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -1981,7 +2076,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00214">214</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00165">ValidateAnomalousGScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00166">ValidateAnomalousGScope()</a>.</p>
 
 </div>
 </div>
@@ -2001,7 +2096,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00211">211</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00170">CheckAnomalousTermHermitePairs()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00155">ValidateAnomalousTermScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00171">CheckAnomalousTermHermitePairs()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00156">ValidateAnomalousTermScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
 
 </div>
 </div>
@@ -2081,7 +2176,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00205">205</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01414">write_nbodyg_line()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01503">write_nbodyg_line()</a>.</p>
 
 </div>
 </div>
@@ -2139,7 +2234,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00203">203</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01414">write_nbodyg_line()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01503">write_nbodyg_line()</a>.</p>
 
 </div>
 </div>
@@ -2159,7 +2254,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00204">204</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01414">write_nbodyg_line()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l01503">write_nbodyg_line()</a>.</p>
 
 </div>
 </div>
@@ -2217,7 +2312,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00195">195</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00736">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00649">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00797">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00878">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00411">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00737">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00520">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00650">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00798">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00879">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00412">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2237,7 +2332,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00193">193</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00736">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00649">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00797">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00878">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00411">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00737">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00520">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00650">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00798">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00879">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00412">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2257,7 +2352,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00194">194</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00736">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00649">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00797">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00878">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00411">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00737">apply_hubbardgc_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00520">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__interall_8c_source.html#l00650">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00798">apply_nbody_interall_spinless_full()</a>, <a class="el" href="nbody__interall_8c_source.html#l00879">apply_spinless_rank_part()</a>, <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00412">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2277,7 +2372,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00196">196</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2297,7 +2392,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00191">191</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -2335,7 +2430,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00189">189</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -2355,7 +2450,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00197">197</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2375,7 +2470,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00190">190</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>.</p>
 
 </div>
 </div>
@@ -2395,7 +2490,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00187">187</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2758,7 +2853,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00350">350</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00370">370</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>.</p>
 
@@ -2818,7 +2913,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00183">183</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00411">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00412">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>.</p>
 
 </div>
 </div>
@@ -2838,7 +2933,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00184">184</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -2858,7 +2953,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00185">185</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -3018,7 +3113,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00065">65</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00569">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00686">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00583">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00700">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00410">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00715">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00832">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00728">apply_spinless_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00845">apply_spinless_rank_create()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00195">build_group_inverse()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00186">find_perm()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00215">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00525">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00642">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00673">get_spinless_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00790">get_spinless_local_block()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00202">has_fixed_hubbard_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00186">has_fixed_spin_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00197">has_fixed_spinless_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00156">SymmetryApplyToState()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00104">validate_anomalous_pair()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00236">validate_bijection_and_anti()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00368">validate_exchange_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00652">validate_hubbard_coulomb_intra_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00597">validate_hubbard_transfer_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00438">validate_ising_coulomb_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00399">validate_ising_hund_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00477">validate_spinless_coulomb_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00546">validate_spinless_transfer_invariance()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00268">ValidateSymmetryGroupInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__correlation_8c_source.html#l00569">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00687">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00583">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00701">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00520">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00410">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00715">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00833">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00728">apply_spinless_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00846">apply_spinless_rank_create()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00195">build_group_inverse()</a>, <a class="el" href="CalcSpectrumByTPQ_8c_source.html#l00135">CalcSpectrumByTPQ()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00186">find_perm()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00216">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00525">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00643">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00673">get_spinless_local_block()</a>, <a class="el" href="nbody__interall_8c_source.html#l00791">get_spinless_local_block()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00202">has_fixed_hubbard_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00186">has_fixed_spin_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00197">has_fixed_spinless_sector()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00740">RunMultiOpFiniteTLoop()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00156">SymmetryApplyToState()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00105">validate_anomalous_pair()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00236">validate_bijection_and_anti()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00368">validate_exchange_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00652">validate_hubbard_coulomb_intra_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00597">validate_hubbard_transfer_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00438">validate_ising_coulomb_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00399">validate_ising_hund_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00477">validate_spinless_coulomb_invariance()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00546">validate_spinless_transfer_invariance()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l00268">ValidateSymmetryGroupInput()</a>.</p>
 
 </div>
 </div>
@@ -3093,7 +3188,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 </div><div class="memdoc">
 <p>[NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00394">394</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00414">414</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3111,7 +3206,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <p>Number of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00371">371</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00391">391</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3129,7 +3224,7 @@ Data Format [NTE] </p>
 <p>Number of diagonal part of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00376">376</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00396">396</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3145,7 +3240,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00370">370</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00390">390</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>.</p>
 
@@ -3165,7 +3260,7 @@ Data Format [NTE] </p>
 <p>Number of off-diagonal part of time-dependent InterAll for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00373">373</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00393">393</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3181,7 +3276,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00346">346</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00366">366</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>.</p>
 
@@ -3201,7 +3296,7 @@ Data Format [NTE] </p>
 <p>Number of time-dependent transfer integrals for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00356">356</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00376">376</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3219,7 +3314,7 @@ Data Format [NTE] </p>
 <p>Number of time-dependent transfer integrals for Time Evolution.<br  />
 Data Format [NTE] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00358">358</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00378">378</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3235,7 +3330,7 @@ Data Format [NTE] </p>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00355">355</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00375">375</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>.</p>
 
@@ -3353,7 +3448,7 @@ Data Format [NTE] </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00101">101</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00649">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00532">apply_nbodyg_hubbardgc_full()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00304">ApplyAnomalousPairHubbardGC()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00215">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00525">get_hubbardgc_local_block()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00642">get_hubbardgc_local_block()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00650">apply_nbody_interall_hubbardgc_full()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00532">apply_nbodyg_hubbardgc_full()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00305">ApplyAnomalousPairHubbardGC()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00216">get_hubbardgc_local_block()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00525">get_hubbardgc_local_block()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00643">get_hubbardgc_local_block()</a>.</p>
 
 </div>
 </div>
@@ -3449,7 +3544,7 @@ Data Format [NTE] </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00213">213</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00170">CheckAnomalousTermHermitePairs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00171">CheckAnomalousTermHermitePairs()</a>.</p>
 
 </div>
 </div>
@@ -3619,7 +3714,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00351">351</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00371">371</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3635,7 +3730,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00341">341</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00361">361</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>, and <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -3657,7 +3752,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00192">192</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>.</p>
 
 </div>
 </div>
@@ -3790,7 +3885,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00396">396</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00416">416</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3808,7 +3903,7 @@ Data Format [<a class="el" href="structDefineList.html#a18033b2e1910d93daa6d12eb
 <p>Value of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00386">386</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00406">406</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3826,7 +3921,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00391">391</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00411">411</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3844,7 +3939,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of off-diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00388">388</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00408">408</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3862,7 +3957,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00364">364</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00384">384</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3880,7 +3975,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Value of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer]. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00366">366</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00386">386</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -3897,7 +3992,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>1: Use preconditioning in LOBPCG </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00398">398</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00418">418</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4011,7 +4106,7 @@ Data Format [NTE][Ntransfer]. </p>
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00103">103</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, and <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>.</p>
 
 </div>
 </div>
@@ -4028,7 +4123,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00395">395</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00415">415</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4140,7 +4235,7 @@ Data Format [NTE][Ntransfer]. </p>
 </div><div class="memdoc">
 <p>[NTE][Nsite] </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00393">393</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00413">413</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4158,7 +4253,7 @@ Data Format [NTE][Ntransfer]. </p>
 <p>Index of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. 4-&gt;site number k, 5-&gt; spin index on k, 6-&gt; site number l, 7-&gt; spin index on l. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00378">378</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00398">398</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4176,7 +4271,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00384">384</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00404">404</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4194,7 +4289,7 @@ Data Format [NTE][NTEInterAll][4]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of off-diagonal part of time-dependent InterAll for Time Evolution. <br  />
 Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. 4-&gt;site number k, 5-&gt; spin index on k, 6-&gt; site number l, 7-&gt; spin index on l. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00381">381</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00401">401</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4210,7 +4305,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00347">347</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00367">367</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>.</p>
 
@@ -4230,7 +4325,7 @@ Data Format [NTE][NTEInterAll][8]: 0-&gt;site number i, 1-&gt; spin index on i, 
 <p>Index of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-&gt; site number j, 3-&gt; spin index on j. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00360">360</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00380">380</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4248,7 +4343,7 @@ Data Format [NTE][Ntransfer][4]: 0-&gt;site number i, 1-&gt; spin index on i, 2-
 <p>Index of time-dependent transfer integrals for Time Evolution. <br  />
 Data Format [NTE][Ntransfer][2]: 0-&gt;site number i, 1-&gt; spin index on i. </p>
 
-<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00362">362</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00382">382</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
 </div>
 </div>
@@ -4304,7 +4399,7 @@ Data Format [NTE][Ntransfer][2]: 0-&gt;site number i, 1-&gt; spin index on i. </
 
 <p class="definition">Definition at line <a class="el" href="struct_8h_source.html#l00099">99</a> of file <a class="el" href="struct_8h_source.html">struct.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00221">apply_anomalous_rank_annihilate()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00235">apply_anomalous_rank_create()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00569">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00686">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00583">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00700">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00519">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00573">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00410">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00715">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00832">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00728">apply_spinless_rank_create()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00845">apply_spinless_rank_create()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00222">apply_anomalous_rank_annihilate()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00236">apply_anomalous_rank_create()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00569">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00687">apply_hubbardgc_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00583">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00701">apply_hubbardgc_rank_create()</a>, <a class="el" href="nbody__interall_8c_source.html#l00520">apply_nbody_interall_bits()</a>, <a class="el" href="nbody__interall_8c_source.html#l00574">apply_nbody_interall_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00456">apply_nbodyg_general_spin_gc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00410">apply_nbodyg_spingc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00715">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__interall_8c_source.html#l00833">apply_spinless_rank_annihilate()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00728">apply_spinless_rank_create()</a>, and <a class="el" href="nbody__interall_8c_source.html#l00846">apply_spinless_rank_create()</a>.</p>
 
 </div>
 </div>

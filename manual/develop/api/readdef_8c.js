@@ -32,6 +32,7 @@ var readdef_8c =
     [ "ReadDefFileNInt", "readdef_8c.html#a17c76a94fb506b26d2c69919ff9d5cd1", null ],
     [ "ReadNBodyLineMPI", "readdef_8c.html#ad4445a89630876c584204987fadaceec", null ],
     [ "ResetInteractionNum", "readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da", null ],
+    [ "ResolveSolver", "readdef_8c.html#a8b5690ffb749c6877cdbcc44422c6882", null ],
     [ "SetConvergenceFactor", "readdef_8c.html#a961b43e36e61cc013d0188dc268707a2", null ],
     [ "ValidateValue", "readdef_8c.html#a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a", null ],
     [ "cFileNameListFile", "readdef_8c.html#aa50055512dbd173f336dcf0387c280dc", null ],

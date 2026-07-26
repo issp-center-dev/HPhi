@@ -13,5 +13,11 @@ var searchData=
   ['expec_5fenergy_5fflct_2ec_10',['expec_energy_flct.c',['../expec__energy__flct_8c.html',1,'']]],
   ['expec_5fenergy_5fflct_2eh_11',['expec_energy_flct.h',['../expec__energy__flct_8h.html',1,'']]],
   ['expec_5ftotalspin_2ec_12',['expec_totalspin.c',['../expec__totalspin_8c.html',1,'']]],
-  ['expec_5ftotalspin_2eh_13',['expec_totalspin.h',['../expec__totalspin_8h.html',1,'']]]
+  ['expec_5ftotalspin_2eh_13',['expec_totalspin.h',['../expec__totalspin_8h.html',1,'']]],
+  ['expec_5ftrace_2ec_14',['expec_trace.c',['../expec__trace_8c.html',1,'']]],
+  ['expec_5ftrace_2eh_15',['expec_trace.h',['../expec__trace_8h.html',1,'']]],
+  ['expec_5ftrace_5ffinalize_2ec_16',['expec_trace_finalize.c',['../expec__trace__finalize_8c.html',1,'']]],
+  ['expec_5ftrace_5fham_2ec_17',['expec_trace_ham.c',['../expec__trace__ham_8c.html',1,'']]],
+  ['expec_5ftrace_5fham_2eh_18',['expec_trace_ham.h',['../expec__trace__ham_8h.html',1,'']]],
+  ['expec_5ftrace_5finternal_2eh_19',['expec_trace_internal.h',['../expec__trace__internal_8h.html',1,'']]]
 ];

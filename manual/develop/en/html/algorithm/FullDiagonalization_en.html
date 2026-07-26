@@ -46,7 +46,11 @@ we can obtain all the eigenvalues <span class="math notranslate nohighlight">\(E
 In the diagonalization, we use a LAPACK routine, such as <code class="docutils literal notranslate"><span class="pre">dsyev</span></code> or <code class="docutils literal notranslate"><span class="pre">zheev</span></code>.
 We also calculate and output
 the expectation values <span class="math notranslate nohighlight">\(A_i \equiv \langle \Phi_i | {\hat A} | \Phi_i\rangle\)</span>.
-These values are used for the finite-temperature calculations.</p>
+These values are used for the finite-temperature calculations.
+Besides LAPACK, the diagonalization backend can be switched with the
+<code class="docutils literal notranslate"><span class="pre">Solver</span></code> keyword to ScaLAPACK, MAGMA (GPU), or ELPA (multi-node,
+CPU/GPU). See <a class="reference internal" href="../technical/parallel_fulldiag_en.html#sec-parallelfulldiag"><span class="std std-ref">Parallel full diagonalization</span></a> for the parallel algorithms
+and a speed comparison.</p>
 </section>
 <section id="finite-temperature-calculations">
 <h2><span class="section-number">5.2.2. </span>Finite-temperature calculations<a class="headerlink" href="#finite-temperature-calculations" title="Link to this heading">¶</a></h2>

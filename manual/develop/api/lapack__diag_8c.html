@@ -124,6 +124,8 @@ $(document).ready(function(){initNavTree('lapack__diag_8c.html',''); initResizab
 <div class="textblock"><code>#include &quot;<a class="el" href="lapack__diag_8h_source.html">lapack_diag.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="matrixlapack_8h_source.html">matrixlapack.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="FileIO_8h_source.html">FileIO.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="DefCommon_8h_source.html">DefCommon.h</a>&quot;</code><br />
+<code>#include &lt;mpi.h&gt;</code><br />
 </div>
 <p><a href="lapack__diag_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -168,9 +170,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lapack__diag_8c_source.html#l00035">35</a> of file <a class="el" href="lapack__diag_8c_source.html">lapack_diag.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lapack__diag_8c_source.html#l00259">259</a> of file <a class="el" href="lapack__diag_8c_source.html">lapack_diag.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00041">cFileNameEigenvalue_Lanczos</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="matrixlapack__magma_8h.html#a90ce0b81067cdf626bcaed0f76954b0d">diag_magma_cmp()</a>, <a class="el" href="global_8c_source.html#l00165">Ham</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="global_8c_source.html#l00189">nproc</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="struct_8c_source.html#l00020">X</a>, and <a class="el" href="matrixlapack_8c_source.html#l00374">ZHEEVall()</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00041">cFileNameEigenvalue_Lanczos</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="matrixlapack__magma_8h.html#a90ce0b81067cdf626bcaed0f76954b0d">diag_magma_cmp()</a>, <a class="el" href="global_8c_source.html#l00165">Ham</a>, <a class="el" href="global_8c_source.html#l00171">iHamPanelActive</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="DefCommon_8h_source.html#l00034">SOLVER_ELPA</a>, <a class="el" href="DefCommon_8h_source.html#l00033">SOLVER_MAGMA</a>, <a class="el" href="DefCommon_8h_source.html#l00032">SOLVER_SCALAPACK</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="struct_8c_source.html#l00020">X</a>, and <a class="el" href="matrixlapack_8c_source.html#l00374">ZHEEVall()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, and <a class="el" href="CalcSpectrumByFullDiag_8c_source.html#l00037">CalcSpectrumByFullDiag()</a>.</p>
 

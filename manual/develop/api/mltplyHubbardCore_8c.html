@@ -129,6 +129,7 @@ $(document).ready(function(){initNavTree('mltplyHubbardCore_8c.html',''); initRe
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mltplyCommon_8h_source.html">mltplyCommon.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mltplyHubbardCore_8h_source.html">mltplyHubbardCore.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="expec__trace__internal_8h_source.html">expec_trace_internal.h</a>&quot;</code><br />
 </div>
 <p><a href="mltplyHubbardCore_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -146,21 +147,36 @@ Functions</h2></td></tr>
 <tr class="memitem:a3308e39a52f716d269691c4f7ec05be0" id="r_a3308e39a52f716d269691c4f7ec05be0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a3308e39a52f716d269691c4f7ec05be0">exchange_GetInfo</a> (int iExchange, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a3308e39a52f716d269691c4f7ec05be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute mask for bit operation of exchange term.  <br /></td></tr>
 <tr class="separator:a3308e39a52f716d269691c4f7ec05be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af22cebde369309994e53f2208e8ad837" id="r_af22cebde369309994e53f2208e8ad837"><td class="memItemLeft" align="right" valign="top">static long unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#af22cebde369309994e53f2208e8ad837">GC_CisAis_map</a> (long unsigned int j, long unsigned int is1_spin)</td></tr>
+<tr class="memdesc:af22cebde369309994e53f2208e8ad837"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation of \(t c_{i\sigma}^\dagger c_{i\sigma}\) (Grandcanonical)  <br /></td></tr>
+<tr class="separator:af22cebde369309994e53f2208e8ad837"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf3b726a0fbe639a2b7169210c3a24c4" id="r_acf3b726a0fbe639a2b7169210c3a24c4"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#acf3b726a0fbe639a2b7169210c3a24c4">GC_CisAis</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, double complex tmp_trans)</td></tr>
-<tr class="memdesc:acf3b726a0fbe639a2b7169210c3a24c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation of \(t c_{i\sigma}^\dagger c_{i\sigma}\) (Grandcanonical)  <br /></td></tr>
 <tr class="separator:acf3b726a0fbe639a2b7169210c3a24c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66399daf40ed10438ac6230db5f8f7ce" id="r_a66399daf40ed10438ac6230db5f8f7ce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a66399daf40ed10438ac6230db5f8f7ce">GC_CisAis_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a66399daf40ed10438ac6230db5f8f7ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#acf3b726a0fbe639a2b7169210c3a24c4">GC_CisAis</a> (grand-canonical diagonal one-body). Diagonal: always returns 1 with *kprime_out = j-1 and *amp_out = occupation.  <br /></td></tr>
+<tr class="separator:a66399daf40ed10438ac6230db5f8f7ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af29e620c3f3ae1fe39112a747bc1b05d" id="r_af29e620c3f3ae1fe39112a747bc1b05d"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#af29e620c3f3ae1fe39112a747bc1b05d">GC_AisCis</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, double complex tmp_trans)</td></tr>
 <tr class="memdesc:af29e620c3f3ae1fe39112a747bc1b05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation of \(t c_{i\sigma} c_{i\sigma}^\dagger\) (Grandcanonical)  <br /></td></tr>
 <tr class="separator:af29e620c3f3ae1fe39112a747bc1b05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1ed7d4662aa8792d50561660afd1305" id="r_ad1ed7d4662aa8792d50561660afd1305"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ad1ed7d4662aa8792d50561660afd1305">child_CisAis</a> (long unsigned int list_1_j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin)</td></tr>
 <tr class="memdesc:ad1ed7d4662aa8792d50561660afd1305"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}\\dagger c_{is}\) term in Hubbard (canonical)  <br /></td></tr>
 <tr class="separator:ad1ed7d4662aa8792d50561660afd1305"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2de503405d7acaaa7a573879c8030c8" id="r_ad2de503405d7acaaa7a573879c8030c8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ad2de503405d7acaaa7a573879c8030c8">CisAjt_map</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, int *sgn_out)</td></tr>
+<tr class="memdesc:ad2de503405d7acaaa7a573879c8030c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}^\dagger c_{jt}\) term for canonical Hubbard  <br /></td></tr>
+<tr class="separator:ad2de503405d7acaaa7a573879c8030c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf0a9a1a4862be39ce011d0acf118928" id="r_aaf0a9a1a4862be39ce011d0acf118928"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, double complex tmp_V)</td></tr>
-<tr class="memdesc:aaf0a9a1a4862be39ce011d0acf118928"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}^\dagger c_{jt}\) term for canonical Hubbard  <br /></td></tr>
 <tr class="separator:aaf0a9a1a4862be39ce011d0acf118928"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6835f45827d97814c692e70c4f11d338" id="r_a6835f45827d97814c692e70c4f11d338"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a6835f45827d97814c692e70c4f11d338">CisAjt_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a6835f45827d97814c692e70c4f11d338"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare Fermion sign.  <br /></td></tr>
+<tr class="separator:a6835f45827d97814c692e70c4f11d338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60a01397977e408cc37b60ce5d64df27" id="r_a60a01397977e408cc37b60ce5d64df27"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a60a01397977e408cc37b60ce5d64df27">GC_CisAjt_map</a> (long unsigned int j, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, int *sgn_out)</td></tr>
+<tr class="memdesc:a60a01397977e408cc37b60ce5d64df27"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}^\dagger c_{jt}\) term for grandcanonical Hubbard  <br /></td></tr>
+<tr class="separator:a60a01397977e408cc37b60ce5d64df27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a257628b6ed79f7a93d3d2a9a957bc936" id="r_a257628b6ed79f7a93d3d2a9a957bc936"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, double complex tmp_V, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:a257628b6ed79f7a93d3d2a9a957bc936"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}^\dagger c_{jt}\) term for grandcanonical Hubbard  <br /></td></tr>
 <tr class="separator:a257628b6ed79f7a93d3d2a9a957bc936"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53b0c68afc11e94435493407e3a22773" id="r_a53b0c68afc11e94435493407e3a22773"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a53b0c68afc11e94435493407e3a22773">GC_CisAjt_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a53b0c68afc11e94435493407e3a22773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = Fermion sign.  <br /></td></tr>
+<tr class="separator:a53b0c68afc11e94435493407e3a22773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a05094ef3950dec07705f97048f7be" id="r_a03a05094ef3950dec07705f97048f7be"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a03a05094ef3950dec07705f97048f7be">child_CisAjt</a> (long unsigned int list_1_j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a03a05094ef3950dec07705f97048f7be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute index of wavefunction of final state.  <br /></td></tr>
 <tr class="separator:a03a05094ef3950dec07705f97048f7be"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,30 +195,70 @@ Functions</h2></td></tr>
 <tr class="memitem:a3516915dc74a674ce65e8b7ffc5f1fae" id="r_a3516915dc74a674ce65e8b7ffc5f1fae"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a3516915dc74a674ce65e8b7ffc5f1fae">GC_pairhopp_element</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a3516915dc74a674ce65e8b7ffc5f1fae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute pairhopp term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a3516915dc74a674ce65e8b7ffc5f1fae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a122925c2ac8b790771141180633ed82c" id="r_a122925c2ac8b790771141180633ed82c"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a122925c2ac8b790771141180633ed82c">CisAisCisAis_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out)</td></tr>
+<tr class="memdesc:a122925c2ac8b790771141180633ed82c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a122925c2ac8b790771141180633ed82c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11d6c70cb9712ea9ee9e16ef11e15c87" id="r_a11d6c70cb9712ea9ee9e16ef11e15c87"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a11d6c70cb9712ea9ee9e16ef11e15c87">CisAisCisAis_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:a11d6c70cb9712ea9ee9e16ef11e15c87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a11d6c70cb9712ea9ee9e16ef11e15c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac091d75adaca68ddd47394fbb99b07e1" id="r_ac091d75adaca68ddd47394fbb99b07e1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ac091d75adaca68ddd47394fbb99b07e1">CisAisCisAis_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ac091d75adaca68ddd47394fbb99b07e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a11d6c70cb9712ea9ee9e16ef11e15c87">CisAisCisAis_element</a> (canonical diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occupation.  <br /></td></tr>
+<tr class="separator:ac091d75adaca68ddd47394fbb99b07e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5ccf8c4f1999a89bdd783f6b2fc0e86" id="r_ab5ccf8c4f1999a89bdd783f6b2fc0e86"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ab5ccf8c4f1999a89bdd783f6b2fc0e86">CisAisCjtAku_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:ab5ccf8c4f1999a89bdd783f6b2fc0e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of canonical Hubbard system.  <br /></td></tr>
+<tr class="separator:ab5ccf8c4f1999a89bdd783f6b2fc0e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07e4ce09990f3232fa53b3710fa71e7e" id="r_a07e4ce09990f3232fa53b3710fa71e7e"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a07e4ce09990f3232fa53b3710fa71e7e">CisAisCjtAku_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:a07e4ce09990f3232fa53b3710fa71e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of canonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a07e4ce09990f3232fa53b3710fa71e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a832c811d30778bcceac13498a9a3ca84" id="r_a832c811d30778bcceac13498a9a3ca84"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a832c811d30778bcceac13498a9a3ca84">CisAisCjtAku_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a832c811d30778bcceac13498a9a3ca84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a07e4ce09990f3232fa53b3710fa71e7e">CisAisCjtAku_element</a> (canonical two-body).  <br /></td></tr>
+<tr class="separator:a832c811d30778bcceac13498a9a3ca84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80386aa0d7b5a793cbf98a45db54d5f5" id="r_a80386aa0d7b5a793cbf98a45db54d5f5"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a80386aa0d7b5a793cbf98a45db54d5f5">CisAjtCkuAku_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:a80386aa0d7b5a793cbf98a45db54d5f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of canonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a80386aa0d7b5a793cbf98a45db54d5f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f79243dd53c39df1978a6ed3aaf8c6d" id="r_a3f79243dd53c39df1978a6ed3aaf8c6d"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a3f79243dd53c39df1978a6ed3aaf8c6d">CisAjtCkuAku_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:a3f79243dd53c39df1978a6ed3aaf8c6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of canonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a3f79243dd53c39df1978a6ed3aaf8c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21d35545675f4e13723e80e64f395763" id="r_a21d35545675f4e13723e80e64f395763"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a21d35545675f4e13723e80e64f395763">CisAjtCkuAku_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a21d35545675f4e13723e80e64f395763"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a3f79243dd53c39df1978a6ed3aaf8c6d">CisAjtCkuAku_element</a> (canonical two-body).  <br /></td></tr>
+<tr class="separator:a21d35545675f4e13723e80e64f395763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87189a3ea284b89e3f2a1e1a091d317f" id="r_a87189a3ea284b89e3f2a1e1a091d317f"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a87189a3ea284b89e3f2a1e1a091d317f">CisAjtCkuAlv_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2, long int *kprime_out)</td></tr>
+<tr class="memdesc:a87189a3ea284b89e3f2a1e1a091d317f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of canonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a87189a3ea284b89e3f2a1e1a091d317f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f2f4539a1f2464a47dcaed32a366903" id="r_a8f2f4539a1f2464a47dcaed32a366903"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a8f2f4539a1f2464a47dcaed32a366903">CisAjtCkuAlv_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2)</td></tr>
-<tr class="memdesc:a8f2f4539a1f2464a47dcaed32a366903"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of canonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a8f2f4539a1f2464a47dcaed32a366903"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5410e962c615e3676849b277221f1041" id="r_a5410e962c615e3676849b277221f1041"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a5410e962c615e3676849b277221f1041">CisAjtCkuAlv_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a5410e962c615e3676849b277221f1041"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a8f2f4539a1f2464a47dcaed32a366903">CisAjtCkuAlv_element</a> (canonical two-body).  <br /></td></tr>
+<tr class="separator:a5410e962c615e3676849b277221f1041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50f2a17f838a53cb4e02521aae0eb8b8" id="r_a50f2a17f838a53cb4e02521aae0eb8b8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a50f2a17f838a53cb4e02521aae0eb8b8">GC_CisAisCisAis_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out)</td></tr>
+<tr class="memdesc:a50f2a17f838a53cb4e02521aae0eb8b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a50f2a17f838a53cb4e02521aae0eb8b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab801a26ab9bb501f3aa443a4007abe00" id="r_ab801a26ab9bb501f3aa443a4007abe00"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ab801a26ab9bb501f3aa443a4007abe00">GC_CisAisCisAis_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:ab801a26ab9bb501f3aa443a4007abe00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:ab801a26ab9bb501f3aa443a4007abe00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf67371db17b72f3d8e6f7775623cfa6" id="r_aaf67371db17b72f3d8e6f7775623cfa6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#aaf67371db17b72f3d8e6f7775623cfa6">GC_CisAisCisAis_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:aaf67371db17b72f3d8e6f7775623cfa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#ab801a26ab9bb501f3aa443a4007abe00">GC_CisAisCisAis_element</a> (grand-canonical diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occ.  <br /></td></tr>
+<tr class="separator:aaf67371db17b72f3d8e6f7775623cfa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56ccef5b54acffa35896d484f995b16e" id="r_a56ccef5b54acffa35896d484f995b16e"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a56ccef5b54acffa35896d484f995b16e">GC_CisAisCjtAku_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:a56ccef5b54acffa35896d484f995b16e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of grandcanonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a56ccef5b54acffa35896d484f995b16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af783a23867d8aef0a04775129fb5d5f8" id="r_af783a23867d8aef0a04775129fb5d5f8"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#af783a23867d8aef0a04775129fb5d5f8">GC_CisAisCjtAku_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:af783a23867d8aef0a04775129fb5d5f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:af783a23867d8aef0a04775129fb5d5f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e01948b5bc9846c70de75ef81249ae7" id="r_a5e01948b5bc9846c70de75ef81249ae7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a5e01948b5bc9846c70de75ef81249ae7">GC_CisAisCjtAku_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite3, long unsigned int isite4, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:a5e01948b5bc9846c70de75ef81249ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#af783a23867d8aef0a04775129fb5d5f8">GC_CisAisCjtAku_element</a> (grand-canonical two-body).  <br /></td></tr>
+<tr class="separator:a5e01948b5bc9846c70de75ef81249ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af79d6dd2c37bc668f0ab05009618b96a" id="r_af79d6dd2c37bc668f0ab05009618b96a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#af79d6dd2c37bc668f0ab05009618b96a">GC_CisAjtCkuAku_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off, long int *kprime_out)</td></tr>
+<tr class="memdesc:af79d6dd2c37bc668f0ab05009618b96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of grandcanonical Hubbard system.  <br /></td></tr>
+<tr class="separator:af79d6dd2c37bc668f0ab05009618b96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5e60a8874f6749eb7add035306e8815" id="r_ac5e60a8874f6749eb7add035306e8815"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ac5e60a8874f6749eb7add035306e8815">GC_CisAjtCkuAku_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off)</td></tr>
-<tr class="memdesc:ac5e60a8874f6749eb7add035306e8815"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:ac5e60a8874f6749eb7add035306e8815"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac22f3ab6796ed2188034ca2fd549bfe1" id="r_ac22f3ab6796ed2188034ca2fd549bfe1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ac22f3ab6796ed2188034ca2fd549bfe1">GC_CisAjtCkuAku_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int Asum, long unsigned int Adiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ac22f3ab6796ed2188034ca2fd549bfe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#ac5e60a8874f6749eb7add035306e8815">GC_CisAjtCkuAku_element</a> (grand-canonical two-body).  <br /></td></tr>
+<tr class="separator:ac22f3ab6796ed2188034ca2fd549bfe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65840287eaa68d9ee69fedf39616301a" id="r_a65840287eaa68d9ee69fedf39616301a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a65840287eaa68d9ee69fedf39616301a">GC_CisAjtCkuAlv_element_map</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2, long int *kprime_out)</td></tr>
+<tr class="memdesc:a65840287eaa68d9ee69fedf39616301a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of grandcanonical Hubbard system.  <br /></td></tr>
+<tr class="separator:a65840287eaa68d9ee69fedf39616301a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28f17430bc05f24751a597b606b6edfb" id="r_a28f17430bc05f24751a597b606b6edfb"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a28f17430bc05f24751a597b606b6edfb">GC_CisAjtCkuAlv_element</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int *tmp_off_2)</td></tr>
-<tr class="memdesc:a28f17430bc05f24751a597b606b6edfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a28f17430bc05f24751a597b606b6edfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad04ea3974cbe975422f3c549284db02f" id="r_ad04ea3974cbe975422f3c549284db02f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#ad04ea3974cbe975422f3c549284db02f">GC_CisAjtCkuAlv_element_TraceProbe</a> (long unsigned int j, long unsigned int isite1, long unsigned int isite2, long unsigned int isite3, long unsigned int isite4, long unsigned int Asum, long unsigned int Adiff, long unsigned int Bsum, long unsigned int Bdiff, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int *kprime_out, double complex *amp_out)</td></tr>
+<tr class="memdesc:ad04ea3974cbe975422f3c549284db02f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a28f17430bc05f24751a597b606b6edfb">GC_CisAjtCkuAlv_element</a> (grand-canonical two-body).  <br /></td></tr>
+<tr class="separator:ad04ea3974cbe975422f3c549284db02f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82057cd7316bca01585868207301cf39" id="r_a82057cd7316bca01585868207301cf39"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a82057cd7316bca01585868207301cf39">GC_Cis</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, long unsigned int is1_spin, double complex tmp_V, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a82057cd7316bca01585868207301cf39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger\) term of grandcanonical Hubbard system.  <br /></td></tr>
 <tr class="separator:a82057cd7316bca01585868207301cf39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -335,9 +391,9 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01184">1184</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01579">1579</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="SingleExHubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>.</p>
 
@@ -433,9 +489,9 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01130">1130</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01525">1525</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00148">list_1_org</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="SingleExHubbard_8c_source.html#l00034">GetSingleExcitedStateHubbard()</a>.</p>
 
@@ -479,9 +535,9 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">337</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">359</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l01352">child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00738">CisAisCisAis_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00767">CisAisCjtAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00803">CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00883">GC_CisAisCisAis_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00914">GC_CisAisCjtAku_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00950">GC_CisAjtCkuAku_element()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l01352">child_CisAis_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00841">CisAisCisAis_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00899">CisAisCjtAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00975">CisAjtCkuAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01132">GC_CisAisCisAis_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01191">GC_CisAisCjtAku_element_map()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01268">GC_CisAjtCkuAku_element_map()</a>.</p>
 
 </div>
 </div>
@@ -559,11 +615,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">448</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">547</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">child_GC_CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">child_GC_CisAjt()</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00767">CisAisCjtAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00803">CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00840">CisAjtCkuAlv_element()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00899">CisAisCjtAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00975">CisAjtCkuAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01050">CisAjtCkuAlv_element_map()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -641,11 +697,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">480</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">579</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">child_CisAjt()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00914">child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00548">child_GC_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00840">CisAjtCkuAlv_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00914">GC_CisAisCjtAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00950">GC_CisAjtCkuAku_element()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00986">GC_CisAjtCkuAlv_element()</a>, and <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00198">GetSgnInterAll()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">child_CisAjt()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00914">child_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00548">child_GC_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01050">CisAjtCkuAlv_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01191">GC_CisAisCjtAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01268">GC_CisAjtCkuAku_element_map()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l01343">GC_CisAjtCkuAlv_element_map()</a>, and <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00198">GetSgnInterAll()</a>.</p>
 
 </div>
 </div>
@@ -710,12 +766,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -730,11 +780,144 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00738">738</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00851">851</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00841">CisAisCisAis_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00704">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a122925c2ac8b790771141180633ed82c" name="a122925c2ac8b790771141180633ed82c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a122925c2ac8b790771141180633ed82c">&#9670;&#160;</a></span>CisAisCisAis_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAisCisAis_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of canonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a11d6c70cb9712ea9ee9e16ef11e15c87">CisAisCisAis_element</a> (diagonal). </p><dl class="section return"><dt>Returns</dt><dd>the signed occupation product (0/1); kprime_out = j-1 (diagonal, always valid). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00841">841</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00851">CisAisCisAis_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00878">CisAisCisAis_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="ac091d75adaca68ddd47394fbb99b07e1" name="ac091d75adaca68ddd47394fbb99b07e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac091d75adaca68ddd47394fbb99b07e1">&#9670;&#160;</a></span>CisAisCisAis_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAisCisAis_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a11d6c70cb9712ea9ee9e16ef11e15c87">CisAisCisAis_element</a> (canonical diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occupation. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00878">878</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00841">CisAisCisAis_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -817,12 +1000,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of canonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -840,11 +1017,186 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00767">767</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00917">917</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">child_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00899">CisAisCjtAku_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00704">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="ab5ccf8c4f1999a89bdd783f6b2fc0e86" name="ab5ccf8c4f1999a89bdd783f6b2fc0e86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5ccf8c4f1999a89bdd783f6b2fc0e86">&#9670;&#160;</a></span>CisAisCjtAku_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAisCjtAku_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of canonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a07e4ce09990f3232fa53b3710fa71e7e">CisAisCjtAku_element</a>. Chains child_CisAjt (canonical 1-based destination via *tmp_off) then child_CisAis. </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = annihilated); kprime_out = *tmp_off-1 on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00899">899</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">child_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00917">CisAisCjtAku_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00947">CisAisCjtAku_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a832c811d30778bcceac13498a9a3ca84" name="a832c811d30778bcceac13498a9a3ca84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a832c811d30778bcceac13498a9a3ca84">&#9670;&#160;</a></span>CisAisCjtAku_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAisCjtAku_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a07e4ce09990f3232fa53b3710fa71e7e">CisAisCjtAku_element</a> (canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00947">947</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00899">CisAisCjtAku_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -915,12 +1267,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>\(c_{is}^\dagger c_{jt}\) term for canonical Hubbard </p>
-<dl class="section return"><dt>Returns</dt><dd>\(\langle v_1|{\hat H}_{\rm this}|v_1\rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of wavefunction  </td></tr>
@@ -936,11 +1282,168 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00354">354</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00410">410</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00383">CisAjt_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l01134">child_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00914">child_CisAjtCkuAlv_Hubbard_MPI()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00793">general_hopp()</a>.</p>
+
+</div>
+</div>
+<a id="ad2de503405d7acaaa7a573879c8030c8" name="ad2de503405d7acaaa7a573879c8030c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2de503405d7acaaa7a573879c8030c8">&#9670;&#160;</a></span>CisAjt_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAjt_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is2_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sum_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>diff_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>sgn_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>\(c_{is}^\dagger c_{jt}\) term for canonical Hubbard </p>
+<dl class="section return"><dt>Returns</dt><dd>\(\langle v_1|{\hat H}_{\rm this}|v_1\rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> shared 3-way (original / probe). Computes the canonical hopping destination and Fermion sign WITHOUT touching any vector. </p><dl class="section return"><dt>Returns</dt><dd>1 if the hop survives (kprime_out = 0-based destination in the basis, i.e. GetOffComp's 1-based off minus 1; sgn_out = +-1); 0 if annihilated or the exchanged bit pattern is not in the basis (kprime_out = -1). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00383">383</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00410">CisAjt()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00441">CisAjt_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a6835f45827d97814c692e70c4f11d338" name="a6835f45827d97814c692e70c4f11d338"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6835f45827d97814c692e70c4f11d338">&#9670;&#160;</a></span>CisAjt_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAjt_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is2_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sum_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>diff_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare Fermion sign. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00441">441</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00383">CisAjt_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -1023,12 +1526,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of canonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1046,11 +1543,186 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00803">803</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00992">992</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">child_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00975">CisAjtCkuAku_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00704">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a80386aa0d7b5a793cbf98a45db54d5f5" name="a80386aa0d7b5a793cbf98a45db54d5f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80386aa0d7b5a793cbf98a45db54d5f5">&#9670;&#160;</a></span>CisAjtCkuAku_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAjtCkuAku_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of canonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a3f79243dd53c39df1978a6ed3aaf8c6d">CisAjtCkuAku_element</a>. child_CisAis gate then child_CisAjt (canonical 1-based *tmp_off). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off-1 on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00975">975</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">child_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00992">CisAjtCkuAku_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01023">CisAjtCkuAku_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a21d35545675f4e13723e80e64f395763" name="a21d35545675f4e13723e80e64f395763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21d35545675f4e13723e80e64f395763">&#9670;&#160;</a></span>CisAjtCkuAku_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAjtCkuAku_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a3f79243dd53c39df1978a6ed3aaf8c6d">CisAjtCkuAku_element</a> (canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01023">1023</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00975">CisAjtCkuAku_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1151,12 +1823,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of canonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1177,11 +1843,222 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00840">840</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01070">1070</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00448">child_CisAjt()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">child_GC_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01050">CisAjtCkuAlv_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00704">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00856">general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a87189a3ea284b89e3f2a1e1a091d317f" name="a87189a3ea284b89e3f2a1e1a091d317f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87189a3ea284b89e3f2a1e1a091d317f">&#9670;&#160;</a></span>CisAjtCkuAlv_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CisAjtCkuAlv_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off_2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of canonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a8f2f4539a1f2464a47dcaed32a366903">CisAjtCkuAlv_element</a>. child_GC_CisAjt (bare-bit intermediate tmp_off_1) then child_CisAjt (canonical 1-based *tmp_off_2). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off_2-1 on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01050">1050</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00547">child_CisAjt()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">child_GC_CisAjt()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l01070">CisAjtCkuAlv_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01103">CisAjtCkuAlv_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a5410e962c615e3676849b277221f1041" name="a5410e962c615e3676849b277221f1041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5410e962c615e3676849b277221f1041">&#9670;&#160;</a></span>CisAjtCkuAlv_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CisAjtCkuAlv_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a8f2f4539a1f2464a47dcaed32a366903">CisAjtCkuAlv_element</a> (canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01103">1103</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01050">CisAjtCkuAlv_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1247,11 +2124,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00521">521</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00620">620</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l00772">exchange()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l00772">exchange()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -1296,11 +2173,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00246">246</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00247">247</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
 
 </div>
 </div>
@@ -1369,7 +2246,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00309">309</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00331">331</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
@@ -1446,9 +2323,9 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01080">1080</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01475">1475</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="SingleExHubbard_8c_source.html#l00110">GetSingleExcitedStateHubbardGC()</a>.</p>
 
@@ -1523,9 +2400,9 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01029">1029</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01424">1424</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="SingleExHubbard_8c_source.html#l00110">GetSingleExcitedStateHubbardGC()</a>.</p>
 
@@ -1580,12 +2457,6 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Operation of \(t c_{i\sigma}^\dagger c_{i\sigma}\) (Grandcanonical) </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1|{\hat H}|v_1\rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of element of wavefunction  </td></tr>
@@ -1598,11 +2469,112 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00282">282</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00293">293</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00287">GC_CisAis_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l00820">GC_general_hopp()</a>.</p>
+
+</div>
+</div>
+<a id="af22cebde369309994e53f2208e8ad837" name="af22cebde369309994e53f2208e8ad837"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af22cebde369309994e53f2208e8ad837">&#9670;&#160;</a></span>GC_CisAis_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static long unsigned int GC_CisAis_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Operation of \(t c_{i\sigma}^\dagger c_{i\sigma}\) (Grandcanonical) </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1|{\hat H}|v_1\rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#acf3b726a0fbe639a2b7169210c3a24c4">GC_CisAis</a> shared 3-way (original / probe). Diagonal: returns the occupation (0/1) of \((i\sigma)\) for bare-bit state j-1. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00287">287</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00293">GC_CisAis()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00317">GC_CisAis_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a66399daf40ed10438ac6230db5f8f7ce" name="a66399daf40ed10438ac6230db5f8f7ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66399daf40ed10438ac6230db5f8f7ce">&#9670;&#160;</a></span>GC_CisAis_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAis_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#acf3b726a0fbe639a2b7169210c3a24c4">GC_CisAis</a> (grand-canonical diagonal one-body). Diagonal: always returns 1 with *kprime_out = j-1 and *amp_out = occupation. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00317">317</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00287">GC_CisAis_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -1667,12 +2639,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1687,11 +2653,144 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00883">883</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01142">1142</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01132">GC_CisAisCisAis_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00585">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a50f2a17f838a53cb4e02521aae0eb8b8" name="a50f2a17f838a53cb4e02521aae0eb8b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50f2a17f838a53cb4e02521aae0eb8b8">&#9670;&#160;</a></span>GC_CisAisCisAis_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAisCisAis_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{is}^\dagger c_{is}\) term of grandcanonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#ab801a26ab9bb501f3aa443a4007abe00">GC_CisAisCisAis_element</a> (grand-canonical diagonal). </p><dl class="section return"><dt>Returns</dt><dd>signed occupation product (0/1); kprime_out = j-1 (always valid). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01132">1132</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l01142">GC_CisAisCisAis_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01170">GC_CisAisCisAis_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="aaf67371db17b72f3d8e6f7775623cfa6" name="aaf67371db17b72f3d8e6f7775623cfa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf67371db17b72f3d8e6f7775623cfa6">&#9670;&#160;</a></span>GC_CisAisCisAis_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAisCisAis_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#ab801a26ab9bb501f3aa443a4007abe00">GC_CisAisCisAis_element</a> (grand-canonical diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed occ. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01170">1170</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01132">GC_CisAisCisAis_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1774,12 +2873,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of grandcanonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -1797,11 +2890,186 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00914">914</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01209">1209</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">child_GC_CisAjt()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01191">GC_CisAisCjtAku_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00585">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a56ccef5b54acffa35896d484f995b16e" name="a56ccef5b54acffa35896d484f995b16e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56ccef5b54acffa35896d484f995b16e">&#9670;&#160;</a></span>GC_CisAisCjtAku_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAisCjtAku_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{ku}\) term of grandcanonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#af783a23867d8aef0a04775129fb5d5f8">GC_CisAisCjtAku_element</a>. child_GC_CisAjt (bare-bit tmp_off) gated by child_CisAis. </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01191">1191</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">child_GC_CisAjt()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l01209">GC_CisAisCjtAku_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01240">GC_CisAisCjtAku_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a5e01948b5bc9846c70de75ef81249ae7" name="a5e01948b5bc9846c70de75ef81249ae7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e01948b5bc9846c70de75ef81249ae7">&#9670;&#160;</a></span>GC_CisAisCjtAku_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAisCjtAku_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#af783a23867d8aef0a04775129fb5d5f8">GC_CisAisCjtAku_element</a> (grand-canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01240">1240</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01191">GC_CisAisCjtAku_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -1878,12 +3146,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>\(c_{is}^\dagger c_{jt}\) term for grandcanonical Hubbard </p>
-<dl class="section return"><dt>Returns</dt><dd>\(\langle v_1|{\hat H}_{\rm this}|v_1\rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of wavefunction  </td></tr>
@@ -1900,11 +3162,162 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00403">403</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00492">492</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00467">GC_CisAjt_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00350">child_GC_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00548">child_GC_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00820">GC_general_hopp()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00350">child_GC_CisAjtCkuAku_Hubbard_MPI()</a>, <a class="el" href="mltplyMPIHubbardCore_8c_source.html#l00548">child_GC_CisAjtCkuAlv_Hubbard_MPI()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00820">GC_general_hopp()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a60a01397977e408cc37b60ce5d64df27" name="a60a01397977e408cc37b60ce5d64df27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60a01397977e408cc37b60ce5d64df27">&#9670;&#160;</a></span>GC_CisAjt_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAjt_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is2_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sum_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>diff_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>sgn_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>\(c_{is}^\dagger c_{jt}\) term for grandcanonical Hubbard </p>
+<dl class="section return"><dt>Returns</dt><dd>\(\langle v_1|{\hat H}_{\rm this}|v_1\rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> shared 3-way (original / probe). Bare-bit grand-canonical hop: no vector access. </p><dl class="section return"><dt>Returns</dt><dd>1 if the hop survives (kprime_out = 0-based destination = bare-bit pattern list_1_off; sgn_out = +-1); 0 if annihilated (kprime_out = -1). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00467">467</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l00492">GC_CisAjt()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l00526">GC_CisAjt_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="a53b0c68afc11e94435493407e3a22773" name="a53b0c68afc11e94435493407e3a22773"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53b0c68afc11e94435493407e3a22773">&#9670;&#160;</a></span>GC_CisAjt_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAjt_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is1_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>is2_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>sum_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>diff_spin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = Fermion sign. </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00526">526</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00467">GC_CisAjt_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -1987,12 +3400,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of grandcanonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -2010,11 +3417,186 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00950">950</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01285">1285</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00337">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">child_GC_CisAjt()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01268">GC_CisAjtCkuAku_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00585">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="af79d6dd2c37bc668f0ab05009618b96a" name="af79d6dd2c37bc668f0ab05009618b96a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af79d6dd2c37bc668f0ab05009618b96a">&#9670;&#160;</a></span>GC_CisAjtCkuAku_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAjtCkuAku_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{ku}\) term of grandcanonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#ac5e60a8874f6749eb7add035306e8815">GC_CisAjtCkuAku_element</a>. child_CisAis gate then child_GC_CisAjt (bare-bit *tmp_off). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01268">1268</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00359">child_CisAis()</a>, <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">child_GC_CisAjt()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l01285">GC_CisAjtCkuAku_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01316">GC_CisAjtCkuAku_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="ac22f3ab6796ed2188034ca2fd549bfe1" name="ac22f3ab6796ed2188034ca2fd549bfe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac22f3ab6796ed2188034ca2fd549bfe1">&#9670;&#160;</a></span>GC_CisAjtCkuAku_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAjtCkuAku_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#ac5e60a8874f6749eb7add035306e8815">GC_CisAjtCkuAku_element</a> (grand-canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01316">1316</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01268">GC_CisAjtCkuAku_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -2115,12 +3697,6 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of grandcanonical Hubbard system. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Index of initial wavefunction  </td></tr>
@@ -2141,11 +3717,222 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00986">986</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01363">1363</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
-<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00480">child_GC_CisAjt()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01343">GC_CisAjtCkuAlv_element_map()</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00585">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00919">GC_general_int()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
+
+</div>
+</div>
+<a id="a65840287eaa68d9ee69fedf39616301a" name="a65840287eaa68d9ee69fedf39616301a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65840287eaa68d9ee69fedf39616301a">&#9670;&#160;</a></span>GC_CisAjtCkuAlv_element_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GC_CisAjtCkuAlv_element_map </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int *&#160;</td>
+          <td class="paramname"><em>tmp_off_2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute \(c_{is}^\dagger c_{jt} c_{ku}^\dagger c_{lv}\) term of grandcanonical Hubbard system. </p>
+<dl class="section return"><dt>Returns</dt><dd>Fragment of \(\langle v_1 | H_{\rm this} | v_1 \rangle\) </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
+<dd>
+Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#a28f17430bc05f24751a597b606b6edfb">GC_CisAjtCkuAlv_element</a>. Two chained child_GC_CisAjt (intermediate bare-bit tmp_off_1, final bare-bit *tmp_off_2). </p><dl class="section return"><dt>Returns</dt><dd>signed result (0 = dead); kprime_out = *tmp_off_2 on survival, else -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01343">1343</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l00579">child_GC_CisAjt()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mltplyHubbardCore_8c_source.html#l01363">GC_CisAjtCkuAlv_element()</a>, and <a class="el" href="mltplyHubbardCore_8c_source.html#l01398">GC_CisAjtCkuAlv_element_TraceProbe()</a>.</p>
+
+</div>
+</div>
+<a id="ad04ea3974cbe975422f3c549284db02f" name="ad04ea3974cbe975422f3c549284db02f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad04ea3974cbe975422f3c549284db02f">&#9670;&#160;</a></span>GC_CisAjtCkuAlv_element_TraceProbe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GC_CisAjtCkuAlv_element_TraceProbe </td>
+          <td>(</td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>isite4</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Asum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Adiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bsum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long unsigned int&#160;</td>
+          <td class="paramname"><em>Bdiff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>tmp_V</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int *&#160;</td>
+          <td class="paramname"><em>kprime_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>amp_out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a28f17430bc05f24751a597b606b6edfb">GC_CisAjtCkuAlv_element</a> (grand-canonical two-body). </p>
+
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l01398">1398</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+
+<p class="reference">References <a class="el" href="mltplyHubbardCore_8c_source.html#l01343">GC_CisAjtCkuAlv_element_map()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -2209,11 +3996,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00631">631</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00730">730</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l01002">GC_exchange()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l01002">GC_exchange()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -2277,11 +4064,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00689">689</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00788">788</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l00980">GC_pairhopp()</a>, and <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplyHubbard_8c_source.html#l00980">GC_pairhopp()</a>, and <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>.</p>
 
 </div>
 </div>
@@ -2365,11 +4152,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00083">83</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00084">84</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00404">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00334">expec_cisajs_HubbardGC()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00037">GetPairExcitedStateHubbardGC()</a>, <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00410">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00340">expec_cisajs_HubbardGC()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00137">GetPairExcitedStateHubbard()</a>, <a class="el" href="PairExHubbard_8c_source.html#l00037">GetPairExcitedStateHubbardGC()</a>, <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplySpin_8c_source.html#l00654">mltplyHalfSpinGC()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, and <a class="el" href="expec__trace_8c_source.html#l00862">TraceMapExtractOneBody()</a>.</p>
 
 </div>
 </div>
@@ -2481,11 +4268,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00125">125</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00126">126</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00820">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00701">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00704">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00585">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>, and <a class="el" href="expec__trace_8c_source.html#l00976">TraceMapExtractTwoBody()</a>.</p>
 
 </div>
 </div>
@@ -2549,11 +4336,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00582">582</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00681">681</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00214">GetOffComp()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="mltplyCommon_8h_source.html#l00025">M_CALCSPEC</a>, <a class="el" href="mltplyCommon_8h_source.html#l00020">M_MLTPLY</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00751">pairhopp()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00751">pairhopp()</a>.</p>
 
 </div>
 </div>
@@ -2598,11 +4385,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00218">218</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00219">219</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00057">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="makeHam_8c_source.html#l00071">makeHam()</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00169">mltplyHubbard()</a>, and <a class="el" href="mltplyHubbard_8c_source.html#l00436">mltplyHubbardGC()</a>.</p>
 
 </div>
 </div>

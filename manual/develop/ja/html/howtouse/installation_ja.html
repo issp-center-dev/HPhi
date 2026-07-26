@@ -51,7 +51,34 @@ make
 </pre></div>
 </div>
 <p>でコンパイルすることができます。全対角化の計算に<code class="docutils literal notranslate"><span class="pre">ScaLAPACK</span></code>を使用する場合には、<code class="docutils literal notranslate"><span class="pre">-DUSE_SCALAPACK=ON</span></code>のオプションをcmake時につけてください。
-コンパイル後、$HOME/build/hphi直下にsrcフォルダが作成され、
+全対角化の計算に<code class="docutils literal notranslate"><span class="pre">ELPA</span></code>を使用する場合には、<code class="docutils literal notranslate"><span class="pre">-DUSE_ELPA=ON</span></code>のオプションをcmake時につけてください（ScaLAPACKとMPIが必要です。
+<code class="docutils literal notranslate"><span class="pre">USE_SCALAPACK</span></code> は自動的に有効化されます）。ELPAが標準外のパスに
+インストールされている場合は<code class="docutils literal notranslate"><span class="pre">-DELPA_ROOT=/path/to/elpa</span></code>で場所を
+指定してください（<code class="docutils literal notranslate"><span class="pre">ELPA_INCLUDE_DIR</span></code>/<code class="docutils literal notranslate"><span class="pre">ELPA_LIBRARY</span></code> での個別指定も
+可能です）。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ELPAビルド時のプラットフォーム注意（AMD EPYC + Mellanox InfiniBand
+クラスタ、Intel oneAPI 2022 / Intel MPI 2021.7 で実機確認済み。
+いずれも物性研スパコン kugui で実際に遭遇・診断した事例です）:</p>
+<ul class="simple">
+<li><p><strong>AVX-512 を持たない CPU</strong>（AMD EPYC Rome/Milan など）では、ELPA
+本体の configure に <code class="docutils literal notranslate"><span class="pre">--disable-avx512</span> <span class="pre">--disable-avx512-kernels</span></code>
+を付けてください。ELPA はビルドホストの能力に関係なく AVX-512
+カーネルをコンパイルし、ランタイムのカーネル選択がそれを選ぶ
+ことがあります。その場合、2段ソルバ経路
+（<code class="docutils literal notranslate"><span class="pre">single_hh_trafo_*_AVX512_*</span></code>）で不正命令（SIGILL）により
+クラッシュします。小さい行列（1段ソルバ経路）では発症しない
+ため、見落としやすい点に注意してください。</p></li>
+<li><p><strong>Intel MPI</strong> を Mellanox（mlx/UCX プロバイダ）環境で使う場合、
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 1 または 2 の複数ランク実行が物理量収集
+（<code class="docutils literal notranslate"><span class="pre">MPI_Gatherv</span></code>）で既定チューニングのアルゴリズムにより
+デッドロックすることがあります。回避策として
+<code class="docutils literal notranslate"><span class="pre">I_MPI_ADJUST_GATHERV=3</span></code>（マルチノード可）または
+<code class="docutils literal notranslate"><span class="pre">I_MPI_FABRICS=shm</span></code>（単一ノードのみ）を設定してください。</p></li>
+</ul>
+</div>
+<p>コンパイル後、$HOME/build/hphi直下にsrcフォルダが作成され、
 実行ファイルであるHPhiがそのフォルダ内に作成されます。
 MPIライブラリがない場合には、MPI非対応の実行ファイルが作成されます。</p>
 <p>なお、上の例ではgccコンパイラを前提としたコンパイルになっていますが、</p>

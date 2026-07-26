@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['symmetryentrycallback_0',['SymmetryEntryCallback',['../symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00',1,'symmetry_matvec_plan.h']]]
+  ['hamcollectsinkfn_0',['HamCollectSinkFn',['../hamstore_8h.html#a7d7f84f8950d1c52a3db18b1bdbbe8d7',1,'hamstore.h']]]
 ];

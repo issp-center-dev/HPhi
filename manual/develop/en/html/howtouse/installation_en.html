@@ -48,7 +48,32 @@ make
 </pre></div>
 </div>
 <p>To use ScaLAPACK library for full diagonalization, the cmake option <code class="docutils literal notranslate"><span class="pre">-DUSE_SCALAPACK=ON</span></code> is needed.
-Here, we set a path to <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> as <code class="docutils literal notranslate"><span class="pre">$PathTohphi</span></code>
+To use ELPA library for full diagonalization, the cmake option <code class="docutils literal notranslate"><span class="pre">-DUSE_ELPA=ON</span></code> is needed
+(ELPA requires ScaLAPACK and MPI; <code class="docutils literal notranslate"><span class="pre">USE_SCALAPACK</span></code> is enabled automatically).
+If ELPA is installed in a non-standard path, specify its location via <code class="docutils literal notranslate"><span class="pre">-DELPA_ROOT=/path/to/elpa</span></code>
+(individual overrides <code class="docutils literal notranslate"><span class="pre">ELPA_INCLUDE_DIR</span></code>/<code class="docutils literal notranslate"><span class="pre">ELPA_LIBRARY</span></code> are also supported).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Platform notes for ELPA builds (verified on an AMD EPYC + Mellanox
+InfiniBand cluster with Intel oneAPI 2022 / Intel MPI 2021.7; both
+issues were actually encountered and diagnosed on the ISSP
+supercomputer kugui):</p>
+<ul class="simple">
+<li><p>On CPUs <strong>without AVX-512</strong> (e.g. AMD EPYC Rome/Milan), configure
+ELPA itself with <code class="docutils literal notranslate"><span class="pre">--disable-avx512</span> <span class="pre">--disable-avx512-kernels</span></code>.
+ELPA compiles AVX-512 kernels regardless of the build host and its
+runtime kernel selection may pick one, crashing with an illegal
+instruction (SIGILL) inside the 2-stage solver
+(<code class="docutils literal notranslate"><span class="pre">single_hh_trafo_*_AVX512_*</span></code>) for larger matrices, while small
+matrices (1-stage path) appear to work.</p></li>
+<li><p>With <strong>Intel MPI</strong> on Mellanox (mlx/UCX provider), multi-rank
+FullDiag runs with <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 1 or 2 may deadlock in the
+observable-collection step (<code class="docutils literal notranslate"><span class="pre">MPI_Gatherv</span></code>) with the default
+tuned algorithm. Set <code class="docutils literal notranslate"><span class="pre">I_MPI_ADJUST_GATHERV=3</span></code> (works multi-node)
+or <code class="docutils literal notranslate"><span class="pre">I_MPI_FABRICS=shm</span></code> (single node only) as a workaround.</p></li>
+</ul>
+</div>
+<p>Here, we set a path to <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> as <code class="docutils literal notranslate"><span class="pre">$PathTohphi</span></code>
 and to a build directory as <code class="docutils literal notranslate"><span class="pre">$HOME/build/hphi</span></code>.
 After compilation, <code class="docutils literal notranslate"><span class="pre">src</span></code> folder is constructed below a <code class="docutils literal notranslate"><span class="pre">$HOME/build/hphi</span></code>
 folder and we obtain an executable <code class="docutils literal notranslate"><span class="pre">HPhi</span></code> in <code class="docutils literal notranslate"><span class="pre">src/</span></code> directory.

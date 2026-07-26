@@ -31,10 +31,11 @@ var searchData=
   ['parateinteralloffdiagonal_28',['ParaTEInterAllOffDiagonal',['../structDefineList.html#ad53fd12177711593489e11f26004ec12',1,'DefineList']]],
   ['paratetransfer_29',['ParaTETransfer',['../structDefineList.html#a54b5c934664f1f8e6bd6780aea894076',1,'DefineList']]],
   ['paratetransferdiagonal_30',['ParaTETransferDiagonal',['../structDefineList.html#a2312228537cf857c2a5be459869f81f9',1,'DefineList']]],
-  ['phase_31',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult']]],
-  ['phys_32',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
-  ['plan_33',['plan',['../structFillEntriesContext.html#a2fe68b4d2dcd3bb80ad3be03df8f5a52',1,'FillEntriesContext']]],
-  ['prdct_34',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
-  ['prdct_5fallreduce_5fcalls_35',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
-  ['precg_36',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
+  ['part_5fpath_31',['part_path',['../structGreenOutputManifestRecord.html#aa812d0e6fd4f330292a294a8d249119f',1,'GreenOutputManifestRecord']]],
+  ['phase_32',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult']]],
+  ['phys_33',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
+  ['plan_34',['plan',['../structFillEntriesContext.html#a2fe68b4d2dcd3bb80ad3be03df8f5a52',1,'FillEntriesContext']]],
+  ['prdct_35',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
+  ['prdct_5fallreduce_5fcalls_36',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
+  ['precg_37',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
 ];

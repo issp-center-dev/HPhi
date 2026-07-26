@@ -12,6 +12,5 @@ var expec__cisajscktaltdc_8c =
     [ "expec_Fourbody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#abccfbf2d994989a50c5ad4a1fa571f43", null ],
     [ "expec_Sixbody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a522e2d5ad822804118592435024471ee", null ],
     [ "expec_Threebody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a2c06d1733daee29acca9c29f50964c32", null ],
-    [ "expec_Threebody_SpinGeneral", "expec__cisajscktaltdc_8c.html#a25d91b20439dd2de25f95e29d8c3fc39", null ],
-    [ "Rearray_Interactions", "expec__cisajscktaltdc_8c.html#a61f26ff579afa28d9473ae5827a41b34", null ]
+    [ "expec_Threebody_SpinGeneral", "expec__cisajscktaltdc_8c.html#a25d91b20439dd2de25f95e29d8c3fc39", null ]
 ];

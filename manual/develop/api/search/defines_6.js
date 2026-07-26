@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['h_5fcorr_0',['H_CORR',['../mltplyCommon_8h.html#a41480345f075da4865bb40e6b0535800',1,'mltplyCommon.h']]],
-  ['hphi_5fsymmetry_5fhalo_5fbitset_5fcap_5fbytes_1',['HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES',['../symmetry__vector__halo_8c.html#a8c02ddb3c42aab007431ca7b7ad6e3b8',1,'symmetry_vector_halo.c']]],
-  ['hubbard_2',['Hubbard',['../DefCommon_8h.html#a1518a9996ad08009b6ea9a6de5198b65',1,'DefCommon.h']]],
-  ['hubbardgc_3',['HubbardGC',['../DefCommon_8h.html#a5e2c64674c783f9e961ac5f05f653e2a',1,'DefCommon.h']]],
-  ['hubbardnconserved_4',['HubbardNConserved',['../DefCommon_8h.html#a289bd2a5931c1b42f8f07d1fb60fe97c',1,'DefCommon.h']]]
+  ['green_5fonebody_5frow_5fformat_0',['GREEN_ONEBODY_ROW_FORMAT',['../green__row__format_8h.html#a56ddc4a339a35e68177049ca4ce68514',1,'green_row_format.h']]],
+  ['green_5foutput_5fnkind_1',['GREEN_OUTPUT_NKIND',['../green__output_8c.html#a82c93e3ba00ed7645a89dd5afb3a7281',1,'green_output.c']]],
+  ['green_5ftwobody_5frow_5fformat_2',['GREEN_TWOBODY_ROW_FORMAT',['../green__row__format_8h.html#a18ad22ce8bc4d775bf1b164a8470fb17',1,'green_row_format.h']]],
+  ['green_5ftwobody_5frow_5fformat_5fsp_3',['GREEN_TWOBODY_ROW_FORMAT_SP',['../green__row__format_8h.html#a1b5a867126e8571654c94e8630d4237f',1,'green_row_format.h']]],
+  ['greenoutputrename_4',['GreenOutputRename',['../green__output_8c.html#a722964aa85f2e0494c630d8116257037',1,'green_output.c']]]
 ];

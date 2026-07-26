@@ -160,6 +160,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a03ed7328be35ca2198a43ec4c0f5e879" id="r_a03ed7328be35ca2198a43ec4c0f5e879"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="expec__energy__flct_8c.html#a03ed7328be35ca2198a43ec4c0f5e879">expec_energy_flct_SpinlessFermionGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:a03ed7328be35ca2198a43ec4c0f5e879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate expected values of particle number for SpinlessFermionGC model.  <br /></td></tr>
 <tr class="separator:a03ed7328be35ca2198a43ec4c0f5e879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc9404caa2dc8bddf9e9daa96046db49" id="r_adc9404caa2dc8bddf9e9daa96046db49"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="expec__energy__flct_8c.html#adc9404caa2dc8bddf9e9daa96046db49">EnergyFlctCoeff_Hubbard</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int k, double *D, double *N, double *S)</td></tr>
+<tr class="separator:adc9404caa2dc8bddf9e9daa96046db49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a810621cb87e895c8bc1ee95c2c4967c0" id="r_a810621cb87e895c8bc1ee95c2c4967c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="expec__energy__flct_8c.html#a810621cb87e895c8bc1ee95c2c4967c0">EnergyFlctCoeff_HubbardGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int k, double *D, double *N, double *S)</td></tr>
+<tr class="separator:a810621cb87e895c8bc1ee95c2c4967c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad56c198726c3d5351d697c7d8a0c8372" id="r_ad56c198726c3d5351d697c7d8a0c8372"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="expec__energy__flct_8c.html#ad56c198726c3d5351d697c7d8a0c8372">EnergyFlctCoeff_HalfSpinGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int k, double *S)</td></tr>
+<tr class="separator:ad56c198726c3d5351d697c7d8a0c8372"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa348e819403959bb072b168e2144d4e3" id="r_aa348e819403959bb072b168e2144d4e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="expec__energy__flct_8c.html#aa348e819403959bb072b168e2144d4e3">EnergyFlctCoeff_GeneralSpinGC</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long int k, double *S)</td></tr>
+<tr class="separator:aa348e819403959bb072b168e2144d4e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compute energy expectation value and energy fluctuation (variance) </p>
@@ -179,6 +187,190 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="aa348e819403959bb072b168e2144d4e3" name="aa348e819403959bb072b168e2144d4e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa348e819403959bb072b168e2144d4e3">&#9670;&#160;</a></span>EnergyFlctCoeff_GeneralSpinGC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void EnergyFlctCoeff_GeneralSpinGC </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>S</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00821">821</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00496">GetLocal2Sz()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00398">expec_energy_flct_GeneralSpinGC()</a>, and <a class="el" href="expec__trace__ham_8c_source.html#l00246">trace_fill_diag()</a>.</p>
+
+</div>
+</div>
+<a id="ad56c198726c3d5351d697c7d8a0c8372" name="ad56c198726c3d5351d697c7d8a0c8372"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad56c198726c3d5351d697c7d8a0c8372">&#9670;&#160;</a></span>EnergyFlctCoeff_HalfSpinGC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void EnergyFlctCoeff_HalfSpinGC </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>S</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00784">784</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00358">expec_energy_flct_HalfSpinGC()</a>, and <a class="el" href="expec__trace__ham_8c_source.html#l00246">trace_fill_diag()</a>.</p>
+
+</div>
+</div>
+<a id="adc9404caa2dc8bddf9e9daa96046db49" name="adc9404caa2dc8bddf9e9daa96046db49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc9404caa2dc8bddf9e9daa96046db49">&#9670;&#160;</a></span>EnergyFlctCoeff_Hubbard()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void EnergyFlctCoeff_Hubbard </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>D</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>S</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00643">643</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00293">expec_energy_flct_Hubbard()</a>, and <a class="el" href="expec__trace__ham_8c_source.html#l00246">trace_fill_diag()</a>.</p>
+
+</div>
+</div>
+<a id="a810621cb87e895c8bc1ee95c2c4967c0" name="a810621cb87e895c8bc1ee95c2c4967c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a810621cb87e895c8bc1ee95c2c4967c0">&#9670;&#160;</a></span>EnergyFlctCoeff_HubbardGC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void EnergyFlctCoeff_HubbardGC </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long int&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>D</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>S</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00717">717</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00239">expec_energy_flct_HubbardGC()</a>, and <a class="el" href="expec__trace__ham_8c_source.html#l00246">trace_fill_diag()</a>.</p>
+
+</div>
+</div>
 <a id="a3597e163a6cc1ae642ea4f0d1ecb9ee5" name="a3597e163a6cc1ae642ea4f0d1ecb9ee5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3597e163a6cc1ae642ea4f0d1ecb9ee5">&#9670;&#160;</a></span>expec_energy_flct()</h2>
 
@@ -220,9 +412,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00069">69</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="LogMessage_8c_source.html#l00103">cExpecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00102">cExpecStart</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="LogMessage_8c_source.html#l00139">cLogExpecEnergyEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00138">cLogExpecEnergyStart</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="LogMessage_8c_source.html#l00105">cTPQExpecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00104">cTPQExpecStart</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00568">expec_energy_flct_GeneralSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00496">expec_energy_flct_HalfSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00359">expec_energy_flct_Hubbard()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00239">expec_energy_flct_HubbardGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00739">expec_energy_flct_SpinlessFermionGC()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="bitcalc_8c_source.html#l00091">GetSplitBitByModel()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="mltplyCommon_8h_source.html#l00021">M_ENERGY</a>, <a class="el" href="mltply_8c_source.html#l00087">mltply()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00039">SpinlessFermionGC</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00240">SumMPI_dc()</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="LogMessage_8c_source.html#l00103">cExpecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00102">cExpecStart</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="LogMessage_8c_source.html#l00139">cLogExpecEnergyEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00138">cLogExpecEnergyStart</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="LogMessage_8c_source.html#l00105">cTPQExpecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00104">cTPQExpecStart</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00398">expec_energy_flct_GeneralSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00358">expec_energy_flct_HalfSpinGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00293">expec_energy_flct_Hubbard()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00239">expec_energy_flct_HubbardGC()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00560">expec_energy_flct_SpinlessFermionGC()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="bitcalc_8c_source.html#l00091">GetSplitBitByModel()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="mltplyCommon_8h_source.html#l00021">M_ENERGY</a>, <a class="el" href="mltply_8c_source.html#l00087">mltply()</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00336">SumMPI_dc()</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, and <a class="el" href="phys_8c_source.html#l00078">phys()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00041">FirstMultiply()</a>, <a class="el" href="phys_8c_source.html#l00081">phys()</a>, and <a class="el" href="phys__distributed__local_8c_source.html#l00096">phys_stateparallel_local_loop()</a>.</p>
 
 </div>
 </div>
@@ -257,9 +449,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00689">689</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00510">510</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00496">GetLocal2Sz()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00496">GetLocal2Sz()</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 </div>
 </div>
@@ -294,9 +486,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00568">568</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00398">398</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bitcalc_8c_source.html#l00496">GetLocal2Sz()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="expec__energy__flct_8c_source.html#l00821">EnergyFlctCoeff_GeneralSpinGC()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>.</p>
 
@@ -333,9 +525,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00616">616</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00437">437</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 </div>
 </div>
@@ -370,9 +562,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00496">496</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00358">358</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="expec__energy__flct_8c_source.html#l00784">EnergyFlctCoeff_HalfSpinGC()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>.</p>
 
@@ -409,9 +601,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00359">359</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00293">293</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="expec__energy__flct_8c_source.html#l00643">EnergyFlctCoeff_Hubbard()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>.</p>
 
@@ -450,7 +642,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00239">239</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="expec__energy__flct_8c_source.html#l00717">EnergyFlctCoeff_HubbardGC()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>.</p>
 
@@ -486,9 +678,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00739">739</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="expec__energy__flct_8c_source.html#l00560">560</a> of file <a class="el" href="expec__energy__flct_8c_source.html">expec_energy_flct.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00190">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00257">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="bitcalc_8c_source.html#l00539">pop()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00359">SumMPI_d()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>.</p>
 

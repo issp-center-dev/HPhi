@@ -166,6 +166,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a3d8c84b499f7188fc876ad1d53349b79" id="r_a3d8c84b499f7188fc876ad1d53349b79"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79">GetKWWithIdx</a> (char *ctmpLine, char *ctmp, int *itmp)</td></tr>
 <tr class="memdesc:a3d8c84b499f7188fc876ad1d53349b79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function of Getting keyword and it's variable from characters.  <br /></td></tr>
 <tr class="separator:a3d8c84b499f7188fc876ad1d53349b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b5690ffb749c6877cdbcc44422c6882" id="r_a8b5690ffb749c6877cdbcc44422c6882"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="readdef_8c.html#a8b5690ffb749c6877cdbcc44422c6882">ResolveSolver</a> (struct <a class="el" href="structDefineList.html">DefineList</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const char *defname)</td></tr>
+<tr class="memdesc:a8b5690ffb749c6877cdbcc44422c6882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolve the FullDiag solver backend from the Solver keyword and legacy keywords (ScaLAPACK, NGPU), following the precedence table in docs/superpowers/specs/2026-07-10-elpa-fulldiag-design.md section 2. On return X-&gt;iSolver is one of SOLVER_*, and X-&gt;iNGPU has its solver-dependent default applied when NGPU was not explicitly given.  <br /></td></tr>
+<tr class="separator:a8b5690ffb749c6877cdbcc44422c6882"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8b765c6b13b09923368a2c8bec319ca" id="r_ab8b765c6b13b09923368a2c8bec319ca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca">ReadcalcmodFile</a> (const char *defname, struct <a class="el" href="structDefineList.html">DefineList</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:ab8b765c6b13b09923368a2c8bec319ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function of Reading calcmod file.  <br /></td></tr>
 <tr class="separator:ab8b765c6b13b09923368a2c8bec319ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -295,11 +298,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03391">3391</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03581">3581</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00078">cErrNonConservedInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, and <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00089">cErrNonConservedInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00050">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, and <a class="el" href="DefCommon_8h_source.html#l00055">tJNConserved</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -370,11 +373,11 @@ Variables</h2></td></tr>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03582">3582</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03772">3772</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00080">cErrIncorrectFormatForKondoInt</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00091">cErrIncorrectFormatForKondoInt</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03932">CheckInterAllCondition()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04122">CheckInterAllCondition()</a>.</p>
 
 </div>
 </div>
@@ -438,11 +441,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03554">3554</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03744">3744</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00085">cWarningIncorrectFormatForSpin</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00096">cWarningIncorrectFormatForSpin</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03932">CheckInterAllCondition()</a>, and <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04122">CheckInterAllCondition()</a>, and <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -541,11 +544,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03782">3782</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03972">3972</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00088">cErrIncorrectSpinIndexForInter</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00099">cErrIncorrectSpinIndexForInter</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03932">CheckInterAllCondition()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04122">CheckInterAllCondition()</a>.</p>
 
 </div>
 </div>
@@ -663,11 +666,11 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dl class="section version"><dt>Version</dt><dd>2.2 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03932">3932</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04122">4122</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l03583">CheckFormatForKondoInt()</a>, <a class="el" href="readdef_8c_source.html#l03555">CheckFormatForSpinInt()</a>, <a class="el" href="readdef_8c_source.html#l03783">CheckGeneralSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02783">CheckQuadSite()</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00039">SpinlessFermionGC</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l03773">CheckFormatForKondoInt()</a>, <a class="el" href="readdef_8c_source.html#l03745">CheckFormatForSpinInt()</a>, <a class="el" href="readdef_8c_source.html#l03973">CheckGeneralSpinIndexForInterAll()</a>, <a class="el" href="readdef_8c_source.html#l02973">CheckQuadSite()</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -747,9 +750,9 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02930">2930</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03120">3120</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00077">cErrNonHermiteInterAll</a>, <a class="el" href="global_8c_source.html#l00181">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00088">cErrNonHermiteInterAll</a>, <a class="el" href="global_8c_source.html#l00188">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
 </div>
 </div>
@@ -803,11 +806,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03072">3072</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03262">3262</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00077">cErrNonHermiteInterAll</a>, <a class="el" href="global_8c_source.html#l00181">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00088">cErrNonHermiteInterAll</a>, <a class="el" href="global_8c_source.html#l00188">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -873,9 +876,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00173">173</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l03870">CheckWords()</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l04060">CheckWords()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00436">GetFileName()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00626">GetFileName()</a>.</p>
 
 </div>
 </div>
@@ -910,11 +913,11 @@ FALSE Indecies of localizes spin is incorrect </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03638">3638</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03828">3828</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l03843">CheckTotal2Sz()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="global_8h_source.html#l00032">LOCSPIN</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00039">SpinlessFermionGC</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l04033">CheckTotal2Sz()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00050">HubbardNConserved</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="global_8h_source.html#l00032">LOCSPIN</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00055">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -971,11 +974,11 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02755">2755</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02945">2945</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l02735">CheckSite()</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l02925">CheckSite()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l02783">CheckQuadSite()</a>, and <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l02973">CheckQuadSite()</a>, and <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1046,11 +1049,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02783">2783</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02973">2973</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l02755">CheckPairSite()</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l02945">CheckPairSite()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03932">CheckInterAllCondition()</a>, and <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04122">CheckInterAllCondition()</a>, and <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1100,9 +1103,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02735">2735</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02925">2925</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l02755">CheckPairSite()</a>, <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00481">ValidateSingleExcitationRow()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l02945">CheckPairSite()</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, and <a class="el" href="CalcSpectrum_8c_source.html#l00481">ValidateSingleExcitationRow()</a>.</p>
 
 </div>
 </div>
@@ -1141,11 +1144,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03809">3809</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03999">3999</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00089">cErrIncorrectSpinIndexForTrans</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00100">cErrIncorrectSpinIndexForTrans</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1198,11 +1201,11 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04049">4049</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04239">4239</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00075">cErrNonHermiteTrans</a>, <a class="el" href="global_8c_source.html#l00181">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00152">free_i_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00138">i_2d_allocate()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00086">cErrNonHermiteTrans</a>, <a class="el" href="global_8c_source.html#l00188">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="setmemory_8c_source.html#l00152">free_i_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00138">i_2d_allocate()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1241,11 +1244,11 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03842">3842</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04032">4032</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03639">CheckLocSpin()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03829">CheckLocSpin()</a>.</p>
 
 </div>
 </div>
@@ -1285,11 +1288,11 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l02811">2811</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03001">3001</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00075">cErrNonHermiteTrans</a>, <a class="el" href="global_8c_source.html#l00181">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00086">cErrNonHermiteTrans</a>, <a class="el" href="global_8c_source.html#l00188">eps_CheckImag0</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1331,9 +1334,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="section version"><dt>Version</dt><dd>1.1.0 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03870">3870</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04060">4060</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00173">CheckKW()</a>, <a class="el" href="readdef_8c_source.html#l03483">JudgeDefType()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00009">read_header_count()</a>, <a class="el" href="readdef_8c_source.html#l00249">ReadcalcmodFile()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00173">CheckKW()</a>, <a class="el" href="readdef_8c_source.html#l03673">JudgeDefType()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00009">read_header_count()</a>, <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>, and <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -1451,9 +1454,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dl class="section version"><dt>Version</dt><dd>2.1 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03179">3179</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03369">3369</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00078">cErrNonConservedInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, and <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00089">cErrNonConservedInterAll</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00050">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, and <a class="el" href="DefCommon_8h_source.html#l00055">tJNConserved</a>.</p>
 
 </div>
 </div>
@@ -1543,9 +1546,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03319">3319</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03509">3509</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1595,11 +1598,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00436">436</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00626">626</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00068">cErrKW</a>, <a class="el" href="ErrorMessage_8c_source.html#l00071">cErrKW_InCorPair</a>, <a class="el" href="ErrorMessage_8c_source.html#l00070">cErrKW_Same</a>, <a class="el" href="ErrorMessage_8c_source.html#l00069">cErrKW_ShowList</a>, <a class="el" href="readdef_8c_source.html#l00173">CheckKW()</a>, <a class="el" href="readdef_8c_source.html#l00054">cKWListOfFileNameList</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00140">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00079">cErrKW</a>, <a class="el" href="ErrorMessage_8c_source.html#l00082">cErrKW_InCorPair</a>, <a class="el" href="ErrorMessage_8c_source.html#l00081">cErrKW_Same</a>, <a class="el" href="ErrorMessage_8c_source.html#l00080">cErrKW_ShowList</a>, <a class="el" href="readdef_8c_source.html#l00173">CheckKW()</a>, <a class="el" href="readdef_8c_source.html#l00054">cKWListOfFileNameList</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="wrapperMPI_8c_source.html#l00232">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00204">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -1645,7 +1648,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03901">3901</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04091">4091</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
 <p class="reference">References <a class="el" href="readdef_8c_source.html#l00094">cFileNameListFile</a>.</p>
 
@@ -1709,9 +1712,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00206">206</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00040">cErrDefFileFormat</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00040">cErrDefFileFormat</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00249">ReadcalcmodFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>.</p>
 
 </div>
 </div>
@@ -1743,11 +1746,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03723">3723</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03913">3913</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -1866,9 +1869,9 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 1 Interaction is diagonal </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03991">3991</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l04181">4181</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1896,9 +1899,9 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00490">490</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00680">680</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00497">ReadNBodyLineMPI()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00687">ReadNBodyLineMPI()</a>.</p>
 
 </div>
 </div>
@@ -1955,9 +1958,9 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03482">3482</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03672">3672</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l03870">CheckWords()</a>, <a class="el" href="readdef_8h_source.html#l00026">EXPERT_MODE</a>, <a class="el" href="readdef_8h_source.html#l00028">STANDARD_DRY_MODE</a>, <a class="el" href="readdef_8h_source.html#l00027">STANDARD_MODE</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l04060">CheckWords()</a>, <a class="el" href="readdef_8h_source.html#l00026">EXPERT_MODE</a>, <a class="el" href="readdef_8h_source.html#l00028">STANDARD_DRY_MODE</a>, <a class="el" href="readdef_8h_source.html#l00027">STANDARD_MODE</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -2009,11 +2012,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00249">249</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00357">357</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00046">cErrCalcEigenVec</a>, <a class="el" href="ErrorMessage_8c_source.html#l00051">cErrCalcModel</a>, <a class="el" href="ErrorMessage_8c_source.html#l00043">cErrCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00055">cErrCUDA</a>, <a class="el" href="ErrorMessage_8c_source.html#l00042">cErrDefFileParam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00052">cErrFiniteTemp</a>, <a class="el" href="ErrorMessage_8c_source.html#l00049">cErrInputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00050">cErrInputOutputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00045">cErrOutputGreenFormat</a>, <a class="el" href="ErrorMessage_8c_source.html#l00047">cErrOutputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00048">cErrOutputHamForFullDiag</a>, <a class="el" href="ErrorMessage_8c_source.html#l00044">cErrOutputMode</a>, <a class="el" href="ErrorMessage_8c_source.html#l00054">cErrRestart</a>, <a class="el" href="ErrorMessage_8c_source.html#l00053">cErrSetIniVec</a>, <a class="el" href="readdef_8c_source.html#l03870">CheckWords()</a>, <a class="el" href="readdef_8h_source.html#l00020">D_CharKWDMAX</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00140">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l00206">GetKWWithIdx()</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00062">NUM_CALCEIGENVEC</a>, <a class="el" href="DefCommon_8h_source.html#l00030">NUM_CALCMODEL</a>, <a class="el" href="DefCommon_8h_source.html#l00021">NUM_CALCTYPE</a>, <a class="el" href="DefCommon_8h_source.html#l00058">NUM_INPUTHAM</a>, <a class="el" href="DefCommon_8h_source.html#l00051">NUM_OUTPUTGREENFORMAT</a>, <a class="el" href="DefCommon_8h_source.html#l00055">NUM_OUTPUTHAM</a>, <a class="el" href="DefCommon_8h_source.html#l00046">NUM_OUTPUTMODE</a>, <a class="el" href="DefCommon_8h_source.html#l00076">NUM_RESTART</a>, <a class="el" href="DefCommon_8h_source.html#l00061">NUM_SETINITAILVEC</a>, <a class="el" href="DefCommon_8h_source.html#l00052">OUTPUTGREENFORMAT_SPLIT</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="readdef_8c_source.html#l00149">ValidateValue()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00081">CALCSPEC_NOT</a>, <a class="el" href="ErrorMessage_8c_source.html#l00046">cErrCalcEigenVec</a>, <a class="el" href="ErrorMessage_8c_source.html#l00051">cErrCalcModel</a>, <a class="el" href="ErrorMessage_8c_source.html#l00043">cErrCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00055">cErrCUDA</a>, <a class="el" href="ErrorMessage_8c_source.html#l00042">cErrDefFileParam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00060">cErrElpaHamIO</a>, <a class="el" href="ErrorMessage_8c_source.html#l00066">cErrExpecMode</a>, <a class="el" href="ErrorMessage_8c_source.html#l00052">cErrFiniteTemp</a>, <a class="el" href="ErrorMessage_8c_source.html#l00049">cErrInputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00050">cErrInputOutputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00045">cErrOutputGreenFormat</a>, <a class="el" href="ErrorMessage_8c_source.html#l00047">cErrOutputHam</a>, <a class="el" href="ErrorMessage_8c_source.html#l00048">cErrOutputHamForFullDiag</a>, <a class="el" href="ErrorMessage_8c_source.html#l00044">cErrOutputMode</a>, <a class="el" href="ErrorMessage_8c_source.html#l00054">cErrRestart</a>, <a class="el" href="ErrorMessage_8c_source.html#l00053">cErrSetIniVec</a>, <a class="el" href="ErrorMessage_8c_source.html#l00065">cErrSpectrumFullDiagSolver</a>, <a class="el" href="ErrorMessage_8c_source.html#l00067">cErrSpinlessFullDiag</a>, <a class="el" href="readdef_8c_source.html#l04060">CheckWords()</a>, <a class="el" href="ErrorMessage_8c_source.html#l00061">cWarnScaLAPACKDep</a>, <a class="el" href="readdef_8h_source.html#l00020">D_CharKWDMAX</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="DefCommon_8h_source.html#l00038">EXPECMODE_SERIAL</a>, <a class="el" href="wrapperMPI_8c_source.html#l00232">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00204">fopenMPI()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="readdef_8c_source.html#l00206">GetKWWithIdx()</a>, <a class="el" href="DefCommon_8h_source.html#l00050">HubbardNConserved</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="DefCommon_8h_source.html#l00075">NUM_CALCEIGENVEC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">NUM_CALCMODEL</a>, <a class="el" href="DefCommon_8h_source.html#l00021">NUM_CALCTYPE</a>, <a class="el" href="DefCommon_8h_source.html#l00037">NUM_EXPECMODE</a>, <a class="el" href="DefCommon_8h_source.html#l00071">NUM_INPUTHAM</a>, <a class="el" href="DefCommon_8h_source.html#l00064">NUM_OUTPUTGREENFORMAT</a>, <a class="el" href="DefCommon_8h_source.html#l00068">NUM_OUTPUTHAM</a>, <a class="el" href="DefCommon_8h_source.html#l00059">NUM_OUTPUTMODE</a>, <a class="el" href="DefCommon_8h_source.html#l00089">NUM_RESTART</a>, <a class="el" href="DefCommon_8h_source.html#l00074">NUM_SETINITAILVEC</a>, <a class="el" href="DefCommon_8h_source.html#l00065">OUTPUTGREENFORMAT_SPLIT</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00246">ResolveSolver()</a>, <a class="el" href="DefCommon_8h_source.html#l00034">SOLVER_ELPA</a>, <a class="el" href="DefCommon_8h_source.html#l00032">SOLVER_SCALAPACK</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00055">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="readdef_8c_source.html#l00149">ValidateValue()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -2047,9 +2050,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00131">131</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00039">cErrReadDefFile</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00039">cErrReadDefFile</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00436">GetFileName()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00009">read_header_count()</a>, <a class="el" href="readdef_8c_source.html#l00249">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00027">ReadTransSymNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00626">GetFileName()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00009">read_header_count()</a>, <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00027">ReadTransSymNInt()</a>.</p>
 
 </div>
 </div>
@@ -2099,9 +2102,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l01321">1321</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l01511">1511</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="readdef_8c_source.html#l03392">ArrangeInterAllOffDiagonal()</a>, <a class="el" href="struct_8h_source.html#l00502">BoostList::arrayJ</a>, <a class="el" href="ErrorMessage_8c_source.html#l00081">cErrIncorrectFormatForKondoTrans</a>, <a class="el" href="ErrorMessage_8c_source.html#l00087">cErrIncorrectFormatInter</a>, <a class="el" href="ErrorMessage_8c_source.html#l00079">cErrNonHermiteInterAllForAll</a>, <a class="el" href="ErrorMessage_8c_source.html#l00075">cErrNonHermiteTrans</a>, <a class="el" href="ErrorMessage_8c_source.html#l00076">cErrNonHermiteTransForAll</a>, <a class="el" href="readdef_8c_source.html#l00094">cFileNameListFile</a>, <a class="el" href="anomalous__pair_8c_source.html#l00170">CheckAnomalousTermHermitePairs()</a>, <a class="el" href="readdef_8c_source.html#l03555">CheckFormatForSpinInt()</a>, <a class="el" href="readdef_8c_source.html#l03932">CheckInterAllCondition()</a>, <a class="el" href="readdef_8c_source.html#l03073">CheckInterAllHermite_simple()</a>, <a class="el" href="readdef_8c_source.html#l03639">CheckLocSpin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00381">CheckNBodyGHubbardConservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00356">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00475">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00411">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00387">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="readdef_8c_source.html#l02755">CheckPairSite()</a>, <a class="el" href="readdef_8c_source.html#l02783">CheckQuadSite()</a>, <a class="el" href="readdef_8c_source.html#l02735">CheckSite()</a>, <a class="el" href="readdef_8c_source.html#l03810">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l04050">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l02812">CheckTransferHermite()</a>, <a class="el" href="nbody__interall_8c_source.html#l00439">ClassifyNBodyInterAllTerms()</a>, <a class="el" href="LogMessage_8c_source.html#l00027">cReadFileNamelist</a>, <a class="el" href="ErrorMessage_8c_source.html#l00086">cWarningIncorrectFormatForSpin2</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="global_8c_source.html#l00181">eps_CheckImag0</a>, <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00140">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l03320">GetDiagonalInterAll_simple()</a>, <a class="el" href="readdef_8h_source.html#l00023">IgnoreLinesInDef</a>, <a class="el" href="readdef_8c_source.html#l03991">InputInterAllInfo()</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="readdef_8h_source.html#l00063">KWAnomalousG</a>, <a class="el" href="readdef_8h_source.html#l00062">KWAnomalousTerm</a>, <a class="el" href="readdef_8h_source.html#l00047">KWBoost</a>, <a class="el" href="readdef_8h_source.html#l00038">KWCoulombInter</a>, <a class="el" href="readdef_8h_source.html#l00037">KWCoulombIntra</a>, <a class="el" href="readdef_8h_source.html#l00041">KWExchange</a>, <a class="el" href="readdef_8h_source.html#l00055">KWFourBodyG</a>, <a class="el" href="readdef_8h_source.html#l00039">KWHund</a>, <a class="el" href="readdef_8h_source.html#l00042">KWInterAll</a>, <a class="el" href="readdef_8h_source.html#l00046">KWIsing</a>, <a class="el" href="readdef_8h_source.html#l00051">KWLaser</a>, <a class="el" href="readdef_8h_source.html#l00035">KWLocSpin</a>, <a class="el" href="readdef_8h_source.html#l00061">KWNBodyG</a>, <a class="el" href="readdef_8h_source.html#l00060">KWNBodyInterAll</a>, <a class="el" href="readdef_8h_source.html#l00043">KWOneBodyG</a>, <a class="el" href="readdef_8h_source.html#l00049">KWPairExcitation</a>, <a class="el" href="readdef_8h_source.html#l00059">KWPairExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00040">KWPairHop</a>, <a class="el" href="readdef_8h_source.html#l00045">KWPairLift</a>, <a class="el" href="readdef_8h_source.html#l00048">KWSingleExcitation</a>, <a class="el" href="readdef_8h_source.html#l00058">KWSingleExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00056">KWSixBodyG</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="readdef_8h_source.html#l00052">KWTEOneBody</a>, <a class="el" href="readdef_8h_source.html#l00053">KWTETwoBody</a>, <a class="el" href="readdef_8h_source.html#l00054">KWThreeBodyG</a>, <a class="el" href="readdef_8h_source.html#l00036">KWTrans</a>, <a class="el" href="readdef_8h_source.html#l00064">KWTransSym</a>, <a class="el" href="readdef_8h_source.html#l00044">KWTwoBodyG</a>, <a class="el" href="struct_8h_source.html#l00505">BoostList::list_6spin_pair</a>, <a class="el" href="struct_8h_source.html#l00504">BoostList::list_6spin_star</a>, <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00310">NormalizeNBodyInterAllTerms()</a>, <a class="el" href="struct_8h_source.html#l00499">BoostList::num_pivot</a>, <a class="el" href="struct_8h_source.html#l00501">BoostList::NumarrayJ</a>, <a class="el" href="anomalous__pair_8c_source.html#l00085">ParseAnomalousGLine()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00060">ParseAnomalousTermLine()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00053">ParseNBodyGLine()</a>, <a class="el" href="nbody__interall_8c_source.html#l00068">ParseNBodyInterAllLine()</a>, <a class="el" href="struct_8h_source.html#l00497">BoostList::R0</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00497">ReadNBodyLineMPI()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, <a class="el" href="readdef_8c_source.html#l03707">ResetInteractionNum()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00039">SpinlessFermionGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="anomalous__pair_8c_source.html#l00165">ValidateAnomalousGScope()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00155">ValidateAnomalousTermScope()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00206">ValidateNBodyInterAllScope()</a>, <a class="el" href="struct_8h_source.html#l00503">BoostList::vecB</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="readdef_8c_source.html#l03582">ArrangeInterAllOffDiagonal()</a>, <a class="el" href="struct_8h_source.html#l00522">BoostList::arrayJ</a>, <a class="el" href="ErrorMessage_8c_source.html#l00092">cErrIncorrectFormatForKondoTrans</a>, <a class="el" href="ErrorMessage_8c_source.html#l00098">cErrIncorrectFormatInter</a>, <a class="el" href="ErrorMessage_8c_source.html#l00090">cErrNonHermiteInterAllForAll</a>, <a class="el" href="ErrorMessage_8c_source.html#l00086">cErrNonHermiteTrans</a>, <a class="el" href="ErrorMessage_8c_source.html#l00087">cErrNonHermiteTransForAll</a>, <a class="el" href="readdef_8c_source.html#l00094">cFileNameListFile</a>, <a class="el" href="anomalous__pair_8c_source.html#l00171">CheckAnomalousTermHermitePairs()</a>, <a class="el" href="readdef_8c_source.html#l03745">CheckFormatForSpinInt()</a>, <a class="el" href="readdef_8c_source.html#l04122">CheckInterAllCondition()</a>, <a class="el" href="readdef_8c_source.html#l03263">CheckInterAllHermite_simple()</a>, <a class="el" href="readdef_8c_source.html#l03829">CheckLocSpin()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00381">CheckNBodyGHubbardConservation()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00356">CheckNBodyGSpinConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00476">CheckNBodyInterAllHermitePairs()</a>, <a class="el" href="nbody__interall_8c_source.html#l00412">CheckNBodyInterAllHubbardConservation()</a>, <a class="el" href="nbody__interall_8c_source.html#l00388">CheckNBodyInterAllSpinConservation()</a>, <a class="el" href="readdef_8c_source.html#l02945">CheckPairSite()</a>, <a class="el" href="readdef_8c_source.html#l02973">CheckQuadSite()</a>, <a class="el" href="readdef_8c_source.html#l02925">CheckSite()</a>, <a class="el" href="readdef_8c_source.html#l04000">CheckSpinIndexForTrans()</a>, <a class="el" href="readdef_8c_source.html#l04240">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l03002">CheckTransferHermite()</a>, <a class="el" href="nbody__interall_8c_source.html#l00440">ClassifyNBodyInterAllTerms()</a>, <a class="el" href="LogMessage_8c_source.html#l00027">cReadFileNamelist</a>, <a class="el" href="ErrorMessage_8c_source.html#l00097">cWarningIncorrectFormatForSpin2</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="global_8c_source.html#l00188">eps_CheckImag0</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00232">fgetsMPI()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00204">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l03510">GetDiagonalInterAll_simple()</a>, <a class="el" href="readdef_8h_source.html#l00023">IgnoreLinesInDef</a>, <a class="el" href="readdef_8c_source.html#l04181">InputInterAllInfo()</a>, <a class="el" href="global_8h_source.html#l00031">ITINERANT</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="readdef_8h_source.html#l00063">KWAnomalousG</a>, <a class="el" href="readdef_8h_source.html#l00062">KWAnomalousTerm</a>, <a class="el" href="readdef_8h_source.html#l00047">KWBoost</a>, <a class="el" href="readdef_8h_source.html#l00038">KWCoulombInter</a>, <a class="el" href="readdef_8h_source.html#l00037">KWCoulombIntra</a>, <a class="el" href="readdef_8h_source.html#l00041">KWExchange</a>, <a class="el" href="readdef_8h_source.html#l00055">KWFourBodyG</a>, <a class="el" href="readdef_8h_source.html#l00039">KWHund</a>, <a class="el" href="readdef_8h_source.html#l00042">KWInterAll</a>, <a class="el" href="readdef_8h_source.html#l00046">KWIsing</a>, <a class="el" href="readdef_8h_source.html#l00051">KWLaser</a>, <a class="el" href="readdef_8h_source.html#l00035">KWLocSpin</a>, <a class="el" href="readdef_8h_source.html#l00061">KWNBodyG</a>, <a class="el" href="readdef_8h_source.html#l00060">KWNBodyInterAll</a>, <a class="el" href="readdef_8h_source.html#l00043">KWOneBodyG</a>, <a class="el" href="readdef_8h_source.html#l00049">KWPairExcitation</a>, <a class="el" href="readdef_8h_source.html#l00059">KWPairExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00040">KWPairHop</a>, <a class="el" href="readdef_8h_source.html#l00045">KWPairLift</a>, <a class="el" href="readdef_8h_source.html#l00048">KWSingleExcitation</a>, <a class="el" href="readdef_8h_source.html#l00058">KWSingleExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00056">KWSixBodyG</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="readdef_8h_source.html#l00052">KWTEOneBody</a>, <a class="el" href="readdef_8h_source.html#l00053">KWTETwoBody</a>, <a class="el" href="readdef_8h_source.html#l00054">KWThreeBodyG</a>, <a class="el" href="readdef_8h_source.html#l00036">KWTrans</a>, <a class="el" href="readdef_8h_source.html#l00064">KWTransSym</a>, <a class="el" href="readdef_8h_source.html#l00044">KWTwoBodyG</a>, <a class="el" href="struct_8h_source.html#l00525">BoostList::list_6spin_pair</a>, <a class="el" href="struct_8h_source.html#l00524">BoostList::list_6spin_star</a>, <a class="el" href="nbody__correlation_8c_source.html#l00271">NormalizeNBodyGTerms()</a>, <a class="el" href="nbody__interall_8c_source.html#l00311">NormalizeNBodyInterAllTerms()</a>, <a class="el" href="struct_8h_source.html#l00519">BoostList::num_pivot</a>, <a class="el" href="struct_8h_source.html#l00521">BoostList::NumarrayJ</a>, <a class="el" href="anomalous__pair_8c_source.html#l00086">ParseAnomalousGLine()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00061">ParseAnomalousTermLine()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00053">ParseNBodyGLine()</a>, <a class="el" href="nbody__interall_8c_source.html#l00069">ParseNBodyInterAllLine()</a>, <a class="el" href="struct_8h_source.html#l00517">BoostList::R0</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00687">ReadNBodyLineMPI()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00082">ReadTransSymFile()</a>, <a class="el" href="readdef_8c_source.html#l03897">ResetInteractionNum()</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="anomalous__pair_8c_source.html#l00166">ValidateAnomalousGScope()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00156">ValidateAnomalousTermScope()</a>, <a class="el" href="nbody__correlation_8c_source.html#l00175">ValidateNBodyGScope()</a>, <a class="el" href="nbody__interall_8c_source.html#l00207">ValidateNBodyInterAllScope()</a>, <a class="el" href="struct_8h_source.html#l00523">BoostList::vecB</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -2164,9 +2167,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <p>Read header (1 line).</p>
 <p>Read lines.</p>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00581">581</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00771">771</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00061">cErrExpecInterval</a>, <a class="el" href="ErrorMessage_8c_source.html#l00074">cErrIncorrectDef</a>, <a class="el" href="ErrorMessage_8c_source.html#l00063">cErrLanczos_eps</a>, <a class="el" href="ErrorMessage_8c_source.html#l00062">cErrLanczos_max</a>, <a class="el" href="ErrorMessage_8c_source.html#l00064">cErrLanczosExct</a>, <a class="el" href="ErrorMessage_8c_source.html#l00065">cErrLanczosTarget</a>, <a class="el" href="ErrorMessage_8c_source.html#l00073">cErrMakeDef</a>, <a class="el" href="ErrorMessage_8c_source.html#l00058">cErrNcond</a>, <a class="el" href="ErrorMessage_8c_source.html#l00041">cErrNLoc</a>, <a class="el" href="ErrorMessage_8c_source.html#l00059">cErrNsite</a>, <a class="el" href="ErrorMessage_8c_source.html#l00060">cErrNumAve</a>, <a class="el" href="readdef_8c_source.html#l00094">cFileNameListFile</a>, <a class="el" href="readdef_8c_source.html#l03870">CheckWords()</a>, <a class="el" href="readdef_8c_source.html#l00054">cKWListOfFileNameList</a>, <a class="el" href="LogMessage_8c_source.html#l00028">cReadFile</a>, <a class="el" href="LogMessage_8c_source.html#l00027">cReadFileNamelist</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00157">fgetsMPI()</a>, <a class="el" href="struct_8h_source.html#l00496">BoostList::flgBoost</a>, <a class="el" href="wrapperMPI_8c_source.html#l00140">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l00436">GetFileName()</a>, <a class="el" href="DefCommon_8h_source.html#l00031">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00034">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00037">HubbardNConserved</a>, <a class="el" href="readdef_8c_source.html#l03724">InitializeInteractionNum()</a>, <a class="el" href="struct_8h_source.html#l00500">BoostList::ishift_nspin</a>, <a class="el" href="DefCommon_8h_source.html#l00033">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00036">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00043">KondoNConserved</a>, <a class="el" href="readdef_8h_source.html#l00063">KWAnomalousG</a>, <a class="el" href="readdef_8h_source.html#l00062">KWAnomalousTerm</a>, <a class="el" href="readdef_8h_source.html#l00047">KWBoost</a>, <a class="el" href="readdef_8h_source.html#l00033">KWCalcMod</a>, <a class="el" href="readdef_8h_source.html#l00038">KWCoulombInter</a>, <a class="el" href="readdef_8h_source.html#l00037">KWCoulombIntra</a>, <a class="el" href="readdef_8h_source.html#l00041">KWExchange</a>, <a class="el" href="readdef_8h_source.html#l00055">KWFourBodyG</a>, <a class="el" href="readdef_8h_source.html#l00039">KWHund</a>, <a class="el" href="readdef_8h_source.html#l00042">KWInterAll</a>, <a class="el" href="readdef_8h_source.html#l00057">KWInvTemp</a>, <a class="el" href="readdef_8h_source.html#l00046">KWIsing</a>, <a class="el" href="readdef_8h_source.html#l00051">KWLaser</a>, <a class="el" href="readdef_8h_source.html#l00035">KWLocSpin</a>, <a class="el" href="readdef_8h_source.html#l00034">KWModPara</a>, <a class="el" href="readdef_8h_source.html#l00061">KWNBodyG</a>, <a class="el" href="readdef_8h_source.html#l00060">KWNBodyInterAll</a>, <a class="el" href="readdef_8h_source.html#l00043">KWOneBodyG</a>, <a class="el" href="readdef_8h_source.html#l00049">KWPairExcitation</a>, <a class="el" href="readdef_8h_source.html#l00059">KWPairExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00040">KWPairHop</a>, <a class="el" href="readdef_8h_source.html#l00045">KWPairLift</a>, <a class="el" href="readdef_8h_source.html#l00048">KWSingleExcitation</a>, <a class="el" href="readdef_8h_source.html#l00058">KWSingleExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00056">KWSixBodyG</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="readdef_8h_source.html#l00052">KWTEOneBody</a>, <a class="el" href="readdef_8h_source.html#l00053">KWTETwoBody</a>, <a class="el" href="readdef_8h_source.html#l00054">KWThreeBodyG</a>, <a class="el" href="readdef_8h_source.html#l00036">KWTrans</a>, <a class="el" href="readdef_8h_source.html#l00064">KWTransSym</a>, <a class="el" href="readdef_8h_source.html#l00044">KWTwoBodyG</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="struct_8h_source.html#l00499">BoostList::num_pivot</a>, <a class="el" href="struct_8h_source.html#l00501">BoostList::NumarrayJ</a>, <a class="el" href="global_8c_source.html#l00158">NumAve</a>, <a class="el" href="nbody__correlation_8c_source.html#l00053">ParseNBodyGLine()</a>, <a class="el" href="nbody__interall_8c_source.html#l00068">ParseNBodyInterAllLine()</a>, <a class="el" href="struct_8h_source.html#l00497">BoostList::R0</a>, <a class="el" href="readdef_8c_source.html#l00249">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00497">ReadNBodyLineMPI()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00027">ReadTransSymNInt()</a>, <a class="el" href="DefCommon_8h_source.html#l00032">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00035">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00038">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00039">SpinlessFermionGC</a>, <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="DefCommon_8h_source.html#l00040">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00041">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00042">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="readdef_8c_source.html#l00149">ValidateValue()</a>, <a class="el" href="struct_8h_source.html#l00498">BoostList::W0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00072">cErrExpecInterval</a>, <a class="el" href="ErrorMessage_8c_source.html#l00085">cErrIncorrectDef</a>, <a class="el" href="ErrorMessage_8c_source.html#l00074">cErrLanczos_eps</a>, <a class="el" href="ErrorMessage_8c_source.html#l00073">cErrLanczos_max</a>, <a class="el" href="ErrorMessage_8c_source.html#l00075">cErrLanczosExct</a>, <a class="el" href="ErrorMessage_8c_source.html#l00076">cErrLanczosTarget</a>, <a class="el" href="ErrorMessage_8c_source.html#l00084">cErrMakeDef</a>, <a class="el" href="ErrorMessage_8c_source.html#l00069">cErrNcond</a>, <a class="el" href="ErrorMessage_8c_source.html#l00041">cErrNLoc</a>, <a class="el" href="ErrorMessage_8c_source.html#l00070">cErrNsite</a>, <a class="el" href="ErrorMessage_8c_source.html#l00071">cErrNumAve</a>, <a class="el" href="readdef_8c_source.html#l00094">cFileNameListFile</a>, <a class="el" href="readdef_8c_source.html#l04060">CheckWords()</a>, <a class="el" href="readdef_8c_source.html#l00054">cKWListOfFileNameList</a>, <a class="el" href="LogMessage_8c_source.html#l00028">cReadFile</a>, <a class="el" href="LogMessage_8c_source.html#l00027">cReadFileNamelist</a>, <a class="el" href="readdef_8h_source.html#l00019">D_CharTmpReadDef</a>, <a class="el" href="readdef_8h_source.html#l00018">D_FileNameMaxReadDef</a>, <a class="el" href="readdef_8c_source.html#l00089">D_iKWNumDef</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="wrapperMPI_8c_source.html#l00232">fgetsMPI()</a>, <a class="el" href="struct_8h_source.html#l00516">BoostList::flgBoost</a>, <a class="el" href="wrapperMPI_8c_source.html#l00204">fopenMPI()</a>, <a class="el" href="readdef_8c_source.html#l00626">GetFileName()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="DefCommon_8h_source.html#l00050">HubbardNConserved</a>, <a class="el" href="readdef_8c_source.html#l03914">InitializeInteractionNum()</a>, <a class="el" href="struct_8h_source.html#l00520">BoostList::ishift_nspin</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="DefCommon_8h_source.html#l00056">KondoNConserved</a>, <a class="el" href="readdef_8h_source.html#l00063">KWAnomalousG</a>, <a class="el" href="readdef_8h_source.html#l00062">KWAnomalousTerm</a>, <a class="el" href="readdef_8h_source.html#l00047">KWBoost</a>, <a class="el" href="readdef_8h_source.html#l00033">KWCalcMod</a>, <a class="el" href="readdef_8h_source.html#l00038">KWCoulombInter</a>, <a class="el" href="readdef_8h_source.html#l00037">KWCoulombIntra</a>, <a class="el" href="readdef_8h_source.html#l00041">KWExchange</a>, <a class="el" href="readdef_8h_source.html#l00055">KWFourBodyG</a>, <a class="el" href="readdef_8h_source.html#l00039">KWHund</a>, <a class="el" href="readdef_8h_source.html#l00042">KWInterAll</a>, <a class="el" href="readdef_8h_source.html#l00057">KWInvTemp</a>, <a class="el" href="readdef_8h_source.html#l00046">KWIsing</a>, <a class="el" href="readdef_8h_source.html#l00051">KWLaser</a>, <a class="el" href="readdef_8h_source.html#l00035">KWLocSpin</a>, <a class="el" href="readdef_8h_source.html#l00034">KWModPara</a>, <a class="el" href="readdef_8h_source.html#l00061">KWNBodyG</a>, <a class="el" href="readdef_8h_source.html#l00060">KWNBodyInterAll</a>, <a class="el" href="readdef_8h_source.html#l00043">KWOneBodyG</a>, <a class="el" href="readdef_8h_source.html#l00049">KWPairExcitation</a>, <a class="el" href="readdef_8h_source.html#l00059">KWPairExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00040">KWPairHop</a>, <a class="el" href="readdef_8h_source.html#l00045">KWPairLift</a>, <a class="el" href="readdef_8h_source.html#l00048">KWSingleExcitation</a>, <a class="el" href="readdef_8h_source.html#l00058">KWSingleExcitationBra</a>, <a class="el" href="readdef_8h_source.html#l00056">KWSixBodyG</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="readdef_8h_source.html#l00052">KWTEOneBody</a>, <a class="el" href="readdef_8h_source.html#l00053">KWTETwoBody</a>, <a class="el" href="readdef_8h_source.html#l00054">KWThreeBodyG</a>, <a class="el" href="readdef_8h_source.html#l00036">KWTrans</a>, <a class="el" href="readdef_8h_source.html#l00064">KWTransSym</a>, <a class="el" href="readdef_8h_source.html#l00044">KWTwoBodyG</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="struct_8h_source.html#l00519">BoostList::num_pivot</a>, <a class="el" href="struct_8h_source.html#l00521">BoostList::NumarrayJ</a>, <a class="el" href="global_8c_source.html#l00158">NumAve</a>, <a class="el" href="nbody__correlation_8c_source.html#l00053">ParseNBodyGLine()</a>, <a class="el" href="nbody__interall_8c_source.html#l00069">ParseNBodyInterAllLine()</a>, <a class="el" href="struct_8h_source.html#l00517">BoostList::R0</a>, <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00131">ReadDefFileError()</a>, <a class="el" href="readdef_8c_source.html#l00687">ReadNBodyLineMPI()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00027">ReadTransSymNInt()</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="DefCommon_8h_source.html#l00055">tJNConserved</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="readdef_8c_source.html#l00149">ValidateValue()</a>, <a class="el" href="struct_8h_source.html#l00518">BoostList::W0</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -2206,11 +2209,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00497">497</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00687">687</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00121">exitMPI()</a>, <a class="el" href="readdef_8c_source.html#l00490">IsSkippableNBodyLine()</a>, <a class="el" href="global_8c_source.html#l00190">myrank</a>, and <a class="el" href="global_8c_source.html#l00193">stdoutMPI</a>.</p>
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="readdef_8c_source.html#l00680">IsSkippableNBodyLine()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -2242,11 +2245,55 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Takahiro Misawa (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03706">3706</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03896">3896</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>.</p>
+
+</div>
+</div>
+<a id="a8b5690ffb749c6877cdbcc44422c6882" name="a8b5690ffb749c6877cdbcc44422c6882"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b5690ffb749c6877cdbcc44422c6882">&#9670;&#160;</a></span>ResolveSolver()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int ResolveSolver </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>defname</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resolve the FullDiag solver backend from the Solver keyword and legacy keywords (ScaLAPACK, NGPU), following the precedence table in docs/superpowers/specs/2026-07-10-elpa-fulldiag-design.md section 2. On return X-&gt;iSolver is one of SOLVER_*, and X-&gt;iNGPU has its solver-dependent default applied when NGPU was not explicitly given. </p>
+
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00246">246</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+
+<p class="reference">References <a class="el" href="ErrorMessage_8c_source.html#l00055">cErrCUDA</a>, <a class="el" href="ErrorMessage_8c_source.html#l00059">cErrElpaGPUBuild</a>, <a class="el" href="ErrorMessage_8c_source.html#l00056">cErrSolver</a>, <a class="el" href="ErrorMessage_8c_source.html#l00058">cErrSolverBuild</a>, <a class="el" href="ErrorMessage_8c_source.html#l00057">cErrSolverCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00062">cWarnScaLAPACKCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00063">cWarnSolverConflict</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="DefCommon_8h_source.html#l00030">NUM_SOLVER</a>, <a class="el" href="DefCommon_8h_source.html#l00034">SOLVER_ELPA</a>, <a class="el" href="DefCommon_8h_source.html#l00031">SOLVER_LAPACK</a>, <a class="el" href="DefCommon_8h_source.html#l00033">SOLVER_MAGMA</a>, <a class="el" href="DefCommon_8h_source.html#l00032">SOLVER_SCALAPACK</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="readdef_8c_source.html#l00149">ValidateValue()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>.</p>
 
 </div>
 </div>
@@ -2278,9 +2325,9 @@ Takahiro Misawa (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03612">3612</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l03802">3802</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00177">eps</a>, <a class="el" href="global_8c_source.html#l00178">eps_CG</a>, <a class="el" href="global_8c_source.html#l00180">eps_Energy</a>, <a class="el" href="global_8c_source.html#l00179">eps_Lanczos</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00184">eps</a>, <a class="el" href="global_8c_source.html#l00185">eps_CG</a>, <a class="el" href="global_8c_source.html#l00187">eps_Energy</a>, <a class="el" href="global_8c_source.html#l00186">eps_Lanczos</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
 
@@ -2341,7 +2388,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00149">149</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00249">ReadcalcmodFile()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00357">ReadcalcmodFile()</a>, <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>, and <a class="el" href="readdef_8c_source.html#l00246">ResolveSolver()</a>.</p>
 
 </div>
 </div>
@@ -2369,7 +2416,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00094">94</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03901">GetFileNameByKW()</a>, <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04091">GetFileNameByKW()</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -2396,7 +2443,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00054">54</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00436">GetFileName()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00626">GetFileName()</a>, and <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>
@@ -2414,7 +2461,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="readdef_8c_source.html#l00089">89</a> of file <a class="el" href="readdef_8c_source.html">readdef.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00436">GetFileName()</a>, <a class="el" href="readdef_8c_source.html#l01321">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00581">ReadDefFileNInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00626">GetFileName()</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, and <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>.</p>
 
 </div>
 </div>

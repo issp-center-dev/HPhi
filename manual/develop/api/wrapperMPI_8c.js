@@ -4,6 +4,11 @@ var wrapperMPI_8c =
     [ "BcastMPI_i", "wrapperMPI_8c.html#ad03fb793bdd71c39a37c76a8e8fd56de", null ],
     [ "BcastMPI_li", "wrapperMPI_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0", null ],
     [ "exitMPI", "wrapperMPI_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed", null ],
+    [ "ExpecLocalActive", "wrapperMPI_8c.html#af74ccff41fb336651fd0ae1e69c739c0", null ],
+    [ "ExpecLocalEnter", "wrapperMPI_8c.html#aff930f2bd7493b14a01a95dde0397d94", null ],
+    [ "ExpecLocalError", "wrapperMPI_8c.html#a2e8c8c683b658389145e337fd4c6fd9a", null ],
+    [ "ExpecLocalLeave", "wrapperMPI_8c.html#ab0a0f068368d495f801d98957ddff65e", null ],
+    [ "ExpecLocalSetError", "wrapperMPI_8c.html#a0526428f7152437bfb0ba396db59aa17", null ],
     [ "fgetsMPI", "wrapperMPI_8c.html#a9436224cf1cda3468767ab28d9359e9a", null ],
     [ "FinalizeMPI", "wrapperMPI_8c.html#ab01492e7612823a34a325619f46862e5", null ],
     [ "fopenMPI", "wrapperMPI_8c.html#a2abfe04445bd797efbd04144652cfe0e", null ],
@@ -15,5 +20,7 @@ var wrapperMPI_8c =
     [ "SumMPI_dc", "wrapperMPI_8c.html#a7a90e7c667189b600a621be9856fa650", null ],
     [ "SumMPI_i", "wrapperMPI_8c.html#aeab38d65c1c82094276a9b250b9a5049", null ],
     [ "SumMPI_li", "wrapperMPI_8c.html#afd4574e9353708ef2aa039a1721440b8", null ],
-    [ "VecProdMPI", "wrapperMPI_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ]
+    [ "VecProdMPI", "wrapperMPI_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ],
+    [ "iExpecLocal", "wrapperMPI_8c.html#a5d92fa390560441bb8da433ad269c2ff", null ],
+    [ "iExpecLocalError", "wrapperMPI_8c.html#a1970e9b1657b8f90f17891a0062fd7da", null ]
 ];

@@ -187,6 +187,12 @@ CoulombIntra, Hund, Exchange, PairHopはスピン自由度がないため使用�
 0: 入力なし
 1: 入力あり
 から選択することが出来ます。</p>
+<div class="line-block">
+<div class="line">注: <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) を複数MPIプロセスで使用する場合、ハミルトニアンは
+分散形式で生成されるため、<code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> の指定は起動時に
+エラーとして拒否されます。ハミルトニアンの入出力が必要な場合は
+1プロセスで実行するか、別の <code class="docutils literal notranslate"><span class="pre">Solver</span></code> を使用してください。</div>
+</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
@@ -215,6 +221,49 @@ CoulombIntra, Hund, Exchange, PairHopはスピン自由度がないため使用�
 <div class="line">LOBCGの <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は既存出力が eigen 番号別ではないため、従来形式のまま出力されます。</div>
 </div>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Solver</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値: 旧キーワードから自動決定)</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> (FullDiag)
+全対角化計算の対角化バックエンドを指定します。</div>
+<div class="line">0: LAPACK (逐次)</div>
+<div class="line">1: ScaLAPACK</div>
+<div class="line">2: MAGMA (シングルノード・マルチGPU)</div>
+<div class="line">3: ELPA (マルチノード対応、CPU/GPU)</div>
+<div class="line">FullDiagで未指定の場合は、従来の優先順位に従って
+<code class="docutils literal notranslate"><span class="pre">Scalapack</span></code>/<code class="docutils literal notranslate"><span class="pre">NGPU</span></code> キーワードから自動決定されます。
+<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> は ELPA を有効にしたビルド (<code class="docutils literal notranslate"><span class="pre">USE_ELPA=ON</span></code>) が必要です。</div>
+<div class="line"><strong>使用例 (エキスパートモード):</strong> <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> に <code class="docutils literal notranslate"><span class="pre">Solver</span></code>
+(必要に応じて <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> も) を記載し、</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcType     2
+CalcModel    0
+Solver       3
+ExpecMode    2
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">任意のMPIプロセス数でエキスパートモードとして実行します:</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mpiexec -np 4 HPhi -e namelist.def
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><strong>スタンダードモードから使用する場合:</strong> スタンダードモードの入力
+ファイルは <code class="docutils literal notranslate"><span class="pre">Solver</span></code>/<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> キーワードを受け付けません。
+<code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-sdry</span> <span class="pre">stan.in</span></code> で一度エキスパートモード用ファイル一式を生成し、
+生成された <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> に上記キーワードを追記した上で、上と同様に
+<strong>エキスパートモード (</strong><code class="docutils literal notranslate"><span class="pre">-e</span></code><strong>) として実行してください</strong>
+(スタンダードモード <code class="docutils literal notranslate"><span class="pre">-s</span></code> で実行すると def ファイルが再生成され、
+編集内容は反映されません)。同じ理由で、<code class="docutils literal notranslate"><span class="pre">stan.in</span></code> を変更して
+<code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-sdry</span></code> を再実行すると <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> は上書きされ追記した
+キーワードは失われるため、再度追記が必要です。<code class="docutils literal notranslate"><span class="pre">stan.in</span></code> に旧
+キーワード (<code class="docutils literal notranslate"><span class="pre">Scalapack</span></code>/<code class="docutils literal notranslate"><span class="pre">NGPU</span></code>) を書いていた場合は、生成された
+<code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code> の該当行を削除して <code class="docutils literal notranslate"><span class="pre">Solver</span></code> で指定し直すことを
+推奨します。並列アルゴリズムの詳細とバックエンド間の速度比較は
+<a class="reference internal" href="../../technical/parallel_fulldiag_ja.html#sec-parallelfulldiag"><span class="std std-ref">並列全対角化</span></a> を参照してください。</div>
+</div>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
 <div class="line-block">
@@ -223,13 +272,217 @@ CoulombIntra, Hund, Exchange, PairHopはスピン自由度がないため使用�
 <div class="line">0: ScaLAPACKを使用しない。</div>
 <div class="line">1: ScaLAPACKを使用する。</div>
 <div class="line">で選択することが出来ます。</div>
+<div class="line">(非推奨) 本キーワードは後方互換のために残されています。
+今後は <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">1</span></code> を使用してください。</div>
+<div class="line">本キーワードは <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> (FullDiag) 専用です。それ以外の計算タイプ
+では警告を表示して無視し、通常のMPIサイト分割を維持します。一方、
+FullDiag以外で <code class="docutils literal notranslate"><span class="pre">Solver</span></code> 1、2、3を明示指定した場合は入力エラーになります。</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NGPU</span></code></p>
-<p><strong>形式 :</strong> int型 (デフォルト値 2)</p>
-<p><strong>説明 :</strong> (FullDiag)
-全対角化計算でのMAGMAライブラリを使用する場合のGPU数を指定します。
-なお、 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> ではマルチノードでのGPU計算には対応していません。</p>
+<p><strong>形式 :</strong> int型 (デフォルト値: 下記参照)</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> (FullDiag)
+ノードあたりの使用 GPU 枚数を指定します。</div>
+<div class="line">デフォルト値は次のとおりです:
+<code class="docutils literal notranslate"><span class="pre">Solver</span></code> を明示指定しない場合は MAGMA 有効ビルドで 2、それ以外は 0
+(従来どおりの挙動)。<code class="docutils literal notranslate"><span class="pre">Solver</span></code> を明示指定した場合は <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">2</span></code>
+(MAGMA) のみ 2、それ以外 (<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">0/1/3</span></code>) は 0
+(ELPA は既定で CPU 実行、GPU 使用は明示的にオプトインする必要があります)。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">2</span></code> (MAGMA) では単一プロセスから使う GPU 枚数です。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) では 0 で CPU 実行、1 以上で GPU 実行となり、
+プロセスと GPU の対応は ELPA が自動割当します (1 プロセス 1 GPU)。</div>
+<div class="line">ノードあたりの MPI プロセス数を GPU 枚数に合わせる実行を推奨します。</div>
+<div class="line">なお <code class="docutils literal notranslate"><span class="pre">NGPU</span></code> は使用 GPU 枚数を物理的には制限しません。枚数を厳密に
+制限する場合はジョブスケジューラ側 (<code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> 等) で
+行ってください。GPU 実行には ELPA 2023.11.001 以降が必要です。
+なお <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> では、行列サイズ（ヒルベルト空間次元）が MPI プロセス
+グリッドの次元（nprow, npcol の最大値）以上である必要があります。
+満たさない場合は起動時にランク数を減らすよう促すエラーで停止します。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> を複数MPIプロセスで使用する場合、ハミルトニアンは分散
+（ブロックサイクリック）形式で生成・格納されるため、1ランクあたりの
+ピークメモリはおよそ O(N²/P)（N: 行列次元, P: プロセス数）となります。
+プロセス数を増やすことでより大きな次元の全対角化が可能になります。</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code></p>
+<p><strong>形式 :</strong> int型 (デフォルト値 0)</p>
+<div class="line-block">
+<div class="line"><strong>説明 :</strong> (FullDiag)
+全対角化の物理量 (エネルギー、N、Sz、S2、doublon、Green関数) を
+評価するカーネルを指定します。</div>
+<div class="line">0: 従来通りの評価方法。</div>
+<div class="line">1: 状態タスク並列評価。各MPIランクが自分が担当する固有状態の
+連続ブロックを独立に評価します (状態ごとの評価ループ中は通信を
+行いません)。集約Green関数出力はランクごとのパーシャルファイルとして
+書き出され、全ランクのマニフェストが成功を報告した時点でランク0が
+最終的な集約ファイルへマージします。</div>
+<div class="line">2: トレースカーネル評価。本カーネルは3つの物理量系列に適用されます:
+一体Green関数 (<code class="docutils literal notranslate"><span class="pre">expec_cisajs</span></code> 相当)、二体Green関数
+(<code class="docutils literal notranslate"><span class="pre">expec_cisajscktaltdc</span></code> 相当)、そして本バージョンより
+エネルギー・ゆらぎ系 (<code class="docutils literal notranslate"><span class="pre">var</span></code> 列を含む) です。Green関数については、
+各演算子について基底状態の写像 (行き先の状態と振幅) を1回だけ
+前計算し、所有する全固有状態をその写像で密ループでストリーミング
+評価することで、<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> がこの2つの物理量について依然
+支払っている状態ごとの演算子オーバーヘッドを償却します。エネルギー・
+ゆらぎ系については、ハミルトニアンを1ランクあたり1回だけコンパクト
+なCSR (圧縮行格納) 行列へ前計算し、所有する全固有状態をそのCSR
+行列との疎行列ベクトル積でストリーミング評価することで、同様に
+状態ごとの (<code class="docutils literal notranslate"><span class="pre">mltply</span></code> 型の) 走査オーバーヘッドを償却します。
+<code class="docutils literal notranslate"><span class="pre">S2</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は本バージョンでも常に
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> の経路で評価されます -- これらの物理量のトレース
+カーネル化は将来のフェーズでの拡張候補です。</div>
+<div class="line">用語注記: ここでの「トレースカーネル」は、この前計算写像による
+ストリーミング評価手法を指す名称であり、行列のトレース
+<span class="math notranslate nohighlight">\({\rm Tr}(\cdot)\)</span> を意味するものではありません。</div>
+<div class="line">一体・二体のトレースカーネルが実際に使われるかどうかは、実行ごとに
+1回、(モデル, 物理量) ごとのケイパビリティ表と3つの実行時判定から
+決まり、実行開始時にランク0が物理量ごとに次の <code class="docutils literal notranslate"><span class="pre">INFO</span></code> 行で報告
+します (実際のログ出力では行頭に字下げが入ります。以下の <code class="docutils literal notranslate"><span class="pre">%s</span></code> は
+<code class="docutils literal notranslate"><span class="pre">one-body</span></code> または <code class="docutils literal notranslate"><span class="pre">two-body</span></code> に置き換わります)。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">trace</span> <span class="pre">kernel.</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(unsupported</span> <span class="pre">model).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(no</span> <span class="pre">operators</span> <span class="pre">of</span> <span class="pre">this</span> <span class="pre">kind</span> <span class="pre">are</span> <span class="pre">defined).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(result</span> <span class="pre">buffer</span> <span class="pre">would</span> <span class="pre">exceed</span> <span class="pre">HPHI_TRACE_BUF_MAX_MB).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">two-body</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(they</span> <span class="pre">share</span> <span class="pre">their</span> <span class="pre">evaluator</span> <span class="pre">with</span> <span class="pre">three-/four-/six-body</span> <span class="pre">Green</span> <span class="pre">functions).</span></code></div>
+<div class="line">エネルギー・ゆらぎ系の判定は独立に行われ、可能な理由は3通りです
+(後述のとおり、この系には「評価器共有」の場合はありません)。判定は
+ランク0が次の専用 <code class="docutils literal notranslate"><span class="pre">INFO</span></code> 行で報告します。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">trace</span> <span class="pre">kernel.</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(the</span> <span class="pre">Hamiltonian</span> <span class="pre">buffer</span> <span class="pre">would</span> <span class="pre">exceed</span> <span class="pre">HPHI_TRACE_BUF_MAX_MB).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(the</span> <span class="pre">Hamiltonian</span> <span class="pre">was</span> <span class="pre">read</span> <span class="pre">from</span> <span class="pre">InputHam).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(unsupported</span> <span class="pre">model).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">S2</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は本バージョンでも無条件に
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> の経路のままであり、次の固定行で報告されます。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">S2,</span> <span class="pre">NBodyG,</span> <span class="pre">and</span> <span class="pre">AnomalousG</span> <span class="pre">always</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">path</span> <span class="pre">in</span> <span class="pre">this</span> <span class="pre">version.</span></code></div>
+<div class="line">一体・二体Green関数のトレースカーネルの対応モデル (本フェーズ時点):
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>/<code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code> とスピン1/2の <code class="docutils literal notranslate"><span class="pre">Spin</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> です
+(一般スピン模型 (<span class="math notranslate nohighlight">\(S \geq 1\)</span> を含む)、<code class="docutils literal notranslate"><span class="pre">tJ</span></code>/<code class="docutils literal notranslate"><span class="pre">tJGC</span></code>、
+<code class="docutils literal notranslate"><span class="pre">Kondo</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoGC</span></code>、<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code>
+は未対応で、両物理量とも常に上記の「unsupported model」の行が
+表示されます)。</div>
+<div class="line">エネルギー・ゆらぎ系のトレースカーネルは、上記のGreen関数カーネル
+よりも広いモデルに対応しています: <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>/<code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code>、
+<code class="docutils literal notranslate"><span class="pre">tJ</span></code>/<code class="docutils literal notranslate"><span class="pre">tJGC</span></code>、<code class="docutils literal notranslate"><span class="pre">Kondo</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoGC</span></code> (それぞれ粒子数保存の
+カノニカル変種 <code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code>/<code class="docutils literal notranslate"><span class="pre">tJNConserved</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoNConserved</span></code>
+-- <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を省略すると自動的に選択されます -- を含む)、および一般スピン
+(<span class="math notranslate nohighlight">\(S \geq 1\)</span> を含む) の <code class="docutils literal notranslate"><span class="pre">Spin</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> に対応しており、
+Green関数で対応していた4行に限られません。ただし
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> には対応していません
+(その粒子数・スピンゆらぎのセマンティクスは異なり、カーネルには
+実装されていません)。これらのモデル、および未知のモデルは
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> の経路へフォールバックします。</div>
+<div class="line">Green関数については、対応モデルであっても、各物理量の結果は、決まった
+順序で評価される最大3つの実行時要因のいずれか一つによって決まります
+(これらは互いに排他的になるよう構成されており、独立に判定される
+わけではありません)。(a) 二体Green関数のみに適用される評価器共有
+規則 -- 最初に判定されます。二体Green関数は ThreeBodyG/FourBodyG/
+SixBodyG (N体) のGreen関数と評価器を共有しているため、これらの
+いずれかが定義されている場合、二体物理量はそれらと一緒にフォール
+バックします (各出力ファイルの書き手を常に一意に保つためです。
+そうしないとフォールバックループがN体出力を黙って落とすか、
+トレースカーネルが二体ファイルを二重に書き込んでしまいます)。
+一体物理量は規則(a)の影響を受けません。(b) 演算子なしチェック --
+次に判定されます。この実行でその種類の演算子が1つも定義されて
+いない場合 (例: <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">CisAjtCkuAlvDC</span></code> が0個)、その物理量
+はストリーミングすべき対象がないためフォールバックします。この
+判定は下記メモリゲートより先に行われるため、演算子が空のテーブル
+がメモリ上限超過と誤って報告されることはありません。(c) メモリ
+ゲート -- 最後に判定されます ((a)・(b) のいずれにも該当しなかった
+場合のみ到達します)。その物理量の結果バッファが
+<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> (環境変数。MiB単位の上限を [1, 1048576]
+の整数で指定、デフォルト1024。この上限は1MPIランクかつ1物理量
+あたりの結果バッファのみに適用され、<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 2の実行に限り
+ランク0で環境から読み取られ全ランクへブロードキャストされる
+ため、起動環境にのみ設定すれば十分です) を超える場合、その物理量
+は <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> へフォールバックします。</div>
+<div class="line">エネルギー・ゆらぎ系については、可能な理由はちょうど3つで、この
+順序で判定されます。(a) <code class="docutils literal notranslate"><span class="pre">InputHam</span></code> チェック -- 最初に判定され
+ます。この実行のハミルトニアンが <code class="docutils literal notranslate"><span class="pre">InputHam</span></code> (<code class="docutils literal notranslate"><span class="pre">InputHam</span> <span class="pre">1</span></code>)
+で読み込まれた場合、トレースカーネルはモデル定義から再列挙して
+一致するハミルトニアンを再構築することができません (実際に対角化
+された行列ではなく、モデル定義から改めて導出した行列になって
+しまうためです)。そのためエネルギー系は無条件でフォールバック
+します。(b) 未対応モデルチェック -- 次に判定されます。モデルが
+上記の対応モデルのいずれでもない場合 (すなわち
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code>、または未知のモデルの
+場合)、エネルギー系はフォールバックします。(c) 上記と同じ
+<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> メモリゲート -- 最後に判定されます
+((a)・(b) のいずれにも該当しない場合のみ到達します)。この上限は、
+エネルギー系については1ランクあたりのハミルトニアンバッファ、
+すなわちコンパクトなCSR (圧縮行格納) 行列 (おおよそ
+<span class="math notranslate nohighlight">\(24 \times \mathrm{nnz}\)</span> バイト。ここで nnz は makeHam が
+このランクで発行する行列要素数で、バッファ容量とゲートはこれに
+合わせて確保・判定されます。重複を合算した後の要素数
+<code class="docutils literal notranslate"><span class="pre">rowptr[N]</span></code> はこれより小さくなり得ます) にも適用されます。
+見積もられたCSRサイズ
+が上限を超える場合、エネルギー系は <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> へフォール
+バックします。Green関数のカーネルとは異なり、エネルギー系には
+評価器共有の場合 (他の常時フォールバック物理量と評価器を共有して
+いません) はありません。</div>
+<div class="line">メモリゲートによるフォールバックが表示されたがトレースカーネルを
+使いたい場合は、<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> を1ランクあたりの利用
+可能メモリの範囲で引き上げてください。なお、分散保持される固有
+ベクトルとは異なり、CSRハミルトニアンは各ランクに完全複製される
+ため、MPIランク数を増やしてもCSRは小さくなりません (理由は
+<a class="reference internal" href="../../technical/parallel_fulldiag_ja.html#sec-parallelfulldiag"><span class="std std-ref">並列全対角化</span></a> を参照)。キャップを引き上げるか、表示
+された <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> フォールバック (結果は同一) を受け入れるか
+の2択になります。</div>
+<div class="line">有効条件: <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> を 0 以外にする場合、<code class="docutils literal notranslate"><span class="pre">CalcType</span></code> = 2
+(全対角化) かつ <code class="docutils literal notranslate"><span class="pre">Solver</span></code> 1 (ScaLAPACK) または 3 (ELPA) である
+必要があります。それ以外の組合せ (<code class="docutils literal notranslate"><span class="pre">CalcType</span></code> または <code class="docutils literal notranslate"><span class="pre">Solver</span></code>
+が異なる場合) は起動時にエラーとして拒否されます。MPIプロセス数が
+1の場合は自動的に0へ降格されます (1プロセスの場合は結果がどちら
+でも同一になるため)。この際、次のメッセージが表示されます
+(実際のログ出力では行頭に字下げが入ります)。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">reverts</span> <span class="pre">to</span> <span class="pre">0</span> <span class="pre">for</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">process</span> <span class="pre">(results</span> <span class="pre">are</span> <span class="pre">identical).</span></code></div>
+<div class="line">保証: <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> は評価の速度のみを変え、物理量の値は変わりません
+-- <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 0、1、2 は浮動小数点の丸め誤差の範囲内で同一の結果を
+与えます (カーネルにより総和の順序が異なるため、ビット単位で完全に
+一致するわけではありません)。これは <code class="docutils literal notranslate"><span class="pre">var</span></code> 列にも当てはまります --
+<code class="docutils literal notranslate"><span class="pre">var</span></code> はエネルギー・ゆらぎ系の一部であるため、本バージョンでは
+カーネルが有効な場合は系の他の量と共にトレースカーネルで計算され、
+フォールバック時は <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> の経路で計算されます。いずれの
+場合も <code class="docutils literal notranslate"><span class="pre">var</span></code> は <span class="math notranslate nohighlight">\(\langle H^2 \rangle\)</span> を格納するという
+フィールド契約は変わりません (下流で <span class="math notranslate nohighlight">\(\langle H \rangle^2\)</span>
+を差し引いて分散を得ます)。</div>
+<div class="line">メモリ: <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code>/<code class="docutils literal notranslate"><span class="pre">2</span></code> は <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> が使用する分散固有
+ベクトル格納領域とほぼ同じ大きさの状態パネル (1ランクあたり
+O(N²/P)) を追加で保持します。さらに <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">2</span></code> では、
+トレースカーネルを使用する物理量ごとに、上記の
+<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> で上限を定めたバッファを保持します --
+一体・二体Green関数については結果バッファ、エネルギー・ゆらぎ系
+については上記の1ランクあたりCSRハミルトニアンバッファ (おおよそ
+<span class="math notranslate nohighlight">\(24 \times \mathrm{nnz}\)</span> バイト) です。<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code>
+は物理量ごとのしきい値であり、各物理量のバッファに対して個別に
+判定されます。同時に存在するトレースバッファの合計に対する上限
+ではありません -- 一体の結果バッファ、二体の結果バッファ、
+エネルギーのCSRはそれぞれが上限まで大きくなり得るため、それらの
+合計は上限を超え得ます。一度だけ行われる再分散のあいだは元の格納
+領域と新しいパネルが両方存在するため、一時的なピークは1ランク
+あたりおよそ 2xO(N²/P) となり、再分散後 (元の格納領域を解放した
+後) は O(N²/P) にトレースバッファ分を加えた程度に戻ります
+(<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> との差はトレースバッファ分のみです)。</div>
+<div class="line">利用指針: 固有状態数やGreen関数の観測量が多い大規模マルチノードの
+<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) または <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">1</span></code> (ScaLAPACK) 実行では、
+全固有状態を全ランクで重複して評価する <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> がボトル
+ネックになる場合に <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> または <code class="docutils literal notranslate"><span class="pre">2</span></code> を推奨します。
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">2</span></code> は、上記の対応モデルにおいて一体・二体Green関数が
+多い FullDiag ワークロードと、モデルを問わずエネルギー・ゆらぎ系の
+評価が多いワークロード (エネルギー系のトレースカーネルはGreen関数
+カーネルの対応4行に限定されません) の双方について、状態ごとの
+オーバーヘッドをさらに償却するよう設計されており、そのような
+ワークロードでは <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> と同等以上に高速であることが
+期待されます。それ以外 (小規模系や1プロセス実行を含む) は
+デフォルトの <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> のままで構いません。</div>
+<div class="line">注 (挙動修正): フェーズ3aより、分散FullDiag実行 (<code class="docutils literal notranslate"><span class="pre">Solver</span></code> 1 または
+3、MPIプロセス数が2以上) では <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> でもランク0でS2と
+Szを計算するようになりました -- これまでこれらの分散実行ではS2と
+Szがゼロ埋めされ、S2列を含まない短縮形式のstdout進捗行が出力されて
+いました。stdout進捗行は、<code class="docutils literal notranslate"><span class="pre">Solver</span></code>/<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> の組合せに
+依らず、常にS2列を含む1プロセス (逐次) 実行と同じ形式になりました。
+これは <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> の値によらない、意図的な修正です。</div>
+</div>
 </li>
 </ul>
 </section>

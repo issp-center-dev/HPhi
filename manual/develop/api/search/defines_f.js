@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['spin_0',['Spin',['../DefCommon_8h.html#ad2bf5a74a6b8ccd9b93ff923d904d3e6',1,'DefCommon.h']]],
-  ['spingc_1',['SpinGC',['../DefCommon_8h.html#aa7314d1157770374b63f2a07076e1cdb',1,'DefCommon.h']]],
-  ['spinlessfermion_2',['SpinlessFermion',['../DefCommon_8h.html#a69d939c08019c29c828946968859a70d',1,'DefCommon.h']]],
-  ['spinlessfermiongc_3',['SpinlessFermionGC',['../DefCommon_8h.html#a20155e0a89abd94eef1d35f4ae7c7c90',1,'DefCommon.h']]],
-  ['standard_5fdry_5fmode_4',['STANDARD_DRY_MODE',['../readdef_8h.html#a3e9479b8fafaed7f4cf48d8d4aab5696',1,'readdef.h']]],
-  ['standard_5fmode_5',['STANDARD_MODE',['../readdef_8h.html#a23b69654944d1c87648c834b701467fa',1,'readdef.h']]],
-  ['symmetry_5fbasis_5fdistribution_5fchunk_6',['SYMMETRY_BASIS_DISTRIBUTION_CHUNK',['../symmetry__basis_8c.html#a76b48276c539e0bfd3d8a518ad0829f9',1,'symmetry_basis.c']]],
-  ['symmetry_5fmatvec_5fmode_5flegacy_7',['SYMMETRY_MATVEC_MODE_LEGACY',['../symmetry__matvec__plan_8h.html#a11a6d01ef1dfccdf1c3a74bd2a410e37',1,'symmetry_matvec_plan.h']]],
-  ['symmetry_5fmatvec_5fmode_5fplan_8',['SYMMETRY_MATVEC_MODE_PLAN',['../symmetry__matvec__plan_8h.html#a81e862e329583c1e247ba44490c9ef23',1,'symmetry_matvec_plan.h']]],
-  ['symmetry_5fvector_5fexchange_5fallgather_9',['SYMMETRY_VECTOR_EXCHANGE_ALLGATHER',['../symmetry__matvec__plan_8h.html#ae697bbbac42f61003a4d126311aa6aa6',1,'symmetry_matvec_plan.h']]],
-  ['symmetry_5fvector_5fexchange_5fhalo_10',['SYMMETRY_VECTOR_EXCHANGE_HALO',['../symmetry__matvec__plan_8h.html#a4a2e0da243f1d419e7cac98931feaa06',1,'symmetry_matvec_plan.h']]]
+  ['rawmode_0',['RAWMODE',['../DefCommon_8h.html#abd4d7cc8b147a5139775f38448c6dcb9',1,'DefCommon.h']]],
+  ['recalc_5ffrom_5ftmcomponents_1',['RECALC_FROM_TMComponents',['../DefCommon_8h.html#ad75009b0bf21f050546f83a3134e316c',1,'DefCommon.h']]],
+  ['recalc_5ffrom_5ftmcomponents_5fvec_2',['RECALC_FROM_TMComponents_VEC',['../DefCommon_8h.html#aea25c22b2a63eae641aa7fca1443e273',1,'DefCommon.h']]],
+  ['recalc_5finout_5ftmcomponents_5fvec_3',['RECALC_INOUT_TMComponents_VEC',['../DefCommon_8h.html#a0ea5cda85e98c77363cabb5d40eb4a2a',1,'DefCommon.h']]],
+  ['recalc_5fnot_4',['RECALC_NOT',['../DefCommon_8h.html#a1b01582b4375d4e9979a1cec6c74da13',1,'DefCommon.h']]],
+  ['recalc_5foutput_5ftmcomponents_5fvec_5',['RECALC_OUTPUT_TMComponents_VEC',['../DefCommon_8h.html#a8b5b43d9dde3ea703966c023f8e43467',1,'DefCommon.h']]],
+  ['restart_5fin_6',['RESTART_IN',['../DefCommon_8h.html#a04ff145072e1c6d65d000414de77f0a4',1,'DefCommon.h']]],
+  ['restart_5finout_7',['RESTART_INOUT',['../DefCommon_8h.html#a74b239aa42df454a26193dfdd967ecbb',1,'DefCommon.h']]],
+  ['restart_5fnot_8',['RESTART_NOT',['../DefCommon_8h.html#a58a665e43a46a540eb262fc67c5267be',1,'DefCommon.h']]],
+  ['restart_5fout_9',['RESTART_OUT',['../DefCommon_8h.html#a8f7e1f675ec6d6ac296131fcb18f9e62',1,'DefCommon.h']]]
 ];

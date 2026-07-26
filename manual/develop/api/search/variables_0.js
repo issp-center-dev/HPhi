@@ -10,8 +10,10 @@ var searchData=
   ['allgather_5fnonlocal_5fvalues_5fper_5fcall_7',['allgather_nonlocal_values_per_call',['../structSymmetryMatvecPlan.html#a04fb50e9b1b3356a50e3e14d1af9758d',1,'SymmetryMatvecPlan']]],
   ['allgather_5fpayload_5fbytes_5fper_5fcall_8',['allgather_payload_bytes_per_call',['../structSymmetryMatvecPlan.html#aa81ba65370c79618652557f1e2e13a45',1,'SymmetryMatvecPlan']]],
   ['alpha_9',['alpha',['../global_8c.html#aa56b7099de1b08ef9d76d944334f02d4',1,'alpha:&#160;global.c'],['../global_8h.html#aa56b7099de1b08ef9d76d944334f02d4',1,'alpha:&#160;global.c']]],
-  ['amplitude_10',['amplitude',['../structSymmetryTransformResult.html#a73623946e440043ae1a3244994ad7016',1,'SymmetryTransformResult']]],
-  ['anomalousg_11',['AnomalousG',['../structDefineList.html#abf5ca772d5ceb7fb4ba4008b82daa621',1,'DefineList']]],
-  ['anomalousterm_12',['AnomalousTerm',['../structDefineList.html#a683c792054b999fd59cb67876521b4a5',1,'DefineList']]],
-  ['arrayj_13',['arrayJ',['../structBoostList.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]]
+  ['amp_10',['amp',['../structTraceMap.html#a44740dd9c2ddce7ed7131f35e3617332',1,'TraceMap']]],
+  ['amplitude_11',['amplitude',['../structSymmetryTransformResult.html#a73623946e440043ae1a3244994ad7016',1,'SymmetryTransformResult']]],
+  ['anomalousg_12',['AnomalousG',['../structDefineList.html#abf5ca772d5ceb7fb4ba4008b82daa621',1,'DefineList']]],
+  ['anomalousterm_13',['AnomalousTerm',['../structDefineList.html#a683c792054b999fd59cb67876521b4a5',1,'DefineList']]],
+  ['arrayj_14',['arrayJ',['../structBoostList.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]],
+  ['attempted_15',['attempted',['../structGreenOutputManifestRecord.html#a53d88c4174397e040a6912705627ae1c',1,'GreenOutputManifestRecord']]]
 ];

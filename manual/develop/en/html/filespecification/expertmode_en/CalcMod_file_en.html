@@ -204,6 +204,12 @@ on the <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> dimension
 <div class="line">0: not input Hamiltonian.</div>
 <div class="line">1: input Hamiltonian.</div>
 </div>
+<div class="line-block">
+<div class="line">Note: with <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) and more than one MPI process, the
+Hamiltonian is generated in distributed form, so <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code>
+are rejected at startup. To output or input the Hamiltonian, run with
+1 MPI process or use a different <code class="docutils literal notranslate"><span class="pre">Solver</span></code>.</div>
+</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
@@ -233,19 +239,268 @@ on the <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> dimension
 <div class="line"><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> in LOBCG keeps the existing non-aggregate output because the existing output is not split by eigen index.</div>
 </div>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Solver</span></code></p>
+<p><strong>Type :</strong> int (default: resolved from legacy keywords)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> (FullDiag)
+Diagonalization backend for the full diagonalization method:</div>
+<div class="line">0 (LAPACK, serial), 1 (ScaLAPACK), 2 (MAGMA, single-node multi-GPU),
+3 (ELPA, multi-node CPU/GPU; requires a build with <code class="docutils literal notranslate"><span class="pre">USE_ELPA=ON</span></code>).</div>
+<div class="line">When omitted for FullDiag, the backend is resolved from the legacy
+<code class="docutils literal notranslate"><span class="pre">Scalapack</span></code> and <code class="docutils literal notranslate"><span class="pre">NGPU</span></code> keywords using the existing precedence.</div>
+<div class="line"><strong>Usage example (expert mode):</strong> write <code class="docutils literal notranslate"><span class="pre">Solver</span></code> (and optionally
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>) in <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code>,</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CalcType     2
+CalcModel    0
+Solver       3
+ExpecMode    2
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">and run HPhi in expert mode with the desired number of MPI processes:</div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mpiexec -np 4 HPhi -e namelist.def
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><strong>Usage from standard mode:</strong> the standard-mode input file does not
+accept the <code class="docutils literal notranslate"><span class="pre">Solver</span></code>/<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> keywords. Generate the expert-mode
+files once with <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-sdry</span> <span class="pre">stan.in</span></code>, append the keywords to the
+generated <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code>, and <strong>run in expert mode (</strong><code class="docutils literal notranslate"><span class="pre">-e</span></code><strong>)</strong>
+as above (running in standard mode <code class="docutils literal notranslate"><span class="pre">-s</span></code> regenerates the def files,
+so the edits would not take effect). For the same reason, re-running
+<code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-sdry</span></code> after changing <code class="docutils literal notranslate"><span class="pre">stan.in</span></code> overwrites <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code>
+and discards the appended keywords, so they must be appended again.
+If <code class="docutils literal notranslate"><span class="pre">stan.in</span></code> contained the legacy <code class="docutils literal notranslate"><span class="pre">Scalapack</span></code>/<code class="docutils literal notranslate"><span class="pre">NGPU</span></code> keywords,
+we recommend removing those lines from the generated <code class="docutils literal notranslate"><span class="pre">calcmod.def</span></code>
+and specifying <code class="docutils literal notranslate"><span class="pre">Solver</span></code> instead.
+See <a class="reference internal" href="../../technical/parallel_fulldiag_en.html#sec-parallelfulldiag"><span class="std std-ref">Parallel full diagonalization</span></a> for the parallel algorithms and a
+performance comparison of the backends.</div>
+</div>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Scalapack</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
 <div class="line-block">
 <div class="line"><strong>Description :</strong> (Full Diag)Select to use ScaLAPACK library for full diagonalization:</div>
 <div class="line">0: not to use ScaLAPACK.</div>
 <div class="line">1: use ScaLAPACK.</div>
+<div class="line">(Deprecated) This keyword is retained for backward compatibility.
+Please use <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">1</span></code> for new inputs.</div>
+<div class="line">This legacy keyword applies only to <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> (FullDiag). For
+another calculation type it is ignored with a warning, preserving the
+normal MPI site decomposition. By contrast, an explicit <code class="docutils literal notranslate"><span class="pre">Solver</span></code> value
+1, 2, or 3 outside FullDiag is rejected as an input error.</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NGPU</span></code></p>
-<p><strong>Type :</strong> Int (default value: 2)</p>
+<p><strong>Type :</strong> Int (default value: see below)</p>
 <div class="line-block">
-<div class="line"><strong>Description :</strong> (Full Diag)Select the number of GPU devices for full diagonalization:</div>
-<div class="line"><span class="math notranslate nohighlight">\({\mathcal H} \Phi\)</span> does not support to use GPU devices at multi-nodes.</div>
+<div class="line"><strong>Description :</strong> (FullDiag)
+Number of GPU devices per node for full diagonalization.</div>
+<div class="line">Default value: when <code class="docutils literal notranslate"><span class="pre">Solver</span></code> is not given explicitly, 2 on
+MAGMA-enabled builds and 0 otherwise (legacy behavior, unchanged).
+When <code class="docutils literal notranslate"><span class="pre">Solver</span></code> is given explicitly, the default is 2 only for
+<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">2</span></code> (MAGMA); it is 0 for <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">0/1/3</span></code> (ELPA defaults to
+CPU execution; GPU use must be opted into explicitly).</div>
+<div class="line">For <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">2</span></code> (MAGMA), this specifies the number of GPUs used by a single process.</div>
+<div class="line">For <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA), 0 runs on CPU, and a value &gt;= 1 runs on GPU with automatic GPU assignment (1 process per GPU).</div>
+<div class="line">It is recommended to match the number of MPI processes per node to the number of GPUs.</div>
+<div class="line">Note that <code class="docutils literal notranslate"><span class="pre">NGPU</span></code> does not physically limit the number of GPU devices.
+To strictly limit GPU count, use the job scheduler (<code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code>, etc.).</div>
+<div class="line">GPU execution with ELPA requires ELPA version &gt;= 2023.11.001.</div>
+<div class="line">For <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code>, the Hilbert-space dimension (matrix size) must be at least
+as large as the largest dimension of the MPI process grid (max of nprow, npcol);
+otherwise HPhi exits at startup with an error asking to reduce the number of MPI ranks.</div>
+<div class="line">With <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> and more than one MPI process, the Hamiltonian is generated
+and stored in distributed (block-cyclic) form, so peak memory per rank scales
+roughly as O(N²/P) rather than O(N²) — larger Hilbert-space dimensions become
+feasible by increasing the process count.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code></p>
+<p><strong>Type :</strong> Int (default value: 0)</p>
+<div class="line-block">
+<div class="line"><strong>Description :</strong> (FullDiag)
+Selects the evaluation kernel for full-diagonalization observables
+(energy, N, Sz, S2, doublon, and Green functions):</div>
+<div class="line">0: Conventional evaluation (existing behavior).</div>
+<div class="line">1: State-task-parallel evaluation. Each MPI rank evaluates the
+observables for its own contiguous block of eigenstates
+independently (no communication during the per-state evaluation
+loop). The aggregate Green-function output is written as
+rank-local partial files and merged into the final aggregate files
+by rank 0 once every rank’s manifest reports success.</div>
+<div class="line">2: Trace-kernel evaluation. Three quantity families use this
+kernel: the one-body (<code class="docutils literal notranslate"><span class="pre">expec_cisajs</span></code>-equivalent) and two-body
+(<code class="docutils literal notranslate"><span class="pre">expec_cisajscktaltdc</span></code>-equivalent) Green functions, and, as of
+this version, the energy/fluctuation family (including the <code class="docutils literal notranslate"><span class="pre">var</span></code>
+column). For the Green functions, HPhi precomputes, for each
+operator, the basis-state mapping (destination state and amplitude)
+once, then streams every owned eigenstate through that mapping in a
+dense loop, amortizing the per-state operator overhead that
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> still pays for these two quantities. For the
+energy/fluctuation family, HPhi instead precomputes the Hamiltonian
+once per rank into a compact CSR (compressed sparse row) matrix and
+streams every owned eigenstate through a CSR sparse
+matrix-vector product, amortizing the per-state
+<code class="docutils literal notranslate"><span class="pre">mltply</span></code>-style traversal overhead in the same way. <code class="docutils literal notranslate"><span class="pre">S2</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> are always evaluated on the
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> path in this version – trace-kernel evaluation for
+these quantities is a candidate for a future phase.</div>
+<div class="line">Note on terminology: “trace kernel” names this precomputed-mapping,
+streaming evaluation technique – it does not refer to the matrix
+trace <span class="math notranslate nohighlight">\({\rm Tr}(\cdot)\)</span>.</div>
+<div class="line">Whether the one-body/two-body trace kernel is actually used is
+decided once per run from a per-(model, quantity) capability table
+plus three runtime checks, and reported at the start of the run by a
+rank-0 <code class="docutils literal notranslate"><span class="pre">INFO</span></code> line per quantity (indented in the actual log
+output; <code class="docutils literal notranslate"><span class="pre">%s</span></code> below stands for <code class="docutils literal notranslate"><span class="pre">one-body</span></code> or <code class="docutils literal notranslate"><span class="pre">two-body</span></code>):</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">trace</span> <span class="pre">kernel.</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(unsupported</span> <span class="pre">model).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(no</span> <span class="pre">operators</span> <span class="pre">of</span> <span class="pre">this</span> <span class="pre">kind</span> <span class="pre">are</span> <span class="pre">defined).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">%s</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(result</span> <span class="pre">buffer</span> <span class="pre">would</span> <span class="pre">exceed</span> <span class="pre">HPHI_TRACE_BUF_MAX_MB).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">two-body</span> <span class="pre">Green</span> <span class="pre">functions</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(they</span> <span class="pre">share</span> <span class="pre">their</span> <span class="pre">evaluator</span> <span class="pre">with</span> <span class="pre">three-/four-/six-body</span> <span class="pre">Green</span> <span class="pre">functions).</span></code></div>
+<div class="line">The energy/fluctuation family’s outcome is decided independently, by
+three possible reasons (it has no shared-evaluator case – see below),
+reported by its own rank-0 <code class="docutils literal notranslate"><span class="pre">INFO</span></code> line:</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">trace</span> <span class="pre">kernel.</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(the</span> <span class="pre">Hamiltonian</span> <span class="pre">buffer</span> <span class="pre">would</span> <span class="pre">exceed</span> <span class="pre">HPHI_TRACE_BUF_MAX_MB).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(the</span> <span class="pre">Hamiltonian</span> <span class="pre">was</span> <span class="pre">read</span> <span class="pre">from</span> <span class="pre">InputHam).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">the</span> <span class="pre">energy/fluctuation</span> <span class="pre">family</span> <span class="pre">uses</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">fallback</span> <span class="pre">(unsupported</span> <span class="pre">model).</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">S2</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> remain unconditionally on the
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> path in this version, reported by one fixed line:</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">2:</span> <span class="pre">S2,</span> <span class="pre">NBodyG,</span> <span class="pre">and</span> <span class="pre">AnomalousG</span> <span class="pre">always</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">ExpecMode-1</span> <span class="pre">path</span> <span class="pre">in</span> <span class="pre">this</span> <span class="pre">version.</span></code></div>
+<div class="line">Supported models for the one-body/two-body Green-function trace
+kernels (as of this phase): <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>/<code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code> and spin-1/2
+<code class="docutils literal notranslate"><span class="pre">Spin</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> (general-spin models (including
+<span class="math notranslate nohighlight">\(S \geq 1\)</span>), <code class="docutils literal notranslate"><span class="pre">tJ</span></code>/
+<code class="docutils literal notranslate"><span class="pre">tJGC</span></code>, <code class="docutils literal notranslate"><span class="pre">Kondo</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoGC</span></code>, and <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> are not yet covered and always print the
+“unsupported model” line above for both quantities).</div>
+<div class="line">The energy/fluctuation family’s trace kernel has broader model
+coverage than the Green-function kernels above: it supports
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>/<code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code>, <code class="docutils literal notranslate"><span class="pre">tJ</span></code>/<code class="docutils literal notranslate"><span class="pre">tJGC</span></code>, <code class="docutils literal notranslate"><span class="pre">Kondo</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoGC</span></code>
+(each including its particle-number-conserved canonical variant –
+<code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code>/<code class="docutils literal notranslate"><span class="pre">tJNConserved</span></code>/<code class="docutils literal notranslate"><span class="pre">KondoNConserved</span></code>, selected
+automatically when <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> is omitted),
+and <code class="docutils literal notranslate"><span class="pre">Spin</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> (including general spin, <span class="math notranslate nohighlight">\(S \geq 1\)</span>) –
+not just the four rows supported for the Green functions. It does
+NOT support <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> (their
+particle-number/spin fluctuation semantics differ and are not
+implemented by the kernel); those models, and any unknown model,
+fall back to the <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> path.</div>
+<div class="line">For the Green functions, on a supported model each quantity’s
+outcome is still decided by up to three further runtime reasons,
+evaluated in a fixed order so that exactly one reason applies (they
+are mutually exclusive by construction, not independently checked):
+(a) a shared-evaluator rule
+for the two-body Green function only, checked first – it shares its
+evaluator with the ThreeBodyG/FourBodyG/SixBodyG (N-body) Green
+functions, so whenever any of those is requested, the two-body
+quantity falls back together with them (this keeps each output
+file’s writer unique: otherwise the fallback loop would silently
+drop the N-body output, or the trace kernel would double-write the
+two-body files); the one-body quantity is unaffected by rule (a).
+(b) a no-operators check, checked next – if this run defines zero
+operators of that kind (e.g. no <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">CisAjtCkuAlvDC</span></code>
+entries), the quantity has nothing to stream and falls back; this
+rule fires BEFORE the memory gate below, so an empty operator table
+is never misreported as exceeding the memory cap. (c) a memory gate,
+checked last (and only reached if neither (a) nor (b) already
+applied) – if the quantity’s result buffer would exceed
+<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> (an environment variable giving the cap in
+MiB, an integer in [1, 1048576], default 1024; the cap applies per
+MPI rank and per quantity to the result buffer only; it is parsed
+from the environment on rank 0, only for <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 2 runs, and
+broadcast to every rank, so it only needs to be set in the launch
+environment), that quantity falls back to <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code>.</div>
+<div class="line">For the energy/fluctuation family, the outcome is decided by exactly
+three possible reasons, checked in this order: (a) an <code class="docutils literal notranslate"><span class="pre">InputHam</span></code>
+check, checked first – if this run’s Hamiltonian was read from
+<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> (<code class="docutils literal notranslate"><span class="pre">InputHam</span> <span class="pre">1</span></code>), the trace kernel cannot rebuild a
+matching Hamiltonian by re-enumerating the model (doing so would
+re-derive the matrix from the model definition instead of reading
+back the one that was actually diagonalized), so the energy family
+unconditionally falls back to <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code>. (b) an
+unsupported-model check, checked next – if the model is not one of
+the supported models listed above (i.e. it is
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> or any unknown model), the
+energy family falls back. (c) the same <code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code>
+memory gate as above, checked last (only reached if neither (a) nor
+(b) applies) – this cap now also bounds the
+energy family’s own per-rank Hamiltonian buffer, a compact CSR
+matrix of approximately <span class="math notranslate nohighlight">\(24 \times \mathrm{nnz}\)</span> bytes (here
+nnz is the number of matrix entries makeHam emits on this rank,
+which the buffer capacity and the gate are sized for; the merged
+entry count <code class="docutils literal notranslate"><span class="pre">rowptr[N]</span></code> after summing duplicates can be smaller);
+if the projected CSR size would exceed the cap, the energy family
+falls back to <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code>. Unlike the Green-function
+kernels, the energy family has no shared-evaluator case (it does not
+share its evaluator with any other always-fallback quantity).</div>
+<div class="line">If a run reports the memory-gate fallback but you want the trace
+kernel, raise <code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> up to the available per-rank
+memory. Note that, unlike the distributed eigenvector storage, the
+CSR Hamiltonian is replicated in full on every rank, so adding MPI
+ranks does NOT shrink it (see <a class="reference internal" href="../../technical/parallel_fulldiag_en.html#sec-parallelfulldiag"><span class="std std-ref">Parallel full diagonalization</span></a> for why);
+raising the cap, or accepting the reported <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> fallback
+(which produces identical results), are the two options.</div>
+<div class="line">Eligibility: a nonzero <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> requires <code class="docutils literal notranslate"><span class="pre">CalcType</span></code> = 2 (full
+diagonalization) together with <code class="docutils literal notranslate"><span class="pre">Solver</span></code> 1 (ScaLAPACK) or 3 (ELPA);
+any other combination (wrong <code class="docutils literal notranslate"><span class="pre">CalcType</span></code> or <code class="docutils literal notranslate"><span class="pre">Solver</span></code>) is rejected
+at startup with an error. With exactly one MPI process, <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>
+is automatically reverted to 0 (results are identical for a single
+process either way), printing (indented in the actual log output)</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">INFO:</span> <span class="pre">ExpecMode</span> <span class="pre">reverts</span> <span class="pre">to</span> <span class="pre">0</span> <span class="pre">for</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">process</span> <span class="pre">(results</span> <span class="pre">are</span> <span class="pre">identical).</span></code></div>
+<div class="line">Guarantee: <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> changes only evaluation speed, never the
+physics – <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> 0, 1, and 2 produce identical results up to
+floating-point rounding (summation order differs between kernels, so
+agreement is not bit-identical). This includes the <code class="docutils literal notranslate"><span class="pre">var</span></code> column:
+<code class="docutils literal notranslate"><span class="pre">var</span></code> is part of the energy/fluctuation family, so it now uses the
+trace kernel together with the rest of that family whenever the
+kernel is active (see above), and the <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> path
+otherwise; either way <code class="docutils literal notranslate"><span class="pre">var</span></code> continues to store
+<span class="math notranslate nohighlight">\(\langle H^2 \rangle\)</span> (downstream code subtracts
+<span class="math notranslate nohighlight">\(\langle H \rangle^2\)</span> to obtain the variance), an unchanged
+field contract.</div>
+<div class="line">Memory: <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code>/<code class="docutils literal notranslate"><span class="pre">2</span></code> additionally hold a state panel roughly
+the same size as the distributed eigenvector storage used by
+<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (O(N²/P) per rank); <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">2</span></code> additionally holds,
+per quantity that uses the trace kernel, a buffer capped by
+<code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code> above – a result buffer for the one-body/
+two-body Green functions, or the per-rank CSR Hamiltonian buffer
+described above (approximately <span class="math notranslate nohighlight">\(24 \times \mathrm{nnz}\)</span>
+bytes) for the energy/fluctuation family. <code class="docutils literal notranslate"><span class="pre">HPHI_TRACE_BUF_MAX_MB</span></code>
+is a per-quantity threshold: it is checked independently against EACH
+quantity’s buffer, not as a budget on the sum of the concurrently-live
+trace buffers – the one-body result buffer, the two-body result
+buffer, and the energy CSR can each be as large as the cap, so their
+live total can exceed it. During the one-time redistribution
+step both the original storage and the new panel coexist, giving a
+temporary peak of roughly 2xO(N²/P) per rank before the original
+storage is freed; steady-state usage afterward is O(N²/P) plus the
+trace buffers, otherwise unchanged from <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code>.</div>
+<div class="line">Guidance: prefer <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">2</span></code> for large multi-node
+<code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) or <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">1</span></code> (ScaLAPACK) runs with many
+eigenstates and/or many Green-function observables, where
+re-evaluating every eigenstate redundantly on every rank
+(<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code>) becomes the bottleneck. <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">2</span></code> is
+designed to further amortize per-state overhead for
+one-body/two-body Green-function-heavy workloads on the supported
+models above, and for energy/fluctuation-heavy workloads on any
+model (the energy family’s trace kernel is not limited to those
+four rows), and is expected to be at least as fast as
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">1</span></code> for such workloads. Keep
+the default <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> otherwise, including for small systems
+and single-process runs.</div>
+<div class="line">Note (behavior fix): as of phase 3a, distributed FullDiag runs
+(<code class="docutils literal notranslate"><span class="pre">Solver</span></code> 1 or 3, more than one MPI process) compute S2 and Sz on
+rank 0 for <code class="docutils literal notranslate"><span class="pre">ExpecMode</span> <span class="pre">0</span></code> as well – previously these distributed runs
+zero-filled S2 and Sz and printed a shortened stdout progress line
+without the S2 column. The stdout progress line now always matches
+the single-process (serial) format, with the S2 column included, for
+every <code class="docutils literal notranslate"><span class="pre">Solver</span></code>/<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> combination. This is an intentional
+correctness fix, independent of <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>’s value.</div>
 </div>
 </li>
 </ul>

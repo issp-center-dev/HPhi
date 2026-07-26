@@ -10,6 +10,9 @@ Prerequisite
  * C/fortran compiler (Intel, Fujitsu, GNU, etc. )
  * BLAS/LAPACK library (Intel MKL, Fujitsu, ATLAS, etc.)
  * MPI library (if you do not use MPI, this is not required).
+ * ScaLAPACK library (if you do not use it for full diagonalization, this is not required).
+ * MAGMA library (if you do not use it for full diagonalization, this is not required).
+ * ELPA library (if you do not use it for full diagonalization, this is not required. The non-threaded variant is required: version 2021.11 or later for CPU execution, and a CUDA-enabled build of version 2023.11.001 or later for GPU execution).
 
 .. tip::
 

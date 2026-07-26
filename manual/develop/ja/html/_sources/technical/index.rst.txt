@@ -14,3 +14,4 @@
    memory_ja
    precision_ja
    restart_ja
+   parallel_fulldiag_ja
