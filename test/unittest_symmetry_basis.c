@@ -4017,6 +4017,149 @@ static void assert_c2_unresolved_blocks(
   } while (local_row_begin < X->Sym->local_dim);
 }
 
+static void assert_c3_plan_matches_replicated(
+    struct BindStruct *X,
+    const size_t *reference_row_ptr,
+    const unsigned long int *reference_columns,
+    const double complex *reference_values,
+    unsigned long int reference_local_offset,
+    unsigned long int reference_local_dim,
+    size_t reference_nnz,
+    const char *label)
+{
+  struct SymmetryRepresentativeBatchStats before;
+  struct SymmetryRepresentativeBatchStats after;
+  struct SymmetryDistributedMatvecPlanOptions options;
+  struct SymmetryRepresentativeBatchOptions directory_options;
+  int pass;
+  memset(&options, 0, sizeof(options));
+  memset(&directory_options, 0, sizeof(directory_options));
+  directory_options.corrupt_response_rank = -1;
+  options.block_memory_byte_limit =
+      HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
+
+  assert_int_eq(
+      GetSymmetryRepresentativeDirectoryBatchStats(
+          X->Sym->representative_directory, &before),
+      0, label);
+  options.global_rows_per_block = 1UL;
+  options.block_memory_byte_limit = 1U;
+  assert_int_eq(
+      BuildSymmetryDistributedMatvecPlanWithOptions(
+          X, &options),
+      -1, "distributed plan enforces collective block memory cap");
+  assert_int_eq(X->Sym->matvec_plan == NULL, 1, label);
+  assert_int_eq(
+      GetSymmetryRepresentativeDirectoryBatchStats(
+          X->Sym->representative_directory, &after),
+      0, label);
+  assert_int_eq(
+      memcmp(&after, &before, sizeof(after)) == 0,
+      1, "pre-batch block cap failure preserves directory stats");
+
+  options.block_memory_byte_limit =
+      HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
+  for (pass = 0; pass < 2; pass++) {
+    const struct SymmetryMatvecPlan *plan;
+    unsigned long int covered_rows = 0UL;
+    size_t flattened_nnz = 0U;
+    size_t block_index;
+    uint64_t expected_rounds;
+    if (pass == 0) {
+      options.global_rows_per_block = 1UL;
+      options.directory_options = NULL;
+    } else {
+      options.global_rows_per_block = 2UL;
+      directory_options.chunk_limit = 1U;
+      directory_options.force_chunked = 1;
+      directory_options.debug_echo = 1;
+      options.directory_options = &directory_options;
+    }
+    expected_rounds =
+        (uint64_t)(X->Sym->dim /
+                   options.global_rows_per_block);
+    if (X->Sym->dim %
+            options.global_rows_per_block != 0UL) {
+      expected_rounds++;
+    }
+    assert_int_eq(
+        GetSymmetryRepresentativeDirectoryBatchStats(
+            X->Sym->representative_directory, &before),
+        0, label);
+    if (BuildSymmetryDistributedMatvecPlanWithOptions(
+            X, &options) != 0) {
+      fprintf(stderr, "%s: distributed plan build failed pass %d\n",
+              label, pass);
+      exit(1);
+    }
+    assert_int_eq(
+        GetSymmetryRepresentativeDirectoryBatchStats(
+            X->Sym->representative_directory, &after),
+        0, label);
+    assert_int_eq(
+        after.directory_batch_calls -
+                before.directory_batch_calls ==
+            expected_rounds,
+        1, "one directory batch is used per global block round");
+    plan = X->Sym->matvec_plan;
+    assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
+    assert_int_eq(plan->columns_remapped, FALSE, label);
+    assert_int_eq(plan->halo.ready, FALSE, label);
+    assert_ulong_eq(plan->dim, X->Sym->dim, label);
+    assert_ulong_eq(plan->local_offset, reference_local_offset, label);
+    assert_ulong_eq(plan->local_dim, reference_local_dim, label);
+    assert_ulong_eq((unsigned long int)plan->nnz,
+                    (unsigned long int)reference_nnz, label);
+    for (block_index = 0U;
+         block_index < SymmetryMatvecPlanBlockCount(plan);
+         block_index++) {
+      struct SymmetryMatvecBlockView view;
+      unsigned long int block_row;
+      assert_int_eq(
+          SymmetryMatvecPlanGetBlockView(
+              plan, block_index, &view),
+          0, label);
+      assert_ulong_eq(view.local_row_begin, covered_rows, label);
+      for (block_row = 0UL;
+           block_row < view.local_row_count;
+           block_row++) {
+        unsigned long int local_row =
+            covered_rows + block_row;
+        size_t expected_begin = reference_row_ptr[local_row];
+        size_t expected_end = reference_row_ptr[local_row + 1UL];
+        size_t actual_begin = view.row_ptr[block_row];
+        size_t actual_end = view.row_ptr[block_row + 1UL];
+        size_t row_nnz = expected_end - expected_begin;
+        assert_ulong_eq(
+            (unsigned long int)(actual_end - actual_begin),
+            (unsigned long int)row_nnz, label);
+        if (row_nnz > 0U) {
+          assert_int_eq(
+              memcmp(
+                  &view.global_columns[actual_begin],
+                  &reference_columns[expected_begin],
+                  row_nnz * sizeof(*reference_columns)) == 0,
+              1, "distributed/global replicated columns are bitwise exact");
+          assert_int_eq(
+              memcmp(
+                  &view.values[actual_begin],
+                  &reference_values[expected_begin],
+                  row_nnz * sizeof(*reference_values)) == 0,
+              1, "distributed/global replicated values are bitwise exact");
+        }
+        flattened_nnz += row_nnz;
+      }
+      covered_rows += view.local_row_count;
+    }
+    assert_ulong_eq(covered_rows, reference_local_dim, label);
+    assert_ulong_eq(
+        (unsigned long int)flattened_nnz,
+        (unsigned long int)reference_nnz, label);
+    FreeSymmetryMatvecPlan(X->Sym->matvec_plan);
+    X->Sym->matvec_plan = NULL;
+  }
+}
+
 static void assert_c6_full_basis_directory_batch(
     struct SymmetryBasisRuntime *sym,
     const struct SymmetryBasisVector *reference_basis,
@@ -4146,6 +4289,12 @@ static void assert_c5_distributed_layout_model(
   struct SymmetryRepresentativeResult representative;
   struct SymmetryBasisVector *reference_basis;
   struct C5DirectoryTarget *directory_targets;
+  size_t *reference_row_ptr;
+  unsigned long int *reference_columns;
+  double complex *reference_values;
+  unsigned long int reference_local_offset;
+  unsigned long int reference_local_dim;
+  size_t reference_nnz;
   unsigned long int raw_dim;
   unsigned long int dim;
   unsigned long int directory_target_count;
@@ -4188,6 +4337,49 @@ static void assert_c5_distributed_layout_model(
   }
   memcpy(reference_basis, X.Sym->basis,
          ((size_t)dim + 1U) * sizeof(*reference_basis));
+  if (setenv(
+          "HPHI_SYMMETRY_VECTOR_EXCHANGE", "allgather", 1) != 0 ||
+      ActivateSymmetryBasisDimension(&X) != 0 ||
+      BuildSymmetryMatvecPlan(&X) != 0) {
+    fprintf(stderr, "%s: replicated plan oracle build failed\n", label);
+    exit(1);
+  }
+  unsetenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
+  reference_local_offset = X.Sym->matvec_plan->local_offset;
+  reference_local_dim = X.Sym->matvec_plan->local_dim;
+  reference_nnz = X.Sym->matvec_plan->nnz;
+  reference_row_ptr = (size_t *)malloc(
+      ((size_t)reference_local_dim + 1U) *
+      sizeof(*reference_row_ptr));
+  reference_columns =
+      reference_nnz == 0U
+          ? NULL
+          : (unsigned long int *)malloc(
+                reference_nnz * sizeof(*reference_columns));
+  reference_values =
+      reference_nnz == 0U
+          ? NULL
+          : (double complex *)malloc(
+                reference_nnz * sizeof(*reference_values));
+  if (reference_row_ptr == NULL ||
+      (reference_nnz > 0U &&
+       (reference_columns == NULL || reference_values == NULL))) {
+    fprintf(stderr, "%s: replicated plan oracle allocation failed\n",
+            label);
+    exit(1);
+  }
+  memcpy(
+      reference_row_ptr, X.Sym->matvec_plan->row_ptr,
+      ((size_t)reference_local_dim + 1U) *
+          sizeof(*reference_row_ptr));
+  if (reference_nnz > 0U) {
+    memcpy(
+        reference_columns, X.Sym->matvec_plan->col_index,
+        reference_nnz * sizeof(*reference_columns));
+    memcpy(
+        reference_values, X.Sym->matvec_plan->values,
+        reference_nnz * sizeof(*reference_values));
+  }
   FreeSymmetryBasis(X.Sym);
   X.Sym = NULL;
   free(list_1);
@@ -4331,6 +4523,10 @@ static void assert_c5_distributed_layout_model(
         memcmp(&after, &before, sizeof(after)) == 0,
         1, "unresolved block build performs no directory batch");
   }
+  assert_c3_plan_matches_replicated(
+      &X, reference_row_ptr, reference_columns,
+      reference_values, reference_local_offset,
+      reference_local_dim, reference_nnz, label);
 
   assert_int_eq(
       ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), 0, label);
@@ -4492,6 +4688,9 @@ static void assert_c5_distributed_layout_model(
   FreeSymmetryBasis(X.Sym);
   X.Sym = NULL;
   free(reference_basis);
+  free(reference_row_ptr);
+  free(reference_columns);
+  free(reference_values);
   free(directory_targets);
   free(list_1);
   free(list_Diagonal);

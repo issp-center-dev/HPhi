@@ -6,6 +6,7 @@
 #include "symmetry_vector_halo.h"
 
 struct BindStruct;
+struct SymmetryRepresentativeBatchOptions;
 
 #define SYMMETRY_MATVEC_MODE_PLAN 0
 #define SYMMETRY_MATVEC_MODE_LEGACY 1
@@ -15,6 +16,10 @@ struct BindStruct;
 
 #ifndef HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES
 #define HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES UINT64_C(1073741824)
+#endif
+
+#ifndef HPHI_SYMMETRY_PLAN_GLOBAL_ROWS_PER_BLOCK
+#define HPHI_SYMMETRY_PLAN_GLOBAL_ROWS_PER_BLOCK UINT64_C(65536)
 #endif
 
 enum SymmetryColumnWidth {
@@ -46,6 +51,13 @@ struct SymmetryUnresolvedMatvecBlock {
   uint64_t memory_byte_limit;
 };
 
+struct SymmetryDistributedMatvecPlanOptions {
+  unsigned long int global_rows_per_block;
+  uint64_t block_memory_byte_limit;
+  /* NULL selects the production directory batch path. */
+  const struct SymmetryRepresentativeBatchOptions *directory_options;
+};
+
 struct SymmetryMatvecBlock {
   unsigned long int local_row_begin;
   unsigned long int local_row_count;
@@ -68,7 +80,7 @@ struct SymmetryMatvecPlan {
   size_t nnz;
   size_t row_nnz_max;
   /*
-   * Non-owning compatibility aliases for the single-block replicated plan.
+   * Non-owning compatibility aliases for a single-block plan.
    * Multi-block consumers must use SymmetryMatvecPlanGetBlockView().
    */
   size_t *row_ptr;
@@ -132,6 +144,16 @@ int BuildSymmetryUnresolvedMatvecBlock(
     struct SymmetryUnresolvedMatvecBlock *block_out);
 void FreeSymmetryUnresolvedMatvecBlock(
     struct SymmetryUnresolvedMatvecBlock *block);
+/**
+ * Collectively resolve distributed transition blocks into global-column CSR.
+ *
+ * Every rank participates once per global row-block round, including ranks
+ * with no intersecting rows.  The resulting plan has global columns and no
+ * halo/remap state; B4-C4 owns that staged integration.
+ */
+int BuildSymmetryDistributedMatvecPlanWithOptions(
+    struct BindStruct *X,
+    const struct SymmetryDistributedMatvecPlanOptions *options);
 int BuildSymmetryMatvecPlan(struct BindStruct *X);
 size_t SymmetryMatvecPlanBlockCount(
     const struct SymmetryMatvecPlan *plan);
