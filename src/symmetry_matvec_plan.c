@@ -205,7 +205,8 @@ static int count_entry(unsigned long int out_index,
 }
 
 struct FillEntriesContext {
-  struct SymmetryMatvecPlan *plan;
+  struct SymmetryMatvecBlock *block;
+  unsigned long int dim;
   size_t next;
   size_t end;
 };
@@ -216,13 +217,31 @@ static int fill_transposed_entry(unsigned long int out_index,
 {
   struct FillEntriesContext *fill = (struct FillEntriesContext *)context;
   if (fill->next >= fill->end || out_index == 0UL ||
-      out_index > fill->plan->dim) {
+      out_index > fill->dim) {
     return -1;
   }
-  fill->plan->col_index[fill->next] = out_index;
-  fill->plan->values[fill->next] = conj(coefficient);
+  fill->block->global_columns[fill->next] = out_index;
+  fill->block->values[fill->next] = conj(coefficient);
   fill->next++;
   return 0;
+}
+
+static void sync_single_block_aliases(struct SymmetryMatvecPlan *plan)
+{
+  struct SymmetryMatvecBlock *block;
+  if (plan == NULL) return;
+  plan->row_ptr = NULL;
+  plan->col_index = NULL;
+  plan->column_slot32 = NULL;
+  plan->column_slot64 = NULL;
+  plan->values = NULL;
+  if (plan->block_count != 1U || plan->blocks == NULL) return;
+  block = &plan->blocks[0];
+  plan->row_ptr = block->row_ptr;
+  plan->col_index = block->global_columns;
+  plan->column_slot32 = block->column_slot32;
+  plan->column_slot64 = block->column_slot64;
+  plan->values = block->values;
 }
 
 static int parse_matvec_mode(void)
@@ -383,6 +402,38 @@ static int find_ghost_position(const struct SymmetryVectorHaloPlan *halo,
   return 0;
 }
 
+static int build_symmetry_matvec_plan_halo(
+    struct SymmetryMatvecPlan *plan,
+    int nrank,
+    int rank)
+{
+  struct SymmetryGlobalColumnSpan *spans;
+  size_t block_index;
+  int status;
+  if (plan == NULL || plan->block_count == 0U || plan->blocks == NULL ||
+      plan->block_count > SIZE_MAX / sizeof(*spans)) {
+    return -1;
+  }
+  spans = (struct SymmetryGlobalColumnSpan *)calloc(
+      plan->block_count, sizeof(*spans));
+  if (spans == NULL) return -1;
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    const struct SymmetryMatvecBlock *block = &plan->blocks[block_index];
+    if (block->nnz > 0U && block->global_columns == NULL) {
+      free(spans);
+      return -1;
+    }
+    spans[block_index].columns = block->global_columns;
+    spans[block_index].count = block->nnz;
+  }
+  status = BuildSymmetryVectorHaloPlan(
+      &plan->halo, plan->dim, plan->local_offset, plan->local_dim,
+      spans, plan->block_count, nrank, rank,
+      &plan->local_column_nnz, &plan->remote_column_nnz);
+  free(spans);
+  return status;
+}
+
 static int remap_symmetry_matvec_block_columns(
     const struct SymmetryMatvecPlan *plan,
     const struct SymmetryMatvecBlockView *view,
@@ -435,72 +486,89 @@ static int remap_symmetry_matvec_block_columns(
 int RemapSymmetryMatvecPlanColumns(struct SymmetryMatvecPlan *plan)
 {
   size_t slot_count;
-  uint32_t *column_slot32 = NULL;
-  uint64_t *column_slot64 = NULL;
+  size_t block_index;
+  size_t total_nnz = 0U;
+  unsigned long int covered_rows = 0UL;
   enum SymmetryColumnWidth column_width;
-  struct SymmetryMatvecBlockView view;
   int remap_error = 0;
   if (plan == NULL || plan->columns_remapped == TRUE ||
       plan->local_offset > plan->dim ||
       plan->local_dim > plan->dim - plan->local_offset ||
-      (plan->nnz > 0U && plan->col_index == NULL) ||
-      plan->column_slot32 != NULL || plan->column_slot64 != NULL ||
+      plan->block_count == 0U || plan->blocks == NULL ||
       (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
     return -1;
   }
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    const struct SymmetryMatvecBlock *block = &plan->blocks[block_index];
+    if (block->local_row_begin != covered_rows ||
+        block->local_row_count > plan->local_dim - covered_rows ||
+        (block->nnz > 0U && block->global_columns == NULL) ||
+        block->column_slot32 != NULL || block->column_slot64 != NULL ||
+        total_nnz > SIZE_MAX - block->nnz) {
+      return -1;
+    }
+    covered_rows += block->local_row_count;
+    total_nnz += block->nnz;
+  }
+  if (covered_rows != plan->local_dim || total_nnz != plan->nnz) return -1;
   slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
   column_width =
       slot_count <= (size_t)UINT32_MAX ? SYMMETRY_COLUMN_U32
                                        : SYMMETRY_COLUMN_U64;
-  memset(&view, 0, sizeof(view));
-  view.local_row_count = plan->local_dim;
-  view.nnz = plan->nnz;
-  view.row_ptr = plan->row_ptr;
-  view.global_columns = plan->col_index;
-  view.values = plan->values;
   StartTimer(1132);
-  if (plan->nnz > 0U) {
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    struct SymmetryMatvecBlock *block = &plan->blocks[block_index];
+    struct SymmetryMatvecBlockView view;
+    memset(&view, 0, sizeof(view));
+    view.local_row_begin = block->local_row_begin;
+    view.local_row_count = block->local_row_count;
+    view.nnz = block->nnz;
+    view.row_ptr = block->row_ptr;
+    view.global_columns = block->global_columns;
+    view.values = block->values;
+    if (block->nnz == 0U) continue;
     if (column_width == SYMMETRY_COLUMN_U32) {
-      if (plan->nnz > SIZE_MAX / sizeof(*column_slot32)) {
+      if (block->nnz > SIZE_MAX / sizeof(*block->column_slot32)) {
         remap_error = 1;
       } else {
-        column_slot32 =
-            (uint32_t *)malloc(plan->nnz * sizeof(*column_slot32));
-        if (column_slot32 == NULL) remap_error = 1;
+        block->column_slot32 =
+            (uint32_t *)malloc(block->nnz * sizeof(*block->column_slot32));
+        if (block->column_slot32 == NULL) remap_error = 1;
       }
     } else {
-      if (plan->nnz > SIZE_MAX / sizeof(*column_slot64)) {
+      if (block->nnz > SIZE_MAX / sizeof(*block->column_slot64)) {
         remap_error = 1;
       } else {
-        column_slot64 =
-            (uint64_t *)malloc(plan->nnz * sizeof(*column_slot64));
-        if (column_slot64 == NULL) remap_error = 1;
+        block->column_slot64 =
+            (uint64_t *)malloc(block->nnz * sizeof(*block->column_slot64));
+        if (block->column_slot64 == NULL) remap_error = 1;
       }
     }
-  }
-  if (remap_error != 0) {
-    StopTimer(1132);
-    free(column_slot32);
-    free(column_slot64);
-    return -1;
-  }
-  if (remap_symmetry_matvec_block_columns(
-          plan, &view, slot_count, column_width,
-          column_slot32, column_slot64) != 0) {
-    remap_error = 1;
+    if (remap_error == 0 &&
+        remap_symmetry_matvec_block_columns(
+            plan, &view, slot_count, column_width,
+            block->column_slot32, block->column_slot64) != 0) {
+      remap_error = 1;
+    }
+    if (remap_error != 0) break;
   }
   StopTimer(1132);
   if (remap_error != 0) {
-    free(column_slot32);
-    free(column_slot64);
+    for (block_index = 0U; block_index < plan->block_count; block_index++) {
+      free(plan->blocks[block_index].column_slot32);
+      free(plan->blocks[block_index].column_slot64);
+      plan->blocks[block_index].column_slot32 = NULL;
+      plan->blocks[block_index].column_slot64 = NULL;
+    }
     return -1;
   }
-  free(plan->col_index);
-  plan->col_index = NULL;
-  plan->column_slot32 = column_slot32;
-  plan->column_slot64 = column_slot64;
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    free(plan->blocks[block_index].global_columns);
+    plan->blocks[block_index].global_columns = NULL;
+  }
   plan->column_slot_width = column_width;
   plan->columns_remapped = TRUE;
+  sync_single_block_aliases(plan);
   return 0;
 }
 
@@ -516,51 +584,65 @@ int SymmetryMatvecPlanGetBlockView(
     size_t block_index,
     struct SymmetryMatvecBlockView *view)
 {
+  const struct SymmetryMatvecBlock *block;
   if (view == NULL) return -1;
   memset(view, 0, sizeof(*view));
-  if (plan == NULL || plan->ready != TRUE || plan->block_count != 1U ||
-      block_index != 0U || plan->row_ptr == NULL ||
-      plan->row_ptr[0] != 0U ||
-      plan->row_ptr[plan->local_dim] != plan->nnz ||
-      (plan->nnz > 0U && plan->values == NULL)) {
+  if (plan == NULL || plan->ready != TRUE || plan->blocks == NULL ||
+      block_index >= plan->block_count) {
+    return -1;
+  }
+  block = &plan->blocks[block_index];
+  if (block->local_row_begin > plan->local_dim ||
+      block->local_row_count >
+          plan->local_dim - block->local_row_begin ||
+      block->row_ptr == NULL || block->row_ptr[0] != 0U ||
+      block->row_ptr[block->local_row_count] != block->nnz ||
+      (block->nnz > 0U && block->values == NULL)) {
     return -1;
   }
   if (plan->columns_remapped == TRUE) {
-    if (plan->col_index != NULL ||
+    if (block->global_columns != NULL ||
         (plan->column_slot_width == SYMMETRY_COLUMN_U32 &&
-         (plan->column_slot64 != NULL ||
-          (plan->nnz > 0U && plan->column_slot32 == NULL))) ||
+         (block->column_slot64 != NULL ||
+          (block->nnz > 0U && block->column_slot32 == NULL))) ||
         (plan->column_slot_width == SYMMETRY_COLUMN_U64 &&
-         (plan->column_slot32 != NULL ||
-          (plan->nnz > 0U && plan->column_slot64 == NULL))) ||
+         (block->column_slot32 != NULL ||
+          (block->nnz > 0U && block->column_slot64 == NULL))) ||
         (plan->column_slot_width != SYMMETRY_COLUMN_U32 &&
          plan->column_slot_width != SYMMETRY_COLUMN_U64)) {
       return -1;
     }
-  } else if ((plan->nnz > 0U && plan->col_index == NULL) ||
-             plan->column_slot32 != NULL || plan->column_slot64 != NULL) {
+  } else if ((block->nnz > 0U && block->global_columns == NULL) ||
+             block->column_slot32 != NULL ||
+             block->column_slot64 != NULL) {
     return -1;
   }
-  view->local_row_begin = 0UL;
-  view->local_row_count = plan->local_dim;
-  view->nnz = plan->nnz;
-  view->row_ptr = plan->row_ptr;
-  view->global_columns = plan->col_index;
-  view->column_slot32 = plan->column_slot32;
-  view->column_slot64 = plan->column_slot64;
-  view->values = plan->values;
+  view->local_row_begin = block->local_row_begin;
+  view->local_row_count = block->local_row_count;
+  view->nnz = block->nnz;
+  view->row_ptr = block->row_ptr;
+  view->global_columns = block->global_columns;
+  view->column_slot32 = block->column_slot32;
+  view->column_slot64 = block->column_slot64;
+  view->values = block->values;
   return 0;
 }
 
 void FreeSymmetryMatvecPlan(struct SymmetryMatvecPlan *plan)
 {
+  size_t block_index;
   if (plan == NULL) return;
   FreeSymmetryVectorHaloPlan(&plan->halo);
-  free(plan->row_ptr);
-  free(plan->col_index);
-  free(plan->column_slot32);
-  free(plan->column_slot64);
-  free(plan->values);
+  if (plan->blocks != NULL) {
+    for (block_index = 0U; block_index < plan->block_count; block_index++) {
+      free(plan->blocks[block_index].row_ptr);
+      free(plan->blocks[block_index].global_columns);
+      free(plan->blocks[block_index].column_slot32);
+      free(plan->blocks[block_index].column_slot64);
+      free(plan->blocks[block_index].values);
+    }
+  }
+  free(plan->blocks);
   free(plan);
 }
 
@@ -575,7 +657,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   size_t min_row_nnz = SIZE_MAX;
   size_t max_row_nnz = 0U;
   size_t *row_counts = NULL;
-  struct SymmetryGlobalColumnSpan column_span;
+  struct SymmetryMatvecBlock *block = NULL;
   struct SymmetryMatvecPlan *plan = NULL;
   int count_error = 0;
   int fill_error = 0;
@@ -637,17 +719,27 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   plan->dim = X->Sym->dim;
   plan->local_offset = X->Sym->local_offset;
   plan->local_dim = X->Sym->local_dim;
+  plan->block_count = 1U;
+  plan->blocks =
+      (struct SymmetryMatvecBlock *)calloc(1U, sizeof(*plan->blocks));
+  if (plan->blocks == NULL) local_error = 1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
+  block = &plan->blocks[0];
+  block->local_row_begin = 0UL;
+  block->local_row_count = plan->local_dim;
 
   if (plan->local_offset > plan->dim ||
       plan->local_dim > plan->dim - plan->local_offset ||
       plan->local_dim > (unsigned long int)(SIZE_MAX - 1U) ||
-      (size_t)plan->local_dim + 1U > SIZE_MAX / sizeof(*plan->row_ptr)) {
+      (size_t)plan->local_dim + 1U > SIZE_MAX / sizeof(*block->row_ptr)) {
     local_error = 1;
   } else {
-    row_ptr_bytes = ((size_t)plan->local_dim + 1U) * sizeof(*plan->row_ptr);
-    plan->row_ptr = (size_t *)calloc((size_t)plan->local_dim + 1U,
-                                    sizeof(*plan->row_ptr));
-    if (plan->row_ptr == NULL) local_error = 1;
+    row_ptr_bytes =
+        ((size_t)plan->local_dim + 1U) * sizeof(*block->row_ptr);
+    block->row_ptr =
+        (size_t *)calloc((size_t)plan->local_dim + 1U,
+                         sizeof(*block->row_ptr));
+    if (block->row_ptr == NULL) local_error = 1;
   }
   if (local_error == 0 && plan->local_dim > 0UL) {
     if ((size_t)plan->local_dim > SIZE_MAX / sizeof(*row_counts)) {
@@ -677,11 +769,12 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   if (count_error == 0) {
     for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
       size_t row_count = row_counts[local_row];
-      if (plan->row_ptr[local_row] > SIZE_MAX - row_count) {
+      if (block->row_ptr[local_row] > SIZE_MAX - row_count) {
         count_error = 1;
         break;
       }
-      plan->row_ptr[local_row + 1UL] = plan->row_ptr[local_row] + row_count;
+      block->row_ptr[local_row + 1UL] =
+          block->row_ptr[local_row] + row_count;
       if (row_count < min_row_nnz) min_row_nnz = row_count;
       if (row_count > max_row_nnz) max_row_nnz = row_count;
     }
@@ -690,21 +783,22 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   if (SymmetryMpiAgreeError(mpi_active, count_error) != 0) goto fail;
   free(row_counts);
   row_counts = NULL;
-  plan->nnz = plan->row_ptr[plan->local_dim];
+  block->nnz = block->row_ptr[block->local_row_count];
+  plan->nnz = block->nnz;
   plan->row_nnz_max = max_row_nnz;
 
   StartTimer(1121);
-  if (plan->nnz > SIZE_MAX / sizeof(*plan->col_index) ||
-      plan->nnz > SIZE_MAX / sizeof(*plan->values)) {
+  if (block->nnz > SIZE_MAX / sizeof(*block->global_columns) ||
+      block->nnz > SIZE_MAX / sizeof(*block->values)) {
     local_error = 1;
   } else {
-    col_bytes = plan->nnz * sizeof(*plan->col_index);
-    value_bytes = plan->nnz * sizeof(*plan->values);
+    col_bytes = block->nnz * sizeof(*block->global_columns);
+    value_bytes = block->nnz * sizeof(*block->values);
   }
-  if (local_error == 0 && plan->nnz > 0U) {
-    plan->col_index = (unsigned long int *)malloc(col_bytes);
-    plan->values = (double complex *)malloc(value_bytes);
-    if (plan->col_index == NULL || plan->values == NULL) {
+  if (local_error == 0 && block->nnz > 0U) {
+    block->global_columns = (unsigned long int *)malloc(col_bytes);
+    block->values = (double complex *)malloc(value_bytes);
+    if (block->global_columns == NULL || block->values == NULL) {
       local_error = 1;
     }
   }
@@ -713,13 +807,14 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
 
   StartTimer(1122);
 #pragma omp parallel for default(none) schedule(static) reduction(|:fill_error) \
-  shared(X, plan)
+  shared(X, plan, block)
   for (local_row = 0UL; local_row < plan->local_dim; local_row++) {
     unsigned long int alpha = plan->local_offset + local_row + 1UL;
     struct FillEntriesContext fill;
-    fill.plan = plan;
-    fill.next = plan->row_ptr[local_row];
-    fill.end = plan->row_ptr[local_row + 1UL];
+    fill.block = block;
+    fill.dim = plan->dim;
+    fill.next = block->row_ptr[local_row];
+    fill.end = block->row_ptr[local_row + 1UL];
     if (SymmetryEnumerateColumn(X, alpha, fill_transposed_entry, &fill) != 0 ||
         fill.next != fill.end) {
       fill_error = 1;
@@ -739,12 +834,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
         plan->allgather_nonlocal_values_per_call * sizeof(double complex);
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
-  column_span.columns = plan->col_index;
-  column_span.count = plan->nnz;
-  if (BuildSymmetryVectorHaloPlan(
-          &plan->halo, plan->dim, plan->local_offset, plan->local_dim,
-          &column_span, 1U, nproc, myrank,
-          &plan->local_column_nnz, &plan->remote_column_nnz) != 0) {
+  if (build_symmetry_matvec_plan_halo(plan, nproc, myrank) != 0) {
     goto fail;
   }
   plan->halo.reference_enabled = halo_reference_mode;
@@ -765,9 +855,9 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
     }
     if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
     if (plan->column_slot_width == SYMMETRY_COLUMN_U32) {
-      col_bytes = plan->nnz * sizeof(*plan->column_slot32);
+      col_bytes = plan->nnz * sizeof(*block->column_slot32);
     } else {
-      col_bytes = plan->nnz * sizeof(*plan->column_slot64);
+      col_bytes = plan->nnz * sizeof(*block->column_slot64);
     }
     if (plan->halo.ghost_count >
         SIZE_MAX / sizeof(*plan->halo.ghost_global_index)) {
@@ -793,7 +883,7 @@ int BuildSymmetryMatvecPlan(struct BindStruct *X)
   plan->column_storage_bytes = col_bytes;
   plan->matrix_storage_bytes = plan_bytes;
   if (plan->local_dim == 0UL) min_row_nnz = 0U;
-  plan->block_count = 1U;
+  sync_single_block_aliases(plan);
   plan->ready = TRUE;
   X->Sym->matvec_plan = plan;
   fprintf(stdoutMPI,
@@ -824,15 +914,44 @@ fail:
   return -1;
 }
 
+static int apply_symmetry_matvec_plan_block(
+    const struct SymmetryMatvecPlan *plan,
+    const struct SymmetryMatvecBlockView *view,
+    double complex *tmp_v0,
+    const double complex *full_v1,
+    double complex *local_prdct)
+{
+  unsigned long int block_row;
+  double complex prdct = 0.0;
+  /* unsigned long canonical loops require OpenMP 3.0 or later. */
+#pragma omp parallel for default(none) schedule(static) reduction(+:prdct) \
+  shared(plan, view, tmp_v0, full_v1)
+  for (block_row = 0UL; block_row < view->local_row_count; block_row++) {
+    size_t p;
+    double complex sum = 0.0;
+    unsigned long int local_row = view->local_row_begin + block_row;
+    unsigned long int global_alpha =
+        plan->local_offset + local_row + 1UL;
+    for (p = view->row_ptr[block_row];
+         p < view->row_ptr[block_row + 1UL]; p++) {
+      sum += view->values[p] * full_v1[view->global_columns[p]];
+    }
+    tmp_v0[local_row + 1UL] += sum;
+    prdct += conj(full_v1[global_alpha]) * sum;
+  }
+  *local_prdct = prdct;
+  return 0;
+}
+
 int ApplySymmetryMatvecPlan(const struct BindStruct *X,
                             double complex *tmp_v0,
                             const double complex *full_v1,
                             double complex *local_prdct)
 {
-  unsigned long int local_row;
-  double complex prdct = 0.0;
   const struct SymmetryMatvecPlan *plan;
-  struct SymmetryMatvecBlockView view;
+  unsigned long int covered_rows = 0UL;
+  double complex prdct = 0.0;
+  size_t block_index;
   if (X == NULL || X->Sym == NULL || tmp_v0 == NULL || full_v1 == NULL ||
       local_prdct == NULL) {
     return -1;
@@ -841,31 +960,26 @@ int ApplySymmetryMatvecPlan(const struct BindStruct *X,
   if (plan == NULL || plan->ready != TRUE || plan->dim != X->Sym->dim ||
       plan->local_offset != X->Sym->local_offset ||
       plan->local_dim != X->Sym->local_dim ||
-      plan->columns_remapped == TRUE ||
-      (plan->nnz > 0U && plan->col_index == NULL)) {
-    fprintf(stdoutMPI, "Error: symmetry matvec plan does not match the active sector.\n");
+      plan->columns_remapped == TRUE || plan->blocks == NULL ||
+      plan->block_count == 0U) {
+    fprintf(stdoutMPI,
+            "Error: symmetry matvec plan does not match the active sector.\n");
     return -1;
   }
-  if (SymmetryMatvecPlanBlockCount(plan) != 1U ||
-      SymmetryMatvecPlanGetBlockView(plan, 0U, &view) != 0 ||
-      (view.nnz > 0U && view.global_columns == NULL)) {
-    return -1;
-  }
-  /* unsigned long canonical loops require OpenMP 3.0 or later. */
-#pragma omp parallel for default(none) schedule(static) reduction(+:prdct) \
-  shared(plan, view, tmp_v0, full_v1)
-  for (local_row = 0UL; local_row < view.local_row_count; local_row++) {
-    size_t p;
-    double complex sum = 0.0;
-    unsigned long int global_alpha =
-        plan->local_offset + local_row + 1UL;
-    for (p = view.row_ptr[local_row];
-         p < view.row_ptr[local_row + 1UL]; p++) {
-      sum += view.values[p] * full_v1[view.global_columns[p]];
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    struct SymmetryMatvecBlockView view;
+    double complex block_prdct = 0.0;
+    if (SymmetryMatvecPlanGetBlockView(plan, block_index, &view) != 0 ||
+        view.local_row_begin != covered_rows ||
+        (view.nnz > 0U && view.global_columns == NULL) ||
+        apply_symmetry_matvec_plan_block(
+            plan, &view, tmp_v0, full_v1, &block_prdct) != 0) {
+      return -1;
     }
-    tmp_v0[local_row + 1UL] += sum;
-    prdct += conj(full_v1[global_alpha]) * sum;
+    covered_rows += view.local_row_count;
+    prdct += block_prdct;
   }
+  if (covered_rows != plan->local_dim) return -1;
   *local_prdct = prdct;
   return 0;
 }
@@ -878,17 +992,18 @@ static int apply_symmetry_matvec_plan_halo_u32(
     size_t slot_count,
     double complex *local_prdct)
 {
-  unsigned long int local_row;
+  unsigned long int block_row;
   double complex prdct = 0.0;
   int apply_error = 0;
 #pragma omp parallel for default(none) schedule(static) \
   reduction(+:prdct) reduction(|:apply_error) \
   shared(plan, view, tmp_v0, local_v1, slot_count)
-  for (local_row = 0UL; local_row < view->local_row_count; local_row++) {
+  for (block_row = 0UL; block_row < view->local_row_count; block_row++) {
     size_t p;
     double complex sum = 0.0;
-    for (p = view->row_ptr[local_row];
-         p < view->row_ptr[local_row + 1UL]; p++) {
+    unsigned long int local_row = view->local_row_begin + block_row;
+    for (p = view->row_ptr[block_row];
+         p < view->row_ptr[block_row + 1UL]; p++) {
       size_t slot = (size_t)view->column_slot32[p];
       double complex input_value;
       if (slot >= slot_count) {
@@ -917,17 +1032,18 @@ static int apply_symmetry_matvec_plan_halo_u64(
     size_t slot_count,
     double complex *local_prdct)
 {
-  unsigned long int local_row;
+  unsigned long int block_row;
   double complex prdct = 0.0;
   int apply_error = 0;
 #pragma omp parallel for default(none) schedule(static) \
   reduction(+:prdct) reduction(|:apply_error) \
   shared(plan, view, tmp_v0, local_v1, slot_count)
-  for (local_row = 0UL; local_row < view->local_row_count; local_row++) {
+  for (block_row = 0UL; block_row < view->local_row_count; block_row++) {
     size_t p;
     double complex sum = 0.0;
-    for (p = view->row_ptr[local_row];
-         p < view->row_ptr[local_row + 1UL]; p++) {
+    unsigned long int local_row = view->local_row_begin + block_row;
+    for (p = view->row_ptr[block_row];
+         p < view->row_ptr[block_row + 1UL]; p++) {
       uint64_t raw_slot = view->column_slot64[p];
       size_t slot;
       double complex input_value;
@@ -957,7 +1073,9 @@ int ApplySymmetryMatvecPlanHalo(const struct BindStruct *X,
 {
   const struct SymmetryMatvecPlan *plan;
   size_t slot_count;
-  struct SymmetryMatvecBlockView view;
+  size_t block_index;
+  unsigned long int covered_rows = 0UL;
+  double complex prdct = 0.0;
   if (X == NULL || X->Sym == NULL || tmp_v0 == NULL || local_v1 == NULL ||
       local_prdct == NULL) {
     return -1;
@@ -968,15 +1086,9 @@ int ApplySymmetryMatvecPlanHalo(const struct BindStruct *X,
       plan->dim != X->Sym->dim ||
       plan->local_offset != X->Sym->local_offset ||
       plan->local_dim != X->Sym->local_dim ||
-      plan->col_index != NULL ||
+      plan->blocks == NULL || plan->block_count == 0U ||
       (plan->column_slot_width != SYMMETRY_COLUMN_U32 &&
        plan->column_slot_width != SYMMETRY_COLUMN_U64) ||
-      (plan->column_slot_width == SYMMETRY_COLUMN_U32 &&
-       (plan->column_slot64 != NULL ||
-        (plan->nnz > 0U && plan->column_slot32 == NULL))) ||
-      (plan->column_slot_width == SYMMETRY_COLUMN_U64 &&
-       (plan->column_slot32 != NULL ||
-        (plan->nnz > 0U && plan->column_slot64 == NULL))) ||
       (size_t)plan->local_dim > SIZE_MAX - plan->halo.ghost_count) {
     fprintf(stdoutMPI,
             "Error: symmetry halo matvec plan does not match "
@@ -984,14 +1096,26 @@ int ApplySymmetryMatvecPlanHalo(const struct BindStruct *X,
     return -1;
   }
   slot_count = (size_t)plan->local_dim + plan->halo.ghost_count;
-  if (SymmetryMatvecPlanBlockCount(plan) != 1U ||
-      SymmetryMatvecPlanGetBlockView(plan, 0U, &view) != 0) {
-    return -1;
+  for (block_index = 0U; block_index < plan->block_count; block_index++) {
+    struct SymmetryMatvecBlockView view;
+    double complex block_prdct = 0.0;
+    int status;
+    if (SymmetryMatvecPlanGetBlockView(plan, block_index, &view) != 0 ||
+        view.local_row_begin != covered_rows) {
+      return -1;
+    }
+    if (plan->column_slot_width == SYMMETRY_COLUMN_U32) {
+      status = apply_symmetry_matvec_plan_halo_u32(
+          plan, &view, tmp_v0, local_v1, slot_count, &block_prdct);
+    } else {
+      status = apply_symmetry_matvec_plan_halo_u64(
+          plan, &view, tmp_v0, local_v1, slot_count, &block_prdct);
+    }
+    if (status != 0) return -1;
+    covered_rows += view.local_row_count;
+    prdct += block_prdct;
   }
-  if (plan->column_slot_width == SYMMETRY_COLUMN_U32) {
-    return apply_symmetry_matvec_plan_halo_u32(
-        plan, &view, tmp_v0, local_v1, slot_count, local_prdct);
-  }
-  return apply_symmetry_matvec_plan_halo_u64(
-      plan, &view, tmp_v0, local_v1, slot_count, local_prdct);
+  if (covered_rows != plan->local_dim) return -1;
+  *local_prdct = prdct;
+  return 0;
 }

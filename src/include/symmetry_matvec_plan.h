@@ -18,6 +18,17 @@ enum SymmetryColumnWidth {
   SYMMETRY_COLUMN_U64 = 64
 };
 
+struct SymmetryMatvecBlock {
+  unsigned long int local_row_begin;
+  unsigned long int local_row_count;
+  size_t nnz;
+  size_t *row_ptr;
+  unsigned long int *global_columns;
+  uint32_t *column_slot32;
+  uint64_t *column_slot64;
+  double complex *values;
+};
+
 struct SymmetryMatvecPlan {
   int ready;
   int columns_remapped;
@@ -25,8 +36,13 @@ struct SymmetryMatvecPlan {
   unsigned long int local_offset;
   unsigned long int local_dim;
   size_t block_count;
+  struct SymmetryMatvecBlock *blocks;
   size_t nnz;
   size_t row_nnz_max;
+  /*
+   * Non-owning compatibility aliases for the single-block replicated plan.
+   * Multi-block consumers must use SymmetryMatvecPlanGetBlockView().
+   */
   size_t *row_ptr;
   /* Global 1-origin columns before halo remap and in allgather mode. */
   unsigned long int *col_index;

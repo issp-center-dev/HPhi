@@ -2078,6 +2078,8 @@ static void assert_mpi_column_spans_exact(const char *label)
   const unsigned long int dim = 10UL;
   struct SymmetryVectorHaloPlan flat_halo;
   struct SymmetryVectorHaloPlan split_halo;
+  struct SymmetryMatvecBlock flat_block;
+  struct SymmetryMatvecBlock split_block;
   struct SymmetryMatvecPlan flat_plan;
   struct SymmetryMatvecPlan split_plan;
   struct SymmetryBasisRuntime sym;
@@ -2115,6 +2117,8 @@ static void assert_mpi_column_spans_exact(const char *label)
 
   memset(&flat_halo, 0, sizeof(flat_halo));
   memset(&split_halo, 0, sizeof(split_halo));
+  memset(&flat_block, 0, sizeof(flat_block));
+  memset(&split_block, 0, sizeof(split_block));
   memset(&flat_plan, 0, sizeof(flat_plan));
   memset(&split_plan, 0, sizeof(split_plan));
   memset(&sym, 0, sizeof(sym));
@@ -2225,13 +2229,18 @@ static void assert_mpi_column_spans_exact(const char *label)
   flat_plan.local_offset = local_offset;
   flat_plan.local_dim = local_dim;
   flat_plan.block_count = 1U;
+  flat_plan.blocks = &flat_block;
   flat_plan.nnz = nnz;
-  flat_plan.row_ptr = row_ptr;
-  flat_plan.col_index = flat_columns;
-  flat_plan.values = values;
+  flat_block.local_row_count = local_dim;
+  flat_block.nnz = nnz;
+  flat_block.row_ptr = row_ptr;
+  flat_block.global_columns = flat_columns;
+  flat_block.values = values;
   flat_plan.halo = flat_halo;
   split_plan = flat_plan;
-  split_plan.col_index = split_columns;
+  split_plan.blocks = &split_block;
+  split_block = flat_block;
+  split_block.global_columns = split_columns;
   split_plan.halo = split_halo;
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&flat_plan), 0, label);
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&split_plan), 0, label);
@@ -2270,10 +2279,10 @@ static void assert_mpi_column_spans_exact(const char *label)
       1, label);
   assert_complex_bitwise(split_prdct, flat_prdct, label);
 
-  free(flat_plan.column_slot32);
-  free(flat_plan.column_slot64);
-  free(split_plan.column_slot32);
-  free(split_plan.column_slot64);
+  free(flat_block.column_slot32);
+  free(flat_block.column_slot64);
+  free(split_block.column_slot32);
+  free(split_block.column_slot64);
   free(columns);
   free(row_ptr);
   free(values);
@@ -2511,6 +2520,8 @@ static void assert_mixed_column_remap(const char *label)
   unsigned long int missing_ghost_column[] = {9UL};
   unsigned long int ghosts[] = {1UL, 4UL, 8UL, 10UL};
   unsigned long int *columns;
+  struct SymmetryMatvecBlock block;
+  struct SymmetryMatvecBlock invalid_block;
   struct SymmetryMatvecPlan plan;
   struct SymmetryMatvecPlan invalid_plan;
   size_t index;
@@ -2520,12 +2531,17 @@ static void assert_mixed_column_remap(const char *label)
     exit(1);
   }
   memcpy(columns, initial_columns, sizeof(initial_columns));
+  memset(&block, 0, sizeof(block));
   memset(&plan, 0, sizeof(plan));
   plan.dim = 10UL;
   plan.local_offset = 4UL;
   plan.local_dim = 3UL;
+  plan.block_count = 1U;
+  plan.blocks = &block;
   plan.nnz = sizeof(initial_columns) / sizeof(initial_columns[0]);
-  plan.col_index = columns;
+  block.local_row_count = plan.local_dim;
+  block.nnz = plan.nnz;
+  block.global_columns = columns;
   plan.halo.ghost_count = sizeof(ghosts) / sizeof(ghosts[0]);
   plan.halo.ghost_global_index = ghosts;
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), 0, label);
@@ -2543,22 +2559,28 @@ static void assert_mixed_column_remap(const char *label)
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), -1,
                 "column remap rejects a second in-place remap");
 
+  memset(&invalid_block, 0, sizeof(invalid_block));
   memset(&invalid_plan, 0, sizeof(invalid_plan));
   invalid_plan.dim = plan.dim;
   invalid_plan.local_offset = plan.local_offset;
   invalid_plan.local_dim = plan.local_dim;
+  invalid_plan.block_count = 1U;
+  invalid_plan.blocks = &invalid_block;
   invalid_plan.nnz = 1U;
-  invalid_plan.col_index = missing_ghost_column;
+  invalid_block.local_row_count = invalid_plan.local_dim;
+  invalid_block.nnz = invalid_plan.nnz;
+  invalid_block.global_columns = missing_ghost_column;
   invalid_plan.halo.ghost_count = plan.halo.ghost_count;
   invalid_plan.halo.ghost_global_index = ghosts;
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&invalid_plan), -1,
                 "column remap rejects a missing ghost index");
-  free(plan.column_slot32);
-  free(plan.column_slot64);
+  free(block.column_slot32);
+  free(block.column_slot64);
 }
 
 static void assert_column_slot_width_boundaries(const char *label)
 {
+  struct SymmetryMatvecBlock block32;
   struct SymmetryMatvecPlan plan32;
   unsigned long int *column32 =
       (unsigned long int *)malloc(sizeof(*column32));
@@ -2567,11 +2589,16 @@ static void assert_column_slot_width_boundaries(const char *label)
     exit(1);
   }
   *column32 = (unsigned long int)UINT32_MAX;
+  memset(&block32, 0, sizeof(block32));
   memset(&plan32, 0, sizeof(plan32));
   plan32.dim = (unsigned long int)UINT32_MAX;
   plan32.local_dim = (unsigned long int)UINT32_MAX;
+  plan32.block_count = 1U;
+  plan32.blocks = &block32;
   plan32.nnz = 1U;
-  plan32.col_index = column32;
+  block32.local_row_count = plan32.local_dim;
+  block32.nnz = plan32.nnz;
+  block32.global_columns = column32;
   assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan32), 0, label);
   assert_ulong_eq(
       (unsigned long int)plan32.column_slot_width,
@@ -2579,11 +2606,12 @@ static void assert_column_slot_width_boundaries(const char *label)
   assert_ulong_eq(
       (unsigned long int)symmetry_plan_column_slot(&plan32, 0U),
       (unsigned long int)UINT32_MAX - 1UL, label);
-  free(plan32.column_slot32);
-  free(plan32.column_slot64);
+  free(block32.column_slot32);
+  free(block32.column_slot64);
 
 #if ULONG_MAX > UINT32_MAX
   {
+    struct SymmetryMatvecBlock block64;
     struct SymmetryMatvecPlan plan64;
     unsigned long int *column64 =
         (unsigned long int *)malloc(sizeof(*column64));
@@ -2593,11 +2621,16 @@ static void assert_column_slot_width_boundaries(const char *label)
       exit(1);
     }
     *column64 = count64;
+    memset(&block64, 0, sizeof(block64));
     memset(&plan64, 0, sizeof(plan64));
     plan64.dim = count64;
     plan64.local_dim = count64;
+    plan64.block_count = 1U;
+    plan64.blocks = &block64;
     plan64.nnz = 1U;
-    plan64.col_index = column64;
+    block64.local_row_count = plan64.local_dim;
+    block64.nnz = plan64.nnz;
+    block64.global_columns = column64;
     assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan64), 0, label);
     assert_ulong_eq(
         (unsigned long int)plan64.column_slot_width,
@@ -2605,8 +2638,8 @@ static void assert_column_slot_width_boundaries(const char *label)
     assert_ulong_eq(
         (unsigned long int)symmetry_plan_column_slot(&plan64, 0U),
         (unsigned long int)UINT32_MAX + 1UL, label);
-    free(plan64.column_slot32);
-    free(plan64.column_slot64);
+    free(block64.column_slot32);
+    free(block64.column_slot64);
   }
 #endif
 }
@@ -2616,6 +2649,7 @@ static void assert_u64_column_slot_apply(const char *label)
 #if ULONG_MAX > UINT32_MAX
   struct BindStruct X;
   struct SymmetryBasisRuntime sym;
+  struct SymmetryMatvecBlock block;
   struct SymmetryMatvecBlockView view;
   struct SymmetryMatvecPlan plan;
   size_t row_ptr[] = {0U, 1U};
@@ -2628,6 +2662,7 @@ static void assert_u64_column_slot_apply(const char *label)
   double complex expected = values[0] * input[1];
   memset(&X, 0, sizeof(X));
   memset(&sym, 0, sizeof(sym));
+  memset(&block, 0, sizeof(block));
   memset(&plan, 0, sizeof(plan));
   X.Sym = &sym;
   sym.dim = (unsigned long int)UINT32_MAX + 1UL;
@@ -2635,14 +2670,17 @@ static void assert_u64_column_slot_apply(const char *label)
   sym.matvec_plan = &plan;
   plan.ready = TRUE;
   plan.block_count = 1U;
+  plan.blocks = &block;
   plan.columns_remapped = TRUE;
   plan.dim = sym.dim;
   plan.local_dim = sym.local_dim;
   plan.nnz = 1U;
-  plan.row_ptr = row_ptr;
+  block.local_row_count = plan.local_dim;
+  block.nnz = plan.nnz;
+  block.row_ptr = row_ptr;
   plan.column_slot_width = SYMMETRY_COLUMN_U64;
-  plan.column_slot64 = column_slot64;
-  plan.values = values;
+  block.column_slot64 = column_slot64;
+  block.values = values;
   plan.halo.ready = TRUE;
   plan.halo.ghost_count = (size_t)UINT32_MAX;
   plan.halo.ghost_values = &ghost_value;
@@ -2674,6 +2712,156 @@ static void assert_u64_column_slot_apply(const char *label)
       "64-bit column apply rejects an out-of-range slot");
 #else
   (void)label;
+#endif
+}
+
+static void assert_owned_multi_block_plan(const char *label)
+{
+  const unsigned long int columns0_data[] = {1UL, 3UL, 2UL};
+  const unsigned long int columns1_data[] = {4UL, 1UL, 3UL};
+  size_t row_ptr0[] = {0U, 2U, 3U};
+  size_t row_ptr1[] = {0U, 1U, 3U};
+  double complex values0[] = {2.0, -0.5 + 0.25 * I, 1.25};
+  double complex values1[] = {0.75 - 0.5 * I, -1.0, 0.5 + 0.5 * I};
+  double complex input[] = {
+      0.0, 1.0 + 0.5 * I, -0.25 + 0.75 * I,
+      0.5 - I, 1.5 + 0.25 * I};
+  double complex global_output[5] = {0.0};
+  double complex halo_output[5] = {0.0};
+  double complex expected[5] = {0.0};
+  double complex global_prdct = 0.0;
+  double complex halo_prdct = 0.0;
+  double complex expected_prdct = 0.0;
+  struct SymmetryMatvecBlock blocks[2];
+  struct SymmetryMatvecBlockView view;
+  struct SymmetryMatvecPlan plan;
+  struct SymmetryBasisRuntime sym;
+  struct BindStruct X;
+  unsigned long int *columns0;
+  unsigned long int *columns1;
+  unsigned long int row;
+  size_t p;
+#ifdef _OPENMP
+  int saved_dynamic = omp_get_dynamic();
+  int saved_threads = omp_get_max_threads();
+  omp_set_dynamic(0);
+  omp_set_num_threads(1);
+#endif
+
+  columns0 =
+      (unsigned long int *)malloc(sizeof(columns0_data));
+  columns1 =
+      (unsigned long int *)malloc(sizeof(columns1_data));
+  if (columns0 == NULL || columns1 == NULL) {
+    fprintf(stderr, "%s: multi-block column allocation failed\n", label);
+    exit(1);
+  }
+  memcpy(columns0, columns0_data, sizeof(columns0_data));
+  memcpy(columns1, columns1_data, sizeof(columns1_data));
+  memset(blocks, 0, sizeof(blocks));
+  memset(&plan, 0, sizeof(plan));
+  memset(&sym, 0, sizeof(sym));
+  memset(&X, 0, sizeof(X));
+  blocks[0].local_row_count = 2UL;
+  blocks[0].nnz = 3U;
+  blocks[0].row_ptr = row_ptr0;
+  blocks[0].global_columns = columns0;
+  blocks[0].values = values0;
+  blocks[1].local_row_begin = 2UL;
+  blocks[1].local_row_count = 2UL;
+  blocks[1].nnz = 3U;
+  blocks[1].row_ptr = row_ptr1;
+  blocks[1].global_columns = columns1;
+  blocks[1].values = values1;
+  plan.ready = TRUE;
+  plan.dim = 4UL;
+  plan.local_dim = 4UL;
+  plan.block_count = 2U;
+  plan.blocks = blocks;
+  plan.nnz = 6U;
+  plan.halo.ready = TRUE;
+  sym.enabled = TRUE;
+  sym.dim = plan.dim;
+  sym.local_dim = plan.local_dim;
+  sym.matvec_plan = &plan;
+  X.Sym = &sym;
+
+  assert_ulong_eq(
+      (unsigned long int)SymmetryMatvecPlanBlockCount(&plan), 2UL, label);
+  assert_int_eq(
+      SymmetryMatvecPlanGetBlockView(&plan, 0U, &view), 0, label);
+  assert_ulong_eq(view.local_row_begin, 0UL, label);
+  assert_ulong_eq(view.local_row_count, 2UL, label);
+  assert_int_eq(view.row_ptr == row_ptr0, 1, label);
+  assert_int_eq(
+      SymmetryMatvecPlanGetBlockView(&plan, 1U, &view), 0, label);
+  assert_ulong_eq(view.local_row_begin, 2UL, label);
+  assert_ulong_eq(view.local_row_count, 2UL, label);
+  assert_int_eq(view.row_ptr == row_ptr1, 1, label);
+  assert_int_eq(
+      SymmetryMatvecPlanGetBlockView(&plan, 2U, &view), -1, label);
+
+  for (row = 0UL; row < plan.local_dim; row++) {
+    const struct SymmetryMatvecBlock *block =
+        row < 2UL ? &blocks[0] : &blocks[1];
+    unsigned long int block_row = row - block->local_row_begin;
+    double complex sum = 0.0;
+    for (p = block->row_ptr[block_row];
+         p < block->row_ptr[block_row + 1UL]; p++) {
+      sum += block->values[p] * input[block->global_columns[p]];
+    }
+    expected[row + 1UL] = sum;
+    expected_prdct += conj(input[row + 1UL]) * sum;
+  }
+  assert_int_eq(
+      ApplySymmetryMatvecPlan(
+          &X, global_output, input, &global_prdct),
+      0, label);
+  for (row = 1UL; row <= plan.local_dim; row++) {
+    assert_complex_bitwise(global_output[row], expected[row], label);
+  }
+  assert_complex_bitwise(global_prdct, expected_prdct, label);
+
+  blocks[1].local_row_begin = 3UL;
+  assert_int_eq(
+      RemapSymmetryMatvecPlanColumns(&plan), -1,
+      "multi-block remap rejects a row gap");
+  blocks[1].local_row_begin = 2UL;
+  columns1[0] = 5UL;
+  assert_int_eq(
+      RemapSymmetryMatvecPlanColumns(&plan), -1,
+      "multi-block remap failure is atomic across blocks");
+  assert_int_eq(
+      blocks[0].column_slot32 == NULL &&
+          blocks[0].column_slot64 == NULL &&
+          blocks[1].column_slot32 == NULL &&
+          blocks[1].column_slot64 == NULL &&
+          blocks[0].global_columns == columns0 &&
+          blocks[1].global_columns == columns1 &&
+          plan.columns_remapped == FALSE,
+      1, label);
+  columns1[0] = 4UL;
+  assert_int_eq(RemapSymmetryMatvecPlanColumns(&plan), 0, label);
+  assert_int_eq(plan.row_ptr == NULL && plan.col_index == NULL &&
+                    plan.column_slot32 == NULL &&
+                    plan.column_slot64 == NULL && plan.values == NULL,
+                1, label);
+  assert_int_eq(
+      ApplySymmetryMatvecPlanHalo(
+          &X, halo_output, input, &halo_prdct),
+      0, label);
+  for (row = 1UL; row <= plan.local_dim; row++) {
+    assert_complex_bitwise(halo_output[row], expected[row], label);
+  }
+  assert_complex_bitwise(halo_prdct, expected_prdct, label);
+
+  free(blocks[0].column_slot32);
+  free(blocks[0].column_slot64);
+  free(blocks[1].column_slot32);
+  free(blocks[1].column_slot64);
+#ifdef _OPENMP
+  omp_set_num_threads(saved_threads);
+  omp_set_dynamic(saved_dynamic);
 #endif
 }
 
@@ -4810,6 +4998,8 @@ int main(int argc, char **argv)
       "column slot storage switches at the UINT32_MAX boundary");
   assert_u64_column_slot_apply(
       "64-bit column slot apply preserves values and bounds checks");
+  assert_owned_multi_block_plan(
+      "owned multi-block plan preserves row order, views, remap, and apply");
   assert_zero_row_plan("local-row plan supports zero-row rank");
   assert_representative_hash_matches_basis(6, 3, 1,
                                            "C6 k=pi/3 representative hash matches basis");
