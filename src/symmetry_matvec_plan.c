@@ -9,6 +9,7 @@
 #include "struct.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_checked.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
@@ -185,6 +186,340 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
     return 0;
   }
 
+  return -1;
+}
+
+static int count_unresolved_row_transitions(
+    const struct BindStruct *X,
+    unsigned long int state,
+    size_t *transition_count)
+{
+  size_t count = 1U;
+  unsigned int p;
+  if (X == NULL || transition_count == NULL) return -1;
+  if (X->Def.iCalcModel == Spin) {
+    for (p = 0U; p < X->Def.NExchangeCoupling; p++) {
+      unsigned long int out_state;
+      if (apply_exchange_halfspin(
+              state, X->Def.ExchangeCoupling[p][0],
+              X->Def.ExchangeCoupling[p][1], &out_state) == TRUE) {
+        if (count == SIZE_MAX) return -1;
+        count++;
+      }
+    }
+  } else if (X->Def.iCalcModel == SpinlessFermion) {
+    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[p];
+      if (apply_spinless_hopping_hermite(
+              state,
+              (unsigned int)X->Def.EDGeneralTransfer[p][0],
+              (unsigned int)X->Def.EDGeneralTransfer[p][2],
+              trans, &out_state, &hval) == TRUE) {
+        if (count == SIZE_MAX) return -1;
+        count++;
+      }
+    }
+  } else if (X->Def.iCalcModel == Hubbard) {
+    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[p];
+      if (apply_hubbard_hopping_hermite(
+              state,
+              (unsigned int)X->Def.EDGeneralTransfer[p][0],
+              (unsigned int)X->Def.EDGeneralTransfer[p][1],
+              (unsigned int)X->Def.EDGeneralTransfer[p][2],
+              (unsigned int)X->Def.EDGeneralTransfer[p][3],
+              trans, &out_state, &hval) == TRUE) {
+        if (count == SIZE_MAX) return -1;
+        count++;
+      }
+    }
+  } else {
+    return -1;
+  }
+  *transition_count = count;
+  return 0;
+}
+
+static int append_unresolved_transition(
+    const struct BindStruct *X,
+    unsigned long int to_state,
+    double complex hval,
+    struct SymmetryUnresolvedTransition *transitions,
+    size_t *next,
+    size_t end)
+{
+  struct SymmetryRepresentativeResult representative;
+  if (transitions == NULL || next == NULL || *next >= end ||
+      SymmetryFindRepresentative(X, to_state, &representative) != 0) {
+    return -1;
+  }
+  transitions[*next].rep_state = representative.rep_state;
+  transitions[*next].phased_hval = hval * representative.phase;
+  transitions[*next].is_diagonal = FALSE;
+  (*next)++;
+  return 0;
+}
+
+static int fill_unresolved_row_transitions(
+    const struct BindStruct *X,
+    const struct SymmetryBasisVector *source,
+    struct SymmetryUnresolvedTransition *transitions,
+    size_t begin,
+    size_t end)
+{
+  size_t next = begin;
+  unsigned int p;
+  if (X == NULL || source == NULL || transitions == NULL || begin >= end) {
+    return -1;
+  }
+  transitions[next].rep_state = 0UL;
+  transitions[next].phased_hval = source->diagonal;
+  transitions[next].is_diagonal = TRUE;
+  next++;
+  if (X->Def.iCalcModel == Spin) {
+    for (p = 0U; p < X->Def.NExchangeCoupling; p++) {
+      unsigned long int out_state;
+      if (apply_exchange_halfspin(
+              source->rep_state, X->Def.ExchangeCoupling[p][0],
+              X->Def.ExchangeCoupling[p][1], &out_state) == TRUE &&
+          append_unresolved_transition(
+              X, out_state, X->Def.ParaExchangeCoupling[p],
+              transitions, &next, end) != 0) {
+        return -1;
+      }
+    }
+  } else if (X->Def.iCalcModel == SpinlessFermion) {
+    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[p];
+      if (apply_spinless_hopping_hermite(
+              source->rep_state,
+              (unsigned int)X->Def.EDGeneralTransfer[p][0],
+              (unsigned int)X->Def.EDGeneralTransfer[p][2],
+              trans, &out_state, &hval) == TRUE &&
+          append_unresolved_transition(
+              X, out_state, hval, transitions, &next, end) != 0) {
+        return -1;
+      }
+    }
+  } else if (X->Def.iCalcModel == Hubbard) {
+    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -X->Def.EDParaGeneralTransfer[p];
+      if (apply_hubbard_hopping_hermite(
+              source->rep_state,
+              (unsigned int)X->Def.EDGeneralTransfer[p][0],
+              (unsigned int)X->Def.EDGeneralTransfer[p][1],
+              (unsigned int)X->Def.EDGeneralTransfer[p][2],
+              (unsigned int)X->Def.EDGeneralTransfer[p][3],
+              trans, &out_state, &hval) == TRUE &&
+          append_unresolved_transition(
+              X, out_state, hval, transitions, &next, end) != 0) {
+        return -1;
+      }
+    }
+  } else {
+    return -1;
+  }
+  return next == end ? 0 : -1;
+}
+
+static int compare_unresolved_request_key(
+    const void *lhs,
+    const void *rhs)
+{
+  const unsigned long int left = *(const unsigned long int *)lhs;
+  const unsigned long int right = *(const unsigned long int *)rhs;
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+void FreeSymmetryUnresolvedMatvecBlock(
+    struct SymmetryUnresolvedMatvecBlock *block)
+{
+  if (block == NULL) return;
+  free(block->row_ptr);
+  free(block->transitions);
+  free(block->request_keys);
+  memset(block, 0, sizeof(*block));
+}
+
+int BuildSymmetryUnresolvedMatvecBlock(
+    const struct BindStruct *X,
+    unsigned long int local_row_begin,
+    unsigned long int local_row_count,
+    uint64_t memory_byte_limit,
+    struct SymmetryUnresolvedMatvecBlock *block_out)
+{
+  struct SymmetryUnresolvedMatvecBlock next;
+  size_t *row_counts = NULL;
+  size_t row_ptr_bytes = 0U;
+  size_t row_count_bytes = 0U;
+  size_t transition_bytes = 0U;
+  size_t request_bytes = 0U;
+  size_t count_peak = 0U;
+  size_t storage_bytes = 0U;
+  size_t temporary_peak = 0U;
+  size_t request_write = 0U;
+  size_t transition_index;
+  unsigned long int block_row;
+  int build_error = 0;
+  if (block_out == NULL || block_out->row_ptr != NULL ||
+      block_out->transitions != NULL || block_out->request_keys != NULL ||
+      block_out->local_row_begin != 0UL ||
+      block_out->local_row_count != 0UL ||
+      block_out->transition_count != 0U ||
+      block_out->offdiagonal_count != 0U ||
+      block_out->request_count != 0U ||
+      block_out->storage_bytes != 0U ||
+      block_out->temporary_peak_bytes != 0U ||
+      block_out->memory_byte_limit != 0U ||
+      X == NULL || X->Sym == NULL ||
+      X->Sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED ||
+      SymmetryBasisOwnedStorageReady(
+          X->Sym, X->Sym->local_dim) != TRUE ||
+      local_row_begin > X->Sym->local_dim ||
+      local_row_count > X->Sym->local_dim - local_row_begin ||
+      local_row_count > (unsigned long int)(SIZE_MAX - 1U) ||
+      memory_byte_limit == 0U) {
+    return -1;
+  }
+  memset(&next, 0, sizeof(next));
+  next.local_row_begin = local_row_begin;
+  next.local_row_count = local_row_count;
+  next.memory_byte_limit = memory_byte_limit;
+  if (SymmetryCheckedSizeMul(
+          (size_t)local_row_count + 1U, sizeof(*next.row_ptr),
+          &row_ptr_bytes) != 0 ||
+      SymmetryCheckedSizeMul(
+          (size_t)local_row_count, sizeof(*row_counts),
+          &row_count_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(
+          row_ptr_bytes, row_count_bytes, &count_peak) != 0) {
+    return -1;
+  }
+  next.row_ptr =
+      (size_t *)calloc((size_t)local_row_count + 1U,
+                       sizeof(*next.row_ptr));
+  if (next.row_ptr == NULL) goto fail;
+  if (local_row_count > 0UL) {
+    row_counts =
+        (size_t *)calloc((size_t)local_row_count,
+                         sizeof(*row_counts));
+    if (row_counts == NULL) goto fail;
+  }
+#pragma omp parallel for default(none) schedule(static) reduction(|:build_error) \
+  shared(X, local_row_begin, local_row_count, row_counts)
+  for (block_row = 0UL; block_row < local_row_count; block_row++) {
+    const struct SymmetryBasisVector *source =
+        SymmetryBasisLocalEntry(
+            X->Sym, local_row_begin + block_row + 1UL);
+    if (source == NULL ||
+        count_unresolved_row_transitions(
+            X, source->rep_state, &row_counts[block_row]) != 0) {
+      build_error = 1;
+    }
+  }
+  if (build_error != 0) goto fail;
+  for (block_row = 0UL; block_row < local_row_count; block_row++) {
+    if (next.row_ptr[block_row] >
+        SIZE_MAX - row_counts[block_row]) {
+      goto fail;
+    }
+    next.row_ptr[block_row + 1UL] =
+        next.row_ptr[block_row] + row_counts[block_row];
+  }
+  next.transition_count = next.row_ptr[local_row_count];
+  if (next.transition_count < (size_t)local_row_count) goto fail;
+  next.offdiagonal_count =
+      next.transition_count - (size_t)local_row_count;
+  if (SymmetryCheckedSizeMul(
+          next.transition_count, sizeof(*next.transitions),
+          &transition_bytes) != 0 ||
+      SymmetryCheckedSizeMul(
+          next.offdiagonal_count, sizeof(*next.request_keys),
+          &request_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(
+          row_ptr_bytes, transition_bytes, &storage_bytes) != 0 ||
+      SymmetryCheckedSizeAdd(
+          storage_bytes, request_bytes, &storage_bytes) != 0) {
+    goto fail;
+  }
+  temporary_peak = count_peak > storage_bytes
+                       ? count_peak : storage_bytes;
+#if SIZE_MAX > UINT64_MAX
+  if (temporary_peak > (size_t)UINT64_MAX) goto fail;
+#endif
+  if ((uint64_t)temporary_peak > memory_byte_limit) {
+    goto fail;
+  }
+  free(row_counts);
+  row_counts = NULL;
+  if (next.transition_count > 0U) {
+    next.transitions =
+        (struct SymmetryUnresolvedTransition *)malloc(transition_bytes);
+    if (next.transitions == NULL) goto fail;
+  }
+  if (next.offdiagonal_count > 0U) {
+    next.request_keys =
+        (unsigned long int *)malloc(request_bytes);
+    if (next.request_keys == NULL) goto fail;
+  }
+  build_error = 0;
+#pragma omp parallel for default(none) schedule(static) reduction(|:build_error) \
+  shared(X, local_row_begin, local_row_count, next)
+  for (block_row = 0UL; block_row < local_row_count; block_row++) {
+    const struct SymmetryBasisVector *source =
+        SymmetryBasisLocalEntry(
+            X->Sym, local_row_begin + block_row + 1UL);
+    if (source == NULL ||
+        fill_unresolved_row_transitions(
+            X, source, next.transitions,
+            next.row_ptr[block_row],
+            next.row_ptr[block_row + 1UL]) != 0) {
+      build_error = 1;
+    }
+  }
+  if (build_error != 0) goto fail;
+  for (transition_index = 0U;
+       transition_index < next.transition_count;
+       transition_index++) {
+    if (next.transitions[transition_index].is_diagonal == TRUE) continue;
+    if (request_write >= next.offdiagonal_count) goto fail;
+    next.request_keys[request_write++] =
+        next.transitions[transition_index].rep_state;
+  }
+  if (request_write != next.offdiagonal_count) goto fail;
+  if (request_write > 1U) {
+    size_t input;
+    size_t output = 1U;
+    qsort(next.request_keys, request_write,
+          sizeof(*next.request_keys),
+          compare_unresolved_request_key);
+    for (input = 1U; input < request_write; input++) {
+      if (next.request_keys[output - 1U] ==
+          next.request_keys[input]) {
+        continue;
+      }
+      next.request_keys[output++] = next.request_keys[input];
+    }
+    next.request_count = output;
+  } else {
+    next.request_count = request_write;
+  }
+  next.storage_bytes = storage_bytes;
+  next.temporary_peak_bytes = temporary_peak;
+  *block_out = next;
+  return 0;
+
+fail:
+  free(row_counts);
+  FreeSymmetryUnresolvedMatvecBlock(&next);
   return -1;
 }
 

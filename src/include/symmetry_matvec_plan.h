@@ -13,9 +13,37 @@ struct BindStruct;
 #define SYMMETRY_VECTOR_EXCHANGE_ALLGATHER 0
 #define SYMMETRY_VECTOR_EXCHANGE_HALO 1
 
+#ifndef HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES
+#define HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES UINT64_C(1073741824)
+#endif
+
 enum SymmetryColumnWidth {
   SYMMETRY_COLUMN_U32 = 32,
   SYMMETRY_COLUMN_U64 = 64
+};
+
+struct SymmetryUnresolvedTransition {
+  unsigned long int rep_state;
+  /*
+   * Off diagonal: hval * canonical phase, in production operation order.
+   * Diagonal: the real owned diagonal promoted to double complex.
+   */
+  double complex phased_hval;
+  int is_diagonal;
+};
+
+struct SymmetryUnresolvedMatvecBlock {
+  unsigned long int local_row_begin;
+  unsigned long int local_row_count;
+  size_t transition_count;
+  size_t offdiagonal_count;
+  size_t *row_ptr;
+  struct SymmetryUnresolvedTransition *transitions;
+  size_t request_count;
+  unsigned long int *request_keys;
+  size_t storage_bytes;
+  size_t temporary_peak_bytes;
+  uint64_t memory_byte_limit;
 };
 
 struct SymmetryMatvecBlock {
@@ -87,6 +115,23 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
                             unsigned long int beta,
                             SymmetryEntryCallback callback,
                             void *context);
+/**
+ * Build a communication-free candidate block from distributed owned rows.
+ *
+ * Row order and Hamiltonian term order are preserved in transitions.
+ * request_keys contains only off-diagonal representative keys, sorted and
+ * deduplicated for one later collective directory batch.  memory_byte_limit
+ * covers all block-owned storage plus the row-count construction workspace.
+ * block_out must be empty and remains empty on failure.
+ */
+int BuildSymmetryUnresolvedMatvecBlock(
+    const struct BindStruct *X,
+    unsigned long int local_row_begin,
+    unsigned long int local_row_count,
+    uint64_t memory_byte_limit,
+    struct SymmetryUnresolvedMatvecBlock *block_out);
+void FreeSymmetryUnresolvedMatvecBlock(
+    struct SymmetryUnresolvedMatvecBlock *block);
 int BuildSymmetryMatvecPlan(struct BindStruct *X);
 size_t SymmetryMatvecPlanBlockCount(
     const struct SymmetryMatvecPlan *plan);

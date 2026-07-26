@@ -3617,6 +3617,40 @@ static int compare_c5_directory_target(const void *lhs, const void *rhs)
   return 0;
 }
 
+static int c5_transition(
+    const struct BindStruct *X,
+    enum C5ReferenceModel model,
+    unsigned long int state,
+    unsigned int term,
+    unsigned long int *out_state,
+    double complex *hval)
+{
+  if (X == NULL || out_state == NULL || hval == NULL) return -1;
+  if (model == C5_REFERENCE_SPIN) {
+    int applied = apply_exchange_halfspin_test(
+        state, X->Def.ExchangeCoupling[term][0],
+        X->Def.ExchangeCoupling[term][1], out_state);
+    if (applied == TRUE) *hval = X->Def.ParaExchangeCoupling[term];
+    return applied;
+  }
+  if (model == C5_REFERENCE_SPINLESS) {
+    double complex trans = -X->Def.EDParaGeneralTransfer[term];
+    return apply_spinless_hopping_hermite_test(
+        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
+        (unsigned int)X->Def.EDGeneralTransfer[term][2],
+        trans, out_state, hval);
+  }
+  {
+    double complex trans = -X->Def.EDParaGeneralTransfer[term];
+    return apply_hubbard_hopping_hermite_test(
+        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
+        (unsigned int)X->Def.EDGeneralTransfer[term][1],
+        (unsigned int)X->Def.EDGeneralTransfer[term][2],
+        (unsigned int)X->Def.EDGeneralTransfer[term][3],
+        trans, out_state, hval);
+  }
+}
+
 static int c5_transition_state(
     const struct BindStruct *X,
     enum C5ReferenceModel model,
@@ -3624,30 +3658,9 @@ static int c5_transition_state(
     unsigned int term,
     unsigned long int *out_state)
 {
-  if (X == NULL || out_state == NULL) return -1;
-  if (model == C5_REFERENCE_SPIN) {
-    return apply_exchange_halfspin_test(
-        state, X->Def.ExchangeCoupling[term][0],
-        X->Def.ExchangeCoupling[term][1], out_state);
-  }
-  if (model == C5_REFERENCE_SPINLESS) {
-    double complex hval;
-    double complex trans = -X->Def.EDParaGeneralTransfer[term];
-    return apply_spinless_hopping_hermite_test(
-        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
-        (unsigned int)X->Def.EDGeneralTransfer[term][2],
-        trans, out_state, &hval);
-  }
-  {
-    double complex hval;
-    double complex trans = -X->Def.EDParaGeneralTransfer[term];
-    return apply_hubbard_hopping_hermite_test(
-        state, (unsigned int)X->Def.EDGeneralTransfer[term][0],
-        (unsigned int)X->Def.EDGeneralTransfer[term][1],
-        (unsigned int)X->Def.EDGeneralTransfer[term][2],
-        (unsigned int)X->Def.EDGeneralTransfer[term][3],
-        trans, out_state, &hval);
-  }
+  double complex hval;
+  return c5_transition(
+      X, model, state, term, out_state, &hval);
 }
 
 static struct C5DirectoryTarget *collect_c5_directory_targets(
@@ -3828,6 +3841,180 @@ static void assert_c5_directory_transition_batch(
   free(keys);
   free(global_beta);
   free(norm);
+}
+
+static int unresolved_request_contains(
+    const struct SymmetryUnresolvedMatvecBlock *block,
+    unsigned long int key)
+{
+  size_t left = 0U;
+  size_t right = block->request_count;
+  while (left < right) {
+    size_t middle = left + (right - left) / 2U;
+    if (block->request_keys[middle] < key) {
+      left = middle + 1U;
+    } else {
+      right = middle;
+    }
+  }
+  return left < block->request_count &&
+      block->request_keys[left] == key;
+}
+
+static void assert_c2_unresolved_blocks(
+    const struct BindStruct *X,
+    enum C5ReferenceModel model,
+    const char *label)
+{
+  unsigned long int local_row_begin = 0UL;
+  unsigned int term_count =
+      model == C5_REFERENCE_SPIN
+          ? X->Def.NExchangeCoupling : X->Def.EDNTransfer;
+  unsigned int term_step =
+      model == C5_REFERENCE_SPIN ? 1U : 2U;
+  if (X == NULL || X->Sym == NULL ||
+      X->Sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED) {
+    fprintf(stderr, "%s: unresolved block fixture is not distributed\n",
+            label);
+    exit(1);
+  }
+  do {
+    struct SymmetryUnresolvedMatvecBlock block;
+    struct SymmetryUnresolvedMatvecBlock failed;
+    unsigned long int block_row;
+    unsigned long int local_row_count =
+        X->Sym->local_dim - local_row_begin;
+    size_t saved_peak;
+    if (local_row_count > 2UL) local_row_count = 2UL;
+    memset(&block, 0, sizeof(block));
+    memset(&failed, 0, sizeof(failed));
+    if (BuildSymmetryUnresolvedMatvecBlock(
+            X, local_row_begin, local_row_count,
+            HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES, &block) != 0) {
+      fprintf(stderr, "%s: unresolved block build failed\n", label);
+      exit(1);
+    }
+    assert_ulong_eq(block.local_row_begin, local_row_begin, label);
+    assert_ulong_eq(block.local_row_count, local_row_count, label);
+    assert_int_eq(block.row_ptr != NULL, 1, label);
+    assert_ulong_eq(
+        (unsigned long int)block.transition_count,
+        (unsigned long int)block.row_ptr[local_row_count], label);
+    assert_ulong_eq(
+        (unsigned long int)block.offdiagonal_count,
+        (unsigned long int)(block.transition_count -
+                            (size_t)local_row_count),
+        label);
+    assert_int_eq(
+        block.storage_bytes <= block.temporary_peak_bytes &&
+            block.temporary_peak_bytes <=
+                (size_t)block.memory_byte_limit,
+        1, label);
+    if (block.offdiagonal_count == 0U) {
+      assert_int_eq(
+          block.request_count == 0U && block.request_keys == NULL,
+          1, label);
+    } else {
+      size_t request;
+      assert_int_eq(block.request_keys != NULL, 1, label);
+      assert_int_eq(
+          block.request_count > 0U &&
+              block.request_count <= block.offdiagonal_count,
+          1, label);
+      for (request = 1U; request < block.request_count; request++) {
+        assert_int_eq(
+            block.request_keys[request - 1U] <
+                block.request_keys[request],
+            1, label);
+      }
+    }
+    for (block_row = 0UL;
+         block_row < local_row_count;
+         block_row++) {
+      unsigned long int local_index =
+          local_row_begin + block_row + 1UL;
+      const struct SymmetryBasisVector *source =
+          SymmetryBasisLocalEntry(X->Sym, local_index);
+      size_t transition = block.row_ptr[block_row];
+      size_t end = block.row_ptr[block_row + 1UL];
+      unsigned int term;
+      double complex expected_diagonal;
+      if (source == NULL || transition >= end) {
+        fprintf(stderr, "%s: unresolved row source is invalid\n", label);
+        exit(1);
+      }
+      expected_diagonal = source->diagonal;
+      assert_int_eq(
+          block.transitions[transition].is_diagonal, TRUE, label);
+      assert_ulong_eq(
+          block.transitions[transition].rep_state, 0UL, label);
+      assert_complex_bitwise(
+          block.transitions[transition].phased_hval,
+          expected_diagonal, label);
+      transition++;
+      for (term = 0U; term < term_count; term += term_step) {
+        struct SymmetryRepresentativeResult representative;
+        unsigned long int out_state;
+        double complex hval;
+        double complex expected_phased_hval;
+        int applied = c5_transition(
+            X, model, source->rep_state, term, &out_state, &hval);
+        if (applied < 0) {
+          fprintf(stderr, "%s: unresolved transition oracle failed\n",
+                  label);
+          exit(1);
+        }
+        if (applied == 0) continue;
+        if (transition >= end ||
+            SymmetryFindRepresentative(
+                X, out_state, &representative) != 0) {
+          fprintf(stderr, "%s: unresolved transition order mismatch\n",
+                  label);
+          exit(1);
+        }
+        expected_phased_hval = hval * representative.phase;
+        assert_int_eq(
+            block.transitions[transition].is_diagonal, FALSE, label);
+        assert_ulong_eq(
+            block.transitions[transition].rep_state,
+            representative.rep_state, label);
+        assert_complex_bitwise(
+            block.transitions[transition].phased_hval,
+            expected_phased_hval, label);
+        assert_int_eq(
+            unresolved_request_contains(
+                &block, representative.rep_state),
+            TRUE, label);
+        transition++;
+      }
+      assert_ulong_eq(
+          (unsigned long int)transition,
+          (unsigned long int)end, label);
+    }
+    saved_peak = block.temporary_peak_bytes;
+    FreeSymmetryUnresolvedMatvecBlock(&block);
+    assert_int_eq(
+        block.row_ptr == NULL && block.transitions == NULL &&
+            block.request_keys == NULL &&
+            block.transition_count == 0U &&
+            block.offdiagonal_count == 0U &&
+            block.request_count == 0U,
+        1, label);
+    assert_int_eq(saved_peak > 0U, 1, label);
+    assert_int_eq(
+        BuildSymmetryUnresolvedMatvecBlock(
+            X, local_row_begin, local_row_count,
+            (uint64_t)(saved_peak - 1U), &failed),
+        -1, "unresolved block enforces its memory cap");
+    assert_int_eq(
+        failed.row_ptr == NULL && failed.transitions == NULL &&
+            failed.request_keys == NULL &&
+            failed.transition_count == 0U &&
+            failed.offdiagonal_count == 0U &&
+            failed.request_count == 0U,
+        1, "failed unresolved build preserves empty output");
+    local_row_begin += local_row_count;
+  } while (local_row_begin < X->Sym->local_dim);
 }
 
 static void assert_c6_full_basis_directory_batch(
@@ -4128,6 +4315,22 @@ static void assert_c5_distributed_layout_model(
   assert_c6_full_basis_directory_batch(X.Sym, reference_basis, label);
   assert_c5_directory_transition_batch(
       &X, model, directory_targets, directory_target_count, label);
+  {
+    struct SymmetryRepresentativeBatchStats before;
+    struct SymmetryRepresentativeBatchStats after;
+    assert_int_eq(
+        GetSymmetryRepresentativeDirectoryBatchStats(
+            X.Sym->representative_directory, &before),
+        0, label);
+    assert_c2_unresolved_blocks(&X, model, label);
+    assert_int_eq(
+        GetSymmetryRepresentativeDirectoryBatchStats(
+            X.Sym->representative_directory, &after),
+        0, label);
+    assert_int_eq(
+        memcmp(&after, &before, sizeof(after)) == 0,
+        1, "unresolved block build performs no directory batch");
+  }
 
   assert_int_eq(
       ComputeSymmetryBasisDigest(X.Sym, &distributed_digest), 0, label);
