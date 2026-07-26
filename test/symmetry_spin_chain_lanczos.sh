@@ -253,6 +253,17 @@ if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_in
 fi
 grep -q "HPHI_SYMMETRY_MATVEC must be 'plan' or 'legacy'" symmetry_invalid_mode.log
 
+rm -rf output
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       ../../src/HPhi -e namelist.def \
+       > symmetry_distributed_lanczos_reject.log 2>&1; then
+    cat symmetry_distributed_lanczos_reject.log
+    exit 1
+fi
+grep -q \
+    "developer opt-in for TransSym CG runs only" \
+    symmetry_distributed_lanczos_reject.log
+
 run_mpi_symmetry_case() {
     label="$1"
     namelist="$2"
@@ -319,8 +330,10 @@ if [ -n "${MPIRUN}" ]; then
 #!/bin/sh
 rank=${OMPI_COMM_WORLD_RANK:-${PMI_RANK:-${PMIX_RANK:-0}}}
 if [ "${rank}" -eq 0 ]; then
+    export HPHI_SYMMETRY_BASIS_LAYOUT=replicated
     export HPHI_SYMMETRY_MATVEC=plan
 else
+    export HPHI_SYMMETRY_BASIS_LAYOUT=invalid
     export HPHI_SYMMETRY_MATVEC=invalid
 fi
 exec "$@"
@@ -338,6 +351,10 @@ EOF
         grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
         grep -q "vector_exchange=halo" symmetry_rank_env_mpi.log
         if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
+            cat symmetry_rank_env_mpi.log
+            exit 1
+        fi
+        if grep -q "HPHI_SYMMETRY_BASIS_LAYOUT must be" symmetry_rank_env_mpi.log; then
             cat symmetry_rank_env_mpi.log
             exit 1
         fi

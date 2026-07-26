@@ -647,57 +647,63 @@ For Hubbard model: \f$D = \binom{N_s}{N_\uparrow}\binom{N_s}{N_\downarrow}\f$
  * @retval -1 fail the calculation.
  * @retval 0 succeed the calculation.
  */
-static int parse_staged_distributed_symmetry(void)
+static int parse_symmetry_basis_layout(void)
 {
-  const char *value = getenv("HPHI_SYMMETRY_STAGED_DISTRIBUTED");
+  const char *value = getenv("HPHI_SYMMETRY_BASIS_LAYOUT");
+  const char *staged = getenv("HPHI_SYMMETRY_STAGED_DISTRIBUTED");
   const char *matvec = getenv("HPHI_SYMMETRY_MATVEC");
   const char *exchange = getenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   const char *reference = getenv("HPHI_SYMMETRY_HALO_REFERENCE");
 
-  if (value == NULL || strcmp(value, "0") == 0 ||
-      strcmp(value, "off") == 0) {
-    return FALSE;
-  }
-  if (strcmp(value, "1") != 0 && strcmp(value, "on") != 0) {
+  if (staged != NULL) {
     fprintf(stdoutMPI,
-            "Error: HPHI_SYMMETRY_STAGED_DISTRIBUTED must be "
-            "'0'/'off' or '1'/'on', got '%s'.\n",
+            "Error: HPHI_SYMMETRY_STAGED_DISTRIBUTED is retired; "
+            "use HPHI_SYMMETRY_BASIS_LAYOUT=distributed.\n");
+    return -1;
+  }
+  if (value == NULL || strcmp(value, "replicated") == 0) {
+    return SYMMETRY_BASIS_REPLICATED;
+  }
+  if (strcmp(value, "distributed") != 0) {
+    fprintf(stdoutMPI,
+            "Error: HPHI_SYMMETRY_BASIS_LAYOUT must be "
+            "'replicated' or 'distributed', got '%s'.\n",
             value);
     return -1;
   }
   if (matvec != NULL && strcmp(matvec, "plan") != 0) {
     fprintf(stdoutMPI,
-            "Error: staged distributed symmetry requires "
+            "Error: distributed symmetry basis requires "
             "HPHI_SYMMETRY_MATVEC=plan.\n");
     return -1;
   }
   if (exchange != NULL && strcmp(exchange, "halo") != 0) {
     fprintf(stdoutMPI,
-            "Error: staged distributed symmetry requires "
+            "Error: distributed symmetry basis requires "
             "HPHI_SYMMETRY_VECTOR_EXCHANGE=halo.\n");
     return -1;
   }
   if (reference != NULL && strcmp(reference, "0") != 0 &&
       strcmp(reference, "off") != 0) {
     fprintf(stdoutMPI,
-            "Error: staged distributed symmetry does not support "
+            "Error: distributed symmetry basis does not support "
             "HPHI_SYMMETRY_HALO_REFERENCE.\n");
     return -1;
   }
-  return TRUE;
+  return SYMMETRY_BASIS_DISTRIBUTED;
 }
 
-static int select_staged_distributed_symmetry(void)
+static int select_symmetry_basis_layout(void)
 {
-  int enabled = FALSE;
-  if (myrank == 0) enabled = parse_staged_distributed_symmetry();
-  return BcastMPI_i(0, enabled);
+  int layout = SYMMETRY_BASIS_REPLICATED;
+  if (myrank == 0) layout = parse_symmetry_basis_layout();
+  return BcastMPI_i(0, layout);
 }
 
 int main(int argc, char* argv[]){
 
   int mode=0;
-  int staged_distributed_symmetry = FALSE;
+  int symmetry_basis_layout = SYMMETRY_BASIS_REPLICATED;
   char cFileListName[D_FileNameMax];
 
   stdoutMPI = stdout;
@@ -771,17 +777,13 @@ int main(int argc, char* argv[]){
   if (ValidateSymmetryRuntimeOptions(&(X.Bind)) != 0) {
     exitMPI(-1);
   }
-  staged_distributed_symmetry =
-      select_staged_distributed_symmetry();
-  if (staged_distributed_symmetry < 0) {
+  symmetry_basis_layout = select_symmetry_basis_layout();
+  if (symmetry_basis_layout < 0) {
     exitMPI(-1);
   }
-  if (staged_distributed_symmetry == TRUE &&
-      (X.Bind.Def.iFlgSymmetryBasis != TRUE ||
-       X.Bind.Def.iCalcType != CG)) {
-    fprintf(stdoutMPI,
-            "Error: HPHI_SYMMETRY_STAGED_DISTRIBUTED is a B4 "
-            "developer/test opt-in for TransSym CG runs only.\n");
+  if (ValidateSymmetryBasisLayoutOptions(
+          &(X.Bind),
+          (enum SymmetryBasisLayout)symmetry_basis_layout) != 0) {
     exitMPI(-1);
   }
 
@@ -810,7 +812,7 @@ int main(int argc, char* argv[]){
 
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StartTimer(1100);
-      if ((staged_distributed_symmetry == TRUE
+      if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
                ? BuildSymmetryBasisForLayout(
                      &(X.Bind), SYMMETRY_BASIS_DISTRIBUTED)
                : BuildSymmetryBasis(&(X.Bind))) != 0) {
@@ -819,12 +821,12 @@ int main(int argc, char* argv[]){
       }
       if (X.Bind.Sym == NULL ||
           X.Bind.Sym->basis_layout !=
-              (staged_distributed_symmetry == TRUE
+              (symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
                    ? SYMMETRY_BASIS_DISTRIBUTED
                    : SYMMETRY_BASIS_REPLICATED)) {
         fprintf(stdoutMPI,
                 "Error: symmetry basis layout does not match the "
-                "selected B4 staged runtime.\n");
+                "selected HPHI_SYMMETRY_BASIS_LAYOUT.\n");
         StopTimer(1100);
         exitMPI(-1);
       }
@@ -853,7 +855,7 @@ int main(int argc, char* argv[]){
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StopTimer(1113);
       StartTimer(1101);
-      if ((staged_distributed_symmetry == TRUE
+      if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
                ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
                : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
         StopTimer(1101);

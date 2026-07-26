@@ -1390,7 +1390,7 @@ static int finalize_distributed_plan_for_solver(
   X->Sym->vector_exchange_mode =
       SYMMETRY_VECTOR_EXCHANGE_HALO;
   fprintf(stdoutMPI,
-          "Symmetry staged distributed matvec: "
+          "Symmetry distributed matvec: "
           "global_rows=%lu local_rows=%lu blocks=%zu local_nnz=%zu "
           "ghost_count=%zu columns=local/ghost-slots.\n",
           plan->dim, plan->local_dim, plan->block_count,

@@ -107,7 +107,7 @@ run_case()
     namelist=$3
     eigenstates=${4:-1}
     execution=${5:-mpi}
-    staged=${6:-replicated}
+    layout=${6:-replicated}
 
     cat > modpara.def <<EOF
 --------------------
@@ -131,23 +131,27 @@ EOF
 
     rm -rf output
     if [ "${execution}" = "serial" ]; then
-        if [ "${staged}" = "distributed" ]; then
+        if [ "${layout}" = "distributed" ]; then
             run_hphi "${label}.log" env \
-                HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+                HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
                 "${HPHI}" -e "${namelist}"
         else
-            run_hphi "${label}.log" "${HPHI}" -e "${namelist}"
+            run_hphi "${label}.log" env \
+                HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+                "${HPHI}" -e "${namelist}"
         fi
-    elif [ "${staged}" = "distributed" ]; then
+    elif [ "${layout}" = "distributed" ]; then
         # RUNNER is intentionally word-split because MPIRUN contains options.
         # shellcheck disable=SC2086
         run_hphi "${label}.log" env \
-            HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+            HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
             ${RUNNER} "${HPHI}" -e "${namelist}"
     else
         # RUNNER is intentionally word-split because MPIRUN contains options.
         # shellcheck disable=SC2086
-        run_hphi "${label}.log" ${RUNNER} "${HPHI}" -e "${namelist}"
+        run_hphi "${label}.log" env \
+            HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
     fi
     test -s output/zvo_energy.dat
     test -s output/zvo_Lanczos_Step.dat
@@ -257,7 +261,7 @@ grep -q \
     "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" \
     symmetry_staged_precg0.log
 grep -q \
-    "Symmetry staged distributed matvec: global_rows=10" \
+    "Symmetry distributed matvec: global_rows=10" \
     symmetry_staged_precg0.log
 grep -q "columns=local/ghost-slots" symmetry_staged_precg0.log
 if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
@@ -265,7 +269,7 @@ if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
     echo "Staged TransSym run entered an incompatible matvec path."
     exit 1
 fi
-if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
        HPHI_SYMMETRY_MATVEC=legacy \
        "${HPHI}" -e namelist_symmetry.def \
        > staged_legacy_reject.log 2>&1; then
@@ -273,8 +277,38 @@ if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
     exit 1
 fi
 grep -q \
-    "staged distributed symmetry requires HPHI_SYMMETRY_MATVEC=plan" \
+    "distributed symmetry basis requires HPHI_SYMMETRY_MATVEC=plan" \
     staged_legacy_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT=typo \
+       "${HPHI}" -e namelist_symmetry.def \
+       > invalid_layout_reject.log 2>&1; then
+    echo "Invalid symmetry basis layout was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_BASIS_LAYOUT must be 'replicated' or 'distributed'" \
+    invalid_layout_reject.log
+
+if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+       "${HPHI}" -e namelist_symmetry.def \
+       > retired_layout_reject.log 2>&1; then
+    echo "Retired staged symmetry layout option was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_STAGED_DISTRIBUTED is retired" \
+    retired_layout_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       "${HPHI}" -e namelist_normal.def \
+       > nonsymmetry_layout_reject.log 2>&1; then
+    echo "Distributed layout without TransSym was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "developer opt-in for TransSym CG runs only" \
+    nonsymmetry_layout_reject.log
 
 for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
     grep -q \
