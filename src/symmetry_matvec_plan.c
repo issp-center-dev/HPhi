@@ -1385,7 +1385,7 @@ static int finalize_distributed_plan_for_solver(
 {
   struct SymmetryMatvecPlan *plan;
   size_t ghost_index_bytes = 0U;
-  size_t remapped_column_bytes;
+  size_t remapped_column_bytes = 0U;
   size_t slot_bytes;
   int mpi_active = SymmetryMpiCollectivesActive();
   int local_error = 0;
