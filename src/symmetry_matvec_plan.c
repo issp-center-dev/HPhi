@@ -591,7 +591,7 @@ static int distributed_plan_options(
     struct SymmetryDistributedMatvecPlanOptions *selected)
 {
   uint64_t default_rows =
-      (uint64_t)HPHI_SYMMETRY_PLAN_GLOBAL_ROWS_PER_BLOCK;
+      (uint64_t)HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK;
   int local_error = 0;
   if (selected == NULL) return -1;
   memset(selected, 0, sizeof(*selected));
@@ -599,13 +599,13 @@ static int distributed_plan_options(
       default_rows > (uint64_t)ULONG_MAX) {
     local_error = 1;
   } else {
-    selected->global_rows_per_block =
+    selected->local_rows_per_block =
         (unsigned long int)default_rows;
     selected->block_memory_byte_limit =
         (uint64_t)HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
   }
   if (options != NULL) *selected = *options;
-  if (selected->global_rows_per_block == 0UL ||
+  if (selected->local_rows_per_block == 0UL ||
       selected->block_memory_byte_limit == 0U) {
     local_error = 1;
   }
@@ -617,10 +617,10 @@ static int distributed_plan_options(
     uint64_t limit_min;
     uint64_t limit_max;
     if (MPI_Allreduce(
-            &selected->global_rows_per_block, &rows_min, 1,
+            &selected->local_rows_per_block, &rows_min, 1,
             MPI_UNSIGNED_LONG, MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
         MPI_Allreduce(
-            &selected->global_rows_per_block, &rows_max, 1,
+            &selected->local_rows_per_block, &rows_max, 1,
             MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS ||
         MPI_Allreduce(
             &selected->block_memory_byte_limit, &limit_min, 1,
@@ -907,29 +907,56 @@ fail:
 
 static int distributed_local_plan_block_count(
     const struct SymmetryBasisRuntime *sym,
-    unsigned long int global_rows_per_block,
-    size_t *block_count)
+    unsigned long int local_rows_per_block,
+    size_t *block_count,
+    size_t *local_wave_count)
 {
-  unsigned long int first_round;
-  unsigned long int last_round;
   unsigned long int count;
   if (sym == NULL || block_count == NULL ||
-      global_rows_per_block == 0UL ||
+      local_wave_count == NULL ||
+      local_rows_per_block == 0UL ||
       sym->local_offset > sym->dim ||
       sym->local_dim > sym->dim - sym->local_offset) {
     return -1;
   }
   if (sym->local_dim == 0UL) {
     *block_count = 1U;
+    *local_wave_count = 0U;
     return 0;
   }
-  first_round = sym->local_offset / global_rows_per_block;
-  last_round =
-      (sym->local_offset + sym->local_dim - 1UL) /
-      global_rows_per_block;
-  count = last_round - first_round + 1UL;
+  count = sym->local_dim / local_rows_per_block;
+  if (sym->local_dim % local_rows_per_block != 0UL) count++;
   if ((unsigned long int)(size_t)count != count) return -1;
   *block_count = (size_t)count;
+  *local_wave_count = (size_t)count;
+  return 0;
+}
+
+static int distributed_max_plan_wave_count(
+    int mpi_active,
+    size_t local_wave_count,
+    size_t *max_wave_count)
+{
+  uint64_t local_count;
+  uint64_t max_count;
+  if (max_wave_count == NULL ||
+      (size_t)(uint64_t)local_wave_count != local_wave_count) {
+    return -1;
+  }
+  local_count = (uint64_t)local_wave_count;
+  max_count = local_count;
+#ifdef MPI
+  if (mpi_active != FALSE && nproc > 1 &&
+      MPI_Allreduce(
+          &local_count, &max_count, 1, MPI_UINT64_T,
+          MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+    return -1;
+  }
+#else
+  (void)mpi_active;
+#endif
+  if ((uint64_t)(size_t)max_count != max_count) return -1;
+  *max_wave_count = (size_t)max_count;
   return 0;
 }
 
@@ -939,7 +966,11 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
 {
   struct SymmetryDistributedMatvecPlanOptions selected;
   struct SymmetryMatvecPlan *plan = NULL;
-  unsigned long int global_begin;
+  unsigned long int next_local_row_begin = 0UL;
+  size_t local_block_count = 0U;
+  size_t local_wave_count = 0U;
+  size_t max_wave_count = 0U;
+  size_t wave;
   size_t block_write = 0U;
   int mpi_active = SymmetryMpiCollectivesActive();
   int local_error = 0;
@@ -956,18 +987,29 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
           mpi_active, options, &selected) != 0) {
     return -1;
   }
+  if (distributed_local_plan_block_count(
+          X->Sym, selected.local_rows_per_block,
+          &local_block_count, &local_wave_count) != 0) {
+    local_error = 1;
+  }
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+  if (distributed_max_plan_wave_count(
+          mpi_active, local_wave_count,
+          &max_wave_count) != 0) {
+    return -1;
+  }
   plan = (struct SymmetryMatvecPlan *)calloc(1U, sizeof(*plan));
   if (plan == NULL) local_error = 1;
   if (local_error == 0) {
     plan->dim = X->Sym->dim;
     plan->local_offset = X->Sym->local_offset;
     plan->local_dim = X->Sym->local_dim;
-    if (distributed_local_plan_block_count(
-            X->Sym, selected.global_rows_per_block,
-            &plan->block_count) != 0 ||
-        plan->block_count > SIZE_MAX / sizeof(*plan->blocks)) {
+    plan->block_count = local_block_count;
+    if (plan->block_count > SIZE_MAX / sizeof(*plan->blocks)) {
       local_error = 1;
     } else {
+      plan->build_local_wave_count = local_wave_count;
+      plan->build_max_wave_count = max_wave_count;
       plan->blocks =
           (struct SymmetryMatvecBlock *)calloc(
               plan->block_count, sizeof(*plan->blocks));
@@ -976,18 +1018,10 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
 
-  global_begin = 0UL;
-  while (global_begin < X->Sym->dim) {
+  for (wave = 0U; wave < max_wave_count; wave++) {
     struct SymmetryUnresolvedMatvecBlock unresolved;
-    unsigned long int global_count =
-        X->Sym->dim - global_begin;
-    unsigned long int global_end;
-    unsigned long int local_end =
-        X->Sym->local_offset + X->Sym->local_dim;
-    unsigned long int intersection_begin;
-    unsigned long int intersection_end;
-    unsigned long int local_row_begin;
-    unsigned long int local_row_count;
+    unsigned long int local_row_begin = X->Sym->local_dim;
+    unsigned long int local_row_count = 0UL;
     unsigned long int *resolved_beta = NULL;
     double *resolved_norm = NULL;
     size_t response_beta_bytes = 0U;
@@ -995,30 +1029,21 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
     size_t round_peak = 0U;
     uint64_t request_count_u64 = 0U;
     memset(&unresolved, 0, sizeof(unresolved));
-    if (global_count > selected.global_rows_per_block) {
-      global_count = selected.global_rows_per_block;
+    if (wave < local_wave_count) {
+      local_row_begin = next_local_row_begin;
+      local_row_count = X->Sym->local_dim - local_row_begin;
+      if (local_row_count > selected.local_rows_per_block) {
+        local_row_count = selected.local_rows_per_block;
+      }
     }
-    global_end = global_begin + global_count;
-    if (global_end <= X->Sym->local_offset) {
-      intersection_begin = X->Sym->local_offset;
-      intersection_end = intersection_begin;
-    } else if (global_begin >= local_end) {
-      intersection_begin = local_end;
-      intersection_end = intersection_begin;
-    } else {
-      intersection_begin =
-          global_begin > X->Sym->local_offset
-              ? global_begin : X->Sym->local_offset;
-      intersection_end =
-          global_end < local_end ? global_end : local_end;
-    }
-    local_row_begin =
-        intersection_begin - X->Sym->local_offset;
-    local_row_count = intersection_end - intersection_begin;
-    if (BuildSymmetryUnresolvedMatvecBlock(
+    StartTimer(1124);
+    local_error =
+        BuildSymmetryUnresolvedMatvecBlock(
             X, local_row_begin, local_row_count,
             selected.block_memory_byte_limit,
-            &unresolved) != 0 ||
+            &unresolved) != 0;
+    StopTimer(1124);
+    if (local_error != 0 ||
         distributed_round_memory_peak(
             &unresolved, selected.block_memory_byte_limit,
             &round_peak) != 0 ||
@@ -1068,10 +1093,16 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
       goto fail;
     }
     if (local_row_count > 0UL) {
-      if (block_write >= plan->block_count ||
+      int finalize_status;
+      StartTimer(1125);
+      finalize_status =
           finalize_distributed_matvec_block(
               X, &unresolved, resolved_beta, resolved_norm,
-              &plan->blocks[block_write]) != 0) {
+              block_write < plan->block_count
+                  ? &plan->blocks[block_write] : NULL);
+      StopTimer(1125);
+      if (block_write >= plan->block_count ||
+          finalize_status != 0) {
         local_error = 1;
       } else {
         struct SymmetryMatvecBlock *block =
@@ -1114,6 +1145,7 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
             }
           }
           block_write++;
+          next_local_row_begin += local_row_count;
         }
       }
     }
@@ -1121,7 +1153,6 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
     free(resolved_norm);
     FreeSymmetryUnresolvedMatvecBlock(&unresolved);
     if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
-    global_begin = global_end;
   }
   if (plan->local_dim == 0UL) {
     plan->blocks[0].row_ptr =
@@ -1134,7 +1165,10 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
       block_write = 1U;
     }
   }
-  if (block_write != plan->block_count) local_error = 1;
+  if (block_write != plan->block_count ||
+      next_local_row_begin != plan->local_dim) {
+    local_error = 1;
+  }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) goto fail;
   plan->ready = TRUE;
   sync_single_block_aliases(plan);

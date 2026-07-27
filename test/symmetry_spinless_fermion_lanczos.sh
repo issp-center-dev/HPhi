@@ -295,7 +295,7 @@ assert_distributed_rank_stats() {
         exit 1
     fi
     grep -Eq \
-        '^format=HPhiCalcTimerRankStats version=8 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        '^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
         "${stats}"
     grep -Eq \
         '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
@@ -306,6 +306,23 @@ assert_distributed_rank_stats() {
     grep -Eq \
         '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
         "${stats}"
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        $1 == "work" {
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            exit !(min["plan_max_wave_count"] > 0 &&
+                   min["plan_max_wave_count"] == max["plan_max_wave_count"] &&
+                   min["directory_batch_calls"] == min["plan_max_wave_count"] &&
+                   max["directory_batch_calls"] == max["plan_max_wave_count"])
+        }
+    ' "${stats}"
 }
 
 write_calcmod

@@ -39,7 +39,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   static const int timer_ids[] = {
     1100, 1110, 1115, 1111, 1112, 1123, 1113, 1114,
     1101, 1120, 1121, 1122, 1130, 1131, 1132,
-    1133, 1134, 1135, 4113,
+    1133, 1134, 1135, 1124, 1125, 4113,
     1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
   };
   static const char *work_keys[] = {
@@ -141,7 +141,9 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "plan_column_storage_bytes",
     "directory_build_heavy_bytes",
     "directory_steady_heavy_bytes",
-    "directory_heavy_storage_released"
+    "directory_heavy_storage_released",
+    "plan_local_wave_count",
+    "plan_max_wave_count"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -434,6 +436,14 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   work_local[98] =
       X->Sym->representative_directory_heavy_storage_released == TRUE
           ? 1ULL : 0ULL;
+  work_local[99] =
+      plan != NULL
+          ? (unsigned long long)plan->build_local_wave_count
+          : 0ULL;
+  work_local[100] =
+      plan != NULL
+          ? (unsigned long long)plan->build_max_wave_count
+          : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -559,7 +569,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=8 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=9 ranks=%d "
           "basis_layout=%s matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED
@@ -703,6 +713,8 @@ void OutputTimer(struct BindStruct *X) {
   StampTime(fp, "    symmetry distributed exact rebalance", 1134);
   StampTime(fp, "    symmetry distributed storage validation", 1135);
   StampTime(fp, "    symmetry representative batch directory", 1123);
+  StampTime(fp, "    symmetry plan unresolved block build", 1124);
+  StampTime(fp, "    symmetry plan block finalize", 1125);
   StampTime(fp, "  symmetry solver storage allocation", 1113);
   StampTime(fp, "    symmetry dimension activation/validation", 1114);
   StampTime(fp, "  symmetry matvec plan build", 1101);

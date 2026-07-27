@@ -18,8 +18,8 @@ struct SymmetryRepresentativeBatchOptions;
 #define HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES UINT64_C(1073741824)
 #endif
 
-#ifndef HPHI_SYMMETRY_PLAN_GLOBAL_ROWS_PER_BLOCK
-#define HPHI_SYMMETRY_PLAN_GLOBAL_ROWS_PER_BLOCK UINT64_C(65536)
+#ifndef HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK
+#define HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK UINT64_C(65536)
 #endif
 
 enum SymmetryColumnWidth {
@@ -52,7 +52,7 @@ struct SymmetryUnresolvedMatvecBlock {
 };
 
 struct SymmetryDistributedMatvecPlanOptions {
-  unsigned long int global_rows_per_block;
+  unsigned long int local_rows_per_block;
   uint64_t block_memory_byte_limit;
   /* NULL selects the production directory batch path. */
   const struct SymmetryRepresentativeBatchOptions *directory_options;
@@ -94,6 +94,8 @@ struct SymmetryMatvecPlan {
   size_t matrix_storage_bytes;
   size_t local_column_nnz;
   size_t remote_column_nnz;
+  size_t build_local_wave_count;
+  size_t build_max_wave_count;
   size_t allgather_nonlocal_values_per_call;
   size_t allgather_payload_bytes_per_call;
   enum SymmetryColumnWidth column_slot_width;
@@ -147,9 +149,10 @@ void FreeSymmetryUnresolvedMatvecBlock(
 /**
  * Collectively resolve distributed transition blocks into global-column CSR.
  *
- * Every rank participates once per global row-block round, including ranks
- * with no intersecting rows.  The resulting plan has global columns and no
- * halo/remap state; B4-C4 owns that staged integration.
+ * Every rank participates once per rank-local block wave up to the maximum
+ * local block count, including ranks that have no block in a wave.  The
+ * resulting plan has global columns and no halo/remap state; B4-C4 owns that
+ * staged integration.
  */
 int BuildSymmetryDistributedMatvecPlanWithOptions(
     struct BindStruct *X,

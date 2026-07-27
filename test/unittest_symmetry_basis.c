@@ -4081,7 +4081,7 @@ static void assert_c3_plan_matches_replicated(
       GetSymmetryRepresentativeDirectoryBatchStats(
           X->Sym->representative_directory, &before),
       0, label);
-  options.global_rows_per_block = 1UL;
+  options.local_rows_per_block = 1UL;
   options.block_memory_byte_limit = 1U;
   assert_int_eq(
       BuildSymmetryDistributedMatvecPlanWithOptions(
@@ -4098,28 +4098,62 @@ static void assert_c3_plan_matches_replicated(
 
   options.block_memory_byte_limit =
       HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
+  options.directory_options = &directory_options;
+  directory_options.corrupt_response_rank = 0;
+  assert_int_eq(
+      BuildSymmetryDistributedMatvecPlanWithOptions(
+          X, &options),
+      -1, "injected directory failure aborts collective plan build");
+  assert_int_eq(X->Sym->matvec_plan == NULL, 1, label);
+  assert_int_eq(
+      GetSymmetryRepresentativeDirectoryBatchStats(
+          X->Sym->representative_directory, &after),
+      0, label);
+  assert_int_eq(
+      representative_batch_stats_equal(&after, &before),
+      1, "failed directory wave preserves published directory stats");
+  directory_options.corrupt_response_rank = -1;
+  options.directory_options = NULL;
   for (pass = 0; pass < 2; pass++) {
     const struct SymmetryMatvecPlan *plan;
     unsigned long int covered_rows = 0UL;
     size_t flattened_nnz = 0U;
     size_t block_index;
     uint64_t expected_rounds;
+    uint64_t expected_local_rounds;
+    int rank;
     if (pass == 0) {
-      options.global_rows_per_block = 1UL;
+      options.local_rows_per_block = 1UL;
       options.directory_options = NULL;
     } else {
-      options.global_rows_per_block = 2UL;
+      options.local_rows_per_block = 2UL;
       directory_options.chunk_limit = 1U;
       directory_options.force_chunked = 1;
       directory_options.debug_echo = 1;
       options.directory_options = &directory_options;
     }
-    expected_rounds =
-        (uint64_t)(X->Sym->dim /
-                   options.global_rows_per_block);
-    if (X->Sym->dim %
-            options.global_rows_per_block != 0UL) {
-      expected_rounds++;
+    expected_local_rounds =
+        (uint64_t)(X->Sym->local_dim /
+                   options.local_rows_per_block);
+    if (X->Sym->local_dim %
+            options.local_rows_per_block != 0UL) {
+      expected_local_rounds++;
+    }
+    expected_rounds = 0U;
+    for (rank = 0; rank < nproc; rank++) {
+      unsigned long int rank_local_dim =
+          X->Sym->rank_offsets[rank + 1] -
+          X->Sym->rank_offsets[rank];
+      uint64_t rank_rounds =
+          (uint64_t)(rank_local_dim /
+                     options.local_rows_per_block);
+      if (rank_local_dim %
+              options.local_rows_per_block != 0UL) {
+        rank_rounds++;
+      }
+      if (rank_rounds > expected_rounds) {
+        expected_rounds = rank_rounds;
+      }
     }
     assert_int_eq(
         GetSymmetryRepresentativeDirectoryBatchStats(
@@ -4139,7 +4173,14 @@ static void assert_c3_plan_matches_replicated(
         after.directory_batch_calls -
                 before.directory_batch_calls ==
             expected_rounds,
-        1, "one directory batch is used per global block round");
+        1, "one directory batch is used per local block wave");
+    if (expected_local_rounds < expected_rounds) {
+      assert_int_eq(
+          after.directory_batch_calls -
+                  before.directory_batch_calls ==
+              expected_rounds,
+          1, "rank without a local block participates in zero-request waves");
+    }
     plan = X->Sym->matvec_plan;
     assert_int_eq(plan != NULL && plan->ready == TRUE, 1, label);
     assert_int_eq(plan->columns_remapped, FALSE, label);
@@ -4149,6 +4190,12 @@ static void assert_c3_plan_matches_replicated(
     assert_ulong_eq(plan->local_dim, reference_local_dim, label);
     assert_ulong_eq((unsigned long int)plan->nnz,
                     (unsigned long int)reference_nnz, label);
+    assert_ulong_eq(
+        (unsigned long int)plan->build_local_wave_count,
+        (unsigned long int)expected_local_rounds, label);
+    assert_ulong_eq(
+        (unsigned long int)plan->build_max_wave_count,
+        (unsigned long int)expected_rounds, label);
     for (block_index = 0U;
          block_index < SymmetryMatvecPlanBlockCount(plan);
          block_index++) {
@@ -4225,7 +4272,7 @@ static void assert_c4_distributed_solver_plan(
       reference_local_dim == 0UL
           ? 1U : (size_t)reference_local_dim + 1U;
   memset(&options, 0, sizeof(options));
-  options.global_rows_per_block = 1UL;
+  options.local_rows_per_block = 1UL;
   options.block_memory_byte_limit =
       HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
   input = (double complex *)calloc(vector_count, sizeof(*input));

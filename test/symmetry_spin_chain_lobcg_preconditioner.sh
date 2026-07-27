@@ -290,13 +290,17 @@ if [ -f symmetry_staged_precg0_rank_stats.dat ]; then
             max[key] = value($5)
         }
         END {
-            if (version != 8 || layout != "distributed" ||
-                count != 100 ||
+            if (version != 9 || layout != "distributed" ||
+                count != 102 ||
                 min["directory_build_heavy_bytes"] <= 0 ||
                 min["directory_steady_heavy_bytes"] != 0 ||
                 max["directory_steady_heavy_bytes"] != 0 ||
                 min["directory_heavy_storage_released"] != 1 ||
                 max["directory_heavy_storage_released"] != 1 ||
+                min["plan_max_wave_count"] <= 0 ||
+                min["plan_max_wave_count"] != max["plan_max_wave_count"] ||
+                min["directory_batch_calls"] != min["plan_max_wave_count"] ||
+                max["directory_batch_calls"] != max["plan_max_wave_count"] ||
                 min["plan_matrix_storage_bytes"] <= 0 ||
                 max["plan_column_storage_bytes"] <= 0) {
                 exit 1

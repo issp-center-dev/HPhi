@@ -370,14 +370,15 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 8 || header_ranks != expected_ranks ||
+            if (header_version != 9 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 27 || work_count != 100 ||
+                timer_count != 29 || work_count != 102 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
+                timer_seen[1124] != 1 || timer_seen[1125] != 1 ||
                 timer_seen[1133] != 1 || timer_seen[1134] != 1 ||
                 timer_seen[1135] != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
@@ -407,6 +408,8 @@ assert_rank_stats() {
                 work_max["directory_steady_heavy_bytes"] != 0 ||
                 work_min["directory_heavy_storage_released"] != 0 ||
                 work_max["directory_heavy_storage_released"] != 0) bad = 1
+            if (work_max["plan_local_wave_count"] != 0 ||
+                work_max["plan_max_wave_count"] != 0) bad = 1
             if (work_min["halo_schedule_bytes"] <= 0) bad = 1
             if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
             if (work_min["halo_reference_enabled"] != expected_reference ||
@@ -538,7 +541,7 @@ assert_distributed_rank_stats() {
         exit 1
     fi
     grep -Eq \
-        '^format=HPhiCalcTimerRankStats version=8 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        '^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
         "${stats}"
     grep -Eq \
         '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
@@ -549,6 +552,23 @@ assert_distributed_rank_stats() {
     grep -Eq \
         '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
         "${stats}"
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        $1 == "work" {
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            exit !(min["plan_max_wave_count"] > 0 &&
+                   min["plan_max_wave_count"] == max["plan_max_wave_count"] &&
+                   min["directory_batch_calls"] == min["plan_max_wave_count"] &&
+                   max["directory_batch_calls"] == max["plan_max_wave_count"])
+        }
+    ' "${stats}"
 }
 
 run_mpi_symmetry_case() {
