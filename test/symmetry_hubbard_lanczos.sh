@@ -578,6 +578,7 @@ run_mpi_symmetry_case() {
     expected_doublon="${4:-}"
     expected_ranks="$5"
     expected_digest="$6"
+    expected_default_layout="${7:-replicated}"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
     if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
@@ -595,6 +596,15 @@ run_mpi_symmetry_case() {
     assert_replicated_rank_stats \
         "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 1 allgather
+    if [ "${expected_default_layout}" = "distributed" ]; then
+        grep -q \
+            "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+            "${log_file}"
+    else
+        grep -q \
+            "Symmetry basis layout: replicated (explicit environment)." \
+            "${log_file}"
+    fi
 
     log_file="hubbard_${label}_default_mpi.log"
     rm -rf output
@@ -607,11 +617,22 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    grep -q "vector_exchange=halo" "${log_file}"
-    grep -q "columns=local/ghost-slots" "${log_file}"
-    assert_replicated_rank_stats \
-        "${expected_dim}" "${expected_ranks}" "${log_file}" \
-        "${expected_digest}" 0 halo
+    if [ "${expected_default_layout}" = "distributed" ]; then
+        grep -q "Symmetry distributed matvec:" "${log_file}"
+        grep -q \
+            "Symmetry basis layout: distributed (default for TransSym CG)." \
+            "${log_file}"
+        assert_distributed_rank_stats "${log_file}"
+    else
+        grep -q "vector_exchange=halo" "${log_file}"
+        grep -q "columns=local/ghost-slots" "${log_file}"
+        grep -q \
+            "Symmetry basis layout: replicated (default outside TransSym CG)." \
+            "${log_file}"
+        assert_replicated_rank_stats \
+            "${expected_dim}" "${expected_ranks}" "${log_file}" \
+            "${expected_digest}" 0 halo
+    fi
 }
 
 run_mpi_if_available() {
@@ -619,18 +640,23 @@ run_mpi_if_available() {
     expected_energy="$2"
     expected_dim="$3"
     expected_doublon="${4:-}"
+    expected_default_layout="${5:-replicated}"
     if [ -n "${MPIRUN}" ]; then
-        expected_digest=`awk '$1 == "basis_digest" {
-            split($4, parts, "="); print parts[2]; exit
-        }' output/CalcTimerRankStats.dat`
-        if [ -z "${expected_digest}" ]; then
-            echo "Missing serial symmetry basis digest"
-            exit 1
+        expected_digest=""
+        if grep -q "basis_layout=replicated" output/CalcTimerRankStats.dat; then
+            expected_digest=`awk '$1 == "basis_digest" {
+                split($4, parts, "="); print parts[2]; exit
+            }' output/CalcTimerRankStats.dat`
+            if [ -z "${expected_digest}" ]; then
+                echo "Missing serial symmetry basis digest"
+                exit 1
+            fi
         fi
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
             run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" \
-                "$expected_doublon" "$MPI_NP" "$expected_digest"
+                "$expected_doublon" "$MPI_NP" "$expected_digest" \
+                "$expected_default_layout"
         fi
     fi
 }
@@ -663,6 +689,9 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
     exit 1
 fi
 assert_replicated_rank_stats 4 1 hubbard_k0.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
     invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
@@ -691,6 +720,9 @@ if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     exit 1
 fi
 assert_replicated_rank_stats 4 1 hubbard_kpi2.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    hubbard_kpi2.log
 run_mpi_if_available kpi2 "-2.0" 4
 
 rm -rf output
@@ -706,6 +738,9 @@ assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
 assert_replicated_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    hubbard_k0_cg.log
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg_distributed.log 2>&1
@@ -713,6 +748,9 @@ assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_distributed.log
 assert_doublon_matches_reference \
     "${ref_doublon}" hubbard_k0_cg_distributed.log
 grep -q "Symmetry distributed matvec:" hubbard_k0_cg_distributed.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    hubbard_k0_cg_distributed.log
 assert_distributed_rank_stats hubbard_k0_cg_distributed.log
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
@@ -740,10 +778,12 @@ rm -rf output
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_default.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_default.log
 assert_symmetry_log 4 hubbard_k0_cg_default.log
-grep -q "vector_exchange=halo" hubbard_k0_cg_default.log
-grep -q "columns=local/ghost-slots" hubbard_k0_cg_default.log
-assert_replicated_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
-run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
+grep -q "Symmetry distributed matvec:" hubbard_k0_cg_default.log
+grep -q \
+    "Symmetry basis layout: distributed (default for TransSym CG)." \
+    hubbard_k0_cg_default.log
+assert_distributed_rank_stats hubbard_k0_cg_default.log
+run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}" distributed
 write_calcmod
 
 rm -rf output

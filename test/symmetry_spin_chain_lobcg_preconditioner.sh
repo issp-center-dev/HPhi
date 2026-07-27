@@ -294,25 +294,36 @@ check_energy_close "${normal_energy}" "${symmetry_precg1_energy}"
 check_energy_close "${normal_energy}" "${symmetry_exct4_precg0_energy}"
 check_energy_close "${normal_energy}" "${symmetry_exct4_precg1_energy}"
 
-check_rank_stats_layout symmetry_precg0_rank_stats.dat replicated
+check_rank_stats_layout symmetry_precg0_rank_stats.dat distributed
 check_rank_stats_layout symmetry_replicated_precg0_rank_stats.dat replicated
 check_rank_stats_layout symmetry_staged_precg0_rank_stats.dat distributed
+check_rank_stats_layout symmetry_exct4_precg0_rank_stats.dat distributed
+check_rank_stats_layout symmetry_exct4_precg1_rank_stats.dat distributed
 
-for log in symmetry_precg0.log symmetry_replicated_precg0.log \
-           symmetry_precg1.log; do
+for log in symmetry_precg0.log symmetry_precg1.log; do
     grep -q \
         "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
     grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
     grep -Eq \
         "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=1 workspace_vector_elements=[1-9][0-9]*" \
         "${log}"
-    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
+    grep -q "Symmetry distributed matvec: global_rows=10" "${log}"
     grep -q "columns=local/ghost-slots" "${log}"
+    grep -q \
+        "Symmetry basis layout: distributed (default for TransSym CG)." \
+        "${log}"
     if grep -q "MPI site separation summary" "${log}"; then
         echo "TransSym MPI path unexpectedly used site decomposition."
         exit 1
     fi
 done
+
+grep -q \
+    "Symmetry matvec: mode=plan vector_exchange=halo" \
+    symmetry_replicated_precg0.log
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    symmetry_replicated_precg0.log
 
 grep -q \
     "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" \
@@ -321,6 +332,9 @@ grep -q \
     "Symmetry distributed matvec: global_rows=10" \
     symmetry_staged_precg0.log
 grep -q "columns=local/ghost-slots" symmetry_staged_precg0.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    symmetry_staged_precg0.log
 if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
    grep -q "MPI site separation summary" symmetry_staged_precg0.log; then
     echo "Staged TransSym run entered an incompatible matvec path."
@@ -373,6 +387,36 @@ grep -q \
     "distributed symmetry basis requires HPHI_SYMMETRY_MATVEC=plan" \
     staged_legacy_reject.log
 
+if env HPHI_SYMMETRY_MATVEC=legacy \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_legacy_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted legacy matvec."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_legacy_reject.log
+
+if env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_allgather_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted allgather."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_allgather_reject.log
+
+if env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_halo_reference_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted halo reference."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_halo_reference_reject.log
+
 if env HPHI_SYMMETRY_BASIS_LAYOUT=typo \
        "${HPHI}" -e namelist_symmetry.def \
        > invalid_layout_reject.log 2>&1; then
@@ -382,6 +426,16 @@ fi
 grep -q \
     "HPHI_SYMMETRY_BASIS_LAYOUT must be 'replicated' or 'distributed'" \
     invalid_layout_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT= \
+       "${HPHI}" -e namelist_symmetry.def \
+       > empty_layout_reject.log 2>&1; then
+    echo "Empty symmetry basis layout was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_BASIS_LAYOUT must be 'replicated' or 'distributed'" \
+    empty_layout_reject.log
 
 if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
        "${HPHI}" -e namelist_symmetry.def \
@@ -400,7 +454,7 @@ if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     exit 1
 fi
 grep -q \
-    "developer opt-in for TransSym CG runs only" \
+    "distributed symmetry basis is supported for TransSym CG runs only" \
     nonsymmetry_layout_reject.log
 
 for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
@@ -410,5 +464,8 @@ for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
     grep -Eq \
         "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=4 workspace_vector_elements=[1-9][0-9]*" \
         "${log}"
-    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
+    grep -q "Symmetry distributed matvec: global_rows=10" "${log}"
+    grep -q \
+        "Symmetry basis layout: distributed (default for TransSym CG)." \
+        "${log}"
 done

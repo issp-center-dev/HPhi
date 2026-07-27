@@ -647,13 +647,14 @@ For Hubbard model: \f$D = \binom{N_s}{N_\uparrow}\binom{N_s}{N_\downarrow}\f$
  * @retval -1 fail the calculation.
  * @retval 0 succeed the calculation.
  */
-static int parse_symmetry_basis_layout(void)
+static int parse_symmetry_basis_layout(const struct BindStruct *X)
 {
   const char *value = getenv("HPHI_SYMMETRY_BASIS_LAYOUT");
   const char *staged = getenv("HPHI_SYMMETRY_STAGED_DISTRIBUTED");
   const char *matvec = getenv("HPHI_SYMMETRY_MATVEC");
   const char *exchange = getenv("HPHI_SYMMETRY_VECTOR_EXCHANGE");
   const char *reference = getenv("HPHI_SYMMETRY_HALO_REFERENCE");
+  int layout;
 
   if (staged != NULL) {
     fprintf(stdoutMPI,
@@ -661,43 +662,83 @@ static int parse_symmetry_basis_layout(void)
             "use HPHI_SYMMETRY_BASIS_LAYOUT=distributed.\n");
     return -1;
   }
-  if (value == NULL || strcmp(value, "replicated") == 0) {
-    return SYMMETRY_BASIS_REPLICATED;
-  }
-  if (strcmp(value, "distributed") != 0) {
+  if (value == NULL) {
+    layout = X->Def.iFlgSymmetryBasis == TRUE && X->Def.iCalcType == CG
+                 ? SYMMETRY_BASIS_DISTRIBUTED
+                 : SYMMETRY_BASIS_REPLICATED;
+  } else if (strcmp(value, "replicated") == 0) {
+    layout = SYMMETRY_BASIS_REPLICATED;
+  } else if (strcmp(value, "distributed") == 0) {
+    layout = SYMMETRY_BASIS_DISTRIBUTED;
+  } else {
     fprintf(stdoutMPI,
             "Error: HPHI_SYMMETRY_BASIS_LAYOUT must be "
             "'replicated' or 'distributed', got '%s'.\n",
             value);
     return -1;
   }
+  if (layout == SYMMETRY_BASIS_REPLICATED) {
+    return layout;
+  }
   if (matvec != NULL && strcmp(matvec, "plan") != 0) {
     fprintf(stdoutMPI,
             "Error: distributed symmetry basis requires "
-            "HPHI_SYMMETRY_MATVEC=plan.\n");
+            "HPHI_SYMMETRY_MATVEC=plan. "
+            "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for "
+            "developer rollback.\n");
     return -1;
   }
   if (exchange != NULL && strcmp(exchange, "halo") != 0) {
     fprintf(stdoutMPI,
             "Error: distributed symmetry basis requires "
-            "HPHI_SYMMETRY_VECTOR_EXCHANGE=halo.\n");
+            "HPHI_SYMMETRY_VECTOR_EXCHANGE=halo. "
+            "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for "
+            "developer rollback.\n");
     return -1;
   }
   if (reference != NULL && strcmp(reference, "0") != 0 &&
       strcmp(reference, "off") != 0) {
     fprintf(stdoutMPI,
             "Error: distributed symmetry basis does not support "
-            "HPHI_SYMMETRY_HALO_REFERENCE.\n");
+            "HPHI_SYMMETRY_HALO_REFERENCE. "
+            "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for "
+            "developer rollback.\n");
     return -1;
   }
-  return SYMMETRY_BASIS_DISTRIBUTED;
+  return layout;
 }
 
-static int select_symmetry_basis_layout(void)
+static int select_symmetry_basis_layout(const struct BindStruct *X)
 {
   int layout = SYMMETRY_BASIS_REPLICATED;
-  if (myrank == 0) layout = parse_symmetry_basis_layout();
+  if (myrank == 0) layout = parse_symmetry_basis_layout(X);
   return BcastMPI_i(0, layout);
+}
+
+static void report_symmetry_basis_layout_selection(
+    const struct BindStruct *X,
+    enum SymmetryBasisLayout layout)
+{
+  const char *value;
+  const char *reason;
+  if (myrank != 0 || X->Def.iFlgSymmetryBasis != TRUE) return;
+  value = getenv("HPHI_SYMMETRY_BASIS_LAYOUT");
+  if (value == NULL) {
+    reason = X->Def.iCalcType == CG
+                 ? "default for TransSym CG"
+                 : "default outside TransSym CG";
+  } else if (layout == SYMMETRY_BASIS_REPLICATED &&
+             X->Def.iCalcType == CG) {
+    reason = "explicit rollback for TransSym CG";
+  } else {
+    reason = "explicit environment";
+  }
+  fprintf(stdoutMPI,
+          "Symmetry basis layout: %s (%s).\n",
+          layout == SYMMETRY_BASIS_DISTRIBUTED
+              ? "distributed"
+              : "replicated",
+          reason);
 }
 
 int main(int argc, char* argv[]){
@@ -777,7 +818,7 @@ int main(int argc, char* argv[]){
   if (ValidateSymmetryRuntimeOptions(&(X.Bind)) != 0) {
     exitMPI(-1);
   }
-  symmetry_basis_layout = select_symmetry_basis_layout();
+  symmetry_basis_layout = select_symmetry_basis_layout(&(X.Bind));
   if (symmetry_basis_layout < 0) {
     exitMPI(-1);
   }
@@ -786,6 +827,8 @@ int main(int argc, char* argv[]){
           (enum SymmetryBasisLayout)symmetry_basis_layout) != 0) {
     exitMPI(-1);
   }
+  report_symmetry_basis_layout_selection(
+      &(X.Bind), (enum SymmetryBasisLayout)symmetry_basis_layout);
 
   if (X.Bind.Def.iCalcType == FullDiag
       && X.Bind.Def.iFlgScaLAPACK ==0
@@ -826,7 +869,7 @@ int main(int argc, char* argv[]){
                    : SYMMETRY_BASIS_REPLICATED)) {
         fprintf(stdoutMPI,
                 "Error: symmetry basis layout does not match the "
-                "selected HPHI_SYMMETRY_BASIS_LAYOUT.\n");
+                "selected production layout.\n");
         StopTimer(1100);
         exitMPI(-1);
       }

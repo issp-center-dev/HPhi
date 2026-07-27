@@ -231,6 +231,9 @@ run_mpi_symmetry_case() {
     fi
     grep -q "vector_exchange=halo" "${log_file}"
     grep -q "columns=local/ghost-slots" "${log_file}"
+    grep -q \
+        "Symmetry basis layout: replicated (default outside TransSym CG)." \
+        "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym SpinlessFermion MPI path unexpectedly used site decomposition."
         exit 1
@@ -255,6 +258,9 @@ run_mpi_symmetry_case() {
     grep -q "Symmetry basis: raw_dim=.* sector_dim=${expected_dim} group_order=4" "${log_file}"
     grep -q "vector_exchange=allgather" "${log_file}"
     grep -q "columns=global" "${log_file}"
+    grep -q \
+        "Symmetry basis layout: replicated (explicit environment)." \
+        "${log_file}"
 }
 
 run_mpi_if_available() {
@@ -363,6 +369,9 @@ assert_energy "-2.0" spinless_k0.log
 grep -q "Symmetry basis: raw_dim=4 sector_dim=1 group_order=4" spinless_k0.log
 grep -q "vector_exchange=halo" spinless_k0.log
 grep -q "columns=local/ghost-slots" spinless_k0.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    spinless_k0.log
 run_mpi_if_available k0 "-2.0" 1
 
 rm -rf output
@@ -374,6 +383,9 @@ assert_energy "-2.0" spinless_kpi2.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
 grep -q "vector_exchange=halo" spinless_kpi2.log
 grep -q "columns=local/ghost-slots" spinless_kpi2.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    spinless_kpi2.log
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
     HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
@@ -387,25 +399,49 @@ perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
 rm -rf output
 ../../src/HPhi -e namelist.def > spinless_kpi2_cg_default.log 2>&1
 assert_energy "-2.0" spinless_kpi2_cg_default.log
-grep -q "Symmetry matvec: mode=plan" spinless_kpi2_cg_default.log
-assert_rank_stats_layout spinless_kpi2_cg_default.log replicated
+grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_default.log
+grep -q \
+    "Symmetry basis layout: distributed (default for TransSym CG)." \
+    spinless_kpi2_cg_default.log
+assert_rank_stats_layout spinless_kpi2_cg_default.log distributed
+assert_distributed_rank_stats spinless_kpi2_cg_default.log
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
     ../../src/HPhi -e namelist.def > spinless_kpi2_cg_replicated.log 2>&1
 assert_energy "-2.0" spinless_kpi2_cg_replicated.log
 grep -q "Symmetry matvec: mode=plan" spinless_kpi2_cg_replicated.log
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    spinless_kpi2_cg_replicated.log
 assert_rank_stats_layout spinless_kpi2_cg_replicated.log replicated
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     ../../src/HPhi -e namelist.def > spinless_kpi2_cg_distributed.log 2>&1
 assert_energy "-2.0" spinless_kpi2_cg_distributed.log
 grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_distributed.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    spinless_kpi2_cg_distributed.log
 assert_rank_stats_layout spinless_kpi2_cg_distributed.log distributed
 assert_distributed_rank_stats spinless_kpi2_cg_distributed.log
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" &&
        [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        if ! ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > spinless_kpi2_cg_default_mpi.log 2>&1; then
+            cat spinless_kpi2_cg_default_mpi.log
+            exit 1
+        fi
+        assert_energy "-2.0" spinless_kpi2_cg_default_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            spinless_kpi2_cg_default_mpi.log
+        grep -q \
+            "Symmetry basis layout: distributed (default for TransSym CG)." \
+            spinless_kpi2_cg_default_mpi.log
+        assert_distributed_rank_stats spinless_kpi2_cg_default_mpi.log
         rm -rf output
         if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
             ${MPIRUN} ../../src/HPhi -e namelist.def \

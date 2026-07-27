@@ -173,6 +173,9 @@ test "${diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
 grep -q "Symmetry allocation: raw_dim=20 global_dim=4 local_dim=4 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=15" symmetry.log
 grep -q "Symmetry matvec: mode=plan" symmetry.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    symmetry.log
 basis_line=`awk '/Symmetry basis:/{print NR; exit}' symmetry.log`
 allocation_line=`awk '/Symmetry allocation:/{print NR; exit}' symmetry.log`
 test -n "${basis_line}"
@@ -260,7 +263,7 @@ if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     exit 1
 fi
 grep -q \
-    "developer opt-in for TransSym CG runs only" \
+    "distributed symmetry basis is supported for TransSym CG runs only" \
     symmetry_distributed_lanczos_reject.log
 
 run_mpi_symmetry_case() {
@@ -349,6 +352,9 @@ EOF
         test "${rank_env_diff}" = "0.000000"
         grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
         grep -q "vector_exchange=halo" symmetry_rank_env_mpi.log
+        grep -q \
+            "Symmetry basis layout: replicated (explicit environment)." \
+            symmetry_rank_env_mpi.log
         if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
             cat symmetry_rank_env_mpi.log
             exit 1

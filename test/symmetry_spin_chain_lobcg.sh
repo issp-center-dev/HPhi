@@ -118,8 +118,11 @@ test "${diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry.log
 grep -q "Symmetry allocation: raw_dim=6 global_dim=2 local_dim=2 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=9" symmetry.log
 grep -q "Symmetry LOBPCG allocation: local_dim=2 exct=1 workspace_vector_elements=18" symmetry.log
-grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry.log
+grep -q "Symmetry distributed matvec: global_rows=2" symmetry.log
 grep -q "columns=local/ghost-slots" symmetry.log
+grep -q \
+    "Symmetry basis layout: distributed (default for TransSym CG)." \
+    symmetry.log
 
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
@@ -131,6 +134,9 @@ replicated_diff=`awk -v a="${replicated_energy}" -v b="${sym_energy}" \
 test "${replicated_diff}" = "0.000000"
 grep -q "Symmetry matvec: mode=plan vector_exchange=halo" \
     symmetry_replicated.log
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    symmetry_replicated.log
 
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
@@ -141,6 +147,9 @@ distributed_diff=`awk -v a="${distributed_energy}" -v b="${sym_energy}" \
     'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${distributed_diff}" = "0.000000"
 grep -q "Symmetry distributed matvec:" symmetry_distributed.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    symmetry_distributed.log
 
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
@@ -154,8 +163,11 @@ if [ -n "${MPIRUN}" ]; then
         grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" symmetry_mpi.log
         grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_mpi.log
         grep -Eq "Symmetry LOBPCG allocation: local_dim=[01] exct=1 workspace_vector_elements=(6|12)" symmetry_mpi.log
-        grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry_mpi.log
+        grep -q "Symmetry distributed matvec: global_rows=2" symmetry_mpi.log
         grep -q "columns=local/ghost-slots" symmetry_mpi.log
+        grep -q \
+            "Symmetry basis layout: distributed (default for TransSym CG)." \
+            symmetry_mpi.log
         if grep -q "MPI site separation summary" symmetry_mpi.log; then
             echo "TransSym MPI path unexpectedly used site decomposition."
             exit 1

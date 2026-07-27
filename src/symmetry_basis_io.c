@@ -305,8 +305,8 @@ int ValidateSymmetryBasisLayoutOptions(
   }
   if (def->iFlgSymmetryBasis != TRUE || def->iCalcType != CG) {
     fprintf(stdoutMPI,
-            "Error: HPHI_SYMMETRY_BASIS_LAYOUT=distributed is a "
-            "developer opt-in for TransSym CG runs only.\n");
+            "Error: distributed symmetry basis is supported for "
+            "TransSym CG runs only.\n");
     return -1;
   }
   return 0;
