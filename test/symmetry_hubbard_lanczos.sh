@@ -257,7 +257,7 @@ assert_symmetry_log() {
     fi
 }
 
-assert_rank_stats() {
+assert_replicated_rank_stats() {
     if [ -z "${MPIRUN}" ]; then
         return
     fi
@@ -580,7 +580,8 @@ run_mpi_symmetry_case() {
     expected_digest="$6"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+        HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         HPHI_SYMMETRY_HALO_REFERENCE=1 \
         ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
@@ -591,7 +592,8 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+    assert_replicated_rank_stats \
+        "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 1 allgather
 
     log_file="hubbard_${label}_default_mpi.log"
@@ -607,7 +609,8 @@ run_mpi_symmetry_case() {
     assert_symmetry_log "${expected_dim}" "${log_file}"
     grep -q "vector_exchange=halo" "${log_file}"
     grep -q "columns=local/ghost-slots" "${log_file}"
-    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+    assert_replicated_rank_stats \
+        "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 0 halo
 }
 
@@ -659,7 +662,7 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_rank_stats 4 1 hubbard_k0.log
+assert_replicated_rank_stats 4 1 hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
     invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
@@ -687,7 +690,7 @@ if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_rank_stats 4 1 hubbard_kpi2.log
+assert_replicated_rank_stats 4 1 hubbard_kpi2.log
 run_mpi_if_available kpi2 "-2.0" 4
 
 rm -rf output
@@ -695,13 +698,14 @@ write_calcmod
 write_k0_transsym
 write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
-env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     HPHI_SYMMETRY_HALO_REFERENCE=1 \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-assert_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+assert_replicated_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg_distributed.log 2>&1
@@ -738,7 +742,7 @@ assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_default.log
 assert_symmetry_log 4 hubbard_k0_cg_default.log
 grep -q "vector_exchange=halo" hubbard_k0_cg_default.log
 grep -q "columns=local/ghost-slots" hubbard_k0_cg_default.log
-assert_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
+assert_replicated_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
 run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
 write_calcmod
 

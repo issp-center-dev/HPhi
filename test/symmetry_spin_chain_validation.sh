@@ -469,7 +469,8 @@ write_c4_kpi2_transsym
 write_base_namelist
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
 perl -0pi -e 's/^exct 1$/exct 2/m' modpara.def
-if ../../src/HPhi -e namelist.def > exct_too_large.log 2>&1; then
+if env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+       ../../src/HPhi -e namelist.def > exct_too_large.log 2>&1; then
     cat exct_too_large.log
     exit 1
 fi

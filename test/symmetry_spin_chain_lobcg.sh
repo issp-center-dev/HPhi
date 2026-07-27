@@ -121,6 +121,27 @@ grep -q "Symmetry LOBPCG allocation: local_dim=2 exct=1 workspace_vector_element
 grep -q "Symmetry matvec: mode=plan vector_exchange=halo" symmetry.log
 grep -q "columns=local/ghost-slots" symmetry.log
 
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    ../../src/HPhi -e namelist.def > symmetry_replicated.log 2>&1
+replicated_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+test -n "${replicated_energy}"
+replicated_diff=`awk -v a="${replicated_energy}" -v b="${sym_energy}" \
+    'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+test "${replicated_diff}" = "0.000000"
+grep -q "Symmetry matvec: mode=plan vector_exchange=halo" \
+    symmetry_replicated.log
+
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def > symmetry_distributed.log 2>&1
+distributed_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+test -n "${distributed_energy}"
+distributed_diff=`awk -v a="${distributed_energy}" -v b="${sym_energy}" \
+    'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
+test "${distributed_diff}" = "0.000000"
+grep -q "Symmetry distributed matvec:" symmetry_distributed.log
+
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then

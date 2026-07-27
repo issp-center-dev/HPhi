@@ -238,7 +238,8 @@ run_mpi_symmetry_case() {
 
     log_file="spinless_${label}_allgather_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+        HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
@@ -325,6 +326,31 @@ assert_distributed_rank_stats() {
     ' "${stats}"
 }
 
+assert_rank_stats_layout() {
+    log="$1"
+    expected_layout="$2"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        return
+    fi
+    if ! grep -Eq \
+        "^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "${stats}"; then
+        cat "${log}"
+        cat "${stats}"
+        exit 1
+    fi
+    if [ "${expected_layout}" = "distributed" ]; then
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+            "${stats}"
+    else
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-fields .* status=ok$' \
+            "${stats}"
+    fi
+}
+
 write_calcmod
 write_locspn
 write_modpara 1
@@ -349,7 +375,8 @@ grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
 grep -q "vector_exchange=halo" spinless_kpi2.log
 grep -q "columns=local/ghost-slots" spinless_kpi2.log
 rm -rf output
-env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     ../../src/HPhi -e namelist.def > spinless_kpi2_allgather.log 2>&1
 assert_energy "-2.0" spinless_kpi2_allgather.log
 grep -q "vector_exchange=allgather" spinless_kpi2_allgather.log
@@ -358,10 +385,22 @@ run_mpi_if_available kpi2 "-2.0" 2
 
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
 rm -rf output
+../../src/HPhi -e namelist.def > spinless_kpi2_cg_default.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_default.log
+grep -q "Symmetry matvec: mode=plan" spinless_kpi2_cg_default.log
+assert_rank_stats_layout spinless_kpi2_cg_default.log replicated
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_cg_replicated.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_replicated.log
+grep -q "Symmetry matvec: mode=plan" spinless_kpi2_cg_replicated.log
+assert_rank_stats_layout spinless_kpi2_cg_replicated.log replicated
+rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     ../../src/HPhi -e namelist.def > spinless_kpi2_cg_distributed.log 2>&1
 assert_energy "-2.0" spinless_kpi2_cg_distributed.log
 grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_distributed.log
+assert_rank_stats_layout spinless_kpi2_cg_distributed.log distributed
 assert_distributed_rank_stats spinless_kpi2_cg_distributed.log
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`

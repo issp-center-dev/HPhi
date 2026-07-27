@@ -107,7 +107,7 @@ run_case()
     namelist=$3
     eigenstates=${4:-1}
     execution=${5:-mpi}
-    layout=${6:-replicated}
+    layout=${6:-default}
 
     cat > modpara.def <<EOF
 --------------------
@@ -135,10 +135,16 @@ EOF
             run_hphi "${label}.log" env \
                 HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
                 "${HPHI}" -e "${namelist}"
-        else
+        elif [ "${layout}" = "replicated" ]; then
             run_hphi "${label}.log" env \
                 HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
                 "${HPHI}" -e "${namelist}"
+        elif [ "${layout}" = "default" ]; then
+            run_hphi "${label}.log" \
+                "${HPHI}" -e "${namelist}"
+        else
+            echo "Unknown symmetry basis layout: ${layout}"
+            exit 1
         fi
     elif [ "${layout}" = "distributed" ]; then
         # RUNNER is intentionally word-split because MPIRUN contains options.
@@ -146,12 +152,20 @@ EOF
         run_hphi "${label}.log" env \
             HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
             ${RUNNER} "${HPHI}" -e "${namelist}"
-    else
+    elif [ "${layout}" = "replicated" ]; then
         # RUNNER is intentionally word-split because MPIRUN contains options.
         # shellcheck disable=SC2086
         run_hphi "${label}.log" env \
             HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
             ${RUNNER} "${HPHI}" -e "${namelist}"
+    elif [ "${layout}" = "default" ]; then
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
+    else
+        echo "Unknown symmetry basis layout: ${layout}"
+        exit 1
     fi
     test -s output/zvo_energy.dat
     test -s output/zvo_Lanczos_Step.dat
@@ -200,11 +214,33 @@ check_energy_close()
     '
 }
 
+check_rank_stats_layout()
+{
+    stats=$1
+    expected_layout=$2
+    if [ ! -f "${stats}" ]; then
+        return
+    fi
+    grep -Eq \
+        "^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "${stats}"
+    if [ "${expected_layout}" = "distributed" ]; then
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+            "${stats}"
+    else
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-fields .* status=ok$' \
+            "${stats}"
+    fi
+}
+
 # The normal-basis run is an energy reference.  Run it in serial because its
 # site decomposition requires a power-of-two MPI size, while TransSym supports
 # arbitrary MPI sizes and is the path under test here.
 run_case normal_precg0 0 namelist_normal.def 1 serial
 run_case symmetry_precg0 0 namelist_symmetry.def
+run_case symmetry_replicated_precg0 0 namelist_symmetry.def 1 mpi replicated
 run_case symmetry_staged_precg0 0 namelist_symmetry.def 1 mpi distributed
 run_case symmetry_precg1 1 namelist_symmetry.def
 run_case symmetry_exct4_precg0 0 namelist_symmetry.def 4
@@ -212,6 +248,7 @@ run_case symmetry_exct4_precg1 1 namelist_symmetry.def 4
 
 check_convergence normal_precg0_steps.dat
 check_convergence symmetry_precg0_steps.dat
+check_convergence symmetry_replicated_precg0_steps.dat
 check_convergence symmetry_staged_precg0_steps.dat
 check_convergence symmetry_precg1_steps.dat
 check_convergence symmetry_exct4_precg0_steps.dat
@@ -219,25 +256,37 @@ check_convergence symmetry_exct4_precg1_steps.dat
 
 normal_energy=$(extract_energy normal_precg0_energy.dat)
 symmetry_precg0_energy=$(extract_energy symmetry_precg0_energy.dat)
+symmetry_replicated_precg0_energy=$(
+    extract_energy symmetry_replicated_precg0_energy.dat
+)
 symmetry_staged_precg0_energy=$(extract_energy symmetry_staged_precg0_energy.dat)
 symmetry_precg1_energy=$(extract_energy symmetry_precg1_energy.dat)
 symmetry_exct4_precg0_energy=$(extract_energy symmetry_exct4_precg0_energy.dat)
 symmetry_exct4_precg1_energy=$(extract_energy symmetry_exct4_precg1_energy.dat)
 symmetry_precg0_residual=$(extract_residual symmetry_precg0_steps.dat)
+symmetry_replicated_precg0_residual=$(
+    extract_residual symmetry_replicated_precg0_steps.dat
+)
 symmetry_staged_precg0_residual=$(
     extract_residual symmetry_staged_precg0_steps.dat
 )
 test -n "${normal_energy}"
 test -n "${symmetry_precg0_energy}"
+test -n "${symmetry_replicated_precg0_energy}"
 test -n "${symmetry_staged_precg0_energy}"
 test -n "${symmetry_precg1_energy}"
 test -n "${symmetry_exct4_precg0_energy}"
 test -n "${symmetry_exct4_precg1_energy}"
 test -n "${symmetry_precg0_residual}"
+test -n "${symmetry_replicated_precg0_residual}"
 test -n "${symmetry_staged_precg0_residual}"
 
 check_energy_close "${symmetry_precg0_energy}" "${symmetry_precg1_energy}"
+check_energy_close \
+    "${symmetry_precg0_energy}" "${symmetry_replicated_precg0_energy}"
 check_energy_close "${symmetry_precg0_energy}" "${symmetry_staged_precg0_energy}"
+check_energy_close \
+    "${symmetry_precg0_residual}" "${symmetry_replicated_precg0_residual}"
 check_energy_close \
     "${symmetry_precg0_residual}" "${symmetry_staged_precg0_residual}"
 check_energy_close "${normal_energy}" "${symmetry_precg0_energy}"
@@ -245,7 +294,12 @@ check_energy_close "${normal_energy}" "${symmetry_precg1_energy}"
 check_energy_close "${normal_energy}" "${symmetry_exct4_precg0_energy}"
 check_energy_close "${normal_energy}" "${symmetry_exct4_precg1_energy}"
 
-for log in symmetry_precg0.log symmetry_precg1.log; do
+check_rank_stats_layout symmetry_precg0_rank_stats.dat replicated
+check_rank_stats_layout symmetry_replicated_precg0_rank_stats.dat replicated
+check_rank_stats_layout symmetry_staged_precg0_rank_stats.dat distributed
+
+for log in symmetry_precg0.log symmetry_replicated_precg0.log \
+           symmetry_precg1.log; do
     grep -q \
         "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
     grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
