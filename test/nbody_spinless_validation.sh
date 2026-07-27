@@ -162,6 +162,12 @@ expect_fail bad_spin_interall "Spin index of NBodyInterAll is incorrect"
 expect_fail bad_spin_nbodyg "Spin index of NBodyG is incorrect"
 expect_fail bad_pair "Off-diagonal NBodyInterAll terms must appear as adjacent Hermite pairs"
 expect_fail diag_im "Diagonal NBodyInterAll term has a finite imaginary part"
-expect_fail bad_fulldiag "NBodyInterAll is not yet supported in FullDiag for SpinlessFermion"
+# SpinlessFermion + FullDiag is now rejected outright at startup (readdef.c
+# cErrSpinlessFullDiag gate: the hopping is not built into the FullDiag
+# Hamiltonian and the particle number is not populated), which fires BEFORE the
+# NBodyInterAll-in-FullDiag capability check. The bad_fulldiag fixture still
+# exercises rejection of this SpinlessFermion FullDiag input; only the reason it
+# reports changed to the broader startup gate.
+expect_fail bad_fulldiag "not currently supported for FullDiag"
 
 echo "Spinless NBody validation accepts cross-site fermion factors and rejects malformed inputs."

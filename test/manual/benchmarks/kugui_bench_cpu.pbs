@@ -1,0 +1,67 @@
+#!/bin/bash
+#PBS -q F1cpu
+#PBS -l select=1:ncpus=128:mpiprocs=128
+#PBS -l walltime=08:00:00
+#PBS -N hphi_bench_cpu
+#PBS -j oe
+
+# Manual-appendix CPU sweep on kugui (AMD EPYC 7763, 16 cores per config):
+#   Solver 0 = 1 proc x 16 threads, Solver 1/3 = 16 procs x 1 thread.
+# SpinGC chain L=8,10,12,14 (N=2^L). Rebuilds HPhi first.
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+PREFIX=$HOME/opt/elpa-2025.06-cpu
+export LD_LIBRARY_PATH="$PREFIX/lib:$MKLROOT/lib/intel64:$LD_LIBRARY_PATH"
+export I_MPI_ADJUST_GATHERV=3
+
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+: > "$BASE/status_cpu.log"
+
+# Rebuild HPhi from the synced tree
+cd $HOME/HPhi-elpa/build_kugui || exit 1
+cmake --build . -j 32 --target HPhi > "$BASE/rebuild_cpu.log" 2>&1 \
+  || { echo BUILD_FAILED >> "$BASE/status_cpu.log"; exit 1; }
+HPHI=$HOME/HPhi-elpa/build_kugui/src/HPhi
+echo "BUILD_OK $(date '+%F %T')" >> "$BASE/status_cpu.log"
+
+run_one () {
+  local L=$1 tag=$2 om=$3 np=$4 omp=$5 extra=$6
+  local d=$BASE/cpu_L${L}_${tag}
+  rm -rf "$d"; mkdir -p "$d"; cd "$d" || return 1
+  cat > stan.in <<EOF
+model = "SpinGC"
+method = "FullDiag"
+lattice = "chain"
+L = $L
+J = 1.0
+Gamma = 0.5
+2S = 1
+outputmode = "$om"
+EOF
+  "$HPHI" -sdry stan.in > sdry.log 2>&1
+  printf "%b" "$extra" >> calcmod.def
+  export OMP_NUM_THREADS=$omp
+  local t0=$SECONDS
+  mpirun -n "$np" "$HPHI" -e namelist.def > run.log 2>&1
+  local rc=$?
+  echo "L=$L tag=$tag rc=$rc wall=$((SECONDS-t0))s" >> "$BASE/status_cpu.log"
+  rm -f output/zvo_cisajs* output/zvo_cisajscktalt* 2>/dev/null
+  cd "$BASE" || return 1
+}
+
+for L in 8 10 12 14; do
+  run_one "$L" s0    none        1  16 "Solver 0\n"
+  run_one "$L" s1    none        16 1  "Solver 1\n"
+  run_one "$L" s3cpu none        16 1  "Solver 3\nNGPU 0\n"
+  run_one "$L" m0    correlation 16 1  "Solver 3\nNGPU 0\nExpecMode 0\nOutputGreenFormat 1\n"
+  run_one "$L" m1    correlation 16 1  "Solver 3\nNGPU 0\nExpecMode 1\nOutputGreenFormat 1\n"
+  run_one "$L" m2    correlation 16 1  "Solver 3\nNGPU 0\nExpecMode 2\nOutputGreenFormat 1\n"
+done
+echo ALL_DONE_CPU >> "$BASE/status_cpu.log"

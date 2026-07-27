@@ -49,6 +49,7 @@
 #include "wrapperMPI.h"
 #include "mltplyCommon.h"
 #include "mltplySpinCore.h"
+#include "expec_trace_internal.h"
 
 /******************************************************************************/
 //[s] GetInfo functions
@@ -270,6 +271,56 @@ int child_SpinGC_CisAit(
   }
 }/*int child_SpinGC_CisAit*/
 
+/**
+@brief Trace-probe adapter for ::child_Spin_CisAis (canonical half-spin diagonal
+one-body). The underlying function is already a pure map, so the probe simply
+reports it: diagonal, always returns 1 with *kprime_out = j-1 and *amp_out the
+0/1 spin match.
+*/
+int child_Spin_CisAis_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int sigma1,
+  long int *kprime_out, double complex *amp_out
+) {
+  *kprime_out = (long int)j - 1;
+  *amp_out = (double complex)child_Spin_CisAis(j, X, is1_spin, sigma1);
+  return 1;
+}/*int child_Spin_CisAis_TraceProbe*/
+/**
+@brief Trace-probe adapter for ::child_SpinGC_CisAis (grand-canonical half-spin
+diagonal one-body).
+*/
+int child_SpinGC_CisAis_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int sigma1,
+  long int *kprime_out, double complex *amp_out
+) {
+  *kprime_out = (long int)j - 1;
+  *amp_out = (double complex)child_SpinGC_CisAis(j, X, is1_spin, sigma1);
+  return 1;
+}/*int child_SpinGC_CisAis_TraceProbe*/
+/**
+@brief Trace-probe adapter for ::child_SpinGC_CisAit (grand-canonical half-spin
+transverse off-diagonal one-body). Bare-bit flip: on a surviving flip *kprime_out
+= tmp_off (0-based) and *amp_out = the sign (+1); otherwise annihilated.
+*/
+int child_SpinGC_CisAit_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int is1_spin, long unsigned int sigma2,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off = 0;
+  int sgn = child_SpinGC_CisAit(j, X, is1_spin, sigma2, &tmp_off);
+  if (sgn != 0) {
+    *kprime_out = (long int)tmp_off;
+    *amp_out = (double complex)sgn;
+    return 1;
+  }
+  *kprime_out = -1;
+  *amp_out = 0.0;
+  return 0;
+}/*int child_SpinGC_CisAit_TraceProbe*/
+
 /******************************************************************************/
 //[e] core routines
 /******************************************************************************/
@@ -308,6 +359,33 @@ int child_exchange_spin_element(
     return 0;
   }
 }/*int child_exchange_spin_element*/
+/**
+@brief Trace-probe adapter for ::child_exchange_spin_element (canonical half-spin
+two-body EXCHANGE branch). The underlying function is already a pure map
+(GetOffComp yields a 1-based canonical index), so the probe reports
+*kprime_out = tmp_off-1 and *amp_out = the 0/1 exchange sign. NOTE: the Mode-1
+caller (expec_cisajscktalt_SpinHalf's exchange branch) multiplies this
+contribution by the raw sign ONLY, deliberately NOT by tmp_V -- so this probe
+reports the bare sign and the extraction driver does not reintroduce tmp_V.
+See docs/superpowers/specs/2026-07-11-expec-call-inventory.md 2c.
+*/
+int child_exchange_spin_element_TraceProbe(
+  long unsigned int j, struct BindStruct *X,
+  long unsigned int isA_up, long unsigned int isB_up,
+  long unsigned int sigmaA, long unsigned int sigmaB,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off = 0;
+  int flag = child_exchange_spin_element(j, X, isA_up, isB_up, sigmaA, sigmaB, &tmp_off);
+  if (flag != 0) {
+    *kprime_out = (long int)tmp_off - 1;
+    *amp_out = (double complex)flag;
+    return 1;
+  }
+  *kprime_out = -1;
+  *amp_out = 0.0;
+  return 0;
+}/*int child_exchange_spin_element_TraceProbe*/
 /**
 @brief Multiply Hamiltonian of exchange term of canonical spin system
 @return @f$\langle v_1 | H_{\rm this}| v_1 \rangle@f$
@@ -433,6 +511,21 @@ canonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::CisAisCisAis_spin_element (canonical half-spin diagonal).
+@return signed spin-match product (0/1); kprime_out = j-1 (always valid).
+*/
+static int CisAisCisAis_spin_element_map(
+  long unsigned int j, long unsigned int isA_up, long unsigned int isB_up,
+  long unsigned int org_sigma2, long unsigned int org_sigma4,
+  struct BindStruct *X, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_Spin_CisAis(j, X, isB_up, org_sigma4);
+  tmp_sgn *= child_Spin_CisAis(j, X, isA_up, org_sigma2);
+  *kprime_out = (long int)j - 1;
+  return tmp_sgn;
+}
 double complex CisAisCisAis_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
@@ -445,18 +538,32 @@ double complex CisAisCisAis_spin_element(
   struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0;
 
-  tmp_sgn = child_Spin_CisAis(j, X, isB_up, org_sigma4);
-  tmp_sgn *= child_Spin_CisAis(j, X, isA_up, org_sigma2);
+  tmp_sgn = CisAisCisAis_spin_element_map(j, isA_up, isB_up, org_sigma2, org_sigma4, X, &kprime);
   dmv = tmp_v1[j] * tmp_sgn * tmp_V;
   if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-    tmp_v0[j] += dmv;
+    tmp_v0[kprime + 1] += dmv;
   }
-  dam_pr = conj(tmp_v1[j]) * dmv;
+  dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
   return dam_pr;
 }/*double complex CisAisCisAis_spin_element*/
+/**
+@brief Trace-probe adapter for ::CisAisCisAis_spin_element (canonical half-spin
+diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match.
+*/
+int CisAisCisAis_spin_element_TraceProbe(
+  long unsigned int j, long unsigned int isA_up, long unsigned int isB_up,
+  long unsigned int org_sigma2, long unsigned int org_sigma4,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  int tmp_sgn = CisAisCisAis_spin_element_map(j, isA_up, isB_up, org_sigma2, org_sigma4, X, kprime_out);
+  *amp_out = tmp_V * (double complex)tmp_sgn;
+  return 1;
+}/*int CisAisCisAis_spin_element_TraceProbe*/
 
 //[e]Spin
 
@@ -468,6 +575,21 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAisCisAis_spin_element (grand-canonical diagonal).
+@return signed spin-match product (0/1); kprime_out = j-1 (always valid).
+*/
+static int GC_CisAisCisAis_spin_element_map(
+  long unsigned int j, long unsigned int isA_up, long unsigned int isB_up,
+  long unsigned int org_sigma2, long unsigned int org_sigma4,
+  struct BindStruct *X, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
+  tmp_sgn *= child_SpinGC_CisAis(j, X, isA_up, org_sigma2);
+  *kprime_out = (long int)j - 1;
+  return tmp_sgn;
+}
 double complex GC_CisAisCisAis_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int isA_up,//!<[in] Bit mask for spin 1
@@ -480,26 +602,39 @@ double complex GC_CisAisCisAis_spin_element(
   struct BindStruct *X//!<[inout]
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv = 0;
   double complex dam_pr = 0;
 
-  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
-  tmp_sgn *= child_SpinGC_CisAis(j, X, isA_up, org_sigma2);
+  tmp_sgn = GC_CisAisCisAis_spin_element_map(j, isA_up, isB_up, org_sigma2, org_sigma4, X, &kprime);
   if (tmp_sgn != 0) {
     dmv = tmp_v1[j] * tmp_sgn * tmp_V;
     if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-      tmp_v0[j] += dmv;
-      dam_pr = conj(tmp_v1[j]) * dmv;
+      tmp_v0[kprime + 1] += dmv;
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
     }else if(X->Large.mode == H_CORR){
-      dam_pr = conj(tmp_v0[j]) * dmv;
-      //printf("j=%d tmp_v1=%lf tmp_V=%lf \n",j,creal(tmp_v1[j]),creal(tmp_V));
-      //printf("j=%d tmp_v0=%lf dmv=%lf \n",j,creal(tmp_v0[j]),creal(dmv));
+      dam_pr = conj(tmp_v0[kprime + 1]) * dmv;
     }else{
-      dam_pr = conj(tmp_v1[j]) * dmv;
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
     }
   }
   return dam_pr;
 }/*double complex GC_CisAisCisAis_spin_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAisCisAis_spin_element (SpinGC-half
+diagonal two-body). Diagonal: always returns 1, *amp_out = tmp_V * signed match.
+The H_CORR branch is never used by extraction (M_CORR only).
+*/
+int GC_CisAisCisAis_spin_element_TraceProbe(
+  long unsigned int j, long unsigned int isA_up, long unsigned int isB_up,
+  long unsigned int org_sigma2, long unsigned int org_sigma4,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  int tmp_sgn = GC_CisAisCisAis_spin_element_map(j, isA_up, isB_up, org_sigma2, org_sigma4, X, kprime_out);
+  *amp_out = tmp_V * (double complex)tmp_sgn;
+  return 1;
+}/*int GC_CisAisCisAis_spin_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{is} c_{it}^\dagger c_{iu}@f$ term of 
 grandcanonical spsin system
@@ -507,6 +642,28 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAisCitAiu_spin_element. child_SpinGC_CisAit
+(bare-bit *tmp_off) gated by child_SpinGC_CisAis. @return signed result
+(0 = dead); kprime_out = *tmp_off on survival, else -1.
+*/
+static int GC_CisAisCitAiu_spin_element_map(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, tmp_off);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_SpinGC_CisAis((*tmp_off + 1), X, isA_up, org_sigma2);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAisCitAiu_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
@@ -520,25 +677,42 @@ double complex GC_CisAisCitAiu_spin_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, tmp_off);
+  tmp_sgn = GC_CisAisCitAiu_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAis((*tmp_off + 1), X, isA_up, org_sigma2);
-    if (tmp_sgn != 0) {
-      dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
-      }else if(X->Large.mode == H_CORR){
-        dam_pr = conj(tmp_v0[*tmp_off+1]) * dmv;
-      }else{
-        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
-      }
-    }/*if (tmp_sgn != 0)*/
+    dmv = tmp_v1[j] * tmp_sgn * tmp_V;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }else if(X->Large.mode == H_CORR){
+      dam_pr = conj(tmp_v0[kprime + 1]) * dmv;
+    }else{
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
 }/*double complex GC_CisAisCitAiu_spin_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAisCitAiu_spin_element (SpinGC-half
+two-body).
+*/
+int GC_CisAisCitAiu_spin_element_TraceProbe(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off = 0;
+  int tmp_sgn = GC_CisAisCitAiu_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAisCitAiu_spin_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iu}@f$ term of 
 grandcanonical spsin system
@@ -546,6 +720,28 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAitCiuAiu_spin_element. child_SpinGC_CisAis gate
+then child_SpinGC_CisAit (bare-bit *tmp_off). @return signed result (0 = dead);
+kprime_out = *tmp_off on survival, else -1.
+*/
+static int GC_CisAitCiuAiu_spin_element_map(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  struct BindStruct *X, long unsigned int *tmp_off, long int *kprime_out
+) {
+  int tmp_sgn;
+  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_SpinGC_CisAit(j, X, isA_up, org_sigma2, tmp_off);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAitCiuAiu_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
@@ -559,25 +755,42 @@ double complex GC_CisAitCiuAiu_spin_element(
   long unsigned int *tmp_off//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_SpinGC_CisAis(j, X, isB_up, org_sigma4);
+  tmp_sgn = GC_CisAitCiuAiu_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, tmp_off, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAit(j, X, isA_up, org_sigma2, tmp_off);
-    if (tmp_sgn != 0) {
-      dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off + 1] += dmv;
-        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
-      }else if(X->Large.mode == H_CORR){
-        dam_pr = conj(tmp_v0[*tmp_off+1]) * dmv;
-      }else{
-        dam_pr = conj(tmp_v1[*tmp_off + 1]) * dmv;
-      }
-    }/*if (tmp_sgn != 0)*/
+    dmv = tmp_v1[j] * tmp_sgn * tmp_V;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }else if(X->Large.mode == H_CORR){
+      dam_pr = conj(tmp_v0[kprime + 1]) * dmv;
+    }else{
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
 }/*double complex GC_CisAitCiuAiu_spin_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAitCiuAiu_spin_element (SpinGC-half
+two-body).
+*/
+int GC_CisAitCiuAiu_spin_element_TraceProbe(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off = 0;
+  int tmp_sgn = GC_CisAitCiuAiu_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, &tmp_off, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAitCiuAiu_spin_element_TraceProbe*/
 /**
 @brief Compute @f$c_{is}^\dagger c_{it} c_{iu}^\dagger c_{iv}@f$ term of
 grandcanonical spsin system
@@ -585,6 +798,30 @@ grandcanonical spsin system
 @author Takahiro Misawa (The University of Tokyo)
 @author Kazuyoshi Yoshimi (The University of Tokyo)
 */
+/**
+@brief Mapping core of ::GC_CisAitCiuAiv_spin_element. Two chained
+child_SpinGC_CisAit (intermediate bare-bit tmp_off_1, final bare-bit
+*tmp_off_2). @return signed result (0 = dead); kprime_out = *tmp_off_2 on
+survival, else -1.
+*/
+static int GC_CisAitCiuAiv_spin_element_map(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  struct BindStruct *X, long unsigned int *tmp_off_2, long int *kprime_out
+) {
+  int tmp_sgn;
+  long unsigned int tmp_off_1;
+  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, &tmp_off_1);
+  if (tmp_sgn != 0) {
+    tmp_sgn *= child_SpinGC_CisAit((tmp_off_1 + 1), X, isA_up, org_sigma2, tmp_off_2);
+    if (tmp_sgn != 0) {
+      *kprime_out = (long int)(*tmp_off_2);
+      return tmp_sgn;
+    }
+  }
+  *kprime_out = -1;
+  return 0;
+}
 double complex GC_CisAitCiuAiv_spin_element(
   long unsigned int j,//!<[in] Index of initial wavefunction
   long unsigned int org_sigma2,//!<[in] Target for spin 1
@@ -598,24 +835,40 @@ double complex GC_CisAitCiuAiv_spin_element(
   long unsigned int *tmp_off_2//!<[out] Index of final wavefunction
 ) {
   int tmp_sgn;
-  long unsigned int tmp_off_1;
+  long int kprime;
   double complex dmv;
   double complex dam_pr = 0 + 0 * I;
-  tmp_sgn = child_SpinGC_CisAit(j, X, isB_up, org_sigma4, &tmp_off_1);
+  tmp_sgn = GC_CisAitCiuAiv_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, tmp_off_2, &kprime);
   if (tmp_sgn != 0) {
-    tmp_sgn *= child_SpinGC_CisAit((tmp_off_1 + 1), X, isA_up, org_sigma2, tmp_off_2);
-    if (tmp_sgn != 0) {
-      dmv = tmp_v1[j] * tmp_sgn * tmp_V;
-      if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
-        tmp_v0[*tmp_off_2 + 1] += dmv;
-        dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
-      }else if(X->Large.mode == H_CORR){
-        dam_pr = conj(tmp_v0[*tmp_off_2+1]) * dmv;
-      }else{
-        dam_pr = conj(tmp_v1[*tmp_off_2 + 1]) * dmv;
-      }
-    }/*if (tmp_sgn != 0)*/
+    dmv = tmp_v1[j] * tmp_sgn * tmp_V;
+    if (X->Large.mode == M_MLTPLY || X->Large.mode == M_CALCSPEC) { // for multply
+      tmp_v0[kprime + 1] += dmv;
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }else if(X->Large.mode == H_CORR){
+      dam_pr = conj(tmp_v0[kprime + 1]) * dmv;
+    }else{
+      dam_pr = conj(tmp_v1[kprime + 1]) * dmv;
+    }
   }/*if (tmp_sgn != 0)*/
   return dam_pr;
 }/*double complex GC_CisAitCiuAiv_spin_element*/
+/**
+@brief Trace-probe adapter for ::GC_CisAitCiuAiv_spin_element (SpinGC-half
+two-body).
+*/
+int GC_CisAitCiuAiv_spin_element_TraceProbe(
+  long unsigned int j, long unsigned int org_sigma2, long unsigned int org_sigma4,
+  long unsigned int isA_up, long unsigned int isB_up,
+  double complex tmp_V, struct BindStruct *X,
+  long int *kprime_out, double complex *amp_out
+) {
+  long unsigned int tmp_off_2 = 0;
+  int tmp_sgn = GC_CisAitCiuAiv_spin_element_map(j, org_sigma2, org_sigma4, isA_up, isB_up, X, &tmp_off_2, kprime_out);
+  if (tmp_sgn != 0) {
+    *amp_out = tmp_V * (double complex)tmp_sgn;
+    return 1;
+  }
+  *amp_out = 0.0;
+  return 0;
+}/*int GC_CisAitCiuAiv_spin_element_TraceProbe*/
 //[e]GC Spin

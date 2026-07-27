@@ -29,6 +29,7 @@ A numerical solver package for a wide range of quantum lattice models including 
 - C compiler (Intel, GCC, Fujitsu, etc.)
 - LAPACK library (Intel MKL, OpenBLAS, etc.)
 - MPI library (optional, for parallel computation)
+- Optional high-performance backends for full diagonalization (ScaLAPACK, MAGMA, ELPA): see the installation guide in the user manual
 
 ### Installation
 

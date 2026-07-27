@@ -1,0 +1,62 @@
+#!/bin/bash
+#PBS -q F2acc
+#PBS -l select=2:ncpus=64:ngpus=2:mpiprocs=2
+#PBS -l walltime=08:00:00
+#PBS -N hphi_l10_gpu
+#PBS -j oe
+
+# Protocol item 18 (moved from clavius to kugui): L=10 Hubbard chain
+# (N=63504) FullDiag, Solver 3 GPU, 2 nodes x 2 A100 (np=4, NGPU 2).
+#   m0_none: ExpecMode 0, energy-only observables (GF at N=63504 with
+#            per-state collectives is infeasible by design -- recorded).
+#   m1_corr / m2_corr: ExpecMode 1/2 with all-states one-+two-body GF
+#            (aggregate format).
+# Also validates the max-size estimate (device memory headroom at
+# N~6.4e4 on 40 GB A100s).
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi cuda/12.4
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+PREFIX=$HOME/opt/elpa-2025.06-a100
+export LD_LIBRARY_PATH="$PREFIX/lib:$MKLROOT/lib/intel64:$LD_LIBRARY_PATH"
+export I_MPI_ADJUST_GATHERV=3
+HPHI=$HOME/HPhi-elpa/build_kugui_gpu/src/HPhi
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+echo "L10_GPU_START $(date '+%F %T')" >> "$BASE/status_l10.log"
+sort -u "$PBS_NODEFILE" >> "$BASE/status_l10.log"
+
+run_one () {
+  local tag=$1 om=$2 extra=$3
+  local d=$BASE/l10_${tag}
+  rm -rf "$d"; mkdir -p "$d"; cd "$d" || return 1
+  cat > stan.in <<EOF
+model = "FermionHubbard"
+method = "FullDiag"
+lattice = "chain"
+L = 10
+t = 1.0
+U = 4.0
+nelec = 10
+2Sz = 0
+outputmode = "$om"
+EOF
+  "$HPHI" -sdry stan.in > sdry.log 2>&1
+  printf "%b" "$extra" >> calcmod.def
+  export OMP_NUM_THREADS=16
+  local t0=$SECONDS
+  /usr/bin/time -v mpirun -n 4 -ppn 2 "$HPHI" -e namelist.def > run.log 2> time.log
+  local rc=$?
+  echo "tag=$tag rc=$rc wall=$((SECONDS-t0))s $(date '+%T')" >> "$BASE/status_l10.log"
+  rm -f output/zvo_cisajs* output/zvo_cisajscktalt* 2>/dev/null
+  cd "$BASE" || return 1
+}
+
+run_one m2_corr correlation "Solver 3\nNGPU 2\nExpecMode 2\nOutputGreenFormat 1\n"
+run_one m1_corr correlation "Solver 3\nNGPU 2\nExpecMode 1\nOutputGreenFormat 1\n"
+run_one m0_none none        "Solver 3\nNGPU 2\nExpecMode 0\n"
+echo ALL_DONE_L10 >> "$BASE/status_l10.log"

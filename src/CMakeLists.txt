@@ -54,8 +54,8 @@ target_sources(HPhi PRIVATE
 
 # Full diagonalization
 target_sources(HPhi PRIVATE
-  CalcByFullDiag.c lapack_diag.c makeHam.c
-  matrixlapack.c matrixlapack_magma.c matrixscalapack.c
+  CalcByFullDiag.c lapack_diag.c makeHam.c expec_trace_ham.c
+  matrixlapack.c matrixlapack_magma.c matrixlapack_elpa.c matrixscalapack.c
 )
 
 # Spectrum calculations
@@ -76,6 +76,9 @@ target_sources(HPhi PRIVATE
 target_sources(HPhi PRIVATE
   expec_cisajs.c expec_cisajscktaltdc.c expec_totalspin.c
   nbody_correlation.c phys.c expec_energy_flct.c
+  phys_distributed.c phys_distributed_local.c expec_trace.c
+  expec_trace_finalize.c
+  rearray_interactions.c
 )
 
 # Common utilities
@@ -99,6 +102,14 @@ target_sources(HPhi PRIVATE
   ${STDFACE_DIR}/src/Wannier90.c
 )
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
+# expec_trace.c uses clock_gettime(CLOCK_MONOTONIC); on older glibc (< 2.17)
+# that symbol lives in librt. Link it when such a librt exists (harmless
+# no-op on modern glibc; absent and skipped on macOS).
+include(CheckLibraryExists)
+check_library_exists(rt clock_gettime "" HPHI_CLOCK_GETTIME_IN_RT)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(HPhi rt)
+endif()
 if(TARGET OpenMP::OpenMP_C)
   target_link_libraries(HPhi OpenMP::OpenMP_C)
 endif()
@@ -110,16 +121,22 @@ if(MAGMA_FOUND)
   target_link_libraries(HPhi ${MAGMA_C_LIBRARIES})
   add_definitions(-D_MAGMA)
 endif(MAGMA_FOUND)
+if(ELPA_FOUND)
+  include_directories(${ELPA_INCLUDE_DIRS})
+  target_compile_options(HPhi PRIVATE ${ELPA_COMPILE_OPTIONS})
+  target_link_libraries(HPhi ${ELPA_LIBRARIES})
+  add_definitions(-D_ELPA)
+  if(ELPA_HAVE_SETUP_GPU)
+    add_definitions(-D_ELPA_GPU)
+  endif(ELPA_HAVE_SETUP_GPU)
+endif(ELPA_FOUND)
 if(CUDA_FOUND)
   target_link_libraries(HPhi ${CUDA_LIBRARIES})
 endif(CUDA_FOUND)
 
 if(USE_SCALAPACK)
-  string(REGEX REPLACE "-L[ ]+" "-L" sc_libs "${SCALAPACK_LIBRARIES}")
-  string(REGEX REPLACE "[ ]+" ";" sc_libs "${sc_libs}")
-  foreach(sc_lib IN LISTS sc_libs)
-    target_link_libraries(HPhi ${sc_lib})
-  endforeach(sc_lib)
+  target_link_libraries(HPhi ${SCALAPACK_LIBRARIES}
+    ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES})
   message(STATUS "SCALAPACK_LIBRARIES: ${SCALAPACK_LIBRARIES}")
 endif(USE_SCALAPACK)
 

@@ -202,6 +202,7 @@ add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
 add_hphi_test_with_srcdir(green_output_format)
+add_hphi_test_with_srcdir(check_expec_local_calls)
 add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
@@ -372,6 +373,13 @@ set_tests_properties(
 # Full Diag
 #
 add_hphi_test(fulldiag_hubbard_chain)
+add_hphi_test(fulldiag_solver_keyword)
+if(USE_SCALAPACK)
+  set_property(TEST fulldiag_solver_keyword APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif(USE_SCALAPACK)
+if(USE_ELPA)
+  set_property(TEST fulldiag_solver_keyword APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif(USE_ELPA)
 add_test(
     NAME fulldiag_Hamiltonian_IO
     COMMAND ${CMAKE_SOURCE_DIR}/test/fulldiag_ham_io.sh
@@ -389,6 +397,7 @@ add_hphi_test(fulldiag_kondogc_chain)
 add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_spingc_nbody_interall_compare)
 add_hphi_test(fulldiag_genspingc_ladder)
+add_hphi_test(fulldiag_spingc_gamma)
 
 # Full diag test labels
 set_tests_properties(
@@ -409,7 +418,7 @@ set_tests_properties(
     fulldiag_tj_kondo_nbody_interall
     PROPERTIES LABELS "fulldiag;tj;tjgc;kondo;nbody")
 set_tests_properties(
-    fulldiag_spin_tri fulldiag_spingc_tri
+    fulldiag_spin_tri fulldiag_spingc_tri fulldiag_spingc_gamma
     PROPERTIES LABELS "fulldiag;spin")
 set_tests_properties(
     fulldiag_genspin_ladder fulldiag_genspingc_ladder
@@ -482,6 +491,193 @@ add_test(NAME unittest_setmemory_zero_size_common
     COMMAND unittest_setmemory_zero_size_common)
 set_tests_properties(unittest_setmemory_zero_size_common
     PROPERTIES LABELS "unit;setmemory")
+
+# Unit test: ExpecMode 2 trace-kernel mapping-probe extraction (phase 3b Task 2)
+# and the ONEBODY streaming kernel (phase 3b Task 3). Serial, no MPI: GC
+# models only (HubbardGC n=256, SpinGC-half n=16), so the bare-bit basis needs
+# no list_1/list_2 and this runs as a plain executable in BOTH the MPI and
+# non-MPI builds (registered here, outside if(MPI_FOUND)).
+# Links only the real sources in the extraction closure -- expec_trace.c (the
+# drivers, plus, since Task 3, TraceStreamOneBody() and the ONEBODY output
+# phase), the two Core files (the co-located *_TraceProbe adapters + element
+# functions), rearray_interactions.c (the REAL two-body reordering, its own TU
+# precisely so this test does not need a drift-prone copy), bitcalc.c
+# (GetSplitBitByModel/GetOffComp/SgnBit), global.c (which provides the
+# list_1/Tpow globals plus `myrank` and stdoutMPI), and ErrorMessage.c (the
+# cErr* strings bitcalc references). Task 3 added wrapperMPI.c/FileIO.c/
+# green_output.c/splash.c to this list: expec_trace.c's
+# (never-called-by-this-test) output phase now references
+# childfopenMPI()/GreenOutput*() symbols, so the TU needs them at LINK time
+# even though the test only exercises TraceStreamOneBody() (pure buffer
+# fill, no I/O) and TraceBuildPlan(), never expec_trace_owned_states()
+# itself; splash.c is transitively required because wrapperMPI.c's
+# (likewise never-called) InitializeMPI() references splash(). The
+# MPI-heavy element libraries are still NOT pulled in.
+add_executable(expec_trace_map_check unit/expec_trace_map_check.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/FileIO.c
+    ${CMAKE_SOURCE_DIR}/src/green_output.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c)
+target_include_directories(expec_trace_map_check PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(expec_trace_map_check PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(expec_trace_map_check m)
+# expec_trace.c's clock_gettime may live in librt on older glibc -- same
+# check-and-link as the HPhi target (src/CMakeLists.txt).
+include(CheckLibraryExists)
+check_library_exists(rt clock_gettime "" HPHI_CLOCK_GETTIME_IN_RT)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(expec_trace_map_check rt)
+endif()
+# On an MPI build the top-level add_definitions(-DMPI) makes the linked-in
+# src/green_output.c contain real MPI calls (GreenOutputMergePartials()'s
+# MPI_Gather/MPI_Bcast), so the MPI libraries must be on this target's link
+# line -- same pattern/condition as the green_partial_merge_check target
+# below. The test itself stays serial and launcher-free: it never calls
+# GreenOutputMergePartials() (nor expec_trace_owned_states(), whose output
+# phase is the only expec_trace.c path into green_output.c), so no MPI
+# function is ever reached at runtime and MPI_Init is not required.
+if(MPI_FOUND)
+    target_link_libraries(expec_trace_map_check ${MPI_C_LIBRARIES})
+endif(MPI_FOUND)
+add_test(NAME expec_trace_map_check COMMAND expec_trace_map_check)
+set_tests_properties(expec_trace_map_check
+    PROPERTIES LABELS "unit;fulldiag;expecmode")
+
+# Unit test: ExpecMode 2 CSR Hamiltonian collector (phase 3c Task 2). Serial,
+# no MPI. Unlike expec_trace_map_check above (which hand-builds a bare-bit GC
+# BindStruct), this test's fixtures include CANONICAL list-based models
+# (Hubbard/tJ/Kondo half-filled, Spin Sz=0), so it drives HPhi's real setup
+# pipeline from StdFace-generated def files: StdFace_main -> ReadDef* ->
+# setmem_* -> check -> sz -> diagonalcalc -> makeHam. It therefore links the
+# full makeHam() closure + the setup closure + the StdFace library, rather than
+# the minimal source set expec_trace_map_check uses. green_output.c is linked
+# for the same reason (and needs MPI libs on an MPI build) as that target;
+# rt/MPI link conditions are kept identical.
+add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace_ham.c
+    # phase 3c Task 5: part 4 drives TraceFinalizeEnergyPlan(), which lives in
+    # its own ScaLAPACK-free TU expec_trace_finalize.c (NOT phys_distributed.c,
+    # whose _SCALAPACK build compiles the phys_stateparallel orchestrator and
+    # would drag in RedistBlockCyclicToStatePanel/matrixscalapack and the
+    # phys_distributed_local.c symbols this test does not link). expec_trace.c
+    # supplies the plan struct/enum.
+    ${CMAKE_SOURCE_DIR}/src/expec_trace_finalize.c
+    ${CMAKE_SOURCE_DIR}/src/expec_trace.c
+    ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
+    ${CMAKE_SOURCE_DIR}/src/makeHam.c
+    ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
+    ${CMAKE_SOURCE_DIR}/src/anomalous_pair.c
+    ${CMAKE_SOURCE_DIR}/src/mltply.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbard.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpin.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinless.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIHubbard.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIHubbardCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpin.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpinCore.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPISpinlessFermion.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIBatched.c
+    ${CMAKE_SOURCE_DIR}/src/mltplyMPIBoost.c
+    ${CMAKE_SOURCE_DIR}/src/rearray_interactions.c
+    ${CMAKE_SOURCE_DIR}/src/HPhiTrans.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/check.c
+    ${CMAKE_SOURCE_DIR}/src/CheckMPI.c
+    ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
+    ${CMAKE_SOURCE_DIR}/src/readdef.c
+    ${CMAKE_SOURCE_DIR}/src/sz.c
+    ${CMAKE_SOURCE_DIR}/src/xsetmem.c
+    ${CMAKE_SOURCE_DIR}/src/input.c
+    ${CMAKE_SOURCE_DIR}/src/output.c
+    ${CMAKE_SOURCE_DIR}/src/output_list.c
+    ${CMAKE_SOURCE_DIR}/src/nbody_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/eigenIO.c
+    ${CMAKE_SOURCE_DIR}/src/dSFMT.c
+    ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/struct.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c
+    ${CMAKE_SOURCE_DIR}/src/LogMessage.c
+    ${CMAKE_SOURCE_DIR}/src/ProgressMessage.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/FileIO.c
+    ${CMAKE_SOURCE_DIR}/src/green_output.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c
+    ${CMAKE_SOURCE_DIR}/src/time.c
+    ${CMAKE_SOURCE_DIR}/src/common/setmemory.c
+    ${STDFACE_DIR}/src/ChainLattice.c
+    ${STDFACE_DIR}/src/FCOrtho.c
+    ${STDFACE_DIR}/src/HoneycombLattice.c
+    ${STDFACE_DIR}/src/Kagome.c
+    ${STDFACE_DIR}/src/Ladder.c
+    ${STDFACE_DIR}/src/Orthorhombic.c
+    ${STDFACE_DIR}/src/Pyrochlore.c
+    ${STDFACE_DIR}/src/SquareLattice.c
+    ${STDFACE_DIR}/src/StdFace_main.c
+    ${STDFACE_DIR}/src/StdFace_ModelUtil.c
+    ${STDFACE_DIR}/src/TriangularLattice.c
+    ${STDFACE_DIR}/src/Wannier90.c)
+target_include_directories(expec_trace_ham_check PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include ${STDFACE_DIR})
+target_compile_definitions(expec_trace_ham_check PRIVATE DSFMT_MEXP=19937 _HPhi)
+target_link_libraries(expec_trace_ham_check m)
+if(HPHI_CLOCK_GETTIME_IN_RT)
+  target_link_libraries(expec_trace_ham_check rt)
+endif()
+if(MPI_FOUND)
+    # Under -DMPI the linked-in mltplyMPIBoost.c references zgemm_ (BLAS), so
+    # LAPACK must be on this target's link line in an MPI build (it is dead code
+    # at runtime here -- the fixtures never reach the Boost path -- but the
+    # symbol must resolve). LAPACK_LIBRARIES comes from the top-level
+    # find_package(LAPACK), same source the HPhi target links.
+    target_link_libraries(expec_trace_ham_check ${MPI_C_LIBRARIES} ${LAPACK_LIBRARIES})
+endif(MPI_FOUND)
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(expec_trace_ham_check OpenMP::OpenMP_C)
+endif()
+add_test(NAME expec_trace_ham_check COMMAND expec_trace_ham_check)
+set_tests_properties(expec_trace_ham_check
+    PROPERTIES LABELS "unit;fulldiag;expecmode")
+
+# phase 3c Task 5: the SAME executable under mpiexec -np 2 exercises part 4's
+# rank-synchronized TraceFinalizeEnergyPlan() (rank 1 fails its collect; every
+# rank must end demoted). At nproc>=2 the executable skips the single-process
+# parts 1-3 and runs only the collective finalize. Registered ONLY on an MPI
+# build (the top-level add_definitions(-DMPI) makes the executable MPI-aware);
+# wrapped in run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77, matching the
+# elpa_* MPI unit tests, so a host without a usable 2-rank launcher skips
+# cleanly rather than failing.
+if(MPI_FOUND)
+    add_test(
+        NAME expec_trace_ham_finalize_mpi
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:expec_trace_ham_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(expec_trace_ham_finalize_mpi
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "unit;fulldiag;expecmode;mpi")
+endif(MPI_FOUND)
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
@@ -719,4 +915,252 @@ if(MPI_FOUND)
     set_tests_properties(
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
+
+    # green_output partial-output/merge unit test (phase 3a Task 7). Unlike
+    # elpa_eigen_check/elpa_redist_check/elpa_statepanel_check above, the
+    # code this test exercises (GreenOutputMergePartials() and the partial
+    # session API in src/green_output.c) is guarded only by "#ifdef MPI",
+    # NOT by "_SCALAPACK"/"_ELPA" -- it has nothing to do with the
+    # ScaLAPACK/ELPA eigensolver path, only with MPI-rank-local partial
+    # Green-output files. So it is registered here, under plain
+    # if(MPI_FOUND), and actually RUNS on any MPI build (ELPA/ScaLAPACK
+    # present or not) rather than being gated behind if(USE_ELPA).
+    # It links the real src/green_output.c + src/FileIO.c + src/wrapperMPI.c
+    # + src/global.c + src/ErrorMessage.c (no HPhi-global stub objects
+    # substituted) so the test exercises the actual merge/publish code
+    # path, including the real childfopenMPI()/fopenMPI() ExpecLocal
+    # per-rank file I/O the Mode 1 driver relies on.
+    add_executable(green_partial_merge_check unit/green_partial_merge_check.c
+        ${CMAKE_SOURCE_DIR}/src/green_output.c
+        ${CMAKE_SOURCE_DIR}/src/FileIO.c
+        ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+        ${CMAKE_SOURCE_DIR}/src/global.c
+        ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+    target_include_directories(green_partial_merge_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include)
+    target_compile_definitions(green_partial_merge_check PRIVATE -DMPI -DGREEN_OUTPUT_TESTING)
+    target_link_libraries(green_partial_merge_check ${MPI_C_LIBRARIES} m)
+    # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as the
+    # other MPI unit tests. min:2 (not exact:2): every scenario in
+    # unit/green_partial_merge_check.c is written to generalize to any
+    # nprocs >= 2 (rank 0 / highest rank play fixed roles).
+    add_test(
+        NAME green_partial_merge_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:green_partial_merge_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(
+        green_partial_merge_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;green;unit;mpi"
+    )
 endif(MPI_FOUND)
+
+if(USE_ELPA)
+    configure_file(
+        ${CMAKE_SOURCE_DIR}/test/cmake/elpa_configure_cache.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_cache.cmake
+        @ONLY)
+    add_test(
+        NAME elpa_configure_check
+        COMMAND ${CMAKE_COMMAND}
+                -DHPHI_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+                -DHPHI_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_check
+                -DHPHI_PRELOAD_CACHE=${CMAKE_CURRENT_BINARY_DIR}/elpa_configure_cache.cmake
+                -P ${CMAKE_SOURCE_DIR}/test/cmake/elpa_configure_check.cmake)
+    set_tests_properties(
+        elpa_configure_check
+        PROPERTIES LABELS "elpa;cmake;validation")
+
+    add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
+    add_hphi_mpi_test(fulldiag_output_open_failure exact:2)
+    set_tests_properties(
+        fulldiag_output_open_failure
+        PROPERTIES LABELS "fulldiag;elpa;validation" TIMEOUT 30)
+
+    add_executable(elpa_eigen_check unit/elpa_eigen_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_eigen_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_eigen_check PRIVATE ${ELPA_COMPILE_OPTIONS})
+    target_compile_definitions(elpa_eigen_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # SCALAPACK_LIBRARIES may be a single space-separated flag string from
+    # config/*.cmake; normalize it into a list the same way src/CMakeLists.txt
+    # does for the HPhi target, or the test target gets one malformed link arg.
+    string(REGEX REPLACE "-L[ ]+" "-L" _ec_sc_libs "${SCALAPACK_LIBRARIES}")
+    string(REGEX REPLACE "[ ]+" ";" _ec_sc_libs "${_ec_sc_libs}")
+    target_link_libraries(elpa_eigen_check ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
+    # convention as the other MPI tests in this file (see add_hphi_mpi_test),
+    # rather than a bare add_test(mpiexec ...): on hosts without a usable
+    # MPIRUN (or with too few ranks configured), this now skips cleanly
+    # (exit 77) instead of failing/hanging trying to launch mpiexec directly.
+    # Requires exactly 3 ranks (the grid assumed by unit/elpa_eigen_check.c),
+    # hence mode "exact:3" like the other exact-rank-count MPI tests above.
+    add_test(
+        NAME elpa_eigen_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_eigen_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(
+        elpa_eigen_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    add_executable(elpa_redist_check unit/elpa_redist_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_redist_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_redist_check PRIVATE ${ELPA_COMPILE_OPTIONS})
+    target_compile_definitions(elpa_redist_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
+    # for elpa_eigen_check; reuse it here for the same reason.
+    target_link_libraries(elpa_redist_check ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    # Wrapped with the same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77
+    # convention as elpa_eigen_check above. Unlike elpa_eigen_check,
+    # unit/elpa_redist_check.c builds its BLACS grid from MPI_Dims_create
+    # and works with any process count, so "min:2" (rather than
+    # "exact:3") is enough; launch with 2 ranks to exercise the
+    # non-divisible-N redistribution path with more than one owner.
+    add_test(
+        NAME elpa_redist_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_redist_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(
+        elpa_redist_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    add_executable(elpa_statepanel_check unit/elpa_statepanel_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_statepanel_check PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_statepanel_check PRIVATE ${ELPA_COMPILE_OPTIONS})
+    target_compile_definitions(elpa_statepanel_check PRIVATE -D_ELPA -D_SCALAPACK -DMPI)
+    # _ec_sc_libs is the normalized SCALAPACK_LIBRARIES list computed above
+    # for elpa_eigen_check; reuse it here for the same reason.
+    target_link_libraries(elpa_statepanel_check ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    # Same run_with_mpi_precheck.sh + SKIP_RETURN_CODE 77 convention as
+    # elpa_redist_check; RedistBlockCyclicToStatePanel's default check
+    # (N=97) also builds its BLACS grid from MPI_Dims_create and works
+    # with any process count, so "min:2" is enough.
+    add_test(
+        NAME elpa_statepanel_check
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                min:2 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_statepanel_check>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(
+        elpa_statepanel_check
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    # Dedicated small-N edge case: reuse the same source (NDIM
+    # overridable at compile time) with N=2 and exactly 3 ranks, so the
+    # frozen ownership formula (NC=ceil(2/3)=1) guarantees rank 2 owns
+    # zero states -- exercising the "zero-owner ranks participate with a
+    # 1-element dummy buffer + valid descriptor" path that is easy to
+    # miss with only the np-vs-N=97 combinations exercised above.
+    add_executable(elpa_statepanel_zero_owner unit/elpa_statepanel_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/matrixlapack_elpa.c)
+    target_include_directories(elpa_statepanel_zero_owner PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/include ${ELPA_INCLUDE_DIRS})
+    target_compile_options(elpa_statepanel_zero_owner PRIVATE ${ELPA_COMPILE_OPTIONS})
+    target_compile_definitions(elpa_statepanel_zero_owner PRIVATE -D_ELPA -D_SCALAPACK -DMPI -DNDIM=2)
+    target_link_libraries(elpa_statepanel_zero_owner ${ELPA_LIBRARIES}
+        ${_ec_sc_libs} ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES}
+        ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    add_test(
+        NAME elpa_statepanel_zero_owner
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 3
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:elpa_statepanel_zero_owner>
+                ${MPIEXEC_POSTFLAGS}
+    )
+    set_tests_properties(
+        elpa_statepanel_zero_owner
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;unit"
+    )
+
+    # ExpecMode 0/1/(2) equivalence (phase 3a Task 7): same FullDiag problem,
+    # ExpecMode 0 (serial) vs ExpecMode 1 (state-task-parallel) vs a single
+    # ExpecMode 2 sanity case (3a: 2 downgrades to 1, so it must reproduce
+    # ExpecMode 1's own result and print the downgrade INFO), compared on
+    # both zvo_phys_* (S^2/Sz included) and every Green aggregate file
+    # (per-state and aggregated kinds). Requires Solver 1 (ScaLAPACK) or 3
+    # (ELPA) for ExpecMode to be accepted at all (see readdef.c's
+    # cErrExpecMode gate), so -- like fulldiag_elpa_hubbard_chain above --
+    # this is genuinely registration-only on a non-ELPA/non-ScaLAPACK build:
+    # there is no way to exercise it without one of those solvers compiled
+    # in, regardless of MPI availability.
+    # Registered as two SEPARATE named ctest cases (not one min:2 case)
+    # because np=3 specifically exercises non-divisible state-panel
+    # ownership (script takes its process count from ${MPIRUN} via the
+    # precheck wrapper; it does not launch a second np internally). Both
+    # names point at the SAME script (test/fulldiag_expecmode_equiv.sh),
+    # so add_test() is used directly here rather than the
+    # add_hphi_mpi_test() macro (which assumes the ctest NAME and the
+    # script's base filename match).
+    add_test(
+        NAME fulldiag_expecmode_equiv_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    add_test(
+        NAME fulldiag_expecmode_equiv_np3
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    set_tests_properties(
+        fulldiag_expecmode_equiv_np2 fulldiag_expecmode_equiv_np3
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;expecmode"
+    )
+endif(USE_ELPA)
+
+# This case exercises the ScaLAPACK solver and must remain available in a
+# USE_SCALAPACK=ON, USE_ELPA=OFF build as well as in an ELPA build.
+if(USE_SCALAPACK)
+    add_test(
+        NAME fulldiag_expecmode_scalapack_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    # np=3 specifically exercises non-divisible state-panel ownership AND the
+    # ScaLAPACK degenerate-subspace basis non-reproducibility across separate
+    # launches (blocker-2): the maintainer's flake reproduced only at
+    # ScaLAPACK np=3, which CI previously did not register. The *_eigen.dat
+    # comparison is now degeneracy-safe (per-(operator,level) sums), so this
+    # variant must run repeatedly clean.
+    add_test(
+        NAME fulldiag_expecmode_scalapack_np3
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:3 ${CMAKE_SOURCE_DIR}/test/fulldiag_expecmode_equiv.sh
+    )
+    set_tests_properties(
+        fulldiag_expecmode_scalapack_np2 fulldiag_expecmode_scalapack_np3
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;scalapack;expecmode"
+    )
+    set_property(
+        TEST fulldiag_expecmode_scalapack_np2
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
+    set_property(
+        TEST fulldiag_expecmode_scalapack_np3
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
+endif(USE_SCALAPACK)

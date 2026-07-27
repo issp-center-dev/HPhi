@@ -1,0 +1,41 @@
+#!/bin/bash
+#PBS -q F4cpu
+#PBS -l select=4:ncpus=128:mpiprocs=32
+#PBS -l walltime=04:00:00
+#PBS -N hphi_l10_cpu
+#PBS -j oe
+cd "$PBS_O_WORKDIR"
+module purge
+module load intel intel-mpi
+if [ -z "$MKLROOT" ]; then
+  for d in /home/app/oneapi/mkl/2022.2.1 /home/app/oneapi/mkl/2022.1.0 /home/app/oneapi/mkl/2022.0.2; do
+    [ -d "$d" ] && source "$d/env/vars.sh" && break
+  done
+fi
+PREFIX=$HOME/opt/elpa-2025.06-cpu
+export LD_LIBRARY_PATH="$PREFIX/lib:$MKLROOT/lib/intel64:$LD_LIBRARY_PATH"
+export I_MPI_ADJUST_GATHERV=3
+HPHI=$HOME/HPhi-elpa/build_kugui/src/HPhi
+BASE=$HOME/bench_appendix
+mkdir -p "$BASE"
+d=$BASE/l10_cpu128
+rm -rf "$d"; mkdir -p "$d"; cd "$d" || exit 1
+cat > stan.in <<EOS
+model = "FermionHubbard"
+method = "FullDiag"
+lattice = "chain"
+L = 10
+t = 1.0
+U = 4.0
+nelec = 10
+2Sz = 0
+outputmode = "none"
+EOS
+"$HPHI" -sdry stan.in > sdry.log 2>&1
+printf "Solver 3\nNGPU 0\nExpecMode 1\n" >> calcmod.def
+export OMP_NUM_THREADS=1
+echo "L10_CPU_START $(date "+%F %T")" >> "$BASE/status_l10cpu.log"
+t0=$SECONDS
+/usr/bin/time -v mpirun -n 128 -ppn 32 "$HPHI" -e namelist.def > run.log 2> time.log
+echo "tag=l10_cpu128 rc=$? wall=$((SECONDS-t0))s" >> "$BASE/status_l10cpu.log"
+echo ALL_DONE_L10CPU >> "$BASE/status_l10cpu.log"

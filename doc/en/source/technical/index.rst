@@ -14,3 +14,4 @@ This section provides technical details about the internal implementation of :ma
    memory_en
    precision_en
    restart_en
+   parallel_fulldiag_en

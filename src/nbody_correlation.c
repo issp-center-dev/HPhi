@@ -1119,6 +1119,16 @@ static double complex calc_nbodyg_term_hubbardgc(struct BindStruct *X, unsigned 
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1138,6 +1148,7 @@ static double complex calc_nbodyg_term_hubbardgc(struct BindStruct *X, unsigned 
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1159,6 +1170,16 @@ static double complex calc_nbodyg_term_hubbard(struct BindStruct *X, unsigned in
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1182,6 +1203,7 @@ static double complex calc_nbodyg_term_hubbard(struct BindStruct *X, unsigned in
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1203,6 +1225,16 @@ static double complex calc_nbodyg_term_spinlessgc(struct BindStruct *X, unsigned
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1222,6 +1254,7 @@ static double complex calc_nbodyg_term_spinlessgc(struct BindStruct *X, unsigned
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1243,6 +1276,16 @@ static double complex calc_nbodyg_term_spinless(struct BindStruct *X, unsigned i
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1266,6 +1309,7 @@ static double complex calc_nbodyg_term_spinless(struct BindStruct *X, unsigned i
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1286,6 +1330,16 @@ static double complex calc_nbodyg_term_general_spin_gc(struct BindStruct *X, uns
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1299,6 +1353,7 @@ static double complex calc_nbodyg_term_general_spin_gc(struct BindStruct *X, uns
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1315,6 +1370,16 @@ static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, 
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1328,6 +1393,7 @@ static double complex calc_nbodyg_term(struct BindStruct *X, unsigned int term, 
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1351,6 +1417,17 @@ static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int t
       return SumMPI_dc(dam_pr);
     }
 
+    /* EXPEC_LOCAL_GUARDED_BEGIN */
+    if (ExpecLocalActive()) {
+      /* Cross-rank exchange is unreachable in the replicated FullDiag
+         basis (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md
+         §3); if we ever get here in local mode, fail this state instead
+         of touching raw MPI, which would deadlock the state-parallel
+         loop. */
+      ExpecLocalSetError();
+      fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+      return 0.0;
+    }
 #ifdef MPI
     {
       MPI_Status statusMPI;
@@ -1374,6 +1451,7 @@ static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int t
     fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
     return 0.0;
 #endif
+    /* EXPEC_LOCAL_GUARDED_END */
     return SumMPI_dc(dam_pr);
   }
 
@@ -1385,6 +1463,16 @@ static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int t
     return SumMPI_dc(dam_pr);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -1408,6 +1496,7 @@ static double complex calc_nbodyg_term_spin(struct BindStruct *X, unsigned int t
   fprintf(stdoutMPI, "Error: NBodyG reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(dam_pr);
 }
 
@@ -1464,9 +1553,11 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody) &&
-      GreenOutputFileName(X, GreenOutputNBody, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, GreenOutputOpenMode(X), &fp) != 0) return -1;
+  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
+    if (GreenOutputOpenAggregate(X, GreenOutputNBody, &fp) != 0) return -1;
+  } else {
+    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  }
 
   for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
@@ -1485,6 +1576,10 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     write_nbodyg_line(fp, &X->Def, t, value);
   }
 
-  fclose(fp);
+  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
+    GreenOutputCloseAggregate(GreenOutputNBody, fp);
+  } else {
+    fclose(fp);
+  }
   return 0;
 }

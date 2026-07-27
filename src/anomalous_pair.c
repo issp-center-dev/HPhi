@@ -20,6 +20,7 @@
 #include "green_output.h"
 #include "mltplyCommon.h"
 #include "wrapperMPI.h"
+#include "hamstore.h"
 
 static int parse_int_token(const char **pp, int *value)
 {
@@ -386,6 +387,16 @@ static double complex multiply_anomalous_term(
       X, term, tmp_v0, tmp_v1, tmp_v1, X->Check.idim_max, myrank);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -405,6 +416,7 @@ static double complex multiply_anomalous_term(
   fprintf(stdoutMPI, "Error: AnomalousTerm reached an MPI-only rank flip path without MPI.\n");
   return 0.0;
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return dam_pr;
 }
 
@@ -427,11 +439,16 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
 {
   unsigned int t;
   unsigned long int j;
+  /* Only invoked from makeHam() (M_Ham / FullDiag path); MultiplyAnomalousTermHubbardGC
+     above is the separate Lanczos/TPQ matvec entry point, so the owned-column
+     restriction here is safe unconditionally on iHamPanelActive. */
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
   if (X->Def.NAnomalousTerm == 0) return 0;
   if (X->Def.iCalcModel != HubbardGC) return -1;
 
   for (t = 0; t < X->Def.NAnomalousTerm; t++) {
-    for (j = 1; j <= X->Check.idim_max; j++) {
+    for (j = hs_jb; j <= hs_je; j++) {
       unsigned long int local_out = 0;
       int rank_out = 0;
       int sign = 1;
@@ -442,7 +459,7 @@ int AddAnomalousTermToHamHubbardGC(struct BindStruct *X)
           fprintf(stdoutMPI, "Error: FullDiag AnomalousTerm cannot handle inter-process output.\n");
           return -1;
         }
-        Ham[local_out + 1][j] += X->Def.ParaAnomalousTerm[t] * sign;
+        AddHamElem(local_out + 1, j, X->Def.ParaAnomalousTerm[t] * sign);
       }
     }
   }
@@ -497,6 +514,16 @@ static double complex calc_anomalousg_term_hubbardgc(
     return SumMPI_dc(value);
   }
 
+  /* EXPEC_LOCAL_GUARDED_BEGIN */
+  if (ExpecLocalActive()) {
+    /* Cross-rank exchange is unreachable in the replicated FullDiag basis
+       (see docs/superpowers/specs/2026-07-11-expec-call-inventory.md §3);
+       if we ever get here in local mode, fail this state instead of
+       touching raw MPI, which would deadlock the state-parallel loop. */
+    ExpecLocalSetError();
+    fprintf(stdout, "  Error: cross-rank term reached in ExpecMode local loop.\n");
+    return 0.0;
+  }
 #ifdef MPI
   {
     MPI_Status statusMPI;
@@ -516,6 +543,7 @@ static double complex calc_anomalousg_term_hubbardgc(
   fprintf(stdoutMPI, "Error: AnomalousG reached an MPI-only rank flip path without MPI.\n");
   return SumMPI_dc(0.0);
 #endif
+  /* EXPEC_LOCAL_GUARDED_END */
   return SumMPI_dc(value);
 }
 
@@ -565,9 +593,11 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
   }
   if (get_anomalousg_filename(X, sdt) != 0) return -1;
   use_aggregate = GreenOutputKindUsesAggregate(X, GreenOutputAnomalous);
-  if (use_aggregate &&
-      GreenOutputFileName(X, GreenOutputAnomalous, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, use_aggregate ? "a" : "w", &fp) != 0) return -1;
+  if (use_aggregate) {
+    if (GreenOutputOpenAggregate(X, GreenOutputAnomalous, &fp) != 0) return -1;
+  } else {
+    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  }
 
   for (t = 0; t < X->Def.NAnomalousG; t++) {
     const double complex value = calc_anomalousg_term_hubbardgc(X, t, vec);
@@ -575,6 +605,10 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
     write_anomalousg_line(fp, &X->Def, t, value);
   }
 
-  fclose(fp);
+  if (use_aggregate) {
+    GreenOutputCloseAggregate(GreenOutputAnomalous, fp);
+  } else {
+    fclose(fp);
+  }
   return 0;
 }

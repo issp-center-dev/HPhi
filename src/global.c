@@ -164,6 +164,13 @@ int step_spin = 1;
 /* All Diagonalization */
 double complex **Ham = 0;
 double complex **L_vec = 0;
+double complex *Ham_local = NULL;
+long int HamColBegin = 0;
+long int HamColEnd = -1;
+long int HamPanelLd = 0;
+int iHamPanelActive = 0;
+int iHamSinkMode = 0; /* HAM_SINK_DENSE_REPLICATED; only the phase-3c collector sets TRACE_COLLECT */
+void (*hamCollectSink)(long int irow, long int jcol, double complex val) = NULL;
 #ifdef _SCALAPACK
 double complex *Z_vec=0;
 int descZ_vec[9] = {0};

@@ -17,6 +17,31 @@ We can compile :math:`{\mathcal H}\Phi` as::
  make
 
 To use ScaLAPACK library for full diagonalization, the cmake option ``-DUSE_SCALAPACK=ON`` is needed.
+To use ELPA library for full diagonalization, the cmake option ``-DUSE_ELPA=ON`` is needed
+(ELPA requires ScaLAPACK and MPI; ``USE_SCALAPACK`` is enabled automatically).
+If ELPA is installed in a non-standard path, specify its location via ``-DELPA_ROOT=/path/to/elpa``
+(individual overrides ``ELPA_INCLUDE_DIR``/``ELPA_LIBRARY`` are also supported).
+
+.. note::
+
+   Platform notes for ELPA builds (verified on an AMD EPYC + Mellanox
+   InfiniBand cluster with Intel oneAPI 2022 / Intel MPI 2021.7; both
+   issues were actually encountered and diagnosed on the ISSP
+   supercomputer kugui):
+
+   * On CPUs **without AVX-512** (e.g. AMD EPYC Rome/Milan), configure
+     ELPA itself with ``--disable-avx512 --disable-avx512-kernels``.
+     ELPA compiles AVX-512 kernels regardless of the build host and its
+     runtime kernel selection may pick one, crashing with an illegal
+     instruction (SIGILL) inside the 2-stage solver
+     (``single_hh_trafo_*_AVX512_*``) for larger matrices, while small
+     matrices (1-stage path) appear to work.
+   * With **Intel MPI** on Mellanox (mlx/UCX provider), multi-rank
+     FullDiag runs with ``ExpecMode`` 1 or 2 may deadlock in the
+     observable-collection step (``MPI_Gatherv``) with the default
+     tuned algorithm. Set ``I_MPI_ADJUST_GATHERV=3`` (works multi-node)
+     or ``I_MPI_FABRICS=shm`` (single node only) as a workaround.
+
 Here, we set a path to :math:`{\mathcal H}\Phi` as ``$PathTohphi``
 and to a build directory as ``$HOME/build/hphi``.
 After compilation, ``src`` folder is constructed below a ``$HOME/build/hphi``

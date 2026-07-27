@@ -53,7 +53,18 @@ char *cErrFiniteTemp="Error in %s\n FlgFiniteTemperature: Finite Temperature, 1:
 char *cErrSetIniVec="Error in %s\n InitialVecType: \n 0: complex type,\n 1: real type.\n";
 char *cErrRestart="Error in %s\n Restart: \n 0: not restart (default).\n 1: output a restart vector.\n 2: input a restart vector and output a new restart vector.\n 3: input a restart vector.\n";
 char *cErrCUDA="Error in %s\n NGPU: NGPU must be greater than 0.\n";
+char *cErrSolver="Error in %s\n Solver: must be one of 0 (LAPACK), 1 (ScaLAPACK), 2 (MAGMA), 3 (ELPA).\n";
+char *cErrSolverCalcType="Error in %s\n Solver %d is a FullDiag backend and is only valid with CalcType=2.\n";
+char *cErrSolverBuild="Error in %s\n Solver %d requires HPhi built with %s.\n";
+char *cErrElpaGPUBuild="Error in %s\n Solver 3 with NGPU >= 1 requires ELPA >= 2023.11.001 (elpa_setup_gpu).\n Rebuild HPhi against a newer ELPA, or set \"NGPU 0\" for CPU execution.\n";
+char *cErrElpaHamIO="Error in %s\n Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian distributed,\n which is incompatible with OutputHam/InputHam. Run with 1 process, or use another solver.\n";
+char *cWarnScaLAPACKDep="Warning in %s\n The \"ScaLAPACK\" keyword is deprecated. Use \"Solver 1\" instead.\n";
+char *cWarnScaLAPACKCalcType="Warning in %s\n The legacy \"ScaLAPACK\" keyword applies only to CalcType=2 and is ignored for CalcType=%d.\n";
+char *cWarnSolverConflict="Warning in %s\n Legacy keyword \"%s\" conflicts with the explicit Solver value and is ignored.\n";
 char *cErrScaLAPACK="Error in %s\n ScaLAPACK: \n 0: Use LAPACK for FullDiag mode,\n 1: Use ScaLAPACK for FullDiag mode.\n";
+char *cErrSpectrumFullDiagSolver="Error in %s\n CalcSpec (spectrum calculation) with FullDiag is requested together with Solver %d,\n but CalcSpectrumByFullDiag() reads eigenvectors from L_vec, which this solver does not fill\n (eigenvectors stay distributed). Use \"Solver 0\" (LAPACK), or \"Solver 1\" (ScaLAPACK) with nproc==1.\n";
+char *cErrExpecMode="Error in %s\n ExpecMode: must be 0 (serial), 1 (state-parallel), or 2 (trace kernels),\n and requires CalcType = FullDiag with Solver 1 (ScaLAPACK) or 3 (ELPA).\n";
+char *cErrSpinlessFullDiag="Error in %s\n SpinlessFermion / SpinlessFermionGC are not currently supported for FullDiag (CalcType=2) in this version:\n the hopping (Trans) term is not built into the FullDiag Hamiltonian and the particle-number output is not populated,\n so the results would be incorrect. This is tracked separately and will be addressed in a future release.\n";
 
 char *cErrNcond= "Error in %s\n Ncond must be greater than 0.\n ";
 char *cErrNsite= "Error in %s\n Nsite must be positive value.\n ";

@@ -4,6 +4,20 @@
 #include "FileIO.h"
 #include "global.h"
 #include "wrapperMPI.h"
+#include <string.h>
+#include <stdlib.h>
+#ifdef MPI
+#include <errno.h>
+#include <mpi.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#ifdef GREEN_OUTPUT_TESTING
+extern int GreenOutputTestRename(const char *old_path, const char *new_path);
+#define GreenOutputRename GreenOutputTestRename
+#else
+#define GreenOutputRename rename
+#endif
+#endif
 
 static int GreenOutputAggregateFamily(const struct BindStruct *X)
 {
@@ -239,3 +253,442 @@ void GreenOutputWriteTPQFlctRow(FILE *fp, const struct BindStruct *X, int step, 
             X->Phys.doublon2, X->Phys.Sz, X->Phys.Sz2, step);
   }
 }
+
+/* ------------------------------------------------------------------------
+ * Partial-output / manifest-based aggregate merge (phase 3a, Mode 1).
+ * See docs/superpowers/specs/2026-07-11-elpa-fulldiag-phase3-design.md §3
+ * ("集約 Green ファイルのパーシャル出力") for the full design rationale.
+ * ------------------------------------------------------------------------ */
+
+/* Number of GreenOutputKind values tracked by the manifest. */
+#define GREEN_OUTPUT_NKIND (GreenOutputAnomalous + 1)
+
+/*
+ * Manifest record for one (rank, kind) pair. Field order and widths are a
+ * FIXED wire shape: int attempted, opened, open_error, closed_ok; long int
+ * bytes; char part_path[256]; char final_path[256] -- because
+ * GreenOutputMergePartials() transfers arrays of this struct between ranks
+ * with MPI_Gather(..., sizeof(record), MPI_BYTE, ...). That is an in-memory,
+ * same-binary, homogeneous-ABI transfer (every HPhi MPI rank in a run
+ * executes the identical binary), NOT a portable/persisted wire format --
+ * struct padding, endianness, and long-int width are whatever this
+ * compilation produced, and this struct must never be written to disk or
+ * exchanged across HPhi binaries/architectures.
+ */
+typedef struct {
+  int attempted;
+  int opened;
+  int open_error;
+  int closed_ok;
+  long int bytes;
+  char part_path[256];
+  char final_path[256];
+} GreenOutputManifestRecord;
+
+static GreenOutputManifestRecord g_greenOutputManifest[GREEN_OUTPUT_NKIND];
+/* Sticky "a close ever failed for this kind" flag, kept out of the gathered
+   record itself (only closed_ok, derived from this, is part of the wire
+   shape); reset together with the manifest by GreenOutputSetPartialSuffix(). */
+static int g_greenOutputCloseFailed[GREEN_OUTPUT_NKIND];
+static int g_greenOutputPartialActive = 0;
+static int g_greenOutputPartialRank = 0;
+
+void GreenOutputSetPartialSuffix(int rank)
+{
+  memset(g_greenOutputManifest, 0, sizeof(g_greenOutputManifest));
+  memset(g_greenOutputCloseFailed, 0, sizeof(g_greenOutputCloseFailed));
+  g_greenOutputPartialRank = rank;
+  g_greenOutputPartialActive = 1;
+}
+
+void GreenOutputClearPartialSuffix(void)
+{
+  /* Deliberately does NOT touch g_greenOutputManifest: GreenOutputMergePartials()
+     must still be able to read this session's records after the session is
+     closed. Only the next GreenOutputSetPartialSuffix() zeroes it. */
+  g_greenOutputPartialActive = 0;
+}
+
+/* Join a childfopenMPI()-relative path with the output-folder prefix, the
+   same way childfopenMPI()/FileIO.c does internally, so remove() targets
+   the exact on-disk path childfopenMPI() would open. */
+static void GreenOutputJoinOutputPath(const char *rel, char *out, size_t outsz)
+{
+  out[0] = '\0';
+  strncat(out, cParentOutputFolder, outsz - 1);
+  strncat(out, rel, outsz - 1 - strlen(out));
+}
+
+int GreenOutputOpenAggregate(struct BindStruct *X, GreenOutputKind kind, FILE **fp)
+{
+  char final_sdt[D_FileNameMax];
+  GreenOutputManifestRecord *rec;
+  int n;
+
+  if (fp == NULL) return -1;
+  if (!GreenOutputKindUsesAggregate(X, kind)) return -1;
+  if (GreenOutputFileName(X, kind, final_sdt) != 0) return -1;
+
+  if (!g_greenOutputPartialActive) {
+    return childfopenMPI(final_sdt, GreenOutputOpenMode(X), fp);
+  }
+  if (kind < 0 || kind > GreenOutputAnomalous) return -1;
+
+  rec = &g_greenOutputManifest[kind];
+  rec->attempted = 1;
+  if (rec->open_error) return -1; /* sticky: this kind already failed this session */
+
+  n = snprintf(rec->final_path, sizeof(rec->final_path), "%s", final_sdt);
+  if (n < 0 || (size_t)n >= sizeof(rec->final_path)) { rec->open_error = 1; return -1; }
+  n = snprintf(rec->part_path, sizeof(rec->part_path), "%s.part%d", final_sdt, g_greenOutputPartialRank);
+  if (n < 0 || (size_t)n >= sizeof(rec->part_path)) { rec->open_error = 1; return -1; }
+
+  if (!rec->opened) {
+    /* First open of this kind in the session: unlink any stale part file
+       (from a previous, possibly-failed run) before creating a fresh one. */
+    char joined[sizeof(rec->part_path) + 64];
+    GreenOutputJoinOutputPath(rec->part_path, joined, sizeof(joined));
+    remove(joined); /* best-effort; ENOENT etc. are not errors here */
+    if (childfopenMPI(rec->part_path, "w", fp) != 0) { rec->open_error = 1; return -1; }
+    rec->opened = 1;
+  } else {
+    /* Later opens of the same kind in this session append. */
+    if (childfopenMPI(rec->part_path, "a", fp) != 0) { rec->open_error = 1; return -1; }
+  }
+  return 0;
+}
+
+int GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp)
+{
+  if (fp == NULL) return -1;
+  if (!g_greenOutputPartialActive) {
+    return (fclose(fp) == 0) ? 0 : -1;
+  }
+  if (kind < 0 || kind > GreenOutputAnomalous) {
+    fclose(fp);
+    return -1;
+  }
+  {
+    GreenOutputManifestRecord *rec = &g_greenOutputManifest[kind];
+    long int pos = ftell(fp);
+    int close_rc = fclose(fp);
+    int ok = (pos >= 0 && close_rc == 0);
+    if (ok) rec->bytes = pos;
+    if (!ok) g_greenOutputCloseFailed[kind] = 1;
+    rec->closed_ok = g_greenOutputCloseFailed[kind] ? 0 : 1;
+    return ok ? 0 : -1;
+  }
+}
+
+#ifdef MPI
+int GreenOutputMergePartials(struct BindStruct *X)
+{
+  int nprocs_l = 1, myrank_l = 0;
+  int rc = 0;
+  int r, k;
+  GreenOutputManifestRecord *all = NULL;
+
+  (void)X; /* not currently needed: every path/kind is already resolved in the manifest */
+
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs_l);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myrank_l);
+
+  if (myrank_l == 0) {
+    all = (GreenOutputManifestRecord *)malloc(
+        (size_t)nprocs_l * GREEN_OUTPUT_NKIND * sizeof(GreenOutputManifestRecord));
+    if (all == NULL) {
+      fprintf(stdoutMPI, "Error: GreenOutputMergePartials: manifest gather buffer allocation failed.\n");
+      exitMPI(1); /* MPI_Abort()s the whole communicator; safe from a single rank */
+    }
+  }
+
+  /* See the GreenOutputManifestRecord comment above: this is a same-binary,
+     in-memory MPI_BYTE transfer, not a portable wire format. */
+  MPI_Gather(g_greenOutputManifest,
+             GREEN_OUTPUT_NKIND * (int)sizeof(GreenOutputManifestRecord), MPI_BYTE,
+             all,
+             GREEN_OUTPUT_NKIND * (int)sizeof(GreenOutputManifestRecord), MPI_BYTE,
+             0, MPI_COMM_WORLD);
+
+  if (myrank_l == 0) {
+    /* Pass 1: an attempted record is trusted only if its whole lifecycle
+       succeeded: the open did not fail, the file was actually opened, and
+       the last close (fflush included) succeeded. A part that was opened
+       but never closed, or whose fclose failed, may be missing buffered
+       data even though the file itself is still readable. Never infer
+       success from file sizes alone -- the manifest decides (pass 2 only
+       cross-checks reality against the manifest's own claims). */
+    for (r = 0; r < nprocs_l && rc == 0; r++) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
+        if (rr->attempted &&
+            (rr->open_error || !rr->opened || !rr->closed_ok)) { rc = -1; break; }
+      }
+    }
+    /* Pass 2: verify every part file the manifest claims succeeded can
+       still actually be opened for reading, before publishing anything.
+       Catches a part file that vanished/was corrupted after a successful
+       close, rather than discovering it mid-concatenation (which could
+       otherwise leave a partially-published final file). */
+    if (rc == 0) {
+      for (r = 0; r < nprocs_l && rc == 0; r++) {
+        for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+          GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
+          FILE *probe = NULL;
+          if (!rr->attempted) continue; /* legitimately empty / zero-owner rank */
+          if (childfopenMPI(rr->part_path, "rb", &probe) != 0) { rc = -1; break; }
+          /* Cross-check the on-disk length against the manifest's own
+             recorded byte count (ftell at the last successful close): a
+             mismatch means the part changed after the writer closed it. */
+          if (fseek(probe, 0L, SEEK_END) != 0 || ftell(probe) != rr->bytes) {
+            fclose(probe); rc = -1; break;
+          }
+          fclose(probe);
+        }
+      }
+    }
+  }
+
+  if (myrank_l == 0 && rc == 0) {
+    /* Transactional publish (write-to-temp, backup, then rename):
+       Phase A concatenates each attempted kind's parts into a private
+       <final>.tmp_merge file, with every fread/fwrite/ferror/fclose checked.
+       Phase B first moves every pre-existing final to a unique
+       <final>.bak_merge.<pid>.<slot> recovery path, then rename()s every temp
+       onto its final name. If a rename fails, all
+       earlier publishes are rolled back: new finals are removed and backups
+       restored. A write failure (disk full, quota, I/O error) can therefore
+       never leave a truncated file under the final name, and a detected
+       publish failure does not leave a mixture of old and new kinds.
+       Renaming per kind is the
+       Mode-1 replacement for GreenOutputInitializeAggregateFiles()
+       (which Mode 1 must not call directly). */
+    char tmp_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 80];
+    char final_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 64];
+    char backup_joined[GREEN_OUTPUT_NKIND][sizeof(((GreenOutputManifestRecord *)0)->final_path) + 80];
+    int kind_active[GREEN_OUTPUT_NKIND];
+    int had_final[GREEN_OUTPUT_NKIND];
+    int backed_up[GREEN_OUTPUT_NKIND];
+    int published[GREEN_OUTPUT_NKIND];
+    int rollback_failed = 0;
+    int rollback_performed = 0;
+
+    for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+      kind_active[k] = 0;
+      had_final[k] = 0;
+      backed_up[k] = 0;
+      published[k] = 0;
+    }
+
+    /* Phase A: concatenate into temp files. */
+    for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+      int any_attempted = 0;
+      int n;
+      FILE *fout = NULL;
+
+      for (r = 0; r < nprocs_l; r++) {
+        GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
+        if (rr->attempted) {
+          any_attempted = 1;
+          GreenOutputJoinOutputPath(rr->final_path, final_joined[k], sizeof(final_joined[k]));
+          break;
+        }
+      }
+      if (!any_attempted) continue;
+
+      n = snprintf(tmp_joined[k], sizeof(tmp_joined[k]), "%s.tmp_merge", final_joined[k]);
+      if (n < 0 || (size_t)n >= sizeof(tmp_joined[k])) { rc = -1; break; }
+      /* Only mark active once tmp_joined[k] holds a valid path -- the
+         failure-cleanup path remove()s every active kind's temp path. */
+      kind_active[k] = 1;
+
+      fout = fopen(tmp_joined[k], "wb");
+      if (fout == NULL) { rc = -1; break; }
+
+      for (r = 0; r < nprocs_l && rc == 0; r++) {
+        GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
+        FILE *fin = NULL;
+        char part_joined[sizeof(rr->part_path) + 64];
+        char buf[8192];
+        size_t got;
+
+        if (!rr->attempted) continue; /* zero-owner rank: contributes nothing */
+        GreenOutputJoinOutputPath(rr->part_path, part_joined, sizeof(part_joined));
+        fin = fopen(part_joined, "rb");
+        if (fin == NULL) { rc = -1; break; }
+        while ((got = fread(buf, 1, sizeof(buf), fin)) > 0) {
+          if (fwrite(buf, 1, got, fout) != got) { rc = -1; break; }
+        }
+        if (rc == 0 && ferror(fin)) rc = -1; /* short read due to I/O error */
+        if (fclose(fin) != 0) rc = -1;
+      }
+      if (fclose(fout) != 0) rc = -1; /* flush failure = truncated temp */
+    }
+
+    /* Phase B preflight: determine which finals need backups and reserve a
+       unique recovery name for this merge. Orphaned backups from interrupted
+       earlier runs are intentionally left untouched and do not block a new
+       merge. Do this for every kind before moving any file. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        struct stat st;
+        int n, backup_slot;
+        if (!kind_active[k]) continue;
+
+        if (lstat(final_joined[k], &st) == 0) {
+          if (S_ISDIR(st.st_mode)) {
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: final path is a directory: %s\n",
+                    final_joined[k]);
+            rc = -1;
+            break;
+          }
+          had_final[k] = 1;
+        } else if (errno != ENOENT) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot inspect final path %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+          break;
+        }
+
+        for (backup_slot = 0; backup_slot < 1000; backup_slot++) {
+          n = snprintf(backup_joined[k], sizeof(backup_joined[k]),
+                       "%s.bak_merge.%ld.%d", final_joined[k],
+                       (long)getpid(), backup_slot);
+          if (n < 0 || (size_t)n >= sizeof(backup_joined[k])) {
+            rc = -1;
+            break;
+          }
+          if (lstat(backup_joined[k], &st) != 0) {
+            if (errno == ENOENT) break;
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: cannot inspect backup path %s: %s\n",
+                    backup_joined[k], strerror(errno));
+            rc = -1;
+            break;
+          }
+        }
+        if (rc == 0 && backup_slot == 1000) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot reserve a unique backup path for %s\n",
+                  final_joined[k]);
+          rc = -1;
+        }
+      }
+    }
+
+    /* Move all old generations out of the way before publishing any new
+       generation. A failure here is rolled back below without exposing new
+       output files. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        if (!kind_active[k] || !had_final[k]) continue;
+        if (GreenOutputRename(final_joined[k], backup_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot back up %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+        } else {
+          backed_up[k] = 1;
+        }
+      }
+    }
+
+    /* Publish every new generation. */
+    if (rc == 0) {
+      for (k = 0; k < GREEN_OUTPUT_NKIND && rc == 0; k++) {
+        if (!kind_active[k]) continue;
+        if (GreenOutputRename(tmp_joined[k], final_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Error: GreenOutputMergePartials: cannot publish %s: %s\n",
+                  final_joined[k], strerror(errno));
+          rc = -1;
+        } else {
+          published[k] = 1;
+        }
+      }
+    }
+
+    if (rc == 0) {
+      /* The complete new generation is visible. Old-generation backups are
+         now expendable; a cleanup failure is reported but does not invalidate
+         the already-complete output set. */
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (backed_up[k] && remove(backup_joined[k]) != 0) {
+          fprintf(stdoutMPI,
+                  "Warning: GreenOutputMergePartials: could not remove backup %s: %s; "
+                  "the orphaned recovery backup will not block later merges.\n",
+                  backup_joined[k], strerror(errno));
+        }
+      }
+      /* Only ever delete part files once every kind published successfully. */
+      for (r = 0; r < nprocs_l; r++) {
+        for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+          GreenOutputManifestRecord *rr = &all[r * GREEN_OUTPUT_NKIND + k];
+          if (rr->attempted) {
+            char joined[sizeof(rr->part_path) + 64];
+            GreenOutputJoinOutputPath(rr->part_path, joined, sizeof(joined));
+            remove(joined);
+          }
+        }
+      }
+    } else {
+      /* Roll back a partially-completed publish. Where an old final existed,
+         restoring its backup atomically replaces any new final. Where no old
+         final existed, remove any newly-published final. Part files are kept
+         in all failure cases for diagnosis/retry. */
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (backed_up[k]) {
+          if (GreenOutputRename(backup_joined[k], final_joined[k]) != 0) {
+            rollback_failed = 1;
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: ROLLBACK FAILED restoring %s from %s: %s\n",
+                    final_joined[k], backup_joined[k], strerror(errno));
+          } else {
+            rollback_performed = 1;
+          }
+        } else if (published[k]) {
+          if (remove(final_joined[k]) != 0 && errno != ENOENT) {
+            rollback_failed = 1;
+            fprintf(stdoutMPI,
+                    "Error: GreenOutputMergePartials: ROLLBACK FAILED removing %s: %s\n",
+                    final_joined[k], strerror(errno));
+          } else {
+            rollback_performed = 1;
+          }
+        }
+      }
+      for (k = 0; k < GREEN_OUTPUT_NKIND; k++) {
+        if (kind_active[k]) remove(tmp_joined[k]);
+      }
+      if (rollback_failed) {
+        fprintf(stdoutMPI,
+                "Error: GreenOutputMergePartials: merge failed and rollback was incomplete; partial (.part*) files are kept for diagnosis.\n");
+      } else if (rollback_performed) {
+        fprintf(stdoutMPI,
+                "Error: GreenOutputMergePartials: merge failed; the pre-merge final-output state was restored; partial (.part*) files are kept for diagnosis.\n");
+      } else {
+        fprintf(stdoutMPI,
+                "Error: GreenOutputMergePartials: merge failed before any final output was changed; partial (.part*) files are kept for diagnosis.\n");
+      }
+    }
+  }
+
+  /* Single rendezvous, LAST: every rank reaches this unconditionally (no
+     early return exists between the Gather above and here on any rank), so
+     the verdict broadcast from rank 0 covers manifest-validation failures
+     AND publish-phase (Phase A/B) failures alike -- on any failure, every
+     rank returns nonzero. */
+  MPI_Bcast(&rc, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+  if (myrank_l == 0 && all != NULL) free(all);
+  return rc;
+}
+#else
+int GreenOutputMergePartials(struct BindStruct *X)
+{
+  (void)X;
+  return 0; /* no MPI: no cross-rank partial files exist to merge; no-op */
+}
+#endif
