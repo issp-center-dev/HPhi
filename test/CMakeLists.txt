@@ -549,6 +549,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/splash.c
     ${CMAKE_SOURCE_DIR}/src/time.c
     ${CMAKE_SOURCE_DIR}/src/common/setmemory.c
