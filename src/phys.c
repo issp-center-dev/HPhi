@@ -54,6 +54,9 @@
 #include "phys_distributed.h"
 #include <assert.h>
 #include <limits.h>
+#ifdef MPI
+#include <mpi.h>
+#endif
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
