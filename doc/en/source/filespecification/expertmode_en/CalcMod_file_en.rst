@@ -145,6 +145,8 @@ The parameters correlated with the keywords are as follows.
    | **Description :** Select the mode of outputting an eigenvector:
    | 0: Not output an eigenvector
    | 1: Output an eigenvector.
+   | In FullDiag calculations, all eigenvectors are output. Each file
+     contains one complete eigenvector, including in MPI runs.
 
 *  ``InputEigenVec``
 

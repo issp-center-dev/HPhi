@@ -76,6 +76,7 @@
 #include "matrixscalapack.h"   /* mpi.h, global.h, Z_vec/descZ_vec, use_scalapack,
                                   RedistBlockCyclicToStatePanel */
 #include "green_output.h"
+#include "phys.h"
 #include "wrapperMPI.h"
 #include "DefCommon.h"
 #include "expec_trace.h"
@@ -127,6 +128,26 @@ int phys_stateparallel(struct BindStruct *X, unsigned long int neig) {
   }
   free(Z_vec);
   Z_vec = NULL;
+
+  /* FullDiag vectors are global rather than site-decomposition slices.
+     Each owned state is therefore written exactly once, with rank_0 in the
+     established file name regardless of which rank owns/writes the state.
+     Synchronize the local I/O verdict before entering the MPI-free
+     expectation-value session. */
+  if (X->Def.iOutputEigenVec == TRUE) {
+    int output_rc = 0;
+    for (r = jb; r <= je && output_rc == 0; r++) {
+      if (FullDiagOutputEigenvector(
+              X, (unsigned long int)(r - 1),
+              &panel[(r - jb) * NN]) != 0)
+        output_rc = -1;
+    }
+    MPI_Allreduce(&output_rc, &g, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    if (g != 0) {
+      free(panel);
+      return -1;
+    }
+  }
 
   /* --- ExpecMode 2 plan: build once, identically on every rank (the
      capability table gates Hubbard/HubbardGC/half-Spin/half-SpinGC as of

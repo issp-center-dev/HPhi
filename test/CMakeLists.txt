@@ -306,6 +306,7 @@ set_tests_properties(
 # Full Diag
 #
 add_hphi_test(fulldiag_hubbard_chain)
+add_hphi_test_with_srcdir(fulldiag_eigenvector_output)
 add_hphi_test(fulldiag_solver_keyword)
 if(USE_SCALAPACK)
   set_property(TEST fulldiag_solver_keyword APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
@@ -338,6 +339,9 @@ set_tests_properties(
     fulldiag_hubbardgc_nbody_interall
     fulldiag_hubbard_nbody_interall
     PROPERTIES LABELS "fulldiag;hubbard")
+set_tests_properties(
+    fulldiag_eigenvector_output
+    PROPERTIES LABELS "fulldiag;spin;eigenvector")
 set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
@@ -901,6 +905,17 @@ if(USE_ELPA)
 
     add_hphi_mpi_test(fulldiag_elpa_hubbard_chain min:2)
     add_hphi_mpi_test(fulldiag_output_open_failure exact:2)
+    add_test(
+        NAME fulldiag_eigenvector_output_elpa_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_eigenvector_output.sh
+                ${CMAKE_SOURCE_DIR})
+    set_tests_properties(
+        fulldiag_eigenvector_output_elpa_np2
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;elpa;eigenvector")
+    set_property(
+        TEST fulldiag_eigenvector_output_elpa_np2
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=3")
     set_tests_properties(
         fulldiag_output_open_failure
         PROPERTIES LABELS "fulldiag;elpa;validation" TIMEOUT 30)
@@ -1063,6 +1078,26 @@ endif(USE_ELPA)
 # This case exercises the ScaLAPACK solver and must remain available in a
 # USE_SCALAPACK=ON, USE_ELPA=OFF build as well as in an ELPA build.
 if(USE_SCALAPACK)
+    add_hphi_mpi_test(fulldiag_output_open_failure_scalapack exact:2)
+    set_tests_properties(
+        fulldiag_output_open_failure_scalapack
+        PROPERTIES LABELS "fulldiag;scalapack;validation" TIMEOUT 30)
+    set_property(
+        TEST fulldiag_output_open_failure_scalapack
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
+
+    add_test(
+        NAME fulldiag_eigenvector_output_scalapack_np2
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+                exact:2 ${CMAKE_SOURCE_DIR}/test/fulldiag_eigenvector_output.sh
+                ${CMAKE_SOURCE_DIR})
+    set_tests_properties(
+        fulldiag_eigenvector_output_scalapack_np2
+        PROPERTIES SKIP_RETURN_CODE 77 LABELS "fulldiag;scalapack;eigenvector")
+    set_property(
+        TEST fulldiag_eigenvector_output_scalapack_np2
+        APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
+
     add_test(
         NAME fulldiag_expecmode_scalapack_np2
         COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
