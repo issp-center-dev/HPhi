@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "Common.h"
+#include "symmetry_memory_policy.h"
 #include "symmetry_vector_halo.h"
 
 struct BindStruct;
@@ -15,7 +16,8 @@ struct SymmetryRepresentativeBatchOptions;
 #define SYMMETRY_VECTOR_EXCHANGE_HALO 1
 
 #ifndef HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES
-#define HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES UINT64_C(1073741824)
+#define HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES \
+  HPHI_SYMMETRY_MEMORY_LIMIT_BYTES
 #endif
 
 #ifndef HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK
@@ -96,6 +98,9 @@ struct SymmetryMatvecPlan {
   size_t remote_column_nnz;
   size_t build_local_wave_count;
   size_t build_max_wave_count;
+  size_t build_temporary_peak_bytes;
+  uint64_t build_memory_warning_byte_threshold;
+  uint64_t build_memory_byte_limit;
   size_t allgather_nonlocal_values_per_call;
   size_t allgather_payload_bytes_per_call;
   enum SymmetryColumnWidth column_slot_width;

@@ -588,12 +588,15 @@ static void sync_single_block_aliases(struct SymmetryMatvecPlan *plan)
 static int distributed_plan_options(
     int mpi_active,
     const struct SymmetryDistributedMatvecPlanOptions *options,
-    struct SymmetryDistributedMatvecPlanOptions *selected)
+    struct SymmetryDistributedMatvecPlanOptions *selected,
+    struct SymmetryMemoryPolicy *memory_policy)
 {
   uint64_t default_rows =
       (uint64_t)HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK;
+  uint64_t compile_time_hard_limit =
+      (uint64_t)HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
   int local_error = 0;
-  if (selected == NULL) return -1;
+  if (selected == NULL || memory_policy == NULL) return -1;
   memset(selected, 0, sizeof(*selected));
   if (default_rows == 0U ||
       default_rows > (uint64_t)ULONG_MAX) {
@@ -601,36 +604,37 @@ static int distributed_plan_options(
   } else {
     selected->local_rows_per_block =
         (unsigned long int)default_rows;
-    selected->block_memory_byte_limit =
-        (uint64_t)HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES;
   }
-  if (options != NULL) *selected = *options;
-  if (selected->local_rows_per_block == 0UL ||
-      selected->block_memory_byte_limit == 0U) {
+  if (options != NULL) {
+    *selected = *options;
+    if (options->block_memory_byte_limit != 0U) {
+      compile_time_hard_limit = options->block_memory_byte_limit;
+    }
+  }
+  if (selected->local_rows_per_block == 0UL) {
     local_error = 1;
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
+  if (SymmetryLoadMemoryPolicy(
+          compile_time_hard_limit, mpi_active, myrank,
+          "matvec-plan", memory_policy) != 0) {
+    return -1;
+  }
+  selected->block_memory_byte_limit =
+      memory_policy->hard_byte_limit;
 #ifdef MPI
   if (mpi_active != FALSE && nproc > 1) {
     unsigned long int rows_min;
     unsigned long int rows_max;
-    uint64_t limit_min;
-    uint64_t limit_max;
     if (MPI_Allreduce(
             &selected->local_rows_per_block, &rows_min, 1,
             MPI_UNSIGNED_LONG, MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
         MPI_Allreduce(
             &selected->local_rows_per_block, &rows_max, 1,
-            MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS ||
-        MPI_Allreduce(
-            &selected->block_memory_byte_limit, &limit_min, 1,
-            MPI_UINT64_T, MPI_MIN, MPI_COMM_WORLD) != MPI_SUCCESS ||
-        MPI_Allreduce(
-            &selected->block_memory_byte_limit, &limit_max, 1,
-            MPI_UINT64_T, MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
+            MPI_UNSIGNED_LONG, MPI_MAX, MPI_COMM_WORLD) != MPI_SUCCESS) {
       return -1;
     }
-    if (rows_min != rows_max || limit_min != limit_max) return -1;
+    if (rows_min != rows_max) return -1;
   }
 #else
   (void)mpi_active;
@@ -965,6 +969,7 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
     const struct SymmetryDistributedMatvecPlanOptions *options)
 {
   struct SymmetryDistributedMatvecPlanOptions selected;
+  struct SymmetryMemoryPolicy memory_policy;
   struct SymmetryMatvecPlan *plan = NULL;
   unsigned long int next_local_row_begin = 0UL;
   size_t local_block_count = 0U;
@@ -972,8 +977,10 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
   size_t max_wave_count = 0U;
   size_t wave;
   size_t block_write = 0U;
+  uint64_t effective_memory_limit;
   int mpi_active = SymmetryMpiCollectivesActive();
   int local_error = 0;
+  int memory_warning_emitted = 0;
   if (X == NULL || X->Sym == NULL ||
       X->Sym->basis_layout != SYMMETRY_BASIS_DISTRIBUTED ||
       X->Sym->matvec_plan != NULL ||
@@ -984,9 +991,11 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
   }
   if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
   if (distributed_plan_options(
-          mpi_active, options, &selected) != 0) {
+          mpi_active, options, &selected, &memory_policy) != 0) {
     return -1;
   }
+  effective_memory_limit = memory_policy.hard_byte_limit != 0U
+      ? memory_policy.hard_byte_limit : UINT64_MAX;
   if (distributed_local_plan_block_count(
           X->Sym, selected.local_rows_per_block,
           &local_block_count, &local_wave_count) != 0) {
@@ -1010,6 +1019,10 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
     } else {
       plan->build_local_wave_count = local_wave_count;
       plan->build_max_wave_count = max_wave_count;
+      plan->build_memory_warning_byte_threshold =
+          memory_policy.warning_byte_threshold;
+      plan->build_memory_byte_limit =
+          memory_policy.hard_byte_limit;
       plan->blocks =
           (struct SymmetryMatvecBlock *)calloc(
               plan->block_count, sizeof(*plan->blocks));
@@ -1040,12 +1053,12 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
     local_error =
         BuildSymmetryUnresolvedMatvecBlock(
             X, local_row_begin, local_row_count,
-            selected.block_memory_byte_limit,
+            effective_memory_limit,
             &unresolved) != 0;
     StopTimer(1124);
     if (local_error != 0 ||
         distributed_round_memory_peak(
-            &unresolved, selected.block_memory_byte_limit,
+            &unresolved, effective_memory_limit,
             &round_peak) != 0 ||
         (size_t)(uint64_t)unresolved.request_count !=
             unresolved.request_count) {
@@ -1057,7 +1070,20 @@ int BuildSymmetryDistributedMatvecPlanWithOptions(
       FreeSymmetryUnresolvedMatvecBlock(&unresolved);
       goto fail;
     }
-    (void)round_peak;
+    if (round_peak > plan->build_temporary_peak_bytes) {
+      plan->build_temporary_peak_bytes = round_peak;
+    }
+    {
+      int memory_status = SymmetryCheckMemoryPolicy(
+          &memory_policy, (uint64_t)round_peak,
+          mpi_active, myrank, "matvec-plan", "block-wave",
+          memory_warning_emitted == 0);
+      if (memory_status < 0) {
+        FreeSymmetryUnresolvedMatvecBlock(&unresolved);
+        goto fail;
+      }
+      if (memory_status > 0) memory_warning_emitted = 1;
+    }
     if (SymmetryCheckedSizeMul(
             unresolved.request_count, sizeof(*resolved_beta),
             &response_beta_bytes) != 0 ||

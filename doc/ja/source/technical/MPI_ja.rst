@@ -122,6 +122,33 @@ MPIビルドでは、バッチ通信はデフォルトで有効です。入力�
 この値は rank 0 で読み込まれ全ランクにブロードキャストされるため、
 常に全プロセスで一致します。
 
+分散対称性経路の一時メモリーポリシー
+--------------------------------------
+
+分散対称性基底の経路では、基底のdistribution、代表状態directoryのbatch、
+行列ベクトル積plan構築について、rankごとの一時メモリーpeakを見積もります。
+既定では1 GiB/rankを超える見積もりに対してwarningを表示しますが、
+計算は停止しません。
+
+以下の環境変数には、byte単位の符号なし10進整数を指定します。
+
+* ``HPHI_SYMMETRY_MEMORY_WARN_BYTES`` はwarning thresholdを設定します。
+  既定値は ``1073741824`` (1 GiB) で、``0`` はwarningを無効にします。
+* ``HPHI_SYMMETRY_MEMORY_LIMIT_BYTES`` は任意のhard limitを設定します。
+  既定値は ``0`` （無制限）です。0以外を指定すると、追跡対象の一時メモリー
+  peakが上限を超える前に、全rankで計算を失敗させます。
+
+例えば、既定のwarning thresholdを維持したまま4 GiB/rankのhard limitを
+設定するには、次のように実行します::
+
+   export HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=4294967296
+   mpirun -np 4 ./HPhi -e namelist.def
+
+両方の値はrank 0で読み込まれ、全rankへブロードキャストされます。
+distribution、directory、行列ベクトル積planの各phaseへ一貫して適用されます。
+これらの設定にかかわらず、メモリー確保失敗、整数overflow検査、MPI失敗は
+引き続きfatal errorです。
+
 SpinlessFermionのoff-diagonal two-body Green関数
 --------------------------------------------------------
 

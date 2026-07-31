@@ -711,6 +711,8 @@ static int representative_batch_stats_equal(
           right->directory_exchange_recv_messages &&
       left->directory_batch_temporary_peak_bytes ==
           right->directory_batch_temporary_peak_bytes &&
+      left->directory_batch_memory_warning_byte_threshold ==
+          right->directory_batch_memory_warning_byte_threshold &&
       left->directory_batch_memory_byte_limit ==
           right->directory_batch_memory_byte_limit;
 }
@@ -4196,6 +4198,15 @@ static void assert_c3_plan_matches_replicated(
     assert_ulong_eq(
         (unsigned long int)plan->build_max_wave_count,
         (unsigned long int)expected_rounds, label);
+    assert_int_eq(
+        plan->build_temporary_peak_bytes > 0U &&
+            plan->build_memory_warning_byte_threshold ==
+                (uint64_t)HPHI_SYMMETRY_MEMORY_WARN_BYTES &&
+            plan->build_memory_byte_limit ==
+                (uint64_t)HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES &&
+            plan->build_temporary_peak_bytes <=
+                (size_t)plan->build_memory_byte_limit,
+        1, "distributed plan memory policy stats mismatch");
     for (block_index = 0U;
          block_index < SymmetryMatvecPlanBlockCount(plan);
          block_index++) {

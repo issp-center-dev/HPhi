@@ -222,7 +222,7 @@ check_rank_stats_layout()
         return
     fi
     grep -Eq \
-        "^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=${expected_layout} " \
         "${stats}"
     if [ "${expected_layout}" = "distributed" ]; then
         grep -Eq \
@@ -358,8 +358,8 @@ if [ -f symmetry_staged_precg0_rank_stats.dat ]; then
             max[key] = value($5)
         }
         END {
-            if (version != 9 || layout != "distributed" ||
-                count != 102 ||
+            if (version != 10 || layout != "distributed" ||
+                count != 107 ||
                 min["directory_build_heavy_bytes"] <= 0 ||
                 min["directory_steady_heavy_bytes"] != 0 ||
                 max["directory_steady_heavy_bytes"] != 0 ||
@@ -456,6 +456,65 @@ fi
 grep -q \
     "distributed symmetry basis is supported for TransSym CG runs only" \
     nonsymmetry_layout_reject.log
+
+rm -rf output
+# RUNNER is intentionally word-split because MPIRUN contains options.
+# shellcheck disable=SC2086
+if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+         HPHI_SYMMETRY_MEMORY_WARN_BYTES=1 \
+         HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=0 \
+         ${RUNNER} "${HPHI}" -e namelist_symmetry.def \
+         > runtime_memory_warning.log 2>&1; then
+    cat runtime_memory_warning.log
+    exit 1
+fi
+for component in distribution directory matvec-plan; do
+    grep -a -q \
+        "Warning: HPhi symmetry ${component} " \
+        runtime_memory_warning.log
+done
+test -s output/CalcTimerRankStats.dat
+awk '
+    function value(field, parts) {
+        split(field, parts, "=")
+        return parts[2]
+    }
+    $1 == "work" {
+        key = value($2)
+        min[key] = value($4)
+        max[key] = value($5)
+    }
+    END {
+        if (min["distribution_memory_warning_byte_threshold"] != 1 ||
+            max["distribution_memory_warning_byte_threshold"] != 1 ||
+            min["directory_batch_memory_warning_byte_threshold"] != 1 ||
+            max["directory_batch_memory_warning_byte_threshold"] != 1 ||
+            min["plan_build_memory_warning_byte_threshold"] != 1 ||
+            max["plan_build_memory_warning_byte_threshold"] != 1 ||
+            min["distribution_memory_byte_limit"] != 0 ||
+            max["distribution_memory_byte_limit"] != 0 ||
+            min["directory_batch_memory_byte_limit"] != 0 ||
+            max["directory_batch_memory_byte_limit"] != 0 ||
+            min["plan_build_memory_byte_limit"] != 0 ||
+            max["plan_build_memory_byte_limit"] != 0) {
+            exit 1
+        }
+    }
+' output/CalcTimerRankStats.dat
+
+# RUNNER is intentionally word-split because MPIRUN contains options.
+# shellcheck disable=SC2086
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       HPHI_SYMMETRY_MEMORY_WARN_BYTES=0 \
+       HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=1 \
+       ${RUNNER} "${HPHI}" -e namelist_symmetry.def \
+       > runtime_memory_hard_limit.log 2>&1; then
+    echo "Distributed symmetry unexpectedly ignored the runtime hard limit."
+    exit 1
+fi
+grep -a -q \
+    "exceeding hard limit=1" \
+    runtime_memory_hard_limit.log
 
 for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
     grep -q \

@@ -370,11 +370,11 @@ assert_replicated_rank_stats() {
             next
         }
         END {
-            if (header_version != 9 || header_ranks != expected_ranks ||
+            if (header_version != 10 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 29 || work_count != 102 ||
+                timer_count != 29 || work_count != 107 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
@@ -541,7 +541,7 @@ assert_distributed_rank_stats() {
         exit 1
     fi
     grep -Eq \
-        '^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        '^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
         "${stats}"
     grep -Eq \
         '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \

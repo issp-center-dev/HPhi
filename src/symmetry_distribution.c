@@ -13,6 +13,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_checked.h"
 #include "symmetry_distribution.h"
+#include "symmetry_memory_policy.h"
 #include "symmetry_mpi_exchange.h"
 
 #define SYMMETRY_SAMPLE_COUNT_DEFAULT UINT64_C(64)
@@ -47,7 +48,7 @@ static int agree_distribution_failure(
   return global_error;
 }
 
-static int agree_distribution_limit_failure(
+static int agree_distribution_bound_failure(
     int mpi_active,
     int rank,
     const char *stage,
@@ -456,6 +457,7 @@ int SymmetrySampleSortBasisRun(
     struct SymmetryBasisDistributionStats *stats)
 {
   struct SymmetryBasisDistributionStats next_stats;
+  struct SymmetryMemoryPolicy memory_policy;
   struct SymmetryBasisVector *local_samples = NULL;
   struct SymmetryBasisVector *merged_entries = NULL;
   struct SymmetryMergeNode *merge_heap = NULL;
@@ -542,12 +544,16 @@ int SymmetrySampleSortBasisRun(
       mpi_active, rank, "sample sort", "invalid rank or communicator",
       local_error);
   if (global_error != 0) return -1;
+  if (SymmetryLoadMemoryPolicy(
+          (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES,
+          mpi_active, rank, "distribution", &memory_policy) != 0) {
+    return -1;
+  }
   if (SymmetryBasisRunIsValid(run) != TRUE ||
       SymmetryCheckedUlongToU64(run != NULL ? run->count : 0UL,
                            &local_count) != 0 ||
       local_count > (uint64_t)(SIZE_MAX /
-          sizeof(struct SymmetryBasisVector)) - 1U ||
-      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+          sizeof(struct SymmetryBasisVector)) - 1U) {
     local_error = 1;
   }
   global_error = agree_distribution_failure(
@@ -833,16 +839,11 @@ int SymmetrySampleSortBasisRun(
       mpi_active, rank, "sample sort",
       "sample-stage temporary memory arithmetic", local_error);
   if (global_error != 0) goto fail;
-  local_error =
-      sample_peak >
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
-  global_error = agree_distribution_limit_failure(
-      mpi_active, rank, "sample sort",
-      "sample-stage temporary memory limit exceeded; increase MPI ranks "
-      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
-      sample_peak,
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
-  if (global_error != 0) goto fail;
+  if (SymmetryCheckMemoryPolicy(
+          &memory_policy, sample_peak, mpi_active, rank,
+          "distribution", "sample-stage", TRUE) < 0) {
+    goto fail;
+  }
 
   send_counts = (uint64_t *)calloc((size_t)nrank, sizeof(*send_counts));
   send_displacements = (uint64_t *)calloc(
@@ -920,7 +921,7 @@ int SymmetrySampleSortBasisRun(
       "sample-derived bucket upper-bound arithmetic", local_error);
   if (global_error != 0) goto fail;
   local_error = receive_count > bucket_upper_bound;
-  global_error = agree_distribution_limit_failure(
+  global_error = agree_distribution_bound_failure(
       mpi_active, rank, "sample sort",
       "range receive count exceeds the sample-derived bucket bound",
       local_error, receive_count, bucket_upper_bound);
@@ -935,16 +936,11 @@ int SymmetrySampleSortBasisRun(
       mpi_active, rank, "sample sort",
       "range-stage size or temporary memory arithmetic", local_error);
   if (global_error != 0) goto fail;
-  local_error =
-      temporary_peak >
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
-  global_error = agree_distribution_limit_failure(
-      mpi_active, rank, "sample sort",
-      "range-stage temporary memory limit exceeded; increase MPI ranks "
-      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
-      temporary_peak,
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
-  if (global_error != 0) goto fail;
+  if (SymmetryCheckMemoryPolicy(
+          &memory_policy, temporary_peak, mpi_active, rank,
+          "distribution", "range-stage", TRUE) < 0) {
+    goto fail;
+  }
 
   next_stats.local_survivor_entries = local_count;
   next_stats.nonempty_rank_count = nonempty_ranks;
@@ -963,8 +959,10 @@ int SymmetrySampleSortBasisRun(
   next_stats.bucket_sample_entries = bucket_sample_counts[rank];
   next_stats.bucket_entry_upper_bound = bucket_upper_bound;
   next_stats.global_entries = global_count;
+  next_stats.distribution_memory_warning_byte_threshold =
+      memory_policy.warning_byte_threshold;
   next_stats.distribution_memory_byte_limit =
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
+      memory_policy.hard_byte_limit;
   next_stats.splitter_digest =
       digest_splitters(splitters, splitter_count);
   next_stats.sort_temporary_peak_bytes = sample_peak_size;
@@ -1261,6 +1259,7 @@ int SymmetryExactRebalanceBasisRun(
     struct SymmetryBasisDistributionStats *stats)
 {
   struct SymmetryBasisOwnership next_ownership;
+  struct SymmetryMemoryPolicy memory_policy;
   struct SymmetryMpiExchangeLayout layout;
   struct SymmetryMpiExchangeResult result;
   struct SymmetryMpiExchangeStats exchange_stats;
@@ -1341,10 +1340,14 @@ int SymmetryExactRebalanceBasisRun(
       mpi_active, rank, "exact rebalance",
       "invalid rank or communicator", local_error);
   if (global_error != 0) return -1;
+  if (SymmetryLoadMemoryPolicy(
+          (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES,
+          mpi_active, rank, "distribution", &memory_policy) != 0) {
+    return -1;
+  }
   if (SymmetryBasisRunIsValid(run) != TRUE ||
       SymmetryCheckedUlongToU64(run != NULL ? run->count : 0UL,
-                           &local_count) != 0 ||
-      HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES == 0U) {
+                           &local_count) != 0) {
     local_error = 1;
   }
   global_error = agree_distribution_failure(
@@ -1578,16 +1581,11 @@ int SymmetryExactRebalanceBasisRun(
       mpi_active, rank, "exact rebalance",
       "temporary memory arithmetic", local_error);
   if (global_error != 0) goto fail_rebalance;
-  local_error =
-      (uint64_t)temporary_peak >
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES;
-  global_error = agree_distribution_limit_failure(
-      mpi_active, rank, "exact rebalance",
-      "temporary memory limit exceeded; increase MPI ranks "
-      "or HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES", local_error,
-      (uint64_t)temporary_peak,
-      (uint64_t)HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES);
-  if (global_error != 0) goto fail_rebalance;
+  if (SymmetryCheckMemoryPolicy(
+          &memory_policy, (uint64_t)temporary_peak,
+          mpi_active, rank, "distribution", "exact-rebalance", TRUE) < 0) {
+    goto fail_rebalance;
+  }
 
   layout.nrank = nrank;
   layout.count = local_count;
@@ -1726,6 +1724,10 @@ int SymmetryExactRebalanceBasisRun(
   *ownership = next_ownership;
   next_ownership.rank_offsets = NULL;
   if (stats != NULL) {
+    stats->distribution_memory_warning_byte_threshold =
+        memory_policy.warning_byte_threshold;
+    stats->distribution_memory_byte_limit =
+        memory_policy.hard_byte_limit;
     stats->rebalance_send_entries = local_count;
     stats->rebalance_recv_entries = receive_total;
     stats->rebalance_exchange_used_chunked =

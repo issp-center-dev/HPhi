@@ -127,6 +127,34 @@ The active setting is reported at startup as ``MPI batching : ON`` or
 ``MPI batching : OFF``. The value is read on rank 0 and broadcast to all ranks,
 so all processes always agree.
 
+Distributed symmetry temporary-memory policy
+--------------------------------------------
+
+The distributed symmetry-basis path estimates the per-rank temporary-memory
+peak for basis distribution, representative-directory batches, and
+matrix-vector plan construction. By default, an estimate above 1 GiB per rank
+prints a warning but does not stop the calculation.
+
+The following environment variables accept unsigned decimal byte values:
+
+* ``HPHI_SYMMETRY_MEMORY_WARN_BYTES`` sets the warning threshold. Its default
+  is ``1073741824`` (1 GiB); ``0`` disables the warning.
+* ``HPHI_SYMMETRY_MEMORY_LIMIT_BYTES`` sets an optional hard limit. Its default
+  is ``0`` (unlimited). A nonzero value makes the calculation fail
+  collectively before a tracked temporary-memory peak is allowed to exceed
+  the limit.
+
+For example, the following keeps the default warning threshold and sets a
+4 GiB per-rank hard limit::
+
+   export HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=4294967296
+   mpirun -np 4 ./HPhi -e namelist.def
+
+Both values are read on rank 0 and broadcast to all ranks. They apply
+consistently to the distribution, directory, and matrix-vector plan phases.
+Allocation failures, integer-overflow checks, and MPI failures remain fatal
+regardless of these settings.
+
 SpinlessFermion Off-diagonal Two-body Green's Function
 ------------------------------------------------------
 

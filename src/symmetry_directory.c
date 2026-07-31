@@ -11,6 +11,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_checked.h"
 #include "symmetry_directory.h"
+#include "symmetry_memory_policy.h"
 #include "symmetry_mpi_exchange.h"
 #include "CalcTime.h"
 
@@ -34,6 +35,8 @@ struct SymmetryRepresentativeDirectory {
   int nonempty_rank_count;
   unsigned long int *rank_first_rep;
   struct SymmetryLocalRepresentativeIndex *local_index;
+  struct SymmetryMemoryPolicy memory_policy;
+  int memory_warning_emitted;
   struct SymmetryRepresentativeBatchStats batch_stats;
 };
 
@@ -406,6 +409,7 @@ int BuildSymmetryRepresentativeDirectory(
 {
   struct SymmetryLocalRepresentativeIndex *local_index = NULL;
   struct SymmetryRepresentativeDirectory *next = NULL;
+  struct SymmetryMemoryPolicy memory_policy;
   unsigned long int local_boundary[2] = {0UL, 0UL};
   unsigned long int *all_boundaries = NULL;
   size_t boundary_elements = 0U;
@@ -424,9 +428,6 @@ int BuildSymmetryRepresentativeDirectory(
   }
   if (directory_out == NULL || *directory_out != NULL ||
       rank < 0 || nrank < 1 || rank >= nrank ||
-      (uint64_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES == 0U ||
-      (uint64_t)(size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES !=
-          (uint64_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES ||
       (mpi_active != 0 &&
        (rank != comm_rank || nrank != comm_size)) ||
       (mpi_active == 0 && (rank != 0 || nrank != 1)) ||
@@ -445,6 +446,14 @@ int BuildSymmetryRepresentativeDirectory(
   }
   global_error = agree_directory_failure(mpi_active, local_error);
   if (global_error != 0) {
+    FreeSymmetryLocalRepresentativeIndex(local_index);
+    return -1;
+  }
+  if (SymmetryLoadMemoryPolicy(
+          (uint64_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES,
+          mpi_active, rank, "directory", &memory_policy) != 0 ||
+      (memory_policy.hard_byte_limit != 0U &&
+       memory_policy.hard_byte_limit > (uint64_t)SIZE_MAX)) {
     FreeSymmetryLocalRepresentativeIndex(local_index);
     return -1;
   }
@@ -483,8 +492,11 @@ int BuildSymmetryRepresentativeDirectory(
     next->nrank = nrank;
     next->nonempty_rank_count = nonempty_rank_count;
     next->local_index = local_index;
+    next->memory_policy = memory_policy;
     next->batch_stats.directory_batch_memory_byte_limit =
-        (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
+        (size_t)memory_policy.hard_byte_limit;
+    next->batch_stats.directory_batch_memory_warning_byte_threshold =
+        memory_policy.warning_byte_threshold;
     local_index = NULL;
     if (nonempty_rank_count > 0) {
       next->rank_first_rep =
@@ -892,7 +904,9 @@ static int directory_publish_batch_stats(
     next_stats->directory_batch_temporary_peak_bytes = batch_peak;
   }
   next_stats->directory_batch_memory_byte_limit =
-      (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
+      (size_t)directory->memory_policy.hard_byte_limit;
+  next_stats->directory_batch_memory_warning_byte_threshold =
+      directory->memory_policy.warning_byte_threshold;
   return 0;
 }
 
@@ -922,7 +936,7 @@ static int resolve_representative_batch_with_options(
   unsigned long int *packed_requests = NULL;
   uint64_t *send_counts = NULL;
   uint64_t *send_displacements = NULL;
-  size_t byte_limit = (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES;
+  size_t byte_limit;
   size_t input_request_count_size = 0U;
   size_t received_request_count_size = 0U;
   size_t schedule_bytes = 0U;
@@ -958,6 +972,10 @@ static int resolve_representative_batch_with_options(
   if (directory_mpi_context(&mpi_active, &comm_rank, &comm_size) != 0) {
     return -1;
   }
+  byte_limit = directory != NULL &&
+          directory->memory_policy.hard_byte_limit != 0U
+      ? (size_t)directory->memory_policy.hard_byte_limit
+      : SIZE_MAX;
   if (SymmetryRepresentativeDirectoryReady(directory) == 0 ||
       directory->rank != comm_rank || directory->nrank != comm_size ||
       (request_count > 0U &&
@@ -986,7 +1004,11 @@ static int resolve_representative_batch_with_options(
   exchange_options.force_chunked = batch_options.force_chunked;
 
   call_stats.directory_batch_calls = 1U;
-  call_stats.directory_batch_memory_byte_limit = byte_limit;
+  call_stats.directory_batch_memory_byte_limit =
+      directory->memory_policy.hard_byte_limit != 0U
+          ? byte_limit : 0U;
+  call_stats.directory_batch_memory_warning_byte_threshold =
+      directory->memory_policy.warning_byte_threshold;
   if (directory->dim == 0UL) {
     call_stats.directory_not_found_entries = request_count;
     if (directory_publish_batch_stats(
@@ -1253,15 +1275,27 @@ static int resolve_representative_batch_with_options(
       directory_peer_count_max(received_requests.counts, directory->nrank);
   call_stats.directory_requester_peer_count_max =
       directory_peer_count_max(send_counts, directory->nrank);
-  if (directory_include_exchange_stats(
-          &call_stats, &request_exchange_stats) != 0 ||
-      directory_include_exchange_stats(
-          &call_stats, &response_exchange_stats) != 0 ||
-      (batch_options.debug_echo != 0 &&
+  {
+    int memory_status = SymmetryCheckMemoryPolicy(
+        &directory->memory_policy, (uint64_t)batch_peak,
+        mpi_active, directory->rank, "directory", "batch",
+        directory->memory_warning_emitted == 0);
+    if (memory_status < 0) {
+      local_error = 1;
+    } else if (memory_status > 0) {
+      directory->memory_warning_emitted = 1;
+    }
+  }
+  if (local_error == 0 &&
+      (directory_include_exchange_stats(
+           &call_stats, &request_exchange_stats) != 0 ||
        directory_include_exchange_stats(
-           &call_stats, &echo_exchange_stats) != 0) ||
-      directory_publish_batch_stats(
-          directory, &call_stats, batch_peak, &next_stats) != 0) {
+           &call_stats, &response_exchange_stats) != 0 ||
+       (batch_options.debug_echo != 0 &&
+        directory_include_exchange_stats(
+            &call_stats, &echo_exchange_stats) != 0) ||
+       directory_publish_batch_stats(
+           directory, &call_stats, batch_peak, &next_stats) != 0)) {
     local_error = 1;
   }
   global_error = agree_directory_failure(mpi_active, local_error);

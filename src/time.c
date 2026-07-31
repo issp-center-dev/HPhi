@@ -143,7 +143,12 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     "directory_steady_heavy_bytes",
     "directory_heavy_storage_released",
     "plan_local_wave_count",
-    "plan_max_wave_count"
+    "plan_max_wave_count",
+    "distribution_memory_warning_byte_threshold",
+    "directory_batch_memory_warning_byte_threshold",
+    "plan_build_temporary_peak_bytes",
+    "plan_build_memory_warning_byte_threshold",
+    "plan_build_memory_byte_limit"
   };
   static const char *metric_keys[] = {
     "plan_remote_column_nnz_ratio",
@@ -444,6 +449,24 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
       plan != NULL
           ? (unsigned long long)plan->build_max_wave_count
           : 0ULL;
+  work_local[101] =
+      X->Sym->distribution_stats
+          .distribution_memory_warning_byte_threshold;
+  work_local[102] =
+      directory_batch_stats
+          .directory_batch_memory_warning_byte_threshold;
+  work_local[103] =
+      plan != NULL
+          ? (unsigned long long)plan->build_temporary_peak_bytes
+          : 0ULL;
+  work_local[104] =
+      plan != NULL
+          ? plan->build_memory_warning_byte_threshold
+          : 0ULL;
+  work_local[105] =
+      plan != NULL
+          ? plan->build_memory_byte_limit
+          : 0ULL;
   row_mean_local = plan != NULL && plan->local_dim > 0UL
                        ? (double)plan->nnz / (double)plan->local_dim
                        : 0.0;
@@ -569,7 +592,7 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
   sprintf(fileName, "CalcTimerRankStats.dat");
   if (childfopenMPI(fileName, "w", &fp) != 0) return;
   fprintf(fp,
-          "format=HPhiCalcTimerRankStats version=9 ranks=%d "
+          "format=HPhiCalcTimerRankStats version=10 ranks=%d "
           "basis_layout=%s matvec_mode=%s vector_exchange=%s\n",
           nproc,
           X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED

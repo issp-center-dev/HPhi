@@ -3,9 +3,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "symmetry_memory_policy.h"
 
 #ifndef HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES
-#define HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES UINT64_C(1073741824)
+#define HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES \
+  HPHI_SYMMETRY_MEMORY_LIMIT_BYTES
 #endif
 
 struct SymmetryBasisVector;
@@ -100,6 +102,7 @@ struct SymmetryRepresentativeBatchStats {
   uint64_t directory_exchange_send_messages;
   uint64_t directory_exchange_recv_messages;
   size_t directory_batch_temporary_peak_bytes;
+  uint64_t directory_batch_memory_warning_byte_threshold;
   size_t directory_batch_memory_byte_limit;
 };
 

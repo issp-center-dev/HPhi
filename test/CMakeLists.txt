@@ -53,6 +53,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
@@ -65,7 +66,9 @@ target_compile_definitions(unittest_symmetry_basis PRIVATE
     DSFMT_MEXP=19937 HPHI_SYMMETRY_PARITY_VERIFY
     HPHI_SYMMETRY_CANONICAL_VERIFY HPHI_SYMMETRY_SPIN_VERIFY
     HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1
-    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES=1073741824)
 target_link_libraries(unittest_symmetry_basis m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_basis ${MPI_C_LIBRARIES})
@@ -89,6 +92,7 @@ endif()
 add_executable(unittest_symmetry_distribution
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
 target_include_directories(unittest_symmetry_distribution
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
@@ -113,6 +117,7 @@ endif()
 add_executable(unittest_symmetry_directory
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
 target_include_directories(unittest_symmetry_directory
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
@@ -134,6 +139,25 @@ set_tests_properties(unittest_symmetry_directory
 if(MPI_FOUND)
     add_hphi_mpi_test(symmetry_directory_mpi min:2)
     set_tests_properties(symmetry_directory_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
+add_executable(unittest_symmetry_memory_policy
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c)
+target_include_directories(unittest_symmetry_memory_policy
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_link_libraries(unittest_symmetry_memory_policy m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_memory_policy ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_memory_policy
+    COMMAND unittest_symmetry_memory_policy)
+set_tests_properties(unittest_symmetry_memory_policy
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_memory_policy_mpi min:2)
+    set_tests_properties(symmetry_memory_policy_mpi
         PROPERTIES LABELS "symmetry;mpi")
 endif()
 
@@ -619,6 +643,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c

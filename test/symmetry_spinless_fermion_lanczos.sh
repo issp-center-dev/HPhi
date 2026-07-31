@@ -302,7 +302,7 @@ assert_distributed_rank_stats() {
         exit 1
     fi
     grep -Eq \
-        '^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        '^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
         "${stats}"
     grep -Eq \
         '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
@@ -340,7 +340,7 @@ assert_rank_stats_layout() {
         return
     fi
     if ! grep -Eq \
-        "^format=HPhiCalcTimerRankStats version=9 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=${expected_layout} " \
         "${stats}"; then
         cat "${log}"
         cat "${stats}"

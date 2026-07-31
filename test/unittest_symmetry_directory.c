@@ -83,6 +83,8 @@ static int representative_batch_stats_equal(
           right->directory_exchange_recv_messages &&
       left->directory_batch_temporary_peak_bytes ==
           right->directory_batch_temporary_peak_bytes &&
+      left->directory_batch_memory_warning_byte_threshold ==
+          right->directory_batch_memory_warning_byte_threshold &&
       left->directory_batch_memory_byte_limit ==
           right->directory_batch_memory_byte_limit;
 }
@@ -963,6 +965,9 @@ static void assert_batch_resolution(void)
                    first_stats.directory_batch_temporary_peak_bytes > 0U &&
                    first_stats.directory_batch_temporary_peak_bytes <=
                        first_stats.directory_batch_memory_byte_limit &&
+                   first_stats
+                           .directory_batch_memory_warning_byte_threshold ==
+                       (uint64_t)HPHI_SYMMETRY_MEMORY_WARN_BYTES &&
                    first_stats.directory_batch_memory_byte_limit ==
                        (size_t)HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES,
                "batch fast stats mismatch");

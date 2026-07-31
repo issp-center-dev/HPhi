@@ -1313,6 +1313,9 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                        first_stats.bucket_sample_entries *
                            first_stats.global_sample_gap_max +
                        first_stats.global_sample_gap_sum &&
+                   first_stats
+                           .distribution_memory_warning_byte_threshold ==
+                       (uint64_t)HPHI_SYMMETRY_MEMORY_WARN_BYTES &&
                    first_stats.distribution_memory_byte_limit ==
                        HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
                    first_stats.sample_gather_message_byte_limit ==
@@ -1616,7 +1619,9 @@ static void assert_exact_rebalance_fixture(uint64_t global_count,
   stats.range_exchange_message_byte_limit = UINT64_C(105);
   stats.range_exchange_max_message_bytes = UINT64_C(106);
   stats.sort_temporary_peak_bytes = 107U;
-  stats.splitter_digest = UINT64_C(109);
+  stats.distribution_memory_warning_byte_threshold = UINT64_C(108);
+  stats.distribution_memory_byte_limit = UINT64_C(109);
+  stats.splitter_digest = UINT64_C(110);
   stats.range_digest = UINT64_C(113);
 
   require_true(
@@ -1666,7 +1671,11 @@ static void assert_exact_rebalance_fixture(uint64_t global_count,
                    stats.range_exchange_max_message_bytes ==
                        UINT64_C(106) &&
                    stats.sort_temporary_peak_bytes == 107U &&
-                   stats.splitter_digest == UINT64_C(109) &&
+                   stats.distribution_memory_warning_byte_threshold ==
+                       (uint64_t)HPHI_SYMMETRY_MEMORY_WARN_BYTES &&
+                   stats.distribution_memory_byte_limit ==
+                       HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES &&
+                   stats.splitter_digest == UINT64_C(110) &&
                    stats.range_digest == UINT64_C(113) &&
                    stats.rebalance_send_entries == input_count &&
                    stats.rebalance_recv_entries ==

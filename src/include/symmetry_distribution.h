@@ -3,13 +3,15 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "symmetry_memory_policy.h"
 
 #ifndef HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES
 #ifdef HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
 #define HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES \
   HPHI_SYMMETRY_SAMPLE_SORT_MEMORY_BYTES
 #else
-#define HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES UINT64_C(1073741824)
+#define HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES \
+  HPHI_SYMMETRY_MEMORY_LIMIT_BYTES
 #endif
 #endif
 
@@ -76,6 +78,7 @@ struct SymmetryBasisDistributionStats {
   int rebalance_exchange_used_chunked;
   uint64_t rebalance_exchange_message_byte_limit;
   uint64_t rebalance_exchange_max_message_bytes;
+  uint64_t distribution_memory_warning_byte_threshold;
   uint64_t distribution_memory_byte_limit;
   uint64_t splitter_digest;
   uint64_t range_digest;
