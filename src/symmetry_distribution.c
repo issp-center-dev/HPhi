@@ -16,9 +16,6 @@
 #include "symmetry_memory_policy.h"
 #include "symmetry_mpi_exchange.h"
 
-#define SYMMETRY_SAMPLE_COUNT_DEFAULT UINT64_C(64)
-#define SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP UINT64_C(131072)
-
 struct SymmetryMergeNode {
   int source;
   uint64_t offset;
@@ -135,6 +132,34 @@ int SymmetryCompareBasisRepState(const void *lhs, const void *rhs)
       (const struct SymmetryBasisVector *)rhs;
   if (a->rep_state < b->rep_state) return -1;
   if (a->rep_state > b->rep_state) return 1;
+  return 0;
+}
+
+int SymmetrySelectSampleCountPolicy(
+    uint64_t nonempty_rank_count,
+    uint64_t *samples_per_nonempty_rank,
+    int *warning_required)
+{
+  const uint64_t default_count =
+      (uint64_t)HPHI_SYMMETRY_SAMPLE_COUNT_DEFAULT;
+  const uint64_t warning_threshold =
+      (uint64_t)HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD;
+  uint64_t selected;
+  if (samples_per_nonempty_rank == NULL || warning_required == NULL ||
+      default_count == 0U || warning_threshold == 0U) {
+    return -1;
+  }
+  *samples_per_nonempty_rank = 0U;
+  *warning_required = FALSE;
+  if (nonempty_rank_count == 0U) return 0;
+  selected = default_count;
+  if (nonempty_rank_count > warning_threshold / selected) {
+    selected = warning_threshold / nonempty_rank_count;
+    if (selected == 0U) selected = 1U;
+  }
+  *samples_per_nonempty_rank = selected;
+  *warning_required =
+      nonempty_rank_count > warning_threshold ? TRUE : FALSE;
   return 0;
 }
 
@@ -487,6 +512,7 @@ int SymmetrySampleSortBasisRun(
   uint64_t global_gap_sum = 0U;
   uint64_t sample_limit = 0U;
   uint64_t nonempty_ranks = 0U;
+  int sample_count_warning = FALSE;
   uint64_t receive_count = 0U;
   uint64_t bucket_upper_bound = 0U;
   uint64_t sample_peak = 0U;
@@ -609,16 +635,10 @@ int SymmetrySampleSortBasisRun(
       break;
     }
   }
-  if (nonempty_ranks > SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP) {
+  if (SymmetrySelectSampleCountPolicy(
+          nonempty_ranks, &sample_limit,
+          &sample_count_warning) != 0) {
     local_error = 1;
-  } else if (nonempty_ranks > 0U) {
-    sample_limit = SYMMETRY_SAMPLE_COUNT_DEFAULT;
-    if (nonempty_ranks >
-        SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP / sample_limit) {
-      sample_limit =
-          SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP / nonempty_ranks;
-      if (sample_limit == 0U) sample_limit = 1U;
-    }
   }
   global_error = agree_distribution_failure(
       mpi_active, rank, "sample sort",
@@ -660,13 +680,25 @@ int SymmetrySampleSortBasisRun(
       break;
     }
   }
-  if (global_sample_count > SYMMETRY_SAMPLE_COUNT_GLOBAL_CAP) {
+  if ((sample_count_warning != FALSE) !=
+      (global_sample_count >
+       (uint64_t)HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD)) {
     local_error = 1;
   }
   global_error = agree_distribution_failure(
       mpi_active, rank, "sample sort",
       "global sample count or gap arithmetic", local_error);
   if (global_error != 0) goto fail;
+  if (sample_count_warning != FALSE && rank == 0) {
+    fprintf(stderr,
+            "Warning: HPhi symmetry distribution global sample count "
+            "(%" PRIu64 ") exceeds warning threshold=%" PRIu64
+            "; continuing with one sample per nonempty MPI rank.\n",
+            global_sample_count,
+            (uint64_t)
+                HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD);
+    fflush(stderr);
+  }
 
   sample_send_counts = (uint64_t *)calloc(
       (size_t)nrank, sizeof(*sample_send_counts));

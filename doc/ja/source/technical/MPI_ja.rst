@@ -149,6 +149,12 @@ distribution、directory、行列ベクトル積planの各phaseへ一貫して�
 これらの設定にかかわらず、メモリー確保失敗、整数overflow検査、MPI失敗は
 引き続きfatal errorです。
 
+分散sample sortでは、初期値としてnonempty MPI rankごとに64個のregular
+sampleを選びます。global sample数131,072はhard limitではなくwarning
+thresholdです。nonempty rankが2,048を超えるとrank当たりsample数を減らし、
+131,072を超えると1 sample/rankで続行してrank 0からwarningを出します。
+実allocationとruntime memory policyの検査は引き続き適用されます。
+
 SpinlessFermionのoff-diagonal two-body Green関数
 --------------------------------------------------------
 

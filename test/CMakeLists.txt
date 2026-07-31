@@ -114,6 +114,33 @@ if(MPI_FOUND)
         PROPERTIES LABELS "symmetry;mpi")
 endif()
 
+add_executable(unittest_symmetry_distribution_warning
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
+target_include_directories(unittest_symmetry_distribution_warning
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_distribution_warning PRIVATE
+    DSFMT_MEXP=19937
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
+    HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD=2
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
+target_link_libraries(unittest_symmetry_distribution_warning m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_distribution_warning
+        ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_distribution_warning
+    COMMAND unittest_symmetry_distribution_warning)
+set_tests_properties(unittest_symmetry_distribution_warning
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_distribution_warning_mpi min:3)
+    set_tests_properties(symmetry_distribution_warning_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
 add_executable(unittest_symmetry_directory
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c

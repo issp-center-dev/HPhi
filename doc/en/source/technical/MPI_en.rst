@@ -155,6 +155,13 @@ consistently to the distribution, directory, and matrix-vector plan phases.
 Allocation failures, integer-overflow checks, and MPI failures remain fatal
 regardless of these settings.
 
+The distributed sample sort initially selects 64 regular samples from every
+nonempty MPI rank. A global sample count of 131,072 is a warning threshold,
+not a hard limit. Above 2,048 nonempty ranks, HPhi reduces the samples per
+rank; above 131,072 nonempty ranks, it continues with one sample per rank and
+prints a warning from rank zero. Actual allocation and runtime memory-policy
+checks still apply.
+
 SpinlessFermion Off-diagonal Two-body Green's Function
 ------------------------------------------------------
 

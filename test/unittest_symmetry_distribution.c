@@ -1096,6 +1096,56 @@ static uint64_t sample_fixture_count(enum SampleSortFixture fixture)
   return (uint64_t)test_nrank * 3U + 11U;
 }
 
+static void assert_sample_count_warning_policy(void)
+{
+  const uint64_t default_count =
+      (uint64_t)HPHI_SYMMETRY_SAMPLE_COUNT_DEFAULT;
+  const uint64_t warning_threshold =
+      (uint64_t)HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD;
+  uint64_t expected_single =
+      default_count < warning_threshold ? default_count : warning_threshold;
+  uint64_t selected = UINT64_MAX;
+  int warning = -1;
+
+  require_true(
+      SymmetrySelectSampleCountPolicy(0U, &selected, &warning) == 0 &&
+          selected == 0U && warning == FALSE,
+      "zero-rank sample policy mismatch");
+  require_true(
+      SymmetrySelectSampleCountPolicy(1U, &selected, &warning) == 0 &&
+          selected == expected_single && warning == FALSE,
+      "single-rank sample policy mismatch");
+  if (warning_threshold >= default_count) {
+    require_true(
+        SymmetrySelectSampleCountPolicy(
+            warning_threshold / default_count,
+            &selected, &warning) == 0 &&
+            selected == default_count && warning == FALSE,
+        "default sample policy boundary mismatch");
+  }
+  require_true(
+      SymmetrySelectSampleCountPolicy(
+          warning_threshold, &selected, &warning) == 0 &&
+          selected == 1U && warning == FALSE,
+      "global sample warning threshold mismatch");
+  require_true(
+      warning_threshold < UINT64_MAX &&
+          SymmetrySelectSampleCountPolicy(
+              warning_threshold + 1U,
+              &selected, &warning) == 0 &&
+          selected == 1U && warning == TRUE,
+      "global sample warning continuation mismatch");
+  require_true(
+      SymmetrySelectSampleCountPolicy(
+          UINT64_MAX, &selected, &warning) == 0 &&
+          selected == 1U && warning == TRUE,
+      "maximum-rank sample warning continuation mismatch");
+  require_true(
+      SymmetrySelectSampleCountPolicy(1U, NULL, &warning) == -1 &&
+          SymmetrySelectSampleCountPolicy(1U, &selected, NULL) == -1,
+      "invalid sample policy output was not rejected");
+}
+
 static int sample_fixture_owner(enum SampleSortFixture fixture,
                                 uint64_t ordinal,
                                 uint64_t global_count)
@@ -1339,12 +1389,21 @@ static void assert_sample_sort_fixture(enum SampleSortFixture fixture,
                    first_stats.rebalance_temporary_peak_bytes == 0U,
                "sample-sort stats contract mismatch");
   if (fixture == SAMPLE_SORT_ONE_RANK_ONLY) {
-    require_true(first_stats.samples_per_nonempty_rank == 64U &&
-                     first_stats.global_sample_entries == 64U &&
-                     first_stats.global_sample_gap_max > 1U &&
-                     (test_nrank == 1 ||
-                      (first_stats.sample_gather_used_chunked == TRUE &&
-                       first_stats.range_exchange_used_chunked == TRUE)),
+    uint64_t expected_samples = 0U;
+    int expected_warning = FALSE;
+    require_true(
+        SymmetrySelectSampleCountPolicy(
+            first_stats.nonempty_rank_count,
+            &expected_samples, &expected_warning) == 0 &&
+            expected_warning == FALSE &&
+            first_stats.samples_per_nonempty_rank == expected_samples &&
+            first_stats.global_sample_entries == expected_samples &&
+            first_stats.global_sample_gap_max > 1U &&
+            (test_nrank == 1 ||
+             (first_stats.sample_gather_used_chunked ==
+                  (expected_samples > test_message_entry_limit
+                       ? TRUE : FALSE) &&
+              first_stats.range_exchange_used_chunked == TRUE)),
                  "regular sample gap fixture did not downsample");
   }
   require_all_ranks_u64_equal(
@@ -1954,6 +2013,7 @@ int main(int argc, char **argv)
                    test_response_message_entry_limit > 0U &&
                    test_response_message_entry_limit < (uint64_t)INT_MAX,
                "invalid test message byte cap");
+  assert_sample_count_warning_policy();
   assert_asymmetric_fast_and_chunked();
   assert_byte_cap_boundary_and_deep_chunks();
   assert_empty_and_self_only();

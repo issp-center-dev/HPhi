@@ -24,6 +24,15 @@
   HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES
 #endif
 
+#ifndef HPHI_SYMMETRY_SAMPLE_COUNT_DEFAULT
+#define HPHI_SYMMETRY_SAMPLE_COUNT_DEFAULT UINT64_C(64)
+#endif
+
+#ifndef HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD
+#define HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD \
+  UINT64_C(131072)
+#endif
+
 struct BindStruct;
 struct SymmetryBasisRuntime;
 struct SymmetryBasisVector;
@@ -102,6 +111,16 @@ int BuildRankLocalSymmetryBasisRun(
 
 /* Shared qsort comparator for replicated and distributed basis ordering. */
 int SymmetryCompareBasisRepState(const void *lhs, const void *rhs);
+
+/*
+ * Select the regular sample count from the number of nonempty MPI ranks.
+ * The global threshold is advisory: once even one sample per nonempty rank
+ * exceeds it, continue with one sample and request a rank-zero warning.
+ */
+int SymmetrySelectSampleCountPolicy(
+    uint64_t nonempty_rank_count,
+    uint64_t *samples_per_nonempty_rank,
+    int *warning_required);
 
 /*
  * Sorts a valid run locally and redistributes it into deterministic
