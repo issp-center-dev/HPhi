@@ -2,6 +2,8 @@
 #define HPHI_SYMMETRY_BASIS_H
 
 #include "Common.h"
+#include "symmetry_directory.h"
+#include "symmetry_distribution.h"
 
 struct BindStruct;
 struct DefineList;
@@ -23,20 +25,57 @@ struct SymmetryCanonicalResult {
   double complex phase;
 };
 
+struct SymmetryRepresentativeResult {
+  unsigned long int rep_state;
+  unsigned int op_rep_to_state;
+  double complex phase;
+};
+
 struct SymmetryTransformResult {
   unsigned long int state;
   double complex amplitude;
 };
 
+enum SymmetryBasisLayout {
+  SYMMETRY_BASIS_REPLICATED = 0,
+  SYMMETRY_BASIS_DISTRIBUTED = 1
+};
+
+enum SymmetryBasisDigestAlgorithm {
+  SYMMETRY_BASIS_DIGEST_INVALID = 0,
+  SYMMETRY_BASIS_DIGEST_REPLICATED_FNV1A64 = 1,
+  SYMMETRY_BASIS_DIGEST_DISTRIBUTED_GLOBAL_BETA = 2
+};
+
+struct SymmetryBasisDigest {
+  enum SymmetryBasisDigestAlgorithm algorithm;
+  uint64_t count;
+  uint64_t fnv1a64;
+  uint64_t xor_hash;
+  uint64_t sum_hash;
+};
+
 struct SymmetryBasisRuntime {
   int enabled;
+  enum SymmetryBasisLayout basis_layout;
   unsigned int nsite;
   unsigned int group_order;
   unsigned long int full_dim;
   unsigned long int dim;
   unsigned long int capacity;
   struct SymmetryBasisVector *basis;
-  double *sym_diagonal;
+  unsigned long int local_capacity;
+  struct SymmetryBasisVector *local_basis;
+  unsigned long int *rank_offsets;
+  struct SymmetryRepresentativeDirectory *representative_directory;
+  int representative_directory_stats_ready;
+  int representative_directory_heavy_storage_released;
+  struct SymmetryRepresentativeDirectoryInfo representative_directory_info;
+  struct SymmetryLocalRepresentativeIndexStats
+      representative_directory_index_stats;
+  struct SymmetryRepresentativeBatchStats
+      representative_directory_batch_stats;
+  struct SymmetryBasisDistributionStats distribution_stats;
   unsigned long int rep_hash_size;
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;
@@ -48,6 +87,8 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_compatible_survivors;
   unsigned long long basis_transform_calls;
   unsigned long long basis_orbit_metadata_calls;
+  unsigned long long basis_state_enumerator_calls;
+  unsigned long long basis_diagonal_evaluator_calls;
   unsigned int basis_thread_count;
   unsigned long long basis_thread_raw_states_max;
   unsigned long long basis_thread_representative_candidates_max;
@@ -55,6 +96,12 @@ struct SymmetryBasisRuntime {
   unsigned long long basis_thread_transform_calls_max;
   unsigned long long basis_gather_entries;
   unsigned long long basis_gather_bytes;
+  unsigned long long allocation_raw_basis_list_elements;
+  unsigned long long allocation_raw_diagonal_elements;
+  unsigned long long allocation_initial_vector_elements;
+  unsigned long long allocation_mpi_vector_buffer_elements;
+  unsigned long long allocation_auxiliary_vector_elements;
+  unsigned long long allocation_lobpcg_workspace_elements;
   int *mpi_recvcounts;
   int *mpi_displs;
   double complex *mpi_full_v1;
@@ -62,6 +109,48 @@ struct SymmetryBasisRuntime {
   int vector_exchange_mode;
   struct SymmetryMatvecPlan *matvec_plan;
 };
+
+static inline const struct SymmetryBasisVector *SymmetryBasisLocalEntry(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int local_index)
+{
+  unsigned long int global_index;
+  if (sym == NULL || sym->enabled != TRUE ||
+      local_index == 0UL || local_index > sym->local_dim ||
+      sym->local_offset > sym->dim ||
+      sym->local_dim > sym->dim - sym->local_offset) {
+    return NULL;
+  }
+  if (sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED) {
+    if (sym->basis != NULL || sym->local_basis == NULL ||
+        sym->local_capacity <= local_index) {
+      return NULL;
+    }
+    return &sym->local_basis[local_index];
+  }
+  if (sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      sym->basis == NULL) {
+    return NULL;
+  }
+  global_index = sym->local_offset + local_index;
+  if (global_index > sym->capacity) return NULL;
+  return &sym->basis[global_index];
+}
+
+static inline const struct SymmetryBasisVector *
+SymmetryBasisReplicatedGlobalEntry(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int global_index)
+{
+  if (sym == NULL || sym->enabled != TRUE ||
+      sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      sym->basis == NULL ||
+      global_index == 0UL || global_index > sym->dim ||
+      global_index > sym->capacity) {
+    return NULL;
+  }
+  return &sym->basis[global_index];
+}
 
 int ValidateSymmetryGroupInput(const struct DefineList *def);
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
@@ -72,6 +161,18 @@ int SymmetryApplyToState(const struct DefineList *def,
                          unsigned int op,
                          struct SymmetryTransformResult *result);
 int BuildSymmetryBasis(struct BindStruct *X);
+int BuildSymmetryBasisForLayout(
+    struct BindStruct *X,
+    enum SymmetryBasisLayout layout);
+/**
+ * @brief Find a symmetry representative without consulting basis storage.
+ *
+ * @return 0 on success, or -1 after zeroing result on invalid input.
+ */
+int SymmetryFindRepresentative(
+    const struct BindStruct *X,
+    unsigned long int state,
+    struct SymmetryRepresentativeResult *result);
 int SymmetryCanonicalizeState(const struct BindStruct *X,
                               unsigned long int state,
                               struct SymmetryCanonicalResult *result);
@@ -82,6 +183,23 @@ int ActivateSymmetryBasisDimension(struct BindStruct *X);
 int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
                                unsigned long int global_index,
                                unsigned long int *local_index);
+int GetOwnedHamiltonianDiagonal(const struct BindStruct *X,
+                                unsigned long int local_index,
+                                double *diagonal);
+int SymmetryBasisOwnedStorageReady(
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int expected_local_dim);
+int SymmetryBasisRepresentativeDirectoryReady(
+    const struct SymmetryBasisRuntime *sym);
+/**
+ * Snapshot directory diagnostics and collectively release the local hash and
+ * owner splitter after the distributed solver plan no longer needs lookups.
+ */
+int ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage(
+    struct SymmetryBasisRuntime *sym);
+int ComputeSymmetryBasisDigest(
+    const struct SymmetryBasisRuntime *sym,
+    struct SymmetryBasisDigest *digest);
 int ValidateSymmetrySectorOptions(const struct BindStruct *X);
 void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym);
 

@@ -171,7 +171,16 @@ diff=`awk -v a="${sym_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; p
 test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
+grep -q "Symmetry allocation: raw_dim=20 global_dim=4 local_dim=4 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=15" symmetry.log
 grep -q "Symmetry matvec: mode=plan" symmetry.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    symmetry.log
+basis_line=`awk '/Symmetry basis:/{print NR; exit}' symmetry.log`
+allocation_line=`awk '/Symmetry allocation:/{print NR; exit}' symmetry.log`
+test -n "${basis_line}"
+test -n "${allocation_line}"
+test "${basis_line}" -lt "${allocation_line}"
 
 cat > namelist_heisenberg_ref.def <<EOF
 CalcMod calcmod.def
@@ -203,6 +212,7 @@ test -n "${sym_heisenberg_energy}"
 heisenberg_diff=`awk -v a="${sym_heisenberg_energy}" -v b="${ref_heisenberg_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${heisenberg_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
+grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_heisenberg.log
 grep -q "Symmetry matvec: mode=plan" symmetry_heisenberg.log
 grep -q "vector_exchange=halo" symmetry_heisenberg.log
 grep -q "columns=local/ghost-slots" symmetry_heisenberg.log
@@ -215,6 +225,7 @@ test -n "${complex_energy}"
 complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
+grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_complex.log
 grep -q "Symmetry matvec: mode=plan" symmetry_complex.log
 grep -q "vector_exchange=halo" symmetry_complex.log
 grep -q "columns=local/ghost-slots" symmetry_complex.log
@@ -244,6 +255,16 @@ if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_in
     exit 1
 fi
 grep -q "HPHI_SYMMETRY_MATVEC must be 'plan' or 'legacy'" symmetry_invalid_mode.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       ../../src/HPhi -e namelist.def \
+       > symmetry_distributed_lanczos_reject.log 2>&1; then
+    cat symmetry_distributed_lanczos_reject.log
+    exit 1
+fi
+grep -q \
+    "distributed symmetry basis is supported for TransSym CG runs only" \
+    symmetry_distributed_lanczos_reject.log
 
 run_mpi_symmetry_case() {
     label="$1"
@@ -311,8 +332,10 @@ if [ -n "${MPIRUN}" ]; then
 #!/bin/sh
 rank=${OMPI_COMM_WORLD_RANK:-${PMI_RANK:-${PMIX_RANK:-0}}}
 if [ "${rank}" -eq 0 ]; then
+    export HPHI_SYMMETRY_BASIS_LAYOUT=replicated
     export HPHI_SYMMETRY_MATVEC=plan
 else
+    export HPHI_SYMMETRY_BASIS_LAYOUT=invalid
     export HPHI_SYMMETRY_MATVEC=invalid
 fi
 exec "$@"
@@ -329,7 +352,14 @@ EOF
         test "${rank_env_diff}" = "0.000000"
         grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
         grep -q "vector_exchange=halo" symmetry_rank_env_mpi.log
+        grep -q \
+            "Symmetry basis layout: replicated (explicit environment)." \
+            symmetry_rank_env_mpi.log
         if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
+            cat symmetry_rank_env_mpi.log
+            exit 1
+        fi
+        if grep -q "HPHI_SYMMETRY_BASIS_LAYOUT must be" symmetry_rank_env_mpi.log; then
             cat symmetry_rank_env_mpi.log
             exit 1
         fi

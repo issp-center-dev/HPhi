@@ -1,0 +1,530 @@
+#!/bin/sh -eu
+
+mkdir -p symmetry_spin_chain_lobcg_preconditioner
+cd symmetry_spin_chain_lobcg_preconditioner
+
+HPHI=../../src/HPhi
+RUNNER=${MPIRUN:-}
+
+run_hphi()
+{
+    log=$1
+    shift
+    "$@" > "${log}" 2>&1 || {
+        cat "${log}"
+        exit 1
+    }
+}
+
+cat > calcmod.def <<EOF
+CalcType 3
+CalcModel 1
+OutputMode 0
+CalcEigenVec 0
+InitialVecType 0
+OutputEigenVec 0
+InputEigenVec 0
+OutputHam 0
+InputHam 0
+ReStart 0
+CalcSpec 0
+EOF
+
+cat > locspn.def <<EOF
+================
+NlocalSpin 8
+================
+========i_1LocSpn ======
+================
+0 1
+1 1
+2 1
+3 1
+4 1
+5 1
+6 1
+7 1
+EOF
+
+cat > exchange.def <<EOF
+================
+NExchange 8
+================
+========i_j_J ======
+================
+0 1 1.0
+1 2 1.0
+2 3 1.0
+3 4 1.0
+4 5 1.0
+5 6 1.0
+6 7 1.0
+7 0 1.0
+EOF
+
+{
+    echo "============================================="
+    echo "NQPTrans          8"
+    echo "============================================="
+    echo "======== TrIdx_TrWeight_and_TrIdx_i_xi ======"
+    echo "============================================="
+    translation=0
+    while [ "${translation}" -lt 8 ]; do
+        echo "${translation} 1.0"
+        translation=$((translation + 1))
+    done
+    translation=0
+    while [ "${translation}" -lt 8 ]; do
+        site=0
+        while [ "${site}" -lt 8 ]; do
+            target=$(((site + translation) % 8))
+            echo "${translation} ${site} ${target} 1"
+            site=$((site + 1))
+        done
+        translation=$((translation + 1))
+    done
+} > qptransidx.def
+
+cat > namelist_normal.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+EOF
+
+cat > namelist_symmetry.def <<EOF
+CalcMod calcmod.def
+ModPara modpara.def
+LocSpin locspn.def
+Exchange exchange.def
+TransSym qptransidx.def
+EOF
+
+run_case()
+{
+    label=$1
+    precondition=$2
+    namelist=$3
+    eigenstates=${4:-1}
+    execution=${5:-mpi}
+    layout=${6:-default}
+
+    cat > modpara.def <<EOF
+--------------------
+Model_Parameters 0
+--------------------
+--------------------
+--------------------
+CDataFileHead zvo
+CParaFileHead zqp
+--------------------
+Nsite 8
+2Sz 0
+Lanczos_max 100
+initial_iv 1
+exct ${eigenstates}
+LanczosEps 12
+LanczosTarget 2
+LargeValue 50
+PreCG ${precondition}
+EOF
+
+    rm -rf output
+    if [ "${execution}" = "serial" ]; then
+        if [ "${layout}" = "distributed" ]; then
+            run_hphi "${label}.log" env \
+                HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+                "${HPHI}" -e "${namelist}"
+        elif [ "${layout}" = "replicated" ]; then
+            run_hphi "${label}.log" env \
+                HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+                "${HPHI}" -e "${namelist}"
+        elif [ "${layout}" = "default" ]; then
+            run_hphi "${label}.log" \
+                "${HPHI}" -e "${namelist}"
+        else
+            echo "Unknown symmetry basis layout: ${layout}"
+            exit 1
+        fi
+    elif [ "${layout}" = "distributed" ]; then
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" env \
+            HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
+    elif [ "${layout}" = "replicated" ]; then
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" env \
+            HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
+    elif [ "${layout}" = "default" ]; then
+        # RUNNER is intentionally word-split because MPIRUN contains options.
+        # shellcheck disable=SC2086
+        run_hphi "${label}.log" \
+            ${RUNNER} "${HPHI}" -e "${namelist}"
+    else
+        echo "Unknown symmetry basis layout: ${layout}"
+        exit 1
+    fi
+    test -s output/zvo_energy.dat
+    test -s output/zvo_Lanczos_Step.dat
+    cp output/zvo_energy.dat "${label}_energy.dat"
+    cp output/zvo_Lanczos_Step.dat "${label}_steps.dat"
+    if [ -f output/CalcTimerRankStats.dat ]; then
+        cp output/CalcTimerRankStats.dat "${label}_rank_stats.dat"
+    fi
+}
+
+check_convergence()
+{
+    step_file=$1
+    awk '
+        $1 ~ /^[0-9]+$/ {
+            count++
+            residual = $2
+            threshold = $3
+        }
+        END {
+            exit !(count >= 2 && residual < threshold)
+        }
+    ' "${step_file}"
+}
+
+extract_energy()
+{
+    awk '$1 == "Energy" {print $2; exit}' "$1"
+}
+
+extract_residual()
+{
+    awk '$1 ~ /^[0-9]+$/ {residual = $2} END {print residual}' "$1"
+}
+
+check_energy_close()
+{
+    left=$1
+    right=$2
+    awk -v left="${left}" -v right="${right}" '
+        BEGIN {
+            difference = left - right
+            if (difference < 0) difference = -difference
+            exit !(difference <= 1.0e-10)
+        }
+    '
+}
+
+check_rank_stats_layout()
+{
+    stats=$1
+    expected_layout=$2
+    if [ ! -f "${stats}" ]; then
+        return
+    fi
+    grep -Eq \
+        "^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "${stats}"
+    if [ "${expected_layout}" = "distributed" ]; then
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+            "${stats}"
+    else
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-fields .* status=ok$' \
+            "${stats}"
+    fi
+}
+
+# The normal-basis run is an energy reference.  Run it in serial because its
+# site decomposition requires a power-of-two MPI size, while TransSym supports
+# arbitrary MPI sizes and is the path under test here.
+run_case normal_precg0 0 namelist_normal.def 1 serial
+run_case symmetry_precg0 0 namelist_symmetry.def
+run_case symmetry_replicated_precg0 0 namelist_symmetry.def 1 mpi replicated
+run_case symmetry_staged_precg0 0 namelist_symmetry.def 1 mpi distributed
+run_case symmetry_precg1 1 namelist_symmetry.def
+run_case symmetry_exct4_precg0 0 namelist_symmetry.def 4
+run_case symmetry_exct4_precg1 1 namelist_symmetry.def 4
+
+check_convergence normal_precg0_steps.dat
+check_convergence symmetry_precg0_steps.dat
+check_convergence symmetry_replicated_precg0_steps.dat
+check_convergence symmetry_staged_precg0_steps.dat
+check_convergence symmetry_precg1_steps.dat
+check_convergence symmetry_exct4_precg0_steps.dat
+check_convergence symmetry_exct4_precg1_steps.dat
+
+normal_energy=$(extract_energy normal_precg0_energy.dat)
+symmetry_precg0_energy=$(extract_energy symmetry_precg0_energy.dat)
+symmetry_replicated_precg0_energy=$(
+    extract_energy symmetry_replicated_precg0_energy.dat
+)
+symmetry_staged_precg0_energy=$(extract_energy symmetry_staged_precg0_energy.dat)
+symmetry_precg1_energy=$(extract_energy symmetry_precg1_energy.dat)
+symmetry_exct4_precg0_energy=$(extract_energy symmetry_exct4_precg0_energy.dat)
+symmetry_exct4_precg1_energy=$(extract_energy symmetry_exct4_precg1_energy.dat)
+symmetry_precg0_residual=$(extract_residual symmetry_precg0_steps.dat)
+symmetry_replicated_precg0_residual=$(
+    extract_residual symmetry_replicated_precg0_steps.dat
+)
+symmetry_staged_precg0_residual=$(
+    extract_residual symmetry_staged_precg0_steps.dat
+)
+test -n "${normal_energy}"
+test -n "${symmetry_precg0_energy}"
+test -n "${symmetry_replicated_precg0_energy}"
+test -n "${symmetry_staged_precg0_energy}"
+test -n "${symmetry_precg1_energy}"
+test -n "${symmetry_exct4_precg0_energy}"
+test -n "${symmetry_exct4_precg1_energy}"
+test -n "${symmetry_precg0_residual}"
+test -n "${symmetry_replicated_precg0_residual}"
+test -n "${symmetry_staged_precg0_residual}"
+
+check_energy_close "${symmetry_precg0_energy}" "${symmetry_precg1_energy}"
+check_energy_close \
+    "${symmetry_precg0_energy}" "${symmetry_replicated_precg0_energy}"
+check_energy_close "${symmetry_precg0_energy}" "${symmetry_staged_precg0_energy}"
+check_energy_close \
+    "${symmetry_precg0_residual}" "${symmetry_replicated_precg0_residual}"
+check_energy_close \
+    "${symmetry_precg0_residual}" "${symmetry_staged_precg0_residual}"
+check_energy_close "${normal_energy}" "${symmetry_precg0_energy}"
+check_energy_close "${normal_energy}" "${symmetry_precg1_energy}"
+check_energy_close "${normal_energy}" "${symmetry_exct4_precg0_energy}"
+check_energy_close "${normal_energy}" "${symmetry_exct4_precg1_energy}"
+
+check_rank_stats_layout symmetry_precg0_rank_stats.dat distributed
+check_rank_stats_layout symmetry_replicated_precg0_rank_stats.dat replicated
+check_rank_stats_layout symmetry_staged_precg0_rank_stats.dat distributed
+check_rank_stats_layout symmetry_exct4_precg0_rank_stats.dat distributed
+check_rank_stats_layout symmetry_exct4_precg1_rank_stats.dat distributed
+
+for log in symmetry_precg0.log symmetry_precg1.log; do
+    grep -q \
+        "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
+    grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
+    grep -Eq \
+        "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=1 workspace_vector_elements=[1-9][0-9]*" \
+        "${log}"
+    grep -q "Symmetry distributed matvec: global_rows=10" "${log}"
+    grep -q "columns=local/ghost-slots" "${log}"
+    grep -q \
+        "Symmetry basis layout: distributed (default for TransSym CG)." \
+        "${log}"
+    if grep -q "MPI site separation summary" "${log}"; then
+        echo "TransSym MPI path unexpectedly used site decomposition."
+        exit 1
+    fi
+done
+
+grep -q \
+    "Symmetry matvec: mode=plan vector_exchange=halo" \
+    symmetry_replicated_precg0.log
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    symmetry_replicated_precg0.log
+
+grep -q \
+    "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" \
+    symmetry_staged_precg0.log
+grep -q \
+    "Symmetry distributed matvec: global_rows=10" \
+    symmetry_staged_precg0.log
+grep -q "columns=local/ghost-slots" symmetry_staged_precg0.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    symmetry_staged_precg0.log
+if grep -q "Symmetry matvec: mode=legacy" symmetry_staged_precg0.log ||
+   grep -q "MPI site separation summary" symmetry_staged_precg0.log; then
+    echo "Staged TransSym run entered an incompatible matvec path."
+    exit 1
+fi
+if [ -f symmetry_staged_precg0_rank_stats.dat ]; then
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        /^format=/ {
+            version = value($2)
+            layout = value($4)
+            next
+        }
+        $1 == "work" {
+            count++
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            if (version != 10 || layout != "distributed" ||
+                count != 107 ||
+                min["directory_build_heavy_bytes"] <= 0 ||
+                min["directory_steady_heavy_bytes"] != 0 ||
+                max["directory_steady_heavy_bytes"] != 0 ||
+                min["directory_heavy_storage_released"] != 1 ||
+                max["directory_heavy_storage_released"] != 1 ||
+                min["plan_max_wave_count"] <= 0 ||
+                min["plan_max_wave_count"] != max["plan_max_wave_count"] ||
+                min["directory_batch_calls"] != min["plan_max_wave_count"] ||
+                max["directory_batch_calls"] != max["plan_max_wave_count"] ||
+                min["plan_matrix_storage_bytes"] <= 0 ||
+                max["plan_column_storage_bytes"] <= 0) {
+                exit 1
+            }
+        }
+    ' symmetry_staged_precg0_rank_stats.dat
+fi
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       HPHI_SYMMETRY_MATVEC=legacy \
+       "${HPHI}" -e namelist_symmetry.def \
+       > staged_legacy_reject.log 2>&1; then
+    echo "Staged distributed symmetry unexpectedly accepted legacy matvec."
+    exit 1
+fi
+grep -q \
+    "distributed symmetry basis requires HPHI_SYMMETRY_MATVEC=plan" \
+    staged_legacy_reject.log
+
+if env HPHI_SYMMETRY_MATVEC=legacy \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_legacy_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted legacy matvec."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_legacy_reject.log
+
+if env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_allgather_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted allgather."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_allgather_reject.log
+
+if env HPHI_SYMMETRY_HALO_REFERENCE=1 \
+       "${HPHI}" -e namelist_symmetry.def \
+       > default_halo_reference_reject.log 2>&1; then
+    echo "Default distributed symmetry unexpectedly accepted halo reference."
+    exit 1
+fi
+grep -q \
+    "Set HPHI_SYMMETRY_BASIS_LAYOUT=replicated for developer rollback" \
+    default_halo_reference_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT=typo \
+       "${HPHI}" -e namelist_symmetry.def \
+       > invalid_layout_reject.log 2>&1; then
+    echo "Invalid symmetry basis layout was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_BASIS_LAYOUT must be 'replicated' or 'distributed'" \
+    invalid_layout_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT= \
+       "${HPHI}" -e namelist_symmetry.def \
+       > empty_layout_reject.log 2>&1; then
+    echo "Empty symmetry basis layout was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_BASIS_LAYOUT must be 'replicated' or 'distributed'" \
+    empty_layout_reject.log
+
+if env HPHI_SYMMETRY_STAGED_DISTRIBUTED=1 \
+       "${HPHI}" -e namelist_symmetry.def \
+       > retired_layout_reject.log 2>&1; then
+    echo "Retired staged symmetry layout option was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "HPHI_SYMMETRY_STAGED_DISTRIBUTED is retired" \
+    retired_layout_reject.log
+
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       "${HPHI}" -e namelist_normal.def \
+       > nonsymmetry_layout_reject.log 2>&1; then
+    echo "Distributed layout without TransSym was unexpectedly accepted."
+    exit 1
+fi
+grep -q \
+    "distributed symmetry basis is supported for TransSym CG runs only" \
+    nonsymmetry_layout_reject.log
+
+rm -rf output
+# RUNNER is intentionally word-split because MPIRUN contains options.
+# shellcheck disable=SC2086
+if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+         HPHI_SYMMETRY_MEMORY_WARN_BYTES=1 \
+         HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=0 \
+         ${RUNNER} "${HPHI}" -e namelist_symmetry.def \
+         > runtime_memory_warning.log 2>&1; then
+    cat runtime_memory_warning.log
+    exit 1
+fi
+for component in distribution directory matvec-plan; do
+    grep -a -q \
+        "Warning: HPhi symmetry ${component} " \
+        runtime_memory_warning.log
+done
+test -s output/CalcTimerRankStats.dat
+awk '
+    function value(field, parts) {
+        split(field, parts, "=")
+        return parts[2]
+    }
+    $1 == "work" {
+        key = value($2)
+        min[key] = value($4)
+        max[key] = value($5)
+    }
+    END {
+        if (min["distribution_memory_warning_byte_threshold"] != 1 ||
+            max["distribution_memory_warning_byte_threshold"] != 1 ||
+            min["directory_batch_memory_warning_byte_threshold"] != 1 ||
+            max["directory_batch_memory_warning_byte_threshold"] != 1 ||
+            min["plan_build_memory_warning_byte_threshold"] != 1 ||
+            max["plan_build_memory_warning_byte_threshold"] != 1 ||
+            min["distribution_memory_byte_limit"] != 0 ||
+            max["distribution_memory_byte_limit"] != 0 ||
+            min["directory_batch_memory_byte_limit"] != 0 ||
+            max["directory_batch_memory_byte_limit"] != 0 ||
+            min["plan_build_memory_byte_limit"] != 0 ||
+            max["plan_build_memory_byte_limit"] != 0) {
+            exit 1
+        }
+    }
+' output/CalcTimerRankStats.dat
+
+# RUNNER is intentionally word-split because MPIRUN contains options.
+# shellcheck disable=SC2086
+if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+       HPHI_SYMMETRY_MEMORY_WARN_BYTES=0 \
+       HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=1 \
+       ${RUNNER} "${HPHI}" -e namelist_symmetry.def \
+       > runtime_memory_hard_limit.log 2>&1; then
+    echo "Distributed symmetry unexpectedly ignored the runtime hard limit."
+    exit 1
+fi
+grep -a -q \
+    "exceeding hard limit=1" \
+    runtime_memory_hard_limit.log
+
+for log in symmetry_exct4_precg0.log symmetry_exct4_precg1.log; do
+    grep -q \
+        "Symmetry basis: raw_dim=70 sector_dim=10 group_order=8" "${log}"
+    grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" "${log}"
+    grep -Eq \
+        "Symmetry LOBPCG allocation: local_dim=[0-9]+ exct=4 workspace_vector_elements=[1-9][0-9]*" \
+        "${log}"
+    grep -q "Symmetry distributed matvec: global_rows=10" "${log}"
+    grep -q \
+        "Symmetry basis layout: distributed (default for TransSym CG)." \
+        "${log}"
+done

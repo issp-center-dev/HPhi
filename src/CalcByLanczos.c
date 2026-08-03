@@ -182,8 +182,8 @@ int CalcByLanczos(
         //}
       }
     }
-    else{//idim_max=1
-      v0[1]=1;
+    else{//global idim_maxMPI=1
+      if(X->Bind.Check.idim_max == 1) v0[1]=1;
       StartTimer(4300);
       iret=expec_energy_flct(&(X->Bind));
       StopTimer(4300);

@@ -257,13 +257,20 @@ assert_symmetry_log() {
     fi
 }
 
-assert_rank_stats() {
+assert_replicated_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
     expected_dim="$1"
     expected_ranks="$2"
     log="$3"
     expected_digest="${4:-}"
     expected_reference="${5:-0}"
     expected_exchange="${6:-halo}"
+    expected_lobpcg=0
+    if grep -q "Symmetry LOBPCG allocation:" "${log}"; then
+        expected_lobpcg=1
+    fi
     stats=output/CalcTimerRankStats.dat
     if [ ! -f output/CalcTimer.dat ]; then
         return
@@ -273,10 +280,19 @@ assert_rank_stats() {
         echo "Missing ${stats}"
         exit 1
     fi
+    for timer_id in 1112 1123 1133 1134 1135; do
+        timer_description_count=`grep -c "\\[${timer_id}\\]" output/CalcTimer.dat || true`
+        if [ "${timer_description_count}" -ne 1 ]; then
+            cat output/CalcTimer.dat
+            echo "Expected timer ${timer_id} exactly once in CalcTimer.dat"
+            exit 1
+        fi
+    done
     if ! awk -v expected_dim="${expected_dim}" -v expected_ranks="${expected_ranks}" \
         -v expected_digest="${expected_digest}" \
         -v expected_reference="${expected_reference}" \
-        -v expected_exchange="${expected_exchange}" '
+        -v expected_exchange="${expected_exchange}" \
+        -v expected_lobpcg="${expected_lobpcg}" '
         function abs(x) { return x < 0 ? -x : x }
         function value(field, parts) {
             split(field, parts, "=")
@@ -301,6 +317,7 @@ assert_rank_stats() {
             if (expected_ranks == 1 &&
                 (abs(min - max) > 1.0e-15 || abs(min - mean) > 1.0e-15)) bad = 1
             timer_mean[id] = mean
+            timer_seen[id]++
             next
         }
         $1 == "work" {
@@ -331,10 +348,15 @@ assert_rank_stats() {
         }
         $1 == "basis_digest" {
             digest_count++
+            digest_algorithm = value($2)
             ranks = value($3)
             digest_min = value($4)
             digest_max = value($5)
-            if (ranks != expected_ranks || digest_min != digest_max) bad = 1
+            digest_entries = value($6)
+            digest_status = value($7)
+            if (digest_algorithm != "fnv1a64-fields" ||
+                ranks != expected_ranks || digest_min != digest_max ||
+                digest_entries != expected_dim || digest_status != "ok") bad = 1
             if (expected_digest != "" && digest_min != expected_digest) bad = 1
             next
         }
@@ -348,17 +370,25 @@ assert_rank_stats() {
             next
         }
         END {
-            if (header_version != 4 || header_ranks != expected_ranks ||
+            if (header_version != 10 || header_ranks != expected_ranks ||
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 23 || work_count != 39 ||
+                timer_count != 29 || work_count != 107 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
+            if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
+                timer_seen[1124] != 1 || timer_seen[1125] != 1 ||
+                timer_seen[1133] != 1 || timer_seen[1134] != 1 ||
+                timer_seen[1135] != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_state_enumerator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
+            if (abs(work_mean["basis_diagonal_evaluator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_representative_candidates"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_compatible_survivors"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
-            if (work_min["basis_transform_calls"] <= 0) bad = 1
+            if (work_max["basis_transform_calls"] <= 0) bad = 1
+            if (work_min["basis_raw_states"] > 0 &&
+                work_min["basis_transform_calls"] <= 0) bad = 1
             if (abs(work_mean["basis_orbit_metadata_calls"] * expected_ranks - 4) > 1.0e-12) bad = 1
             if (work_min["basis_thread_count"] < 1) bad = 1
             if (abs(work_mean["plan_local_rows"] * expected_ranks - expected_dim) > 1.0e-12) bad = 1
@@ -370,6 +400,16 @@ assert_rank_stats() {
                 work_max["column_slot_width"] != 32) bad = 1
             if (work_min["halo_schedule_ready"] != 1 ||
                 work_max["halo_schedule_ready"] != 1) bad = 1
+            if (work_min["plan_matrix_storage_bytes"] <= 0 ||
+                work_max["plan_column_storage_bytes"] <= 0) bad = 1
+            if (work_min["directory_build_heavy_bytes"] != 0 ||
+                work_max["directory_build_heavy_bytes"] != 0 ||
+                work_min["directory_steady_heavy_bytes"] != 0 ||
+                work_max["directory_steady_heavy_bytes"] != 0 ||
+                work_min["directory_heavy_storage_released"] != 0 ||
+                work_max["directory_heavy_storage_released"] != 0) bad = 1
+            if (work_max["plan_local_wave_count"] != 0 ||
+                work_max["plan_max_wave_count"] != 0) bad = 1
             if (work_min["halo_schedule_bytes"] <= 0) bad = 1
             if (abs(work_mean["halo_runtime_buffer_bytes"] - 16 * (work_mean["halo_ghost_count"] + work_mean["halo_send_value_count"])) > 1.0e-12) bad = 1
             if (work_min["halo_reference_enabled"] != expected_reference ||
@@ -383,6 +423,62 @@ assert_rank_stats() {
                 work_max["full_input_vector_allocated"] != expected_full) bad = 1
             if (work_min["symmetry_matvec_calls"] <= 0) bad = 1
             if (work_min["prdct_allreduce_calls"] <= 0) bad = 1
+            if (work_max["allocation_raw_basis_list_elements"] != 0 ||
+                work_max["allocation_raw_diagonal_elements"] != 0) bad = 1
+            if (work_min["allocation_initial_vector_elements"] < 3 ||
+                work_max["allocation_auxiliary_vector_elements"] != 1) bad = 1
+            workspace_delta = work_mean["allocation_lobpcg_workspace_elements"] - 2 * work_mean["allocation_initial_vector_elements"]
+            if (expected_lobpcg == 1 && abs(workspace_delta) > 1.0e-12) bad = 1
+            if (expected_lobpcg == 0 &&
+                work_max["allocation_lobpcg_workspace_elements"] != 0) bad = 1
+            if (work_max["local_basis_capacity_entries"] != 0 ||
+                work_max["local_basis_bytes"] != 0 ||
+                work_max["rank_offset_entries"] != 0 ||
+                work_max["distribution_local_survivor_entries"] != 0 ||
+                work_max["distribution_local_sample_entries"] != 0 ||
+                work_max["distribution_global_sample_entries"] != 0 ||
+                work_max["distribution_range_send_entries"] != 0 ||
+                work_max["distribution_range_recv_entries"] != 0 ||
+                work_max["distribution_rebalance_send_entries"] != 0 ||
+                work_max["distribution_rebalance_recv_entries"] != 0 ||
+                work_max["distribution_global_entries"] != 0 ||
+                work_max["distribution_range_entries"] != 0 ||
+                work_max["distribution_sample_gather_used_chunked"] != 0 ||
+                work_max["distribution_sample_gather_message_byte_limit"] != 0 ||
+                work_max["distribution_sample_gather_max_message_bytes"] != 0 ||
+                work_max["distribution_range_exchange_used_chunked"] != 0 ||
+                work_max["distribution_range_exchange_message_byte_limit"] != 0 ||
+                work_max["distribution_range_exchange_max_message_bytes"] != 0 ||
+                work_max["distribution_rebalance_exchange_used_chunked"] != 0 ||
+                work_max["distribution_rebalance_exchange_message_byte_limit"] != 0 ||
+                work_max["distribution_rebalance_exchange_max_message_bytes"] != 0 ||
+                work_max["distribution_memory_byte_limit"] != 0 ||
+                work_max["distribution_sort_temporary_peak_bytes"] != 0 ||
+                work_max["distribution_rebalance_temporary_peak_bytes"] != 0 ||
+                work_max["directory_nonempty_rank_count"] != 0 ||
+                work_max["directory_splitter_entries"] != 0 ||
+                work_max["directory_splitter_bytes"] != 0 ||
+                work_max["directory_local_hash_entries"] != 0 ||
+                work_max["directory_local_hash_table_entries"] != 0 ||
+                work_max["directory_local_hash_bytes"] != 0 ||
+                work_max["directory_hash_build_collisions"] != 0 ||
+                work_max["directory_hash_build_max_probe"] != 0 ||
+                work_max["directory_batch_calls"] != 0 ||
+                work_max["directory_request_entries_sent"] != 0 ||
+                work_max["directory_request_entries_received"] != 0 ||
+                work_max["directory_found_entries"] != 0 ||
+                work_max["directory_not_found_entries"] != 0 ||
+                work_max["directory_lookup_probe_count"] != 0 ||
+                work_max["directory_lookup_max_probe"] != 0 ||
+                work_max["directory_owner_peer_count_max"] != 0 ||
+                work_max["directory_requester_peer_count_max"] != 0 ||
+                work_max["directory_exchange_used_chunked"] != 0 ||
+                work_max["directory_exchange_message_byte_limit"] != 0 ||
+                work_max["directory_exchange_max_message_bytes"] != 0 ||
+                work_max["directory_exchange_send_messages"] != 0 ||
+                work_max["directory_exchange_recv_messages"] != 0 ||
+                work_max["directory_batch_temporary_peak_bytes"] != 0 ||
+                work_max["directory_batch_memory_byte_limit"] != 0) bad = 1
             if (abs(work_mean["symmetry_matvec_calls"] - work_mean["prdct_allreduce_calls"]) > 1.0e-12) bad = 1
             if (expected_reference == 1) {
                 if (work_min["halo_reference_exchange_calls"] <= 0) bad = 1
@@ -433,6 +529,48 @@ assert_rank_stats() {
     fi
 }
 
+assert_distributed_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
+    log="$1"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        cat "${log}"
+        echo "Missing distributed ${stats}"
+        exit 1
+    fi
+    grep -Eq \
+        '^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_heavy_storage_released .* min=1 max=1 ' \
+        "${stats}"
+    grep -Eq \
+        '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+        "${stats}"
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        $1 == "work" {
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            exit !(min["plan_max_wave_count"] > 0 &&
+                   min["plan_max_wave_count"] == max["plan_max_wave_count"] &&
+                   min["directory_batch_calls"] == min["plan_max_wave_count"] &&
+                   max["directory_batch_calls"] == max["plan_max_wave_count"])
+        }
+    ' "${stats}"
+}
+
 run_mpi_symmetry_case() {
     label="$1"
     expected_energy="$2"
@@ -440,9 +578,11 @@ run_mpi_symmetry_case() {
     expected_doublon="${4:-}"
     expected_ranks="$5"
     expected_digest="$6"
+    expected_default_layout="${7:-replicated}"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+        HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         HPHI_SYMMETRY_HALO_REFERENCE=1 \
         ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
@@ -453,8 +593,18 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
+    assert_replicated_rank_stats \
+        "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 1 allgather
+    if [ "${expected_default_layout}" = "distributed" ]; then
+        grep -q \
+            "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+            "${log_file}"
+    else
+        grep -q \
+            "Symmetry basis layout: replicated (explicit environment)." \
+            "${log_file}"
+    fi
 
     log_file="hubbard_${label}_default_mpi.log"
     rm -rf output
@@ -467,10 +617,22 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    grep -q "vector_exchange=halo" "${log_file}"
-    grep -q "columns=local/ghost-slots" "${log_file}"
-    assert_rank_stats "${expected_dim}" "${expected_ranks}" "${log_file}" \
-        "${expected_digest}" 0 halo
+    if [ "${expected_default_layout}" = "distributed" ]; then
+        grep -q "Symmetry distributed matvec:" "${log_file}"
+        grep -q \
+            "Symmetry basis layout: distributed (default for TransSym CG)." \
+            "${log_file}"
+        assert_distributed_rank_stats "${log_file}"
+    else
+        grep -q "vector_exchange=halo" "${log_file}"
+        grep -q "columns=local/ghost-slots" "${log_file}"
+        grep -q \
+            "Symmetry basis layout: replicated (default outside TransSym CG)." \
+            "${log_file}"
+        assert_replicated_rank_stats \
+            "${expected_dim}" "${expected_ranks}" "${log_file}" \
+            "${expected_digest}" 0 halo
+    fi
 }
 
 run_mpi_if_available() {
@@ -478,18 +640,23 @@ run_mpi_if_available() {
     expected_energy="$2"
     expected_dim="$3"
     expected_doublon="${4:-}"
+    expected_default_layout="${5:-replicated}"
     if [ -n "${MPIRUN}" ]; then
-        expected_digest=`awk '$1 == "basis_digest" {
-            split($4, parts, "="); print parts[2]; exit
-        }' output/CalcTimerRankStats.dat`
-        if [ -z "${expected_digest}" ]; then
-            echo "Missing serial symmetry basis digest"
-            exit 1
+        expected_digest=""
+        if grep -q "basis_layout=replicated" output/CalcTimerRankStats.dat; then
+            expected_digest=`awk '$1 == "basis_digest" {
+                split($4, parts, "="); print parts[2]; exit
+            }' output/CalcTimerRankStats.dat`
+            if [ -z "${expected_digest}" ]; then
+                echo "Missing serial symmetry basis digest"
+                exit 1
+            fi
         fi
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
             run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" \
-                "$expected_doublon" "$MPI_NP" "$expected_digest"
+                "$expected_doublon" "$MPI_NP" "$expected_digest" \
+                "$expected_default_layout"
         fi
     fi
 }
@@ -521,7 +688,10 @@ if grep -q "MPI site separation summary" hubbard_k0.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_rank_stats 4 1 hubbard_k0.log
+assert_replicated_rank_stats 4 1 hubbard_k0.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
     invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
@@ -549,7 +719,10 @@ if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_rank_stats 4 1 hubbard_kpi2.log
+assert_replicated_rank_stats 4 1 hubbard_kpi2.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    hubbard_kpi2.log
 run_mpi_if_available kpi2 "-2.0" 4
 
 rm -rf output
@@ -557,22 +730,60 @@ write_calcmod
 write_k0_transsym
 write_sym_namelist yes
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
-env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     HPHI_SYMMETRY_HALO_REFERENCE=1 \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg.log
 assert_symmetry_log 4 hubbard_k0_cg.log
-assert_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+assert_replicated_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    hubbard_k0_cg.log
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def > hubbard_k0_cg_distributed.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_distributed.log
+assert_doublon_matches_reference \
+    "${ref_doublon}" hubbard_k0_cg_distributed.log
+grep -q "Symmetry distributed matvec:" hubbard_k0_cg_distributed.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    hubbard_k0_cg_distributed.log
+assert_distributed_rank_stats hubbard_k0_cg_distributed.log
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" &&
+       [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+            ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > hubbard_k0_cg_distributed_mpi.log 2>&1; then
+            cat hubbard_k0_cg_distributed_mpi.log
+            exit 1
+        fi
+        assert_energy_matches_reference \
+            "${ref_energy}" hubbard_k0_cg_distributed_mpi.log
+        assert_doublon_matches_reference \
+            "${ref_doublon}" hubbard_k0_cg_distributed_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            hubbard_k0_cg_distributed_mpi.log
+        assert_distributed_rank_stats hubbard_k0_cg_distributed_mpi.log
+    fi
+fi
 rm -rf output
 ../../src/HPhi -e namelist.def > hubbard_k0_cg_default.log 2>&1
 assert_energy_matches_reference "${ref_energy}" hubbard_k0_cg_default.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_cg_default.log
 assert_symmetry_log 4 hubbard_k0_cg_default.log
-grep -q "vector_exchange=halo" hubbard_k0_cg_default.log
-grep -q "columns=local/ghost-slots" hubbard_k0_cg_default.log
-assert_rank_stats 4 1 hubbard_k0_cg_default.log "" 0 halo
-run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}"
+grep -q "Symmetry distributed matvec:" hubbard_k0_cg_default.log
+grep -q \
+    "Symmetry basis layout: distributed (default for TransSym CG)." \
+    hubbard_k0_cg_default.log
+assert_distributed_rank_stats hubbard_k0_cg_default.log
+run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}" distributed
 write_calcmod
 
 rm -rf output

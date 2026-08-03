@@ -49,8 +49,15 @@ endmacro()
 add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
     ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
 target_include_directories(unittest_symmetry_basis
@@ -58,7 +65,10 @@ target_include_directories(unittest_symmetry_basis
 target_compile_definitions(unittest_symmetry_basis PRIVATE
     DSFMT_MEXP=19937 HPHI_SYMMETRY_PARITY_VERIFY
     HPHI_SYMMETRY_CANONICAL_VERIFY HPHI_SYMMETRY_SPIN_VERIFY
-    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1)
+    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES=1073741824)
 target_link_libraries(unittest_symmetry_basis m)
 if(MPI_FOUND)
     target_link_libraries(unittest_symmetry_basis ${MPI_C_LIBRARIES})
@@ -70,6 +80,113 @@ add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
+    set_tests_properties(symmetry_rank_local_run_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+    add_hphi_mpi_test(symmetry_distributed_basis_mpi min:2)
+    set_tests_properties(symmetry_distributed_basis_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
+add_executable(unittest_symmetry_distribution
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
+target_include_directories(unittest_symmetry_distribution
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_distribution PRIVATE
+    DSFMT_MEXP=19937
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
+target_link_libraries(unittest_symmetry_distribution m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_distribution ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_distribution
+    COMMAND unittest_symmetry_distribution)
+set_tests_properties(unittest_symmetry_distribution
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_distribution_mpi min:2)
+    set_tests_properties(symmetry_distribution_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
+add_executable(unittest_symmetry_distribution_warning
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
+target_include_directories(unittest_symmetry_distribution_warning
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_distribution_warning PRIVATE
+    DSFMT_MEXP=19937
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
+    HPHI_SYMMETRY_SAMPLE_COUNT_GLOBAL_WARNING_THRESHOLD=2
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384)
+target_link_libraries(unittest_symmetry_distribution_warning m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_distribution_warning
+        ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_distribution_warning
+    COMMAND unittest_symmetry_distribution_warning)
+set_tests_properties(unittest_symmetry_distribution_warning
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_distribution_warning_mpi min:3)
+    set_tests_properties(symmetry_distribution_warning_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
+add_executable(unittest_symmetry_directory
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c)
+target_include_directories(unittest_symmetry_directory
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_directory PRIVATE
+    DSFMT_MEXP=19937
+    HPHI_SYMMETRY_EXCHANGE_MESSAGE_BYTES=256
+    HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES=16384)
+target_link_libraries(unittest_symmetry_directory m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_directory ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_directory OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_directory
+    COMMAND unittest_symmetry_directory)
+set_tests_properties(unittest_symmetry_directory
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_directory_mpi min:2)
+    set_tests_properties(symmetry_directory_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
+
+add_executable(unittest_symmetry_memory_policy
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c)
+target_include_directories(unittest_symmetry_memory_policy
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_link_libraries(unittest_symmetry_memory_policy m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_memory_policy ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_symmetry_memory_policy
+    COMMAND unittest_symmetry_memory_policy)
+set_tests_properties(unittest_symmetry_memory_policy
+    PROPERTIES LABELS "unit;symmetry")
+if(MPI_FOUND)
+    add_hphi_mpi_test(symmetry_memory_policy_mpi min:2)
+    set_tests_properties(symmetry_memory_policy_mpi
+        PROPERTIES LABELS "symmetry;mpi")
+endif()
 
 #
 # Lanczos
@@ -262,6 +379,7 @@ add_hphi_test(lobcg_hubbard_szunconserv)
 add_hphi_test(lobcg_kondo_chain)
 add_hphi_test(lobcg_spin_kagome)
 add_hphi_test(symmetry_spin_chain_lobcg)
+add_hphi_test(symmetry_spin_chain_lobcg_preconditioner)
 add_hphi_test(lobcg_genspin_ladder)
 add_hphi_test(lobcg_hubbardgc_tri)
 add_hphi_test(lobcg_kondogc_chain)
@@ -292,7 +410,7 @@ set_tests_properties(
     lobcg_spin_kagome_restart
     PROPERTIES LABELS "lobcg;spin")
 set_tests_properties(
-    symmetry_spin_chain_lobcg
+    symmetry_spin_chain_lobcg symmetry_spin_chain_lobcg_preconditioner
     PROPERTIES LABELS "symmetry;spin;lobcg")
 set_tests_properties(
     lobcg_genspin_ladder lobcg_genspingc_ladder
@@ -548,7 +666,13 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/green_output.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/splash.c
     ${CMAKE_SOURCE_DIR}/src/time.c
@@ -622,9 +746,11 @@ set_tests_properties(unittest_komega_bicg_nonfinite
     PROPERTIES LABELS "unit;spectrum")
 
 # MPI consistency for the off-diagonal spectrum (4-site Hubbard needs np=4)
-add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
-set_tests_properties(spectrum_hubbard_offdiag_single_mpi
-    PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
+if(MPI_FOUND)
+    add_hphi_mpi_test(spectrum_hubbard_offdiag_single_mpi exact:4)
+    set_tests_properties(spectrum_hubbard_offdiag_single_mpi
+        PROPERTIES LABELS "spectrum;hubbard;offdiag;mpi")
+endif()
 set_tests_properties(
     spectrum_kondo_chain spectrum_kondogc_chain
     PROPERTIES LABELS "spectrum;kondo")
