@@ -20,9 +20,15 @@ var searchData=
   ['ghost_5fcount_17',['ghost_count',['../structSymmetryVectorHaloPlan.html#a9ba055381373e628c16d78266a03d83e',1,'SymmetryVectorHaloPlan']]],
   ['ghost_5fglobal_5findex_18',['ghost_global_index',['../structSymmetryVectorHaloPlan.html#aabf709353fcd0420b29e26f38b0ef5df',1,'SymmetryVectorHaloPlan']]],
   ['ghost_5fvalues_19',['ghost_values',['../structSymmetryVectorHaloPlan.html#a0f6d8c0aaf249a709b49f706de9ea60d',1,'SymmetryVectorHaloPlan']]],
-  ['global_5f1st_5fnorm_20',['global_1st_norm',['../global_8c.html#ab49961427db962dd360f977920909700',1,'global_1st_norm:&#160;global.c'],['../global_8h.html#ab49961427db962dd360f977920909700',1,'global_1st_norm:&#160;global.c']]],
-  ['global_5fnorm_21',['global_norm',['../global_8c.html#a633b54cb7aa03a7af7ce6c13b8a434ba',1,'global_norm:&#160;global.c'],['../global_8h.html#a633b54cb7aa03a7af7ce6c13b8a434ba',1,'global_norm:&#160;global.c']]],
-  ['group_5finverse_22',['group_inverse',['../structSymmetryBasisRuntime.html#a646d3eb87bf7a7057d95903af94a5b3d',1,'SymmetryBasisRuntime']]],
-  ['group_5forder_23',['group_order',['../structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e',1,'SymmetryBasisRuntime']]],
-  ['groups_24',['groups',['../structMPIBatchedSpinExchange.html#a87c6c6aab2a1f72b87aa29e99b8b221b',1,'MPIBatchedSpinExchange::groups'],['../structMPIBatchedInterAll.html#af2e0818ee1bf7817001521010f504ad7',1,'MPIBatchedInterAll::groups'],['../structMPIBatchedDoubleTransfers.html#a7dfed2cad850e2cd0541c1f7c4df9312',1,'MPIBatchedDoubleTransfers::groups'],['../structMPIBatchedTransfers.html#a413e20a77504c2751037c47e70e1b5a6',1,'MPIBatchedTransfers::groups']]]
+  ['global_5f1st_5fnorm_20',['global_1st_norm',['../global_8h.html#ab49961427db962dd360f977920909700',1,'global_1st_norm:&#160;global.c'],['../global_8c.html#ab49961427db962dd360f977920909700',1,'global_1st_norm:&#160;global.c']]],
+  ['global_5fbeta_21',['global_beta',['../structSymmetryMpiLookupResponse.html#ad7a39704df520e408d0a5d5ab8f2eb1a',1,'SymmetryMpiLookupResponse']]],
+  ['global_5fcolumns_22',['global_columns',['../structSymmetryMatvecBlock.html#a141e723ba4fe99e92f2a2e5b2eb39c0f',1,'SymmetryMatvecBlock::global_columns'],['../structSymmetryMatvecBlockView.html#ae09967424479e8a7d0c58cb681ec3f05',1,'SymmetryMatvecBlockView::global_columns']]],
+  ['global_5fentries_23',['global_entries',['../structSymmetryBasisDistributionStats.html#a7b6ac5f5f570c937051ed88d5f34df35',1,'SymmetryBasisDistributionStats']]],
+  ['global_5fnorm_24',['global_norm',['../global_8h.html#a633b54cb7aa03a7af7ce6c13b8a434ba',1,'global_norm:&#160;global.c'],['../global_8c.html#a633b54cb7aa03a7af7ce6c13b8a434ba',1,'global_norm:&#160;global.c']]],
+  ['global_5fsample_5fentries_25',['global_sample_entries',['../structSymmetryBasisDistributionStats.html#a0c4abe35838c32be49ab115467336fec',1,'SymmetryBasisDistributionStats']]],
+  ['global_5fsample_5fgap_5fmax_26',['global_sample_gap_max',['../structSymmetryBasisDistributionStats.html#a1fb2c39767820d49801dbc1709bb6da5',1,'SymmetryBasisDistributionStats']]],
+  ['global_5fsample_5fgap_5fsum_27',['global_sample_gap_sum',['../structSymmetryBasisDistributionStats.html#a23c772cf5058c471df8217a78da96b19',1,'SymmetryBasisDistributionStats']]],
+  ['group_5finverse_28',['group_inverse',['../structSymmetryBasisRuntime.html#a646d3eb87bf7a7057d95903af94a5b3d',1,'SymmetryBasisRuntime']]],
+  ['group_5forder_29',['group_order',['../structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e',1,'SymmetryBasisRuntime']]],
+  ['groups_30',['groups',['../structMPIBatchedTransfers.html#a413e20a77504c2751037c47e70e1b5a6',1,'MPIBatchedTransfers::groups'],['../structMPIBatchedDoubleTransfers.html#a7dfed2cad850e2cd0541c1f7c4df9312',1,'MPIBatchedDoubleTransfers::groups'],['../structMPIBatchedInterAll.html#af2e0818ee1bf7817001521010f504ad7',1,'MPIBatchedInterAll::groups'],['../structMPIBatchedSpinExchange.html#a87c6c6aab2a1f72b87aa29e99b8b221b',1,'MPIBatchedSpinExchange::groups']]]
 ];

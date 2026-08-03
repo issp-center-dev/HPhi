@@ -127,6 +127,9 @@ $(document).ready(function(){initNavTree('symmetry__vector__halo_8c.html',''); i
 <code>#include &lt;mpi.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="DefCommon_8h_source.html">DefCommon.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="CalcTime_8h_source.html">CalcTime.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__checked_8h_source.html">symmetry_checked.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__distribution_8h_source.html">symmetry_distribution.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__mpi__exchange_8h_source.html">symmetry_mpi_exchange.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__vector__halo_8h_source.html">symmetry_vector_halo.h</a>&quot;</code><br />
 </div>
 <p><a href="symmetry__vector__halo_8c_source.html">Go to the source code of this file.</a></p>
@@ -140,12 +143,6 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aa4714a23c4d9259bc28303d70845ecd3" id="r_aa4714a23c4d9259bc28303d70845ecd3"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#aa4714a23c4d9259bc28303d70845ecd3">checked_size_add</a> (size_t lhs, size_t rhs, size_t *result)</td></tr>
 <tr class="separator:aa4714a23c4d9259bc28303d70845ecd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa8334aef1360778d547d814549c742e" id="r_aaa8334aef1360778d547d814549c742e"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#aaa8334aef1360778d547d814549c742e">checked_size_mul</a> (size_t lhs, size_t rhs, size_t *result)</td></tr>
-<tr class="separator:aaa8334aef1360778d547d814549c742e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad75959ed8cde76cdd5e0860bfd9bb08d" id="r_ad75959ed8cde76cdd5e0860bfd9bb08d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#ad75959ed8cde76cdd5e0860bfd9bb08d">halo_mpi_collectives_active</a> (void)</td></tr>
-<tr class="separator:ad75959ed8cde76cdd5e0860bfd9bb08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6438685e17b812dc0dcec921259e164b" id="r_a6438685e17b812dc0dcec921259e164b"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a6438685e17b812dc0dcec921259e164b">agree_halo_error</a> (int mpi_active, int local_error)</td></tr>
-<tr class="separator:a6438685e17b812dc0dcec921259e164b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f1637a67ef1428abd9d512df7e2a71e" id="r_a0f1637a67ef1428abd9d512df7e2a71e"><td class="memItemLeft" align="right" valign="top">static unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a0f1637a67ef1428abd9d512df7e2a71e">hash_bytes</a> (unsigned long long hash, const void *data, size_t size)</td></tr>
 <tr class="separator:a0f1637a67ef1428abd9d512df7e2a71e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa61d6a3efc47b80c558594411dce52fa" id="r_aa61d6a3efc47b80c558594411dce52fa"><td class="memItemLeft" align="right" valign="top">static unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#aa61d6a3efc47b80c558594411dce52fa">halo_schedule_checksum</a> (const struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo)</td></tr>
@@ -154,8 +151,8 @@ Functions</h2></td></tr>
 <tr class="separator:a6e1bd2fc8ea746c3dc38b410bdd3103f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a554e00b0dadb79fccd57812366a04f0b" id="r_a554e00b0dadb79fccd57812366a04f0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a554e00b0dadb79fccd57812366a04f0b">FreeSymmetryVectorHaloPlan</a> (struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo)</td></tr>
 <tr class="separator:a554e00b0dadb79fccd57812366a04f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35f22f573c01c54c2a7b2dc5274d9a91" id="r_a35f22f573c01c54c2a7b2dc5274d9a91"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a35f22f573c01c54c2a7b2dc5274d9a91">BuildSymmetryVectorHaloPlan</a> (struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo, unsigned long int dim, unsigned long int local_offset, unsigned long int local_dim, const unsigned long int *global_columns, size_t column_count, int nrank, int rank, size_t *local_column_count, size_t *remote_column_count)</td></tr>
-<tr class="separator:a35f22f573c01c54c2a7b2dc5274d9a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a76b50b0c2ed7968e8b713d3953ffda" id="r_a8a76b50b0c2ed7968e8b713d3953ffda"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a8a76b50b0c2ed7968e8b713d3953ffda">BuildSymmetryVectorHaloPlan</a> (struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo, unsigned long int dim, unsigned long int local_offset, unsigned long int local_dim, const struct <a class="el" href="structSymmetryGlobalColumnSpan.html">SymmetryGlobalColumnSpan</a> *spans, size_t span_count, int nrank, int rank, size_t *local_column_count, size_t *remote_column_count)</td></tr>
+<tr class="separator:a8a76b50b0c2ed7968e8b713d3953ffda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a97b18ff91fea297304cdec42b99a84" id="r_a6a97b18ff91fea297304cdec42b99a84"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a6a97b18ff91fea297304cdec42b99a84">ExchangeSymmetryVectorHalo</a> (struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo, const double complex *local_vector)</td></tr>
 <tr class="separator:a6a97b18ff91fea297304cdec42b99a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a690939239ebe8c0d545f8d499960feec" id="r_a690939239ebe8c0d545f8d499960feec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__vector__halo_8c.html#a690939239ebe8c0d545f8d499960feec">ExchangeSymmetryVectorHaloReference</a> (struct <a class="el" href="structSymmetryVectorHaloPlan.html">SymmetryVectorHaloPlan</a> *halo, const double complex *local_vector, const double complex *full_vector)</td></tr>
@@ -174,55 +171,13 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00012">12</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00015">15</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6438685e17b812dc0dcec921259e164b" name="a6438685e17b812dc0dcec921259e164b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6438685e17b812dc0dcec921259e164b">&#9670;&#160;</a></span>agree_halo_error()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int agree_halo_error </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>mpi_active</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>local_error</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00046">46</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>, and <a class="el" href="symmetry__vector__halo_8c_source.html#l00641">ExchangeSymmetryVectorHaloReference()</a>.</p>
-
-</div>
-</div>
-<a id="a35f22f573c01c54c2a7b2dc5274d9a91" name="a35f22f573c01c54c2a7b2dc5274d9a91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35f22f573c01c54c2a7b2dc5274d9a91">&#9670;&#160;</a></span>BuildSymmetryVectorHaloPlan()</h2>
+<a id="a8a76b50b0c2ed7968e8b713d3953ffda" name="a8a76b50b0c2ed7968e8b713d3953ffda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a76b50b0c2ed7968e8b713d3953ffda">&#9670;&#160;</a></span>BuildSymmetryVectorHaloPlan()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,14 +209,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const unsigned long int *&#160;</td>
-          <td class="paramname"><em>global_columns</em>, </td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryGlobalColumnSpan.html">SymmetryGlobalColumnSpan</a> *&#160;</td>
+          <td class="paramname"><em>spans</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>column_count</em>, </td>
+          <td class="paramname"><em>span_count</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -295,11 +250,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">141</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">104</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__vector__halo_8c_source.html#l00046">agree_halo_error()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00015">checked_size_add()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00022">checked_size_mul()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00012">SymmetryVectorHaloPlan::dim</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00127">FreeSymmetryVectorHaloPlan()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00025">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00029">halo_mpi_collectives_active()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00075">halo_schedule_checksum()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00012">HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00017">SymmetryVectorHaloPlan::incoming_peer_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00014">SymmetryVectorHaloPlan::local_dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::local_offset</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00019">SymmetryVectorHaloPlan::max_recv_from_peer</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::max_send_to_peer</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00010">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00018">SymmetryVectorHaloPlan::outgoing_peer_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00011">SymmetryVectorHaloPlan::rank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00008">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00024">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00007">SymmetryVectorHaloPlan::request_layout_ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00031">SymmetryVectorHaloPlan::runtime_buffer_bytes</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00032">SymmetryVectorHaloPlan::schedule_checksum</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_local_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00016">SymmetryVectorHaloPlan::send_value_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_values</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00106">SymmetryVectorOwnerOfGlobalIndex()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00029">SymmetryVectorHaloPlan::topology_scratch_bytes</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__vector__halo_8c_source.html#l00018">checked_size_add()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00007">SymmetryGlobalColumnSpan::columns</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00008">SymmetryGlobalColumnSpan::count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00017">SymmetryVectorHaloPlan::dim</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00090">FreeSymmetryVectorHaloPlan()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00038">halo_schedule_checksum()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00015">HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::incoming_peer_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00019">SymmetryVectorHaloPlan::local_dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00018">SymmetryVectorHaloPlan::local_offset</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00024">SymmetryVectorHaloPlan::max_recv_from_peer</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00025">SymmetryVectorHaloPlan::max_send_to_peer</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::outgoing_peer_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00016">SymmetryVectorHaloPlan::rank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00029">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00012">SymmetryVectorHaloPlan::request_layout_ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00036">SymmetryVectorHaloPlan::runtime_buffer_bytes</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00035">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00037">SymmetryVectorHaloPlan::schedule_checksum</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00031">SymmetryVectorHaloPlan::send_local_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_value_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00032">SymmetryVectorHaloPlan::send_values</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__distribution_8c_source.html#l00104">SymmetryBlockRange()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00069">SymmetryVectorOwnerOfGlobalIndex()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00034">SymmetryVectorHaloPlan::topology_scratch_bytes</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00517">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01367">build_symmetry_matvec_plan_halo()</a>.</p>
 
 </div>
 </div>
@@ -343,55 +298,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00015">15</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00018">18</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>.</p>
-
-</div>
-</div>
-<a id="aaa8334aef1360778d547d814549c742e" name="aaa8334aef1360778d547d814549c742e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa8334aef1360778d547d814549c742e">&#9670;&#160;</a></span>checked_size_mul()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int checked_size_mul </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname"><em>result</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00022">22</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">BuildSymmetryVectorHaloPlan()</a>.</p>
 
 </div>
 </div>
@@ -421,11 +330,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00589">589</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00572">572</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::exchange_calls</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00029">halo_mpi_collectives_active()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00010">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00008">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00024">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_local_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00016">SymmetryVectorHaloPlan::send_value_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_values</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00038">SymmetryVectorHaloPlan::exchange_calls</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00029">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00031">SymmetryVectorHaloPlan::send_local_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_value_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00032">SymmetryVectorHaloPlan::send_values</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00641">ExchangeSymmetryVectorHaloReference()</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00087">mltplySpinSym()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00624">ExchangeSymmetryVectorHaloReference()</a>, and <a class="el" href="mltplySpinSym_8c_source.html#l00087">mltplySpinSym()</a>.</p>
 
 </div>
 </div>
@@ -461,9 +370,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00641">641</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00624">624</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__vector__halo_8c_source.html#l00046">agree_halo_error()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00589">ExchangeSymmetryVectorHalo()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00025">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00029">halo_mpi_collectives_active()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00034">SymmetryVectorHaloPlan::reference_exchange_calls</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, and <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__vector__halo_8c_source.html#l00572">ExchangeSymmetryVectorHalo()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00039">SymmetryVectorHaloPlan::reference_exchange_calls</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, and <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00087">mltplySpinSym()</a>.</p>
 
@@ -485,43 +394,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00127">127</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00090">90</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00025">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00024">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_local_index</a>, and <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_values</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00029">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00031">SymmetryVectorHaloPlan::send_local_index</a>, and <a class="el" href="symmetry__vector__halo_8h_source.html#l00032">SymmetryVectorHaloPlan::send_values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00505">FreeSymmetryMatvecPlan()</a>.</p>
-
-</div>
-</div>
-<a id="ad75959ed8cde76cdd5e0860bfd9bb08d" name="ad75959ed8cde76cdd5e0860bfd9bb08d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad75959ed8cde76cdd5e0860bfd9bb08d">&#9670;&#160;</a></span>halo_mpi_collectives_active()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int halo_mpi_collectives_active </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00029">29</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00589">ExchangeSymmetryVectorHalo()</a>, and <a class="el" href="symmetry__vector__halo_8c_source.html#l00641">ExchangeSymmetryVectorHaloReference()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">BuildSymmetryVectorHaloPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01713">FreeSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -549,11 +426,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00075">75</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00038">38</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00012">SymmetryVectorHaloPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00025">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00062">hash_bytes()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00014">SymmetryVectorHaloPlan::local_dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::local_offset</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00010">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00011">SymmetryVectorHaloPlan::rank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00024">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_local_index</a>, and <a class="el" href="symmetry__vector__halo_8h_source.html#l00016">SymmetryVectorHaloPlan::send_value_count</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00017">SymmetryVectorHaloPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00025">hash_bytes()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00019">SymmetryVectorHaloPlan::local_dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00018">SymmetryVectorHaloPlan::local_offset</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00015">SymmetryVectorHaloPlan::nrank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00016">SymmetryVectorHaloPlan::rank</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00028">SymmetryVectorHaloPlan::recv_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00029">SymmetryVectorHaloPlan::recv_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00026">SymmetryVectorHaloPlan::send_counts</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00027">SymmetryVectorHaloPlan::send_displs</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00031">SymmetryVectorHaloPlan::send_local_index</a>, and <a class="el" href="symmetry__vector__halo_8h_source.html#l00021">SymmetryVectorHaloPlan::send_value_count</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">BuildSymmetryVectorHaloPlan()</a>.</p>
 
 </div>
 </div>
@@ -597,9 +474,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00062">62</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00025">25</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00075">halo_schedule_checksum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00038">halo_schedule_checksum()</a>.</p>
 
 </div>
 </div>
@@ -635,9 +512,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00106">106</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__vector__halo_8c_source.html#l00069">69</a> of file <a class="el" href="symmetry__vector__halo_8c_source.html">symmetry_vector_halo.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00141">BuildSymmetryVectorHaloPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">BuildSymmetryVectorHaloPlan()</a>.</p>
 
 </div>
 </div>

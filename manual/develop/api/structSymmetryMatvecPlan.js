@@ -2,6 +2,13 @@ var structSymmetryMatvecPlan =
 [
     [ "allgather_nonlocal_values_per_call", "structSymmetryMatvecPlan.html#a04fb50e9b1b3356a50e3e14d1af9758d", null ],
     [ "allgather_payload_bytes_per_call", "structSymmetryMatvecPlan.html#aa81ba65370c79618652557f1e2e13a45", null ],
+    [ "block_count", "structSymmetryMatvecPlan.html#a2fbfc86bffb8cf82e9a87eebfb5f25b9", null ],
+    [ "blocks", "structSymmetryMatvecPlan.html#af5c0cd06ad99638b15b5f8eacbb7c4bc", null ],
+    [ "build_local_wave_count", "structSymmetryMatvecPlan.html#a6f3ac4122a3c8c9a337fb8f1bb58ce15", null ],
+    [ "build_max_wave_count", "structSymmetryMatvecPlan.html#a2623c1376edf2e5332c7dbad5a5ba1e0", null ],
+    [ "build_memory_byte_limit", "structSymmetryMatvecPlan.html#ad48d46790fd9ca227b4b9388069d9be0", null ],
+    [ "build_memory_warning_byte_threshold", "structSymmetryMatvecPlan.html#a6edfa78ec916d324a750aa971c1e7da2", null ],
+    [ "build_temporary_peak_bytes", "structSymmetryMatvecPlan.html#a5d6ea0b8ac3de61fb0956baf7834a501", null ],
     [ "col_index", "structSymmetryMatvecPlan.html#a28f3f9619616cbe20d5bef83ac50ce73", null ],
     [ "column_slot32", "structSymmetryMatvecPlan.html#a03dfabdaeb341bbb29320b30f74f46b7", null ],
     [ "column_slot64", "structSymmetryMatvecPlan.html#a09de7141dcd724a2680d4c3524f32852", null ],

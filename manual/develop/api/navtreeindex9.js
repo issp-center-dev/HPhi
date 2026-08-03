@@ -1,5 +1,9 @@
 var NAVTREEINDEX9 =
 {
+"mltplySpinless_8h.html":[10,0,1,68],
+"mltplySpinless_8h.html#a079626d9bda6791a2a0e011bb40b527f":[10,0,1,68,2],
+"mltplySpinless_8h.html#a5a881cc0abd208fb68a1b2805449e74a":[10,0,1,68,0],
+"mltplySpinless_8h.html#a6660e59b6f260ec6440e396b8b419f6c":[10,0,1,68,1],
 "mltplySpinless_8h_source.html":[10,0,1,68],
 "mltply_8c.html":[10,0,48],
 "mltply_8c.html#a61eb17d17b7d03aab22aa05b4074a407":[10,0,48,0],
@@ -245,9 +249,5 @@ var NAVTREEINDEX9 =
 "page_time.html#sec_time_overview":[7,0],
 "page_time.html#sec_time_usage":[7,1],
 "page_time.html#subsec_time_basic":[7,1,0],
-"page_time.html#subsec_time_ids":[7,1,1],
-"page_time.html#subsec_time_new":[7,1,2],
-"page_variable.html":[2],
-"page_variable.html#sec_data_struct":[2,1],
-"page_variable.html#sec_global_vars":[2,0]
+"page_time.html#subsec_time_ids":[7,1,1]
 };

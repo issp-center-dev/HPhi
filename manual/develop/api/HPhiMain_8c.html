@@ -146,8 +146,14 @@ $(document).ready(function(){initNavTree('HPhiMain_8c.html',''); initResizable()
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aa6bf98f3cd7f7639a1fabadf8ee63fe2" id="r_aa6bf98f3cd7f7639a1fabadf8ee63fe2"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="HPhiMain_8c.html#aa6bf98f3cd7f7639a1fabadf8ee63fe2">parse_symmetry_basis_layout</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="memdesc:aa6bf98f3cd7f7639a1fabadf8ee63fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main program for HPhi.  <br /></td></tr>
+<tr class="separator:aa6bf98f3cd7f7639a1fabadf8ee63fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ac3568fa7b124902f1fea613b9f52d8" id="r_a1ac3568fa7b124902f1fea613b9f52d8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="HPhiMain_8c.html#a1ac3568fa7b124902f1fea613b9f52d8">select_symmetry_basis_layout</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
+<tr class="separator:a1ac3568fa7b124902f1fea613b9f52d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7597e6ecd779cdb0b4a7f322318b121" id="r_ac7597e6ecd779cdb0b4a7f322318b121"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="HPhiMain_8c.html#ac7597e6ecd779cdb0b4a7f322318b121">report_symmetry_basis_layout_selection</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, enum <a class="el" href="symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7">SymmetryBasisLayout</a> layout)</td></tr>
+<tr class="separator:ac7597e6ecd779cdb0b4a7f322318b121"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97" id="r_a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="HPhiMain_8c.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
-<tr class="memdesc:a0ddf1224851353fc92bfbff6f499fa97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main program for HPhi.  <br /></td></tr>
 <tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -177,6 +183,36 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p class="definition">Definition at line <a class="el" href="HPhiMain_8c_source.html#l00744">744</a> of file <a class="el" href="HPhiMain_8c_source.html">HPhiMain.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__basis_8c_source.html#l01219">ActivateSymmetryBasisDimension()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00060">SymmetryBasisRuntime::basis_layout</a>, <a class="el" href="struct_8h_source.html#l00542">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00535">BindStruct::Boost</a>, <a class="el" href="symmetry__basis_8c_source.html#l00963">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__basis_8c_source.html#l00968">BuildSymmetryBasisForLayout()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01513">BuildSymmetryDistributedMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00772">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="DefCommon_8h_source.html#l00081">CALCSPEC_NOT</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="ErrorMessage_8c_source.html#l00024">cErrDefFile</a>, <a class="el" href="ErrorMessage_8c_source.html#l00028">cErrIndices</a>, <a class="el" href="ErrorMessage_8c_source.html#l00035">cErrLargeMem</a>, <a class="el" href="ErrorMessage_8c_source.html#l00026">cErrnvec</a>, <a class="el" href="ErrorMessage_8c_source.html#l00027">cErrnvecShow</a>, <a class="el" href="ErrorMessage_8c_source.html#l00023">cErrOutput</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="check_8c_source.html#l00078">check()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="ProgressMessage_8c_source.html#l00027">cProFinishDefCheck</a>, <a class="el" href="ProgressMessage_8c_source.html#l00026">cProFinishDefFiles</a>, <a class="el" href="LogMessage_8c_source.html#l00030">cReadDefFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00029">cReadDefStart</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00531">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="struct_8h_source.html#l00040">ParamList::ExpecInterval</a>, <a class="el" href="wrapperMPI_8c_source.html#l00173">FinalizeMPI()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01518">FreeSymmetryBasis()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="HPhiTrans_8c_source.html#l00045">HPhiTrans()</a>, <a class="el" href="struct_8h_source.html#l00265">DefineList::iCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00020">iErrCodeMem</a>, <a class="el" href="struct_8h_source.html#l00316">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00335">DefineList::iFlgScaLAPACK</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="wrapperMPI_8c_source.html#l00130">InitializeMPI()</a>, <a class="el" href="time_8c_source.html#l00677">InitTimer()</a>, <a class="el" href="readdef_8c_source.html#l03673">JudgeDefType()</a>, <a class="el" href="struct_8h_source.html#l00051">DefineList::k_exct</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="global_8h_source.html#l00024">MPIFALSE</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="global_8c_source.html#l00158">NumAve</a>, <a class="el" href="struct_8h_source.html#l00050">DefineList::nvec</a>, <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>, <a class="el" href="time_8c_source.html#l00719">OutputTimer()</a>, <a class="el" href="struct_8h_source.html#l00361">DefineList::Param</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>, <a class="el" href="HPhiMain_8c_source.html#l00718">report_symmetry_basis_layout_selection()</a>, <a class="el" href="HPhiMain_8c_source.html#l00711">select_symmetry_basis_layout()</a>, <a class="el" href="readdef_8c_source.html#l03803">SetConvergenceFactor()</a>, <a class="el" href="xsetmem_8c_source.html#l00079">setmem_def()</a>, <a class="el" href="xsetmem_8c_source.html#l00065">setmem_HEAD()</a>, <a class="el" href="xsetmem_8c_source.html#l00228">setmem_large()</a>, <a class="el" href="splash_8c_source.html#l00025">splash()</a>, <a class="el" href="readdef_8h_source.html#l00028">STANDARD_DRY_MODE</a>, <a class="el" href="readdef_8h_source.html#l00027">STANDARD_MODE</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="StdFace__main_8h.html#ae55faf027f0fa2b17f99755b073ac171">StdFace_main()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="struct_8h_source.html#l00536">BindStruct::Sym</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="sz_8c_source.html#l00109">sz()</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00293">ValidateSymmetryBasisLayoutOptions()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00709">ValidateSymmetryHamiltonian()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01505">ValidateSymmetrySectorOptions()</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::WRITE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+</div>
+</div>
+<a id="aa6bf98f3cd7f7639a1fabadf8ee63fe2" name="aa6bf98f3cd7f7639a1fabadf8ee63fe2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6bf98f3cd7f7639a1fabadf8ee63fe2">&#9670;&#160;</a></span>parse_symmetry_basis_layout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_symmetry_basis_layout </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 <p>Main program for HPhi. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -203,7 +239,83 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="HPhiMain_8c_source.html#l00650">650</a> of file <a class="el" href="HPhiMain_8c_source.html">HPhiMain.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8c_source.html#l01073">ActivateSymmetryBasisDimension()</a>, <a class="el" href="struct_8h_source.html#l00542">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00535">BindStruct::Boost</a>, <a class="el" href="symmetry__basis_8c_source.html#l00776">BuildSymmetryBasis()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00517">BuildSymmetryMatvecPlan()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00055">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByFullDiag_8c_source.html#l00026">CalcByFullDiag()</a>, <a class="el" href="CalcByLanczos_8c_source.html#l00085">CalcByLanczos()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00094">CalcByTEM()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00093">CalcByTPQ()</a>, <a class="el" href="DefCommon_8h_source.html#l00081">CALCSPEC_NOT</a>, <a class="el" href="CalcSpectrum_8c_source.html#l00957">CalcSpectrum()</a>, <a class="el" href="ErrorMessage_8c_source.html#l00024">cErrDefFile</a>, <a class="el" href="ErrorMessage_8c_source.html#l00028">cErrIndices</a>, <a class="el" href="ErrorMessage_8c_source.html#l00035">cErrLargeMem</a>, <a class="el" href="ErrorMessage_8c_source.html#l00026">cErrnvec</a>, <a class="el" href="ErrorMessage_8c_source.html#l00027">cErrnvecShow</a>, <a class="el" href="ErrorMessage_8c_source.html#l00023">cErrOutput</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="check_8c_source.html#l00078">check()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="ProgressMessage_8c_source.html#l00027">cProFinishDefCheck</a>, <a class="el" href="ProgressMessage_8c_source.html#l00026">cProFinishDefFiles</a>, <a class="el" href="LogMessage_8c_source.html#l00030">cReadDefFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00029">cReadDefStart</a>, <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00531">BindStruct::Def</a>, <a class="el" href="diagonalcalc_8c_source.html#l00098">diagonalcalc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="struct_8h_source.html#l00040">ParamList::ExpecInterval</a>, <a class="el" href="wrapperMPI_8c_source.html#l00173">FinalizeMPI()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01122">FreeSymmetryBasis()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="HPhiTrans_8c_source.html#l00045">HPhiTrans()</a>, <a class="el" href="struct_8h_source.html#l00265">DefineList::iCalcType</a>, <a class="el" href="ErrorMessage_8c_source.html#l00020">iErrCodeMem</a>, <a class="el" href="struct_8h_source.html#l00316">DefineList::iFlgCalcSpec</a>, <a class="el" href="struct_8h_source.html#l00335">DefineList::iFlgScaLAPACK</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="wrapperMPI_8c_source.html#l00130">InitializeMPI()</a>, <a class="el" href="time_8c_source.html#l00406">InitTimer()</a>, <a class="el" href="readdef_8c_source.html#l03673">JudgeDefType()</a>, <a class="el" href="struct_8h_source.html#l00051">DefineList::k_exct</a>, <a class="el" href="DefCommon_8h_source.html#l00022">Lanczos</a>, <a class="el" href="global_8c_source.html#l00141">list_1</a>, <a class="el" href="global_8c_source.html#l00144">list_2_1</a>, <a class="el" href="global_8c_source.html#l00145">list_2_2</a>, <a class="el" href="global_8h_source.html#l00024">MPIFALSE</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="global_8c_source.html#l00158">NumAve</a>, <a class="el" href="struct_8h_source.html#l00050">DefineList::nvec</a>, <a class="el" href="output__list_8c_source.html#l00040">output_list()</a>, <a class="el" href="time_8c_source.html#l00448">OutputTimer()</a>, <a class="el" href="struct_8h_source.html#l00361">DefineList::Param</a>, <a class="el" href="readdef_8c_source.html#l01511">ReadDefFileIdxPara()</a>, <a class="el" href="readdef_8c_source.html#l00771">ReadDefFileNInt()</a>, <a class="el" href="readdef_8c_source.html#l03803">SetConvergenceFactor()</a>, <a class="el" href="xsetmem_8c_source.html#l00076">setmem_def()</a>, <a class="el" href="xsetmem_8c_source.html#l00062">setmem_HEAD()</a>, <a class="el" href="xsetmem_8c_source.html#l00225">setmem_large()</a>, <a class="el" href="splash_8c_source.html#l00025">splash()</a>, <a class="el" href="readdef_8h_source.html#l00028">STANDARD_DRY_MODE</a>, <a class="el" href="readdef_8h_source.html#l00027">STANDARD_MODE</a>, <a class="el" href="time_8c_source.html#l00424">StartTimer()</a>, <a class="el" href="StdFace__main_8h.html#ae55faf027f0fa2b17f99755b073ac171">StdFace_main()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00436">StopTimer()</a>, <a class="el" href="struct_8h_source.html#l00536">BindStruct::Sym</a>, <a class="el" href="sz_8c_source.html#l00109">sz()</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00687">ValidateSymmetryHamiltonian()</a>, <a class="el" href="symmetry__basis__io_8c_source.html#l00210">ValidateSymmetryRuntimeOptions()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01109">ValidateSymmetrySectorOptions()</a>, <a class="el" href="struct_8h_source.html#l00063">DefineList::WRITE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="mltplyHubbard_8c_source.html#l00772">exchange()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00711">select_symmetry_basis_layout()</a>.</p>
+
+</div>
+</div>
+<a id="ac7597e6ecd779cdb0b4a7f322318b121" name="ac7597e6ecd779cdb0b4a7f322318b121"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7597e6ecd779cdb0b4a7f322318b121">&#9670;&#160;</a></span>report_symmetry_basis_layout_selection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void report_symmetry_basis_layout_selection </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">enum <a class="el" href="symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7">SymmetryBasisLayout</a>&#160;</td>
+          <td class="paramname"><em>layout</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="HPhiMain_8c_source.html#l00718">718</a> of file <a class="el" href="HPhiMain_8c_source.html">HPhiMain.c</a>.</p>
+
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00744">main()</a>.</p>
+
+</div>
+</div>
+<a id="a1ac3568fa7b124902f1fea613b9f52d8" name="a1ac3568fa7b124902f1fea613b9f52d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ac3568fa7b124902f1fea613b9f52d8">&#9670;&#160;</a></span>select_symmetry_basis_layout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int select_symmetry_basis_layout </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="HPhiMain_8c_source.html#l00711">711</a> of file <a class="el" href="HPhiMain_8c_source.html">HPhiMain.c</a>.</p>
+
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00419">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="HPhiMain_8c_source.html#l00650">parse_symmetry_basis_layout()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00744">main()</a>.</p>
 
 </div>
 </div>

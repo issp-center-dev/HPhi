@@ -124,8 +124,10 @@ $(document).ready(function(){initNavTree('structFillEntriesContext.html',''); in
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a2fe68b4d2dcd3bb80ad3be03df8f5a52" id="r_a2fe68b4d2dcd3bb80ad3be03df8f5a52"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html#a2fe68b4d2dcd3bb80ad3be03df8f5a52">plan</a></td></tr>
-<tr class="separator:a2fe68b4d2dcd3bb80ad3be03df8f5a52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a265a010ec8471d5310dff50f85ace1a8" id="r_a265a010ec8471d5310dff50f85ace1a8"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structSymmetryMatvecBlock.html">SymmetryMatvecBlock</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html#a265a010ec8471d5310dff50f85ace1a8">block</a></td></tr>
+<tr class="separator:a265a010ec8471d5310dff50f85ace1a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03eeefeb2140a9ce2c59ac331ed13dcd" id="r_a03eeefeb2140a9ce2c59ac331ed13dcd"><td class="memItemLeft" align="right" valign="top">unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html#a03eeefeb2140a9ce2c59ac331ed13dcd">dim</a></td></tr>
+<tr class="separator:a03eeefeb2140a9ce2c59ac331ed13dcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86cb5d8ce223176b55b3ef2379a615f5" id="r_a86cb5d8ce223176b55b3ef2379a615f5"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html#a86cb5d8ce223176b55b3ef2379a615f5">next</a></td></tr>
 <tr class="separator:a86cb5d8ce223176b55b3ef2379a615f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52baaba60eb10648204f8c6fac562461" id="r_a52baaba60eb10648204f8c6fac562461"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html#a52baaba60eb10648204f8c6fac562461">end</a></td></tr>
@@ -133,8 +135,44 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00192">192</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00548">548</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a id="a265a010ec8471d5310dff50f85ace1a8" name="a265a010ec8471d5310dff50f85ace1a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a265a010ec8471d5310dff50f85ace1a8">&#9670;&#160;</a></span>block</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structSymmetryMatvecBlock.html">SymmetryMatvecBlock</a>* FillEntriesContext::block</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00549">549</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">fill_transposed_entry()</a>.</p>
+
+</div>
+</div>
+<a id="a03eeefeb2140a9ce2c59ac331ed13dcd" name="a03eeefeb2140a9ce2c59ac331ed13dcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03eeefeb2140a9ce2c59ac331ed13dcd">&#9670;&#160;</a></span>dim</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long int FillEntriesContext::dim</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00550">550</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">fill_transposed_entry()</a>.</p>
+
+</div>
+</div>
 <a id="a52baaba60eb10648204f8c6fac562461" name="a52baaba60eb10648204f8c6fac562461"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52baaba60eb10648204f8c6fac562461">&#9670;&#160;</a></span>end</h2>
 
@@ -147,9 +185,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00195">195</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00552">552</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00517">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">fill_transposed_entry()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">fill_transposed_entry()</a>.</p>
 
 </div>
 </div>
@@ -165,27 +203,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">194</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00551">551</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00517">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">fill_transposed_entry()</a>.</p>
-
-</div>
-</div>
-<a id="a2fe68b4d2dcd3bb80ad3be03df8f5a52" name="a2fe68b4d2dcd3bb80ad3be03df8f5a52"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fe68b4d2dcd3bb80ad3be03df8f5a52">&#9670;&#160;</a></span>plan</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">struct <a class="el" href="structSymmetryMatvecPlan.html">SymmetryMatvecPlan</a>* FillEntriesContext::plan</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00193">193</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00517">BuildSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">fill_transposed_entry()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00505">FreeSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00408">RemapSymmetryMatvecPlanColumns()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">fill_transposed_entry()</a>.</p>
 
 </div>
 </div>

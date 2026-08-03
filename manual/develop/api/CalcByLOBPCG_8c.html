@@ -134,7 +134,10 @@ $(document).ready(function(){initNavTree('CalcByLOBPCG_8c.html',''); initResizab
 <code>#include &quot;<a class="el" href="expec__totalspin_8h_source.html">expec_totalspin.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="expec__energy__flct_8h_source.html">expec_energy_flct.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="phys_8h_source.html">phys.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__basis_8h_source.html">symmetry_basis.h</a>&quot;</code><br />
+<code>#include &lt;limits.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="setmemory_8h_source.html">./common/setmemory.h</a>&quot;</code><br />
 </div>
 <p><a href="CalcByLOBPCG_8c_source.html">Go to the source code of this file.</a></p>
@@ -156,6 +159,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a977f41b5be3d424fcd341fc93c95ce2e" id="r_a977f41b5be3d424fcd341fc93c95ce2e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByLOBPCG_8c.html#a977f41b5be3d424fcd341fc93c95ce2e">Output_restart</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex **wave)</td></tr>
 <tr class="memdesc:a977f41b5be3d424fcd341fc93c95ce2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output eigenvectors for restart LOBPCG method.  <br /></td></tr>
 <tr class="separator:a977f41b5be3d424fcd341fc93c95ce2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dc83308387f67324a4d261029c9aacf" id="r_a6dc83308387f67324a4d261029c9aacf"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByLOBPCG_8c.html#a6dc83308387f67324a4d261029c9aacf">CheckedLOBPCGWorkspaceElements</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, size_t *workspace_elements)</td></tr>
+<tr class="separator:a6dc83308387f67324a4d261029c9aacf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf636cac2045e948fae38a03ed72e14d" id="r_abf636cac2045e948fae38a03ed72e14d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByLOBPCG_8c.html#abf636cac2045e948fae38a03ed72e14d">LOBPCG_Main</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:abf636cac2045e948fae38a03ed72e14d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core routine for the LOBPCG method This method is introduced in.  <br /></td></tr>
 <tr class="separator:abf636cac2045e948fae38a03ed72e14d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,9 +246,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00154">154</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00157">157</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">LOBPCG_Main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -273,11 +278,53 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">708</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00772">772</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00494">PhysList::all_doublon</a>, <a class="el" href="struct_8h_source.html#l00492">PhysList::all_energy</a>, <a class="el" href="struct_8h_source.html#l00496">PhysList::all_sz</a>, <a class="el" href="struct_8h_source.html#l00542">EDMainCalStruct::Bind</a>, <a class="el" href="setmemory_8c_source.html#l00255">cd_2d_allocate()</a>, <a class="el" href="struct_8h_source.html#l00046">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00042">cFileNameEnergy_CG</a>, <a class="el" href="global_8c_source.html#l00040">cFileNameEnergy_Lanczos</a>, <a class="el" href="global_8c_source.html#l00055">cFileNameInputEigen</a>, <a class="el" href="global_8c_source.html#l00054">cFileNameOutputEigen</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="ProgressMessage_8c_source.html#l00039">cLogLanczos_EigenVecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00045">cOutputEigenVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00044">cReadEigenVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00043">cReadEigenVecStart</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00531">BindStruct::Def</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="struct_8h_source.html#l00271">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00424">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00276">DefineList::iInputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00085">DefineList::initial_iv</a>, <a class="el" href="global_8c_source.html#l00154">initial_mode</a>, <a class="el" href="struct_8h_source.html#l00275">DefineList::iOutputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00436">LargeList::itr</a>, <a class="el" href="struct_8h_source.html#l00051">DefineList::k_exct</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="struct_8h_source.html#l00533">BindStruct::Large</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">LOBPCG_Main()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="phys_8c_source.html#l00081">phys()</a>, <a class="el" href="struct_8h_source.html#l00534">BindStruct::Phys</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::St</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="struct_8h_source.html#l00494">PhysList::all_doublon</a>, <a class="el" href="struct_8h_source.html#l00492">PhysList::all_energy</a>, <a class="el" href="struct_8h_source.html#l00496">PhysList::all_sz</a>, <a class="el" href="struct_8h_source.html#l00542">EDMainCalStruct::Bind</a>, <a class="el" href="setmemory_8c_source.html#l00255">cd_2d_allocate()</a>, <a class="el" href="struct_8h_source.html#l00046">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00042">cFileNameEnergy_CG</a>, <a class="el" href="global_8c_source.html#l00040">cFileNameEnergy_Lanczos</a>, <a class="el" href="global_8c_source.html#l00055">cFileNameInputEigen</a>, <a class="el" href="global_8c_source.html#l00054">cFileNameOutputEigen</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="ProgressMessage_8c_source.html#l00039">cLogLanczos_EigenVecEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00045">cOutputEigenVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00044">cReadEigenVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00043">cReadEigenVecStart</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00531">BindStruct::Def</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00047">HubbardGC</a>, <a class="el" href="struct_8h_source.html#l00271">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00424">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00276">DefineList::iInputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00085">DefineList::initial_iv</a>, <a class="el" href="global_8c_source.html#l00154">initial_mode</a>, <a class="el" href="struct_8h_source.html#l00275">DefineList::iOutputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00436">LargeList::itr</a>, <a class="el" href="struct_8h_source.html#l00051">DefineList::k_exct</a>, <a class="el" href="DefCommon_8h_source.html#l00046">Kondo</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="struct_8h_source.html#l00533">BindStruct::Large</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="phys_8c_source.html#l00081">phys()</a>, <a class="el" href="struct_8h_source.html#l00534">BindStruct::Phys</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00052">SpinlessFermionGC</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::St</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, <a class="el" href="DefCommon_8h_source.html#l00054">tJGC</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00650">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00744">main()</a>.</p>
+
+</div>
+</div>
+<a id="a6dc83308387f67324a4d261029c9aacf" name="a6dc83308387f67324a4d261029c9aacf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dc83308387f67324a4d261029c9aacf">&#9670;&#160;</a></span>CheckedLOBPCGWorkspaceElements()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int CheckedLOBPCGWorkspaceElements </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname"><em>workspace_elements</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00354">354</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+
+<p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -365,11 +412,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00068">68</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00071">71</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
 <p class="reference">References <a class="el" href="CalcByLOBPCG_8c.html#a9c185d22681129ef639f56558ffcb0f1">zgemm_()</a>, and <a class="el" href="CalcByLOBPCG_8c.html#ab3d3474861840c3dc1a09ff1ab028b96">zheevd_()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">LOBPCG_Main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -416,11 +463,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00178">178</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00181">181</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
 <p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00438">BcastMPI_li()</a>, <a class="el" href="global_8c_source.html#l00098">cFileNameInputVector</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="LogMessage_8c_source.html#l00150">cLogInputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00149">cLogInputVecStart</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="dSFMT_8h_source.html#l00437">dsfmt_init_gen_rand()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00154">initial_mode</a>, <a class="el" href="wrapperMPI_8c_source.html#l00292">MaxMPI_li()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="global_8c_source.html#l00198">nthreads</a>, <a class="el" href="DefCommon_8h_source.html#l00093">RESTART_IN</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="wrapperMPI_8c_source.html#l00378">SumMPI_li()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00492">VecProdMPI()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">LOBPCG_Main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -456,7 +503,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <li>
 </li>
 </ul>
-<p>424</p>
+<p>485</p>
 <p class="endli"></p>
 </li>
 <li>
@@ -469,7 +516,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <li>
 </li>
 </ul>
-<p>439</p>
+<p>500</p>
 <p class="endli"></p>
 </li>
 <li>
@@ -509,11 +556,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">358</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">391</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
-<p class="reference">References <a class="el" href="CalcByLOBPCG_8c_source.html#l00154">calc_preshift()</a>, <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00255">cd_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00279">cd_3d_allocate()</a>, <a class="el" href="global_8c_source.html#l00039">cFileNameLanczosStep</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="LogMessage_8c_source.html#l00093">cLanczos_EigenValueFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00091">cLanczos_EigenValueStart</a>, <a class="el" href="LogMessage_8c_source.html#l00092">cLanczos_EigenValueStep</a>, <a class="el" href="ProgressMessage_8c_source.html#l00037">cLogLanczos_EigenValueEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00089">cLogLanczos_EigenValueNotConverged</a>, <a class="el" href="setmemory_8c_source.html#l00192">d_1d_allocate()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00068">diag_ovrp()</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00269">free_cd_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00297">free_cd_3d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00200">free_d_1d_allocate()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00178">Initialize_wave()</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="global_8c_source.html#l00140">list_Diagonal</a>, <a class="el" href="mltply_8c_source.html#l00087">mltply()</a>, <a class="el" href="global_8c_source.html#l00198">nthreads</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00325">Output_restart()</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="wrapperMPI_8c_source.html#l00492">VecProdMPI()</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="CalcByLOBPCG_8c_source.html#l00157">calc_preshift()</a>, <a class="el" href="setmemory_8c_source.html#l00236">cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00255">cd_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00279">cd_3d_allocate()</a>, <a class="el" href="global_8c_source.html#l00039">cFileNameLanczosStep</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00354">CheckedLOBPCGWorkspaceElements()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="LogMessage_8c_source.html#l00093">cLanczos_EigenValueFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00091">cLanczos_EigenValueStart</a>, <a class="el" href="LogMessage_8c_source.html#l00092">cLanczos_EigenValueStep</a>, <a class="el" href="ProgressMessage_8c_source.html#l00037">cLogLanczos_EigenValueEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00089">cLogLanczos_EigenValueNotConverged</a>, <a class="el" href="setmemory_8c_source.html#l00192">d_1d_allocate()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00071">diag_ovrp()</a>, <a class="el" href="setmemory_8c_source.html#l00244">free_cd_1d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00269">free_cd_2d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00297">free_cd_3d_allocate()</a>, <a class="el" href="setmemory_8c_source.html#l00200">free_d_1d_allocate()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01282">GetOwnedHamiltonianDiagonal()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00181">Initialize_wave()</a>, <a class="el" href="global_8c_source.html#l00166">L_vec</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="mltply_8c_source.html#l00087">mltply()</a>, <a class="el" href="global_8c_source.html#l00198">nthreads</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00328">Output_restart()</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="wrapperMPI_8c_source.html#l00399">SumMPI_i()</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="wrapperMPI_8c_source.html#l00492">VecProdMPI()</a>, <a class="el" href="global_8c_source.html#l00136">vg</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00708">CalcByLOBPCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00772">CalcByLOBPCG()</a>.</p>
 
 </div>
 </div>
@@ -560,11 +607,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00325">325</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByLOBPCG_8c_source.html#l00328">328</a> of file <a class="el" href="CalcByLOBPCG_8c_source.html">CalcByLOBPCG.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00096">cFileNameOutputVector</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="LogMessage_8c_source.html#l00152">cLogOutputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00151">cLogOutputVecStart</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="wrapperMPI_8c_source.html#l00185">exitMPI()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00358">LOBPCG_Main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00391">LOBPCG_Main()</a>.</p>
 
 </div>
 </div>
@@ -660,7 +707,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00068">diag_ovrp()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00071">diag_ovrp()</a>.</p>
 
 </div>
 </div>
@@ -756,7 +803,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00068">diag_ovrp()</a>, and <a class="el" href="matrixlapack_8c_source.html#l00374">ZHEEVall()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00071">diag_ovrp()</a>, and <a class="el" href="matrixlapack_8c_source.html#l00374">ZHEEVall()</a>.</p>
 
 </div>
 </div>

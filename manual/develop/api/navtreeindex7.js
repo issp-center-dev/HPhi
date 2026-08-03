@@ -1,5 +1,9 @@
 var NAVTREEINDEX7 =
 {
+"matrixscalapack_8c_source.html":[10,0,47],
+"matrixscalapack_8h.html":[10,0,1,54],
+"matrixscalapack_8h_source.html":[10,0,1,54],
+"mltplyCommon_8h.html":[10,0,1,56],
 "mltplyCommon_8h.html#a41480345f075da4865bb40e6b0535800":[10,0,1,56,0],
 "mltplyCommon_8h.html#a5c8dd0d097bacc500eddcc7970047d3f":[10,0,1,56,4],
 "mltplyCommon_8h.html#a60c602f654cc690280c2a75a69d1f98b":[10,0,1,56,7],
@@ -245,9 +249,5 @@ var NAVTREEINDEX7 =
 "mltplyMPIHubbard_8c_source.html":[10,0,53],
 "mltplyMPIHubbard_8h.html":[10,0,1,61],
 "mltplyMPIHubbard_8h.html#a1ab395ecd0b9cd763a237a25620b2b3b":[10,0,1,61,7],
-"mltplyMPIHubbard_8h.html#a2c6e0cf1561aadc80056ee14994dd595":[10,0,1,61,4],
-"mltplyMPIHubbard_8h.html#a3054a988e80405c642108d898fb92a9c":[10,0,1,61,3],
-"mltplyMPIHubbard_8h.html#a4b763c919309e9ccde4b782177847ab0":[10,0,1,61,0],
-"mltplyMPIHubbard_8h.html#a79464e9faa4065ea8fa9d7bd758e6281":[10,0,1,61,6],
-"mltplyMPIHubbard_8h.html#add4b98b87cb542d3c3cdd26c5e515e5c":[10,0,1,61,1]
+"mltplyMPIHubbard_8h.html#a2c6e0cf1561aadc80056ee14994dd595":[10,0,1,61,4]
 };

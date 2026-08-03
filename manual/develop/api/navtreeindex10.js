@@ -1,5 +1,9 @@
 var NAVTREEINDEX10 =
 {
+"page_time.html#subsec_time_new":[7,1,2],
+"page_variable.html":[2],
+"page_variable.html#sec_data_struct":[2,1],
+"page_variable.html#sec_global_vars":[2,0],
 "page_variable.html#subsec_bindstruct":[2,1,0],
 "page_variable.html#subsec_definelist":[2,1,1],
 "page_variable.html#subsec_largelist":[2,1,2],
@@ -245,9 +249,5 @@ var NAVTREEINDEX10 =
 "structDefineList.html#a06aeb15fc8b6b37061570adfc9670829":[9,0,5,163],
 "structDefineList.html#a070611dcb758c4f1ae08c28c441c2456":[9,0,5,183],
 "structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,5,135],
-"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,5,89],
-"structDefineList.html#a0a20ef558db29fdb792c93680f938adf":[9,0,5,86],
-"structDefineList.html#a0addab7d71a29ad52070e5132f39a271":[9,0,5,171],
-"structDefineList.html#a0bce5cf65aa07ea30984a6991e8c4bc4":[9,0,5,79],
-"structDefineList.html#a0bdb25dd85dfa0809d21fb1975180cf3":[9,0,5,98]
+"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,5,89]
 };

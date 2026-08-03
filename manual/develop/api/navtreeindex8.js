@@ -1,5 +1,9 @@
 var NAVTREEINDEX8 =
 {
+"mltplyMPIHubbard_8h.html#a3054a988e80405c642108d898fb92a9c":[10,0,1,61,3],
+"mltplyMPIHubbard_8h.html#a4b763c919309e9ccde4b782177847ab0":[10,0,1,61,0],
+"mltplyMPIHubbard_8h.html#a79464e9faa4065ea8fa9d7bd758e6281":[10,0,1,61,6],
+"mltplyMPIHubbard_8h.html#add4b98b87cb542d3c3cdd26c5e515e5c":[10,0,1,61,1],
 "mltplyMPIHubbard_8h.html#af30a31457fd5a36ec44f8f9e50d43c0e":[10,0,1,61,2],
 "mltplyMPIHubbard_8h.html#af66e5f529eb1bfae84850449609588b5":[10,0,1,61,5],
 "mltplyMPIHubbard_8h_source.html":[10,0,1,61],
@@ -245,9 +249,5 @@ var NAVTREEINDEX8 =
 "mltplySpinless_8c.html#a73faa702d8a601d0d15eb65c3c231147":[10,0,60,6],
 "mltplySpinless_8c.html#a79fdb5b6fd4564de62b0a4e9780f77f5":[10,0,60,5],
 "mltplySpinless_8c.html#adbac06369acc76d362a91079a26030eb":[10,0,60,2],
-"mltplySpinless_8c_source.html":[10,0,60],
-"mltplySpinless_8h.html":[10,0,1,68],
-"mltplySpinless_8h.html#a079626d9bda6791a2a0e011bb40b527f":[10,0,1,68,2],
-"mltplySpinless_8h.html#a5a881cc0abd208fb68a1b2805449e74a":[10,0,1,68,0],
-"mltplySpinless_8h.html#a6660e59b6f260ec6440e396b8b419f6c":[10,0,1,68,1]
+"mltplySpinless_8c_source.html":[10,0,60]
 };

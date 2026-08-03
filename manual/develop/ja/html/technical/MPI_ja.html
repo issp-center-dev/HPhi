@@ -140,8 +140,38 @@ mpirun -np 4 ./HPhi -e namelist.def
 常に全プロセスで一致します。</p>
 </section>
 </section>
+<section id="id6">
+<h2><span class="section-number">6.2.5. </span>分散対称性経路の一時メモリーポリシー<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>分散対称性基底の経路では、基底のdistribution、代表状態directoryのbatch、
+行列ベクトル積plan構築について、rankごとの一時メモリーpeakを見積もります。
+既定では1 GiB/rankを超える見積もりに対してwarningを表示しますが、
+計算は停止しません。</p>
+<p>以下の環境変数には、byte単位の符号なし10進整数を指定します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_MEMORY_WARN_BYTES</span></code> はwarning thresholdを設定します。
+既定値は <code class="docutils literal notranslate"><span class="pre">1073741824</span></code> (1 GiB) で、<code class="docutils literal notranslate"><span class="pre">0</span></code> はwarningを無効にします。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_MEMORY_LIMIT_BYTES</span></code> は任意のhard limitを設定します。
+既定値は <code class="docutils literal notranslate"><span class="pre">0</span></code> （無制限）です。0以外を指定すると、追跡対象の一時メモリー
+peakが上限を超える前に、全rankで計算を失敗させます。</p></li>
+</ul>
+<p>例えば、既定のwarning thresholdを維持したまま4 GiB/rankのhard limitを
+設定するには、次のように実行します:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=4294967296
+mpirun -np 4 ./HPhi -e namelist.def
+</pre></div>
+</div>
+<p>両方の値はrank 0で読み込まれ、全rankへブロードキャストされます。
+distribution、directory、行列ベクトル積planの各phaseへ一貫して適用されます。
+これらの設定にかかわらず、メモリー確保失敗、整数overflow検査、MPI失敗は
+引き続きfatal errorです。</p>
+<p>分散sample sortでは、初期値としてnonempty MPI rankごとに64個のregular
+sampleを選びます。global sample数131,072はhard limitではなくwarning
+thresholdです。nonempty rankが2,048を超えるとrank当たりsample数を減らし、
+131,072を超えると1 sample/rankで続行してrank 0からwarningを出します。
+実allocationとruntime memory policyの検査は引き続き適用されます。</p>
+</section>
 <section id="spinlessfermionoff-diagonal-two-body-green">
-<h2><span class="section-number">6.2.5. </span>SpinlessFermionのoff-diagonal two-body Green関数<a class="headerlink" href="#spinlessfermionoff-diagonal-two-body-green" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.6. </span>SpinlessFermionのoff-diagonal two-body Green関数<a class="headerlink" href="#spinlessfermionoff-diagonal-two-body-green" title="Link to this heading">¶</a></h2>
 <p>SpinlessFermionにおける
 <span class="math notranslate nohighlight">\(\langle c^\dagger_i c_j c^\dagger_k c_l \rangle\)</span>
 のMPI経路は、グランドカノニカル（GC）に加えてカノニカルでも
@@ -150,7 +180,7 @@ mpirun -np 4 ./HPhi -e namelist.def
 ランク間通信を伴う場合でもフェルミオン符号を一貫して評価します。</p>
 </section>
 <section id="mpi-ctest">
-<h2><span class="section-number">6.2.6. </span>MPI前提テストの挙動（ctest）<a class="headerlink" href="#mpi-ctest" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.7. </span>MPI前提テストの挙動（ctest）<a class="headerlink" href="#mpi-ctest" title="Link to this heading">¶</a></h2>
 <p>以下のテストはMPI実行環境を前提とします：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">mpi_consistency_*</span></code> （目安: <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code>）</p></li>
@@ -164,16 +194,16 @@ mpirun -np 4 ./HPhi -e namelist.def
 </pre></div>
 </div>
 </section>
-<section id="id6">
-<h2><span class="section-number">6.2.7. </span>フェルミオン符号<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<section id="id7">
+<h2><span class="section-number">6.2.8. </span>フェルミオン符号<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
 <p>フェルミオン系（Hubbard、SpinlessFermion）では、
 演算子の反交換から生じるフェルミオン符号をMPI通信時に注意深く扱う必要があります。</p>
 <p>符号は <code class="docutils literal notranslate"><span class="pre">SgnBit</span></code> 関数を使用して計算され、
 生成演算子と消滅演算子の間の占有状態数をカウントします。
 この符号は初期化時に事前計算され、各転送グループと共に格納されます。</p>
 </section>
-<section id="id7">
-<h2><span class="section-number">6.2.8. </span>プロセス数の要件<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<section id="id8">
+<h2><span class="section-number">6.2.9. </span>プロセス数の要件<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
 <p>MPIプロセス数は特定の制約を満たす必要があります：</p>
 <dl class="simple">
 <dt><strong>Hubbard/近藤モデル</strong></dt><dd><p>プロセス数 = <span class="math notranslate nohighlight">\(4^n\)</span> （1サイトあたり4状態: 空、上、下、二重占有）</p>
@@ -222,10 +252,11 @@ mpirun -np 4 ./HPhi -e namelist.def
 <li class="toctree-l3"><a class="reference internal" href="#id2">6.2.2. サイトの分類</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">6.2.3. MPI通信パターン</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id4">6.2.4. バッチ処理MPI通信</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#spinlessfermionoff-diagonal-two-body-green">6.2.5. SpinlessFermionのoff-diagonal two-body Green関数</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mpi-ctest">6.2.6. MPI前提テストの挙動（ctest）</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">6.2.7. フェルミオン符号</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">6.2.8. プロセス数の要件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.2.5. 分散対称性経路の一時メモリーポリシー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spinlessfermionoff-diagonal-two-body-green">6.2.6. SpinlessFermionのoff-diagonal two-body Green関数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi-ctest">6.2.7. MPI前提テストの挙動（ctest）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.2.8. フェルミオン符号</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">6.2.9. プロセス数の要件</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>

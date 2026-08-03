@@ -144,8 +144,40 @@ mpirun -np 4 ./HPhi -e namelist.def
 so all processes always agree.</p>
 </section>
 </section>
+<section id="distributed-symmetry-temporary-memory-policy">
+<h2><span class="section-number">6.2.5. </span>Distributed symmetry temporary-memory policy<a class="headerlink" href="#distributed-symmetry-temporary-memory-policy" title="Link to this heading">¶</a></h2>
+<p>The distributed symmetry-basis path estimates the per-rank temporary-memory
+peak for basis distribution, representative-directory batches, and
+matrix-vector plan construction. By default, an estimate above 1 GiB per rank
+prints a warning but does not stop the calculation.</p>
+<p>The following environment variables accept unsigned decimal byte values:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_MEMORY_WARN_BYTES</span></code> sets the warning threshold. Its default
+is <code class="docutils literal notranslate"><span class="pre">1073741824</span></code> (1 GiB); <code class="docutils literal notranslate"><span class="pre">0</span></code> disables the warning.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_MEMORY_LIMIT_BYTES</span></code> sets an optional hard limit. Its default
+is <code class="docutils literal notranslate"><span class="pre">0</span></code> (unlimited). A nonzero value makes the calculation fail
+collectively before a tracked temporary-memory peak is allowed to exceed
+the limit.</p></li>
+</ul>
+<p>For example, the following keeps the default warning threshold and sets a
+4 GiB per-rank hard limit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=4294967296
+mpirun -np 4 ./HPhi -e namelist.def
+</pre></div>
+</div>
+<p>Both values are read on rank 0 and broadcast to all ranks. They apply
+consistently to the distribution, directory, and matrix-vector plan phases.
+Allocation failures, integer-overflow checks, and MPI failures remain fatal
+regardless of these settings.</p>
+<p>The distributed sample sort initially selects 64 regular samples from every
+nonempty MPI rank. A global sample count of 131,072 is a warning threshold,
+not a hard limit. Above 2,048 nonempty ranks, HPhi reduces the samples per
+rank; above 131,072 nonempty ranks, it continues with one sample per rank and
+prints a warning from rank zero. Actual allocation and runtime memory-policy
+checks still apply.</p>
+</section>
 <section id="spinlessfermion-off-diagonal-two-body-green-s-function">
-<h2><span class="section-number">6.2.5. </span>SpinlessFermion Off-diagonal Two-body Green’s Function<a class="headerlink" href="#spinlessfermion-off-diagonal-two-body-green-s-function" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.6. </span>SpinlessFermion Off-diagonal Two-body Green’s Function<a class="headerlink" href="#spinlessfermion-off-diagonal-two-body-green-s-function" title="Link to this heading">¶</a></h2>
 <p>For SpinlessFermion,
 <span class="math notranslate nohighlight">\(\langle c^\dagger_i c_j c^\dagger_k c_l \rangle\)</span>
 with inter-process sites is supported in MPI paths for both
@@ -154,7 +186,7 @@ grand-canonical (GC) and canonical calculations.</p>
 keeps fermion-sign evaluation consistent across rank communication.</p>
 </section>
 <section id="behavior-of-mpi-required-tests-ctest">
-<h2><span class="section-number">6.2.6. </span>Behavior of MPI-required Tests (ctest)<a class="headerlink" href="#behavior-of-mpi-required-tests-ctest" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.7. </span>Behavior of MPI-required Tests (ctest)<a class="headerlink" href="#behavior-of-mpi-required-tests-ctest" title="Link to this heading">¶</a></h2>
 <p>The following tests require an MPI runtime environment:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">mpi_consistency_*</span></code> (typically <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code>)</p></li>
@@ -169,7 +201,7 @@ these tests are reported as <code class="docutils literal notranslate"><span cla
 </div>
 </section>
 <section id="fermion-sign">
-<h2><span class="section-number">6.2.7. </span>Fermion Sign<a class="headerlink" href="#fermion-sign" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.8. </span>Fermion Sign<a class="headerlink" href="#fermion-sign" title="Link to this heading">¶</a></h2>
 <p>For fermionic systems (Hubbard, SpinlessFermion), the fermion sign arising from
 operator anticommutation must be carefully handled during MPI communication.</p>
 <p>The sign is computed using the <code class="docutils literal notranslate"><span class="pre">SgnBit</span></code> function, which counts the number of
@@ -177,7 +209,7 @@ occupied states between the creation and annihilation operators.
 This sign is pre-computed during initialization and stored with each transfer group.</p>
 </section>
 <section id="process-number-requirements">
-<h2><span class="section-number">6.2.8. </span>Process Number Requirements<a class="headerlink" href="#process-number-requirements" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.2.9. </span>Process Number Requirements<a class="headerlink" href="#process-number-requirements" title="Link to this heading">¶</a></h2>
 <p>The number of MPI processes must satisfy specific constraints:</p>
 <dl class="simple">
 <dt><strong>Hubbard/Kondo models:</strong></dt><dd><p>Process number = <span class="math notranslate nohighlight">\(4^n\)</span> (due to 4 states per site: empty, up, down, double)</p>
@@ -226,10 +258,11 @@ This sign is pre-computed during initialization and stored with each transfer gr
 <li class="toctree-l3"><a class="reference internal" href="#site-classification">6.2.2. Site Classification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mpi-communication-patterns">6.2.3. MPI Communication Patterns</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#batched-mpi-communication">6.2.4. Batched MPI Communication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#spinlessfermion-off-diagonal-two-body-green-s-function">6.2.5. SpinlessFermion Off-diagonal Two-body Green’s Function</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#behavior-of-mpi-required-tests-ctest">6.2.6. Behavior of MPI-required Tests (ctest)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#fermion-sign">6.2.7. Fermion Sign</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#process-number-requirements">6.2.8. Process Number Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributed-symmetry-temporary-memory-policy">6.2.5. Distributed symmetry temporary-memory policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spinlessfermion-off-diagonal-two-body-green-s-function">6.2.6. SpinlessFermion Off-diagonal Two-body Green’s Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#behavior-of-mpi-required-tests-ctest">6.2.7. Behavior of MPI-required Tests (ctest)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fermion-sign">6.2.8. Fermion Sign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#process-number-requirements">6.2.9. Process Number Requirements</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
