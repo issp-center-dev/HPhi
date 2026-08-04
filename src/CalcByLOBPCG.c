@@ -52,7 +52,10 @@
 #include "expec_totalspin.h"
 #include "expec_energy_flct.h"
 #include "phys.h"
+#include "symmetry_basis.h"
+#include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include "./common/setmemory.h"
 
 void zheevd_(char *jobz, char *uplo, int *n, double complex *a, int *lda, double *w, double complex *work, int *lwork, double *rwork, int * lrwork, int *iwork, int *liwork, int *info);
@@ -347,6 +350,36 @@ static void Output_restart(
   fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
   if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
 }/*static void Output_restart*/
+
+static int CheckedLOBPCGWorkspaceElements(
+    const struct BindStruct *X,
+    size_t *workspace_elements)
+{
+  size_t vector_count;
+  size_t vector_length;
+  size_t subspace_dim;
+
+  if (X == NULL || workspace_elements == NULL ||
+      X->Def.k_exct == 0U ||
+      X->Def.k_exct > (unsigned int)(INT_MAX / 3) ||
+      X->Check.idim_max == ULONG_MAX) {
+    return -1;
+  }
+  vector_count = 6U * (size_t)X->Def.k_exct;
+  vector_length = (size_t)X->Check.idim_max + 1U;
+  subspace_dim = 3U * (size_t)X->Def.k_exct;
+  if (vector_count > SIZE_MAX / vector_length ||
+      vector_count * vector_length >
+          SIZE_MAX / sizeof(double complex) ||
+      subspace_dim > SIZE_MAX / subspace_dim ||
+      subspace_dim * subspace_dim >
+          SIZE_MAX / sizeof(double complex)) {
+    return -1;
+  }
+  *workspace_elements = vector_count * vector_length;
+  return 0;
+}
+
 /**@brief
 Core routine for the LOBPCG method
 This method is introduced in 
@@ -362,6 +395,7 @@ int LOBPCG_Main(
   char sdt[D_FileNameMax], sdt_2[D_FileNameMax];
   FILE *fp;
   int iconv = -1;
+  int diagonal_status = 0;
   long int idim, i_max;
   int ii, jj, ie, je, nsub, stp, mythread, nsub_cut;
   double complex ***wxp/*[0] w, [1] x, [2] p of Ref.1*/, 
@@ -369,17 +403,44 @@ int LOBPCG_Main(
     *hsub, *ovlp /*Subspace Hamiltonian and Overlap*/,
     **work;
   double *eig, dnorm, eps_LOBPCG, eigabs_max, preshift, precon, dnormmax, *eigsub, eig_pos_shift;
+  size_t workspace_elements;
+
+  i_max = X->Check.idim_max;
+  if (CheckedLOBPCGWorkspaceElements(X, &workspace_elements) != 0) {
+    fprintf(stdoutMPI,
+            "Error: LOBPCG workspace size overflows the addressable range.\n");
+    return -1;
+  }
+  if (X->Def.iFlgSymmetryBasis == TRUE && X->Sym != NULL &&
+      X->Sym->enabled == TRUE) {
+    X->Sym->allocation_lobpcg_workspace_elements =
+        (unsigned long long)workspace_elements;
+    fprintf(stdoutMPI,
+            "Symmetry LOBPCG allocation: local_dim=%lu exct=%u "
+            "workspace_vector_elements=%llu\n",
+            X->Sym->local_dim, X->Def.k_exct,
+            X->Sym->allocation_lobpcg_workspace_elements);
+  }
+  if (X->Def.PreCG == 1 && i_max > 0) {
+    double diagonal;
+    if (GetOwnedHamiltonianDiagonal(X, 1UL, &diagonal) != 0 ||
+        GetOwnedHamiltonianDiagonal(
+            X, (unsigned long int)i_max, &diagonal) != 0) {
+      diagonal_status = 1;
+    }
+  }
+  if (X->Def.PreCG == 1 && SumMPI_i(diagonal_status) != 0) return -1;
 
   nsub = 3 * X->Def.k_exct;
   eig_pos_shift = LargeValue * X->Def.NsiteMPI;
 
   eig = d_1d_allocate(X->Def.k_exct);
   eigsub = d_1d_allocate(nsub);
-  hsub = cd_1d_allocate(nsub*nsub);
-  ovlp = cd_1d_allocate(nsub*nsub);
+  hsub = cd_1d_allocate(
+      (unsigned long int)nsub * (unsigned long int)nsub);
+  ovlp = cd_1d_allocate(
+      (unsigned long int)nsub * (unsigned long int)nsub);
   work = cd_2d_allocate(nthreads, nsub);
-
-  i_max = X->Check.idim_max;
 
   free(v0);
   free(v1);
@@ -451,9 +512,12 @@ int LOBPCG_Main(
         */
         if (X->Def.PreCG == 1) {
           preshift = calc_preshift(eig[ie]+ eig_pos_shift, dnorm, eps_LOBPCG) - eig_pos_shift;
-#pragma omp parallel for default(none) shared(wxp,ie,list_Diagonal,preshift,i_max,eps_LOBPCG) private(idim,precon)
+#pragma omp parallel for default(none) shared(wxp,ie,X,preshift,i_max,eps_LOBPCG) private(idim,precon)
           for (idim = 1; idim <= i_max; idim++) {
-            precon = list_Diagonal[idim] - preshift;
+            double diagonal = 0.0;
+            (void)GetOwnedHamiltonianDiagonal(
+                X, (unsigned long int)idim, &diagonal);
+            precon = diagonal - preshift;
             if(fabs(precon) > eps_LOBPCG) wxp[0][ie][idim] /= precon;
           }
         }/*if(X->Def.PreCG == 1)*/

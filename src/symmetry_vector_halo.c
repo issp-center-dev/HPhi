@@ -6,6 +6,9 @@
 #include "DefCommon.h"
 struct BindStruct;
 #include "CalcTime.h"
+#include "symmetry_checked.h"
+#include "symmetry_distribution.h"
+#include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 
 #ifndef HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES
@@ -17,46 +20,6 @@ static int checked_size_add(size_t lhs, size_t rhs, size_t *result)
   if (result == NULL || lhs > SIZE_MAX - rhs) return -1;
   *result = lhs + rhs;
   return 0;
-}
-
-static int checked_size_mul(size_t lhs, size_t rhs, size_t *result)
-{
-  if (result == NULL || (lhs != 0U && rhs > SIZE_MAX / lhs)) return -1;
-  *result = lhs * rhs;
-  return 0;
-}
-
-static int halo_mpi_collectives_active(void)
-{
-#ifdef MPI
-  int initialized = 0;
-  int finalized = 0;
-  if (MPI_Initialized(&initialized) != MPI_SUCCESS || initialized == 0) {
-    return FALSE;
-  }
-  if (MPI_Finalized(&finalized) != MPI_SUCCESS || finalized != 0) {
-    return FALSE;
-  }
-  return TRUE;
-#else
-  return FALSE;
-#endif
-}
-
-static int agree_halo_error(int mpi_active, int local_error)
-{
-#ifdef MPI
-  int global_error = local_error;
-  if (mpi_active != FALSE &&
-      MPI_Allreduce(&local_error, &global_error, 1, MPI_INT, MPI_MAX,
-                    MPI_COMM_WORLD) != MPI_SUCCESS) {
-    return -1;
-  }
-  return global_error;
-#else
-  (void)mpi_active;
-  return local_error;
-#endif
 }
 
 static unsigned long long hash_bytes(unsigned long long hash,
@@ -142,8 +105,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                                 unsigned long int dim,
                                 unsigned long int local_offset,
                                 unsigned long int local_dim,
-                                const unsigned long int *global_columns,
-                                size_t column_count,
+                                const struct SymmetryGlobalColumnSpan *spans,
+                                size_t span_count,
                                 int nrank,
                                 int rank,
                                 size_t *local_column_count,
@@ -160,9 +123,6 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   unsigned long int last_local;
   unsigned long int expected_local_offset;
   unsigned long int expected_local_dim;
-  unsigned long int block_base;
-  unsigned long int block_remainder;
-  unsigned long int unsigned_rank;
   unsigned long int window_capacity;
   unsigned long int window_zero;
   unsigned long int window_dim;
@@ -174,6 +134,7 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   size_t index_bytes = 0U;
   size_t schedule_scratch_bytes = 0U;
   size_t total_count;
+  size_t span_index;
   size_t column;
   size_t ghost_position = 0U;
   size_t byte_index;
@@ -182,12 +143,21 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   int owner;
   int peer;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || local_column_count == NULL ||
       remote_column_count == NULL || nrank < 1 || rank < 0 || rank >= nrank ||
       local_offset > dim || local_dim > dim - local_offset ||
-      (column_count > 0U && global_columns == NULL)) {
+      (span_count > 0U && spans == NULL)) {
     local_error = 1;
+  }
+  if (local_error == 0) {
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      if (spans[span_index].count > 0U &&
+          spans[span_index].columns == NULL) {
+        local_error = 1;
+        break;
+      }
+    }
   }
 #ifdef MPI
   if (mpi_active != FALSE) {
@@ -198,21 +168,15 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
 
-  block_base = dim / (unsigned long int)nrank;
-  block_remainder = dim % (unsigned long int)nrank;
-  unsigned_rank = (unsigned long int)rank;
-  expected_local_dim =
-      block_base + (unsigned_rank < block_remainder ? 1UL : 0UL);
-  expected_local_offset =
-      block_base * unsigned_rank +
-      (unsigned_rank < block_remainder ? unsigned_rank : block_remainder);
-  if (local_offset != expected_local_offset ||
+  if (SymmetryBlockRange(dim, rank, nrank, &expected_local_offset,
+                         &expected_local_dim) != 0 ||
+      local_offset != expected_local_offset ||
       local_dim != expected_local_dim) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
 
   memset(halo, 0, sizeof(*halo));
   *local_column_count = 0U;
@@ -226,28 +190,32 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   last_local = local_offset + local_dim;
 
   StartTimer(1130);
-  for (column = 0U; column < column_count; column++) {
-    unsigned long int global_index = global_columns[column];
-    if (global_index == 0UL || global_index > dim) {
-      local_error = 1;
-      break;
-    }
-    if (local_dim > 0UL &&
-        global_index >= first_local && global_index <= last_local) {
-      if (*local_column_count == SIZE_MAX) {
+  for (span_index = 0U; span_index < span_count; span_index++) {
+    for (column = 0U; column < spans[span_index].count; column++) {
+      unsigned long int global_index = spans[span_index].columns[column];
+      if (global_index == 0UL || global_index > dim) {
         local_error = 1;
         break;
       }
-      (*local_column_count)++;
-    } else {
-      if (*remote_column_count == SIZE_MAX) {
-        local_error = 1;
-        break;
+      if (local_dim > 0UL &&
+          global_index >= first_local && global_index <= last_local) {
+        if (*local_column_count == SIZE_MAX) {
+          local_error = 1;
+          break;
+        }
+        (*local_column_count)++;
+      } else {
+        if (*remote_column_count == SIZE_MAX) {
+          local_error = 1;
+          break;
+        }
+        (*remote_column_count)++;
       }
-      (*remote_column_count)++;
     }
+    if (local_error != 0) break;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
   if (*remote_column_count > 0U) {
     size_t bitset_cap = (size_t)HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES;
     if (bitset_cap == 0U) {
@@ -291,13 +259,14 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       local_error = 1;
     }
   }
-  if (checked_size_mul(2U * sizeof(*request_counts), (size_t)nrank,
+  if (SymmetryCheckedSizeMul(2U * sizeof(*request_counts), (size_t)nrank,
                        &count64_bytes) != 0 ||
-      checked_size_mul(4U * sizeof(*halo->recv_counts), (size_t)nrank,
+      SymmetryCheckedSizeMul(4U * sizeof(*halo->recv_counts), (size_t)nrank,
                        &count_int_bytes) != 0) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   window_zero = 0UL;
   while (window_zero < dim && *remote_column_count > 0U) {
@@ -307,17 +276,19 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     window_bytes = (size_t)(window_dim / 8UL);
     if (window_dim % 8UL != 0UL) window_bytes++;
     memset(remote_bits, 0, bitset_bytes);
-    for (column = 0U; column < column_count; column++) {
-      unsigned long int global_index = global_columns[column];
-      if (local_dim == 0UL ||
-          global_index < first_local || global_index > last_local) {
-        unsigned long int zero_index = global_index - 1UL;
-        if (zero_index >= window_zero &&
-            zero_index - window_zero < window_dim) {
-          unsigned long int relative_index = zero_index - window_zero;
-          remote_bits[(size_t)(relative_index / 8UL)] |=
-              (unsigned char)(1U <<
-                              (unsigned int)(relative_index % 8UL));
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      for (column = 0U; column < spans[span_index].count; column++) {
+        unsigned long int global_index = spans[span_index].columns[column];
+        if (local_dim == 0UL ||
+            global_index < first_local || global_index > last_local) {
+          unsigned long int zero_index = global_index - 1UL;
+          if (zero_index >= window_zero &&
+              zero_index - window_zero < window_dim) {
+            unsigned long int relative_index = zero_index - window_zero;
+            remote_bits[(size_t)(relative_index / 8UL)] |=
+                (unsigned char)(1U <<
+                                (unsigned int)(relative_index % 8UL));
+          }
         }
       }
     }
@@ -347,7 +318,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     if (local_error != 0) break;
     window_zero += window_dim;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   if (halo->ghost_count > 0U) {
     if (halo->ghost_count >
@@ -359,7 +331,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       if (halo->ghost_global_index == NULL) local_error = 1;
     }
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
 
   window_zero = 0UL;
   while (window_zero < dim && *remote_column_count > 0U) {
@@ -369,17 +342,19 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     window_bytes = (size_t)(window_dim / 8UL);
     if (window_dim % 8UL != 0UL) window_bytes++;
     memset(remote_bits, 0, bitset_bytes);
-    for (column = 0U; column < column_count; column++) {
-      unsigned long int global_index = global_columns[column];
-      if (local_dim == 0UL ||
-          global_index < first_local || global_index > last_local) {
-        unsigned long int zero_index = global_index - 1UL;
-        if (zero_index >= window_zero &&
-            zero_index - window_zero < window_dim) {
-          unsigned long int relative_index = zero_index - window_zero;
-          remote_bits[(size_t)(relative_index / 8UL)] |=
-              (unsigned char)(1U <<
-                              (unsigned int)(relative_index % 8UL));
+    for (span_index = 0U; span_index < span_count; span_index++) {
+      for (column = 0U; column < spans[span_index].count; column++) {
+        unsigned long int global_index = spans[span_index].columns[column];
+        if (local_dim == 0UL ||
+            global_index < first_local || global_index > last_local) {
+          unsigned long int zero_index = global_index - 1UL;
+          if (zero_index >= window_zero &&
+              zero_index - window_zero < window_dim) {
+            unsigned long int relative_index = zero_index - window_zero;
+            remote_bits[(size_t)(relative_index / 8UL)] |=
+                (unsigned char)(1U <<
+                                (unsigned int)(relative_index % 8UL));
+          }
         }
       }
     }
@@ -421,7 +396,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                        &halo->topology_scratch_bytes) != 0) {
     local_error = 1;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_topology;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_topology;
   halo->request_layout_ready = TRUE;
   free(remote_bits);
   remote_bits = NULL;
@@ -443,7 +419,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                      MPI_COMM_WORLD) == MPI_SUCCESS ? 0 : 1;
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   total_count = 0U;
   for (peer = 0; peer < nrank; peer++) {
@@ -463,7 +440,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
   halo->send_value_count = total_count;
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   if (halo->send_value_count > 0U) {
     if (halo->send_value_count >
@@ -480,7 +458,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
       }
     }
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
@@ -497,7 +476,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
             : 1;
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   for (column = 0U; column < halo->send_value_count; column++) {
     unsigned long int global_index = requested_global_index[column];
@@ -509,7 +489,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
     halo->send_local_index[column] = global_index - local_offset;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
 #ifdef MPI
   if (mpi_active != FALSE && nrank > 1) {
@@ -530,7 +511,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
     }
   }
 #endif
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
 
   if (halo->send_value_count > 0U) {
     halo->send_values = (double complex *)malloc(
@@ -544,13 +526,13 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   }
   if (checked_size_add(halo->ghost_count, halo->send_value_count,
                        &total_count) != 0 ||
-      checked_size_mul(total_count, sizeof(unsigned long int),
+      SymmetryCheckedSizeMul(total_count, sizeof(unsigned long int),
                        &index_bytes) != 0 ||
       checked_size_add(count_int_bytes, index_bytes,
                        &halo->schedule_bytes) != 0 ||
-      checked_size_mul(total_count, sizeof(double complex),
+      SymmetryCheckedSizeMul(total_count, sizeof(double complex),
                        &halo->runtime_buffer_bytes) != 0 ||
-      checked_size_mul(halo->send_value_count,
+      SymmetryCheckedSizeMul(halo->send_value_count,
                        sizeof(*requested_global_index),
                        &request_bytes) != 0 ||
       checked_size_add(count64_bytes, request_bytes,
@@ -560,7 +542,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
   if (schedule_scratch_bytes > halo->topology_scratch_bytes) {
     halo->topology_scratch_bytes = schedule_scratch_bytes;
   }
-  if (agree_halo_error(mpi_active, local_error) != 0) goto fail_schedule;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0)
+    goto fail_schedule;
   halo->ready = TRUE;
   halo->schedule_checksum = halo_schedule_checksum(halo);
   free(requested_global_index);
@@ -594,7 +577,7 @@ int ExchangeSymmetryVectorHalo(struct SymmetryVectorHaloPlan *halo,
   size_t index;
   int mpi_active;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || halo->ready != TRUE || local_vector == NULL ||
       (halo != NULL && halo->nrank > 1 && mpi_active == FALSE)) {
     return -1;
@@ -647,9 +630,9 @@ int ExchangeSymmetryVectorHaloReference(
   int mpi_active;
   int local_error = 0;
 
-  mpi_active = halo_mpi_collectives_active();
+  mpi_active = SymmetryMpiCollectivesActive();
   if (halo == NULL || full_vector == NULL) local_error = 1;
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
   if (ExchangeSymmetryVectorHalo(halo, local_vector) != 0) return -1;
 
   StartTimer(1512);
@@ -662,7 +645,7 @@ int ExchangeSymmetryVectorHaloReference(
     }
   }
   StopTimer(1512);
-  if (agree_halo_error(mpi_active, local_error) != 0) return -1;
+  if (SymmetryMpiAgreeError(mpi_active, local_error) != 0) return -1;
   halo->reference_exchange_calls++;
   return 0;
 }

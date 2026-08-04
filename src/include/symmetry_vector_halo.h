@@ -3,6 +3,11 @@
 
 #include "Common.h"
 
+struct SymmetryGlobalColumnSpan {
+  const unsigned long int *columns;
+  size_t count;
+};
+
 struct SymmetryVectorHaloPlan {
   int request_layout_ready;
   int ready;
@@ -41,8 +46,8 @@ int BuildSymmetryVectorHaloPlan(struct SymmetryVectorHaloPlan *halo,
                                 unsigned long int dim,
                                 unsigned long int local_offset,
                                 unsigned long int local_dim,
-                                const unsigned long int *global_columns,
-                                size_t column_count,
+                                const struct SymmetryGlobalColumnSpan *spans,
+                                size_t span_count,
                                 int nrank,
                                 int rank,
                                 size_t *local_column_count,

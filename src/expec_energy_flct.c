@@ -303,9 +303,7 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
 
     use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
     if (use_symmetry_basis == TRUE &&
-        (X->Sym == NULL || X->Sym->enabled != TRUE || X->Sym->basis == NULL ||
-         X->Sym->local_offset > X->Sym->dim ||
-         i_max > X->Sym->dim - X->Sym->local_offset)) {
+        SymmetryBasisOwnedStorageReady(X->Sym, i_max) != TRUE) {
         return -1;
     }
 
@@ -666,8 +664,9 @@ void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
     bit_down = 0;
     bit_D = 0;
     if (use_symmetry_basis == TRUE) {
-        unsigned long int global_index = X->Sym->local_offset + k;
-        tmp_list_1 = X->Sym->basis[global_index].rep_state;
+        const struct SymmetryBasisVector *entry =
+            SymmetryBasisLocalEntry(X->Sym, (unsigned long int)k);
+        tmp_list_1 = entry->rep_state;
     } else {
         tmp_list_1 = list_1[k];
     }

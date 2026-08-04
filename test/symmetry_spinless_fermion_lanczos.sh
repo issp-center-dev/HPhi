@@ -231,6 +231,9 @@ run_mpi_symmetry_case() {
     fi
     grep -q "vector_exchange=halo" "${log_file}"
     grep -q "columns=local/ghost-slots" "${log_file}"
+    grep -q \
+        "Symmetry basis layout: replicated (default outside TransSym CG)." \
+        "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym SpinlessFermion MPI path unexpectedly used site decomposition."
         exit 1
@@ -238,7 +241,8 @@ run_mpi_symmetry_case() {
 
     log_file="spinless_${label}_allgather_mpi.log"
     rm -rf output
-    if ! env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+    if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+        HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         ${MPIRUN} ../../src/HPhi -e namelist.def > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
@@ -254,6 +258,9 @@ run_mpi_symmetry_case() {
     grep -q "Symmetry basis: raw_dim=.* sector_dim=${expected_dim} group_order=4" "${log_file}"
     grep -q "vector_exchange=allgather" "${log_file}"
     grep -q "columns=global" "${log_file}"
+    grep -q \
+        "Symmetry basis layout: replicated (explicit environment)." \
+        "${log_file}"
 }
 
 run_mpi_if_available() {
@@ -283,6 +290,73 @@ expect_failure() {
     fi
 }
 
+assert_distributed_rank_stats() {
+    if [ -z "${MPIRUN}" ]; then
+        return
+    fi
+    log="$1"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        cat "${log}"
+        echo "Missing distributed ${stats}"
+        exit 1
+    fi
+    grep -Eq \
+        '^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=distributed matvec_mode=plan vector_exchange=halo$' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_steady_heavy_bytes .* min=0 max=0 ' \
+        "${stats}"
+    grep -Eq \
+        '^work key=directory_heavy_storage_released .* min=1 max=1 ' \
+        "${stats}"
+    grep -Eq \
+        '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+        "${stats}"
+    awk '
+        function value(field, parts) {
+            split(field, parts, "=")
+            return parts[2]
+        }
+        $1 == "work" {
+            key = value($2)
+            min[key] = value($4)
+            max[key] = value($5)
+        }
+        END {
+            exit !(min["plan_max_wave_count"] > 0 &&
+                   min["plan_max_wave_count"] == max["plan_max_wave_count"] &&
+                   min["directory_batch_calls"] == min["plan_max_wave_count"] &&
+                   max["directory_batch_calls"] == max["plan_max_wave_count"])
+        }
+    ' "${stats}"
+}
+
+assert_rank_stats_layout() {
+    log="$1"
+    expected_layout="$2"
+    stats=output/CalcTimerRankStats.dat
+    if [ ! -f "${stats}" ]; then
+        return
+    fi
+    if ! grep -Eq \
+        "^format=HPhiCalcTimerRankStats version=10 ranks=[0-9]+ basis_layout=${expected_layout} " \
+        "${stats}"; then
+        cat "${log}"
+        cat "${stats}"
+        exit 1
+    fi
+    if [ "${expected_layout}" = "distributed" ]; then
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-global-beta-fields-xor-sum .* status=ok$' \
+            "${stats}"
+    else
+        grep -Eq \
+            '^basis_digest algorithm=fnv1a64-fields .* status=ok$' \
+            "${stats}"
+    fi
+}
+
 write_calcmod
 write_locspn
 write_modpara 1
@@ -295,6 +369,9 @@ assert_energy "-2.0" spinless_k0.log
 grep -q "Symmetry basis: raw_dim=4 sector_dim=1 group_order=4" spinless_k0.log
 grep -q "vector_exchange=halo" spinless_k0.log
 grep -q "columns=local/ghost-slots" spinless_k0.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    spinless_k0.log
 run_mpi_if_available k0 "-2.0" 1
 
 rm -rf output
@@ -306,13 +383,80 @@ assert_energy "-2.0" spinless_kpi2.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
 grep -q "vector_exchange=halo" spinless_kpi2.log
 grep -q "columns=local/ghost-slots" spinless_kpi2.log
+grep -q \
+    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    spinless_kpi2.log
 rm -rf output
-env HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     ../../src/HPhi -e namelist.def > spinless_kpi2_allgather.log 2>&1
 assert_energy "-2.0" spinless_kpi2_allgather.log
 grep -q "vector_exchange=allgather" spinless_kpi2_allgather.log
 grep -q "columns=global" spinless_kpi2_allgather.log
 run_mpi_if_available kpi2 "-2.0" 2
+
+perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
+rm -rf output
+../../src/HPhi -e namelist.def > spinless_kpi2_cg_default.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_default.log
+grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_default.log
+grep -q \
+    "Symmetry basis layout: distributed (default for TransSym CG)." \
+    spinless_kpi2_cg_default.log
+assert_rank_stats_layout spinless_kpi2_cg_default.log distributed
+assert_distributed_rank_stats spinless_kpi2_cg_default.log
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_cg_replicated.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_replicated.log
+grep -q "Symmetry matvec: mode=plan" spinless_kpi2_cg_replicated.log
+grep -q \
+    "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
+    spinless_kpi2_cg_replicated.log
+assert_rank_stats_layout spinless_kpi2_cg_replicated.log replicated
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def > spinless_kpi2_cg_distributed.log 2>&1
+assert_energy "-2.0" spinless_kpi2_cg_distributed.log
+grep -q "Symmetry distributed matvec:" spinless_kpi2_cg_distributed.log
+grep -q \
+    "Symmetry basis layout: distributed (explicit environment)." \
+    spinless_kpi2_cg_distributed.log
+assert_rank_stats_layout spinless_kpi2_cg_distributed.log distributed
+assert_distributed_rank_stats spinless_kpi2_cg_distributed.log
+if [ -n "${MPIRUN}" ]; then
+    MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
+    if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" &&
+       [ "${MPI_NP}" -gt 1 ]; then
+        rm -rf output
+        if ! ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > spinless_kpi2_cg_default_mpi.log 2>&1; then
+            cat spinless_kpi2_cg_default_mpi.log
+            exit 1
+        fi
+        assert_energy "-2.0" spinless_kpi2_cg_default_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            spinless_kpi2_cg_default_mpi.log
+        grep -q \
+            "Symmetry basis layout: distributed (default for TransSym CG)." \
+            spinless_kpi2_cg_default_mpi.log
+        assert_distributed_rank_stats spinless_kpi2_cg_default_mpi.log
+        rm -rf output
+        if ! env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+            ${MPIRUN} ../../src/HPhi -e namelist.def \
+            > spinless_kpi2_cg_distributed_mpi.log 2>&1; then
+            cat spinless_kpi2_cg_distributed_mpi.log
+            exit 1
+        fi
+        assert_energy "-2.0" spinless_kpi2_cg_distributed_mpi.log
+        grep -q \
+            "Symmetry distributed matvec:" \
+            spinless_kpi2_cg_distributed_mpi.log
+        assert_distributed_rank_stats spinless_kpi2_cg_distributed_mpi.log
+    fi
+fi
+write_calcmod
 
 rm -rf output
 write_k0_transsym

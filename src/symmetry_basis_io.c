@@ -290,6 +290,28 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   return 0;
 }
 
+int ValidateSymmetryBasisLayoutOptions(
+    const struct BindStruct *X,
+    enum SymmetryBasisLayout layout)
+{
+  const struct DefineList *def;
+  if (X == NULL) return -1;
+  def = &X->Def;
+  if (layout == SYMMETRY_BASIS_REPLICATED) return 0;
+  if (layout != SYMMETRY_BASIS_DISTRIBUTED) {
+    fprintf(stdoutMPI,
+            "Error: invalid TransSym symmetry basis layout selection.\n");
+    return -1;
+  }
+  if (def->iFlgSymmetryBasis != TRUE || def->iCalcType != CG) {
+    fprintf(stdoutMPI,
+            "Error: distributed symmetry basis is supported for "
+            "TransSym CG runs only.\n");
+    return -1;
+  }
+  return 0;
+}
+
 static int same_unordered_pair(int a0, int a1, int b0, int b1)
 {
   return (a0 == b0 && a1 == b1) || (a0 == b1 && a1 == b0);
