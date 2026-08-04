@@ -46,7 +46,7 @@ jobs:
           MPIRUN: mpiexec --oversubscribe -np 2
         run: |
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
-            -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2)$'
+            -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|fulldiag_output_open_failure_scalapack|fulldiag_eigenvector_output_elpa_np2|fulldiag_eigenvector_output_scalapack_np2|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2)$'
 
       - name: ELPA three-rank regression tests
         env:

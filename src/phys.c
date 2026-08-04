@@ -49,12 +49,68 @@
 #include "anomalous_pair.h"
 #include "green_output.h"
 #include "wrapperMPI.h"
+#include "FileIO.h"
 #include "DefCommon.h"
 #include "phys_distributed.h"
 #include <assert.h>
+#include <limits.h>
+#ifdef MPI
+#include <mpi.h>
+#endif
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
+
+/**
+ * @brief Write one global FullDiag eigenvector using the established binary
+ * eigenvector-file layout.
+ *
+ * Iterative solvers write one local-basis slice per MPI rank. FullDiag uses
+ * MPI to distribute dense-matrix columns or eigenstates instead, while each
+ * eigenvector itself still spans the complete Hilbert space. Consequently a
+ * FullDiag state has one file, with the decomposition suffix fixed to rank 0.
+ */
+int FullDiagOutputEigenvector(const struct BindStruct *X,
+                              unsigned long int state,
+                              const double complex *eigenvector) {
+  char sdt[D_FileNameMax];
+  FILE *fp = NULL;
+  int iteration = 0;
+  unsigned long int dimension;
+  double complex unused = 0.0;
+  int nfn;
+  int failed = 0;
+
+  if (X == NULL || eigenvector == NULL || state > (unsigned long int)INT_MAX) {
+    fprintf(stderr, "Error: invalid FullDiag eigenvector output request.\n");
+    return -1;
+  }
+  dimension = X->Check.idim_max;
+  nfn = snprintf(sdt, sizeof(sdt), cFileNameOutputEigen,
+                 X->Def.CDataFileHead, (int)state, 0);
+  if (nfn < 0 || nfn >= (int)sizeof(sdt)) {
+    fprintf(stderr,
+            "Error: FullDiag eigenvector file name is too long (state=%lu).\n",
+            state);
+    return -1;
+  }
+  if (childfopenALL(sdt, "wb", &fp) != 0) return -1;
+
+  if (fwrite(&iteration, sizeof(iteration), 1, fp) != 1 ||
+      fwrite(&dimension, sizeof(dimension), 1, fp) != 1 ||
+      fwrite(&unused, sizeof(unused), 1, fp) != 1 ||
+      fwrite(eigenvector, sizeof(*eigenvector), dimension, fp) != dimension) {
+    fprintf(stderr,
+            "Error: failed to write FullDiag eigenvector file (%s).\n", sdt);
+    failed = 1;
+  }
+  if (fclose(fp) != 0) {
+    fprintf(stderr,
+            "Error: failed to close FullDiag eigenvector file (%s).\n", sdt);
+    failed = 1;
+  }
+  return failed ? -1 : 0;
+}
 
 /**
  * @brief Compute physical quantities for all eigenstates from full diagonalization
@@ -83,6 +139,7 @@ void phys(struct BindStruct *X, //!<[inout]
 ) {
   long unsigned int i, j, i_max;
   double tmp_N;
+  int eigen_output_failed = 0;
   i_max = X->Check.idim_max;
 #ifdef _SCALAPACK
   double complex *vec_tmp;
@@ -149,6 +206,19 @@ void phys(struct BindStruct *X, //!<[inout]
       v0[j + 1] = L_vec[i][j];
     }    
 #endif
+
+    if (X->Def.iCalcType == FullDiag &&
+        X->Def.iOutputEigenVec == TRUE && myrank == 0 &&
+        !eigen_output_failed) {
+#ifdef _SCALAPACK
+      const double complex *eigenvector =
+          use_scalapack ? vec_tmp : L_vec[i];
+#else
+      const double complex *eigenvector = L_vec[i];
+#endif
+      if (FullDiagOutputEigenvector(X, i, eigenvector) != 0)
+        eigen_output_failed = 1;
+    }
 
     X->Phys.eigen_num = i;
     if (expec_energy_flct(X) != 0) {
@@ -229,11 +299,20 @@ void phys(struct BindStruct *X, //!<[inout]
     X->Phys.all_num_up[i] = X->Phys.num_up;
     X->Phys.all_num_down[i] = X->Phys.num_down;
   }
+#ifdef MPI
+  if (X->Def.iCalcType == FullDiag && X->Def.iOutputEigenVec == TRUE) {
+    int any_eigen_output_failed = 0;
+    MPI_Allreduce(&eigen_output_failed, &any_eigen_output_failed, 1, MPI_INT,
+                  MPI_MAX, MPI_COMM_WORLD);
+    eigen_output_failed = any_eigen_output_failed;
+  }
+#endif
 #ifdef _SCALAPACK
   if(use_scalapack) {
     free(vec_tmp);
     FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
   }
 #endif
+  if (eigen_output_failed) exitMPI(-1);
   assert(!ExpecLocalActive());
 }
