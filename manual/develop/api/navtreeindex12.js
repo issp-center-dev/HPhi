@@ -1,5 +1,7 @@
 var NAVTREEINDEX12 =
 {
+"structMPIBatchedDoubleTransfers.html":[9,0,13],
+"structMPIBatchedDoubleTransfers.html#a47d81c8563311571732e6725a577bab7":[9,0,13,2],
 "structMPIBatchedDoubleTransfers.html#a5b47146c48d156e4f5b0dfbfbb54e629":[9,0,13,1],
 "structMPIBatchedDoubleTransfers.html#a7dfed2cad850e2cd0541c1f7c4df9312":[9,0,13,0],
 "structMPIBatchedInterAll.html":[9,0,14],
@@ -247,7 +249,5 @@ var NAVTREEINDEX12 =
 "structSymmetryMatvecBlock.html#a7762ef18a1391cc12d8bdeb8dc1eb6f0":[9,0,36,7],
 "structSymmetryMatvecBlockView.html":[9,0,37],
 "structSymmetryMatvecBlockView.html#a462afa05c63729eda3bb8ffd37478093":[9,0,37,7],
-"structSymmetryMatvecBlockView.html#a72b19fef4a9c39412c2543ecdbd14dd5":[9,0,37,0],
-"structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac":[9,0,37,6],
-"structSymmetryMatvecBlockView.html#aaaa87ec7a39c243ad82694446f3a925c":[9,0,37,4]
+"structSymmetryMatvecBlockView.html#a72b19fef4a9c39412c2543ecdbd14dd5":[9,0,37,0]
 };

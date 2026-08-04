@@ -1,5 +1,7 @@
 var NAVTREEINDEX15 =
 {
+"symmetry__matvec__plan_8c.html#acafc318f1bfeb935448ad699bd225922":[10,0,87,23],
+"symmetry__matvec__plan_8c.html#acc41b0ece347e8da3e8d99269ae9dc80":[10,0,87,2],
 "symmetry__matvec__plan_8c.html#ad1ea0ec53d23edec435d574b07ea8d5a":[10,0,87,30],
 "symmetry__matvec__plan_8c.html#ad8526ed131320cf7e59fa77373f14b42":[10,0,87,17],
 "symmetry__matvec__plan_8c.html#ae288d84c551c067a6f6cc0cc4aebbeba":[10,0,87,37],
@@ -247,7 +249,5 @@ var NAVTREEINDEX15 =
 "wrapperMPI_8c.html#a7a90e7c667189b600a621be9856fa650":[10,0,95,17],
 "wrapperMPI_8c.html#a9436224cf1cda3468767ab28d9359e9a":[10,0,95,9],
 "wrapperMPI_8c.html#ab01492e7612823a34a325619f46862e5":[10,0,95,10],
-"wrapperMPI_8c.html#ab0a0f068368d495f801d98957ddff65e":[10,0,95,7],
-"wrapperMPI_8c.html#ad03fb793bdd71c39a37c76a8e8fd56de":[10,0,95,1],
-"wrapperMPI_8c.html#ad6b9f4d67bf6d08880e90b54291b2eee":[10,0,95,13]
+"wrapperMPI_8c.html#ab0a0f068368d495f801d98957ddff65e":[10,0,95,7]
 };

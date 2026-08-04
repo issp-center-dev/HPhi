@@ -13,6 +13,7 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="検索" href="../../search.html" />
     <link rel="next" title="tmpvec.dat" href="tmpvec_ja.html" />
@@ -36,17 +37,34 @@
             
   <section id="eigenvec-dat">
 <span id="subsec-eigenvec"></span><h1>eigenvec.dat<a class="headerlink" href="#eigenvec-dat" title="Link to this heading">¶</a></h1>
-<p>CalcModファイルのOutputEigenVec=1の場合に、Lanczos法で計算された固有ベクトルを出力します。IntputEigenVec=1の場合には、出力されたファイルの読み込みを行います。ファイルはバイナリ形式で出力されます。ファイル名およびファイル形式は以下の通りです。</p>
+<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> ファイルで <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> とした場合に、固有ベクトルを
+バイナリ形式で出力します。反復法では指定された状態を出力し、FullDiagでは
+全固有ベクトルを出力します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> は、対応するリスタート・スペクトル計算で反復法の
+出力ファイルを読み込みます。FullDiag出力も同じバイナリ配置ですが、
+FullDiagのリスタート機能ではありません。FullDiagでは常に対角化を実行します。</p>
 <section id="id1">
 <h2>ファイル名<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>##_eigenvec_&amp;&amp;_rank_$$.dat</p></li>
 </ul>
-<p>##はModParaファイル内の[string02]で指定されるヘッダ、&amp;&amp;は固有値の番号、$$はランク番号を表します。</p>
+<p>##はModParaファイル内の[string02]で指定されるヘッダ、&amp;&amp;は0始まりの
+固有状態番号、$$はランク番号を表します。</p>
+<p>反復法では、各MPIランクが局所Hilbert空間の成分を自身のランク番号の
+ファイルへ出力します。FullDiagでは各ファイルに分割されていない1本の
+固有ベクトルを格納するため、ScaLAPACK/ELPAや <code class="docutils literal notranslate"><span class="pre">ExpecMode=1</span></code> / <code class="docutils literal notranslate"><span class="pre">2</span></code> を
+用いたMPI実行でも <code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_0.dat</span></code> だけを出力します。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><strong>Note:</strong>  <code class="docutils literal notranslate"><span class="pre">eigen_vector</span></code>の一番最初の成分に計算に使用しない値が入っています。</p>
+<p>ファイルには、順に反復回数（<code class="docutils literal notranslate"><span class="pre">int</span></code>）、ベクトル次元
+（<code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">long</span> <span class="pre">int</span></code>）、<code class="docutils literal notranslate"><span class="pre">complex</span> <span class="pre">double</span></code> 型の
+<code class="docutils literal notranslate"><span class="pre">local_size+1</span></code> 成分を格納します。</p>
+<p><strong>Note:</strong>  <code class="docutils literal notranslate"><span class="pre">eigen_vector</span></code>の一番最初の成分は計算に使用しません。</p>
+<p>FullDiagでは反復回数は0、ベクトル次元はHilbert空間の全次元です。この指定を
+有効にすると、<span class="math notranslate nohighlight">\(N_{\rm H}\)</span> 本のファイルへ合計
+<span class="math notranslate nohighlight">\(N_{\rm H}^2\)</span> 個の複素数成分を出力するため、ディスク使用量は
+<span class="math notranslate nohighlight">\(O(N_{\rm H}^2)\)</span> になります。</p>
 </section>
 </section>
 

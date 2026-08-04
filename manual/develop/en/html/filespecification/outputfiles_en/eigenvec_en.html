@@ -36,17 +36,25 @@
             
   <section id="eigenvec-dat">
 <span id="subsec-eigenvec"></span><h1>eigenvec.dat<a class="headerlink" href="#eigenvec-dat" title="Link to this heading">¶</a></h1>
-<p>When OutputEigenVec=1 in a CalcMod file, the eigenvectors calculated by
-the Lanczos method are outputted. When InputEigenVec=1 in a CalcMod
-file, eigenvectors are inputted by this outputted file. The file format
-is of the binary type.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> in a <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> file, the eigenvectors are
+written in binary form. Iterative solvers write the requested states,
+whereas FullDiag writes all eigenvectors.</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> can read the iterative-solver files for the
+corresponding restart or spectrum workflows. FullDiag output uses the
+same binary layout, but it is not a FullDiag restart mechanism:
+FullDiag always performs the diagonalization.</p>
 <section id="file-name">
 <span id="file-name-18"></span><h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>##_eigenvec_&amp;&amp;_rank_$$.dat</p></li>
 </ul>
-<p>## indicates [string02] in a ModPara file, &amp;&amp; is the number of
-eigenvalues, and $$ is a number of rank.</p>
+<p>## indicates [string02] in a ModPara file, &amp;&amp; is the zero-based
+eigenstate index, and $$ is a rank number.</p>
+<p>For iterative solvers, each MPI rank writes its local Hilbert-space
+slice to the file with its own rank number. For FullDiag, each file
+contains a complete eigenvector; therefore only
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_0.dat</span></code> is written, even when the distributed
+ScaLAPACK or ELPA solver and <code class="docutils literal notranslate"><span class="pre">ExpecMode=1</span></code> or <code class="docutils literal notranslate"><span class="pre">2</span></code> are used.</p>
 </section>
 <section id="file-format">
 <span id="file-format-42"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
@@ -55,18 +63,22 @@ eigenvalues, and $$ is a number of rank.</p>
 different fron the actual <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> source).</div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_eigenvec_0_rank_0.dat&quot;, &quot;wb&quot;);
-fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
+fwrite(&amp;number_of_iterations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;eigen_vector[0], sizeof(complex double),local_size+1, fp);
 fclose(fp);
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">number_of_interations</span></code> is the number of iterations,
+<p>where <code class="docutils literal notranslate"><span class="pre">number_of_iterations</span></code> is the number of iterations,
 <code class="docutils literal notranslate"><span class="pre">local_size</span></code> is the size of eigenvector (if MPI is used, it differs
 from the dimension of the Hilbert space), <code class="docutils literal notranslate"><span class="pre">eigen_vector</span></code> is the
 (complex) eigenvector.</p>
-<p><strong>Note:</strong> The fist component of <code class="docutils literal notranslate"><span class="pre">eigen_vector</span></code> (<code class="docutils literal notranslate"><span class="pre">eigen_vector[0]</span></code>)
+<p><strong>Note:</strong> The first component of <code class="docutils literal notranslate"><span class="pre">eigen_vector</span></code> (<code class="docutils literal notranslate"><span class="pre">eigen_vector[0]</span></code>)
 is not used for calculation.</p>
+<p>For FullDiag, <code class="docutils literal notranslate"><span class="pre">number_of_iterations</span></code> is zero and <code class="docutils literal notranslate"><span class="pre">local_size</span></code> is
+the full Hilbert-space dimension. Thus, enabling this option writes
+<span class="math notranslate nohighlight">\(N_{\rm H}\)</span> files containing <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> complex
+components each; disk usage is <span class="math notranslate nohighlight">\(O(N_{\rm H}^2)\)</span>.</p>
 </section>
 </section>
 

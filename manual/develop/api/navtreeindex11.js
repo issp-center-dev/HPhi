@@ -1,5 +1,7 @@
 var NAVTREEINDEX11 =
 {
+"structDefineList.html#a09fa2f50f7daaa648426f773af18e18d":[9,0,5,135],
+"structDefineList.html#a0a1a6ed4ebd530f2986b6f3bf6ee3191":[9,0,5,89],
 "structDefineList.html#a0a20ef558db29fdb792c93680f938adf":[9,0,5,86],
 "structDefineList.html#a0addab7d71a29ad52070e5132f39a271":[9,0,5,171],
 "structDefineList.html#a0bce5cf65aa07ea30984a6991e8c4bc4":[9,0,5,79],
@@ -247,7 +249,5 @@ var NAVTREEINDEX11 =
 "structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755":[9,0,12,2],
 "structLegacyApplyContext.html#aa2e031ded933b71101f7bd1142fde7b3":[9,0,12,4],
 "structLegacyApplyContext.html#ad4ef8b65cbae89c6ad166b0328a94456":[9,0,12,3],
-"structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77":[9,0,12,0],
-"structMPIBatchedDoubleTransfers.html":[9,0,13],
-"structMPIBatchedDoubleTransfers.html#a47d81c8563311571732e6725a577bab7":[9,0,13,2]
+"structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77":[9,0,12,0]
 };
