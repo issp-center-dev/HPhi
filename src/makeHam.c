@@ -549,17 +549,14 @@ int makeHam(struct BindStruct *X) {
         }
 
         //PairLift
-        for (i = 0; i < X->Def.NPairLiftCoupling / 2; i++) {
-          for (ihermite = 0; ihermite < 2; ihermite++) {
-            idx = 2 * i + ihermite;
-            pairlift_spin_GetInfo(idx, X);
-
-            hs_jb = HS_JB();
-            hs_je = HS_JE(X->Large.i_max);
-            for (j = hs_jb; j <= hs_je; j++) {
-              dmv = GC_pairlift_spin_element(j, v0, v1, X, &tmp_off);
-              AddHamElem(tmp_off + 1, j, dmv);
-            }
+        //Each term holds both S+S+ and S-S-, so that the terms are not paired
+        for (i = 0; i < X->Def.NPairLiftCoupling; i++) {
+          pairlift_spin_GetInfo(i, X);
+          hs_jb = HS_JB();
+          hs_je = HS_JE(X->Large.i_max);
+          for (j = hs_jb; j <= hs_je; j++) {
+            dmv = GC_pairlift_spin_element(j, v0, v1, X, &tmp_off);
+            AddHamElem(tmp_off + 1, j, dmv);
           }
         }
       } else { //For General spin
