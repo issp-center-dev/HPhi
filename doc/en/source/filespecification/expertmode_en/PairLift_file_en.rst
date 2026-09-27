@@ -10,7 +10,15 @@ This file determines the values of PairLift couplings
 
 .. math::
 
-   {\mathcal H}+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow}).
+   {\mathcal H}+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow})
+   =\sum_{i,j}J_{ij}^{\rm PairLift} (S_{i}^{+}S_{j}^{+}+S_{i}^{-}S_{j}^{-}).
+
+.. note::
+   This file can be used only for the :math:`S=1/2` spin model in the grand
+   canonical ensemble (``SpinGC``, CalcModel=4). Specifying this file for the
+   other models will result in an error; use the InterAll file
+   (:ref:`Subsec:interall`) for them.
+   Both terms in the parentheses are added by one line of this file.
 
 An example of the file format is as follows.
 
