@@ -131,7 +131,7 @@ NumAve = 2
 ExpecInterval = 1
 outputmode = "correlation"
 EOF
-  run_hphi sdry.log "${hphi}" -sdry stan.in
+  run_hphi sdry.log ${MPIRUNFC} "${hphi}" -sdry stan.in
   append_aggregate_mode calcmod.def
   printf '    NBodyG  nbodyg.def\n' >> namelist.def
   cat > nbodyg.def <<EOF
@@ -142,7 +142,7 @@ NNBodyG 1
 ========================
 1 0 0 0 0
 EOF
-  run_hphi run.log "${hphi}" -e namelist.def
+  run_hphi run.log ${MPIRUNFC} "${hphi}" -e namelist.def
   assert_file output/zvo_cisajs_tpq.dat
   assert_file output/zvo_cisajscktalt_tpq.dat
   assert_file output/zvo_NBodyG_tpq.dat
@@ -177,11 +177,11 @@ NumAve = 2
 ExpecInterval = 1
 outputmode = "None"
 EOF
-  run_hphi sdry.log "${hphi}" -sdry stan.in
+  run_hphi sdry.log ${MPIRUNFC} "${hphi}" -sdry stan.in
   sed -e 's/^CalcType.*/CalcType   5/' calcmod.def > calcmod.tmp
   mv calcmod.tmp calcmod.def
   append_aggregate_mode calcmod.def
-  run_hphi run.log "${hphi}" -e namelist.def
+  run_hphi run.log ${MPIRUNFC} "${hphi}" -e namelist.def
   assert_file output/SS_tpq.dat
   assert_file output/Norm_tpq.dat
   assert_file output/Flct_tpq.dat
@@ -196,13 +196,13 @@ EOF
 mkdir te
 (
   cd te
-  python3 "${srcdir}/test/testTECalc.py" -p "${hphi}" -m "Spin" > gen.log 2>&1
+  python3 "${srcdir}/test/testTECalc.py" -p "${hphi}" -mpi "${MPIRUNFC}" -m "Spin" > gen.log 2>&1
   append_aggregate_mode calcmod2.def
   sed -e 's/^Lanczos_max.*/Lanczos_max    3/' modpara2.def > modpara2.tmp
   mv modpara2.tmp modpara2.def
   rm -f output/zvo_cisajs_step*.dat output/zvo_cisajscktalt_step*.dat
   rm -f output/zvo_cisajs_te.dat output/zvo_cisajscktalt_te.dat
-  run_hphi run_te.log "${hphi}" -e namelist2.def
+  run_hphi run_te.log ${MPIRUNFC} "${hphi}" -e namelist2.def
   assert_file output/zvo_cisajs_te.dat
   assert_file output/zvo_cisajscktalt_te.dat
   assert_no_match "output/zvo_cisajs_step*.dat"
@@ -224,9 +224,9 @@ nelec = 2
 2Sz = 0
 outputmode = "correlation"
 EOF
-  run_hphi sdry.log "${hphi}" -sdry stan.in
+  run_hphi sdry.log ${MPIRUNFC} "${hphi}" -sdry stan.in
   append_aggregate_mode calcmod.def
-  run_hphi run.log "${hphi}" -e namelist.def
+  run_hphi run.log ${MPIRUNFC} "${hphi}" -e namelist.def
   assert_file output/zvo_cisajs_eigen.dat
   assert_file output/zvo_cisajscktalt_eigen.dat
   assert_no_match "output/zvo_cisajs_eigen[0-9]*.dat"
@@ -249,7 +249,7 @@ initial_iv = 1
 exct = 2
 outputmode = "None"
 EOF
-  run_hphi sdry.log "${hphi}" -sdry stan.in
+  run_hphi sdry.log ${MPIRUNFC} "${hphi}" -sdry stan.in
   append_aggregate_mode calcmod.def
   printf '    AnomalousTerm  anomalousterm.def\n' >> namelist.def
   printf '    AnomalousG     anomalousg.def\n' >> namelist.def
@@ -271,7 +271,7 @@ NAnomalousG 2
 0 0 0 0 1
 1 0 1 0 0
 EOF
-  run_hphi run.log "${hphi}" -e namelist.def
+  run_hphi run.log ${MPIRUNFC} "${hphi}" -e namelist.def
   assert_file output/zvo_AnomalousG_eigen.dat
   assert_no_match "output/zvo_AnomalousG.dat"
   check_single_index_anomalous_rows output/zvo_AnomalousG_eigen.dat "LOBCG AnomalousG"
@@ -289,10 +289,10 @@ J = 1.0
 2Sz = 0
 outputmode = "None"
 EOF
-  run_hphi sdry.log "${hphi}" -sdry stan.in
+  run_hphi sdry.log ${MPIRUNFC} "${hphi}" -sdry stan.in
   printf "OutputGreenFormat 2\n" >> calcmod.def
   set +e
-  "${hphi}" -e namelist.def > invalid.log 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > invalid.log 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then

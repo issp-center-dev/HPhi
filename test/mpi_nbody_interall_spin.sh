@@ -29,7 +29,7 @@ Lanczos_max = 200
 initial_iv = 1
 EOF
 
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 cat > nbodyinterall.def <<EOF
 ========================
@@ -41,7 +41,7 @@ NNBodyInterAll 3
 2 6 1 6 0 7 0 7 1 0.2500000000000000 0.0000000000000000
 2 6 0 6 1 7 1 7 0 0.2500000000000000 0.0000000000000000
 EOF
-run_hphi log_serial.txt "${hphi}" -e namelist.def
+run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_serial.dat
 cd ..
 

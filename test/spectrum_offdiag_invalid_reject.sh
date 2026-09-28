@@ -24,7 +24,7 @@ nelec = 4
 2Sz = 0
 EigenVecIO = "out"
 EOF
-${HPHI} -s stan_gs.in
+${MPIRUNFC} ${HPHI} -s stan_gs.in
 
 cat > SpectrumModpara <<EOF
 --------------------
@@ -95,7 +95,7 @@ fail=0
 expect_reject() {  # $1 = case name, $2 = expected guard-message substring
   name="$1"
   pat="$2"
-  if ${HPHI} -e namelist_cg.def > "reject_${name}.log" 2>&1; then
+  if ${MPIRUNFC} ${HPHI} -e namelist_cg.def > "reject_${name}.log" 2>&1; then
     echo "FAIL: invalid case '${name}' was ACCEPTED (should be rejected)"
     cat "reject_${name}.log"
     fail=1

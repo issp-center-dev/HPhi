@@ -29,7 +29,7 @@ NumAve = 1
 Lanczos_max = 5
 outputmode = "None"
 EOF
-    "${hphi}" -sdry stan.in > gen.log 2>&1
+    ${MPIRUNFC} "${hphi}" -sdry stan.in > gen.log 2>&1
 
     cat > calcmod.def <<EOF
 CalcType   5

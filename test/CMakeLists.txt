@@ -362,7 +362,7 @@ if(MPI_FOUND)
     target_link_libraries(unittest_komega_bicg_nonfinite ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
 add_test(NAME unittest_komega_bicg_nonfinite
-    COMMAND unittest_komega_bicg_nonfinite)
+    COMMAND sh -c "\$MPIRUNFC $<TARGET_FILE:unittest_komega_bicg_nonfinite>")
 set_tests_properties(unittest_komega_bicg_nonfinite
     PROPERTIES LABELS "unit;spectrum")
 

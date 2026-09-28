@@ -43,7 +43,7 @@ nelec = 4
 Lanczos_max = 120
 initial_iv = 1
 EOF
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 cat > nbodyinterall.def <<EOF
 ========================
@@ -55,7 +55,7 @@ NNBodyInterAll 3
 2 3 0 0 0 1 1 1 1 0.3700000000000000 0.1100000000000000
 2 1 1 1 1 0 0 3 0 0.3700000000000000 -0.1100000000000000
 EOF
-run_hphi log_serial.txt "${hphi}" -e namelist.def
+run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_serial.dat
 cd ..
 
@@ -85,7 +85,7 @@ ncond = 4
 Lanczos_max = 120
 initial_iv = 1
 EOF
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 cat > nbodyinterall.def <<EOF
 ========================
@@ -96,7 +96,7 @@ NNBodyInterAll 2
 2 3 0 3 1 0 1 0 0 0.2300000000000000 0.0700000000000000
 2 0 0 0 1 3 1 3 0 0.2300000000000000 -0.0700000000000000
 EOF
-run_hphi log_ncond_serial.txt "${hphi}" -e namelist.def
+run_hphi log_ncond_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_ncond_serial.dat
 cd ..
 

@@ -18,13 +18,13 @@ cd spinless_interall_diagonal
 
 # Generate the SpinlessFermion expert-mode definition files (L=8 chain, 3
 # fermions; non-degenerate ground state) with no interaction.
-python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "../../src/HPhi" -m "SpinlessFermion" \
+python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "../../src/HPhi" -mpi "${MPIRUNFC}" -m "SpinlessFermion" \
   -s 8 -n 3 -V 0.0 > log_generate.txt 2>&1
 cp namelist.def namelist.base
 
 run_energy() {  # echoes the ground-state energy
   rm -rf output
-  ../../src/HPhi -e namelist.def > "$1" 2>&1
+  ${MPIRUNFC} ../../src/HPhi -e namelist.def > "$1" 2>&1
   awk '/Energy/{print $2}' output/zvo_energy.dat
 }
 
