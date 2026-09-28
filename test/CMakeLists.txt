@@ -220,6 +220,7 @@ add_hphi_test(modpara_parse_validation)
 set_tests_properties(modpara_parse_validation
     PROPERTIES LABELS "validation;input")
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
+add_hphi_test_with_srcdir(version_option)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)
 add_hphi_test(lanczos_small_dimension_regression)
@@ -297,6 +298,9 @@ set_tests_properties(
 set_tests_properties(
     lanczos_hubbardgc_anomalous_pair
     PROPERTIES LABELS "lanczos;fulldiag;te;hubbard;anomalous")
+set_tests_properties(
+    version_option
+    PROPERTIES LABELS "validation;input")
 set_tests_properties(
     calchs2_unsupported_reject
     PROPERTIES LABELS "lanczos;hubbard;validation")
@@ -684,6 +688,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/CheckMPI.c
     ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
     ${CMAKE_SOURCE_DIR}/src/readdef.c
+    ${CMAKE_SOURCE_DIR}/src/version.c
     ${CMAKE_SOURCE_DIR}/src/sz.c
     ${CMAKE_SOURCE_DIR}/src/xsetmem.c
     ${CMAKE_SOURCE_DIR}/src/input.c

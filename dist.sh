@@ -22,9 +22,9 @@ fi
 #
 # Version ID
 #
-major=`cat src/include/version_major.h`
-minor=`cat src/include/version_minor.h`
-patch=`cat src/include/version_patch.h`
+major=`awk '$2=="HPHI_VERSION_MAJOR"{print $3}' src/include/version.h`
+minor=`awk '$2=="HPHI_VERSION_MINOR"{print $3}' src/include/version.h`
+patch=`awk '$2=="HPHI_VERSION_PATCH"{print $3}' src/include/version.h`
 vid=`echo ${major}.${minor}.${patch}`
 
 ROOTDIR=`pwd`

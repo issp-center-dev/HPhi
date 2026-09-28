@@ -157,6 +157,17 @@ For technical details about MPI parallelization (site classification, communicat
 Printing version ID
 -------------------
 
-By using the ``-v`` option as follows, you can check which version of :math:`{\mathcal H}\Phi` you are using.
+By using the ``-v`` (or ``--version``) option as follows, you can check which version of :math:`{\mathcal H}\Phi` you are using.
 
  ``$ PATH/HPhi -v``
+
+The version number is printed in the following form, and :math:`{\mathcal H}\Phi` finishes with the exit status 0.
+
+::
+
+ HPhi version 3.7.0 (211bd466)
+
+The string in the parentheses is the abbreviated hash (8 characters) of the git commit
+from which :math:`{\mathcal H}\Phi` was built.
+It is not printed when :math:`{\mathcal H}\Phi` is built from a source which is not a git repository,
+such as a release archive.
