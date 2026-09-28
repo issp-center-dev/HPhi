@@ -149,12 +149,34 @@ The following tests require an MPI runtime environment:
 If ``MPIRUN`` is not set, or the MPI rank requirement is not met,
 these tests are reported as ``Skipped`` by ``ctest``.
 
+Tests for spin-1 models (``*spinone*`` and
+``mpi_consistency_threebody_generalspin``) require the number of MPI
+ranks to be a power of 3.  They run in serial when ``MPIRUN`` is not
+set, and are ``Skipped`` when ``MPIRUN`` specifies any other rank count.
+
 Example:
 
 .. code-block:: bash
 
    MPIRUN='mpirun -np 4 --oversubscribe' ctest -L consistency
    MPIRUN='mpirun -np 16 --oversubscribe' ctest -L batching
+   MPIRUN='mpirun -np 3 --oversubscribe' ctest -R "spinone|threebody_generalspin"
+
+Launcher for serial runs (``MPIRUNFC``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Every test also runs HPhi in serial mode, for example to generate input
+files with ``-sdry`` or to compute a serial reference.  These
+invocations are prefixed with ``${MPIRUNFC}``, which is empty by
+default.  On systems where an MPI-linked binary cannot be started
+without a launcher (e.g. Slurm with ``srun``), set both variables:
+
+.. code-block:: bash
+
+   make test "MPIRUN=srun -n 4" "MPIRUNFC=srun -n 1"
+
+When adding a new test, prefix serial HPhi invocations with
+``${MPIRUNFC}`` and parallel ones with ``${MPIRUN}``.
 
 Fermion Sign
 ------------
