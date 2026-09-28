@@ -151,8 +151,19 @@ these tests are reported as ``Skipped`` by ``ctest``.
 
 Tests for spin-1 models (``*spinone*`` and
 ``mpi_consistency_threebody_generalspin``) require the number of MPI
-ranks to be a power of 3.  They run in serial when ``MPIRUN`` is not
-set, and are ``Skipped`` when ``MPIRUN`` specifies any other rank count.
+ranks to be a power of 3, so they are selected separately (see the
+example below).  Their rank conditions are:
+
+* ``lobcg_spinone_chain_threebody``: runs in serial when ``MPIRUN`` is
+  not set; with ``MPIRUN`` it runs only for 3^k ranks and is
+  ``Skipped`` otherwise.
+* ``mpi_consistency_threebody_generalspin`` and ``mpi_*_spinone``:
+  MPI-only, exactly 3 ranks; ``mpi_*_spinone_np9``: MPI-only, exactly
+  9 ranks.  ``Skipped`` for any other rank count or when ``MPIRUN`` is
+  not set, so some of them are always skipped in a 3-rank run and
+  others in a 9-rank run.
+* The remaining ``*spinone*`` tests (Lanczos, FullDiag, validation) run
+  in serial regardless of ``MPIRUN``.
 
 Example:
 
@@ -165,8 +176,8 @@ Example:
 Launcher for serial runs (``MPIRUNFC``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Every test also runs HPhi in serial mode, for example to generate input
-files with ``-sdry`` or to compute a serial reference.  These
+Test scripts also run HPhi in serial mode, for example to generate
+input files with ``-sdry`` or to compute a serial reference.  Such
 invocations are prefixed with ``${MPIRUNFC}``, which is empty by
 default.  On systems where an MPI-linked binary cannot be started
 without a launcher (e.g. Slurm with ``srun``), set both variables:

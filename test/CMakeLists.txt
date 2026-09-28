@@ -366,7 +366,10 @@ if(MPI_FOUND)
     target_link_libraries(unittest_komega_bicg_nonfinite ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
 add_test(NAME unittest_komega_bicg_nonfinite
-    COMMAND sh -c "\$MPIRUNFC $<TARGET_FILE:unittest_komega_bicg_nonfinite>")
+    # ${MPIRUNFC} is word-split as a launcher prefix; the executable path is
+    # passed as a separate argument so that paths with spaces work.
+    COMMAND sh -c "exec \$MPIRUNFC \"\$1\""
+            _ "$<TARGET_FILE:unittest_komega_bicg_nonfinite>")
 set_tests_properties(unittest_komega_bicg_nonfinite
     PROPERTIES LABELS "unit;spectrum")
 
@@ -457,6 +460,10 @@ set_tests_properties(
 #
 # Three body for spin 1 Heisenberg chain
 #
+# Regression test for run_with_mpi_precheck.sh itself (no HPhi / MPI launch).
+add_hphi_test_with_srcdir(precheck_modes)
+set_tests_properties(precheck_modes PROPERTIES LABELS "validation")
+
 # spin-1 model: MPI ranks must be a power of 3 (serial run is also allowed).
 add_hphi_mpi_test_with_srcdir(lobcg_spinone_chain_threebody pow:3)
 set_tests_properties(
