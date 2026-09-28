@@ -221,6 +221,10 @@ set_tests_properties(modpara_parse_validation
     PROPERTIES LABELS "validation;input")
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test_with_srcdir(version_option)
+add_test(
+    NAME version_git_hash
+    COMMAND ${CMAKE_SOURCE_DIR}/test/version_git_hash.sh ${CMAKE_SOURCE_DIR} ${CMAKE_COMMAND}
+)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)
 add_hphi_test(lanczos_small_dimension_regression)
@@ -299,7 +303,7 @@ set_tests_properties(
     lanczos_hubbardgc_anomalous_pair
     PROPERTIES LABELS "lanczos;fulldiag;te;hubbard;anomalous")
 set_tests_properties(
-    version_option
+    version_option version_git_hash
     PROPERTIES LABELS "validation;input")
 set_tests_properties(
     calchs2_unsupported_reject

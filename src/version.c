@@ -16,8 +16,7 @@
 #include "version.h"
 
 /*
-version_git.h is written into the build directory by cmake/git_hash.cmake
-when HPhi is built from a git repository.
+version_git.h is written into the build directory by cmake/git_hash.cmake.
 */
 #ifdef HPHI_HAVE_VERSION_GIT_H
 #include "version_git.h"
@@ -27,9 +26,9 @@ when HPhi is built from a git repository.
 #endif
 
 /**
-@brief Abbreviated hash of the commit which HPhi was built from
-@return The hash, or an empty string if it is not known
-(e.g. a build from a release archive)
+@brief Abbreviated hash (8 digits) of the commit which HPhi was built from
+@return The hash, followed by "-dirty" if the source had changes which were
+not committed. An empty string if the commit is not known.
 */
 const char *GetGitHash(void) {
   return HPHI_GIT_HASH;

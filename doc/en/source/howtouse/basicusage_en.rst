@@ -167,7 +167,9 @@ The version number is printed in the following form, and :math:`{\mathcal H}\Phi
 
  HPhi version 3.7.0 (211bd466)
 
-The string in the parentheses is the abbreviated hash (8 characters) of the git commit
+The string in the parentheses is the first 8 digits of the hash of the git commit
 from which :math:`{\mathcal H}\Phi` was built.
-It is not printed when :math:`{\mathcal H}\Phi` is built from a source which is not a git repository,
-such as a release archive.
+``-dirty`` follows it, as ``(211bd466-dirty)``, when the source had changes which were not committed
+(files which are not under the version control are not taken into account).
+The hash is printed also when :math:`{\mathcal H}\Phi` is built from a release archive.
+It is not printed when the commit is not known, e.g., for a plain copy of the source.

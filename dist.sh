@@ -48,3 +48,18 @@ git-archive-all \
   --extra=doc/tutorial_HPhi_en.pdf \
   --prefix=HPhi-${vid} \
   HPhi-${vid}.tar.gz
+
+# Write the hash of the commit into cmake/git_archive.txt of the tarball,
+# unless it is filled in already. "HPhi -v" built from the tarball prints it.
+hash=`git rev-parse HEAD`
+tmpdir=`mktemp -d`
+tar xzf HPhi-${vid}.tar.gz -C ${tmpdir}
+if grep -q Format ${tmpdir}/HPhi-${vid}/cmake/git_archive.txt; then
+  echo ${hash} > ${tmpdir}/HPhi-${vid}/cmake/git_archive.txt
+  COPYFILE_DISABLE=1 tar czf HPhi-${vid}.tar.gz -C ${tmpdir} HPhi-${vid}
+fi
+rm -rf ${tmpdir}
+if [ -n "`git status --porcelain --untracked-files=no`" ]; then
+  echo 'WARNING: the source has changes which are not committed.'
+  echo '         The hash written into the tarball is that of HEAD.'
+fi

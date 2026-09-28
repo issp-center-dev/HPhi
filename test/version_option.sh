@@ -5,7 +5,8 @@
 #   - The exit status is 0, so that the option can be used as a probe.
 #   - The output is "HPhi version X.Y.Z" or "HPhi version X.Y.Z (hash)",
 #     where X.Y.Z agrees with src/include/version.h and the hash is the
-#     abbreviated hash (8 characters or more) of a git commit.
+#     first 8 digits of the hash of a git commit, followed by "-dirty" if the
+#     source had changes which were not committed.
 #
 # The hash is not compared with that of the source tree: it is the one at the
 # time of the build, and the tests may be run after another commit.
@@ -45,8 +46,8 @@ for option in -v --version; do
 
   case "${line}" in
     *"("*)
-      printf '%s\n' "${line}" | grep -q -E '^HPhi version [0-9]+\.[0-9]+\.[0-9]+ \([0-9a-f]{8,}\)$' || \
-        fail "${option}: the hash is not in the form (xxxxxxxx)"
+      printf '%s\n' "${line}" | grep -q -E '^HPhi version [0-9]+\.[0-9]+\.[0-9]+ \([0-9a-f]{8}(-dirty)?\)$' || \
+        fail "${option}: the hash is not in the form (xxxxxxxx) or (xxxxxxxx-dirty)"
       ;;
   esac
 done
