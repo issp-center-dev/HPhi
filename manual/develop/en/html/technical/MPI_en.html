@@ -195,8 +195,8 @@ keeps fermion-sign evaluation consistent across rank communication.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> is not set, or the MPI rank requirement is not met,
 these tests are reported as <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> by <code class="docutils literal notranslate"><span class="pre">ctest</span></code>.</p>
 <p>Example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 4 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
-<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 16 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 4 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 16 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
 </pre></div>
 </div>
 </section>

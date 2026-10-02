@@ -48,9 +48,9 @@ Please refer to the manuals of each solver for the details of the input files.</
 The input file is as follows:</p>
 <p><a class="reference download internal" download="" href="../_downloads/fc8a03ca4d72a607207c9c468c338dd3/scf.in"><code class="xref download docutils literal notranslate"><span class="pre">scf.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
- calculation = &#39;scf&#39;
-  pseudo_dir = &#39;../pseudo&#39;
-prefix = &#39;sr2cuo3&#39;
+ calculation = 'scf'
+  pseudo_dir = '../pseudo'
+prefix = 'sr2cuo3'
 /
 &amp;SYSTEM
        ibrav = 0
@@ -58,7 +58,7 @@ prefix = &#39;sr2cuo3&#39;
         ntyp = 3
      ecutwfc = 30.000000
      ecutrho = 240.000000
- occupations = &#39;tetrahedra_opt&#39;
+ occupations = 'tetrahedra_opt'
 /
 &amp;ELECTRONS
 mixing_beta = 0.3
@@ -95,9 +95,9 @@ Put the pseudopotential files into <code class="docutils literal notranslate"><s
 <h2>(Optional) Band structure<a class="headerlink" href="#optional-band-structure" title="Link to this heading">¶</a></h2>
 <p><a class="reference download internal" download="" href="../_downloads/da167c3c214ea2b40788f448a3605d0b/band.in"><code class="xref download docutils literal notranslate"><span class="pre">band.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
- calculation = &#39;bands&#39;
-  pseudo_dir = &#39;../pseudo&#39;
-prefix = &#39;sr2cuo3&#39;
+ calculation = 'bands'
+  pseudo_dir = '../pseudo'
+prefix = 'sr2cuo3'
 /
 &amp;SYSTEM
        ibrav = 0
@@ -184,7 +184,7 @@ K_POINTS crystal
 </div>
 <p><a class="reference download internal" download="" href="../_downloads/b1ec3039cdf0202e36301d36c1f37b1a/bands.in"><code class="xref download docutils literal notranslate"><span class="pre">bands.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;BANDS
-      prefix = &#39;sr2cuo3&#39;
+      prefix = 'sr2cuo3'
        lsym = .false.
 /
 </pre></div>
@@ -200,10 +200,10 @@ GnuPlot etc.</p>
 <h2>Kohn-Sham orbitals for Wannier<a class="headerlink" href="#kohn-sham-orbitals-for-wannier" title="Link to this heading">¶</a></h2>
 <p><a class="reference download internal" download="" href="../_downloads/b593b96ec06a24a051e56aa0df84bd84/nscf.in"><code class="xref download docutils literal notranslate"><span class="pre">nscf.in</span></code></a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&amp;CONTROL
- calculation = &#39;nscf&#39;
-  pseudo_dir = &#39;../pseudo&#39;
+ calculation = 'nscf'
+  pseudo_dir = '../pseudo'
   wf_collect = .true.
-      prefix = &#39;sr2cuo3&#39;
+      prefix = 'sr2cuo3'
 /
 &amp;SYSTEM
        ibrav = 0
@@ -211,7 +211,7 @@ GnuPlot etc.</p>
         ntyp = 3
      ecutwfc = 30.000000
      ecutrho = 240.000000
- occupations = &#39;tetrahedra_opt&#39;
+ occupations = 'tetrahedra_opt'
         nbnd = 35
 /
 &amp;ELECTRONS
@@ -313,8 +313,8 @@ First, the files in <code class="docutils literal notranslate"><span class="pre"
 Then, the calculation will be started by using standard mode.
 For example, in HPhi, the calculation will be dobe by typing the following command:</p>
 <p><a class="reference download internal" download="" href="../_downloads/2230fa7451cede3854a6deef75032ce9/stan.in"><code class="xref download docutils literal notranslate"><span class="pre">stan.in</span></code></a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = &quot;Hubbard&quot;
-lattice = &quot;wannier90&quot;
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>model = "Hubbard"
+lattice = "wannier90"
 a0w = 8
 a0l = 0
 a0h = 8
@@ -324,7 +324,7 @@ a1h = 0
 a2w = 1
 a2l = 0
 a2h = 0
-method = &quot;TPQ&quot;
+method = "TPQ"
 nelec = 8
 exct = 1
 cutoff_t = 0.5

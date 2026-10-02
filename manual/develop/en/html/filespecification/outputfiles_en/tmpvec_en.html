@@ -55,7 +55,7 @@ different from the actual <span class="math notranslate nohighlight">\({\mathcal
 <div class="line-block">
 <div class="line">Lanczos</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_rank_0.dat&quot;, &quot;wb&quot;);
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
 fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);
@@ -66,7 +66,7 @@ fclose(fp);
 <div class="line-block">
 <div class="line">TPQ and LOBPCG</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_set_0_rank_0.dat&quot;, &quot;wb&quot;);
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
 fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);

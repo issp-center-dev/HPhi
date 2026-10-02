@@ -46,17 +46,17 @@ For example, the following python function (<code class="docutils literal notran
     from os.path import join
     from struct import unpack
 
-    filename = join(&quot;output&quot;,
-                    &quot;zvo_eigenvec_{}_rank_{}.dat&quot;.format(index,
+    filename = join("output",
+                    "zvo_eigenvec_{}_rank_{}.dat".format(index,
                                                          rank))
-    with open(filename, &quot;rb&quot;) as f:
+    with open(filename, "rb") as f:
         f.read(4)
-        nelems = unpack(&quot;L&quot;, f.read(8))[0]
+        nelems = unpack("L", f.read(8))[0]
         ret = np.zeros(nelems, dtype=np.complex128)
         f.read(16)
         for i in range(nelems):
-            re = unpack(&quot;d&quot;, f.read(8))[0]
-            im = unpack(&quot;d&quot;, f.read(8))[0]
+            re = unpack("d", f.read(8))[0]
+            im = unpack("d", f.read(8))[0]
             ret[i] = complex(re, im)
         return ret
 </pre></div>

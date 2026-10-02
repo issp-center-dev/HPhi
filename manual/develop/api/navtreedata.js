@@ -156,7 +156,7 @@ var NAVTREEINDEX =
 "structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac",
 "symmetry__basis_8c.html#a2dbb1fb76cf1059cbc8d713d20332f26",
 "symmetry__matvec__plan_8c.html#acafc318f1bfeb935448ad699bd225922",
-"wrapperMPI_8c.html#ad03fb793bdd71c39a37c76a8e8fd56de"
+"wrapperMPI_8c.html#ab01492e7612823a34a325619f46862e5"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

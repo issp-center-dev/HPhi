@@ -62,7 +62,7 @@ ScaLAPACK or ELPA solver and <code class="docutils literal notranslate"><span cl
 <div class="line">This file is written through the following source code (a little
 different fron the actual <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> source).</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_eigenvec_0_rank_0.dat&quot;, &quot;wb&quot;);
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen("zvo_eigenvec_0_rank_0.dat", "wb");
 fwrite(&amp;number_of_iterations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;eigen_vector[0], sizeof(complex double),local_size+1, fp);

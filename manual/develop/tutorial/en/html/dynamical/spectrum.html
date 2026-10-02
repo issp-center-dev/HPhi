@@ -46,15 +46,15 @@ a0W = 2
 a0L = 2
 a1W = -2
 a1L = 2
-model = &quot;hubbard&quot;
-method = &quot;CG&quot;
-lattice = &quot;square&quot;
+model = "hubbard"
+method = "CG"
+lattice = "square"
 t = 1.0
-t&#39; = 0.5
+t' = 0.5
 U = 4.0
 2Sz = 0
 nelec = 8
-EigenvecIO = &quot;out&quot;
+EigenvecIO = "out"
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan2.in
@@ -63,17 +63,17 @@ a0W = 2
 a0L = 2
 a1W = -2
 a1L = 2
-model = &quot;hubbard&quot;
-method = &quot;CG&quot;
-lattice = &quot;square&quot;
+model = "hubbard"
+method = "CG"
+lattice = "square"
 t = 1.0
-t&#39; = 0.5
+t' = 0.5
 U = 4.0
 2Sz = 0
 nelec = 8
 LanczosEPS = 8
-CalcSpec = &quot;Normal&quot;
-SpectrumType = &quot;SzSz&quot;
+CalcSpec = "Normal"
+SpectrumType = "SzSz"
 SpectrumQW = 0.5
 SpectrumQL = 0.5
 OmegaMin = -10.0
@@ -89,11 +89,11 @@ HPhi -s stan2.in
 </div>
 <p>After finishing calculations, the spectrum <span class="math notranslate nohighlight">\(G_{S_z S_z}({\bf Q} \equiv (\pi, \pi), \omega) = \langle S_z(-{\bf Q}) \left[H-\omega-\omega_0 + i\eta\right]^{-1}S_z({\bf Q})\rangle\)</span> is outputted in <cite>output/zvo_DynamicalGreen.dat</cite>. Here, <span class="math notranslate nohighlight">\(S_z({\bf Q})= \sum_{i}e^{i {\bf Q} \cdot {\bf r}_i} S_z^i\)</span> and the frequency <span class="math notranslate nohighlight">\(\omega\)</span> moves from <span class="math notranslate nohighlight">\(-10\)</span> to <span class="math notranslate nohighlight">\(10\)</span>, <span class="math notranslate nohighlight">\(\omega_0 = 10\)</span>, and <span class="math notranslate nohighlight">\(\eta\)</span> is set as <span class="math notranslate nohighlight">\(0.2\)</span>. You can check the result by executing the following command on gnuplot:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>gnuplot
-gnuplot&gt; set xlabel &quot;Energy&quot;
-gnuplot&gt; set ylabel &quot;G_{SzSz}(E)&quot;
+gnuplot&gt; set xlabel "Energy"
+gnuplot&gt; set ylabel "G_{SzSz}(E)"
 gnuplot&gt; set xzeroaxis
-gnuplot&gt; plot &quot;output/zvo_DynamicalGreen.dat&quot; u 1:3 w l tit &quot;Real&quot;, \
-&gt; &quot;output/zvo_DynamicalGreen.dat&quot; u 1:4 w l tit &quot;Imaginary&quot;
+gnuplot&gt; plot "output/zvo_DynamicalGreen.dat" u 1:3 w l tit "Real", \
+&gt; "output/zvo_DynamicalGreen.dat" u 1:4 w l tit "Imaginary"
 </pre></div>
 </div>
 <p>You can see the following output image.</p>

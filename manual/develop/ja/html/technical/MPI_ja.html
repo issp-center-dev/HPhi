@@ -189,8 +189,8 @@ thresholdです。nonempty rankが2,048を超えるとrank当たりsample数を�
 <p><code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> が未設定、または必要なMPIランク条件を満たさない場合、
 これらは <code class="docutils literal notranslate"><span class="pre">ctest</span></code> 上で <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> として報告されます。</p>
 <p>例：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 4 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
-<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 16 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 4 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 16 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
 </pre></div>
 </div>
 </section>
