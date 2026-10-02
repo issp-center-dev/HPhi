@@ -174,7 +174,7 @@ Example:
    MPIRUN='mpirun -np 3 --oversubscribe' ctest -R "spinone|threebody_generalspin"
 
 Launcher for serial runs (``MPIRUNFC``)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test scripts also run HPhi in serial mode, for example to generate
 input files with ``-sdry`` or to compute a serial reference.  Such
