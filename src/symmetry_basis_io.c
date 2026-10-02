@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
 #include "symmetry_basis.h"
@@ -5,6 +6,7 @@
 #include "readdef.h"
 #include "struct.h"
 #include "wrapperMPI.h"
+#include "global.h"
 
 static int read_header_count(FILE *fp, const char *defname, unsigned int *ntrans)
 {
@@ -79,14 +81,89 @@ static int parse_perm_line(const char *line,
   return 0;
 }
 
+/*
+  Case-insensitive test for the metadata keyword. Returns 1 for an exact
+  match, -1 when the word merely starts with the keyword (a typo such as
+  "MomentumIndex=3" must not pass silently as an ordinary comment), 0 otherwise.
+*/
+static int match_momentum_index_key(const char *word)
+{
+  static const char keyword[] = "momentumindex";
+  size_t i;
+  for (i = 0; keyword[i] != '\0'; i++) {
+    if (word[i] == '\0' || tolower((unsigned char)word[i]) != keyword[i]) return 0;
+  }
+  return word[i] == '\0' ? 1 : -1;
+}
+
+/*
+  Optional metadata in comment lines of the TransSym file, for example
+  "# MomentumIndex 3" written by Standard mode. Comment lines never reach
+  the fixed-layout reader below because fgetsMPI() skips them, so older
+  versions of HPhi ignore the metadata. It is scanned separately on rank 0
+  and broadcast. *momentum_index is -1 when the file carries no metadata.
+*/
+static int read_transsym_metadata(const char *defname, int *momentum_index)
+{
+  int value = -1;
+  int status = 0;
+  if (myrank == 0) {
+    FILE *fp = fopen(defname, "r");
+    char line[D_CharTmpReadDef + D_CharKWDMAX];
+    if (fp == NULL) {
+      status = -1;
+    } else {
+      while (fgets(line, sizeof(line), fp) != NULL) {
+        char key[D_CharKWDMAX];
+        char trail[D_CharKWDMAX];
+        int parsed = 0;
+        int nread;
+        int match;
+        const char *p = line;
+        if (*p != '#') continue; /* same rule as fgetsMPI(): '#' in column 0 */
+        p++;
+        nread = sscanf(p, "%199s %d %199s", key, &parsed, trail);
+        if (nread < 1) continue;
+        match = match_momentum_index_key(key);
+        if (match == 0) continue;
+        if (match < 0 || nread != 2 || parsed < 0) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym metadata must be \"# MomentumIndex <non-negative integer>\": %s",
+                  line);
+          status = -1;
+          break;
+        }
+        if (value >= 0 && value != parsed) {
+          fprintf(stdoutMPI,
+                  "Error: TransSym metadata MomentumIndex is given twice with different values (%d and %d).\n",
+                  value, parsed);
+          status = -1;
+          break;
+        }
+        value = parsed;
+      }
+      fclose(fp);
+    }
+  }
+  status = BcastMPI_i(0, status);
+  value = BcastMPI_i(0, value);
+  if (status != 0) return -1;
+  *momentum_index = value;
+  return 0;
+}
+
 int ReadTransSymFile(const char *defname, struct DefineList *def)
 {
-  FILE *fp = fopenMPI(defname, "r");
+  FILE *fp;
   char line[D_CharTmpReadDef + D_CharKWDMAX];
   unsigned int ntrans = 0;
   unsigned int i;
   int *seen_char;
   int *seen_perm;
+  if (read_transsym_metadata(defname, &def->iSymMomentumIndex) != 0) {
+    return ReadDefFileError(defname);
+  }
+  fp = fopenMPI(defname, "r");
   if (fp == NULL) return ReadDefFileError(defname);
   if (read_header_count(fp, defname, &ntrans) != 0) {
     fclose(fp);
@@ -180,7 +257,11 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
   }
   free(seen_perm);
   fclose(fp);
-  return ValidateSymmetryGroupInput(def);
+  if (ValidateSymmetryGroupInput(def) != 0) return -1;
+  if (def->iSymMomentumIndex >= 0) {
+    fprintf(stdoutMPI, "TransSym metadata: MomentumIndex=%d\n", def->iSymMomentumIndex);
+  }
+  return 0;
 }
 
 static int has_fixed_spin_sector(const struct DefineList *def)

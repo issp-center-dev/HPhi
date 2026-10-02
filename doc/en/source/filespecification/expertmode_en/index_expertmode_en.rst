@@ -34,6 +34,9 @@ The following table summarizes all input files for expert mode.
    * - :doc:`LocSpin <LocSpin_file_en>`
      - Kondo only
      - Location of local spins
+   * - :doc:`TransSym <TransSym_file_en>`
+     - No
+     - Symmetry sector: a group of site permutations with one-dimensional characters (momentum, parity)
 
 **Hamiltonian Definition**
 
@@ -151,6 +154,7 @@ These files define the fundamental parameters for the calculation.
    CalcMod_file_en
    ModPara_file_en
    LocSpin_file_en
+   TransSym_file_en
 
 Hamiltonian Definition
 ^^^^^^^^^^^^^^^^^^^^^^

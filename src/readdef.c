@@ -796,6 +796,7 @@ int ReadDefFileNInt(
   X->iFlgSzConserved=FALSE;
   X->iFlgSymmetryBasis=FALSE;
   X->NSymTrans=0;
+  X->iSymMomentumIndex=-1;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   int iReadNup=FALSE;

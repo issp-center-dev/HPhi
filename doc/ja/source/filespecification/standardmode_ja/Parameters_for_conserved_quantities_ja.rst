@@ -29,6 +29,11 @@
    :math:`\exp(-2\pi i m g/L)` です。 ``MomentumIndex`` は
    :math:`0 \le m < L` を満たす必要があります。
 
+   生成される ``qptransidx.def`` の1行目はコメント ``# MomentumIndex m`` で、
+   :math:`{\mathcal H}\Phi` はこれをログに ``TransSym metadata: MomentumIndex=m``
+   と出力します。鏡映などほかのサイト置換群も指定できるファイル形式は
+   :doc:`TransSym指定ファイル <../expertmode_ja/TransSym_file_ja>` を参照してください。
+
    現在は HPhi のスタンダードモードで ``lattice = "chain"``,
    ``phase0`` を使わない周期境界条件、かつ ``"Lanczos"`` または
    ``"CG"`` の計算手法にのみ対応します。対応する model は以下です。

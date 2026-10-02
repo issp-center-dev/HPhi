@@ -34,6 +34,9 @@
    * - :doc:`LocSpin <LocSpin_file_ja>`
      - 近藤のみ
      - 局在スピンの位置
+   * - :doc:`TransSym <TransSym_file_ja>`
+     - No
+     - 対称性セクター: サイト置換群と1次元指標（運動量、パリティ）
 
 **ハミルトニアン定義**
 
@@ -151,6 +154,7 @@
    CalcMod_file_ja
    ModPara_file_ja
    LocSpin_file_ja
+   TransSym_file_ja
 
 ハミルトニアン定義
 ^^^^^^^^^^^^^^^^^^

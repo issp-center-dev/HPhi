@@ -63,6 +63,8 @@ run_hphi auto.log ../../src/HPhi -s stan.in
 auto_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${auto_energy}"
 grep -q "qptransidx.def is written for MomentumIndex = 1" auto.log
+grep -q "^# MomentumIndex 1$" qptransidx.def
+grep -q "TransSym metadata: MomentumIndex=1" auto.log
 grep -q "TransSym  qptransidx.def" namelist.def
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" auto.log
 grep -q "Symmetry matvec: mode=plan vector_exchange=halo" auto.log
@@ -84,6 +86,11 @@ test "${diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" expert.log
 grep -q "Symmetry matvec: mode=plan vector_exchange=halo" expert.log
 grep -q "columns=local/ghost-slots" expert.log
+if grep -q "TransSym metadata" expert.log; then
+    cat expert.log
+    echo "TransSym metadata was reported for a file without a MomentumIndex comment."
+    exit 1
+fi
 cd ..
 
 write_exchange_only_stan "MomentumIndex = 6"

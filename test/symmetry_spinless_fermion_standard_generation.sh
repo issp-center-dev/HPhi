@@ -95,6 +95,8 @@ run_case() {
     test -n "${auto_energy}" || { cat auto.log; exit 1; }
     assert_close "${expected_energy}" "${auto_energy}"
     grep -q "qptransidx.def is written for MomentumIndex = ${momentum_index}" auto.log
+    grep -q "^# MomentumIndex ${momentum_index}$" qptransidx.def
+    grep -q "TransSym metadata: MomentumIndex=${momentum_index}" auto.log
     grep -q "TransSym  qptransidx.def" namelist.def
     grep -q "CalcModel   7" calcmod.def
     grep -q "Ncond          ${ncond}" modpara.def
@@ -197,6 +199,26 @@ if ../../../src/HPhi -sdry stan.in > density_reject.log 2>&1; then
     exit 1
 fi
 grep -q "V is SPECIFIED but will NOT be USED" density_reject.log
+cd ..
+
+rm -rf method_reject
+mkdir method_reject
+cd method_reject
+cat > stan.in <<EOF
+L = 4
+model = SpinlessFermion
+method = FullDiag
+lattice = chain
+outputmode = none
+t = 1.0
+ncond = 1
+MomentumIndex = 1
+EOF
+if ../../../src/HPhi -sdry stan.in > method_reject.log 2>&1; then
+    cat method_reject.log
+    exit 1
+fi
+grep -q "MomentumIndex currently supports only Lanczos and CG" method_reject.log
 cd ..
 
 rm -rf non_chain_reject

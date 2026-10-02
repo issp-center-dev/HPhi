@@ -21,6 +21,7 @@
     AnomalousG zanomalousg.def
     TwoBodyG zcisajscktaltdc.def
     NBodyG znbodyg.def
+    TransSym qptransidx.def
 
 | 
 
@@ -70,6 +71,7 @@
     "CalcMod","計算モードに関する指定をします。"
     "ModPara","計算で用いるパラメータの指定をします。"
     "LocSpin","各サイトに対して遍歴電子もしくは局在スピンの指定をします。"
+    "TransSym","対称性セクター（サイト置換群と1次元指標）の指定をします。"
     "Trans","一般的一体相互作用に関する設定をします。"
     "AnomalousTerm", "HubbardGCの異常ペアハミルトニアン項に関する設定をします。"
     "InterAll", "一般的二体相互作用に関する設定をします。"
