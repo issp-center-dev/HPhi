@@ -207,10 +207,150 @@ static int has_fixed_hubbard_sector(const struct DefineList *def)
          def->Ne == def->Nup + def->Ndown;
 }
 
-int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
+/*
+ * Runtime capability matrix of the TransSym symmetry basis.
+ *
+ * One row per CalcType.  `enabled` says whether the method may run with
+ * TransSym at all; the other columns say which layout, options and output
+ * families that method supports.  Enabling one more method or feature is a
+ * change to this table (and its tests), not to the validation code below.
+ *
+ *   distributed_layout  the distributed symmetry basis layout may be used.
+ *   correlation         OneBodyG/TwoBodyG/ThreeBodyG/FourBodyG/SixBodyG/NBodyG.
+ *   spectrum            CalcSpec != CALCSPEC_NOT.
+ *   restart             ReStart != RESTART_NOT.
+ *   eigenvec_output     OutputEigenVec.
+ *   eigenvec_input      InputEigenVec.
+ *   ham_output          OutputHam.
+ *   ham_input           InputHam.
+ *
+ * Every feature column is 0 for every method in this version, so TransSym
+ * runs output energy/norm/convergence only.
+ */
+struct SymmetryMethodCapability {
+  int calc_type;
+  const char *name;
+  int enabled;
+  int distributed_layout;
+  int correlation;
+  int spectrum;
+  int restart;
+  int eigenvec_output;
+  int eigenvec_input;
+  int ham_output;
+  int ham_input;
+};
+
+static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
+  /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
+  { Lanczos,       "Lanczos",       1,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { TPQCalc,       "TPQ",           0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { FullDiag,      "FullDiag",      0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { CG,            "CG",            1,      1,   0,   0,   0,   0,    0,   0,   0   },
+  { TimeEvolution, "TimeEvolution", 0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { cTPQ,          "cTPQ",          0,      0,   0,   0,   0,   0,    0,   0,   0   },
+};
+
+/* Fails to compile when a CalcType is added without a row in the table. */
+typedef char symmetry_method_capabilities_cover_every_calc_type
+    [(sizeof(symmetry_method_capabilities) /
+      sizeof(symmetry_method_capabilities[0])) == NUM_CALCTYPE ? 1 : -1];
+
+/* One requested option (or output family) and whether the method supports it. */
+struct SymmetryOptionGate {
+  const char *option;
+  const char *reason;
+  int requested;
+  int supported;
+};
+
+static const struct SymmetryMethodCapability *find_symmetry_method_capability(int calc_type)
 {
-  const struct DefineList *def = &X->Def;
-  if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* readdef already bounds CalcType, so this row is only a safe fallback. */
+  static const struct SymmetryMethodCapability unknown_method = {
+    -1, "an unknown CalcType", 0, 0, 0, 0, 0, 0, 0, 0, 0
+  };
+  size_t i;
+  for (i = 0; i < sizeof(symmetry_method_capabilities) /
+                      sizeof(symmetry_method_capabilities[0]); i++) {
+    if (symmetry_method_capabilities[i].calc_type == calc_type) {
+      return &symmetry_method_capabilities[i];
+    }
+  }
+  return &unknown_method;
+}
+
+/* A feature column only counts when the method itself is enabled. */
+static int symmetry_method_supports(const struct SymmetryMethodCapability *cap,
+                                    int feature)
+{
+  return cap->enabled != 0 && feature != 0;
+}
+
+static int symmetry_method_is_listed(const struct SymmetryMethodCapability *cap,
+                                     int distributed_only)
+{
+  return cap->enabled != 0 && (distributed_only == 0 || cap->distributed_layout != 0);
+}
+
+/* Writes "A", "A and B" or "A, B and C": the enabled methods, or with
+ * distributed_only the enabled methods that may use the distributed layout. */
+static void list_symmetry_methods(char *buf, size_t size, int distributed_only)
+{
+  const size_t nrow = sizeof(symmetry_method_capabilities) /
+                      sizeof(symmetry_method_capabilities[0]);
+  size_t i;
+  size_t total = 0;
+  size_t seen = 0;
+  size_t len = 0;
+  int written;
+  if (size == 0) return;
+  buf[0] = '\0';
+  for (i = 0; i < nrow; i++) {
+    if (symmetry_method_is_listed(&symmetry_method_capabilities[i], distributed_only)) total++;
+  }
+  for (i = 0; i < nrow; i++) {
+    if (!symmetry_method_is_listed(&symmetry_method_capabilities[i], distributed_only)) continue;
+    written = snprintf(buf + len, size - len, "%s%s",
+                       seen == 0 ? "" : (seen + 1 == total ? " and " : ", "),
+                       symmetry_method_capabilities[i].name);
+    if (written < 0 || (size_t)written >= size - len) break;
+    len += (size_t)written;
+    seen++;
+  }
+}
+
+static int reject_unsupported_method(const struct SymmetryMethodCapability *cap)
+{
+  char supported[128];
+  list_symmetry_methods(supported, sizeof(supported), 0);
+  fprintf(stdoutMPI,
+          "Error: TransSym symmetry basis v1 does not support %s; "
+          "it supports only %s in this version.\n",
+          cap->name, supported);
+  return -1;
+}
+
+/* Rejects the first requested option that the method does not support. */
+static int reject_first_unsupported_option(const struct SymmetryMethodCapability *cap,
+                                           const struct SymmetryOptionGate *gates,
+                                           size_t ngate)
+{
+  size_t i;
+  for (i = 0; i < ngate; i++) {
+    if (gates[i].requested != 0 && gates[i].supported == 0) {
+      fprintf(stdoutMPI,
+              "Error: TransSym symmetry basis v1 does not support %s with %s; %s.\n",
+              gates[i].option, cap->name, gates[i].reason);
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/* 1. Model and conserved-quantity sector. */
+static int validate_symmetry_model_sector(const struct DefineList *def)
+{
   if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
       def->iCalcModel != Hubbard) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, and Hubbard canonical models.\n");
@@ -232,27 +372,91 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
     return -1;
   }
-  if (def->iCalcType == FullDiag || def->iOutputHam != FALSE || def->iInputHam != FALSE ||
-      def->iOutputEigenVec != FALSE || def->iInputEigenVec != FALSE ||
-      def->iReStart != RESTART_NOT) {
-    fprintf(stdoutMPI,
-            "Error: TransSym symmetry basis v1 does not support FullDiag/InputHam/OutputHam/EigenVec/ReStart.\n");
+  return 0;
+}
+
+/* 2. Method, Hamiltonian/eigenvector I/O and restart.
+ *
+ * The evaluation order is part of the diagnostics: when an input violates
+ * several rules, the first message printed is the first of FullDiag,
+ * OutputHam, InputHam, OutputEigenVec, InputEigenVec, ReStart and then any
+ * other unsupported method.  (These used to be one combined check followed by
+ * the Lanczos/CG-only check.) */
+static int validate_symmetry_method_capability(const struct DefineList *def)
+{
+  const struct SymmetryMethodCapability *cap =
+      find_symmetry_method_capability(def->iCalcType);
+  const struct SymmetryOptionGate io_gates[] = {
+    { "OutputHam",
+      "InputHam/OutputHam Hamiltonian I/O is not available in this version",
+      def->iOutputHam != FALSE,
+      symmetry_method_supports(cap, cap->ham_output) },
+    { "InputHam",
+      "InputHam/OutputHam Hamiltonian I/O is not available in this version",
+      def->iInputHam != FALSE,
+      symmetry_method_supports(cap, cap->ham_input) },
+    { "OutputEigenVec",
+      "EigenVec/ReStart vector I/O is not available in this version",
+      def->iOutputEigenVec != FALSE,
+      symmetry_method_supports(cap, cap->eigenvec_output) },
+    { "InputEigenVec",
+      "EigenVec/ReStart vector I/O is not available in this version",
+      def->iInputEigenVec != FALSE,
+      symmetry_method_supports(cap, cap->eigenvec_input) },
+    { "ReStart",
+      "EigenVec/ReStart vector I/O is not available in this version",
+      def->iReStart != RESTART_NOT,
+      symmetry_method_supports(cap, cap->restart) },
+  };
+  /* FullDiag led the old combined check, so it is still reported first. */
+  if (def->iCalcType == FullDiag && cap->enabled == 0) {
+    return reject_unsupported_method(cap);
+  }
+  if (reject_first_unsupported_option(
+          cap, io_gates, sizeof(io_gates) / sizeof(io_gates[0])) != 0) {
     return -1;
   }
-  if (def->iCalcType != Lanczos && def->iCalcType != CG) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Lanczos and CG.\n");
-    return -1;
-  }
-  if (def->iFlgCalcSpec != CALCSPEC_NOT) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 does not support spectrum calculations.\n");
-    return -1;
-  }
-  if (def->NCisAjt > 0 || def->NCisAjtCkuAlvDC > 0 ||
-      def->NTBody > 0 || def->NFBody > 0 || def->NSBody > 0 ||
-      def->NNBodyG > 0) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 outputs energy/norm/convergence only.\n");
-    return -1;
-  }
+  if (cap->enabled == 0) return reject_unsupported_method(cap);
+  return 0;
+}
+
+/* 3. Spectrum calculation and correlation functions. */
+static int validate_symmetry_output_capability(const struct DefineList *def)
+{
+  const struct SymmetryMethodCapability *cap =
+      find_symmetry_method_capability(def->iCalcType);
+  static const char correlation_reason[] = "it outputs energy/norm/convergence only";
+  const struct SymmetryOptionGate gates[] = {
+    { "spectrum calculations",
+      "CalcSpec is not available in this version",
+      def->iFlgCalcSpec != CALCSPEC_NOT,
+      symmetry_method_supports(cap, cap->spectrum) },
+    { "correlation functions (OneBodyG)", correlation_reason,
+      def->NCisAjt > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (TwoBodyG)", correlation_reason,
+      def->NCisAjtCkuAlvDC > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (ThreeBodyG)", correlation_reason,
+      def->NTBody > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (FourBodyG)", correlation_reason,
+      def->NFBody > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (SixBodyG)", correlation_reason,
+      def->NSBody > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (NBodyG)", correlation_reason,
+      def->NNBodyG > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+  };
+  return reject_first_unsupported_option(
+      cap, gates, sizeof(gates) / sizeof(gates[0]));
+}
+
+/* 4. Model-specific Hamiltonian term families. */
+static int validate_symmetry_term_families(const struct DefineList *def)
+{
   if (def->iCalcModel == Spin) {
     if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
         def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
@@ -290,11 +494,26 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   return 0;
 }
 
+int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
+{
+  const struct DefineList *def = &X->Def;
+  if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* The order fixes which message is printed first for an input that
+   * violates several rules; keep it when adding checks. */
+  if (validate_symmetry_model_sector(def) != 0) return -1;
+  if (validate_symmetry_method_capability(def) != 0) return -1;
+  if (validate_symmetry_output_capability(def) != 0) return -1;
+  if (validate_symmetry_term_families(def) != 0) return -1;
+  return 0;
+}
+
 int ValidateSymmetryBasisLayoutOptions(
     const struct BindStruct *X,
     enum SymmetryBasisLayout layout)
 {
   const struct DefineList *def;
+  const struct SymmetryMethodCapability *cap;
+  char methods[128];
   if (X == NULL) return -1;
   def = &X->Def;
   if (layout == SYMMETRY_BASIS_REPLICATED) return 0;
@@ -303,10 +522,14 @@ int ValidateSymmetryBasisLayoutOptions(
             "Error: invalid TransSym symmetry basis layout selection.\n");
     return -1;
   }
-  if (def->iFlgSymmetryBasis != TRUE || def->iCalcType != CG) {
+  cap = find_symmetry_method_capability(def->iCalcType);
+  if (def->iFlgSymmetryBasis != TRUE ||
+      cap->enabled == 0 || cap->distributed_layout == 0) {
+    list_symmetry_methods(methods, sizeof(methods), 1);
     fprintf(stdoutMPI,
             "Error: distributed symmetry basis is supported for "
-            "TransSym CG runs only.\n");
+            "TransSym %s runs only.\n",
+            methods);
     return -1;
   }
   return 0;
