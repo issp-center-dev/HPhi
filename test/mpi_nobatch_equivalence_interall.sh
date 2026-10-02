@@ -23,7 +23,7 @@ initial_iv = 1
 EOF
 
 # Generate the standard-mode definition files (serial -sdry; np-independent).
-../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
+${MPIRUNFC} ../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
 
 # Inject an explicit off-diagonal InterAll term + its Hermitian conjugate:
 #   c^dag_{3,up} c_{0,up} n_{0,down}   and its h.c.

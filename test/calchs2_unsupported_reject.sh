@@ -39,13 +39,13 @@ run_reject_case () {
   (
     cd "${subdir}"
     printf "%s" "${stanfile}" > stan.in
-    ../../../src/HPhi -sdry stan.in > gen.log 2>&1
+    ${MPIRUNFC} ../../../src/HPhi -sdry stan.in > gen.log 2>&1
     echo "CalcHS         ${calchs_value}" >> modpara.def
     rm -rf output
     mkdir -p output
 
     set +e
-    ../../../src/HPhi -e namelist.def > run.log 2>&1
+    ${MPIRUNFC} ../../../src/HPhi -e namelist.def > run.log 2>&1
     rc=$?
     set -e
 

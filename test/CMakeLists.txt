@@ -20,7 +20,11 @@ macro(add_hphi_test_with_srcdir test_name)
 endmacro()
 
 # Macro for MPI tests requiring runtime MPIRUN precheck.
-# mode: min:<N> or exact:<N>
+# mode: min:<N>, exact:<N>, or pow:<N>
+#   min:<N>   run if MPI ranks >= N (skipped if MPIRUN is unset)
+#   exact:<N> run if MPI ranks == N (skipped if MPIRUN is unset)
+#   pow:<N>   run if MPI ranks == N^k, k >= 0 (run in serial if MPIRUN is
+#             unset); e.g. pow:3 for spin-1 models
 macro(add_hphi_mpi_test test_name mode)
     add_test(
         NAME ${test_name}
@@ -362,7 +366,10 @@ if(MPI_FOUND)
     target_link_libraries(unittest_komega_bicg_nonfinite ${MPI_C_LIBRARIES})
 endif(MPI_FOUND)
 add_test(NAME unittest_komega_bicg_nonfinite
-    COMMAND unittest_komega_bicg_nonfinite)
+    # ${MPIRUNFC} is word-split as a launcher prefix; the executable path is
+    # passed as a separate argument so that paths with spaces work.
+    COMMAND sh -c "exec \$MPIRUNFC \"\$1\""
+            _ "$<TARGET_FILE:unittest_komega_bicg_nonfinite>")
 set_tests_properties(unittest_komega_bicg_nonfinite
     PROPERTIES LABELS "unit;spectrum")
 
@@ -453,7 +460,12 @@ set_tests_properties(
 #
 # Three body for spin 1 Heisenberg chain
 #
-add_hphi_test_with_srcdir(lobcg_spinone_chain_threebody)
+# Regression test for run_with_mpi_precheck.sh itself (no HPhi / MPI launch).
+add_hphi_test_with_srcdir(precheck_modes)
+set_tests_properties(precheck_modes PROPERTIES LABELS "validation")
+
+# spin-1 model: MPI ranks must be a power of 3 (serial run is also allowed).
+add_hphi_mpi_test_with_srcdir(lobcg_spinone_chain_threebody pow:3)
 set_tests_properties(
     lobcg_spinone_chain_threebody
     PROPERTIES LABELS "lobcg;threebody")
@@ -505,7 +517,8 @@ if(MPI_FOUND)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_spinless_GC min:2)
     add_hphi_mpi_test(mpi_consistency_te_kondo min:2)
     add_hphi_mpi_test_with_srcdir(mpi_consistency_threebody_generalspin exact:3)
-    add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody min:4)
+    # L=2 HubbardGC: 16 ranks cannot be distributed, so np=4 only.
+    add_hphi_mpi_test(mpi_consistency_te_hubbardgc_twobody exact:4)
     add_hphi_mpi_test(mpi_consistency_te_hubbard_twobody min:4)
     add_hphi_mpi_test(mpi_nobatch_equivalence min:4)
     # batched-vs-nobatch equivalence for the paths the base test does not reach:

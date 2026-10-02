@@ -25,7 +25,7 @@ J = 1.0
 2Sz = 0
 EigenVecIO = "out"
 EOF
-${HPHI} -s stan_gs.in
+${MPIRUNFC} ${HPHI} -s stan_gs.in
 
 cat > calcmod_cg.def <<EOF
 CalcType   3
@@ -97,7 +97,7 @@ cat > namelist_cg.def <<EOF
   PairExcitationBra  pairexcitationbra.def
      SpectrumVec  zvo_eigenvec_0
 EOF
-${HPHI} -e namelist_cg.def
+${MPIRUNFC} ${HPHI} -e namelist_cg.def
 cat > reference.dat <<EOF
 0.0000000000 0.0000000000 0.1650165022 0.0165016502
 0.1000000000 0.0000000000 0.1829268299 0.0203252033
@@ -121,7 +121,7 @@ J = 1.0
 2Sz = 0
 EigenVecIO = "out"
 EOF
-${HPHI} -s stan_gs.in
+${MPIRUNFC} ${HPHI} -s stan_gs.in
 
 cat > SpectrumModpara <<EOF
 --------------------
@@ -180,7 +180,7 @@ cat > namelist_cg.def <<EOF
   PairExcitationBra  pairexcitationbra.def
      SpectrumVec  zvo_eigenvec_0
 EOF
-${HPHI} -e namelist_cg.def
+${MPIRUNFC} ${HPHI} -e namelist_cg.def
 cat > reference.dat <<EOF
 0.0000000000 0.0000000000 0.4950495119 0.0495049512
 0.1000000000 0.0000000000 0.5487804948 0.0609756105

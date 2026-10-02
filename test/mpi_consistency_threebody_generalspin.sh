@@ -31,7 +31,7 @@ cp "${SRCDIR}/test/SpinOneThreeBody.py" .
 # Generate the SpinGC 2S=2 L=6 chain definition files (mag/interall/green1/
 # green3/namelist/stan), then the standard-mode defs.
 python3 SpinOneThreeBody.py generate > log_generate.txt 2>&1
-../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
+${MPIRUNFC} ../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
 
 # Override green3.def: 5th/6th operators are a TRANSVERSE pair on site 5
 # (the inter-process site at np=3). The first four operators are transverse
@@ -57,7 +57,7 @@ run_side() {  # $1 = tag, $2 = MPI prefix (empty for serial)
   cp output/zvo_ThreeBody_eigen0.dat "tb_${tag}.dat"
 }
 
-run_side serial ""
+run_side serial "${MPIRUNFC}"
 # Confirm site 5 is in the inter-process region for this np.
 run_side mpi "${MPIRUN}"
 

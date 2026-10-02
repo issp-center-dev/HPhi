@@ -14,7 +14,7 @@ cd mpi_nobatch_equivalence_spinless
 
 spinless_case() {  # $1 = tag, $2... = testSpinlessCalc.py args
   tag="$1"; shift
-  python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "../../src/HPhi" "$@" --onebody-offdiag > "log_${tag}_gen.txt" 2>&1
+  python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "../../src/HPhi" -mpi "${MPIRUNFC}" "$@" --onebody-offdiag > "log_${tag}_gen.txt" 2>&1
   rm -rf output
   ${MPIRUN} ../../src/HPhi -e namelist.def > "log_${tag}_batched.txt" 2>&1
   # Confirm the batched Spinless MPIsingle path actually fired.

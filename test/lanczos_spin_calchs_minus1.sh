@@ -32,12 +32,12 @@ LanczosEps = 12
 outputmode = "None"
 EOF
 
-  "${hphi}" -sdry stan.in > stdface.log 2>&1 || { cat stdface.log; fail "${dir}: input generation failed"; }
+  ${MPIRUNFC} "${hphi}" -sdry stan.in > stdface.log 2>&1 || { cat stdface.log; fail "${dir}: input generation failed"; }
   if [ -n "${calc_hs_line}" ]; then
     printf "%s\n" "${calc_hs_line}" >> modpara.def
   fi
 
-  "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${dir}: HPhi failed"; }
+  ${MPIRUNFC} "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${dir}: HPhi failed"; }
   grep -q "Error: in sz" run.log && { cat run.log; fail "${dir}: Error in sz"; }
   [ -s output/zvo_energy.dat ] || { cat run.log; fail "${dir}: missing zvo_energy.dat"; }
   awk 'NR==1{print $2}' output/zvo_energy.dat > energy.txt

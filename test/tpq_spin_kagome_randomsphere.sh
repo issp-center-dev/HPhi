@@ -22,7 +22,7 @@ LargeValue  = 5
 NumAve      = 10
 EOF
 
-../../src/HPhi -sdry stan.in
+${MPIRUNFC} ../../src/HPhi -sdry stan.in
 
 cat > calcmod.def <<EOF
 #CalcType = 0:Lanczos, 1:TPQCalc, 2:FullDiag, 3:CG, 4:Time-evolution

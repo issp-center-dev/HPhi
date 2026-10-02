@@ -23,7 +23,7 @@ HPHI="../../src/HPhi"
 mkdir -p spectrum_spinless_chain/
 cd spectrum_spinless_chain
 
-python3 "$1/test/testSpinlessCalc.py" -p "${HPHI}" -mpi "" -m "SpinlessFermion" -s 6 -n 3 -V 1.0 > /dev/null 2>&1
+python3 "$1/test/testSpinlessCalc.py" -p "${HPHI}" -mpi "${MPIRUNFC}" -m "SpinlessFermion" -s 6 -n 3 -V 1.0 > /dev/null 2>&1
 
 cat > modpara.def <<'EOF'
 --------------------
@@ -86,7 +86,7 @@ cat > namelist.def <<'EOF'
         TwoBodyG  greentwo.def
 EOF
 rm -rf output
-${HPHI} -e namelist.def
+${MPIRUNFC} ${HPHI} -e namelist.def
 
 # Step 2: density-density dynamical Green's function (CG/BiCG spectrum)
 cat > calcmod.def <<'EOF'
@@ -110,7 +110,7 @@ cat > namelist.def <<'EOF'
   PairExcitation  pair.def
      SpectrumVec  zvo_eigenvec_0
 EOF
-${HPHI} -e namelist.def
+${MPIRUNFC} ${HPHI} -e namelist.def
 
 # --- check: the dynamical Green's function must be non-trivial ---
 # Column layout: Re(omega) Im(omega) Re(G) Im(G)
