@@ -12,12 +12,12 @@ group :math:`G` of site permutations and a one-dimensional character
 
 .. math::
 
-   |r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle ,
+   |r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle ,
 
 where :math:`T_g` moves the content of each site :math:`i` to the site
 :math:`g(i)` and :math:`|r\rangle` runs over the representative
 configurations. Every state of the sector satisfies
-:math:`T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle`, and the dimension of the
+:math:`T_g|\psi\rangle=\chi(g)|\psi\rangle`, and the dimension of the
 Hilbert space is reduced by roughly the order of the group. The sector
 dimension is printed in the log as ``Symmetry basis: raw_dim=... sector_dim=...``.
 
@@ -180,21 +180,85 @@ Use rules
    mismatch terminates the program with
    ``TransSym Hamiltonian invariance failed``.
 
-*  For ``SpinlessFermion`` and ``Hubbard``, the sign of the fermion
+*  For ``SpinlessFermion``, ``Hubbard``, and ``tJ``, the sign of the fermion
    permutation is taken into account automatically. For example, a
    reflection that exchanges occupied orbitals contributes a factor
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  In this version the symmetry sector is available for ``Spin`` with
-   :math:`S=1/2` and fixed ``2Sz`` (``Exchange`` and ``Ising`` terms),
-   ``SpinlessFermion`` with fixed ``Ncond`` (``Trans`` and ``CoulombInter``
-   terms), and ``Hubbard`` with fixed ``Nup`` and ``Ndown`` (``Trans`` and
-   ``CoulombIntra`` terms), with the ``Lanczos`` and ``CG`` methods.
+*  The ``Lanczos`` and ``CG`` methods support ``Spin`` with
+   :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
+   and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
+   Expert-mode Hamiltonian terms are:
+
+   * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
+     ``Ising``, ``CoulombInter``, ``Hund``, and fixed-Sz ``InterAll``.
+   * ``SpinlessFermion``: ``Trans`` (including on-site potentials),
+     ``CoulombInter``, and ``InterAll``.
+   * ``Hubbard``: spin-conserving ``Trans``, ``CoulombIntra``, ``CoulombInter``,
+     ``Hund``, ``Ising``, ``Exchange``, ``PairHop``, and fixed-spin ``InterAll``.
+   * ``tJ``: the same terms as ``Hubbard``, projected onto configurations
+     without double occupancy. ``CoulombIntra`` and ``PairHop`` then vanish.
+     The raw dimension is
+     :math:`\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}`.
+     Both replicated and distributed basis layouts are supported, including
+     MPI sizes that cannot be used with raw site decomposition.
+
+   Extended terms are combined after fermionic normal ordering or local Spin
+   matrix-unit reduction. This accounts for permutation signs, contractions,
+   duplicate terms, and cancellations between families before checking
+   invariance and conserved quantum numbers. The coefficient tolerance is
+   :math:`10^{-10}`. ``PairLift``, ``NBodyInterAll``, and anomalous terms remain
+   unsupported. The raw spinless solver still rejects off-diagonal ``InterAll``;
+   this extension applies to ``TransSym``. Standard-mode generation is unchanged.
+
    Correlation functions, spectrum calculations, restart, and the input and
    output of Hamiltonians and eigenvectors are not supported together with
-   this file. Unsupported combinations terminate the program with an error
-   message that names the unsupported option.
+   this file. Unsupported combinations terminate with an error.
+
+Sector manifest
+~~~~~~~~~~~~~~~
+
+After constructing a nonempty symmetry basis and validating the sector options,
+HPhi writes ``output/symmetry_sector.dat`` before starting the solver. When
+``OutputDataHead=1``, the name is
+``output/<CDataFileHead>_symmetry_sector.dat``. Ordinary runs without ``TransSym``
+and definition-file generation with ``-sdry`` do not write this file.
+An output error terminates the calculation on all MPI ranks.
+
+The first line is ``format=HPhiSymmetrySector version=1``. Subsequent lines have
+the form ``key=value`` and record the method, model, site count, fixed quantum
+numbers, full canonical dimension (``full_dim``), sector dimension
+(``sector_dim``), group order, optional ``momentum_index``, basis layout,
+MPI ranks, OpenMP thread limit, term counts, and solver parameters.
+The manifest describes the input sector; its presence does not certify solver
+completion or convergence.
+
+Three versioned fingerprints are included:
+
+* ``group_digest``: ``hphi-group-fnv1a64-v1`` hashes the permutations and
+  characters after sorting operations lexicographically by permutation.
+  Renumbering operations does not change it. Character components are rounded
+  to integer multiples of :math:`10^{-10}`; this quantization is not a general
+  equivalence test for floating-point inputs near a rounding boundary.
+* ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` hashes each
+  representative state, orbit size, and stabilizer size with FNV-1a 64 and
+  combines the hashes without dependence on entry order or MPI ownership.
+  Integers use fixed-width little-endian encoding. The sum is modulo
+  :math:`2^{64}`. Norms and Hamiltonian diagonal values are excluded.
+* ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` records the
+  supported parsed Hamiltonian terms in their stored order, using the exact
+  binary64 coefficient bits. Version 2 adds on-site potentials, pair hopping,
+  and the split diagonal/off-diagonal InterAll arrays. Equivalent Hamiltonians expressed in different
+  term orders or decompositions may have different fingerprints.
+
+Sector identification uses the model, fixed quantum numbers, sector dimension,
+``group_digest``, and ``sector_digest`` together. Conjugate representations may
+share the same ``sector_digest``, so it must not be used alone. Hamiltonian
+changes do not change the sector identity. These fingerprints are diagnostics,
+not collision-free proofs of equivalence, and the order-independent sector
+fingerprint alone does not validate vector-component ordering for checkpoint
+input. Existing calculation outputs and ``CalcTimerRankStats.dat`` are unchanged.
 
 .. raw:: latex
 

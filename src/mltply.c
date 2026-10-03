@@ -124,8 +124,8 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
       return -1;
     }
     if (X->Def.iCalcModel != Spin && X->Def.iCalcModel != SpinlessFermion &&
-        X->Def.iCalcModel != Hubbard) {
-      fprintf(stdoutMPI, "Error: symmetry basis mltply supports only Spin, SpinlessFermion, and Hubbard in this version.\n");
+        X->Def.iCalcModel != Hubbard && X->Def.iCalcModel != tJ) {
+      fprintf(stdoutMPI, "Error: symmetry basis mltply supports only Spin, SpinlessFermion, Hubbard, and tJ in this version.\n");
       StopTimer(1);
       return -1;
     }

@@ -84,10 +84,12 @@ int InitSymmetryStateEnumerator(
     initialized.bit_count = def->Nsite;
     break;
   case Hubbard:
+  case tJ:
     if (def->Nsite > word_bits / 2U ||
         def->Nup > def->Nsite ||
         def->Ndown > def->Nsite ||
-        def->Ne != def->Nup + def->Ndown) {
+        def->Ne != def->Nup + def->Ndown ||
+        (def->iCalcModel == tJ && def->Ne > def->Nsite)) {
       return -1;
     }
     initialized.bit_count = 2U * def->Nsite;
@@ -98,9 +100,10 @@ int InitSymmetryStateEnumerator(
   if (initialize_binomial_table(&initialized) != 0) return -1;
   up_dim = enumerator_binomial(
       &initialized, initialized.nsite, initialized.nup);
-  if (initialized.model == Hubbard) {
+  if (initialized.model == Hubbard || initialized.model == tJ) {
     down_dim = enumerator_binomial(
-        &initialized, initialized.nsite, initialized.ndown);
+        &initialized, initialized.nsite - (initialized.model == tJ ? initialized.nup : 0U),
+        initialized.ndown);
     if (checked_product(up_dim, down_dim, &raw_dim) != 0) return -1;
   } else {
     raw_dim = up_dim;
@@ -166,6 +169,45 @@ static int hubbard_state_at(
   return 0;
 }
 
+static int tj_completion_count(const struct SymmetryStateEnumerator *enumerator,
+                                unsigned int sites, unsigned int up,
+                                unsigned int down, unsigned long *count)
+{
+  if (up > sites || down > sites - up) { *count = 0UL; return 0; }
+  return checked_product(enumerator_binomial(enumerator, sites, up),
+                         enumerator_binomial(enumerator, sites - up, down), count);
+}
+
+/* Lexicographic base-4 state order, with local digits 0 (empty), 1 (up),
+ * 2 (down). Count completions instead of constructing a Hubbard list and
+ * removing doubly occupied states. This also covers empty/full sectors. */
+static int tj_state_at(const struct SymmetryStateEnumerator *enumerator,
+                       unsigned long rank, unsigned long *state)
+{
+  unsigned int site = enumerator->nsite;
+  unsigned int up = enumerator->nup, down = enumerator->ndown;
+  unsigned long result = 0UL;
+  while (site-- > 0U) {
+    unsigned long empty_count, up_count = 0UL;
+    if (tj_completion_count(enumerator, site, up, down, &empty_count)) return -1;
+    if (rank < empty_count) continue;
+    rank -= empty_count;
+    if (up && tj_completion_count(enumerator, site, up - 1U, down, &up_count)) return -1;
+    if (rank < up_count) {
+      result |= 1UL << (2U * site);
+      --up;
+    } else {
+      rank -= up_count;
+      if (!down) return -1;
+      result |= 1UL << (2U * site + 1U);
+      --down;
+    }
+  }
+  if (rank || up || down) return -1;
+  *state = result;
+  return 0;
+}
+
 int SymmetryStateEnumeratorStateAt(
     const struct SymmetryStateEnumerator *enumerator,
     unsigned long int raw_index,
@@ -180,15 +222,18 @@ int SymmetryStateEnumeratorStateAt(
       raw_index == 0UL || raw_index > enumerator->raw_dim) {
     return -1;
   }
-  if (enumerator->model == Hubbard) {
+  if (enumerator->model == Hubbard || enumerator->model == tJ) {
     if (enumerator->nsite == 0U ||
         enumerator->nsite > word_bits / 2U ||
         enumerator->bit_count != 2U * enumerator->nsite ||
         enumerator->nup > enumerator->nsite ||
-        enumerator->ndown > enumerator->nsite) {
+        enumerator->ndown > enumerator->nsite ||
+        (enumerator->model == tJ && enumerator->nup > enumerator->nsite - enumerator->ndown)) {
       return -1;
     }
-    status = hubbard_state_at(enumerator, raw_index - 1UL, &result);
+    status = enumerator->model == tJ
+        ? tj_state_at(enumerator, raw_index - 1UL, &result)
+        : hubbard_state_at(enumerator, raw_index - 1UL, &result);
   } else if (enumerator->model == Spin ||
              enumerator->model == SpinlessFermion) {
     if (enumerator->nsite == 0U ||

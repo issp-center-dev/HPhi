@@ -33,6 +33,7 @@
 #include "splash.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_sector.h"
 #include "symmetry_basis_io.h"
 #include "symmetry_matvec_plan.h"
 
@@ -882,6 +883,9 @@ int main(int argc, char* argv[]){
       if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
         StopTimer(1114);
         StopTimer(1100);
+        exitMPI(-1);
+      }
+      if (WriteSymmetrySectorManifest(&(X.Bind)) != 0) {
         exitMPI(-1);
       }
       StopTimer(1114);

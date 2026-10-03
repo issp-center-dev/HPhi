@@ -50,6 +50,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
@@ -233,6 +234,9 @@ add_hphi_test(symmetry_spin_chain_point_group)
 add_hphi_test(symmetry_spinless_fermion_point_group)
 add_hphi_test(symmetry_hubbard_point_group)
 add_hphi_test(symmetry_transsym_metadata)
+add_hphi_test(symmetry_sector_manifest)
+add_hphi_test(symmetry_general_terms)
+set_tests_properties(symmetry_general_terms PROPERTIES LABELS "symmetry;interall")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -344,7 +348,7 @@ set_tests_properties(
     symmetry_hubbard_point_group
     PROPERTIES LABELS "symmetry;pointgroup")
 set_tests_properties(
-    symmetry_transsym_metadata
+    symmetry_transsym_metadata symmetry_sector_manifest
     PROPERTIES LABELS "symmetry;validation")
 set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
@@ -413,6 +417,13 @@ add_hphi_test(lobcg_kondo_chain)
 add_hphi_test(lobcg_spin_kagome)
 add_hphi_test(symmetry_spin_chain_lobcg)
 add_hphi_test(symmetry_spin_chain_lobcg_preconditioner)
+if(MPI_FOUND)
+    set_tests_properties(symmetry_spin_chain_lobcg_preconditioner
+        PROPERTIES ENVIRONMENT "HPHI_TEST_MPI_ENABLED=1")
+else()
+    set_tests_properties(symmetry_spin_chain_lobcg_preconditioner
+        PROPERTIES ENVIRONMENT "HPHI_TEST_MPI_ENABLED=0")
+endif()
 add_hphi_test(lobcg_genspin_ladder)
 add_hphi_test(lobcg_hubbardgc_tri)
 add_hphi_test(lobcg_kondogc_chain)
@@ -704,6 +715,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c

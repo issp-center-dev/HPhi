@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "symmetry_basis.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_terms.h"
 #include "readdef.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -289,9 +290,10 @@ static int has_fixed_spinless_sector(const struct DefineList *def)
   return def->iCalcModel == SpinlessFermion && def->Ne <= def->Nsite;
 }
 
-static int has_fixed_hubbard_sector(const struct DefineList *def)
+static int has_fixed_spinful_sector(const struct DefineList *def)
 {
-  return def->iCalcModel == Hubbard &&
+  return (def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+         (def->iCalcModel != tJ || def->Ne <= def->Nsite) &&
          def->Nup <= def->Nsite &&
          def->Ndown <= def->Nsite &&
          def->Ne == def->Nup + def->Ndown;
@@ -442,8 +444,8 @@ static int reject_first_unsupported_option(const struct SymmetryMethodCapability
 static int validate_symmetry_model_sector(const struct DefineList *def)
 {
   if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
-      def->iCalcModel != Hubbard) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, and Hubbard canonical models.\n");
+      def->iCalcModel != Hubbard && def->iCalcModel != tJ) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, Hubbard, and tJ canonical models.\n");
     return -1;
   }
   if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
@@ -458,8 +460,10 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
     fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis requires fixed Ncond/Ne.\n");
     return -1;
   }
-  if (def->iCalcModel == Hubbard && has_fixed_hubbard_sector(def) != TRUE) {
-    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
+  if ((def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+      has_fixed_spinful_sector(def) != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym %s symmetry basis requires fixed Nup/Ndown.\n",
+            def->iCalcModel == tJ ? "tJ" : "Hubbard");
     return -1;
   }
   return 0;
@@ -547,39 +551,13 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 /* 4. Model-specific Hamiltonian term families. */
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
-  if (def->iCalcModel == Spin) {
-    if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
-      return -1;
-    }
-    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NInterAll > 0) {
-      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only.\n");
-      return -1;
-    }
-    if (def->NCoulombInter != def->NIsingCoupling ||
-        def->NHundCoupling != def->NIsingCoupling) {
-      fprintf(stdoutMPI,
-              "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only; "
-              "direct CoulombInter/Hund terms are not supported.\n");
-      return -1;
-    }
-  } else if (def->iCalcModel == SpinlessFermion) {
-    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 ||
-        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
-        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer and CoulombInter terms only.\n");
-      return -1;
-    }
-  } else if (def->iCalcModel == Hubbard) {
-    if (def->EDNChemi > 0 || def->NCoulombInter > 0 ||
-        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
-        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis supports Transfer and CoulombIntra terms only.\n");
-      return -1;
-    }
+  if (def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling ||
+      (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       (def->NCoulombIntra || def->NPairHopping)) ||
+      (def->iCalcModel == SpinlessFermion &&
+       (def->NHundCoupling || def->NIsingCoupling || def->NExchangeCoupling))) {
+    fprintf(stdoutMPI, "Error: TransSym rejects unsupported term families for this canonical model.\n");
+    return -1;
   }
   return 0;
 }
@@ -1023,6 +1001,10 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* Preserve established diagnostics for the original subset. Extended
+   * inputs use a combined polynomial, including cross-family cancellations. */
+  if (SymmetryUsesExtendedTerms(def))
+    return ValidateSymmetryTerms(def);
   if (def->iCalcModel == Spin) {
     if (validate_exchange_invariance(def) != 0) return -1;
     if (validate_ising_diagonal_invariance(def) != 0) return -1;
@@ -1033,5 +1015,5 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
     if (validate_hubbard_transfer_invariance(def) != 0) return -1;
     if (validate_hubbard_coulomb_intra_invariance(def) != 0) return -1;
   }
-  return 0;
+  return ValidateSymmetryTerms(def);
 }

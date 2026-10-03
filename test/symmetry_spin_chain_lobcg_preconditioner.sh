@@ -473,8 +473,11 @@ for component in distribution directory matvec-plan; do
         "Warning: HPhi symmetry ${component} " \
         runtime_memory_warning.log
 done
-test -s output/CalcTimerRankStats.dat
-awk '
+# time.c emits rank statistics only when compiled with MPI. CTest supplies
+# the build capability; keep the file mandatory for MPI-enabled builds.
+if [ "${HPHI_TEST_MPI_ENABLED:-1}" = 1 ]; then
+    test -s output/CalcTimerRankStats.dat
+    awk '
     function value(field, parts) {
         split(field, parts, "=")
         return parts[2]
@@ -501,6 +504,7 @@ awk '
         }
     }
 ' output/CalcTimerRankStats.dat
+fi
 
 # RUNNER is intentionally word-split because MPIRUN contains options.
 # shellcheck disable=SC2086
