@@ -6,7 +6,7 @@
 
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
-  return def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
+  return def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
       def->NInterAll_OffDiagonal || def->NPairHopping ||
       (def->iCalcModel == Hubbard && (def->NCoulombInter || def->NHundCoupling ||
        def->NExchangeCoupling || def->NIsingCoupling)) ||
@@ -57,7 +57,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   int a, b, s, t;
   if (!def || !callback || kind < -1 || kind > 1 || def->Nsite == 0 ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard) || def->iFlgGeneralSpin ||
+       def->iCalcModel != Hubbard && def->iCalcModel != tJ) || def->iFlgGeneralSpin ||
       def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling ||
       def->NIsingCoupling > def->NCoulombInter ||
       def->NIsingCoupling > def->NHundCoupling) return -1;
@@ -87,7 +87,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     if (emit(def, kind, 2, def->InterAll_OffDiagonal[p],
              def->ParaInterAll_OffDiagonal[p], callback, context)) return -1;
   CHECK_STORAGE(def->NCoulombIntra, def->CoulombIntra, def->ParaCoulombIntra);
-  if (def->NCoulombIntra && def->iCalcModel != Hubbard) return -1;
+  if (def->NCoulombIntra && def->iCalcModel != Hubbard && def->iCalcModel != tJ) return -1;
   for (p = 0; p < def->NCoulombIntra; ++p) {
     a = def->CoulombIntra[p][0];
     EMIT(2, def->ParaCoulombIntra[p], a,0,a,0,a,1,a,1);
@@ -119,7 +119,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     }
   }
   CHECK_STORAGE(def->NPairHopping, def->PairHopping, def->ParaPairHopping);
-  if (def->NPairHopping && def->iCalcModel != Hubbard) return -1;
+  if (def->NPairHopping && def->iCalcModel != Hubbard && def->iCalcModel != tJ) return -1;
   for (p = 0; p < def->NPairHopping; ++p) {
     a = def->PairHopping[p][0]; b = def->PairHopping[p][1];
     EMIT(2, def->ParaPairHopping[p], a,0,b,0,a,1,b,1);
@@ -135,11 +135,11 @@ int ApplySymmetryTerm(const struct DefineList *def,
 {
   int f;
   double sign = 1;
-  unsigned int width = (def && def->iCalcModel == Hubbard) ? 2U : 1U;
+  unsigned int width = (def && (def->iCalcModel == Hubbard || def->iCalcModel == tJ)) ? 2U : 1U;
   if (!def || !term || !out || !value || term->factors < 1 || term->factors > 2 ||
       def->Nsite == 0 || def->Nsite > CHAR_BIT * sizeof(state) / width ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard)) return -1;
+       def->iCalcModel != Hubbard && def->iCalcModel != tJ)) return -1;
   for (f = 0; f < (int)(4*term->factors); f += 2)
     if (term->index[f] < 0 || (unsigned int)term->index[f] >= def->Nsite ||
         term->index[f+1] < 0 || term->index[f+1] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
@@ -164,6 +164,8 @@ int ApplySymmetryTerm(const struct DefineList *def,
       }
     }
   }
+  /* Project the final state onto the physical tJ Hilbert space. */
+  if (def->iCalcModel == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
   *out = state;
   *value = sign * term->value;
   return 1;
@@ -231,7 +233,7 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
     }
     return 0;
   } else {
-    int width = poly->def->iCalcModel == Hubbard ? 2 : 1;
+    int width = (poly->def->iCalcModel == Hubbard || poly->def->iCalcModel == tJ) ? 2 : 1;
     int a = width*x[0]+x[1], b = width*x[2]+x[3];
     if (n == 1) {
       key[0] = 1; key[1] = a; key[2] = b;
@@ -243,6 +245,9 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
         if (append_monomial(poly, key, value)) return -1;
       }
       if (a == c || b == d) return 0;
+      /* P O P vanishes if a normal-ordered string creates or annihilates
+       * a doublon. Retain any contraction emitted above before discarding it. */
+      if (poly->def->iCalcModel == tJ && (a / 2 == c / 2 || b / 2 == d / 2)) return 0;
       value = -value;
       if (a > c) { tmp = a; a = c; c = tmp; value = -value; }
       if (b > d) { tmp = b; b = d; d = tmp; value = -value; }
@@ -295,7 +300,7 @@ int ValidateSymmetryTerms(const struct DefineList *def)
     int delta = 0, f;
     if (def->iCalcModel == Spin)
       for (f = 0; f < key[0]; ++f) delta += key[2+3*f] - key[3+3*f];
-    else if (def->iCalcModel == Hubbard)
+    else if (def->iCalcModel == Hubbard || def->iCalcModel == tJ)
       for (f = 0; f < key[0]; ++f) delta += key[1+f]%2 - key[1+key[0]+f]%2;
     if (delta) {
       fprintf(stdoutMPI, "Error: TransSym Hamiltonian does not conserve fixed Sz/Nup/Ndown.\n");

@@ -290,9 +290,10 @@ static int has_fixed_spinless_sector(const struct DefineList *def)
   return def->iCalcModel == SpinlessFermion && def->Ne <= def->Nsite;
 }
 
-static int has_fixed_hubbard_sector(const struct DefineList *def)
+static int has_fixed_spinful_sector(const struct DefineList *def)
 {
-  return def->iCalcModel == Hubbard &&
+  return (def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+         (def->iCalcModel != tJ || def->Ne <= def->Nsite) &&
          def->Nup <= def->Nsite &&
          def->Ndown <= def->Nsite &&
          def->Ne == def->Nup + def->Ndown;
@@ -443,8 +444,8 @@ static int reject_first_unsupported_option(const struct SymmetryMethodCapability
 static int validate_symmetry_model_sector(const struct DefineList *def)
 {
   if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
-      def->iCalcModel != Hubbard) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, and Hubbard canonical models.\n");
+      def->iCalcModel != Hubbard && def->iCalcModel != tJ) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, Hubbard, and tJ canonical models.\n");
     return -1;
   }
   if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
@@ -459,8 +460,10 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
     fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis requires fixed Ncond/Ne.\n");
     return -1;
   }
-  if (def->iCalcModel == Hubbard && has_fixed_hubbard_sector(def) != TRUE) {
-    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
+  if ((def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+      has_fixed_spinful_sector(def) != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym %s symmetry basis requires fixed Nup/Ndown.\n",
+            def->iCalcModel == tJ ? "tJ" : "Hubbard");
     return -1;
   }
   return 0;
@@ -549,7 +552,8 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
   if (def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling ||
-      (def->iCalcModel != Hubbard && (def->NCoulombIntra || def->NPairHopping)) ||
+      (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       (def->NCoulombIntra || def->NPairHopping)) ||
       (def->iCalcModel == SpinlessFermion &&
        (def->NHundCoupling || def->NIsingCoupling || def->NExchangeCoupling))) {
     fprintf(stdoutMPI, "Error: TransSym rejects unsupported term families for this canonical model.\n");

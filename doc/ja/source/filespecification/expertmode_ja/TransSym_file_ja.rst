@@ -179,13 +179,13 @@ TransSym指定ファイル
    写した結果が元の項と一致しない場合、
    ``TransSym Hamiltonian invariance failed`` のエラーで終了します。
 
--  ``SpinlessFermion`` と ``Hubbard`` では、フェルミオンの置換に伴う符号は
+-  ``SpinlessFermion``、 ``Hubbard``、 ``tJ`` では、フェルミオンの置換に伴う符号は
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
 -  対応手法は ``Lanczos`` と ``CG`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` です。expert mode では次の項に対応します。
+   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
 
    - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
      ``Hund``、固定Szを保存する ``InterAll``。
@@ -193,6 +193,11 @@ TransSym指定ファイル
      ``CoulombInter``、 ``InterAll``。
    - ``Hubbard``: スピンを保存する ``Trans``、 ``CoulombIntra``、 ``CoulombInter``、
      ``Hund``、 ``Ising``、 ``Exchange``、 ``PairHop``、固定スピンを保存する ``InterAll``。
+   - ``tJ``: ``Hubbard`` と同じ項を二重占有のない配置へ射影します。
+     ``CoulombIntra`` と ``PairHop`` の寄与は0になります。raw次元は
+     :math:`\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}` です。
+     replicated / distributedの両layoutに対応し、rawのサイト分割で使えない
+     MPIプロセス数でも実行できます。
 
    拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
    係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、

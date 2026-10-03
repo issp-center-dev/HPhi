@@ -180,7 +180,7 @@ Use rules
    mismatch terminates the program with
    ``TransSym Hamiltonian invariance failed``.
 
-*  For ``SpinlessFermion`` and ``Hubbard``, the sign of the fermion
+*  For ``SpinlessFermion``, ``Hubbard``, and ``tJ``, the sign of the fermion
    permutation is taken into account automatically. For example, a
    reflection that exchanges occupied orbitals contributes a factor
    :math:`-1`, so the dimensions of the even and odd sectors differ from
@@ -188,7 +188,7 @@ Use rules
 
 *  The ``Lanczos`` and ``CG`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
-   and ``Hubbard`` with fixed ``Nup`` and ``Ndown``.
+   and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
    Expert-mode Hamiltonian terms are:
 
    * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
@@ -197,6 +197,12 @@ Use rules
      ``CoulombInter``, and ``InterAll``.
    * ``Hubbard``: spin-conserving ``Trans``, ``CoulombIntra``, ``CoulombInter``,
      ``Hund``, ``Ising``, ``Exchange``, ``PairHop``, and fixed-spin ``InterAll``.
+   * ``tJ``: the same terms as ``Hubbard``, projected onto configurations
+     without double occupancy. ``CoulombIntra`` and ``PairHop`` then vanish.
+     The raw dimension is
+     :math:`\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}`.
+     Both replicated and distributed basis layouts are supported, including
+     MPI sizes that cannot be used with raw site decomposition.
 
    Extended terms are combined after fermionic normal ordering or local Spin
    matrix-unit reduction. This accounts for permutation signs, contractions,

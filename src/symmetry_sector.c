@@ -236,7 +236,8 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       threads = omp_get_max_threads();
 #endif
       model = def->iCalcModel == Spin ? "Spin" :
-              def->iCalcModel == SpinlessFermion ? "SpinlessFermion" : "Hubbard";
+              def->iCalcModel == SpinlessFermion ? "SpinlessFermion" :
+              def->iCalcModel == tJ ? "tJ" : "Hubbard";
       switch (def->iCalcType) {
       case Lanczos: method = "Lanczos"; break;
       case CG: method = "CG"; break;
@@ -253,7 +254,7 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
         fprintf(fp, "fixed_2sz=%d\n", (int)def->Nup - (int)def->Ndown);
       else {
         fprintf(fp, "fixed_ne=%u\n", def->Ne);
-        if (def->iCalcModel == Hubbard)
+        if (def->iCalcModel == Hubbard || def->iCalcModel == tJ)
           fprintf(fp, "fixed_nup=%u\nfixed_ndown=%u\n", def->Nup, def->Ndown);
       }
       if (def->iSymMomentumIndex >= 0)

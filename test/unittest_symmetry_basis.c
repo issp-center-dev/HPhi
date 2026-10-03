@@ -723,7 +723,8 @@ static int state_matches_sector(int model,
                                 unsigned int nup,
                                 unsigned int ndown)
 {
-  if (model == Hubbard) {
+  if ((model == Hubbard || model == tJ)) {
+    if (model == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
     return (unsigned int)count_hubbard_spin(state, nsite, 0U) == nup &&
            (unsigned int)count_hubbard_spin(state, nsite, 1U) == ndown;
   }
@@ -739,7 +740,7 @@ static void assert_state_enumerator_sequence(int model,
 {
   struct DefineList def;
   struct SymmetryStateEnumerator enumerator;
-  unsigned long int limit = 1UL << (model == Hubbard ? 2U * nsite : nsite);
+  unsigned long int limit = 1UL << ((model == Hubbard || model == tJ) ? 2U * nsite : nsite);
   unsigned long int state, raw, dim = 0UL;
   unsigned long int *states;
   int failed = 0;
@@ -814,6 +815,10 @@ static void assert_state_enumerator_exact(void)
           assert_state_enumerator_sequence(
               Hubbard, nsite, nup, ndown, thread_count,
               "Hubbard raw-state enumerator matches numeric list_1 order");
+          if (nup + ndown <= nsite)
+            assert_state_enumerator_sequence(
+                tJ, nsite, nup, ndown, thread_count,
+                "tJ enumerator matches exhaustive no-double-occupancy states");
         }
       }
     }
@@ -884,6 +889,24 @@ static void assert_state_enumerator_exact(void)
   assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
                 "full Hubbard sector at word width enumerates");
   assert_ulong_eq(state, ULONG_MAX, "full Hubbard word-width state is exact");
+  def.iCalcModel = tJ;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "tJ rejects excess filling");
+  def.Ndown = 0U;
+  def.Ne = def.Nup;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "fully polarized tJ at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "fully polarized tJ at word width enumerates");
+  assert_ulong_eq(state, ULONG_MAX / 3UL, "tJ up-only word-width state is exact");
+  def.Nup = 0U;
+  def.Ndown = def.Nsite;
+  def.Ne = def.Ndown;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "down-polarized tJ at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "down-polarized tJ at word width enumerates");
+  assert_ulong_eq(state, (ULONG_MAX / 3UL) << 1U, "tJ down-only word-width state is exact");
   assert_int_eq(InitSymmetryStateEnumerator(NULL, 1UL, &enumerator), -1,
                 "null definition rejects");
   assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, NULL), -1,

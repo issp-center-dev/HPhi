@@ -174,6 +174,7 @@ int SymmetryApplyToState(const struct DefineList *def,
   case SpinlessFermion:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 1U, result);
   case Hubbard:
+  case tJ:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);
   default:
     return -1;
