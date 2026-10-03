@@ -195,7 +195,7 @@ if ../../src/HPhi -e namelist.def > time_evolution.log 2>&1; then
     cat time_evolution.log
     exit 1
 fi
-grep -q "does not support TimeEvolution" time_evolution.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution.log
 
 for calc_type in 4; do
     write_common_defs
@@ -206,7 +206,7 @@ for calc_type in 4; do
         cat "${log}"
         exit 1
     fi
-    grep -q "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" "${log}"
+    grep -q "requires sector checkpoint InputEigenVec=1" "${log}"
 done
 
 write_common_defs
@@ -432,7 +432,7 @@ for flag in ReStart InputEigenVec; do
     grep -q "does not support ${flag}" "${log}"
 done
 
-# An unsupported method names itself and lists the supported ones.
+# Sector TE requires an explicit checkpoint import.
 write_common_defs
 write_valid_transsym
 write_base_namelist
@@ -441,8 +441,8 @@ if ../../src/HPhi -e namelist.def > time_evolution_supported_methods.log 2>&1; t
     cat time_evolution_supported_methods.log
     exit 1
 fi
-grep -q "does not support TimeEvolution" time_evolution_supported_methods.log
-grep -q "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" time_evolution_supported_methods.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution_supported_methods.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution_supported_methods.log
 
 write_common_defs
 write_valid_transsym

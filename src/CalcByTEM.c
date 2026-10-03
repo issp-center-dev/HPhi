@@ -16,15 +16,14 @@
 /**
  * @file CalcByTEM.c
  *
- * @brief Real-time evolution calculation using Suzuki-Trotter decomposition
+ * @brief Real-time evolution calculation using a Taylor polynomial
  *
  * Implements time evolution of quantum states:
  *   |psi(t+dt)> = exp(-i H dt) |psi(t)>
  *
  * Method:
- * Uses Krylov subspace method (similar to Lanczos) for the matrix exponential.
- * The time evolution operator is approximated using a polynomial expansion
- * in the Krylov basis.
+ * Uses a truncated Taylor polynomial of the matrix exponential, followed
+ * by normalization.
  *
  * Time-dependent Hamiltonian:
  * - Supports time-dependent transfer integrals (laser pulses, etc.)
@@ -35,7 +34,7 @@
  * 1. Read initial state from file (must be provided)
  * 2. For each time step:
  *    a. Update time-dependent Hamiltonian if needed
- *    b. Apply exp(-i H dt) via Krylov approximation
+ *    b. Apply the Taylor polynomial of exp(-i H dt)
  *    c. Every ExpecInterval steps, compute observables
  *
  * Output:
@@ -62,9 +61,53 @@
 #include "HPhiTrans.h"
 #include <math.h>
 #include <limits.h>
+#include <inttypes.h>
+#include "symmetry_checkpoint.h"
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
+
+/* A sector checkpoint is a state import, not a continuation of its solver clock. */
+static int record_sector_te(const struct BindStruct *X, const struct SymmetryCheckpointInfo *source)
+{
+  char name[D_FileNameMax];
+  FILE *fp = NULL;
+  int error = 0;
+  if (myrank == 0) {
+    int n = snprintf(name, sizeof(name), "%s%ssymmetry_sector.dat",
+                     X->Def.iOutputDataHead ? X->Def.CDataFileHead : "",
+                     X->Def.iOutputDataHead ? "_" : "");
+    error = n < 0 || (size_t)n + strlen(cParentOutputFolder) >= sizeof(name);
+    if (!error) error = childfopenMPI(name, "a", &fp) != 0;
+    if (!error) {
+      fprintf(fp, "te_hamiltonian=static\nte_steps=%u\nexpand_coef=%d\n"
+              "source_method=%" PRIu64 "\nsource_state=%" PRIu64 "\nsource_step=%" PRIu64
+              "\nsource_time=%.17g\nsource_hamiltonian_digest=%016" PRIx64 "\n",
+              X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
+              source->state_index, source->step, source->time, source->hamiltonian_digest);
+      for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i)
+        fprintf(fp, "te_time_%u=%.17g\n", i, X->Def.TETime[i]);
+      if (ferror(fp)) error = 1;
+      if (fclose(fp) != 0) error = 1;
+    }
+  }
+  if (SumMPI_i(error) != 0) {
+    fprintf(stdoutMPI, "Error: failed to record symmetry TE schedule.\n");
+    return -1;
+  }
+  return 0;
+}
+
+static int write_sector_te_vector(struct BindStruct *X, int step, double time,
+                                  uint64_t state, int final)
+{
+  char name[D_FileNameMax];
+  int n = final ? snprintf(name, sizeof(name), "%s_eigenvec_final_rank_%d.dat", X->Def.CDataFileHead, myrank)
+                : snprintf(name, sizeof(name), "%s_eigenvec_%d_rank_%d.dat", X->Def.CDataFileHead, step, myrank);
+  if (SumMPI_i(n < 0 || (size_t)n >= sizeof(name)) != 0) return -1;
+  struct SymmetryCheckpointInfo info = {TimeEvolution, state, (uint64_t)step, time, 0};
+  return WriteSymmetryCheckpoint(X, name, v1, &info);
+}
 
 static int write_raw_te_vector(struct BindStruct *X, int label, int next_step)
 {
@@ -119,6 +162,7 @@ int CalcByTEM(
         const int ExpecInterval,
         struct EDMainCalStruct *X
 ) {
+  struct SymmetryCheckpointInfo source = {0};
   char *defname = NULL;
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
@@ -175,40 +219,45 @@ int CalcByTEM(
       fprintf(stdoutMPI, "Error: missing or overlong TE SpectrumVec filename.\n");
       return -1;
     }
-    invalid = childfopenALL(sdt, "rb", &fp) != 0;
-    if (!invalid) {
-      invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
-                fread(&i_max, sizeof(i_max), 1, fp) != 1 ||
-                i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
-      if (!invalid) invalid = fread(v1, sizeof(*v1), X->Bind.Check.idim_max + 1, fp)
-                                  != X->Bind.Check.idim_max + 1;
-      if (!invalid && (fgetc(fp) != EOF || ferror(fp))) invalid = 1;
-      if (fclose(fp) != 0) invalid = 1;
-      fp = NULL;
-    }
-    if (SumMPI_i(invalid) != 0) {
-      fprintf(stdoutMPI, "Error: missing, truncated or incompatible TE Inputvector file.\n");
-      return -1;
-    }
-    double norm = 0;
-    for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) {
-      double re = creal(v1[i]), im = cimag(v1[i]);
-      if (!isfinite(re) || !isfinite(im)) invalid = 1;
-      norm += re*re + im*im;
-    }
-    norm = SumMPI_d(norm);
-    if (SumMPI_i(invalid || !isfinite(norm) || norm <= 0) != 0) {
-      fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
-      return -1;
-    }
-    if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT)
-      step_initial = 0;
-    int root_step = BcastMPI_i(0, step_initial);
-    if (SumMPI_i(step_initial < 0 || (unsigned int)step_initial >= X->Bind.Def.Lanczos_max ||
-                 step_initial != root_step) != 0) {
-      fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
-      return -1;
-    }
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      if (ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &source) != 0) return -1;
+      if (record_sector_te(&(X->Bind), &source) != 0) return -1;
+    } else {
+      invalid = childfopenALL(sdt, "rb", &fp) != 0;
+      if (!invalid) {
+        invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
+                  fread(&i_max, sizeof(i_max), 1, fp) != 1 ||
+                  i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
+        if (!invalid) invalid = fread(v1, sizeof(*v1), X->Bind.Check.idim_max + 1, fp)
+                                    != X->Bind.Check.idim_max + 1;
+        if (!invalid && (fgetc(fp) != EOF || ferror(fp))) invalid = 1;
+        if (fclose(fp) != 0) invalid = 1;
+        fp = NULL;
+      }
+      if (SumMPI_i(invalid) != 0) {
+        fprintf(stdoutMPI, "Error: missing, truncated or incompatible TE Inputvector file.\n");
+        return -1;
+      }
+      double norm = 0;
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) {
+        double re = creal(v1[i]), im = cimag(v1[i]);
+        if (!isfinite(re) || !isfinite(im)) invalid = 1;
+        norm += re*re + im*im;
+      }
+      norm = SumMPI_d(norm);
+      if (SumMPI_i(invalid || !isfinite(norm) || norm <= 0) != 0) {
+        fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
+        return -1;
+      }
+      if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT)
+        step_initial = 0;
+      int root_step = BcastMPI_i(0, step_initial);
+      if (SumMPI_i(step_initial < 0 || (unsigned int)step_initial >= X->Bind.Def.Lanczos_max ||
+                   step_initial != root_step) != 0) {
+        fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
+        return -1;
+      }
+      }
   }
 
   if(X->Bind.Def.iOutputDataHead==1){
@@ -358,12 +407,16 @@ int CalcByTEM(
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
-        if (write_raw_te_vector(&(X->Bind), step_i, step_i + 1) != 0) return -1;
+        if (X->Bind.Def.iFlgSymmetryBasis) {
+          if (write_sector_te_vector(&(X->Bind), step_i, Time, source.state_index, 0) != 0) return -1;
+        } else if (write_raw_te_vector(&(X->Bind), step_i, step_i + 1) != 0) return -1;
       }
     }
   }
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
-    if (write_raw_te_vector(&(X->Bind), rand_i, step_i) != 0) return -1;
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      if (write_sector_te_vector(&(X->Bind), step_i - 1, Time, source.state_index, 1) != 0) return -1;
+    } else if (write_raw_te_vector(&(X->Bind), rand_i, step_i) != 0) return -1;
   }
 
   fprintf(stdoutMPI, "%s",cLogTEM_End);

@@ -665,7 +665,7 @@ static int parse_symmetry_basis_layout(const struct BindStruct *X)
   }
   if (value == NULL) {
     layout = X->Def.iFlgSymmetryBasis == TRUE &&
-                 (X->Def.iCalcType == CG || X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ)
+                 (X->Def.iCalcType == CG || X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ || X->Def.iCalcType == TimeEvolution)
                  ? SYMMETRY_BASIS_DISTRIBUTED
                  : SYMMETRY_BASIS_REPLICATED;
   } else if (strcmp(value, "replicated") == 0) {
@@ -730,6 +730,7 @@ static void report_symmetry_basis_layout_selection(
                  ? "default for TransSym CG"
                  : X->Def.iCalcType == TPQCalc ? "default for TransSym TPQ"
                  : X->Def.iCalcType == cTPQ ? "default for TransSym cTPQ"
+                 : X->Def.iCalcType == TimeEvolution ? "default for TransSym TimeEvolution"
                  : X->Def.iCalcType == FullDiag ? "default for TransSym FullDiag"
                  : "default outside TransSym CG";
   } else if (layout == SYMMETRY_BASIS_REPLICATED &&

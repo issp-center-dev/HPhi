@@ -186,7 +186,7 @@ Use rules
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, and ``FullDiag`` methods support ``Spin`` with
+*  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, ``FullDiag``, and ``TimeEvolution`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
    Expert-mode Hamiltonian terms are:
@@ -214,7 +214,7 @@ Use rules
 
    Correlation functions, spectrum calculations, restart, and the input and
    output of Hamiltonians are not supported together with this file.
-   Eigenvector I/O is available for CG through the sector checkpoint format
+   Eigenvector I/O is available for CG and TimeEvolution through the sector checkpoint format
    below. Unsupported combinations terminate with an error.
 
 Sector TPQ
@@ -262,6 +262,43 @@ final point. Vector I/O and restart remain unsupported.
 The manifest records ``canonical_tpq_steps``, ``beta_schedule`` and either
 the uniform step/order or all explicit beta/order rows. As for mTPQ, these
 outputs describe a single sector, not the sum over all sectors.
+
+Sector time evolution with a static Hamiltonian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In expert mode, ``CalcType=4`` evolves a sector checkpoint with a static
+Hamiltonian. Set ``InputEigenVec=1``, ``ReStart=0``, a positive integer
+``ExpandCoef``, and ``SpectrumVec seed_eigenvec_0`` in the namelist. The
+rank files ``output/seed_eigenvec_0_rank_<rank>.dat`` must use the sector
+format below. A CG run with ``OutputEigenVec=1`` provides such files.
+The basis, sector, MPI size and layout must match; the Hamiltonian may differ
+for a quench. The default layout is distributed; replicated remains available
+through ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``.
+
+Provide a ``TEOneBody`` time grid whose number of terms is zero at every row.
+``Lanczos_max`` selects the number of rows. Times must be finite and
+nondecreasing. The first row records the imported state without propagation;
+subsequent rows apply the degree-``ExpandCoef`` Taylor polynomial of
+:math:`\exp[-i H(t_j-t_{j-1})]`, followed by normalization. Repeated times are
+allowed. The input checkpoint's solver step and time are recorded as
+provenance, but do not resume its clock. Nonzero ``TEOneBody``/``TETwoBody``
+terms and Peierls driving are not available in this static implementation.
+
+``SS``, ``Norm`` and ``Flct`` contain sector expectation values. ``Norm`` is
+the norm before each step's normalization; Taylor truncation can make it
+differ from one. Increase ``ExpandCoef`` or reduce the time spacing to check
+convergence. Correlation functions and ``ReStart`` remain unsupported.
+The sector manifest records the actual time grid, Taylor order, and source
+checkpoint's method, state, step, time and Hamiltonian digest.
+
+With ``OutputEigenVec=1`` and positive ``OutputInterval``, periodic files are
+``<prefix>_eigenvec_<step>_rank_<rank>.dat``; the final file is separately
+named ``<prefix>_eigenvec_final_rank_<rank>.dat``. In these sector headers,
+``step`` is the completed zero-based grid row and ``time`` is that row's
+physical time. ``state_index`` retains the imported state's label.
+The final file does not overwrite row zero. Any of these checkpoints can
+seed a new same-sector run via ``SpectrumVec``; this is a new time grid,
+not a restart. Raw TE binary files use their existing, different format.
 
 Sector vector checkpoints
 ~~~~~~~~~~~~~~~~~~~~~~~~~

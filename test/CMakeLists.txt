@@ -1363,3 +1363,6 @@ if(USE_SCALAPACK)
         TEST fulldiag_expecmode_scalapack_np3
         APPEND PROPERTY ENVIRONMENT "HPHI_FULLDIAG_SOLVER=1")
 endif(USE_SCALAPACK)
+
+add_hphi_test(symmetry_te)
+set_tests_properties(symmetry_te PROPERTIES LABELS "symmetry;te")

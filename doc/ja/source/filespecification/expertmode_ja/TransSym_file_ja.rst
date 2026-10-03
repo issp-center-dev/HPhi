@@ -183,7 +183,7 @@ TransSym指定ファイル
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag`` です。模型は :math:`S=1/2` で ``2Sz`` を
+-  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
    ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
 
@@ -207,7 +207,7 @@ TransSym指定ファイル
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
    相関関数、スペクトル計算、リスタート、ハミルトニアン入出力は本ファイルと併用できません。
-   CGの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
+   CGとTimeEvolutionの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
    非対応の組み合わせはエラーで終了します。
 
 セクター内TPQ
@@ -250,6 +250,38 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 ``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
 manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。
+
+静的ハミルトニアンでのセクター時間発展
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+expert modeの ``CalcType=4`` は、保存済みセクターベクトルを静的Hamiltonianで
+時間発展させます。 ``InputEigenVec=1``、 ``ReStart=0``、正整数の ``ExpandCoef`` を
+指定し、namelistへ ``SpectrumVec seed_eigenvec_0`` を追加します。
+``output/seed_eigenvec_0_rank_<rank>.dat`` は下記のsector形式が必要です。
+CGの ``OutputEigenVec=1`` で作成できます。基底・sector・MPI数・layoutは一致が
+必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
+``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で参照用layoutを選択できます。
+
+全行の項数が0の ``TEOneBody`` で時刻列を指定し、 ``Lanczos_max`` 行を使用します。
+時刻は有限で単調非減少とします。最初の行は入力状態を伝播せず記録し、以降は
+:math:`\exp[-iH(t_j-t_{j-1})]` の ``ExpandCoef`` 次Taylor多項式を作用させて
+規格化します。同一時刻も許容します。入力checkpointのstep/timeは来歴として
+記録し、新しい時刻列の時計には引き継ぎません。非零の ``TEOneBody`` / ``TETwoBody``
+項とPeierls駆動は、この静的実装では未対応です。
+
+``SS`` / ``Norm`` / ``Flct`` はsector内の期待値を出力します。 ``Norm`` は各stepの
+規格化前のnormで、Taylor打切りにより1からずれる場合があります。次数を増やすか
+時間間隔を減らして収束を確認してください。相関関数と ``ReStart`` は未対応です。
+manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
+記録します。
+
+``OutputEigenVec=1`` と正の ``OutputInterval`` により、周期出力を
+``<prefix>_eigenvec_<step>_rank_<rank>.dat``、最終出力を別名
+``<prefix>_eigenvec_final_rank_<rank>.dat`` に保存します。sector headerの ``step`` は
+完了した0始まりの時刻行、 ``time`` はその物理時刻、 ``state_index`` は入力状態の
+ラベルです。最終出力はrow 0を上書きしません。これらのcheckpointを ``SpectrumVec``
+で新しい同一sector計算へ渡せますが、restartではありません。raw TEの既存binary形式とは
+異なります。
 
 セクターベクトルcheckpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
