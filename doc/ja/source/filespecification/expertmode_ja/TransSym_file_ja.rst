@@ -105,7 +105,8 @@ TransSym指定ファイル
 
    **形式 :** string型 (空白不可)
 
-   **説明 :** 対称操作の総数のキーワード名を指定します(任意)。
+   **説明 :** 対称操作の総数のキーワード名として ``NQPTrans`` を指定します。
+   大文字小文字は区別しません。
 
 -  :math:`[`\ int01\ :math:`]`
 
@@ -152,7 +153,8 @@ TransSym指定ファイル
 
 ``# MomentumIndex`` :math:`[`\ int06\ :math:`]` の形のコメント行は、
 このファイルを生成した ``MomentumIndex`` を記録します。
-:math:`[`\ int06\ :math:`]` は0以上の整数です。スタンダードモードは
+:math:`[`\ int06\ :math:`]` は0以上でC言語の ``int`` 型に収まる整数
+（``INT_MAX`` 以下）です。スタンダードモードは
 これを1行目に書き、 :math:`{\mathcal H}\Phi` はログに
 ``TransSym metadata: MomentumIndex=``\ :math:`[`\ int06\ :math:`]`
 と出力します。本バージョンでは計算には使われません。

@@ -108,7 +108,7 @@ Parameters
    **Type :** String (a blank parameter is not allowed)
 
    **Description :** A keyword for the number of symmetry operations.
-   You can freely give a name to the keyword.
+   Specify ``NQPTrans`` (case-insensitive).
 
 *  [int01]
 
@@ -157,7 +157,8 @@ Metadata
 
 A comment line of the form ``# MomentumIndex`` [int06] records the
 ``MomentumIndex`` that generated the file. [int06] must be a non-negative
-integer. Standard mode writes it as the first line, and HPhi reports it in
+integer representable by the C ``int`` type (at most ``INT_MAX``).
+Standard mode writes it as the first line, and HPhi reports it in
 the log as ``TransSym metadata: MomentumIndex=``\ [int06]. The value is not
 used by the calculation in this version. Other comment lines are ignored.
 

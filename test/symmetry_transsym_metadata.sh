@@ -36,7 +36,7 @@ energy() {
 }
 
 cat > calcmod.def <<EOF
-CalcType 0
+CalcType 3
 CalcModel 1
 OutputMode 0
 CalcEigenVec 0
@@ -148,9 +148,11 @@ fi
 # Accepted spellings. The metadata must not change the result.
 check_accepted() {
     label="$1"
+    expected="$2"
+    shift 2
     rm -rf output
-    run_hphi "${label}.log" ../../src/HPhi -e namelist.def
-    grep -q "TransSym metadata: MomentumIndex=2" "${label}.log"
+    run_hphi "${label}.log" "$@" ../../src/HPhi -e namelist.def
+    grep -q "TransSym metadata: MomentumIndex=${expected}$" "${label}.log"
     grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" "${label}.log"
     this_energy=`energy`
     test -n "${this_energy}"
@@ -159,27 +161,43 @@ check_accepted() {
 }
 
 write_with_metadata "# MomentumIndex 2"
-check_accepted first_line
+check_accepted first_line 2
 write_with_metadata "#MomentumIndex 2"
-check_accepted no_space
+check_accepted no_space 2
 write_with_metadata "#   momentumindex 2"
-check_accepted lower_case
+check_accepted lower_case 2
 write_with_metadata "# a comment that is not metadata" "# MomentumIndex 2"
-check_accepted last_line
+check_accepted last_line 2
 write_with_metadata "# MomentumIndex 2" "# MomentumIndex 2"
-check_accepted repeated_same_value
+check_accepted repeated_same_value 2
+write_with_metadata "# MomentumIndex +2  "
+check_accepted explicit_plus 2
+
+# Check both int bounds and values that overflow even a 64-bit long.
+# The metadata is descriptive: INT_MAX need not be a valid momentum sector.
+check_integer_boundaries() {
+    prefix="$1"
+    shift
+    for value in 0 2147483647; do
+        write_with_metadata "# MomentumIndex ${value}"
+        check_accepted "${prefix}_boundary_${value}" "${value}" "$@"
+    done
+    for value in 2147483648 4294967296 -4294967296 -4294967294 \
+                 9223372036854775808 -9223372036854775809; do
+        write_with_metadata "# MomentumIndex ${value}"
+        expect_failure "TransSym metadata must be" "${prefix}_out_of_range_${value}.log" \
+            "$@" ../../src/HPhi -e namelist.def
+    done
+}
+
+check_integer_boundaries serial
 
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
         write_with_metadata "# MomentumIndex 2"
-        rm -rf output
-        run_hphi mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
-        grep -q "TransSym metadata: MomentumIndex=2" mpi.log
-        mpi_energy=`energy`
-        test -n "${mpi_energy}"
-        diff=`awk -v a="${mpi_energy}" -v b="${ref_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
-        test "${diff}" = "0.000000"
+        check_accepted mpi 2 ${MPIRUN}
+        check_integer_boundaries mpi ${MPIRUN}
         write_with_metadata "# MomentumIndex two"
         rm -rf output
         expect_failure "TransSym metadata must be" mpi_malformed.log ${MPIRUN} ../../src/HPhi -e namelist.def
@@ -189,6 +207,12 @@ fi
 # Rejected metadata.
 write_with_metadata "# MomentumIndex two"
 expect_failure "TransSym metadata must be" malformed_value.log ../../src/HPhi -e namelist.def
+write_with_metadata "# MomentumIndex"
+expect_failure "TransSym metadata must be" missing_value.log ../../src/HPhi -e namelist.def
+write_with_metadata "# MomentumIndex 2.5"
+expect_failure "TransSym metadata must be" fractional_value.log ../../src/HPhi -e namelist.def
+write_with_metadata "# MomentumIndex 2x"
+expect_failure "TransSym metadata must be" suffixed_value.log ../../src/HPhi -e namelist.def
 write_with_metadata "# MomentumIndex=2"
 expect_failure "TransSym metadata must be" malformed_key.log ../../src/HPhi -e namelist.def
 write_with_metadata "# MomentumIndex -1"

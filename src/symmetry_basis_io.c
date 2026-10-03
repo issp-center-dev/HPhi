@@ -1,4 +1,6 @@
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdlib.h>
 #include "symmetry_basis.h"
@@ -115,32 +117,39 @@ static int read_transsym_metadata(const char *defname, int *momentum_index)
     } else {
       while (fgets(line, sizeof(line), fp) != NULL) {
         char key[D_CharKWDMAX];
-        char trail[D_CharKWDMAX];
-        int parsed = 0;
-        int nread;
+        char *end;
+        long parsed;
+        int key_end = 0;
+        int has_digits;
         int match;
         const char *p = line;
         if (*p != '#') continue; /* same rule as fgetsMPI(): '#' in column 0 */
         p++;
-        nread = sscanf(p, "%199s %d %199s", key, &parsed, trail);
-        if (nread < 1) continue;
+        if (sscanf(p, "%199s%n", key, &key_end) != 1) continue;
         match = match_momentum_index_key(key);
         if (match == 0) continue;
-        if (match < 0 || nread != 2 || parsed < 0) {
+        p += key_end;
+        errno = 0;
+        parsed = strtol(p, &end, 10);
+        has_digits = end != p;
+        while (isspace((unsigned char)*end)) end++;
+        /* Check the range before narrowing to int; scanf's %d can wrap. */
+        if (match < 0 || !has_digits || errno == ERANGE ||
+            parsed < 0 || parsed > INT_MAX || *end != '\0') {
           fprintf(stdoutMPI,
-                  "Error: TransSym metadata must be \"# MomentumIndex <non-negative integer>\": %s",
-                  line);
+                  "Error: TransSym metadata must be \"# MomentumIndex <non-negative integer>\" "
+                  "with value <= %d: %s", INT_MAX, line);
           status = -1;
           break;
         }
         if (value >= 0 && value != parsed) {
           fprintf(stdoutMPI,
                   "Error: TransSym metadata MomentumIndex is given twice with different values (%d and %d).\n",
-                  value, parsed);
+                  value, (int)parsed);
           status = -1;
           break;
         }
-        value = parsed;
+        value = (int)parsed;
       }
       fclose(fp);
     }
