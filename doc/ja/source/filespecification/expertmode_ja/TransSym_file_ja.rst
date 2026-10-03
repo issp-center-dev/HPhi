@@ -192,6 +192,43 @@ TransSym指定ファイル
    できません。非対応の組み合わせは、非対応のオプション名を含むエラー
    メッセージを出して終了します。
 
+セクター情報ファイル
+^^^^^^^^^^^^^^^^^^^^
+
+非空の対称化基底を構築し、セクターのオプションを検証した後、solver の開始前に
+``output/symmetry_sector.dat`` を出力します。 ``OutputDataHead=1`` の場合は
+``output/<CDataFileHead>_symmetry_sector.dat`` です。 ``TransSym`` を指定しない
+通常の計算と、 ``-sdry`` による定義ファイル生成では出力しません。
+書き込みエラーがあれば全 MPI rank で計算を終了します。
+
+先頭行は ``format=HPhiSymmetrySector version=1`` です。以降は ``key=value`` の
+形式で、計算手法、模型、サイト数、固定量子数、固定量子数空間の全次元
+（``full_dim``）、セクター次元（``sector_dim``）、群の位数、任意指定の
+``momentum_index``、基底 layout、MPI rank 数、OpenMP thread 数の上限、
+項の件数、solver のパラメータを記録します。入力セクターを記録するファイルであり、
+ファイルの存在は計算の完了・収束を意味しません。
+
+次の3種類の、algorithm version を含む fingerprint を出力します。
+
+- ``group_digest``: ``hphi-group-fnv1a64-v1`` は、操作をサイト置換の辞書順に
+  並べて置換と指標を hash 化します。操作番号の変更には依存しません。
+  指標の各成分は :math:`10^{-10}` 刻みに丸めます。この量子化は、丸め境界付近の
+  浮動小数点入力を一般的に同値判定するものではありません。
+- ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` は、各基底の
+  代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
+  MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
+  法として計算します。ノルムとハミルトニアンの対角値は含めません。
+- ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v1`` は、対応する
+  ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
+  物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。
+
+セクターの識別には、模型、固定量子数、セクター次元、 ``group_digest``、
+``sector_digest`` の組を使います。共役表現では ``sector_digest`` が同じに
+なり得るため、単独では使用できません。結合定数の変更はセクター識別に影響しません。
+これらは照合のための fingerprint であり、衝突のない同値性の証明ではありません。
+順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
+従来の計算結果と ``CalcTimerRankStats.dat`` の形式は変更しません。
+
 .. raw:: latex
 
    \newpage

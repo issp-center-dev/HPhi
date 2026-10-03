@@ -196,6 +196,49 @@ Use rules
    this file. Unsupported combinations terminate the program with an error
    message that names the unsupported option.
 
+Sector manifest
+~~~~~~~~~~~~~~~
+
+After constructing a nonempty symmetry basis and validating the sector options,
+HPhi writes ``output/symmetry_sector.dat`` before starting the solver. When
+``OutputDataHead=1``, the name is
+``output/<CDataFileHead>_symmetry_sector.dat``. Ordinary runs without ``TransSym``
+and definition-file generation with ``-sdry`` do not write this file.
+An output error terminates the calculation on all MPI ranks.
+
+The first line is ``format=HPhiSymmetrySector version=1``. Subsequent lines have
+the form ``key=value`` and record the method, model, site count, fixed quantum
+numbers, full canonical dimension (``full_dim``), sector dimension
+(``sector_dim``), group order, optional ``momentum_index``, basis layout,
+MPI ranks, OpenMP thread limit, term counts, and solver parameters.
+The manifest describes the input sector; its presence does not certify solver
+completion or convergence.
+
+Three versioned fingerprints are included:
+
+* ``group_digest``: ``hphi-group-fnv1a64-v1`` hashes the permutations and
+  characters after sorting operations lexicographically by permutation.
+  Renumbering operations does not change it. Character components are rounded
+  to integer multiples of :math:`10^{-10}`; this quantization is not a general
+  equivalence test for floating-point inputs near a rounding boundary.
+* ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` hashes each
+  representative state, orbit size, and stabilizer size with FNV-1a 64 and
+  combines the hashes without dependence on entry order or MPI ownership.
+  Integers use fixed-width little-endian encoding. The sum is modulo
+  :math:`2^{64}`. Norms and Hamiltonian diagonal values are excluded.
+* ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v1`` records the
+  supported parsed Hamiltonian terms in their stored order, using the exact
+  binary64 coefficient bits. Equivalent Hamiltonians expressed in different
+  term orders or decompositions may have different fingerprints.
+
+Sector identification uses the model, fixed quantum numbers, sector dimension,
+``group_digest``, and ``sector_digest`` together. Conjugate representations may
+share the same ``sector_digest``, so it must not be used alone. Hamiltonian
+changes do not change the sector identity. These fingerprints are diagnostics,
+not collision-free proofs of equivalence, and the order-independent sector
+fingerprint alone does not validate vector-component ordering for checkpoint
+input. Existing calculation outputs and ``CalcTimerRankStats.dat`` are unchanged.
+
 .. raw:: latex
 
    \newpage

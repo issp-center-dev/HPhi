@@ -233,6 +233,7 @@ add_hphi_test(symmetry_spin_chain_point_group)
 add_hphi_test(symmetry_spinless_fermion_point_group)
 add_hphi_test(symmetry_hubbard_point_group)
 add_hphi_test(symmetry_transsym_metadata)
+add_hphi_test(symmetry_sector_manifest)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -344,7 +345,7 @@ set_tests_properties(
     symmetry_hubbard_point_group
     PROPERTIES LABELS "symmetry;pointgroup")
 set_tests_properties(
-    symmetry_transsym_metadata
+    symmetry_transsym_metadata symmetry_sector_manifest
     PROPERTIES LABELS "symmetry;validation")
 set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
