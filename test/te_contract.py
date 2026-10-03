@@ -29,6 +29,49 @@ def run(path, label, failure=None, mpi=True):
         assert result.returncode == 0, text
 
 
+def check_final_extension(source, family=None):
+    """A final file from six rows must resume at row six on a longer grid."""
+    path = source / "final_extension"
+    path.mkdir()
+    (path / "output").mkdir()
+    for p in source.glob("*.def"):
+        shutil.copyfile(p, path / p.name)
+    for name in seed_names:
+        shutil.copyfile(source / "output" / name, path / "output" / name)
+    for rank, seed in enumerate(seeds):
+        final = source / "output" / seed.name
+        assert struct.unpack("=i", final.read_bytes()[:4])[0] == 6
+        shutil.copyfile(final, path / "output/extend_rank_{}.dat".format(rank))
+    p = path / "modpara.def"
+    p.write_text(re.sub(r"^\s*Lanczos_max\s+\d+", "Lanczos_max 9", p.read_text(), flags=re.M))
+    rows = "====\nNTimeSteps 9\n====\n====\n====\n"
+    for step in range(9):
+        rows += "{} {}\n".format(.025*step, int(family is not None))
+        if family:
+            indices = "0 0 0 0" if family == "TEOneBody" else "0 0 0 0 1 0 1 0"
+            rows += indices + " {} 0\n".format(.2*step)
+    (path / "times.def").write_text(rows)
+    run(path, "uninterrupted")
+    expected = [(path / "output" / seed.name).read_bytes() for seed in seeds]
+    observables = {key: np.loadtxt(path / "output" / (key + ".dat"), ndmin=2)
+                   for key in ("SS", "Norm", "Flct")}
+    shutil.copytree(path / "output", path / "uninterrupted_output")
+    p = path / "namelist.def"
+    p.write_text(p.read_text().replace("seed%literal_eigenvec_0", "extend"))
+    p = path / "calcmod.def"
+    p.write_text(re.sub(r"^ReStart\s+\d+", "ReStart 3", p.read_text(), flags=re.M))
+    run(path, "extended")
+    for seed, saved in zip(seeds, expected):
+        actual = (path / "output" / seed.name).read_bytes()
+        assert struct.unpack("=i", actual[:4])[0] == 9
+        assert actual[:12] == saved[:12]
+        np.testing.assert_allclose(np.frombuffer(actual[12:], dtype=complex),
+                                   np.frombuffer(saved[12:], dtype=complex), atol=3e-13, rtol=0)
+    for key, reference in observables.items():
+        actual = np.loadtxt(path / "output" / (key + ".dat"), ndmin=2)
+        np.testing.assert_allclose(actual, reference[6:], atol=5e-12, rtol=0)
+
+
 (ROOT / "stan.in").write_text('L=8\nmodel="Spin"\nmethod="CG"\nlattice="chain"\nJ=1\n2Sz=0\nexct=1\noutputmode="None"\n')
 with (ROOT / "generate.log").open("w") as fp:
     result = subprocess.run([HPHI, "-sdry", "stan.in"], cwd=str(ROOT), stdout=fp, stderr=subprocess.STDOUT)
@@ -69,6 +112,7 @@ run(ROOT, "uninterrupted")
 expected = [p.read_bytes() for p in seeds]  # legacy final alias has index zero
 observables = {family: np.loadtxt(ROOT / "output" / (family + ".dat")) for family in ("SS", "Norm", "Flct")}
 shutil.copytree(ROOT / "output", ROOT / "uninterrupted_output")
+check_final_extension(ROOT)
 # A periodic file after step 2 must encode NEXT step 3, just like final files.
 for rank in range(len(seeds)):
     source = ROOT / "output/zvo_eigenvec_2_rank_{}.dat".format(rank)
@@ -146,6 +190,7 @@ for family in ("TEOneBody", "TETwoBody"):
         rows += indices + " {} 0\n".format(.2*step)
     (path / "times.def").write_text(rows)
     run(path, "uninterrupted")
+    check_final_extension(path, family)
     reference = [(path / "output" / p.name).read_bytes() for p in seeds]
     ss = np.loadtxt(path / "output/SS.dat")
     for rank in range(len(seeds)):
@@ -160,4 +205,4 @@ for family in ("TEOneBody", "TETwoBody"):
         np.testing.assert_allclose(np.frombuffer(actual[12:], dtype=complex),
                                    np.frombuffer(saved[12:], dtype=complex), atol=3e-13, rtol=0)
     np.testing.assert_allclose(np.loadtxt(path / "output/SS.dat"), ss[3:], atol=5e-12, rtol=0)
-print("Raw TE: literal filenames, collective I/O guards, periodic restart state/observables PASS")
+print("Raw TE: literal filenames, collective I/O guards, periodic restart and final extension PASS")

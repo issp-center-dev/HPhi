@@ -262,6 +262,11 @@ CGの ``OutputEigenVec=1`` で作成できます。基底・sector・MPI数・la
 必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
 ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で参照用layoutを選択できます。
 
+TE実行前にCGのseedを全rank分、別prefixで保存するか、TE側の
+``CDataFileHead`` を変更してください。入出力のprefixが同じ場合、row 0の出力
+``<prefix>_eigenvec_0_rank_<rank>.dat`` がseedを上書きします。
+sectorの最終出力が別名であっても、このrow 0での上書きは防げません。
+
 全行の項数が0の ``TEOneBody`` で時刻列を指定し、 ``Lanczos_max`` 行を使用します。
 時刻は有限で単調非減少とします。最初の行は入力状態を伝播せず記録し、以降は
 :math:`\exp[-iH(t_j-t_{j-1})]` の ``ExpandCoef`` 次Taylor多項式を作用させて

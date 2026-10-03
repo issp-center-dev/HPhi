@@ -275,6 +275,12 @@ The basis, sector, MPI size and layout must match; the Hamiltonian may differ
 for a quench. The default layout is distributed; replicated remains available
 through ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``.
 
+Before running TE, preserve all rank files of the CG seed under a separate
+prefix, or change the TE ``CDataFileHead``. If the input and output prefixes
+are identical, row-zero output ``<prefix>_eigenvec_0_rank_<rank>.dat``
+overwrites the seed files. The separate sector final filename does not
+prevent this row-zero overwrite.
+
 Provide a ``TEOneBody`` time grid whose number of terms is zero at every row.
 ``Lanczos_max`` selects the number of rows. Times must be finite and
 nondecreasing. The first row records the imported state without propagation;
