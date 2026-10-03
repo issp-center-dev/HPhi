@@ -1507,7 +1507,8 @@ int ValidateSymmetrySectorOptions(const struct BindStruct *X)
 {
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
   if (X->Sym == NULL || X->Sym->enabled != TRUE) return 0;
-  if (X->Def.k_exct > X->Sym->dim) {
+  if ((X->Def.iCalcType == CG || X->Def.iCalcType == Lanczos) &&
+      X->Def.k_exct > X->Sym->dim) {
     fprintf(stdoutMPI,
             "Error: TransSym sector dimension %lu is smaller than exct=%u.\n",
             X->Sym->dim, X->Def.k_exct);

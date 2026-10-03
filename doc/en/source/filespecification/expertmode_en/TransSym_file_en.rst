@@ -186,7 +186,7 @@ Use rules
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  The ``Lanczos`` and ``CG`` methods support ``Spin`` with
+*  The ``Lanczos``, ``CG``, and ``TPQ`` (microcanonical TPQ) methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
    Expert-mode Hamiltonian terms are:
@@ -215,6 +215,31 @@ Use rules
    Correlation functions, spectrum calculations, restart, and the input and
    output of Hamiltonians and eigenvectors are not supported together with
    this file. Unsupported combinations terminate with an error.
+
+Sector TPQ
+~~~~~~~~~~
+
+In expert mode, ``CalcType=1`` with ``TransSym`` evolves a random vector within
+the selected symmetry sector using :math:`l-H_q/N_{\rm site}`. The default
+basis layout is distributed; ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` selects
+the reference layout. Empty MPI ranks participate in global normalization.
+``Lanczos_max``, ``NumAve``, ``LargeValue``, ``initial_iv``, and ``InitialVecType``
+have their usual TPQ meanings. ``exct`` does not restrict the TPQ sector.
+Standard mode still limits ``MomentumIndex`` generation to Lanczos and CG.
+
+All existing SS/Norm/Flct columns are supported, including doublon and its
+second moment for Hubbard. The SS ``phys_var`` column retains its existing
+meaning :math:`\langle H^2\rangle`, not the subtracted variance.
+``OutputGreenFormat=1`` selects the usual aggregate SS/Norm/Flct files even
+though correlation functions remain unsupported. Restart, vector I/O,
+spectrum, and cTPQ remain unavailable with ``TransSym``.
+
+These results estimate the trace within a **single symmetry sector**; they
+are not a thermal average over the entire fixed-quantum-number space.
+The manifest records ``ensemble=single_symmetry_sector``, ``num_ave``,
+``large_value``, and ``initial_vec_type``. The existing random generator
+depends on MPI ownership and OpenMP threads, so a fixed seed alone does not
+make samples identical across different process/thread counts.
 
 Sector manifest
 ~~~~~~~~~~~~~~~

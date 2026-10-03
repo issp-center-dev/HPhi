@@ -197,7 +197,7 @@ if ../../src/HPhi -e namelist.def > fulldiag.log 2>&1; then
 fi
 grep -q "does not support FullDiag" fulldiag.log
 
-for calc_type in 1 4 5; do
+for calc_type in 4 5; do
     write_common_defs
     write_valid_transsym
     perl -0pi -e "s/CalcType 0/CalcType ${calc_type}/" calcmod.def
@@ -206,7 +206,7 @@ for calc_type in 1 4 5; do
         cat "${log}"
         exit 1
     fi
-    grep -q "supports only Lanczos and CG" "${log}"
+    grep -q "supports only Lanczos, TPQ and CG" "${log}"
 done
 
 write_common_defs
@@ -442,7 +442,7 @@ if ../../src/HPhi -e namelist.def > fulldiag_supported_methods.log 2>&1; then
     exit 1
 fi
 grep -q "does not support FullDiag" fulldiag_supported_methods.log
-grep -q "supports only Lanczos and CG" fulldiag_supported_methods.log
+grep -q "supports only Lanczos, TPQ and CG" fulldiag_supported_methods.log
 
 write_common_defs
 write_valid_transsym

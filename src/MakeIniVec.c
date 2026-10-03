@@ -18,6 +18,8 @@
 #include "common/setmemory.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include <limits.h>
+#include <math.h>
 
 /**
  * @file   MakeIniVec.c
@@ -42,14 +44,20 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
-  double Ns;
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
   int mythread;
   double rand_X,rand_Y;
   double complex rand_Z1,rand_Z2;
 
-  Ns = 1.0*X->Def.NsiteMPI;
+  /* idim_max is the active rank-local dimension, including zero-row ranks.
+   * Only the globally reduced norm must be positive. */
+  int invalid = X == NULL || v0 == NULL || v1 == NULL;
+  if (!invalid && X->Check.idim_max > LONG_MAX) invalid = 1;
+  if (SumMPI_i(invalid) != 0) {
+    fprintf(stdoutMPI, "Error: invalid TPQ initial-vector storage.\n");
+    return -1;
+  }
   i_max = X->Check.idim_max;
 
 #pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \
@@ -103,6 +111,10 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
     dnorm += conj(v1[i])*v1[i];
   }
   dnorm = SumMPI_dc(dnorm);
+  if (!isfinite(creal(dnorm)) || !isfinite(cimag(dnorm)) || creal(dnorm) <= 0.0) {
+    fprintf(stdoutMPI, "Error: TPQ initial vector has zero or non-finite global norm.\n");
+    return -1;
+  }
   dnorm=sqrt(dnorm);
   global_1st_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)

@@ -40,7 +40,8 @@ int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X);
  * The caller applies the same scalings it applies today. Shared verbatim by
  * the Mode-1 evaluators and the CSR trace collector so no algebra is
  * reimplemented. */
-void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
+/* Returns -1 when the canonical or symmetry basis entry is unavailable. */
+int EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
                              double *D, double *N, double *S);
 void EnergyFlctCoeff_HubbardGC(struct BindStruct *X, long int k,
                                double *D, double *N, double *S);

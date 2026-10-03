@@ -194,6 +194,24 @@ static void run_matrix_fixture(const char *label, const char *subdir,
   }
   n = (long int)X.Check.idim_max;
 
+  if (X.Def.iCalcModel == Spin && X.Def.iFlgGeneralSpin == FALSE) {
+    X.Def.iFlgSymmetryBasis = TRUE; /* no Sym runtime: matvec must fail */
+    expect_true("energy evaluation propagates symmetry matvec failure",
+                expec_energy_flct(&X) == -1);
+    X.Def.iFlgSymmetryBasis = FALSE;
+  }
+  if (X.Def.iCalcModel == Hubbard) {
+    double d, number, spin;
+    expect_true("coefficient helper rejects null definition",
+                EnergyFlctCoeff_Hubbard(NULL, 1, &d, &number, &spin) == -1);
+    X.Def.iFlgSymmetryBasis = TRUE;
+    expect_true("coefficient helper rejects missing symmetry entry",
+                EnergyFlctCoeff_Hubbard(&X, 1, &d, &number, &spin) == -1);
+    X.Def.iFlgSymmetryBasis = FALSE;
+    expect_true("coefficient helper still accepts canonical entry",
+                EnergyFlctCoeff_Hubbard(&X, 1, &d, &number, &spin) == 0);
+  }
+
   for (i = 1; i <= n; i++)
     for (j = 1; j <= n; j++) {
       double a = cabs(Ham[i][j]);
