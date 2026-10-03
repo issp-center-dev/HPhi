@@ -62,3 +62,20 @@ if ! grep -q 'mTPQ first step has zero or non-finite global norm' failure.log; t
     cat failure.log
     exit 1
 fi
+
+# cTPQ order 1: exp(-delta_beta*H/2) ~= 1-H/4 = 0, H=4I.
+# The top-level cTPQ caller must report the kernel failure too.
+sed 's/CalcType 1/CalcType 5/' calc.def > calc.new
+mv calc.new calc.def
+sed 's/LargeValue 1/LargeValue 2/' mod.def > mod.new
+mv mod.new mod.def
+printf 'ExpandCoef 1\n' >> mod.def
+if ../../src/HPhi -e namelist.def > canonical_failure.log 2>&1; then
+    cat canonical_failure.log
+    echo 'cTPQ accepted an annihilated vector' >&2
+    exit 1
+fi
+if ! grep -q 'cTPQ step has zero or non-finite global norm' canonical_failure.log; then
+    cat canonical_failure.log
+    exit 1
+fi

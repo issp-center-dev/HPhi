@@ -340,7 +340,7 @@ static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   0,    0,   0,   0   },
   { CG,            "CG",            1,      1,   0,   0,   0,   0,    0,   0,   0   },
   { TimeEvolution, "TimeEvolution", 0,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { cTPQ,          "cTPQ",          0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { cTPQ,          "cTPQ",          1,      1,   0,   0,   0,   0,    0,   0,   0   },
 };
 
 /* Fails to compile when a CalcType is added without a row in the table. */
@@ -524,7 +524,7 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 {
   const struct SymmetryMethodCapability *cap =
       find_symmetry_method_capability(def->iCalcType);
-  const char *correlation_reason = def->iCalcType == TPQCalc
+  const char *correlation_reason = (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
       ? "sector TPQ outputs SS/Norm/Flct only"
       : def->iCalcType == FullDiag ? "sector FullDiag outputs eigenvalues only"
       : "it outputs energy/norm/convergence only";

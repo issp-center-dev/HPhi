@@ -466,8 +466,8 @@ expect_failure "SpinlessFermion Transfer invariance failed" \
     noninvariant_transfer.log ../../src/HPhi -e namelist.def
 
 write_transfer_ring
-perl -0pi -e 's/CalcType 0/CalcType 5/' calcmod.def
-expect_failure "supports only Lanczos, TPQ, FullDiag and CG" \
+perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
+expect_failure "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" \
     unsupported_method.log ../../src/HPhi -e namelist.def
 
 write_calcmod

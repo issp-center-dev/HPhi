@@ -183,7 +183,7 @@ TransSym指定ファイル
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``FullDiag`` です。模型は :math:`S=1/2` で ``2Sz`` を
+-  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
    ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
 
@@ -224,13 +224,31 @@ Hubbardのdoublonとその二乗平均を含む、既存SS/Norm/Flctの全列に
 SSの ``phys_var`` 列は従来どおり :math:`\langle H^2\rangle` で、
 エネルギー平均の二乗を引いた分散ではありません。
 ``OutputGreenFormat=1`` によるSS/Norm/Flct集約出力も使えます。
-相関関数、restart、ベクトル入出力、スペクトル、cTPQは ``TransSym`` と併用できません。
+相関関数、restart、ベクトル入出力、スペクトルは ``TransSym`` と併用できません。
 
 計算結果は **単一の対称性セクター内** のtraceを推定します。
 固定量子数空間全体の熱平均ではありません。manifestには
 ``ensemble=single_symmetry_sector``、 ``num_ave``、 ``large_value``、
 ``initial_vec_type`` を追記します。既存の乱数生成はMPIの要素分担とOpenMP threadに
 依存するため、seedを固定してもprocess/thread数が異なる場合の標本は一致しません。
+
+セクター内cTPQ
+^^^^^^^^^^^^^^
+
+``CalcType=5`` はmTPQと同じセクター保存方式・出力を使い、
+:math:`\sum_{n=0}^{n_{\max}}(-\Delta\beta H_q/2)^n/n!` を作用させて各stepで正規化します。
+Taylor打ち切り次数の収束は利用者が確認してください。
+``InvTemp`` を指定しない場合は :math:`\Delta\beta=1/\mathrm{LargeValue}` で、
+``ExpandCoef`` の省略時既定値は10です。明示指定した次数は正の整数で
+``INT_MAX`` 未満に限ります。normがゼロ・非有限の場合とmatvec失敗時は停止します。
+
+``InvTemp`` の各行は ``beta nmax physcal eigen`` です。betaは0から始まり、
+有限値で単調非減少である必要があります。同じbetaの繰り返しは刻み0として扱います。 ``nmax`` は ``INT_MAX`` 未満の正の整数、
+両flagは0または1です。行 ``i`` の次数はbeta ``i`` から ``i+1`` への発展に使い、
+最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
+``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
+manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み・次数または
+全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。
 
 セクター内FullDiag
 ^^^^^^^^^^^^^^^^^^

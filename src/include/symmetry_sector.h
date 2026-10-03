@@ -19,5 +19,8 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
 int ComputeSymmetrySectorDigest(const struct SymmetryBasisRuntime *sym,
                                 struct SymmetrySectorDigest *digest);
 int WriteSymmetrySectorManifest(const struct BindStruct *X);
+/* Append the validated cTPQ schedule before producing any thermal data. */
+int WriteSymmetryCanonicalTPQSchedule(const struct BindStruct *X, int rows,
+                                     const double *beta, const int *orders);
 
 #endif
