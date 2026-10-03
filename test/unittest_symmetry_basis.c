@@ -5,6 +5,7 @@
 #include <limits.h>
 #include "DefCommon.h"
 #include "mltplySpinSym.h"
+#include "makeHamSym.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
 #include "symmetry_directory.h"
@@ -29,6 +30,10 @@ long unsigned int *list_1 = NULL;
 long unsigned int *list_2_1 = NULL;
 long unsigned int *list_2_2 = NULL;
 double *list_Diagonal = NULL;
+double complex **Ham = NULL, *Ham_local = NULL;
+int iHamPanelActive = 0, iHamSinkMode = 0;
+long HamColBegin, HamColEnd, HamPanelLd;
+void (*hamCollectSink)(long, long, double complex) = NULL;
 int g_tj_odd_split_guard_enabled = 0;
 long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
@@ -3205,6 +3210,71 @@ static void assert_streaming_basis_without_raw_lists(void)
   FreeSymmetryBasis(X.Sym);
 }
 
+static void assert_dense_builder_matches_raw(struct BindStruct *X, const char *label)
+{
+  unsigned long n = X->Sym->dim, row, col;
+  int pass;
+  double complex **reference;
+  Ham = calloc(n + 1, sizeof(*Ham));
+  if (Ham == NULL) exit(1);
+  for (row = 0; row <= n; ++row) {
+    Ham[row] = calloc(n + 1, sizeof(**Ham));
+    if (Ham[row] == NULL) exit(1);
+  }
+  /* Repeat on the same destination: entries must not accumulate across calls. */
+  for (pass = 0; pass < 2; ++pass) {
+    unsigned long *saved_list = list_1;
+    double *saved_diagonal = list_Diagonal;
+    int status;
+    list_1 = NULL; list_Diagonal = NULL;
+    status = makeHamSym(X);
+    list_1 = saved_list; list_Diagonal = saved_diagonal;
+    if (status != 0) { fprintf(stderr, "%s: dense builder failed\n", label); exit(1); }
+    for (col = 1; col <= n; ++col)
+      for (row = 1; row <= n; ++row) {
+        assert_complex_close(Ham[row][col], raw_reference_matrix_element(X, row, col), 1e-10, label);
+        assert_complex_close(Ham[row][col], conj(Ham[col][row]), 1e-10, "dense Hermiticity");
+      }
+  }
+  reference = Ham;
+  Ham = NULL; /* Panel builder must never touch the replicated allocation. */
+  iHamPanelActive = 1;
+  HamPanelLd = (long)n;
+  for (col = 1; col <= n; col += 2) {
+    HamColBegin = (long)col;
+    HamColEnd = (long)(col + 1 <= n ? col + 1 : col);
+    Ham_local = calloc(n * 2, sizeof(*Ham_local));
+    if (Ham_local == NULL) exit(1);
+    for (pass = 0; pass < 2; ++pass) {
+      long j;
+      if (makeHamSym(X) != 0) { fprintf(stderr, "%s: panel builder failed\n", label); exit(1); }
+      for (j = HamColBegin; j <= HamColEnd; ++j)
+        for (row = 1; row <= n; ++row)
+          assert_complex_close(Ham_local[(j-HamColBegin)*n+row-1], reference[row][j], 1e-13, "dense panel identity");
+    }
+    free(Ham_local);
+  }
+  {
+    double complex sentinel = 987.0;
+    Ham_local = &sentinel;
+    HamColBegin = 1; HamColEnd = 0;
+    assert_ulong_eq(makeHamSym(X) == 0 && sentinel == 987.0, 1, "empty dense panel");
+    HamColBegin = 0; HamColEnd = 1;
+    assert_ulong_eq(makeHamSym(X) == -1, 1, "invalid dense panel range");
+    HamColBegin = 1; HamColEnd = 1; HamPanelLd = (long)n + 1;
+    assert_ulong_eq(makeHamSym(X) == -1, 1, "invalid dense panel leading dimension");
+  }
+  Ham_local = NULL;
+  iHamPanelActive = 0;
+  assert_ulong_eq(makeHamSym(X) == -1, 1, "missing dense destination");
+  assert_ulong_eq(makeHamSym(NULL) == -1, 1, "missing dense definition");
+  X->Sym->basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
+  assert_ulong_eq(makeHamSym(X) == -1, 1, "dense builder requires replicated metadata");
+  X->Sym->basis_layout = SYMMETRY_BASIS_REPLICATED;
+  for (row = 0; row <= n; ++row) free(reference[row]);
+  free(reference);
+}
+
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
@@ -3227,6 +3297,7 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -3259,6 +3330,7 @@ static void assert_spinless_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -3291,6 +3363,7 @@ static void assert_hubbard_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
