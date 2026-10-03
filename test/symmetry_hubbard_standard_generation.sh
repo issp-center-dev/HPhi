@@ -161,6 +161,7 @@ assert_symmetry_log() {
 assert_generated_files() {
     grep -q "qptransidx.def is written for MomentumIndex" "$1"
     grep -Eq "NQPTrans[[:space:]]+4" qptransidx.def
+    grep -Eq "^# MomentumIndex [0-9]+$" qptransidx.def
     grep -q "TransSym  qptransidx.def" namelist.def
     grep -q "Ncond" modpara.def
     grep -q "2Sz" modpara.def
@@ -213,6 +214,7 @@ test -n "${auto_k0_energy}"
 assert_energy_matches_reference "${ref_energy}" auto_k0.log
 assert_symmetry_log auto_k0.log
 assert_generated_files auto_k0.log
+grep -q "TransSym metadata: MomentumIndex=0" auto_k0.log
 run_mpi_generated_if_available k0 "${auto_k0_energy}"
 
 rm -rf expert_k0
@@ -236,6 +238,7 @@ test -n "${auto_k1_energy}"
 assert_energy_matches_reference "-2.0" auto_k1.log
 assert_symmetry_log auto_k1.log
 assert_generated_files auto_k1.log
+grep -q "TransSym metadata: MomentumIndex=1" auto_k1.log
 awk 'NF == 3 && $1 == 1 {found=1; ok=($2 < 0.000001 && $2 > -0.000001 && $3 + 1.0 < 0.000001 && $3 + 1.0 > -0.000001)} END{exit found && ok ? 0 : 1}' qptransidx.def
 run_mpi_generated_if_available k1 "${auto_k1_energy}"
 

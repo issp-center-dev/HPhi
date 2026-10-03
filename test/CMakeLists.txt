@@ -229,6 +229,10 @@ add_hphi_test(symmetry_spinless_fermion_lanczos)
 add_hphi_test(symmetry_spinless_fermion_standard_generation)
 add_hphi_test(symmetry_hubbard_lanczos)
 add_hphi_test(symmetry_hubbard_standard_generation)
+add_hphi_test(symmetry_spin_chain_point_group)
+add_hphi_test(symmetry_spinless_fermion_point_group)
+add_hphi_test(symmetry_hubbard_point_group)
+add_hphi_test(symmetry_transsym_metadata)
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -335,6 +339,13 @@ set_tests_properties(
 set_tests_properties(
     symmetry_spin_chain_lanczos
     PROPERTIES LABELS "symmetry;spin;lanczos")
+set_tests_properties(
+    symmetry_spin_chain_point_group symmetry_spinless_fermion_point_group
+    symmetry_hubbard_point_group
+    PROPERTIES LABELS "symmetry;pointgroup")
+set_tests_properties(
+    symmetry_transsym_metadata
+    PROPERTIES LABELS "symmetry;validation")
 set_tests_properties(
     lanczos_genspin_ladder lanczos_genspingc_ladder
     lanczos_genspin_ladder_restart
