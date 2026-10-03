@@ -6,6 +6,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 
 import numpy as np
 
@@ -25,9 +26,14 @@ def run(path, label, symmetry=True, layout="replicated", fail=None):
     command = (MPI if symmetry else []) + [HPHI, "-e", "sym.def" if symmetry else "raw.def"]
     env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout)
     log = path / (label + ".log")
-    with log.open("w") as stream:
+    # MPI may forward stdout in chunks while stderr arrives between them.
+    # Capture the streams separately so diagnostics remain searchable, then
+    # retain both streams in the failure log.
+    with log.open("w") as stream, tempfile.TemporaryFile(mode="w+") as errors:
         result = subprocess.run(command, cwd=str(path), env=env, stdout=stream,
-                                stderr=subprocess.STDOUT, timeout=120)
+                                stderr=errors, timeout=120)
+        errors.seek(0)
+        shutil.copyfileobj(errors, stream)
     text = log.read_text()
     if fail is not None:
         assert result.returncode != 0 and fail in text, text
