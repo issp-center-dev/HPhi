@@ -47,18 +47,28 @@ git-archive-all \
   --extra=doc/userguide_HPhi_en.pdf \
   --extra=doc/tutorial_HPhi_en.pdf \
   --prefix=HPhi-${vid} \
-  HPhi-${vid}.tar.gz
+  HPhi-${vid}.tar.gz || exit $?
 
 # Write the hash of the commit into cmake/git_archive.txt of the tarball,
 # unless it is filled in already. "HPhi -v" built from the tarball prints it.
-hash=`git rev-parse HEAD`
-tmpdir=`mktemp -d`
-tar xzf HPhi-${vid}.tar.gz -C ${tmpdir}
-if grep -q Format ${tmpdir}/HPhi-${vid}/cmake/git_archive.txt; then
-  echo ${hash} > ${tmpdir}/HPhi-${vid}/cmake/git_archive.txt
-  COPYFILE_DISABLE=1 tar czf HPhi-${vid}.tar.gz -C ${tmpdir} HPhi-${vid}
+#
+# A failure of any step below stops the script with the status of the step.
+# The temporary files are removed by the trap, also in that case.
+hash=`git rev-parse HEAD` || exit $?
+tmpdir=`mktemp -d` || exit $?
+trap 'rm -rf "${tmpdir}" "HPhi-${vid}.tar.gz.tmp"' EXIT
+tar xzf HPhi-${vid}.tar.gz -C ${tmpdir} || exit $?
+archive_txt=${tmpdir}/HPhi-${vid}/cmake/git_archive.txt
+if [ ! -f ${archive_txt} ]; then
+  echo "ERROR: cmake/git_archive.txt is not found in HPhi-${vid}.tar.gz"
+  exit 1
 fi
-rm -rf ${tmpdir}
+if grep -q Format ${archive_txt}; then
+  echo ${hash} > ${archive_txt} || exit $?
+  # The tarball is replaced only after the new one is written completely
+  COPYFILE_DISABLE=1 tar czf HPhi-${vid}.tar.gz.tmp -C ${tmpdir} HPhi-${vid} || exit $?
+  mv HPhi-${vid}.tar.gz.tmp HPhi-${vid}.tar.gz || exit $?
+fi
 if [ -n "`git status --porcelain --untracked-files=no`" ]; then
   echo 'WARNING: the source has changes which are not committed.'
   echo '         The hash written into the tarball is that of HEAD.'

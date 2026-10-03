@@ -11,6 +11,10 @@ endforeach()
 project(HPhi
   VERSION ${HPHI_VERSION_MAJOR}.${HPHI_VERSION_MINOR}.${HPHI_VERSION_PATCH}
   LANGUAGES NONE)
+# Run cmake again at the next build when the version number is changed, so
+# that PROJECT_VERSION follows the header
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_LIST_DIR}/src/include/version.h)
 # Capture whether the user explicitly requested USE_SCALAPACK=OFF (as opposed to
 # the default OFF). -D cache vars are defined before option() runs, so a plain
 # `if(DEFINED USE_SCALAPACK AND NOT USE_SCALAPACK)` would look identical for
