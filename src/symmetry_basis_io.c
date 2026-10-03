@@ -516,10 +516,6 @@ static int validate_symmetry_method_capability(const struct DefineList *def)
       fprintf(stdoutMPI, "Error: TransSym TimeEvolution requires sector checkpoint InputEigenVec=1.\n");
       return -1;
     }
-    if (def->NLaser || def->NTETransferMax || def->NTEInterAllMax) {
-      fprintf(stdoutMPI, "Error: TransSym TimeEvolution currently requires a static Hamiltonian.\n");
-      return -1;
-    }
   }
   if (def->iCalcType == CG && def->iInputEigenVec > 1) {
     fprintf(stdoutMPI, "Error: TransSym CG supports binary sector checkpoint InputEigenVec=1 only.\n");

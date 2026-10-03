@@ -141,7 +141,7 @@ def check(path, model, length, momentum, states, raw, projector):
             fixture.run(path, 'reject_restart_'+layout, layout=layout, fail='ReStart')
             (path / 'calc.def').write_text(te_calc)
             (path / 'times.def').write_text('====\nNTimeSteps 5\n====\n====\n====\n' + ''.join('{} 1\n0 0 0 0 .1 0\n'.format(t) for t in times))
-            fixture.run(path, 'reject_dynamic_'+layout, layout=layout, fail='requires a static Hamiltonian')
+            fixture.run(path, 'reject_dynamic_'+layout, layout=layout, fail='preflight failed at step 0')
     (path / 'InterAll.def').write_text(inter)
     (path / 'calc.def').write_text(calc)
     (path / 'mod.def').write_text(mod)

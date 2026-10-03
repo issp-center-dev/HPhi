@@ -6,7 +6,9 @@
 
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
-  return def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
+  return (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
+          (def->NLaser || def->NTETransferMax || def->NTEInterAllMax)) ||
+      def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
       def->NInterAll_OffDiagonal || def->NPairHopping ||
       (def->iCalcModel == Hubbard && (def->NCoulombInter || def->NHundCoupling ||
        def->NExchangeCoupling || def->NIsingCoupling)) ||

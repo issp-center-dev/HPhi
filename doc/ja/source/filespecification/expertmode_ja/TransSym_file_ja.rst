@@ -266,8 +266,7 @@ CGの ``OutputEigenVec=1`` で作成できます。基底・sector・MPI数・la
 時刻は有限で単調非減少とします。最初の行は入力状態を伝播せず記録し、以降は
 :math:`\exp[-iH(t_j-t_{j-1})]` の ``ExpandCoef`` 次Taylor多項式を作用させて
 規格化します。同一時刻も許容します。入力checkpointのstep/timeは来歴として
-記録し、新しい時刻列の時計には引き継ぎません。非零の ``TEOneBody`` / ``TETwoBody``
-項とPeierls駆動は、この静的実装では未対応です。
+記録し、新しい時刻列の時計には引き継ぎません。時間依存項とPeierls駆動については次節を参照してください。
 
 ``SS`` / ``Norm`` / ``Flct`` はsector内の期待値を出力します。 ``Norm`` は各stepの
 規格化前のnormで、Taylor打切りにより1からずれる場合があります。次数を増やすか
@@ -282,6 +281,35 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 ラベルです。最終出力はrow 0を上書きしません。これらのcheckpointを ``SpectrumVec``
 で新しい同一sector計算へ渡せますが、restartではありません。raw TEの既存binary形式とは
 異なります。
+
+時間依存するセクターHamiltonian
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TEOneBody``、 ``TETwoBody``、 ``Laser`` のいずれか1種類で駆動できます。
+one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
+位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
+raw spinless solverの対角TE項に対する制限は変更しません。
+
+初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、
+固定量子数の保存、指定群に対する不変性を検査します。後の時刻だけで対称性が
+破れる場合も伝播開始前に停止します。 ``Laser`` は既存の9パラメータを使い、
+時刻を ``Tinit + step * TimeSlice`` とします。時間刻みは有限・非負とし、最初の行は
+``Tinit`` における入力状態を伝播せず記録します。 ``TEOneBody`` / ``TETwoBody`` は
+ファイルの有限・単調非減少の時刻列を使います。
+
+区間の終点 :math:`t_j` のHamiltonian :math:`H(t_j)` を固定し、そのTaylor多項式を
+前の状態へ作用させます。一次項を含む全次数で同じ行列を使います。
+連続的な時間依存Hamiltonianに対しては右端点での区分一定近似なので、Taylor次数だけを
+増やしても時間離散化誤差は消えません。時間刻みと次数の両方で収束を確認してください。
+このsectorの規約は、従来のraw動的TEの漸化式とは区別されます。
+
+現実装は基底の代表状態・順序・位相・MPI分担を保持し、各時刻で対角成分を更新します。
+既存のrank局所基底からlookup directoryを再作成し、行列作用のplanを再構築します。
+raw Hilbert空間を列挙し直す必要がなく、項の出現・消滅にも対応します。
+共通疎構造のcacheやplanの係数だけの更新は、まだ行いません。manifestには ``te_hamiltonian=time_dependent``、
+``te_integrator=right_endpoint_taylor``、 ``te_plan_update=rebuild_with_fixed_basis`` と
+各時刻の実効Hamiltonian digest ``te_hamiltonian_<step>`` を記録します。
+同じdigestをその行のcheckpoint headerにも記録します。
 
 セクターベクトルcheckpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -63,12 +63,14 @@
 #include <limits.h>
 #include <inttypes.h>
 #include "symmetry_checkpoint.h"
+#include "symmetry_te.h"
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
 /* A sector checkpoint is a state import, not a continuation of its solver clock. */
-static int record_sector_te(const struct BindStruct *X, const struct SymmetryCheckpointInfo *source)
+static int record_sector_te(const struct BindStruct *X, const struct SymmetryCheckpointInfo *source,
+                             const struct SymmetryTEHamiltonian *view)
 {
   char name[D_FileNameMax];
   FILE *fp = NULL;
@@ -80,13 +82,16 @@ static int record_sector_te(const struct BindStruct *X, const struct SymmetryChe
     error = n < 0 || (size_t)n + strlen(cParentOutputFolder) >= sizeof(name);
     if (!error) error = childfopenMPI(name, "a", &fp) != 0;
     if (!error) {
-      fprintf(fp, "te_hamiltonian=static\nte_steps=%u\nexpand_coef=%d\n"
+      fprintf(fp, "te_hamiltonian=%s\nte_steps=%u\nexpand_coef=%d\n"
               "source_method=%" PRIu64 "\nsource_state=%" PRIu64 "\nsource_step=%" PRIu64
               "\nsource_time=%.17g\nsource_hamiltonian_digest=%016" PRIx64 "\n",
-              X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
+              view ? "time_dependent" : "static", X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
               source->state_index, source->step, source->time, source->hamiltonian_digest);
-      for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i)
-        fprintf(fp, "te_time_%u=%.17g\n", i, X->Def.TETime[i]);
+      for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i) {
+        fprintf(fp, "te_time_%u=%.17g\n", i, SymmetryTETime(&X->Def, i));
+        if (view) fprintf(fp, "te_hamiltonian_%u=%016" PRIx64 "\n", i, view->digests[i]);
+      }
+      if (view) fprintf(fp, "te_integrator=right_endpoint_taylor\nte_plan_update=rebuild_with_fixed_basis\n");
       if (ferror(fp)) error = 1;
       if (fclose(fp) != 0) error = 1;
     }
@@ -158,9 +163,10 @@ static int write_raw_te_vector(struct BindStruct *X, int label, int next_step)
  * @author Kota Ido (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int CalcByTEM(
+static int calc_by_tem(
         const int ExpecInterval,
-        struct EDMainCalStruct *X
+        struct EDMainCalStruct *X,
+        struct SymmetryTEHamiltonian *view
 ) {
   struct SymmetryCheckpointInfo source = {0};
   char *defname = NULL;
@@ -186,7 +192,7 @@ int CalcByTEM(
     fprintf(stdoutMPI, "Error: TE requires finite initial time and nonnegative time step.\n");
     return -1;
   }
-  if(X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
+  if (!(view && X->Bind.Def.NLaser) && X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
     fprintf(stdoutMPI, "Error: NTETimeSteps must be larger than Lanczos_max.\n");
     return -1;
   }
@@ -203,6 +209,7 @@ int CalcByTEM(
       return -1;
     }
   }
+  if (view && ValidateSymmetryTESchedule(&(X->Bind), view) != 0) return -1;
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTEM_Start);
@@ -221,7 +228,7 @@ int CalcByTEM(
     }
     if (X->Bind.Def.iFlgSymmetryBasis) {
       if (ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &source) != 0) return -1;
-      if (record_sector_te(&(X->Bind), &source) != 0) return -1;
+      if (record_sector_te(&(X->Bind), &source, view) != 0) return -1;
     } else {
       invalid = childfopenALL(sdt, "rb", &fp) != 0;
       if (!invalid) {
@@ -332,7 +339,17 @@ int CalcByTEM(
       fprintf(stdoutMPI, cLogTEStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
-    if(X->Bind.Def.NLaser !=0) {
+    if (view) {
+      Time = SymmetryTETime(&view->base, step_i);
+      dt = step_i ? Time - SymmetryTETime(&view->base, step_i - 1) : 0;
+      if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_i, Time) != 0 ||
+          RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
+      X->Bind.Def.Param.TimeSlice = dt;
+      /* All Taylor powers use the SAME current H, including the first one. */
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
+      if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+    }
+    else if(X->Bind.Def.NLaser !=0) {
       TransferWithPeierls(&(X->Bind), Time);
     }
     else {
@@ -369,7 +386,7 @@ int CalcByTEM(
     //Multiply Diagonal
     if (expec_energy_flct(&(X->Bind)) != 0) return -1;
 
-    if(X->Bind.Def.NLaser >0 ) Time+=dt;
+    if(!view && X->Bind.Def.NLaser >0 ) Time+=dt;
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
@@ -421,6 +438,17 @@ int CalcByTEM(
 
   fprintf(stdoutMPI, "%s",cLogTEM_End);
   return 0;
+}
+
+int CalcByTEM(const int ExpecInterval, struct EDMainCalStruct *X)
+{
+  if (!SymmetryTEIsDynamic(&X->Bind.Def)) return calc_by_tem(ExpecInterval, X, NULL);
+  struct SymmetryTEHamiltonian view = {0};
+  view.base = X->Bind.Def;
+  int result = calc_by_tem(ExpecInterval, X, &view);
+  X->Bind.Def = view.base;
+  FreeSymmetryTEHamiltonian(&view);
+  return result;
 }
 
 /// \brief Set transfer integrals at timeidx-th time

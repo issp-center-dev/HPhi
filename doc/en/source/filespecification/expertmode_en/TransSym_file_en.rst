@@ -281,8 +281,7 @@ nondecreasing. The first row records the imported state without propagation;
 subsequent rows apply the degree-``ExpandCoef`` Taylor polynomial of
 :math:`\exp[-i H(t_j-t_{j-1})]`, followed by normalization. Repeated times are
 allowed. The input checkpoint's solver step and time are recorded as
-provenance, but do not resume its clock. Nonzero ``TEOneBody``/``TETwoBody``
-terms and Peierls driving are not available in this static implementation.
+provenance, but do not resume its clock. For time-dependent interactions and Peierls driving, see the next section.
 
 ``SS``, ``Norm`` and ``Flct`` contain sector expectation values. ``Norm`` is
 the norm before each step's normalization; Taylor truncation can make it
@@ -299,6 +298,42 @@ physical time. ``state_index`` retains the imported state's label.
 The final file does not overwrite row zero. Any of these checkpoints can
 seed a new same-sector run via ``SpectrumVec``; this is a new time grid,
 not a restart. Raw TE binary files use their existing, different format.
+
+Time-dependent sector Hamiltonians
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``TEOneBody``, ``TETwoBody``, or ``Laser`` may drive the sector Hamiltonian.
+Use one driving family per calculation. One-body and two-body entries are
+added to the static Hamiltonian; Peierls driving changes the phases of its
+parsed transfer coefficients. Diagonal and off-diagonal terms are supported
+for the four canonical models above, including spinless fermions. The raw
+spinless solver's diagonal-TE restriction is unchanged.
+
+Before loading the initial vector or writing time-series data, HPhi checks
+every used time slice for finite coefficients, conserved quantum numbers,
+and invariance under the specified group. A violation at a later time stops
+the run before any propagation. ``Laser`` uses the nine existing laser
+parameters and times ``Tinit + step * TimeSlice``; finite nonnegative spacing
+is required. The first row records the initial state at ``Tinit``. A
+``TEOneBody``/``TETwoBody`` file supplies its own finite, nondecreasing grid.
+
+For the interval ending at :math:`t_j`, sector TE freezes the Hamiltonian at
+:math:`H(t_j)` and applies its Taylor polynomial to the previous state. All
+powers, including the linear term, use this same matrix. This is a
+right-endpoint piecewise-constant approximation to a continuously varying
+Hamiltonian: increasing Taylor order alone does not remove the time-grid
+error. Check both time spacing and Taylor order. This sector convention is
+separate from the legacy raw dynamic-TE recurrence.
+
+The current implementation retains the basis representatives, ordering,
+phase and MPI ownership. At each time point it updates the diagonal values,
+recreates the distributed lookup directory from the existing local basis,
+and rebuilds the multiplication plan. This handles terms that appear or
+disappear without enumerating the raw Hilbert space again. It does not yet
+cache a common sparsity pattern or update only plan coefficients. The manifest records ``te_hamiltonian=time_dependent``,
+``te_integrator=right_endpoint_taylor``, ``te_plan_update=rebuild_with_fixed_basis``, and
+``te_hamiltonian_<step>`` for each effective parsed Hamiltonian. The same
+digest is written into that row's checkpoint header.
 
 Sector vector checkpoints
 ~~~~~~~~~~~~~~~~~~~~~~~~~

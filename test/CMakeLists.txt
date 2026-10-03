@@ -1366,3 +1366,6 @@ endif(USE_SCALAPACK)
 
 add_hphi_test(symmetry_te)
 set_tests_properties(symmetry_te PROPERTIES LABELS "symmetry;te")
+
+add_hphi_test(symmetry_te_dynamic)
+set_tests_properties(symmetry_te_dynamic PROPERTIES LABELS "symmetry;te")
