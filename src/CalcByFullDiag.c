@@ -17,6 +17,10 @@
 #include "input.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "makeHamSym.h"
+#ifdef _SCALAPACK
+#include "matrixscalapack.h"
+#endif
 
  /// \brief Parent function for FullDiag mode
  /// \param X [in,out] Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
@@ -31,16 +35,17 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
-    makeHam(&(X->Bind));
+    iret = X->Bind.Def.iFlgSymmetryBasis
+        ? makeHamSym(&(X->Bind)) : makeHam(&(X->Bind));
   }
   else if(X->Bind.Def.iInputHam==TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);
-    inputHam(&(X->Bind));
+    iret = inputHam(&(X->Bind));
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_End);
   }
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
-  if(iret != 0) return FALSE;
+  if(SumMPI_i(iret != 0) != 0) return FALSE;
 
 
   if(X->Bind.Def.iOutputHam == TRUE){
@@ -60,6 +65,15 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, "%s", cLogFullDiag_End);
   if(iret != 0) return FALSE;
 
+  if (X->Bind.Def.iFlgSymmetryBasis) {
+    /* Initial sector FullDiag contract is eigenvalues only. No raw-basis
+     * observables may run; distributed eigenvectors still need cleanup. */
+#ifdef _SCALAPACK
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+    fprintf(stdoutMPI, "TransSym FullDiag: sector eigenvalues written; eigenstate observables are not requested.\n");
+    return TRUE;
+  }
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_Start);
   StartTimer(5300);

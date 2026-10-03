@@ -183,7 +183,7 @@ TransSym指定ファイル
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）です。模型は :math:`S=1/2` で ``2Sz`` を
+-  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``FullDiag`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
    ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
 
@@ -231,6 +231,28 @@ SSの ``phys_var`` 列は従来どおり :math:`\langle H^2\rangle` で、
 ``ensemble=single_symmetry_sector``、 ``num_ave``、 ``large_value``、
 ``initial_vec_type`` を追記します。既存の乱数生成はMPIの要素分担とOpenMP threadに
 依存するため、seedを固定してもprocess/thread数が異なる場合の標本は一致しません。
+
+セクター内FullDiag
+^^^^^^^^^^^^^^^^^^
+
+expert modeの ``CalcType=2`` で、選択したセクターの全固有値を計算します。
+buildに含まれていれば ``Solver=0`` （LAPACK、MPI 1 rank）、 ``Solver=1``
+（ScaLAPACK）、 ``Solver=3`` （ELPA）に対応します。
+基底metadataはreplicatedに限られ、FullDiagでの
+``HPHI_SYMMETRY_BASIS_LAYOUT=distributed`` は拒否します。
+solverの作業配列には全rankでセクター全次元を使います。
+複数rankのELPAでは所有するcolumn panelだけを生成します。
+ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製固有ベクトル行列は
+確保しません。ELPAではセクター次元がprocess gridより小さければエラーとなるため、
+その場合はrank数を減らしてください。
+
+``output/<CDataFileHead>_energy_sector.dat`` へ0始まりの番号と全固有値を出力し、
+セクターmanifestも記録します。この固有値ファイル名は常にprefix付きです。
+通常のFullDiagは従来どおり ``Eigenvalue.dat`` を出力します。
+セクターFullDiagでは固有状態物理量、相関関数、固有ベクトルを出力しません。
+0以外の ``ExpecMode`` とMAGMAは非対応です。
+Hamiltonian/ベクトル入出力とrestartも非対応です。
+manifestにはsolver、行列storage、 ``output_scope=eigenvalues`` を記録します。
 
 セクター情報ファイル
 ^^^^^^^^^^^^^^^^^^^^

@@ -17,6 +17,8 @@
 #include "matrixlapack.h"
 #include "FileIO.h"
 #include "DefCommon.h"
+#include "wrapperMPI.h"
+#include <limits.h>
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -263,6 +265,7 @@ struct BindStruct *X//!<[inout]
   FILE *fp = NULL;
   char sdt[D_FileNameMax] = "";
   long int i, j, i_max, xMsize;
+  int solver_failed = 0;
 #ifdef _SCALAPACK
   int rank, size, nprocs, nprow, npcol, myrow, mycol, ictxt;
   int i_negone=-1, i_zero=0, iam;
@@ -271,6 +274,10 @@ struct BindStruct *X//!<[inout]
 #endif
 
   i_max = X->Check.idim_max;
+  if (SumMPI_i(i_max <= 0 || i_max > INT_MAX) != 0) {
+    fprintf(stdoutMPI, "Error: invalid FullDiag solver dimension.\n");
+    return -1;
+  }
   if (!iHamPanelActive) {
     /* Distributed-panel mode (phase 2): Ham is NULL and the panel is
        already 0-based-packed by rows / start-packed by columns at
@@ -300,13 +307,17 @@ struct BindStruct *X//!<[inout]
       mb = GetBlockSize(xMsize, size);
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
-      Z_vec = malloc(mp * nq * sizeof(complex double));
+      Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(complex double));
       /* diag_scalapack_cmp() builds the equivalent grid recorded in
          descZ_vec. This temporary sizing grid is no longer needed. */
       blacs_gridexit_(&ictxt);
-      diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
+      if (SumMPI_i(Z_vec == NULL) != 0) {
+        free(Z_vec); Z_vec = NULL;
+        return -1;
+      }
+      solver_failed = diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec) != 0;
     } else {
-      ZHEEVall(xMsize, Ham, v0, L_vec);
+      solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
     }
 #endif
     break;
@@ -314,26 +325,40 @@ struct BindStruct *X//!<[inout]
   case SOLVER_MAGMA:
 #ifdef _MAGMA
     if (myrank == 0) {
-      if (diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
-        return -1;
-      }
+      solver_failed = diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0;
     }
 #endif
     break;
 
   case SOLVER_ELPA:
 #ifdef _ELPA
-    if (lapack_diag_elpa(X, xMsize) != 0) {
-      return -1;
-    }
+    solver_failed = lapack_diag_elpa(X, xMsize) != 0;
 #endif
     break;
 
   default: /* SOLVER_LAPACK */
-    ZHEEVall(xMsize, Ham, v0, L_vec);
+    solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
     break;
   }
-  strcpy(sdt, cFileNameEigenvalue_Lanczos);
+  if (SumMPI_i(solver_failed) != 0) {
+    fprintf(stdoutMPI, "Error: FullDiag eigensolver failed; no eigenvalues are written.\n");
+#ifdef _SCALAPACK
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+    if (X->Def.iSolver == SOLVER_SCALAPACK) {
+      free(Z_vec); Z_vec = NULL; /* backend failure did not retain a grid */
+    }
+#endif
+    return -1;
+  }
+  if (X->Def.iFlgSymmetryBasis) {
+    int length = snprintf(sdt, sizeof(sdt), "%s_energy_sector.dat", X->Def.CDataFileHead);
+    if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0) {
+#ifdef _SCALAPACK
+      FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+      return -1;
+    }
+  } else strcpy(sdt, cFileNameEigenvalue_Lanczos);
   {
     int open_failed = (childfopenMPI(sdt, "w", &fp) != 0) ? 1 : 0;
 #ifdef MPI
@@ -355,8 +380,18 @@ struct BindStruct *X//!<[inout]
     }
   }
   for (i = 0; i < i_max; i++) {
-    fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
+    if (X->Def.iFlgSymmetryBasis) fprintf(fp, " %ld %.17g\n", i, creal(v0[i]));
+    else fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
   }
-  fclose(fp);
+  {
+    int failed = ferror(fp) != 0;
+    if (fclose(fp) != 0) failed = 1;
+    if (SumMPI_i(failed) != 0) {
+#ifdef _SCALAPACK
+      FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+      return -1;
+    }
+  }
   return 0;
 }

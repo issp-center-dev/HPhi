@@ -1217,6 +1217,19 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
   return SymmetryCanonicalizeState(X, state, result);
 }
 
+int ActivateSymmetryFullDiagDimension(struct BindStruct *X)
+{
+  if (X == NULL || X->Def.iCalcType != FullDiag || X->Sym == NULL ||
+      X->Sym->enabled != TRUE || X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      X->Sym->basis == NULL || X->Sym->dim == 0 || X->Sym->dim > INT_MAX ||
+      X->Sym->matvec_plan != NULL) return -1;
+  if (SymmetryBlockRange(X->Sym->dim, myrank, nproc,
+                         &X->Sym->local_offset, &X->Sym->local_dim) != 0) return -1;
+  X->Check.idim_max = X->Sym->dim;
+  X->Check.idim_maxMPI = X->Sym->dim;
+  return 0;
+}
+
 int ActivateSymmetryBasisDimension(struct BindStruct *X)
 {
   if (X->Sym != NULL && X->Sym->enabled == TRUE) {

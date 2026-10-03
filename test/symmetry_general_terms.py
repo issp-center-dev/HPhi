@@ -50,7 +50,7 @@ def tensor_operator(width, site, matrix, fermion=False):
     return result
 
 
-def prepare(model, length, nup=2, ndown=1, sector_test=None):
+def prepare(model, length, nup=2, ndown=1, sector_test=None, sector_momenta=(0, 1)):
     path = ROOT / ("{}_up{}_down{}".format(model, nup, ndown) if model == "tJ" else model)
     if path.exists():
         shutil.rmtree(str(path))
@@ -164,7 +164,7 @@ def prepare(model, length, nup=2, ndown=1, sector_test=None):
     seen_dims = 0
     sector_spectra = []
     for momentum in range(length):
-        if sector_test is not None and momentum not in (0, 1):
+        if sector_test is not None and momentum not in sector_momenta:
             continue
         projector = np.zeros_like(raw)
         rows = []

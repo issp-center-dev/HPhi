@@ -274,6 +274,10 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       if (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
         fprintf(fp, "ensemble=single_symmetry_sector\nnum_ave=%d\nlarge_value=%.17g\ninitial_vec_type=%d\n",
                 NumAve, LargeValue, def->iInitialVecType);
+      if (def->iCalcType == FullDiag)
+        fprintf(fp, "output_scope=eigenvalues\nsolver_id=%d\neigenvalue_file=%s_energy_sector.dat\nmatrix_storage=%s\n",
+                def->iSolver, def->CDataFileHead,
+                def->iSolver == SOLVER_ELPA && nproc > 1 ? "column_panel" : "replicated");
       if (ferror(fp)) error = 1;
       if (fclose(fp) != 0) error = 1;
     }

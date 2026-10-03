@@ -48,6 +48,7 @@ endmacro()
 
 add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
@@ -781,6 +782,24 @@ if(MPI_FOUND)
 endif(MPI_FOUND)
 
 # TPQ failure propagation and global normalization (including empty ranks).
+add_executable(unittest_fulldiag_failure
+    ${CMAKE_SOURCE_DIR}/test/unittest_fulldiag_failure.c
+    ${CMAKE_SOURCE_DIR}/src/CalcByFullDiag.c
+    ${CMAKE_SOURCE_DIR}/src/lapack_diag.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ProgressMessage.c)
+target_include_directories(unittest_fulldiag_failure PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+# Isolate the LAPACK caller for fault injection even in distributed-solver
+# builds. MPI stays enabled to exercise collective error propagation.
+target_compile_options(unittest_fulldiag_failure PRIVATE -U_SCALAPACK -U_ELPA -U_MAGMA)
+if(MPI_FOUND)
+    target_link_libraries(unittest_fulldiag_failure ${MPI_C_LIBRARIES})
+    add_hphi_mpi_test(unittest_fulldiag_failure_mpi min:2)
+    set_tests_properties(unittest_fulldiag_failure_mpi PROPERTIES LABELS "unit;fulldiag;mpi")
+endif()
+add_test(NAME unittest_fulldiag_failure COMMAND unittest_fulldiag_failure)
+set_tests_properties(unittest_fulldiag_failure PROPERTIES LABELS "unit;fulldiag")
+
 add_executable(unittest_tpq_failure
     ${CMAKE_SOURCE_DIR}/test/unittest_tpq_failure.c
     ${CMAKE_SOURCE_DIR}/src/MakeIniVec.c
@@ -804,6 +823,23 @@ add_hphi_test(tpq_zero_norm)
 set_tests_properties(tpq_zero_norm PROPERTIES LABELS "tpq;validation")
 add_hphi_test(symmetry_tpq)
 set_tests_properties(symmetry_tpq PROPERTIES LABELS "symmetry;tpq")
+add_hphi_test(symmetry_fulldiag)
+set_tests_properties(symmetry_fulldiag PROPERTIES LABELS "symmetry;fulldiag")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_fulldiag APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+    add_executable(scalapack_failure_check
+        ${CMAKE_SOURCE_DIR}/test/unit/scalapack_failure_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/global.c)
+    target_include_directories(scalapack_failure_check PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+    target_link_libraries(scalapack_failure_check ${SCALAPACK_LIBRARIES}
+        ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    add_hphi_mpi_test(scalapack_failure_check min:2)
+    set_tests_properties(scalapack_failure_check PROPERTIES LABELS "unit;fulldiag;scalapack;mpi" TIMEOUT 30)
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_fulldiag APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
