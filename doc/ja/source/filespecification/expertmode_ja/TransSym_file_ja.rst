@@ -206,8 +206,9 @@ TransSym指定ファイル
    spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
-   相関関数、スペクトル計算、リスタート、ハミルトニアンと固有ベクトルの入出力は
-   本ファイルと併用できません。非対応の組み合わせはエラーで終了します。
+   相関関数、スペクトル計算、リスタート、ハミルトニアン入出力は本ファイルと併用できません。
+   CGの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
+   非対応の組み合わせはエラーで終了します。
 
 セクター内TPQ
 ^^^^^^^^^^^^^
@@ -249,6 +250,48 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 ``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
 manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。
+
+セクターベクトルcheckpoint
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+expert modeのCGでは ``OutputEigenVec=1`` と ``InputEigenVec=1`` を使えます。
+ファイル名は ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat`` で、
+状態・rankの番号は0始まりです。要素を持たないrankもファイルを出力します。
+読込には、模型・固定量子数・群と指標・sector・MPI rank数・layout・局所分担・
+global indexと代表状態の対応・基底位相規約の一致が必要です。
+従来のraw基底vector、 ``InputEigenVec=2``、 ``ReStart`` は拒否します。
+CGの入力実行は与えた状態の物理量を評価し、固有状態の再計算や反復再開は行いません。
+
+生成時のHamiltonian digestは別に記録し、同一sector内のquench用に現在のHamiltonianと
+異なる場合も読み込めます。変更の有無をログへ表示します。この状態読込はsolverのrestartとは別です。
+全rankでmetadataを照合してからvector本体を検査し、成功した場合だけ計算用vectorへ反映します。
+切れたファイル、余分なデータ、非有限値、1から :math:`10^{-8}` を超えてずれたglobal normの二乗、
+checksum不一致は拒否します。異なるcheckpoint setのrankファイルも混在できません。
+
+version 1形式はendiannessに依存しません。28個のlittle-endian unsigned 64-bit wordのheaderに、
+``local_dim`` 個のIEEE binary64実部・虚部の組が続きます。添字0の未使用成分は保存しません。
+headerの順序は次のとおりです。
+
+.. code-block:: text
+
+   magic version phase scalar model nsite nup ndown ne
+   raw_dim sector_dim ranks rank layout offset local_dim group_digest
+   sector_count sector_xor sector_sum order_digest hamiltonian_digest
+   source_method state_index step time_bits payload_xor payload_sum
+
+``magic`` は8 byteの ``HPHISV1\n``、versionとphaseは1、scalarは128、layoutは
+0（replicated）または1（distributed）です。 ``offset`` は0始まりです。
+``source_method`` はCalcType番号、 ``time_bits`` はIEEE binary64の物理時刻（CGでは0）です。
+phase 1は最小代表状態に対する正規化済み
+:math:`\sum_g\overline{\chi(g)}T_g|r\rangle` で、代表状態の係数を正の実数に固定します。
+
+群・sector・Hamiltonianのfingerprintはmanifestと同じalgorithmです。order digestは所有成分順に
+1始まりのglobal index・代表整数・orbitサイズ・stabilizerサイズを各8 byteのlittle-endianで
+FNV-1a-64へ入力します。payload digestはrank・offset・局所次元（各8 byte）に続けて
+保存した実部・虚部を入力し、そのrank別hashのXORと :math:`2^{64}` を法とする和を記録します。
+これらは整合性検査用fingerprintで、暗号学的hashではありません。
+全rankの ``.part`` 一時ファイル書込成功後に正式名へ変更します。正式名への変更失敗も
+異常終了とし、readerは全rankが同じcheckpoint setに属することを検査します。
 
 セクター内FullDiag
 ^^^^^^^^^^^^^^^^^^

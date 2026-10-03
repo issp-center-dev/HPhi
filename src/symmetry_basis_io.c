@@ -338,7 +338,7 @@ static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   { Lanczos,       "Lanczos",       1,      0,   0,   0,   0,   0,    0,   0,   0   },
   { TPQCalc,       "TPQ",           1,      1,   0,   0,   0,   0,    0,   0,   0   },
   { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { CG,            "CG",            1,      1,   0,   0,   0,   0,    0,   0,   0   },
+  { CG,            "CG",            1,      1,   0,   0,   0,   1,    1,   0,   0   },
   { TimeEvolution, "TimeEvolution", 0,      0,   0,   0,   0,   0,    0,   0,   0   },
   { cTPQ,          "cTPQ",          1,      1,   0,   0,   0,   0,    0,   0,   0   },
 };
@@ -511,6 +511,10 @@ static int validate_symmetry_method_capability(const struct DefineList *def)
     return -1;
   }
   if (cap->enabled == 0) return reject_unsupported_method(cap);
+  if (def->iCalcType == CG && def->iInputEigenVec > 1) {
+    fprintf(stdoutMPI, "Error: TransSym CG supports binary sector checkpoint InputEigenVec=1 only.\n");
+    return -1;
+  }
   if (def->iCalcType == FullDiag &&
       (def->iSolver == SOLVER_MAGMA || def->iExpecMode != EXPECMODE_SERIAL)) {
     fprintf(stdoutMPI, "Error: TransSym FullDiag supports LAPACK/ScaLAPACK/ELPA eigenvalues only; MAGMA and ExpecMode are not supported.\n");
