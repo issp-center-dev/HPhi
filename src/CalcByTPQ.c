@@ -238,7 +238,11 @@ int CalcByTPQ(
       /**@brief
       Initialize v1 and compute v0 = H*v1
       */
-      FirstMultiply(rand_i, &(X->Bind));
+      iret = FirstMultiply(rand_i, &(X->Bind));
+      if (iret != 0) {
+        StopTimer(3100);
+        return -1;
+      }
       inv_temp = 0.0;
       StopTimer(3100);
       if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
@@ -314,8 +318,9 @@ int CalcByTPQ(
       TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
       StopTimer(3600);
       StartTimer(3500);
-      Multiply(&(X->Bind));
+      iret = Multiply(&(X->Bind));
       StopTimer(3500);
+      if (iret != 0) return -1;
 
       StartTimer(3200);
       iret=expec_energy_flct(&(X->Bind));

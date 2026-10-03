@@ -780,6 +780,29 @@ if(MPI_FOUND)
         PROPERTIES SKIP_RETURN_CODE 77 LABELS "unit;fulldiag;expecmode;mpi")
 endif(MPI_FOUND)
 
+# TPQ failure propagation and global normalization (including empty ranks).
+add_executable(unittest_tpq_failure
+    ${CMAKE_SOURCE_DIR}/test/unittest_tpq_failure.c
+    ${CMAKE_SOURCE_DIR}/src/MakeIniVec.c
+    ${CMAKE_SOURCE_DIR}/src/FirstMultiply.c
+    ${CMAKE_SOURCE_DIR}/src/Multiply.c
+    ${CMAKE_SOURCE_DIR}/src/dSFMT.c)
+target_include_directories(unittest_tpq_failure PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_tpq_failure PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_tpq_failure m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_tpq_failure ${MPI_C_LIBRARIES})
+    add_hphi_mpi_test(unittest_tpq_failure_mpi min:2)
+    set_tests_properties(unittest_tpq_failure_mpi PROPERTIES LABELS "unit;tpq;mpi")
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_tpq_failure OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_tpq_failure COMMAND unittest_tpq_failure)
+set_tests_properties(unittest_tpq_failure PROPERTIES LABELS "unit;tpq")
+add_hphi_test(tpq_zero_norm)
+set_tests_properties(tpq_zero_norm PROPERTIES LABELS "tpq;validation")
+
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
     ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)

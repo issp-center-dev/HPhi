@@ -19,6 +19,8 @@
 #include "Multiply.h"
 #include "wrapperMPI.h"
 #include "mltply.h"
+#include <limits.h>
+#include <math.h>
 
 /**
  * @file   Multiply.c
@@ -48,6 +50,12 @@ int Multiply
   double complex dnorm;
   double Ns;
 
+  int invalid = X == NULL || v0 == NULL || v1 == NULL || !isfinite(LargeValue);
+  if (!invalid && (X->Check.idim_max > LONG_MAX || X->Def.NsiteMPI == 0)) invalid = 1;
+  if (SumMPI_i(invalid) != 0) {
+    fprintf(stdoutMPI, "Error: invalid mTPQ step storage or scaling parameters.\n");
+    return -1;
+  }
   i_max=X->Check.idim_max;      
   Ns = 1.0*X->Def.NsiteMPI;
  // mltply is in expec_energy.c v0=H*v1
@@ -58,6 +66,10 @@ int Multiply
     dnorm += conj(v0[i])*v0[i];
   }
   dnorm=SumMPI_dc(dnorm);
+  if (!isfinite(creal(dnorm)) || !isfinite(cimag(dnorm)) || creal(dnorm) <= 0.0) {
+    fprintf(stdoutMPI, "Error: mTPQ step has zero or non-finite global norm.\n");
+    return -1;
+  }
   dnorm=sqrt(dnorm);
   global_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)

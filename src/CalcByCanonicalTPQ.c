@@ -306,7 +306,11 @@ int CalcByCanonicalTPQ(
             /**@brief
              Initialize v1 and v0 = v1
             */
-            MakeIniVec(rand_i, &(X->Bind)); 
+            iret = MakeIniVec(rand_i, &(X->Bind));
+            if (iret != 0) {
+                StopTimer(3100);
+                return -1;
+            }
             /*[s] tau*/
             inv_temp  = 0.0;
             delta_tau = 1.0/LargeValue;
