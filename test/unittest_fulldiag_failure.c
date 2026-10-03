@@ -23,6 +23,7 @@ int SumMPI_i(int value)
 #endif
 }
 int makeHam(struct BindStruct *x) { (void)x; return build_failed ? -1 : 0; }
+int makeHamSym(const struct BindStruct *x) { (void)x; return build_failed ? -1 : 0; }
 int inputHam(struct BindStruct *x) { (void)x; return input_failed ? -1 : 0; }
 int outputHam(struct BindStruct *x) { (void)x; return 0; }
 void phys(struct BindStruct *x, unsigned long n) { (void)x; (void)n; ++phys_calls; }

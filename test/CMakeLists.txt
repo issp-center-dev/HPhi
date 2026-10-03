@@ -823,6 +823,23 @@ add_hphi_test(tpq_zero_norm)
 set_tests_properties(tpq_zero_norm PROPERTIES LABELS "tpq;validation")
 add_hphi_test(symmetry_tpq)
 set_tests_properties(symmetry_tpq PROPERTIES LABELS "symmetry;tpq")
+add_hphi_test(symmetry_fulldiag)
+set_tests_properties(symmetry_fulldiag PROPERTIES LABELS "symmetry;fulldiag")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_fulldiag APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+    add_executable(scalapack_failure_check
+        ${CMAKE_SOURCE_DIR}/test/unit/scalapack_failure_check.c
+        ${CMAKE_SOURCE_DIR}/src/matrixscalapack.c
+        ${CMAKE_SOURCE_DIR}/src/global.c)
+    target_include_directories(scalapack_failure_check PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+    target_link_libraries(scalapack_failure_check ${SCALAPACK_LIBRARIES}
+        ${LAPACK_LIBRARIES} ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${HPHI_FORTRAN_RUNTIME_LIBRARIES} m)
+    add_hphi_mpi_test(scalapack_failure_check min:2)
+    set_tests_properties(scalapack_failure_check PROPERTIES LABELS "unit;fulldiag;scalapack;mpi" TIMEOUT 30)
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_fulldiag APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite

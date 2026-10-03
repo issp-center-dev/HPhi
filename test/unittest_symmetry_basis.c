@@ -3271,6 +3271,17 @@ static void assert_dense_builder_matches_raw(struct BindStruct *X, const char *l
   X->Sym->basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
   assert_ulong_eq(makeHamSym(X) == -1, 1, "dense builder requires replicated metadata");
   X->Sym->basis_layout = SYMMETRY_BASIS_REPLICATED;
+  {
+    int original_method = X->Def.iCalcType;
+    X->Def.iCalcType = FullDiag;
+    assert_ulong_eq(ActivateSymmetryFullDiagDimension(X) == 0, 1, "FullDiag activation");
+    assert_ulong_eq(X->Check.idim_max, n, "FullDiag global work dimension");
+    assert_ulong_eq(X->Check.idim_maxMPI, n, "FullDiag global MPI dimension");
+    X->Sym->basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
+    assert_ulong_eq(ActivateSymmetryFullDiagDimension(X) == -1, 1, "FullDiag rejects distributed metadata");
+    X->Sym->basis_layout = SYMMETRY_BASIS_REPLICATED;
+    X->Def.iCalcType = original_method;
+  }
   for (row = 0; row <= n; ++row) free(reference[row]);
   free(reference);
 }

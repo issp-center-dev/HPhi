@@ -14,6 +14,9 @@
 /* You should have received a copy of the GNU General Public License */
 /* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "matrixscalapack.h"
+#include <limits.h>
+#include <math.h>
+#include <stdint.h>
 /**
  * @file matrixscalapack.c
  * @version 3.1
@@ -197,78 +200,83 @@ void GetEigenVector(long int i, long int m, double complex *Z, int *descZ, doubl
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  * @author Yusuke Konishi (Academeia Co., Ltd.)
  */
-int diag_scalapack_cmp(long int xNsize, double complex **A, 
-                       double complex *r, double complex *Z, int *descZ) {
-  const int i_one=1, i_zero=0;
-  const long int i_negone=-1;
-  const double zero=0.0, one=1.0;
-  long int m, n, mb, nb;
-  int nprow, npcol;
-  int myrow, mycol, info, lld;
-  long int mp, nq;
-  int ictxt;
-  complex double *A_distr, *work, *rwork;
-  double *W;
-  int descA_distr[9];
-  int rank, size, iam, nprocs;
-  long int lwork, lrwork;
-  int dims[2]={0,0};
-  long int i, j, ip, jp;
-  m=n=xNsize;
+static int scalapack_any_error(int local_error)
+{
+  int error = 0;
+  if (MPI_Allreduce(&local_error, &error, 1, MPI_INT, MPI_MAX,
+                    MPI_COMM_WORLD) != MPI_SUCCESS) return 1;
+  return error;
+}
 
+int diag_scalapack_cmp(long int xNsize, double complex **A,
+                       double complex *r, double complex *Z, int *descZ) {
+  const int i_one = 1, i_zero = 0, blacs_default = -1;
+  const long int query = -1;
+  long int n = xNsize, mb, mp, nq, lwork, lrwork, i, j;
+  int nprow, npcol, myrow, mycol, info, info_a, lld, ictxt;
+  int rank, size, iam, nprocs, dims[2] = {0, 0};
+  double complex *A_distr = NULL, *work = NULL, wkopt = 0;
+  double *W = NULL, *rwork = NULL, rwkopt = 0;
+  int descA[9];
+  size_t entries;
+  int invalid = n <= 0 || n > INT_MAX || A == NULL || r == NULL ||
+                Z == NULL || descZ == NULL || use_scalapack != 0;
+  if (!invalid)
+    for (i = 0; i < n; ++i) if (A[i] == NULL) invalid = 1;
+  if (scalapack_any_error(invalid)) return -1;
+  descZ[1] = -1;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  MPI_Dims_create(size,2,dims);
-  nprow=dims[0]; npcol=dims[1];
- 
-  blacs_pinfo_(&iam, &nprocs); 
-  blacs_get_((int *)&i_negone, &i_zero, &ictxt);
+  MPI_Dims_create(size, 2, dims);
+  nprow = dims[0]; npcol = dims[1];
+  blacs_pinfo_(&iam, &nprocs);
+  blacs_get_(&blacs_default, &i_zero, &ictxt);
   blacs_gridinit_(&ictxt, "R", &nprow, &npcol);
   blacs_gridinfo_(&ictxt, &nprow, &npcol, &myrow, &mycol);
- 
-  mb = GetBlockSize(m, size);
-  nb = GetBlockSize(n, size);
-
-  mp = numroc_(&m, &mb, &myrow, &i_zero, &nprow);
-  nq = numroc_(&n, &nb, &mycol, &i_zero, &npcol);
-  W = malloc(n*sizeof(double));
-  A_distr = malloc(mp*nq*sizeof(complex double));
-
-  lld = (mp>0) ? mp : 1;
-  descinit_(descA_distr, &m, &n, &mb, &nb, &i_zero, &i_zero, &ictxt, &lld, &info);
-  descinit_(descZ, &m, &n, &mb, &nb, &i_zero, &i_zero, &ictxt, &lld, &info);
-
-  for(i=0; i<m; i++){
-    for(j=0; j<n; j++){
-      DivMat(i, j, A[i][j], A_distr, descA_distr);
-    }
+  mb = GetBlockSize(n, size);
+  mp = numroc_(&n, &mb, &myrow, &i_zero, &nprow);
+  nq = numroc_(&n, &mb, &mycol, &i_zero, &npcol);
+  invalid = mp < 0 || nq < 0 ||
+            (nq > 0 && (size_t)mp > SIZE_MAX / (size_t)nq / sizeof(*A_distr));
+  if (scalapack_any_error(invalid)) goto fail;
+  entries = (size_t)mp * (size_t)nq;
+  W = malloc((size_t)n * sizeof(*W));
+  A_distr = malloc((entries ? entries : 1) * sizeof(*A_distr));
+  if (scalapack_any_error(W == NULL || A_distr == NULL)) goto fail;
+  lld = mp > 0 ? (int)mp : 1;
+  descinit_(descA, &n, &n, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info_a);
+  descinit_(descZ, &n, &n, &mb, &mb, &i_zero, &i_zero, &ictxt, &lld, &info);
+  if (scalapack_any_error(info_a != 0 || info != 0)) goto fail;
+  for (i = 0; i < n; ++i)
+    for (j = 0; j < n; ++j) DivMat(i, j, A[i][j], A_distr, descA);
+  pzheev_("V", "U", &n, A_distr, &i_one, &i_one, descA, W, Z,
+           &i_one, &i_one, descZ, &wkopt, &query, &rwkopt, &query, &info);
+  invalid = info != 0 || !isfinite(creal(wkopt)) || !isfinite(rwkopt) ||
+            creal(wkopt) < 1 || rwkopt < 1 ||
+            creal(wkopt) > INT_MAX || rwkopt > INT_MAX;
+  if (scalapack_any_error(invalid)) {
+    if (rank == 0) fprintf(stderr, "Error: ScaLAPACK workspace query failed.\n");
+    goto fail;
   }
-
-  double complex wkopt, rwkopt;
-  pzheev_("V", "U", &n, A_distr, &i_one, &i_one, descA_distr, W, Z, &i_one, &i_one, descZ, &wkopt, &i_negone, &rwkopt, &i_negone, &info);
-
-  lwork = (long int)wkopt;
-  lrwork = (long int)rwkopt;
-  work = malloc(lwork*sizeof(complex double));
-  rwork = malloc(lrwork*sizeof(complex double));
-
-
-  pzheev_("V", "U", &n, A_distr, &i_one, &i_one, descA_distr, W, Z, &i_one, &i_one, descZ, work, &lwork, rwork, &lrwork, &info);
-
-  if(rank == 0){
-    for(i=0; i<n; i++){
-      r[i] = W[i];
-    }
+  lwork = (long)creal(wkopt); lrwork = (long)rwkopt;
+  work = malloc((size_t)lwork * sizeof(*work));
+  rwork = malloc((size_t)lrwork * sizeof(*rwork));
+  if (scalapack_any_error(work == NULL || rwork == NULL)) goto fail;
+  pzheev_("V", "U", &n, A_distr, &i_one, &i_one, descA, W, Z,
+           &i_one, &i_one, descZ, work, &lwork, rwork, &lrwork, &info);
+  if (scalapack_any_error(info != 0)) {
+    if (rank == 0) fprintf(stderr, "Error: ScaLAPACK diagonalization failed.\n");
+    goto fail;
   }
-
-  free(A_distr);
-  free(work);
-  free(rwork);
-  free(W);
-
-  use_scalapack = 1;
-
+  if (rank == 0) for (i = 0; i < n; ++i) r[i] = W[i];
+  free(A_distr); free(work); free(rwork); free(W);
+  use_scalapack = 1; /* descZ's grid remains alive until eigenvectors are freed. */
   return 0;
+fail:
+  free(A_distr); free(work); free(rwork); free(W);
+  blacs_gridexit_(&ictxt);
+  descZ[1] = -1;
+  return -1;
 }
 
 /* Cached destination grid for GetEigenVectorBlock: a 1x1 BLACS grid

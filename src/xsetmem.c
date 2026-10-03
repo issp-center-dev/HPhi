@@ -243,7 +243,8 @@ int setmem_large
 
   if (use_symmetry_storage) {
     if (X->Sym == NULL || X->Sym->enabled != TRUE ||
-        X->Check.idim_max != X->Sym->local_dim ||
+        X->Check.idim_max != (X->Def.iCalcType == FullDiag ? X->Sym->dim : X->Sym->local_dim) ||
+        (X->Def.iCalcType == FullDiag && X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) ||
         X->Check.idim_maxMPI != X->Sym->dim ||
         X->Check.idim_max == ULONG_MAX ||
         list_1 != NULL || list_1buf != NULL ||
@@ -366,7 +367,8 @@ int setmem_large
 #endif
       {
         Ham = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
-        L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
+        if (!(X->Def.iSolver == SOLVER_SCALAPACK && nproc > 1))
+          L_vec = cd_2d_allocate(X->Check.idim_max + 1, X->Check.idim_max + 1);
       }
 
     if (X->Phys.all_num_down == NULL
@@ -378,11 +380,18 @@ int setmem_large
       return -1;
     }
     if (!iHamPanelActive) {
+      int need_lvec = !(X->Def.iSolver == SOLVER_SCALAPACK && nproc > 1);
+      if (Ham == NULL || (need_lvec && L_vec == NULL)) return -1;
       for (j = 0; j < X->Check.idim_max + 1; j++) {
-        if (Ham[j] == NULL || L_vec[j] == NULL) {
+        if (Ham[j] == NULL || (need_lvec && L_vec[j] == NULL)) {
           return -1;
         }
       }
+    }
+    if (use_symmetry_storage) {
+      fprintf(stdoutMPI, "Symmetry FullDiag storage: dimension=%lu metadata=replicated matrix=%s eigenvectors=%s raw_basis_elements=0\n",
+              X->Check.idim_max, iHamPanelActive ? "column_panel" : "replicated",
+              L_vec == NULL ? "distributed" : "replicated");
     }
   } else if (X->Def.iCalcType == CG) {
       X->Phys.all_num_down = d_1d_allocate(X->Def.k_exct);

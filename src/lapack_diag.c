@@ -307,10 +307,14 @@ struct BindStruct *X//!<[inout]
       mb = GetBlockSize(xMsize, size);
       mp = numroc_(&xMsize, &mb, &myrow, &i_zero, &nprow);
       nq = numroc_(&xMsize, &mb, &mycol, &i_zero, &npcol);
-      Z_vec = malloc(mp * nq * sizeof(complex double));
+      Z_vec = malloc(((mp * nq > 0) ? mp * nq : 1) * sizeof(complex double));
       /* diag_scalapack_cmp() builds the equivalent grid recorded in
          descZ_vec. This temporary sizing grid is no longer needed. */
       blacs_gridexit_(&ictxt);
+      if (SumMPI_i(Z_vec == NULL) != 0) {
+        free(Z_vec); Z_vec = NULL;
+        return -1;
+      }
       solver_failed = diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec) != 0;
     } else {
       solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
@@ -340,10 +344,21 @@ struct BindStruct *X//!<[inout]
     fprintf(stdoutMPI, "Error: FullDiag eigensolver failed; no eigenvalues are written.\n");
 #ifdef _SCALAPACK
     FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+    if (X->Def.iSolver == SOLVER_SCALAPACK) {
+      free(Z_vec); Z_vec = NULL; /* backend failure did not retain a grid */
+    }
 #endif
     return -1;
   }
-  strcpy(sdt, cFileNameEigenvalue_Lanczos);
+  if (X->Def.iFlgSymmetryBasis) {
+    int length = snprintf(sdt, sizeof(sdt), "%s_energy_sector.dat", X->Def.CDataFileHead);
+    if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0) {
+#ifdef _SCALAPACK
+      FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+      return -1;
+    }
+  } else strcpy(sdt, cFileNameEigenvalue_Lanczos);
   {
     int open_failed = (childfopenMPI(sdt, "w", &fp) != 0) ? 1 : 0;
 #ifdef MPI
@@ -365,8 +380,18 @@ struct BindStruct *X//!<[inout]
     }
   }
   for (i = 0; i < i_max; i++) {
-    fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
+    if (X->Def.iFlgSymmetryBasis) fprintf(fp, " %ld %.17g\n", i, creal(v0[i]));
+    else fprintf(fp, " %ld %.10lf \n", i, creal(v0[i]));
   }
-  fclose(fp);
+  {
+    int failed = ferror(fp) != 0;
+    if (fclose(fp) != 0) failed = 1;
+    if (SumMPI_i(failed) != 0) {
+#ifdef _SCALAPACK
+      FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+      return -1;
+    }
+  }
   return 0;
 }

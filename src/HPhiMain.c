@@ -729,6 +729,7 @@ static void report_symmetry_basis_layout_selection(
     reason = X->Def.iCalcType == CG
                  ? "default for TransSym CG"
                  : X->Def.iCalcType == TPQCalc ? "default for TransSym TPQ"
+                 : X->Def.iCalcType == FullDiag ? "default for TransSym FullDiag"
                  : "default outside TransSym CG";
   } else if (layout == SYMMETRY_BASIS_REPLICATED &&
              X->Def.iCalcType == CG) {
@@ -880,7 +881,9 @@ int main(int argc, char* argv[]){
         exitMPI(-1);
       }
       StartTimer(1114);
-      if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
+      if ((X.Bind.Def.iCalcType == FullDiag
+               ? ActivateSymmetryFullDiagDimension(&(X.Bind))
+               : ActivateSymmetryBasisDimension(&(X.Bind))) != 0) {
         StopTimer(1114);
         StopTimer(1100);
         exitMPI(-1);
@@ -906,14 +909,16 @@ int main(int argc, char* argv[]){
     }
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StopTimer(1113);
-      StartTimer(1101);
-      if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
-               ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
-               : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
+      if (X.Bind.Def.iCalcType != FullDiag) {
+        StartTimer(1101);
+        if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
+                 ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
+                 : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
+          StopTimer(1101);
+          exitMPI(-1);
+        }
         StopTimer(1101);
-        exitMPI(-1);
       }
-      StopTimer(1101);
     } else {
       StartTimer(1000);
       if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){

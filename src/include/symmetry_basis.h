@@ -180,6 +180,8 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
                                   unsigned long int state,
                                   struct SymmetryCanonicalResult *result);
 int ActivateSymmetryBasisDimension(struct BindStruct *X);
+/* FullDiag owns global-sized work vectors; matvec ownership stays separate. */
+int ActivateSymmetryFullDiagDimension(struct BindStruct *X);
 int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
                                unsigned long int global_index,
                                unsigned long int *local_index);

@@ -544,19 +544,6 @@ int ReadcalcmodFile(
     return (-1);
   }
 
-  /* SpinlessFermion / SpinlessFermionGC are not supported for FullDiag in this
-     version: makeHam has no spinless branch, so the hopping (Trans) term is
-     silently dropped from the FullDiag Hamiltonian, and the FullDiag phys
-     output never populates the particle number for these models. Both make the
-     published results incorrect, so reject the combination at startup rather
-     than compute (and write out) wrong physics. Full support is tracked
-     separately. */
-  if (X->iCalcType == FullDiag &&
-      (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC)) {
-    fprintf(stdoutMPI, cErrSpinlessFullDiag, defname);
-    return (-1);
-  }
-
   /* CalcSpectrumByFullDiag() (src/CalcSpectrumByFullDiag.c) reads eigenvectors
      out of L_vec after calling lapack_diag(). SOLVER_ELPA never fills L_vec
      (eigenvectors stay distributed in Z_vec; see lapack_diag_elpa()), and
@@ -1308,6 +1295,15 @@ int ReadDefFileNInt(
     }
     /*=======================================================================*/
     fclose(fp);
+  }
+
+  /* TransSym is read after CalcMod. Only the sector-specific dense builder
+     supports canonical spinless FullDiag; the raw makeHam path still does not. */
+  if (X->iCalcType == FullDiag &&
+      (X->iCalcModel == SpinlessFermionGC ||
+       (X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis == FALSE))) {
+    fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
+    return -1;
   }
 
   if (iReadNup != iReadNdown) {
