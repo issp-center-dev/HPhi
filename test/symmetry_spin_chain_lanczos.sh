@@ -263,7 +263,7 @@ if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     exit 1
 fi
 grep -q \
-    "distributed symmetry basis is supported for TransSym CG runs only" \
+    "distributed symmetry basis is supported for TransSym TPQ and CG runs only" \
     symmetry_distributed_lanczos_reject.log
 
 run_mpi_symmetry_case() {

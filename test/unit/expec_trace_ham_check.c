@@ -194,6 +194,12 @@ static void run_matrix_fixture(const char *label, const char *subdir,
   }
   n = (long int)X.Check.idim_max;
 
+  if (X.Def.iCalcModel == Spin && X.Def.iFlgGeneralSpin == FALSE) {
+    X.Def.iFlgSymmetryBasis = TRUE; /* no Sym runtime: matvec must fail */
+    expect_true("energy evaluation propagates symmetry matvec failure",
+                expec_energy_flct(&X) == -1);
+    X.Def.iFlgSymmetryBasis = FALSE;
+  }
   if (X.Def.iCalcModel == Hubbard) {
     double d, number, spin;
     expect_true("coefficient helper rejects null definition",

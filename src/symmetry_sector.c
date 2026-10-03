@@ -271,6 +271,9 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
               def->NHundCoupling, def->NExchangeCoupling, def->NIsingCoupling,
               def->NPairHopping, def->EDNChemi, def->NInterAll_Diagonal, def->NInterAll_OffDiagonal,
               def->k_exct, def->Lanczos_max, def->LanczosEps, def->initial_iv);
+      if (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
+        fprintf(fp, "ensemble=single_symmetry_sector\nnum_ave=%d\nlarge_value=%.17g\ninitial_vec_type=%d\n",
+                NumAve, LargeValue, def->iInitialVecType);
       if (ferror(fp)) error = 1;
       if (fclose(fp) != 0) error = 1;
     }

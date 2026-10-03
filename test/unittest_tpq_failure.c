@@ -94,6 +94,35 @@ int main(int argc, char **argv)
   nthreads = omp_get_max_threads();
 #endif
   stdoutMPI = stdout;
+  /* Test-only oracle input: expose the existing RNG without adding a product
+   * vector-output option. Python applies an independently constructed H_q. */
+  if (argc == 6 && strcmp(argv[1], "--dump-initial") == 0) {
+    unsigned long dim = strtoul(argv[2], NULL, 10), j;
+    int sample, samples = atoi(argv[5]);
+    x.Check.idim_max = dim / nproc + ((unsigned long)myrank < dim % nproc);
+    x.Def.iInitialVecType = atoi(argv[3]);
+    x.Def.initial_iv = strtol(argv[4], NULL, 10);
+    v0 = calloc(x.Check.idim_max + 1, sizeof(*v0));
+    v1 = calloc(x.Check.idim_max + 1, sizeof(*v1));
+    require(v0 != NULL && v1 != NULL, "oracle vector allocation");
+    for (sample = 0; sample < samples; ++sample) {
+      char name[128];
+      FILE *fp;
+      require(MakeIniVec(sample, &x) == 0, "oracle initialization");
+      snprintf(name, sizeof(name), "initial_%d_rank%d.dat", sample, myrank);
+      fp = fopen(name, "w");
+      require(fp != NULL, "oracle file open");
+      fprintf(fp, "%.17g\n", global_1st_norm);
+      for (j = 1; j <= x.Check.idim_max; ++j)
+        fprintf(fp, "%.17g %.17g\n", creal(v1[j]), cimag(v1[j]));
+      require(fclose(fp) == 0, "oracle file close");
+    }
+    free(v0); free(v1);
+#ifdef MPI
+    MPI_Finalize();
+#endif
+    return 0;
+  }
   v0 = a; v1 = b; v2 = c;
   x.Def.NsiteMPI = 2;
   x.Def.initial_iv = 7;

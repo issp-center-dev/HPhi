@@ -50,7 +50,7 @@ def tensor_operator(width, site, matrix, fermion=False):
     return result
 
 
-def prepare(model, length, nup=2, ndown=1):
+def prepare(model, length, nup=2, ndown=1, sector_test=None):
     path = ROOT / ("{}_up{}_down{}".format(model, nup, ndown) if model == "tJ" else model)
     if path.exists():
         shutil.rmtree(str(path))
@@ -159,10 +159,13 @@ def prepare(model, length, nup=2, ndown=1):
         (path / "calc.def").write_text((path / "calc.def").read_text().replace("CalcModel 7", "CalcModel 0"))
         (path / "mod.def").write_text((path / "mod.def").read_text().replace(
             "Ncond {}".format(length//2), "Nup {}\nNdown 0".format(length//2)))
-    np.testing.assert_allclose(run(path, "raw", symmetry=False), np.linalg.eigvalsh(raw), atol=2e-8, rtol=0)
+    if sector_test is None:
+        np.testing.assert_allclose(run(path, "raw", symmetry=False), np.linalg.eigvalsh(raw), atol=2e-8, rtol=0)
     seen_dims = 0
     sector_spectra = []
     for momentum in range(length):
+        if sector_test is not None and momentum not in (0, 1):
+            continue
         projector = np.zeros_like(raw)
         rows = []
         for g in range(length):
@@ -187,6 +190,9 @@ def prepare(model, length, nup=2, ndown=1):
         expected = np.linalg.eigvalsh(basis.conj().T @ raw @ basis)
         sector_spectra.append(expected)
         settings(3, dim_sector)
+        if sector_test is not None:
+            sector_test(path, model, length, momentum, states, raw, projector)
+            continue
         for layout in ["replicated", "distributed"]:
             result = run(path, "k{}_{}".format(momentum, layout), layout=layout)
             np.testing.assert_allclose(result, expected, atol=3e-8, rtol=0)
@@ -198,6 +204,8 @@ def prepare(model, length, nup=2, ndown=1):
                 doublons = [float(line.split()[1]) for line in (path / "output/zvo_energy.dat").read_text().splitlines()
                             if line.lstrip().startswith("Doublon ")]
                 assert len(doublons) == dim_sector and max(map(abs, doublons)) < 1e-12
+    if sector_test is not None:
+        return
     assert seen_dims == len(states)
     if model == "SpinlessFermion":
         assert np.max(np.abs(sector_spectra[1] - sector_spectra[-1])) > 0.1
@@ -227,7 +235,8 @@ def prepare(model, length, nup=2, ndown=1):
     print("{}: {} raw levels and all {} momentum sectors verified".format(model, len(states), length))
 
 
-for model, length in [("Spin", 6), ("SpinlessFermion", 6), ("Hubbard", 4), ("tJ", 4)]:
-    prepare(model, length)
-prepare("tJ", 4, 1, 1)
-prepare("tJ", 4, 2, 2)
+if __name__ == "__main__":
+    for model, length in [("Spin", 6), ("SpinlessFermion", 6), ("Hubbard", 4), ("tJ", 4)]:
+        prepare(model, length)
+    prepare("tJ", 4, 1, 1)
+    prepare("tJ", 4, 2, 2)

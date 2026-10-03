@@ -255,13 +255,17 @@ int setmem_large
     if (vector_length > ULLONG_MAX / 3ULL) return -1;
     X->Sym->allocation_raw_basis_list_elements = 0ULL;
     X->Sym->allocation_raw_diagonal_elements = 0ULL;
-    X->Sym->allocation_initial_vector_elements = 3ULL * vector_length;
+    X->Sym->allocation_initial_vector_elements =
+        (X->Def.iCalcType == TPQCalc || X->Def.iCalcType == cTPQ)
+            ? 2ULL * vector_length + 1ULL : 3ULL * vector_length;
 #ifdef MPI
     X->Sym->allocation_mpi_vector_buffer_elements = 1ULL;
 #else
     X->Sym->allocation_mpi_vector_buffer_elements = 0ULL;
 #endif
-    X->Sym->allocation_auxiliary_vector_elements = 1ULL;
+    X->Sym->allocation_auxiliary_vector_elements =
+        (X->Def.iCalcType == TimeEvolution || X->Def.iCalcType == cTPQ)
+            ? vector_length : 1ULL;
   }
 
   if (!use_symmetry_storage && GetlistSize(X) == TRUE) {

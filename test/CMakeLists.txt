@@ -802,6 +802,8 @@ add_test(NAME unittest_tpq_failure COMMAND unittest_tpq_failure)
 set_tests_properties(unittest_tpq_failure PROPERTIES LABELS "unit;tpq")
 add_hphi_test(tpq_zero_norm)
 set_tests_properties(tpq_zero_norm PROPERTIES LABELS "tpq;validation")
+add_hphi_test(symmetry_tpq)
+set_tests_properties(symmetry_tpq PROPERTIES LABELS "symmetry;tpq")
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite

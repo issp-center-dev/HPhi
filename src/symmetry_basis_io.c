@@ -317,7 +317,7 @@ static int has_fixed_spinful_sector(const struct DefineList *def)
  *   ham_input           InputHam.
  *
  * Every feature column is 0 for every method in this version, so TransSym
- * runs output energy/norm/convergence only.
+ * runs output energy/norm/convergence, or TPQ SS/Norm/Flct, only.
  */
 struct SymmetryMethodCapability {
   int calc_type;
@@ -336,7 +336,7 @@ struct SymmetryMethodCapability {
 static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
   { Lanczos,       "Lanczos",       1,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { TPQCalc,       "TPQ",           0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { TPQCalc,       "TPQ",           1,      1,   0,   0,   0,   0,    0,   0,   0   },
   { FullDiag,      "FullDiag",      0,      0,   0,   0,   0,   0,    0,   0,   0   },
   { CG,            "CG",            1,      1,   0,   0,   0,   0,    0,   0,   0   },
   { TimeEvolution, "TimeEvolution", 0,      0,   0,   0,   0,   0,    0,   0,   0   },
@@ -519,7 +519,9 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 {
   const struct SymmetryMethodCapability *cap =
       find_symmetry_method_capability(def->iCalcType);
-  static const char correlation_reason[] = "it outputs energy/norm/convergence only";
+  const char *correlation_reason = def->iCalcType == TPQCalc
+      ? "sector TPQ outputs SS/Norm/Flct only"
+      : "it outputs energy/norm/convergence only";
   const struct SymmetryOptionGate gates[] = {
     { "spectrum calculations",
       "CalcSpec is not available in this version",
@@ -542,6 +544,9 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
       symmetry_method_supports(cap, cap->correlation) },
     { "correlation functions (NBodyG)", correlation_reason,
       def->NNBodyG > 0,
+      symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (AnomalousG)", correlation_reason,
+      def->NAnomalousG > 0,
       symmetry_method_supports(cap, cap->correlation) },
   };
   return reject_first_unsupported_option(
