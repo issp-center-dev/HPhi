@@ -254,7 +254,7 @@ TPQ法で使用するパラメータ
 
    .. math:: U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .
 
-   詳しくは, :ref:`Ch:algorithm`を参照してください.
+   詳しくは, :ref:`Ch:algorithm` を参照してください.
 
  
 
@@ -387,6 +387,8 @@ TPQ法で使用するパラメータ
 
 -  ``ExpandCoef``
 
+   実時間発展では指定が必須です。 ``INT_MAX`` 未満の正の整数を指定してください。
+
    **形式 :** int型 (自然数)
 
    **説明 :** 微小時間\ :math:`\Delta t`\ に対して実時間発展を行う際の
@@ -403,6 +405,9 @@ TPQ法で使用するパラメータ
    頻度を上げると計算コストが増大するので注意してください。
 
 -  ``OutputInterval``
+
+   ``OutputEigenVec=1`` の場合は正の値が必要です。明示指定したintervalと反復回数は
+   ``INT_MAX`` 未満の有限な整数に限ります。
 
    **形式 :** int型 (自然数)
 

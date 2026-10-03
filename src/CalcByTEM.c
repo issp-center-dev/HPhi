@@ -60,9 +60,33 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "HPhiTrans.h"
+#include <math.h>
+#include <limits.h>
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
+
+static int write_raw_te_vector(struct BindStruct *X, int label, int next_step)
+{
+  char name[D_FileNameMax];
+  FILE *fp = NULL;
+  int length = snprintf(name, sizeof(name), "%s_eigenvec_%d_rank_%d.dat",
+                        X->Def.CDataFileHead, label, myrank);
+  int failed = length < 0 || (size_t)length + strlen(cParentOutputFolder) >= sizeof(name);
+  if (SumMPI_i(failed) != 0) return -1;
+  failed = childfopenALL(name, "wb", &fp) != 0;
+  if (!failed) {
+    failed = fwrite(&next_step, sizeof(next_step), 1, fp) != 1 ||
+             fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp) != 1 ||
+             fwrite(v1, sizeof(*v1), X->Check.idim_max + 1, fp) != X->Check.idim_max + 1;
+    if (fclose(fp) != 0) failed = 1;
+  }
+  if (SumMPI_i(failed) != 0) {
+    fprintf(stdoutMPI, "Error: failed to write TE vector on one or more ranks.\n");
+    return -1;
+  }
+  return 0;
+}
 
 /**
  * @brief Main driver for real-time evolution calculation
@@ -95,7 +119,7 @@ int CalcByTEM(
         const int ExpecInterval,
         struct EDMainCalStruct *X
 ) {
-  char *defname;
+  char *defname = NULL;
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
@@ -103,13 +127,37 @@ int CalcByTEM(
   int rand_i=0;
   int step_initial = 0;
   long int i_max = 0;
-  FILE *fp;
+  FILE *fp = NULL;
   double Time = X->Bind.Def.Param.Tinit;
   double dt = ((X->Bind.Def.NLaser==0)? 0.0: X->Bind.Def.Param.TimeSlice);
 
+  int invalid = X->Bind.Def.Param.ExpandCoef < 1 ||
+                X->Bind.Def.Param.ExpandCoef == INT_MAX || ExpecInterval <= 0 ||
+                (X->Bind.Def.iOutputEigenVec && X->Bind.Def.Param.OutputInterval <= 0);
+  if (SumMPI_i(invalid) != 0) {
+    fprintf(stdoutMPI, "Error: TE requires positive ExpandCoef, ExpecInterval and vector OutputInterval.\n");
+    return -1;
+  }
+  if (!isfinite(Time) || !isfinite(dt) || dt < 0) {
+    fprintf(stdoutMPI, "Error: TE requires finite initial time and nonnegative time step.\n");
+    return -1;
+  }
   if(X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
     fprintf(stdoutMPI, "Error: NTETimeSteps must be larger than Lanczos_max.\n");
     return -1;
+  }
+  if (X->Bind.Def.NLaser == 0) {
+    invalid = X->Bind.Def.TETime == NULL;
+    for (unsigned int i = 0; !invalid && i < X->Bind.Def.Lanczos_max; ++i) {
+      double time = X->Bind.Def.TETime[i];
+      invalid = !isfinite(time) ||
+                (i > 0 && (time < X->Bind.Def.TETime[i-1] ||
+                           !isfinite(time-X->Bind.Def.TETime[i-1])));
+    }
+    if (SumMPI_i(invalid) != 0) {
+      fprintf(stdoutMPI, "Error: TE time grid must be finite and nondecreasing.\n");
+      return -1;
+    }
   }
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
@@ -121,26 +169,45 @@ int CalcByTEM(
     //input v1
     fprintf(stdoutMPI, "%s","An Initial Vector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    GetFileNameByKW(KWSpectrumVec, &defname);
-    strcat(defname, "_rank_%d.dat");
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      fclose(fp);
-      exitMPI(-1);
+    invalid = GetFileNameByKW(KWSpectrumVec, &defname) != 0 || defname == NULL;
+    int length = invalid ? -1 : snprintf(sdt, sizeof(sdt), "%s_rank_%d.dat", defname, myrank);
+    if (SumMPI_i(length < 0 || (size_t)length + strlen(cParentOutputFolder) >= sizeof(sdt)) != 0) {
+      fprintf(stdoutMPI, "Error: missing or overlong TE SpectrumVec filename.\n");
+      return -1;
     }
-    fread(&step_initial, sizeof(int), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
-    if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      fclose(fp);
-      exitMPI(-1);
+    invalid = childfopenALL(sdt, "rb", &fp) != 0;
+    if (!invalid) {
+      invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
+                fread(&i_max, sizeof(i_max), 1, fp) != 1 ||
+                i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
+      if (!invalid) invalid = fread(v1, sizeof(*v1), X->Bind.Check.idim_max + 1, fp)
+                                  != X->Bind.Check.idim_max + 1;
+      if (!invalid && (fgetc(fp) != EOF || ferror(fp))) invalid = 1;
+      if (fclose(fp) != 0) invalid = 1;
+      fp = NULL;
     }
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
-    if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT) {
+    if (SumMPI_i(invalid) != 0) {
+      fprintf(stdoutMPI, "Error: missing, truncated or incompatible TE Inputvector file.\n");
+      return -1;
+    }
+    double norm = 0;
+    for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) {
+      double re = creal(v1[i]), im = cimag(v1[i]);
+      if (!isfinite(re) || !isfinite(im)) invalid = 1;
+      norm += re*re + im*im;
+    }
+    norm = SumMPI_d(norm);
+    if (SumMPI_i(invalid || !isfinite(norm) || norm <= 0) != 0) {
+      fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
+      return -1;
+    }
+    if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT)
       step_initial = 0;
+    int root_step = BcastMPI_i(0, step_initial);
+    if (SumMPI_i(step_initial < 0 || (unsigned int)step_initial >= X->Bind.Def.Lanczos_max ||
+                 step_initial != root_step) != 0) {
+      fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
+      return -1;
     }
   }
 
@@ -185,6 +252,24 @@ int CalcByTEM(
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
+  if (step_initial > 0) {
+    /* Raw TE files store the next step. Restore H|psi> at the preceding
+     * time point: MultiplyForTEM consumes both psi (v1) and H psi (v0).
+     * Without this, a restarted run silently loses its first Taylor term. */
+    step_i = X->Bind.Def.istep = step_initial - 1;
+    if (X->Bind.Def.NLaser > 0) {
+      double previous_time = Time + (step_initial - 1) * dt;
+      Time += step_initial * dt;
+      if (!isfinite(previous_time) || !isfinite(Time)) return -1;
+      TransferWithPeierls(&(X->Bind), previous_time);
+    } else if (X->Bind.Def.NTETransferMax > 0) {
+      MakeTEDTransfer(&(X->Bind), step_initial - 1);
+    } else if (X->Bind.Def.NTEInterAllMax > 0) {
+      MakeTEDInterAll(&(X->Bind), step_initial - 1);
+    }
+    for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
+    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+  }
   int progress_interval = X->Bind.Def.Lanczos_max / 10;
   if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 when Lanczos_max < 10 */
   for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
@@ -230,10 +315,10 @@ int CalcByTEM(
     else {
       TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "a", step_i);
     }
-    MultiplyForTEM(&(X->Bind));
+    if (MultiplyForTEM(&(X->Bind)) != 0) return -1;
     //Add Diagonal Parts
     //Multiply Diagonal
-    expec_energy_flct(&(X->Bind));
+    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
 
     if(X->Bind.Def.NLaser >0 ) Time+=dt;
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
@@ -273,28 +358,12 @@ int CalcByTEM(
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
-        sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, step_i, myrank);
-        if (childfopenALL(sdt, "wb", &fp) != 0) {
-          fclose(fp);
-          exitMPI(-1);
-        }
-        fwrite(&step_i, sizeof(step_i), 1, fp);
-        fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
-        fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-        fclose(fp);
+        if (write_raw_te_vector(&(X->Bind), step_i, step_i + 1) != 0) return -1;
       }
     }
   }
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, rand_i, myrank);
-    if (childfopenALL(sdt, "wb", &fp) != 0) {
-      fclose(fp);
-      exitMPI(-1);
-    }
-    fwrite(&step_i, sizeof(step_i), 1, fp);
-    fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
-    fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
+    if (write_raw_te_vector(&(X->Bind), rand_i, step_i) != 0) return -1;
   }
 
   fprintf(stdoutMPI, "%s",cLogTEM_End);

@@ -82,6 +82,8 @@ sed -e 's/^CalcType.*/CalcType   4/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
+# The ground-state input does not set the TE Taylor expansion order.
+printf 'ExpandCoef 10\n' >> modpara.def
 echo "   TEOneBody  teonebody.def" >> namelist.def
 
 echo "  [serial] Time evolution..."
@@ -122,6 +124,8 @@ sed -e 's/^CalcType.*/CalcType   4/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
+# The ground-state input does not set the TE Taylor expansion order.
+printf 'ExpandCoef 10\n' >> modpara.def
 echo "   TEOneBody  teonebody.def" >> namelist.def
 
 echo "  [mpi] Time evolution..."

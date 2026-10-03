@@ -247,7 +247,7 @@ CG method
  
 
 TPQ (mTPQ/cTPQ) method
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``Lanczos_max``
 
@@ -424,8 +424,8 @@ Real time evolution method
 
    **Type :** Int (positive integer)
 
-   **Description :** An integer giving the expansion order :math:`n` for
-   real-time evolution method;
+   **Description :** A required positive integer less than ``INT_MAX`` giving
+   the expansion order :math:`n` for the real-time evolution method;
 
    .. math:: \exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.
 
@@ -446,7 +446,8 @@ Real time evolution method
    | **Description :** An integer giving the interval steps of output
      the wave function.
    | The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod``
-     file.
+     file. A positive ``OutputInterval`` is then required. Explicit interval
+     and iteration-count values must be finite integers less than ``INT_MAX``.
 
 .. raw:: latex
 

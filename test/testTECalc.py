@@ -240,8 +240,12 @@ if __name__ == "__main__":
     shutil.copyfile("modpara.def", "modpara1.def")
     #For TE
     replaceStr("modpara.def", "Lanczos_max    2000", "Lanczos_max    100")
-    f=open("modpara", "a")
-    f.write("       ExpandCoef     10\n")
+    f=open("modpara.def", "a")
+    # Historical reference tables used first-order propagation: this used to
+    # append to an unused file named "modpara", leaving the effective order
+    # at one. Specify that order explicitly to preserve this regression oracle.
+    # Higher Taylor orders are exercised by te_contract.
+    f.write("       ExpandCoef     1\n")
     f.close()
     shutil.copyfile("modpara.def", "modpara2.def")
     #[e] Make ModPara file    
