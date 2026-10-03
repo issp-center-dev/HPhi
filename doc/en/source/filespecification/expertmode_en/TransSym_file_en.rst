@@ -213,8 +213,9 @@ Use rules
    this extension applies to ``TransSym``. Standard-mode generation is unchanged.
 
    Correlation functions, spectrum calculations, restart, and the input and
-   output of Hamiltonians and eigenvectors are not supported together with
-   this file. Unsupported combinations terminate with an error.
+   output of Hamiltonians are not supported together with this file.
+   Eigenvector I/O is available for CG through the sector checkpoint format
+   below. Unsupported combinations terminate with an error.
 
 Sector TPQ
 ~~~~~~~~~~
@@ -261,6 +262,57 @@ final point. Vector I/O and restart remain unsupported.
 The manifest records ``canonical_tpq_steps``, ``beta_schedule`` and either
 the uniform step/order or all explicit beta/order rows. As for mTPQ, these
 outputs describe a single sector, not the sum over all sectors.
+
+Sector vector checkpoints
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Expert-mode CG accepts ``OutputEigenVec=1`` and ``InputEigenVec=1``.
+The files are ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat``
+with zero-based state and rank indices. All ranks write a file, including
+empty owners. Reading requires the same model, fixed quantum numbers,
+group/character, sector, MPI rank count, basis layout, local ownership,
+global-index-to-representative mapping, and basis phase convention.
+Legacy raw-basis vector files are rejected. ``InputEigenVec=2`` and
+``ReStart`` remain unsupported. A CG input run evaluates the supplied states;
+it does not solve for new eigenstates or resume iterations.
+
+The source Hamiltonian digest is recorded separately and may differ from the
+current Hamiltonian, allowing a same-sector quench. The load log reports this
+change. Such a state import is distinct from a solver restart.
+All metadata is checked collectively before loading vector data into the
+active vector. Truncation, extra data, non-finite values, a squared global
+norm differing from one by more than :math:`10^{-8}`, and checksum mismatches
+are rejected. Files from different checkpoint sets cannot be mixed.
+
+The version-1 binary format is portable across endianness. It consists of
+28 little-endian unsigned 64-bit header words followed by ``local_dim``
+pairs of IEEE binary64 real/imaginary values. The unused vector element zero
+is not stored. Header words, in order, are:
+
+.. code-block:: text
+
+   magic version phase scalar model nsite nup ndown ne
+   raw_dim sector_dim ranks rank layout offset local_dim group_digest
+   sector_count sector_xor sector_sum order_digest hamiltonian_digest
+   source_method state_index step time_bits payload_xor payload_sum
+
+``magic`` is the eight bytes ``HPHISV1\n``; version and phase are 1;
+scalar is 128; layout is 0 (replicated) or 1 (distributed). ``offset`` is
+zero-based. ``source_method`` uses the CalcType number, and ``time_bits``
+is an IEEE binary64 physical time (zero for CG). Phase 1 uses the normalized
+:math:`\sum_g\overline{\chi(g)}T_g|r\rangle` with the smallest representative
+and a positive real coefficient at that representative.
+
+Group, sector and Hamiltonian fingerprints use the manifest algorithms.
+The order digest is FNV-1a-64 over each owned entry's one-based global index,
+representative integer, orbit size and stabilizer size, each encoded in eight
+little-endian bytes. The payload digest starts with rank, offset and local
+length (eight bytes each), followed by the serialized complex coefficients.
+The header stores both XOR and unsigned-modulo-:math:`2^{64}` sum of those
+per-rank hashes; these are integrity fingerprints, not cryptographic hashes.
+Each rank writes a temporary ``.part`` file, and publishes it after all writes
+have completed successfully. Publication errors fail the run; readers verify
+that every rank belongs to the same complete checkpoint set.
 
 Sector FullDiag
 ~~~~~~~~~~~~~~~

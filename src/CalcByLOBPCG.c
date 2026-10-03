@@ -53,6 +53,7 @@
 #include "expec_energy_flct.h"
 #include "phys.h"
 #include "symmetry_basis.h"
+#include "symmetry_checkpoint.h"
 #include <limits.h>
 #include <math.h>
 #include <stdint.h>
@@ -830,8 +831,28 @@ int CalcByLOBPCG(
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     L_vec = cd_2d_allocate(X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      int invalid = L_vec == NULL;
+      for (ie = 0; !invalid && ie < X->Bind.Def.k_exct; ++ie) invalid = L_vec[ie] == NULL;
+      if (SumMPI_i(invalid) != 0) return FALSE;
+    }
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
+      if (X->Bind.Def.iFlgSymmetryBasis) {
+        struct SymmetryCheckpointInfo info;
+        int length = snprintf(sdt, sizeof(sdt), "%s_eigenvec_%ld_rank_%d.dat",
+                              X->Bind.Def.CDataFileHead, ie, myrank);
+        if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0 ||
+            ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &info) != 0) return FALSE;
+        if (SumMPI_i(info.state_index != (uint64_t)ie || info.step > INT_MAX) != 0) {
+          fprintf(stdoutMPI, "Error: symmetry checkpoint state index or step is invalid for CG input.\n");
+          return FALSE;
+        }
+        X->Bind.Large.itr = (int)info.step;
+        for (idim = 0; idim < X->Bind.Check.idim_max; ++idim)
+          L_vec[ie][idim] = v1[idim + 1];
+        continue;
+      }
       sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       childfopenALL(sdt, "rb", &fp);
       if (fp == NULL) {
@@ -850,10 +871,10 @@ int CalcByLOBPCG(
         L_vec[ie][idim] = v1[idim + 1];
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-    fclose(fp);
+    if (!X->Bind.Def.iFlgSymmetryBasis) fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 
-    if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
+    if(!X->Bind.Def.iFlgSymmetryBasis && byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
   }/*X->Bind.Def.iInputEigenVec == TRUE*/
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
@@ -898,6 +919,14 @@ int CalcByLOBPCG(
       for (idim = 0; idim < X->Bind.Check.idim_max; idim++)
         v1[idim + 1] = L_vec[ie][idim];
       
+      if (X->Bind.Def.iFlgSymmetryBasis) {
+        struct SymmetryCheckpointInfo info = {CG, (uint64_t)ie, (uint64_t)X->Bind.Large.itr, 0, 0};
+        int length = snprintf(sdt, sizeof(sdt), "%s_eigenvec_%ld_rank_%d.dat",
+                              X->Bind.Def.CDataFileHead, ie, myrank);
+        if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0 ||
+            WriteSymmetryCheckpoint(&(X->Bind), sdt, v1, &info) != 0) return FALSE;
+        continue;
+      }
       sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
       byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
