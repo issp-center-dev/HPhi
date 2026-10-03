@@ -133,8 +133,9 @@ def prepare(name, model, length):
         for i in range(length):
             j = (i+1) % length
             for spin in range(2 if model == "Hubbard" else 1):
-                terms.extend(["{} {} {} {} -1.0".format(i, spin, j, spin),
-                              "{} {} {} {} -1.0".format(j, spin, i, spin)])
+                # Trans requires both real and imaginary coefficient columns.
+                terms.extend(["{} {} {} {} -1.0 0.0".format(i, spin, j, spin),
+                              "{} {} {} {} -1.0 0.0".format(j, spin, i, spin)])
         write_def(path, "trans.def", len(terms), terms)
         if model == "Hubbard":
             write_def(path, "coulombintra.def", length, ["{} 0.5".format(i) for i in range(length)])
@@ -166,7 +167,9 @@ for model, length in [("Spin", 8), ("SpinlessFermion", 6), ("Hubbard", 4)]:
         run(path, layout, ["-e", "namelist.def"], layout, mpi=True)
         parallel = manifest(file)
         assert parallel["basis_layout"] == layout
-        assert all(parallel[key] == base[key] for key in identity_keys)
+        for key in identity_keys:
+            assert parallel[key] == base[key], (
+                model, layout, key, "serial", base[key], "parallel", parallel[key])
     write_group(path, length, 1, reverse=True, metadata=False)
     run(path, "renumbered", ["-e", "namelist.def"])
     reordered = manifest(file)
