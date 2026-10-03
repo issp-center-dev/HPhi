@@ -183,7 +183,7 @@ NQPTrans          2
 <li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>、 <code class="docutils literal notranslate"><span class="pre">tJ</span></code> では、フェルミオンの置換に伴う符号は
 自動的に考慮されます。例えば占有軌道を入れ替える鏡映は <span class="math notranslate nohighlight">\(-1\)</span> の
 因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。</p></li>
-<li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> と <code class="docutils literal notranslate"><span class="pre">CG</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
+<li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、 <code class="docutils literal notranslate"><span class="pre">CG</span></code>、 <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> （microcanonical TPQ）、 <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
 固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
 <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。expert mode では次の項に対応します。</p>
 <ul class="simple">
@@ -209,6 +209,46 @@ spinlessのraw solverでは非対角 <code class="docutils literal notranslate">
 本ファイルと併用できません。非対応の組み合わせはエラーで終了します。</p>
 </li>
 </ul>
+</section>
+<section id="tpq">
+<h2>セクター内TPQ<a class="headerlink" href="#tpq" title="Link to this heading">¶</a></h2>
+<p>expert modeで <code class="docutils literal notranslate"><span class="pre">CalcType=1</span></code> と <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定すると、選択したセクター内の
+ランダムベクトルへ <span class="math notranslate nohighlight">\(l-H_q/N_{\rm site}\)</span> を反復して作用させます。
+既定の基底layoutはdistributedで、 <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> により
+参照用layoutを選択できます。要素を持たないMPI rankもglobal normの集約に参加します。
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>、 <code class="docutils literal notranslate"><span class="pre">NumAve</span></code>、 <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code>、 <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>、 <code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code> は
+通常のTPQと同じ意味です。 <code class="docutils literal notranslate"><span class="pre">exct</span></code> によるセクター次元の制限はありません。
+Standard modeの <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> 生成は引き続きLanczosとCGに限られます。</p>
+<p>Hubbardのdoublonとその二乗平均を含む、既存SS/Norm/Flctの全列に対応します。
+SSの <code class="docutils literal notranslate"><span class="pre">phys_var</span></code> 列は従来どおり <span class="math notranslate nohighlight">\(\langle H^2\rangle\)</span> で、
+エネルギー平均の二乗を引いた分散ではありません。
+<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> によるSS/Norm/Flct集約出力も使えます。
+相関関数、restart、ベクトル入出力、スペクトル、cTPQは <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と併用できません。</p>
+<p>計算結果は <strong>単一の対称性セクター内</strong> のtraceを推定します。
+固定量子数空間全体の熱平均ではありません。manifestには
+<code class="docutils literal notranslate"><span class="pre">ensemble=single_symmetry_sector</span></code>、 <code class="docutils literal notranslate"><span class="pre">num_ave</span></code>、 <code class="docutils literal notranslate"><span class="pre">large_value</span></code>、
+<code class="docutils literal notranslate"><span class="pre">initial_vec_type</span></code> を追記します。既存の乱数生成はMPIの要素分担とOpenMP threadに
+依存するため、seedを固定してもprocess/thread数が異なる場合の標本は一致しません。</p>
+</section>
+<section id="fulldiag">
+<h2>セクター内FullDiag<a class="headerlink" href="#fulldiag" title="Link to this heading">¶</a></h2>
+<p>expert modeの <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> で、選択したセクターの全固有値を計算します。
+buildに含まれていれば <code class="docutils literal notranslate"><span class="pre">Solver=0</span></code> （LAPACK、MPI 1 rank）、 <code class="docutils literal notranslate"><span class="pre">Solver=1</span></code>
+（ScaLAPACK）、 <code class="docutils literal notranslate"><span class="pre">Solver=3</span></code> （ELPA）に対応します。
+基底metadataはreplicatedに限られ、FullDiagでの
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=distributed</span></code> は拒否します。
+solverの作業配列には全rankでセクター全次元を使います。
+複数rankのELPAでは所有するcolumn panelだけを生成します。
+ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製固有ベクトル行列は
+確保しません。ELPAではセクター次元がprocess gridより小さければエラーとなるため、
+その場合はrank数を減らしてください。</p>
+<p><code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_energy_sector.dat</span></code> へ0始まりの番号と全固有値を出力し、
+セクターmanifestも記録します。この固有値ファイル名は常にprefix付きです。
+通常のFullDiagは従来どおり <code class="docutils literal notranslate"><span class="pre">Eigenvalue.dat</span></code> を出力します。
+セクターFullDiagでは固有状態物理量、相関関数、固有ベクトルを出力しません。
+0以外の <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> とMAGMAは非対応です。
+Hamiltonian/ベクトル入出力とrestartも非対応です。
+manifestにはsolver、行列storage、 <code class="docutils literal notranslate"><span class="pre">output_scope=eigenvalues</span></code> を記録します。</p>
 </section>
 <section id="id5">
 <h2>セクター情報ファイル<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>

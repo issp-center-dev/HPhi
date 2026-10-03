@@ -3,6 +3,7 @@ var symmetry__basis_8c =
     [ "SymmetryBasisCollector", "structSymmetryBasisCollector.html", "structSymmetryBasisCollector" ],
     [ "SYMMETRY_BASIS_DISTRIBUTION_CHUNK", "symmetry__basis_8c.html#a76b48276c539e0bfd3d8a518ad0829f9", null ],
     [ "ActivateSymmetryBasisDimension", "symmetry__basis_8c.html#a135f98a976b38c287e2f29537ff477ee", null ],
+    [ "ActivateSymmetryFullDiagDimension", "symmetry__basis_8c.html#aa9b4af9c9348ad8b1577ef7030f7c5c9", null ],
     [ "analyze_basis_candidate", "symmetry__basis_8c.html#a88d638f98523f273d7f7767148d9857b", null ],
     [ "append_basis_vector", "symmetry__basis_8c.html#aec30a814445ae4762eb3e86b60c82809", null ],
     [ "apply_fermion_site_permutation", "symmetry__basis_8c.html#ab5125993060b5667ee5dd5aa08db6aa8", null ],

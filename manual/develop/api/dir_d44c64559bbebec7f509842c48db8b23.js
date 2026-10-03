@@ -50,6 +50,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "log.h", "log_8h.html", "log_8h" ],
     [ "LogMessage.h", "LogMessage_8h.html", "LogMessage_8h" ],
     [ "makeHam.h", "makeHam_8h.html", "makeHam_8h" ],
+    [ "makeHamSym.h", "makeHamSym_8h.html", "makeHamSym_8h" ],
     [ "MakeIniVec.h", "MakeIniVec_8h.html", "MakeIniVec_8h" ],
     [ "matrixlapack.h", "matrixlapack_8h.html", "matrixlapack_8h" ],
     [ "matrixlapack_elpa.h", "matrixlapack__elpa_8h.html", null ],

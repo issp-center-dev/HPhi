@@ -16,6 +16,7 @@ var symmetry__basis_8h =
       [ "SYMMETRY_BASIS_DISTRIBUTED", "symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7a808d9a9b42b89191148fdcaaac953b8a", null ]
     ] ],
     [ "ActivateSymmetryBasisDimension", "symmetry__basis_8h.html#a135f98a976b38c287e2f29537ff477ee", null ],
+    [ "ActivateSymmetryFullDiagDimension", "symmetry__basis_8h.html#aa9b4af9c9348ad8b1577ef7030f7c5c9", null ],
     [ "BuildSymmetryBasis", "symmetry__basis_8h.html#aa4b23a374c23a23ed228057aee5f0953", null ],
     [ "BuildSymmetryBasisForLayout", "symmetry__basis_8h.html#aa2f13d7300cd597bb1986dedaaf52ce1", null ],
     [ "ComputeSymmetryBasisDigest", "symmetry__basis_8h.html#abc7c0ae431b0f2587cd4596948030d36", null ],

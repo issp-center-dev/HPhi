@@ -43,6 +43,7 @@ var files_dup =
     [ "log.c", "log_8c.html", "log_8c" ],
     [ "LogMessage.c", "LogMessage_8c.html", "LogMessage_8c" ],
     [ "makeHam.c", "makeHam_8c.html", "makeHam_8c" ],
+    [ "makeHamSym.c", "makeHamSym_8c.html", "makeHamSym_8c" ],
     [ "MakeIniVec.c", "MakeIniVec_8c.html", "MakeIniVec_8c" ],
     [ "matrixlapack.c", "matrixlapack_8c.html", "matrixlapack_8c" ],
     [ "matrixlapack_elpa.c", "matrixlapack__elpa_8c.html", null ],

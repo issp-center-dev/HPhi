@@ -185,7 +185,7 @@ permutation is taken into account automatically. For example, a
 reflection that exchanges occupied orbitals contributes a factor
 <span class="math notranslate nohighlight">\(-1\)</span>, so the dimensions of the even and odd sectors differ from
 the counting for spins.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), and <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
 <span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
 Expert-mode Hamiltonian terms are:</p>
@@ -215,6 +215,47 @@ output of Hamiltonians and eigenvectors are not supported together with
 this file. Unsupported combinations terminate with an error.</p>
 </li>
 </ul>
+</section>
+<section id="sector-tpq">
+<h2>Sector TPQ<a class="headerlink" href="#sector-tpq" title="Link to this heading">¶</a></h2>
+<p>In expert mode, <code class="docutils literal notranslate"><span class="pre">CalcType=1</span></code> with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> evolves a random vector within
+the selected symmetry sector using <span class="math notranslate nohighlight">\(l-H_q/N_{\rm site}\)</span>. The default
+basis layout is distributed; <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> selects
+the reference layout. Empty MPI ranks participate in global normalization.
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>, <code class="docutils literal notranslate"><span class="pre">NumAve</span></code>, <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code>, <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code>, and <code class="docutils literal notranslate"><span class="pre">InitialVecType</span></code>
+have their usual TPQ meanings. <code class="docutils literal notranslate"><span class="pre">exct</span></code> does not restrict the TPQ sector.
+Standard mode still limits <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> generation to Lanczos and CG.</p>
+<p>All existing SS/Norm/Flct columns are supported, including doublon and its
+second moment for Hubbard. The SS <code class="docutils literal notranslate"><span class="pre">phys_var</span></code> column retains its existing
+meaning <span class="math notranslate nohighlight">\(\langle H^2\rangle\)</span>, not the subtracted variance.
+<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> selects the usual aggregate SS/Norm/Flct files even
+though correlation functions remain unsupported. Restart, vector I/O,
+spectrum, and cTPQ remain unavailable with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</p>
+<p>These results estimate the trace within a <strong>single symmetry sector</strong>; they
+are not a thermal average over the entire fixed-quantum-number space.
+The manifest records <code class="docutils literal notranslate"><span class="pre">ensemble=single_symmetry_sector</span></code>, <code class="docutils literal notranslate"><span class="pre">num_ave</span></code>,
+<code class="docutils literal notranslate"><span class="pre">large_value</span></code>, and <code class="docutils literal notranslate"><span class="pre">initial_vec_type</span></code>. The existing random generator
+depends on MPI ownership and OpenMP threads, so a fixed seed alone does not
+make samples identical across different process/thread counts.</p>
+</section>
+<section id="sector-fulldiag">
+<h2>Sector FullDiag<a class="headerlink" href="#sector-fulldiag" title="Link to this heading">¶</a></h2>
+<p>Expert-mode <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> computes all eigenvalues within the chosen sector.
+<code class="docutils literal notranslate"><span class="pre">Solver=0</span></code> (LAPACK, one MPI rank), <code class="docutils literal notranslate"><span class="pre">Solver=1</span></code> (ScaLAPACK), and <code class="docutils literal notranslate"><span class="pre">Solver=3</span></code>
+(ELPA) are supported when compiled in. The basis metadata must be replicated;
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=distributed</span></code> is rejected for FullDiag.
+All ranks use the full sector dimension for solver work arrays. ELPA with
+multiple ranks builds only its owned column panel. ScaLAPACK currently builds
+a replicated Hamiltonian but does not allocate the unused replicated
+eigenvector matrix. ELPA rejects a sector smaller than its process grid;
+reduce the rank count in that case.</p>
+<p>The output is <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_energy_sector.dat</span></code> with zero-based
+eigenvalue indices and energies, accompanied by the sector manifest.
+This filename always has the data-file prefix. Ordinary FullDiag still writes
+<code class="docutils literal notranslate"><span class="pre">Eigenvalue.dat</span></code>. Sector FullDiag does not produce eigenstate observables,
+correlation files, or eigenvectors. <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> other than 0 and MAGMA are
+unsupported. Hamiltonian/vector I/O and restart remain unavailable.
+The manifest records the solver, matrix storage, and <code class="docutils literal notranslate"><span class="pre">output_scope=eigenvalues</span></code>.</p>
 </section>
 <section id="sector-manifest">
 <h2>Sector manifest<a class="headerlink" href="#sector-manifest" title="Link to this heading">¶</a></h2>

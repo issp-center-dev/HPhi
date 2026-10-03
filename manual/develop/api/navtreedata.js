@@ -147,16 +147,16 @@ var NAVTREEINDEX =
 "eigenIO_8c.html#ae1ffe2e84ac89023d9eafeb0115328fe",
 "global_8c.html#a053af60b5682458dbce5a65c2a793de3",
 "global_8h.html#acf7d5ab0ac7ac8e208636bd9ec2ec391",
-"matrixscalapack_8c_source.html",
-"mltplyMPIHubbard_8h.html#a3054a988e80405c642108d898fb92a9c",
-"mltplySpinless_8h.html",
-"page_time.html#subsec_time_new",
-"structDefineList.html#a02409ec33f1a07f47fb57e3700550c64",
-"structLargeList.html#a9bfe297ac2953656469df4531a9bdd0b",
-"structSymmetryGlobalColumnSpan.html",
-"structSymmetryVectorHaloPlan.html#ac8b13d86ea610c51949571a280f2eb42",
-"symmetry__distribution_8c.html#a089c9f49ecdcde002b8aaba5787c6c9b",
-"symmetry__vector__halo_8h.html#a6a97b18ff91fea297304cdec42b99a84"
+"matrixlapack__magma_8c.html",
+"mltplyMPIHubbard_8c.html#add4b98b87cb542d3c3cdd26c5e515e5c",
+"mltplySpinless_8c.html#a6660e59b6f260ec6440e396b8b419f6c",
+"page_setmem.html#subsec_setmem_large",
+"structCheckList.html#aaf992da196c21c87c8850bb10f0d40b2",
+"structLargeList.html#a523438b712f4d79554b6331505e70e14",
+"structSymmetryBasisVector.html#afac94c3a0872e05f61255104c6855cf8",
+"structSymmetryVectorHaloPlan.html#a5c19f391fd49525cb0228e5d560d5f69",
+"symmetry__directory_8h.html#a842ae3f663e68cc4362bab989645283c",
+"symmetry__vector__halo_8c.html#a554e00b0dadb79fccd57812366a04f0b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

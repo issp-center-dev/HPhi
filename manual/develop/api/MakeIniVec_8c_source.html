@@ -144,95 +144,107 @@ $(document).ready(function(){initNavTree('MakeIniVec_8c_source.html',''); initRe
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="setmemory_8h.html">common/setmemory.h</a>&quot;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;<a class="code" href="wrapperMPI_8h.html">wrapperMPI.h</a>&quot;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="CalcTime_8h.html">CalcTime.h</a>&quot;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType == 0: All components are given by random complex numbers x+i*y, x = [-1,1),y=[-1,1]*/</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType ==-1: random vectors on the 2*i_max complex sphere*/</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType == others: All components are given by random real numbers x, x=[-1,1)*/</span></div>
-<div class="foldopen" id="foldopen00041" data-start="{" data-end="}">
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="MakeIniVec_8h.html#ae49ca3eb43cf78de07f16c08356f812f">   41</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="MakeIniVec_8c.html#ae49ca3eb43cf78de07f16c08356f812f">MakeIniVec</a>(<span class="keywordtype">int</span> rand_i, <span class="keyword">struct</span> <a class="code hl_struct" href="structBindStruct.html">BindStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <span class="keywordtype">long</span> <span class="keywordtype">int</span> i, i_max;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keywordtype">double</span> complex dnorm;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordtype">double</span> Ns;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keywordtype">long</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> u_long_i;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <a class="code hl_struct" href="structDSFMT__T.html">dsfmt_t</a> dsfmt;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keywordtype">int</span> mythread;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordtype">double</span> rand_X,rand_Y;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keywordtype">double</span> complex rand_Z1,rand_Z2;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  Ns = 1.0*<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.NsiteMPI;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  i_max = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Check.idim_max;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">        shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">        firstprivate(i_max)</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#pragma omp for</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>      <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i] = 0.0;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>      <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 0.0;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    }</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">/*</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">    Initialise MT</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">    */</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#ifdef _OPENMP</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    mythread = omp_get_thread_num();</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    mythread = 0;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    u_long_i = 123432 + (rand_i+1)*labs(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.initial_iv) + mythread + <a class="code hl_variable" href="global_8c.html#a2b6a46c4274b223ea03fb4a7b80f4a5a">nthreads</a> * <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a>;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <a class="code hl_function" href="dSFMT_8h.html#aa767efdc0f36a3cde4d61d3764a473de">dsfmt_init_gen_rand</a>(&amp;dsfmt, u_long_i);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iInitialVecType == 0) {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>      <a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(3101);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">      #pragma omp for</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++)</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5) + 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5)*I;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>      <span class="comment">/*if (X-&gt;Def.iInitialVecType == 0)*/</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    }<span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iInitialVecType == -1) {</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>      <a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(3101);</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="preprocessor">      #pragma omp for </span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++){</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        rand_X   = <a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        rand_Y   = <a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt);</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        rand_Z1  = sqrt(-2.0*log(rand_X))*cos(2.0*M_PI*rand_Y);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        rand_Z2  = sqrt(-2.0*log(rand_X))*sin(2.0*M_PI*rand_Y);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i]    = rand_Z1+I*rand_Z2;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>      } </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="comment">/*if (X-&gt;Def.iInitialVecType == -1)*/</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    }<span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">      #pragma omp for</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++)</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>         <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(3101);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  }<span class="comment">/*#pragma omp parallel*/</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="comment">/*Normalize v*/</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  dnorm=0.0;</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) </span></div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keywordflow">for</span>(i=1;i&lt;=i_max;i++){</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    dnorm += conj(<a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i])*<a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i];</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  }</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  dnorm = <a class="code hl_function" href="wrapperMPI_8h.html#a7a90e7c667189b600a621be9856fa650">SumMPI_dc</a>(dnorm);</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  dnorm=sqrt(dnorm);</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <a class="code hl_variable" href="global_8c.html#ab49961427db962dd360f977920909700">global_1st_norm</a> = dnorm;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="preprocessor">#pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)</span></div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keywordflow">for</span>(i=1;i&lt;=i_max;i++){</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i]/dnorm;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i] = <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i];</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;limits.h&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;math.h&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType == 0: All components are given by random complex numbers x+i*y, x = [-1,1),y=[-1,1]*/</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType ==-1: random vectors on the 2*i_max complex sphere*/</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/*Note: X-&gt;Def.iInitialVecType == others: All components are given by random real numbers x, x=[-1,1)*/</span></div>
+<div class="foldopen" id="foldopen00043" data-start="{" data-end="}">
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="MakeIniVec_8h.html#ae49ca3eb43cf78de07f16c08356f812f">   43</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="MakeIniVec_8c.html#ae49ca3eb43cf78de07f16c08356f812f">MakeIniVec</a>(<span class="keywordtype">int</span> rand_i, <span class="keyword">struct</span> <a class="code hl_struct" href="structBindStruct.html">BindStruct</a> *<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordtype">long</span> <span class="keywordtype">int</span> i, i_max;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keywordtype">double</span> complex dnorm;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keywordtype">long</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> u_long_i;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <a class="code hl_struct" href="structDSFMT__T.html">dsfmt_t</a> dsfmt;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordtype">int</span> mythread;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keywordtype">double</span> rand_X,rand_Y;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keywordtype">double</span> complex rand_Z1,rand_Z2;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="comment">/* idim_max is the active rank-local dimension, including zero-row ranks.</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">   * Only the globally reduced norm must be positive. */</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordtype">int</span> invalid = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a> == NULL || <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a> == NULL || <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a> == NULL;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordflow">if</span> (!invalid &amp;&amp; <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Check.idim_max &gt; LONG_MAX) invalid = 1;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(invalid) != 0) {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Error: invalid TPQ initial-vector storage.\n&quot;</span>);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  i_max = <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Check.idim_max;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">        shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">        firstprivate(i_max)</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#pragma omp for</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++) {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i] = 0.0;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>      <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 0.0;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="comment">/*</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">    Initialise MT</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">    */</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#ifdef _OPENMP</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    mythread = omp_get_thread_num();</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    mythread = 0;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    u_long_i = 123432 + (rand_i+1)*labs(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.initial_iv) + mythread + <a class="code hl_variable" href="global_8c.html#a2b6a46c4274b223ea03fb4a7b80f4a5a">nthreads</a> * <a class="code hl_variable" href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a>;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <a class="code hl_function" href="dSFMT_8h.html#aa767efdc0f36a3cde4d61d3764a473de">dsfmt_init_gen_rand</a>(&amp;dsfmt, u_long_i);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iInitialVecType == 0) {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>      <a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(3101);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">      #pragma omp for</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++)</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5) + 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5)*I;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="comment">/*if (X-&gt;Def.iInitialVecType == 0)*/</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    }<span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iInitialVecType == -1) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>      <a class="code hl_function" href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a>(3101);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">      #pragma omp for </span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++){</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        rand_X   = <a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        rand_Y   = <a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        rand_Z1  = sqrt(-2.0*log(rand_X))*cos(2.0*M_PI*rand_Y);</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        rand_Z2  = sqrt(-2.0*log(rand_X))*sin(2.0*M_PI*rand_Y);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i]    = rand_Z1+I*rand_Z2;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>      } </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="comment">/*if (X-&gt;Def.iInitialVecType == -1)*/</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }<span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">      #pragma omp for</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>      <span class="keywordflow">for</span> (i = 1; i &lt;= i_max; i++)</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>         <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = 2.0*(<a class="code hl_function" href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a>(&amp;dsfmt) - 0.5);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    }</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <a class="code hl_function" href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a>(3101);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  }<span class="comment">/*#pragma omp parallel*/</span></div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="comment">/*Normalize v*/</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  dnorm=0.0;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="preprocessor">#pragma omp parallel for default(none) private(i) shared(v1, i_max) reduction(+: dnorm) </span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <span class="keywordflow">for</span>(i=1;i&lt;=i_max;i++){</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    dnorm += conj(<a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i])*<a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i];</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  }</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  <a class="code hl_function" href="log_8h.html#a6e1528922a48320b30d56b93f1cc8370">TimeKeeperWithRandAndStep</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="code hl_variable" href="global_8c.html#a4cc81b237528770cf1b012aee34ba424">cFileNameTimeKeep</a>, <a class="code hl_variable" href="LogMessage_8h.html#a9720bbea9d14844abaf83128fda8cafe">cTPQStep</a>, <span class="stringliteral">&quot;a&quot;</span>, rand_i, <a class="code hl_variable" href="global_8c.html#ae4b3c259843556181feaef44545e833f">step_i</a>);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>   </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  dnorm = <a class="code hl_function" href="wrapperMPI_8h.html#a7a90e7c667189b600a621be9856fa650">SumMPI_dc</a>(dnorm);</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  <span class="keywordflow">if</span> (!isfinite(creal(dnorm)) || !isfinite(cimag(dnorm)) || creal(dnorm) &lt;= 0.0) {</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Error: TPQ initial vector has zero or non-finite global norm.\n&quot;</span>);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  }</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  dnorm=sqrt(dnorm);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <a class="code hl_variable" href="global_8c.html#ab49961427db962dd360f977920909700">global_1st_norm</a> = dnorm;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="preprocessor">#pragma omp parallel for default(none) private(i) shared(v0,v1) firstprivate(i_max, dnorm)</span></div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  <span class="keywordflow">for</span>(i=1;i&lt;=i_max;i++){</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i] = <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i]/dnorm;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i] = <a class="code hl_variable" href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a>[i];</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  }</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  <a class="code hl_function" href="log_8h.html#a6e1528922a48320b30d56b93f1cc8370">TimeKeeperWithRandAndStep</a>(<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="code hl_variable" href="global_8c.html#a4cc81b237528770cf1b012aee34ba424">cFileNameTimeKeep</a>, <a class="code hl_variable" href="LogMessage_8h.html#a9720bbea9d14844abaf83128fda8cafe">cTPQStep</a>, <span class="stringliteral">&quot;a&quot;</span>, rand_i, <a class="code hl_variable" href="global_8c.html#ae4b3c259843556181feaef44545e833f">step_i</a>);</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>   </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>}</div>
 </div>
 <div class="ttc" id="aCalcTime_8h_html"><div class="ttname"><a href="CalcTime_8h.html">CalcTime.h</a></div></div>
 <div class="ttc" id="aCalcTime_8h_html_a2581cae87041a26e35cc11d2b36433ea"><div class="ttname"><a href="CalcTime_8h.html#a2581cae87041a26e35cc11d2b36433ea">StartTimer</a></div><div class="ttdeci">void StartTimer(int n)</div><div class="ttdoc">function for initializing elapse time [start]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00695">time.c:695</a></div></div>
 <div class="ttc" id="aCalcTime_8h_html_a7a401c1e932bb7ff998602ee237fbecd"><div class="ttname"><a href="CalcTime_8h.html#a7a401c1e932bb7ff998602ee237fbecd">StopTimer</a></div><div class="ttdeci">void StopTimer(int n)</div><div class="ttdoc">function for calculating elapse time [elapse time=StartTimer-StopTimer]</div><div class="ttdef"><b>Definition</b> <a href="time_8c_source.html#l00707">time.c:707</a></div></div>
 <div class="ttc" id="aFirstMultiply_8h_html"><div class="ttname"><a href="FirstMultiply_8h.html">FirstMultiply.h</a></div></div>
 <div class="ttc" id="aLogMessage_8h_html_a9720bbea9d14844abaf83128fda8cafe"><div class="ttname"><a href="LogMessage_8h.html#a9720bbea9d14844abaf83128fda8cafe">cTPQStep</a></div><div class="ttdeci">const char * cTPQStep</div><div class="ttdef"><b>Definition</b> <a href="LogMessage_8c_source.html#l00079">LogMessage.c:79</a></div></div>
-<div class="ttc" id="aMakeIniVec_8c_html_ae49ca3eb43cf78de07f16c08356f812f"><div class="ttname"><a href="MakeIniVec_8c.html#ae49ca3eb43cf78de07f16c08356f812f">MakeIniVec</a></div><div class="ttdeci">int MakeIniVec(int rand_i, struct BindStruct *X)</div><div class="ttdoc">Generating the random initial vectors for TPQ mode (  is the random or inputted vector).</div><div class="ttdef"><b>Definition</b> <a href="MakeIniVec_8c_source.html#l00041">MakeIniVec.c:41</a></div></div>
+<div class="ttc" id="aMakeIniVec_8c_html_ae49ca3eb43cf78de07f16c08356f812f"><div class="ttname"><a href="MakeIniVec_8c.html#ae49ca3eb43cf78de07f16c08356f812f">MakeIniVec</a></div><div class="ttdeci">int MakeIniVec(int rand_i, struct BindStruct *X)</div><div class="ttdoc">Generating the random initial vectors for TPQ mode (  is the random or inputted vector).</div><div class="ttdef"><b>Definition</b> <a href="MakeIniVec_8c_source.html#l00043">MakeIniVec.c:43</a></div></div>
 <div class="ttc" id="adSFMT_8h_html_a1d070f0dc97e95122038aed8be76f8dd"><div class="ttname"><a href="dSFMT_8h.html#a1d070f0dc97e95122038aed8be76f8dd">dsfmt_genrand_close_open</a></div><div class="ttdeci">DSFMT_PRE_INLINE double dsfmt_genrand_close_open(dsfmt_t *dsfmt) DSFMT_PST_INLINE</div><div class="ttdef"><b>Definition</b> <a href="dSFMT_8h_source.html#l00295">dSFMT.h:295</a></div></div>
 <div class="ttc" id="adSFMT_8h_html_aa767efdc0f36a3cde4d61d3764a473de"><div class="ttname"><a href="dSFMT_8h.html#aa767efdc0f36a3cde4d61d3764a473de">dsfmt_init_gen_rand</a></div><div class="ttdeci">DSFMT_PRE_INLINE void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed) DSFMT_PST_INLINE</div><div class="ttdef"><b>Definition</b> <a href="dSFMT_8h_source.html#l00437">dSFMT.h:437</a></div></div>
 <div class="ttc" id="aexpec__energy__flct_8h_html"><div class="ttname"><a href="expec__energy__flct_8h.html">expec_energy_flct.h</a></div></div>
@@ -242,6 +254,7 @@ $(document).ready(function(){initNavTree('MakeIniVec_8c_source.html',''); initRe
 <div class="ttc" id="aglobal_8c_html_a9fbff38d5659324379db905b39b7625e"><div class="ttname"><a href="global_8c.html#a9fbff38d5659324379db905b39b7625e">v1</a></div><div class="ttdeci">double complex * v1</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00132">global.c:132</a></div></div>
 <div class="ttc" id="aglobal_8c_html_aa8a2431e50f9fc7d8c78af300d5f3bee"><div class="ttname"><a href="global_8c.html#aa8a2431e50f9fc7d8c78af300d5f3bee">myrank</a></div><div class="ttdeci">int myrank</div><div class="ttdoc">Process ID, defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00197">global.c:197</a></div></div>
 <div class="ttc" id="aglobal_8c_html_ab49961427db962dd360f977920909700"><div class="ttname"><a href="global_8c.html#ab49961427db962dd360f977920909700">global_1st_norm</a></div><div class="ttdeci">double global_1st_norm</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00161">global.c:161</a></div></div>
+<div class="ttc" id="aglobal_8c_html_abacbc82cf67663cd6f3708f1274ac207"><div class="ttname"><a href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a></div><div class="ttdeci">FILE * stdoutMPI</div><div class="ttdoc">File pointer to the standard output defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00200">global.c:200</a></div></div>
 <div class="ttc" id="aglobal_8c_html_ae4b3c259843556181feaef44545e833f"><div class="ttname"><a href="global_8c.html#ae4b3c259843556181feaef44545e833f">step_i</a></div><div class="ttdeci">int step_i</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00159">global.c:159</a></div></div>
 <div class="ttc" id="alog_8h_html_a6e1528922a48320b30d56b93f1cc8370"><div class="ttname"><a href="log_8h.html#a6e1528922a48320b30d56b93f1cc8370">TimeKeeperWithRandAndStep</a></div><div class="ttdeci">int TimeKeeperWithRandAndStep(struct BindStruct *X, const char *cFileName, const char *cTimeKeeper_Message, const char *cWriteType, const int istep, const int irand)</div><div class="ttdoc">Functions for writing a time log.</div><div class="ttdef"><b>Definition</b> <a href="log_8c_source.html#l00116">log.c:117</a></div></div>
 <div class="ttc" id="asetmemory_8h_html"><div class="ttname"><a href="setmemory_8h.html">setmemory.h</a></div></div>
@@ -250,6 +263,7 @@ $(document).ready(function(){initNavTree('MakeIniVec_8c_source.html',''); initRe
 <div class="ttc" id="astruct_8h_html_a2e5276e30c3a9c9155e407ab3e645567"><div class="ttname"><a href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a></div><div class="ttdeci">struct EDMainCalStruct X</div><div class="ttdef"><b>Definition</b> <a href="struct_8c_source.html#l00020">struct.c:20</a></div></div>
 <div class="ttc" id="awrapperMPI_8h_html"><div class="ttname"><a href="wrapperMPI_8h.html">wrapperMPI.h</a></div><div class="ttdoc">Global variables related to MPI and OpenMP.</div></div>
 <div class="ttc" id="awrapperMPI_8h_html_a7a90e7c667189b600a621be9856fa650"><div class="ttname"><a href="wrapperMPI_8h.html#a7a90e7c667189b600a621be9856fa650">SumMPI_dc</a></div><div class="ttdeci">double complex SumMPI_dc(double complex norm)</div><div class="ttdoc">MPI wrapper function to obtain sum of Double complex across processes.</div><div class="ttdef"><b>Definition</b> <a href="wrapperMPI_8c_source.html#l00374">wrapperMPI.c:374</a></div></div>
+<div class="ttc" id="awrapperMPI_8h_html_aeab38d65c1c82094276a9b250b9a5049"><div class="ttname"><a href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a></div><div class="ttdeci">int SumMPI_i(int idim)</div><div class="ttdoc">MPI wrapper function to obtain sum of integer across processes.</div><div class="ttdef"><b>Definition</b> <a href="wrapperMPI_8c_source.html#l00437">wrapperMPI.c:437</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

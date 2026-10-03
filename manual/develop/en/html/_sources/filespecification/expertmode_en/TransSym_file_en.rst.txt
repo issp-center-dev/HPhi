@@ -186,7 +186,7 @@ Use rules
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  The ``Lanczos`` and ``CG`` methods support ``Spin`` with
+*  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), and ``FullDiag`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
    Expert-mode Hamiltonian terms are:
@@ -215,6 +215,52 @@ Use rules
    Correlation functions, spectrum calculations, restart, and the input and
    output of Hamiltonians and eigenvectors are not supported together with
    this file. Unsupported combinations terminate with an error.
+
+Sector TPQ
+~~~~~~~~~~
+
+In expert mode, ``CalcType=1`` with ``TransSym`` evolves a random vector within
+the selected symmetry sector using :math:`l-H_q/N_{\rm site}`. The default
+basis layout is distributed; ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` selects
+the reference layout. Empty MPI ranks participate in global normalization.
+``Lanczos_max``, ``NumAve``, ``LargeValue``, ``initial_iv``, and ``InitialVecType``
+have their usual TPQ meanings. ``exct`` does not restrict the TPQ sector.
+Standard mode still limits ``MomentumIndex`` generation to Lanczos and CG.
+
+All existing SS/Norm/Flct columns are supported, including doublon and its
+second moment for Hubbard. The SS ``phys_var`` column retains its existing
+meaning :math:`\langle H^2\rangle`, not the subtracted variance.
+``OutputGreenFormat=1`` selects the usual aggregate SS/Norm/Flct files even
+though correlation functions remain unsupported. Restart, vector I/O,
+spectrum, and cTPQ remain unavailable with ``TransSym``.
+
+These results estimate the trace within a **single symmetry sector**; they
+are not a thermal average over the entire fixed-quantum-number space.
+The manifest records ``ensemble=single_symmetry_sector``, ``num_ave``,
+``large_value``, and ``initial_vec_type``. The existing random generator
+depends on MPI ownership and OpenMP threads, so a fixed seed alone does not
+make samples identical across different process/thread counts.
+
+Sector FullDiag
+~~~~~~~~~~~~~~~
+
+Expert-mode ``CalcType=2`` computes all eigenvalues within the chosen sector.
+``Solver=0`` (LAPACK, one MPI rank), ``Solver=1`` (ScaLAPACK), and ``Solver=3``
+(ELPA) are supported when compiled in. The basis metadata must be replicated;
+``HPHI_SYMMETRY_BASIS_LAYOUT=distributed`` is rejected for FullDiag.
+All ranks use the full sector dimension for solver work arrays. ELPA with
+multiple ranks builds only its owned column panel. ScaLAPACK currently builds
+a replicated Hamiltonian but does not allocate the unused replicated
+eigenvector matrix. ELPA rejects a sector smaller than its process grid;
+reduce the rank count in that case.
+
+The output is ``output/<CDataFileHead>_energy_sector.dat`` with zero-based
+eigenvalue indices and energies, accompanied by the sector manifest.
+This filename always has the data-file prefix. Ordinary FullDiag still writes
+``Eigenvalue.dat``. Sector FullDiag does not produce eigenstate observables,
+correlation files, or eigenvectors. ``ExpecMode`` other than 0 and MAGMA are
+unsupported. Hamiltonian/vector I/O and restart remain unavailable.
+The manifest records the solver, matrix storage, and ``output_scope=eigenvalues``.
 
 Sector manifest
 ~~~~~~~~~~~~~~~

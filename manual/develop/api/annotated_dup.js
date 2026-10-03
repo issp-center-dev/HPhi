@@ -7,6 +7,7 @@ var annotated_dup =
     [ "CheckList", "structCheckList.html", "structCheckList" ],
     [ "CountEntriesContext", "structCountEntriesContext.html", "structCountEntriesContext" ],
     [ "DefineList", "structDefineList.html", "structDefineList" ],
+    [ "DenseSymmetryColumn", "structDenseSymmetryColumn.html", "structDenseSymmetryColumn" ],
     [ "DiagonalContext", "structDiagonalContext.html", "structDiagonalContext" ],
     [ "DSFMT_T", "structDSFMT__T.html", "structDSFMT__T" ],
     [ "EDMainCalStruct", "structEDMainCalStruct.html", "structEDMainCalStruct" ],

@@ -7,7 +7,7 @@ var expec__trace__ham_8c =
     [ "insertion_seg", "expec__trace__ham_8c.html#ac3bb90ee4dcbd2539093286151b87813", null ],
     [ "merge_sort_seg", "expec__trace__ham_8c.html#ae080c23b0429949d96c809cd26cdf1bc", null ],
     [ "trace_count_sink", "expec__trace__ham_8c.html#a1472b8da54c483a5543ab4ecb8242887", null ],
-    [ "trace_fill_diag", "expec__trace__ham_8c.html#a3e7a757c11bf855dfca3b14353365c9d", null ],
+    [ "trace_fill_diag", "expec__trace__ham_8c.html#a3dceb77fccd951ef958bead002260336", null ],
     [ "trace_fill_sink", "expec__trace__ham_8c.html#ae72083d92456ff28cbf6ceafb3341d16", null ],
     [ "trace_model_n_diag", "expec__trace__ham_8c.html#a6f038d5133c5cb6d51247496f44afe24", null ],
     [ "trace_restore_sink", "expec__trace__ham_8c.html#a5d083aef7105758eb0efed9c8dbd30df", null ],

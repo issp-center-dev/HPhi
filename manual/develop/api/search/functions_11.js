@@ -13,7 +13,7 @@ var searchData=
   ['totalsz_5fhubbardgc_10',['totalsz_hubbardgc',['../expec__totalspin_8c.html#a408b344e7ab97dc747e3c6c9c9eb892c',1,'totalSz_HubbardGC(struct BindStruct *X, double complex *vec):&#160;expec_totalspin.c'],['../expec__totalspin_8h.html#a408b344e7ab97dc747e3c6c9c9eb892c',1,'totalSz_HubbardGC(struct BindStruct *X, double complex *vec):&#160;expec_totalspin.c']]],
   ['totalsz_5fspingc_11',['totalsz_spingc',['../expec__totalspin_8c.html#ab7b5839640e77d0bb01982c7be6f2b69',1,'totalSz_SpinGC(struct BindStruct *X, double complex *vec):&#160;expec_totalspin.c'],['../expec__totalspin_8h.html#ab7b5839640e77d0bb01982c7be6f2b69',1,'totalSz_SpinGC(struct BindStruct *X, double complex *vec):&#160;expec_totalspin.c']]],
   ['trace_5fcount_5fsink_12',['trace_count_sink',['../expec__trace__ham_8c.html#a1472b8da54c483a5543ab4ecb8242887',1,'expec_trace_ham.c']]],
-  ['trace_5ffill_5fdiag_13',['trace_fill_diag',['../expec__trace__ham_8c.html#a3e7a757c11bf855dfca3b14353365c9d',1,'expec_trace_ham.c']]],
+  ['trace_5ffill_5fdiag_13',['trace_fill_diag',['../expec__trace__ham_8c.html#a3dceb77fccd951ef958bead002260336',1,'expec_trace_ham.c']]],
   ['trace_5ffill_5fsink_14',['trace_fill_sink',['../expec__trace__ham_8c.html#ae72083d92456ff28cbf6ceafb3341d16',1,'expec_trace_ham.c']]],
   ['trace_5fmap_5falloc_15',['trace_map_alloc',['../expec__trace_8c.html#aa8c7ce408fa01f6f0bfaec40bc6ac25d',1,'expec_trace.c']]],
   ['trace_5fmap_5fassert_5frange_16',['trace_map_assert_range',['../expec__trace_8c.html#a829a977da260f304e04cc6dfd2875155',1,'expec_trace.c']]],
