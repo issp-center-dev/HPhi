@@ -21,6 +21,7 @@ var searchData=
   ['amplitude_18',['amplitude',['../structSymmetryTransformResult.html#a73623946e440043ae1a3244994ad7016',1,'SymmetryTransformResult']]],
   ['anomalousg_19',['AnomalousG',['../structDefineList.html#abf5ca772d5ceb7fb4ba4008b82daa621',1,'DefineList']]],
   ['anomalousterm_20',['AnomalousTerm',['../structDefineList.html#a683c792054b999fd59cb67876521b4a5',1,'DefineList']]],
-  ['arrayj_21',['arrayJ',['../structBoostList.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]],
-  ['attempted_22',['attempted',['../structGreenOutputManifestRecord.html#a53d88c4174397e040a6912705627ae1c',1,'GreenOutputManifestRecord']]]
+  ['anti_21',['anti',['../structGroupDigestEntry.html#a16157db8486ff31c96b7de19b5646607',1,'GroupDigestEntry']]],
+  ['arrayj_22',['arrayJ',['../structBoostList.html#a5adcc3ddfbc1d8b24dc0516bdfd6f2fe',1,'BoostList']]],
+  ['attempted_23',['attempted',['../structGreenOutputManifestRecord.html#a53d88c4174397e040a6912705627ae1c',1,'GreenOutputManifestRecord']]]
 ];

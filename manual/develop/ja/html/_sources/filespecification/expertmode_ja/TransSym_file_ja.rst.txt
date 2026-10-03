@@ -9,11 +9,11 @@ TransSym指定ファイル
 各要素 :math:`g` に対する1次元指標 :math:`\chi(g)` （絶対値1の複素数）を
 指定します。 :math:`{\mathcal H}\Phi` は対称化された状態
 
-.. math:: |r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle
+.. math:: |r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle
 
 を基底として計算します。ここで :math:`T_g` は各サイト :math:`i` の内容を
 サイト :math:`g(i)` へ移す演算子で、 :math:`|r\rangle` は代表配置を走ります。
-セクター内のすべての状態は :math:`T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle`
+セクター内のすべての状態は :math:`T_g|\psi\rangle=\chi(g)|\psi\rangle`
 を満たし、ヒルベルト空間の次元はおよそ群の位数分の1に縮小されます。
 セクターの次元はログに ``Symmetry basis: raw_dim=... sector_dim=...``
 として出力されます。
@@ -179,18 +179,73 @@ TransSym指定ファイル
    写した結果が元の項と一致しない場合、
    ``TransSym Hamiltonian invariance failed`` のエラーで終了します。
 
--  ``SpinlessFermion`` と ``Hubbard`` では、フェルミオンの置換に伴う符号は
+-  ``SpinlessFermion``、 ``Hubbard``、 ``tJ`` では、フェルミオンの置換に伴う符号は
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  本バージョンで対称性セクターを使えるのは、 :math:`S=1/2` で ``2Sz`` を
-   固定した ``Spin`` （``Exchange`` と ``Ising`` 項）、 ``Ncond`` を固定した
-   ``SpinlessFermion`` （``Trans`` と ``CoulombInter`` 項）、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` （``Trans`` と ``CoulombIntra`` 項）で、
-   計算手法は ``Lanczos`` と ``CG`` です。相関関数、スペクトル計算、
-   リスタート、ハミルトニアンと固有ベクトルの入出力は本ファイルと併用
-   できません。非対応の組み合わせは、非対応のオプション名を含むエラー
-   メッセージを出して終了します。
+-  対応手法は ``Lanczos`` と ``CG`` です。模型は :math:`S=1/2` で ``2Sz`` を
+   固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
+   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
+
+   - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
+     ``Hund``、固定Szを保存する ``InterAll``。
+   - ``SpinlessFermion``: サイト内ポテンシャルを含む ``Trans``、
+     ``CoulombInter``、 ``InterAll``。
+   - ``Hubbard``: スピンを保存する ``Trans``、 ``CoulombIntra``、 ``CoulombInter``、
+     ``Hund``、 ``Ising``、 ``Exchange``、 ``PairHop``、固定スピンを保存する ``InterAll``。
+   - ``tJ``: ``Hubbard`` と同じ項を二重占有のない配置へ射影します。
+     ``CoulombIntra`` と ``PairHop`` の寄与は0になります。raw次元は
+     :math:`\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}` です。
+     replicated / distributedの両layoutに対応し、rawのサイト分割で使えない
+     MPIプロセス数でも実行できます。
+
+   拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
+   係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、
+   不変性と固定量子数の保存を検査します。係数の許容誤差は :math:`10^{-10}` です。
+   ``PairLift``、 ``NBodyInterAll``、異常項は非対応です。
+   spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
+   ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
+
+   相関関数、スペクトル計算、リスタート、ハミルトニアンと固有ベクトルの入出力は
+   本ファイルと併用できません。非対応の組み合わせはエラーで終了します。
+
+セクター情報ファイル
+^^^^^^^^^^^^^^^^^^^^
+
+非空の対称化基底を構築し、セクターのオプションを検証した後、solver の開始前に
+``output/symmetry_sector.dat`` を出力します。 ``OutputDataHead=1`` の場合は
+``output/<CDataFileHead>_symmetry_sector.dat`` です。 ``TransSym`` を指定しない
+通常の計算と、 ``-sdry`` による定義ファイル生成では出力しません。
+書き込みエラーがあれば全 MPI rank で計算を終了します。
+
+先頭行は ``format=HPhiSymmetrySector version=1`` です。以降は ``key=value`` の
+形式で、計算手法、模型、サイト数、固定量子数、固定量子数空間の全次元
+（``full_dim``）、セクター次元（``sector_dim``）、群の位数、任意指定の
+``momentum_index``、基底 layout、MPI rank 数、OpenMP thread 数の上限、
+項の件数、solver のパラメータを記録します。入力セクターを記録するファイルであり、
+ファイルの存在は計算の完了・収束を意味しません。
+
+次の3種類の、algorithm version を含む fingerprint を出力します。
+
+- ``group_digest``: ``hphi-group-fnv1a64-v1`` は、操作をサイト置換の辞書順に
+  並べて置換と指標を hash 化します。操作番号の変更には依存しません。
+  指標の各成分は :math:`10^{-10}` 刻みに丸めます。この量子化は、丸め境界付近の
+  浮動小数点入力を一般的に同値判定するものではありません。
+- ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` は、各基底の
+  代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
+  MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
+  法として計算します。ノルムとハミルトニアンの対角値は含めません。
+- ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` は、対応する
+  ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
+  version 2ではサイト内ポテンシャル、pair hopping、分離済みの対角・非対角InterAllを
+  記録対象に追加しています。物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。
+
+セクターの識別には、模型、固定量子数、セクター次元、 ``group_digest``、
+``sector_digest`` の組を使います。共役表現では ``sector_digest`` が同じに
+なり得るため、単独では使用できません。結合定数の変更はセクター識別に影響しません。
+これらは照合のための fingerprint であり、衝突のない同値性の証明ではありません。
+順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
+従来の計算結果と ``CalcTimerRankStats.dat`` の形式は変更しません。
 
 .. raw:: latex
 

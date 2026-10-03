@@ -118,6 +118,7 @@ $(document).ready(function(){initNavTree('symmetry__matvec__plan_8c.html',''); i
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">symmetry_matvec_plan.c File Reference</div></div>
 </div><!--header-->
@@ -136,6 +137,7 @@ $(document).ready(function(){initNavTree('symmetry__matvec__plan_8c.html',''); i
 <code>#include &quot;<a class="el" href="symmetry__directory_8h_source.html">symmetry_directory.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__distribution_8h_source.html">symmetry_distribution.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__matvec__plan_8h_source.html">symmetry_matvec_plan.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__terms_8h_source.html">symmetry_terms.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__mpi__exchange_8h_source.html">symmetry_mpi_exchange.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__vector__halo_8h_source.html">symmetry_vector_halo.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
@@ -144,10 +146,21 @@ $(document).ready(function(){initNavTree('symmetry__matvec__plan_8c.html',''); i
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRawTransitionContext.html">RawTransitionContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCanonicalColumnContext.html">CanonicalColumnContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structUnresolvedRowContext.html">UnresolvedRowContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCountEntriesContext.html">CountEntriesContext</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFillEntriesContext.html">FillEntriesContext</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a7e85d3adb547525de242f6e799a6d301" id="r_a7e85d3adb547525de242f6e799a6d301"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a7e85d3adb547525de242f6e799a6d301">SymmetryRawTransitionCallback</a>) (unsigned long int state, double complex coefficient, void *context)</td></tr>
+<tr class="separator:a7e85d3adb547525de242f6e799a6d301"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -161,12 +174,24 @@ Functions</h2></td></tr>
 <tr class="separator:a1bf203cc47a6612576a23f96e7274724"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6009f95400b557bae3633c0ae097235" id="r_ae6009f95400b557bae3633c0ae097235"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#ae6009f95400b557bae3633c0ae097235">emit_canonicalized_transition</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, unsigned long int to_state, double complex hval, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> callback, void *context)</td></tr>
 <tr class="separator:ae6009f95400b557bae3633c0ae097235"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a325b20ba1e48de9355050af84406ee3b" id="r_a325b20ba1e48de9355050af84406ee3b"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a325b20ba1e48de9355050af84406ee3b">enumerate_legacy_offdiagonal_transitions</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int state, <a class="el" href="symmetry__matvec__plan_8c.html#a7e85d3adb547525de242f6e799a6d301">SymmetryRawTransitionCallback</a> callback, void *context)</td></tr>
+<tr class="separator:a325b20ba1e48de9355050af84406ee3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a846dabc094e4d8ba63643505c6fab67e" id="r_a846dabc094e4d8ba63643505c6fab67e"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a846dabc094e4d8ba63643505c6fab67e">apply_raw_term</a> (const struct <a class="el" href="structSymmetryTerm.html">SymmetryTerm</a> *term, void *context)</td></tr>
+<tr class="separator:a846dabc094e4d8ba63643505c6fab67e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8179fca86779742671b8c0c1dc0e575b" id="r_a8179fca86779742671b8c0c1dc0e575b"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a8179fca86779742671b8c0c1dc0e575b">enumerate_raw_offdiagonal_transitions</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long state, <a class="el" href="symmetry__matvec__plan_8c.html#a7e85d3adb547525de242f6e799a6d301">SymmetryRawTransitionCallback</a> callback, void *context)</td></tr>
+<tr class="separator:a8179fca86779742671b8c0c1dc0e575b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed1824faec0c911c919e6f640bd66a7d" id="r_aed1824faec0c911c919e6f640bd66a7d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aed1824faec0c911c919e6f640bd66a7d">emit_column_transition</a> (unsigned long int state, double complex coefficient, void *context)</td></tr>
+<tr class="separator:aed1824faec0c911c919e6f640bd66a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa279c7799042513650d2b4147fe0b862" id="r_aa279c7799042513650d2b4147fe0b862"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#aa279c7799042513650d2b4147fe0b862">SymmetryEnumerateColumn</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int <a class="el" href="global_8c.html#a5c7b96103ba8c775791fd817c42782ae">beta</a>, <a class="el" href="symmetry__matvec__plan_8h.html#a3516d536bbe8086bb64d2a09e91bea00">SymmetryEntryCallback</a> callback, void *context)</td></tr>
 <tr class="separator:aa279c7799042513650d2b4147fe0b862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a601c34147221960b1aab11cbc91a853f" id="r_a601c34147221960b1aab11cbc91a853f"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a601c34147221960b1aab11cbc91a853f">count_raw_transition</a> (unsigned long int state, double complex coefficient, void *context)</td></tr>
+<tr class="separator:a601c34147221960b1aab11cbc91a853f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90882fafe4fb3487baa640f947e306e0" id="r_a90882fafe4fb3487baa640f947e306e0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a90882fafe4fb3487baa640f947e306e0">count_unresolved_row_transitions</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int state, size_t *transition_count)</td></tr>
 <tr class="separator:a90882fafe4fb3487baa640f947e306e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc41b0ece347e8da3e8d99269ae9dc80" id="r_acc41b0ece347e8da3e8d99269ae9dc80"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#acc41b0ece347e8da3e8d99269ae9dc80">append_unresolved_transition</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int to_state, double complex hval, struct <a class="el" href="structSymmetryUnresolvedTransition.html">SymmetryUnresolvedTransition</a> *transitions, size_t *next, size_t end)</td></tr>
 <tr class="separator:acc41b0ece347e8da3e8d99269ae9dc80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ffab7687f62fc8b9fd44cfb40c6057" id="r_ad2ffab7687f62fc8b9fd44cfb40c6057"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#ad2ffab7687f62fc8b9fd44cfb40c6057">store_raw_transition</a> (unsigned long int state, double complex coefficient, void *context)</td></tr>
+<tr class="separator:ad2ffab7687f62fc8b9fd44cfb40c6057"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3796d266d3e76e999eeaf762da09d809" id="r_a3796d266d3e76e999eeaf762da09d809"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a3796d266d3e76e999eeaf762da09d809">fill_unresolved_row_transitions</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structSymmetryBasisVector.html">SymmetryBasisVector</a> *source, struct <a class="el" href="structSymmetryUnresolvedTransition.html">SymmetryUnresolvedTransition</a> *transitions, size_t begin, size_t end)</td></tr>
 <tr class="separator:a3796d266d3e76e999eeaf762da09d809"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8526ed131320cf7e59fa77373f14b42" id="r_ad8526ed131320cf7e59fa77373f14b42"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#ad8526ed131320cf7e59fa77373f14b42">compare_unresolved_request_key</a> (const void *lhs, const void *rhs)</td></tr>
@@ -242,6 +267,23 @@ Functions</h2></td></tr>
 <tr class="memitem:a8331c430c7115be8a32ecfe51e747468" id="r_a8331c430c7115be8a32ecfe51e747468"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__matvec__plan_8c.html#a8331c430c7115be8a32ecfe51e747468">ApplySymmetryMatvecPlanHalo</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, const double complex *local_v1, double complex *local_prdct)</td></tr>
 <tr class="separator:a8331c430c7115be8a32ecfe51e747468"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a7e85d3adb547525de242f6e799a6d301" name="a7e85d3adb547525de242f6e799a6d301"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e85d3adb547525de242f6e799a6d301">&#9670;&#160;</a></span>SymmetryRawTransitionCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(* SymmetryRawTransitionCallback) (unsigned long int state, double complex coefficient, void *context)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00119">119</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="acc41b0ece347e8da3e8d99269ae9dc80" name="acc41b0ece347e8da3e8d99269ae9dc80"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acc41b0ece347e8da3e8d99269ae9dc80">&#9670;&#160;</a></span>append_unresolved_transition()</h2>
@@ -301,11 +343,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00249">249</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00252">252</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00031">SymmetryRepresentativeResult::phase</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__basis_8h_source.html#l00029">SymmetryRepresentativeResult::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__basis_8c_source.html#l01122">SymmetryFindRepresentative()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__basis_8h_source.html#l00031">SymmetryRepresentativeResult::phase</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__basis_8h_source.html#l00029">SymmetryRepresentativeResult::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__basis_8c_source.html#l01123">SymmetryFindRepresentative()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">fill_unresolved_row_transitions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00279">store_raw_transition()</a>.</p>
 
 </div>
 </div>
@@ -355,11 +397,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00021">21</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00022">22</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">fill_unresolved_row_transitions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00122">enumerate_legacy_offdiagonal_transitions()</a>.</p>
 
 </div>
 </div>
@@ -433,11 +475,53 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00068">68</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00069">69</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">apply_spinless_hopping_hermite()</a>, and <a class="el" href="global_8h_source.html#l00025">FALSE</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00042">apply_spinless_hopping_hermite()</a>, and <a class="el" href="global_8h_source.html#l00025">FALSE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">fill_unresolved_row_transitions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00122">enumerate_legacy_offdiagonal_transitions()</a>.</p>
+
+</div>
+</div>
+<a id="a846dabc094e4d8ba63643505c6fab67e" name="a846dabc094e4d8ba63643505c6fab67e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a846dabc094e4d8ba63643505c6fab67e">&#9670;&#160;</a></span>apply_raw_term()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int apply_raw_term </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryTerm.html">SymmetryTerm</a> *&#160;</td>
+          <td class="paramname"><em>term</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00170">170</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__terms_8c_source.html#l00132">ApplySymmetryTerm()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00166">RawTransitionContext::callback</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00167">RawTransitionContext::context</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00164">RawTransitionContext::def</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00165">RawTransitionContext::state</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>.</p>
 
 </div>
 </div>
@@ -499,11 +583,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">41</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00042">42</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00033">mask_between_sites()</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00034">mask_between_sites()</a>, <a class="el" href="bitcalc_8c_source.html#l00386">SgnBit()</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00068">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">fill_unresolved_row_transitions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00069">apply_hubbard_hopping_hermite()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00122">enumerate_legacy_offdiagonal_transitions()</a>.</p>
 
 </div>
 </div>
@@ -559,11 +643,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01999">1999</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01970">1970</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02028">ApplySymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01999">ApplySymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -625,11 +709,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02069">2069</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02040">2040</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00119">SymmetryMatvecBlockView::column_slot32</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02151">ApplySymmetryMatvecPlanHalo()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02122">ApplySymmetryMatvecPlanHalo()</a>.</p>
 
 </div>
 </div>
@@ -691,11 +775,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02109">2109</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02080">2080</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00120">SymmetryMatvecBlockView::column_slot64</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00033">SymmetryVectorHaloPlan::ghost_values</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02151">ApplySymmetryMatvecPlanHalo()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02122">ApplySymmetryMatvecPlanHalo()</a>.</p>
 
 </div>
 </div>
@@ -737,9 +821,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02028">2028</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01999">1999</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l01999">apply_symmetry_matvec_plan_block()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01664">SymmetryMatvecPlanGetBlockView()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l01970">apply_symmetry_matvec_plan_block()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01635">SymmetryMatvecPlanGetBlockView()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00087">mltplySpinSym()</a>.</p>
 
@@ -783,9 +867,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02151">2151</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l02122">2122</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l02069">apply_symmetry_matvec_plan_halo_u32()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l02109">apply_symmetry_matvec_plan_halo_u64()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01664">SymmetryMatvecPlanGetBlockView()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l02040">apply_symmetry_matvec_plan_halo_u32()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l02080">apply_symmetry_matvec_plan_halo_u64()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01635">SymmetryMatvecPlanGetBlockView()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00087">mltplySpinSym()</a>.</p>
 
@@ -831,11 +915,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01367">1367</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01338">1338</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00104">BuildSymmetryVectorHaloPlan()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00007">SymmetryGlobalColumnSpan::columns</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00008">SymmetryGlobalColumnSpan::count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00097">SymmetryMatvecPlan::local_column_nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00098">SymmetryMatvecPlan::remote_column_nnz</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, and <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01409">finalize_distributed_plan_for_solver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01380">finalize_distributed_plan_for_solver()</a>.</p>
 
 </div>
 </div>
@@ -855,11 +939,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01513">1513</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01484">1484</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l01491">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l01462">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00744">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00745">main()</a>.</p>
 
 </div>
 </div>
@@ -889,11 +973,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01491">1491</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01462">1462</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01409">finalize_distributed_plan_for_solver()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01713">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01378">ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01380">finalize_distributed_plan_for_solver()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01684">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01379">ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01513">BuildSymmetryDistributedMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01484">BuildSymmetryDistributedMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -925,11 +1009,11 @@ Functions</h2></td></tr>
 <p>Collectively resolve distributed transition blocks into global-column CSR.</p>
 <p>Every rank participates once per rank-local block wave up to the maximum local block count, including ranks that have no block in a wave. The resulting plan has global columns and no halo/remap state; B4-C4 owns that staged integration. </p>
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">967</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">938</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00099">SymmetryMatvecPlan::build_local_wave_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00100">SymmetryMatvecPlan::build_max_wave_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00103">SymmetryMatvecPlan::build_memory_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00102">SymmetryMatvecPlan::build_memory_warning_byte_threshold</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00101">SymmetryMatvecPlan::build_temporary_peak_bytes</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">BuildSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00060">SymmetryDistributedMatvecPlanOptions::directory_options</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00912">distributed_local_plan_block_count()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00939">distributed_max_plan_wave_count()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00588">distributed_plan_options()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00685">distributed_round_memory_peak()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00738">finalize_distributed_matvec_block()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01713">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00344">FreeSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__memory__policy_8h_source.html#l00021">SymmetryMemoryPolicy::hard_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00057">SymmetryDistributedMatvecPlanOptions::local_rows_per_block</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00083">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8c_source.html#l01299">SymmetryBasisOwnedStorageReady()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01357">SymmetryBasisRepresentativeDirectoryReady()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__memory__policy_8c_source.html#l00090">SymmetryCheckMemoryPolicy()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="symmetry__directory_8c_source.html#l01328">SymmetryResolveRepresentativeBatchWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00570">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, <a class="el" href="symmetry__memory__policy_8h_source.html#l00020">SymmetryMemoryPolicy::warning_byte_threshold</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00099">SymmetryMatvecPlan::build_local_wave_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00100">SymmetryMatvecPlan::build_max_wave_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00103">SymmetryMatvecPlan::build_memory_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00102">SymmetryMatvecPlan::build_memory_warning_byte_threshold</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00101">SymmetryMatvecPlan::build_temporary_peak_bytes</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">BuildSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00060">SymmetryDistributedMatvecPlanOptions::directory_options</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00883">distributed_local_plan_block_count()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00910">distributed_max_plan_wave_count()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00559">distributed_plan_options()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00656">distributed_round_memory_peak()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00709">finalize_distributed_matvec_block()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01684">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00315">FreeSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__memory__policy_8h_source.html#l00021">SymmetryMemoryPolicy::hard_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00057">SymmetryDistributedMatvecPlanOptions::local_rows_per_block</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00083">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8c_source.html#l01300">SymmetryBasisOwnedStorageReady()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01358">SymmetryBasisRepresentativeDirectoryReady()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__memory__policy_8c_source.html#l00090">SymmetryCheckMemoryPolicy()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="symmetry__directory_8c_source.html#l01328">SymmetryResolveRepresentativeBatchWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00541">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, <a class="el" href="symmetry__memory__policy_8h_source.html#l00020">SymmetryMemoryPolicy::warning_byte_threshold</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01491">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01462">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -949,11 +1033,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">1731</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">1702</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00104">SymmetryMatvecPlan::allgather_nonlocal_values_per_call</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00105">SymmetryMatvecPlan::allgather_payload_bytes_per_call</a>, <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00549">FillEntriesContext::block</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01367">build_symmetry_matvec_plan_halo()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01284">configure_full_input_vector()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00533">CountEntriesContext::count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00536">count_entry()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00550">FillEntriesContext::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00552">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">fill_transposed_entry()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01713">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::incoming_peer_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00097">SymmetryMatvecPlan::local_column_nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00551">FillEntriesContext::next</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::outgoing_peer_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00014">SymmetryVectorHaloPlan::reference_enabled</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01568">RemapSymmetryMatvecPlanColumns()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00098">SymmetryMatvecPlan::remote_column_nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00083">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00035">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01277">select_halo_reference_mode()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">select_matvec_mode()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01253">select_vector_exchange_mode()</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SYMMETRY_VECTOR_EXCHANGE_ALLGATHER</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SYMMETRY_VECTOR_EXCHANGE_HALO</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">SymmetryEnumerateColumn()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00570">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00104">SymmetryMatvecPlan::allgather_nonlocal_values_per_call</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00105">SymmetryMatvecPlan::allgather_payload_bytes_per_call</a>, <a class="el" href="global_8c_source.html#l00137">alpha</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00520">FillEntriesContext::block</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01338">build_symmetry_matvec_plan_halo()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01255">configure_full_input_vector()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00504">CountEntriesContext::count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00507">count_entry()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00521">FillEntriesContext::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00523">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00526">fill_transposed_entry()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01684">FreeSymmetryMatvecPlan()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00022">SymmetryVectorHaloPlan::incoming_peer_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00097">SymmetryMatvecPlan::local_column_nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00522">FillEntriesContext::next</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00023">SymmetryVectorHaloPlan::outgoing_peer_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00014">SymmetryVectorHaloPlan::reference_enabled</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01539">RemapSymmetryMatvecPlanColumns()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00098">SymmetryMatvecPlan::remote_column_nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00083">SymmetryMatvecPlan::row_nnz_max</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00035">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01248">select_halo_reference_mode()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01195">select_matvec_mode()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">select_vector_exchange_mode()</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SYMMETRY_VECTOR_EXCHANGE_ALLGATHER</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SYMMETRY_VECTOR_EXCHANGE_HALO</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00206">SymmetryEnumerateColumn()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00541">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00744">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00745">main()</a>.</p>
 
 </div>
 </div>
@@ -1003,11 +1087,11 @@ Functions</h2></td></tr>
 <p>Build a communication-free candidate block from distributed owned rows.</p>
 <p>Row order and Hamiltonian term order are preserved in transitions. request_keys contains only off-diagonal representative keys, sorted and deduplicated for one later collective directory batch. memory_byte_limit covers all block-owned storage plus the row-count construction workspace. block_out must be empty and remains empty on failure. </p>
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">354</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">325</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00335">compare_unresolved_request_key()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">fill_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00344">FreeSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00053">SymmetryUnresolvedMatvecBlock::memory_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00046">SymmetryUnresolvedMatvecBlock::offdiagonal_count</a>, <a class="el" href="output_8c_source.html#l00027">output()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00047">SymmetryUnresolvedMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00051">SymmetryUnresolvedMatvecBlock::storage_bytes</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00113">SymmetryBasisLocalEntry()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01299">SymmetryBasisOwnedStorageReady()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00040">SymmetryCheckedSizeAdd()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00052">SymmetryUnresolvedMatvecBlock::temporary_peak_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00045">SymmetryUnresolvedMatvecBlock::transition_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00048">SymmetryUnresolvedMatvecBlock::transitions</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00306">compare_unresolved_request_key()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00287">fill_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00315">FreeSymmetryUnresolvedMatvecBlock()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00053">SymmetryUnresolvedMatvecBlock::memory_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00046">SymmetryUnresolvedMatvecBlock::offdiagonal_count</a>, <a class="el" href="output_8c_source.html#l00027">output()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00047">SymmetryUnresolvedMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00051">SymmetryUnresolvedMatvecBlock::storage_bytes</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00113">SymmetryBasisLocalEntry()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01300">SymmetryBasisOwnedStorageReady()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00040">SymmetryCheckedSizeAdd()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00052">SymmetryUnresolvedMatvecBlock::temporary_peak_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00045">SymmetryUnresolvedMatvecBlock::transition_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00048">SymmetryUnresolvedMatvecBlock::transitions</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1045,9 +1129,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00335">335</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00306">306</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
 
 </div>
 </div>
@@ -1091,11 +1175,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01284">1284</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01255">1255</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__distribution_8c_source.html#l00104">SymmetryBlockRange()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -1139,11 +1223,59 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00536">536</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00507">507</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00533">CountEntriesContext::count</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00504">CountEntriesContext::count</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
+
+</div>
+</div>
+<a id="a601c34147221960b1aab11cbc91a853f" name="a601c34147221960b1aab11cbc91a853f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a601c34147221960b1aab11cbc91a853f">&#9670;&#160;</a></span>count_raw_transition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int count_raw_transition </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>coefficient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00228">228</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00195">CanonicalColumnContext::context</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">count_unresolved_row_transitions()</a>.</p>
 
 </div>
 </div>
@@ -1187,11 +1319,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">194</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">239</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00021">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00068">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">apply_spinless_hopping_hermite()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00228">count_raw_transition()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
 
 </div>
 </div>
@@ -1241,11 +1373,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00912">912</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00883">883</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00064">SymmetryBasisRuntime::dim</a>, <a class="el" href="symmetry__basis_8h_source.html#l00084">SymmetryBasisRuntime::local_dim</a>, and <a class="el" href="symmetry__basis_8h_source.html#l00083">SymmetryBasisRuntime::local_offset</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1289,11 +1421,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00939">939</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00910">910</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8c_source.html#l00196">nproc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1343,11 +1475,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00588">588</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00559">559</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00058">SymmetryDistributedMatvecPlanOptions::block_memory_byte_limit</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__memory__policy_8h_source.html#l00021">SymmetryMemoryPolicy::hard_byte_limit</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00019">HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00024">HPHI_SYMMETRY_PLAN_LOCAL_ROWS_PER_BLOCK</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00057">SymmetryDistributedMatvecPlanOptions::local_rows_per_block</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="symmetry__memory__policy_8c_source.html#l00036">SymmetryLoadMemoryPolicy()</a>, and <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1391,11 +1523,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00685">685</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00656">656</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00051">SymmetryUnresolvedMatvecBlock::storage_bytes</a>, <a class="el" href="symmetry__checked_8h_source.html#l00040">SymmetryCheckedSizeAdd()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00045">SymmetryUnresolvedMatvecBlock::transition_count</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1457,11 +1589,167 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00092">92</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00093">93</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00023">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00016">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__basis_8h_source.html#l00025">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8h_source.html#l00141">SymmetryBasisReplicatedGlobalEntry()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01184">SymmetryCanonicalizeState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00023">SymmetryCanonicalResult::basis_index</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::found</a>, <a class="el" href="symmetry__basis_8h_source.html#l00016">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__basis_8h_source.html#l00025">SymmetryCanonicalResult::phase</a>, <a class="el" href="symmetry__basis_8h_source.html#l00141">SymmetryBasisReplicatedGlobalEntry()</a>, <a class="el" href="symmetry__basis_8c_source.html#l01185">SymmetryCanonicalizeState()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">SymmetryEnumerateColumn()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">emit_column_transition()</a>.</p>
+
+</div>
+</div>
+<a id="aed1824faec0c911c919e6f640bd66a7d" name="aed1824faec0c911c919e6f640bd66a7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1824faec0c911c919e6f640bd66a7d">&#9670;&#160;</a></span>emit_column_transition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int emit_column_transition </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>coefficient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">198</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00193">CanonicalColumnContext::beta</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">CanonicalColumnContext::callback</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00195">CanonicalColumnContext::context</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00093">emit_canonicalized_transition()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00192">CanonicalColumnContext::X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00206">SymmetryEnumerateColumn()</a>.</p>
+
+</div>
+</div>
+<a id="a325b20ba1e48de9355050af84406ee3b" name="a325b20ba1e48de9355050af84406ee3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a325b20ba1e48de9355050af84406ee3b">&#9670;&#160;</a></span>enumerate_legacy_offdiagonal_transitions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int enumerate_legacy_offdiagonal_transitions </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>def</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="symmetry__matvec__plan_8c.html#a7e85d3adb547525de242f6e799a6d301">SymmetryRawTransitionCallback</a>&#160;</td>
+          <td class="paramname"><em>callback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00122">122</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00022">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00069">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00042">apply_spinless_hopping_hermite()</a>, <a class="el" href="struct_8h_source.html#l00119">DefineList::EDGeneralTransfer</a>, <a class="el" href="struct_8h_source.html#l00114">DefineList::EDNTransfer</a>, <a class="el" href="struct_8h_source.html#l00125">DefineList::EDParaGeneralTransfer</a>, <a class="el" href="struct_8h_source.html#l00155">DefineList::ExchangeCoupling</a>, <a class="el" href="symmetry__basis_8h_source.html#l00022">SymmetryCanonicalResult::found</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00154">DefineList::NExchangeCoupling</a>, <a class="el" href="struct_8h_source.html#l00157">DefineList::ParaExchangeCoupling</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>.</p>
+
+</div>
+</div>
+<a id="a8179fca86779742671b8c0c1dc0e575b" name="a8179fca86779742671b8c0c1dc0e575b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8179fca86779742671b8c0c1dc0e575b">&#9670;&#160;</a></span>enumerate_raw_offdiagonal_transitions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int enumerate_raw_offdiagonal_transitions </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>def</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="symmetry__matvec__plan_8c.html#a7e85d3adb547525de242f6e799a6d301">SymmetryRawTransitionCallback</a>&#160;</td>
+          <td class="paramname"><em>callback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">180</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00170">apply_raw_term()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00166">RawTransitionContext::callback</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00167">RawTransitionContext::context</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00164">RawTransitionContext::def</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00122">enumerate_legacy_offdiagonal_transitions()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00053">EnumerateSymmetryTerms()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00165">RawTransitionContext::state</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00007">SymmetryUsesExtendedTerms()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00239">count_unresolved_row_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00287">fill_unresolved_row_transitions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00206">SymmetryEnumerateColumn()</a>.</p>
 
 </div>
 </div>
@@ -1505,11 +1793,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00555">555</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00526">526</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00549">FillEntriesContext::block</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00550">FillEntriesContext::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00552">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00551">FillEntriesContext::next</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00520">FillEntriesContext::block</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00521">FillEntriesContext::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00523">FillEntriesContext::end</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00522">FillEntriesContext::next</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -1565,11 +1853,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00269">269</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00287">287</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00249">append_unresolved_transition()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00021">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00068">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">apply_spinless_hopping_hermite()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00018">SymmetryBasisVector::diagonal</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__basis_8h_source.html#l00018">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00276">UnresolvedRowContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00275">UnresolvedRowContext::next</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00279">store_raw_transition()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00274">UnresolvedRowContext::transitions</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
 
 </div>
 </div>
@@ -1625,11 +1913,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00738">738</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00709">709</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00645">find_resolved_request()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__basis_8h_source.html#l00016">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00047">SymmetryUnresolvedMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__basis_8h_source.html#l00113">SymmetryBasisLocalEntry()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00045">SymmetryUnresolvedMatvecBlock::transition_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00048">SymmetryUnresolvedMatvecBlock::transitions</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00616">find_resolved_request()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00039">SymmetryUnresolvedTransition::is_diagonal</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00043">SymmetryUnresolvedMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00044">SymmetryUnresolvedMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__basis_8h_source.html#l00016">SymmetryBasisVector::norm</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00038">SymmetryUnresolvedTransition::phased_hval</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00033">SymmetryUnresolvedTransition::rep_state</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00047">SymmetryUnresolvedMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__basis_8h_source.html#l00113">SymmetryBasisLocalEntry()</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00045">SymmetryUnresolvedMatvecBlock::transition_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00048">SymmetryUnresolvedMatvecBlock::transitions</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1657,11 +1945,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01409">1409</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01380">1380</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01367">build_symmetry_matvec_plan_halo()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01568">RemapSymmetryMatvecPlanColumns()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00035">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SYMMETRY_VECTOR_EXCHANGE_HALO</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01338">build_symmetry_matvec_plan_halo()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00095">SymmetryMatvecPlan::column_storage_bytes</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00096">SymmetryMatvecPlan::matrix_storage_bytes</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="global_8c_source.html#l00196">nproc</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00013">SymmetryVectorHaloPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01539">RemapSymmetryMatvecPlanColumns()</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00035">SymmetryVectorHaloPlan::schedule_bytes</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00041">SYMMETRY_BASIS_DISTRIBUTED</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SYMMETRY_VECTOR_EXCHANGE_HALO</a>, <a class="el" href="symmetry__checked_8h_source.html#l00030">SymmetryCheckedSizeMul()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00112">SymmetryMpiAgreeError()</a>, <a class="el" href="symmetry__mpi__exchange_8c_source.html#l00095">SymmetryMpiCollectivesActive()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01491">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01462">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>.</p>
 
 </div>
 </div>
@@ -1705,11 +1993,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01344">1344</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01315">1315</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, and <a class="el" href="symmetry__vector__halo_8h_source.html#l00030">SymmetryVectorHaloPlan::ghost_global_index</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01519">remap_symmetry_matvec_block_columns()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01490">remap_symmetry_matvec_block_columns()</a>.</p>
 
 </div>
 </div>
@@ -1771,11 +2059,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00645">645</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00616">616</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00049">SymmetryUnresolvedMatvecBlock::request_count</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00738">finalize_distributed_matvec_block()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00709">finalize_distributed_matvec_block()</a>.</p>
 
 </div>
 </div>
@@ -1795,11 +2083,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01713">1713</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01684">1684</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__vector__halo_8c_source.html#l00090">FreeSymmetryVectorHaloPlan()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l01219">ActivateSymmetryBasisDimension()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01491">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l01518">FreeSymmetryBasis()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l01220">ActivateSymmetryBasisDimension()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01462">BuildSymmetryDistributedMatvecPlanForSolverWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__basis_8c_source.html#l01519">FreeSymmetryBasis()</a>.</p>
 
 </div>
 </div>
@@ -1819,11 +2107,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00344">344</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00315">315</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00050">SymmetryUnresolvedMatvecBlock::request_keys</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00047">SymmetryUnresolvedMatvecBlock::row_ptr</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00048">SymmetryUnresolvedMatvecBlock::transitions</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00354">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00325">BuildSymmetryUnresolvedMatvecBlock()</a>.</p>
 
 </div>
 </div>
@@ -1861,9 +2149,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00033">33</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00034">34</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">apply_spinless_hopping_hermite()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00042">apply_spinless_hopping_hermite()</a>.</p>
 
 </div>
 </div>
@@ -1891,11 +2179,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01260">1260</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01231">1231</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01277">select_halo_reference_mode()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01248">select_halo_reference_mode()</a>.</p>
 
 </div>
 </div>
@@ -1923,11 +2211,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01209">1209</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01180">1180</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SYMMETRY_MATVEC_MODE_LEGACY</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">select_matvec_mode()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01195">select_matvec_mode()</a>.</p>
 
 </div>
 </div>
@@ -1955,11 +2243,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01231">1231</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01202">1202</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00013">SYMMETRY_MATVEC_MODE_LEGACY</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SYMMETRY_VECTOR_EXCHANGE_ALLGATHER</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00016">SYMMETRY_VECTOR_EXCHANGE_HALO</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01253">select_vector_exchange_mode()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">select_vector_exchange_mode()</a>.</p>
 
 </div>
 </div>
@@ -2021,11 +2309,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01519">1519</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01490">1490</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00092">SymmetryMatvecPlan::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00093">SymmetryMatvecPlan::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01344">find_ghost_position()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00092">SymmetryMatvecPlan::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00093">SymmetryMatvecPlan::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01315">find_ghost_position()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01568">RemapSymmetryMatvecPlanColumns()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01539">RemapSymmetryMatvecPlanColumns()</a>.</p>
 
 </div>
 </div>
@@ -2045,11 +2333,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01568">1568</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01539">1539</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01519">remap_symmetry_matvec_block_columns()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00570">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00077">SymmetryMatvecPlan::dim</a>, <a class="el" href="symmetry__vector__halo_8h_source.html#l00020">SymmetryVectorHaloPlan::ghost_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00110">SymmetryMatvecPlan::halo</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00078">SymmetryMatvecPlan::local_offset</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00082">SymmetryMatvecPlan::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01490">remap_symmetry_matvec_block_columns()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00541">sync_single_block_aliases()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01409">finalize_distributed_plan_for_solver()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01380">finalize_distributed_plan_for_solver()</a>.</p>
 
 </div>
 </div>
@@ -2077,11 +2365,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01277">1277</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01248">1248</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01260">parse_halo_reference_mode()</a>.</p>
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01231">parse_halo_reference_mode()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -2109,11 +2397,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">1224</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01195">1195</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01209">parse_matvec_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01180">parse_matvec_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00012">SYMMETRY_MATVEC_MODE_PLAN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -2141,11 +2429,59 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01253">1253</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01224">1224</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01231">parse_vector_exchange_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SYMMETRY_VECTOR_EXCHANGE_ALLGATHER</a>.</p>
+<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00457">BcastMPI_i()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01202">parse_vector_exchange_mode()</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00015">SYMMETRY_VECTOR_EXCHANGE_ALLGATHER</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
+
+</div>
+</div>
+<a id="ad2ffab7687f62fc8b9fd44cfb40c6057" name="ad2ffab7687f62fc8b9fd44cfb40c6057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2ffab7687f62fc8b9fd44cfb40c6057">&#9670;&#160;</a></span>store_raw_transition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int store_raw_transition </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long int&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex&#160;</td>
+          <td class="paramname"><em>coefficient</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00279">279</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00252">append_unresolved_transition()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00276">UnresolvedRowContext::end</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00275">UnresolvedRowContext::next</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00274">UnresolvedRowContext::transitions</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00273">UnresolvedRowContext::X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00287">fill_unresolved_row_transitions()</a>.</p>
 
 </div>
 </div>
@@ -2187,11 +2523,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00115">115</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00206">206</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__matvec__plan_8c_source.html#l00021">apply_exchange_halfspin()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00068">apply_hubbard_hopping_hermite()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00041">apply_spinless_hopping_hermite()</a>, <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__basis_8h_source.html#l00018">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00092">emit_canonicalized_transition()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00141">SymmetryBasisReplicatedGlobalEntry()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00138">beta</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00194">CanonicalColumnContext::callback</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00195">CanonicalColumnContext::context</a>, <a class="el" href="symmetry__basis_8h_source.html#l00018">SymmetryBasisVector::diagonal</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00198">emit_column_transition()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__basis_8h_source.html#l00040">SYMMETRY_BASIS_REPLICATED</a>, <a class="el" href="symmetry__basis_8h_source.html#l00141">SymmetryBasisReplicatedGlobalEntry()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="mltplySpinSym_8c_source.html#l00036">apply_legacy_scan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>.</p>
 
 </div>
 </div>
@@ -2211,7 +2547,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01657">1657</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01628">1628</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
@@ -2249,11 +2585,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01664">1664</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l01635">1635</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00119">SymmetryMatvecBlockView::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00120">SymmetryMatvecBlockView::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00106">SymmetryMatvecPlan::column_slot_width</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00076">SymmetryMatvecPlan::columns_remapped</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00118">SymmetryMatvecBlockView::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00079">SymmetryMatvecPlan::local_dim</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00064">SymmetryMatvecBlock::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00114">SymmetryMatvecBlockView::local_row_begin</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00065">SymmetryMatvecBlock::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00115">SymmetryMatvecBlockView::local_row_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00066">SymmetryMatvecBlock::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00116">SymmetryMatvecBlockView::nnz</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00075">SymmetryMatvecPlan::ready</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00117">SymmetryMatvecBlockView::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00028">SYMMETRY_COLUMN_U32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00029">SYMMETRY_COLUMN_U64</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00121">SymmetryMatvecBlockView::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l02028">ApplySymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l02151">ApplySymmetryMatvecPlanHalo()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l01999">ApplySymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l02122">ApplySymmetryMatvecPlanHalo()</a>.</p>
 
 </div>
 </div>
@@ -2281,11 +2617,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00570">570</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__matvec__plan_8c_source.html#l00541">541</a> of file <a class="el" href="symmetry__matvec__plan_8c_source.html">symmetry_matvec_plan.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__matvec__plan_8h_source.html#l00080">SymmetryMatvecPlan::block_count</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00081">SymmetryMatvecPlan::blocks</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00090">SymmetryMatvecPlan::col_index</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00069">SymmetryMatvecBlock::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00092">SymmetryMatvecPlan::column_slot32</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00070">SymmetryMatvecBlock::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00093">SymmetryMatvecPlan::column_slot64</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00068">SymmetryMatvecBlock::global_columns</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00067">SymmetryMatvecBlock::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00088">SymmetryMatvecPlan::row_ptr</a>, <a class="el" href="symmetry__matvec__plan_8h_source.html#l00071">SymmetryMatvecBlock::values</a>, and <a class="el" href="symmetry__matvec__plan_8h_source.html#l00094">SymmetryMatvecPlan::values</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00967">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01731">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01568">RemapSymmetryMatvecPlanColumns()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00938">BuildSymmetryDistributedMatvecPlanWithOptions()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l01702">BuildSymmetryMatvecPlan()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l01539">RemapSymmetryMatvecPlanColumns()</a>.</p>
 
 </div>
 </div>

@@ -41,10 +41,10 @@
 各要素 <span class="math notranslate nohighlight">\(g\)</span> に対する1次元指標 <span class="math notranslate nohighlight">\(\chi(g)\)</span> （絶対値1の複素数）を
 指定します。 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は対称化された状態</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-0">
-<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle\]</div>
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle\]</div>
 <p>を基底として計算します。ここで <span class="math notranslate nohighlight">\(T_g\)</span> は各サイト <span class="math notranslate nohighlight">\(i\)</span> の内容を
 サイト <span class="math notranslate nohighlight">\(g(i)\)</span> へ移す演算子で、 <span class="math notranslate nohighlight">\(|r\rangle\)</span> は代表配置を走ります。
-セクター内のすべての状態は <span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle\)</span>
+セクター内のすべての状態は <span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)|\psi\rangle\)</span>
 を満たし、ヒルベルト空間の次元はおよそ群の位数分の1に縮小されます。
 セクターの次元はログに <code class="docutils literal notranslate"><span class="pre">Symmetry</span> <span class="pre">basis:</span> <span class="pre">raw_dim=...</span> <span class="pre">sector_dim=...</span></code>
 として出力されます。</p>
@@ -169,7 +169,7 @@ NQPTrans          2
 <section id="id4">
 <h2>使用ルール<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
-<ul class="simple">
+<ul>
 <li><p>ヘッダの省略はできません。</p></li>
 <li><p>各操作はサイトの全単射でなければならず、<span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>と
 <span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>の各組はちょうど1回ずつ指定します。</p></li>
@@ -180,18 +180,70 @@ NQPTrans          2
 <li><p>ハミルトニアンはすべての操作で不変でなければなりません。各項を操作で
 写した結果が元の項と一致しない場合、
 <code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span></code> のエラーで終了します。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> と <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> では、フェルミオンの置換に伴う符号は
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>、 <code class="docutils literal notranslate"><span class="pre">tJ</span></code> では、フェルミオンの置換に伴う符号は
 自動的に考慮されます。例えば占有軌道を入れ替える鏡映は <span class="math notranslate nohighlight">\(-1\)</span> の
 因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。</p></li>
-<li><p>本バージョンで対称性セクターを使えるのは、 <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
-固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code> （<code class="docutils literal notranslate"><span class="pre">Exchange</span></code> と <code class="docutils literal notranslate"><span class="pre">Ising</span></code> 項）、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した
-<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> （<code class="docutils literal notranslate"><span class="pre">Trans</span></code> と <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code> 項）、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
-<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> （<code class="docutils literal notranslate"><span class="pre">Trans</span></code> と <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> 項）で、
-計算手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> と <code class="docutils literal notranslate"><span class="pre">CG</span></code> です。相関関数、スペクトル計算、
-リスタート、ハミルトニアンと固有ベクトルの入出力は本ファイルと併用
-できません。非対応の組み合わせは、非対応のオプション名を含むエラー
-メッセージを出して終了します。</p></li>
+<li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> と <code class="docutils literal notranslate"><span class="pre">CG</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
+固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。expert mode では次の項に対応します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: 縦磁場の <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、
+<code class="docutils literal notranslate"><span class="pre">Hund</span></code>、固定Szを保存する <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>: サイト内ポテンシャルを含む <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、
+<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>: スピンを保存する <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、
+<code class="docutils literal notranslate"><span class="pre">Hund</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、固定スピンを保存する <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tJ</span></code>: <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> と同じ項を二重占有のない配置へ射影します。
+<code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> と <code class="docutils literal notranslate"><span class="pre">PairHop</span></code> の寄与は0になります。raw次元は
+<span class="math notranslate nohighlight">\(\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}\)</span> です。
+replicated / distributedの両layoutに対応し、rawのサイト分割で使えない
+MPIプロセス数でも実行できます。</p></li>
 </ul>
+<p>拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
+係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、
+不変性と固定量子数の保存を検査します。係数の許容誤差は <span class="math notranslate nohighlight">\(10^{-10}\)</span> です。
+<code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、異常項は非対応です。
+spinlessのraw solverでは非対角 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> は引き続き非対応で、今回の拡張は
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> に適用されます。Standard modeの入力生成は変更していません。</p>
+<p>相関関数、スペクトル計算、リスタート、ハミルトニアンと固有ベクトルの入出力は
+本ファイルと併用できません。非対応の組み合わせはエラーで終了します。</p>
+</li>
+</ul>
+</section>
+<section id="id5">
+<h2>セクター情報ファイル<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>非空の対称化基底を構築し、セクターのオプションを検証した後、solver の開始前に
+<code class="docutils literal notranslate"><span class="pre">output/symmetry_sector.dat</span></code> を出力します。 <code class="docutils literal notranslate"><span class="pre">OutputDataHead=1</span></code> の場合は
+<code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_symmetry_sector.dat</span></code> です。 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定しない
+通常の計算と、 <code class="docutils literal notranslate"><span class="pre">-sdry</span></code> による定義ファイル生成では出力しません。
+書き込みエラーがあれば全 MPI rank で計算を終了します。</p>
+<p>先頭行は <code class="docutils literal notranslate"><span class="pre">format=HPhiSymmetrySector</span> <span class="pre">version=1</span></code> です。以降は <code class="docutils literal notranslate"><span class="pre">key=value</span></code> の
+形式で、計算手法、模型、サイト数、固定量子数、固定量子数空間の全次元
+（<code class="docutils literal notranslate"><span class="pre">full_dim</span></code>）、セクター次元（<code class="docutils literal notranslate"><span class="pre">sector_dim</span></code>）、群の位数、任意指定の
+<code class="docutils literal notranslate"><span class="pre">momentum_index</span></code>、基底 layout、MPI rank 数、OpenMP thread 数の上限、
+項の件数、solver のパラメータを記録します。入力セクターを記録するファイルであり、
+ファイルの存在は計算の完了・収束を意味しません。</p>
+<p>次の3種類の、algorithm version を含む fingerprint を出力します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">group_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-group-fnv1a64-v1</span></code> は、操作をサイト置換の辞書順に
+並べて置換と指標を hash 化します。操作番号の変更には依存しません。
+指標の各成分は <span class="math notranslate nohighlight">\(10^{-10}\)</span> 刻みに丸めます。この量子化は、丸め境界付近の
+浮動小数点入力を一般的に同値判定するものではありません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sector_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-sector-multiset-v1:count:xor:sum</span></code> は、各基底の
+代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
+MPI 分割によらず集約します。整数は固定幅 little-endian、和は <span class="math notranslate nohighlight">\(2^{64}\)</span> を
+法として計算します。ノルムとハミルトニアンの対角値は含めません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> は、対応する
+ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
+version 2ではサイト内ポテンシャル、pair hopping、分離済みの対角・非対角InterAllを
+記録対象に追加しています。物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。</p></li>
+</ul>
+<p>セクターの識別には、模型、固定量子数、セクター次元、 <code class="docutils literal notranslate"><span class="pre">group_digest</span></code>、
+<code class="docutils literal notranslate"><span class="pre">sector_digest</span></code> の組を使います。共役表現では <code class="docutils literal notranslate"><span class="pre">sector_digest</span></code> が同じに
+なり得るため、単独では使用できません。結合定数の変更はセクター識別に影響しません。
+これらは照合のための fingerprint であり、衝突のない同値性の証明ではありません。
+順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
+従来の計算結果と <code class="docutils literal notranslate"><span class="pre">CalcTimerRankStats.dat</span></code> の形式は変更しません。</p>
 </section>
 </section>
 

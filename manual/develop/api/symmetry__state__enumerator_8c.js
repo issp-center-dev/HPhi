@@ -6,5 +6,7 @@ var symmetry__state__enumerator_8c =
     [ "hubbard_state_at", "symmetry__state__enumerator_8c.html#ab7ee8b74173e182c702ce509db62507d", null ],
     [ "initialize_binomial_table", "symmetry__state__enumerator_8c.html#ad1592333023d9d5df611ae2e4a3f4314", null ],
     [ "InitSymmetryStateEnumerator", "symmetry__state__enumerator_8c.html#a1c83f1c3e059f4cc014ddb0030b52cd0", null ],
-    [ "SymmetryStateEnumeratorStateAt", "symmetry__state__enumerator_8c.html#aabf1b4a84cf97fa4ac4172ebd6f65597", null ]
+    [ "SymmetryStateEnumeratorStateAt", "symmetry__state__enumerator_8c.html#aabf1b4a84cf97fa4ac4172ebd6f65597", null ],
+    [ "tj_completion_count", "symmetry__state__enumerator_8c.html#aa14599cb7a1ad711529f454ad4d0c643", null ],
+    [ "tj_state_at", "symmetry__state__enumerator_8c.html#afe40078aeea4198ab0eb069fd8468e15", null ]
 ];

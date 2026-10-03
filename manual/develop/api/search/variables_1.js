@@ -37,7 +37,7 @@ var searchData=
   ['batched_5ftransfers_5fhubbard_5finitialized_34',['batched_transfers_Hubbard_initialized',['../mltplyHubbard_8c.html#a2cde70b4f4af5b8d243767b663d672a5',1,'mltplyHubbard.c']]],
   ['batched_5ftransfers_5fhubbardgc_35',['batched_transfers_HubbardGC',['../mltplyHubbard_8c.html#adb6153c3a5ac68fc5f68eeb04aafe62f',1,'mltplyHubbard.c']]],
   ['batched_5ftransfers_5fhubbardgc_5finitialized_36',['batched_transfers_HubbardGC_initialized',['../mltplyHubbard_8c.html#ab3e730f9e070a65214299166140696bd',1,'mltplyHubbard.c']]],
-  ['beta_37',['beta',['../global_8c.html#a5c7b96103ba8c775791fd817c42782ae',1,'beta:&#160;global.c'],['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'beta:&#160;global.h']]],
+  ['beta_37',['beta',['../global_8c.html#a5c7b96103ba8c775791fd817c42782ae',1,'beta:&#160;global.c'],['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'beta:&#160;global.h'],['../structCanonicalColumnContext.html#a17e2c3ad3c6f703d51873ca6d43651dd',1,'CanonicalColumnContext::beta']]],
   ['bind_38',['Bind',['../structEDMainCalStruct.html#ac28ad147bf75b9b2864d9feb74bd4d29',1,'EDMainCalStruct']]],
   ['binomial_39',['binomial',['../structSymmetryStateEnumerator.html#aa08322dadfe02ef54f10439b4e8de434',1,'SymmetryStateEnumerator']]],
   ['bit1diff_40',['bit1diff',['../structMPITransferGroup.html#a9c421c95245ae78449b9b4ffc00014e5',1,'MPITransferGroup']]],

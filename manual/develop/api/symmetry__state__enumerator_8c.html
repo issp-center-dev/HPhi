@@ -143,6 +143,10 @@ Functions</h2></td></tr>
 <tr class="separator:a7835b2567f657b2024a9198971efaffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7ee8b74173e182c702ce509db62507d" id="r_ab7ee8b74173e182c702ce509db62507d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8c.html#ab7ee8b74173e182c702ce509db62507d">hubbard_state_at</a> (const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator, unsigned long int rank, unsigned long int *state)</td></tr>
 <tr class="separator:ab7ee8b74173e182c702ce509db62507d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa14599cb7a1ad711529f454ad4d0c643" id="r_aa14599cb7a1ad711529f454ad4d0c643"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8c.html#aa14599cb7a1ad711529f454ad4d0c643">tj_completion_count</a> (const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator, unsigned int sites, unsigned int up, unsigned int down, unsigned long *count)</td></tr>
+<tr class="separator:aa14599cb7a1ad711529f454ad4d0c643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe40078aeea4198ab0eb069fd8468e15" id="r_afe40078aeea4198ab0eb069fd8468e15"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8c.html#afe40078aeea4198ab0eb069fd8468e15">tj_state_at</a> (const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator, unsigned long rank, unsigned long *state)</td></tr>
+<tr class="separator:afe40078aeea4198ab0eb069fd8468e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabf1b4a84cf97fa4ac4172ebd6f65597" id="r_aabf1b4a84cf97fa4ac4172ebd6f65597"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8c.html#aabf1b4a84cf97fa4ac4172ebd6f65597">SymmetryStateEnumeratorStateAt</a> (const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator, unsigned long int raw_index, unsigned long int *state)</td></tr>
 <tr class="separator:aabf1b4a84cf97fa4ac4172ebd6f65597"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -189,7 +193,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">43</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00137">hubbard_state_at()</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">InitSymmetryStateEnumerator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00140">hubbard_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">InitSymmetryStateEnumerator()</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00172">tj_completion_count()</a>.</p>
 
 </div>
 </div>
@@ -237,7 +241,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00021">SymmetryStateEnumerator::binomial</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00114">fixed_popcount_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00137">hubbard_state_at()</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">InitSymmetryStateEnumerator()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00117">fixed_popcount_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00140">hubbard_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">InitSymmetryStateEnumerator()</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00172">tj_completion_count()</a>.</p>
 
 </div>
 </div>
@@ -281,11 +285,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00114">114</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00117">117</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, and <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00169">SymmetryStateEnumeratorStateAt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00211">SymmetryStateEnumeratorStateAt()</a>.</p>
 
 </div>
 </div>
@@ -329,11 +333,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00137">137</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00140">140</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
 <p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">checked_product()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, and <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00169">SymmetryStateEnumeratorStateAt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00211">SymmetryStateEnumeratorStateAt()</a>.</p>
 
 </div>
 </div>
@@ -403,9 +407,9 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">52</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">checked_product()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00096">DefineList::iFlgSzConserved</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00008">initialize_binomial_table()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="struct_8h_source.html#l00068">DefineList::Ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="struct_8h_source.html#l00080">DefineList::Ne</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::Nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">checked_product()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00096">DefineList::iFlgSzConserved</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00008">initialize_binomial_table()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="struct_8h_source.html#l00068">DefineList::Ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="struct_8h_source.html#l00080">DefineList::Ne</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::Nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00658">BuildRankLocalSymmetryBasisRun()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00659">BuildRankLocalSymmetryBasisRun()</a>.</p>
 
 </div>
 </div>
@@ -441,11 +445,119 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00169">169</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00211">211</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00114">fixed_popcount_state_at()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00137">hubbard_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, and <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00117">fixed_popcount_state_at()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00140">hubbard_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00184">tj_state_at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00658">BuildRankLocalSymmetryBasisRun()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00659">BuildRankLocalSymmetryBasisRun()</a>.</p>
+
+</div>
+</div>
+<a id="aa14599cb7a1ad711529f454ad4d0c643" name="aa14599cb7a1ad711529f454ad4d0c643"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa14599cb7a1ad711529f454ad4d0c643">&#9670;&#160;</a></span>tj_completion_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int tj_completion_count </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *&#160;</td>
+          <td class="paramname"><em>enumerator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>sites</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>up</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>down</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long *&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00172">172</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">checked_product()</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00184">tj_state_at()</a>.</p>
+
+</div>
+</div>
+<a id="afe40078aeea4198ab0eb069fd8468e15" name="afe40078aeea4198ab0eb069fd8468e15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe40078aeea4198ab0eb069fd8468e15">&#9670;&#160;</a></span>tj_state_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int tj_state_at </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *&#160;</td>
+          <td class="paramname"><em>enumerator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>rank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long *&#160;</td>
+          <td class="paramname"><em>state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00184">184</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00172">tj_completion_count()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00211">SymmetryStateEnumeratorStateAt()</a>.</p>
 
 </div>
 </div>

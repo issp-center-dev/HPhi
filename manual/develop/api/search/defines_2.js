@@ -5,6 +5,7 @@ var searchData=
   ['calcvec_5flanczoscg_2',['CALCVEC_LANCZOSCG',['../DefCommon_8h.html#aa6cf8f30f8d549832a7349656a2244ec',1,'DefCommon.h']]],
   ['calcvec_5fnot_3',['CALCVEC_NOT',['../DefCommon_8h.html#afeb80d5dec5ade718c099a3606ed0910',1,'DefCommon.h']]],
   ['cg_4',['CG',['../DefCommon_8h.html#a2084aacfc0e802280aec2d1db1ccd7f5',1,'DefCommon.h']]],
-  ['corrmode_5',['CORRMODE',['../DefCommon_8h.html#aa1c58bc238c2f29814c7d5c0ee642ebf',1,'DefCommon.h']]],
-  ['ctpq_6',['cTPQ',['../DefCommon_8h.html#a487b3980c5e2dd8d53d5e209cd96a34e',1,'DefCommon.h']]]
+  ['check_5fstorage_5',['CHECK_STORAGE',['../symmetry__terms_8c.html#a9ee77486e1413f842f4f7ce7235019f6',1,'symmetry_terms.c']]],
+  ['corrmode_6',['CORRMODE',['../DefCommon_8h.html#aa1c58bc238c2f29814c7d5c0ee642ebf',1,'DefCommon.h']]],
+  ['ctpq_7',['cTPQ',['../DefCommon_8h.html#a487b3980c5e2dd8d53d5e209cd96a34e',1,'DefCommon.h']]]
 ];

@@ -41,11 +41,11 @@ group <span class="math notranslate nohighlight">\(G\)</span> of site permutatio
 <span class="math notranslate nohighlight">\(\chi(g)\)</span> (a complex number of unit modulus) for every element
 <span class="math notranslate nohighlight">\(g\)</span>. HPhi then works in the basis of symmetry-adapted states</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-0">
-<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle ,\]</div>
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle ,\]</div>
 <p>where <span class="math notranslate nohighlight">\(T_g\)</span> moves the content of each site <span class="math notranslate nohighlight">\(i\)</span> to the site
 <span class="math notranslate nohighlight">\(g(i)\)</span> and <span class="math notranslate nohighlight">\(|r\rangle\)</span> runs over the representative
 configurations. Every state of the sector satisfies
-<span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle\)</span>, and the dimension of the
+<span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)|\psi\rangle\)</span>, and the dimension of the
 Hilbert space is reduced by roughly the order of the group. The sector
 dimension is printed in the log as <code class="docutils literal notranslate"><span class="pre">Symmetry</span> <span class="pre">basis:</span> <span class="pre">raw_dim=...</span> <span class="pre">sector_dim=...</span></code>.</p>
 <p>The group is not restricted to translations. Reflections, rotations, and
@@ -168,7 +168,7 @@ used by the calculation in this version. Other comment lines are ignored.</p>
 </section>
 <section id="use-rules">
 <h2>Use rules<a class="headerlink" href="#use-rules" title="Link to this heading">¶</a></h2>
-<ul class="simple">
+<ul>
 <li><p>Headers cannot be omitted.</p></li>
 <li><p>Every operation must be a bijection of the sites, and every pair of
 [int02] and [int03] must be given exactly once.</p></li>
@@ -180,21 +180,82 @@ The characters must have unit modulus and be multiplicative,
 mapped by the operation and compared with the original terms; a
 mismatch terminates the program with
 <code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span></code>.</p></li>
-<li><p>For <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>, the sign of the fermion
+<li><p>For <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>, <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>, and <code class="docutils literal notranslate"><span class="pre">tJ</span></code>, the sign of the fermion
 permutation is taken into account automatically. For example, a
 reflection that exchanges occupied orbitals contributes a factor
 <span class="math notranslate nohighlight">\(-1\)</span>, so the dimensions of the even and odd sectors differ from
 the counting for spins.</p></li>
-<li><p>In this version the symmetry sector is available for <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
-<span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> (<code class="docutils literal notranslate"><span class="pre">Exchange</span></code> and <code class="docutils literal notranslate"><span class="pre">Ising</span></code> terms),
-<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> (<code class="docutils literal notranslate"><span class="pre">Trans</span></code> and <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>
-terms), and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> (<code class="docutils literal notranslate"><span class="pre">Trans</span></code> and
-<code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> terms), with the <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code> methods.
-Correlation functions, spectrum calculations, restart, and the input and
-output of Hamiltonians and eigenvectors are not supported together with
-this file. Unsupported combinations terminate the program with an error
-message that names the unsupported option.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
+<span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
+Expert-mode Hamiltonian terms are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: longitudinal <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (local diagonal fields), <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Ising</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>, <code class="docutils literal notranslate"><span class="pre">Hund</span></code>, and fixed-Sz <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>: <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (including on-site potentials),
+<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>, and <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>: spin-conserving <code class="docutils literal notranslate"><span class="pre">Trans</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Hund</span></code>, <code class="docutils literal notranslate"><span class="pre">Ising</span></code>, <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, and fixed-spin <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tJ</span></code>: the same terms as <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>, projected onto configurations
+without double occupancy. <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> and <code class="docutils literal notranslate"><span class="pre">PairHop</span></code> then vanish.
+The raw dimension is
+<span class="math notranslate nohighlight">\(\binom{N_{\rm site}}{N_\uparrow}\binom{N_{\rm site}-N_\uparrow}{N_\downarrow}\)</span>.
+Both replicated and distributed basis layouts are supported, including
+MPI sizes that cannot be used with raw site decomposition.</p></li>
 </ul>
+<p>Extended terms are combined after fermionic normal ordering or local Spin
+matrix-unit reduction. This accounts for permutation signs, contractions,
+duplicate terms, and cancellations between families before checking
+invariance and conserved quantum numbers. The coefficient tolerance is
+<span class="math notranslate nohighlight">\(10^{-10}\)</span>. <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, and anomalous terms remain
+unsupported. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
+this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
+<p>Correlation functions, spectrum calculations, restart, and the input and
+output of Hamiltonians and eigenvectors are not supported together with
+this file. Unsupported combinations terminate with an error.</p>
+</li>
+</ul>
+</section>
+<section id="sector-manifest">
+<h2>Sector manifest<a class="headerlink" href="#sector-manifest" title="Link to this heading">¶</a></h2>
+<p>After constructing a nonempty symmetry basis and validating the sector options,
+HPhi writes <code class="docutils literal notranslate"><span class="pre">output/symmetry_sector.dat</span></code> before starting the solver. When
+<code class="docutils literal notranslate"><span class="pre">OutputDataHead=1</span></code>, the name is
+<code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_symmetry_sector.dat</span></code>. Ordinary runs without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>
+and definition-file generation with <code class="docutils literal notranslate"><span class="pre">-sdry</span></code> do not write this file.
+An output error terminates the calculation on all MPI ranks.</p>
+<p>The first line is <code class="docutils literal notranslate"><span class="pre">format=HPhiSymmetrySector</span> <span class="pre">version=1</span></code>. Subsequent lines have
+the form <code class="docutils literal notranslate"><span class="pre">key=value</span></code> and record the method, model, site count, fixed quantum
+numbers, full canonical dimension (<code class="docutils literal notranslate"><span class="pre">full_dim</span></code>), sector dimension
+(<code class="docutils literal notranslate"><span class="pre">sector_dim</span></code>), group order, optional <code class="docutils literal notranslate"><span class="pre">momentum_index</span></code>, basis layout,
+MPI ranks, OpenMP thread limit, term counts, and solver parameters.
+The manifest describes the input sector; its presence does not certify solver
+completion or convergence.</p>
+<p>Three versioned fingerprints are included:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">group_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-group-fnv1a64-v1</span></code> hashes the permutations and
+characters after sorting operations lexicographically by permutation.
+Renumbering operations does not change it. Character components are rounded
+to integer multiples of <span class="math notranslate nohighlight">\(10^{-10}\)</span>; this quantization is not a general
+equivalence test for floating-point inputs near a rounding boundary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sector_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-sector-multiset-v1:count:xor:sum</span></code> hashes each
+representative state, orbit size, and stabilizer size with FNV-1a 64 and
+combines the hashes without dependence on entry order or MPI ownership.
+Integers use fixed-width little-endian encoding. The sum is modulo
+<span class="math notranslate nohighlight">\(2^{64}\)</span>. Norms and Hamiltonian diagonal values are excluded.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> records the
+supported parsed Hamiltonian terms in their stored order, using the exact
+binary64 coefficient bits. Version 2 adds on-site potentials, pair hopping,
+and the split diagonal/off-diagonal InterAll arrays. Equivalent Hamiltonians expressed in different
+term orders or decompositions may have different fingerprints.</p></li>
+</ul>
+<p>Sector identification uses the model, fixed quantum numbers, sector dimension,
+<code class="docutils literal notranslate"><span class="pre">group_digest</span></code>, and <code class="docutils literal notranslate"><span class="pre">sector_digest</span></code> together. Conjugate representations may
+share the same <code class="docutils literal notranslate"><span class="pre">sector_digest</span></code>, so it must not be used alone. Hamiltonian
+changes do not change the sector identity. These fingerprints are diagnostics,
+not collision-free proofs of equivalence, and the order-independent sector
+fingerprint alone does not validate vector-component ordering for checkpoint
+input. Existing calculation outputs and <code class="docutils literal notranslate"><span class="pre">CalcTimerRankStats.dat</span></code> are unchanged.</p>
 </section>
 </section>
 

@@ -117,39 +117,37 @@ $(document).ready(function(){initNavTree('symmetry__diagonal_8c.html',''); initR
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">symmetry_diagonal.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;limits.h&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="symmetry__terms_8h_source.html">symmetry_terms.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="DefCommon_8h_source.html">DefCommon.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__diagonal_8h_source.html">symmetry_diagonal.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="struct_8h_source.html">struct.h</a>&quot;</code><br />
 </div>
 <p><a href="symmetry__diagonal_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDiagonalContext.html">DiagonalContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5b6003a5105b5cbaae27790f388f3d84" id="r_a5b6003a5105b5cbaae27790f388f3d84"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#a5b6003a5105b5cbaae27790f388f3d84">state_fits_width</a> (unsigned long int state, unsigned int bit_count)</td></tr>
 <tr class="separator:a5b6003a5105b5cbaae27790f388f3d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a2f2d1f48717ad48b969a2f18392f77" id="r_a4a2f2d1f48717ad48b969a2f18392f77"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#a4a2f2d1f48717ad48b969a2f18392f77">valid_site_pair_storage</a> (unsigned int count, int **sites, const double *parameters, unsigned int nsite)</td></tr>
-<tr class="separator:a4a2f2d1f48717ad48b969a2f18392f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a8c170a78dd85e6509551a770684af9" id="r_a6a8c170a78dd85e6509551a770684af9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#a6a8c170a78dd85e6509551a770684af9">valid_site_storage</a> (unsigned int count, int **sites, const double *parameters, unsigned int nsite)</td></tr>
-<tr class="separator:a6a8c170a78dd85e6509551a770684af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a538d309a5f467a2714fd8aab0bb66eaa" id="r_a538d309a5f467a2714fd8aab0bb66eaa"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#a538d309a5f467a2714fd8aab0bb66eaa">has_unsupported_general_diagonal</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def)</td></tr>
-<tr class="separator:a538d309a5f467a2714fd8aab0bb66eaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2f0b46268f4aeb394f58940328693cb" id="r_aa2f0b46268f4aeb394f58940328693cb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#aa2f0b46268f4aeb394f58940328693cb">evaluate_spin_diagonal</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int state, double *value)</td></tr>
-<tr class="separator:aa2f0b46268f4aeb394f58940328693cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa066a8da8c12fcff89f510b8e22e3373" id="r_aa066a8da8c12fcff89f510b8e22e3373"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#aa066a8da8c12fcff89f510b8e22e3373">evaluate_spinless_diagonal</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int state, double *value)</td></tr>
-<tr class="separator:aa066a8da8c12fcff89f510b8e22e3373"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae099ba266ee898baf06b4872de268d68" id="r_ae099ba266ee898baf06b4872de268d68"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#ae099ba266ee898baf06b4872de268d68">evaluate_hubbard_diagonal</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int state, double *value)</td></tr>
-<tr class="separator:ae099ba266ee898baf06b4872de268d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa4048e02639c3d2de094f410a18e996" id="r_aaa4048e02639c3d2de094f410a18e996"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#aaa4048e02639c3d2de094f410a18e996">accumulate_diagonal</a> (const struct <a class="el" href="structSymmetryTerm.html">SymmetryTerm</a> *term, void *context)</td></tr>
+<tr class="separator:aaa4048e02639c3d2de094f410a18e996"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa102f210ff274f577ec7b7c53fbe505a" id="r_aa102f210ff274f577ec7b7c53fbe505a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__diagonal_8c.html#aa102f210ff274f577ec7b7c53fbe505a">EvaluateSymmetryStateDiagonal</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int state, double *diagonal)</td></tr>
 <tr class="separator:aa102f210ff274f577ec7b7c53fbe505a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ae099ba266ee898baf06b4872de268d68" name="ae099ba266ee898baf06b4872de268d68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae099ba266ee898baf06b4872de268d68">&#9670;&#160;</a></span>evaluate_hubbard_diagonal()</h2>
+<a id="aaa4048e02639c3d2de094f410a18e996" name="aaa4048e02639c3d2de094f410a18e996"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa4048e02639c3d2de094f410a18e996">&#9670;&#160;</a></span>accumulate_diagonal()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,22 +156,16 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static int evaluate_hubbard_diagonal </td>
+          <td class="memname">static int accumulate_diagonal </td>
           <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
-          <td class="paramname"><em>def</em>, </td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryTerm.html">SymmetryTerm</a> *&#160;</td>
+          <td class="paramname"><em>term</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned long int&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -188,107 +180,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00118">118</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00024">24</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00131">DefineList::CoulombIntra</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00053">has_unsupported_general_diagonal()</a>, <a class="el" href="struct_8h_source.html#l00136">DefineList::NCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00130">DefineList::NCoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00142">DefineList::NHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00160">DefineList::NIsingCoupling</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00133">DefineList::ParaCoulombIntra</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00035">valid_site_storage()</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__terms_8c_source.html#l00132">ApplySymmetryTerm()</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00019">DiagonalContext::def</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00020">DiagonalContext::state</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00021">DiagonalContext::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00142">EvaluateSymmetryStateDiagonal()</a>.</p>
-
-</div>
-</div>
-<a id="aa2f0b46268f4aeb394f58940328693cb" name="aa2f0b46268f4aeb394f58940328693cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2f0b46268f4aeb394f58940328693cb">&#9670;&#160;</a></span>evaluate_spin_diagonal()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int evaluate_spin_diagonal </td>
-          <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
-          <td class="paramname"><em>def</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned long int&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00062">62</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
-
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00137">DefineList::CoulombInter</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00053">has_unsupported_general_diagonal()</a>, <a class="el" href="struct_8h_source.html#l00143">DefineList::HundCoupling</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00136">DefineList::NCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00130">DefineList::NCoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00142">DefineList::NHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00160">DefineList::NIsingCoupling</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00139">DefineList::ParaCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00145">DefineList::ParaHundCoupling</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00016">valid_site_pair_storage()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00142">EvaluateSymmetryStateDiagonal()</a>.</p>
-
-</div>
-</div>
-<a id="aa066a8da8c12fcff89f510b8e22e3373" name="aa066a8da8c12fcff89f510b8e22e3373"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa066a8da8c12fcff89f510b8e22e3373">&#9670;&#160;</a></span>evaluate_spinless_diagonal()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int evaluate_spinless_diagonal </td>
-          <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
-          <td class="paramname"><em>def</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned long int&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00093">93</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
-
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00137">DefineList::CoulombInter</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00053">has_unsupported_general_diagonal()</a>, <a class="el" href="struct_8h_source.html#l00136">DefineList::NCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00130">DefineList::NCoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00142">DefineList::NHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00160">DefineList::NIsingCoupling</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00139">DefineList::ParaCoulombInter</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00016">valid_site_pair_storage()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00142">EvaluateSymmetryStateDiagonal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00038">EvaluateSymmetryStateDiagonal()</a>.</p>
 
 </div>
 </div>
@@ -324,43 +220,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00142">142</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00038">38</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__diagonal_8c_source.html#l00118">evaluate_hubbard_diagonal()</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00062">evaluate_spin_diagonal()</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00093">evaluate_spinless_diagonal()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00007">state_fits_width()</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__diagonal_8c_source.html#l00024">accumulate_diagonal()</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00019">DiagonalContext::def</a>, <a class="el" href="symmetry__terms_8c_source.html#l00053">EnumerateSymmetryTerms()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00020">DiagonalContext::state</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00009">state_fits_width()</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00021">DiagonalContext::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00658">BuildRankLocalSymmetryBasisRun()</a>.</p>
-
-</div>
-</div>
-<a id="a538d309a5f467a2714fd8aab0bb66eaa" name="a538d309a5f467a2714fd8aab0bb66eaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a538d309a5f467a2714fd8aab0bb66eaa">&#9670;&#160;</a></span>has_unsupported_general_diagonal()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int has_unsupported_general_diagonal </td>
-          <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
-          <td class="paramname"><em>def</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00053">53</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
-
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00106">DefineList::EDNChemi</a>, <a class="el" href="struct_8h_source.html#l00172">DefineList::NInterAll</a>, <a class="el" href="struct_8h_source.html#l00173">DefineList::NInterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00183">DefineList::NNBodyInterAll</a>, and <a class="el" href="struct_8h_source.html#l00184">DefineList::NNBodyInterAll_Diagonal</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00118">evaluate_hubbard_diagonal()</a>, <a class="el" href="symmetry__diagonal_8c_source.html#l00062">evaluate_spin_diagonal()</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00093">evaluate_spinless_diagonal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00659">BuildRankLocalSymmetryBasisRun()</a>.</p>
 
 </div>
 </div>
@@ -398,119 +262,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00007">7</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00009">9</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00142">EvaluateSymmetryStateDiagonal()</a>.</p>
-
-</div>
-</div>
-<a id="a4a2f2d1f48717ad48b969a2f18392f77" name="a4a2f2d1f48717ad48b969a2f18392f77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a2f2d1f48717ad48b969a2f18392f77">&#9670;&#160;</a></span>valid_site_pair_storage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int valid_site_pair_storage </td>
-          <td>(</td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>count</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int **&#160;</td>
-          <td class="paramname"><em>sites</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double *&#160;</td>
-          <td class="paramname"><em>parameters</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>nsite</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00016">16</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00062">evaluate_spin_diagonal()</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00093">evaluate_spinless_diagonal()</a>.</p>
-
-</div>
-</div>
-<a id="a6a8c170a78dd85e6509551a770684af9" name="a6a8c170a78dd85e6509551a770684af9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a8c170a78dd85e6509551a770684af9">&#9670;&#160;</a></span>valid_site_storage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int valid_site_storage </td>
-          <td>(</td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>count</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int **&#160;</td>
-          <td class="paramname"><em>sites</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double *&#160;</td>
-          <td class="paramname"><em>parameters</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>nsite</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="symmetry__diagonal_8c_source.html#l00035">35</a> of file <a class="el" href="symmetry__diagonal_8c_source.html">symmetry_diagonal.c</a>.</p>
-
-<p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00118">evaluate_hubbard_diagonal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00038">EvaluateSymmetryStateDiagonal()</a>.</p>
 
 </div>
 </div>
