@@ -50,6 +50,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
@@ -234,6 +235,8 @@ add_hphi_test(symmetry_spinless_fermion_point_group)
 add_hphi_test(symmetry_hubbard_point_group)
 add_hphi_test(symmetry_transsym_metadata)
 add_hphi_test(symmetry_sector_manifest)
+add_hphi_test(symmetry_general_terms)
+set_tests_properties(symmetry_general_terms PROPERTIES LABELS "symmetry;interall")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -705,6 +708,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c

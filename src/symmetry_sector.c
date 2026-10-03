@@ -128,15 +128,13 @@ static int hash_terms(uint64_t *hash, const char *tag, unsigned int count,
 
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest)
 {
-  uint64_t hash = hash_tag(FNV_OFFSET, "hphi-parsed-hamiltonian-fnv1a64-v1");
+  uint64_t hash = hash_tag(FNV_OFFSET, "hphi-parsed-hamiltonian-fnv1a64-v2");
   if (digest == NULL) return -1;
   *digest = 0;
   if (def == NULL) return -1;
   /* Extend this scope when enabling additional term families. Never silently
    * omit an unsupported family from an otherwise successful fingerprint. */
-  if (def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
-      def->NInterAll_OffDiagonal || def->NNBodyInterAll ||
-      def->NAnomalousTerm || def->NPairHopping || def->NPairLiftCoupling)
+  if (def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling)
     return -1;
   hash = hash_integer(hash, (uint32_t)def->iCalcModel, 4);
   hash = hash_integer(hash, def->Nsite, 4);
@@ -152,6 +150,20 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
       hash_terms(&hash, "exchange", def->NExchangeCoupling, 2,
                  def->ExchangeCoupling, def->ParaExchangeCoupling, NULL))
     return -1;
+  if (hash_terms(&hash, "pair_hopping", def->NPairHopping, 2,
+                 def->PairHopping, def->ParaPairHopping, NULL) ||
+      hash_terms(&hash, "interall_diagonal", def->NInterAll_Diagonal, 4,
+                 def->InterAll_Diagonal, def->ParaInterAll_Diagonal, NULL) ||
+      hash_terms(&hash, "interall_offdiagonal", def->NInterAll_OffDiagonal, 8,
+                 def->InterAll_OffDiagonal, NULL, def->ParaInterAll_OffDiagonal)) return -1;
+  hash = hash_tag(hash, "chemical_potential");
+  hash = hash_integer(hash, def->EDNChemi, 4);
+  if (def->EDNChemi && (!def->EDChemi || !def->EDSpinChemi || !def->EDParaChemi)) return -1;
+  for (unsigned int i = 0; i < def->EDNChemi; ++i) {
+    hash = hash_integer(hash, (uint32_t)def->EDChemi[i], 4);
+    hash = hash_integer(hash, (uint32_t)def->EDSpinChemi[i], 4);
+    if (hash_double(&hash, def->EDParaChemi[i])) return -1;
+  }
   *digest = hash;
   return 0;
 }
@@ -248,14 +260,15 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
         fprintf(fp, "momentum_index=%d\n", def->iSymMomentumIndex);
       fprintf(fp, "group_digest=hphi-group-fnv1a64-v1:%016" PRIx64 "\n"
               "sector_digest=hphi-sector-multiset-v1:%" PRIu64 ":%016" PRIx64 ":%016" PRIx64 "\n"
-              "hamiltonian_digest=hphi-parsed-hamiltonian-fnv1a64-v1:%016" PRIx64 "\n",
+              "hamiltonian_digest=hphi-parsed-hamiltonian-fnv1a64-v2:%016" PRIx64 "\n",
               group, sector.count, sector.xor_hash, sector.sum_hash, hamiltonian);
       fprintf(fp, "basis_layout=%s\nmpi_ranks=%d\nomp_threads=%d\n"
-              "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u\n"
+              "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u pair_hopping:%u chemi:%u interall_diagonal:%u interall_offdiagonal:%u\n"
               "exct=%u\nlanczos_max=%u\nlanczos_eps=%d\ninitial_iv=%ld\n",
               X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED ? "distributed" : "replicated",
               nproc, threads, def->EDNTransfer, def->NCoulombIntra, def->NCoulombInter,
               def->NHundCoupling, def->NExchangeCoupling, def->NIsingCoupling,
+              def->NPairHopping, def->EDNChemi, def->NInterAll_Diagonal, def->NInterAll_OffDiagonal,
               def->k_exct, def->Lanczos_max, def->LanczosEps, def->initial_iv);
       if (ferror(fp)) error = 1;
       if (fclose(fp) != 0) error = 1;

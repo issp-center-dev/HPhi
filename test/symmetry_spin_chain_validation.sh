@@ -249,7 +249,7 @@ if ../../src/HPhi -e namelist.def > interall.log 2>&1; then
     cat interall.log
     exit 1
 fi
-grep -q "Exchange and Ising terms only" interall.log
+grep -q "Hamiltonian invariance failed" interall.log
 
 write_common_defs
 write_valid_transsym
@@ -321,11 +321,9 @@ Exchange exchange.def
 CoulombInter coulombinter.def
 TransSym qptransidx.def
 EOF
-if ../../src/HPhi -e namelist.def > direct_coulombinter.log 2>&1; then
-    cat direct_coulombinter.log
-    exit 1
-fi
-grep -q "direct CoulombInter/Hund terms are not supported" direct_coulombinter.log
+# Spin density is the identity, so even a single CoulombInter bond is invariant.
+run_hphi direct_coulombinter.log ../../src/HPhi -e namelist.def
+grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" direct_coulombinter.log
 
 write_common_defs
 write_valid_transsym
@@ -349,7 +347,7 @@ if ../../src/HPhi -e namelist.def > direct_hund.log 2>&1; then
     cat direct_hund.log
     exit 1
 fi
-grep -q "direct CoulombInter/Hund terms are not supported" direct_hund.log
+grep -q "Hamiltonian invariance failed" direct_hund.log
 
 write_common_defs
 cat > qptransidx.def <<EOF

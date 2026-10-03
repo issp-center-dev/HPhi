@@ -12,12 +12,12 @@ group :math:`G` of site permutations and a one-dimensional character
 
 .. math::
 
-   |r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle ,
+   |r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle ,
 
 where :math:`T_g` moves the content of each site :math:`i` to the site
 :math:`g(i)` and :math:`|r\rangle` runs over the representative
 configurations. Every state of the sector satisfies
-:math:`T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle`, and the dimension of the
+:math:`T_g|\psi\rangle=\chi(g)|\psi\rangle`, and the dimension of the
 Hilbert space is reduced by roughly the order of the group. The sector
 dimension is printed in the log as ``Symmetry basis: raw_dim=... sector_dim=...``.
 
@@ -186,15 +186,29 @@ Use rules
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  In this version the symmetry sector is available for ``Spin`` with
-   :math:`S=1/2` and fixed ``2Sz`` (``Exchange`` and ``Ising`` terms),
-   ``SpinlessFermion`` with fixed ``Ncond`` (``Trans`` and ``CoulombInter``
-   terms), and ``Hubbard`` with fixed ``Nup`` and ``Ndown`` (``Trans`` and
-   ``CoulombIntra`` terms), with the ``Lanczos`` and ``CG`` methods.
+*  The ``Lanczos`` and ``CG`` methods support ``Spin`` with
+   :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
+   and ``Hubbard`` with fixed ``Nup`` and ``Ndown``.
+   Expert-mode Hamiltonian terms are:
+
+   * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
+     ``Ising``, ``CoulombInter``, ``Hund``, and fixed-Sz ``InterAll``.
+   * ``SpinlessFermion``: ``Trans`` (including on-site potentials),
+     ``CoulombInter``, and ``InterAll``.
+   * ``Hubbard``: spin-conserving ``Trans``, ``CoulombIntra``, ``CoulombInter``,
+     ``Hund``, ``Ising``, ``Exchange``, ``PairHop``, and fixed-spin ``InterAll``.
+
+   Extended terms are combined after fermionic normal ordering or local Spin
+   matrix-unit reduction. This accounts for permutation signs, contractions,
+   duplicate terms, and cancellations between families before checking
+   invariance and conserved quantum numbers. The coefficient tolerance is
+   :math:`10^{-10}`. ``PairLift``, ``NBodyInterAll``, and anomalous terms remain
+   unsupported. The raw spinless solver still rejects off-diagonal ``InterAll``;
+   this extension applies to ``TransSym``. Standard-mode generation is unchanged.
+
    Correlation functions, spectrum calculations, restart, and the input and
    output of Hamiltonians and eigenvectors are not supported together with
-   this file. Unsupported combinations terminate the program with an error
-   message that names the unsupported option.
+   this file. Unsupported combinations terminate with an error.
 
 Sector manifest
 ~~~~~~~~~~~~~~~
@@ -226,9 +240,10 @@ Three versioned fingerprints are included:
   combines the hashes without dependence on entry order or MPI ownership.
   Integers use fixed-width little-endian encoding. The sum is modulo
   :math:`2^{64}`. Norms and Hamiltonian diagonal values are excluded.
-* ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v1`` records the
+* ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` records the
   supported parsed Hamiltonian terms in their stored order, using the exact
-  binary64 coefficient bits. Equivalent Hamiltonians expressed in different
+  binary64 coefficient bits. Version 2 adds on-site potentials, pair hopping,
+  and the split diagonal/off-diagonal InterAll arrays. Equivalent Hamiltonians expressed in different
   term orders or decompositions may have different fingerprints.
 
 Sector identification uses the model, fixed quantum numbers, sector dimension,

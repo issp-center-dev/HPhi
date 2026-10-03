@@ -9,11 +9,11 @@ TransSym指定ファイル
 各要素 :math:`g` に対する1次元指標 :math:`\chi(g)` （絶対値1の複素数）を
 指定します。 :math:`{\mathcal H}\Phi` は対称化された状態
 
-.. math:: |r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle
+.. math:: |r;\chi\rangle \propto \sum_{g\in G}\chi(g)^{*}\,T_g|r\rangle
 
 を基底として計算します。ここで :math:`T_g` は各サイト :math:`i` の内容を
 サイト :math:`g(i)` へ移す演算子で、 :math:`|r\rangle` は代表配置を走ります。
-セクター内のすべての状態は :math:`T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle`
+セクター内のすべての状態は :math:`T_g|\psi\rangle=\chi(g)|\psi\rangle`
 を満たし、ヒルベルト空間の次元はおよそ群の位数分の1に縮小されます。
 セクターの次元はログに ``Symmetry basis: raw_dim=... sector_dim=...``
 として出力されます。
@@ -183,14 +183,26 @@ TransSym指定ファイル
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  本バージョンで対称性セクターを使えるのは、 :math:`S=1/2` で ``2Sz`` を
-   固定した ``Spin`` （``Exchange`` と ``Ising`` 項）、 ``Ncond`` を固定した
-   ``SpinlessFermion`` （``Trans`` と ``CoulombInter`` 項）、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` （``Trans`` と ``CoulombIntra`` 項）で、
-   計算手法は ``Lanczos`` と ``CG`` です。相関関数、スペクトル計算、
-   リスタート、ハミルトニアンと固有ベクトルの入出力は本ファイルと併用
-   できません。非対応の組み合わせは、非対応のオプション名を含むエラー
-   メッセージを出して終了します。
+-  対応手法は ``Lanczos`` と ``CG`` です。模型は :math:`S=1/2` で ``2Sz`` を
+   固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
+   ``Ndown`` を固定した ``Hubbard`` です。expert mode では次の項に対応します。
+
+   - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
+     ``Hund``、固定Szを保存する ``InterAll``。
+   - ``SpinlessFermion``: サイト内ポテンシャルを含む ``Trans``、
+     ``CoulombInter``、 ``InterAll``。
+   - ``Hubbard``: スピンを保存する ``Trans``、 ``CoulombIntra``、 ``CoulombInter``、
+     ``Hund``、 ``Ising``、 ``Exchange``、 ``PairHop``、固定スピンを保存する ``InterAll``。
+
+   拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
+   係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、
+   不変性と固定量子数の保存を検査します。係数の許容誤差は :math:`10^{-10}` です。
+   ``PairLift``、 ``NBodyInterAll``、異常項は非対応です。
+   spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
+   ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
+
+   相関関数、スペクトル計算、リスタート、ハミルトニアンと固有ベクトルの入出力は
+   本ファイルと併用できません。非対応の組み合わせはエラーで終了します。
 
 セクター情報ファイル
 ^^^^^^^^^^^^^^^^^^^^
@@ -218,9 +230,10 @@ TransSym指定ファイル
   代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
   MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
   法として計算します。ノルムとハミルトニアンの対角値は含めません。
-- ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v1`` は、対応する
+- ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` は、対応する
   ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
-  物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。
+  version 2ではサイト内ポテンシャル、pair hopping、分離済みの対角・非対角InterAllを
+  記録対象に追加しています。物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。
 
 セクターの識別には、模型、固定量子数、セクター次元、 ``group_digest``、
 ``sector_digest`` の組を使います。共役表現では ``sector_digest`` が同じに

@@ -804,13 +804,13 @@ write_coulombinter
 cat >> namelist.def <<EOF
 CoulombInter coulombinter.def
 EOF
-expect_failure "Hubbard symmetry basis supports Transfer and CoulombIntra terms only" \
+expect_failure "Hamiltonian invariance failed" \
     unsupported_term.log ../../src/HPhi -e namelist.def
 
 if [ -n "${MPIRUN}" ]; then
     MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
     if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
-        expect_failure "Hubbard symmetry basis supports Transfer and CoulombIntra terms only" \
+        expect_failure "Hamiltonian invariance failed" \
             unsupported_term_mpi.log ${MPIRUN} ../../src/HPhi -e namelist.def
     fi
 fi

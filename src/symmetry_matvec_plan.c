@@ -14,6 +14,7 @@
 #include "symmetry_directory.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_terms.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 #include "wrapperMPI.h"
@@ -118,7 +119,7 @@ static int emit_canonicalized_transition(const struct BindStruct *X,
 typedef int (*SymmetryRawTransitionCallback)(
     unsigned long int state, double complex coefficient, void *context);
 
-static int enumerate_raw_offdiagonal_transitions(
+static int enumerate_legacy_offdiagonal_transitions(
     const struct DefineList *def,
     unsigned long int state,
     SymmetryRawTransitionCallback callback,
@@ -157,6 +158,34 @@ static int enumerate_raw_offdiagonal_transitions(
     return -1;
   }
   return 0;
+}
+
+struct RawTransitionContext {
+  const struct DefineList *def;
+  unsigned long state;
+  SymmetryRawTransitionCallback callback;
+  void *context;
+};
+
+static int apply_raw_term(const struct SymmetryTerm *term, void *context)
+{
+  struct RawTransitionContext *raw = context;
+  unsigned long out;
+  double complex value;
+  int status = ApplySymmetryTerm(raw->def, term, raw->state, &out, &value);
+  if (status < 0) return -1;
+  return status ? raw->callback(out, value, raw->context) : 0;
+}
+
+static int enumerate_raw_offdiagonal_transitions(
+    const struct DefineList *def, unsigned long state,
+    SymmetryRawTransitionCallback callback, void *context)
+{
+  struct RawTransitionContext raw = {def, state, callback, context};
+  if (!def || !callback) return -1;
+  if (!SymmetryUsesExtendedTerms(def))
+    return enumerate_legacy_offdiagonal_transitions(def, state, callback, context);
+  return EnumerateSymmetryTerms(def, 1, apply_raw_term, &raw);
 }
 
 struct CanonicalColumnContext {
