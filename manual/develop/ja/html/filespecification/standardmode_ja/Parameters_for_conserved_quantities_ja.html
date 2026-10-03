@@ -57,6 +57,10 @@
 <span class="math notranslate nohighlight">\(L\)</span> の chain で <span class="math notranslate nohighlight">\(g\)</span> サイト並進したときの指標は
 <span class="math notranslate nohighlight">\(\exp(-2\pi i m g/L)\)</span> です。 <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> は
 <span class="math notranslate nohighlight">\(0 \le m &lt; L\)</span> を満たす必要があります。</p>
+<p>生成される <code class="docutils literal notranslate"><span class="pre">qptransidx.def</span></code> の1行目はコメント <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">MomentumIndex</span> <span class="pre">m</span></code> で、
+<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はこれをログに <code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">metadata:</span> <span class="pre">MomentumIndex=m</span></code>
+と出力します。鏡映などほかのサイト置換群も指定できるファイル形式は
+<a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html"><span class="doc">TransSym指定ファイル</span></a> を参照してください。</p>
 <p>現在は HPhi のスタンダードモードで <code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;chain&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">phase0</span></code> を使わない周期境界条件、かつ <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code> または
 <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code> の計算手法にのみ対応します。対応する model は以下です。</p>

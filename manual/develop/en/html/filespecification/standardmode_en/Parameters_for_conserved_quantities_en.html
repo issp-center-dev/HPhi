@@ -59,6 +59,11 @@ specified by an integer <span class="math notranslate nohighlight">\(m\)</span>.
 the translation by <span class="math notranslate nohighlight">\(g\)</span> sites is
 <span class="math notranslate nohighlight">\(\exp(-2\pi i m g/L)\)</span>, and <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> must satisfy
 <span class="math notranslate nohighlight">\(0 \le m &lt; L\)</span>.</p>
+<p>The first line of the generated <code class="docutils literal notranslate"><span class="pre">qptransidx.def</span></code> is the comment
+<code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">MomentumIndex</span> <span class="pre">m</span></code>, which HPhi reports in the log as
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">metadata:</span> <span class="pre">MomentumIndex=m</span></code>. The file format, which also
+accepts other site-permutation groups such as reflections, is described
+in <a class="reference internal" href="../expertmode_en/TransSym_file_en.html"><span class="doc">the TransSym file</span></a>.</p>
 <p>This parameter is currently supported only for HPhi Standard mode with
 <code class="docutils literal notranslate"><span class="pre">lattice</span> <span class="pre">=</span> <span class="pre">&quot;chain&quot;</span></code>, periodic boundary conditions without <code class="docutils literal notranslate"><span class="pre">phase0</span></code>,
 and the <code class="docutils literal notranslate"><span class="pre">&quot;Lanczos&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;CG&quot;</span></code> calculation method. The supported

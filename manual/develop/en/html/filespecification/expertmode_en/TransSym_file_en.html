@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TransSym file &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Trans file" href="Trans_file_en.html" />
+    <link rel="prev" title="LocSpin file" href="LocSpin_file_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="transsym-file">
+<span id="subsec-transsym"></span><h1>TransSym file<a class="headerlink" href="#transsym-file" title="Link to this heading">¶</a></h1>
+<p>This file restricts the calculation to one symmetry sector. It defines a
+group <span class="math notranslate nohighlight">\(G\)</span> of site permutations and a one-dimensional character
+<span class="math notranslate nohighlight">\(\chi(g)\)</span> (a complex number of unit modulus) for every element
+<span class="math notranslate nohighlight">\(g\)</span>. HPhi then works in the basis of symmetry-adapted states</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-0">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle ,\]</div>
+<p>where <span class="math notranslate nohighlight">\(T_g\)</span> moves the content of each site <span class="math notranslate nohighlight">\(i\)</span> to the site
+<span class="math notranslate nohighlight">\(g(i)\)</span> and <span class="math notranslate nohighlight">\(|r\rangle\)</span> runs over the representative
+configurations. Every state of the sector satisfies
+<span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle\)</span>, and the dimension of the
+Hilbert space is reduced by roughly the order of the group. The sector
+dimension is printed in the log as <code class="docutils literal notranslate"><span class="pre">Symmetry</span> <span class="pre">basis:</span> <span class="pre">raw_dim=...</span> <span class="pre">sector_dim=...</span></code>.</p>
+<p>The group is not restricted to translations. Reflections, rotations, and
+their products with translations can be given in the same way, as long as
+the Hamiltonian is invariant under every operation and the representation
+is one-dimensional (abelian groups, or a one-dimensional irreducible
+representation of a larger group). For a two-dimensional irreducible
+representation, restrict the group to an abelian subgroup.</p>
+<p>Standard mode writes this file as <code class="docutils literal notranslate"><span class="pre">qptransidx.def</span></code> when <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>
+is given (see <a class="reference internal" href="../standardmode_en/Parameters_for_conserved_quantities_en.html"><span class="doc">the MomentumIndex parameter</span></a>).
+For a chain of length <span class="math notranslate nohighlight">\(L\)</span> it contains the <span class="math notranslate nohighlight">\(L\)</span> translations with
+<span class="math notranslate nohighlight">\(\chi(T^{g})=\exp(-2\pi i m g/L)\)</span>, which the <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> section
+labels as the momentum <span class="math notranslate nohighlight">\(k=2\pi m/L\)</span>.</p>
+<p>An example of the file format (translations of a 6-site ring with
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span> <span class="pre">=</span> <span class="pre">1</span></code>) is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># MomentumIndex 1
+=============================================
+NQPTrans          6
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0  1.000000000000000  0.000000000000000
+1  0.500000000000000 -0.866025403784439
+2 -0.500000000000000 -0.866025403784439
+3 -1.000000000000000  0.000000000000000
+4 -0.500000000000000  0.866025403784439
+5  0.500000000000000  0.866025403784439
+0 0 0 1
+0 1 1 1
+...
+1 0 1 1
+1 1 2 1
+...
+5 5 4 1
+</pre></div>
+</div>
+<p>The following example is the reflection <span class="math notranslate nohighlight">\(i\to 5-i\)</span> of the same ring,
+with the character <span class="math notranslate nohighlight">\(-1\)</span> (odd parity).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>=============================================
+NQPTrans          2
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0  1.0
+1 -1.0
+0 0 0 1
+0 1 1 1
+0 2 2 1
+0 3 3 1
+0 4 4 1
+0 5 5 1
+1 0 5 1
+1 1 4 1
+1 2 3 1
+1 3 2 1
+1 4 1 1
+1 5 0 1
+</pre></div>
+</div>
+<section id="file-format">
+<h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Line 1: Header</p></li>
+<li><p>Line 2: [string01] [int01]</p></li>
+<li><p>Lines 3-5: Header</p></li>
+<li><p>Next [int01] lines: [int02] [double01] [double02]</p></li>
+<li><p>Next [int01] <span class="math notranslate nohighlight">\(\times\)</span> <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> lines: [int02] [int03] [int04] [int05]</p></li>
+</ul>
+<p>Lines that start with <code class="docutils literal notranslate"><span class="pre">#</span></code> and empty lines are skipped wherever they
+appear and do not count in the line numbers above.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>[string01]</p>
+<p><strong>Type :</strong> String (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> A keyword for the number of symmetry operations.
+Specify <code class="docutils literal notranslate"><span class="pre">NQPTrans</span></code> (case-insensitive).</p>
+</li>
+<li><p>[int01]</p>
+<p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> The number of symmetry operations, i.e., the order of
+the group.</p>
+</li>
+<li><p>[int02]</p>
+<p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> An integer giving the index of a symmetry operation
+(<span class="math notranslate nohighlight">\(0&lt;=\)</span> [int02] <span class="math notranslate nohighlight">\(&lt;\)</span> [int01]).</p>
+</li>
+<li><p>[double01], [double02]</p>
+<p><strong>Type :</strong> Double ([double02] can be omitted)</p>
+<p><strong>Description :</strong> The real and imaginary parts of the character
+<span class="math notranslate nohighlight">\(\chi(g)\)</span> of the operation [int02]. When [double02] is omitted,
+the imaginary part is zero.</p>
+</li>
+<li><p>[int03]</p>
+<p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> A site index (<span class="math notranslate nohighlight">\(0&lt;=\)</span> [int03] <span class="math notranslate nohighlight">\(&lt;\)</span> <code class="docutils literal notranslate"><span class="pre">Nsite</span></code>).</p>
+</li>
+<li><p>[int04]</p>
+<p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> The site to which the operation [int02] moves the
+site [int03] (<span class="math notranslate nohighlight">\(0&lt;=\)</span> [int04] <span class="math notranslate nohighlight">\(&lt;\)</span> <code class="docutils literal notranslate"><span class="pre">Nsite</span></code>).</p>
+</li>
+<li><p>[int05]</p>
+<p><strong>Type :</strong> Int (a blank parameter is not allowed)</p>
+<p><strong>Description :</strong> Reserved for anti-periodic boundary conditions.
+In this version it must be <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</li>
+</ul>
+</section>
+<section id="metadata">
+<h2>Metadata<a class="headerlink" href="#metadata" title="Link to this heading">¶</a></h2>
+<p>A comment line of the form <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">MomentumIndex</span></code> [int06] records the
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> that generated the file. [int06] must be a non-negative
+integer representable by the C <code class="docutils literal notranslate"><span class="pre">int</span></code> type (at most <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>).
+Standard mode writes it as the first line, and HPhi reports it in
+the log as <code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">metadata:</span> <span class="pre">MomentumIndex=</span></code>[int06]. The value is not
+used by the calculation in this version. Other comment lines are ignored.</p>
+</section>
+<section id="use-rules">
+<h2>Use rules<a class="headerlink" href="#use-rules" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Headers cannot be omitted.</p></li>
+<li><p>Every operation must be a bijection of the sites, and every pair of
+[int02] and [int03] must be given exactly once.</p></li>
+<li><p>The operations must form a group: they must contain the identity,
+and the composition of any two operations must be one of them.
+The characters must have unit modulus and be multiplicative,
+<span class="math notranslate nohighlight">\(\chi(gh)=\chi(g)\chi(h)\)</span>, with <span class="math notranslate nohighlight">\(\chi(e)=1\)</span> for the identity.</p></li>
+<li><p>The Hamiltonian must be invariant under every operation. Each term is
+mapped by the operation and compared with the original terms; a
+mismatch terminates the program with
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span></code>.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>, the sign of the fermion
+permutation is taken into account automatically. For example, a
+reflection that exchanges occupied orbitals contributes a factor
+<span class="math notranslate nohighlight">\(-1\)</span>, so the dimensions of the even and odd sectors differ from
+the counting for spins.</p></li>
+<li><p>In this version the symmetry sector is available for <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
+<span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> (<code class="docutils literal notranslate"><span class="pre">Exchange</span></code> and <code class="docutils literal notranslate"><span class="pre">Ising</span></code> terms),
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> (<code class="docutils literal notranslate"><span class="pre">Trans</span></code> and <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>
+terms), and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> (<code class="docutils literal notranslate"><span class="pre">Trans</span></code> and
+<code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> terms), with the <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code> methods.
+Correlation functions, spectrum calculations, restart, and the input and
+output of Hamiltonians and eigenvectors are not supported together with
+this file. Unsupported combinations terminate the program with an error
+message that names the unsupported option.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_expertmode_en.html#quick-reference">4.2.1. Quick Reference</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_expertmode_en.html#detailed-specifications">4.2.2. Detailed Specifications</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_en/index_outputfiles_en.html">4.3. Output files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_expertmode_en.html"><span class="section-number">4.2. </span>Input files for <em>Expert</em> mode</a><ul>
+      <li>Previous: <a href="LocSpin_file_en.html" title="previous chapter">LocSpin file</a></li>
+      <li>Next: <a href="Trans_file_en.html" title="next chapter">Trans file</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_en/TransSym_file_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

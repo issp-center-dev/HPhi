@@ -32,6 +32,12 @@ Parameters for conserved quantities
    :math:`\exp(-2\pi i m g/L)`, and ``MomentumIndex`` must satisfy
    :math:`0 \le m < L`.
 
+   The first line of the generated ``qptransidx.def`` is the comment
+   ``# MomentumIndex m``, which HPhi reports in the log as
+   ``TransSym metadata: MomentumIndex=m``. The file format, which also
+   accepts other site-permutation groups such as reflections, is described
+   in :doc:`the TransSym file <../expertmode_en/TransSym_file_en>`.
+
    This parameter is currently supported only for HPhi Standard mode with
    ``lattice = "chain"``, periodic boundary conditions without ``phase0``,
    and the ``"Lanczos"`` or ``"CG"`` calculation method. The supported

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TransSym指定ファイル &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/translations.js?v=4755f45a"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="next" title="Trans指定ファイル" href="Trans_file_ja.html" />
+    <link rel="prev" title="LocSpin指定ファイル" href="LocSpin_file_ja.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="transsym">
+<span id="subsec-transsym"></span><h1>TransSym指定ファイル<a class="headerlink" href="#transsym" title="Link to this heading">¶</a></h1>
+<p>計算を一つの対称性セクターに制限します。サイト置換の群 <span class="math notranslate nohighlight">\(G\)</span> と、
+各要素 <span class="math notranslate nohighlight">\(g\)</span> に対する1次元指標 <span class="math notranslate nohighlight">\(\chi(g)\)</span> （絶対値1の複素数）を
+指定します。 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> は対称化された状態</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-0">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-0" title="Link to this equation">¶</a></span>\[|r;\chi\rangle \propto \sum_{g\in G}\chi(g)\,T_g|r\rangle\]</div>
+<p>を基底として計算します。ここで <span class="math notranslate nohighlight">\(T_g\)</span> は各サイト <span class="math notranslate nohighlight">\(i\)</span> の内容を
+サイト <span class="math notranslate nohighlight">\(g(i)\)</span> へ移す演算子で、 <span class="math notranslate nohighlight">\(|r\rangle\)</span> は代表配置を走ります。
+セクター内のすべての状態は <span class="math notranslate nohighlight">\(T_g|\psi\rangle=\chi(g)^{*}|\psi\rangle\)</span>
+を満たし、ヒルベルト空間の次元はおよそ群の位数分の1に縮小されます。
+セクターの次元はログに <code class="docutils literal notranslate"><span class="pre">Symmetry</span> <span class="pre">basis:</span> <span class="pre">raw_dim=...</span> <span class="pre">sector_dim=...</span></code>
+として出力されます。</p>
+<p>群は並進に限りません。ハミルトニアンがすべての操作で不変で、表現が
+1次元である限り（可換群、またはより大きな群の1次元既約表現）、鏡映、
+回転、およびそれらと並進の積も同じ書式で指定できます。2次元既約表現が
+必要な場合は、可換部分群に制限してください。</p>
+<p>スタンダードモードで <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> を指定すると、このファイルが
+<code class="docutils literal notranslate"><span class="pre">qptransidx.def</span></code> として生成されます
+（<a class="reference internal" href="../standardmode_ja/Parameters_for_conserved_quantities_ja.html"><span class="doc">MomentumIndex パラメータ</span></a> を参照）。
+長さ <span class="math notranslate nohighlight">\(L\)</span> の chain では <span class="math notranslate nohighlight">\(L\)</span> 個の並進と指標
+<span class="math notranslate nohighlight">\(\chi(T^{g})=\exp(-2\pi i m g/L)\)</span> が書かれ、 <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> の節では
+これを運動量 <span class="math notranslate nohighlight">\(k=2\pi m/L\)</span> と呼んでいます。</p>
+<p>以下にファイル例を記載します（6サイトのリングの並進、
+<code class="docutils literal notranslate"><span class="pre">MomentumIndex</span> <span class="pre">=</span> <span class="pre">1</span></code>）。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># MomentumIndex 1
+=============================================
+NQPTrans          6
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0  1.000000000000000  0.000000000000000
+1  0.500000000000000 -0.866025403784439
+2 -0.500000000000000 -0.866025403784439
+3 -1.000000000000000  0.000000000000000
+4 -0.500000000000000  0.866025403784439
+5  0.500000000000000  0.866025403784439
+0 0 0 1
+0 1 1 1
+...
+1 0 1 1
+1 1 2 1
+...
+5 5 4 1
+</pre></div>
+</div>
+<p>次の例は同じリングの鏡映 <span class="math notranslate nohighlight">\(i\to 5-i\)</span> で、指標 <span class="math notranslate nohighlight">\(-1\)</span>
+（奇パリティ）のセクターです。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>=============================================
+NQPTrans          2
+=============================================
+======== TrIdx_TrWeight_and_TrIdx_i_xi ======
+=============================================
+0  1.0
+1 -1.0
+0 0 0 1
+0 1 1 1
+0 2 2 1
+0 3 3 1
+0 4 4 1
+0 5 5 1
+1 0 5 1
+1 1 4 1
+1 2 3 1
+1 3 2 1
+1 4 1 1
+1 5 0 1
+</pre></div>
+</div>
+<section id="id1">
+<h2>ファイル形式<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>以下のように行数に応じ異なる形式をとります。</p>
+<ul class="simple">
+<li><p>1行: ヘッダ(何が書かれても問題ありません)。</p></li>
+<li><p>2行: [string01] [int01]</p></li>
+<li><p>3-5行: ヘッダ(何が書かれても問題ありません)。</p></li>
+<li><p>続く [int01] 行: [int02] [double01] [double02]</p></li>
+<li><p>続く [int01] <span class="math notranslate nohighlight">\(\times\)</span> <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> 行: [int02] [int03] [int04] [int05]</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">#</span></code> で始まる行と空行はどこにあっても読み飛ばされ、上の行数には
+数えません。</p>
+</section>
+<section id="id2">
+<h2>パラメータ<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p><span class="math notranslate nohighlight">\([\)</span>string01<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> string型 (空白不可)</p>
+<p><strong>説明 :</strong> 対称操作の総数のキーワード名として <code class="docutils literal notranslate"><span class="pre">NQPTrans</span></code> を指定します。
+大文字小文字は区別しません。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> 対称操作の総数、すなわち群の位数を指定します。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> 対称操作の番号を指定します。0以上<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>未満です。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型 (<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span> は省略可)</p>
+<p><strong>説明 :</strong> 操作<span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>の指標 <span class="math notranslate nohighlight">\(\chi(g)\)</span>
+の実部と虚部を指定します。<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>を省略すると
+虚部は0になります。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> サイト番号を指定します。0以上<code class="docutils literal notranslate"><span class="pre">Nsite</span></code>未満で指定します。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int04<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> 操作<span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>がサイト<span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>を
+移す先のサイト番号を指定します。0以上<code class="docutils literal notranslate"><span class="pre">Nsite</span></code>未満で指定します。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>int05<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> int型 (空白不可)</p>
+<p><strong>説明 :</strong> 反周期境界条件用に予約されています。本バージョンでは
+<code class="docutils literal notranslate"><span class="pre">1</span></code> を指定してください。</p>
+</li>
+</ul>
+</section>
+<section id="id3">
+<h2>メタデータ<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">MomentumIndex</span></code> <span class="math notranslate nohighlight">\([\)</span>int06<span class="math notranslate nohighlight">\(]\)</span> の形のコメント行は、
+このファイルを生成した <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code> を記録します。
+<span class="math notranslate nohighlight">\([\)</span>int06<span class="math notranslate nohighlight">\(]\)</span> は0以上でC言語の <code class="docutils literal notranslate"><span class="pre">int</span></code> 型に収まる整数
+（<code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 以下）です。スタンダードモードは
+これを1行目に書き、 <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はログに
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">metadata:</span> <span class="pre">MomentumIndex=</span></code><span class="math notranslate nohighlight">\([\)</span>int06<span class="math notranslate nohighlight">\(]\)</span>
+と出力します。本バージョンでは計算には使われません。
+その他のコメント行は無視されます。</p>
+</section>
+<section id="id4">
+<h2>使用ルール<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
+<ul class="simple">
+<li><p>ヘッダの省略はできません。</p></li>
+<li><p>各操作はサイトの全単射でなければならず、<span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>と
+<span class="math notranslate nohighlight">\([\)</span>int03<span class="math notranslate nohighlight">\(]\)</span>の各組はちょうど1回ずつ指定します。</p></li>
+<li><p>操作の集合は群でなければなりません。恒等操作を含み、任意の2つの
+操作の合成がいずれかの操作に一致する必要があります。指標は絶対値1で
+乗法的（<span class="math notranslate nohighlight">\(\chi(gh)=\chi(g)\chi(h)\)</span>）、恒等操作の指標は
+<span class="math notranslate nohighlight">\(\chi(e)=1\)</span> でなければなりません。</p></li>
+<li><p>ハミルトニアンはすべての操作で不変でなければなりません。各項を操作で
+写した結果が元の項と一致しない場合、
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span></code> のエラーで終了します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> と <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> では、フェルミオンの置換に伴う符号は
+自動的に考慮されます。例えば占有軌道を入れ替える鏡映は <span class="math notranslate nohighlight">\(-1\)</span> の
+因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。</p></li>
+<li><p>本バージョンで対称性セクターを使えるのは、 <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
+固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code> （<code class="docutils literal notranslate"><span class="pre">Exchange</span></code> と <code class="docutils literal notranslate"><span class="pre">Ising</span></code> 項）、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> （<code class="docutils literal notranslate"><span class="pre">Trans</span></code> と <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code> 項）、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> （<code class="docutils literal notranslate"><span class="pre">Trans</span></code> と <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> 項）で、
+計算手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> と <code class="docutils literal notranslate"><span class="pre">CG</span></code> です。相関関数、スペクトル計算、
+リスタート、ハミルトニアンと固有ベクトルの入出力は本ファイルと併用
+できません。非対応の組み合わせは、非対応のオプション名を含むエラー
+メッセージを出して終了します。</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_ja.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. チュートリアル</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. ファイルフォーマット</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_ja/index_standardmode_ja.html">4.1. スタンダードモード用入力ファイル</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_expertmode_ja.html">4.2. エキスパートモード用入力ファイル</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_expertmode_ja.html#id2">4.2.1. クイックリファレンス</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_expertmode_ja.html#id3">4.2.2. 詳細仕様</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../outputfiles_ja/index_outputfiles_ja.html">4.3. 出力ファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. アルゴリズム</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. 技術詳細</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. 関連ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_ja.html">8. 謝辞</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>ファイルフォーマット</a><ul>
+  <li><a href="index_expertmode_ja.html"><span class="section-number">4.2. </span>エキスパートモード用入力ファイル</a><ul>
+      <li>Previous: <a href="LocSpin_file_ja.html" title="前の章へ">LocSpin指定ファイル</a></li>
+      <li>Next: <a href="Trans_file_ja.html" title="次の章へ">Trans指定ファイル</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/expertmode_ja/TransSym_file_ja.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

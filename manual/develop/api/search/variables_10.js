@@ -18,7 +18,7 @@ var searchData=
   ['read_15',['READ',['../structDefineList.html#a3ef6c92551b059a02814173b9701ec2c',1,'DefineList']]],
   ['read_5fhacker_16',['read_hacker',['../structDefineList.html#aa10e338e7a8ef221e5ef057eda8c0e47',1,'DefineList']]],
   ['ready_17',['ready',['../structSymmetryMatvecPlan.html#ad49f6d1c102d9f36c18e9ea21ca3cf0c',1,'SymmetryMatvecPlan::ready'],['../structSymmetryVectorHaloPlan.html#a26515fb2d04a489cef98689147704122',1,'SymmetryVectorHaloPlan::ready'],['../structSymmetryRepresentativeDirectory.html#a4507b572acf09c2c8e1af87c536ef884',1,'SymmetryRepresentativeDirectory::ready']]],
-  ['reason_18',['reason',['../structSectorShift.html#ac6245c3550d3d0e3b188aefafcc106f3',1,'SectorShift']]],
+  ['reason_18',['reason',['../structSectorShift.html#ac6245c3550d3d0e3b188aefafcc106f3',1,'SectorShift::reason'],['../structSymmetryOptionGate.html#a4fdd77f2c99f400ea5294d93aacddfd2',1,'SymmetryOptionGate::reason']]],
   ['rebalance_5fexchange_5fmax_5fmessage_5fbytes_19',['rebalance_exchange_max_message_bytes',['../structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417',1,'SymmetryBasisDistributionStats']]],
   ['rebalance_5fexchange_5fmessage_5fbyte_5flimit_20',['rebalance_exchange_message_byte_limit',['../structSymmetryBasisDistributionStats.html#a8244cf8a9bfe8ca17fe4098bda62fce7',1,'SymmetryBasisDistributionStats']]],
   ['rebalance_5fexchange_5fused_5fchunked_21',['rebalance_exchange_used_chunked',['../structSymmetryBasisDistributionStats.html#ab2a9add670f64c843bce1f71d293487c',1,'SymmetryBasisDistributionStats']]],
@@ -46,8 +46,10 @@ var searchData=
   ['request_5fcount_43',['request_count',['../structSymmetryUnresolvedMatvecBlock.html#aaaadce2b07f566e35a874d603dc3590b',1,'SymmetryUnresolvedMatvecBlock']]],
   ['request_5fkeys_44',['request_keys',['../structSymmetryUnresolvedMatvecBlock.html#a605fce3a923b267848c158b86f75f977',1,'SymmetryUnresolvedMatvecBlock']]],
   ['request_5flayout_5fready_45',['request_layout_ready',['../structSymmetryVectorHaloPlan.html#aa5c3657e304cfdca80c41226c2534e47',1,'SymmetryVectorHaloPlan']]],
-  ['row_5fnnz_5fmax_46',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
-  ['row_5fptr_47',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
-  ['rowptr_48',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
-  ['runtime_5fbuffer_5fbytes_49',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
+  ['requested_46',['requested',['../structSymmetryOptionGate.html#aa1161cf81c2f221b29ee877d33eb3ed0',1,'SymmetryOptionGate']]],
+  ['restart_47',['restart',['../structSymmetryMethodCapability.html#a0a69eff1af1d9099fea006564bbde987',1,'SymmetryMethodCapability']]],
+  ['row_5fnnz_5fmax_48',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
+  ['row_5fptr_49',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
+  ['rowptr_50',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
+  ['runtime_5fbuffer_5fbytes_51',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
 ];

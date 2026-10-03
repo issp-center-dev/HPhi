@@ -65,6 +65,7 @@ var structDefineList =
     [ "iSpectrumNumBra", "structDefineList.html#aa9e1e769951b8b9fc84a1d4dc0e95f85", null ],
     [ "iSpectrumNumOp", "structDefineList.html#a32f4ad0abed9db0ff5946fef5ce910d0", null ],
     [ "istep", "structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22", null ],
+    [ "iSymMomentumIndex", "structDefineList.html#ad1cd67975005cbcd124ce0c479cc859d", null ],
     [ "k_exct", "structDefineList.html#a7b1557d9f89c207164139b3bd65d73fa", null ],
     [ "Lanczos_max", "structDefineList.html#ad4a5b703754c42b775d2d4c83af3cf5f", null ],
     [ "Lanczos_restart", "structDefineList.html#afb8a2f22e15c09891db3e83e6f16deb9", null ],

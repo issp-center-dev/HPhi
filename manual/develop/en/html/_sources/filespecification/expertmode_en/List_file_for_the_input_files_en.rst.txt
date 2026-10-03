@@ -20,6 +20,7 @@ This file determines the input filenames, which are correlated with the keywords
     AnomalousG zanomalousg.def
     TwoBodyG zcisajscktaltdc.def
     NBodyG znbodyg.def
+    TransSym qptransidx.def
 
 File format
 ~~~~~~~~~~~
@@ -67,6 +68,7 @@ Use rules
     "CalcMod", "Parameters for modes of calculation"
     "ModPara", "Parameters for calculation"
     "LocSpin", "Configurations of the local spins for Hamiltonian"
+    "TransSym", "Symmetry sector (a group of site permutations and its one-dimensional characters)"
     "Trans", "Transfer and chemical potential for Hamiltonian"
     "AnomalousTerm", "Anomalous pair Hamiltonian terms for HubbardGC"
     "InterAll", "Two-body interactions for Hamiltonian"

@@ -48,6 +48,7 @@ OneBodyG zcisajs.def
 AnomalousG zanomalousg.def
 TwoBodyG zcisajscktaltdc.def
 NBodyG znbodyg.def
+TransSym qptransidx.def
 </pre></div>
 </div>
 <section id="file-format">
@@ -101,70 +102,73 @@ terminated.</p></li>
 <tr class="row-even"><td><p>LocSpin</p></td>
 <td><p>Configurations of the local spins for Hamiltonian</p></td>
 </tr>
-<tr class="row-odd"><td><p>Trans</p></td>
+<tr class="row-odd"><td><p>TransSym</p></td>
+<td><p>Symmetry sector (a group of site permutations and its one-dimensional characters)</p></td>
+</tr>
+<tr class="row-even"><td><p>Trans</p></td>
 <td><p>Transfer and chemical potential for Hamiltonian</p></td>
 </tr>
-<tr class="row-even"><td><p>AnomalousTerm</p></td>
+<tr class="row-odd"><td><p>AnomalousTerm</p></td>
 <td><p>Anomalous pair Hamiltonian terms for HubbardGC</p></td>
 </tr>
-<tr class="row-odd"><td><p>InterAll</p></td>
+<tr class="row-even"><td><p>InterAll</p></td>
 <td><p>Two-body interactions for Hamiltonian</p></td>
 </tr>
-<tr class="row-even"><td><p>NBodyInterAll</p></td>
+<tr class="row-odd"><td><p>NBodyInterAll</p></td>
 <td><p>Generic N-body interactions for Hamiltonian</p></td>
 </tr>
-<tr class="row-odd"><td><p>CoulombIntra</p></td>
+<tr class="row-even"><td><p>CoulombIntra</p></td>
 <td><p>CoulombIntra interactions</p></td>
 </tr>
-<tr class="row-even"><td><p>CoulombInter</p></td>
+<tr class="row-odd"><td><p>CoulombInter</p></td>
 <td><p>CoulombInter interactions</p></td>
 </tr>
-<tr class="row-odd"><td><p>Hund</p></td>
+<tr class="row-even"><td><p>Hund</p></td>
 <td><p>Hund couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>PairHop</p></td>
+<tr class="row-odd"><td><p>PairHop</p></td>
 <td><p>Pair hopping couplings</p></td>
 </tr>
-<tr class="row-odd"><td><p>Exchange</p></td>
+<tr class="row-even"><td><p>Exchange</p></td>
 <td><p>Exchange couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>Ising</p></td>
+<tr class="row-odd"><td><p>Ising</p></td>
 <td><p>Ising interactions</p></td>
 </tr>
-<tr class="row-odd"><td><p>PairLift</p></td>
+<tr class="row-even"><td><p>PairLift</p></td>
 <td><p>Pair lift couplings</p></td>
 </tr>
-<tr class="row-even"><td><p>OneBodyG</p></td>
+<tr class="row-odd"><td><p>OneBodyG</p></td>
 <td><p>Output components for one-body Green’s functions <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}\rangle\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>AnomalousG</p></td>
+<tr class="row-even"><td><p>AnomalousG</p></td>
 <td><p>Output components for anomalous pair Green’s functions <span class="math notranslate nohighlight">\(\langle c_{i\sigma}c_{j\tau}\rangle\)</span> and <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\tau}^{\dagger}\rangle\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p>TwoBodyG</p></td>
+<tr class="row-odd"><td><p>TwoBodyG</p></td>
 <td><p>Output components for two-body Green’s functions <span class="math notranslate nohighlight">\(\langle c_{i\sigma}^{\dagger}c_{j\sigma}c_{k\tau}^{\dagger}c_{l\tau}\rangle\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>NBodyG</p></td>
+<tr class="row-even"><td><p>NBodyG</p></td>
 <td><p>Output components for generic N-body Green’s functions</p></td>
 </tr>
-<tr class="row-even"><td><p>SingleExcitation</p></td>
+<tr class="row-odd"><td><p>SingleExcitation</p></td>
 <td><p>Operators for generating a single excited state</p></td>
 </tr>
-<tr class="row-odd"><td><p>PairExcitation</p></td>
+<tr class="row-even"><td><p>PairExcitation</p></td>
 <td><p>Operators for generating a pair excited state</p></td>
 </tr>
-<tr class="row-even"><td><p>SingleExcitationBra</p></td>
+<tr class="row-odd"><td><p>SingleExcitationBra</p></td>
 <td><p>Bra single excitation operators for the off-diagonal Green’s function</p></td>
 </tr>
-<tr class="row-odd"><td><p>PairExcitationBra</p></td>
+<tr class="row-even"><td><p>PairExcitationBra</p></td>
 <td><p>Bra pair excitation operators for the off-diagonal Green’s function</p></td>
 </tr>
-<tr class="row-even"><td><p>SpectrumVec</p></td>
+<tr class="row-odd"><td><p>SpectrumVec</p></td>
 <td><p>An input vector to calculate a restart vector</p></td>
 </tr>
-<tr class="row-odd"><td><p>OneBodyTE</p></td>
+<tr class="row-even"><td><p>OneBodyTE</p></td>
 <td><p>Time-dependent transfer integrals</p></td>
 </tr>
-<tr class="row-even"><td><p>TwoBodyTE</p></td>
+<tr class="row-odd"><td><p>TwoBodyTE</p></td>
 <td><p>Time-dependent two-body interactions</p></td>
 </tr>
 </tbody>
