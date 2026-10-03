@@ -417,6 +417,13 @@ add_hphi_test(lobcg_kondo_chain)
 add_hphi_test(lobcg_spin_kagome)
 add_hphi_test(symmetry_spin_chain_lobcg)
 add_hphi_test(symmetry_spin_chain_lobcg_preconditioner)
+if(MPI_FOUND)
+    set_tests_properties(symmetry_spin_chain_lobcg_preconditioner
+        PROPERTIES ENVIRONMENT "HPHI_TEST_MPI_ENABLED=1")
+else()
+    set_tests_properties(symmetry_spin_chain_lobcg_preconditioner
+        PROPERTIES ENVIRONMENT "HPHI_TEST_MPI_ENABLED=0")
+endif()
 add_hphi_test(lobcg_genspin_ladder)
 add_hphi_test(lobcg_hubbardgc_tri)
 add_hphi_test(lobcg_kondogc_chain)
