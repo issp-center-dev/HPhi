@@ -15,7 +15,7 @@ double LargeValue = 1.0, global_norm, global_1st_norm;
 int myrank = 0, nproc = 1, nthreads = 1, step_i = 0;
 FILE *stdoutMPI;
 const char *cFileNameTimeKeep = "unused", *cTPQStep = "unused", *cTPQStepEnd = "unused";
-static int energy_calls, energy_failure;
+static int energy_calls, energy_failure, matvec_failure;
 static double scalar_h;
 
 void StartTimer(int timer) { (void)timer; }
@@ -56,6 +56,7 @@ double complex SumMPI_dc(double complex value)
 int mltply(struct BindStruct *x, double complex *out, double complex *in)
 {
   unsigned long i;
+  if (matvec_failure && myrank == nproc-1) return -1;
   for (i = 1; i <= x->Check.idim_max; ++i) out[i] = scalar_h * in[i];
   return 0;
 }
@@ -157,6 +158,33 @@ int main(int argc, char **argv)
   if (!myrank) v0[1] = NAN;
   require(Multiply(&x) == -1, "nonfinite global norm reaches all ranks");
   require(Multiply(NULL) == -1, "invalid later-step storage rejects");
+  require(MakeIniVec(0, &x) == 0, "reset cTPQ input");
+  scalar_h = 2;
+  x.Def.Param.ExpandCoef = 1;
+  mltply(&x, v0, v1);
+  require(MultiplyForCanonicalTPQ(&x, 1) == -1, "annihilated cTPQ step rejects");
+  require(MultiplyForCanonicalTPQ(&x, NAN) == -1, "nonfinite cTPQ step rejects");
+  require(MultiplyForCanonicalTPQ(&x, -1) == -1, "negative cTPQ step rejects");
+  require(MultiplyForCanonicalTPQ(NULL, .1) == -1, "invalid cTPQ storage rejects");
+  x.Def.Param.ExpandCoef = 0;
+  require(MultiplyForCanonicalTPQ(&x, .1) == -1, "invalid cTPQ order rejects");
+  x.Def.Param.ExpandCoef = 4;
+  if (myrank == nproc-1) v2 = NULL;
+  require(MultiplyForCanonicalTPQ(&x, .1) == -1, "one-rank cTPQ workspace failure");
+  v2 = c;
+  require(MakeIniVec(0, &x) == 0, "reset cTPQ before matvec failure");
+  mltply(&x, v0, v1);
+  matvec_failure = 1;
+  require(MultiplyForCanonicalTPQ(&x, .1) == -1, "one-rank Taylor matvec failure propagates");
+  matvec_failure = 0;
+  require(MakeIniVec(0, &x) == 0, "reset cTPQ before normal step");
+  mltply(&x, v0, v1);
+  require(MultiplyForCanonicalTPQ(&x, .1) == 0, "normal cTPQ with empty ranks");
+  require(fabs(norm(&x, v0)-1) < 1e-12, "cTPQ global normalization");
+  require(fabs(global_norm - (1-.1+.01/2-.001/6+.0001/24)) < 1e-12,
+          "cTPQ scalar Taylor polynomial norm");
+  if (!myrank) v0[1] = NAN;
+  require(MultiplyForCanonicalTPQ(&x, .1) == -1, "nonfinite cTPQ norm reaches all ranks");
   if (!myrank) puts("TPQ failure propagation and zero-row normalization PASS");
 #ifdef MPI
   MPI_Finalize();

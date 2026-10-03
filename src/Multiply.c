@@ -174,6 +174,14 @@ int MultiplyForCanonicalTPQ
   double complex tmp2  = 0.0;
   //double dt=X->Def.Param.TimeSlice;
 
+  int invalid = X == NULL || v0 == NULL || v1 == NULL || v2 == NULL ||
+                !isfinite(delta_tau) || delta_tau < 0;
+  if (!invalid && (X->Check.idim_max > LONG_MAX ||
+                   X->Def.Param.ExpandCoef < 1 || X->Def.Param.ExpandCoef == INT_MAX)) invalid = 1;
+  if (SumMPI_i(invalid) != 0) {
+    fprintf(stdoutMPI, "Error: invalid cTPQ step storage, inverse-temperature step or Taylor order.\n");
+    return -1;
+  }
   //Make |v0> = |psi(tau+delta_tau)> from |v1> = |psi(tau)> and |v0> = H |psi(tau)>
   i_max=X->Check.idim_max;
   // mltply is in expec_energy.c v0=H*v1
@@ -191,7 +199,7 @@ int MultiplyForCanonicalTPQ
   for (coef = 2; coef <= X->Def.Param.ExpandCoef; coef++) {
     tmp1 *= (-0.5 * delta_tau) / (double ) coef;
     //v2 = H*v1 = H^coef |psi(tau)>
-    mltply(X, v2, v1);
+    if (SumMPI_i(mltply(X, v2, v1) != 0) != 0) return -1;
 #pragma omp parallel for default(none) private(i) shared(v0, v1, v2) firstprivate(i_max, tmp1, myrank)
     for (i = 1; i <= i_max; i++) {
       v0[i] += tmp1 * v2[i];
@@ -205,6 +213,10 @@ int MultiplyForCanonicalTPQ
     dnorm += conj(v0[i])*v0[i];
   }
   dnorm=SumMPI_dc(dnorm);
+  if (!isfinite(creal(dnorm)) || !isfinite(cimag(dnorm)) || creal(dnorm) <= 0) {
+    fprintf(stdoutMPI, "Error: cTPQ step has zero or non-finite global norm.\n");
+    return -1;
+  }
   dnorm=sqrt(dnorm);
   global_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)

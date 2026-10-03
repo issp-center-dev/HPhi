@@ -186,7 +186,7 @@ Use rules
    :math:`-1`, so the dimensions of the even and odd sectors differ from
    the counting for spins.
 
-*  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), and ``FullDiag`` methods support ``Spin`` with
+*  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, and ``FullDiag`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
    Expert-mode Hamiltonian terms are:
@@ -232,7 +232,7 @@ second moment for Hubbard. The SS ``phys_var`` column retains its existing
 meaning :math:`\langle H^2\rangle`, not the subtracted variance.
 ``OutputGreenFormat=1`` selects the usual aggregate SS/Norm/Flct files even
 though correlation functions remain unsupported. Restart, vector I/O,
-spectrum, and cTPQ remain unavailable with ``TransSym``.
+and spectrum remain unavailable with ``TransSym``.
 
 These results estimate the trace within a **single symmetry sector**; they
 are not a thermal average over the entire fixed-quantum-number space.
@@ -240,6 +240,27 @@ The manifest records ``ensemble=single_symmetry_sector``, ``num_ave``,
 ``large_value``, and ``initial_vec_type``. The existing random generator
 depends on MPI ownership and OpenMP threads, so a fixed seed alone does not
 make samples identical across different process/thread counts.
+
+Sector cTPQ
+~~~~~~~~~~~
+
+``CalcType=5`` uses the same sector storage and outputs as mTPQ. It applies
+:math:`\sum_{n=0}^{n_{\max}}(-\Delta\beta H_q/2)^n/n!` and normalizes after
+each step. The Taylor truncation remains the user's convergence parameter.
+Without ``InvTemp``, :math:`\Delta\beta=1/\mathrm{LargeValue}`;
+``ExpandCoef`` defaults to 10 when omitted. An explicitly supplied order must
+be a positive integer less than ``INT_MAX``. Zero or non-finite step norms
+and matrix-vector failures terminate the calculation.
+
+An ``InvTemp`` file uses rows ``beta nmax physcal eigen``. Beta must start
+at zero and be finite and nondecreasing. Repeated beta values represent a zero step. ``nmax`` is a positive
+integer less than ``INT_MAX``, and both flags are 0 or 1. The order on row
+``i`` advances from beta ``i`` to beta ``i+1``; the final order is unused.
+Sector cTPQ rejects any nonzero ``eigen`` flag, including at the initial or
+final point. Vector I/O and restart remain unsupported.
+The manifest records ``canonical_tpq_steps``, ``beta_schedule`` and either
+the uniform step/order or all explicit beta/order rows. As for mTPQ, these
+outputs describe a single sector, not the sum over all sectors.
 
 Sector FullDiag
 ~~~~~~~~~~~~~~~

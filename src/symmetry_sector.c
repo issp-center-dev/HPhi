@@ -211,6 +211,43 @@ int ComputeSymmetrySectorDigest(const struct SymmetryBasisRuntime *sym,
   return 0;
 }
 
+int WriteSymmetryCanonicalTPQSchedule(const struct BindStruct *X, int rows,
+                                     const double *beta, const int *orders)
+{
+  char name[D_FileNameMax];
+  FILE *fp = NULL;
+  int error = 0;
+  if (!X->Def.iFlgSymmetryBasis) return 0;
+  if (myrank == 0) {
+    int length = snprintf(name, sizeof(name), "%s%ssymmetry_sector.dat",
+                          X->Def.iOutputDataHead ? X->Def.CDataFileHead : "",
+                          X->Def.iOutputDataHead ? "_" : "");
+    error = length < 0 || (size_t)length + strlen(cParentOutputFolder) >= sizeof(name) ||
+            (rows > 0 && (beta == NULL || orders == NULL));
+    if (!error && childfopenMPI(name, "a", &fp) != 0) error = 1;
+    if (!error) {
+      fprintf(fp, "canonical_tpq_steps=%u\nbeta_schedule=%s\n",
+              rows > 0 ? (unsigned int)rows : X->Def.Lanczos_max,
+              rows > 0 ? "explicit" : "uniform");
+      if (rows > 0) {
+        /* order[i] advances beta[i] to beta[i+1]; the final order is unused. */
+        for (int i = 0; i < rows; ++i)
+          fprintf(fp, "invtemp_row_%d=%.17g %d\n", i, beta[i], orders[i]);
+      } else {
+        fprintf(fp, "beta_initial=0\nbeta_step=%.17g\nexpand_coef=%d\n",
+                1.0 / LargeValue, X->Def.Param.ExpandCoef);
+      }
+      if (ferror(fp)) error = 1;
+      if (fclose(fp) != 0) error = 1;
+    }
+  }
+  if (SumMPI_i(error) != 0) {
+    fprintf(stdoutMPI, "Error: failed to record the symmetry cTPQ schedule.\n");
+    return -1;
+  }
+  return 0;
+}
+
 int WriteSymmetrySectorManifest(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;

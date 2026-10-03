@@ -55,7 +55,7 @@ expect_reject() {
   (
     cd "${name}"
     set +e
-    ${MPIRUN} "${hphi}" -e namelist.def > run.log 2>&1
+    "${hphi}" -e namelist.def > run.log 2>&1
     rc=$?
     set -e
 
@@ -115,5 +115,42 @@ cat > trailing_blank/list_inv_temp_trailing_blank.def <<EOF
 
 EOF
 expect_accept trailing_blank
+
+index=0
+while IFS= read -r row; do
+  name="invalid_value_${index}"
+  prepare_case "$name" 0 beta.def
+  printf '0 4 1 0\n%s\n' "$row" > "$name/beta.def"
+  expect_reject "$name" "invalid row"
+  index=$((index + 1))
+done <<'EOF'
+nan 4 1 0
+inf 4 1 0
+-1 4 1 0
+1 0 1 0
+1 -2 1 0
+1 2.5 1 0
+1 1e100 1 0
+1 nan 1 0
+1 4 2 0
+1 4 1 -1
+1 4 1 nan
+EOF
+prepare_case repeated_beta 0 beta.def
+printf '0 4 1 0\n0.5 4 1 0\n0.5 4 1 0\n1 4 1 0\n' > repeated_beta/beta.def
+expect_accept repeated_beta
+prepare_case decreasing_beta 0 beta.def
+printf '0 4 1 0\n0.5 4 1 0\n0.4 4 1 0\n' > decreasing_beta/beta.def
+expect_reject decreasing_beta "invalid row"
+prepare_case nonzero_initial_beta 0 beta.def
+printf '0.5 4 1 0\n1 4 1 0\n' > nonzero_initial_beta/beta.def
+expect_reject nonzero_initial_beta "invalid row"
+for value in 0 -1 1.5 nan inf 1e100 2147483647; do
+  name="invalid_order_${value}"
+  prepare_case "$name" 0 beta.def
+  printf 'ExpandCoef %s\n' "$value" >> "$name/modpara.def"
+  printf '0 4 1 0\n1 4 1 0\n' > "$name/beta.def"
+  expect_reject "$name" "ExpandCoef must be a positive integer"
+done
 
 echo "cTPQ InvTemp validation rejects empty, malformed, extra-field, and restart-combined inputs, and accepts trailing blanks: OK"

@@ -190,14 +190,14 @@ grep -q "duplicate TransSym permutation entry" duplicate.log
 
 write_common_defs
 write_valid_transsym
-perl -0pi -e 's/CalcType 0/CalcType 5/' calcmod.def
-if ../../src/HPhi -e namelist.def > ctpq.log 2>&1; then
-    cat ctpq.log
+perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
+if ../../src/HPhi -e namelist.def > time_evolution.log 2>&1; then
+    cat time_evolution.log
     exit 1
 fi
-grep -q "does not support cTPQ" ctpq.log
+grep -q "does not support TimeEvolution" time_evolution.log
 
-for calc_type in 4 5; do
+for calc_type in 4; do
     write_common_defs
     write_valid_transsym
     perl -0pi -e "s/CalcType 0/CalcType ${calc_type}/" calcmod.def
@@ -206,7 +206,7 @@ for calc_type in 4 5; do
         cat "${log}"
         exit 1
     fi
-    grep -q "supports only Lanczos, TPQ, FullDiag and CG" "${log}"
+    grep -q "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" "${log}"
 done
 
 write_common_defs
@@ -436,13 +436,13 @@ done
 write_common_defs
 write_valid_transsym
 write_base_namelist
-perl -0pi -e 's/CalcType 0/CalcType 5/' calcmod.def
-if ../../src/HPhi -e namelist.def > ctpq_supported_methods.log 2>&1; then
-    cat ctpq_supported_methods.log
+perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
+if ../../src/HPhi -e namelist.def > time_evolution_supported_methods.log 2>&1; then
+    cat time_evolution_supported_methods.log
     exit 1
 fi
-grep -q "does not support cTPQ" ctpq_supported_methods.log
-grep -q "supports only Lanczos, TPQ, FullDiag and CG" ctpq_supported_methods.log
+grep -q "does not support TimeEvolution" time_evolution_supported_methods.log
+grep -q "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" time_evolution_supported_methods.log
 
 write_common_defs
 write_valid_transsym

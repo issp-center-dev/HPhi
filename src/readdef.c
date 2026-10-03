@@ -934,6 +934,11 @@ int ReadDefFileNInt(
                 X->Param.TimeSlice=dtmp;
               }
               else if(strcmp(ctmp, "ExpandCoef")==0){
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: ExpandCoef must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Param.ExpandCoef=(int)dtmp;
               }
               else if(strcmp(ctmp, "OutputInterval")==0){
