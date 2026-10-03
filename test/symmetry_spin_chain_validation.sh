@@ -420,6 +420,32 @@ for flag in OutputEigenVec InputEigenVec ReStart; do
     grep -q "EigenVec/ReStart" "${log}"
 done
 
+# The diagnostic must name the unsupported option itself, not only the group.
+for flag in ReStart InputEigenVec; do
+    write_common_defs
+    write_valid_transsym
+    write_base_namelist
+    perl -0pi -e "s/${flag} 0/${flag} 1/" calcmod.def
+    log="unsupported_option_${flag}.log"
+    if ../../src/HPhi -e namelist.def > "${log}" 2>&1; then
+        cat "${log}"
+        exit 1
+    fi
+    grep -q "does not support ${flag}" "${log}"
+done
+
+# An unsupported method names itself and lists the supported ones.
+write_common_defs
+write_valid_transsym
+write_base_namelist
+perl -0pi -e 's/CalcType 0/CalcType 2/' calcmod.def
+if ../../src/HPhi -e namelist.def > fulldiag_supported_methods.log 2>&1; then
+    cat fulldiag_supported_methods.log
+    exit 1
+fi
+grep -q "does not support FullDiag" fulldiag_supported_methods.log
+grep -q "supports only Lanczos and CG" fulldiag_supported_methods.log
+
 write_common_defs
 write_valid_transsym
 write_base_namelist
