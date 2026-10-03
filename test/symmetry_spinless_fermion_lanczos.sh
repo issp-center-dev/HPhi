@@ -467,7 +467,7 @@ expect_failure "SpinlessFermion Transfer invariance failed" \
 
 write_transfer_ring
 perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
-expect_failure "supports only Lanczos, TPQ, FullDiag, CG and cTPQ" \
+expect_failure "requires sector checkpoint InputEigenVec=1" \
     unsupported_method.log ../../src/HPhi -e namelist.def
 
 write_calcmod

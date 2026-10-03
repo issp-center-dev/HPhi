@@ -427,6 +427,12 @@ Real time evolution method
    **Description :** A required positive integer less than ``INT_MAX`` giving
    the expansion order :math:`n` for the real-time evolution method;
 
+   Older raw expert-mode TE inputs that omitted this parameter silently used
+   first-order Taylor propagation. Such inputs now fail validation; set
+   ``ExpandCoef=1`` explicitly to retain that order, or select a higher order
+   after checking convergence. Standard-mode inputs are unaffected because
+   StdFace always writes this parameter.
+
    .. math:: \exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.
 
 

@@ -2638,7 +2638,8 @@ int ReadDefFileIdxPara(
                   return (-1);
               }
 
-                if(ArrangeInterAllOffDiagonal(
+                if (!(X->iFlgSymmetryBasis && X->iCalcModel == SpinlessFermion) &&
+                   ArrangeInterAllOffDiagonal(
                         X->NTEInterAllOffDiagonal[idx],
                         X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
                         X->iCalcModel

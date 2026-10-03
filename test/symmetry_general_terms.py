@@ -111,6 +111,8 @@ def prepare(model, length, nup=2, ndown=1, sector_test=None, sector_momenta=(0, 
                 add("Trans", [i, s, j, s, z.real, z.imag], -z*op(i, s, j, s))
                 add("Trans", [j, s, i, s, z.real, -z.imag], -z.conjugate()*op(j, s, i, s))
         if model == "Spin":
+            exchange = op(i, 0, i, 1) @ op(j, 1, j, 0)
+            add("Exchange", [i, j, 0.19], 0.19*(exchange + exchange.T))
             pair((i, 1, i, 0, j, 0, j, 1), 0.43+0.11j)
             inter((i, 0, i, 0, j, 0, j, 0), 0.31+0j)
             # Same-site product tests local matrix-unit contraction.

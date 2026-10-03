@@ -183,7 +183,7 @@ TransSym指定ファイル
    自動的に考慮されます。例えば占有軌道を入れ替える鏡映は :math:`-1` の
    因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。
 
--  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag`` です。模型は :math:`S=1/2` で ``2Sz`` を
+-  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
    ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
 
@@ -207,7 +207,7 @@ TransSym指定ファイル
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
    相関関数、スペクトル計算、リスタート、ハミルトニアン入出力は本ファイルと併用できません。
-   CGの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
+   CGとTimeEvolutionの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
    非対応の組み合わせはエラーで終了します。
 
 セクター内TPQ
@@ -250,6 +250,71 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 ``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
 manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。
+
+静的ハミルトニアンでのセクター時間発展
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+expert modeの ``CalcType=4`` は、保存済みセクターベクトルを静的Hamiltonianで
+時間発展させます。 ``InputEigenVec=1``、 ``ReStart=0``、正整数の ``ExpandCoef`` を
+指定し、namelistへ ``SpectrumVec seed_eigenvec_0`` を追加します。
+``output/seed_eigenvec_0_rank_<rank>.dat`` は下記のsector形式が必要です。
+CGの ``OutputEigenVec=1`` で作成できます。基底・sector・MPI数・layoutは一致が
+必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
+``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で参照用layoutを選択できます。
+
+TE実行前にCGのseedを全rank分、別prefixで保存するか、TE側の
+``CDataFileHead`` を変更してください。入出力のprefixが同じ場合、row 0の出力
+``<prefix>_eigenvec_0_rank_<rank>.dat`` がseedを上書きします。
+sectorの最終出力が別名であっても、このrow 0での上書きは防げません。
+
+全行の項数が0の ``TEOneBody`` で時刻列を指定し、 ``Lanczos_max`` 行を使用します。
+時刻は有限で単調非減少とします。最初の行は入力状態を伝播せず記録し、以降は
+:math:`\exp[-iH(t_j-t_{j-1})]` の ``ExpandCoef`` 次Taylor多項式を作用させて
+規格化します。同一時刻も許容します。入力checkpointのstep/timeは来歴として
+記録し、新しい時刻列の時計には引き継ぎません。時間依存項とPeierls駆動については次節を参照してください。
+
+``SS`` / ``Norm`` / ``Flct`` はsector内の期待値を出力します。 ``Norm`` は各stepの
+規格化前のnormで、Taylor打切りにより1からずれる場合があります。次数を増やすか
+時間間隔を減らして収束を確認してください。相関関数と ``ReStart`` は未対応です。
+manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
+記録します。
+
+``OutputEigenVec=1`` と正の ``OutputInterval`` により、周期出力を
+``<prefix>_eigenvec_<step>_rank_<rank>.dat``、最終出力を別名
+``<prefix>_eigenvec_final_rank_<rank>.dat`` に保存します。sector headerの ``step`` は
+完了した0始まりの時刻行、 ``time`` はその物理時刻、 ``state_index`` は入力状態の
+ラベルです。最終出力はrow 0を上書きしません。これらのcheckpointを ``SpectrumVec``
+で新しい同一sector計算へ渡せますが、restartではありません。raw TEの既存binary形式とは
+異なります。
+
+時間依存するセクターHamiltonian
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TEOneBody``、 ``TETwoBody``、 ``Laser`` のいずれか1種類で駆動できます。
+one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
+位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
+raw spinless solverの対角TE項に対する制限は変更しません。
+
+初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、
+固定量子数の保存、指定群に対する不変性を検査します。後の時刻だけで対称性が
+破れる場合も伝播開始前に停止します。 ``Laser`` は既存の9パラメータを使い、
+時刻を ``Tinit + step * TimeSlice`` とします。時間刻みは有限・非負とし、最初の行は
+``Tinit`` における入力状態を伝播せず記録します。 ``TEOneBody`` / ``TETwoBody`` は
+ファイルの有限・単調非減少の時刻列を使います。
+
+区間の終点 :math:`t_j` のHamiltonian :math:`H(t_j)` を固定し、そのTaylor多項式を
+前の状態へ作用させます。一次項を含む全次数で同じ行列を使います。
+連続的な時間依存Hamiltonianに対しては右端点での区分一定近似なので、Taylor次数だけを
+増やしても時間離散化誤差は消えません。時間刻みと次数の両方で収束を確認してください。
+このsectorの規約は、従来のraw動的TEの漸化式とは区別されます。
+
+現実装は基底の代表状態・順序・位相・MPI分担を保持し、各時刻で対角成分を更新します。
+既存のrank局所基底からlookup directoryを再作成し、行列作用のplanを再構築します。
+raw Hilbert空間を列挙し直す必要がなく、項の出現・消滅にも対応します。
+共通疎構造のcacheやplanの係数だけの更新は、まだ行いません。manifestには ``te_hamiltonian=time_dependent``、
+``te_integrator=right_endpoint_taylor``、 ``te_plan_update=rebuild_with_fixed_basis`` と
+各時刻の実効Hamiltonian digest ``te_hamiltonian_<step>`` を記録します。
+同じdigestをその行のcheckpoint headerにも記録します。
 
 セクターベクトルcheckpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
