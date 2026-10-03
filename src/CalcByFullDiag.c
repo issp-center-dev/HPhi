@@ -31,16 +31,16 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
-    makeHam(&(X->Bind));
+    iret = makeHam(&(X->Bind));
   }
   else if(X->Bind.Def.iInputHam==TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);
-    inputHam(&(X->Bind));
+    iret = inputHam(&(X->Bind));
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_End);
   }
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
-  if(iret != 0) return FALSE;
+  if(SumMPI_i(iret != 0) != 0) return FALSE;
 
 
   if(X->Bind.Def.iOutputHam == TRUE){

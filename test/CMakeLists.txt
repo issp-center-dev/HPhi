@@ -782,6 +782,24 @@ if(MPI_FOUND)
 endif(MPI_FOUND)
 
 # TPQ failure propagation and global normalization (including empty ranks).
+add_executable(unittest_fulldiag_failure
+    ${CMAKE_SOURCE_DIR}/test/unittest_fulldiag_failure.c
+    ${CMAKE_SOURCE_DIR}/src/CalcByFullDiag.c
+    ${CMAKE_SOURCE_DIR}/src/lapack_diag.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/ProgressMessage.c)
+target_include_directories(unittest_fulldiag_failure PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+# Isolate the LAPACK caller for fault injection even in distributed-solver
+# builds. MPI stays enabled to exercise collective error propagation.
+target_compile_options(unittest_fulldiag_failure PRIVATE -U_SCALAPACK -U_ELPA -U_MAGMA)
+if(MPI_FOUND)
+    target_link_libraries(unittest_fulldiag_failure ${MPI_C_LIBRARIES})
+    add_hphi_mpi_test(unittest_fulldiag_failure_mpi min:2)
+    set_tests_properties(unittest_fulldiag_failure_mpi PROPERTIES LABELS "unit;fulldiag;mpi")
+endif()
+add_test(NAME unittest_fulldiag_failure COMMAND unittest_fulldiag_failure)
+set_tests_properties(unittest_fulldiag_failure PROPERTIES LABELS "unit;fulldiag")
+
 add_executable(unittest_tpq_failure
     ${CMAKE_SOURCE_DIR}/test/unittest_tpq_failure.c
     ${CMAKE_SOURCE_DIR}/src/MakeIniVec.c

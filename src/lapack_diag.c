@@ -17,6 +17,8 @@
 #include "matrixlapack.h"
 #include "FileIO.h"
 #include "DefCommon.h"
+#include "wrapperMPI.h"
+#include <limits.h>
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -263,6 +265,7 @@ struct BindStruct *X//!<[inout]
   FILE *fp = NULL;
   char sdt[D_FileNameMax] = "";
   long int i, j, i_max, xMsize;
+  int solver_failed = 0;
 #ifdef _SCALAPACK
   int rank, size, nprocs, nprow, npcol, myrow, mycol, ictxt;
   int i_negone=-1, i_zero=0, iam;
@@ -271,6 +274,10 @@ struct BindStruct *X//!<[inout]
 #endif
 
   i_max = X->Check.idim_max;
+  if (SumMPI_i(i_max <= 0 || i_max > INT_MAX) != 0) {
+    fprintf(stdoutMPI, "Error: invalid FullDiag solver dimension.\n");
+    return -1;
+  }
   if (!iHamPanelActive) {
     /* Distributed-panel mode (phase 2): Ham is NULL and the panel is
        already 0-based-packed by rows / start-packed by columns at
@@ -304,9 +311,9 @@ struct BindStruct *X//!<[inout]
       /* diag_scalapack_cmp() builds the equivalent grid recorded in
          descZ_vec. This temporary sizing grid is no longer needed. */
       blacs_gridexit_(&ictxt);
-      diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec);
+      solver_failed = diag_scalapack_cmp(xMsize, Ham, v0, Z_vec, descZ_vec) != 0;
     } else {
-      ZHEEVall(xMsize, Ham, v0, L_vec);
+      solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
     }
 #endif
     break;
@@ -314,24 +321,27 @@ struct BindStruct *X//!<[inout]
   case SOLVER_MAGMA:
 #ifdef _MAGMA
     if (myrank == 0) {
-      if (diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0) {
-        return -1;
-      }
+      solver_failed = diag_magma_cmp(xMsize, Ham, v0, L_vec, X->Def.iNGPU) != 0;
     }
 #endif
     break;
 
   case SOLVER_ELPA:
 #ifdef _ELPA
-    if (lapack_diag_elpa(X, xMsize) != 0) {
-      return -1;
-    }
+    solver_failed = lapack_diag_elpa(X, xMsize) != 0;
 #endif
     break;
 
   default: /* SOLVER_LAPACK */
-    ZHEEVall(xMsize, Ham, v0, L_vec);
+    solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
     break;
+  }
+  if (SumMPI_i(solver_failed) != 0) {
+    fprintf(stdoutMPI, "Error: FullDiag eigensolver failed; no eigenvalues are written.\n");
+#ifdef _SCALAPACK
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+    return -1;
   }
   strcpy(sdt, cFileNameEigenvalue_Lanczos);
   {
