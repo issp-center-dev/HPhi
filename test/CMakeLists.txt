@@ -483,6 +483,7 @@ add_hphi_test(fulldiag_spingc_tri)
 add_hphi_test(fulldiag_spingc_nbody_interall_compare)
 add_hphi_test(fulldiag_genspingc_ladder)
 add_hphi_test(fulldiag_spingc_gamma)
+add_hphi_test(fulldiag_spingc_pairlift)
 
 # Full diag test labels
 set_tests_properties(
@@ -507,6 +508,7 @@ set_tests_properties(
     PROPERTIES LABELS "fulldiag;tj;tjgc;kondo;nbody")
 set_tests_properties(
     fulldiag_spin_tri fulldiag_spingc_tri fulldiag_spingc_gamma
+    fulldiag_spingc_pairlift
     PROPERTIES LABELS "fulldiag;spin")
 set_tests_properties(
     fulldiag_genspin_ladder fulldiag_genspingc_ladder
