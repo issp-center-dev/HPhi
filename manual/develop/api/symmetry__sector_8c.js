@@ -11,5 +11,6 @@ var symmetry__sector_8c =
     [ "hash_integer", "symmetry__sector_8c.html#aeddeacb977eaabd008bb898072a2bdbb", null ],
     [ "hash_tag", "symmetry__sector_8c.html#a3de58548d41c689902dbb2a4bb795223", null ],
     [ "hash_terms", "symmetry__sector_8c.html#acb444605e819f27b1f248dcb3cd944d4", null ],
+    [ "WriteSymmetryCanonicalTPQSchedule", "symmetry__sector_8c.html#abb43f283a3ecf555d84b6aa95231a050", null ],
     [ "WriteSymmetrySectorManifest", "symmetry__sector_8c.html#ad23336b68a87692b5fcbf6944e3d528e", null ]
 ];

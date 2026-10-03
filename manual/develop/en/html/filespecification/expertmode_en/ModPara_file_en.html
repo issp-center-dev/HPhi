@@ -382,8 +382,13 @@ specified with this parameter. In the case of restart calculation,
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
-<p><strong>Description :</strong> An integer giving the expansion order <span class="math notranslate nohighlight">\(n\)</span> for
-real-time evolution method;</p>
+<p><strong>Description :</strong> A required positive integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> giving
+the expansion order <span class="math notranslate nohighlight">\(n\)</span> for the real-time evolution method;</p>
+<p>Older raw expert-mode TE inputs that omitted this parameter silently used
+first-order Taylor propagation. Such inputs now fail validation; set
+<code class="docutils literal notranslate"><span class="pre">ExpandCoef=1</span></code> explicitly to retain that order, or select a higher order
+after checking convergence. Standard-mode inputs are unaffected because
+StdFace always writes this parameter.</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-modpara-file-en-1">
 <span class="eqno">(4.6)<a class="headerlink" href="#equation-filespecification-expertmode-en-modpara-file-en-1" title="Link to this equation">¶</a></span>\[\exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.\]</div>
 </li>
@@ -401,7 +406,8 @@ calculating the correlation functions.</div>
 <div class="line"><strong>Description :</strong> An integer giving the interval steps of output
 the wave function.</div>
 <div class="line">The wave vector is output when <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> in <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>
-file.</div>
+file. A positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> is then required. Explicit interval
+and iteration-count values must be finite integers less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>.</div>
 </div>
 </li>
 </ul>

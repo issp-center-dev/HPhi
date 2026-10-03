@@ -8,7 +8,8 @@ var searchData=
   ['hamcolbegin_5',['hamcolbegin',['../global_8c.html#aee0fd92422824ab447d18ccc6c2348c5',1,'HamColBegin:&#160;global.c'],['../global_8h.html#aee0fd92422824ab447d18ccc6c2348c5',1,'HamColBegin:&#160;global.c']]],
   ['hamcolend_6',['hamcolend',['../global_8c.html#aa6c381afcd5507467f72aad4fb6467b6',1,'HamColEnd:&#160;global.c'],['../global_8h.html#aa6c381afcd5507467f72aad4fb6467b6',1,'HamColEnd:&#160;global.c']]],
   ['hamcollectsink_7',['hamcollectsink',['../global_8c.html#a60537e096bd9b93e14bb4b8805b2e38e',1,'hamCollectSink:&#160;global.c'],['../global_8h.html#a60537e096bd9b93e14bb4b8805b2e38e',1,'hamCollectSink:&#160;global.c']]],
-  ['hampanelld_8',['hampanelld',['../global_8c.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c'],['../global_8h.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c']]],
-  ['hard_5fbyte_5flimit_9',['hard_byte_limit',['../structSymmetryMemoryPolicy.html#ae0a1f58f6b7f950fbb4db21b0c49946f',1,'SymmetryMemoryPolicy']]],
-  ['hundcoupling_10',['HundCoupling',['../structDefineList.html#a67120f094230a63d8d074afcc7f676b5',1,'DefineList']]]
+  ['hamiltonian_5fdigest_8',['hamiltonian_digest',['../structSymmetryCheckpointInfo.html#a25ec2079f6e04340a953c9944593ecba',1,'SymmetryCheckpointInfo']]],
+  ['hampanelld_9',['hampanelld',['../global_8c.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c'],['../global_8h.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c']]],
+  ['hard_5fbyte_5flimit_10',['hard_byte_limit',['../structSymmetryMemoryPolicy.html#ae0a1f58f6b7f950fbb4db21b0c49946f',1,'SymmetryMemoryPolicy']]],
+  ['hundcoupling_11',['HundCoupling',['../structDefineList.html#a67120f094230a63d8d074afcc7f676b5',1,'DefineList']]]
 ];

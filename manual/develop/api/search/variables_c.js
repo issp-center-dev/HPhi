@@ -68,7 +68,7 @@ var searchData=
   ['nsingle_65',['NSingle',['../structExcitationOperatorSet.html#a218292e6c153ffbb9015bd05c51ea92d',1,'ExcitationOperatorSet']]],
   ['nsingleexcitationoperator_66',['NSingleExcitationOperator',['../structDefineList.html#aa8bd9a409e38941cae42c45e52e0c9e7',1,'DefineList']]],
   ['nsingleexcitationoperatorbra_67',['NSingleExcitationOperatorBra',['../structDefineList.html#a05f51af0be5f87991d7d6557d8244fdb',1,'DefineList']]],
-  ['nsite_68',['nsite',['../structSymmetryBasisRuntime.html#a51943fee1b626c8044c78b9e8b175fbf',1,'SymmetryBasisRuntime::nsite'],['../structGroupDigestEntry.html#a4d2675ddd0c8a68d306853403f045a94',1,'GroupDigestEntry::nsite'],['../structSymmetryStateEnumerator.html#ab999798933d25fff2908d8a52aaa19d9',1,'SymmetryStateEnumerator::nsite'],['../structDefineList.html#acd881e170f064eb429a207412b8b64a2',1,'DefineList::Nsite']]],
+  ['nsite_68',['nsite',['../structSymmetryStateEnumerator.html#ab999798933d25fff2908d8a52aaa19d9',1,'SymmetryStateEnumerator::nsite'],['../structDefineList.html#acd881e170f064eb429a207412b8b64a2',1,'DefineList::Nsite'],['../structGroupDigestEntry.html#a4d2675ddd0c8a68d306853403f045a94',1,'GroupDigestEntry::nsite'],['../structSymmetryBasisRuntime.html#a51943fee1b626c8044c78b9e8b175fbf',1,'SymmetryBasisRuntime::nsite']]],
   ['nsitempi_69',['NsiteMPI',['../structDefineList.html#a11a02d7b00fe39d386a3bcbcef9d9e68',1,'DefineList']]],
   ['nsymtrans_70',['NSymTrans',['../structDefineList.html#a6e081298c98d48a09daab22d923be1cf',1,'DefineList']]],
   ['ntbody_71',['NTBody',['../structDefineList.html#ab5f33e96cd828e5791d6aeb53fddb52d',1,'DefineList']]],
@@ -94,7 +94,7 @@ var searchData=
   ['num_5fup_91',['num_up',['../structPhysList.html#ad23f6224e25e8e6fb9ee498debf55482',1,'PhysList']]],
   ['numarrayj_92',['NumarrayJ',['../structBoostList.html#ac63f24ab60a54d00aef412eef3290e62',1,'BoostList']]],
   ['numave_93',['numave',['../global_8c.html#a1e22af59b031f04f2928772d4b7f12af',1,'NumAve:&#160;global.c'],['../global_8h.html#a1e22af59b031f04f2928772d4b7f12af',1,'NumAve:&#160;global.c']]],
-  ['nup_94',['nup',['../structSymmetryStateEnumerator.html#af221fdb369e611595a9f5b0698a4f612',1,'SymmetryStateEnumerator::nup'],['../structDefineList.html#a663475b5150d20237e3dd8a489dfbff9',1,'DefineList::Nup']]],
+  ['nup_94',['nup',['../structDefineList.html#a663475b5150d20237e3dd8a489dfbff9',1,'DefineList::Nup'],['../structSymmetryStateEnumerator.html#af221fdb369e611595a9f5b0698a4f612',1,'SymmetryStateEnumerator::nup']]],
   ['nupmpi_95',['NupMPI',['../structDefineList.html#a951a1a00e3fdfbe0e8dc3a6dc8825391',1,'DefineList']]],
   ['nuporg_96',['NupOrg',['../structDefineList.html#ac2a88ffede96904ea464cc74077872d8',1,'DefineList']]],
   ['nvec_97',['nvec',['../structDefineList.html#a15f41923d6a2f0cca7da0d318a84fd93',1,'DefineList']]]

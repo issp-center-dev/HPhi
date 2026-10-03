@@ -185,7 +185,7 @@ permutation is taken into account automatically. For example, a
 reflection that exchanges occupied orbitals contributes a factor
 <span class="math notranslate nohighlight">\(-1\)</span>, so the dimensions of the even and odd sectors differ from
 the counting for spins.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), and <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
 <span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
 Expert-mode Hamiltonian terms are:</p>
@@ -211,8 +211,9 @@ invariance and conserved quantum numbers. The coefficient tolerance is
 unsupported. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
 <p>Correlation functions, spectrum calculations, restart, and the input and
-output of Hamiltonians and eigenvectors are not supported together with
-this file. Unsupported combinations terminate with an error.</p>
+output of Hamiltonians are not supported together with this file.
+Eigenvector I/O is available for CG and TimeEvolution through the sector checkpoint format
+below. Unsupported combinations terminate with an error.</p>
 </li>
 </ul>
 </section>
@@ -230,13 +231,146 @@ second moment for Hubbard. The SS <code class="docutils literal notranslate"><sp
 meaning <span class="math notranslate nohighlight">\(\langle H^2\rangle\)</span>, not the subtracted variance.
 <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> selects the usual aggregate SS/Norm/Flct files even
 though correlation functions remain unsupported. Restart, vector I/O,
-spectrum, and cTPQ remain unavailable with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</p>
+and spectrum remain unavailable with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</p>
 <p>These results estimate the trace within a <strong>single symmetry sector</strong>; they
 are not a thermal average over the entire fixed-quantum-number space.
 The manifest records <code class="docutils literal notranslate"><span class="pre">ensemble=single_symmetry_sector</span></code>, <code class="docutils literal notranslate"><span class="pre">num_ave</span></code>,
 <code class="docutils literal notranslate"><span class="pre">large_value</span></code>, and <code class="docutils literal notranslate"><span class="pre">initial_vec_type</span></code>. The existing random generator
 depends on MPI ownership and OpenMP threads, so a fixed seed alone does not
 make samples identical across different process/thread counts.</p>
+</section>
+<section id="sector-ctpq">
+<h2>Sector cTPQ<a class="headerlink" href="#sector-ctpq" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcType=5</span></code> uses the same sector storage and outputs as mTPQ. It applies
+<span class="math notranslate nohighlight">\(\sum_{n=0}^{n_{\max}}(-\Delta\beta H_q/2)^n/n!\)</span> and normalizes after
+each step. The Taylor truncation remains the user’s convergence parameter.
+Without <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code>, <span class="math notranslate nohighlight">\(\Delta\beta=1/\mathrm{LargeValue}\)</span>;
+<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> defaults to 10 when omitted. An explicitly supplied order must
+be a positive integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>. Zero or non-finite step norms
+and matrix-vector failures terminate the calculation.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> file uses rows <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">nmax</span> <span class="pre">physcal</span> <span class="pre">eigen</span></code>. Beta must start
+at zero and be finite and nondecreasing. Repeated beta values represent a zero step. <code class="docutils literal notranslate"><span class="pre">nmax</span></code> is a positive
+integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>, and both flags are 0 or 1. The order on row
+<code class="docutils literal notranslate"><span class="pre">i</span></code> advances from beta <code class="docutils literal notranslate"><span class="pre">i</span></code> to beta <code class="docutils literal notranslate"><span class="pre">i+1</span></code>; the final order is unused.
+Sector cTPQ rejects any nonzero <code class="docutils literal notranslate"><span class="pre">eigen</span></code> flag, including at the initial or
+final point. Vector I/O and restart remain unsupported.
+The manifest records <code class="docutils literal notranslate"><span class="pre">canonical_tpq_steps</span></code>, <code class="docutils literal notranslate"><span class="pre">beta_schedule</span></code> and either
+the uniform step/order or all explicit beta/order rows. As for mTPQ, these
+outputs describe a single sector, not the sum over all sectors.</p>
+</section>
+<section id="sector-time-evolution-with-a-static-hamiltonian">
+<h2>Sector time evolution with a static Hamiltonian<a class="headerlink" href="#sector-time-evolution-with-a-static-hamiltonian" title="Link to this heading">¶</a></h2>
+<p>In expert mode, <code class="docutils literal notranslate"><span class="pre">CalcType=4</span></code> evolves a sector checkpoint with a static
+Hamiltonian. Set <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>, <code class="docutils literal notranslate"><span class="pre">ReStart=0</span></code>, a positive integer
+<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>, and <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed_eigenvec_0</span></code> in the namelist. The
+rank files <code class="docutils literal notranslate"><span class="pre">output/seed_eigenvec_0_rank_&lt;rank&gt;.dat</span></code> must use the sector
+format below. A CG run with <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> provides such files.
+The basis, sector, MPI size and layout must match; the Hamiltonian may differ
+for a quench. The default layout is distributed; replicated remains available
+through <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code>.</p>
+<p>Before running TE, preserve all rank files of the CG seed under a separate
+prefix, or change the TE <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>. If the input and output prefixes
+are identical, row-zero output <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;_eigenvec_0_rank_&lt;rank&gt;.dat</span></code>
+overwrites the seed files. The separate sector final filename does not
+prevent this row-zero overwrite.</p>
+<p>Provide a <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> time grid whose number of terms is zero at every row.
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> selects the number of rows. Times must be finite and
+nondecreasing. The first row records the imported state without propagation;
+subsequent rows apply the degree-<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> Taylor polynomial of
+<span class="math notranslate nohighlight">\(\exp[-i H(t_j-t_{j-1})]\)</span>, followed by normalization. Repeated times are
+allowed. The input checkpoint’s solver step and time are recorded as
+provenance, but do not resume its clock. For time-dependent interactions and Peierls driving, see the next section.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SS</span></code>, <code class="docutils literal notranslate"><span class="pre">Norm</span></code> and <code class="docutils literal notranslate"><span class="pre">Flct</span></code> contain sector expectation values. <code class="docutils literal notranslate"><span class="pre">Norm</span></code> is
+the norm before each step’s normalization; Taylor truncation can make it
+differ from one. Increase <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> or reduce the time spacing to check
+convergence. Correlation functions and <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remain unsupported.
+The sector manifest records the actual time grid, Taylor order, and source
+checkpoint’s method, state, step, time and Hamiltonian digest.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> and positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code>, periodic files are
+<code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;_eigenvec_&lt;step&gt;_rank_&lt;rank&gt;.dat</span></code>; the final file is separately
+named <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;_eigenvec_final_rank_&lt;rank&gt;.dat</span></code>. In these sector headers,
+<code class="docutils literal notranslate"><span class="pre">step</span></code> is the completed zero-based grid row and <code class="docutils literal notranslate"><span class="pre">time</span></code> is that row’s
+physical time. <code class="docutils literal notranslate"><span class="pre">state_index</span></code> retains the imported state’s label.
+The final file does not overwrite row zero. Any of these checkpoints can
+seed a new same-sector run via <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code>; this is a new time grid,
+not a restart. Raw TE binary files use their existing, different format.</p>
+</section>
+<section id="time-dependent-sector-hamiltonians">
+<h2>Time-dependent sector Hamiltonians<a class="headerlink" href="#time-dependent-sector-hamiltonians" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>, <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code>, or <code class="docutils literal notranslate"><span class="pre">Laser</span></code> may drive the sector Hamiltonian.
+Use one driving family per calculation. One-body and two-body entries are
+added to the static Hamiltonian; Peierls driving changes the phases of its
+parsed transfer coefficients. Diagonal and off-diagonal terms are supported
+for the four canonical models above, including spinless fermions. The raw
+spinless solver’s diagonal-TE restriction is unchanged.</p>
+<p>Before loading the initial vector or writing time-series data, HPhi checks
+every used time slice for finite coefficients, conserved quantum numbers,
+and invariance under the specified group. A violation at a later time stops
+the run before any propagation. <code class="docutils literal notranslate"><span class="pre">Laser</span></code> uses the nine existing laser
+parameters and times <code class="docutils literal notranslate"><span class="pre">Tinit</span> <span class="pre">+</span> <span class="pre">step</span> <span class="pre">*</span> <span class="pre">TimeSlice</span></code>; finite nonnegative spacing
+is required. The first row records the initial state at <code class="docutils literal notranslate"><span class="pre">Tinit</span></code>. A
+<code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>/<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> file supplies its own finite, nondecreasing grid.</p>
+<p>For the interval ending at <span class="math notranslate nohighlight">\(t_j\)</span>, sector TE freezes the Hamiltonian at
+<span class="math notranslate nohighlight">\(H(t_j)\)</span> and applies its Taylor polynomial to the previous state. All
+powers, including the linear term, use this same matrix. This is a
+right-endpoint piecewise-constant approximation to a continuously varying
+Hamiltonian: increasing Taylor order alone does not remove the time-grid
+error. Check both time spacing and Taylor order. This sector convention is
+separate from the legacy raw dynamic-TE recurrence.</p>
+<p>The current implementation retains the basis representatives, ordering,
+phase and MPI ownership. At each time point it updates the diagonal values,
+recreates the distributed lookup directory from the existing local basis,
+and rebuilds the multiplication plan. This handles terms that appear or
+disappear without enumerating the raw Hilbert space again. It does not yet
+cache a common sparsity pattern or update only plan coefficients. The manifest records <code class="docutils literal notranslate"><span class="pre">te_hamiltonian=time_dependent</span></code>,
+<code class="docutils literal notranslate"><span class="pre">te_integrator=right_endpoint_taylor</span></code>, <code class="docutils literal notranslate"><span class="pre">te_plan_update=rebuild_with_fixed_basis</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">te_hamiltonian_&lt;step&gt;</span></code> for each effective parsed Hamiltonian. The same
+digest is written into that row’s checkpoint header.</p>
+</section>
+<section id="sector-vector-checkpoints">
+<h2>Sector vector checkpoints<a class="headerlink" href="#sector-vector-checkpoints" title="Link to this heading">¶</a></h2>
+<p>Expert-mode CG accepts <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> and <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>.
+The files are <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;rank&gt;.dat</span></code>
+with zero-based state and rank indices. All ranks write a file, including
+empty owners. Reading requires the same model, fixed quantum numbers,
+group/character, sector, MPI rank count, basis layout, local ownership,
+global-index-to-representative mapping, and basis phase convention.
+Legacy raw-basis vector files are rejected. <code class="docutils literal notranslate"><span class="pre">InputEigenVec=2</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remain unsupported. A CG input run evaluates the supplied states;
+it does not solve for new eigenstates or resume iterations.</p>
+<p>The source Hamiltonian digest is recorded separately and may differ from the
+current Hamiltonian, allowing a same-sector quench. The load log reports this
+change. Such a state import is distinct from a solver restart.
+All metadata is checked collectively before loading vector data into the
+active vector. Truncation, extra data, non-finite values, a squared global
+norm differing from one by more than <span class="math notranslate nohighlight">\(10^{-8}\)</span>, and checksum mismatches
+are rejected. Files from different checkpoint sets cannot be mixed.</p>
+<p>The version-1 binary format is portable across endianness. It consists of
+28 little-endian unsigned 64-bit header words followed by <code class="docutils literal notranslate"><span class="pre">local_dim</span></code>
+pairs of IEEE binary64 real/imaginary values. The unused vector element zero
+is not stored. Header words, in order, are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>magic version phase scalar model nsite nup ndown ne
+raw_dim sector_dim ranks rank layout offset local_dim group_digest
+sector_count sector_xor sector_sum order_digest hamiltonian_digest
+source_method state_index step time_bits payload_xor payload_sum
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">magic</span></code> is the eight bytes <code class="docutils literal notranslate"><span class="pre">HPHISV1\n</span></code>; version and phase are 1;
+scalar is 128; layout is 0 (replicated) or 1 (distributed). <code class="docutils literal notranslate"><span class="pre">offset</span></code> is
+zero-based. <code class="docutils literal notranslate"><span class="pre">source_method</span></code> uses the CalcType number, and <code class="docutils literal notranslate"><span class="pre">time_bits</span></code>
+is an IEEE binary64 physical time (zero for CG). Phase 1 uses the normalized
+<span class="math notranslate nohighlight">\(\sum_g\overline{\chi(g)}T_g|r\rangle\)</span> with the smallest representative
+and a positive real coefficient at that representative.</p>
+<p>Group, sector and Hamiltonian fingerprints use the manifest algorithms.
+The order digest is FNV-1a-64 over each owned entry’s one-based global index,
+representative integer, orbit size and stabilizer size, each encoded in eight
+little-endian bytes. The payload digest starts with rank, offset and local
+length (eight bytes each), followed by the serialized complex coefficients.
+The header stores both XOR and unsigned-modulo-<span class="math notranslate nohighlight">\(2^{64}\)</span> sum of those
+per-rank hashes; these are integrity fingerprints, not cryptographic hashes.
+Each rank writes a temporary <code class="docutils literal notranslate"><span class="pre">.part</span></code> file, and publishes it after all writes
+have completed successfully. Publication errors fail the run; readers verify
+that every rank belongs to the same complete checkpoint set.</p>
 </section>
 <section id="sector-fulldiag">
 <h2>Sector FullDiag<a class="headerlink" href="#sector-fulldiag" title="Link to this heading">¶</a></h2>

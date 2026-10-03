@@ -66,15 +66,15 @@ var searchData=
   ['period_5fcertification_63',['period_certification',['../dSFMT_8c.html#a8c0334eb83e12d16f2cfe48929114e44',1,'dSFMT.c']]],
   ['perm_64',['perm',['../structGroupDigestEntry.html#a83512d8e31ed81c50583b9827e0cedd4',1,'GroupDigestEntry']]],
   ['permutation_65',['permutation',['../structPolynomial.html#a003cc1b72c502e9ab0538ac003867bbd',1,'Polynomial']]],
-  ['phase_66',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase'],['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase']]],
+  ['phase_66',['phase',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba434d1244bb0c93d8c0f72b7dcbc9e530',1,'PHASE:&#160;symmetry_checkpoint.c'],['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase'],['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase']]],
   ['phased_5fhval_67',['phased_hval',['../structSymmetryUnresolvedTransition.html#ae141bc8a7a8edb470d3d9d526625ed6f',1,'SymmetryUnresolvedTransition']]],
-  ['phys_68',['phys',['../phys_8c.html#a968744495c661c11bf1de29e130f549a',1,'phys():&#160;phys.c'],['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct::Phys'],['../phys_8h.html#a968744495c661c11bf1de29e130f549a',1,'phys():&#160;phys.c'],['../page_variable.html#subsec_physlist',1,'PhysList (X-&gt;Phys)']]],
+  ['phys_68',['phys',['../phys_8c.html#a968744495c661c11bf1de29e130f549a',1,'phys(struct BindStruct *X, unsigned long int neig):&#160;phys.c'],['../phys_8h.html#a968744495c661c11bf1de29e130f549a',1,'phys(struct BindStruct *X, unsigned long int neig):&#160;phys.c'],['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct::Phys'],['../page_variable.html#subsec_physlist',1,'PhysList (X-&gt;Phys)']]],
   ['phys_2ec_69',['phys.c',['../phys_8c.html',1,'']]],
   ['phys_2eh_70',['phys.h',['../phys_8h.html',1,'']]],
   ['phys_5fdistributed_2ec_71',['phys_distributed.c',['../phys__distributed_8c.html',1,'']]],
   ['phys_5fdistributed_2eh_72',['phys_distributed.h',['../phys__distributed_8h.html',1,'']]],
   ['phys_5fdistributed_5flocal_2ec_73',['phys_distributed_local.c',['../phys__distributed__local_8c.html',1,'']]],
-  ['phys_5fstateparallel_5fenergy_5fstream_5fseconds_74',['phys_stateparallel_energy_stream_seconds',['../phys__distributed_8h.html#a2fea62543870ef6f019995bea999d254',1,'phys_stateparallel_energy_stream_seconds(void):&#160;phys_distributed_local.c'],['../phys__distributed__local_8c.html#a2fea62543870ef6f019995bea999d254',1,'phys_stateparallel_energy_stream_seconds(void):&#160;phys_distributed_local.c']]],
+  ['phys_5fstateparallel_5fenergy_5fstream_5fseconds_74',['phys_stateparallel_energy_stream_seconds',['../phys__distributed__local_8c.html#a2fea62543870ef6f019995bea999d254',1,'phys_stateparallel_energy_stream_seconds(void):&#160;phys_distributed_local.c'],['../phys__distributed_8h.html#a2fea62543870ef6f019995bea999d254',1,'phys_stateparallel_energy_stream_seconds(void):&#160;phys_distributed_local.c']]],
   ['phys_5fstateparallel_5flocal_5floop_75',['phys_stateparallel_local_loop',['../phys__distributed__local_8c.html#abd464d17c3128b2b2bc2c5e067da5a9c',1,'phys_stateparallel_local_loop(struct BindStruct *X, double complex *panel, long int jb, long int je, long int NN, const TraceExecutionPlan *plan, const TraceHamCsr *ham_csr):&#160;phys_distributed_local.c'],['../phys__distributed_8h.html#abd464d17c3128b2b2bc2c5e067da5a9c',1,'phys_stateparallel_local_loop(struct BindStruct *X, double complex *panel, long int jb, long int je, long int NN, const TraceExecutionPlan *plan, const TraceHamCsr *ham_csr):&#160;phys_distributed_local.c']]],
   ['physlist_76',['PhysList',['../structPhysList.html',1,'']]],
   ['physlist_20x_20phys_77',['PhysList (X-&gt;Phys)',['../page_variable.html#subsec_physlist',1,'']]],
@@ -97,5 +97,6 @@ var searchData=
   ['prix64_94',['PRIx64',['../dSFMT_8h.html#aba38357387a474f439428dee1984fc5a',1,'dSFMT.h']]],
   ['progress_20messages_95',['Progress Messages',['../page_log.html#sec_log_progress',1,'']]],
   ['progressmessage_2ec_96',['ProgressMessage.c',['../ProgressMessage_8c.html',1,'']]],
-  ['progressmessage_2eh_97',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]]
+  ['progressmessage_2eh_97',['ProgressMessage.h',['../ProgressMessage_8h.html',1,'']]],
+  ['put_5fword_98',['put_word',['../symmetry__checkpoint_8c.html#ac67c23acbb8f0a5551be50ca4ad9cd9a',1,'symmetry_checkpoint.c']]]
 ];

@@ -141,22 +141,22 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "CG__EigenVector_8c.html",
-"ErrorMessage_8c.html#aa78f849f6d98e4da52896bf4c788f875",
-"LogMessage_8c.html#aa57d25344f2bd3078302446e8baf681e",
-"ProgressMessage_8h.html#aa59a240a778bfd11454781b8afe4df08",
-"eigenIO_8c.html#ae1ffe2e84ac89023d9eafeb0115328fe",
-"global_8c.html#a053af60b5682458dbce5a65c2a793de3",
-"global_8h.html#acf7d5ab0ac7ac8e208636bd9ec2ec391",
-"matrixlapack__magma_8c.html",
-"mltplyMPIHubbard_8c.html#add4b98b87cb542d3c3cdd26c5e515e5c",
-"mltplySpinless_8c.html#a6660e59b6f260ec6440e396b8b419f6c",
-"page_setmem.html#subsec_setmem_large",
-"structCheckList.html#aaf992da196c21c87c8850bb10f0d40b2",
-"structLargeList.html#a523438b712f4d79554b6331505e70e14",
-"structSymmetryBasisVector.html#afac94c3a0872e05f61255104c6855cf8",
-"structSymmetryVectorHaloPlan.html#a5c19f391fd49525cb0228e5d560d5f69",
-"symmetry__directory_8h.html#a842ae3f663e68cc4362bab989645283c",
-"symmetry__vector__halo_8c.html#a554e00b0dadb79fccd57812366a04f0b"
+"ErrorMessage_8c.html#a9710ebc651a3382d8b1b019da42cfb5e",
+"LogMessage_8c.html#a9ec9a54f2680d0b638842e420ce000fb",
+"ProgressMessage_8h.html#a85740ac8e64c0acb39dbdb5d8976954f",
+"eigenIO_8c.html#a4dce135a2c787539fb2851ee47f5c63e",
+"global_8c.html",
+"global_8h.html#ac189678ecde40ac11f263e1b98ac5969",
+"matrixlapack__elpa_8c.html",
+"mltplyMPIHubbard_8c.html#a3054a988e80405c642108d898fb92a9c",
+"mltplySpinless_8c.html",
+"page_setmem.html#subsec_setmem_2d",
+"structCheckList.html#a5d8a1e6a9e9064ae7dab52310d2cce11",
+"structLargeList.html#a3af579bf8c8e3dae9c3c8b518bf08844",
+"structSymmetryBasisVector.html#aa3e741c90718478225b46a556a12580a",
+"structSymmetryUnresolvedTransition.html",
+"symmetry__directory_8c.html#a1619fc601f20f50595f1d8ccd9ecc158",
+"symmetry__sector_8h.html#ab263ee775708858df57b601fbf21acb1"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

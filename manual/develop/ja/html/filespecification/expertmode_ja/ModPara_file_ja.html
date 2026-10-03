@@ -238,12 +238,12 @@ cTPQ計算の詳細は <a class="reference internal" href="../../algorithm/al-in
 <p><strong>Description :</strong> cTPQ計算における展開次数を指定する整数です(<span class="math notranslate nohighlight">\(n_{\rm max}\)</span>);</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-0">
 <span class="eqno">(4.5)<a class="headerlink" href="#equation-filespecification-expertmode-ja-modpara-file-ja-0" title="Link to this equation">¶</a></span>\[U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .\]</div>
-<p>詳しくは, :ref:<a href="#id5"><span class="problematic" id="id6">`</span></a>Ch:algorithm`を参照してください.</p>
+<p>詳しくは, <a class="reference internal" href="../../algorithm/al-index.html#ch-algorithm"><span class="std std-ref">アルゴリズム</span></a> を参照してください.</p>
 </li>
 </ul>
 </section>
-<section id="id7">
-<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<section id="id5">
+<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>形式 :</strong> complex型 (複素数)</p>
@@ -343,8 +343,8 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 </li>
 </ul>
 </section>
-<section id="id8">
-<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<section id="id6">
+<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -352,6 +352,11 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 再計算を行う場合には、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>の最大数を過去のステップ数よりも大きくする必要があります。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
+<p>実時間発展では指定が必須です。 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満の正の整数を指定してください。</p>
+<p>旧版のraw expert-mode TEでは、省略すると警告なく1次Taylor伝播を行っていました。
+現在は入力エラーになります。同じ次数を保つ場合は <code class="docutils literal notranslate"><span class="pre">ExpandCoef=1</span></code> を明示し、
+高次を選ぶ場合は収束を確認してください。Standard modeではStdFaceが必ず
+この値を出力するため、この変更の影響はありません。</p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 微小時間<span class="math notranslate nohighlight">\(\Delta t\)</span>に対して実時間発展を行う際の</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-modpara-file-ja-1">
@@ -368,6 +373,8 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 頻度を上げると計算コストが増大するので注意してください。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> の場合は正の値が必要です。明示指定したintervalと反復回数は
+<code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満の有限な整数に限ります。</p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 時間発展中の波動関数を出力するステップ間隔を指定する整数。
 (<code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>ファイルで<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>にすると有効になります)</p>

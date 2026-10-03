@@ -128,7 +128,6 @@ $(document).ready(function(){initNavTree('CalcByTEM_8h.html',''); initResizable(
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a95c436e25727f69519a98af30f6eb00d" id="r_a95c436e25727f69519a98af30f6eb00d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8h.html#a95c436e25727f69519a98af30f6eb00d">CalcByTEM</a> (const int ExpecInterval, struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
-<tr class="memdesc:a95c436e25727f69519a98af30f6eb00d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main driver for real-time evolution calculation.  <br /></td></tr>
 <tr class="separator:a95c436e25727f69519a98af30f6eb00d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -158,38 +157,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Main driver for real-time evolution calculation. </p>
-<p>Evolves the initial state through NTETimeSteps time steps, computing physical observables at intervals.</p>
-<p>Prerequisites:</p><ul>
-<li>Initial wavefunction must be provided (iInputEigenVec = TRUE)</li>
-<li>NTETimeSteps must be larger than Lanczos_max</li>
-</ul>
-<p>Time evolution per step:</p><ol type="1">
-<li>If time-dependent terms exist, update Hamiltonian</li>
-<li>Apply exp(-i H dt) using <a class="el" href="Multiply_8h.html#a8f840d0f8db7e5c75e241f8b223a098e" title="Function of calculating the i-th step norm as.">Multiply()</a> function</li>
-<li>Normalize if needed</li>
-</ol>
-<p>Observable output:</p><ul>
-<li>SS_*.dat: Energy, spin correlations vs time</li>
-<li>Norm_*.dat: Norm evolution (should remain ~1)</li>
-</ul>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ExpecInterval</td><td>Steps between observable calculations [in] </td></tr>
-    <tr><td class="paramname">X</td><td>Calculation parameters and state [in,out]</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>0 on success, -1 on error</dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Kota Ido (The University of Tokyo) </dd>
-<dd>
-Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00443">443</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00094">94</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="struct_8h_source.html#l00543">EDMainCalStruct::Bind</a>, <a class="el" href="CalcByTEM_8c_source.html#l00166">calc_by_tem()</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Def</a>, <a class="el" href="symmetry__te_8c_source.html#l00033">FreeSymmetryTEHamiltonian()</a>, <a class="el" href="symmetry__te_8c_source.html#l00012">SymmetryTEIsDynamic()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00543">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00060">c_InputEigenVectorStart</a>, <a class="el" href="struct_8h_source.html#l00046">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00104">cFileNameFlct</a>, <a class="el" href="global_8c_source.html#l00103">cFileNameNorm</a>, <a class="el" href="global_8c_source.html#l00054">cFileNameOutputEigen</a>, <a class="el" href="global_8c_source.html#l00102">cFileNameSS</a>, <a class="el" href="global_8c_source.html#l00101">cFileNameTEStep</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00533">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="LogMessage_8c_source.html#l00160">cLogFlct</a>, <a class="el" href="LogMessage_8c_source.html#l00159">cLogNorm</a>, <a class="el" href="LogMessage_8c_source.html#l00158">cLogSS</a>, <a class="el" href="ProgressMessage_8c_source.html#l00065">cLogTEM_End</a>, <a class="el" href="ProgressMessage_8c_source.html#l00064">cLogTEM_Start</a>, <a class="el" href="LogMessage_8c_source.html#l00157">cLogTEStep</a>, <a class="el" href="LogMessage_8c_source.html#l00083">cTEStep</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Def</a>, <a class="el" href="struct_8h_source.html#l00478">PhysList::doublon</a>, <a class="el" href="struct_8h_source.html#l00479">PhysList::doublon2</a>, <a class="el" href="struct_8h_source.html#l00114">DefineList::EDNTransfer</a>, <a class="el" href="struct_8h_source.html#l00477">PhysList::energy</a>, <a class="el" href="wrapperMPI_8c_source.html#l00221">exitMPI()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00092">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00101">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00069">expec_energy_flct()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01541">expec_nbodyg()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="readdef_8c_source.html#l04092">GetFileNameByKW()</a>, <a class="el" href="global_8c_source.html#l00160">global_norm</a>, <a class="el" href="green__output_8c_source.html#l00133">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="struct_8h_source.html#l00425">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00277">DefineList::iInputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::iOutputDataHead</a>, <a class="el" href="struct_8h_source.html#l00276">DefineList::iOutputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00322">DefineList::iReStart</a>, <a class="el" href="struct_8h_source.html#l00087">DefineList::istep</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="struct_8h_source.html#l00083">DefineList::Lanczos_max</a>, <a class="el" href="CalcByTEM_8c_source.html#l00330">MakeTEDInterAll()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00307">MakeTEDTransfer()</a>, <a class="el" href="Multiply_8c_source.html#l00092">MultiplyForTEM()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="struct_8h_source.html#l00174">DefineList::NInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00371">DefineList::NLaser</a>, <a class="el" href="struct_8h_source.html#l00391">DefineList::NTEInterAllMax</a>, <a class="el" href="struct_8h_source.html#l00367">DefineList::NTETimeSteps</a>, <a class="el" href="struct_8h_source.html#l00376">DefineList::NTETransferMax</a>, <a class="el" href="struct_8h_source.html#l00480">PhysList::num</a>, <a class="el" href="struct_8h_source.html#l00481">PhysList::num2</a>, <a class="el" href="struct_8h_source.html#l00038">ParamList::OutputInterval</a>, <a class="el" href="struct_8h_source.html#l00362">DefineList::Param</a>, <a class="el" href="struct_8h_source.html#l00535">BindStruct::Phys</a>, <a class="el" href="DefCommon_8h_source.html#l00090">RESTART_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::St</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="global_8c_source.html#l00162">step_spin</a>, <a class="el" href="struct_8h_source.html#l00482">PhysList::Sz</a>, <a class="el" href="struct_8h_source.html#l00483">PhysList::Sz2</a>, <a class="el" href="struct_8h_source.html#l00368">DefineList::TETime</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="struct_8h_source.html#l00037">ParamList::TimeSlice</a>, <a class="el" href="struct_8h_source.html#l00036">ParamList::Tinit</a>, <a class="el" href="HPhiTrans_8c_source.html#l00092">TransferWithPeierls()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="struct_8h_source.html#l00485">PhysList::var</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00751">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00755">main()</a>.</p>
 
 </div>
 </div>

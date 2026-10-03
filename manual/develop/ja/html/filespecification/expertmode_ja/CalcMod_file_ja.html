@@ -164,6 +164,15 @@ FullDiag計算では、全固有ベクトルが出力されます。MPI実行時
 2: リスタートベクトル入力あり、出力あり
 3: リスタートベクトル入力あり、出力なし
 から選択することが出来ます。</p>
+<p>raw基底のTimeEvolutionでは、binary vectorのheaderに <strong>次に実行するstep</strong> を保存し、
+途中保存と最終保存で同じ規約を使います。restartには全rankのstepが一致し、
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">Lanczos_max)</span></code> にあることが必要です。Hamiltonianと時刻列は前回と整合させてください。
+<code class="docutils literal notranslate"><span class="pre">ReStart=0</span></code> は新しい初期状態として扱い、保存されたstepは使いません。
+旧版の途中保存ファイルは完了したstepを保存していたため、restartに使う際にはheaderのstepを
+1増やす必要があります。旧版の最終保存ファイルは既に次stepを保存していました。
+raw最終vectorのファイル名は従来の <code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_eigenvec_0_rank_&lt;rank&gt;.dat</span></code> を維持します。
+途中保存のファイル名は完了したstep番号ですが、headerは次stepです。
+欠損・truncation・非有限値・非互換な入力は全rankで異常終了します。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
 <p><strong>形式 :</strong> int型 (デフォルト値 0)</p>

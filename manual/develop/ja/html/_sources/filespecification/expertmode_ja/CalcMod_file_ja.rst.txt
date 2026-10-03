@@ -146,6 +146,16 @@ CalcModファイル
    3: リスタートベクトル入力あり、出力なし
    から選択することが出来ます。
 
+   raw基底のTimeEvolutionでは、binary vectorのheaderに **次に実行するstep** を保存し、
+   途中保存と最終保存で同じ規約を使います。restartには全rankのstepが一致し、
+   ``[0, Lanczos_max)`` にあることが必要です。Hamiltonianと時刻列は前回と整合させてください。
+   ``ReStart=0`` は新しい初期状態として扱い、保存されたstepは使いません。
+   旧版の途中保存ファイルは完了したstepを保存していたため、restartに使う際にはheaderのstepを
+   1増やす必要があります。旧版の最終保存ファイルは既に次stepを保存していました。
+   raw最終vectorのファイル名は従来の ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` を維持します。
+   途中保存のファイル名は完了したstep番号ですが、headerは次stepです。
+   欠損・truncation・非有限値・非互換な入力は全rankで異常終了します。
+
 -  ``CalcSpec``
 
    **形式 :** int型 (デフォルト値 0)
