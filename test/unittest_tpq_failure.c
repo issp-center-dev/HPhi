@@ -185,6 +185,30 @@ int main(int argc, char **argv)
           "cTPQ scalar Taylor polynomial norm");
   if (!myrank) v0[1] = NAN;
   require(MultiplyForCanonicalTPQ(&x, .1) == -1, "nonfinite cTPQ norm reaches all ranks");
+  require(MultiplyForTEM(NULL) == -1, "invalid TE storage");
+  x.Def.Param.TimeSlice = NAN;
+  require(MultiplyForTEM(&x) == -1, "nonfinite TE time step");
+  x.Def.Param.TimeSlice = -.1;
+  require(MultiplyForTEM(&x) == -1, "negative TE time step");
+  x.Def.Param.TimeSlice = .1;
+  x.Def.Param.ExpandCoef = 0;
+  require(MultiplyForTEM(&x) == -1, "missing TE Taylor order");
+  x.Def.Param.ExpandCoef = 4;
+  require(MakeIniVec(0, &x) == 0, "reset TE input");
+  mltply(&x, v0, v1);
+  matvec_failure = 1;
+  require(MultiplyForTEM(&x) == -1, "one-rank TE matvec failure");
+  matvec_failure = 0;
+  require(MakeIniVec(0, &x) == 0, "reset TE before normal step");
+  mltply(&x, v0, v1);
+  require(MultiplyForTEM(&x) == 0, "normal TE step with empty ranks");
+  require(fabs(norm(&x, v0)-1) < 1e-12, "TE normalization");
+  require(fabs(global_norm-cabs(1-.2*I-.04/2+.008*I/6+.0016/24)) < 1e-12,
+          "TE scalar Taylor polynomial norm");
+  if (!myrank) v0[1] = NAN;
+  require(MultiplyForTEM(&x) == -1, "nonfinite TE norm reaches all ranks");
+  for (unsigned long i = 1; i <= x.Check.idim_max; ++i) v0[i] = v1[i] = 0;
+  require(MultiplyForTEM(&x) == -1, "zero TE norm reaches all ranks");
   if (!myrank) puts("TPQ failure propagation and zero-row normalization PASS");
 #ifdef MPI
   MPI_Finalize();

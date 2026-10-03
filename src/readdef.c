@@ -907,6 +907,11 @@ int ReadDefFileNInt(
                 iReadNCond = TRUE;
               }
               else if (CheckWords(ctmp, "Lanczos_max") == 0) {
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: Lanczos_max must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Lanczos_max = (int) dtmp;
               }
               else if (CheckWords(ctmp, "initial_iv") == 0) {
@@ -942,6 +947,11 @@ int ReadDefFileNInt(
                 X->Param.ExpandCoef=(int)dtmp;
               }
               else if(strcmp(ctmp, "OutputInterval")==0){
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: OutputInterval must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Param.OutputInterval=(int)dtmp;
               }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {

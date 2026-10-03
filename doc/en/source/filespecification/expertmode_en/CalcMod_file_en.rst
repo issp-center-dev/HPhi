@@ -166,6 +166,19 @@ The parameters correlated with the keywords are as follows.
    | 2: Input a restart vector and output a new restart vector
    | 3: Input a restart vector.
 
+   For raw-basis TimeEvolution, the binary vector header stores the **next**
+   step to execute. Periodic and final output use this same convention.
+   A restart requires that step to be in ``[0, Lanczos_max)`` and identical
+   across ranks. Keep the Hamiltonian and time grid consistent with the
+   original run. With ``ReStart=0`` the input is a new initial state and its
+   saved step is ignored.
+   Older periodic TE files stored the completed step, so their header step
+   must be incremented by one before use as a restart; older final files
+   already stored the next step. The final raw vector retains the legacy
+   ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` alias. Periodic filenames use
+   the completed step as their index, even though the header stores the next
+   step. Missing, truncated, non-finite or incompatible input fails collectively.
+
 *  ``CalcSpec``
 
    **Type :** Int (default value: 0)
