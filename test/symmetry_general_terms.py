@@ -16,6 +16,32 @@ ROOT.mkdir(exist_ok=True)
 MPI = shlex.split(os.environ.get("MPIRUN", ""))
 
 
+def mpi_size(command):
+    """Process count named by -np or -n in the launcher command.
+
+    Returns 1 without a launcher and 0 when a launcher names no count, so
+    that only an explicit single-process launcher counts as size 1."""
+    for flag, value in zip(command, command[1:]):
+        if flag in ("-np", "-n") and value.isdigit():
+            return int(value)
+    return 1 if not command else 0
+
+
+MPI_SIZE = mpi_size(MPI)
+
+
+def launcher(rejecting=False):
+    """Launcher prefix for one HPhi run.
+
+    A run that must be rejected starts without the launcher when the MPI size
+    is 1. mpiexec forwards the rank's stdout and stderr through its own
+    process, and at MPI_Abort part of the final stdout flush has been seen on
+    the stderr side, which splits the diagnostic the test matches. The
+    rejection does not depend on the launcher; runs with more ranks keep it so
+    that collective failure handling stays covered."""
+    return [] if rejecting and MPI_SIZE == 1 else MPI
+
+
 def definition(path, name, rows, count=None):
     text = [" ".join(map(str, row)) for row in rows]
     (path / name).write_text("====\nNItems {}\n====\n====\n====\n{}\n".format(
@@ -23,7 +49,7 @@ def definition(path, name, rows, count=None):
 
 
 def run(path, label, symmetry=True, layout="replicated", fail=None):
-    command = (MPI if symmetry else []) + [HPHI, "-e", "sym.def" if symmetry else "raw.def"]
+    command = (launcher(fail is not None) if symmetry else []) + [HPHI, "-e", "sym.def" if symmetry else "raw.def"]
     env = dict(os.environ)
     if layout is None:
         env.pop("HPHI_SYMMETRY_BASIS_LAYOUT", None)
