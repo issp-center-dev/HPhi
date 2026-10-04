@@ -210,6 +210,20 @@ TransSym指定ファイル
    CGとTimeEvolutionの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
    非対応の組み合わせはエラーで終了します。
 
+セクター内Lanczosの基底layout
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TransSym`` を指定したセクター内Lanczosは、対称性で縮約した基底上で実行します。
+既定の基底layoutは ``distributed`` で、各MPI rankは担当する行と、その行に必要な
+ghost要素だけを保持します。行列ベクトル積には既存のdistributed planとhalo exchangeを
+使用し、ベクトルnorm、内積、energy、varianceはMPI reductionで集約します。
+MPI rank数がセクター次元より多い場合は担当行が0のrankもありますが、そのrankも
+collective operationに参加します。
+
+開発者が比較・診断する場合は ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` を指定して
+rollback用layoutを選択できます。この設定は通常運用の推奨値ではありません。
+layoutの選択によって出力ファイル名、出力形式、セクターmanifestのschemaは変わりません。
+
 セクター内TPQ
 ^^^^^^^^^^^^^
 

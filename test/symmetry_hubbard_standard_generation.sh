@@ -154,7 +154,10 @@ assert_symmetry_log() {
         echo "TransSym Hubbard path unexpectedly used site decomposition."
         exit 1
     fi
-    grep -q "Symmetry matvec: mode=plan vector_exchange=halo" "${log}"
+    grep -q "Symmetry distributed matvec:" "${log}"
+    grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." "${log}"
+    grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+    grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
     grep -q "columns=local/ghost-slots" "${log}"
 }
 
