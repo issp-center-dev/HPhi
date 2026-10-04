@@ -174,7 +174,7 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
                 lines[row] = " ".join(fields)
                 (path / "beta.def").write_text("\n".join(lines) + "\n")
                 (path / "calc.def").write_text(calc)
-                invoke(path, fixture.MPI + [fixture.HPHI, "-e", "sym.def"], "reject_eigen_{}".format(row),
+                invoke(path, fixture.launcher(True) + [fixture.HPHI, "-e", "sym.def"], "reject_eigen_{}".format(row),
                        failure="does not support InvTemp eigenvector output")
                 assert not list((path / "output").glob("*eigen*"))
             (path / "beta.def").write_text(original_beta)
