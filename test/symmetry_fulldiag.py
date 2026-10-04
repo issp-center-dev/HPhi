@@ -101,7 +101,7 @@ def check_sector(path, model, length, momentum, states, raw, projector):
         np.testing.assert_allclose(sorted(spectra), np.linalg.eigvalsh(raw), rtol=0, atol=3e-8)
     if model == "Spin" and momentum == 0:
         execute(path, "layout_reject", calc, layout="distributed",
-                failure="distributed symmetry basis is supported for TransSym TPQ, CG, TimeEvolution and cTPQ runs only")
+                failure="distributed symmetry basis is supported for TransSym Lanczos, TPQ, CG, TimeEvolution and cTPQ runs only")
         for option in ["ReStart", "InputEigenVec", "OutputEigenVec", "InputHam", "OutputHam"]:
             execute(path, "reject_"+option, calc + option + " 1\n",
                     failure="does not support " + option)

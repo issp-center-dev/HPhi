@@ -24,7 +24,11 @@ def definition(path, name, rows, count=None):
 
 def run(path, label, symmetry=True, layout="replicated", fail=None):
     command = (MPI if symmetry else []) + [HPHI, "-e", "sym.def" if symmetry else "raw.def"]
-    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout)
+    env = dict(os.environ)
+    if layout is None:
+        env.pop("HPHI_SYMMETRY_BASIS_LAYOUT", None)
+    else:
+        env["HPHI_SYMMETRY_BASIS_LAYOUT"] = layout
     log = path / (label + ".log")
     # MPI may forward stdout in chunks while stderr arrives between them.
     # Capture the streams separately so diagnostics remain searchable, then
@@ -158,7 +162,7 @@ def prepare(model, length, nup=2, ndown=1, sector_test=None, sector_momenta=(0, 
         (path / "calc.def").write_text("CalcType {}\nCalcModel {}\nOutputMode 0\nOutputDataHead 1\n".format(
             method, {"Spin": 1, "SpinlessFermion": 7, "Hubbard": 0, "tJ": 9}[model]))
         (path / "mod.def").write_text("====\nModel_Parameters 0\n====\n====\n====\nCDataFileHead zvo\nCParaFileHead zqp\n====\n"
-            "Nsite {}\n{}Lanczos_max 400\ninitial_iv -1\nexct {}\nLanczosEps 12\nLargeValue 100\nPreCG 0\n".format(length, quantum, count))
+            "Nsite {}\n{}Lanczos_max 400\ninitial_iv -1\nexct {}\nLanczosEps 12\nLanczosTarget 1\nLargeValue 100\nPreCG 0\n".format(length, quantum, count))
 
     settings(2, len(states))
     if model == "SpinlessFermion":
@@ -171,6 +175,8 @@ def prepare(model, length, nup=2, ndown=1, sector_test=None, sector_momenta=(0, 
         np.testing.assert_allclose(run(path, "raw", symmetry=False), np.linalg.eigvalsh(raw), atol=2e-8, rtol=0)
     seen_dims = 0
     sector_spectra = []
+    empty_rank_case_seen = False
+    mpi_ranks = 1
     for momentum in range(length):
         if sector_test is not None and momentum not in sector_momenta:
             continue
@@ -212,8 +218,37 @@ def prepare(model, length, nup=2, ndown=1, sector_test=None, sector_momenta=(0, 
                 doublons = [float(line.split()[1]) for line in (path / "output/zvo_energy.dat").read_text().splitlines()
                             if line.lstrip().startswith("Doublon ")]
                 assert len(doublons) == dim_sector and max(map(abs, doublons)) < 1e-12
+        settings(0, 1)
+        for layout, label, expected_layout in [
+                (None, "default", "distributed"),
+                ("replicated", "replicated", "replicated")]:
+            label = "k{}_lanczos_{}".format(momentum, label)
+            result = run(path, label, layout=layout)
+            np.testing.assert_allclose(result[0], expected[0], atol=3e-8, rtol=0)
+            record = dict(line.split("=", 1) for line in
+                          (path / "output/zvo_symmetry_sector.dat").read_text().splitlines())
+            assert record["calc_type"] == "Lanczos", record
+            assert record["basis_layout"] == expected_layout, record
+            reason = "default" if layout is None else "explicit rollback"
+            assert "{} ({} for TransSym Lanczos)".format(expected_layout, reason) in (path / (label + ".log")).read_text()
+            if model == "tJ":
+                assert record["model"] == "tJ" and int(record["full_dim"]) == len(states)
+                assert int(record["sector_dim"]) == dim_sector
+                assert int(record["fixed_nup"]) == nup and int(record["fixed_ndown"]) == ndown
+                doublons = [float(line.split()[1]) for line in (path / "output/zvo_energy.dat").read_text().splitlines()
+                            if line.lstrip().startswith("Doublon ")]
+                assert len(doublons) == 1 and abs(doublons[0]) < 1e-12
+                if (nup, ndown) == (1, 1) and layout is None:
+                    mpi_ranks = int(record["mpi_ranks"])
+                    if mpi_ranks > int(record["sector_dim"]):
+                        assert int(record["sector_dim"]) == 3
+                        assert record["basis_layout"] == "distributed"
+                        empty_rank_case_seen = True
+        settings(3, dim_sector)
     if sector_test is not None:
         return
+    if model == "tJ" and (nup, ndown) == (1, 1) and mpi_ranks > 3:
+        assert empty_rank_case_seen
     assert seen_dims == len(states)
     if model == "SpinlessFermion":
         assert np.max(np.abs(sector_spectra[1] - sector_spectra[-1])) > 0.1

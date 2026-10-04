@@ -454,7 +454,7 @@ if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     exit 1
 fi
 grep -q \
-    "distributed symmetry basis is supported for TransSym TPQ, CG, TimeEvolution and cTPQ runs only" \
+    "distributed symmetry basis is supported for TransSym Lanczos, TPQ, CG, TimeEvolution and cTPQ runs only" \
     nonsymmetry_layout_reject.log
 
 rm -rf output

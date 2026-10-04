@@ -229,11 +229,16 @@ run_mpi_symmetry_case() {
         echo "Expected SpinlessFermion symmetry sector_dim=${expected_dim} was not found"
         exit 1
     fi
-    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "Symmetry distributed matvec:" "${log_file}"
     grep -q "columns=local/ghost-slots" "${log_file}"
     grep -q \
-        "Symmetry basis layout: replicated (default outside TransSym CG)." \
+        "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
         "${log_file}"
+    grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+    grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
+    if [ "${expected_dim}" -eq 2 ]; then
+        assert_distributed_rank_stats "${log_file}"
+    fi
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym SpinlessFermion MPI path unexpectedly used site decomposition."
         exit 1
@@ -259,7 +264,7 @@ run_mpi_symmetry_case() {
     grep -q "vector_exchange=allgather" "${log_file}"
     grep -q "columns=global" "${log_file}"
     grep -q \
-        "Symmetry basis layout: replicated (explicit environment)." \
+        "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." \
         "${log_file}"
 }
 
@@ -367,11 +372,13 @@ write_namelist
 ../../src/HPhi -e namelist.def > spinless_k0.log 2>&1
 assert_energy "-2.0" spinless_k0.log
 grep -q "Symmetry basis: raw_dim=4 sector_dim=1 group_order=4" spinless_k0.log
-grep -q "vector_exchange=halo" spinless_k0.log
+grep -q "Symmetry distributed matvec:" spinless_k0.log
 grep -q "columns=local/ghost-slots" spinless_k0.log
 grep -q \
-    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
     spinless_k0.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 run_mpi_if_available k0 "-2.0" 1
 
 rm -rf output
@@ -381,11 +388,14 @@ write_kpi2_transsym
 ../../src/HPhi -e namelist.def > spinless_kpi2.log 2>&1
 assert_energy "-2.0" spinless_kpi2.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" spinless_kpi2.log
-grep -q "vector_exchange=halo" spinless_kpi2.log
+grep -q "Symmetry distributed matvec:" spinless_kpi2.log
 grep -q "columns=local/ghost-slots" spinless_kpi2.log
 grep -q \
-    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
     spinless_kpi2.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
+assert_distributed_rank_stats spinless_kpi2.log
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
     HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
@@ -393,6 +403,7 @@ env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
 assert_energy "-2.0" spinless_kpi2_allgather.log
 grep -q "vector_exchange=allgather" spinless_kpi2_allgather.log
 grep -q "columns=global" spinless_kpi2_allgather.log
+grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." spinless_kpi2_allgather.log
 run_mpi_if_available kpi2 "-2.0" 2
 
 perl -0pi -e 's/CalcType 0/CalcType 3/' calcmod.def
@@ -479,7 +490,11 @@ rm -rf output
 ../../src/HPhi -e namelist.def > spinless_coulombinter.log 2>&1
 assert_energy "0.25" spinless_coulombinter.log
 grep -q "Symmetry basis: raw_dim=6 sector_dim=1 group_order=4" spinless_coulombinter.log
-grep -q "vector_exchange=halo" spinless_coulombinter.log
+grep -q "Symmetry distributed matvec:" spinless_coulombinter.log
+grep -q "columns=local/ghost-slots" spinless_coulombinter.log
+grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." spinless_coulombinter.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 test -s output/zvo_energy.dat
 run_mpi_if_available coulombinter "0.25" 1
 write_coulombinter
