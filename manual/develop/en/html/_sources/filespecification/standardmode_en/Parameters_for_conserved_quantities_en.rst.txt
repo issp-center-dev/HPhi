@@ -57,6 +57,12 @@ Parameters for conserved quantities
      (``t'``, ``t''``), offsite Coulomb terms (``V``/``CoulombInter``),
      and general or pair terms are not supported with ``MomentumIndex``.
 
+   For the three supported models above, generated Lanczos input uses the
+   same default ``distributed`` TransSym basis layout described in the
+   linked expert-mode section. The explicit developer rollback is
+   ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``; it is intended for comparison
+   and diagnosis, not normal operation.
+
    To obtain the lowest energy at every momentum point, run one Standard-mode
    calculation for each :math:`m=0,\ldots,L-1`, changing only
    ``MomentumIndex``. For example, a six-site spin chain in the :math:`m=1`

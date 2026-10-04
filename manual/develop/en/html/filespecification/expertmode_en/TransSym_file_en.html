@@ -217,6 +217,20 @@ below. Unsupported combinations terminate with an error.</p>
 </li>
 </ul>
 </section>
+<section id="sector-lanczos-basis-layout">
+<h2>Sector Lanczos basis layout<a class="headerlink" href="#sector-lanczos-basis-layout" title="Link to this heading">¶</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, sector Lanczos runs in the symmetry-reduced basis. The
+default basis layout is <code class="docutils literal notranslate"><span class="pre">distributed</span></code>: each MPI rank holds only its owned
+rows and the ghost entries required for those rows. Matrix-vector products use
+the existing distributed plan and halo exchange, while vector norms, inner
+products, energy, and variance are combined with MPI reductions. When the
+number of MPI ranks exceeds the sector dimension, some ranks can own zero rows;
+these ranks still participate in the collective operations.</p>
+<p>For developer comparison and diagnosis, set
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> to select the rollback layout. This
+setting is not recommended for normal operation. The layout choice does not
+change output filenames or formats, or the sector manifest schema.</p>
+</section>
 <section id="sector-tpq">
 <h2>Sector TPQ<a class="headerlink" href="#sector-tpq" title="Link to this heading">¶</a></h2>
 <p>In expert mode, <code class="docutils literal notranslate"><span class="pre">CalcType=1</span></code> with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> evolves a random vector within

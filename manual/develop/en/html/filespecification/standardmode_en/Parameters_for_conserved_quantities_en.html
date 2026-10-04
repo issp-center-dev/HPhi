@@ -83,6 +83,11 @@ onsite <code class="docutils literal notranslate"><span class="pre">U</span></co
 (<code class="docutils literal notranslate"><span class="pre">t'</span></code>, <code class="docutils literal notranslate"><span class="pre">t''</span></code>), offsite Coulomb terms (<code class="docutils literal notranslate"><span class="pre">V</span></code>/<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>),
 and general or pair terms are not supported with <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>.</p></li>
 </ul>
+<p>For the three supported models above, generated Lanczos input uses the
+same default <code class="docutils literal notranslate"><span class="pre">distributed</span></code> TransSym basis layout described in the
+linked expert-mode section. The explicit developer rollback is
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code>; it is intended for comparison
+and diagnosis, not normal operation.</p>
 <p>To obtain the lowest energy at every momentum point, run one Standard-mode
 calculation for each <span class="math notranslate nohighlight">\(m=0,\ldots,L-1\)</span>, changing only
 <code class="docutils literal notranslate"><span class="pre">MomentumIndex</span></code>. For example, a six-site spin chain in the <span class="math notranslate nohighlight">\(m=1\)</span>

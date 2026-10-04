@@ -211,6 +211,18 @@ CGとTimeEvolutionの固有ベクトル入出力は下記のセクターcheckpoi
 </li>
 </ul>
 </section>
+<section id="lanczoslayout">
+<h2>セクター内Lanczosの基底layout<a class="headerlink" href="#lanczoslayout" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定したセクター内Lanczosは、対称性で縮約した基底上で実行します。
+既定の基底layoutは <code class="docutils literal notranslate"><span class="pre">distributed</span></code> で、各MPI rankは担当する行と、その行に必要な
+ghost要素だけを保持します。行列ベクトル積には既存のdistributed planとhalo exchangeを
+使用し、ベクトルnorm、内積、energy、varianceはMPI reductionで集約します。
+MPI rank数がセクター次元より多い場合は担当行が0のrankもありますが、そのrankも
+collective operationに参加します。</p>
+<p>開発者が比較・診断する場合は <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> を指定して
+rollback用layoutを選択できます。この設定は通常運用の推奨値ではありません。
+layoutの選択によって出力ファイル名、出力形式、セクターmanifestのschemaは変わりません。</p>
+</section>
 <section id="tpq">
 <h2>セクター内TPQ<a class="headerlink" href="#tpq" title="Link to this heading">¶</a></h2>
 <p>expert modeで <code class="docutils literal notranslate"><span class="pre">CalcType=1</span></code> と <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定すると、選択したセクター内の

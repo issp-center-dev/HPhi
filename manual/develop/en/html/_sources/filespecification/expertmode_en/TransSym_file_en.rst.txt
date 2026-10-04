@@ -217,6 +217,22 @@ Use rules
    Eigenvector I/O is available for CG and TimeEvolution through the sector checkpoint format
    below. Unsupported combinations terminate with an error.
 
+Sector Lanczos basis layout
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With ``TransSym``, sector Lanczos runs in the symmetry-reduced basis. The
+default basis layout is ``distributed``: each MPI rank holds only its owned
+rows and the ghost entries required for those rows. Matrix-vector products use
+the existing distributed plan and halo exchange, while vector norms, inner
+products, energy, and variance are combined with MPI reductions. When the
+number of MPI ranks exceeds the sector dimension, some ranks can own zero rows;
+these ranks still participate in the collective operations.
+
+For developer comparison and diagnosis, set
+``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` to select the rollback layout. This
+setting is not recommended for normal operation. The layout choice does not
+change output filenames or formats, or the sector manifest schema.
+
 Sector TPQ
 ~~~~~~~~~~
 
