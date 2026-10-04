@@ -578,7 +578,7 @@ run_mpi_symmetry_case() {
     expected_doublon="${4:-}"
     expected_ranks="$5"
     expected_digest="$6"
-    expected_default_layout="${7:-replicated}"
+    method="$7"
     log_file="hubbard_${label}_mpi.log"
     rm -rf output
     if ! env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
@@ -596,15 +596,11 @@ run_mpi_symmetry_case() {
     assert_replicated_rank_stats \
         "${expected_dim}" "${expected_ranks}" "${log_file}" \
         "${expected_digest}" 1 allgather
-    if [ "${expected_default_layout}" = "distributed" ]; then
-        grep -q \
-            "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
-            "${log_file}"
-    else
-        grep -q \
-            "Symmetry basis layout: replicated (explicit environment)." \
-            "${log_file}"
-    fi
+    grep -q \
+        "Symmetry basis layout: replicated (explicit rollback for TransSym ${method})." \
+        "${log_file}"
+    grep -q "^calc_type=${method}$" output/symmetry_sector.dat
+    grep -q '^basis_layout=replicated$' output/symmetry_sector.dat
 
     log_file="hubbard_${label}_default_mpi.log"
     rm -rf output
@@ -617,22 +613,14 @@ run_mpi_symmetry_case() {
         assert_doublon_matches_reference "${expected_doublon}" "${log_file}"
     fi
     assert_symmetry_log "${expected_dim}" "${log_file}"
-    if [ "${expected_default_layout}" = "distributed" ]; then
-        grep -q "Symmetry distributed matvec:" "${log_file}"
-        grep -q \
-            "Symmetry basis layout: distributed (default for TransSym CG)." \
-            "${log_file}"
-        assert_distributed_rank_stats "${log_file}"
-    else
-        grep -q "vector_exchange=halo" "${log_file}"
-        grep -q "columns=local/ghost-slots" "${log_file}"
-        grep -q \
-            "Symmetry basis layout: replicated (default outside TransSym CG)." \
-            "${log_file}"
-        assert_replicated_rank_stats \
-            "${expected_dim}" "${expected_ranks}" "${log_file}" \
-            "${expected_digest}" 0 halo
-    fi
+    grep -q "Symmetry distributed matvec:" "${log_file}"
+    grep -q "columns=local/ghost-slots" "${log_file}"
+    grep -q \
+        "Symmetry basis layout: distributed (default for TransSym ${method})." \
+        "${log_file}"
+    grep -q "^calc_type=${method}$" output/symmetry_sector.dat
+    grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
+    assert_distributed_rank_stats "${log_file}"
 }
 
 run_mpi_if_available() {
@@ -640,23 +628,21 @@ run_mpi_if_available() {
     expected_energy="$2"
     expected_dim="$3"
     expected_doublon="${4:-}"
-    expected_default_layout="${5:-replicated}"
+    method="$5"
     if [ -n "${MPIRUN}" ]; then
-        expected_digest=""
-        if grep -q "basis_layout=replicated" output/CalcTimerRankStats.dat; then
-            expected_digest=`awk '$1 == "basis_digest" {
-                split($4, parts, "="); print parts[2]; exit
-            }' output/CalcTimerRankStats.dat`
-            if [ -z "${expected_digest}" ]; then
-                echo "Missing serial symmetry basis digest"
-                exit 1
-            fi
+        grep -q "basis_layout=replicated" output/CalcTimerRankStats.dat
+        expected_digest=`awk '$1 == "basis_digest" {
+            split($4, parts, "="); print parts[2]; exit
+        }' output/CalcTimerRankStats.dat`
+        if [ -z "${expected_digest}" ]; then
+            echo "Missing serial symmetry basis digest"
+            exit 1
         fi
         MPI_NP=`printf "%s\n" "${MPIRUN}" | awk '{for(i=1;i<=NF;i++){if($i=="-np"||$i=="-n"){print $(i+1); exit}}}'`
         if printf "%s\n" "${MPI_NP}" | grep -Eq "^[0-9]+$" && [ "${MPI_NP}" -gt 1 ]; then
             run_mpi_symmetry_case "$label" "$expected_energy" "$expected_dim" \
                 "$expected_doublon" "$MPI_NP" "$expected_digest" \
-                "$expected_default_layout"
+                "$method"
         fi
     fi
 }
@@ -681,18 +667,32 @@ write_sym_namelist yes
 assert_energy_matches_reference "${ref_energy}" hubbard_k0.log
 assert_doublon_matches_reference "${ref_doublon}" hubbard_k0.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_k0.log
-grep -q "vector_exchange=halo" hubbard_k0.log
+grep -q "Symmetry distributed matvec:" hubbard_k0.log
 grep -q "columns=local/ghost-slots" hubbard_k0.log
 if grep -q "MPI site separation summary" hubbard_k0.log; then
     cat hubbard_k0.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_replicated_rank_stats 4 1 hubbard_k0.log
+assert_distributed_rank_stats hubbard_k0.log
 grep -q \
-    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
     hubbard_k0.log
-run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    ../../src/HPhi -e namelist.def > hubbard_k0_replicated.log 2>&1
+assert_energy_matches_reference "${ref_energy}" hubbard_k0_replicated.log
+assert_doublon_matches_reference "${ref_doublon}" hubbard_k0_replicated.log
+assert_symmetry_log 4 hubbard_k0_replicated.log
+assert_replicated_rank_stats 4 1 hubbard_k0_replicated.log
+grep -q "Symmetry matvec: mode=plan" hubbard_k0_replicated.log
+grep -q "vector_exchange=halo" hubbard_k0_replicated.log
+grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." hubbard_k0_replicated.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=replicated$' output/symmetry_sector.dat
+run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}" Lanczos
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
     invalid_halo_reference.log env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
     HPHI_SYMMETRY_HALO_REFERENCE=invalid \
@@ -716,18 +716,36 @@ write_sym_namelist no
 ../../src/HPhi -e namelist.def > hubbard_kpi2.log 2>&1
 assert_energy "-2.0" hubbard_kpi2.log
 grep -q "Symmetry basis: raw_dim=16 sector_dim=4 group_order=4" hubbard_kpi2.log
-grep -q "vector_exchange=halo" hubbard_kpi2.log
+grep -q "Symmetry distributed matvec:" hubbard_kpi2.log
 grep -q "columns=local/ghost-slots" hubbard_kpi2.log
 if grep -q "MPI site separation summary" hubbard_kpi2.log; then
     cat hubbard_kpi2.log
     echo "TransSym Hubbard serial path unexpectedly used site decomposition."
     exit 1
 fi
-assert_replicated_rank_stats 4 1 hubbard_kpi2.log
+assert_distributed_rank_stats hubbard_kpi2.log
 grep -q \
-    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
     hubbard_kpi2.log
-run_mpi_if_available kpi2 "-2.0" 4
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
+kpi2_doublon=`awk '$1 == "Doublon" {print $2; exit}' output/zvo_energy.dat`
+test -n "${kpi2_doublon}"
+rm -rf output
+env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    ../../src/HPhi -e namelist.def > hubbard_kpi2_replicated.log 2>&1
+assert_energy "-2.0" hubbard_kpi2_replicated.log
+assert_doublon_matches_reference "${kpi2_doublon}" hubbard_kpi2_replicated.log
+assert_symmetry_log 4 hubbard_kpi2_replicated.log
+assert_replicated_rank_stats 4 1 hubbard_kpi2_replicated.log
+grep -q "Symmetry matvec: mode=plan" hubbard_kpi2_replicated.log
+grep -q "vector_exchange=halo" hubbard_kpi2_replicated.log
+grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." hubbard_kpi2_replicated.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=replicated$' output/symmetry_sector.dat
+# The noninteracting ground space is degenerate; changing rank count may
+# select a different ground-state vector and therefore a different doublon.
+run_mpi_if_available kpi2 "-2.0" 4 "" Lanczos
 
 rm -rf output
 write_calcmod
@@ -745,6 +763,7 @@ assert_replicated_rank_stats 4 1 hubbard_k0_cg.log "" 1 allgather
 grep -q \
     "Symmetry basis layout: replicated (explicit rollback for TransSym CG)." \
     hubbard_k0_cg.log
+run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}" CG
 rm -rf output
 env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
     ../../src/HPhi -e namelist.def > hubbard_k0_cg_distributed.log 2>&1
@@ -787,7 +806,6 @@ grep -q \
     "Symmetry basis layout: distributed (default for TransSym CG)." \
     hubbard_k0_cg_default.log
 assert_distributed_rank_stats hubbard_k0_cg_default.log
-run_mpi_if_available k0_cg "${ref_energy}" 4 "${ref_doublon}" distributed
 write_calcmod
 
 rm -rf output

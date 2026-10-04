@@ -172,9 +172,12 @@ test "${diff}" = "0.000000"
 
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry.log
 grep -q "Symmetry allocation: raw_dim=20 global_dim=4 local_dim=4 raw_basis_list_elements=0 raw_diagonal_elements=0 initial_vector_elements=15" symmetry.log
-grep -q "Symmetry matvec: mode=plan" symmetry.log
+grep -q "Symmetry distributed matvec:" symmetry.log
+grep -q "columns=local/ghost-slots" symmetry.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 grep -q \
-    "Symmetry basis layout: replicated (default outside TransSym CG)." \
+    "Symmetry basis layout: distributed (default for TransSym Lanczos)." \
     symmetry.log
 basis_line=`awk '/Symmetry basis:/{print NR; exit}' symmetry.log`
 allocation_line=`awk '/Symmetry allocation:/{print NR; exit}' symmetry.log`
@@ -213,8 +216,10 @@ heisenberg_diff=`awk -v a="${sym_heisenberg_energy}" -v b="${ref_heisenberg_ener
 test "${heisenberg_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=4 group_order=6" symmetry_heisenberg.log
 grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_heisenberg.log
-grep -q "Symmetry matvec: mode=plan" symmetry_heisenberg.log
-grep -q "vector_exchange=halo" symmetry_heisenberg.log
+grep -q "Symmetry distributed matvec:" symmetry_heisenberg.log
+grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." symmetry_heisenberg.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 grep -q "columns=local/ghost-slots" symmetry_heisenberg.log
 
 rm -rf output
@@ -226,8 +231,10 @@ complex_diff=`awk -v a="${complex_energy}" 'BEGIN{d=a+1.0; if(d<0)d=-d; printf "
 test "${complex_diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" symmetry_complex.log
 grep -q "raw_basis_list_elements=0 raw_diagonal_elements=0" symmetry_complex.log
-grep -q "Symmetry matvec: mode=plan" symmetry_complex.log
-grep -q "vector_exchange=halo" symmetry_complex.log
+grep -q "Symmetry distributed matvec:" symmetry_complex.log
+grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." symmetry_complex.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 grep -q "columns=local/ghost-slots" symmetry_complex.log
 
 rm -rf output
@@ -240,6 +247,7 @@ complex_allgather_diff=`awk -v a="${complex_allgather_energy}" -v b="${complex_e
 awk -v d="${complex_allgather_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
 grep -q "vector_exchange=allgather" symmetry_complex_allgather.log
 grep -q "columns=global" symmetry_complex_allgather.log
+grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." symmetry_complex_allgather.log
 
 rm -rf output
 run_hphi symmetry_complex_legacy.log env HPHI_SYMMETRY_MATVEC=legacy \
@@ -250,6 +258,7 @@ legacy_diff=`awk -v a="${legacy_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; 
 awk -v d="${legacy_diff}" 'BEGIN{exit !(d <= 1.0e-12)}'
 grep -q "Symmetry matvec: mode=legacy" symmetry_complex_legacy.log
 grep -q "mode=legacy vector_exchange=allgather" symmetry_complex_legacy.log
+grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." symmetry_complex_legacy.log
 
 rm -rf output
 if env HPHI_SYMMETRY_MATVEC=invalid \
@@ -260,15 +269,15 @@ if env HPHI_SYMMETRY_MATVEC=invalid \
 fi
 grep -q "HPHI_SYMMETRY_MATVEC must be 'plan' or 'legacy'" symmetry_invalid_mode.log
 
-if env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
-       ../../src/HPhi -e namelist.def \
-       > symmetry_distributed_lanczos_reject.log 2>&1; then
-    cat symmetry_distributed_lanczos_reject.log
-    exit 1
-fi
-grep -q \
-    "distributed symmetry basis is supported for TransSym TPQ, CG, TimeEvolution and cTPQ runs only" \
-    symmetry_distributed_lanczos_reject.log
+run_hphi symmetry_distributed_lanczos.log env HPHI_SYMMETRY_BASIS_LAYOUT=distributed \
+    ../../src/HPhi -e namelist.def
+distributed_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
+awk -v a="${distributed_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; exit !(d <= 1.0e-12)}'
+grep -q "Symmetry distributed matvec:" symmetry_distributed_lanczos.log
+grep -q "columns=local/ghost-slots" symmetry_distributed_lanczos.log
+grep -q "Symmetry basis layout: distributed (explicit environment)." symmetry_distributed_lanczos.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 
 run_mpi_symmetry_case() {
     label="$1"
@@ -286,8 +295,10 @@ run_mpi_symmetry_case() {
     mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
     test "${mpi_diff}" = "0.000000"
     grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
-    grep -q "Symmetry matvec: mode=plan" "${log_file}"
-    grep -q "vector_exchange=halo" "${log_file}"
+    grep -q "Symmetry distributed matvec:" "${log_file}"
+    grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." "${log_file}"
+    grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+    grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
     grep -q "columns=local/ghost-slots" "${log_file}"
     if grep -q "MPI site separation summary" "${log_file}"; then
         echo "TransSym MPI path unexpectedly used site decomposition."
@@ -310,6 +321,7 @@ run_mpi_symmetry_case() {
     grep -q "Symmetry basis: raw_dim=20 sector_dim=${expected_dim} group_order=6" "${log_file}"
     grep -q "vector_exchange=allgather" "${log_file}"
     grep -q "columns=global" "${log_file}"
+    grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." "${log_file}"
 
     log_file="symmetry_${label}_legacy_mpi.log"
     rm -rf output
@@ -324,6 +336,7 @@ run_mpi_symmetry_case() {
     mpi_diff=`awk -v a="${mpi_energy}" -v b="${expected_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
     test "${mpi_diff}" = "0.000000"
     grep -q "mode=legacy vector_exchange=allgather" "${log_file}"
+    grep -q "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." "${log_file}"
 }
 
 if [ -n "${MPIRUN}" ]; then
@@ -359,7 +372,7 @@ EOF
         grep -q "Symmetry matvec: mode=plan" symmetry_rank_env_mpi.log
         grep -q "vector_exchange=halo" symmetry_rank_env_mpi.log
         grep -q \
-            "Symmetry basis layout: replicated (explicit environment)." \
+            "Symmetry basis layout: replicated (explicit rollback for TransSym Lanczos)." \
             symmetry_rank_env_mpi.log
         if grep -q "HPHI_SYMMETRY_MATVEC must be" symmetry_rank_env_mpi.log; then
             cat symmetry_rank_env_mpi.log
