@@ -694,17 +694,21 @@ grep -q \
     hubbard_k0.log
 run_mpi_if_available k0 "${ref_energy}" 4 "${ref_doublon}"
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE must be" \
-    invalid_halo_reference.log env HPHI_SYMMETRY_HALO_REFERENCE=invalid \
+    invalid_halo_reference.log env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_HALO_REFERENCE=invalid \
     ../../src/HPhi -e namelist.def
 expect_failure "HPHI_SYMMETRY_VECTOR_EXCHANGE must be" \
-    invalid_vector_exchange.log env HPHI_SYMMETRY_VECTOR_EXCHANGE=invalid \
+    invalid_vector_exchange.log env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_VECTOR_EXCHANGE=invalid \
     ../../src/HPhi -e namelist.def
 expect_failure "symmetry legacy matvec requires" \
-    invalid_legacy_halo.log env HPHI_SYMMETRY_MATVEC=legacy \
+    invalid_legacy_halo.log env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_MATVEC=legacy \
     HPHI_SYMMETRY_VECTOR_EXCHANGE=halo ../../src/HPhi -e namelist.def
 expect_failure "HPHI_SYMMETRY_HALO_REFERENCE requires" \
     invalid_halo_reference_production.log \
-    env HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
+    env HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+    HPHI_SYMMETRY_HALO_REFERENCE=1 ../../src/HPhi -e namelist.def
 
 rm -rf output
 write_kpi2_transsym

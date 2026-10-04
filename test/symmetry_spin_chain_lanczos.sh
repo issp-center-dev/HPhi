@@ -232,6 +232,7 @@ grep -q "columns=local/ghost-slots" symmetry_complex.log
 
 rm -rf output
 run_hphi symmetry_complex_allgather.log env HPHI_SYMMETRY_MATVEC=plan \
+    HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
     HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
     ../../src/HPhi -e namelist.def
 complex_allgather_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
@@ -241,7 +242,8 @@ grep -q "vector_exchange=allgather" symmetry_complex_allgather.log
 grep -q "columns=global" symmetry_complex_allgather.log
 
 rm -rf output
-run_hphi symmetry_complex_legacy.log env HPHI_SYMMETRY_MATVEC=legacy ../../src/HPhi -e namelist.def
+run_hphi symmetry_complex_legacy.log env HPHI_SYMMETRY_MATVEC=legacy \
+    HPHI_SYMMETRY_BASIS_LAYOUT=replicated ../../src/HPhi -e namelist.def
 legacy_energy=`awk '$1 == "Energy" {print $2; exit}' output/zvo_energy.dat`
 test -n "${legacy_energy}"
 legacy_diff=`awk -v a="${legacy_energy}" -v b="${complex_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%.16e", d}'`
@@ -250,7 +252,9 @@ grep -q "Symmetry matvec: mode=legacy" symmetry_complex_legacy.log
 grep -q "mode=legacy vector_exchange=allgather" symmetry_complex_legacy.log
 
 rm -rf output
-if env HPHI_SYMMETRY_MATVEC=invalid ../../src/HPhi -e namelist.def > symmetry_invalid_mode.log 2>&1; then
+if env HPHI_SYMMETRY_MATVEC=invalid \
+       HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
+       ../../src/HPhi -e namelist.def > symmetry_invalid_mode.log 2>&1; then
     cat symmetry_invalid_mode.log
     exit 1
 fi
@@ -293,6 +297,7 @@ run_mpi_symmetry_case() {
     log_file="symmetry_${label}_allgather_mpi.log"
     rm -rf output
     if ! HPHI_SYMMETRY_MATVEC=plan \
+        HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
         HPHI_SYMMETRY_VECTOR_EXCHANGE=allgather \
         ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1; then
         cat "${log_file}"
@@ -309,6 +314,7 @@ run_mpi_symmetry_case() {
     log_file="symmetry_${label}_legacy_mpi.log"
     rm -rf output
     if ! HPHI_SYMMETRY_MATVEC=legacy \
+        HPHI_SYMMETRY_BASIS_LAYOUT=replicated \
         ${MPIRUN} ../../src/HPhi -e "${namelist}" > "${log_file}" 2>&1; then
         cat "${log_file}"
         exit 1
