@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['x_0',['x',['../page_variable.html#subsec_bindstruct',1,'BindStruct (X)'],['../structLegacyApplyContext.html#aa2e031ded933b71101f7bd1142fde7b3',1,'LegacyApplyContext::X'],['../structCanonicalColumnContext.html#ab7f9e27e2918ed9c7ce07396dfc06389',1,'CanonicalColumnContext::X'],['../structUnresolvedRowContext.html#a7cdb936f89b9f63777e38ffd7aa15bcc',1,'UnresolvedRowContext::X'],['../struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567',1,'X:&#160;struct.c'],['../struct_8c.html#a2e5276e30c3a9c9155e407ab3e645567',1,'X:&#160;struct.c']]],
+  ['x_0',['x',['../page_variable.html#subsec_bindstruct',1,'BindStruct (X)'],['../structLegacyApplyContext.html#aa2e031ded933b71101f7bd1142fde7b3',1,'LegacyApplyContext::X'],['../structCorrelationContext.html#a9be5141a76376224ea67aea3533fb3b7',1,'CorrelationContext::X'],['../structCanonicalColumnContext.html#ab7f9e27e2918ed9c7ce07396dfc06389',1,'CanonicalColumnContext::X'],['../structUnresolvedRowContext.html#a7cdb936f89b9f63777e38ffd7aa15bcc',1,'UnresolvedRowContext::X'],['../struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567',1,'X:&#160;struct.c'],['../struct_8c.html#a2e5276e30c3a9c9155e407ab3e645567',1,'X:&#160;struct.c']]],
   ['x_20def_1',['DefineList (X-&gt;Def)',['../page_variable.html#subsec_definelist',1,'']]],
   ['x_20large_2',['LargeList (X-&gt;Large)',['../page_variable.html#subsec_largelist',1,'']]],
   ['x_20phys_3',['PhysList (X-&gt;Phys)',['../page_variable.html#subsec_physlist',1,'']]],

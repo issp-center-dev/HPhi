@@ -8,5 +8,6 @@ var expec__cisajs_8c =
     [ "expec_cisajs_SpinGCGeneral", "expec__cisajs_8c.html#a3aa6dfa28ea11557e0977bf0b0e62b27", null ],
     [ "expec_cisajs_SpinGCHalf", "expec__cisajs_8c.html#a7d54f4f6d51df8259d09f1f1337bdb58", null ],
     [ "expec_cisajs_SpinGeneral", "expec__cisajs_8c.html#ad0637ab3a58ed6b5f4fd5571daaed44e", null ],
-    [ "expec_cisajs_SpinHalf", "expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443", null ]
+    [ "expec_cisajs_SpinHalf", "expec__cisajs_8c.html#a89861e090a13a24c828cd0e100341443", null ],
+    [ "expec_cisajs_Symmetry", "expec__cisajs_8c.html#ae5f182aad0c938f6eef416f5c3847782", null ]
 ];

@@ -8,9 +8,11 @@ var expec__cisajscktaltdc_8c =
     [ "expec_cisajscktalt_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a2e87402ae7a6aeb5e826cd33cdf3ab57", null ],
     [ "expec_cisajscktalt_SpinGeneral", "expec__cisajscktaltdc_8c.html#a0b7abd184f6ccce7ac4141c21fabf91c", null ],
     [ "expec_cisajscktalt_SpinHalf", "expec__cisajscktaltdc_8c.html#a915879a823599f9fa3b0cb041c5de568", null ],
+    [ "expec_cisajscktalt_Symmetry", "expec__cisajscktaltdc_8c.html#ae748ee3c8a55027648fc7ffd5fb86f3d", null ],
     [ "expec_cisajscktaltdc", "expec__cisajscktaltdc_8c.html#ab1e0307962ebf631818025cd262c4bd9", null ],
     [ "expec_Fourbody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#abccfbf2d994989a50c5ad4a1fa571f43", null ],
     [ "expec_Sixbody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a522e2d5ad822804118592435024471ee", null ],
     [ "expec_Threebody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a2c06d1733daee29acca9c29f50964c32", null ],
-    [ "expec_Threebody_SpinGeneral", "expec__cisajscktaltdc_8c.html#a25d91b20439dd2de25f95e29d8c3fc39", null ]
+    [ "expec_Threebody_SpinGeneral", "expec__cisajscktaltdc_8c.html#a25d91b20439dd2de25f95e29d8c3fc39", null ],
+    [ "write_symmetry_green_row", "expec__cisajscktaltdc_8c.html#a445e3126cc45c5cba57ba43dbb0e1377", null ]
 ];

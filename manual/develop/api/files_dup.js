@@ -86,6 +86,7 @@ var files_dup =
     [ "symmetry_basis.c", "symmetry__basis_8c.html", "symmetry__basis_8c" ],
     [ "symmetry_basis_io.c", "symmetry__basis__io_8c.html", "symmetry__basis__io_8c" ],
     [ "symmetry_checkpoint.c", "symmetry__checkpoint_8c.html", "symmetry__checkpoint_8c" ],
+    [ "symmetry_correlation.c", "symmetry__correlation_8c.html", "symmetry__correlation_8c" ],
     [ "symmetry_diagonal.c", "symmetry__diagonal_8c.html", "symmetry__diagonal_8c" ],
     [ "symmetry_directory.c", "symmetry__directory_8c.html", "symmetry__directory_8c" ],
     [ "symmetry_distribution.c", "symmetry__distribution_8c.html", "symmetry__distribution_8c" ],

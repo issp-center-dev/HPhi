@@ -2,7 +2,7 @@ var searchData=
 [
   ['k_5fexct_0',['k_exct',['../structDefineList.html#a7b1557d9f89c207164139b3bd65d73fa',1,'DefineList']]],
   ['kernel_1',['kernel',['../structTraceExecutionPlan.html#a2596c16d4999521d327aa84c8d460195',1,'TraceExecutionPlan']]],
-  ['key_2',['key',['../structMonomial.html#ac6fbf493e0c23601978019cc2c338258',1,'Monomial']]],
+  ['key_2',['key',['../structCorrelationTransition.html#a5d6dff29f62754453c7b44c5625b66db',1,'CorrelationTransition::key'],['../structMonomial.html#ac6fbf493e0c23601978019cc2c338258',1,'Monomial::key']]],
   ['keys_3',['keys',['../structSymmetryLocalRepresentativeIndex.html#a1e987778e3ba62a363d1b7567acb6994',1,'SymmetryLocalRepresentativeIndex']]],
   ['keyword_4',['Step 2: Add Keyword',['../page_addmodpara.html#subsec_modpara_step2',1,'']]],
   ['keywords_5',['Step 1: Define Keywords',['../page_addexpert.html#subsec_expert_step1',1,'']]],

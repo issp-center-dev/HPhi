@@ -1,17 +1,18 @@
 var searchData=
 [
-  ['factors_0',['factors',['../structSymmetryTerm.html#aabbebc0345ec2c71d0418d13f8c96b43',1,'SymmetryTerm']]],
+  ['factors_0',['factors',['../structSymmetryTerm.html#aabbebc0345ec2c71d0418d13f8c96b43',1,'SymmetryTerm::factors'],['../structCorrelationOrbit.html#ab58f36aa8e32ccb777220e064b64bf2c',1,'CorrelationOrbit::factors'],['../structSymmetryCorrelationOperator.html#ae404c1b71d1bce47a957ab99dfca469a',1,'SymmetryCorrelationOperator::factors']]],
   ['fbody_1',['FBody',['../structDefineList.html#a14a6f0a875c55ba299df50bfc2eda983',1,'DefineList']]],
   ['fidx_2',['fidx',['../structDefineList.html#afb0fb56d5d02820791901e094e6202b3',1,'DefineList']]],
   ['file_5finvtemp_3',['file_invtemp',['../structDefineList.html#a9914bf158373c5bdd881a24ecb1bfe04',1,'DefineList']]],
   ['final_5fpath_4',['final_path',['../structGreenOutputManifestRecord.html#a5a2bb4c6be4fe6ef4591c5fa84783d49',1,'GreenOutputManifestRecord']]],
-  ['flag_5fread_5finvtemp_5',['flag_read_invtemp',['../structDefineList.html#ada8d5e17f306387cf7191ccfd947af0a',1,'DefineList']]],
-  ['flg_5fgeneral_5fspin_6',['flg_general_spin',['../structTraceCap.html#add664dbae90dffb314c43878dd9d8ab8',1,'TraceCap']]],
-  ['flgboost_7',['flgBoost',['../structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703',1,'BoostList']]],
-  ['fnv1a64_8',['fnv1a64',['../structSymmetryBasisDigest.html#a646e03df2b08551cc8d51507314aaf07',1,'SymmetryBasisDigest']]],
-  ['force_5fchunked_9',['force_chunked',['../structSymmetryRepresentativeBatchOptions.html#a4c14755f2350f4c99becc790b1533378',1,'SymmetryRepresentativeBatchOptions::force_chunked'],['../structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045',1,'SymmetryMpiExchangeOptions::force_chunked']]],
-  ['found_10',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
-  ['fsgn_11',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
-  ['full_5fdim_12',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime']]],
-  ['full_5fv1_13',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
+  ['fixed_5fbytes_5',['fixed_bytes',['../structCorrelationContext.html#ae6db533980bb1776541bc6df8fe8152f',1,'CorrelationContext']]],
+  ['flag_5fread_5finvtemp_6',['flag_read_invtemp',['../structDefineList.html#ada8d5e17f306387cf7191ccfd947af0a',1,'DefineList']]],
+  ['flg_5fgeneral_5fspin_7',['flg_general_spin',['../structTraceCap.html#add664dbae90dffb314c43878dd9d8ab8',1,'TraceCap']]],
+  ['flgboost_8',['flgBoost',['../structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703',1,'BoostList']]],
+  ['fnv1a64_9',['fnv1a64',['../structSymmetryBasisDigest.html#a646e03df2b08551cc8d51507314aaf07',1,'SymmetryBasisDigest']]],
+  ['force_5fchunked_10',['force_chunked',['../structSymmetryRepresentativeBatchOptions.html#a4c14755f2350f4c99becc790b1533378',1,'SymmetryRepresentativeBatchOptions::force_chunked'],['../structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045',1,'SymmetryMpiExchangeOptions::force_chunked']]],
+  ['found_11',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
+  ['fsgn_12',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
+  ['full_5fdim_13',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime']]],
+  ['full_5fv1_14',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
 ];

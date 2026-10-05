@@ -206,9 +206,16 @@ TransSym指定ファイル
    spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
-   相関関数、スペクトル計算、リスタート、ハミルトニアン入出力は本ファイルと併用できません。
-   CGとTimeEvolutionの固有ベクトル入出力は下記のセクターcheckpoint形式に対応します。
-   非対応の組み合わせはエラーで終了します。
+   相関関数（``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
+   ``SixBodyG``、``NBodyG``）は ``Lanczos`` と ``CG`` でsector内で計算されます。
+   値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
+   sectorの外へ出る演算子は0になります。canonical ``Spin`` の
+   ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
+   同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタート、
+   ハミルトニアンの入出力は本ファイルと併用できません。``TPQ``、``cTPQ``、
+   ``TimeEvolution`` との相関関数はこの版では利用できません。固有ベクトルの入出力は、
+   CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。
+   未対応の組み合わせはエラーで終了します。
 
 セクター内Lanczosの基底layout
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

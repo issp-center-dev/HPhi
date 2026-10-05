@@ -210,10 +210,19 @@ invariance and conserved quantum numbers. The coefficient tolerance is
 <span class="math notranslate nohighlight">\(10^{-10}\)</span>. <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, and anomalous terms remain
 unsupported. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
-<p>Correlation functions, spectrum calculations, restart, and the input and
-output of Hamiltonians are not supported together with this file.
-Eigenvector I/O is available for CG and TimeEvolution through the sector checkpoint format
-below. Unsupported combinations terminate with an error.</p>
+<p>Correlation functions (<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>) are computed in the sector for
+<code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code>. The values are the exact expectation values in the
+sector; rows that are mapped onto each other by a symmetry operation have
+the same value, and an operator that leaves the sector gives zero. For
+canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> are rejected
+at startup as in the raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products.
+<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, spectrum calculations, restart, and the input and output of
+Hamiltonians are not supported together with this file. Correlation
+functions with <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> are not available in
+this version. Eigenvector I/O is available for CG and TimeEvolution through
+the sector checkpoint format below. Unsupported combinations terminate with
+an error.</p>
 </li>
 </ul>
 </section>

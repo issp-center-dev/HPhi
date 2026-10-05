@@ -1,5 +1,8 @@
 var NAVTREEINDEX7 =
 {
+"matrixlapack_8h.html#a6591537834cf2a4f86271053cc54dd37":[10,0,1,52,3],
+"matrixlapack_8h.html#a7447554c8b594af132a9b2c848509f76":[10,0,1,52,2],
+"matrixlapack_8h_source.html":[10,0,1,52],
 "matrixlapack__elpa_8c.html":[10,0,46],
 "matrixlapack__elpa_8c_source.html":[10,0,46],
 "matrixlapack__elpa_8h.html":[10,0,1,53],
@@ -246,8 +249,5 @@ var NAVTREEINDEX7 =
 "mltplyMPIHubbardCore_8h.html#af0facc9f8c4f831450bd613751a784e6":[10,0,1,63,8],
 "mltplyMPIHubbardCore_8h.html#af7bc5450d8bcafa8b0e218916f43ab86":[10,0,1,63,4],
 "mltplyMPIHubbardCore_8h_source.html":[10,0,1,63],
-"mltplyMPIHubbard_8c.html":[10,0,54],
-"mltplyMPIHubbard_8c.html#a18d040bbc95fb50a0320779334c18856":[10,0,54,1],
-"mltplyMPIHubbard_8c.html#a1ab395ecd0b9cd763a237a25620b2b3b":[10,0,54,9],
-"mltplyMPIHubbard_8c.html#a2c6e0cf1561aadc80056ee14994dd595":[10,0,54,6]
+"mltplyMPIHubbard_8c.html":[10,0,54]
 };

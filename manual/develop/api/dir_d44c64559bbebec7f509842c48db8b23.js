@@ -95,6 +95,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "symmetry_basis_io.h", "symmetry__basis__io_8h.html", "symmetry__basis__io_8h" ],
     [ "symmetry_checked.h", "symmetry__checked_8h.html", "symmetry__checked_8h" ],
     [ "symmetry_checkpoint.h", "symmetry__checkpoint_8h.html", "symmetry__checkpoint_8h" ],
+    [ "symmetry_correlation.h", "symmetry__correlation_8h.html", "symmetry__correlation_8h" ],
     [ "symmetry_diagonal.h", "symmetry__diagonal_8h.html", "symmetry__diagonal_8h" ],
     [ "symmetry_directory.h", "symmetry__directory_8h.html", "symmetry__directory_8h" ],
     [ "symmetry_distribution.h", "symmetry__distribution_8h.html", "symmetry__distribution_8h" ],

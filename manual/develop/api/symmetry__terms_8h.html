@@ -141,6 +141,8 @@ Typedefs</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aa4968f118950dd5356a18763999cee79" id="r_aa4968f118950dd5356a18763999cee79"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__terms_8h.html#aa4968f118950dd5356a18763999cee79">EnumerateSymmetryTerms</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, int kind, <a class="el" href="symmetry__terms_8h.html#a3b778f19c733bf6f9943b53edbd3ecea">SymmetryTermCallback</a> callback, void *context)</td></tr>
 <tr class="separator:aa4968f118950dd5356a18763999cee79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac321057fbfbc3e2be7a87171b13fcbbd" id="r_ac321057fbfbc3e2be7a87171b13fcbbd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__terms_8h.html#ac321057fbfbc3e2be7a87171b13fcbbd">ApplySymmetryFactors</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned int factors, const int *index, unsigned long state, unsigned long *out, double *sign)</td></tr>
+<tr class="separator:ac321057fbfbc3e2be7a87171b13fcbbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6cf1710400fabdb3f44db3232ece500" id="r_ad6cf1710400fabdb3f44db3232ece500"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__terms_8h.html#ad6cf1710400fabdb3f44db3232ece500">ApplySymmetryTerm</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, const struct <a class="el" href="structSymmetryTerm.html">SymmetryTerm</a> *term, unsigned long state, unsigned long *out, double complex *value)</td></tr>
 <tr class="separator:ad6cf1710400fabdb3f44db3232ece500"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a080e0a545c06190375a7d65473e94023" id="r_a080e0a545c06190375a7d65473e94023"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__terms_8h.html#a080e0a545c06190375a7d65473e94023">ValidateSymmetryTerms</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def)</td></tr>
@@ -166,6 +168,64 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ac321057fbfbc3e2be7a87171b13fcbbd" name="ac321057fbfbc3e2be7a87171b13fcbbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac321057fbfbc3e2be7a87171b13fcbbd">&#9670;&#160;</a></span>ApplySymmetryFactors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ApplySymmetryFactors </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>def</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>factors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int *&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long *&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>sign</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00134">134</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__terms_8h_source.html#l00010">SymmetryTerm::factors</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="symmetry__terms_8h_source.html#l00011">SymmetryTerm::index</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, and <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00177">ApplySymmetryTerm()</a>, and <a class="el" href="symmetry__correlation_8c_source.html#l00364">collect_block()</a>.</p>
+
+</div>
+</div>
 <a id="ad6cf1710400fabdb3f44db3232ece500" name="ad6cf1710400fabdb3f44db3232ece500"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad6cf1710400fabdb3f44db3232ece500">&#9670;&#160;</a></span>ApplySymmetryTerm()</h2>
 
@@ -210,9 +270,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00134">134</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00177">177</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__terms_8h_source.html#l00010">SymmetryTerm::factors</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="symmetry__terms_8h_source.html#l00011">SymmetryTerm::index</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__terms_8h_source.html#l00012">SymmetryTerm::value</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__terms_8c_source.html#l00134">ApplySymmetryFactors()</a>, <a class="el" href="symmetry__terms_8h_source.html#l00010">SymmetryTerm::factors</a>, <a class="el" href="symmetry__terms_8h_source.html#l00011">SymmetryTerm::index</a>, and <a class="el" href="symmetry__terms_8h_source.html#l00012">SymmetryTerm::value</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="symmetry__diagonal_8c_source.html#l00024">accumulate_diagonal()</a>, and <a class="el" href="symmetry__matvec__plan_8c_source.html#l00170">apply_raw_term()</a>.</p>
 
@@ -260,7 +320,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__terms_8c.html#a9ee77486e1413f842f4f7ce7235019f6">CHECK_STORAGE</a>, <a class="el" href="struct_8h_source.html#l00137">DefineList::CoulombInter</a>, <a class="el" href="struct_8h_source.html#l00131">DefineList::CoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00107">DefineList::EDChemi</a>, <a class="el" href="struct_8h_source.html#l00119">DefineList::EDGeneralTransfer</a>, <a class="el" href="struct_8h_source.html#l00106">DefineList::EDNChemi</a>, <a class="el" href="struct_8h_source.html#l00114">DefineList::EDNTransfer</a>, <a class="el" href="struct_8h_source.html#l00109">DefineList::EDParaChemi</a>, <a class="el" href="struct_8h_source.html#l00125">DefineList::EDParaGeneralTransfer</a>, <a class="el" href="struct_8h_source.html#l00108">DefineList::EDSpinChemi</a>, <a class="el" href="symmetry__terms_8c_source.html#l00020">emit()</a>, <a class="el" href="symmetry__terms_8c.html#a6f4dfa1a4ec143c177522ef2757886d4">EMIT</a>, <a class="el" href="struct_8h_source.html#l00155">DefineList::ExchangeCoupling</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00143">DefineList::HundCoupling</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00171">DefineList::InterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00170">DefineList::InterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00211">DefineList::NAnomalousTerm</a>, <a class="el" href="struct_8h_source.html#l00136">DefineList::NCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00130">DefineList::NCoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00154">DefineList::NExchangeCoupling</a>, <a class="el" href="struct_8h_source.html#l00142">DefineList::NHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00173">DefineList::NInterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00174">DefineList::NInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00160">DefineList::NIsingCoupling</a>, <a class="el" href="struct_8h_source.html#l00183">DefineList::NNBodyInterAll</a>, <a class="el" href="struct_8h_source.html#l00148">DefineList::NPairHopping</a>, <a class="el" href="struct_8h_source.html#l00162">DefineList::NPairLiftCoupling</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00149">DefineList::PairHopping</a>, <a class="el" href="struct_8h_source.html#l00139">DefineList::ParaCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00133">DefineList::ParaCoulombIntra</a>, <a class="el" href="struct_8h_source.html#l00157">DefineList::ParaExchangeCoupling</a>, <a class="el" href="struct_8h_source.html#l00145">DefineList::ParaHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00177">DefineList::ParaInterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00179">DefineList::ParaInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00151">DefineList::ParaPairHopping</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, and <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00274">collect_polynomial()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00038">EvaluateSymmetryStateDiagonal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00287">collect_polynomial()</a>, <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, and <a class="el" href="symmetry__diagonal_8c_source.html#l00038">EvaluateSymmetryStateDiagonal()</a>.</p>
 
 </div>
 </div>
@@ -284,7 +344,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="struct_8h_source.html#l00106">DefineList::EDNChemi</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00266">DefineList::iCalcType</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="struct_8h_source.html#l00136">DefineList::NCoulombInter</a>, <a class="el" href="struct_8h_source.html#l00154">DefineList::NExchangeCoupling</a>, <a class="el" href="struct_8h_source.html#l00142">DefineList::NHundCoupling</a>, <a class="el" href="struct_8h_source.html#l00172">DefineList::NInterAll</a>, <a class="el" href="struct_8h_source.html#l00173">DefineList::NInterAll_Diagonal</a>, <a class="el" href="struct_8h_source.html#l00174">DefineList::NInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00160">DefineList::NIsingCoupling</a>, <a class="el" href="struct_8h_source.html#l00371">DefineList::NLaser</a>, <a class="el" href="struct_8h_source.html#l00148">DefineList::NPairHopping</a>, <a class="el" href="struct_8h_source.html#l00391">DefineList::NTEInterAllMax</a>, <a class="el" href="struct_8h_source.html#l00376">DefineList::NTETransferMax</a>, <a class="el" href="struct_8h_source.html#l00113">DefineList::NTransfer</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, and <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l01021">ValidateSymmetryHamiltonian()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__matvec__plan_8c_source.html#l00180">enumerate_raw_offdiagonal_transitions()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l01030">ValidateSymmetryHamiltonian()</a>.</p>
 
 </div>
 </div>
@@ -304,11 +364,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00292">292</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00305">305</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__terms_8c_source.html#l00274">collect_polynomial()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00263">compare_monomials()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00182">Polynomial::count</a>, <a class="el" href="symmetry__terms_8c_source.html#l00183">Polynomial::def</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="symmetry__terms_8c_source.html#l00179">Monomial::key</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, <a class="el" href="symmetry__terms_8c_source.html#l00181">Polynomial::terms</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00179">Monomial::value</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__terms_8c_source.html#l00287">collect_polynomial()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00276">compare_monomials()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00195">Polynomial::count</a>, <a class="el" href="symmetry__terms_8c_source.html#l00196">Polynomial::def</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="symmetry__terms_8c_source.html#l00192">Monomial::key</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::NSymTrans</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="struct_8h_source.html#l00219">DefineList::SymTrans</a>, <a class="el" href="symmetry__terms_8c_source.html#l00194">Polynomial::terms</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00192">Monomial::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis__io_8c_source.html#l01021">ValidateSymmetryHamiltonian()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis__io_8c_source.html#l01030">ValidateSymmetryHamiltonian()</a>.</p>
 
 </div>
 </div>

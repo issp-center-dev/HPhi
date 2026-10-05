@@ -32,12 +32,14 @@ var searchData=
   ['paratetransfer_29',['ParaTETransfer',['../structDefineList.html#a54b5c934664f1f8e6bd6780aea894076',1,'DefineList']]],
   ['paratetransferdiagonal_30',['ParaTETransferDiagonal',['../structDefineList.html#a2312228537cf857c2a5be459869f81f9',1,'DefineList']]],
   ['part_5fpath_31',['part_path',['../structGreenOutputManifestRecord.html#aa812d0e6fd4f330292a294a8d249119f',1,'GreenOutputManifestRecord']]],
-  ['perm_32',['perm',['../structGroupDigestEntry.html#a83512d8e31ed81c50583b9827e0cedd4',1,'GroupDigestEntry']]],
-  ['permutation_33',['permutation',['../structPolynomial.html#a003cc1b72c502e9ab0538ac003867bbd',1,'Polynomial']]],
-  ['phase_34',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase'],['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase']]],
-  ['phased_5fhval_35',['phased_hval',['../structSymmetryUnresolvedTransition.html#ae141bc8a7a8edb470d3d9d526625ed6f',1,'SymmetryUnresolvedTransition']]],
-  ['phys_36',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
-  ['prdct_37',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
-  ['prdct_5fallreduce_5fcalls_38',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
-  ['precg_39',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
+  ['peak_5fbytes_32',['peak_bytes',['../structSymmetryCorrelationStats.html#aee1c612816626c32d860a4cf9b7b1c0a',1,'SymmetryCorrelationStats']]],
+  ['perm_33',['perm',['../structGroupDigestEntry.html#a83512d8e31ed81c50583b9827e0cedd4',1,'GroupDigestEntry']]],
+  ['permutation_34',['permutation',['../structPolynomial.html#a003cc1b72c502e9ab0538ac003867bbd',1,'Polynomial']]],
+  ['phase_35',['phase',['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase'],['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase']]],
+  ['phased_5fhval_36',['phased_hval',['../structSymmetryUnresolvedTransition.html#ae141bc8a7a8edb470d3d9d526625ed6f',1,'SymmetryUnresolvedTransition']]],
+  ['phys_37',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
+  ['policy_38',['policy',['../structCorrelationContext.html#a0788a7ac96a876eb7309ed4ac8f3066e',1,'CorrelationContext']]],
+  ['prdct_39',['prdct',['../structLargeList.html#ac0e932f82f716485a2bb012dc05bc7c1',1,'LargeList::prdct'],['../structLegacyApplyContext.html#aa2c1cdfa3ca33b12a7bcd1a86b87d755',1,'LegacyApplyContext::prdct']]],
+  ['prdct_5fallreduce_5fcalls_40',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
+  ['precg_41',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]]
 ];

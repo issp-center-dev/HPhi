@@ -25,6 +25,7 @@ var nbody__correlation_8c =
     [ "CheckNBodyGSpinConservation", "nbody__correlation_8c.html#ac6c411ed57668056ca998b7de38d0eac", null ],
     [ "convert_nbodyg_general_spin_to_list1", "nbody__correlation_8c.html#afcd902ebef5dde26d001f205f8a26723", null ],
     [ "expec_nbodyg", "nbody__correlation_8c.html#a2a5aba86fb93a6b7d9513be6f13cc0e2", null ],
+    [ "expec_nbodyg_symmetry", "nbody__correlation_8c.html#a27a43c440a95a2f4ffc60ff246c00fd0", null ],
     [ "expec_nbodyg_term_to_rank", "nbody__correlation_8c.html#a6917d76b1bd8c0016843329663f0fd8c", null ],
     [ "expec_nbodyg_term_to_rank_general_spin_gc", "nbody__correlation_8c.html#a898b245aad2cbb120e0b036133467374", null ],
     [ "expec_nbodyg_term_to_rank_hubbard", "nbody__correlation_8c.html#a5a00e67d53314440661e880c1e9906d2", null ],
