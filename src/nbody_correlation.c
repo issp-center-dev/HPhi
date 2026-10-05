@@ -14,10 +14,13 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "bitcalc.h"
 #include "nbody_correlation.h"
 #include "FileIO.h"
 #include "green_output.h"
+#include "symmetry_correlation.h"
+#include "symmetry_mpi_exchange.h"
 #include "wrapperMPI.h"
 
 static int parse_unsigned_token(const char **pp, unsigned int *value)
@@ -1514,6 +1517,59 @@ static int write_nbodyg_line(FILE *fp, const struct DefineList *D, unsigned int 
   return 0;
 }
 
+static int expec_nbodyg_symmetry(struct BindStruct *X, double complex *vec,
+                                 FILE *fp)
+{
+  unsigned int t, k;
+  size_t ints = 0, n = 0, off = 0;
+  int *index = NULL;
+  long *map = NULL;
+  struct SymmetryCorrelationOperator *ops = NULL;
+  double complex *values = NULL;
+  int status = -1, local_error;
+  for (t = 0; t < X->Def.NNBodyG; ++t)
+    ints += 4U * (size_t)X->Def.NBodyG_CanonicalN[t];
+  index = (int *)malloc((ints + 4U) * sizeof(*index));
+  map = (long *)malloc(((size_t)X->Def.NNBodyG + 1U) * sizeof(*map));
+  ops = (struct SymmetryCorrelationOperator *)calloc(
+      (size_t)X->Def.NNBodyG + 1U, sizeof(*ops));
+  values = (double complex *)calloc(
+      (size_t)X->Def.NNBodyG + 1U, sizeof(*values));
+  local_error = index == NULL || map == NULL || ops == NULL || values == NULL;
+  if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), local_error) != 0)
+    goto done;
+  for (t = 0; t < X->Def.NNBodyG; ++t) {
+    unsigned int count = X->Def.NBodyG_CanonicalN[t];
+    if (X->Def.NBodyG_IsZero[t] != FALSE || count == 0U) {
+      map[t] = -1L;
+      continue;
+    }
+    for (k = 0; k < count; ++k)
+      memcpy(index + off + 4U * k,
+             X->Def.NBodyG_CanonicalFactors[
+                 X->Def.NBodyG_CanonicalOffset[t] + k],
+             4U * sizeof(*index));
+    ops[n].factors = count;
+    ops[n].index = index + off;
+    map[t] = (long)n++;
+    off += 4U * count;
+  }
+  if (n > 0U && SymmetryCorrelationExpectation(X, vec, ops, n, values) != 0)
+    goto done;
+  for (t = 0; t < X->Def.NNBodyG; ++t) {
+    GreenOutputWriteIndexPrefix(fp, X);
+    write_nbodyg_line(fp, &X->Def, t,
+                      map[t] >= 0L ? values[map[t]] : 0.0);
+  }
+  status = 0;
+done:
+  free(index);
+  free(map);
+  free(ops);
+  free(values);
+  return status;
+}
+
 static int get_nbodyg_filename(struct BindStruct *X, char *sdt)
 {
   switch (X->Def.iCalcType) {
@@ -1543,6 +1599,7 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   FILE *fp;
   char sdt[D_FileNameMax];
   unsigned int t;
+  int sector_status = 0;
 
   if (X->Def.NNBodyG < 1) return 0;
   if (nbodyg_is_supported_model(&X->Def) == FALSE) {
@@ -1559,7 +1616,9 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
   }
 
-  for (t = 0; t < X->Def.NNBodyG; t++) {
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    sector_status = expec_nbodyg_symmetry(X, vec, fp);
+  } else for (t = 0; t < X->Def.NNBodyG; t++) {
     double complex value = 0.0;
     if (X->Def.NBodyG_IsZero[t] == FALSE) {
       if (X->Def.iCalcModel == Spin) value = calc_nbodyg_term_spin(X, t, vec);
@@ -1581,5 +1640,6 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
   } else {
     fclose(fp);
   }
+  if (sector_status != 0) return -1;
   return 0;
 }

@@ -757,6 +757,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
