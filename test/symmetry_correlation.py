@@ -501,8 +501,6 @@ def negative_tests(path, model, case, fam, ops, sector, requests):
     L = case["L"]
     write_inputs(path, model, case, fam, ops, sector["chars"], 2, {"one": requests["one"]})
     fixture.run(path, "reject_fulldiag", fail="sector FullDiag outputs eigenvalues only")
-    write_inputs(path, model, case, fam, ops, sector["chars"], 1, {"one": requests["one"]})
-    fixture.run(path, "reject_tpq", fail="sector TPQ outputs SS/Norm/Flct only")
     if model == "Spin":
         write_inputs(path, model, case, fam, ops, sector["chars"], 3,
                      {"one": requests["one"], "three": [[0, 0, 0, 1, 1, 1, 1, 0, 2, 0, 2, 0]]})

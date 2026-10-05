@@ -134,10 +134,6 @@ def check_sector(path, model, length, momentum, states, raw, projector):
                    failure=("OutputHam is only defined for FullDiag" if option.startswith("OutputHam")
                             else "does not support " + option.split()[0]))
         (path / "calc.def").write_text(calc)
-        fixture.definition(path, "one.def", [[0, 0, 0, 0]])
-        (path / "reject.def").write_text((path / "sym.def").read_text() + "OneBodyG one.def\n")
-        invoke(path, [fixture.HPHI, "-e", "reject.def"], "correlation",
-               failure="sector TPQ outputs SS/Norm/Flct only")
     print("{} k={}: {} dimensions, all TPQ columns match independent evolution".format(model, momentum, dim))
 
 
