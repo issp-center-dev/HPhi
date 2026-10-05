@@ -207,13 +207,13 @@ TransSym指定ファイル
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
    相関関数（``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
-   ``SixBodyG``、``NBodyG``）は ``Lanczos`` と ``CG`` でsector内で計算されます。
+   ``SixBodyG``、``NBodyG``）は ``Lanczos``、``CG``、``TPQ``、``cTPQ``、
+   ``TimeEvolution`` でsector内計算されます。
    値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
    同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタート、
-   ハミルトニアンの入出力は本ファイルと併用できません。``TPQ``、``cTPQ``、
-   ``TimeEvolution`` との相関関数はこの版では利用できません。固有ベクトルの入出力は、
+   ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。
    未対応の組み合わせはエラーで終了します。
 
@@ -245,8 +245,10 @@ Standard modeの ``MomentumIndex`` 生成は引き続きLanczosとCGに限られ
 Hubbardのdoublonとその二乗平均を含む、既存SS/Norm/Flctの全列に対応します。
 SSの ``phys_var`` 列は従来どおり :math:`\langle H^2\rangle` で、
 エネルギー平均の二乗を引いた分散ではありません。
-``OutputGreenFormat=1`` によるSS/Norm/Flct集約出力も使えます。
-相関関数、restart、ベクトル入出力、スペクトルは ``TransSym`` と併用できません。
+``OutputGreenFormat=1`` によりSS/Norm/Flctと相関関数の集約出力を使えます。
+相関関数は ``ExpecInterval`` が選ぶTPQ評価stepで再計算されます。大規模sectorで
+全site pairを毎step要求すると高コストになります。restart、ベクトル入出力、
+スペクトルは ``TransSym`` と併用できません。
 
 計算結果は **単一の対称性セクター内** のtraceを推定します。
 固定量子数空間全体の熱平均ではありません。manifestには
@@ -269,6 +271,9 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 両flagは0または1です。行 ``i`` の次数はbeta ``i`` から ``i+1`` への発展に使い、
 最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
 ``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
+明示scheduleでは初期点と ``physcal=1`` の行で相関関数を出力します。``InvTemp`` を
+指定しない場合は ``ExpecInterval`` が出力stepを選びます。``OutputGreenFormat=1`` は
+全sample・stepを添字付きの相関関数集約ファイルへまとめます。
 manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。
 
@@ -296,7 +301,10 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 
 ``SS`` / ``Norm`` / ``Flct`` はsector内の期待値を出力します。 ``Norm`` は各stepの
 規格化前のnormで、Taylor打切りにより1からずれる場合があります。次数を増やすか
-時間間隔を減らして収束を確認してください。相関関数と ``ReStart`` は未対応です。
+時間間隔を減らして収束を確認してください。相関関数は伝播後、``ExpecInterval`` が
+選ぶstepで評価されます。``OutputGreenFormat=1`` は0始まりの時刻stepを添字として
+集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
+なります。``ReStart`` は引き続き非対応です。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
 記録します。
 

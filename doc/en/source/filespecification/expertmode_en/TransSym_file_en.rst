@@ -214,17 +214,16 @@ Use rules
 
    Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
    ``FourBodyG``, ``SixBodyG``, and ``NBodyG``) are computed in the sector for
-   ``Lanczos`` and ``CG``. The values are the exact expectation values in the
-   sector; rows that are mapped onto each other by a symmetry operation have
-   the same value, and an operator that leaves the sector gives zero. For
-   canonical ``Spin``, ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected
-   at startup as in the raw basis; ``NBodyG`` expresses the same products.
-   ``AnomalousG``, spectrum calculations, restart, and the input and output of
-   Hamiltonians are not supported together with this file. Correlation
-   functions with ``TPQ``, ``cTPQ``, and ``TimeEvolution`` are not available in
-   this version. Eigenvector I/O is available for CG and TimeEvolution through
-   the sector checkpoint format below. Unsupported combinations terminate with
-   an error.
+   ``Lanczos``, ``CG``, ``TPQ``, ``cTPQ``, and ``TimeEvolution``. The values are
+   the exact expectation values in the sector; rows that are mapped onto each
+   other by a symmetry operation have the same value, and an operator that
+   leaves the sector gives zero. For canonical ``Spin``,
+   ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected at startup as in the
+   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG``, spectrum
+   calculations, restart, and the input and output of Hamiltonians are not
+   supported together with this file. Eigenvector I/O is available for CG and
+   TimeEvolution through the sector checkpoint format below. Unsupported
+   combinations terminate with an error.
 
 Sector Lanczos basis layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -256,9 +255,11 @@ Standard mode still limits ``MomentumIndex`` generation to Lanczos and CG.
 All existing SS/Norm/Flct columns are supported, including doublon and its
 second moment for Hubbard. The SS ``phys_var`` column retains its existing
 meaning :math:`\langle H^2\rangle`, not the subtracted variance.
-``OutputGreenFormat=1`` selects the usual aggregate SS/Norm/Flct files even
-though correlation functions remain unsupported. Restart, vector I/O,
-and spectrum remain unavailable with ``TransSym``.
+``OutputGreenFormat=1`` selects the usual aggregate files for SS/Norm/Flct and
+for the correlation functions. Correlation functions are recomputed at the TPQ
+evaluation steps selected by ``ExpecInterval``; requesting every site pair at
+every step can be expensive for large sectors. Restart, vector I/O, and
+spectrum remain unavailable with ``TransSym``.
 
 These results estimate the trace within a **single symmetry sector**; they
 are not a thermal average over the entire fixed-quantum-number space.
@@ -284,6 +285,10 @@ integer less than ``INT_MAX``, and both flags are 0 or 1. The order on row
 ``i`` advances from beta ``i`` to beta ``i+1``; the final order is unused.
 Sector cTPQ rejects any nonzero ``eigen`` flag, including at the initial or
 final point. Vector I/O and restart remain unsupported.
+For an explicit schedule, correlation functions are written at the initial
+point and at rows whose ``physcal`` flag is 1. Without ``InvTemp``,
+``ExpecInterval`` selects the correlation steps. ``OutputGreenFormat=1``
+collects all samples and steps into the indexed aggregate correlation files.
 The manifest records ``canonical_tpq_steps``, ``beta_schedule`` and either
 the uniform step/order or all explicit beta/order rows. As for mTPQ, these
 outputs describe a single sector, not the sum over all sectors.
@@ -317,7 +322,11 @@ provenance, but do not resume its clock. For time-dependent interactions and Pei
 ``SS``, ``Norm`` and ``Flct`` contain sector expectation values. ``Norm`` is
 the norm before each step's normalization; Taylor truncation can make it
 differ from one. Increase ``ExpandCoef`` or reduce the time spacing to check
-convergence. Correlation functions and ``ReStart`` remain unsupported.
+convergence.
+Correlation functions are evaluated after propagation at the steps selected
+by ``ExpecInterval``. ``OutputGreenFormat=1`` collects them into files indexed
+by the zero-based time-grid step. Requesting every site pair at every step can
+be expensive for large sectors. ``ReStart`` remains unsupported.
 The sector manifest records the actual time grid, Taylor order, and source
 checkpoint's method, state, step, time and Hamiltonian digest.
 
