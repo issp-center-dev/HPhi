@@ -278,6 +278,12 @@ add_hphi_test(symmetry_transsym_metadata)
 add_hphi_test(symmetry_sector_manifest)
 add_hphi_test(symmetry_general_terms)
 set_tests_properties(symmetry_general_terms PROPERTIES LABELS "symmetry;interall")
+add_hphi_test(symmetry_correlation)
+set_tests_properties(symmetry_correlation PROPERTIES LABELS "symmetry;correlation")
+add_hphi_mpi_test(symmetry_correlation_memory_limit exact:4)
+set_tests_properties(symmetry_correlation_memory_limit PROPERTIES
+    LABELS "symmetry;correlation;memory"
+    ENVIRONMENT "HPHI_TEST_MODELS=Spin;HPHI_TEST_LAYOUTS=distributed;HPHI_TEST_PRIMARY_ONLY=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=19550")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
