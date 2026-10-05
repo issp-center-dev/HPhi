@@ -82,6 +82,22 @@ add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
+
+add_executable(unittest_symmetry_correlation
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
+target_include_directories(unittest_symmetry_correlation
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_correlation PRIVATE
+    DSFMT_MEXP=19937 HPHI_SYMMETRY_CORRELATION_VERIFY
+    HPHI_SYMMETRY_CORRELATION_BLOCK_TRANSITIONS=128)
+target_link_libraries(unittest_symmetry_correlation m)
+add_test(NAME unittest_symmetry_correlation
+    COMMAND unittest_symmetry_correlation)
+set_tests_properties(unittest_symmetry_correlation
+    PROPERTIES LABELS "unit;symmetry")
+
 if(MPI_FOUND)
     add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
     set_tests_properties(symmetry_rank_local_run_mpi

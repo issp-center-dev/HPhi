@@ -131,26 +131,27 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   return 0;
 }
 
-int ApplySymmetryTerm(const struct DefineList *def,
-                      const struct SymmetryTerm *term, unsigned long state,
-                      unsigned long *out, double complex *value)
+int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
+                         const int *index, unsigned long state,
+                         unsigned long *out, double *sign)
 {
-  int f;
-  double sign = 1;
+  unsigned int f, nint;
+  double s = 1.0;
   unsigned int width = (def && (def->iCalcModel == Hubbard || def->iCalcModel == tJ)) ? 2U : 1U;
-  if (!def || !term || !out || !value || term->factors < 1 || term->factors > 2 ||
+  if (!def || !index || !out || !sign || factors < 1U || factors > UINT_MAX / 4U ||
       def->Nsite == 0 || def->Nsite > CHAR_BIT * sizeof(state) / width ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
        def->iCalcModel != Hubbard && def->iCalcModel != tJ)) return -1;
-  for (f = 0; f < (int)(4*term->factors); f += 2)
-    if (term->index[f] < 0 || (unsigned int)term->index[f] >= def->Nsite ||
-        term->index[f+1] < 0 || term->index[f+1] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
+  nint = 4U * factors;
+  for (f = 0; f < nint; f += 2U)
+    if (index[f] < 0 || (unsigned int)index[f] >= def->Nsite ||
+        index[f+1U] < 0 || index[f+1U] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
       return -1;
   if (def->iCalcModel == Spin)
-    for (f = 0; f < (int)term->factors; ++f)
-      if (term->index[4*f] != term->index[4*f+2]) return -1;
-  for (f = (int)term->factors - 1; f >= 0; --f) {
-    const int *x = term->index + 4*f;
+    for (f = 0; f < factors; ++f)
+      if (index[4U*f] != index[4U*f+2U]) return -1;
+  for (f = factors; f-- > 0U;) {
+    const int *x = index + 4U*f;
     if (def->iCalcModel == Spin) {
       unsigned long mask = 1UL << x[0];
       if ((int)((state >> x[0]) & 1UL) != x[3]) return 0;
@@ -161,7 +162,7 @@ int ApplySymmetryTerm(const struct DefineList *def,
         unsigned int orbital = width * (unsigned int)x[2*op] + (unsigned int)x[2*op+1];
         unsigned long mask = 1UL << orbital, below = state & (mask - 1UL);
         if (((state & mask) != 0) != (op == 1)) return 0;
-        while (below) { sign = -sign; below &= below - 1UL; }
+        while (below) { s = -s; below &= below - 1UL; }
         state ^= mask;
       }
     }
@@ -169,8 +170,20 @@ int ApplySymmetryTerm(const struct DefineList *def,
   /* Project the final state onto the physical tJ Hilbert space. */
   if (def->iCalcModel == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
   *out = state;
-  *value = sign * term->value;
+  *sign = s;
   return 1;
+}
+
+int ApplySymmetryTerm(const struct DefineList *def,
+                      const struct SymmetryTerm *term, unsigned long state,
+                      unsigned long *out, double complex *value)
+{
+  double sign = 1.0;
+  int status;
+  if (!term || !value || term->factors < 1U || term->factors > 2U) return -1;
+  status = ApplySymmetryFactors(def, term->factors, term->index, state, out, &sign);
+  if (status == 1) *value = sign * term->value;
+  return status;
 }
 
 /* Canonical polynomials are used only at validation time. Fermions use
