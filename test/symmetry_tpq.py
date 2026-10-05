@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 import numpy as np
+import symmetry_correlation as correlation
 import symmetry_general_terms as fixture
 
 fixture.ROOT = Path("symmetry_tpq")
@@ -45,6 +46,9 @@ def check_sector(path, model, length, momentum, states, raw, projector):
     dim = basis.shape[1]
     np.testing.assert_allclose(basis.conj().T @ basis, np.eye(dim), atol=1e-12)
     h = basis.conj().T @ raw @ basis
+    requests = correlation.step_requests(model, length)
+    operators = correlation.sector_operators(model, length, states, basis, requests)
+    correlation.add_requests(path, "sym.def", requests)
     dtype = {"Spin": -1, "SpinlessFermion": 1, "Hubbard": 0, "tJ": -1}[model]
     calc = (path / "calc.def").read_text().replace("CalcType 3", "CalcType 1")
     calc += "InitialVecType {}\n".format(dtype)
@@ -76,12 +80,13 @@ def check_sector(path, model, length, momentum, states, raw, projector):
                            if model in ("Hubbard", "tJ") else 0 for s in states])
     doublon = basis.conj().T @ (doublon_raw[:, None] * basis)
     doublon2 = basis.conj().T @ ((doublon_raw**2)[:, None] * basis)
-    expected = []
+    expected, vectors_by_step = [], []
     for sample, vector in enumerate(vectors):
-        ss, norms, flct = [], [], []
+        ss, norms, flct, step_vectors = [], [], [], []
         norm = first_norms[sample]
         np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-12)
         for step in range(5):
+            step_vectors.append(vector.copy())
             hv = h @ vector
             energy = np.vdot(vector, hv).real
             energy2 = np.vdot(hv, hv).real
@@ -96,35 +101,81 @@ def check_sector(path, model, length, momentum, states, raw, projector):
             norm = np.linalg.norm(vector)
             vector /= norm
         expected.append([np.array(ss), np.array(norms), np.array(flct)])
+        vectors_by_step.append(step_vectors)
+    correlation.assert_nonzero_operators(
+        operators, [vector for sample in vectors_by_step for vector in sample]
+    )
     for layout in ["default", "replicated"]:
         env = dict(os.environ)
         env.pop("HPHI_SYMMETRY_BASIS_LAYOUT", None)
         if layout != "default":
             env["HPHI_SYMMETRY_BASIS_LAYOUT"] = layout
-        for aggregate in [0, 1]:
-            (path / "calc.def").write_text(calc + "OutputGreenFormat {}\n".format(aggregate))
-            if (path / "output").exists():
-                shutil.rmtree(path / "output")
-            label = "k{}_{}_aggregate{}".format(momentum, layout, aggregate)
-            text = invoke(path, fixture.MPI + [fixture.HPHI, "-e", "sym.def"], label, env)
-            if layout == "default":
-                assert "distributed (default for TransSym TPQ)" in text
-            record = dict(line.split("=", 1) for line in (path / "output/zvo_symmetry_sector.dat").read_text().splitlines())
-            assert record["ensemble"] == "single_symmetry_sector"
-            assert record["calc_type"] == "TPQ" and int(record["sector_dim"]) == dim
-            assert int(record["num_ave"]) == 2 and float(record["large_value"]) == 4
-            assert int(record["initial_vec_type"]) == dtype and int(record["mpi_ranks"]) == len(ranks)
-            for sample in range(2):
-                for family, reference in zip(["SS", "Norm", "Flct"], expected[sample]):
-                    name = "{}_tpq.dat".format(family) if aggregate else "{}_rand{}.dat".format(family, sample)
-                    actual = np.loadtxt(path / "output" / ("zvo_" + name), ndmin=2)
-                    if aggregate:
-                        actual = actual[actual[:, 0] == sample]
-                        actual = np.column_stack((actual[:, 2:], actual[:, 1]))
-                    np.testing.assert_allclose(actual, reference, rtol=2e-11, atol=2e-11,
-                                               err_msg="{} {} {} sample{}".format(model, label, family, sample))
-            # Preserve outputs for inspection instead of only the last run.
-            shutil.copytree(path / "output", path / label)
+        for interval in [1, 2]:
+            # The established mTPQ output schedule writes the initial step and
+            # then resumes correlation output at step 2; step 1 has no Green
+            # file even when ExpecInterval is 1.
+            emitted_steps = [0] + [step for step in range(2, 5)
+                                   if step % interval == 0]
+            (path / "mod.def").write_text(
+                mod + "NumAve 2\nExpecInterval {}\n".format(interval)
+            )
+            for aggregate in [0, 1]:
+                (path / "calc.def").write_text(calc + "OutputGreenFormat {}\n".format(aggregate))
+                if (path / "output").exists():
+                    shutil.rmtree(path / "output")
+                label = "k{}_{}_interval{}_aggregate{}".format(
+                    momentum, layout, interval, aggregate
+                )
+                text = invoke(path, fixture.MPI + [fixture.HPHI, "-e", "sym.def"], label, env)
+                if layout == "default":
+                    assert "distributed (default for TransSym TPQ)" in text
+                record = dict(line.split("=", 1) for line in (path / "output/zvo_symmetry_sector.dat").read_text().splitlines())
+                assert record["ensemble"] == "single_symmetry_sector"
+                assert record["calc_type"] == "TPQ" and int(record["sector_dim"]) == dim
+                assert int(record["num_ave"]) == 2 and float(record["large_value"]) == 4
+                assert int(record["initial_vec_type"]) == dtype and int(record["mpi_ranks"]) == len(ranks)
+                for sample in range(2):
+                    for family, reference in zip(["SS", "Norm", "Flct"], expected[sample]):
+                        name = "{}_tpq.dat".format(family) if aggregate else "{}_rand{}.dat".format(family, sample)
+                        actual = np.loadtxt(path / "output" / ("zvo_" + name), ndmin=2)
+                        if aggregate:
+                            actual = actual[actual[:, 0] == sample]
+                            actual = np.column_stack((actual[:, 2:], actual[:, 1]))
+                        np.testing.assert_allclose(actual, reference, rtol=2e-11, atol=2e-11,
+                                                   err_msg="{} {} {} sample{}".format(model, label, family, sample))
+                    for step in range(5):
+                        if step not in emitted_steps:
+                            if not aggregate:
+                                for kind in requests:
+                                    missing = path / "output" / "zvo_{}_set{}step{}.dat".format(
+                                        correlation.FILES[kind], sample, step
+                                    )
+                                    assert not missing.exists(), (label, missing)
+                            continue
+                        if aggregate:
+                            name = "zvo_{}_tpq.dat"
+                            flt = lambda data, s=sample, n=step: data[
+                                (data[:, 0] == s) & (data[:, 1] == n)
+                            ]
+                        else:
+                            name = "zvo_{{}}_set{}step{}.dat".format(sample, step)
+                            flt = None
+                        correlation.check_step_file(
+                            path, name, requests, operators,
+                            vectors_by_step[sample][step],
+                            prefix=2 if aggregate else 0,
+                            prefix_filter=flt,
+                            label="{} {} sample{} step{}".format(model, label, sample, step),
+                        )
+                if aggregate:
+                    correlation.check_aggregate_index(
+                        path, "zvo_{}_tpq.dat", requests,
+                        [(sample, step) for sample in range(2)
+                         for step in emitted_steps],
+                        label=label,
+                    )
+                # Preserve outputs for inspection instead of only the last run.
+                shutil.copytree(path / "output", path / label)
     # Feature gates must report TPQ-specific scope, before any MPI matvec.
     if model == "Spin" and momentum == 0:
         (path / "calc.def").write_text(calc)
