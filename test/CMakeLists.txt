@@ -82,6 +82,46 @@ add_test(NAME unittest_symmetry_basis
     COMMAND unittest_symmetry_basis)
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
+
+add_executable(unittest_symmetry_correlation
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+target_include_directories(unittest_symmetry_correlation
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_correlation PRIVATE
+    DSFMT_MEXP=19937 HPHI_SYMMETRY_CANONICAL_VERIFY
+    HPHI_SYMMETRY_CORRELATION_VERIFY
+    HPHI_SYMMETRY_CORRELATION_BLOCK_TRANSITIONS=128
+    HPHI_SYMMETRY_HALO_BITSET_CAP_BYTES=1
+    HPHI_SYMMETRY_DISTRIBUTION_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_DIRECTORY_MEMORY_BYTES=16384
+    HPHI_SYMMETRY_PLAN_BLOCK_MEMORY_BYTES=0)
+target_link_libraries(unittest_symmetry_correlation m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_correlation ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_correlation OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_correlation
+    COMMAND unittest_symmetry_correlation)
+set_tests_properties(unittest_symmetry_correlation
+    PROPERTIES LABELS "unit;symmetry")
+
 if(MPI_FOUND)
     add_hphi_mpi_test(symmetry_rank_local_run_mpi min:2)
     set_tests_properties(symmetry_rank_local_run_mpi
@@ -238,6 +278,12 @@ add_hphi_test(symmetry_transsym_metadata)
 add_hphi_test(symmetry_sector_manifest)
 add_hphi_test(symmetry_general_terms)
 set_tests_properties(symmetry_general_terms PROPERTIES LABELS "symmetry;interall")
+add_hphi_test(symmetry_correlation)
+set_tests_properties(symmetry_correlation PROPERTIES LABELS "symmetry;correlation")
+add_hphi_mpi_test(symmetry_correlation_memory_limit exact:4)
+set_tests_properties(symmetry_correlation_memory_limit PROPERTIES
+    LABELS "symmetry;correlation;memory"
+    ENVIRONMENT "HPHI_TEST_MODELS=Spin;HPHI_TEST_LAYOUTS=distributed;HPHI_TEST_PRIMARY_ONLY=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=19550")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -717,6 +763,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c

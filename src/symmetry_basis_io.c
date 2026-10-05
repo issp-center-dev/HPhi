@@ -316,8 +316,8 @@ static int has_fixed_spinful_sector(const struct DefineList *def)
  *   ham_output          OutputHam.
  *   ham_input           InputHam.
  *
- * Every feature column is 0 for every method in this version, so TransSym
- * runs output energy/norm/convergence, or TPQ SS/Norm/Flct, only.
+ * Correlation output is available for Lanczos and CG. TPQ, cTPQ and time
+ * evolution remain deferred to the next implementation stage.
  */
 struct SymmetryMethodCapability {
   int calc_type;
@@ -335,10 +335,10 @@ struct SymmetryMethodCapability {
 
 static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
-  { Lanczos,       "Lanczos",       1,      1,   0,   0,   0,   0,    0,   0,   0   },
+  { Lanczos,       "Lanczos",       1,      1,   1,   0,   0,   0,    0,   0,   0   },
   { TPQCalc,       "TPQ",           1,      1,   0,   0,   0,   0,    0,   0,   0   },
   { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { CG,            "CG",            1,      1,   0,   0,   0,   1,    1,   0,   0   },
+  { CG,            "CG",            1,      1,   1,   0,   0,   1,    1,   0,   0   },
   { TimeEvolution, "TimeEvolution", 1,      1,   0,   0,   0,   1,    1,   0,   0   },
   { cTPQ,          "cTPQ",          1,      1,   0,   0,   0,   0,    0,   0,   0   },
 };
@@ -538,6 +538,14 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
       ? "sector TPQ outputs SS/Norm/Flct only"
       : def->iCalcType == FullDiag ? "sector FullDiag outputs eigenvalues only"
       : "it outputs energy/norm/convergence only";
+  if (def->iCalcModel == Spin &&
+      (def->NTBody > 0 || def->NFBody > 0 || def->NSBody > 0)) {
+    fprintf(stdoutMPI,
+            "Error: ThreeBodyG/FourBodyG/SixBodyG for canonical Spin is not supported. "
+            "Use SpinGC or remove the N-body Green function request. "
+            "In a TransSym sector, NBodyG expresses the same products.\n");
+    return -1;
+  }
   const struct SymmetryOptionGate gates[] = {
     { "spectrum calculations",
       "CalcSpec is not available in this version",
@@ -561,9 +569,10 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
     { "correlation functions (NBodyG)", correlation_reason,
       def->NNBodyG > 0,
       symmetry_method_supports(cap, cap->correlation) },
-    { "correlation functions (AnomalousG)", correlation_reason,
+    { "correlation functions (AnomalousG)",
+      "AnomalousG is not available in a canonical sector",
       def->NAnomalousG > 0,
-      symmetry_method_supports(cap, cap->correlation) },
+      0 },
   };
   return reject_first_unsupported_option(
       cap, gates, sizeof(gates) / sizeof(gates[0]));

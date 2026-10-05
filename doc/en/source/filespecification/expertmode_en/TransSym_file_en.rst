@@ -212,10 +212,19 @@ Use rules
    unsupported. The raw spinless solver still rejects off-diagonal ``InterAll``;
    this extension applies to ``TransSym``. Standard-mode generation is unchanged.
 
-   Correlation functions, spectrum calculations, restart, and the input and
-   output of Hamiltonians are not supported together with this file.
-   Eigenvector I/O is available for CG and TimeEvolution through the sector checkpoint format
-   below. Unsupported combinations terminate with an error.
+   Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
+   ``FourBodyG``, ``SixBodyG``, and ``NBodyG``) are computed in the sector for
+   ``Lanczos`` and ``CG``. The values are the exact expectation values in the
+   sector; rows that are mapped onto each other by a symmetry operation have
+   the same value, and an operator that leaves the sector gives zero. For
+   canonical ``Spin``, ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected
+   at startup as in the raw basis; ``NBodyG`` expresses the same products.
+   ``AnomalousG``, spectrum calculations, restart, and the input and output of
+   Hamiltonians are not supported together with this file. Correlation
+   functions with ``TPQ``, ``cTPQ``, and ``TimeEvolution`` are not available in
+   this version. Eigenvector I/O is available for CG and TimeEvolution through
+   the sector checkpoint format below. Unsupported combinations terminate with
+   an error.
 
 Sector Lanczos basis layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

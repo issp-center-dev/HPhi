@@ -31,6 +31,8 @@
 #include "green_output.h"
 #include "green_row_format.h"
 #include "rearray_interactions.h"
+#include "symmetry_correlation.h"
+#include "symmetry_mpi_exchange.h"
 
 /**
  * @file   expec_cisajscktaltdc.c
@@ -56,6 +58,86 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
 int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4);
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
+
+static void write_symmetry_green_row(FILE *fp, struct BindStruct *X,
+                                     const int *row, unsigned int factors,
+                                     double complex value)
+{
+  unsigned int k, nint = 4U * factors;
+  GreenOutputWriteIndexPrefix(fp, X);
+  for (k = 0; k < nint; ++k) {
+    /* Preserve the legacy fixed-body raw layout, including its grouping
+     * spaces before factors four and five. */
+    if ((factors >= 4U && k == 12U) || (factors >= 6U && k == 16U)) fputc(' ', fp);
+    fprintf(fp, " %4ld", (long)row[k]);
+  }
+  if ((factors == 2U && X->Def.iCalcModel == Spin) || factors >= 3U)
+    fprintf(fp, " %.10lf %.10lf \n", creal(value), cimag(value));
+  else
+    fprintf(fp, " %.10lf %.10lf\n", creal(value), cimag(value));
+}
+
+static int expec_cisajscktalt_Symmetry(struct BindStruct *X,
+                                       double complex *vec,
+                                       FILE **fp2, FILE **fp3,
+                                       FILE **fp4, FILE **fp6)
+{
+  struct CorrelationKind {
+    int **rows;
+    unsigned int count;
+    unsigned int factors;
+    FILE *fp;
+  } kinds[4] = {
+    { X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 2U, *fp2 },
+    { X->Def.TBody, X->Def.NTBody, 3U, *fp3 },
+    { X->Def.FBody, X->Def.NFBody, 4U, *fp4 },
+    { X->Def.SBody, X->Def.NSBody, 6U, *fp6 }
+  };
+  size_t total = 0, ints = 0, n = 0, slot = 0, off = 0;
+  unsigned int kind, i;
+  int *index = NULL;
+  long *map = NULL;
+  struct SymmetryCorrelationOperator *ops = NULL;
+  double complex *values = NULL;
+  int status = -1, local_error;
+  for (kind = 0; kind < 4U; ++kind) {
+    total += kinds[kind].count;
+    ints += (size_t)kinds[kind].count * 4U * kinds[kind].factors;
+  }
+  index = (int *)malloc((ints + 4U) * sizeof(*index));
+  map = (long *)malloc((total + 1U) * sizeof(*map));
+  ops = (struct SymmetryCorrelationOperator *)calloc(total + 1U, sizeof(*ops));
+  values = (double complex *)calloc(total + 1U, sizeof(*values));
+  local_error = index == NULL || map == NULL || ops == NULL || values == NULL;
+  if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), local_error) != 0)
+    goto done;
+  for (kind = 0; kind < 4U; ++kind) {
+    for (i = 0; i < kinds[kind].count; ++i, ++slot) {
+      const int *row = kinds[kind].rows[i];
+      unsigned int len = 4U * kinds[kind].factors;
+      memcpy(index + off, row, len * sizeof(*index));
+      ops[n].factors = kinds[kind].factors;
+      ops[n].index = index + off;
+      map[slot] = (long)n++;
+      off += len;
+    }
+  }
+  if (n > 0U && SymmetryCorrelationExpectation(X, vec, ops, n, values) != 0)
+    goto done;
+  slot = 0;
+  for (kind = 0; kind < 4U; ++kind)
+    for (i = 0; i < kinds[kind].count; ++i, ++slot)
+      write_symmetry_green_row(kinds[kind].fp, X, kinds[kind].rows[i],
+                               kinds[kind].factors,
+                               map[slot] >= 0L ? values[map[slot]] : 0.0);
+  status = 0;
+done:
+  free(index);
+  free(map);
+  free(ops);
+  free(values);
+  return status;
+}
 
 /**
  * @brief Compute two-body Green's functions <psi| c†_i c_j c†_k c_l |psi>
@@ -104,13 +186,14 @@ int expec_cisajscktaltdc
  )
 {
 
-  FILE *fp,*fp_2,*fp_3,*fp_4;
+  FILE *fp = NULL, *fp_2 = NULL, *fp_3 = NULL, *fp_4 = NULL;
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],sdt_4[D_FileNameMax],*tmp_char;
   long unsigned int irght,ilft,ihfbit;
 
   //For TPQ
   int step=0;
   int rand_i=0;
+  int sector_status = 0;
 
   if(X->Def.NCisAjtCkuAlvDC < 1 && X->Def.NTBody < 1 && X->Def.NFBody < 1 && X->Def.NSBody < 1) return 0;
   X->Large.mode=M_CORR;
@@ -212,7 +295,10 @@ int expec_cisajscktaltdc
     fp_4 = fp;
   }
 
-  switch(X->Def.iCalcModel){
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    sector_status = expec_cisajscktalt_Symmetry(
+        X, vec, &fp, &fp_2, &fp_3, &fp_4);
+  } else switch(X->Def.iCalcModel){
   case HubbardGC:
       if(expec_cisajscktalt_HubbardGC(X, vec, &fp)!=0){
           return -1;
@@ -535,6 +621,8 @@ int expec_cisajscktaltdc
       fclose(fp_4);
     }
   }
+
+  if (sector_status != 0) return -1;
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){

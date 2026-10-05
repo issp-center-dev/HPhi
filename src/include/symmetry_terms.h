@@ -17,7 +17,15 @@ typedef int (*SymmetryTermCallback)(const struct SymmetryTerm *, void *);
  * arrays and EDChemi, never the original InterAll as well. */
 int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
                           SymmetryTermCallback callback, void *context);
-/* Return 1 for a nonzero matrix element, 0 for zero, -1 for invalid input. */
+/* Apply an ordered product of factors from right to left. The index array has
+ * 4*factors entries (site_out, spin_out, site_in, spin_in per factor). No
+ * fixed factor limit is imposed; only overflow of 4*factors is rejected.
+ * Return 1 for a nonzero element, 0 for zero, and -1 for invalid input. */
+int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
+                         const int *index, unsigned long state,
+                         unsigned long *out, double *sign);
+/* The fixed-size SymmetryTerm wrapper retains its one/two-factor contract and
+ * multiplies the returned sign by term->value. */
 int ApplySymmetryTerm(const struct DefineList *def,
                       const struct SymmetryTerm *term, unsigned long state,
                       unsigned long *out, double complex *value);
