@@ -1440,6 +1440,13 @@ int ReadDefFileNInt(
     }
     break;
   case SpinGC:
+    if (X->iFlgSymmetryBasis &&
+        (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
+      fprintf(stdoutMPI, "Error: SpinGC TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n");
+      return -1;
+    }
+    /* Preserve the raw GC warning below. */
+    /* fall through */
   case KondoGC:
   case HubbardGC:
   case tJGC:

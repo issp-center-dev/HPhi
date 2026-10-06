@@ -128,13 +128,17 @@ static int hash_terms(uint64_t *hash, const char *tag, unsigned int count,
 
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest)
 {
-  uint64_t hash = hash_tag(FNV_OFFSET, "hphi-parsed-hamiltonian-fnv1a64-v2");
+  uint64_t hash;
   if (digest == NULL) return -1;
   *digest = 0;
   if (def == NULL) return -1;
+  hash = hash_tag(FNV_OFFSET, def->iCalcModel == SpinGC
+      ? "hphi-parsed-hamiltonian-fnv1a64-v3"
+      : "hphi-parsed-hamiltonian-fnv1a64-v2");
   /* Extend this scope when enabling additional term families. Never silently
    * omit an unsupported family from an otherwise successful fingerprint. */
-  if (def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling)
+  if (def->NNBodyInterAll || def->NAnomalousTerm ||
+      (def->iCalcModel != SpinGC && def->NPairLiftCoupling))
     return -1;
   hash = hash_integer(hash, (uint32_t)def->iCalcModel, 4);
   hash = hash_integer(hash, def->Nsite, 4);
@@ -164,6 +168,9 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
     hash = hash_integer(hash, (uint32_t)def->EDSpinChemi[i], 4);
     if (hash_double(&hash, def->EDParaChemi[i])) return -1;
   }
+  if (def->iCalcModel == SpinGC &&
+      hash_terms(&hash, "pair_lift", def->NPairLiftCoupling, 2,
+                 def->PairLiftCoupling, def->ParaPairLiftCoupling, NULL)) return -1;
   *digest = hash;
   return 0;
 }
@@ -272,7 +279,8 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
 #ifdef _OPENMP
       threads = omp_get_max_threads();
 #endif
-      model = def->iCalcModel == Spin ? "Spin" :
+      model = def->iCalcModel == SpinGC ? "SpinGC" :
+              def->iCalcModel == Spin ? "Spin" :
               def->iCalcModel == SpinlessFermion ? "SpinlessFermion" :
               def->iCalcModel == tJ ? "tJ" : "Hubbard";
       switch (def->iCalcType) {
@@ -287,7 +295,9 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       fprintf(fp, "format=HPhiSymmetrySector version=1\ncalc_type=%s\nmodel=%s\n"
               "nsite=%u\nfull_dim=%lu\nsector_dim=%lu\ngroup_order=%u\n",
               method, model, def->Nsite, X->Sym->full_dim, X->Sym->dim, def->NSymTrans);
-      if (def->iCalcModel == Spin)
+      if (def->iCalcModel == SpinGC)
+        fprintf(fp, "fixed_quantities=none\npair_lift=%u\n", def->NPairLiftCoupling);
+      else if (def->iCalcModel == Spin)
         fprintf(fp, "fixed_2sz=%d\n", (int)def->Nup - (int)def->Ndown);
       else {
         fprintf(fp, "fixed_ne=%u\n", def->Ne);
@@ -298,8 +308,9 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
         fprintf(fp, "momentum_index=%d\n", def->iSymMomentumIndex);
       fprintf(fp, "group_digest=hphi-group-fnv1a64-v1:%016" PRIx64 "\n"
               "sector_digest=hphi-sector-multiset-v1:%" PRIu64 ":%016" PRIx64 ":%016" PRIx64 "\n"
-              "hamiltonian_digest=hphi-parsed-hamiltonian-fnv1a64-v2:%016" PRIx64 "\n",
-              group, sector.count, sector.xor_hash, sector.sum_hash, hamiltonian);
+              "hamiltonian_digest=hphi-parsed-hamiltonian-fnv1a64-v%d:%016" PRIx64 "\n",
+              group, sector.count, sector.xor_hash, sector.sum_hash,
+              def->iCalcModel == SpinGC ? 3 : 2, hamiltonian);
       fprintf(fp, "basis_layout=%s\nmpi_ranks=%d\nomp_threads=%d\n"
               "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u pair_hopping:%u chemi:%u interall_diagonal:%u interall_offdiagonal:%u\n"
               "exct=%u\nlanczos_max=%u\nlanczos_eps=%d\ninitial_iv=%ld\n",
