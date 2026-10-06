@@ -7,6 +7,7 @@ import struct
 import subprocess
 
 import numpy as np
+import symmetry_correlation as correlation
 import symmetry_general_terms as fixture
 
 fixture.ROOT = Path('symmetry_te')
@@ -40,6 +41,11 @@ def check(path, model, length, momentum, states, raw, projector):
     hi = basis.conj().T @ raw @ basis
     dim = len(hi)
     calc, mod, names = [(path / f).read_text() for f in ['calc.def', 'mod.def', 'sym.def']]
+    requests = correlation.step_requests(model, length)
+    operators = correlation.sector_operators(model, length, states, basis, requests)
+    correlation.add_requests(path, 'sym.def', requests)
+    correlation_names = (path / 'sym.def').read_text()
+    (path / 'sym.def').write_text(names)
     inter = (path / 'InterAll.def').read_text()
     # Change a translation-invariant density interaction, not just an energy offset.
     rows = [line.split() for line in inter.splitlines()[5:] if line.strip()]
@@ -63,85 +69,129 @@ def check(path, model, length, momentum, states, raw, projector):
     d1 = basis.conj().T @ (d_raw[:, None]*basis)
     d2 = basis.conj().T @ ((d_raw**2)[:, None]*basis)
     for layout in ['distributed', 'replicated']:
-        (path / 'InterAll.def').write_text(inter)
-        (path / 'calc.def').write_text(calc + 'OutputEigenVec 1\n')
-        (path / 'mod.def').write_text(mod)
-        (path / 'sym.def').write_text(names)
-        if (path / 'output').exists():
-            shutil.rmtree(path / 'output')
-        fixture.run(path, 'seed_k{}_{}'.format(momentum, layout), layout=layout)
-        files = sorted((path / 'output').glob('zvo_eigenvec_0_rank_*.dat'),
-                       key=lambda p: int(p.stem.split('rank_')[1]))
-        initial = []
-        for p in files:
-            initial.extend(np.frombuffer(p.read_bytes()[224:], dtype='<c16'))
-            shutil.copyfile(p, p.with_name(p.name.replace('zvo_', 'seed_')))
-        initial = np.array(initial)
-        np.testing.assert_allclose(hi @ initial, np.linalg.eigvalsh(hi)[0]*initial, atol=3e-7)
-        fixture.definition(path, 'InterAll.def', rows)
-        te_calc = calc.replace('CalcType 3', 'CalcType 4') + 'InputEigenVec 1\nOutputEigenVec 1\n'
-        (path / 'calc.def').write_text(te_calc)
-        (path / 'mod.def').write_text(mod.replace('Lanczos_max 400', 'Lanczos_max 5') + 'ExpandCoef 8\nOutputInterval 1\n')
-        (path / 'sym.def').write_text(names + 'SpectrumVec seed_eigenvec_0\nTEOneBody times.def\n')
-        (path / 'times.def').write_text('====\nNTimeSteps 5\n====\n====\n====\n' + ''.join('{} 0\n'.format(t) for t in times))
-        fixture.run(path, 'evolve_k{}_{}'.format(momentum, layout), layout=layout)
-        expected_ss, expected_norm, expected_flct = [], [], []
-        state = initial.copy()
-        for step, t in enumerate(times):
-            dt = t-times[step-1] if step else 0
-            x = -1j*dt*eig
-            poly = sum(x**k / math.factorial(k) for k in range(9))
-            state = rot @ (poly*(rot.conj().T @ state))
-            norm = np.linalg.norm(state)
-            state /= norm
-            hv = hf @ state
-            doublon, doublon2 = np.vdot(state, d1 @ state).real, np.vdot(state, d2 @ state).real
-            expected_ss.append([t, np.vdot(state, hv).real, np.vdot(hv, hv).real, doublon, n, step])
-            expected_norm.append([t, norm, step])
-            expected_flct.append([t, n, n*n, doublon, doublon2, sz, sz*sz, step])
-            np.testing.assert_allclose(vector(path, 'zvo_eigenvec_{}'.format(step), step, t), state, atol=2e-11, rtol=0)
-        np.testing.assert_allclose(vector(path, 'zvo_eigenvec_final', 4, times[-1]), state, atol=2e-11, rtol=0)
-        for family, expected in [('SS', expected_ss), ('Norm', expected_norm), ('Flct', expected_flct)]:
-            np.testing.assert_allclose(np.loadtxt(path / 'output' / ('zvo_'+family+'.dat')), expected, atol=3e-11, rtol=0)
-        exact = rot @ (np.exp(-1j*times[-1]*eig)*(rot.conj().T @ initial))
-        np.testing.assert_allclose(state, exact, atol=2e-7, rtol=0)
-        record = dict(line.split('=', 1) for line in (path / 'output/zvo_symmetry_sector.dat').read_text().splitlines())
-        assert record['calc_type'] == 'TimeEvolution' and record['te_hamiltonian'] == 'static'
-        assert record['source_method'] == '3' and record['expand_coef'] == '8'
-        for step, t in enumerate(times):
-            assert float(record['te_time_'+str(step)]) == t
-        shutil.copytree(path / 'output', path / 'k{}_{}'.format(momentum, layout))
-        if model == 'Spin' and momentum == 0:
-            # A TE checkpoint imports a state into a NEW clock, with the default
-            # distributed layout as well as the explicit rollback layout.
-            (path / 'sym.def').write_text(names + 'SpectrumVec zvo_eigenvec_final\nTEOneBody times.def\n')
-            env = dict(os.environ)
-            if layout == 'distributed':
-                env.pop('HPHI_SYMMETRY_BASIS_LAYOUT', None)
-            else:
-                env['HPHI_SYMMETRY_BASIS_LAYOUT'] = layout
-            with (path / ('import_te_'+layout+'.log')).open('w') as fp:
-                result = subprocess.run(fixture.MPI + [fixture.HPHI, '-e', 'sym.def'], cwd=path,
-                                        env=env, stdout=fp, stderr=subprocess.STDOUT, timeout=120)
-            assert result.returncode == 0, (path / ('import_te_'+layout+'.log')).read_text()
-            np.testing.assert_allclose(vector(path, 'zvo_eigenvec_0', 0, 0), state, atol=2e-11, rtol=0)
-            second = state.copy()
-            for dt in np.diff(times):
-                poly = sum((-1j*dt*eig)**k / math.factorial(k) for k in range(9))
-                second = rot @ (poly*(rot.conj().T @ second))
-                second /= np.linalg.norm(second)
-            np.testing.assert_allclose(vector(path, 'zvo_eigenvec_final', 4, times[-1]), second, atol=3e-11, rtol=0)
-            record = dict(line.split('=', 1) for line in (path / 'output/zvo_symmetry_sector.dat').read_text().splitlines())
-            assert record['source_method'] == '4' and float(record['source_time']) == times[-1]
-            (path / 'sym.def').write_text(names + 'SpectrumVec seed_eigenvec_0\nTEOneBody times.def\n')
-            # These fail before propagation; do not depend on a particular MPI partition.
-            (path / 'calc.def').write_text(te_calc.replace('InputEigenVec 1', 'InputEigenVec 2'))
-            fixture.run(path, 'reject_input_'+layout, layout=layout, fail='requires sector checkpoint InputEigenVec=1')
-            (path / 'calc.def').write_text(te_calc + 'ReStart 1\n')
-            fixture.run(path, 'reject_restart_'+layout, layout=layout, fail='ReStart')
-            (path / 'calc.def').write_text(te_calc)
-            (path / 'times.def').write_text('====\nNTimeSteps 5\n====\n====\n====\n' + ''.join('{} 1\n0 0 0 0 .1 0\n'.format(t) for t in times))
-            fixture.run(path, 'reject_dynamic_'+layout, layout=layout, fail='preflight failed at step 0')
+        intervals = ([1, 2] if model == 'Spin' and momentum == 0 and
+                     layout == 'distributed' else [1])
+        for interval in intervals:
+            emitted_steps = [step for step in range(5) if step % interval == 0]
+            for aggregate in [0, 1]:
+                run_label = 'k{}_{}_interval{}_aggregate{}'.format(
+                    momentum, layout, interval, aggregate
+                )
+                (path / 'InterAll.def').write_text(inter)
+                (path / 'calc.def').write_text(calc + 'OutputEigenVec 1\n')
+                (path / 'mod.def').write_text(mod)
+                (path / 'sym.def').write_text(names)
+                if (path / 'output').exists():
+                    shutil.rmtree(path / 'output')
+                fixture.run(path, 'seed_'+run_label, layout=layout)
+                files = sorted((path / 'output').glob('zvo_eigenvec_0_rank_*.dat'),
+                               key=lambda p: int(p.stem.split('rank_')[1]))
+                initial = []
+                for p in files:
+                    initial.extend(np.frombuffer(p.read_bytes()[224:], dtype='<c16'))
+                    shutil.copyfile(p, p.with_name(p.name.replace('zvo_', 'seed_')))
+                initial = np.array(initial)
+                np.testing.assert_allclose(hi @ initial, np.linalg.eigvalsh(hi)[0]*initial, atol=3e-7)
+                fixture.definition(path, 'InterAll.def', rows)
+                te_calc = (calc.replace('CalcType 3', 'CalcType 4') +
+                           'InputEigenVec 1\nOutputEigenVec 1\nOutputGreenFormat {}\n'.format(aggregate))
+                (path / 'calc.def').write_text(te_calc)
+                (path / 'mod.def').write_text(
+                    mod.replace('Lanczos_max 400', 'Lanczos_max 5') +
+                    'ExpandCoef 8\nOutputInterval 1\nExpecInterval {}\n'.format(interval)
+                )
+                (path / 'sym.def').write_text(
+                    correlation_names + 'SpectrumVec seed_eigenvec_0\nTEOneBody times.def\n'
+                )
+                (path / 'times.def').write_text(
+                    '====\nNTimeSteps 5\n====\n====\n====\n' +
+                    ''.join('{} 0\n'.format(t) for t in times)
+                )
+                fixture.run(path, 'evolve_'+run_label, layout=layout)
+                expected_ss, expected_norm, expected_flct, states_by_step = [], [], [], []
+                state = initial.copy()
+                for step, t in enumerate(times):
+                    dt = t-times[step-1] if step else 0
+                    x = -1j*dt*eig
+                    poly = sum(x**k / math.factorial(k) for k in range(9))
+                    state = rot @ (poly*(rot.conj().T @ state))
+                    norm = np.linalg.norm(state)
+                    state /= norm
+                    states_by_step.append(state.copy())
+                    hv = hf @ state
+                    doublon, doublon2 = np.vdot(state, d1 @ state).real, np.vdot(state, d2 @ state).real
+                    expected_ss.append([t, np.vdot(state, hv).real, np.vdot(hv, hv).real, doublon, n, step])
+                    expected_norm.append([t, norm, step])
+                    expected_flct.append([t, n, n*n, doublon, doublon2, sz, sz*sz, step])
+                    np.testing.assert_allclose(vector(path, 'zvo_eigenvec_{}'.format(step), step, t), state, atol=2e-11, rtol=0)
+                correlation.assert_nonzero_operators(operators, states_by_step)
+                np.testing.assert_allclose(vector(path, 'zvo_eigenvec_final', 4, times[-1]), state, atol=2e-11, rtol=0)
+                for family, expected in [('SS', expected_ss), ('Norm', expected_norm), ('Flct', expected_flct)]:
+                    np.testing.assert_allclose(np.loadtxt(path / 'output' / ('zvo_'+family+'.dat')), expected, atol=3e-11, rtol=0)
+                for step in range(5):
+                    if step not in emitted_steps:
+                        if not aggregate:
+                            for kind in requests:
+                                missing = path / 'output' / 'zvo_{}_step{}.dat'.format(
+                                    correlation.FILES[kind], step
+                                )
+                                assert not missing.exists(), (run_label, missing)
+                        continue
+                    if aggregate:
+                        name = 'zvo_{}_te.dat'
+                        flt = lambda data, n=step: data[data[:, 0] == n]
+                    else:
+                        name = 'zvo_{{}}_step{}.dat'.format(step)
+                        flt = None
+                    correlation.check_step_file(
+                        path, name, requests, operators, states_by_step[step],
+                        prefix=1 if aggregate else 0, prefix_filter=flt,
+                        label='{} {} step{}'.format(model, run_label, step),
+                    )
+                if aggregate:
+                    correlation.check_aggregate_index(
+                        path, 'zvo_{}_te.dat', requests,
+                        [(step,) for step in emitted_steps], label=run_label,
+                    )
+                exact = rot @ (np.exp(-1j*times[-1]*eig)*(rot.conj().T @ initial))
+                np.testing.assert_allclose(state, exact, atol=2e-7, rtol=0)
+                record = dict(line.split('=', 1) for line in (path / 'output/zvo_symmetry_sector.dat').read_text().splitlines())
+                assert record['calc_type'] == 'TimeEvolution' and record['te_hamiltonian'] == 'static'
+                assert record['source_method'] == '3' and record['expand_coef'] == '8'
+                for step, t in enumerate(times):
+                    assert float(record['te_time_'+str(step)]) == t
+                shutil.copytree(path / 'output', path / run_label)
+                if model == 'Spin' and momentum == 0 and interval == 1 and aggregate == 0:
+                    # A TE checkpoint imports a state into a NEW clock, with the default
+                    # distributed layout as well as the explicit rollback layout.
+                    (path / 'sym.def').write_text(names + 'SpectrumVec zvo_eigenvec_final\nTEOneBody times.def\n')
+                    env = dict(os.environ)
+                    if layout == 'distributed':
+                        env.pop('HPHI_SYMMETRY_BASIS_LAYOUT', None)
+                    else:
+                        env['HPHI_SYMMETRY_BASIS_LAYOUT'] = layout
+                    with (path / ('import_te_'+layout+'.log')).open('w') as fp:
+                        result = subprocess.run(fixture.MPI + [fixture.HPHI, '-e', 'sym.def'], cwd=path,
+                                                env=env, stdout=fp, stderr=subprocess.STDOUT, timeout=120)
+                    assert result.returncode == 0, (path / ('import_te_'+layout+'.log')).read_text()
+                    np.testing.assert_allclose(vector(path, 'zvo_eigenvec_0', 0, 0), state, atol=2e-11, rtol=0)
+                    second = state.copy()
+                    for dt in np.diff(times):
+                        poly = sum((-1j*dt*eig)**k / math.factorial(k) for k in range(9))
+                        second = rot @ (poly*(rot.conj().T @ second))
+                        second /= np.linalg.norm(second)
+                    np.testing.assert_allclose(vector(path, 'zvo_eigenvec_final', 4, times[-1]), second, atol=3e-11, rtol=0)
+                    record = dict(line.split('=', 1) for line in (path / 'output/zvo_symmetry_sector.dat').read_text().splitlines())
+                    assert record['source_method'] == '4' and float(record['source_time']) == times[-1]
+                    (path / 'sym.def').write_text(names + 'SpectrumVec seed_eigenvec_0\nTEOneBody times.def\n')
+                    # These fail before propagation; do not depend on a particular MPI partition.
+                    (path / 'calc.def').write_text(te_calc.replace('InputEigenVec 1', 'InputEigenVec 2'))
+                    fixture.run(path, 'reject_input_'+layout, layout=layout, fail='requires sector checkpoint InputEigenVec=1')
+                    (path / 'calc.def').write_text(te_calc + 'ReStart 1\n')
+                    fixture.run(path, 'reject_restart_'+layout, layout=layout, fail='ReStart')
+                    (path / 'calc.def').write_text(te_calc)
+                    (path / 'times.def').write_text('====\nNTimeSteps 5\n====\n====\n====\n' + ''.join('{} 1\n0 0 0 0 .1 0\n'.format(t) for t in times))
+                    fixture.run(path, 'reject_dynamic_'+layout, layout=layout, fail='preflight failed at step 0')
     (path / 'InterAll.def').write_text(inter)
     (path / 'calc.def').write_text(calc)
     (path / 'mod.def').write_text(mod)

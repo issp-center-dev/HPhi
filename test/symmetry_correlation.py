@@ -241,6 +241,91 @@ def request_factors(kind, row):
     return factors_of(row, {"one": 1, "two": 2, "three": 3, "four": 4, "six": 6}[kind])
 
 
+def sector_operators(model, L, states, basis, requests):
+    """Return B^dag O B for every requested row, keyed by output family."""
+    return {
+        kind: [
+            basis.conj().T @ matrix(
+                model, L, states, request_factors(kind, row)
+            ) @ basis
+            for row in rows
+        ]
+        for kind, rows in requests.items()
+    }
+
+
+def step_requests(model, L):
+    """Small nontrivial OneBodyG, TwoBodyG and NBodyG request set."""
+    one = ([[0, 0, 0, 0], [1, 1, 1, 1]] if model == "Spin"
+           else [[0, 0, 0, 0], [0, 0, 1, 0]])
+    two = [[0, 0, 0, 0, 1, 0, 1, 0]]
+    if model == "SpinlessFermion":
+        two.append([0, 0, 1, 0, 2, 0, 2, 0])
+    else:
+        two.append([0, 0, 0, 1, 1, 1, 1, 0])
+    nbody = {
+        "Spin": [3, 0, 0, 0, 1, 1, 1, 1, 0, 2, 0, 2, 0],
+        "SpinlessFermion": [3, 0, 0, 1, 0, 1, 0, 2, 0, 2, 0, 0, 0],
+        "Hubbard": [3, 0, 0, 1, 0, 1, 1, 1, 1, 2, 0, 0, 0],
+        "tJ": [3, 0, 0, 1, 0, 1, 1, 2, 1, 2, 0, 0, 0],
+    }[model]
+    return {"one": one, "two": two, "nbody": [nbody]}
+
+
+def add_requests(path, namelist_name, requests):
+    """Write request definition files and add them once to a namelist."""
+    text = (path / namelist_name).read_text()
+    for kind, rows in requests.items():
+        fixture.definition(path, FILES[kind] + ".def", rows)
+        line = "{} {}.def\n".format(KEYWORDS[kind], FILES[kind])
+        if line not in text:
+            text += line
+    (path / namelist_name).write_text(text)
+
+
+def assert_nonzero_operators(operators, vectors):
+    """Every family must be nonzero as an operator and in a compared state."""
+    for kind, ops in operators.items():
+        assert max(np.linalg.norm(op) for op in ops) > 1e-12, kind
+        assert max(abs(np.vdot(vector, op @ vector))
+                   for op in ops for vector in vectors) > 1e-6, kind
+
+
+def check_step_file(path, name, requests, operators, vector, prefix=0,
+                    prefix_filter=None, label=""):
+    """Compare every row, including indices, with the dense sector oracle."""
+    for kind, rows in requests.items():
+        file_name = name.format(FILES[kind])
+        data = np.loadtxt(path / "output" / file_name, ndmin=2)
+        if prefix_filter is not None:
+            data = prefix_filter(data)
+        expected_shape = (len(rows), prefix + len(rows[0]) + 2)
+        assert data.shape == expected_shape, (label, file_name, data.shape, expected_shape)
+        np.testing.assert_array_equal(
+            data[:, prefix:-2], np.array(rows, dtype=float),
+            err_msg=label + " " + file_name,
+        )
+        values = data[:, -2] + 1j * data[:, -1]
+        expected = [np.vdot(vector, op @ vector) for op in operators[kind]]
+        np.testing.assert_allclose(
+            values, expected, atol=ATOL, rtol=0,
+            err_msg=label + " " + file_name,
+        )
+
+
+def check_aggregate_index(path, name, requests, expected_prefixes, label=""):
+    """Require exactly one request block for every expected aggregate prefix."""
+    assert expected_prefixes, label
+    for kind, rows in requests.items():
+        file_name = name.format(FILES[kind])
+        data = np.loadtxt(path / "output" / file_name, ndmin=2)
+        width = len(expected_prefixes[0])
+        seen = sorted({tuple(int(x) for x in row[:width]) for row in data})
+        assert seen == sorted(expected_prefixes), (label, kind, seen, expected_prefixes)
+        expected_rows = len(rows) * len(expected_prefixes)
+        assert data.shape[0] == expected_rows, (label, kind, data.shape, expected_rows)
+
+
 def expected_values(model, L, states, gs, kind, rows):
     return np.array([np.vdot(gs, matrix(model, L, states, request_factors(kind, row)) @ gs) for row in rows])
 
@@ -501,8 +586,6 @@ def negative_tests(path, model, case, fam, ops, sector, requests):
     L = case["L"]
     write_inputs(path, model, case, fam, ops, sector["chars"], 2, {"one": requests["one"]})
     fixture.run(path, "reject_fulldiag", fail="sector FullDiag outputs eigenvalues only")
-    write_inputs(path, model, case, fam, ops, sector["chars"], 1, {"one": requests["one"]})
-    fixture.run(path, "reject_tpq", fail="sector TPQ outputs SS/Norm/Flct only")
     if model == "Spin":
         write_inputs(path, model, case, fam, ops, sector["chars"], 3,
                      {"one": requests["one"], "three": [[0, 0, 0, 1, 1, 1, 1, 0, 2, 0, 2, 0]]})

@@ -5,6 +5,7 @@ import shutil
 import struct
 
 import numpy as np
+import symmetry_correlation as correlation
 import symmetry_general_terms as fixture
 
 fixture.ROOT = Path('symmetry_te_dynamic')
@@ -55,6 +56,11 @@ def check(path, model, length, momentum, states, raw, projector):
 
     hi = basis.conj().T @ raw @ basis
     calc, mod, names = [(path/f).read_text() for f in ('calc.def','mod.def','sym.def')]
+    requests = correlation.step_requests(model, length)
+    operators = correlation.sector_operators(model, length, states, basis, requests)
+    correlation.add_requests(path, 'sym.def', requests)
+    correlation_names = (path/'sym.def').read_text()
+    (path/'sym.def').write_text(names)
     amplitudes = [0, .21, -.17, 0, .31]
     families = ['TEOneBody', 'TETwoBody'] + ([] if model == 'Spin' else ['Laser'])
     for family in families:
@@ -117,7 +123,7 @@ def check(path, model, length, momentum, states, raw, projector):
                 shutil.copyfile(p,p.with_name(p.name.replace('zvo_','seed_')))
             (path/'calc.def').write_text(calc.replace('CalcType 3','CalcType 4')+'InputEigenVec 1\nOutputEigenVec 1\n')
             (path/'mod.def').write_text(mod.replace('Lanczos_max 400','Lanczos_max 5')+'ExpandCoef 8\nOutputInterval 1\nTimeSlice .035\nTinit 0\n')
-            (path/'sym.def').write_text(names+'SpectrumVec seed_eigenvec_0\n'+family+' drive.def\n')
+            (path/'sym.def').write_text(correlation_names+'SpectrumVec seed_eigenvec_0\n'+family+' drive.def\n')
             (path/'drive.def').write_text(schedule if family != 'Laser' else '====\nNLaser 9\n====\n====\n====\n'+''.join('p{} {}\n'.format(i,v) for i,v in enumerate([2,.4,1,1,0,length,1,1,0])))
             fixture.run(path,'evolve_{}_k{}_{}'.format(family,momentum,layout),layout=layout)
             number = length if model == 'Spin' else length//2 if model == 'SpinlessFermion' else 3
@@ -126,13 +132,14 @@ def check(path, model, length, momentum, states, raw, projector):
                               if model in ('Hubbard','tJ') else 0 for s in states])
             d1 = basis.conj().T @ (d_raw[:,None]*basis)
             d2 = basis.conj().T @ ((d_raw**2)[:,None]*basis)
-            ss,norm,flct=[],[],[]
+            ss,norm,flct,states_by_step=[],[],[],[]
             for step,(time,h) in enumerate(zip(times,hs)):
                 dt=time-times[step-1] if step else 0
                 eig,rot=np.linalg.eigh(h)
                 poly=sum((-1j*dt*eig)**n/math.factorial(n) for n in range(9))
                 state=rot @ (poly*(rot.conj().T @ state))
                 before=np.linalg.norm(state);state/=before
+                states_by_step.append(state.copy())
                 actual,headers=checkpoint(path,'zvo_eigenvec_'+str(step))
                 np.testing.assert_allclose(actual,state,atol=3e-11,rtol=0)
                 assert all(hd[24]==step and struct.unpack('<d',struct.pack('<Q',hd[25]))[0]==time for hd in headers)
@@ -144,6 +151,15 @@ def check(path, model, length, momentum, states, raw, projector):
             np.testing.assert_allclose(np.loadtxt(path/'output/zvo_SS.dat'),ss,atol=4e-11,rtol=0)
             np.testing.assert_allclose(np.loadtxt(path/'output/zvo_Flct.dat'),flct,atol=4e-11,rtol=0)
             np.testing.assert_allclose(np.loadtxt(path/'output/zvo_Norm.dat'),norm,atol=4e-11,rtol=0)
+            correlation.assert_nonzero_operators(operators, states_by_step)
+            for step in range(5):
+                correlation.check_step_file(
+                    path, 'zvo_{{}}_step{}.dat'.format(step), requests,
+                    operators, states_by_step[step],
+                    label='{} {} k{} {} step{}'.format(
+                        model, family, momentum, layout, step
+                    ),
+                )
             np.testing.assert_allclose(checkpoint(path,'zvo_eigenvec_final')[0],state,atol=3e-11,rtol=0)
             record=dict(line.split('=',1) for line in (path/'output/zvo_symmetry_sector.dat').read_text().splitlines())
             assert record['te_hamiltonian']=='time_dependent'

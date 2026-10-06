@@ -316,8 +316,8 @@ static int has_fixed_spinful_sector(const struct DefineList *def)
  *   ham_output          OutputHam.
  *   ham_input           InputHam.
  *
- * Correlation output is available for Lanczos and CG. TPQ, cTPQ and time
- * evolution remain deferred to the next implementation stage.
+ * Correlation output is available for Lanczos, CG, TPQ, cTPQ and time
+ * evolution.
  */
 struct SymmetryMethodCapability {
   int calc_type;
@@ -336,11 +336,11 @@ struct SymmetryMethodCapability {
 static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
   { Lanczos,       "Lanczos",       1,      1,   1,   0,   0,   0,    0,   0,   0   },
-  { TPQCalc,       "TPQ",           1,      1,   0,   0,   0,   0,    0,   0,   0   },
+  { TPQCalc,       "TPQ",           1,      1,   1,   0,   0,   0,    0,   0,   0   },
   { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   0,    0,   0,   0   },
   { CG,            "CG",            1,      1,   1,   0,   0,   1,    1,   0,   0   },
-  { TimeEvolution, "TimeEvolution", 1,      1,   0,   0,   0,   1,    1,   0,   0   },
-  { cTPQ,          "cTPQ",          1,      1,   0,   0,   0,   0,    0,   0,   0   },
+  { TimeEvolution, "TimeEvolution", 1,      1,   1,   0,   0,   1,    1,   0,   0   },
+  { cTPQ,          "cTPQ",          1,      1,   1,   0,   0,   0,    0,   0,   0   },
 };
 
 /* Fails to compile when a CalcType is added without a row in the table. */

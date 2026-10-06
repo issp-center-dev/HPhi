@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 import numpy as np
+import symmetry_correlation as correlation
 import symmetry_general_terms as fixture
 
 fixture.ROOT = Path("symmetry_ctpq")
@@ -46,6 +47,8 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
     dim = basis.shape[1]
     np.testing.assert_allclose(basis.conj().T @ basis, np.eye(dim), atol=1e-12)
     h = basis.conj().T @ raw @ basis
+    requests = correlation.step_requests(model, length)
+    operators = correlation.sector_operators(model, length, states, basis, requests)
     dtype = {"Spin": -1, "SpinlessFermion": 1, "Hubbard": 0, "tJ": -1}[model]
     calc = (path / "calc.def").read_text().replace("CalcType 3", "CalcType 5")
     calc += "InitialVecType {}\n".format(dtype)
@@ -62,6 +65,7 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
     betas = np.array([0, .13, .29, .29, .52]) if explicit else np.arange(5)*.25
     orders = [2, 7, 3, 6, 5] if explicit else [order]*5
     (path / "sym.def").write_text(base_names + ("InvTemp beta.def\n" if explicit else ""))
+    correlation.add_requests(path, "sym.def", requests)
     (path / "beta.def").write_text("".join("{} {} {} 0\n".format(b, n, i % 2)
                                             for i, (b, n) in enumerate(zip(betas, orders))))
     (path / "mod.def").write_text(mod + "NumAve 2\n" +
@@ -89,12 +93,13 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
                            if model in ("Hubbard", "tJ") else 0 for s in states])
     doublon = basis.conj().T @ (doublon_raw[:, None] * basis)
     doublon2 = basis.conj().T @ ((doublon_raw**2)[:, None] * basis)
-    expected = []
+    expected, vectors_by_step = [], []
     for sample, vector in enumerate(vectors):
-        ss, norms, flct = [], [], []
+        ss, norms, flct, step_vectors = [], [], [], []
         norm = first_norms[sample]
         np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-12)
         for step in range(5):
+            step_vectors.append(vector.copy())
             hv = h @ vector
             energy = np.vdot(vector, hv).real
             energy2 = np.vdot(hv, hv).real
@@ -115,6 +120,11 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
                 norm = np.linalg.norm(vector)
                 vector /= norm
         expected.append([np.array(ss), np.array(norms), np.array(flct)])
+        vectors_by_step.append(step_vectors)
+    correlation.assert_nonzero_operators(
+        operators, [vector for sample in vectors_by_step for vector in sample]
+    )
+    emitted_steps = [0, 1, 3] if explicit else list(range(5))
     for layout in ["default", "replicated"]:
         env = dict(os.environ)
         env.pop("HPHI_SYMMETRY_BASIS_LAYOUT", None)
@@ -150,6 +160,37 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
                         actual = np.column_stack((actual[:, 2:], actual[:, 1]))
                     np.testing.assert_allclose(actual, reference, rtol=2e-11, atol=2e-11,
                                                err_msg="{} {} {} sample{}".format(model, label, family, sample))
+                for step in range(5):
+                    if step not in emitted_steps:
+                        if not aggregate:
+                            for kind in requests:
+                                missing = path / "output" / "zvo_{}_set{}step{}.dat".format(
+                                    correlation.FILES[kind], sample, step
+                                )
+                                assert not missing.exists(), (label, missing)
+                        continue
+                    if aggregate:
+                        name = "zvo_{}_tpq.dat"
+                        flt = lambda data, s=sample, n=step: data[
+                            (data[:, 0] == s) & (data[:, 1] == n)
+                        ]
+                    else:
+                        name = "zvo_{{}}_set{}step{}.dat".format(sample, step)
+                        flt = None
+                    correlation.check_step_file(
+                        path, name, requests, operators,
+                        vectors_by_step[sample][step],
+                        prefix=2 if aggregate else 0,
+                        prefix_filter=flt,
+                        label="{} {} sample{} step{}".format(model, label, sample, step),
+                    )
+            if aggregate:
+                correlation.check_aggregate_index(
+                    path, "zvo_{}_tpq.dat", requests,
+                    [(sample, step) for sample in range(2)
+                     for step in emitted_steps],
+                    label=label,
+                )
             # Preserve outputs for inspection instead of only the last run.
             shutil.copytree(path / "output", path / label)
     # Feature gates must report TPQ-specific scope, before any MPI matvec.
@@ -161,10 +202,6 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
                    failure=("OutputHam is only defined for FullDiag" if option.startswith("OutputHam")
                             else "does not support " + option.split()[0]))
         (path / "calc.def").write_text(calc)
-        fixture.definition(path, "one.def", [[0, 0, 0, 0]])
-        (path / "reject.def").write_text((path / "sym.def").read_text() + "OneBodyG one.def\n")
-        invoke(path, [fixture.HPHI, "-e", "reject.def"], "correlation",
-               failure="sector TPQ outputs SS/Norm/Flct only")
         if explicit:
             original_beta = (path / "beta.def").read_text()
             for row in (0, 2, 4):
