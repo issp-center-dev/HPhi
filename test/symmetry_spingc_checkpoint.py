@@ -324,6 +324,50 @@ def old_payload_compatibility(root, hphi):
         print('actual baseline canonical {} payload accepted'.format(layout), flush=True)
 
 
+def te_imports(root, layout, hphi, launcher):
+    # Imported state is a new solver start, never a continuation of old steps.
+    import symmetry_spingc_te as te
+    import symmetry_spingc_thermal as thermal
+    fixture = thermal.fixture('D' if c.mpi_size(launcher) == 16 else 'B',1)
+    env = dict(os.environ,HPHI_SYMMETRY_BASIS_LAYOUT=layout)
+    n, permutations, characters, families, basis, reps, h = fixture
+    seed, _ = te.prepare(root,'import_'+layout+'_cg',fixture,hphi,launcher,env)
+    evolved, vectors = te.evolve(root,'import_'+layout+'_cg_to_te',fixture,
+                                seed,'zvo_eigenvec_0','one',1,1,hphi,launcher,env)
+    restarted, _ = te.evolve(root,'import_'+layout+'_te_to_te',fixture,
+                            evolved,'zvo_eigenvec_final','two',1,1,hphi,launcher,env,
+                            times=np.array([0.,.005,.01,.01,.02]))
+    metadata = dict(line.split('=',1) for line in
+                    (restarted/'output/zvo_symmetry_sector.dat').read_text().splitlines())
+    assert metadata['source_method'] == '4' and metadata['source_step'] == '4'
+    assert float(metadata['source_time']) == .04
+    initial = c.join_rank_vectors(te.checkpoints(restarted,'zvo_eigenvec_0'),len(reps))
+    assert np.linalg.norm(initial-vectors[-1]) <= 3e-11
+    cg = root/('import_'+layout+'_te_to_cg')
+    c.write_case(cg,n,permutations,characters,families,3,
+                 {'CalcMod': {'InputEigenVec':1,'OutputEigenVec':1}})
+    (cg/'output').mkdir()
+    for rank,file in enumerate(te.checkpoints(evolved,'zvo_eigenvec_final')):
+        shutil.copy2(file,cg/'output'/('zvo_eigenvec_0_rank_{}.dat'.format(rank)))
+    text = c.run_case(cg,hphi,'te_to_cg',launcher,env)
+    assert 'step=4 time=0.040000000000000001' in text
+    assert 'hamiltonian_changed=yes' in text
+    energy, _ = parse_energy(cg)
+    np.testing.assert_allclose(energy,np.vdot(vectors[-1],h@vectors[-1]).real,
+                               atol=4e-11,rtol=0)
+    actual = c.join_rank_vectors(checkpoint_files(cg),len(reps))
+    assert np.linalg.norm(actual-vectors[-1]) <= 3e-11
+    if c.mpi_size(launcher) > 1:
+        mixed = import_copy(root,'import_'+layout+'_mixed_source',cg)
+        # Both rank files are authentic outputs, with matching basis/layout.
+        shutil.copy2(te.checkpoints(restarted,'zvo_eigenvec_final')[-1],
+                     checkpoint_files(mixed)[-1])
+        c.run_case(mixed,hphi,'mixed_te_cg_provenance',launcher,env,
+                   'checkpoint cross-rank metadata consistency failed')
+        assert not (mixed/'output/zvo_energy.dat').exists()
+    print(layout+' CG→TE, TE→CG, TE→TE state imports passed',flush=True)
+
+
 def main():
     hphi = Path(sys.argv[1]).resolve()
     probe = hphi.with_name('unittest_symmetry_spingc_probe')
@@ -335,6 +379,7 @@ def main():
     for layout in ('distributed', 'replicated') if ranks <= 4 else ('distributed',):
         for label in ('B0', 'B1', 'D'):
             exercise_fixture(root, label, layout, hphi, probe, launcher)
+        te_imports(root, layout, hphi, launcher)
     if ranks == 1:
         old_payload_compatibility(root, hphi)
 
