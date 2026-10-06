@@ -45,9 +45,9 @@
 The input files (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_3.1/stan1.in</span></code> and <code class="docutils literal notranslate"><span class="pre">samples/tutorial_3.1/stan2.in</span></code>) are as follows</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan1.in
 
-model = &quot;Hubbard&quot;
-method = &quot;CG&quot;
-lattice = &quot;square&quot;
+model = "Hubbard"
+method = "CG"
+lattice = "square"
 a0W =  2
 a0L =  2
 a1W =  2
@@ -56,14 +56,14 @@ a1L = -2
 t = 1.0
 U = 4.0
 nelec = 8
-EigenvecIO = &quot;out&quot;
+EigenvecIO = "out"
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stan2.in
 
-model = &quot;Hubbard&quot;
-method = &quot;Time-Evolution&quot;
-lattice = &quot;square&quot;
+model = "Hubbard"
+method = "Time-Evolution"
+lattice = "square"
 a0W =  2
 a0L =  2
 a1W =  2
@@ -72,9 +72,9 @@ a1L = -2
 t = 1.0
 U = 4.0
 nelec = 8
-PumpType = &quot;Quench&quot;
+PumpType = "Quench"
 Uquench = -8
-EigenvecIO = &quot;in&quot;
+EigenvecIO = "in"
 dt = 0.01
 lanczos_max = 1000
 </pre></div>
@@ -88,12 +88,12 @@ HPhi -s stan2.in
 <h2><span class="section-number">3.1.1. </span>Check norm and energy<a class="headerlink" href="#check-norm-and-energy" title="Link to this heading">¶</a></h2>
 <p>Unitary dynamics of the norm of a wavefunction should be conserved during the real-time evolution.
 Using gnuplot, check the dynamics of the norm for this problem</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/Norm.dat&quot; u 1:2 w l
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot "output/Norm.dat" u 1:2 w l
 </pre></div>
 </div>
 <p>In sudden U-quench simulations, the total energy should be conserved for <span class="math notranslate nohighlight">\(\tau&gt;0\)</span>.
 Using gnuplot, check whether the energy is conserved during the real-time evolution</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:2 w l
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot "output/SS.dat" u 1:2 w l
 </pre></div>
 </div>
 </section>
@@ -101,7 +101,7 @@ Using gnuplot, check whether the energy is conserved during the real-time evolut
 <h2><span class="section-number">3.1.2. </span>Dynamics of double occupation<a class="headerlink" href="#dynamics-of-double-occupation" title="Link to this heading">¶</a></h2>
 <p>The double occupation <span class="math notranslate nohighlight">\(D=\sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle\)</span> is not conserved because <span class="math notranslate nohighlight">\([D, H] \neq 0\)</span>.
 You can check the dynamics of <span class="math notranslate nohighlight">\(D\)</span> by executing the following command on gnuplot</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot &quot;output/SS.dat&quot; u 1:4 w l
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>plot "output/SS.dat" u 1:4 w l
 </pre></div>
 </div>
 </section>

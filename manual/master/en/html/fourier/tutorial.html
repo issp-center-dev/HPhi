@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>7.1.2. Tutorial &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <title>7.1.2. Tutorial &#8212; HΦ Documentation 3.7.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
-    <script src="../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../_static/documentation_options.js?v=86e43a22"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -48,9 +48,9 @@ the following input file</p>
 a0l = 2
 a1w = -2
 a1l = 2
-model=&quot;Hubbard&quot;
-method=&quot;CG&quot;
-lattice=&quot;square&quot;
+model="Hubbard"
+method="CG"
+lattice="square"
 t=1.0
 U=8.0
 nelec = 8
@@ -67,8 +67,8 @@ nelec = 8
 a0l = 2
 a1w = -2
 a1l = 2
-model=&quot;Hubbard&quot;
-lattice=&quot;square&quot;
+model="Hubbard"
+lattice="square"
 t=1.0
 U=8.0
 nelec = 8
@@ -102,12 +102,12 @@ in the <code class="docutils literal notranslate"><span class="pre">output/</spa
 <h2>Fourier transformation of correlation functions<a class="headerlink" href="#fourier-transformation-of-correlation-functions" title="Link to this heading">¶</a></h2>
 <p>Perform the Fourier transformation of the correlation function
 by using the utility <code class="docutils literal notranslate"><span class="pre">greenr2k</span></code>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;4 20</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"4 20</span>
 <span class="s2">G 0 0 0</span>
 <span class="s2">X 0.5 0 0</span>
 <span class="s2">M 0.5 0.5 0</span>
 <span class="s2">G 0 0 0</span>
-<span class="s2">16 16 1&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>geometry.dat
+<span class="s2">16 16 1"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>geometry.dat
 $<span class="w"> </span>greenr2k<span class="w"> </span>namelist.def<span class="w"> </span>geometry.dat
 </pre></div>
 </div>
@@ -127,8 +127,8 @@ written to a file in <code class="docutils literal notranslate"><span class="pre
 <h2>Display correlation functions<a class="headerlink" href="#display-correlation-functions" title="Link to this heading">¶</a></h2>
 <p>Plot the correlation function in the <em>k</em> space
 by using gnuplot.</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span><span class="w"> </span><span class="s">&quot;kpath.gp&quot;</span>
-<span class="k">plot</span><span class="w"> </span><span class="s">&quot;output/zvo_corr_eigen0.dat&quot;</span><span class="w"> </span><span class="nb">u</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">12</span><span class="w"> </span><span class="nb">w</span><span class="w"> </span><span class="n">l</span>
+<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">load</span><span class="w"> </span><span class="s">"kpath.gp"</span>
+<span class="k">plot</span><span class="w"> </span><span class="s">"output/zvo_corr_eigen0.dat"</span><span class="w"> </span><span class="nb">u</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">12</span><span class="w"> </span><span class="nb">w</span><span class="w"> </span><span class="n">l</span>
 </pre></div>
 </div>
 <figure class="align-default" id="id2">

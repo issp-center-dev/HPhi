@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.2. MPI並列化 &#8212; HΦ マニュアル 3.7.0 ドキュメント</title>
+    <title>6.2. MPI並列化 &#8212; HΦ マニュアル 3.7.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
-    <script src="../_static/documentation_options.js?v=bb860595"></script>
+    <script src="../_static/documentation_options.js?v=1ffe818c"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/translations.js?v=4755f45a"></script>
@@ -158,11 +158,37 @@ mpirun -np 4 ./HPhi -e namelist.def
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> が未設定、または必要なMPIランク条件を満たさない場合、
 これらは <code class="docutils literal notranslate"><span class="pre">ctest</span></code> 上で <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> として報告されます。</p>
+<p>スピン1模型のテスト（<code class="docutils literal notranslate"><span class="pre">*spinone*</span></code> および
+<code class="docutils literal notranslate"><span class="pre">mpi_consistency_threebody_generalspin</span></code>）はMPIランク数が3のべき乗である
+必要があるため、下記の例のように別途選択して実行します。ランク条件は次のとおりです。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lobcg_spinone_chain_threebody</span></code>: <code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> 未設定ではシリアルで実行。
+<code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> 指定時は 3^k ランクのときだけ実行し、それ以外は <code class="docutils literal notranslate"><span class="pre">Skipped</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mpi_consistency_threebody_generalspin</span></code> と <code class="docutils literal notranslate"><span class="pre">mpi_*_spinone</span></code>: MPI専用、
+ちょうど3ランク。<code class="docutils literal notranslate"><span class="pre">mpi_*_spinone_np9</span></code>: MPI専用、ちょうど9ランク。
+それ以外のランク数や <code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> 未設定では <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> になるため、
+3ランク実行と9ランク実行のそれぞれで一部が <code class="docutils literal notranslate"><span class="pre">Skipped</span></code> になるのは正常です。</p></li>
+<li><p>残りの <code class="docutils literal notranslate"><span class="pre">*spinone*</span></code> テスト（Lanczos、FullDiag、validation）は
+<code class="docutils literal notranslate"><span class="pre">MPIRUN</span></code> に関係なくシリアルで実行されます。</p></li>
+</ul>
 <p>例：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 4 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
-<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">&#39;mpirun -np 16 --oversubscribe&#39;</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 4 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>consistency
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 16 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-L<span class="w"> </span>batching
+<span class="nv">MPIRUN</span><span class="o">=</span><span class="s1">'mpirun -np 3 --oversubscribe'</span><span class="w"> </span>ctest<span class="w"> </span>-R<span class="w"> </span><span class="s2">"spinone|threebody_generalspin"</span>
 </pre></div>
 </div>
+<section id="mpirunfc">
+<h3>シリアル実行用のランチャー（<code class="docutils literal notranslate"><span class="pre">MPIRUNFC</span></code>）<a class="headerlink" href="#mpirunfc" title="Link to this heading">¶</a></h3>
+<p>テストスクリプトは、<code class="docutils literal notranslate"><span class="pre">-sdry</span></code> による入力ファイル生成やシリアルの参照計算のために、
+HPhiをシリアルでも実行します。このような呼び出しには <code class="docutils literal notranslate"><span class="pre">${MPIRUNFC}</span></code>
+（既定では空）が前置されています。ランチャーなしではMPIバイナリを起動できない
+環境（Slurmの <code class="docutils literal notranslate"><span class="pre">srun</span></code> など）では、両方の変数を指定してください：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">"MPIRUN=srun -n 4"</span><span class="w"> </span><span class="s2">"MPIRUNFC=srun -n 1"</span>
+</pre></div>
+</div>
+<p>テストを追加する際は、シリアル実行のHPhi呼び出しには <code class="docutils literal notranslate"><span class="pre">${MPIRUNFC}</span></code> を、
+並列実行には <code class="docutils literal notranslate"><span class="pre">${MPIRUN}</span></code> を前置してください。</p>
+</section>
 </section>
 <section id="id6">
 <h2><span class="section-number">6.2.7. </span>フェルミオン符号<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>

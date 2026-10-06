@@ -41,9 +41,9 @@
 <span class="eqno">(1.1)<a class="headerlink" href="#equation-zero-temperature-spin-dimer-0" title="Link to this equation">¶</a></span>\[H = J {\bf S}_{0}\cdot{\bf S}_{1}\]</div>
 <p>The input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan1.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L=2
-model = &quot;Spin&quot;
-method = &quot;FullDiag&quot;
-lattice = &quot;chain&quot;
+model = "Spin"
+method = "FullDiag"
+lattice = "chain"
 J = 0.5
 2Sz = 0
 2S  = 1
@@ -78,9 +78,9 @@ you can examine the
 effects of the magnetic field in the dimer model.
 An example of the input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan3.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L=2
-model = &quot;SpinGC&quot;
-method = &quot;FullDiag&quot;
-lattice = &quot;chain&quot;
+model = "SpinGC"
+method = "FullDiag"
+lattice = "chain"
 J = 0.5
 2S  = 1
 H   = 2
@@ -94,9 +94,9 @@ H   = 2
 you can perform the Lanczos calculations.
 An example of the input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan4.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L=2
-model = &quot;SpinGC&quot;
-method = &quot;Lanczos&quot;
-lattice = &quot;chain&quot;
+model = "SpinGC"
+method = "Lanczos"
+lattice = "chain"
 J = 0.5
 2S  = 1
 H   = 2
@@ -117,9 +117,9 @@ By selecting method as “CG”,
 you can perform the LOBCG calculations.
 An example of the input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan5a.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L=2
-model = &quot;SpinGC&quot;
-method = &quot;CG&quot;
-lattice = &quot;chain&quot;
+model = "SpinGC"
+method = "CG"
+lattice = "chain"
 J = 0.5
 2S  = 1
 H   = 2
@@ -138,9 +138,9 @@ be correctly obtained by using LOBCG method.
 (Please compare the energies obtained by the full diagonalization.)
 An example of the input file (<code class="docutils literal notranslate"><span class="pre">samples/tutorial_1.1/stan5b.in</span></code>) is as follows:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L=2
-model = &quot;SpinGC&quot;
-method = &quot;CG&quot;
-lattice = &quot;chain&quot;
+model = "SpinGC"
+method = "CG"
+lattice = "chain"
 J = 0.5
 2S  = 1
 H   = 2

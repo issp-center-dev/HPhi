@@ -144,12 +144,41 @@ MPI前提テストの挙動（ctest）
 ``MPIRUN`` が未設定、または必要なMPIランク条件を満たさない場合、
 これらは ``ctest`` 上で ``Skipped`` として報告されます。
 
+スピン1模型のテスト（``*spinone*`` および
+``mpi_consistency_threebody_generalspin``）はMPIランク数が3のべき乗である
+必要があるため、下記の例のように別途選択して実行します。ランク条件は次のとおりです。
+
+* ``lobcg_spinone_chain_threebody``: ``MPIRUN`` 未設定ではシリアルで実行。
+  ``MPIRUN`` 指定時は 3^k ランクのときだけ実行し、それ以外は ``Skipped``。
+* ``mpi_consistency_threebody_generalspin`` と ``mpi_*_spinone``: MPI専用、
+  ちょうど3ランク。``mpi_*_spinone_np9``: MPI専用、ちょうど9ランク。
+  それ以外のランク数や ``MPIRUN`` 未設定では ``Skipped`` になるため、
+  3ランク実行と9ランク実行のそれぞれで一部が ``Skipped`` になるのは正常です。
+* 残りの ``*spinone*`` テスト（Lanczos、FullDiag、validation）は
+  ``MPIRUN`` に関係なくシリアルで実行されます。
+
 例：
 
 .. code-block:: bash
 
    MPIRUN='mpirun -np 4 --oversubscribe' ctest -L consistency
    MPIRUN='mpirun -np 16 --oversubscribe' ctest -L batching
+   MPIRUN='mpirun -np 3 --oversubscribe' ctest -R "spinone|threebody_generalspin"
+
+シリアル実行用のランチャー（``MPIRUNFC``）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+テストスクリプトは、``-sdry`` による入力ファイル生成やシリアルの参照計算のために、
+HPhiをシリアルでも実行します。このような呼び出しには ``${MPIRUNFC}``
+（既定では空）が前置されています。ランチャーなしではMPIバイナリを起動できない
+環境（Slurmの ``srun`` など）では、両方の変数を指定してください：
+
+.. code-block:: bash
+
+   make test "MPIRUN=srun -n 4" "MPIRUNFC=srun -n 1"
+
+テストを追加する際は、シリアル実行のHPhi呼び出しには ``${MPIRUNFC}`` を、
+並列実行には ``${MPIRUN}`` を前置してください。
 
 フェルミオン符号
 ----------------

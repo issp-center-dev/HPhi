@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>tmpvec.dat &#8212; HΦ Documentation 3.7.0 documentation</title>
+    <title>tmpvec.dat &#8212; HΦ Documentation 3.7.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
-    <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+    <script src="../../_static/documentation_options.js?v=86e43a22"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -55,7 +55,7 @@ different from the actual <span class="math notranslate nohighlight">\({\mathcal
 <div class="line-block">
 <div class="line">Lanczos</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_rank_0.dat&quot;, &quot;wb&quot;);
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
 fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);
@@ -66,7 +66,7 @@ fclose(fp);
 <div class="line-block">
 <div class="line">TPQ and LOBPCG</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen(&quot;zvo_tmpvec_set_0_rank_0.dat&quot;, &quot;wb&quot;);
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
 fwrite(&amp;number_of_interations, sizeof(int), 1,fp);
 fwrite(&amp;local_size, sizeof(unsigned long int),1,fp);
 fwrite(&amp;last_vector[0], sizeof(complex double),local_size+1, fp);
