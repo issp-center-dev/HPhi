@@ -312,12 +312,16 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
               group, sector.count, sector.xor_hash, sector.sum_hash,
               def->iCalcModel == SpinGC ? 3 : 2, hamiltonian);
       fprintf(fp, "basis_layout=%s\nmpi_ranks=%d\nomp_threads=%d\n"
-              "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u pair_hopping:%u chemi:%u interall_diagonal:%u interall_offdiagonal:%u\n"
-              "exct=%u\nlanczos_max=%u\nlanczos_eps=%d\ninitial_iv=%ld\n",
+              "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u pair_hopping:%u chemi:%u interall_diagonal:%u interall_offdiagonal:%u",
               X->Sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED ? "distributed" : "replicated",
               nproc, threads, def->EDNTransfer, def->NCoulombIntra, def->NCoulombInter,
               def->NHundCoupling, def->NExchangeCoupling, def->NIsingCoupling,
-              def->NPairHopping, def->EDNChemi, def->NInterAll_Diagonal, def->NInterAll_OffDiagonal,
+              def->NPairHopping, def->EDNChemi, def->NInterAll_Diagonal, def->NInterAll_OffDiagonal);
+      /* Keep canonical manifest bytes unchanged; SpinGC also retains its
+         standalone pair_lift key for existing manifest consumers. */
+      if (def->iCalcModel == SpinGC)
+        fprintf(fp, " pair_lift:%u", def->NPairLiftCoupling);
+      fprintf(fp, "\nexct=%u\nlanczos_max=%u\nlanczos_eps=%d\ninitial_iv=%ld\n",
               def->k_exct, def->Lanczos_max, def->LanczosEps, def->initial_iv);
       if (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
         fprintf(fp, "ensemble=single_symmetry_sector\nnum_ave=%d\nlarge_value=%.17g\ninitial_vec_type=%d\n",

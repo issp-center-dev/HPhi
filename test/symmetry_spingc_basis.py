@@ -12,7 +12,25 @@ import symmetry_spingc_common as c
 
 
 def translation(n, k):
-    return [[(i+g) % n for i in range(n)] for g in range(n)], np.exp(2j*np.pi*k*np.arange(n)/n)
+    return [[(i+g) % n for i in range(n)] for g in range(n)], np.exp(-2j*np.pi*k*np.arange(n)/n)
+
+
+def check_momentum_convention():
+    # Independently anchor the contractual k=1 sectors, not merely internal
+    # consistency of a character and a projector built from that character.
+    for name, n, phase in [('B1', 8, (1-1j)/np.sqrt(2)),
+                           ('D1', 6, (1-1j*np.sqrt(3))/2)]:
+        permutations, characters = translation(n, 1)
+        assert permutations[1][0] == 1
+        np.testing.assert_allclose(characters[1], phase, atol=1e-12, rtol=0)
+        basis, representatives, _ = c.sector_basis(n, permutations, characters)
+        column, = np.flatnonzero(representatives == 1)
+        # The single-up orbit has representative |...001>. Since the
+        # projector uses conjugate characters, |...010> has phase conj(chi).
+        np.testing.assert_allclose(basis[[1, 2], column],
+                                   [1/np.sqrt(n), np.conj(phase)/np.sqrt(n)],
+                                   atol=1e-12, rtol=0)
+        print('{} negative-character and orbit-phase anchors passed'.format(name), flush=True)
 
 
 def close_matrix(actual, expected, tolerance=1e-11):
@@ -72,7 +90,11 @@ def manifest(path, dim, n, families):
     assert not any(k in data for k in ['fixed_2sz', 'fixed_ne', 'fixed_nup', 'fixed_ndown'])
     assert int(data['sector_dim']) == dim and int(data['full_dim']) == 1 << n
     assert data['hamiltonian_digest'].startswith('hphi-parsed-hamiltonian-fnv1a64-v3:')
-    assert int(data['pair_lift']) == len(families.get('PairLift', []))
+    pair_lift = len(families.get('PairLift', []))
+    scope = data['term_scope'].split()
+    assert sum(term.startswith('pair_lift:') for term in scope) == 1
+    assert 'pair_lift:{}'.format(pair_lift) in scope
+    assert int(data['pair_lift']) == pair_lift
     return data
 
 
@@ -108,6 +130,7 @@ def probe_matrix(path, dim, reps, ranks):
 
 
 def positive(root, hphi, probe, mode):
+    check_momentum_convention()
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     ranks = c.mpi_size(launcher)
     assert ranks is not None, 'Specify MPI process count explicitly for probe rank checks'

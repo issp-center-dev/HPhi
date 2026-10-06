@@ -142,6 +142,11 @@ def parse_energy(path):
 
 
 def check_eigenvector(vector, energy, hamiltonian, representatives, nsite):
+    assert np.isfinite(vector).all() and np.isfinite(hamiltonian).all()
+    assert np.isfinite(energy)
+    ground_energy = np.linalg.eigvalsh(hamiltonian)[0]
+    assert np.isfinite(ground_energy)
+    np.testing.assert_allclose(energy, ground_energy, atol=3e-8, rtol=0)
     np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-9, rtol=0)
     residual = np.linalg.norm(hamiltonian@vector-energy*vector)
     scale = max(1, np.linalg.norm(hamiltonian, 2)*np.linalg.norm(vector))
