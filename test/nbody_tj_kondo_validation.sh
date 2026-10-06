@@ -18,7 +18,7 @@ expect_fail() {
   pattern="$2"
   cd "${dir}"
   set +e
-  "${hphi}" -e namelist.def > log.txt 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > log.txt 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then
@@ -157,7 +157,7 @@ EOF
   elif [ "${write_sector}" = "ncond" ]; then
     printf "ncond = 2\n" >> stan.in
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   printf '          NBodyG  nbodyg.def\n' >> namelist.def
   cd ..
@@ -417,27 +417,27 @@ NNBodyG 1
 EOF
 
 cd accept_tj
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_tj
 cd accept_tjgc
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_tjgc
 cd accept_tjn
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_tjn
 cd accept_kondo
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_kondo
 cd accept_kondogc
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_kondogc
 cd accept_kondon
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_kondon
 

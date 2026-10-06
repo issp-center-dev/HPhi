@@ -29,7 +29,7 @@ Lanczos_max = 100
 initial_iv = 1
 EOF
   rm -rf output
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 
@@ -49,7 +49,7 @@ NNBodyInterAll 3
 2 0 1 0 0 1 0 1 1 0.3700000000000000 0.1100000000000000
 2 0 0 0 1 1 1 1 0 0.3700000000000000 -0.1100000000000000
 EOF
-run_hphi log_nbody.txt "${hphi}" -e namelist.def
+run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 
 cd interall
@@ -64,7 +64,7 @@ NInterAll 3
 0 1 0 0 1 0 1 1 0.3700000000000000 0.1100000000000000
 1 1 1 0 0 0 0 1 0.3700000000000000 -0.1100000000000000
 EOF
-run_hphi log_interall.txt "${hphi}" -e namelist.def
+run_hphi log_interall.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 
 diff=$(paste nbody/output/zvo_phys.dat interall/output/zvo_phys.dat \

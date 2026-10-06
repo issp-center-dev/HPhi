@@ -74,11 +74,11 @@ jobs:
         shell: bash
         run: ctest -V -LE "consistency|batching"
 
-      - name: ctest (mpisize=3/9, spinone only)
+      - name: ctest (mpisize=3/9, spin-1 tests only)
         if: ${{ matrix.mpisize == 3 || matrix.mpisize == 9 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -R spinone
+        run: ctest -V -R "spinone|threebody_generalspin"
 
       - name: ctest (mpisize=4, baseline)
         if: ${{ matrix.mpisize == 4 }}

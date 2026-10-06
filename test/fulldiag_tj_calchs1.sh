@@ -113,7 +113,7 @@ run_case() {
   cd "${dir}"
   rm -rf output
   mkdir -p output
-  "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${dir}: HPhi failed"; }
+  ${MPIRUNFC} "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${dir}: HPhi failed"; }
   grep -q "Error: in sz" run.log && { cat run.log; fail "${dir}: Error in sz"; }
 
   dim=$(grep "Total dimension :" run.log | tail -1 | awk '{print $NF}')

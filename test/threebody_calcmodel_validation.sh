@@ -18,7 +18,7 @@ expect_reject() {
     "$@"
 
     set +e
-    "${hphi}" -e namelist.def > run.log 2>&1
+    ${MPIRUNFC} "${hphi}" -e namelist.def > run.log 2>&1
     rc=$?
     set -e
 
@@ -45,7 +45,7 @@ h = 0.1
 2S = 1
 outputmode = "None"
 EOF
-  "${hphi}" -sdry stan.in > gen.log 2>&1
+  ${MPIRUNFC} "${hphi}" -sdry stan.in > gen.log 2>&1
   cat > green3.def <<EOF
 ===================
 num       1
@@ -67,7 +67,7 @@ J = 1.0
 2Sz = 0
 outputmode = "None"
 EOF
-  "${hphi}" -sdry stan.in > gen.log 2>&1
+  ${MPIRUNFC} "${hphi}" -sdry stan.in > gen.log 2>&1
   cat > green3.def <<EOF
 ===================
 num       1

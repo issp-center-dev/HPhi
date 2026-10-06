@@ -29,11 +29,11 @@ mkdir -p mpi_consistency_spinless/
 cd mpi_consistency_spinless
 
 # Generate input files using Python script
-python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -m "SpinlessFermion" -s 8 --onebody-offdiag
+python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -mpi "${MPIRUNFC}" -m "SpinlessFermion" -s 8 --onebody-offdiag
 
 # Run without MPI
 echo "Running without MPI..."
-../../src/HPhi -e namelist.def
+${MPIRUNFC} ../../src/HPhi -e namelist.def
 cp output/zvo_energy.dat energy_nompi.dat
 cp output/zvo_cisajs.dat onebody_nompi.dat
 
