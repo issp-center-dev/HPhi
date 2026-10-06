@@ -212,17 +212,16 @@ unsupported. The raw spinless solver still rejects off-diagonal <code class="doc
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
 <p>Correlation functions (<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
 <code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>) are computed in the sector for
-<code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> and <code class="docutils literal notranslate"><span class="pre">CG</span></code>. The values are the exact expectation values in the
-sector; rows that are mapped onto each other by a symmetry operation have
-the same value, and an operator that leaves the sector gives zero. For
-canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> are rejected
-at startup as in the raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products.
-<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, spectrum calculations, restart, and the input and output of
-Hamiltonians are not supported together with this file. Correlation
-functions with <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> are not available in
-this version. Eigenvector I/O is available for CG and TimeEvolution through
-the sector checkpoint format below. Unsupported combinations terminate with
-an error.</p>
+<code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code>. The values are
+the exact expectation values in the sector; rows that are mapped onto each
+other by a symmetry operation have the same value, and an operator that
+leaves the sector gives zero. For canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> are rejected at startup as in the
+raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products. <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, spectrum
+calculations, restart, and the input and output of Hamiltonians are not
+supported together with this file. Eigenvector I/O is available for CG and
+TimeEvolution through the sector checkpoint format below. Unsupported
+combinations terminate with an error.</p>
 </li>
 </ul>
 </section>
@@ -252,9 +251,11 @@ Standard mode still limits <code class="docutils literal notranslate"><span clas
 <p>All existing SS/Norm/Flct columns are supported, including doublon and its
 second moment for Hubbard. The SS <code class="docutils literal notranslate"><span class="pre">phys_var</span></code> column retains its existing
 meaning <span class="math notranslate nohighlight">\(\langle H^2\rangle\)</span>, not the subtracted variance.
-<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> selects the usual aggregate SS/Norm/Flct files even
-though correlation functions remain unsupported. Restart, vector I/O,
-and spectrum remain unavailable with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> selects the usual aggregate files for SS/Norm/Flct and
+for the correlation functions. Correlation functions are recomputed at the TPQ
+evaluation steps selected by <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code>; requesting every site pair at
+every step can be expensive for large sectors. Restart, vector I/O, and
+spectrum remain unavailable with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</p>
 <p>These results estimate the trace within a <strong>single symmetry sector</strong>; they
 are not a thermal average over the entire fixed-quantum-number space.
 The manifest records <code class="docutils literal notranslate"><span class="pre">ensemble=single_symmetry_sector</span></code>, <code class="docutils literal notranslate"><span class="pre">num_ave</span></code>,
@@ -277,6 +278,10 @@ integer less than <code class="docutils literal notranslate"><span class="pre">I
 <code class="docutils literal notranslate"><span class="pre">i</span></code> advances from beta <code class="docutils literal notranslate"><span class="pre">i</span></code> to beta <code class="docutils literal notranslate"><span class="pre">i+1</span></code>; the final order is unused.
 Sector cTPQ rejects any nonzero <code class="docutils literal notranslate"><span class="pre">eigen</span></code> flag, including at the initial or
 final point. Vector I/O and restart remain unsupported.
+For an explicit schedule, correlation functions are written at the initial
+point and at rows whose <code class="docutils literal notranslate"><span class="pre">physcal</span></code> flag is 1. Without <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> selects the correlation steps. <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code>
+collects all samples and steps into the indexed aggregate correlation files.
 The manifest records <code class="docutils literal notranslate"><span class="pre">canonical_tpq_steps</span></code>, <code class="docutils literal notranslate"><span class="pre">beta_schedule</span></code> and either
 the uniform step/order or all explicit beta/order rows. As for mTPQ, these
 outputs describe a single sector, not the sum over all sectors.</p>
@@ -306,7 +311,11 @@ provenance, but do not resume its clock. For time-dependent interactions and Pei
 <p><code class="docutils literal notranslate"><span class="pre">SS</span></code>, <code class="docutils literal notranslate"><span class="pre">Norm</span></code> and <code class="docutils literal notranslate"><span class="pre">Flct</span></code> contain sector expectation values. <code class="docutils literal notranslate"><span class="pre">Norm</span></code> is
 the norm before each step’s normalization; Taylor truncation can make it
 differ from one. Increase <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> or reduce the time spacing to check
-convergence. Correlation functions and <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remain unsupported.
+convergence.
+Correlation functions are evaluated after propagation at the steps selected
+by <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code>. <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> collects them into files indexed
+by the zero-based time-grid step. Requesting every site pair at every step can
+be expensive for large sectors. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remains unsupported.
 The sector manifest records the actual time grid, Taylor order, and source
 checkpoint’s method, state, step, time and Hamiltonian digest.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> and positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code>, periodic files are

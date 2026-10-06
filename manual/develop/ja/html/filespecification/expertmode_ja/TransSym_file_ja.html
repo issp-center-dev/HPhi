@@ -206,13 +206,13 @@ MPIプロセス数でも実行できます。</p></li>
 spinlessのraw solverでは非対角 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> は引き続き非対応で、今回の拡張は
 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> に適用されます。Standard modeの入力生成は変更していません。</p>
 <p>相関関数（<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>、
-<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>）は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code> と <code class="docutils literal notranslate"><span class="pre">CG</span></code> でsector内で計算されます。
+<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>）は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、<code class="docutils literal notranslate"><span class="pre">CG</span></code>、<code class="docutils literal notranslate"><span class="pre">TPQ</span></code>、<code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、
+<code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> でsector内計算されます。
 値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
 sectorの外へ出る演算子は0になります。canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> はraw基底と同様に起動時に拒否されます。
 同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、スペクトル計算、リスタート、
-ハミルトニアンの入出力は本ファイルと併用できません。<code class="docutils literal notranslate"><span class="pre">TPQ</span></code>、<code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、
-<code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> との相関関数はこの版では利用できません。固有ベクトルの入出力は、
+ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
 CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。
 未対応の組み合わせはエラーで終了します。</p>
 </li>
@@ -242,8 +242,10 @@ Standard modeの <code class="docutils literal notranslate"><span class="pre">Mo
 <p>Hubbardのdoublonとその二乗平均を含む、既存SS/Norm/Flctの全列に対応します。
 SSの <code class="docutils literal notranslate"><span class="pre">phys_var</span></code> 列は従来どおり <span class="math notranslate nohighlight">\(\langle H^2\rangle\)</span> で、
 エネルギー平均の二乗を引いた分散ではありません。
-<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> によるSS/Norm/Flct集約出力も使えます。
-相関関数、restart、ベクトル入出力、スペクトルは <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と併用できません。</p>
+<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> によりSS/Norm/Flctと相関関数の集約出力を使えます。
+相関関数は <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> が選ぶTPQ評価stepで再計算されます。大規模sectorで
+全site pairを毎step要求すると高コストになります。restart、ベクトル入出力、
+スペクトルは <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と併用できません。</p>
 <p>計算結果は <strong>単一の対称性セクター内</strong> のtraceを推定します。
 固定量子数空間全体の熱平均ではありません。manifestには
 <code class="docutils literal notranslate"><span class="pre">ensemble=single_symmetry_sector</span></code>、 <code class="docutils literal notranslate"><span class="pre">num_ave</span></code>、 <code class="docutils literal notranslate"><span class="pre">large_value</span></code>、
@@ -263,6 +265,9 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 両flagは0または1です。行 <code class="docutils literal notranslate"><span class="pre">i</span></code> の次数はbeta <code class="docutils literal notranslate"><span class="pre">i</span></code> から <code class="docutils literal notranslate"><span class="pre">i+1</span></code> への発展に使い、
 最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
 <code class="docutils literal notranslate"><span class="pre">eigen</span></code> が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
+明示scheduleでは初期点と <code class="docutils literal notranslate"><span class="pre">physcal=1</span></code> の行で相関関数を出力します。<code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> を
+指定しない場合は <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> が出力stepを選びます。<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> は
+全sample・stepを添字付きの相関関数集約ファイルへまとめます。
 manifestには <code class="docutils literal notranslate"><span class="pre">canonical_tpq_steps</span></code>、 <code class="docutils literal notranslate"><span class="pre">beta_schedule</span></code> と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。</p>
 </section>
@@ -286,7 +291,10 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 記録し、新しい時刻列の時計には引き継ぎません。時間依存項とPeierls駆動については次節を参照してください。</p>
 <p><code class="docutils literal notranslate"><span class="pre">SS</span></code> / <code class="docutils literal notranslate"><span class="pre">Norm</span></code> / <code class="docutils literal notranslate"><span class="pre">Flct</span></code> はsector内の期待値を出力します。 <code class="docutils literal notranslate"><span class="pre">Norm</span></code> は各stepの
 規格化前のnormで、Taylor打切りにより1からずれる場合があります。次数を増やすか
-時間間隔を減らして収束を確認してください。相関関数と <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は未対応です。
+時間間隔を減らして収束を確認してください。相関関数は伝播後、<code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> が
+選ぶstepで評価されます。<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> は0始まりの時刻stepを添字として
+集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
+なります。<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は引き続き非対応です。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
 記録します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> と正の <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> により、周期出力を
