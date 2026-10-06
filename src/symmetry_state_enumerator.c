@@ -65,6 +65,16 @@ int InitSymmetryStateEnumerator(
   initialized.nup = def->Nup;
   initialized.ndown = def->Ndown;
 
+  if (def->iCalcModel == SpinGC) {
+    if (def->iFlgGeneralSpin != FALSE || def->Nsite >= word_bits) return -1;
+    initialized.bit_count = def->Nsite;
+    initialized.nup = initialized.ndown = 0U;
+    initialized.raw_dim = 1UL << def->Nsite;
+    if (initialized.raw_dim != expected_raw_dim) return -1;
+    *enumerator = initialized;
+    return 0;
+  }
+
   switch (def->iCalcModel) {
   case Spin:
     if (def->iFlgGeneralSpin != FALSE ||
@@ -221,6 +231,15 @@ int SymmetryStateEnumeratorStateAt(
       enumerator->raw_dim == 0UL ||
       raw_index == 0UL || raw_index > enumerator->raw_dim) {
     return -1;
+  }
+  if (enumerator->model == SpinGC) {
+    if (enumerator->nsite == 0U || enumerator->nsite >= word_bits ||
+        enumerator->bit_count != enumerator->nsite ||
+        enumerator->raw_dim != (1UL << enumerator->nsite)) {
+      return -1;
+    }
+    *state = raw_index - 1UL;
+    return 0;
   }
   if (enumerator->model == Hubbard || enumerator->model == tJ) {
     if (enumerator->nsite == 0U ||
