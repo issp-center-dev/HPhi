@@ -1,4 +1,4 @@
-"""SpinGC input boundaries, independent projected matrices and LAPACK spectra."""
+"""SpinGC input boundaries, independent matrices and LAPACK/ScaLAPACK/ELPA spectra."""
 import os
 from pathlib import Path
 import re
@@ -167,9 +167,65 @@ def positive(root, hphi, probe, mode):
             (path/('spingc_probe_rank_{}.dat'.format(ranks-1))).mkdir()
             c.run_case(path, probe, 'reject', launcher,
                        dict(os.environ, HPHI_TEST_SPINGC_ACTION='matvec',
-                            HPHI_SYMMETRY_BASIS_LAYOUT=layout), 'MPI-ERROR MESSAGE')
+                            HPHI_SYMMETRY_BASIS_LAYOUT=layout),
+                       # Non-MPI exitMPI has no MPI abort banner. Require
+                       # completed setup plus nonzero exit in that build.
+                       'MPI-ERROR MESSAGE' if ranks > 1 else
+                       ('Symmetry matvec:' if layout == 'replicated' else
+                        'Symmetry distributed matvec:'))
     if mode == 'fulldiag':
         np.testing.assert_allclose(sorted(spectra), np.linalg.eigvalsh(c.mixed_hamiltonian(8)), atol=3e-8, rtol=0)
+        backend_full_diag(root, hphi, launcher, ranks)
+
+
+def backend_full_diag(root, hphi, launcher, ranks):
+    """Only B k0/1 need distributed solvers; LAPACK covers the full spectrum."""
+    env = dict(os.environ)
+    env.pop('HPHI_SYMMETRY_BASIS_LAYOUT', None)
+    backends = []
+    for solver, flag, label in [(1, 'HPHI_HAS_SCALAPACK', 'ScaLAPACK'),
+                                 (3, 'HPHI_HAS_ELPA', 'ELPA')]:
+        if os.environ.get(flag) == '1' and ranks > 1:
+            backends.append((solver, label))
+        else:
+            print('{} not exercised: backend unavailable or launcher has one rank'.format(label), flush=True)
+    for solver, label in backends:
+        for k in (0, 1):
+            p, chi = translation(8, k)
+            families = c.mixed_families(8)
+            expected, reps = reference(8, p, chi, c.mixed_hamiltonian(8))
+            path = root/'Bk{}_solver{}'.format(k, solver)
+            c.write_case(path, 8, p, chi, families, 2,
+                         {'CalcMod': {'Solver': solver, 'NGPU': 0}})
+            text = c.run_case(path, hphi, 'fulldiag', launcher, env)
+            values = np.loadtxt(path/'output/zvo_energy_sector.dat', ndmin=2)
+            assert np.isfinite(values).all()
+            np.testing.assert_array_equal(values[:, 0], np.arange(len(reps)))
+            np.testing.assert_allclose(values[:, 1], np.linalg.eigvalsh(expected), atol=3e-8, rtol=0)
+            data = manifest(path, len(reps), 8, families)
+            assert int(data['solver_id']) == solver and data['output_scope'] == 'eigenvalues'
+            assert data['basis_layout'] == 'replicated'
+            storage = 'replicated' if solver == 1 else 'column_panel'
+            assert 'matrix={} eigenvectors=distributed'.format(storage) in text
+            assert not list((path/'output').glob('*eigenvec*'))
+            print('{} Solver{} B k{} np{} dim={} passed'.format(label, solver, k, ranks, len(reps)), flush=True)
+        # Nonserial ExpecMode must be rejected on actual multiple ranks;
+        # one-rank readdef intentionally demotes it before the sector gate.
+        path = root/'expecmode_solver{}'.format(solver)
+        c.write_case(path, 8, p, chi, families, 2,
+                     {'CalcMod': {'Solver': solver, 'ExpecMode': 1}})
+        c.run_case(path, hphi, 'reject', launcher, env, 'MAGMA and ExpecMode are not supported')
+    if any(solver == 3 for solver, _ in backends):
+        # Two-site odd translation sector has dimension one: too small
+        # for any multiple-rank ELPA process grid, including required np2.
+        p, chi = translation(2, 1)
+        path = root/'elpa_small_sector'
+        c.write_case(path, 2, p, chi, {}, 2, {'CalcMod': {'Solver': 3}})
+        _, reps, _ = c.sector_basis(2, p, chi)
+        assert len(reps) == 1
+        c.run_case(path, hphi, 'reject', launcher, env, 'smaller than the process grid')
+        assert not (path/'output/zvo_energy_sector.dat').exists()
+        print('ELPA Solver3 process-grid rejection np{} dim=1 passed'.format(ranks), flush=True)
 
 
 def validation(root, hphi):
@@ -226,6 +282,18 @@ def validation(root, hphi):
     negative('spectrum', 'spectrum calculations', lambda path: append(path, 'calc.def', 'CalcSpec 1\n'))
     negative('fulldiag_vectors', 'does not support OutputEigenVec',
              lambda path: (replace(path, 'calc.def', 'CalcType 3', 'CalcType 2'), append(path, 'calc.def', 'OutputEigenVec 1\n')))
+    full = root/'valid_fulldiag'
+    c.write_case(full, 4, p, chi, c.mixed_families(4), 2,
+                 {'CalcMod': {'Solver': 0}})
+    negative('fulldiag_correlations', 'sector FullDiag outputs eigenvalues only',
+             lambda path: extra(path, 'OneBodyG', [(0, 1, 0, 0)]), full)
+    negative('fulldiag_magma', 'MAGMA',
+             lambda path: replace(path, 'calc.def', 'Solver 0', 'Solver 2'), full)
+    negative('fulldiag_expecmode', 'ExpecMode',
+             lambda path: append(path, 'calc.def', 'ExpecMode 1\n'), full)
+    c.run_case(full, hphi, 'reject_distributed', [],
+               dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed'),
+               'distributed symmetry basis is supported for TransSym Lanczos, TPQ, CG, TimeEvolution and cTPQ runs only')
     negative('invalid_character', 'character', lambda path: replace(path, 'group.def', '1 1.0 0.0', '1 0.5 0.0'))
     negative('nonfinite_character', 'character must be finite',
              lambda path: replace(path, 'group.def', '1 1.0 0.0', '1 nan 0.0'))

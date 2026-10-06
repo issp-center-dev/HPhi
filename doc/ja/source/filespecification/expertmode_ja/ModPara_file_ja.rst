@@ -420,6 +420,19 @@ TPQ法で使用するパラメータ
    (``CalcMod``\ ファイルで\ ``OutputEigenVec=1``\ にすると有効になります)
 
 
+
+TransSymを使うSpinGC
+~~~~~~~~~~~~~~~~~~~~
+
+スピン1/2のSpinGC sector（``CalcModel=4``）では ``2Sz``、``Nup``、
+``Ndown``、``Ncond`` を省略してください。0を含む明示指定は無視せず拒否します。
+サイト数は ``0 < Nsite < CHAR_BIT * sizeof(unsigned long)`` に制限されます。
+``Lanczos_max``、``initial_iv``、CG収束パラメータは通常の意味を持ちます。
+TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector cTPQの
+``InvTemp`` は固有ベクトル出力を要求できません。TEは正の ``ExpandCoef``、
+有限で非減少の時間列、観測量・checkpointの ``ExpecInterval`` / ``OutputInterval``
+を使います。磁化モーメント、読込の意味、入力例は :ref:`Subsec:TransSym` を参照してください。
+
 .. raw:: latex
 
    \newpage

@@ -214,7 +214,7 @@ def main():
     root = Path(tempfile.mkdtemp(prefix='symmetry_spingc_te_',dir='.')).resolve()
     print('artifacts: '+str(root),flush=True)
     for layout in (('distributed','replicated') if ranks <= 4 else ('distributed',)):
-        for label, momentum in [('B',0),('B',1)]+([('D',1)] if ranks == 16 else []):
+        for label, momentum in [('B',0),('B',1),('D',1)]:
             fixture = thermal.fixture(label,momentum)
             env = dict(os.environ,HPHI_SYMMETRY_BASIS_LAYOUT=layout)
             prefix = '{}_k{}_{}'.format(label,momentum,layout)

@@ -189,6 +189,7 @@ Use rules
 *  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, ``FullDiag``, and ``TimeEvolution`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
+   Spin-one-half ``SpinGC`` without fixed Sz is also supported as described below.
    Expert-mode Hamiltonian terms are:
 
    * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
@@ -208,8 +209,8 @@ Use rules
    matrix-unit reduction. This accounts for permutation signs, contractions,
    duplicate terms, and cancellations between families before checking
    invariance and conserved quantum numbers. The coefficient tolerance is
-   :math:`10^{-10}`. ``PairLift``, ``NBodyInterAll``, and anomalous terms remain
-   unsupported. The raw spinless solver still rejects off-diagonal ``InterAll``;
+   :math:`10^{-10}`. For these canonical models, ``PairLift``, ``NBodyInterAll``, and anomalous
+   terms remain unsupported. SpinGC supports ``PairLift`` as described below. The raw spinless solver still rejects off-diagonal ``InterAll``;
    this extension applies to ``TransSym``. Standard-mode generation is unchanged.
 
    Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
@@ -224,6 +225,156 @@ Use rules
    supported together with this file. Eigenvector I/O is available for CG and
    TimeEvolution through the sector checkpoint format below. Unsupported
    combinations terminate with an error.
+
+
+SpinGC sectors (spin one-half, expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=4`` with ``TransSym`` selects a spatial-symmetry sector of the
+complete spin-one-half space, of dimension :math:`2^{N_{\rm site}}` before
+projection. It does **not** fix total :math:`S_z`. Omit ``2Sz``, ``Nup``,
+``Ndown`` and ``Ncond`` entirely: even an explicit zero is rejected.
+The site count must satisfy ``0 < Nsite < CHAR_BIT * sizeof(unsigned long)``.
+Bit 0 denotes down, bit 1 up, and site 0 is the least significant bit.
+Basis representatives are the smallest bit strings in their orbits; their
+coefficients are positive real in the normalized projected states.
+No full-space state vector is required by the sector solver.
+
+Supported Hamiltonian families are on-site ``Trans`` (including transverse
+and complex fields), ``Ising``, ``Exchange``, ``CoulombInter``, ``Hund``,
+``PairLift``, and ``InterAll`` built from on-site spin matrix units, including
+terms that change total :math:`S_z`. Hermiticity and group invariance are
+still required. For :math:`E_i^{ab}=|a\rangle_i\langle b|`, one real
+``PairLift`` row ``i j J`` means
+
+.. math::
+
+   J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).
+
+There is no additional factor of one-half. Reversed and duplicate rows add;
+a same-site row vanishes. These rules do not relax the fixed-Sz restriction
+of canonical ``Spin``.
+
+.. list-table:: SpinGC sector method and feature support
+   :header-rows: 1
+   :widths: 17 24 22 19 18
+
+   * - Method (CalcType)
+     - Result
+     - Correlations
+     - Vector import/export
+     - MPI layout
+   * - Lanczos (0)
+     - Low-energy states
+     - All six formats
+     - No / No
+     - Distributed or replicated
+   * - mTPQ (1)
+     - Single-sector samples
+     - All six formats
+     - No / No
+     - Distributed or replicated
+   * - FullDiag (2)
+     - All sector eigenvalues
+     - No
+     - No / No
+     - Replicated metadata
+   * - CG / LOBCG (3)
+     - Low-energy states
+     - All six formats
+     - Yes / Yes
+     - Distributed or replicated
+   * - TimeEvolution (4)
+     - Static or driven evolution
+     - All six formats
+     - Required / Optional
+     - Distributed or replicated
+   * - cTPQ (5)
+     - Single-sector samples
+     - All six formats
+     - No / No
+     - Distributed or replicated
+
+The six correlation formats are ``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
+``FourBodyG``, ``SixBodyG`` and ``NBodyG``. ``OneBodyG`` requires on-site
+operators; off-site rows are rejected. Both aggregate and legacy output
+formats are available. FullDiag supports LAPACK (Solver 0, one rank),
+ScaLAPACK (1) and ELPA (3), subject to the restrictions below.
+
+:math:`S_z=\sum_i S_i^z` and :math:`S_z^2` are evaluated with the actual
+sector vector, not inferred from a fixed quantum number. Existing output
+columns are unchanged: the CG energy file reports ``Sz``; TPQ/cTPQ/TE Flct
+files report the first and second magnetization moments. CG does not add a
+new ``Sz2`` column. mTPQ and cTPQ estimate a **single spatial-symmetry sector**,
+not the full SpinGC thermal ensemble. Summing sectors requires their proper
+statistical weights; a single sector sample is not such a sum.
+
+CG vector import evaluates supplied states without restarting optimization.
+TE import starts a new time grid; it can use a different Hamiltonian within
+the same sector (quench). Same rank count, ownership, model, sector and phase
+are required. Neither import is solver restart; ``ReStart`` remains rejected.
+SpinGC checkpoints retain version 1 with ``model=4`` and zero ``nup/ndown/ne``
+header fields. Their Hamiltonian fingerprint is
+``hphi-parsed-hamiltonian-fnv1a64-v3``, which includes parsed PairLift rows.
+Canonical models retain their v2 fingerprints and existing checkpoint format.
+The manifest has ``fixed_quantities=none`` and ``full_dim=2^Nsite``.
+
+``TEOneBody`` and ``TETwoBody`` may drive SpinGC using the right-endpoint
+Taylor rule described below. Every used slice is checked before propagation.
+``Laser`` is rejected; use invariant on-site ``TEOneBody`` or spin-product
+``TETwoBody`` entries instead. General spin, Boost, Kondo, new Standard-mode
+SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
+operations, multidimensional irreducible representations, spectrum,
+Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
+are unsupported. ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
+``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
+rejects eigenvector/correlation output, distributed basis metadata, MAGMA,
+and nonserial ``ExpecMode``.
+
+Eight-site transverse-field CG example
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In an empty directory, save the following standard-library Python code as
+``make_input.py`` and run ``python3 make_input.py``. It writes portable expert
+input files for :math:`H=-\sum_{i=0}^7 S_i^x`, translations with character 1
+(momentum zero), and CG. The positive ``Trans`` coefficients implement the
+minus sign in HPhi's transfer convention.
+
+.. code-block:: python
+
+   from pathlib import Path
+
+   def definition(name, rows, count=None, keyword="NData"):
+       rows = list(rows)
+       header = "====\n{} {}\n====\n====\n====\n".format(
+           keyword, len(rows) if count is None else count)
+       Path(name).write_text(header + "".join(
+           " ".join(map(str, row)) + "\n" for row in rows))
+
+   Path("sym.def").write_text(
+       "CalcMod calc.def\nModPara mod.def\nLocSpin loc.def\n"
+       "TransSym group.def\nTrans trans.def\n")
+   Path("calc.def").write_text(
+       "CalcType 3\nCalcModel 4\nOutputMode 0\nOutputDataHead 1\n")
+   Path("mod.def").write_text(
+       "====\nModel_Parameters 0\n====\n====\n====\n"
+       "CDataFileHead zvo\nCParaFileHead zqp\n====\n"
+       "Nsite 8\nLanczos_max 400\ninitial_iv -1\nexct 1\n"
+       "LanczosEps 18\nLanczosTarget 1\nLargeValue 100\nPreCG 0\n")
+   definition("loc.def", ((i, 1) for i in range(8)))
+   definition("trans.def", ((i, a, i, b, 0.5, 0)
+              for i in range(8) for a, b in [(1, 0), (0, 1)]))
+   definition("group.def", [(g, 1.0, 0.0) for g in range(8)] +
+              [(g, i, (i+g) % 8, 1) for g in range(8) for i in range(8)],
+              count=8, keyword="NQPTrans")
+
+Run ``HPhi -e sym.def`` (or ``mpiexec -np 4 HPhi -e sym.def``) with
+``OMP_NUM_THREADS=1``. The converged ground state has :math:`E=-4`,
+:math:`\langle S_z\rangle=0` and :math:`\langle S_z^2\rangle=2`.
+``output/zvo_energy.dat`` reports energy and Sz. To reconstruct Sz2 in this
+CG example, request :math:`S_i^z S_j^z` via ``TwoBodyG`` and sum over all
+:math:`i,j` (each :math:`S_i^z=(E_i^{11}-E_i^{00})/2`).
+This example does not add or require a Standard-mode keyword.
 
 Sector Lanczos basis layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,7 +493,8 @@ not a restart. Raw TE binary files use their existing, different format.
 Time-dependent sector Hamiltonians
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``TEOneBody``, ``TETwoBody``, or ``Laser`` may drive the sector Hamiltonian.
+``TEOneBody`` or ``TETwoBody`` may drive the sector Hamiltonian.
+``Laser`` is available only for the canonical models, not SpinGC.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
@@ -477,7 +629,7 @@ Three versioned fingerprints are included:
   combines the hashes without dependence on entry order or MPI ownership.
   Integers use fixed-width little-endian encoding. The sum is modulo
   :math:`2^{64}`. Norms and Hamiltonian diagonal values are excluded.
-* ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` records the
+* ``hamiltonian_digest``: for canonical models, ``hphi-parsed-hamiltonian-fnv1a64-v2`` records the
   supported parsed Hamiltonian terms in their stored order, using the exact
   binary64 coefficient bits. Version 2 adds on-site potentials, pair hopping,
   and the split diagonal/off-diagonal InterAll arrays. Equivalent Hamiltonians expressed in different

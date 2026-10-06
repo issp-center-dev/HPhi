@@ -1453,3 +1453,17 @@ endforeach()
 set_property(TEST symmetry_spingc_thermal APPEND PROPERTY LABELS "tpq;ctpq")
 
 set_property(TEST symmetry_spingc_te APPEND PROPERTY LABELS "te")
+
+set_property(TEST symmetry_spingc_validation APPEND PROPERTY LABELS "validation")
+set_property(TEST symmetry_spingc_basis APPEND PROPERTY LABELS "basis")
+set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY LABELS "fulldiag")
+set_property(TEST symmetry_spingc_observables APPEND PROPERTY LABELS "lobcg;lanczos;correlation")
+set_property(TEST symmetry_spingc_checkpoint APPEND PROPERTY LABELS "checkpoint;lobcg")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()

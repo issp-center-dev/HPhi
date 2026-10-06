@@ -455,6 +455,21 @@ Real time evolution method
      file. A positive ``OutputInterval`` is then required. Explicit interval
      and iteration-count values must be finite integers less than ``INT_MAX``.
 
+
+SpinGC with TransSym
+~~~~~~~~~~~~~~~~~~~~
+
+For a spin-one-half SpinGC sector (``CalcModel=4``), omit ``2Sz``, ``Nup``,
+``Ndown`` and ``Ncond``. Explicit values, including zero, are rejected rather
+than ignored. The allowed site count is
+``0 < Nsite < CHAR_BIT * sizeof(unsigned long)``.
+``Lanczos_max``, ``initial_iv`` and CG convergence parameters retain their
+usual meaning. TPQ/cTPQ parameters describe samples within one symmetry
+sector; ``InvTemp`` cannot request eigenvector output in sector cTPQ.
+TE uses positive ``ExpandCoef``, a finite nondecreasing time grid, and
+``ExpecInterval``/``OutputInterval`` for observables/checkpoints. See
+:ref:`Subsec:TransSym` for magnetization moments, import semantics and examples.
+
 .. raw:: latex
 
    \newpage

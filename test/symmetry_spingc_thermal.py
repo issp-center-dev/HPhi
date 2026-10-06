@@ -58,10 +58,12 @@ def initial_vectors(path, helper, launcher, env, dimension, dtype):
     vectors, norms = [], []
     for sample in range(NUM_AVE):
         vector = []
+        empty_ranks = 0
         first_norm = None
         for rank in range(ranks):
             file = path/'initial_{}_rank{}.dat'.format(sample, rank)
             lines = file.read_text().splitlines()
+            empty_ranks += len(lines) == 1
             rank_norm = float(lines[0])
             if first_norm is None:
                 first_norm = rank_norm
@@ -70,6 +72,7 @@ def initial_vectors(path, helper, launcher, env, dimension, dtype):
                                            atol=0, rtol=0)
             vector.extend(complex(*map(float, line.split()))
                           for line in lines[1:])
+        assert empty_ranks == max(0, ranks-dimension)
         vector = np.asarray(vector)
         assert len(vector) == dimension and np.isfinite(vector).all()
         np.testing.assert_allclose(np.vdot(vector, vector), 1,
@@ -242,7 +245,7 @@ def run_thermal(root, label, momentum, kind, explicit, aggregate, interval,
      hamiltonian) = fixture(label, momentum)
     dimension = len(representatives)
     if label == 'D':
-        assert dimension == 9 and c.mpi_size(launcher) == 16
+        assert dimension == 9
     dtype = 1 if momentum == 0 else 0
     schedule = 'explicit' if explicit else 'uniform'
     path = root/'{}_{}_k{}_{}_{}_{}_i{}'.format(
@@ -337,7 +340,7 @@ def main():
                     'distributed', hphi, helper, launcher, base_env)
         assert explicit_rejection_source is not None
         reject_invtemp_eigen(root, explicit_rejection_source, hphi, base_env)
-    if ranks == 16:
+    if ranks in (1, 4, 16):
         run_thermal(root, 'D', 1, 'tpq', False, True, 2,
                     'distributed', hphi, helper, launcher, base_env)
         run_thermal(root, 'D', 1, 'ctpq', False, True, 2,
