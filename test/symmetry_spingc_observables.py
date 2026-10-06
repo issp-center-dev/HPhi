@@ -10,6 +10,30 @@ import numpy as np
 import symmetry_spingc_common as c
 
 
+CORRELATION_FILES = {
+    'one': 'cisajs', 'two': 'cisajscktalt', 'three': 'ThreeBody',
+    'four': 'FourBody', 'six': 'SixBody', 'nbody': 'NBodyG',
+}
+CORRELATION_KEYWORDS = {
+    'one': 'OneBodyG', 'two': 'TwoBodyG', 'three': 'ThreeBodyG',
+    'four': 'FourBodyG', 'six': 'SixBodyG', 'nbody': 'NBodyG',
+}
+CORRELATION_REQUESTS = {
+    'one': [[0, 1, 0, 0], [0, 0, 0, 1], [0, 1, 0, 0]],
+    'two': [[0, 1, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 1, 0, 1, 0, 0],
+            [0, 1, 0, 0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 1, 1, 1, 0]],
+    'three': [[0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1]] * 2,
+    'four': [[0, 1, 0, 0, 0, 0, 0, 1,
+              1, 1, 1, 0, 2, 0, 2, 1]] * 2,
+    'six': [[0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+             1, 0, 1, 1, 2, 1, 2, 0, 3, 0, 3, 1]] * 2,
+    'nbody': [[5, 0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1,
+               3, 1, 3, 1, 4, 0, 4, 0]] * 2,
+}
+
+
 def translation(nsite, momentum):
     permutations = [[(site+shift) % nsite for site in range(nsite)]
                     for shift in range(nsite)]
@@ -128,6 +152,73 @@ def arbitrary_vector(dimension, seed):
     return vector/np.linalg.norm(vector)
 
 
+def correlation_operator(nsite, kind, row):
+    data = row[1:] if kind == 'nbody' else row
+    assert len(data) % 4 == 0
+    operator = np.eye(1 << nsite, dtype=complex)
+    for offset in range(0, len(data), 4):
+        site_out, spin_out, site_in, spin_in = data[offset:offset+4]
+        assert site_out == site_in
+        unit = np.zeros((2, 2), dtype=complex)
+        unit[spin_out, spin_in] = 1
+        operator = operator @ c.tensor_at(nsite, site_out, unit)
+    return operator
+
+
+def correlation_references(nsite, basis, vector):
+    references = {}
+    for kind, rows in CORRELATION_REQUESTS.items():
+        values = []
+        for row in rows:
+            operator = correlation_operator(nsite, kind, row)
+            values.append(np.vdot(vector, (basis.conj().T@operator@basis)@vector))
+        values = np.asarray(values)
+        assert np.isfinite(values).all()
+        assert np.max(np.abs(values)) > 1e-6, (kind, values)
+        assert np.max(np.abs(values.imag)) > 1e-6, (kind, values)
+        duplicate = (0, -1) if kind == 'one' else (-2, -1)
+        np.testing.assert_allclose(values[duplicate[0]], values[duplicate[1]],
+                                   atol=1e-12, rtol=0)
+        references[kind] = values
+    return references
+
+
+def add_correlation_requests(path, aggregate=False):
+    namelist = (path/'sym.def').read_text()
+    for kind, rows in CORRELATION_REQUESTS.items():
+        c.definition(path, CORRELATION_FILES[kind]+'.def', rows)
+        namelist += '{} {}.def\n'.format(
+            CORRELATION_KEYWORDS[kind], CORRELATION_FILES[kind])
+    (path/'sym.def').write_text(namelist)
+    if aggregate:
+        with (path/'calc.def').open('a') as handle:
+            handle.write('OutputGreenFormat 1\n')
+
+
+def check_correlations(path, method, aggregate, references):
+    for kind, rows in CORRELATION_REQUESTS.items():
+        stem = CORRELATION_FILES[kind]
+        if aggregate:
+            name = 'zvo_{}_eigen.dat'.format(stem)
+            prefix = 1
+        elif method == 3:
+            name = 'zvo_{}_eigen0.dat'.format(stem)
+            prefix = 0
+        else:
+            name = 'zvo_{}.dat'.format(stem)
+            prefix = 0
+        data = np.loadtxt(path/'output'/name, ndmin=2)
+        expected_width = len(rows[0])+2+prefix
+        assert data.shape == (len(rows), expected_width), (name, data.shape)
+        if aggregate:
+            np.testing.assert_array_equal(data[:, 0], 0)
+        np.testing.assert_array_equal(data[:, prefix:-2], np.asarray(rows))
+        actual = data[:, -2]+1j*data[:, -1]
+        assert np.isfinite(actual).all()
+        np.testing.assert_allclose(actual, references[kind], atol=1e-8, rtol=0,
+                                   err_msg=name)
+
+
 def exercise_fixture(root, label, hphi, probe, launcher, layout):
     (nsite, permutations, characters, families, basis, representatives,
      hamiltonian) = fixture(label)
@@ -156,6 +247,9 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     c.write_case(cg_path, nsite, permutations, characters, families, 3,
                  {'CalcMod': {'OutputEigenVec': 1},
                   'ModPara': {'LanczosEps': 18}})
+    aggregate = label == 'B1'
+    if label in ('B0', 'B1', 'D'):
+        add_correlation_requests(cg_path, aggregate)
     env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout)
     c.run_case(cg_path, hphi, 'cg', launcher, env)
     energy, energy_text = parse_energy(cg_path)
@@ -167,6 +261,9 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     np.testing.assert_allclose(float(output_sz.group(1)), moments[0], atol=1e-8, rtol=0)
     probe_moments(cg_path, probe, launcher, layout, vector,
                   representatives, nsite)
+    if label in ('B0', 'B1', 'D'):
+        check_correlations(cg_path, 3, aggregate,
+                           correlation_references(nsite, basis, vector))
     if label == 'A':
         np.testing.assert_allclose(energy, -4, atol=3e-8, rtol=0)
         np.testing.assert_allclose(moments, [0, 2], atol=1e-8, rtol=0)
@@ -175,6 +272,8 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     c.write_case(lanczos_path, nsite, permutations, characters, families, 0,
                  {'CalcMod': {'CalcEigenVec': 1},
                   'ModPara': {'LanczosEps': 18}})
+    if label in ('B0', 'B1', 'D'):
+        add_correlation_requests(lanczos_path)
     lanczos_env = dict(env, HPHI_TEST_SPINGC_ACTION='lanczos')
     c.run_case(lanczos_path, probe, 'lanczos', launcher, lanczos_env)
     energy, energy_text = parse_energy(lanczos_path)
@@ -186,6 +285,9 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     assert output_sz
     np.testing.assert_allclose(float(output_sz.group(1)), moments[0], atol=1e-8, rtol=0)
     assert not list((lanczos_path/'output').glob('*eigenvec*'))
+    if label in ('B0', 'B1', 'D'):
+        check_correlations(lanczos_path, 0, False,
+                           correlation_references(nsite, basis, vector))
     print('{} {} dim={} CG/Lanczos/moments passed'.format(
         label, layout, dimension), flush=True)
 
@@ -227,6 +329,18 @@ def failures(root, probe, launcher, layout):
                      {'CalcMod': {'CalcEigenVec': 1, 'OutputEigenVec': 1}})
         c.run_case(path, probe, 'output_gate', [], dict(os.environ),
                    'does not support OutputEigenVec with Lanczos')
+    if layout == 'replicated':
+        nsite, permutations, characters, families, _, _, _ = fixture('B0')
+        path = root/'failure_offsite_onebody'
+        c.write_case(path, nsite, permutations, characters, families, 3, {})
+        c.definition(path, 'cisajs.def', [[0, 1, 1, 0]])
+        (path/'sym.def').write_text(
+            (path/'sym.def').read_text()+'OneBodyG cisajs.def\n')
+        c.run_case(path, probe, 'offsite_onebody', [], dict(os.environ),
+                   'SpinGC TransSym OneBodyG requires onsite operators.')
+        assert not (path/'output/zvo_energy.dat').exists()
+        if (path/'output').exists():
+            assert not list((path/'output').glob('*cisajs*'))
 
 
 def raw_regression(root, hphi):

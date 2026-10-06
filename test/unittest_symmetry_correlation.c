@@ -113,6 +113,22 @@ static unsigned long int setup_fixed_sz_basis(unsigned int nsite,
   return dim;
 }
 
+static unsigned long int setup_full_spin_basis(unsigned int nsite)
+{
+  unsigned long int state, dim = 1UL << nsite;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = (unsigned long int *)calloc(dim + 1UL, sizeof(*list_1));
+  list_Diagonal = (double *)calloc(dim + 1UL, sizeof(*list_Diagonal));
+  if (list_1 == NULL || list_Diagonal == NULL) {
+    fprintf(stderr, "failed to allocate SpinGC basis\n");
+    exit(1);
+  }
+  for (state = 0; state < dim; ++state) list_1[state + 1UL] = state;
+  test_raw_dim = dim;
+  return dim;
+}
+
 static int count_hubbard_spin(unsigned long int state,
                               unsigned int nsite,
                               unsigned int spin)
@@ -223,6 +239,18 @@ static void setup_bind(struct BindStruct *X,
   X->Def.iFlgSzConserved = TRUE;
   setup_exchange_ring(&X->Def, nsite);
   X->Check.idim_max = setup_fixed_sz_basis(nsite, nup);
+}
+
+static void setup_spingc_bind(struct BindStruct *X,
+                              unsigned int nsite,
+                              unsigned int momentum_index)
+{
+  memset(X, 0, sizeof(*X));
+  setup_cyclic_def(&X->Def, nsite, momentum_index);
+  X->Def.iCalcModel = SpinGC;
+  X->Def.iFlgSzConserved = FALSE;
+  setup_exchange_ring(&X->Def, nsite);
+  X->Check.idim_max = setup_full_spin_basis(nsite);
 }
 
 static void setup_spinless_bind(struct BindStruct *X,
@@ -487,7 +515,7 @@ static size_t build_request(const struct DefineList *def, int *index, struct Sym
   int *p = index;
   for (i = 0; i < def->Nsite; i++) for (j = 0; j < def->Nsite; j++) {
     unsigned int s;
-    if (def->iCalcModel == Spin && i != j) continue;
+    if ((def->iCalcModel == Spin || def->iCalcModel == SpinGC) && i != j) continue;
     for (s = 0; s <= spin_max; s++) {
       p[0] = (int)i; p[1] = (int)s; p[2] = (int)j; p[3] = (int)s;
       ops[n].factors = 1U; ops[n].index = p; n++; p += 4;
@@ -503,18 +531,29 @@ static size_t build_request(const struct DefineList *def, int *index, struct Sym
     }
   }
   p[0] = 0; p[1] = 0; p[2] = 0; p[3] = 0;
-  p[4] = 1; p[5] = 0; p[6] = (def->iCalcModel == Spin ? 1 : 2); p[7] = 0;
+  p[4] = 1; p[5] = 0;
+  p[6] = (def->iCalcModel == Spin || def->iCalcModel == SpinGC) ? 1 : 2; p[7] = 0;
   p[8] = 2; p[9] = 0; p[10] = 2; p[11] = 0;
   ops[n].factors = 3U; ops[n].index = p; n++; p += 12;
   if (spin_max == 1U) {
     p[0] = 0; p[1] = 0; p[2] = 0; p[3] = 1;   /* S+_0 (Spin) or c^dag_{0,up} c_{0,down}: leaves the sector */
     ops[n].factors = 1U; ops[n].index = p; n++; p += 4;
   }
+  if (def->iCalcModel == SpinGC) {
+    static const int four[] = {0,1,0,0, 0,0,0,1, 1,1,1,0, 2,0,2,1};
+    static const int six[] = {0,1,0,0, 0,0,0,1, 1,1,1,0,
+                              1,0,1,1, 2,1,2,0, 3,0,3,1};
+    memcpy(p, four, sizeof(four));
+    ops[n].factors = 4U; ops[n].index = p; n++; p += 16;
+    memcpy(p, six, sizeof(six));
+    ops[n].factors = 6U; ops[n].index = p; n++;
+  }
   return n;
 }
 
 static void test_expectation(struct BindStruct *X, size_t expected_orbits, unsigned long long min_waves,
-                             unsigned long long exact_waves, const char *label)
+                             unsigned long long exact_waves, unsigned int min_threads,
+                             const char *label)
 {
   int index[4096];
   struct SymmetryCorrelationOperator ops[512];
@@ -527,7 +566,8 @@ static void test_expectation(struct BindStruct *X, size_t expected_orbits, unsig
   if (a == NULL) exit(1);
   random_sector_vector(a, X->Sym->dim);
   n = build_request(&X->Def, index, ops);
-  if (SymmetryCorrelationOrbitCount(&X->Def, ops, n, &orbits, &members) != 0 || orbits != expected_orbits) {
+  if (SymmetryCorrelationOrbitCount(&X->Def, ops, n, &orbits, &members) != 0 ||
+      (expected_orbits != (size_t)-1 && orbits != expected_orbits)) {
     fprintf(stderr, "%s: orbit count %zu, expected %zu\n", label, orbits, expected_orbits);
     exit(1);
   }
@@ -538,12 +578,23 @@ static void test_expectation(struct BindStruct *X, size_t expected_orbits, unsig
   }
   for (t = 0; t < n; t++)
     assert_close(values[t], reference_expectation(X, a, ops[t].factors, ops[t].index), 1.0e-12, label);
-  if (def_spin_max(&X->Def) == 1U) assert_close(values[n-1], 0.0, 1.0e-15, label);
+  if (def_spin_max(&X->Def) == 1U && X->Def.iCalcModel != SpinGC)
+    assert_close(values[n-1], 0.0, 1.0e-15, label);
   if (stats.waves < min_waves || (exact_waves != 0ULL && stats.waves != exact_waves)) {
     fprintf(stderr, "%s: waves=%llu (min %llu, exact %llu)\n", label, stats.waves, min_waves, exact_waves);
     exit(1);
   }
-  if (stats.threads < 1U) { fprintf(stderr, "%s: threads=%u\n", label, stats.threads); exit(1); }
+  if (stats.threads < min_threads) { fprintf(stderr, "%s: threads=%u\n", label, stats.threads); exit(1); }
+  if (X->Def.iCalcModel == SpinGC) {
+    int offsite[4] = {0, 1, 1, 0};
+    struct SymmetryCorrelationOperator invalid = {1U, offsite};
+    size_t invalid_orbits = 0, invalid_members = 0;
+    if (SymmetryCorrelationOrbitCount(&X->Def, &invalid, 1U,
+                                      &invalid_orbits, &invalid_members) != -1)
+      fail("SpinGC offsite OrbitCount must fail");
+    if (SymmetryCorrelationExpectation(X, a, &invalid, 1U, values) != -1)
+      fail("SpinGC offsite expectation must fail");
+  }
   /* count == 0 は何もしない */
   values[0] = 42.0;
   if (SymmetryCorrelationExpectation(X, a, ops, 0, values) != 0 || values[0] != 42.0) {
@@ -578,6 +629,7 @@ static void test_expectation(struct BindStruct *X, size_t expected_orbits, unsig
 int main(void)
 {
   struct BindStruct X;
+  unsigned int spingc_threads = 1U;
   stdoutMPI = stdout;
   test_matches_term(Spin, 6U, "spin wrapper equivalence");
   test_matches_term(SpinlessFermion, 6U, "spinless wrapper equivalence");
@@ -586,15 +638,22 @@ int main(void)
   test_three_factors();
 
   setup_bind(&X, 6U, 3U, 0U);
-  test_expectation(&X, 6U, 1ULL, 0ULL, "spin k=0");
+  test_expectation(&X, 6U, 1ULL, 0ULL, 1U, "spin k=0");
   setup_bind(&X, 6U, 3U, 1U);
-  test_expectation(&X, 6U, 1ULL, 0ULL, "spin k=1 (complex character)");
+  test_expectation(&X, 6U, 1ULL, 0ULL, 1U, "spin k=1 (complex character)");
   setup_spinless_bind(&X, 6U, 3U, 1U);
-  test_expectation(&X, 8U, 1ULL, 0ULL, "spinless k=1");
+  test_expectation(&X, 8U, 1ULL, 0ULL, 1U, "spinless k=1");
   setup_hubbard_bind(&X, 4U, 2U, 2U, 2U);
-  test_expectation(&X, 12U, 2ULL, 0ULL, "hubbard k=pi");
+  test_expectation(&X, 12U, 2ULL, 0ULL, 1U, "hubbard k=pi");
   setup_tj_bind(&X, 6U, 1U, 1U, 0U);
-  test_expectation(&X, 16U, 5ULL, 5ULL, "tJ k=0");
-  puts("unittest_symmetry_correlation: task 2 passed");
+  test_expectation(&X, 16U, 5ULL, 5ULL, 1U, "tJ k=0");
+  setup_spingc_bind(&X, 6U, 1U);
+#ifdef _OPENMP
+  omp_set_num_threads(3);
+  spingc_threads = 3U;
+#endif
+  test_expectation(&X, (size_t)-1, 2ULL, 0ULL, spingc_threads,
+                   "SpinGC k=1 OMP3");
+  puts("unittest_symmetry_correlation: passed");
   return 0;
 }
