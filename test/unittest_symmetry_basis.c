@@ -1082,6 +1082,8 @@ static void assert_state_diagonal_exact(void)
   const int hubbard_sites[6] = {0, 1, 2, 3, 1, 3};
   unsigned int index;
   double diagonal = 19.25;
+  double spin_diagonal;
+  double spingc_diagonal;
   int thread_count;
 #ifdef _OPENMP
   int saved_dynamic = omp_get_dynamic();
@@ -1154,7 +1156,18 @@ static void assert_state_diagonal_exact(void)
       EvaluateSymmetryStateDiagonal(
           &invalid, 1UL << invalid.Nsite, &diagonal),
       -1, "state bits outside model width reject");
+  invalid = spin_def;
   invalid.iCalcModel = SpinGC;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&spin_def, 0x15UL,
+                                               &spin_diagonal),
+                0, "Spin diagonal fixture evaluates");
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0x15UL,
+                                               &spingc_diagonal),
+                0, "SpinGC diagonal model accepts");
+  assert_double_bitwise(spingc_diagonal, spin_diagonal,
+                        "SpinGC diagonal matches Spin local algebra");
+  invalid = spinless_def;
+  invalid.iCalcModel = Kondo;
   assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
                 "unsupported diagonal model rejects");
   invalid = spinless_def;

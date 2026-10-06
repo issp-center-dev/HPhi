@@ -48,7 +48,7 @@ int EvaluateSymmetryStateDiagonal(
   if ((def->iCalcModel == Hubbard || def->iCalcModel == tJ)) {
     if (def->Nsite > word_bits / 2U) return -1;
     bit_count = 2U * def->Nsite;
-  } else if (def->iCalcModel == Spin ||
+  } else if (def->iCalcModel == Spin || def->iCalcModel == SpinGC ||
              def->iCalcModel == SpinlessFermion) {
     if (def->Nsite > word_bits) return -1;
     bit_count = def->Nsite;

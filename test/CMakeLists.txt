@@ -83,6 +83,26 @@ add_test(NAME unittest_symmetry_basis
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
 
+add_executable(unittest_symmetry_spingc_terms
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_spingc_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
+target_include_directories(unittest_symmetry_spingc_terms
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_spingc_terms PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_spingc_terms m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_spingc_terms ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_spingc_terms OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_spingc_terms
+    COMMAND unittest_symmetry_spingc_terms)
+set_tests_properties(unittest_symmetry_spingc_terms
+    PROPERTIES LABELS "unit;symmetry")
+
 add_executable(unittest_symmetry_correlation
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
