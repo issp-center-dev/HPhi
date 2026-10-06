@@ -304,6 +304,13 @@ add_hphi_mpi_test(symmetry_correlation_memory_limit exact:4)
 set_tests_properties(symmetry_correlation_memory_limit PROPERTIES
     LABELS "symmetry;correlation;memory"
     ENVIRONMENT "HPHI_TEST_MODELS=Spin;HPHI_TEST_LAYOUTS=distributed;HPHI_TEST_PRIMARY_ONLY=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=19550")
+add_test(NAME symmetry_spingc_correlation_memory_limit
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+            exact:4 ${CMAKE_SOURCE_DIR}/test/symmetry_spingc_observables.sh)
+set_tests_properties(symmetry_spingc_correlation_memory_limit PROPERTIES
+    SKIP_RETURN_CODE 77
+    LABELS "symmetry;spingc;correlation;memory"
+    ENVIRONMENT "HPHI_TEST_CORRELATION_MEMORY_FAILURE=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=40000")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)

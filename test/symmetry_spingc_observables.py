@@ -24,13 +24,39 @@ CORRELATION_REQUESTS = {
             [0, 0, 0, 1, 0, 1, 0, 0],
             [0, 1, 0, 0, 1, 1, 1, 0],
             [0, 1, 0, 0, 1, 1, 1, 0]],
-    'three': [[0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1]] * 2,
+    'three': [[0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1],
+              [0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1],
+              [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+              [0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0]],
     'four': [[0, 1, 0, 0, 0, 0, 0, 1,
-              1, 1, 1, 0, 2, 0, 2, 1]] * 2,
+              1, 1, 1, 0, 2, 0, 2, 1],
+             [0, 0, 0, 1, 0, 1, 0, 0,
+              1, 1, 1, 0, 2, 0, 2, 1],
+             [0, 1, 0, 0, 0, 0, 0, 1,
+              1, 1, 1, 0, 2, 0, 2, 1]],
     'six': [[0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
-             1, 0, 1, 1, 2, 1, 2, 0, 3, 0, 3, 1]] * 2,
+             1, 0, 1, 1, 2, 1, 2, 0, 3, 0, 3, 1],
+            [0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0,
+             1, 0, 1, 1, 2, 1, 2, 0, 3, 0, 3, 1],
+            [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+             1, 0, 1, 1, 2, 1, 2, 0, 3, 0, 3, 1]],
     'nbody': [[5, 0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1,
-               3, 1, 3, 1, 4, 0, 4, 0]] * 2,
+               3, 1, 3, 1, 4, 0, 4, 0],
+              [5, 0, 1, 0, 0, 1, 1, 1, 0, 2, 0, 2, 1,
+               3, 1, 3, 1, 4, 0, 4, 0],
+              [5, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+               2, 0, 2, 1, 3, 1, 3, 1],
+              [5, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0,
+               2, 0, 2, 1, 3, 1, 3, 1]],
+}
+
+DUPLICATE_PAIRS = {
+    'one': (0, 2), 'two': (2, 3), 'three': (0, 1),
+    'four': (0, 2), 'six': (0, 2), 'nbody': (0, 1),
+}
+ORDER_PAIRS = {
+    'two': (0, 1), 'three': (2, 3), 'four': (0, 1),
+    'six': (0, 1), 'nbody': (2, 3),
 }
 
 
@@ -176,16 +202,20 @@ def correlation_references(nsite, basis, vector):
         assert np.isfinite(values).all()
         assert np.max(np.abs(values)) > 1e-6, (kind, values)
         assert np.max(np.abs(values.imag)) > 1e-6, (kind, values)
-        duplicate = (0, -1) if kind == 'one' else (-2, -1)
+        duplicate = DUPLICATE_PAIRS[kind]
         np.testing.assert_allclose(values[duplicate[0]], values[duplicate[1]],
                                    atol=1e-12, rtol=0)
+        if kind in ORDER_PAIRS:
+            order = ORDER_PAIRS[kind]
+            assert abs(values[order[0]]-values[order[1]]) > 1e-6, (kind, values)
         references[kind] = values
     return references
 
 
-def add_correlation_requests(path, aggregate=False):
+def add_correlation_requests(path, aggregate=False, requests=None):
+    requests = CORRELATION_REQUESTS if requests is None else requests
     namelist = (path/'sym.def').read_text()
-    for kind, rows in CORRELATION_REQUESTS.items():
+    for kind, rows in requests.items():
         c.definition(path, CORRELATION_FILES[kind]+'.def', rows)
         namelist += '{} {}.def\n'.format(
             CORRELATION_KEYWORDS[kind], CORRELATION_FILES[kind])
@@ -359,6 +389,40 @@ def raw_regression(root, hphi):
     assert 'TransSym' not in text
 
 
+def collective_correlation_memory_failure(root, hphi, launcher):
+    assert c.mpi_size(launcher) == 4
+    nsite, permutations, characters, families, _, _, _ = fixture('B0')
+    path = root/'collective_correlation_memory_failure'
+    c.write_case(path, nsite, permutations, characters, families, 3,
+                 {'ModPara': {'LanczosEps': 18}})
+    rows = []
+    for code in range(512):
+        row = []
+        value = code
+        for site in range(6):
+            pair = value & 3
+            row.extend((site, pair >> 1, site, pair & 1))
+            value >>= 2
+        rows.append(row)
+    add_correlation_requests(path, requests={'six': rows})
+    text = c.run_case(
+        path, hphi, 'collective_correlation_memory_failure', launcher,
+        dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed'),
+        'Error: HPhi symmetry correlation orbit-table temporary memory')
+    assert 'exceeding hard limit=' in text, text
+    assert 'End  : Calculate Lanczos EigenVec.' in text, text
+    assert text.count('Error: calc TwoBodyG.') == c.mpi_size(launcher), text
+    assert (path/'output/zvo_Lanczos_Step.dat').stat().st_size > 0
+    correlation_output = path/'output/zvo_SixBody_eigen0.dat'
+    assert correlation_output.exists() and correlation_output.stat().st_size == 0
+    if (path/'output').exists():
+        for output in path.joinpath('output').glob('zvo_*Body*.dat'):
+            assert output.stat().st_size == 0, output
+        for output in path.joinpath('output').glob('zvo_cisajs*.dat'):
+            assert output.stat().st_size == 0, output
+    print('SpinGC collective correlation memory failure passed', flush=True)
+
+
 def main():
     hphi, probe = [Path(arg).resolve() for arg in sys.argv[1:]]
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
@@ -366,6 +430,9 @@ def main():
     assert ranks in (1, 4, 16), 'observables suite requires explicit np1, np4, or np16'
     root = Path(tempfile.mkdtemp(prefix='symmetry_spingc_observables_', dir='.'))
     print('artifacts: {}'.format(root.resolve()), flush=True)
+    if os.environ.get('HPHI_TEST_CORRELATION_MEMORY_FAILURE'):
+        collective_correlation_memory_failure(root, hphi, launcher)
+        return
     for layout in ('replicated', 'distributed'):
         for label in ('A', 'B0', 'B1', 'D'):
             exercise_fixture(root, label, hphi, probe, launcher, layout)
