@@ -738,6 +738,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace_finalize.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_observables.c
     ${CMAKE_SOURCE_DIR}/src/makeHam.c
     ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
     ${CMAKE_SOURCE_DIR}/src/anomalous_pair.c
@@ -1437,7 +1438,7 @@ set_tests_properties(symmetry_te PROPERTIES LABELS "symmetry;te")
 add_hphi_test(symmetry_te_dynamic)
 set_tests_properties(symmetry_te_dynamic PROPERTIES LABELS "symmetry;te")
 
-foreach(_spingc_suite basis validation fulldiag)
+foreach(_spingc_suite basis validation fulldiag observables)
     add_hphi_test(symmetry_spingc_${_spingc_suite})
     set_tests_properties(symmetry_spingc_${_spingc_suite}
         PROPERTIES LABELS "symmetry;spingc")

@@ -23,6 +23,7 @@ target_sources(HPhi PRIVATE
   symmetry_diagonal.c symmetry_terms.c symmetry_correlation.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_memory_policy.c symmetry_mpi_exchange.c
   symmetry_state_enumerator.c symmetry_sector.c symmetry_checkpoint.c symmetry_te.c
+  symmetry_observables.c
   symmetry_vector_halo.c
 )
 
