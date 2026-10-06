@@ -1,4 +1,5 @@
 """Independent tensor references and portable I/O for SpinGC sector tests."""
+import math
 import os
 from pathlib import Path
 import struct
@@ -239,6 +240,17 @@ def join_rank_vectors(paths, dimension):
         offset += len(vector)
     assert offset == dimension and np.isfinite(result).all()
     return result
+
+
+def taylor_step(h, v, coefficient, order):
+    """Apply a finite Taylor polynomial in an independent eigenbasis."""
+    eigenvalues, rotation = np.linalg.eigh(h)
+    x = coefficient*eigenvalues
+    polynomial = sum(x**n/math.factorial(n) for n in range(order+1))
+    total = rotation@(polynomial*(rotation.conj().T@v))
+    norm = np.linalg.norm(total)
+    assert np.isfinite(norm) and norm > 0
+    return total/norm, norm
 
 
 def checkpoint_digest(parts):
