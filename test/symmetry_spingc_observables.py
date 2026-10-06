@@ -168,8 +168,8 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     probe_moments(cg_path, probe, launcher, layout, vector,
                   representatives, nsite)
     if label == 'A':
-        np.testing.assert_allclose([energy, moments[0], moments[1]],
-                                   [-4, 0, 2], atol=3e-8, rtol=0)
+        np.testing.assert_allclose(energy, -4, atol=3e-8, rtol=0)
+        np.testing.assert_allclose(moments, [0, 2], atol=1e-8, rtol=0)
 
     lanczos_path = root/'{}_{}_lanczos'.format(label, layout)
     c.write_case(lanczos_path, nsite, permutations, characters, families, 0,
@@ -240,7 +240,8 @@ def raw_regression(root, hphi):
     text = c.run_case(path, hphi, 'raw', [], dict(os.environ))
     energy, values = parse_energy(path)
     sz = float(re.search(r'^\s*Sz\s+([^\s]+)', values, re.M).group(1))
-    np.testing.assert_allclose([energy, sz], [-4, 0], atol=3e-8, rtol=0)
+    np.testing.assert_allclose(energy, -4, atol=3e-8, rtol=0)
+    np.testing.assert_allclose(sz, 0, atol=1e-8, rtol=0)
     assert 'TransSym' not in text
 
 
