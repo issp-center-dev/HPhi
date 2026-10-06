@@ -150,7 +150,10 @@ def check_data_files(path, aggregate, expected):
             for sample in range(NUM_AVE):
                 data = load_finite(
                     path/'output'/('zvo_{}_rand{}.dat'.format(family, sample)))
-                np.testing.assert_allclose(data, expected[sample][family],
+                np.testing.assert_array_equal(
+                    data[:, -1], expected[sample][family][:, -1])
+                np.testing.assert_allclose(data[:, :-1],
+                                           expected[sample][family][:, :-1],
                                            atol=ATOL_DATA, rtol=ATOL_DATA,
                                            err_msg='{} sample{}'.format(family, sample))
 
@@ -242,8 +245,8 @@ def run_thermal(root, label, momentum, kind, explicit, aggregate, interval,
         assert dimension == 9 and c.mpi_size(launcher) == 16
     dtype = 1 if momentum == 0 else 0
     schedule = 'explicit' if explicit else 'uniform'
-    path = root/'{}_k{}_{}_{}_{}_i{}'.format(
-        label, momentum, kind, schedule,
+    path = root/'{}_{}_k{}_{}_{}_{}_i{}'.format(
+        label, layout, momentum, kind, schedule,
         'aggregate' if aggregate else 'legacy', interval)
     calc_type = 1 if kind == 'tpq' else 5
     c.write_case(path, nsite, permutations, characters, families, calc_type,
