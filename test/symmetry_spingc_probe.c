@@ -19,6 +19,14 @@ int SpinGCProbeBeforeSolver(struct BindStruct *X)
   FILE *matrix = NULL, *info = NULL;
   char filename[128];
   int error = 0;
+  /* Basis setup is complete. Poison only the unused fixed-sector fields,
+   * then continue through the ordinary solver and checkpoint writer. */
+  const char *poison = getenv("HPHI_TEST_SPINGC_POISON_FIXED");
+  if (poison != NULL && strcmp(poison, "1") == 0 &&
+      X->Def.iCalcModel == SpinGC && X->Def.iFlgSymmetryBasis) {
+    X->Def.Nup = 1; X->Def.Ndown = 2; X->Def.Ne = 3;
+    fprintf(stdoutMPI, "SpinGCProbe poisoned fixed fields after basis setup.\n");
+  }
   if (action == NULL) return 0;
   if (strcmp(action, "moments") == 0) {
     double complex *vector = NULL;

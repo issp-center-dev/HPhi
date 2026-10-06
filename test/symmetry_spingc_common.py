@@ -241,5 +241,25 @@ def join_rank_vectors(paths, dimension):
     return result
 
 
+def checkpoint_digest(parts):
+    """Independent version-1 payload digest, including empty rank ownership.
+
+    parts contains (header, vector) pairs; hash binary64 bits, not rounded text.
+    This deliberately does not validate norm/finite values, so rejection tests
+    can isolate those guards with otherwise consistent checksums.
+    """
+    mask = (1 << 64)-1
+    xor_hash, sum_hash = 0, 0
+    for header, vector in parts:
+        data = struct.pack('<3Q', header[12], header[14], header[15])
+        data += np.asarray(vector, dtype='<c16').tobytes()
+        value = 14695981039346656037
+        for byte in data:
+            value = ((value ^ byte)*1099511628211) & mask
+        xor_hash ^= value
+        sum_hash = (sum_hash+value) & mask
+    return xor_hash, sum_hash
+
+
 if __name__ == '__main__':
     raise SystemExit('Import this module from a SpinGC test suite.')

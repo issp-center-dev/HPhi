@@ -1445,7 +1445,7 @@ set_tests_properties(symmetry_te PROPERTIES LABELS "symmetry;te")
 add_hphi_test(symmetry_te_dynamic)
 set_tests_properties(symmetry_te_dynamic PROPERTIES LABELS "symmetry;te")
 
-foreach(_spingc_suite basis validation fulldiag observables)
+foreach(_spingc_suite basis validation fulldiag observables checkpoint)
     add_hphi_test(symmetry_spingc_${_spingc_suite})
     set_tests_properties(symmetry_spingc_${_spingc_suite}
         PROPERTIES LABELS "symmetry;spingc")
