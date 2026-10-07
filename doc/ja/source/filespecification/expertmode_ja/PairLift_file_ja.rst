@@ -8,7 +8,17 @@ PairLift指定ファイル
 PairLiftカップリングをハミルトニアンに付け加えます
 (:math:`S=1/2`\ の系でのみ使用可能)。 付け加える項は以下で与えられます。
 
-.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow})
+.. math::
+
+   \mathcal{H}+=\sum_{i,j}J_{ij}^{\rm PairLift} (c_ {i \uparrow}^{\dagger}c_{i\downarrow}c_{j \uparrow}^{\dagger}c_{j \downarrow}+c_ {i \downarrow}^{\dagger}c_{i\uparrow}c_{j \downarrow}^{\dagger}c_{j \uparrow})
+   =\sum_{i,j}J_{ij}^{\rm PairLift} (S_{i}^{+}S_{j}^{+}+S_{i}^{-}S_{j}^{-})
+
+.. note::
+   このファイルはグランドカノニカル集団の\ :math:`S=1/2`\ スピン模型
+   (``SpinGC``, CalcModel=4)でのみ使用できます。
+   それ以外の模型で指定した場合はエラー終了します。その場合はInterAll指定ファイル
+   (:ref:`Subsec:interall`)を使用してください。
+   括弧内の2つの項は、このファイルの1行で両方とも付け加えられます。
 
 以下にファイル例を記載します。
 

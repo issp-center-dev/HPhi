@@ -4,15 +4,17 @@ Ising指定ファイル
 ~~~~~~~~~~~~~~~~~
 
 Ising相互作用をハミルトニアンに付け加えます
-(:math:`S=1/2`\ の系でのみ使用可能)。 電子系の場合には
-
-.. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} )
-
-が付け加えられ、スピン系の場合には
+(:math:`S=1/2`\ の系でのみ使用可能)。 付け加える項は以下で与えられます。
 
 .. math:: \mathcal{H}+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z
 
-が付け加えられます。 以下にファイル例を記載します。
+電子系の場合には
+
+.. math:: S_{i}^{z} = \frac{1}{2}(n_{i\uparrow}-n_{i\downarrow})
+
+であり、Ising相互作用はHundカップリング\ :math:`J_{ij}^{\rm Hund}=-J_{ij}^{z}/2`\ と
+サイト間クーロン相互作用\ :math:`V_{ij}=-J_{ij}^{z}/4`\ の組と等価です。
+以下にファイル例を記載します。
 
 ::
 
