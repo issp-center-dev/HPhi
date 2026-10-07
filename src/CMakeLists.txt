@@ -23,6 +23,7 @@ target_sources(HPhi PRIVATE
   symmetry_diagonal.c symmetry_terms.c symmetry_correlation.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_memory_policy.c symmetry_mpi_exchange.c
   symmetry_state_enumerator.c symmetry_sector.c symmetry_checkpoint.c symmetry_te.c
+  symmetry_observables.c
   symmetry_vector_halo.c
 )
 
@@ -142,3 +143,18 @@ endif(USE_SCALAPACK)
 
 
 install(TARGETS HPhi RUNTIME DESTINATION bin)
+
+# Test-only entry point sharing the configured production source/flags.
+get_target_property(_spingc_sources HPhi SOURCES)
+add_executable(unittest_symmetry_spingc_probe ${_spingc_sources}
+  ${CMAKE_SOURCE_DIR}/test/symmetry_spingc_probe.c)
+foreach(_spingc_property INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
+    COMPILE_OPTIONS LINK_LIBRARIES LINK_FLAGS)
+  get_target_property(_spingc_value HPhi ${_spingc_property})
+  if(NOT "${_spingc_value}" MATCHES "-NOTFOUND$")
+    set_property(TARGET unittest_symmetry_spingc_probe
+      PROPERTY ${_spingc_property} "${_spingc_value}")
+  endif()
+endforeach()
+target_compile_definitions(unittest_symmetry_spingc_probe PRIVATE HPHI_TEST_SPINGC_PROBE)
+target_include_directories(unittest_symmetry_spingc_probe PRIVATE ${CMAKE_SOURCE_DIR}/test)

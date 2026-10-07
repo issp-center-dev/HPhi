@@ -27,6 +27,9 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "mltply.h"
+#ifdef HPHI_TEST_SPINGC_PROBE
+#include "symmetry_spingc_probe.h"
+#endif
 
 /**
  * @file   CalcByLanczos.c
@@ -256,6 +259,10 @@ int CalcByLanczos(
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
   // v1 is eigen vector
+
+#ifdef HPHI_TEST_SPINGC_PROBE
+  if (SpinGCProbeFinalVector(&(X->Bind), v1) != 0) return FALSE;
+#endif
 
   StartTimer(4500);
   if(expec_cisajs(&(X->Bind), v1)!=0){

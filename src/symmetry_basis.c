@@ -168,6 +168,7 @@ int SymmetryApplyToState(const struct DefineList *def,
   memset(result, 0, sizeof(*result));
   switch (def->iCalcModel) {
   case Spin:
+  case SpinGC:
     result->state = SymmetryApplyToSpinBits(state, def->SymTrans[op], def->Nsite);
     result->amplitude = 1.0;
     return 0;

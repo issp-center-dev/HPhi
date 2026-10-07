@@ -83,6 +83,26 @@ add_test(NAME unittest_symmetry_basis
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
 
+add_executable(unittest_symmetry_spingc_terms
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_spingc_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
+target_include_directories(unittest_symmetry_spingc_terms
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_spingc_terms PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_spingc_terms m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_spingc_terms ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_spingc_terms OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_spingc_terms
+    COMMAND unittest_symmetry_spingc_terms)
+set_tests_properties(unittest_symmetry_spingc_terms
+    PROPERTIES LABELS "unit;symmetry")
+
 add_executable(unittest_symmetry_correlation
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
@@ -284,6 +304,13 @@ add_hphi_mpi_test(symmetry_correlation_memory_limit exact:4)
 set_tests_properties(symmetry_correlation_memory_limit PROPERTIES
     LABELS "symmetry;correlation;memory"
     ENVIRONMENT "HPHI_TEST_MODELS=Spin;HPHI_TEST_LAYOUTS=distributed;HPHI_TEST_PRIMARY_ONLY=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=19550")
+add_test(NAME symmetry_spingc_correlation_memory_limit
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/run_with_mpi_precheck.sh
+            exact:4 ${CMAKE_SOURCE_DIR}/test/symmetry_spingc_observables.sh)
+set_tests_properties(symmetry_spingc_correlation_memory_limit PROPERTIES
+    SKIP_RETURN_CODE 77
+    LABELS "symmetry;spingc;correlation;memory"
+    ENVIRONMENT "HPHI_TEST_CORRELATION_MEMORY_FAILURE=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=40000")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
 add_hphi_test(lanczos_spin_calchs_minus1)
@@ -718,6 +745,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace_finalize.c
     ${CMAKE_SOURCE_DIR}/src/expec_trace.c
     ${CMAKE_SOURCE_DIR}/src/expec_energy_flct.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_observables.c
     ${CMAKE_SOURCE_DIR}/src/makeHam.c
     ${CMAKE_SOURCE_DIR}/src/nbody_interall.c
     ${CMAKE_SOURCE_DIR}/src/anomalous_pair.c
@@ -1416,3 +1444,26 @@ set_tests_properties(symmetry_te PROPERTIES LABELS "symmetry;te")
 
 add_hphi_test(symmetry_te_dynamic)
 set_tests_properties(symmetry_te_dynamic PROPERTIES LABELS "symmetry;te")
+
+foreach(_spingc_suite basis validation fulldiag observables checkpoint thermal te)
+    add_hphi_test(symmetry_spingc_${_spingc_suite})
+    set_tests_properties(symmetry_spingc_${_spingc_suite}
+        PROPERTIES LABELS "symmetry;spingc")
+endforeach()
+set_property(TEST symmetry_spingc_thermal APPEND PROPERTY LABELS "tpq;ctpq")
+
+set_property(TEST symmetry_spingc_te APPEND PROPERTY LABELS "te")
+
+set_property(TEST symmetry_spingc_validation APPEND PROPERTY LABELS "validation")
+set_property(TEST symmetry_spingc_basis APPEND PROPERTY LABELS "basis")
+set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY LABELS "fulldiag")
+set_property(TEST symmetry_spingc_observables APPEND PROPERTY LABELS "lobcg;lanczos;correlation")
+set_property(TEST symmetry_spingc_checkpoint APPEND PROPERTY LABELS "checkpoint;lobcg")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()

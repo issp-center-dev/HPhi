@@ -41,6 +41,7 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_observables.h"
 
 /**
  * @brief Calculate energy expectation value and variance
@@ -131,7 +132,7 @@ int expec_energy_flct(struct BindStruct *X){
   
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
-      expec_energy_flct_HalfSpinGC(X);
+      if (expec_energy_flct_HalfSpinGC(X) != 0) return -1;
   }
   else{//for generalspin
       expec_energy_flct_GeneralSpinGC(X);
@@ -365,6 +366,9 @@ int expec_energy_flct_HalfSpinGC(struct BindStruct *X){
     double tmp_v02;
     long unsigned int i_max;
     i_max=X->Check.idim_max;
+
+    if (X->Def.iFlgSymmetryBasis == TRUE)
+        return EvaluateSymmetrySpinGCMoments(X, v0);
 
     // tentative doublon
     tmp_Sz       = 0.0;

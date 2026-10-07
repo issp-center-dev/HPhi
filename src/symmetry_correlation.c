@@ -118,7 +118,7 @@ static int validate_operator(const struct DefineList *def,
   for (f = 0; f < nint; f += 2U)
     if (op->index[f] < 0 || (unsigned int)op->index[f] >= def->Nsite ||
         op->index[f+1] < 0 || op->index[f+1] > spin_max) return -1;
-  if (def->iCalcModel == Spin)
+  if (def->iCalcModel == Spin || def->iCalcModel == SpinGC)
     for (f = 0; f < op->factors; ++f)
       if (op->index[4*f] != op->index[4*f+2]) return -1;
   return 0;

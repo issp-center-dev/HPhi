@@ -47,6 +47,7 @@
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "expec_totalspin.h"
+#include "symmetry_observables.h"
 
 /**
  * @brief Calculate total spin \f$\langle S^2 \rangle\f$ and \f$\langle S_z \rangle\f$
@@ -686,6 +687,8 @@ int expec_totalSz(
       X->Phys.Sz = X->Def.Total2SzMPI / 2.;
       break;
     case SpinGC:
+      if (X->Def.iFlgSymmetryBasis == TRUE)
+        return EvaluateSymmetrySpinGCMoments(X, vec);
       totalSz_SpinGC(X, vec);
       break;
     case Hubbard:

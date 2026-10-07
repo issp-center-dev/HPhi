@@ -829,6 +829,50 @@ static void assert_state_enumerator_exact(void)
     }
   }
 
+  for (nsite = 1U; nsite <= 8U; nsite++) {
+    unsigned long int raw_dim = 1UL << nsite;
+    memset(&def, 0, sizeof(def));
+    def.iCalcModel = SpinGC;
+    def.Nsite = nsite;
+    def.Nup = 1U;
+    def.Ndown = 2U;
+    assert_int_eq(InitSymmetryStateEnumerator(&def, raw_dim, &enumerator), 0,
+                  "SpinGC init");
+    for (state = 1UL; state <= raw_dim; state++) {
+      unsigned long int enumerated_state = ULONG_MAX;
+      assert_int_eq(
+          SymmetryStateEnumeratorStateAt(&enumerator, state, &enumerated_state),
+          0, "SpinGC state");
+      assert_ulong_eq(enumerated_state, state - 1UL, "SpinGC all bit states");
+    }
+  }
+
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = SpinGC;
+  def.Nsite = 3U;
+  def.Nup = 1U;
+  def.Ndown = 2U;
+  state = 123UL;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), 0,
+                "SpinGC boundary init");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 0UL, &state), -1,
+                "SpinGC index zero rejects");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 9UL, &state), -1,
+                "SpinGC index overflow rejects");
+  assert_ulong_eq(state, 123UL, "failed SpinGC enumeration preserves output");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 7UL, &enumerator), -1,
+                "SpinGC dimension mismatch rejects");
+  def.iFlgGeneralSpin = TRUE;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), -1,
+                "general SpinGC rejects");
+  def.iFlgGeneralSpin = FALSE;
+  def.Nsite = 0U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "zero-site SpinGC rejects");
+  def.Nsite = word_bits;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "word-width SpinGC rejects");
+
   memset(&def, 0, sizeof(def));
   def.iCalcModel = Spin;
   def.Nsite = 4U;
@@ -856,9 +900,6 @@ static void assert_state_enumerator_exact(void)
   assert_int_eq(InitSymmetryStateEnumerator(&def, 6UL, &enumerator), -1,
                 "general Spin rejects");
   def.iFlgGeneralSpin = FALSE;
-  def.iCalcModel = SpinGC;
-  assert_int_eq(InitSymmetryStateEnumerator(&def, 16UL, &enumerator), -1,
-                "unsupported model rejects");
   def.iCalcModel = Spin;
   def.Nsite = word_bits + 1U;
   def.Nup = 0U;
@@ -1041,6 +1082,8 @@ static void assert_state_diagonal_exact(void)
   const int hubbard_sites[6] = {0, 1, 2, 3, 1, 3};
   unsigned int index;
   double diagonal = 19.25;
+  double spin_diagonal;
+  double spingc_diagonal;
   int thread_count;
 #ifdef _OPENMP
   int saved_dynamic = omp_get_dynamic();
@@ -1113,7 +1156,18 @@ static void assert_state_diagonal_exact(void)
       EvaluateSymmetryStateDiagonal(
           &invalid, 1UL << invalid.Nsite, &diagonal),
       -1, "state bits outside model width reject");
+  invalid = spin_def;
   invalid.iCalcModel = SpinGC;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&spin_def, 0x15UL,
+                                               &spin_diagonal),
+                0, "Spin diagonal fixture evaluates");
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0x15UL,
+                                               &spingc_diagonal),
+                0, "SpinGC diagonal model accepts");
+  assert_double_bitwise(spingc_diagonal, spin_diagonal,
+                        "SpinGC diagonal matches Spin local algebra");
+  invalid = spinless_def;
+  invalid.iCalcModel = Kondo;
   assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
                 "unsupported diagonal model rejects");
   invalid = spinless_def;
@@ -1359,8 +1413,18 @@ static void assert_spin_permutation_states(const int *perm,
                                            unsigned int nsite,
                                            const char *label)
 {
+  const int models[2] = {Spin, SpinGC};
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int *perm_rows_local[1];
   unsigned long int state;
   unsigned long int limit = 1UL << nsite;
+  unsigned int model_index;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = (int *)perm;
+  def.Nsite = nsite;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
   for (state = 0UL; state < limit; state++) {
     unsigned long int expected = 0UL;
     unsigned int site;
@@ -1373,6 +1437,17 @@ static void assert_spin_permutation_states(const int *perm,
       fprintf(stderr, "%s: state=%#lx expected=%#lx\n",
               label, state, expected);
       exit(1);
+    }
+    for (model_index = 0U; model_index < 2U; model_index++) {
+      def.iCalcModel = models[model_index];
+      if (SymmetryApplyToState(&def, state, 0U, &result) != 0 ||
+          result.state != expected || result.amplitude != 1.0) {
+        fprintf(stderr,
+                "%s: model=%d state=%#lx expected=%#lx amplitude=%g\n",
+                label, models[model_index], state, expected,
+                creal(result.amplitude));
+        exit(1);
+      }
     }
   }
 }

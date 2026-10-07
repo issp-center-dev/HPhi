@@ -6,7 +6,8 @@
 
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
-  return (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
+  return def->iCalcModel == SpinGC ||
+      (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
           (def->NLaser || def->NTETransferMax || def->NTEInterAllMax)) ||
       def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
       def->NInterAll_OffDiagonal || def->NPairHopping ||
@@ -34,7 +35,7 @@ static int emit(const struct DefineList *def, int kind, unsigned int factors,
     term.index[i] = index[i];
     term.index[i+1] = index[i+1];
   }
-  if (def->iCalcModel == Spin) {
+  if (def->iCalcModel == Spin || def->iCalcModel == SpinGC) {
     for (i = 0; i < factors; ++i)
       if (index[4*i] != index[4*i+2]) return -1;
   }
@@ -58,9 +59,11 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   unsigned int p;
   int a, b, s, t;
   if (!def || !callback || kind < -1 || kind > 1 || def->Nsite == 0 ||
-      (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
+      (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
+       def->iCalcModel != SpinlessFermion &&
        def->iCalcModel != Hubbard && def->iCalcModel != tJ) || def->iFlgGeneralSpin ||
-      def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling ||
+      def->NNBodyInterAll || def->NAnomalousTerm ||
+      (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
       def->NIsingCoupling > def->NCoulombInter ||
       def->NIsingCoupling > def->NHundCoupling) return -1;
 #define EMIT(n, v, ...) do { int ix[] = {__VA_ARGS__}; \
@@ -113,12 +116,20 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     a = def->ExchangeCoupling[p][0]; b = def->ExchangeCoupling[p][1];
     if (a == b) continue; /* Existing Exchange semantics. */
     for (s = 0; s < 2; ++s) {
-      if (def->iCalcModel == Spin) {
+      if (def->iCalcModel == Spin || def->iCalcModel == SpinGC) {
         EMIT(2, def->ParaExchangeCoupling[p], a,s,a,1-s,b,1-s,b,s);
       } else {
         EMIT(2, def->ParaExchangeCoupling[p], a,s,b,s,b,1-s,a,1-s);
       }
     }
+  }
+  CHECK_STORAGE(def->NPairLiftCoupling, def->PairLiftCoupling,
+                def->ParaPairLiftCoupling);
+  for (p = 0; p < def->NPairLiftCoupling; ++p) {
+    a = def->PairLiftCoupling[p][0];
+    b = def->PairLiftCoupling[p][1];
+    EMIT(2, def->ParaPairLiftCoupling[p], a,1,a,0,b,1,b,0);
+    EMIT(2, def->ParaPairLiftCoupling[p], a,0,a,1,b,0,b,1);
   }
   CHECK_STORAGE(def->NPairHopping, def->PairHopping, def->ParaPairHopping);
   if (def->NPairHopping && def->iCalcModel != Hubbard && def->iCalcModel != tJ) return -1;
@@ -140,19 +151,20 @@ int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
   unsigned int width = (def && (def->iCalcModel == Hubbard || def->iCalcModel == tJ)) ? 2U : 1U;
   if (!def || !index || !out || !sign || factors < 1U || factors > UINT_MAX / 4U ||
       def->Nsite == 0 || def->Nsite > CHAR_BIT * sizeof(state) / width ||
-      (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
+      (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
+       def->iCalcModel != SpinlessFermion &&
        def->iCalcModel != Hubbard && def->iCalcModel != tJ)) return -1;
   nint = 4U * factors;
   for (f = 0; f < nint; f += 2U)
     if (index[f] < 0 || (unsigned int)index[f] >= def->Nsite ||
         index[f+1U] < 0 || index[f+1U] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
       return -1;
-  if (def->iCalcModel == Spin)
+  if (def->iCalcModel == Spin || def->iCalcModel == SpinGC)
     for (f = 0; f < factors; ++f)
       if (index[4U*f] != index[4U*f+2U]) return -1;
   for (f = factors; f-- > 0U;) {
     const int *x = index + 4U*f;
-    if (def->iCalcModel == Spin) {
+    if (def->iCalcModel == Spin || def->iCalcModel == SpinGC) {
       unsigned long mask = 1UL << x[0];
       if ((int)((state >> x[0]) & 1UL) != x[3]) return 0;
       state = (state & ~mask) | ((unsigned long)x[1] << x[0]);
@@ -187,8 +199,8 @@ int ApplySymmetryTerm(const struct DefineList *def,
 }
 
 /* Canonical polynomials are used only at validation time. Fermions use
- * normal-ordered creation/annihilation strings; Spin uses the independent
- * local basis {I, E01, E10, E11}, with E00 = I - E11. */
+ * normal-ordered creation/annihilation strings; Spin and SpinGC use the
+ * independent local basis {I, E01, E10, E11}, with E00 = I - E11. */
 struct Monomial { int key[7]; double complex value; };
 struct Polynomial {
   struct Monomial *terms;
@@ -220,7 +232,7 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
   memcpy(x, input->index, sizeof(x));
   if (poly->permutation)
     for (i = 0; i < 4*n; i += 2) x[i] = poly->permutation[x[i]];
-  if (poly->def->iCalcModel == Spin) {
+  if (poly->def->iCalcModel == Spin || poly->def->iCalcModel == SpinGC) {
     if (n == 2 && x[0] == x[4]) {
       if (x[3] != x[5]) return 0;
       x[3] = x[7]; n = 1;

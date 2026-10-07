@@ -98,7 +98,9 @@ static int make_header(const struct BindStruct *X, const char *name,
   header[MAGIC] = CHECKPOINT_MAGIC; header[VERSION] = 1;
   header[PHASE] = 1; header[SCALAR] = 128; /* little-endian complex binary64 */
   header[MODEL] = X->Def.iCalcModel; header[NSITE] = X->Def.Nsite;
-  header[NUP] = X->Def.Nup; header[NDOWN] = X->Def.Ndown; header[NE] = X->Def.Ne;
+  header[NUP] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Nup;
+  header[NDOWN] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Ndown;
+  header[NE] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Ne;
   header[FULL_DIM] = X->Sym->full_dim; header[DIM] = X->Sym->dim;
   header[RANKS] = nproc; header[RANK] = myrank;
   header[LAYOUT] = X->Sym->basis_layout;

@@ -443,13 +443,20 @@ static int reject_first_unsupported_option(const struct SymmetryMethodCapability
 /* 1. Model and conserved-quantity sector. */
 static int validate_symmetry_model_sector(const struct DefineList *def)
 {
-  if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
+  if (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
+      def->iCalcModel != SpinlessFermion &&
       def->iCalcModel != Hubbard && def->iCalcModel != tJ) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, Hubbard, and tJ canonical models.\n");
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, and tJ models.\n");
     return -1;
   }
-  if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
+  if ((def->iCalcModel == Spin || def->iCalcModel == SpinGC) &&
+      def->iFlgGeneralSpin != FALSE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinGC &&
+      (def->Nsite == 0 || def->Nsite >= CHAR_BIT * sizeof(unsigned long))) {
+    fprintf(stdoutMPI, "Error: SpinGC TransSym Nsite must satisfy 0 < Nsite < CHAR_BIT * sizeof(unsigned long).\n");
     return -1;
   }
   if (def->iCalcModel == Spin && has_fixed_spin_sector(def) != TRUE) {
@@ -546,6 +553,14 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
             "In a TransSym sector, NBodyG expresses the same products.\n");
     return -1;
   }
+  if (def->iCalcModel == SpinGC) {
+    for (unsigned int i = 0; i < def->NCisAjt; ++i) {
+      if (def->CisAjt[i][0] != def->CisAjt[i][2]) {
+        fprintf(stdoutMPI, "Error: SpinGC TransSym OneBodyG requires onsite operators.\n");
+        return -1;
+      }
+    }
+  }
   const struct SymmetryOptionGate gates[] = {
     { "spectrum calculations",
       "CalcSpec is not available in this version",
@@ -581,7 +596,8 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 /* 4. Model-specific Hamiltonian term families. */
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
-  if (def->NNBodyInterAll || def->NAnomalousTerm || def->NPairLiftCoupling ||
+  if (def->NNBodyInterAll || def->NAnomalousTerm ||
+      (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
       (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
        (def->NCoulombIntra || def->NPairHopping)) ||
       (def->iCalcModel == SpinlessFermion &&
@@ -599,6 +615,14 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   /* The order fixes which message is printed first for an input that
    * violates several rules; keep it when adding checks. */
   if (validate_symmetry_model_sector(def) != 0) return -1;
+  if (X->Boost.flgBoost) {
+    fprintf(stdoutMPI, "Error: TransSym does not support Boost.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinGC && def->NLaser) {
+    fprintf(stdoutMPI, "Error: SpinGC TransSym does not support Laser; use TEOneBody/TETwoBody.\n");
+    return -1;
+  }
   if (validate_symmetry_method_capability(def) != 0) return -1;
   if (validate_symmetry_output_capability(def) != 0) return -1;
   if (validate_symmetry_term_families(def) != 0) return -1;

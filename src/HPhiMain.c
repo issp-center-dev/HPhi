@@ -33,6 +33,9 @@
 #include "splash.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#ifdef HPHI_TEST_SPINGC_PROBE
+#include "symmetry_spingc_probe.h"
+#endif
 #include "symmetry_sector.h"
 #include "symmetry_basis_io.h"
 #include "symmetry_matvec_plan.h"
@@ -948,6 +951,21 @@ int main(int argc, char* argv[]){
       StopTimer(2000);
     }
       
+#ifdef HPHI_TEST_SPINGC_PROBE
+    {
+      int probe_status = SpinGCProbeBeforeSolver(&X.Bind);
+      if (probe_status < 0) exitMPI(-1);
+      if (probe_status > 0) {
+        StopTimer(0);
+        OutputTimer(&X.Bind);
+        FreeSymmetryBasis(X.Bind.Sym);
+        X.Bind.Sym = NULL;
+        FinalizeMPI();
+        return 0;
+      }
+    }
+#endif
+
     switch (X.Bind.Def.iCalcType) {
     case Lanczos:
       StartTimer(4000);
