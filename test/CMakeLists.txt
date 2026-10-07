@@ -600,3 +600,26 @@ if(MPI_FOUND)
         lanczos_hubbard_mpidouble lanczos_hubbardgc_mpidouble
         PROPERTIES LABELS "mpi;lanczos;hubbard;batching")
 endif(MPI_FOUND)
+
+#
+# exitMPI(): the rank-0 diagnostic must survive when every rank aborts.
+# Links the real wrapperMPI.c (plus the globals and splash() it references);
+# the driver delays rank 0 before it prints and calls exitMPI(), so the test
+# fails if the other ranks' MPI_Abort() can kill rank 0 before it has flushed.
+# (Backport of PR #300 / 7ce4494e for the 3.7 patch line.)
+#
+if(MPI_FOUND)
+    add_executable(unittest_exitmpi_abort_grace
+        ${CMAKE_SOURCE_DIR}/test/unittest_exitmpi_abort_grace.c
+        ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+        ${CMAKE_SOURCE_DIR}/src/global.c
+        ${CMAKE_SOURCE_DIR}/src/splash.c)
+    target_include_directories(unittest_exitmpi_abort_grace
+        PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+    target_compile_definitions(unittest_exitmpi_abort_grace PRIVATE
+        DSFMT_MEXP=19937)
+    target_link_libraries(unittest_exitmpi_abort_grace m ${MPI_C_LIBRARIES})
+    add_hphi_mpi_test(exitmpi_abort_grace_mpi min:2)
+    set_tests_properties(exitmpi_abort_grace_mpi
+        PROPERTIES LABELS "unit;mpi")
+endif()

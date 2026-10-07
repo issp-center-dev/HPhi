@@ -43,6 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifdef MPI
 #include <mpi.h>
+#include <errno.h>
+#include <time.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,8 +116,42 @@ void FinalizeMPI(){
 #endif
   if (myrank != 0) fclose(stdoutMPI);
 }
+#ifdef MPI
+/**
+Grace period, in milliseconds, that MPI ranks other than 0 wait in exitMPI()
+before calling MPI_Abort(). See exitMPI() for the reason. The default can be
+overridden at compile time with -DHPHI_MPI_ABORT_GRACE_MS=<ms>.
+*/
+#ifndef HPHI_MPI_ABORT_GRACE_MS
+#define HPHI_MPI_ABORT_GRACE_MS 2000
+#endif
+/**
+@brief Sleep for ::HPHI_MPI_ABORT_GRACE_MS milliseconds. The sleep is resumed
+if a signal interrupts it; the launcher's kill signal terminates the process
+anyway.
+*/
+static void WaitAbortGrace(void)
+{
+  struct timespec req, rem;
+  req.tv_sec = HPHI_MPI_ABORT_GRACE_MS / 1000;
+  req.tv_nsec = (long)(HPHI_MPI_ABORT_GRACE_MS % 1000) * 1000000L;
+  while (nanosleep(&req, &rem) != 0 && errno == EINTR) req = rem;
+}
+#endif
 /**
 @brief MPI Abortation wrapper
+
+Input errors are usually detected by every rank at (almost) the same point,
+but only rank 0 prints the diagnostic (::stdoutMPI is /dev/null on the other
+ranks), and when stdout is a pipe or a file that message stays in the stdio
+buffer until the fflush() below. If another rank reaches MPI_Abort() first,
+the launcher kills rank 0 before it has printed and flushed, and the
+diagnostic is lost (observed as an intermittent CI failure of a negative test
+with 16 ranks). Ranks other than 0 therefore wait ::HPHI_MPI_ABORT_GRACE_MS
+milliseconds before aborting so that rank 0 goes first. When rank 0 aborts,
+the launcher terminates the waiting ranks at once, so the full grace period
+is spent only when rank 0 is not aborting (an error local to another rank),
+which merely delays the end of the job by that period.
 @author Mitsuaki Kawamura (The University of Tokyo)
 */
 void exitMPI(
@@ -125,7 +161,9 @@ void exitMPI(
   int ierr;
   fflush(stdout);
 #ifdef MPI
+  if (myrank != 0) WaitAbortGrace();
   fprintf(stdout,"\n\n #######  [HPhi] You DO NOT have to WORRY about the following MPI-ERROR MESSAGE.  #######\n\n");
+  fflush(stdout);
   ierr = MPI_Abort(MPI_COMM_WORLD, errorcode);
   ierr = MPI_Finalize();
   if (ierr != 0) fprintf(stderr, "\n  MPI_Finalize() = %d\n\n", ierr);
