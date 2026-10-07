@@ -102,6 +102,7 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "symmetry_matvec_plan.h", "symmetry__matvec__plan_8h.html", "symmetry__matvec__plan_8h" ],
     [ "symmetry_memory_policy.h", "symmetry__memory__policy_8h.html", "symmetry__memory__policy_8h" ],
     [ "symmetry_mpi_exchange.h", "symmetry__mpi__exchange_8h.html", "symmetry__mpi__exchange_8h" ],
+    [ "symmetry_observables.h", "symmetry__observables_8h.html", "symmetry__observables_8h" ],
     [ "symmetry_sector.h", "symmetry__sector_8h.html", "symmetry__sector_8h" ],
     [ "symmetry_state_enumerator.h", "symmetry__state__enumerator_8h.html", "symmetry__state__enumerator_8h" ],
     [ "symmetry_te.h", "symmetry__te_8h.html", "symmetry__te_8h" ],

@@ -185,7 +185,8 @@ TransSym指定ファイル
 
 -  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。expert mode では次の項に対応します。
+   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。固定Szを持たないスピン1/2の
+   ``SpinGC`` にも対応します（下記参照）。expert mode では次の項に対応します。
 
    - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
      ``Hund``、固定Szを保存する ``InterAll``。
@@ -202,7 +203,8 @@ TransSym指定ファイル
    拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
    係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、
    不変性と固定量子数の保存を検査します。係数の許容誤差は :math:`10^{-10}` です。
-   ``PairLift``、 ``NBodyInterAll``、異常項は非対応です。
+   これらcanonical模型では ``PairLift``、 ``NBodyInterAll``、異常項は非対応です。
+   SpinGCは下記のとおり ``PairLift`` に対応します。
    spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
@@ -216,6 +218,147 @@ TransSym指定ファイル
    ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。
    未対応の組み合わせはエラーで終了します。
+
+
+SpinGCセクター（スピン1/2、expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=4`` と ``TransSym`` の組み合わせは、射影前の次元が
+:math:`2^{N_{\rm site}}` の全スピン1/2空間から空間対称性のセクターを選びます。
+全 :math:`S_z` は固定しません。``2Sz``、``Nup``、``Ndown``、``Ncond`` は
+省略してください。値0の明示指定も拒否します。サイト数は
+``0 < Nsite < CHAR_BIT * sizeof(unsigned long)`` を満たす必要があります。
+bit 0が下向き、bit 1が上向きで、site 0が最下位bitです。各軌道の最小bit列を
+代表とし、規格化した射影状態でその係数を正実にします。
+セクターsolverは全空間ベクトルを必要としません。
+
+対応するHamiltonian項は、横磁場・複素磁場を含むサイト内 ``Trans``、
+``Ising``、``Exchange``、``CoulombInter``、``Hund``、``PairLift`` と、
+サイト内スピン行列単位の積で表す ``InterAll`` です。全Szを変える項も使えますが、
+Hermitian性と群の各操作に対する不変性は必要です。
+:math:`E_i^{ab}=|a\rangle_i\langle b|` とすると、実数係数の ``PairLift`` の1行
+``i j J`` は次の項を表します。
+
+.. math::
+
+   J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).
+
+追加の1/2はありません。逆向きの行と重複行は加算され、同一サイトの行は0です。
+canonical ``Spin`` の固定Sz条件は変更しません。
+
+.. list-table:: SpinGCセクターの手法と機能
+   :header-rows: 1
+   :widths: 17 24 22 19 18
+
+   * - 手法 (CalcType)
+     - 結果
+     - 相関関数
+     - ベクトル読込/出力
+     - MPI layout
+   * - Lanczos (0)
+     - 低エネルギー状態
+     - 全6形式
+     - 不可/不可
+     - distributed / replicated
+   * - mTPQ (1)
+     - 単一sectorの標本
+     - 全6形式
+     - 不可/不可
+     - distributed / replicated
+   * - FullDiag (2)
+     - sectorの全固有値
+     - 不可
+     - 不可/不可
+     - metadataはreplicated
+   * - CG / LOBCG (3)
+     - 低エネルギー状態
+     - 全6形式
+     - 可/可
+     - distributed / replicated
+   * - TimeEvolution (4)
+     - 静的・動的時間発展
+     - 全6形式
+     - 必須/任意
+     - distributed / replicated
+   * - cTPQ (5)
+     - 単一sectorの標本
+     - 全6形式
+     - 不可/不可
+     - distributed / replicated
+
+相関の6形式は ``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
+``SixBodyG``、``NBodyG`` です。``OneBodyG`` はサイト内演算子のみ指定でき、
+サイト間の行は拒否します。aggregate形式と従来形式の両方に対応します。
+FullDiagは下記の制限のもとでLAPACK（Solver 0、1rank）、ScaLAPACK（1）、
+ELPA（3）を使えます。
+
+:math:`S_z=\sum_i S_i^z` と :math:`S_z^2` は固定量子数から代入せず、実際の
+sectorベクトルで評価します。既存の出力列は変更しません。CGのenergyファイルは
+``Sz`` を出力し、TPQ/cTPQ/TEのFlctファイルは磁化の1次・2次モーメントを出力します。
+CGに ``Sz2`` 列は追加しません。mTPQとcTPQは **単一の空間対称性sector** の
+熱標本であり、全SpinGC空間の熱平均ではありません。sector間の和には適切な統計的
+重みが必要で、単一sectorの標本はその和を表しません。
+
+CGのベクトル読込は入力状態を評価し、最適化を再開しません。TEの読込は新しい時間列を
+開始し、同一sector内のHamiltonian変更（quench）も許します。rank数、所有範囲、模型、
+sectorと位相規約は一致させます。どちらもsolver restartではなく ``ReStart`` は拒否します。
+SpinGC checkpointもversion 1で、headerは ``model=4``、``nup/ndown/ne`` は0です。
+Hamiltonian fingerprintは解析済みPairLift行を含む
+``hphi-parsed-hamiltonian-fnv1a64-v3`` です。canonical模型はv2と既存checkpoint形式を
+維持します。manifestは ``fixed_quantities=none``、``full_dim=2^Nsite`` を記録します。
+
+SpinGCは ``TEOneBody`` / ``TETwoBody`` の駆動に対応し、下記の右端Taylor規約を使います。
+使用する全時刻の入力を伝播前に検査します。``Laser`` は拒否されます。
+代わりに、群不変なサイト内 ``TEOneBody`` またはスピン積の ``TETwoBody`` を指定してください。
+general spin、Boost、Kondo、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
+全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
+solver restart、rank数を変更したcheckpoint再分配は対象外です。
+このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
+``AnomalousG`` も非対応です。FullDiagは固有ベクトル・相関出力、distributed基底metadata、
+MAGMAと非serial ``ExpecMode`` も拒否します。
+
+8サイト横磁場のCG例
+^^^^^^^^^^^^^^^^^^^
+
+空のディレクトリで次の標準ライブラリだけを使うPythonコードを ``make_input.py`` として
+保存し、``python3 make_input.py`` を実行します。
+:math:`H=-\sum_{i=0}^7 S_i^x`、characterが1の並進（運動量0）、CGのportableな
+expert入力を生成します。正の ``Trans`` 係数はHPhiのtransfer規約の負号に対応します。
+
+.. code-block:: python
+
+   from pathlib import Path
+
+   def definition(name, rows, count=None, keyword="NData"):
+       rows = list(rows)
+       header = "====\n{} {}\n====\n====\n====\n".format(
+           keyword, len(rows) if count is None else count)
+       Path(name).write_text(header + "".join(
+           " ".join(map(str, row)) + "\n" for row in rows))
+
+   Path("sym.def").write_text(
+       "CalcMod calc.def\nModPara mod.def\nLocSpin loc.def\n"
+       "TransSym group.def\nTrans trans.def\n")
+   Path("calc.def").write_text(
+       "CalcType 3\nCalcModel 4\nOutputMode 0\nOutputDataHead 1\n")
+   Path("mod.def").write_text(
+       "====\nModel_Parameters 0\n====\n====\n====\n"
+       "CDataFileHead zvo\nCParaFileHead zqp\n====\n"
+       "Nsite 8\nLanczos_max 400\ninitial_iv -1\nexct 1\n"
+       "LanczosEps 18\nLanczosTarget 1\nLargeValue 100\nPreCG 0\n")
+   definition("loc.def", ((i, 1) for i in range(8)))
+   definition("trans.def", ((i, a, i, b, 0.5, 0)
+              for i in range(8) for a, b in [(1, 0), (0, 1)]))
+   definition("group.def", [(g, 1.0, 0.0) for g in range(8)] +
+              [(g, i, (i+g) % 8, 1) for g in range(8) for i in range(8)],
+              count=8, keyword="NQPTrans")
+
+``OMP_NUM_THREADS=1`` として ``HPhi -e sym.def``、または
+``mpiexec -np 4 HPhi -e sym.def`` を実行します。収束した基底状態は
+:math:`E=-4`、:math:`\langle S_z\rangle=0`、:math:`\langle S_z^2\rangle=2` です。
+``output/zvo_energy.dat`` にenergyとSzが出力されます。このCG例でSz2を求めるには、
+``TwoBodyG`` で :math:`S_i^z S_j^z` を指定して全 :math:`i,j` について和を取ります
+（:math:`S_i^z=(E_i^{11}-E_i^{00})/2`）。新しいStandard-mode keywordは使いません。
 
 セクター内Lanczosの基底layout
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -319,7 +462,8 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 時間依存するセクターHamiltonian
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``TEOneBody``、 ``TETwoBody``、 ``Laser`` のいずれか1種類で駆動できます。
+``TEOneBody`` または ``TETwoBody`` の1種類で駆動できます。
+canonical模型では ``Laser`` も選べますが、SpinGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
 位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
 raw spinless solverの対角TE項に対する制限は変更しません。
@@ -435,7 +579,7 @@ manifestにはsolver、行列storage、 ``output_scope=eigenvalues`` を記録�
   代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
   MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
   法として計算します。ノルムとハミルトニアンの対角値は含めません。
-- ``hamiltonian_digest``: ``hphi-parsed-hamiltonian-fnv1a64-v2`` は、対応する
+- ``hamiltonian_digest``: canonical模型の ``hphi-parsed-hamiltonian-fnv1a64-v2`` は、対応する
   ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
   version 2ではサイト内ポテンシャル、pair hopping、分離済みの対角・非対角InterAllを
   記録対象に追加しています。物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。

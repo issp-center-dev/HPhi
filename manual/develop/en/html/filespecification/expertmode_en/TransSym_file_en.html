@@ -188,6 +188,7 @@ the counting for spins.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
 <span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
+Spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> without fixed Sz is also supported as described below.
 Expert-mode Hamiltonian terms are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: longitudinal <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (local diagonal fields), <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>,
@@ -207,8 +208,8 @@ MPI sizes that cannot be used with raw site decomposition.</p></li>
 matrix-unit reduction. This accounts for permutation signs, contractions,
 duplicate terms, and cancellations between families before checking
 invariance and conserved quantum numbers. The coefficient tolerance is
-<span class="math notranslate nohighlight">\(10^{-10}\)</span>. <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, and anomalous terms remain
-unsupported. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
+<span class="math notranslate nohighlight">\(10^{-10}\)</span>. For these canonical models, <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, and anomalous
+terms remain unsupported. SpinGC supports <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> as described below. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
 <p>Correlation functions (<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
 <code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>) are computed in the sector for
@@ -224,6 +225,159 @@ TimeEvolution through the sector checkpoint format below. Unsupported
 combinations terminate with an error.</p>
 </li>
 </ul>
+</section>
+<section id="spingc-sectors-spin-one-half-expert-mode">
+<h2>SpinGC sectors (spin one-half, expert mode)<a class="headerlink" href="#spingc-sectors-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> selects a spatial-symmetry sector of the
+complete spin-one-half space, of dimension <span class="math notranslate nohighlight">\(2^{N_{\rm site}}\)</span> before
+projection. It does <strong>not</strong> fix total <span class="math notranslate nohighlight">\(S_z\)</span>. Omit <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> and <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> entirely: even an explicit zero is rejected.
+The site count must satisfy <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;</span> <span class="pre">CHAR_BIT</span> <span class="pre">*</span> <span class="pre">sizeof(unsigned</span> <span class="pre">long)</span></code>.
+Bit 0 denotes down, bit 1 up, and site 0 is the least significant bit.
+Basis representatives are the smallest bit strings in their orbits; their
+coefficients are positive real in the normalized projected states.
+No full-space state vector is required by the sector solver.</p>
+<p>Supported Hamiltonian families are on-site <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (including transverse
+and complex fields), <code class="docutils literal notranslate"><span class="pre">Ising</span></code>, <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>, <code class="docutils literal notranslate"><span class="pre">Hund</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, and <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> built from on-site spin matrix units, including
+terms that change total <span class="math notranslate nohighlight">\(S_z\)</span>. Hermiticity and group invariance are
+still required. For <span class="math notranslate nohighlight">\(E_i^{ab}=|a\rangle_i\langle b|\)</span>, one real
+<code class="docutils literal notranslate"><span class="pre">PairLift</span></code> row <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">j</span> <span class="pre">J</span></code> means</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-1">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-1" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
+<p>There is no additional factor of one-half. Reversed and duplicate rows add;
+a same-site row vanishes. These rules do not relax the fixed-Sz restriction
+of canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 4.3 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 17.0%" />
+<col style="width: 24.0%" />
+<col style="width: 22.0%" />
+<col style="width: 19.0%" />
+<col style="width: 18.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method (CalcType)</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>Correlations</p></th>
+<th class="head"><p>Vector import/export</p></th>
+<th class="head"><p>MPI layout</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Lanczos (0)</p></td>
+<td><p>Low-energy states</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Distributed or replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>mTPQ (1)</p></td>
+<td><p>Single-sector samples</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Distributed or replicated</p></td>
+</tr>
+<tr class="row-even"><td><p>FullDiag (2)</p></td>
+<td><p>All sector eigenvalues</p></td>
+<td><p>No</p></td>
+<td><p>No / No</p></td>
+<td><p>Replicated metadata</p></td>
+</tr>
+<tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
+<td><p>Low-energy states</p></td>
+<td><p>All six formats</p></td>
+<td><p>Yes / Yes</p></td>
+<td><p>Distributed or replicated</p></td>
+</tr>
+<tr class="row-even"><td><p>TimeEvolution (4)</p></td>
+<td><p>Static or driven evolution</p></td>
+<td><p>All six formats</p></td>
+<td><p>Required / Optional</p></td>
+<td><p>Distributed or replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>cTPQ (5)</p></td>
+<td><p>Single-sector samples</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Distributed or replicated</p></td>
+</tr>
+</tbody>
+</table>
+<p>The six correlation formats are <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>. <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code> requires on-site
+operators; off-site rows are rejected. Both aggregate and legacy output
+formats are available. FullDiag supports LAPACK (Solver 0, one rank),
+ScaLAPACK (1) and ELPA (3), subject to the restrictions below.</p>
+<p><span class="math notranslate nohighlight">\(S_z=\sum_i S_i^z\)</span> and <span class="math notranslate nohighlight">\(S_z^2\)</span> are evaluated with the actual
+sector vector, not inferred from a fixed quantum number. Existing output
+columns are unchanged: the CG energy file reports <code class="docutils literal notranslate"><span class="pre">Sz</span></code>; TPQ/cTPQ/TE Flct
+files report the first and second magnetization moments. CG does not add a
+new <code class="docutils literal notranslate"><span class="pre">Sz2</span></code> column. mTPQ and cTPQ estimate a <strong>single spatial-symmetry sector</strong>,
+not the full SpinGC thermal ensemble. Summing sectors requires their proper
+statistical weights; a single sector sample is not such a sum.</p>
+<p>CG vector import evaluates supplied states without restarting optimization.
+TE import starts a new time grid; it can use a different Hamiltonian within
+the same sector (quench). Same rank count, ownership, model, sector and phase
+are required. Neither import is solver restart; <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remains rejected.
+SpinGC checkpoints retain version 1 with <code class="docutils literal notranslate"><span class="pre">model=4</span></code> and zero <code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code>
+header fields. Their Hamiltonian fingerprint is
+<code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code>, which includes parsed PairLift rows.
+Canonical models retain their v2 fingerprints and existing checkpoint format.
+The manifest has <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code> and <code class="docutils literal notranslate"><span class="pre">full_dim=2^Nsite</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> and <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive SpinGC using the right-endpoint
+Taylor rule described below. Every used slice is checked before propagation.
+<code class="docutils literal notranslate"><span class="pre">Laser</span></code> is rejected; use invariant on-site <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or spin-product
+<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. General spin, Boost, Kondo, new Standard-mode
+SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
+operations, multidimensional irreducible representations, spectrum,
+Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
+are unsupported. <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code> and
+<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> are not supported in this SpinGC sector path. FullDiag also
+rejects eigenvector/correlation output, distributed basis metadata, MAGMA,
+and nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
+<section id="eight-site-transverse-field-cg-example">
+<h3>Eight-site transverse-field CG example<a class="headerlink" href="#eight-site-transverse-field-cg-example" title="Link to this heading">¶</a></h3>
+<p>In an empty directory, save the following standard-library Python code as
+<code class="docutils literal notranslate"><span class="pre">make_input.py</span></code> and run <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">make_input.py</span></code>. It writes portable expert
+input files for <span class="math notranslate nohighlight">\(H=-\sum_{i=0}^7 S_i^x\)</span>, translations with character 1
+(momentum zero), and CG. The positive <code class="docutils literal notranslate"><span class="pre">Trans</span></code> coefficients implement the
+minus sign in HPhi’s transfer convention.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">definition</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">"NData"</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s2">"====</span><span class="se">\n</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">keyword</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="k">if</span> <span class="n">count</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">count</span><span class="p">)</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">))</span>
+
+<span class="n">Path</span><span class="p">(</span><span class="s2">"sym.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"CalcMod calc.def</span><span class="se">\n</span><span class="s2">ModPara mod.def</span><span class="se">\n</span><span class="s2">LocSpin loc.def</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"TransSym group.def</span><span class="se">\n</span><span class="s2">Trans trans.def</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">"calc.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"CalcType 3</span><span class="se">\n</span><span class="s2">CalcModel 4</span><span class="se">\n</span><span class="s2">OutputMode 0</span><span class="se">\n</span><span class="s2">OutputDataHead 1</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">"mod.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"====</span><span class="se">\n</span><span class="s2">Model_Parameters 0</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"CDataFileHead zvo</span><span class="se">\n</span><span class="s2">CParaFileHead zqp</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Nsite 8</span><span class="se">\n</span><span class="s2">Lanczos_max 400</span><span class="se">\n</span><span class="s2">initial_iv -1</span><span class="se">\n</span><span class="s2">exct 1</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"LanczosEps 18</span><span class="se">\n</span><span class="s2">LanczosTarget 1</span><span class="se">\n</span><span class="s2">LargeValue 100</span><span class="se">\n</span><span class="s2">PreCG 0</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"loc.def"</span><span class="p">,</span> <span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)))</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"trans.def"</span><span class="p">,</span> <span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]))</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"group.def"</span><span class="p">,</span> <span class="p">[(</span><span class="n">g</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="o">+</span>
+           <span class="p">[(</span><span class="n">g</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">g</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)],</span>
+           <span class="n">count</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">"NQPTrans"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-e</span> <span class="pre">sym.def</span></code> (or <code class="docutils literal notranslate"><span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">4</span> <span class="pre">HPhi</span> <span class="pre">-e</span> <span class="pre">sym.def</span></code>) with
+<code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=1</span></code>. The converged ground state has <span class="math notranslate nohighlight">\(E=-4\)</span>,
+<span class="math notranslate nohighlight">\(\langle S_z\rangle=0\)</span> and <span class="math notranslate nohighlight">\(\langle S_z^2\rangle=2\)</span>.
+<code class="docutils literal notranslate"><span class="pre">output/zvo_energy.dat</span></code> reports energy and Sz. To reconstruct Sz2 in this
+CG example, request <span class="math notranslate nohighlight">\(S_i^z S_j^z\)</span> via <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code> and sum over all
+<span class="math notranslate nohighlight">\(i,j\)</span> (each <span class="math notranslate nohighlight">\(S_i^z=(E_i^{11}-E_i^{00})/2\)</span>).
+This example does not add or require a Standard-mode keyword.</p>
+</section>
 </section>
 <section id="sector-lanczos-basis-layout">
 <h2>Sector Lanczos basis layout<a class="headerlink" href="#sector-lanczos-basis-layout" title="Link to this heading">¶</a></h2>
@@ -329,7 +483,8 @@ not a restart. Raw TE binary files use their existing, different format.</p>
 </section>
 <section id="time-dependent-sector-hamiltonians">
 <h2>Time-dependent sector Hamiltonians<a class="headerlink" href="#time-dependent-sector-hamiltonians" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>, <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code>, or <code class="docutils literal notranslate"><span class="pre">Laser</span></code> may drive the sector Hamiltonian.
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive the sector Hamiltonian.
+<code class="docutils literal notranslate"><span class="pre">Laser</span></code> is available only for the canonical models, not SpinGC.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
@@ -450,7 +605,7 @@ representative state, orbit size, and stabilizer size with FNV-1a 64 and
 combines the hashes without dependence on entry order or MPI ownership.
 Integers use fixed-width little-endian encoding. The sum is modulo
 <span class="math notranslate nohighlight">\(2^{64}\)</span>. Norms and Hamiltonian diagonal values are excluded.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> records the
+<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: for canonical models, <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> records the
 supported parsed Hamiltonian terms in their stored order, using the exact
 binary64 coefficient bits. Version 2 adds on-site potentials, pair hopping,
 and the split diagonal/off-diagonal InterAll arrays. Equivalent Hamiltonians expressed in different

@@ -498,6 +498,17 @@ Szがゼロ埋めされ、S2列を含まない短縮形式のstdout進捗行が�
 </ul>
 </section>
 </section>
+<section id="spingc">
+<h1>SpinGCの対称性セクター指定<a class="headerlink" href="#spingc" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と <code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> は、固定Szのないスピン1/2で
+<code class="docutils literal notranslate"><span class="pre">CalcType=0,1,2,3,4,5</span></code> に対応します。基底状態計算はCG（3）を使います。
+FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）による固有値のみで、
+MAGMA、相関、ベクトル入出力、非serial ExpecModeは非対応です。
+CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
+読込は新しい評価・時間列を開始する操作でありrestartではありません。
+全sector手法で <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は非対応です。機能表と実行可能なexpert入力例は
+<a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> を参照してください。</p>
+</section>
 
 
           </div>

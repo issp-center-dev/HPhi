@@ -519,6 +519,17 @@ correctness fix, independent of <code class="docutils literal notranslate"><span
 </li>
 </ul>
 </section>
+<section id="spingc-symmetry-sector-options">
+<h2>SpinGC symmetry-sector options<a class="headerlink" href="#spingc-symmetry-sector-options" title="Link to this heading">¶</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, <code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> supports spin one-half without fixed Sz
+for <code class="docutils literal notranslate"><span class="pre">CalcType=0,1,2,3,4,5</span></code>. Use CG (3) for ground-state calculations.
+FullDiag (2) provides eigenvalues only with Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA);
+MAGMA, correlations, vector I/O and nonserial ExpecMode are unsupported.
+CG accepts sector vector import/export; TE requires sector vector import and
+optionally exports vectors. Import starts a new evaluation/time grid, not a
+restart: <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> is unsupported for every sector method.
+For the full feature table and a runnable expert example, see <a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>.</p>
+</section>
 </section>
 
 

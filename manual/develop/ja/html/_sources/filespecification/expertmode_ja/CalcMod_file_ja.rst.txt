@@ -485,6 +485,19 @@ CalcModファイル
      依らず、常にS2列を含む1プロセス (逐次) 実行と同じ形式になりました。
      これは ``ExpecMode`` の値によらない、意図的な修正です。
 
+
+SpinGCの対称性セクター指定
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``TransSym`` と ``CalcModel=4`` は、固定Szのないスピン1/2で
+``CalcType=0,1,2,3,4,5`` に対応します。基底状態計算はCG（3）を使います。
+FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）による固有値のみで、
+MAGMA、相関、ベクトル入出力、非serial ExpecModeは非対応です。
+CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
+読込は新しい評価・時間列を開始する操作でありrestartではありません。
+全sector手法で ``ReStart`` は非対応です。機能表と実行可能なexpert入力例は
+:ref:`Subsec:TransSym` を参照してください。
+
 .. raw:: latex
 
    \newpage

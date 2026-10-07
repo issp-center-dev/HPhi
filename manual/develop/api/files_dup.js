@@ -93,6 +93,7 @@ var files_dup =
     [ "symmetry_matvec_plan.c", "symmetry__matvec__plan_8c.html", "symmetry__matvec__plan_8c" ],
     [ "symmetry_memory_policy.c", "symmetry__memory__policy_8c.html", "symmetry__memory__policy_8c" ],
     [ "symmetry_mpi_exchange.c", "symmetry__mpi__exchange_8c.html", "symmetry__mpi__exchange_8c" ],
+    [ "symmetry_observables.c", "symmetry__observables_8c.html", "symmetry__observables_8c" ],
     [ "symmetry_sector.c", "symmetry__sector_8c.html", "symmetry__sector_8c" ],
     [ "symmetry_state_enumerator.c", "symmetry__state__enumerator_8c.html", "symmetry__state__enumerator_8c" ],
     [ "symmetry_te.c", "symmetry__te_8c.html", "symmetry__te_8c" ],

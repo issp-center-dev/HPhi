@@ -412,6 +412,19 @@ and iteration-count values must be finite integers less than <code class="docuti
 </li>
 </ul>
 </section>
+<section id="spingc-with-transsym">
+<h2>SpinGC with TransSym<a class="headerlink" href="#spingc-with-transsym" title="Link to this heading">¶</a></h2>
+<p>For a spin-one-half SpinGC sector (<code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code>), omit <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> and <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>. Explicit values, including zero, are rejected rather
+than ignored. The allowed site count is
+<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;</span> <span class="pre">CHAR_BIT</span> <span class="pre">*</span> <span class="pre">sizeof(unsigned</span> <span class="pre">long)</span></code>.
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>, <code class="docutils literal notranslate"><span class="pre">initial_iv</span></code> and CG convergence parameters retain their
+usual meaning. TPQ/cTPQ parameters describe samples within one symmetry
+sector; <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> cannot request eigenvector output in sector cTPQ.
+TE uses positive <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>, a finite nondecreasing time grid, and
+<code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code>/<code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> for observables/checkpoints. See
+<a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a> for magnetization moments, import semantics and examples.</p>
+</section>
 </section>
 
 

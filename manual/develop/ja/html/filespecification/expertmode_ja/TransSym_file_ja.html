@@ -185,7 +185,8 @@ NQPTrans          2
 因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。</p></li>
 <li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、 <code class="docutils literal notranslate"><span class="pre">CG</span></code>、 <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> （microcanonical TPQ）、 <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、 <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>、 <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
 固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
-<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。expert mode では次の項に対応します。</p>
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。固定Szを持たないスピン1/2の
+<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> にも対応します（下記参照）。expert mode では次の項に対応します。</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: 縦磁場の <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、
 <code class="docutils literal notranslate"><span class="pre">Hund</span></code>、固定Szを保存する <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>。</p></li>
@@ -202,7 +203,8 @@ MPIプロセス数でも実行できます。</p></li>
 <p>拡張項ではフェルミオンの正規順序化、または局所スピン行列の積の簡約後に
 係数を集約します。置換符号、縮約、重複項、family間の相殺を含めて、
 不変性と固定量子数の保存を検査します。係数の許容誤差は <span class="math notranslate nohighlight">\(10^{-10}\)</span> です。
-<code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、異常項は非対応です。
+これらcanonical模型では <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、異常項は非対応です。
+SpinGCは下記のとおり <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> に対応します。
 spinlessのraw solverでは非対角 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> は引き続き非対応で、今回の拡張は
 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> に適用されます。Standard modeの入力生成は変更していません。</p>
 <p>相関関数（<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>、
@@ -217,6 +219,150 @@ CGとTimeEvolutionで下記のsector checkpoint形式により利用できます
 未対応の組み合わせはエラーで終了します。</p>
 </li>
 </ul>
+</section>
+</section>
+<section id="spingc-1-2expert-mode">
+<h1>SpinGCセクター（スピン1/2、expert mode）<a class="headerlink" href="#spingc-1-2expert-mode" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> と <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> の組み合わせは、射影前の次元が
+<span class="math notranslate nohighlight">\(2^{N_{\rm site}}\)</span> の全スピン1/2空間から空間対称性のセクターを選びます。
+全 <span class="math notranslate nohighlight">\(S_z\)</span> は固定しません。<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、<code class="docutils literal notranslate"><span class="pre">Nup</span></code>、<code class="docutils literal notranslate"><span class="pre">Ndown</span></code>、<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> は
+省略してください。値0の明示指定も拒否します。サイト数は
+<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;</span> <span class="pre">CHAR_BIT</span> <span class="pre">*</span> <span class="pre">sizeof(unsigned</span> <span class="pre">long)</span></code> を満たす必要があります。
+bit 0が下向き、bit 1が上向きで、site 0が最下位bitです。各軌道の最小bit列を
+代表とし、規格化した射影状態でその係数を正実にします。
+セクターsolverは全空間ベクトルを必要としません。</p>
+<p>対応するHamiltonian項は、横磁場・複素磁場を含むサイト内 <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、
+<code class="docutils literal notranslate"><span class="pre">Ising</span></code>、<code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、<code class="docutils literal notranslate"><span class="pre">Hund</span></code>、<code class="docutils literal notranslate"><span class="pre">PairLift</span></code> と、
+サイト内スピン行列単位の積で表す <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> です。全Szを変える項も使えますが、
+Hermitian性と群の各操作に対する不変性は必要です。
+<span class="math notranslate nohighlight">\(E_i^{ab}=|a\rangle_i\langle b|\)</span> とすると、実数係数の <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> の1行
+<code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">j</span> <span class="pre">J</span></code> は次の項を表します。</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-1">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-1" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
+<p>追加の1/2はありません。逆向きの行と重複行は加算され、同一サイトの行は0です。
+canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の固定Sz条件は変更しません。</p>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-number">表 4.3 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id7" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 17.0%" />
+<col style="width: 24.0%" />
+<col style="width: 22.0%" />
+<col style="width: 19.0%" />
+<col style="width: 18.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>手法 (CalcType)</p></th>
+<th class="head"><p>結果</p></th>
+<th class="head"><p>相関関数</p></th>
+<th class="head"><p>ベクトル読込/出力</p></th>
+<th class="head"><p>MPI layout</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Lanczos (0)</p></td>
+<td><p>低エネルギー状態</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可/不可</p></td>
+<td><p>distributed / replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>mTPQ (1)</p></td>
+<td><p>単一sectorの標本</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可/不可</p></td>
+<td><p>distributed / replicated</p></td>
+</tr>
+<tr class="row-even"><td><p>FullDiag (2)</p></td>
+<td><p>sectorの全固有値</p></td>
+<td><p>不可</p></td>
+<td><p>不可/不可</p></td>
+<td><p>metadataはreplicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
+<td><p>低エネルギー状態</p></td>
+<td><p>全6形式</p></td>
+<td><p>可/可</p></td>
+<td><p>distributed / replicated</p></td>
+</tr>
+<tr class="row-even"><td><p>TimeEvolution (4)</p></td>
+<td><p>静的・動的時間発展</p></td>
+<td><p>全6形式</p></td>
+<td><p>必須/任意</p></td>
+<td><p>distributed / replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>cTPQ (5)</p></td>
+<td><p>単一sectorの標本</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可/不可</p></td>
+<td><p>distributed / replicated</p></td>
+</tr>
+</tbody>
+</table>
+<p>相関の6形式は <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>、
+<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> です。<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code> はサイト内演算子のみ指定でき、
+サイト間の行は拒否します。aggregate形式と従来形式の両方に対応します。
+FullDiagは下記の制限のもとでLAPACK（Solver 0、1rank）、ScaLAPACK（1）、
+ELPA（3）を使えます。</p>
+<p><span class="math notranslate nohighlight">\(S_z=\sum_i S_i^z\)</span> と <span class="math notranslate nohighlight">\(S_z^2\)</span> は固定量子数から代入せず、実際の
+sectorベクトルで評価します。既存の出力列は変更しません。CGのenergyファイルは
+<code class="docutils literal notranslate"><span class="pre">Sz</span></code> を出力し、TPQ/cTPQ/TEのFlctファイルは磁化の1次・2次モーメントを出力します。
+CGに <code class="docutils literal notranslate"><span class="pre">Sz2</span></code> 列は追加しません。mTPQとcTPQは <strong>単一の空間対称性sector</strong> の
+熱標本であり、全SpinGC空間の熱平均ではありません。sector間の和には適切な統計的
+重みが必要で、単一sectorの標本はその和を表しません。</p>
+<p>CGのベクトル読込は入力状態を評価し、最適化を再開しません。TEの読込は新しい時間列を
+開始し、同一sector内のHamiltonian変更（quench）も許します。rank数、所有範囲、模型、
+sectorと位相規約は一致させます。どちらもsolver restartではなく <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は拒否します。
+SpinGC checkpointもversion 1で、headerは <code class="docutils literal notranslate"><span class="pre">model=4</span></code>、<code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> は0です。
+Hamiltonian fingerprintは解析済みPairLift行を含む
+<code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code> です。canonical模型はv2と既存checkpoint形式を
+維持します。manifestは <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code>、<code class="docutils literal notranslate"><span class="pre">full_dim=2^Nsite</span></code> を記録します。</p>
+<p>SpinGCは <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の駆動に対応し、下記の右端Taylor規約を使います。
+使用する全時刻の入力を伝播前に検査します。<code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否されます。
+代わりに、群不変なサイト内 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> またはスピン積の <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を指定してください。
+general spin、Boost、Kondo、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
+全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
+solver restart、rank数を変更したcheckpoint再分配は対象外です。
+このSpinGC sector経路では <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
+<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> も非対応です。FullDiagは固有ベクトル・相関出力、distributed基底metadata、
+MAGMAと非serial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> も拒否します。</p>
+<section id="cg">
+<h2>8サイト横磁場のCG例<a class="headerlink" href="#cg" title="Link to this heading">¶</a></h2>
+<p>空のディレクトリで次の標準ライブラリだけを使うPythonコードを <code class="docutils literal notranslate"><span class="pre">make_input.py</span></code> として
+保存し、<code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">make_input.py</span></code> を実行します。
+<span class="math notranslate nohighlight">\(H=-\sum_{i=0}^7 S_i^x\)</span>、characterが1の並進（運動量0）、CGのportableな
+expert入力を生成します。正の <code class="docutils literal notranslate"><span class="pre">Trans</span></code> 係数はHPhiのtransfer規約の負号に対応します。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">definition</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">"NData"</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s2">"====</span><span class="se">\n</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">keyword</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="k">if</span> <span class="n">count</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">count</span><span class="p">)</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">))</span>
+
+<span class="n">Path</span><span class="p">(</span><span class="s2">"sym.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"CalcMod calc.def</span><span class="se">\n</span><span class="s2">ModPara mod.def</span><span class="se">\n</span><span class="s2">LocSpin loc.def</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"TransSym group.def</span><span class="se">\n</span><span class="s2">Trans trans.def</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">"calc.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"CalcType 3</span><span class="se">\n</span><span class="s2">CalcModel 4</span><span class="se">\n</span><span class="s2">OutputMode 0</span><span class="se">\n</span><span class="s2">OutputDataHead 1</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">"mod.def"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="s2">"====</span><span class="se">\n</span><span class="s2">Model_Parameters 0</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"CDataFileHead zvo</span><span class="se">\n</span><span class="s2">CParaFileHead zqp</span><span class="se">\n</span><span class="s2">====</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Nsite 8</span><span class="se">\n</span><span class="s2">Lanczos_max 400</span><span class="se">\n</span><span class="s2">initial_iv -1</span><span class="se">\n</span><span class="s2">exct 1</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"LanczosEps 18</span><span class="se">\n</span><span class="s2">LanczosTarget 1</span><span class="se">\n</span><span class="s2">LargeValue 100</span><span class="se">\n</span><span class="s2">PreCG 0</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"loc.def"</span><span class="p">,</span> <span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)))</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"trans.def"</span><span class="p">,</span> <span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]))</span>
+<span class="n">definition</span><span class="p">(</span><span class="s2">"group.def"</span><span class="p">,</span> <span class="p">[(</span><span class="n">g</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span> <span class="o">+</span>
+           <span class="p">[(</span><span class="n">g</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">g</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)],</span>
+           <span class="n">count</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">"NQPTrans"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=1</span></code> として <code class="docutils literal notranslate"><span class="pre">HPhi</span> <span class="pre">-e</span> <span class="pre">sym.def</span></code>、または
+<code class="docutils literal notranslate"><span class="pre">mpiexec</span> <span class="pre">-np</span> <span class="pre">4</span> <span class="pre">HPhi</span> <span class="pre">-e</span> <span class="pre">sym.def</span></code> を実行します。収束した基底状態は
+<span class="math notranslate nohighlight">\(E=-4\)</span>、<span class="math notranslate nohighlight">\(\langle S_z\rangle=0\)</span>、<span class="math notranslate nohighlight">\(\langle S_z^2\rangle=2\)</span> です。
+<code class="docutils literal notranslate"><span class="pre">output/zvo_energy.dat</span></code> にenergyとSzが出力されます。このCG例でSz2を求めるには、
+<code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code> で <span class="math notranslate nohighlight">\(S_i^z S_j^z\)</span> を指定して全 <span class="math notranslate nohighlight">\(i,j\)</span> について和を取ります
+（<span class="math notranslate nohighlight">\(S_i^z=(E_i^{11}-E_i^{00})/2\)</span>）。新しいStandard-mode keywordは使いません。</p>
 </section>
 <section id="lanczoslayout">
 <h2>セクター内Lanczosの基底layout<a class="headerlink" href="#lanczoslayout" title="Link to this heading">¶</a></h2>
@@ -307,7 +453,8 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 </section>
 <section id="hamiltonian">
 <h2>時間依存するセクターHamiltonian<a class="headerlink" href="#hamiltonian" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>、 <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code>、 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> のいずれか1種類で駆動できます。
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> または <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の1種類で駆動できます。
+canonical模型では <code class="docutils literal notranslate"><span class="pre">Laser</span></code> も選べますが、SpinGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
 位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
 raw spinless solverの対角TE項に対する制限は変更しません。</p>
@@ -409,7 +556,7 @@ manifestにはsolver、行列storage、 <code class="docutils literal notranslat
 代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
 MPI 分割によらず集約します。整数は固定幅 little-endian、和は <span class="math notranslate nohighlight">\(2^{64}\)</span> を
 法として計算します。ノルムとハミルトニアンの対角値は含めません。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> は、対応する
+<li><p><code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>: canonical模型の <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v2</span></code> は、対応する
 ハミルトニアンの項を格納順に記録し、係数には binary64 の bit 列を使います。
 version 2ではサイト内ポテンシャル、pair hopping、分離済みの対角・非対角InterAllを
 記録対象に追加しています。物理的に同じハミルトニアンでも、項の順序や分解が違えば値が異なることがあります。</p></li>

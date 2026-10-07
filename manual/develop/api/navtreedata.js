@@ -157,7 +157,7 @@ var NAVTREEINDEX =
 "structSymmetryRepresentativeDirectoryInfo.html#ac7df69737fa69b95d01b56e6bfa91bbd",
 "symmetry__basis__io_8h.html#a1193bae9ad315f92bd4f91eca164bbe1",
 "symmetry__memory__policy_8h.html#a270c2fd8219a6fccd13daf6ebd3b5b9f",
-"version__patch_8h_source.html"
+"vec12_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
