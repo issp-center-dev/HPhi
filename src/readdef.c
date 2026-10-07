@@ -34,6 +34,7 @@
 
 #include "Common.h"
 #include "readdef.h"
+#include "version.h"
 #include "nbody_interall.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
@@ -3700,16 +3701,6 @@ int JudgeDefType
  int *mode
  )
 {
-   int ver_maj =
-#include "version_major.h"
-;
-   int ver_min =
-#include "version_minor.h"
-;
-   int ver_pat =
-#include "version_patch.h"
-;
-
   if(argc == 3 && 
      (CheckWords(argv[1], "-e") == 0 ||
       CheckWords(argv[1], "--Expert") == 0)){
@@ -3730,8 +3721,13 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stdoutMPI, "\nHPhi version %d.%d.%d \n\n", ver_maj, ver_min, ver_pat);
-    exit(-1);
+    fprintf(stdoutMPI, "\nHPhi version %d.%d.%d",
+            HPHI_VERSION_MAJOR, HPHI_VERSION_MINOR, HPHI_VERSION_PATCH);
+    if(strlen(GetGitHash()) > 0){
+      fprintf(stdoutMPI, " (%s)", GetGitHash());
+    }
+    fprintf(stdoutMPI, "\n\n");
+    exit(0);
   }
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/

@@ -19,6 +19,7 @@ target_sources(HPhi PRIVATE
   dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
+  version.c
   nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
   symmetry_diagonal.c symmetry_terms.c symmetry_correlation.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_memory_policy.c symmetry_mpi_exchange.c
@@ -102,6 +103,24 @@ target_sources(HPhi PRIVATE
   ${STDFACE_DIR}/src/TriangularLattice.c
   ${STDFACE_DIR}/src/Wannier90.c
 )
+
+# Hash of the commit, shown by "HPhi -v". version_git.h is written when cmake
+# is run and is checked again at every build.
+set(HPHI_VERSION_GIT_H ${CMAKE_CURRENT_BINARY_DIR}/version_git.h)
+set(HPHI_GIT_HASH_COMMAND
+  ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_SOURCE_DIR} -DOUTPUT=${HPHI_VERSION_GIT_H}
+  -P ${CMAKE_SOURCE_DIR}/cmake/git_hash.cmake)
+execute_process(COMMAND ${HPHI_GIT_HASH_COMMAND})
+add_custom_target(hphi_git_hash
+  COMMAND ${HPHI_GIT_HASH_COMMAND}
+  BYPRODUCTS ${HPHI_VERSION_GIT_H}
+  COMMENT "Checking the hash of the commit"
+  VERBATIM)
+add_dependencies(HPhi hphi_git_hash)
+target_include_directories(HPhi PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+set_source_files_properties(version.c PROPERTIES
+  COMPILE_DEFINITIONS HPHI_HAVE_VERSION_GIT_H)
+
 target_link_libraries(HPhi komega ${LAPACK_LIBRARIES} m)
 # expec_trace.c uses clock_gettime(CLOCK_MONOTONIC); on older glibc (< 2.17)
 # that symbol lives in librt. Link it when such a librt exists (harmless
