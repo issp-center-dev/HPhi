@@ -107,13 +107,13 @@ U = 2.0
 Lanczos_max = 120
 initial_iv = 1
 EOF
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 cd ..
 write_anomalous_term serial
 write_anomalousg serial
 
 cd serial
-run_hphi log_serial.txt "${hphi}" -e namelist.def
+run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_serial.dat
 cp output/zvo_AnomalousG.dat ../anomalousg_serial.dat
 cd ..

@@ -22,7 +22,7 @@ nelec = 4
 EigenVecIO = "out"
 EOF
 
-${HPHI} -s stan_gs.in > gs.log 2>&1
+${MPIRUNFC} ${HPHI} -s stan_gs.in > gs.log 2>&1
 
 cat > calcmod_cg.def <<EOF
 CalcType   3
@@ -97,7 +97,7 @@ cat > namelist_cg.def <<EOF
 EOF
 
 set +e
-${HPHI} -e namelist_cg.def > run.log 2>&1
+${MPIRUNFC} ${HPHI} -e namelist_cg.def > run.log 2>&1
 rc=$?
 set -e
 
@@ -126,7 +126,7 @@ sed -e 's/CalcMod  calcmod_cg.def/CalcMod  calcmod_restart_out.def/' \
     namelist_cg.def > namelist_restart_out.def
 
 set +e
-${HPHI} -e namelist_restart_out.def > restart_out.log 2>&1
+${MPIRUNFC} ${HPHI} -e namelist_restart_out.def > restart_out.log 2>&1
 rc=$?
 set -e
 

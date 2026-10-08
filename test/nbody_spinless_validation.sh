@@ -19,7 +19,7 @@ expect_fail() {
   pattern="$2"
   cd "${dir}"
   set +e
-  "${hphi}" -e namelist.def > log.txt 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > log.txt 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then
@@ -155,7 +155,7 @@ NNBodyG 0
 EOF
 
 cd accept
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 
 expect_fail bad_spin_interall "Spin index of NBodyInterAll is incorrect"

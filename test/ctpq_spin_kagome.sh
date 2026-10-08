@@ -22,7 +22,7 @@ LargeValue  = 5
 NumAve      = 10
 EOF
 
-../../src/HPhi -sdry stan.in
+${MPIRUNFC} ../../src/HPhi -sdry stan.in
 
 cat > modpara.def <<EOF
 --------------------

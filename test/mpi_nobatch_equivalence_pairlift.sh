@@ -24,7 +24,7 @@ initial_iv = 1
 EOF
 
 # Generate the standard-mode definition files (serial -sdry).
-../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
+${MPIRUNFC} ../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
 
 # Inject a PairLift term coupling site 0 and the inter-process site 7.
 cat > pairlift.def <<EOF

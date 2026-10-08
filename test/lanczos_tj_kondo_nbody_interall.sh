@@ -111,7 +111,7 @@ EOF
   if [ "${model}" = "Kondo" ]; then
     printf "nelec = 2\n2Sz = 0\n" >> stan.in
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 
@@ -131,7 +131,7 @@ ncond = 2
 Lanczos_max = 1000
 initial_iv = 1
 EOF
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 

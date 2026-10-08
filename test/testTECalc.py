@@ -196,19 +196,26 @@ if __name__ == "__main__":
                         nargs='?', default="", type=str, choices=None,
                         help=('MPI command'),
                         metavar=None)
+    parser.add_argument('-mpifc', '--mpifc', action='store', dest='mpifc',
+                        nargs='?', default=os.environ.get("MPIRUNFC", ""),
+                        type=str, choices=None,
+                        help=('Launcher prefix for serial runs (-sdry); '
+                              'defaults to $MPIRUNFC'),
+                        metavar=None)
     
     args = parser.parse_args()
     PathToHPhi=args.path
     Model = "\""+args.model+"\""
     InteractionType = args.interaction
     MPIRUN=str(args.mpi)
+    MPIRUNFC=str(args.mpifc)
     InfoTE={"NTimeSteps":100, "dt":0.01}
 
     # Make standard input file
 
     sin=StandardIni(Model=Model)
     MakeStandard(sin, "stan.in")
-    subprocess.call(PathToHPhi+" -sdry ./stan.in", shell=True)
+    subprocess.call((MPIRUNFC+" "+PathToHPhi+" -sdry ./stan.in").strip(), shell=True)
 
     #[s] Make CalcMod file
     #For Lanczos

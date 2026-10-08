@@ -67,10 +67,10 @@ EigenvecIO = "out"
 EOF
 
 echo "  [serial] Input generation..."
-run_hphi "  [serial] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+run_hphi "  [serial] Input generation" hphi_sdry.log ${MPIRUNFC} ../../${HPHI} -sdry stan_gs.in
 
 echo "  [serial] Ground state..."
-run_hphi "  [serial] Ground state" hphi_gs.log ../../${HPHI} -e namelist.def
+run_hphi "  [serial] Ground state" hphi_gs.log ${MPIRUNFC} ../../${HPHI} -e namelist.def
 
 # TEOneBody: step 0 empty, step 1-19 add inter-PE transfer (site 0 <-> site 8)
 # With 4 MPI ranks on 9-site square, site 8 is inter-process.
@@ -87,7 +87,7 @@ printf 'ExpandCoef 10\n' >> modpara.def
 echo "   TEOneBody  teonebody.def" >> namelist.def
 
 echo "  [serial] Time evolution..."
-run_hphi "  [serial] Time evolution" hphi_te.log ../../${HPHI} -e namelist.def
+run_hphi "  [serial] Time evolution" hphi_te.log ${MPIRUNFC} ../../${HPHI} -e namelist.def
 cd ../..
 
 # ---- MPI run ----
@@ -111,7 +111,7 @@ EigenvecIO = "out"
 EOF
 
 echo "  [mpi] Input generation..."
-run_hphi "  [mpi] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+run_hphi "  [mpi] Input generation" hphi_sdry.log ${MPIRUNFC} ../../${HPHI} -sdry stan_gs.in
 
 echo "  [mpi] Ground state..."
 run_hphi "  [mpi] Ground state" hphi_gs.log ${MPIRUN} ../../${HPHI} -e namelist.def

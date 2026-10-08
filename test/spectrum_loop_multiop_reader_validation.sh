@@ -22,7 +22,7 @@ nelec = 4
 EigenVecIO = "out"
 EOF
 
-${HPHI} -s stan_gs.in
+${MPIRUNFC} ${HPHI} -s stan_gs.in
 
 cat > calcmod_cg.def <<EOF
 CalcType   3
@@ -105,7 +105,7 @@ EOF
 expect_reject() {
   name="$1"
   pat="$2"
-  if ${HPHI} -e namelist_cg.def > "reject_${name}.log" 2>&1; then
+  if ${MPIRUNFC} ${HPHI} -e namelist_cg.def > "reject_${name}.log" 2>&1; then
     echo "FAIL: invalid case '${name}' was ACCEPTED"
     cat "reject_${name}.log"
     exit 1
@@ -121,7 +121,7 @@ expect_reject() {
 # The additional file intentionally uses the standard SingleExcitation keyword,
 # not the DCore-specific "NSingle" spelling.
 write_single_ex_1 1 0 0
-${HPHI} -e namelist_cg.def > accept_nsingleexcitation.log 2>&1
+${MPIRUNFC} ${HPHI} -e namelist_cg.def > accept_nsingleexcitation.log 2>&1
 test -s output/zvo_DynamicalGreen_0_0.dat
 test -s output/zvo_DynamicalGreen_0_1.dat
 

@@ -63,12 +63,12 @@ run_standard_case() {
   (
     cd "${label}"
     write_standard_input 2
-    "${hphi}" -sdry stan.in > gen.log 2>&1 || { cat gen.log; fail "${label}: standard input generation failed"; }
+    ${MPIRUNFC} "${hphi}" -sdry stan.in > gen.log 2>&1 || { cat gen.log; fail "${label}: standard input generation failed"; }
     echo "CalcHS         ${calchs}" >> modpara.def
 
     rm -rf output
     mkdir -p output
-    "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${label}: HPhi failed"; }
+    ${MPIRUNFC} "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${label}: HPhi failed"; }
     assert_dimension "${label}" 448 run.log
   )
 }
@@ -81,7 +81,7 @@ run_sparse_local_spin_case() {
   (
     cd "${label}"
     write_standard_input 3
-    "${hphi}" -sdry stan.in > gen.log 2>&1 || { cat gen.log; fail "${label}: standard input generation failed"; }
+    ${MPIRUNFC} "${hphi}" -sdry stan.in > gen.log 2>&1 || { cat gen.log; fail "${label}: standard input generation failed"; }
 
     # Replace the all-local-spin standard Kondo layout by a dilute Kondo
     # expert layout: Nsite=8, NlocalSpin=2, NsCond=6, ncond=3.
@@ -105,7 +105,7 @@ EOF
 
     rm -rf output
     mkdir -p output
-    "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${label}: HPhi failed"; }
+    ${MPIRUNFC} "${hphi}" -e namelist.def > run.log 2>&1 || { cat run.log; fail "${label}: HPhi failed"; }
     assert_dimension "${label}" 880 run.log
   )
 }
