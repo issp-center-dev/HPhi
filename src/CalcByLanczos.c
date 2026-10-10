@@ -109,6 +109,7 @@ int CalcByLanczos(
     case Hubbard:
     case tJ:
     case Kondo:
+    case KondoNConserved:
     case KondoGC:
     case Spin:
     case SpinlessFermion:

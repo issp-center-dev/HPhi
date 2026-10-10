@@ -54,6 +54,9 @@
 #include "phys.h"
 #include "symmetry_basis.h"
 #include "symmetry_checkpoint.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
 #include <limits.h>
 #include <math.h>
 #include <stdint.h>
@@ -794,6 +797,7 @@ int CalcByLOBPCG(
     case Hubbard:
     case tJ:
     case Kondo:
+    case KondoNConserved:
     case KondoGC:
     case Spin:
     case SpinlessFermion:
@@ -878,6 +882,14 @@ int CalcByLOBPCG(
   }/*X->Bind.Def.iInputEigenVec == TRUE*/
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  for (ie = 0; ie < X->Bind.Def.k_exct; ++ie) {
+    for (idim = 0; idim < X->Bind.Check.idim_max; ++idim)
+      v0[idim + 1] = L_vec[ie][idim];
+    if (SymmetryProbeWriteVector(&(X->Bind), v0, "final", (int)ie, 0, 1.0) != 0)
+      return FALSE;
+  }
+#endif
   /**@brief
     Compute & Output physical variables to a file
     the same function as FullDiag [phys()] is used.

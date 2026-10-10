@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Common.h"
 #include "symmetry_basis.h"
+#include "symmetry_kondo.h"
 #include "symmetry_checked.h"
 #include "symmetry_correlation.h"
 #include "symmetry_directory.h"
@@ -121,6 +122,14 @@ static int validate_operator(const struct DefineList *def,
   if (def->iCalcModel == Spin || def->iCalcModel == SpinGC)
     for (f = 0; f < op->factors; ++f)
       if (op->index[4*f] != op->index[4*f+2]) return -1;
+  if (IsSymmetryKondoModel(def->iCalcModel)) {
+    if (def->LocSpn == NULL) return -1;
+    for (f = 0; f < op->factors; ++f) {
+      int out = op->index[4*f], in = op->index[4*f+2];
+      if ((def->LocSpn[out] == LOCSPIN || def->LocSpn[in] == LOCSPIN) && out != in)
+        return -1;
+    }
+  }
   return 0;
 }
 

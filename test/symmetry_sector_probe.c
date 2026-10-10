@@ -10,7 +10,9 @@ struct BindStruct;
 #include "mltply.h"
 #include "symmetry_basis.h"
 #include "symmetry_observables.h"
+#include "symmetry_correlation.h"
 #include "expec_totalspin.h"
+#include "expec_energy_flct.h"
 #include "symmetry_sector_probe.h"
 
 static const char *probe_action(const struct BindStruct *X, int *legacy)
@@ -132,12 +134,26 @@ int SymmetryProbeBeforeSolver(struct BindStruct *X)
     fprintf(stdoutMPI, "SpinGCProbe poisoned fixed fields after basis setup.\n");
   }
   if (action == NULL || strcmp(action, "lanczos") == 0) return 0;
-  if (strcmp(action, "matvec") && strcmp(action, "apply") && strcmp(action, "moments"))
+  if (strcmp(action, "matvec") && strcmp(action, "apply") && strcmp(action, "moments") &&
+      strcmp(action, "invalid-correlation"))
     return legacy ? 0 : -1;
   error = X == NULL || sym == NULL || !X->Def.iFlgSymmetryBasis ||
           X->Def.iCalcType == FullDiag;
   if (!error) error = sym->dim == 0 || (strcmp(action, "matvec") == 0 && sym->dim > 256);
   if (SumMPI_i(error)) return -1;
+  if (strcmp(action, "invalid-correlation") == 0) {
+    int index[4] = {-1, 0, -1, 0};
+    struct SymmetryCorrelationOperator op = {1U, index};
+    size_t orbits = 0, members = 0;
+    for (unsigned int site = 0; site < X->Def.Nsite; ++site) {
+      if (X->Def.LocSpn[site] == LOCSPIN) index[0] = (int)site;
+      else if (index[2] < 0) index[2] = (int)site;
+    }
+    error = index[0] < 0 || index[2] < 0 ||
+            SymmetryCorrelationOrbitCount(&X->Def, &op, 1, &orbits, &members) != -1;
+    if (SumMPI_i(error)) goto cleanup;
+    goto cleanup;
+  }
   in = calloc(sym->local_dim+1, sizeof(*in));
   out = calloc(sym->local_dim+1, sizeof(*out));
   error = in == NULL || out == NULL;
@@ -147,21 +163,28 @@ int SymmetryProbeBeforeSolver(struct BindStruct *X)
     if (SumMPI_i(error)) { error = 1; goto cleanup; }
   }
   if (strcmp(action, "moments") == 0) {
-    const char *corrupt = legacy ? getenv("HPHI_TEST_SPINGC_INVALID_STORAGE_RANK") : NULL;
+    const char *corrupt = legacy ? getenv("HPHI_TEST_SPINGC_INVALID_STORAGE_RANK") :
+                                   getenv("HPHI_TEST_SYMMETRY_INVALID_STORAGE_RANK");
+    const char *nan_rank = legacy ? NULL : getenv("HPHI_TEST_SYMMETRY_NAN_RANK");
     unsigned long saved = 0;
     unsigned long *capacity = sym->basis_layout == SYMMETRY_BASIS_DISTRIBUTED ?
                               &sym->local_capacity : &sym->capacity;
+    if (nan_rank != NULL && atoi(nan_rank) == myrank && sym->local_dim > 0) in[1] = NAN;
     if (corrupt != NULL && atoi(corrupt) == myrank) { saved = *capacity; *capacity = 0; }
     error = legacy ? EvaluateSymmetrySpinGCMoments(X, in) != 0 : expec_totalSz(X, in) != 0;
     if (corrupt != NULL && atoi(corrupt) == myrank) *capacity = saved;
     if (SumMPI_i(error)) { error = 1; goto cleanup; }
     if (myrank == 0) {
-      fprintf(stdoutMPI, "%s Sz %.17g\n%s Sz2 %.17g\n",
-              legacy ? "SpinGCProbe" : "SymmetryProbe", X->Phys.Sz,
-              legacy ? "SpinGCProbe" : "SymmetryProbe", X->Phys.Sz2);
-      if (!legacy)
-        fprintf(stdoutMPI, "SymmetryProbe num %.17g\nSymmetryProbe num2 %.17g\n"
-                "SymmetryProbe doublon %.17g\n", X->Phys.num, X->Phys.num2, X->Phys.doublon);
+      if (legacy) {
+        fprintf(stdoutMPI, "SpinGCProbe Sz %.17g\nSpinGCProbe Sz2 %.17g\n",
+                X->Phys.Sz, X->Phys.Sz2);
+      } else {
+        fprintf(stdoutMPI, "SectorProbe N %.17g\nSectorProbe N2 %.17g\n"
+                "SectorProbe D %.17g\nSectorProbe D2 %.17g\n"
+                "SectorProbe Sz %.17g\nSectorProbe Sz2 %.17g\n",
+                X->Phys.num, X->Phys.num2, X->Phys.doublon, X->Phys.doublon2,
+                X->Phys.Sz, X->Phys.Sz2);
+      }
       if (fflush(stdoutMPI)) error = 1;
     }
     if (legacy) goto cleanup;
@@ -202,6 +225,8 @@ cleanup:
   if (SumMPI_i(error)) {
     if (legacy && strcmp(action, "moments") == 0)
       fprintf(stdoutMPI, "Error: SpinGC moments probe failed.\n");
+    else if (!legacy && strcmp(action, "moments") == 0)
+      fprintf(stdoutMPI, "Error: sector moments probe failed.\n");
     return -1;
   }
   return 1;

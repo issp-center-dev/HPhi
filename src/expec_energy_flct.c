@@ -126,6 +126,7 @@ int expec_energy_flct(struct BindStruct *X){
   case tJ:
   case tJGC:
   case Kondo:
+  case KondoNConserved:
   case KondoGC:
       if (expec_energy_flct_Hubbard(X) != 0) return -1;
   break;
@@ -292,7 +293,7 @@ int expec_energy_flct_HubbardGC(struct BindStruct *X) {
 /// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
 /// \retval 0 normally finished.
 /// \retval -1 abnormally finished.
-int expec_energy_flct_Hubbard(struct BindStruct *X){
+int EvaluateHubbardMoments(struct BindStruct *X, const double complex *vec){
     long unsigned int j;
     double D,N,S;
     double tmp_D,tmp_D2;
@@ -302,6 +303,7 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     long unsigned int i_max;
     int use_symmetry_basis;
     int coefficient_error = 0;
+    if (SumMPI_i(X == NULL || vec == NULL) != 0) return -1;
     i_max=X->Check.idim_max;
 
     use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
@@ -317,11 +319,15 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     tmp_Sz       = 0.0;
     tmp_Sz2      = 0.0;
 
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) reduction(|:coefficient_error) default(none) shared(v0) \
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) reduction(|:coefficient_error) default(none) shared(vec) \
   firstprivate(i_max, X) \
   private(j, tmp_v02,D,N,S)
     for(j = 1; j <= i_max; j++) {
-        tmp_v02 = conj(v0[j]) * v0[j];
+        if (!isfinite(creal(vec[j])) || !isfinite(cimag(vec[j]))) {
+            coefficient_error = 1;
+            continue;
+        }
+        tmp_v02 = creal(conj(vec[j]) * vec[j]);
         if (EnergyFlctCoeff_Hubbard(X, (long int)j, &D, &N, &S) != 0) {
             coefficient_error = 1;
             continue;
@@ -333,6 +339,9 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
         tmp_N2 += tmp_v02 * N * N;
         tmp_Sz += tmp_v02 * S;
         tmp_Sz2 += tmp_v02 * S * S;
+        if (!isfinite(tmp_D) || !isfinite(tmp_D2) ||
+            !isfinite(tmp_N) || !isfinite(tmp_N2) ||
+            !isfinite(tmp_Sz) || !isfinite(tmp_Sz2)) coefficient_error = 1;
     }
 
 
@@ -344,6 +353,11 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     tmp_Sz       = SumMPI_d(tmp_Sz);
     tmp_Sz2      = SumMPI_d(tmp_Sz2);
 
+    coefficient_error = !isfinite(tmp_D) || !isfinite(tmp_D2) ||
+                        !isfinite(tmp_N) || !isfinite(tmp_N2) ||
+                        !isfinite(tmp_Sz) || !isfinite(tmp_Sz2);
+    if (SumMPI_i(coefficient_error) != 0) return -1;
+
     X->Phys.doublon   = tmp_D;
     X->Phys.doublon2  = tmp_D2;
     X->Phys.num       = tmp_N;
@@ -353,6 +367,10 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     X->Phys.num_up    = 0.5*(tmp_N+tmp_Sz);
     X->Phys.num_down  = 0.5*(tmp_N-tmp_Sz);
     return 0;
+}
+
+int expec_energy_flct_Hubbard(struct BindStruct *X){
+    return EvaluateHubbardMoments(X, v0);
 }
 
 ///
