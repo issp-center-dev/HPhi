@@ -15,11 +15,24 @@ struct SymmetryStateEnumerator {
   unsigned int nup;
   unsigned int ndown;
   unsigned int bit_count;
+  unsigned long local_site_mask;
+  unsigned int ncond;
+  unsigned int prefix_local[HPHI_SYMMETRY_STATE_WORD_BITS / 2U + 1U];
+  unsigned int prefix_conduction[HPHI_SYMMETRY_STATE_WORD_BITS / 2U + 1U];
   unsigned long int raw_dim;
   unsigned long int
       binomial[HPHI_SYMMETRY_STATE_WORD_BITS + 1U]
               [HPHI_SYMMETRY_STATE_WORD_BITS + 1U];
 };
+
+/* Validated, nonzero physical dimension bounded by LONG_MAX. */
+int ComputeSymmetryKondoDimension(const struct DefineList *def,
+                                  unsigned long *dimension);
+/* Counts need no LocSpn array. Impossible residuals return count=0;
+ * invalid models/site counts or checked-integer overflow return -1. */
+int CountSymmetryKondoCompletions(int model, unsigned int local_sites,
+    unsigned int conduction_sites, int nup, int ndown, int ncond,
+    unsigned long *count);
 
 int InitSymmetryStateEnumerator(
     const struct DefineList *def,

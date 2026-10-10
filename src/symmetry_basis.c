@@ -11,6 +11,7 @@
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_state_enumerator.h"
+#include "symmetry_kondo.h"
 #include "struct.h"
 #include "CalcTime.h"
 #include "wrapperMPI.h"
@@ -174,6 +175,16 @@ int SymmetryApplyToState(const struct DefineList *def,
     return 0;
   case SpinlessFermion:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 1U, result);
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC: {
+    int local_sign;
+    if (SymmetryKondoPermutationSign(def, def->SymTrans[op], &local_sign) ||
+        apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result))
+      return -1;
+    result->amplitude *= local_sign;
+    return 0;
+  }
   case Hubbard:
   case tJ:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);

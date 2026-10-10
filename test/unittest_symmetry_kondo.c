@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,8 +9,52 @@
 struct BindStruct;
 #include "struct.h"
 #include "symmetry_kondo.h"
+#include "symmetry_state_enumerator.h"
+#include "symmetry_basis.h"
 
 FILE *stdoutMPI = NULL;
+
+int nproc = 1;
+int myrank = 0;
+long unsigned int *list_1 = NULL;
+long unsigned int *list_2_1 = NULL;
+long unsigned int *list_2_2 = NULL;
+double *list_Diagonal = NULL;
+double complex **Ham = NULL, *Ham_local = NULL;
+int iHamPanelActive = 0, iHamSinkMode = 0;
+long HamColBegin, HamColEnd, HamPanelLd;
+void (*hamCollectSink)(long, long, double complex) = NULL;
+int g_tj_odd_split_guard_enabled = 0;
+long unsigned int g_tj_odd_split_up_mask = 0;
+long unsigned int g_tj_odd_split_down_mask = 0;
+
+
+void StartTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
+void StopTimer(int timer_id)
+{
+  (void)timer_id;
+}
+
+int BcastMPI_i(int root, int value)
+{
+  (void)root;
+  return value;
+}
+
+int SumMPI_i(int value)
+{
+  return value;
+}
+
+unsigned long int SumMPI_li(unsigned long int value)
+{
+  return value;
+}
+
 
 static unsigned int failures = 0U;
 
@@ -404,11 +449,287 @@ static void test_permutation_sign(void)
             SymmetryKondoPermutationSign(&def, changes_kind, &sign), -1);
 }
 
+
+/* Independent word filter: deleting the local occupancy restriction or changing
+ * the unranking order must fail the complete word-by-word comparison. */
+static int brute_accept(const struct DefineList *d, unsigned long word)
+{
+  unsigned int up = 0, down = 0, nc = 0, i;
+  for (i = 0; i < d->Nsite; ++i) {
+    unsigned int digit = (word >> (2 * i)) & 3UL;
+    if (d->LocSpn[i] && digit != 1 && digit != 2)
+      return 0;
+    up += digit & 1U;
+    down += (digit >> 1) & 1U;
+    if (!d->LocSpn[i])
+      nc += (digit & 1U) + ((digit >> 1) & 1U);
+  }
+  return d->iCalcModel == KondoGC ||
+         (d->iCalcModel == KondoNConserved ? nc == d->NCond
+                                           : up == d->Nup && down == d->Ndown);
+}
+
+static struct DefineList enumeration_case(int model, unsigned int n, unsigned int l,
+                                          int *loc, unsigned int nc, int sz)
+{
+  struct DefineList d = base_normalize(model, n, l);
+  d.LocSpn = loc;
+  if (model != KondoGC) {
+    d.NCond = nc;
+    d.Ne = l + nc;
+  }
+  if (model == Kondo) {
+    d.Nup = (d.Ne + sz) / 2;
+    d.Ndown = d.Ne - d.Nup;
+    d.Total2Sz = sz;
+    d.iFlgSzConserved = TRUE;
+  }
+  return d;
+}
+
+static void compare_enumeration(struct DefineList *d, unsigned long want)
+{
+  struct SymmetryStateEnumerator e;
+  unsigned long dim = 0, word, got = 0, rank = 0;
+  check_int("checked dimension", ComputeSymmetryKondoDimension(d, &dim), 0);
+  check_ulong("dimension fixture", dim, want);
+  if (InitSymmetryStateEnumerator(d, want, &e)) {
+    check_int("initialize Kondo enumerator", -1, 0);
+    return;
+  }
+  for (word = 0; word < (1UL << (2 * d->Nsite)); ++word)
+    if (brute_accept(d, word)) {
+      ++rank;
+      check_int("direct unranking", SymmetryStateEnumeratorStateAt(&e, rank, &got), 0);
+      check_ulong("word order", got, word);
+    }
+  check_ulong("brute-force dimension", rank, want);
+  check_int("rank zero", SymmetryStateEnumeratorStateAt(&e, 0, &got), -1);
+  check_int("rank beyond dimension", SymmetryStateEnumeratorStateAt(&e, want + 1, &got),
+            -1);
+  check_int("expected dimension mismatch", InitSymmetryStateEnumerator(d, want + 1, &e),
+            -1);
+}
+
+static void test_enumeration(void)
+{
+  unsigned int p, layout, m, i;
+  int models[] = {Kondo, KondoNConserved, KondoGC};
+  unsigned long dims[2][3] = {{39, 120, 512}, {144, 448, 4096}};
+  for (p = 3; p <= 4; ++p)
+    for (layout = 0; layout < 2; ++layout) {
+      int loc[8];
+      for (i = 0; i < 2 * p; ++i)
+        loc[i] = layout ? i % 2 == 0 : i < p;
+      for (m = 0; m < 3; ++m) {
+        struct DefineList d =
+            enumeration_case(models[m], 2 * p, p, loc, 2, p == 3 ? 1 : 0);
+        compare_enumeration(&d, dims[p - 3][m]);
+      }
+    }
+}
+
+static void test_completion_counts(void)
+{
+  unsigned int l, c, m, i;
+  int models[] = {Kondo, KondoNConserved, KondoGC};
+  for (l = 0; l <= 3; ++l)
+    for (c = 0; c <= 3; ++c)
+      for (m = 0; m < 3; ++m) {
+        int up, down, nc, loc[6];
+        for (i = 0; i < l + c; ++i)
+          loc[i] = i < l;
+        for (up = -1; up <= (int)(l + c) + 1; ++up)
+          for (down = -1; down <= (int)(l + c) + 1; ++down) {
+            unsigned long count = 99, want = 0, w;
+            nc = up + down - (int)l;
+            struct DefineList d = enumeration_case(models[m], l + c, l, loc,
+                                                   nc < 0 ? 0 : (unsigned int)nc, 0);
+            d.Nup = up;
+            d.Ndown = down;
+            d.NCond = nc;
+            for (w = 0; w < (1UL << (2 * (l + c))); ++w)
+              want += brute_accept(&d, w);
+            check_int(
+                "completion status",
+                CountSymmetryKondoCompletions(models[m], l, c, up, down, nc, &count), 0);
+            check_ulong("completion vs independent filter", count, want);
+            if (l + c && want) {
+              d.Ne = l + nc;
+              d.Total2Sz = up - down;
+              if (models[m] != Kondo)
+                d.Nup = d.Ndown = d.Total2Sz = 0;
+              if (models[m] == KondoGC)
+                d.Ne = d.NCond = 0;
+              compare_enumeration(&d, want);
+            }
+            if (models[m] == Kondo && up >= 0 && down >= 0 && l + c) {
+              struct DefineList normalized = base_normalize(Kondo, l + c, l);
+              normalized.Nup = up;
+              normalized.Ndown = down;
+              check_int("existence inequality vs completion",
+                        NormalizeSymmetryKondoQuantumNumbers(&normalized, 0, 0, 1, 1) ==
+                            0,
+                        want != 0);
+            }
+          }
+      }
+}
+
+static void test_word_boundaries(void)
+{
+  const unsigned int n = HPHI_SYMMETRY_STATE_WORD_BITS / 2;
+  int loc[HPHI_SYMMETRY_STATE_WORD_BITS / 2];
+  unsigned int i;
+  unsigned long dim = 0, word = 0, want = 0;
+  struct SymmetryStateEnumerator e;
+  for (i = 0; i < n; ++i) {
+    loc[i] = 1;
+    want |= 1UL << (2 * i);
+  }
+  struct DefineList d = enumeration_case(Kondo, n, n, loc, 0, n);
+  check_int("top-bit canonical init", InitSymmetryStateEnumerator(&d, 1, &e), 0);
+  check_int("top-bit canonical state", SymmetryStateEnumeratorStateAt(&e, 1, &word), 0);
+  check_ulong("all-up canonical word", word, want);
+  for (i = 0; i < n; ++i)
+    loc[i] = 0;
+  memset(&d, 0, sizeof(d));
+  check_int("enumerator owns its layout", SymmetryStateEnumeratorStateAt(&e, 1, &word),
+            0);
+  check_ulong("state independent of original def and LocSpn", word, want);
+  d = enumeration_case(KondoNConserved, n, 0, loc, 2 * n, 0);
+  check_int("full conduction init", InitSymmetryStateEnumerator(&d, 1, &e), 0);
+  check_int("full conduction state", SymmetryStateEnumeratorStateAt(&e, 1, &word), 0);
+  check_ulong("full conduction word", word, ULONG_MAX);
+  check_int("completion product overflow",
+            CountSymmetryKondoCompletions(KondoNConserved, n, n, 0, 0, n, &dim), -1);
+  check_int(
+      "completion sum overflow",
+      CountSymmetryKondoCompletions(Kondo, n / 16 + 3, n, n / 2 + 2, n / 2 + 2, 0, &dim),
+      -1);
+  check_int("completion power overflow",
+            CountSymmetryKondoCompletions(KondoGC, n, n, 0, 0, 0, &dim), -1);
+  for (i = 0; i < n; ++i)
+    loc[i] = 1;
+  d = enumeration_case(KondoGC, n - 1, n - 1, loc, 0, 0);
+  dim = 1UL << (n - 1);
+  want &= ~(1UL << (2 * (n - 1)));
+  check_int("large GC init without enumeration", InitSymmetryStateEnumerator(&d, dim, &e),
+            0);
+  check_int("large GC first", SymmetryStateEnumeratorStateAt(&e, 1, &word), 0);
+  check_ulong("large GC first word", word, want);
+  check_int("large GC last", SymmetryStateEnumeratorStateAt(&e, dim, &word), 0);
+  check_ulong("large GC last word", word, want << 1);
+  d.Nsite = d.NLocSpn = n;
+  check_int("GC strict boundary", ComputeSymmetryKondoDimension(&d, &dim), -1);
+}
+
+static void test_physical_group_action(void)
+{
+  unsigned int p, layout, g, h, i;
+  for (p = 3; p <= 4; ++p)
+    for (layout = 0; layout < 2; ++layout) {
+      int loc[8], perm[4][8], *rows[4];
+      unsigned long w, vacuum = 0;
+      for (i = 0; i < 2 * p; ++i) {
+        loc[i] = layout ? i % 2 == 0 : i < p;
+        if (loc[i])
+          vacuum |= 1UL << (2 * i);
+      }
+      for (g = 0; g < p; ++g) {
+        rows[g] = perm[g];
+        for (i = 0; i < 2 * p; ++i)
+          perm[g][i] =
+              layout ? 2 * ((i / 2 + g) % p) + i % 2 : ((i % p + g) % p) + (i / p) * p;
+      }
+      struct DefineList d = enumeration_case(KondoGC, 2 * p, p, loc, 0, 0);
+      d.NSymTrans = p;
+      d.SymTrans = rows;
+      for (w = 0; w < (1UL << (4 * p)); ++w)
+        if (brute_accept(&d, w)) {
+          for (g = 0; g < p; ++g)
+            for (h = 0; h < p; ++h) {
+              struct SymmetryTransformResult a, b, c;
+              if (SymmetryApplyToState(&d, w, h, &a) ||
+                  SymmetryApplyToState(&d, a.state, g, &b) ||
+                  SymmetryApplyToState(&d, w, (g + h) % p, &c)) {
+                check_int("Kondo physical group action supported", -1, 0);
+                return;
+              }
+              check_ulong("group composition state", b.state, c.state);
+              check_int("group composition sign", a.amplitude * b.amplitude, c.amplitude);
+              if (w == vacuum)
+                check_int("polarized vacuum momentum zero", a.amplitude, 1);
+            }
+        }
+    }
+}
+
+/* Character projection trace is an independent sector-dimension calculation;
+ * it detects a wrong local parity even when a wrong action is still a group. */
+static void test_sector_dimensions(void)
+{
+  const int models[3] = {Kondo, KondoNConserved, KondoGC};
+  const unsigned long raw[2][3] = {{39, 120, 512}, {144, 448, 4096}};
+  const unsigned long expected[2][3][4] = {
+      {{13, 13, 13, 0}, {40, 40, 40, 0}, {176, 168, 168, 0}},
+      {{36, 36, 36, 36}, {108, 116, 108, 116}, {1024, 1024, 1024, 1024}}};
+  unsigned int p, layout, m, g, k, i;
+  for (p = 3; p <= 4; ++p)
+    for (layout = 0; layout < 2; ++layout) {
+      int loc[8], storage[4][8], *rows[4];
+      for (i = 0; i < 2 * p; ++i)
+        loc[i] = layout ? i % 2 == 0 : i < p;
+      for (g = 0; g < p; ++g) {
+        rows[g] = storage[g];
+        for (i = 0; i < 2 * p; ++i)
+          storage[g][i] =
+              layout ? 2 * ((i / 2 + g) % p) + i % 2 : ((i % p + g) % p) + (i / p) * p;
+      }
+      for (m = 0; m < 3; ++m) {
+        struct DefineList d =
+            enumeration_case(models[m], 2 * p, p, loc, 2, p == 3 ? 1 : 0);
+        struct SymmetryStateEnumerator e;
+        double traces[4] = {0};
+        unsigned long rank, word;
+        d.NSymTrans = p;
+        d.SymTrans = rows;
+        if (InitSymmetryStateEnumerator(&d, raw[p - 3][m], &e)) {
+          check_int("sector trace enumeration", -1, 0);
+          continue;
+        }
+        for (rank = 1; rank <= e.raw_dim; ++rank) {
+          check_int("trace unranking", SymmetryStateEnumeratorStateAt(&e, rank, &word),
+                    0);
+          for (g = 0; g < p; ++g) {
+            struct SymmetryTransformResult moved;
+            check_int("trace physical translation",
+                      SymmetryApplyToState(&d, word, g, &moved), 0);
+            if (moved.state == word)
+              traces[g] += moved.amplitude;
+          }
+        }
+        for (k = 0; k < p; ++k) {
+          double complex dimension = 0;
+          for (g = 0; g < p; ++g)
+            dimension += traces[g] * cexp(2 * I * acos(-1) * k * g / p) / p;
+          check_int("literal sector dimension",
+                    cabs(dimension - expected[p - 3][m][k]) < 1e-10, 1);
+        }
+      }
+    }
+}
+
 int main(void)
 {
   stdoutMPI = tmpfile();
   if (stdoutMPI == NULL) stdoutMPI = stderr;
 
+  test_sector_dimensions();
+  test_enumeration();
+  test_completion_counts();
+  test_word_boundaries();
+  test_physical_group_action();
   test_model_classification();
   test_normalization_success();
   test_normalization_failures();
