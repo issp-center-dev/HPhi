@@ -158,3 +158,15 @@ def run_probe(path: Path, case: Case, executable: Path, *, action: str,
                 representatives[int(index)-1] = int(rep)
         result['representatives'] = representatives
     return result
+
+
+def read_kondo_checkpoint(path: Path) -> tuple[np.ndarray, np.ndarray]:
+    """Read the Kondo-only v2 wire format without changing the v1 reader."""
+    data = Path(path).read_bytes()
+    assert len(data) >= 30*8, 'truncated Kondo checkpoint header'
+    header = np.frombuffer(data[:30*8], dtype='<u8').copy()
+    assert tuple(header[:4]) == (0x0a31565349485048, 2, 2, 128), tuple(header[:4])
+    assert len(data) == 30*8+int(header[15])*16
+    payload = np.frombuffer(data[30*8:], dtype='<c16').copy()
+    assert np.isfinite(payload).all()
+    return header, payload

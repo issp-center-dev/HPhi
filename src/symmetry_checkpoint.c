@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "symmetry_basis.h"
 #include "symmetry_sector.h"
+#include "symmetry_kondo.h"
 #include "symmetry_checkpoint.h"
 #include "wrapperMPI.h"
 #ifdef MPI
@@ -13,12 +14,16 @@
 /* Version 1: 28 little-endian uint64 words, followed by local_dim pairs of
  * IEEE binary64 real/imaginary components (index zero is not serialized).
  * Phase 1: normalized sum_g conjugate(chi(g)) T_g |smallest representative>,
- * with a positive real coefficient at that representative. */
+ * with a positive real coefficient at that representative.
+ * Kondo version 2 appends the local-site mask and fixed-quantity flags,
+ * using phase 2 (physical Kondo translation). */
 enum {
   MAGIC, VERSION, PHASE, SCALAR, MODEL, NSITE, NUP, NDOWN, NE,
   FULL_DIM, DIM, RANKS, RANK, LAYOUT, OFFSET, LOCAL_DIM, GROUP,
   SECTOR_COUNT, SECTOR_XOR, SECTOR_SUM, ORDER, HAMILTONIAN,
-  METHOD, STATE, STEP, TIME, DATA_XOR, DATA_SUM, HEADER_WORDS
+  METHOD, STATE, STEP, TIME, DATA_XOR, DATA_SUM,
+  LOCAL_SITE_MASK = 28, FIXED_FLAGS = 29,
+  V1_WORDS = 28, V2_WORDS = 30, MAX_WORDS = 30
 };
 static const char *identity_names[HAMILTONIAN] = {
   "magic", "version", "phase convention", "scalar encoding", "model", "nsite",
@@ -94,13 +99,22 @@ static int make_header(const struct BindStruct *X, const char *name,
     order = hash_word(order, entry->stabilizer_size);
   }
   if (failure(invalid, "basis identity")) return -1;
-  memset(header, 0, HEADER_WORDS * sizeof(*header));
+  memset(header, 0, MAX_WORDS * sizeof(*header));
   header[MAGIC] = CHECKPOINT_MAGIC; header[VERSION] = 1;
   header[PHASE] = 1; header[SCALAR] = 128; /* little-endian complex binary64 */
   header[MODEL] = X->Def.iCalcModel; header[NSITE] = X->Def.Nsite;
   header[NUP] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Nup;
   header[NDOWN] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Ndown;
   header[NE] = X->Def.iCalcModel == SpinGC ? 0 : X->Def.Ne;
+  if (IsSymmetryKondoModel(X->Def.iCalcModel)) {
+    struct SymmetryKondoIdentity identity;
+    if (failure(GetSymmetryKondoIdentity(&X->Def, &identity) != 0,
+                "Kondo physical identity")) return -1;
+    header[VERSION] = 2; header[PHASE] = identity.phase;
+    header[NUP] = identity.nup; header[NDOWN] = identity.ndown; header[NE] = identity.ne;
+    header[LOCAL_SITE_MASK] = identity.local_site_mask;
+    header[FIXED_FLAGS] = identity.fixed_flags;
+  }
   header[FULL_DIM] = X->Sym->full_dim; header[DIM] = X->Sym->dim;
   header[RANKS] = nproc; header[RANK] = myrank;
   header[LAYOUT] = X->Sym->basis_layout;
@@ -112,16 +126,16 @@ static int make_header(const struct BindStruct *X, const char *name,
 }
 /* Catch mixed checkpoint sets, including different H/time/state provenance.
  * Rank-specific identity fields were separately checked against the runtime. */
-static int consistent_header(const uint64_t *header)
+static int consistent_header(const uint64_t *header, int words)
 {
-  uint64_t local[HEADER_WORDS], root[HEADER_WORDS];
-  memcpy(local, header, sizeof(local));
+  uint64_t local[MAX_WORDS], root[MAX_WORDS];
+  memcpy(local, header, words * sizeof(*local));
   local[RANK] = local[OFFSET] = local[LOCAL_DIM] = local[ORDER] = 0;
-  memcpy(root, local, sizeof(root));
+  memcpy(root, local, words * sizeof(*root));
 #ifdef MPI
-  if (MPI_Bcast(root, HEADER_WORDS, MPI_UINT64_T, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return -1;
+  if (MPI_Bcast(root, words, MPI_UINT64_T, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return -1;
 #endif
-  return failure(memcmp(root, local, sizeof(root)) != 0, "cross-rank metadata consistency");
+  return failure(memcmp(root, local, words * sizeof(*root)) != 0, "cross-rank metadata consistency");
 }
 static int vector_digest(const struct BindStruct *X, const double complex *vector,
                           uint64_t *xor_hash, uint64_t *sum_hash)
@@ -152,24 +166,25 @@ int WriteSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                             const double complex *vector,
                             const struct SymmetryCheckpointInfo *info)
 {
-  uint64_t header[HEADER_WORDS];
+  uint64_t header[MAX_WORDS];
   char path[D_FileNameMax], temporary[D_FileNameMax];
   FILE *fp = NULL;
   int invalid, created;
   if (make_header(X, name, header, path) != 0) return -1;
+  int words = header[VERSION] == 2 ? V2_WORDS : V1_WORDS;
   if (failure(info == NULL || vector == NULL, "output arguments")) return -1;
   if (failure(!isfinite(info->time) || (info->source_method != CG &&
                                       info->source_method != TimeEvolution), "output provenance")) return -1;
   header[METHOD] = info->source_method; header[STATE] = info->state_index;
   header[STEP] = info->step; header[TIME] = double_word(info->time);
   if (vector_digest(X, vector, &header[DATA_XOR], &header[DATA_SUM]) != 0 ||
-      consistent_header(header) != 0) return -1;
+      consistent_header(header, words) != 0) return -1;
   int length = snprintf(temporary, sizeof(temporary), "%s.part", path);
   if (failure(length < 0 || (size_t)length >= sizeof(temporary), "temporary path")) return -1;
   fp = fopen(temporary, "wb");
   created = fp != NULL;
   invalid = fp == NULL;
-  for (int i = 0; !invalid && i < HEADER_WORDS; ++i) invalid = put_word(fp, header[i]) != 0;
+  for (int i = 0; !invalid && i < words; ++i) invalid = put_word(fp, header[i]) != 0;
   for (unsigned long i = 1; !invalid && i <= X->Sym->local_dim; ++i)
     invalid = put_word(fp, double_word(creal(vector[i]))) != 0 ||
               put_word(fp, double_word(cimag(vector[i]))) != 0;
@@ -184,7 +199,7 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                            double complex *vector,
                            struct SymmetryCheckpointInfo *info)
 {
-  uint64_t expected[HEADER_WORDS], header[HEADER_WORDS] = {0}, xor_hash, sum_hash;
+  uint64_t expected[MAX_WORDS], header[MAX_WORDS] = {0}, xor_hash, sum_hash;
   char path[D_FileNameMax];
   FILE *fp = NULL;
   double complex *temporary = NULL;
@@ -193,7 +208,19 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
   if (failure(info == NULL || vector == NULL, "input arguments")) return -1;
   fp = fopen(path, "rb");
   invalid = fp == NULL;
-  for (int i = 0; !invalid && i < HEADER_WORDS; ++i) invalid = get_word(fp, &header[i]) != 0;
+  for (int i = 0; !invalid && i < 2; ++i) invalid = get_word(fp, &header[i]) != 0;
+  invalid |= header[MAGIC] != CHECKPOINT_MAGIC ||
+             (header[VERSION] != 1 && header[VERSION] != 2);
+  if (failure(invalid, "header / sector / layout validation")) goto fail;
+  /* Agree on a fixed-size prefix before selecting any variable I/O or collective. */
+  uint64_t version = header[VERSION];
+#ifdef MPI
+  if (MPI_Bcast(&version, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD) != MPI_SUCCESS) goto fail;
+#endif
+  if (failure(version != header[VERSION], "version agreement")) goto fail;
+  int words = version == 2 ? V2_WORDS : V1_WORDS;
+  for (int i = 2; !invalid && i < words; ++i) invalid = get_word(fp, &header[i]) != 0;
+  if (failure(invalid, "header / sector / layout validation")) goto fail;
   /* H is deliberately excluded: this is a quench-capable state import. */
   for (int i = 0; !invalid && i < HAMILTONIAN; ++i) {
     invalid = header[i] != expected[i];
@@ -201,10 +228,17 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                          ", expected=%" PRIu64 ").\n", myrank, name,
                          identity_names[i], header[i], expected[i]);
   }
+  for (int i = LOCAL_SITE_MASK; !invalid && i < words; ++i) {
+    invalid = header[i] != expected[i];
+    if (invalid) fprintf(stderr, "Error: rank %d checkpoint %s: %s differs (file=%" PRIu64
+                         ", expected=%" PRIu64 ").\n", myrank, name,
+                         i == LOCAL_SITE_MASK ? "local site mask" : "fixed quantity flags",
+                         header[i], expected[i]);
+  }
   if (!invalid) invalid = !isfinite(word_double(header[TIME])) ||
                          (header[METHOD] != CG && header[METHOD] != TimeEvolution);
   if (failure(invalid, "header / sector / layout validation")) goto fail;
-  if (consistent_header(header) != 0) goto fail;
+  if (consistent_header(header, words) != 0) goto fail;
   if (X->Sym->local_dim >= SIZE_MAX / sizeof(*temporary)) invalid = 1;
   if (!invalid) temporary = calloc(X->Sym->local_dim + 1, sizeof(*temporary));
   if (failure(invalid || temporary == NULL, "input allocation")) goto fail;

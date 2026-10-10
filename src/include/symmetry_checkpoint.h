@@ -16,7 +16,10 @@ struct SymmetryCheckpointInfo {
 /* Collective, including ranks with no vector elements. Paths are relative to
  * HPhi's output directory and include the rank suffix. Vectors are one-based.
  * A load is a same-sector initial-state import: a changed H is allowed. It is
- * not a solver restart. Layout, rank count, index order and phase must match. */
+ * not a solver restart. Layout, rank count, index order and phase must match.
+ * Non-Kondo: v1, 28 little-endian uint64 words, phase 1. Kondo only: v2,
+ * 30 words, phase 2; words 28/29 hold local-site mask/fixed-quantity flags.
+ * Both append local_dim complex binary64 pairs, without vector index zero. */
 int WriteSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                             const double complex *vector,
                             const struct SymmetryCheckpointInfo *info);
