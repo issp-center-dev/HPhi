@@ -220,6 +220,149 @@ TransSym指定ファイル
    未対応の組み合わせはエラーで終了します。
 
 
+Kondoセクター（スピン1/2、expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``TransSym`` は次の3種類のKondo空間に対応します。 ``Nsite`` は局在スピンの
+:math:`L` サイトと伝導電子の :math:`C` サイトの合計です。 ``LocSpin`` では局在
+スピン1/2を1、伝導サイトを0とします。全群操作はこの配置maskを保存する必要が
+あります。局在・伝導サイトは連続配置でも交互配置でもかまいません。
+
+.. list-table:: Kondoの入力と固定量
+   :header-rows: 1
+   :widths: 24 39 37
+
+   * - 空間
+     - expert入力
+     - 固定量
+   * - Kondo
+     - ``CalcModel=2`` と ``Ncond``, ``2Sz``。または ``Nup``, ``Ndown`` の両方
+     - 伝導電子数と全スピンz成分
+   * - KondoNConserved
+     - ``CalcModel=2`` と ``Ncond``。 ``2Sz``, ``Nup``, ``Ndown`` は省略
+     - 伝導電子数のみ（内部model 12）
+   * - KondoGC
+     - ``CalcModel=5``。上記4個の量子数keywordは全て省略
+     - 粒子数・スピンz成分とも固定しない
+
+``Ncond`` は伝導電子数です。 ``Nup``, ``Ndown`` は局在サイトごとの1個のスピン
+占有も含み、 :math:`N_\uparrow+N_\downarrow=L+N_{\rm cond}`、
+:math:`N_\uparrow-N_\downarrow=2S_z` です。重複する明示指定は一致が必要です。
+0は省略ではなく明示値で、KondoGCでは上記4個のkeywordに0を指定しても拒否します。
+伝導電子数の範囲は :math:`0\leq N_{\rm cond}\leq2C` です。対称性射影前の
+NConservedとGCの次元は :math:`2^L\binom{2C}{N_{\rm cond}}` と :math:`2^L4^C` で、
+Kondoではさらに全スピンz成分を制限します。空の物理空間・対称性セクターは拒否します。
+KondoとKondoNConservedは ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2``、
+KondoGCは上限を含まない厳密不等号を要求します。
+
+物理的並進と演算子
+^^^^^^^^^^^^^^^^^^
+
+各サイトはup/downの2 bitを使い、局在サイトは必ず1 bitだけ占有します。
+全軌道置換のフェルミオン符号を含む作用を :math:`F_g`、局在サイトだけの置換の
+符号を :math:`\epsilon_L(g)` とすると、物理的作用は
+
+.. math::
+
+   T_{\rm phys}(g)=\epsilon_L(g)F_g,\qquad
+   \chi(g)=\exp(-2\pi i m g/P),\qquad k=2\pi m/P.
+
+です。局在スピン数が偶数でも物理的運動量に追加のshiftは不要です。射影には
+:math:`\overline{\chi(g)}` を使い、最小代表wordの係数を正の実数に固定します。
+
+対応する項は伝導 ``Trans`` （複素hoppingを含む）、局在onsite ``Trans``、
+``CoulombIntra``、 ``CoulombInter``、 ``Hund``、 ``Ising``、 ``Exchange``、
+``PairHop``、 ``InterAll`` です。局在演算子はonsite行列単位 :math:`E_i^{ab}` に
+限り、局在サイトへの・局在サイトからの・局在サイト間のhoppingは拒否します。
+``CoulombIntra`` は局在サイトでは0となり、 ``PairHop`` は伝導サイトを要求します。
+混合項は局在行列代数と
+伝導フェルミオン反交換則で整理してから、Hermiticity・群不変性・固定量の保存を
+検査します。横磁場や補償するスピン反転は、この検査を満たす場合に使えます。
+専用 ``PairLift`` 入力は非対応ですが、許されるスピン対積は ``InterAll`` で記述
+できます。空Hamiltonianも有効です。
+
+.. list-table:: Kondoセクターの手法と機能（3空間共通）
+   :header-rows: 1
+   :widths: 19 28 18 18 17
+
+   * - 手法（CalcType）
+     - 結果
+     - 相関関数
+     - 状態import/export
+     - 基底layout
+   * - Lanczos (0)
+     - 低エネルギー状態
+     - 全6形式
+     - 不可 / 不可
+     - 両方
+   * - mTPQ (1)
+     - 単一セクター標本
+     - 全6形式
+     - 不可 / 不可
+     - 両方
+   * - FullDiag (2)
+     - セクターの全固有値
+     - 不可
+     - 不可 / 不可
+     - Replicated
+   * - CG / LOBCG (3)
+     - 低エネルギー状態（推奨）
+     - 全6形式
+     - 可 / 可
+     - 両方
+   * - TimeEvolution (4)
+     - 静的・駆動時間発展
+     - 全6形式
+     - 必須 / 任意
+     - 両方
+   * - cTPQ (5)
+     - 単一セクター標本
+     - 全6形式
+     - 不可 / 不可
+     - 両方
+
+両方とは ``replicated`` と ``distributed`` です。所有するセクター行が0のMPI
+rankもcollectiveと状態I/Oへ参加します。FullDiagはbuildに含まれるLAPACK
+（``Solver=0``）、ScaLAPACK（1）、ELPA（3）に対応し、後述のprocess grid制約が
+適用されます。全6形式は ``OneBodyG``、 ``TwoBodyG``、 ``ThreeBodyG``、
+``FourBodyG``、 ``SixBodyG``、 ``NBodyG`` です。spin添字は0または1で、局在因子は
+onsiteに限ります。legacy形式と集約形式に対応します。セクター内の期待値であり、
+セクター間遷移振幅ではありません。
+
+粒子数の出力（``num``, ``num2`` を含む）は従来どおり :math:`N=L+N_{\rm cond}`
+を使い、doublon列は伝導doublonを数えます。全 :math:`S_z` とその2次momentは実際の
+vectorから評価します。既存の出力列は変更せず、組込み :math:`S^2` 出力も拡張
+しません。TPQ/cTPQは固定量を含む単一空間対称性セクターを標本化します。単一
+セクターは全熱ensembleではありません。cTPQの一様・明示逆温度scheduleは後述の
+規則に従います。
+
+Kondoのcheckpointだけはversion 2、phase 2、30個のlittle-endian 64-bit header
+wordを使います。後述のversion 1のfieldに ``local_site_mask`` と
+``fixed_quantity_flags`` を追加したものです。phase 2は上記の物理的並進規約です。
+flagsはKondoが3、NConservedが1、GCが0で、GCの ``nup/ndown/ne`` fieldは0です。
+manifestは局在mask・物理空間digest・固定量をHamiltonian digestと分離して記録
+します。importには模型・物理空間・sector・順序・rank数・layoutの一致が必要です。
+CGはimport状態を評価し、最適化を再開しません。TEは新しい時刻列で開始し、
+Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応します。
+非Kondoのcheckpointはversion 1 / phase 1 / 28 wordのままです。
+
+``TEOneBody`` と ``TETwoBody`` は状態読込・時系列出力より前に、全使用時刻で
+同じ局在形式・固定量・対称性の検査を行います。基底を固定し、後述の右端点Taylor則
+で伝播します。同一時刻もHamiltonian検査を省略しません。twist/APBCは伝導hopping
+の一様Peierls位相で表せますが、置換行の予約multiplierは1のままです。ゲージと
+サイト置換が物理的運動量の規約を定めます。境界だけのtwistは通常、単純な並進に
+不変ではなく、ゲージ変換時に対称性作用も変換せず同じ運動量labelと解釈しては
+いけません。 ``Laser`` は既存の座標規約を使い、局在maskから座標を推定しません。
+全時刻で得られるhoppingが不変な場合だけ使えます。配置がその座標に適合しない
+場合は、整合するゲージで明示的な不変 ``TEOneBody`` hopping増分を指定してください。
+
+general spin、新しいStandard-modeのKondo運動量生成、 ``NBodyInterAll``、
+``AnomalousTerm``、 ``AnomalousG``、 ``CalcSpec``、スピン軸回転、反ユニタリ操作、
+多次元既約表現、Hamiltonian I/O、solver restart、rank数変更を伴うcheckpoint
+再分配は非対応です。FullDiagはさらに状態・相関出力、distributed基底metadata、
+MAGMA、nonserial ``ExpecMode`` を除外します。
+
+
 SpinGCセクター（スピン1/2、expert mode）
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -304,13 +447,13 @@ CGのベクトル読込は入力状態を評価し、最適化を再開しませ
 sectorと位相規約は一致させます。どちらもsolver restartではなく ``ReStart`` は拒否します。
 SpinGC checkpointもversion 1で、headerは ``model=4``、``nup/ndown/ne`` は0です。
 Hamiltonian fingerprintは解析済みPairLift行を含む
-``hphi-parsed-hamiltonian-fnv1a64-v3`` です。canonical模型はv2と既存checkpoint形式を
+``hphi-parsed-hamiltonian-fnv1a64-v3`` です。非Kondoのcanonical模型はv2と既存checkpoint形式を
 維持します。manifestは ``fixed_quantities=none``、``full_dim=2^Nsite`` を記録します。
 
 SpinGCは ``TEOneBody`` / ``TETwoBody`` の駆動に対応し、下記の右端Taylor規約を使います。
 使用する全時刻の入力を伝播前に検査します。``Laser`` は拒否されます。
 代わりに、群不変なサイト内 ``TEOneBody`` またはスピン積の ``TETwoBody`` を指定してください。
-general spin、Boost、Kondo、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
+general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
 全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
 solver restart、rank数を変更したcheckpoint再分配は対象外です。
 このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
@@ -463,9 +606,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``TEOneBody`` または ``TETwoBody`` の1種類で駆動できます。
-canonical模型では ``Laser`` も選べますが、SpinGCでは拒否します。
+canonical模型とKondoの3空間では ``Laser`` も選べます。Kondoには上記の幾何・
+ゲージ制限が適用され、SpinGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。
 
 初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、

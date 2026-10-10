@@ -209,3 +209,66 @@ def drive_rows(case: Case, kind: str, amplitude: float = 1.) -> list[tuple]:
         else:
             raise ValueError(kind)
     return [(*indices, z.real, z.imag) for indices, z in merged_rows(rows)]
+
+
+def selected_layouts() -> tuple[str, ...]:
+    layout = os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT')
+    assert layout in (None, 'replicated', 'distributed'), layout
+    return (layout,) if layout else ('replicated', 'distributed')
+
+
+def selected_cases() -> str:
+    cases = os.environ.get('HPHI_TEST_KONDO_CASES', 'main')
+    assert cases in ('main', 'empty-ranks', 'all'), cases
+    return cases
+
+
+def expert_empty_rank_case(path: Path, model: str, *, method: int, options: dict) -> Path:
+    """Portable fixture with 6/14/4 odd-sector states and explicit local mask."""
+    if model != 'KondoGC':
+        return expert_case(path, Case(model, 2, 'block', 2,
+                                      0 if model == 'Kondo' else None, 1),
+                           method=method, options=options)
+    # Build the L2/C1 input directly: no fictitious cell count or mutation
+    # of a cell-chain geometry is needed for this local-swap group.
+    path = Path(path)
+    path.mkdir(parents=True, exist_ok=True)
+    calc = dict(CalcType=method, CalcModel=5, OutputMode=0, OutputDataHead=1)
+    calc.update(options.get('CalcMod', {}))
+    (path/'calc.def').write_text(''.join(f'{key} {value}\n' for key, value in calc.items()))
+    mod = dict(Nsite=3, Lanczos_max=400, initial_iv=-1, exct=1,
+               LanczosEps=12, LanczosTarget=1, LargeValue=100, PreCG=0)
+    mod.update(options.get('ModPara', {}))
+    (path/'mod.def').write_text('====\nModel_Parameters 0\n====\n====\n====\n'
+        'CDataFileHead zvo\nCParaFileHead zqp\n====\n'
+        + ''.join(f'{key} {value}\n' for key, value in mod.items() if value is not None))
+    (path/'sym.def').write_text('CalcMod calc.def\nModPara mod.def\n'
+                               'LocSpin loc.def\nTransSym group.def\n')
+    definition(path, 'loc.def', [(0, 1), (1, 1), (2, 0)], 2)
+    definition(path, 'group.def', [(0, 1, 0), (1, -1, 0)]+
+               [(g, i, (1-i if g and i < 2 else i), 1) for g in (0, 1) for i in range(3)],
+               2, 'NQPTrans')
+    with (path/'group.def').open('a') as handle:
+        handle.write('# MomentumIndex 1\n')
+    transfer, inter = [], []
+    for l in (0, 1):
+        transfer.extend([((l, 0, l, 1), .065), ((l, 1, l, 0), .065)])
+        for s, sz in ((0, .5), (1, -.5)):
+            for t, tz in ((0, .5), (1, -.5)):
+                inter.append(((l, s, l, s, 2, t, 2, t), .6*sz*tz))
+        inter.extend([((l, 0, l, 1, 2, 1, 2, 0), .3),
+                      ((2, 0, 2, 1, l, 1, l, 0), .3)])
+    for s, sz in ((0, .5), (1, -.5)):
+        transfer.append(((2, s, 2, s), .23))
+        for t, tz in ((0, .5), (1, -.5)):
+            inter.append(((0, s, 0, s, 1, t, 1, t), .2*sz*tz))
+    transfer.extend([((2, 0, 2, 1), -.085j), ((2, 1, 2, 0), .085j)])
+    inter.extend([((0, 0, 0, 1, 1, 1, 1, 0), .1),
+                  ((1, 0, 1, 1, 0, 1, 0, 0), .1),
+                  ((2, 0, 2, 0, 2, 1, 2, 1), .41)])
+    for family, rows in [('Trans', transfer), ('InterAll', inter)]:
+        definition(path, family+'.def', [(*key, complex(z).real, complex(z).imag)
+                                         for key, z in merged_rows(rows)])
+        with (path/'sym.def').open('a') as handle:
+            handle.write(f'{family} {family}.def\n')
+    return path

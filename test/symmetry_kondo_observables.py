@@ -97,7 +97,7 @@ def solver_case(root: Path, executable: Path, launcher: list[str], case: Case,
                        case, method=method,
                        options={'CalcMod': {'CalcEigenVec': 1},
                                 'ModPara': {'LanczosEps': 18}})
-    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed',
+    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'),
                HPHI_TEST_SYMMETRY_CAPTURE='1')
     if method == 0:
         env['HPHI_TEST_SYMMETRY_ACTION'] = 'lanczos'
@@ -213,7 +213,7 @@ def check_correlations(root: Path, executable: Path, launcher: list[str]) -> Non
                                options={'CalcMod': {'CalcEigenVec': 1},
                                         'ModPara': {'LanczosEps': 18}})
             add_correlation_requests(path, requests, aggregate)
-            env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed',
+            env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'),
                        HPHI_TEST_SYMMETRY_CAPTURE='1')
             run_case(path, executable, 'correlation', launcher, env)
             vector = read_vector_parts(path, 'sector_final_sample0_step0.rank', len(hamiltonian))
@@ -225,7 +225,7 @@ def check_correlations(root: Path, executable: Path, launcher: list[str]) -> Non
     invalid = expert_case(root / 'invalid_local_offsite', invalid_case, method=3, options={})
     run_case(invalid, executable, 'invalid-correlation', launcher,
              dict(os.environ, HPHI_TEST_SYMMETRY_ACTION='invalid-correlation',
-                  HPHI_SYMMETRY_BASIS_LAYOUT='distributed'))
+                  HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed')))
 
 
 def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> None:
@@ -237,7 +237,7 @@ def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> N
         path = expert_case(root / f'failure_{name}', case, method=3, options={})
         write_probe_inputs(path, vector, ranks)
         env = dict(os.environ, HPHI_TEST_SYMMETRY_ACTION='moments',
-                   HPHI_SYMMETRY_BASIS_LAYOUT='distributed')
+                   HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'))
         if name == 'nan':
             env['HPHI_TEST_SYMMETRY_NAN_RANK'] = '0'
         else:
@@ -250,7 +250,7 @@ def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> N
         path = expert_case(root / 'empty_rank_moments', empty_case, method=3,
                            options={}, empty=True)
         result = run_probe(path, empty_case, probe, action='moments',
-                           layout='distributed', vector=np.ones(1, complex))
+                           layout=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'), vector=np.ones(1, complex))
         actual = parse_moments(result['text'])
         assert actual == {'N': 1., 'N2': 1., 'D': 0., 'D2': 0., 'Sz': .5, 'Sz2': .25}
         for name in ('nan', 'storage'):
@@ -258,7 +258,7 @@ def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> N
                                   method=3, options={}, empty=True)
             write_probe_inputs(failure, np.ones(1, complex), ranks)
             env = dict(os.environ, HPHI_TEST_SYMMETRY_ACTION='moments',
-                       HPHI_SYMMETRY_BASIS_LAYOUT='distributed')
+                       HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'))
             if name == 'nan':
                 env['HPHI_TEST_SYMMETRY_NAN_RANK'] = '0'
             else:
@@ -268,6 +268,15 @@ def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> N
 
 
 def main() -> None:
+    from symmetry_kondo_common import selected_cases, selected_layouts
+    from symmetry_kondo_empty import run_empty_rank_suite
+    selection = selected_cases()
+    if selection in ('empty-ranks', 'all'):
+        args = [Path(arg).resolve() for arg in sys.argv[1:]]
+        run_empty_rank_suite('observables', args[0], args[1] if len(args) > 1 else None)
+    if selection == 'empty-ranks':
+        return
+
     hphi, probe = [Path(arg).resolve() for arg in sys.argv[1:]]
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     ranks = mpi_size(launcher)
@@ -277,7 +286,7 @@ def main() -> None:
     scope = os.environ.get('HPHI_TEST_KONDO_OBSERVABLES_SCOPE', 'all')
     assert scope in ('all', 'moments', 'solvers', 'correlation', 'failures')
     if scope in ('all', 'moments'):
-        for layout in ('replicated', 'distributed'):
+        for layout in selected_layouts():
             check_arbitrary_moments(root, probe, layout)
     if scope in ('all', 'solvers'):
         check_solvers(root, probe, launcher)

@@ -73,6 +73,14 @@ static int write_info(const struct SymmetryBasisRuntime *sym, const char *stem,
               sym->allocation_raw_basis_list_elements,
               sym->allocation_raw_diagonal_elements,
               sym->allocation_initial_vector_elements, elements, prenorm) < 0) error = 1;
+  if (strncmp(stem, "sector_", 7) == 0) {
+    unsigned long owned = 0;
+    for (unsigned long j = 1; j <= sym->local_dim; ++j) {
+      if (SymmetryBasisLocalEntry(sym, j) == NULL) error = 1;
+      else ++owned;
+    }
+    if (fprintf(fp, "owned_basis_elements=%lu\n", owned) < 0) error = 1;
+  }
   if (fclose(fp)) error = 1;
   return error ? -1 : 0;
 }

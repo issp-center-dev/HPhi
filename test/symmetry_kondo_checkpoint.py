@@ -272,13 +272,22 @@ def reject_non_kondo_v2(root, hphi, launcher, env):
 
 
 def main():
+    from symmetry_kondo_common import selected_cases, selected_layouts
+    from symmetry_kondo_empty import run_empty_rank_suite
+    selection = selected_cases()
+    if selection in ('empty-ranks', 'all'):
+        args = [Path(arg).resolve() for arg in sys.argv[1:]]
+        run_empty_rank_suite('checkpoint', args[0], args[1] if len(args) > 1 else None)
+    if selection == 'empty-ranks':
+        return
+
     hphi = Path(sys.argv[1]).resolve()
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     ranks = mpi_size(launcher)
     assert ranks in (1, 2, 4, 16)
     root = Path(tempfile.mkdtemp(prefix='symmetry_kondo_checkpoint_', dir='.')).resolve()
     print('artifacts:', root, flush=True)
-    for layout in ('distributed', 'replicated'):
+    for layout in selected_layouts():
         env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout)
         for model in ('Kondo', 'KondoNConserved', 'KondoGC'):
             case = Case(model, 3, 'block', None if model == 'KondoGC' else 2,

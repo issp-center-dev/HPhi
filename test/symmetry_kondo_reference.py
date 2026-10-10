@@ -470,6 +470,51 @@ def drive_hamiltonian(case: Case, kind: str, amplitude: float) -> np.ndarray:
     return sector_hamiltonian(reference)
 
 
+def make_empty_rank_reference(model: str) -> Reference:
+    """Odd sector: P2/Nc2, or two local spins and one fixed conduction site.
+
+    The GC fixture uses an explicit local mask (sites 0, 1); it is not a
+    cell chain. Construct its tensor Hamiltonian before embedding raw words.
+    """
+    if model != 'KondoGC':
+        return make_reference(Case(model, 2, 'block', 2,
+                                   0 if model == 'Kondo' else None, 1))
+    from itertools import product
+    entries = sorted((sum((1 << s) << (2*l) for l, s in enumerate(spins)) | (f << 4), spins, f)
+                     for spins in product((0, 1), repeat=2) for f in range(4))
+    space = _Space(np.array([e[0] for e in entries], dtype=np.uint64),
+                   [e[1] for e in entries], [e[2] for e in entries],
+                   np.ones(16, dtype=np.int8),
+                   {(s, f): i for i, (_, s, f) in enumerate(entries)})
+    columns, representatives = [], []
+    for i, (word, spins, fock) in enumerate(entries):
+        j = space.lookup[spins[::-1], fock]
+        if i >= j:
+            continue
+        vector = np.zeros(16, complex)
+        vector[i], vector[j] = 1/np.sqrt(2), -1/np.sqrt(2)
+        columns.append(vector)
+        representatives.append(word)
+    diagonal = np.array([.6*sum(.5-s for s in spins)*.5*((f&1)-((f>>1)&1))
+                          + .2*(.5-spins[0])*(.5-spins[1])
+                          + .41*(f == 3)-.23*f.bit_count() for _, spins, f in entries])
+    terms = [(.1, [(0, _SP), (1, _SM)], []), (.1, [(0, _SM), (1, _SP)], []),
+             (.085j, [], [(1, 0), (0, 1)]), (-.085j, [], [(1, 1), (0, 0)])]
+    for l in (0, 1):
+        terms.extend([(.3, [(l, _SP)], [(1, 1), (0, 0)]),
+                      (.3, [(l, _SM)], [(1, 0), (0, 1)]),
+                      (-.065, [(l, _SP)], []), (-.065, [(l, _SM)], [])])
+    nc = np.array([f.bit_count() for f in space.focks], float)
+    moments = dict(N=nc+2, Ncond=nc,
+                   D=np.array([f == 3 for f in space.focks], float),
+                   Sz=np.array([sum(.5-s for s in spins)+.5*((f&1)-((f>>1)&1))
+                                for spins, f in zip(space.spins, space.focks)]))
+    moments.update({key+'2': value**2 for key, value in list(moments.items())})
+    return Reference(space.words, np.column_stack(columns),
+                     np.array(representatives, dtype=np.uint64),
+                     _transition_action(space, terms, diagonal), moments)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--self-test', action='store_true')

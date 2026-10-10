@@ -249,10 +249,10 @@ def run_thermal(root: Path, executable: Path, launcher: list[str], case: Case,
         betas, emitted_steps = UNIFORM_BETAS, [0, 2, 4]
     else:
         betas, emitted_steps = None, [0, 2, 4]
-    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed',
+    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'),
                HPHI_TEST_SYMMETRY_CAPTURE='1')
     text = run_case(path, executable, 'run', launcher, env)
-    assert 'Symmetry basis layout: distributed' in text
+    assert 'Symmetry basis layout: '+env['HPHI_SYMMETRY_BASIS_LAYOUT'] in text
     vectors, prenorms = captured_initials(
         path, len(reference.representatives), reference.representatives,
         mpi_size(launcher))
@@ -278,12 +278,21 @@ def reject_invtemp_eigen(root: Path, source: Path, executable: Path) -> None:
     (path / 'beta.def').write_text('\n'.join(rows) + '\n')
     shutil.rmtree(path / 'output')
     run_case(path, executable, 'reject-eigen', [],
-             dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed'),
+             dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed')),
              'does not support InvTemp eigenvector output')
     assert not list((path / 'output').glob('*eigen*'))
 
 
 def main() -> None:
+    from symmetry_kondo_common import selected_cases, selected_layouts
+    from symmetry_kondo_empty import run_empty_rank_suite
+    selection = selected_cases()
+    if selection in ('empty-ranks', 'all'):
+        args = [Path(arg).resolve() for arg in sys.argv[1:]]
+        run_empty_rank_suite('thermal', args[0], args[1] if len(args) > 1 else None)
+    if selection == 'empty-ranks':
+        return
+
     executable = Path(sys.argv[1]).resolve()
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     ranks = mpi_size(launcher)

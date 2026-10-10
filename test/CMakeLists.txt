@@ -1559,3 +1559,15 @@ set_tests_properties(symmetry_kondo_checkpoint PROPERTIES LABELS "symmetry;kondo
 
 add_hphi_test(symmetry_kondo_te)
 set_tests_properties(symmetry_kondo_te PROPERTIES LABELS "symmetry;kondo;te;checkpoint;correlation")
+
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_kondo_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_kondo_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
+set_tests_properties(symmetry_kondo_basis symmetry_kondo_observables
+    symmetry_kondo_checkpoint symmetry_kondo_thermal symmetry_kondo_te
+    symmetry_kondo_fulldiag PROPERTIES TIMEOUT 1800)

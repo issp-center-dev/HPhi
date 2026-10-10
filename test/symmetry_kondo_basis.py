@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import struct
 import sys
+import os
 import numpy as np
 from symmetry_kondo_reference import Case, make_reference, sector_hamiltonian, _translate, apply_operator
 from symmetry_kondo_common import expert_case, run_probe
@@ -78,13 +79,22 @@ def family_check(root, probe, model):
         expected[:, col] = ref.basis.conj().T @ out
     path = expert_case(root/('families_'+model), case, method=3,
                        options={'families': families}, empty=True)
-    actual = run_probe(path, case, probe, action='matvec', layout='distributed')['matrix']
+    actual = run_probe(path, case, probe, action='matvec', layout=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'))['matrix']
     error = np.linalg.norm(actual-expected, 2)
     assert error <= 1e-11*max(1, np.linalg.norm(expected, 2)), (model, error)
     return error
 
 
 def main():
+    from symmetry_kondo_common import selected_cases, selected_layouts
+    from symmetry_kondo_empty import run_empty_rank_suite
+    selection = selected_cases()
+    if selection in ('empty-ranks', 'all'):
+        args = [Path(arg).resolve() for arg in sys.argv[1:]]
+        run_empty_rank_suite('basis', args[0], args[1] if len(args) > 1 else None)
+    if selection == 'empty-ranks':
+        return
+
     hphi, probe = map(lambda p: Path(p).resolve(), sys.argv[1:])
     root = Path('symmetry_kondo_basis')
     max_error = 0.
@@ -112,7 +122,7 @@ def main():
                 vector /= np.linalg.norm(vector)
                 expected = ref.basis.conj().T @ ref.apply_h(ref.basis @ vector)
                 h = sector_hamiltonian(ref) if p != 4 or k == 1 else None
-                for layout in ('replicated', 'distributed'):
+                for layout in selected_layouts():
                     path = root/f'{model}_P{p}_{sites}_k{k}_{layout}'
                     expert_case(path, case, method=3, options={}, empty=empty)
                     result = run_probe(path, case, probe, action=action, layout=layout,

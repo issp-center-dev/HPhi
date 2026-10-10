@@ -299,6 +299,15 @@ def reject_laser_geometry(root, executable, env):
 
 
 def main():
+    from symmetry_kondo_common import selected_cases, selected_layouts
+    from symmetry_kondo_empty import run_empty_rank_suite
+    selection = selected_cases()
+    if selection in ('empty-ranks', 'all'):
+        args = [Path(arg).resolve() for arg in sys.argv[1:]]
+        run_empty_rank_suite('te', args[0], args[1] if len(args) > 1 else None)
+    if selection == 'empty-ranks':
+        return
+
     executable = Path(sys.argv[1]).resolve()
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     ranks = mpi_size(launcher)
@@ -306,13 +315,13 @@ def main():
     root = Path(tempfile.mkdtemp(prefix='symmetry_kondo_te_', dir='.')).resolve()
     print('artifacts:', root, flush=True)
     scope = os.environ.get('HPHI_TEST_KONDO_TE_SCOPE', 'all')
-    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed', HPHI_TEST_SYMMETRY_CAPTURE='1')
+    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed'), HPHI_TEST_SYMMETRY_CAPTURE='1')
     if ranks == 1 and scope in ('all', 'preflight'):
         preflight_negatives(root, executable, env)
         reject_laser_geometry(root, executable, env)
     if scope == 'preflight':
         return
-    for layout in ('distributed', 'replicated'):
+    for layout in selected_layouts():
         env['HPHI_SYMMETRY_BASIS_LAYOUT'] = layout
         for model in ('Kondo', 'KondoNConserved', 'KondoGC'):
             for momentum in (0, 1):
@@ -329,7 +338,7 @@ def main():
                         return
                     if drive == 'onebody' and momentum == 1 and layout == 'distributed':
                         imports(root, case, reference, result, executable, launcher, env)
-    env['HPHI_SYMMETRY_BASIS_LAYOUT'] = 'distributed'
+    env['HPHI_SYMMETRY_BASIS_LAYOUT'] = os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed')
     for model in ('Kondo', 'KondoNConserved', 'KondoGC'):
         case = Case(model, 3, 'alternating', None if model == 'KondoGC' else 2,
                     1 if model == 'Kondo' else None, 1)
