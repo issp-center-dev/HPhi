@@ -148,7 +148,8 @@ def correlation_requests() -> dict[str, list[list[int]]]:
                 plus_minus + local_up * 4],
     }
     requests['six'].append(requests['six'][0])
-    requests['nbody'] = [[len(row) // 4] + row for row in requests['four']]
+    five_factor = [row + local_up for row in requests['four']]
+    requests['nbody'] = [[5] + row for row in five_factor]
     return requests
 
 
@@ -252,6 +253,18 @@ def check_collective_failures(root: Path, probe: Path, launcher: list[str]) -> N
                            layout='distributed', vector=np.ones(1, complex))
         actual = parse_moments(result['text'])
         assert actual == {'N': 1., 'N2': 1., 'D': 0., 'D2': 0., 'Sz': .5, 'Sz2': .25}
+        for name in ('nan', 'storage'):
+            failure = expert_case(root / f'empty_rank_failure_{name}', empty_case,
+                                  method=3, options={}, empty=True)
+            write_probe_inputs(failure, np.ones(1, complex), ranks)
+            env = dict(os.environ, HPHI_TEST_SYMMETRY_ACTION='moments',
+                       HPHI_SYMMETRY_BASIS_LAYOUT='distributed')
+            if name == 'nan':
+                env['HPHI_TEST_SYMMETRY_NAN_RANK'] = '0'
+            else:
+                env['HPHI_TEST_SYMMETRY_INVALID_STORAGE_RANK'] = '0'
+            run_case(failure, probe, f'empty_rank_{name}', launcher, env,
+                     'Error: sector moments probe failed.')
 
 
 def main() -> None:
