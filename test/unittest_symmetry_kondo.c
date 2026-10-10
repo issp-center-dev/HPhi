@@ -12,6 +12,10 @@ struct BindStruct;
 #include "symmetry_state_enumerator.h"
 #include "symmetry_basis.h"
 
+#ifdef MPI
+#include <mpi.h>
+#endif
+
 FILE *stdoutMPI = NULL;
 
 int nproc = 1;
@@ -720,11 +724,188 @@ static void test_sector_dimensions(void)
     }
 }
 
+/* A missing/stale cache must fail before any numerical comparison. The oracle
+ * below intentionally uses the checked public transform, never cached signs. */
+static void test_runtime_sign_cache(void)
+{
+  const int models[] = {Kondo, KondoNConserved, KondoGC};
+  unsigned int p, arrangement, model, layout, g, i;
+  for (p = 3; p <= 4; ++p)
+    for (arrangement = 0; arrangement < 2; ++arrangement) {
+      int loc[8], perm[4][8], *rows[4];
+      double complex chars[4];
+      for (i = 0; i < 2 * p; ++i)
+        loc[i] = arrangement ? i % 2 == 0 : i < p;
+      for (g = 0; g < p; ++g) {
+        rows[g] = perm[g];
+        chars[g] = cexp(2 * I * acos(-1) * g / p);
+        for (i = 0; i < 2 * p; ++i)
+          perm[g][i] = arrangement ? 2 * ((i / 2 + g) % p) + i % 2
+                                  : (i % p + g) % p + (i / p) * p;
+      }
+      for (model = 0; model < 3; ++model)
+        for (layout = 0; layout < 2; ++layout) {
+          struct BindStruct x;
+          struct SymmetryStateEnumerator enumerator;
+          unsigned long raw, rank, word;
+          int *prepared;
+          memset(&x, 0, sizeof(x));
+          x.Def = enumeration_case(models[model], 2 * p, p, loc, 2,
+                                   p == 3 ? 1 : 0);
+          x.Def.NSymTrans = p;
+          x.Def.SymTrans = rows;
+          x.Def.SymTransChar = chars;
+          x.Def.iFlgSymmetryBasis = TRUE;
+          check_int("cache fixture dimension", ComputeSymmetryKondoDimension(&x.Def, &raw), 0);
+          x.Check.idim_max = raw;
+          check_int("cache fixture enumeration", InitSymmetryStateEnumerator(&x.Def, raw, &enumerator), 0);
+          check_int("build independently owned Kondo runtime",
+                    BuildSymmetryBasisForLayout(&x, layout), 0);
+          if (x.Sym == NULL) continue;
+          prepared = x.Sym->kondo_local_sign;
+          check_int("Kondo runtime prepares local signs", prepared != NULL, 1);
+          if (prepared != NULL)
+            for (g = 0; g < p; ++g)
+              check_int("literal cyclic local sign", prepared[g],
+                        p == 4 && g % 2 ? -1 : 1);
+          for (rank = 1; rank <= raw; ++rank) {
+            struct SymmetryRepresentativeResult cached, checked;
+            unsigned long representative;
+            unsigned int inverse;
+            double complex phase = 0;
+            check_int("cache test unranking", SymmetryStateEnumeratorStateAt(&enumerator, rank, &word), 0);
+            representative = word;
+            for (g = 0; g < p; ++g) {
+              struct SymmetryTransformResult moved;
+              check_int("checked representative transform", SymmetryApplyToState(&x.Def, word, g, &moved), 0);
+              if (moved.state < representative) representative = moved.state;
+            }
+            for (inverse = 0; inverse < p; ++inverse) {
+              struct SymmetryTransformResult moved;
+              check_int("checked phase transform", SymmetryApplyToState(&x.Def, representative, inverse, &moved), 0);
+              if (moved.state == word) {
+                phase = chars[inverse] * moved.amplitude;
+                break;
+              }
+            }
+            check_int("cached representative lookup", SymmetryFindRepresentative(&x, word, &cached), 0);
+            check_ulong("cached representative matches checked action", cached.rep_state, representative);
+            check_int("cached first inverse matches checked action", cached.op_rep_to_state, inverse);
+            check_int("cached phase matches checked action", cabs(cached.phase - phase) < 1e-12, 1);
+            /* Incomplete hand-constructed runtimes retain the checked path. */
+            x.Sym->kondo_local_sign = NULL;
+            check_int("uncached runtime fallback", SymmetryFindRepresentative(&x, word, &checked), 0);
+            check_ulong("fallback representative", checked.rep_state, cached.rep_state);
+            check_int("fallback phase", cabs(checked.phase - cached.phase) < 1e-12, 1);
+            x.Sym->kondo_local_sign = prepared;
+            if (layout == SYMMETRY_BASIS_REPLICATED) {
+              struct SymmetryCanonicalResult canonical;
+              check_int("cached canonicalization", SymmetryCanonicalizeState(&x, word, &canonical), 0);
+              if (canonical.found) {
+                check_ulong("canonical representative", x.Sym->basis[canonical.basis_index].rep_state, representative);
+                check_int("canonical phase", cabs(canonical.phase - phase) < 1e-12, 1);
+              }
+            }
+          }
+          FreeSymmetryBasis(x.Sym);
+          x.Sym = NULL;
+          /* Reuse the very same DefineList address with a different local
+           * subset: a pointer-keyed or process-global cache would be stale. */
+          for (i = 0; i < 2 * p; ++i) loc[i] = ITINERANT;
+          x.Def = enumeration_case(KondoGC, 2 * p, 0, loc, 0, 0);
+          x.Def.NSymTrans = p;
+          x.Def.SymTrans = rows;
+          x.Def.SymTransChar = chars;
+          x.Def.iFlgSymmetryBasis = TRUE;
+          check_int("second lifetime dimension", ComputeSymmetryKondoDimension(&x.Def, &raw), 0);
+          x.Check.idim_max = raw;
+          check_int("build second independent runtime", BuildSymmetryBasisForLayout(&x, layout), 0);
+          if (x.Sym != NULL) {
+            check_int("second runtime prepares signs", x.Sym->kondo_local_sign != NULL, 1);
+            if (x.Sym->kondo_local_sign != NULL)
+              for (g = 0; g < p; ++g)
+                check_int("no stale local parity", x.Sym->kondo_local_sign[g], 1);
+            FreeSymmetryBasis(x.Sym);
+            x.Sym = NULL;
+          }
+          for (i = 0; i < 2 * p; ++i)
+            loc[i] = arrangement ? i % 2 == 0 : i < p;
+        }
+    }
+}
+
+static void test_runtime_cache_rejection(void)
+{
+  int loc[] = {LOCSPIN, ITINERANT, LOCSPIN, ITINERANT};
+  int identity[] = {0, 1, 2, 3};
+  int mixed[] = {1, 0, 3, 2};
+  int swap_pairs[] = {2, 3, 0, 1};
+  int *rows[] = {identity, mixed};
+  double complex chars[] = {1, 1};
+  unsigned int layout;
+  for (layout = 0; layout < 2; ++layout) {
+    struct BindStruct x;
+    struct SymmetryTransformResult result;
+    memset(&x, 0, sizeof(x));
+    x.Def = enumeration_case(KondoGC, 4, 2, loc, 0, 0);
+    x.Def.NSymTrans = 2;
+    x.Def.SymTrans = rows;
+    x.Def.SymTransChar = chars;
+    x.Def.iFlgSymmetryBasis = TRUE;
+    x.Check.idim_max = 64;
+    check_int("public action still rejects mixed site types", SymmetryApplyToState(&x.Def, 17, 1, &result), -1);
+    check_int("cache rejects a group changing local sites", BuildSymmetryBasisForLayout(&x, layout), -1);
+    check_int("failed cache is never published", x.Sym == NULL, 1);
+    x.Def.NLocSpn = 1;
+    check_int("public action still rejects invalid space", SymmetryApplyToState(&x.Def, 17, 0, &result), -1);
+    check_int("cache rejects invalid space", BuildSymmetryBasisForLayout(&x, layout), -1);
+    check_int("failed space is never published", x.Sym == NULL, 1);
+    x.Def.NLocSpn = 2;
+    rows[1] = swap_pairs;
+    check_int("valid runtime after failed preparation",
+              BuildSymmetryBasisForLayout(&x, layout), 0);
+    if (x.Sym != NULL) {
+      struct SymmetryRepresentativeResult representative;
+      unsigned int *inverse = x.Sym->group_inverse;
+      int *signs = x.Sym->kondo_local_sign;
+      x.Sym->group_inverse = NULL;
+      check_int("cached action without inverse table",
+                SymmetryFindRepresentative(&x, 82, &representative), 0);
+      check_ulong("fallback inverse representative", representative.rep_state, 37);
+      check_int("fallback inverse physical phase", cabs(representative.phase + 1) < 1e-12, 1);
+      x.Sym->group_inverse = inverse;
+      x.Sym->nsite++;
+      check_int("reject incomplete cache lattice metadata",
+                SymmetryFindRepresentative(&x, 82, &representative), -1);
+      check_ulong("rejected lookup clears result", representative.rep_state, 0);
+      x.Sym->nsite--;
+      x.Sym->group_order--;
+      check_int("reject incomplete cache group metadata",
+                SymmetryFindRepresentative(&x, 82, &representative), -1);
+      x.Sym->group_order++;
+      x.Sym->kondo_local_sign = NULL;
+      x.Def.NLocSpn = 1;
+      check_int("uncached fallback retains validation",
+                SymmetryFindRepresentative(&x, 82, &representative), -1);
+      x.Def.NLocSpn = 2;
+      x.Sym->kondo_local_sign = signs;
+      FreeSymmetryBasis(x.Sym);
+      x.Sym = NULL;
+    }
+    rows[1] = mixed;
+  }
+}
+
 int main(void)
 {
+#ifdef MPI
+  if (MPI_Init(NULL, NULL) != MPI_SUCCESS) return 1;
+#endif
   stdoutMPI = tmpfile();
   if (stdoutMPI == NULL) stdoutMPI = stderr;
 
+  test_runtime_sign_cache();
+  test_runtime_cache_rejection();
   test_sector_dimensions();
   test_enumeration();
   test_completion_counts();
@@ -738,6 +919,9 @@ int main(void)
   test_permutation_sign();
 
   if (stdoutMPI != stderr) fclose(stdoutMPI);
+#ifdef MPI
+  if (MPI_Finalize() != MPI_SUCCESS) return 1;
+#endif
   if (failures != 0U) {
     fprintf(stderr, "%u symmetry Kondo unit checks failed\n", failures);
     return 1;

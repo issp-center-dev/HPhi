@@ -80,6 +80,9 @@ struct SymmetryBasisRuntime {
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;
   unsigned int *group_inverse;
+  /* Runtime-owned Kondo local permutation signs, immutable after preparation.
+   * NULL for other models or standalone runtimes using the checked action. */
+  int *kondo_local_sign;
   unsigned long int local_offset;
   unsigned long int local_dim;
   unsigned long long basis_raw_states;
