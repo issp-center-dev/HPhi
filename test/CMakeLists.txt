@@ -55,6 +55,7 @@ add_executable(unittest_symmetry_kondo
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
@@ -88,6 +89,7 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
@@ -121,9 +123,30 @@ add_test(NAME unittest_symmetry_basis
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
 
+add_executable(unittest_symmetry_kondo_terms
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_kondo_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
+target_include_directories(unittest_symmetry_kondo_terms
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_kondo_terms PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_kondo_terms m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_kondo_terms ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_kondo_terms OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_kondo_terms COMMAND unittest_symmetry_kondo_terms)
+set_tests_properties(unittest_symmetry_kondo_terms PROPERTIES LABELS "unit;symmetry")
+
 add_executable(unittest_symmetry_spingc_terms
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_spingc_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
 target_include_directories(unittest_symmetry_spingc_terms
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
@@ -147,6 +170,7 @@ add_executable(unittest_symmetry_correlation
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
@@ -830,6 +854,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
