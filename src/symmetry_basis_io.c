@@ -629,6 +629,8 @@ static int validate_kondo_bilinears(const struct DefineList *def,
 static int validate_kondo_input_forms(const struct DefineList *def)
 {
   if (!IsSymmetryKondoModel(def->iCalcModel)) return 0;
+  /* The reader checks original InterAll rows before reusing that array as
+   * scratch; this remaining-array check is not the input-format boundary. */
   if (validate_kondo_bilinears(def, def->GeneralTransfer, def->NTransfer, 1, "Transfer") ||
       validate_kondo_bilinears(def, def->InterAll, def->NInterAll, 2, "InterAll") ||
       validate_kondo_bilinears(def, def->CisAjt, def->NCisAjt, 1, "OneBodyG") ||

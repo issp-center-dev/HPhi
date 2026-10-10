@@ -2,6 +2,7 @@
 """Exercise each malformed input through a serial expert entry, even under np16 CI."""
 from pathlib import Path
 import os
+from itertools import permutations
 import sys
 from symmetry_kondo_reference import Case
 from symmetry_kondo_common import expert_case, definition, run_case
@@ -47,7 +48,16 @@ def main():
                        ('hybridization', [(0, 0, 2, 0, .2, 0), (2, 0, 0, 0, .2, 0)])]:
         negative(name, 'onsite', gc, {'families': {'Trans': rows}})
     negative('local_pairhop', 'PairHop requires conduction sites', gc, {'families': {'PairHop': [(0, 2, .1)]}})
-    negative('crossed_interall', 'onsite', gc, {'families': {'InterAll': [(0, 0, 2, 0, 2, 0, 0, 0, .2, 0)]}})
+    # InterAll is reader scratch: mixed diagonal/offdiagonal rows must be
+    # rejected before Hermitian-pair packing can overwrite the crossed row.
+    crossed_rows = [(0, 0, 1, 0, 1, 0, 0, 0, .2, 0),
+                    (0, 0, 0, 1, 1, 0, 1, 0, .1, 0),
+                    (1, 0, 1, 0, 0, 1, 0, 0, .1, 0)]
+    for order, rows in enumerate(permutations(crossed_rows)):
+        negative('crossed_interall_mixed_'+str(order), 'Site component of (i, j, k, l)',
+                 Case('KondoGC', 1, 'block', None, None, 0),
+                 {'families': {'InterAll': list(rows)}}, method=2)
+    negative('crossed_interall', 'Site component of (i, j, k, l)', gc, {'families': {'InterAll': [(0, 0, 2, 0, 2, 0, 0, 0, .2, 0)]}})
     negative('local_correlation', 'onsite', gc, {'families': {'OneBodyG': [(0, 0, 2, 0)]}})
     negative('pairlift', 'PairLift is active only in SpinGC', gc, {'families': {'PairLift': [(0, 1, .1)]}})
     negative('nbody_interall', 'unsupported term families', gc,
@@ -62,6 +72,13 @@ def main():
         negative('option_'+field, 'does not support '+field if field != 'CalcSpec' else 'spectrum calculations', gc, {'CalcMod': {field: 1}}, method=2 if field == 'OutputHam' else 3)
     for field in ('OutputEigenVec', 'InputEigenVec'):
         negative('fulldiag_'+field, field, gc, {'CalcMod': {field: 1}}, method=2)
+    # The new early guard must not restrict raw KondoGC InterAll input.
+    raw = expert_case(root/'raw_gc_crossed_interall',
+                      Case('KondoGC', 1, 'block', None, None, 0), method=2,
+                      options={'families': {'InterAll': crossed_rows}}, empty=True)
+    (raw/'sym.def').write_text((raw/'sym.def').read_text().replace('TransSym group.def\n', ''))
+    run_case(raw, hphi, 'raw_gc', [], dict(os.environ))
+    assert (raw/'output/Eigenvalue.dat').exists()
     # The TransSym-only vacuum relaxation must survive the full expert reader.
     for name, mod in [('ncond', {'Ncond': 0, '2Sz': None}),
                       ('explicit_pair', {'Ncond': None, '2Sz': None, 'Nup': 0, 'Ndown': 0})]:
