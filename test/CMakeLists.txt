@@ -50,6 +50,19 @@ macro(add_hphi_mpi_test_with_srcdir test_name mode)
     )
 endmacro()
 
+add_executable(unittest_symmetry_kondo
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_kondo.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c)
+target_include_directories(unittest_symmetry_kondo
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_kondo PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_kondo m)
+add_test(NAME unittest_symmetry_kondo
+    COMMAND unittest_symmetry_kondo)
+set_tests_properties(unittest_symmetry_kondo
+    PROPERTIES LABELS "unit;symmetry")
+
 add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
@@ -774,6 +787,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/CheckMPI.c
     ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
     ${CMAKE_SOURCE_DIR}/src/readdef.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/sz.c
     ${CMAKE_SOURCE_DIR}/src/xsetmem.c
     ${CMAKE_SOURCE_DIR}/src/input.c

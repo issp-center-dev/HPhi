@@ -38,6 +38,7 @@
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_kondo.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -1344,10 +1345,18 @@ int ReadDefFileNInt(
 
   //Sz, Ncond
   switch(X->iCalcModel){
+  case Kondo:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw Kondo normalization below. */
+    /* fall through */
   case Spin:
   case Hubbard:
   case tJ:
-  case Kondo: 
   case SpinlessFermion:
    
     if(iReadNCond==TRUE){
@@ -1439,6 +1448,15 @@ int ReadDefFileNInt(
       }
     }
     break;
+  case KondoGC:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw GC warning below. */
+    /* fall through */
   case SpinGC:
     if (X->iFlgSymmetryBasis &&
         (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
@@ -1447,7 +1465,6 @@ int ReadDefFileNInt(
     }
     /* Preserve the raw GC warning below. */
     /* fall through */
-  case KondoGC:
   case HubbardGC:
   case tJGC:
   case SpinlessFermionGC:  
