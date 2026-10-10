@@ -1541,3 +1541,10 @@ if(ELPA_FOUND)
     set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
         ENVIRONMENT "HPHI_HAS_ELPA=1")
 endif()
+
+add_hphi_test(symmetry_kondo_basis)
+set_tests_properties(symmetry_kondo_basis PROPERTIES LABELS "symmetry;kondo;basis")
+add_hphi_test(symmetry_kondo_validation)
+set_tests_properties(symmetry_kondo_validation PROPERTIES LABELS "symmetry;kondo;validation")
+add_hphi_test(symmetry_kondo_fulldiag)
+set_tests_properties(symmetry_kondo_fulldiag PROPERTIES LABELS "symmetry;kondo;fulldiag")

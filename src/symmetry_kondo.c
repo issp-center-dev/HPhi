@@ -283,3 +283,20 @@ int SymmetryKondoPermutationSign(const struct DefineList *def,
   *sign = result;
   return 0;
 }
+
+int GetSymmetryKondoIdentity(const struct DefineList *def,
+                             struct SymmetryKondoIdentity *identity)
+{
+  unsigned long mask;
+  if (identity == NULL || def == NULL || !IsSymmetryKondoModel(def->iCalcModel) ||
+      ValidateSymmetryKondoSpace(def) != 0 || SymmetryKondoLocalMask(def, &mask) != 0)
+    return -1;
+  identity->local_site_mask = (uint64_t)mask;
+  identity->fixed_flags = def->iCalcModel == Kondo ? 3U :
+                          def->iCalcModel == KondoNConserved ? 1U : 0U;
+  identity->nup = def->iCalcModel == Kondo ? def->Nup : 0U;
+  identity->ndown = def->iCalcModel == Kondo ? def->Ndown : 0U;
+  identity->ne = def->iCalcModel == KondoGC ? 0U : def->Ne;
+  identity->phase = 2U;
+  return 0;
+}

@@ -6,6 +6,7 @@
 #include "struct.h"
 #include "symmetry_basis.h"
 #include "symmetry_sector.h"
+#include "symmetry_kondo.h"
 #include "wrapperMPI.h"
 #ifdef MPI
 #include <mpi.h>
@@ -58,6 +59,22 @@ static int compare_group_entries(const void *a, const void *b)
     if (left->perm[site] < right->perm[site]) return -1;
     if (left->perm[site] > right->perm[site]) return 1;
   }
+  return 0;
+}
+
+int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *digest)
+{
+  struct SymmetryKondoIdentity identity;
+  uint64_t hash;
+  if (digest == NULL) return -1;
+  *digest = 0;
+  if (GetSymmetryKondoIdentity(def, &identity) != 0) return -1;
+  hash = hash_tag(FNV_OFFSET, "hphi-kondo-space-fnv1a64-v1");
+  const uint64_t fields[] = {def->iCalcModel, def->Nsite, identity.local_site_mask,
+    identity.fixed_flags, identity.nup, identity.ndown, identity.ne, identity.phase};
+  for (unsigned int i = 0; i < sizeof(fields)/sizeof(fields[0]); ++i)
+    hash = hash_integer(hash, fields[i], 8);
+  *digest = hash;
   return 0;
 }
 
@@ -259,7 +276,8 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   struct SymmetrySectorDigest sector;
-  uint64_t group = 0, hamiltonian = 0;
+  uint64_t group = 0, hamiltonian = 0, space = 0;
+  struct SymmetryKondoIdentity identity;
   char name[D_FileNameMax];
   int error = 0, length, threads = 1;
   FILE *fp = NULL;
@@ -269,6 +287,9 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
   if (myrank == 0) {
     error = ComputeSymmetryGroupDigest(def, &group) != 0 ||
             ComputeSymmetryHamiltonianDigest(def, &hamiltonian) != 0;
+    if (IsSymmetryKondoModel(def->iCalcModel))
+      error |= GetSymmetryKondoIdentity(def, &identity) != 0 ||
+               ComputeSymmetryKondoSpaceDigest(def, &space) != 0;
     length = snprintf(name, sizeof(name), "%s%ssymmetry_sector.dat",
                       def->iOutputDataHead == 1 ? def->CDataFileHead : "",
                       def->iOutputDataHead == 1 ? "_" : "");
@@ -279,7 +300,10 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
 #ifdef _OPENMP
       threads = omp_get_max_threads();
 #endif
-      model = def->iCalcModel == SpinGC ? "SpinGC" :
+      model = def->iCalcModel == Kondo ? "Kondo" :
+              def->iCalcModel == KondoNConserved ? "KondoNConserved" :
+              def->iCalcModel == KondoGC ? "KondoGC" :
+              def->iCalcModel == SpinGC ? "SpinGC" :
               def->iCalcModel == Spin ? "Spin" :
               def->iCalcModel == SpinlessFermion ? "SpinlessFermion" :
               def->iCalcModel == tJ ? "tJ" : "Hubbard";
@@ -295,7 +319,22 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       fprintf(fp, "format=HPhiSymmetrySector version=1\ncalc_type=%s\nmodel=%s\n"
               "nsite=%u\nfull_dim=%lu\nsector_dim=%lu\ngroup_order=%u\n",
               method, model, def->Nsite, X->Sym->full_dim, X->Sym->dim, def->NSymTrans);
-      if (def->iCalcModel == SpinGC)
+      if (IsSymmetryKondoModel(def->iCalcModel)) {
+        fprintf(fp, "n_local_spin=%u\nn_conduction_sites=%u\nlocal_site_mask=%016" PRIx64 "\n"
+                "translation_convention=kondo-physical-v1\n"
+                "particle_number_convention=total_fermions_including_local_spins\n"
+                "basis_space_digest=hphi-kondo-space-fnv1a64-v1:%016" PRIx64 "\n",
+                def->NLocSpn, def->Nsite-def->NLocSpn, identity.local_site_mask, space);
+        if (def->iCalcModel == Kondo)
+          fprintf(fp, "fixed_quantities=ncond,2sz\nfixed_ncond=%u\nfixed_2sz=%d\n"
+                  "fixed_nup=%" PRIu64 "\nfixed_ndown=%" PRIu64 "\nfixed_ne=%" PRIu64 "\n",
+                  def->NCond, def->Total2Sz, identity.nup, identity.ndown, identity.ne);
+        else if (def->iCalcModel == KondoNConserved)
+          fprintf(fp, "fixed_quantities=ncond\nfixed_ncond=%u\nfixed_ne=%" PRIu64 "\n",
+                  def->NCond, identity.ne);
+        else
+          fprintf(fp, "fixed_quantities=none\n");
+      } else if (def->iCalcModel == SpinGC)
         fprintf(fp, "fixed_quantities=none\npair_lift=%u\n", def->NPairLiftCoupling);
       else if (def->iCalcModel == Spin)
         fprintf(fp, "fixed_2sz=%d\n", (int)def->Nup - (int)def->Ndown);

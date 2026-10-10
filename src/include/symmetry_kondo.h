@@ -1,7 +1,13 @@
 #ifndef HPHI_SYMMETRY_KONDO_H
 #define HPHI_SYMMETRY_KONDO_H
 
+#include <stdint.h>
 struct DefineList;
+struct SymmetryKondoIdentity {
+  uint64_t local_site_mask, fixed_flags, nup, ndown, ne, phase;
+};
+int GetSymmetryKondoIdentity(const struct DefineList *def,
+                             struct SymmetryKondoIdentity *identity);
 
 int IsSymmetryKondoModel(int model);
 int NormalizeSymmetryKondoQuantumNumbers(struct DefineList *def,
