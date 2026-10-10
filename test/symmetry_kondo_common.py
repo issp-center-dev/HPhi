@@ -170,3 +170,42 @@ def read_kondo_checkpoint(path: Path) -> tuple[np.ndarray, np.ndarray]:
     payload = np.frombuffer(data[30*8:], dtype='<c16').copy()
     assert np.isfinite(payload).all()
     return header, payload
+
+
+def drive_rows(case: Case, kind: str, amplitude: float = 1.) -> list[tuple]:
+    """Expert coefficients for the specified local spin / Kondo drives.
+
+    InterAll adjoints reverse all factors; the physical oracle does not use
+    this input generator or its row-to-operator conventions.
+    """
+    p = case.cells
+    local = list(range(p)) if case.layout == 'block' else list(range(0, 2*p, 2))
+    cond = list(range(p, 2*p)) if case.layout == 'block' else list(range(1, 2*p, 2))
+    rows = []
+    def pair(key, value):
+        pairs = list(zip(key[::2], key[1::2]))
+        adjoint = tuple(x for item in reversed(pairs) for x in item)
+        rows.extend([(key, value), (adjoint, complex(value).conjugate())])
+    for j, (l, c) in enumerate(zip(local, cond)):
+        if kind == 'onebody':
+            if case.model == 'Kondo':
+                rows.extend([((l, s, l, s), -.21*sz*amplitude)
+                             for s, sz in ((0, .5), (1, -.5))])
+            else:
+                pair((l, 0, l, 1), .105j*amplitude)
+        elif kind == 'twobody':
+            for s, sz in ((0, .5), (1, -.5)):
+                if case.model == 'Kondo':
+                    rows.extend([((l, a, l, a, c, s, c, s), .17*lz*sz*amplitude)
+                                 for a, lz in ((0, .5), (1, -.5))])
+                else:
+                    pair((l, 0, l, 1, c, s, c, s), .085*sz*amplitude)
+        elif kind == 'laser':
+            # Explicit change relative to the static hopping. Coordinates of
+            # arbitrary site layouts are not inferred from their numbering.
+            cc = cond[(j+1) % p]
+            for s in (0, 1):
+                pair((cc, s, c, s), .73*np.exp(.17j)*(np.exp(-1j*amplitude)-1))
+        else:
+            raise ValueError(kind)
+    return [(*indices, z.real, z.imag) for indices, z in merged_rows(rows)]

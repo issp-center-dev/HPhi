@@ -64,6 +64,9 @@
 #include <inttypes.h>
 #include "symmetry_checkpoint.h"
 #include "symmetry_te.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
@@ -228,6 +231,13 @@ static int calc_by_tem(
     }
     if (X->Bind.Def.iFlgSymmetryBasis) {
       if (ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &source) != 0) return -1;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+      double norm2 = 0;
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i)
+        norm2 += creal(conj(v1[i])*v1[i]);
+      if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", 0, 0,
+                                   sqrt(SumMPI_d(norm2))) != 0) return -1;
+#endif
       if (record_sector_te(&(X->Bind), &source, view) != 0) return -1;
     } else {
       invalid = childfopenALL(sdt, "rb", &fp) != 0;

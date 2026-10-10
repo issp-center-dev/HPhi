@@ -1114,6 +1114,14 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* Validate the active view before physical projection: forbidden local
+   * hopping can project to zero and escape the mixed-polynomial validator.
+   * This array also contains the current TE rows, unlike the static input
+   * array checked by ValidateSymmetryRuntimeOptions. InterAll input forms
+   * are checked by the reader before its internal crossed-row rewrite. */
+  if (IsSymmetryKondoModel(def->iCalcModel) &&
+      validate_kondo_bilinears(def, def->EDGeneralTransfer, def->EDNTransfer,
+                               1, "Transfer")) return -1;
   /* Preserve established diagnostics for the original subset. Extended
    * inputs use a combined polynomial, including cross-family cancellations. */
   if (SymmetryUsesExtendedTerms(def))

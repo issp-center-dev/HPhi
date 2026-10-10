@@ -41,6 +41,8 @@ int SelectSymmetryTEHamiltonian(struct BindStruct *X, struct SymmetryTEHamiltoni
                                 unsigned int step, double time)
 {
   const struct DefineList *base = &view->base;
+  /* LocSpn and the fixed basis identity remain borrowed, read-only data.
+   * Only the active coefficient/index arrays below are owned by this view. */
   X->Def = *base;
   free_arrays(view);
   unsigned int nt = base->NLaser ? 0 : base->NTETransfer[step];

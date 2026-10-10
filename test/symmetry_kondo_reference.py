@@ -426,6 +426,50 @@ def _self_test():
     print('reference self-test passed')
 
 
+def _drive_action(case: Case, kind: str, amplitude: float):
+    """Physical tensor/CAR drive; amplitude is A(t) for a Peierls drive."""
+    space = _space(case)
+    diagonal = np.zeros(len(space.words))
+    terms = []
+    if kind == 'onebody' and case.model == 'Kondo':
+        diagonal = np.array([.21*amplitude*sum(.5-s for s in spins)
+                             for spins in space.spins])
+    elif kind == 'twobody' and case.model == 'Kondo':
+        diagonal = np.array([.17*amplitude*sum((.5-spins[j]) *
+                              .5*(((f >> (2*j)) & 1)-((f >> (2*j+1)) & 1))
+                              for j in range(case.cells))
+                             for spins, f in zip(space.spins, space.focks)])
+    elif kind in ('onebody', 'twobody'):
+        for j in range(case.cells):
+            if kind == 'onebody':
+                terms.extend([(-.105j*amplitude, [(j, _SP)], []),
+                              (.105j*amplitude, [(j, _SM)], [])])
+            else:
+                for s, sz in ((0, .5), (1, -.5)):
+                    for spin in (_SP, _SM):
+                        terms.append((.085*sz*amplitude, [(j, spin)],
+                                      [(1, 2*j+s), (0, 2*j+s)]))
+    elif kind == 'laser':
+        forward = -.73*np.exp(.17j)*(np.exp(-1j*amplitude)-1)
+        for j in range(case.cells):
+            nxt = (j+1) % case.cells
+            for s in (0, 1):
+                terms.extend([(forward, [], [(1, 2*nxt+s), (0, 2*j+s)]),
+                              (forward.conjugate(), [], [(1, 2*j+s), (0, 2*nxt+s)])])
+    else:
+        raise ValueError(kind)
+    static = _hamiltonian(case, space, False)
+    drive = _transition_action(space, terms, diagonal)
+    return lambda vector: static(vector)+drive(vector)
+
+
+def drive_hamiltonian(case: Case, kind: str, amplitude: float) -> np.ndarray:
+    """Return static H plus the physical onebody/twobody/laser sector drive."""
+    reference = make_reference(case)
+    reference.apply_h = _drive_action(case, kind, amplitude)
+    return sector_hamiltonian(reference)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--self-test', action='store_true')

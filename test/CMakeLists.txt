@@ -1556,3 +1556,6 @@ set_tests_properties(symmetry_kondo_thermal PROPERTIES LABELS "symmetry;kondo;tp
 
 add_hphi_test(symmetry_kondo_checkpoint)
 set_tests_properties(symmetry_kondo_checkpoint PROPERTIES LABELS "symmetry;kondo;checkpoint;lobcg")
+
+add_hphi_test(symmetry_kondo_te)
+set_tests_properties(symmetry_kondo_te PROPERTIES LABELS "symmetry;kondo;te;checkpoint;correlation")
