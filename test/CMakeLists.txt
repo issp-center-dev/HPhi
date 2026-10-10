@@ -1551,5 +1551,8 @@ set_tests_properties(symmetry_kondo_fulldiag PROPERTIES LABELS "symmetry;kondo;f
 add_hphi_test(symmetry_kondo_observables)
 set_tests_properties(symmetry_kondo_observables PROPERTIES LABELS "symmetry;kondo;lobcg;lanczos;correlation")
 
+add_hphi_test(symmetry_kondo_thermal)
+set_tests_properties(symmetry_kondo_thermal PROPERTIES LABELS "symmetry;kondo;tpq;ctpq;correlation")
+
 add_hphi_test(symmetry_kondo_checkpoint)
 set_tests_properties(symmetry_kondo_checkpoint PROPERTIES LABELS "symmetry;kondo;checkpoint;lobcg")

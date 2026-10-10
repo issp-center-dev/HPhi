@@ -30,6 +30,9 @@
 #include <math.h>
 #include <limits.h>
 #include "symmetry_sector.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
 #ifdef MPI
     #include <mpi.h>
 #endif
@@ -332,6 +335,13 @@ int CalcByCanonicalTPQ(
                 StopTimer(3100);
                 return -1;
             }
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+            if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", rand_i, 0,
+                                         global_1st_norm) != 0) {
+                StopTimer(3100);
+                return -1;
+            }
+#endif
             /*[s] tau*/
             inv_temp  = 0.0;
             delta_tau = 1.0/LargeValue;
