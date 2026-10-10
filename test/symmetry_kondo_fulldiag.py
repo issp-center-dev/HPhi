@@ -13,6 +13,12 @@ from symmetry_kondo_basis import manifest_check
 from symmetry_spingc_common import mpi_size
 
 
+def check_empty_spectrum(actual, representatives):
+    assert actual.shape == (len(representatives), 2) and np.isfinite(actual).all()
+    np.testing.assert_array_equal(actual[:, 0], np.arange(len(representatives)))
+    np.testing.assert_array_equal(actual[:, 1], np.zeros(len(actual)))
+
+
 def main():
     hphi, probe = map(lambda p: Path(p).resolve(), sys.argv[1:])
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
@@ -80,8 +86,7 @@ def main():
                     expert_case(path, case, method=2, options=options, empty=True)
                     run_case(path, hphi, 'empty', backend_launcher, env)
                     actual = np.loadtxt(path/'output/zvo_energy_sector.dat', ndmin=2)
-                    assert actual.shape == (len(ref.representatives), 2) and np.isfinite(actual).all()
-                    np.testing.assert_array_equal(actual[:, 1], np.zeros(len(actual)))
+                    check_empty_spectrum(actual, ref.representatives)
                     manifest_check(read_manifest(path), case, ref)
         print(f'{label} maximum eigenvalue error {error:.3e}', flush=True)
 

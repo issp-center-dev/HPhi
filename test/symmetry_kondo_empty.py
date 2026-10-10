@@ -68,6 +68,20 @@ def check_correlations(path, reference, vector, suffix):
         check_correlation_block(finite_data(file), rows, values[kind], 0, str(file))
 
 
+def check_manifests(paths, model, layout, dimension, ranks, omp_threads):
+    expected = [path/'output/zvo_symmetry_sector.dat' for path in paths]
+    assert len(set(expected)) == len(expected)
+    for manifest in expected:
+        assert manifest.is_file(), ('missing symmetry manifest', manifest)
+        metadata = read_manifest(manifest)
+        assert metadata['model'] == model
+        assert metadata['basis_layout'] == layout
+        assert int(metadata['sector_dim']) == dimension
+        assert int(metadata['mpi_ranks']) == ranks
+        if omp_threads is not None:
+            assert int(metadata['omp_threads']) == int(omp_threads)
+
+
 def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None) -> None:
     from symmetry_kondo_observables import (add_correlation_requests, parse_moments,
                                             check_eigenvector)
@@ -86,6 +100,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
         env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout,
                    HPHI_TEST_SYMMETRY_CAPTURE='1')
         for model, dimension in [('Kondo', 6), ('KondoNConserved', 14), ('KondoGC', 4)]:
+            executed_case_paths = []
             ref = make_empty_rank_reference(model)
             assert ref.basis.shape[1] == dimension
             np.testing.assert_allclose(ref.basis.conj().T@ref.basis, np.eye(dimension), atol=1e-12, rtol=0)
@@ -99,6 +114,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
             requests, _ = requests_and_values(ref, vector)
             if kind == 'basis':
                 path = expert_empty_rank_case(prefix, model, method=3, options={})
+                executed_case_paths.append(path)
                 actual = run_probe(path, None, probe, action='matvec', layout=layout)
                 np.testing.assert_array_equal(actual['representatives'], ref.representatives)
                 error = np.linalg.norm(actual['matrix']-h)
@@ -110,6 +126,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
             elif kind == 'observables':
                 path = expert_empty_rank_case(prefix, model, method=3,
                        options={'CalcMod': {'OutputEigenVec': 1}, 'ModPara': {'LanczosEps': 18}})
+                executed_case_paths.append(path)
                 result = run_probe(path, None, probe, action='moments', layout=layout, vector=vector)
                 values = parse_moments(result['text'])
                 for key in ('N', 'N2', 'D', 'D2', 'Sz', 'Sz2'):
@@ -130,6 +147,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
                                     'ModPara': {'Lanczos_max': 5, 'initial_iv': 7, 'NumAve': 2,
                                                 'LargeValue': 4 if method == 1 else 50,
                                                 'ExpandCoef': 12, 'ExpecInterval': 2}})
+                    executed_case_paths.append(path)
                     add_correlation_requests(path, requests, False)
                     run_case(path, probe, name, launcher, env)
                     initial, prenorms = captured_initials(path, dimension, ref.representatives, ranks)
@@ -163,6 +181,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
                 # state so a missing TE application cannot pass this test.
                 seed = expert_empty_rank_case(Path(str(prefix)+'_seed'), model, method=3,
                                                options={'CalcMod': {'OutputEigenVec': 1}})
+                executed_case_paths.append(seed)
                 run_case(seed, probe, 'seed', launcher, env)
                 checkpoint_vector(seed, dimension, ranks)
                 from symmetry_kondo_checkpoint import store_parts
@@ -178,6 +197,7 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
                         path = expert_empty_rank_case(Path(str(prefix)+f'_from{source_index}_to{method}'), model,
                             method=method, options={'CalcMod': {'InputEigenVec': 1, 'OutputEigenVec': 1},
                                 'ModPara': {'Lanczos_max': 5, 'ExpandCoef': 8, 'ExpecInterval': 1, 'OutputInterval': 1}})
+                        executed_case_paths.append(path)
                         attach_seed(path, source, label)
                         if method == 3:
                             for rank in range(ranks):
@@ -226,14 +246,8 @@ def run_empty_rank_suite(kind: str, executable: Path, probe: Path | None = None)
                                 errors['data'] = max(errors['data'], error)
                         if source_index == 0 and method == 4:
                             sources.append((path, 'zvo_eigenvec_4', state.copy()))
-            for manifest in root.glob(f'{model}_{layout}*/output/zvo_symmetry_sector.dat'):
-                metadata = read_manifest(manifest)
-                assert metadata['model'] == model
-                assert metadata['basis_layout'] == layout
-                assert int(metadata['sector_dim']) == dimension
-                assert int(metadata['mpi_ranks']) == ranks
-                if 'OMP_NUM_THREADS' in env:
-                    assert int(metadata['omp_threads']) == int(env['OMP_NUM_THREADS'])
+            check_manifests(executed_case_paths, model, layout, dimension, ranks,
+                            env.get('OMP_NUM_THREADS'))
             print(f'{kind} {model} dim={dimension} np={ranks} OMP={env.get("OMP_NUM_THREADS", "default")} '
                   f'layout={layout} empty={max(0, ranks-dimension)} passed', flush=True)
     print('maximum errors:', errors, flush=True)

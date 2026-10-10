@@ -177,6 +177,10 @@ def correlation_reference(case: Case, ref, vector: np.ndarray,
             result.append(np.vdot(psi, apply_operator(case, factors, psi)))
         result = np.asarray(result)
         assert np.isfinite(result).all() and np.max(abs(result)) > 1e-7, (kind, result)
+        if kind in ('two', 'three', 'four', 'six', 'nbody'):
+            # Row 1 is the compensating local/conduction spin flip in every
+            # multi-factor format, including the five-factor NBodyG case.
+            assert abs(result[1]) > 1e-7, (kind, result[1])
         assert np.max(abs(result.imag)) > 1e-8, (kind, result)
         assert abs(result[0] - result[-1]) < 1e-12, (kind, result)
         values[kind] = result

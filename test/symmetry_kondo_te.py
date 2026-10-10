@@ -14,7 +14,7 @@ from symmetry_kondo_common import (expert_case, drive_rows, read_kondo_checkpoin
                                    read_manifest, read_vector_parts)
 from symmetry_kondo_reference import (Case, make_reference, sector_hamiltonian,
                                       drive_hamiltonian, _drive_action)
-from symmetry_kondo_checkpoint import joined
+from symmetry_kondo_checkpoint import joined, check_cg_method_transition
 from symmetry_kondo_observables import (add_correlation_requests,
                                         correlation_requests, CORRELATION_FILES)
 from symmetry_kondo_thermal import (finite_data, thermal_correlation_reference,
@@ -271,10 +271,18 @@ def imports(root, case, reference, source, executable, launcher, env):
     (path/'output').mkdir(exist_ok=True)
     for rank, file in enumerate(checkpoints(source, 'zvo_eigenvec_final')):
         shutil.copy2(file, path/'output'/f'zvo_eigenvec_0_rank_{rank}.dat')
+    source_vector = joined(source, 'zvo_eigenvec_final')
     run_case(path, executable, 'te_to_cg', launcher, env)
-    np.testing.assert_array_equal(joined(path), joined(source, 'zvo_eigenvec_final'))
-    for old, new in zip(checkpoints(source, 'zvo_eigenvec_final'), checkpoints(path, 'zvo_eigenvec_0')):
-        check_identity(read_kondo_checkpoint(old)[0], read_kondo_checkpoint(new)[0])
+    np.testing.assert_array_equal(joined(path), source_vector)
+    captured = read_vector_parts(path, 'sector_final_sample0_step0.rank', len(source_vector))
+    np.testing.assert_allclose(captured, source_vector, atol=1e-12, rtol=0)
+    source_files = checkpoints(source, 'zvo_eigenvec_final')
+    target_files = checkpoints(path, 'zvo_eigenvec_0')
+    for old, new in zip(source_files, target_files):
+        old_header, _ = read_kondo_checkpoint(old)
+        new_header, _ = read_kondo_checkpoint(new)
+        check_identity(old_header, new_header)
+    check_cg_method_transition(source_files, target_files)
     print(path.name+' immediate TE→CG payload passed', flush=True)
 
 
@@ -287,7 +295,7 @@ def reject_laser_geometry(root, executable, env):
                                             'Tinit': 0, 'TimeSlice': .01}})
     laser_definition(path)
     # Lx=3 yields the same displacement on all alternating bonds. Lx=6
-    # instead gives -4,-4,2 after the existing wrap rule: 
+    # instead gives -4,-4,2 after the existing wrap rule:
     # at t=0 it agrees, but t=.01 breaks translation.
     laser = path/'laser.def'
     laser.write_text(laser.read_text().replace('p5 3\n', 'p5 6\n'))

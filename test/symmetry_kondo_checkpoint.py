@@ -64,6 +64,16 @@ def joined(path, label='zvo_eigenvec_0'):
     return np.concatenate([v for _, v in parts])
 
 
+def check_cg_method_transition(source_files, target_files):
+    source_files, target_files = list(source_files), list(target_files)
+    assert len(source_files) == len(target_files) and source_files
+    for old, new in zip(source_files, target_files):
+        old_header, _ = read_kondo_checkpoint(old)
+        new_header, _ = read_kondo_checkpoint(new)
+        assert int(old_header[22]) == 4
+        assert int(new_header[22]) == 3
+
+
 def imports(root, source, case, hphi, launcher, env):
     cg = import_copy(root, source.name+'_cg', source)
     with (cg/'calc.def').open('a') as f:
@@ -119,6 +129,7 @@ def imports(root, source, case, hphi, launcher, env):
     text = run_case(te_cg, hphi, 'te_to_cg', launcher, env)
     assert 'step=4 time=0.040000000000000001' in text
     np.testing.assert_allclose(joined(te_cg), joined(te, 'zvo_eigenvec_final'), atol=3e-11, rtol=0)
+    check_cg_method_transition(checkpoints(te, 'zvo_eigenvec_final'), checkpoint_files(te_cg))
     if mpi_size(launcher) > 1:
         mixed = import_copy(root, source.name+'_mixed_actual', source)
         shutil.copy2(checkpoints(te, 'zvo_eigenvec_final')[-1], checkpoint_files(mixed)[-1])
