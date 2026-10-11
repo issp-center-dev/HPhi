@@ -1,4 +1,8 @@
-"""FullDiag sector states as TE initial states and CG re-evaluation inputs."""
+"""FullDiag sector states as TE initial states and CG re-evaluation inputs.
+
+generated: states of the H built from the definition files.
+external: states of an edited Matrix Market H read by InputHam; TE and CG
+still use the H of their own definition files (the consumer H)."""
 from pathlib import Path
 import os
 import shutil
@@ -14,6 +18,7 @@ from symmetry_fulldiag_common import W
 # Sector TE needs an explicit time grid; zero TEOneBody rows keep H static.
 TIMES = (0., .001, .002, .003, .004)
 QUENCH = .17
+MATRIX = 'zvo_ham_sector.mtx'
 ATOL = 1e-8
 FULLDIAG, CG, TE = 2, 3, 4
 KIND_LINE = 'source_hamiltonian_kind=sector_matrix_v1 hamiltonian_changed=unknown'
@@ -45,6 +50,8 @@ def consumer(case, name):
         shutil.rmtree(target)
     shutil.copytree(case.path, target, ignore=shutil.ignore_patterns('output', '*.log'))
     (target/'output').mkdir()
+    # The producer may have read its H from a file; consumers never do.
+    common.set_calc_file(target, {'InputHam': 0, 'OutputHam': 0})
     return target
 
 
@@ -154,6 +161,8 @@ def quench_case(case, states, required):
 
 
 def check_cg(case, path, hphi, launcher, ranks, label, vectors, energies):
+    """CG re-evaluates the imported states with the consumer H. energies, the
+    FullDiag eigenvalues, are compared only when that H produced them."""
     count = min(2, len(case.hq))
     common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0,
                                 'OutputGreenFormat': 0})
@@ -167,7 +176,8 @@ def check_cg(case, path, hphi, launcher, ranks, label, vectors, energies):
     for n in range(count):
         v = vectors[:, n]
         np.testing.assert_allclose(energy[n], np.vdot(v, case.hq @ v).real, rtol=0, atol=ATOL)
-        np.testing.assert_allclose(energy[n], energies[n], rtol=0, atol=ATOL)
+        if energies is not None:
+            np.testing.assert_allclose(energy[n], energies[n], rtol=0, atol=ATOL)
     for family, requests in case.operators.items():
         actual = common.read_green(path/'output', family, count, False, [row for row, _ in requests])
         for n in range(count):
@@ -176,6 +186,74 @@ def check_cg(case, path, hphi, launcher, ranks, label, vectors, energies):
             np.testing.assert_allclose(actual[n].real, reference.real, rtol=0, atol=ATOL)
             np.testing.assert_allclose(actual[n].imag, reference.imag, rtol=0, atol=ATOL)
     assert not list((path/'output').glob('zvo_eigenvec_*_rank_*.dat.part'))
+    return np.asarray(energy)
+
+
+def external_edit(case, exported):
+    """A change of the H itself: a shift for D=1, otherwise an off-diagonal
+    pair where the independent ground state u of Hq lives. Its phase makes
+    the first-order shift <u|dH|u> = 0.2|u_r u_c| positive, so the edited
+    low spectrum differs from a re-evaluation with the consumer H."""
+    edited = exported.copy()
+    if len(edited) == 1:
+        return edited + .125
+    ground = np.linalg.eigh(case.hq)[1][:, 0]
+    weight = np.tril(np.abs(np.outer(ground, ground)), -1)
+    row, col = np.unravel_index(np.argmax(weight), weight.shape)
+    product = np.conj(ground[row]) * ground[col]
+    edited[row, col] += .1 * np.conj(product) / abs(product)
+    edited[col, row] = np.conj(edited[row, col])
+    return edited
+
+
+def produce_external(case, hphi, solver, launcher, label):
+    """OutputHam, an edit that keeps the identity comments, then InputHam."""
+    output = case.path/'output'
+    if output.exists():
+        shutil.rmtree(output)
+    common.run_fd(case, hphi, solver, {'OutputHam': 1, 'OutputGreenFormat': 0}, launcher,
+                  f'export_{label}')
+    metadata, exported = common.read_sector_matrix(output/MATRIX)
+    edited = external_edit(case, exported)
+    shutil.rmtree(output)
+    output.mkdir()
+    common.write_sector_matrix(output/MATRIX, metadata, edited)
+    text = common.run_fd(case, hphi, solver, {'InputHam': 1, 'OutputEigenVec': 1,
+                                              'OutputGreenFormat': 0}, launcher, f'external_{label}')
+    assert f'FullDiag solver: {label}' in text, text
+    store = case.path.parent/f'{case.name}_{label}_external_states'
+    if store.exists():
+        shutil.rmtree(store)
+    shutil.copytree(output, store)
+    assert common.read_manifest(store)['matrix_source'] == 'input'
+    return store, edited
+
+
+def check_external(case, hphi, solver, launcher, ranks, label):
+    store, edited = produce_external(case, hphi, solver, launcher, label)
+    dim = len(edited)
+    energies = np.loadtxt(store/'zvo_energy_sector.dat', ndmin=2)[:, 1]
+    vectors, headers = common.read_states(store, dim, ranks)
+    common.check_eigensystem(edited, energies, vectors)
+    digest = common.matrix_digest(edited)
+    assert int(headers[0][0][W.HAMILTONIAN]) == digest
+    # The state of the edited H evolves under the consumer H.
+    state = min(1, dim-1)
+    path = consumer(case, f'{case.name}_{label}_external_te')
+    copy_state(store, state, path, 'seed', ranks)
+    set_te_inputs(path)
+    worst = check_te(case, path, hphi, launcher, ranks, 'te_external', vectors[:, state], state,
+                     case.hq, digest)
+    path = consumer(case, f'{case.name}_{label}_external_cg')
+    for k in range(min(2, dim)):
+        copy_state(store, k, path, f'zvo_eigenvec_{k}', ranks)
+    reevaluated = check_cg(case, path, hphi, launcher, ranks, 'cg_external', vectors, None)
+    # Re-evaluation with the consumer H is not the edited spectrum.
+    assert np.max(np.abs(reevaluated - energies[:len(reevaluated)])) > 1e-6, \
+        (case.name, reevaluated, energies)
+    print(f'{case.name} {label} np={ranks}: InputHam states in TE/CG with the consumer H PASS',
+          flush=True)
+    return worst
 
 
 def negatives(cases, case, store, hphi, launcher, ranks, label):
@@ -229,7 +307,8 @@ def kondo_layout_negative(root, case, store, hphi, launcher, ranks, label):
 def main():
     hphi = Path(sys.argv[1]).resolve()
     mode = sys.argv[2] if len(sys.argv) > 2 else 'all'
-    assert mode in ('all', 'generated'), mode
+    assert mode in ('all', 'generated', 'external'), mode
+    generated, external = mode in ('all', 'generated'), mode in ('all', 'external')
     launcher, ranks = common.launcher_from_env()
     selection = common.selected_cases()
     root = common.suite_root(f'reuse-{selection}')
@@ -241,7 +320,7 @@ def main():
             seen.add(case.model)
     if selection == 'boundary':
         chosen = cases
-    worst, negatives_done, quenches, exercised = 0., set(), 0, {}
+    worst, negatives_done, quenches, externals, exercised = 0., set(), 0, 0, {}
     for case in chosen:
         if not common.attach_correlations(case, False):
             case.operators = {}
@@ -249,8 +328,14 @@ def main():
             n = common.spingc.mpi_size(backend_launcher)
             if solver == 3 and len(case.hq) < common.grid_max(n):
                 continue
-            store = produce(case, hphi, solver, backend_launcher, label)
             dim = len(case.hq)
+            exercised.setdefault(label, []).append((case.name, dim, n))
+            if external:
+                worst = max(worst, check_external(case, hphi, solver, backend_launcher, n, label))
+                externals += 1
+            if not generated:
+                continue
+            store = produce(case, hphi, solver, backend_launcher, label)
             energies = np.loadtxt(store/'zvo_energy_sector.dat', ndmin=2)[:, 1]
             vectors, headers = common.read_states(store, dim, n)
             source_digest = int(headers[0][0][W.HAMILTONIAN])
@@ -277,17 +362,17 @@ def main():
             check_cg(case, path, hphi, backend_launcher, n, 'cg', vectors, energies)
             print(f'{case.name} {label} np={n}: TE static/quench and CG re-evaluation PASS',
                   flush=True)
-            exercised.setdefault(label, []).append((case.name, dim, n))
             if label not in negatives_done and selection == 'all':
                 negatives(cases, case, store, hphi, backend_launcher, n, label)
                 negatives_done.add(label)
             if case.model == 'Kondo' and selection == 'all' and f'kondo_{label}' not in negatives_done:
                 kondo_layout_negative(root, case, store, hphi, backend_launcher, n, label)
                 negatives_done.add(f'kondo_{label}')
-    assert quenches > 0, 'no noncommuting quench was exercised'
+    assert not generated or quenches > 0, 'no noncommuting quench was exercised'
+    assert not external or externals > 0, 'no InputHam source was exercised'
     common.require_backends(exercised)
-    print(f'sector FullDiag reuse ({selection}): {len(seen)} models, {quenches} quenches, '
-          f'worst state error {worst:.2e} PASS', flush=True)
+    print(f'sector FullDiag reuse ({selection}, {mode}): {len(seen)} models, {quenches} quenches, '
+          f'{externals} InputHam sources, worst state error {worst:.2e} PASS', flush=True)
 
 
 if __name__ == '__main__':
