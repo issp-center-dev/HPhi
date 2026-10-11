@@ -37,9 +37,10 @@ int CalcByFullDiag(
   int iret=0;
   struct SymmetryHamiltonianInfo info;
   unsigned int outputs = SymmetryFullDiagOutputMask(&(X->Bind.Def));
-  /* Eigenvalue-only sector input keeps the original path: no matrix
-   * preparation, state loop or completion record. */
-  int extended = X->Bind.Def.iFlgSymmetryBasis && outputs != SYM_FD_EIGENVALUES;
+  /* Eigenvalue-only sector input with the generated H keeps the original
+   * path: no matrix preparation, state loop or completion record. */
+  int extended = X->Bind.Def.iFlgSymmetryBasis &&
+                 (outputs != SYM_FD_EIGENVALUES || X->Bind.Def.iInputHam);
   memset(&info, 0, sizeof(info));
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
@@ -49,7 +50,9 @@ int CalcByFullDiag(
   }
   else if(X->Bind.Def.iInputHam==TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);
-    iret = inputHam(&(X->Bind));
+    /* The sector reader ends with Prepare(X, 1, info). */
+    iret = X->Bind.Def.iFlgSymmetryBasis
+        ? InputSymmetryHamiltonian(&(X->Bind), &info) : inputHam(&(X->Bind));
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_End);
   }
   StopTimer(5100);
@@ -57,14 +60,22 @@ int CalcByFullDiag(
   if(SumMPI_i(iret != 0) != 0) return FALSE;
   /* Canonicalize and hash the matrix the solver receives; ELPA consumes the
    * column panel during diagonalization. */
-  if (extended && PrepareSymmetryHamiltonian(&(X->Bind), 0, &info) != 0) return FALSE;
+  if (!X->Bind.Def.iInputHam && extended &&
+      PrepareSymmetryHamiltonian(&(X->Bind), 0, &info) != 0) return FALSE;
 
 
   if(X->Bind.Def.iOutputHam == TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_Start);
-    StartTimer(5500);
-    iret=outputHam(&(X->Bind));
-    StopTimer(5500);
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      /* The prepared matrix is the export; no diagonalization follows. */
+      iret = OutputSymmetryHamiltonian(&(X->Bind), &info);
+      if (iret == 0)
+        iret = WriteSymmetryFullDiagCompletion(&(X->Bind), 0, info.matrix_digest);
+    } else {
+      StartTimer(5500);
+      iret=outputHam(&(X->Bind));
+      StopTimer(5500);
+    }
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_End);
     if(iret != 0) return FALSE;
     return TRUE;

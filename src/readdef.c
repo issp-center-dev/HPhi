@@ -562,19 +562,6 @@ int ReadcalcmodFile(
     }
   }
 
-  /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
-     as a distributed block-cyclic panel rather than the full replicated
-     matrix. OutputHam/InputHam need the full replicated matrix, so that
-     combination must be rejected at startup. Serial (nproc==1) runs are
-     unaffected: the replicated matrix is still available there. Scoped to
-     FullDiag: the panel path only exists there, and OutputHam/InputHam with
-     other calc types must keep their previous (ignored) behavior. */
-  if (X->iCalcType == FullDiag && X->iSolver == SOLVER_ELPA && nproc > 1
-      && (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
-    fprintf(stdoutMPI, cErrElpaHamIO, defname);
-    return (-1);
-  }
-
   /* ExpecMode selects the observable-evaluation kernel for FullDiag
      (distributed-eigenvector solvers only). readdef checks range and
      CalcType/Solver eligibility, and demotes nproc==1 runs to serial here
@@ -1321,6 +1308,20 @@ int ReadDefFileNInt(
        (X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis == FALSE))) {
     fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
     return -1;
+  }
+
+  /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
+     as a distributed column panel rather than the full replicated matrix.
+     The raw OutputHam/InputHam need the full replicated matrix, so that
+     combination is rejected at startup; the TransSym sector reader/writer
+     works on the panel. Checked after TransSym is known. Serial (nproc==1)
+     runs are unaffected, and other calc types keep their previous (ignored)
+     behavior. */
+  if (X->iCalcType == FullDiag && X->iSolver == SOLVER_ELPA && nproc > 1 &&
+      X->iFlgSymmetryBasis == FALSE &&
+      (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
+    fprintf(stdoutMPI, cErrElpaHamIO, cFileNameListFile[KWCalcMod]);
+    return (-1);
   }
 
   if (iReadNup != iReadNdown) {

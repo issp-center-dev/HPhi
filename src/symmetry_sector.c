@@ -437,7 +437,8 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
                 NumAve, LargeValue, def->iInitialVecType);
       if (def->iCalcType == FullDiag) {
         unsigned int outputs = SymmetryFullDiagOutputMask(def);
-        if (outputs == SYM_FD_EIGENVALUES) {
+        /* InputHam is a requested matrix source even for eigenvalues only. */
+        if (outputs == SYM_FD_EIGENVALUES && !def->iInputHam) {
           fprintf(fp, "output_scope=eigenvalues\n");
         } else {
           /* Requested, not yet produced: completion is appended at the end. */
@@ -447,8 +448,11 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
                   "fulldiag_status=pending\n",
                   requested, def->iInputHam ? "input" : "generated");
         }
-        fprintf(fp, "solver_id=%d\neigenvalue_file=%s_energy_sector.dat\nmatrix_storage=%s\n",
-                def->iSolver, def->CDataFileHead,
+        fprintf(fp, "solver_id=%d\n", def->iSolver);
+        /* OutputHam stops before the eigenvalues. */
+        if (outputs != SYM_FD_HAMILTONIAN)
+          fprintf(fp, "eigenvalue_file=%s_energy_sector.dat\n", def->CDataFileHead);
+        fprintf(fp, "matrix_storage=%s\n",
                 def->iSolver == SOLVER_ELPA && nproc > 1 ? "column_panel" : "replicated");
       }
       if (ferror(fp)) error = 1;

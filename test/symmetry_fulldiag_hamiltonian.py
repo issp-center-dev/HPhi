@@ -1,10 +1,13 @@
-"""Sector Hamiltonian identity, canonical storage and digest through the test probe."""
+"""Sector Hamiltonian identity, canonical storage and digest through the test
+probe (contract), and the Matrix Market OutputHam/InputHam files (io)."""
 from pathlib import Path
+import shutil
 import sys
 
 import numpy as np
 
 import symmetry_fulldiag_common as common
+from symmetry_fulldiag_common import W
 
 MODEL_IDS = {'Hubbard': 0, 'Spin': 1, 'Kondo': 2, 'SpinGC': 4, 'KondoGC': 5,
              'SpinlessFermion': 7, 'tJ': 9, 'KondoNConserved': 12}
@@ -159,12 +162,214 @@ def contract_mode(hphi, probe_exe, launcher, ranks):
     assert negative_done == {label for _, label, _ in backends}, negative_done
 
 
+MATRIX = 'zvo_ham_sector.mtx'
+GREEN_GLOBS = ('*cisajs*', '*ThreeBody*', '*FourBody*', '*SixBody*', '*NBodyG*')
+ATOL = 1e-8
+
+
+def metadata_contract(metadata):
+    """The 15 identity fields of a matrix file as the probe contract integers."""
+    return {key: MODEL_IDS[metadata[key]] if key == 'model'
+            else int(metadata[key], 16 if key in common.MATRIX_HEX_KEYS else 10)
+            for key in IDENTITY}
+
+
+def fresh_output(case):
+    output = case.path/'output'
+    if output.exists():
+        shutil.rmtree(output)
+    output.mkdir()
+    return output
+
+
+def digest_text(digest):
+    return f'hphi-sector-matrix-fnv1a64-v1:{digest:016x}'
+
+
+def export(case, hphi, solver, launcher, label):
+    """OutputHam writes the canonical matrix and stops before diagonalizing."""
+    output = fresh_output(case)
+    common.run_fd(case, hphi, solver, {'OutputHam': 1}, launcher, f'export_{label}')
+    metadata, exported = common.read_sector_matrix(output/MATRIX)
+    assert not list(output.glob('*.part'))
+    assert not (output/'zvo_energy_sector.dat').exists()
+    assert not list(output.glob('*eigenvec*'))
+    for pattern in GREEN_GLOBS:
+        assert not list(output.glob(pattern)), pattern
+    manifest = common.read_manifest(output)
+    assert manifest['output_scope'] == 'requested' and manifest['requested_outputs'] == 'hamiltonian'
+    assert manifest['matrix_source'] == 'generated' and manifest['fulldiag_status'] == 'complete'
+    assert manifest['completed_outputs'] == 'hamiltonian'
+    digest = common.matrix_digest(exported)
+    assert manifest['matrix_digest'] == digest_text(digest), (manifest['matrix_digest'], digest)
+    assert 'eigenvalue_file' not in manifest, manifest
+    # Signed zeros are written as +0.
+    records = [line.split() for line in (output/MATRIX).read_text().splitlines()
+               if not line.startswith('%')][1:]
+    assert not [r for r in records if '-0' in r[2:]], records
+    assert metadata['format'] == 'sector-hamiltonian-v1'
+    assert metadata['scalar'] == 'complex-binary64'
+    check_identity(case, metadata_contract(metadata), manifest)
+    error = np.max(np.abs(exported - case.hq))
+    assert error <= 1e-10, (case.name, label, error)
+    return metadata, exported, digest, (output/MATRIX).read_bytes()
+
+
+def import_matrix(case, hphi, solver, launcher, label, h, writer):
+    """InputHam: the file written by writer(path) is the H that is diagonalized."""
+    output = fresh_output(case)
+    writer(output/MATRIX)
+    text = common.run_fd(case, hphi, solver, {'InputHam': 1, 'OutputEigenVec': 1},
+                         launcher, f'import_{label}')
+    assert f'FullDiag solver: {label.split("_")[0]}' in text, text
+    ranks = common.spingc.mpi_size(launcher)
+    dim = len(h)
+    energies = np.loadtxt(output/'zvo_energy_sector.dat', ndmin=2)[:, 1]
+    vectors, headers = common.read_states(output, dim, ranks)
+    common.check_eigensystem(h, energies, vectors)
+    digest = common.matrix_digest(h)
+    for parts in headers:
+        for header in parts:
+            assert int(header[W.HAMILTONIAN]) == digest
+    manifest = common.read_manifest(output)
+    requested = 'eigenvalues,correlations,eigenvectors' if case.operators else 'eigenvalues,eigenvectors'
+    assert manifest['output_scope'] == 'requested' and manifest['requested_outputs'] == requested
+    assert manifest['matrix_source'] == 'input' and manifest['fulldiag_status'] == 'complete'
+    assert manifest['completed_outputs'] == requested
+    assert manifest['matrix_digest'] == digest_text(digest), (manifest['matrix_digest'], digest)
+    for family, requests in case.operators.items():
+        actual = common.read_green(output, family, dim, False, [row for row, _ in requests])
+        expected = np.array([[np.vdot(v, oq @ v) for _, oq in requests] for v in vectors.T])
+        np.testing.assert_allclose(actual.real, expected.real, rtol=0, atol=ATOL)
+        np.testing.assert_allclose(actual.imag, expected.imag, rtol=0, atol=ATOL)
+    return energies, digest
+
+
+def edits(case, hphi, solver, launcher, label, metadata, exported, digest):
+    """External edits keep the identity comments and change the provenance."""
+    shifted = exported + .125*np.eye(len(exported))
+    energies, shifted_digest = import_matrix(
+        case, hphi, solver, launcher, f'{label}_shift', shifted,
+        lambda path: common.write_sector_matrix(path, metadata, shifted))
+    np.testing.assert_allclose(energies, np.linalg.eigvalsh(exported) + .125, rtol=0, atol=3e-8)
+    assert shifted_digest != digest
+    offdiagonal = exported.copy()
+    offdiagonal[1, 0] += .07+.03j
+    offdiagonal[0, 1] = np.conj(offdiagonal[1, 0])
+    _, offdiagonal_digest = import_matrix(
+        case, hphi, solver, launcher, f'{label}_offdiagonal', offdiagonal,
+        lambda path: common.write_sector_matrix(path, metadata, offdiagonal))
+    assert offdiagonal_digest not in (digest, shifted_digest)
+    print(f'{case.name} {label}: delta-I and off-diagonal edits PASS', flush=True)
+
+
+def precision(case, hphi, solver, launcher, label, metadata, exported):
+    """17-digit values, explicit zeros, any record order, CRLF and nnz=0."""
+    h = exported.copy()
+    h[1, 0] = h[0, 1] = 0
+    h[2, 0], h[0, 2] = 1e-15+3e-16j, 1e-15-3e-16j
+    h[2, 2] = 1/3
+    records = common.matrix_records(h, explicit_zeros={(2, 1)})
+    assert (2, 1, 0j) in records
+
+    def writer(path):
+        common.write_matrix_records(path, metadata, len(h), records[::-1])
+        lines = path.read_text().splitlines()
+        lines[1:1] = ['% general comment kept by any Matrix Market reader', '']
+        path.write_bytes(('\r\n'.join(lines) + '\r\n% trailing comment\r\n\r\n').encode())
+    import_matrix(case, hphi, solver, launcher, f'{label}_precision', h, writer)
+
+    def unterminated(path):
+        # The longest accepted line (511 bytes) ends the file without a line end.
+        common.write_sector_matrix(path, metadata, h)
+        lines = path.read_text().splitlines()
+        lines[-1] = lines[-1].ljust(511)
+        path.write_text('\n'.join(lines))
+    import_matrix(case, hphi, solver, launcher, f'{label}_unterminated', h, unterminated)
+    zero = np.zeros_like(h)
+    import_matrix(case, hphi, solver, launcher, f'{label}_zero', zero,
+                  lambda path: common.write_matrix_records(path, metadata, len(h), []))
+    print(f'{case.name} {label}: 17-digit/explicit-zero/reversed/CRLF/unterminated/nnz=0 inputs PASS',
+          flush=True)
+
+
+def chunks(case, hphi, solver, launcher, label, metadata, exported):
+    """Every lower element written explicitly, in a fixed shuffled order:
+    more than three record chunks of 4096 reach every rank."""
+    dim = len(exported)
+    records = common.matrix_records(
+        exported, explicit_zeros={(row, col) for col in range(1, dim+1) for row in range(col, dim+1)})
+    assert len(records) > 3*4096, len(records)
+    order = np.random.default_rng(20261011).permutation(len(records))
+    records = [records[i] for i in order]
+    import_matrix(case, hphi, solver, launcher, f'{label}_chunks', exported,
+                  lambda path: common.write_matrix_records(path, metadata, dim, records))
+    print(f'{case.name} {label}: {len(records)} records in {-(-len(records)//4096)} chunks PASS',
+          flush=True)
+
+
+def io_mode(hphi, launcher, ranks):
+    selection = common.selected_cases()
+    root = common.suite_root(f'hamiltonian-io-{selection}')
+    backends = common.solver_backends(launcher, ranks)
+    labels = [label for _, label, _ in backends]
+    exercised, edited, precise, chunked = {}, set(), set(), set()
+    for case in common.cases(root, selection):
+        if not common.attach_correlations(case, False):
+            case.operators = {}
+        dim = len(case.hq)
+        exports = {label: export(case, hphi, solver, backend_launcher, label)
+                   for solver, label, backend_launcher in backends}
+        # Generated values, identity and digest are rank and storage independent.
+        assert len({data[3] for data in exports.values()}) == 1, case.name
+        for index, (solver, label, backend_launcher) in enumerate(backends):
+            n = common.spingc.mpi_size(backend_launcher)
+            # Each backend reads the file of another rank count/backend.
+            source = labels[(index+1) % len(labels)]
+            metadata, exported, digest, text = exports[source]
+            if solver == 3 and dim < common.grid_max(n):
+                output = fresh_output(case)
+                (output/MATRIX).write_bytes(text)
+                common.run_fd(case, hphi, solver, {'InputHam': 1, 'OutputEigenVec': 1},
+                              backend_launcher, f'grid_reject_{label}', 'smaller than the process grid')
+                assert not list(output.glob('*eigenvec*'))
+                continue
+            _, imported = import_matrix(case, hphi, solver, backend_launcher, label, exported,
+                                        lambda path: path.write_bytes(text))
+            # The 17-digit file restores the exact binary64 matrix.
+            assert imported == digest
+            exercised.setdefault(label, []).append((case.name, dim, n))
+            print(f'{case.name} {label} np={n}: export, import of the {source} file, '
+                  f'digest {digest:016x} PASS', flush=True)
+            if selection != 'all':
+                continue
+            if dim >= 2 and (case.model, label) not in edited:
+                edits(case, hphi, solver, backend_launcher, label, metadata, exported, digest)
+                edited.add((case.model, label))
+            if dim >= 3 and label not in precise:
+                precision(case, hphi, solver, backend_launcher, label, metadata, exported)
+                precise.add(label)
+            if dim*(dim+1)//2 > 3*4096 and label not in chunked:
+                chunks(case, hphi, solver, backend_launcher, label, metadata, exported)
+                chunked.add(label)
+    for label, runs in exercised.items():
+        print(f'{label} exercised: ' + ', '.join(f'{name}(D={dim},np={n})' for name, dim, n in runs),
+              flush=True)
+    if selection == 'all':
+        models = {model for model, _ in edited}
+        assert len(models) == 8 and precise == chunked == set(exercised), \
+            (sorted(models), precise, chunked)
+    common.require_backends(exercised)
+
+
 def main():
     hphi = Path(sys.argv[1]).resolve()
     mode = sys.argv[2] if len(sys.argv) > 2 else 'contract'
     launcher, ranks = common.launcher_from_env()
     if mode == 'contract':
         contract_mode(hphi, common.probe_executable(hphi), launcher, ranks)
+    elif mode == 'io':
+        io_mode(hphi, launcher, ranks)
     else:
         raise ValueError(mode)
     print(f'sector FullDiag hamiltonian ({mode}) PASS', flush=True)
