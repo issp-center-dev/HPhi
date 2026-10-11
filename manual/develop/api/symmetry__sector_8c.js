@@ -6,6 +6,7 @@ var symmetry__sector_8c =
     [ "compare_group_entries", "symmetry__sector_8c.html#a61f49c978dd360cc6e920e44b9843121", null ],
     [ "ComputeSymmetryGroupDigest", "symmetry__sector_8c.html#a864cdbbd69f9abeb2dbb4c30f240de22", null ],
     [ "ComputeSymmetryHamiltonianDigest", "symmetry__sector_8c.html#ab263ee775708858df57b601fbf21acb1", null ],
+    [ "ComputeSymmetryKondoSpaceDigest", "symmetry__sector_8c.html#a7bb01b52927f4f7ac375eea9b31c0d22", null ],
     [ "ComputeSymmetrySectorDigest", "symmetry__sector_8c.html#a1cfb83ddd21deabb61a9d37676a87db1", null ],
     [ "hash_double", "symmetry__sector_8c.html#a51bf26ead98aaeb77daac52497313039", null ],
     [ "hash_integer", "symmetry__sector_8c.html#aeddeacb977eaabd008bb898072a2bdbb", null ],

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['fillentriescontext_0',['FillEntriesContext',['../structFillEntriesContext.html',1,'']]]
+  ['fermion_0',['Fermion',['../structFermion.html',1,'']]],
+  ['fillentriescontext_1',['FillEntriesContext',['../structFillEntriesContext.html',1,'']]]
 ];

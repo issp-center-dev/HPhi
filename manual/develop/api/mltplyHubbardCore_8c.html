@@ -167,7 +167,7 @@ Functions</h2></td></tr>
 <tr class="memitem:aaf0a9a1a4862be39ce011d0acf118928" id="r_aaf0a9a1a4862be39ce011d0acf118928"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, double complex tmp_V)</td></tr>
 <tr class="separator:aaf0a9a1a4862be39ce011d0acf118928"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6835f45827d97814c692e70c4f11d338" id="r_a6835f45827d97814c692e70c4f11d338"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a6835f45827d97814c692e70c4f11d338">CisAjt_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, double complex *amp_out)</td></tr>
-<tr class="memdesc:a6835f45827d97814c692e70c4f11d338"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare Fermion sign.  <br /></td></tr>
+<tr class="memdesc:a6835f45827d97814c692e70c4f11d338"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare <a class="el" href="structFermion.html">Fermion</a> sign.  <br /></td></tr>
 <tr class="separator:a6835f45827d97814c692e70c4f11d338"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60a01397977e408cc37b60ce5d64df27" id="r_a60a01397977e408cc37b60ce5d64df27"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a60a01397977e408cc37b60ce5d64df27">GC_CisAjt_map</a> (long unsigned int j, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, int *sgn_out)</td></tr>
 <tr class="memdesc:a60a01397977e408cc37b60ce5d64df27"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(c_{is}^\dagger c_{jt}\) term for grandcanonical Hubbard  <br /></td></tr>
@@ -175,7 +175,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a257628b6ed79f7a93d3d2a9a957bc936" id="r_a257628b6ed79f7a93d3d2a9a957bc936"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (long unsigned int j, double complex *tmp_v0, double complex *tmp_v1, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, double complex tmp_V, long unsigned int *tmp_off)</td></tr>
 <tr class="separator:a257628b6ed79f7a93d3d2a9a957bc936"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53b0c68afc11e94435493407e3a22773" id="r_a53b0c68afc11e94435493407e3a22773"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a53b0c68afc11e94435493407e3a22773">GC_CisAjt_TraceProbe</a> (long unsigned int j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long int *kprime_out, double complex *amp_out)</td></tr>
-<tr class="memdesc:a53b0c68afc11e94435493407e3a22773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = Fermion sign.  <br /></td></tr>
+<tr class="memdesc:a53b0c68afc11e94435493407e3a22773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = <a class="el" href="structFermion.html">Fermion</a> sign.  <br /></td></tr>
 <tr class="separator:a53b0c68afc11e94435493407e3a22773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a05094ef3950dec07705f97048f7be" id="r_a03a05094ef3950dec07705f97048f7be"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyHubbardCore_8c.html#a03a05094ef3950dec07705f97048f7be">child_CisAjt</a> (long unsigned int list_1_j, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, long unsigned int is1_spin, long unsigned int is2_spin, long unsigned int sum_spin, long unsigned int diff_spin, long unsigned int *tmp_off)</td></tr>
 <tr class="memdesc:a03a05094ef3950dec07705f97048f7be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute index of wavefunction of final state.  <br /></td></tr>
@@ -286,7 +286,7 @@ Functions</h2></td></tr>
 <li>A_spin: Mask for computing fermion sign (bits between sites)</li>
 <li>isA_spin = is1_spin + is2_spin: Combined mask for hopping</li>
 </ul>
-<p>Fermion sign:</p><ul>
+<p><a class="el" href="structFermion.html">Fermion</a> sign:</p><ul>
 <li>When c†_i c_j acts, sign = (-1)^(number of particles between i and j)</li>
 <li>Computed via SgnBit(state &amp; A_spin)</li>
 </ul>
@@ -598,7 +598,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </div><div class="memdoc">
 
 <p>Compute index of wavefunction of final state. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fermion sign </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structFermion.html">Fermion</a> sign </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
@@ -609,7 +609,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">is1_spin</td><td>Mask for occupation of (is)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is2_spin</td><td>Mask for occupation of (jt)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sum_spin</td><td>Mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_off</td><td>Index of wavefunction of final state </td></tr>
   </table>
   </dd>
@@ -680,7 +680,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </div><div class="memdoc">
 
 <p>Compute index of wavefunction of final state. </p>
-<dl class="section return"><dt>Returns</dt><dd>Fermion sign </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structFermion.html">Fermion</a> sign </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
@@ -691,7 +691,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">is1_spin</td><td>Mask for occupation of (is)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is2_spin</td><td>Mask for occupation of (jt)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sum_spin</td><td>Mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tmp_off</td><td>Index of wavefunction of final state </td></tr>
   </table>
   </dd>
@@ -1007,7 +1007,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite4</td><td>Site 4  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Bsum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -1276,7 +1276,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">is1_spin</td><td>Mask for occupation of (is)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is2_spin</td><td>Mask for occupation of (jt)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sum_spin</td><td>Mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Hopping integral </td></tr>
   </table>
   </dd>
@@ -1365,7 +1365,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (The University of Tokyo) </dd>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
-<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> shared 3-way (original / probe). Computes the canonical hopping destination and Fermion sign WITHOUT touching any vector. </p><dl class="section return"><dt>Returns</dt><dd>1 if the hop survives (kprime_out = 0-based destination in the basis, i.e. GetOffComp's 1-based off minus 1; sgn_out = +-1); 0 if annihilated or the exchanged bit pattern is not in the basis (kprime_out = -1). </dd></dl>
+<p>Mapping core of <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> shared 3-way (original / probe). Computes the canonical hopping destination and <a class="el" href="structFermion.html">Fermion</a> sign WITHOUT touching any vector. </p><dl class="section return"><dt>Returns</dt><dd>1 if the hop survives (kprime_out = 0-based destination in the basis, i.e. GetOffComp's 1-based off minus 1; sgn_out = +-1); 0 if annihilated or the exchanged bit pattern is not in the basis (kprime_out = -1). </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00383">383</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
@@ -1437,7 +1437,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare Fermion sign. </p>
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#aaf0a9a1a4862be39ce011d0acf118928">CisAjt</a> (canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, so *amp_out is the bare <a class="el" href="structFermion.html">Fermion</a> sign. </p>
 
 <p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00441">441</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
@@ -1533,7 +1533,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite2</td><td>Site 2  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Asum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -1831,9 +1831,9 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite4</td><td>Site 4  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Asum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Bsum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -2880,7 +2880,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite4</td><td>Site 4  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Bsum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -3155,7 +3155,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">is1_spin</td><td>Mask for occupation of (is)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is2_spin</td><td>Mask for occupation of (jt)  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sum_spin</td><td>Mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">diff_spin</td><td>Mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Hopping  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_off</td><td>Index of wavefunction of final state </td></tr>
   </table>
@@ -3311,7 +3311,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = Fermion sign. </p>
+<p>Trace-probe adapter for <a class="el" href="mltplyHubbardCore_8c.html#a257628b6ed79f7a93d3d2a9a957bc936">GC_CisAjt</a> (grand-canonical off-diagonal one-body). One-body operator: implicit coupling 1.0, *amp_out = <a class="el" href="structFermion.html">Fermion</a> sign. </p>
 
 <p class="definition">Definition at line <a class="el" href="mltplyHubbardCore_8c_source.html#l00526">526</a> of file <a class="el" href="mltplyHubbardCore_8c_source.html">mltplyHubbardCore.c</a>.</p>
 
@@ -3407,7 +3407,7 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite2</td><td>Site 2  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Asum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -3705,9 +3705,9 @@ Kazuyoshi Yoshimi (The University of Tokyo)</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite4</td><td>Site 4  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Asum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Adiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Bsum</td><td>Bit mask for hopping  </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for Fermion sign  </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Bdiff</td><td>Bit mask for <a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_V</td><td>Coupling constant  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">tmp_v0</td><td>Resulting wavefunction  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tmp_v1</td><td>Wavefunction to be multiplied  </td></tr>
@@ -4139,7 +4139,7 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <p>Compute mask for checking occupations of \((i_1,\sigma_1)\) (<a class="el" href="structLargeList.html#aa3b29bd026038bb0742a26b44aaf7af2" title="Mask used in the bit oeration.">LargeList::is1_spin</a>) and \((i_2,\sigma_2)\) (<a class="el" href="structLargeList.html#a39695415db0ac0ef9688a0ba0efdc440" title="Mask used in the bit oeration.">LargeList::is2_spin</a>)</p>
-<p>Compute mask for Fermion sign (<a class="el" href="structLargeList.html#a0595e327f9726774211d82f27477ae07" title="Mask used in the bit oeration.">LargeList::A_spin</a>)</p>
+<p>Compute mask for <a class="el" href="structFermion.html">Fermion</a> sign (<a class="el" href="structLargeList.html#a0595e327f9726774211d82f27477ae07" title="Mask used in the bit oeration.">LargeList::A_spin</a>)</p>
 <p>Compute mask for hopping (<a class="el" href="structLargeList.html#a8bd46afee09b313f7f938418c32a301f" title="Mask used in the bit oeration.">LargeList::isA_spin</a>)</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -4246,9 +4246,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <p>Compute mask for checking occupations of \((i_1,\sigma_1)\) (<a class="el" href="structLargeList.html#aa3b29bd026038bb0742a26b44aaf7af2" title="Mask used in the bit oeration.">LargeList::is1_spin</a>) and \((i_2,\sigma_2)\) (<a class="el" href="structLargeList.html#a39695415db0ac0ef9688a0ba0efdc440" title="Mask used in the bit oeration.">LargeList::is2_spin</a>)</p>
-<p>Compute mask for Fermion sign (<a class="el" href="structLargeList.html#a0595e327f9726774211d82f27477ae07" title="Mask used in the bit oeration.">LargeList::A_spin</a>)</p>
+<p>Compute mask for <a class="el" href="structFermion.html">Fermion</a> sign (<a class="el" href="structLargeList.html#a0595e327f9726774211d82f27477ae07" title="Mask used in the bit oeration.">LargeList::A_spin</a>)</p>
 <p>Compute mask for checking occupations of \((i_3,\sigma_3)\) (<a class="el" href="structLargeList.html#a92cf162de20e74ee5acf2a65242cf435" title="Mask used in the bit oeration.">LargeList::is3_spin</a>) and \((i_4,\sigma_4)\) (<a class="el" href="structLargeList.html#a7e059f6e6cebf78ce4cb390c03aaee60" title="Mask used in the bit oeration.">LargeList::is4_spin</a>)</p>
-<p>Compute mask for Fermion sign (<a class="el" href="structLargeList.html#a7d84518da32ee1be30b4031b77e4b282" title="Mask used in the bit oeration.">LargeList::B_spin</a>)</p>
+<p>Compute mask for <a class="el" href="structFermion.html">Fermion</a> sign (<a class="el" href="structLargeList.html#a7d84518da32ee1be30b4031b77e4b282" title="Mask used in the bit oeration.">LargeList::B_spin</a>)</p>
 <p>Compute mask for hopping (<a class="el" href="structLargeList.html#a8bd46afee09b313f7f938418c32a301f" title="Mask used in the bit oeration.">LargeList::isA_spin</a>, <a class="el" href="structLargeList.html#a726d63842067e1bbfd2a06d6b37f4476" title="Mask used in the bit oeration.">LargeList::isB_spin</a>)</p>
 <p>Copy coupling constant (<a class="el" href="structLargeList.html#ad706dd1a7ccaaa6f4e50cdcde74382a9" title="Coupling constant.">LargeList::tmp_V</a>)</p>
 <dl class="params"><dt>Parameters</dt><dd>

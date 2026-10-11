@@ -184,7 +184,7 @@ Functions</h2></td></tr>
 <li>Validity check: site j must be occupied, site i empty</li>
 <li>MPI_Sendrecv exchanges data with origin rank</li>
 </ul>
-<p>Fermion sign:</p><ul>
+<p><a class="el" href="structFermion.html">Fermion</a> sign:</p><ul>
 <li>Computed from bits between sites i and j</li>
 <li>bitdiff = |mask_i - 2*mask_j| or |mask_j - 2*mask_i|</li>
 <li>sign = SgnBit(myrank &amp; bitdiff) or SgnBit(origin &amp; bitdiff)</li>

@@ -14,7 +14,7 @@ var searchData=
   ['temporary_5fpeak_5fbytes_11',['temporary_peak_bytes',['../structSymmetryUnresolvedMatvecBlock.html#a5ed48868a365b892cc30cb7e34103a77',1,'SymmetryUnresolvedMatvecBlock']]],
   ['tend_12',['tend',['../structTimeKeepStruct.html#aa99971131764062c93f2bf54c8a0bb4b',1,'TimeKeepStruct']]],
   ['term_5findices_13',['term_indices',['../structMPISpinExchangeGroup.html#a4a916cccef8c10960645d0adcf4750f1',1,'MPISpinExchangeGroup']]],
-  ['terms_14',['terms',['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial']]],
+  ['terms_14',['terms',['../structPolynomial.html#ad878f5eb07ac18ec4996c499ed0a6ae8',1,'Polynomial::terms'],['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial::terms']]],
   ['tetime_15',['TETime',['../structDefineList.html#af26d0e477bb666f009625a2c5531661b',1,'DefineList']]],
   ['tetransfer_16',['TETransfer',['../structDefineList.html#a8b120ff7907dfc198c3475b0e8e35d95',1,'DefineList']]],
   ['tetransferdiagonal_17',['TETransferDiagonal',['../structDefineList.html#a586f32dbd000db66684ed6eee14bb65f',1,'DefineList']]],

@@ -221,6 +221,163 @@ CGとTimeEvolutionで下記のsector checkpoint形式により利用できます
 </ul>
 </section>
 </section>
+<section id="kondo-1-2expert-mode">
+<h1>Kondoセクター（スピン1/2、expert mode）<a class="headerlink" href="#kondo-1-2expert-mode" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> は次の3種類のKondo空間に対応します。 <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> は局在スピンの
+<span class="math notranslate nohighlight">\(L\)</span> サイトと伝導電子の <span class="math notranslate nohighlight">\(C\)</span> サイトの合計です。 <code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> では局在
+スピン1/2を1、伝導サイトを0とします。全群操作はこの配置maskを保存する必要が
+あります。局在・伝導サイトは連続配置でも交互配置でもかまいません。</p>
+<table class="docutils align-default" id="id8">
+<caption><span class="caption-number">表 4.3 </span><span class="caption-text">Kondoの入力と固定量</span><a class="headerlink" href="#id8" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 39.0%" />
+<col style="width: 37.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>空間</p></th>
+<th class="head"><p>expert入力</p></th>
+<th class="head"><p>固定量</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Kondo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=2</span></code> と <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>, <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>。または <code class="docutils literal notranslate"><span class="pre">Nup</span></code>, <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> の両方</p></td>
+<td><p>伝導電子数と全スピンz成分</p></td>
+</tr>
+<tr class="row-odd"><td><p>KondoNConserved</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=2</span></code> と <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>。 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code>, <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> は省略</p></td>
+<td><p>伝導電子数のみ（内部model 12）</p></td>
+</tr>
+<tr class="row-even"><td><p>KondoGC</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=5</span></code>。上記4個の量子数keywordは全て省略</p></td>
+<td><p>粒子数・スピンz成分とも固定しない</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">Ncond</span></code> は伝導電子数です。 <code class="docutils literal notranslate"><span class="pre">Nup</span></code>, <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> は局在サイトごとの1個のスピン
+占有も含み、 <span class="math notranslate nohighlight">\(N_\uparrow+N_\downarrow=L+N_{\rm cond}\)</span>、
+<span class="math notranslate nohighlight">\(N_\uparrow-N_\downarrow=2S_z\)</span> です。重複する明示指定は一致が必要です。
+0は省略ではなく明示値で、KondoGCでは上記4個のkeywordに0を指定しても拒否します。
+伝導電子数の範囲は <span class="math notranslate nohighlight">\(0\leq N_{\rm cond}\leq2C\)</span> です。対称性射影前の
+NConservedとGCの次元は <span class="math notranslate nohighlight">\(2^L\binom{2C}{N_{\rm cond}}\)</span> と <span class="math notranslate nohighlight">\(2^L4^C\)</span> で、
+Kondoではさらに全スピンz成分を制限します。空の物理空間・対称性セクターは拒否します。
+KondoとKondoNConservedは <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;=</span> <span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)/2</span></code>、
+KondoGCは上限を含まない厳密不等号を要求します。</p>
+<section id="id5">
+<h2>物理的並進と演算子<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>各サイトはup/downの2 bitを使い、局在サイトは必ず1 bitだけ占有します。
+全軌道置換のフェルミオン符号を含む作用を <span class="math notranslate nohighlight">\(F_g\)</span>、局在サイトだけの置換の
+符号を <span class="math notranslate nohighlight">\(\epsilon_L(g)\)</span> とすると、物理的作用は</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-1">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-1" title="Link to this equation">¶</a></span>\[T_{\rm phys}(g)=\epsilon_L(g)F_g,\qquad
+\chi(g)=\exp(-2\pi i m g/P),\qquad k=2\pi m/P.\]</div>
+<p>です。局在スピン数が偶数でも物理的運動量に追加のshiftは不要です。射影には
+<span class="math notranslate nohighlight">\(\overline{\chi(g)}\)</span> を使い、最小代表wordの係数を正の実数に固定します。</p>
+<p>対応する項は伝導 <code class="docutils literal notranslate"><span class="pre">Trans</span></code> （複素hoppingを含む）、局在onsite <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、
+<code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、 <code class="docutils literal notranslate"><span class="pre">Hund</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、
+<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> です。局在演算子はonsite行列単位 <span class="math notranslate nohighlight">\(E_i^{ab}\)</span> に
+限り、局在サイトへの・局在サイトからの・局在サイト間のhoppingは拒否します。
+<code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> は局在サイトでは0となり、 <code class="docutils literal notranslate"><span class="pre">PairHop</span></code> は伝導サイトを要求します。
+混合項は局在行列代数と
+伝導フェルミオン反交換則で整理してから、Hermiticity・群不変性・固定量の保存を
+検査します。横磁場や補償するスピン反転は、この検査を満たす場合に使えます。
+専用 <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> 入力は非対応ですが、許されるスピン対積は <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> で記述
+できます。空Hamiltonianも有効です。</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-number">表 4.4 </span><span class="caption-text">Kondoセクターの手法と機能（3空間共通）</span><a class="headerlink" href="#id9" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 19.0%" />
+<col style="width: 28.0%" />
+<col style="width: 18.0%" />
+<col style="width: 18.0%" />
+<col style="width: 17.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>手法（CalcType）</p></th>
+<th class="head"><p>結果</p></th>
+<th class="head"><p>相関関数</p></th>
+<th class="head"><p>状態import/export</p></th>
+<th class="head"><p>基底layout</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Lanczos (0)</p></td>
+<td><p>低エネルギー状態</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可 / 不可</p></td>
+<td><p>両方</p></td>
+</tr>
+<tr class="row-odd"><td><p>mTPQ (1)</p></td>
+<td><p>単一セクター標本</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可 / 不可</p></td>
+<td><p>両方</p></td>
+</tr>
+<tr class="row-even"><td><p>FullDiag (2)</p></td>
+<td><p>セクターの全固有値</p></td>
+<td><p>不可</p></td>
+<td><p>不可 / 不可</p></td>
+<td><p>Replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
+<td><p>低エネルギー状態（推奨）</p></td>
+<td><p>全6形式</p></td>
+<td><p>可 / 可</p></td>
+<td><p>両方</p></td>
+</tr>
+<tr class="row-even"><td><p>TimeEvolution (4)</p></td>
+<td><p>静的・駆動時間発展</p></td>
+<td><p>全6形式</p></td>
+<td><p>必須 / 任意</p></td>
+<td><p>両方</p></td>
+</tr>
+<tr class="row-odd"><td><p>cTPQ (5)</p></td>
+<td><p>単一セクター標本</p></td>
+<td><p>全6形式</p></td>
+<td><p>不可 / 不可</p></td>
+<td><p>両方</p></td>
+</tr>
+</tbody>
+</table>
+<p>両方とは <code class="docutils literal notranslate"><span class="pre">replicated</span></code> と <code class="docutils literal notranslate"><span class="pre">distributed</span></code> です。所有するセクター行が0のMPI
+rankもcollectiveと状態I/Oへ参加します。FullDiagはbuildに含まれるLAPACK
+（<code class="docutils literal notranslate"><span class="pre">Solver=0</span></code>）、ScaLAPACK（1）、ELPA（3）に対応し、後述のprocess grid制約が
+適用されます。全6形式は <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>、 <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>、 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>、
+<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>、 <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>、 <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> です。spin添字は0または1で、局在因子は
+onsiteに限ります。legacy形式と集約形式に対応します。セクター内の期待値であり、
+セクター間遷移振幅ではありません。</p>
+<p>粒子数の出力（<code class="docutils literal notranslate"><span class="pre">num</span></code>, <code class="docutils literal notranslate"><span class="pre">num2</span></code> を含む）は従来どおり <span class="math notranslate nohighlight">\(N=L+N_{\rm cond}\)</span>
+を使い、doublon列は伝導doublonを数えます。全 <span class="math notranslate nohighlight">\(S_z\)</span> とその2次momentは実際の
+vectorから評価します。既存の出力列は変更せず、組込み <span class="math notranslate nohighlight">\(S^2\)</span> 出力も拡張
+しません。TPQ/cTPQは固定量を含む単一空間対称性セクターを標本化します。単一
+セクターは全熱ensembleではありません。cTPQの一様・明示逆温度scheduleは後述の
+規則に従います。</p>
+<p>Kondoのcheckpointだけはversion 2、phase 2、30個のlittle-endian 64-bit header
+wordを使います。後述のversion 1のfieldに <code class="docutils literal notranslate"><span class="pre">local_site_mask</span></code> と
+<code class="docutils literal notranslate"><span class="pre">fixed_quantity_flags</span></code> を追加したものです。phase 2は上記の物理的並進規約です。
+flagsはKondoが3、NConservedが1、GCが0で、GCの <code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> fieldは0です。
+manifestは局在mask・物理空間digest・固定量をHamiltonian digestと分離して記録
+します。importには模型・物理空間・sector・順序・rank数・layoutの一致が必要です。
+CGはimport状態を評価し、最適化を再開しません。TEは新しい時刻列で開始し、
+Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応します。
+非Kondoのcheckpointはversion 1 / phase 1 / 28 wordのままです。</p>
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> と <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> は状態読込・時系列出力より前に、全使用時刻で
+同じ局在形式・固定量・対称性の検査を行います。基底を固定し、後述の右端点Taylor則
+で伝播します。同一時刻もHamiltonian検査を省略しません。twist/APBCは伝導hopping
+の一様Peierls位相で表せますが、置換行の予約multiplierは1のままです。ゲージと
+サイト置換が物理的運動量の規約を定めます。境界だけのtwistは通常、単純な並進に
+不変ではなく、ゲージ変換時に対称性作用も変換せず同じ運動量labelと解釈しては
+いけません。 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> は既存の座標規約を使い、局在maskから座標を推定しません。
+全時刻で得られるhoppingが不変な場合だけ使えます。配置がその座標に適合しない
+場合は、整合するゲージで明示的な不変 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> hopping増分を指定してください。</p>
+<p>general spin、新しいStandard-modeのKondo運動量生成、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
+<code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>、 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>、スピン軸回転、反ユニタリ操作、
+多次元既約表現、Hamiltonian I/O、solver restart、rank数変更を伴うcheckpoint
+再分配は非対応です。FullDiagはさらに状態・相関出力、distributed基底metadata、
+MAGMA、nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> を除外します。</p>
+</section>
+</section>
 <section id="spingc-1-2expert-mode">
 <h1>SpinGCセクター（スピン1/2、expert mode）<a class="headerlink" href="#spingc-1-2expert-mode" title="Link to this heading">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> と <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> の組み合わせは、射影前の次元が
@@ -237,12 +394,12 @@ bit 0が下向き、bit 1が上向きで、site 0が最下位bitです。各軌�
 Hermitian性と群の各操作に対する不変性は必要です。
 <span class="math notranslate nohighlight">\(E_i^{ab}=|a\rangle_i\langle b|\)</span> とすると、実数係数の <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> の1行
 <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">j</span> <span class="pre">J</span></code> は次の項を表します。</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-1">
-<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-1" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-2">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-2" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
 <p>追加の1/2はありません。逆向きの行と重複行は加算され、同一サイトの行は0です。
 canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の固定Sz条件は変更しません。</p>
-<table class="docutils align-default" id="id7">
-<caption><span class="caption-number">表 4.3 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id7" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-number">表 4.5 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id10" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />
@@ -313,12 +470,12 @@ CGに <code class="docutils literal notranslate"><span class="pre">Sz2</span></c
 sectorと位相規約は一致させます。どちらもsolver restartではなく <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は拒否します。
 SpinGC checkpointもversion 1で、headerは <code class="docutils literal notranslate"><span class="pre">model=4</span></code>、<code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> は0です。
 Hamiltonian fingerprintは解析済みPairLift行を含む
-<code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code> です。canonical模型はv2と既存checkpoint形式を
+<code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code> です。非Kondoのcanonical模型はv2と既存checkpoint形式を
 維持します。manifestは <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code>、<code class="docutils literal notranslate"><span class="pre">full_dim=2^Nsite</span></code> を記録します。</p>
 <p>SpinGCは <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の駆動に対応し、下記の右端Taylor規約を使います。
 使用する全時刻の入力を伝播前に検査します。<code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否されます。
 代わりに、群不変なサイト内 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> またはスピン積の <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を指定してください。
-general spin、Boost、Kondo、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
+general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
 全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
 solver restart、rank数を変更したcheckpoint再分配は対象外です。
 このSpinGC sector経路では <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
@@ -417,8 +574,8 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 manifestには <code class="docutils literal notranslate"><span class="pre">canonical_tpq_steps</span></code>、 <code class="docutils literal notranslate"><span class="pre">beta_schedule</span></code> と、一定刻み・次数または
 全beta・次数行を記録します。mTPQと同様に、全セクターの和ではなく単一セクターの結果です。</p>
 </section>
-<section id="id5">
-<h2>静的ハミルトニアンでのセクター時間発展<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<section id="id6">
+<h2>静的ハミルトニアンでのセクター時間発展<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
 <p>expert modeの <code class="docutils literal notranslate"><span class="pre">CalcType=4</span></code> は、保存済みセクターベクトルを静的Hamiltonianで
 時間発展させます。 <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>、 <code class="docutils literal notranslate"><span class="pre">ReStart=0</span></code>、正整数の <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> を
 指定し、namelistへ <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed_eigenvec_0</span></code> を追加します。
@@ -454,9 +611,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 <section id="hamiltonian">
 <h2>時間依存するセクターHamiltonian<a class="headerlink" href="#hamiltonian" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> または <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の1種類で駆動できます。
-canonical模型では <code class="docutils literal notranslate"><span class="pre">Laser</span></code> も選べますが、SpinGCでは拒否します。
+canonical模型とKondoの3空間では <code class="docutils literal notranslate"><span class="pre">Laser</span></code> も選べます。Kondoには上記の幾何・
+ゲージ制限が適用され、SpinGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。上記4模型で対角・非対角項に対応し、spinless fermionも含みます。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。</p>
 <p>初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、
 固定量子数の保存、指定群に対する不変性を検査します。後の時刻だけで対称性が
@@ -533,8 +691,8 @@ ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製
 Hamiltonian/ベクトル入出力とrestartも非対応です。
 manifestにはsolver、行列storage、 <code class="docutils literal notranslate"><span class="pre">output_scope=eigenvalues</span></code> を記録します。</p>
 </section>
-<section id="id6">
-<h2>セクター情報ファイル<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<section id="id7">
+<h2>セクター情報ファイル<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
 <p>非空の対称化基底を構築し、セクターのオプションを検証した後、solver の開始前に
 <code class="docutils literal notranslate"><span class="pre">output/symmetry_sector.dat</span></code> を出力します。 <code class="docutils literal notranslate"><span class="pre">OutputDataHead=1</span></code> の場合は
 <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_symmetry_sector.dat</span></code> です。 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定しない

@@ -654,7 +654,7 @@ Functions</h2></td></tr>
 <li>origin = myrank XOR (mask1 + mask2)</li>
 <li>This XOR flips both site bits, locating the rank whose bit pattern satisfies the complementary occupation requirements.</li>
 </ul>
-<p>Fermion sign:</p><ul>
+<p><a class="el" href="structFermion.html">Fermion</a> sign:</p><ul>
 <li>bitdiff captures bits between the two sites for anticommutation counting</li>
 <li>SgnBit counts set bits in (origin &amp; bitdiff) to determine sign</li>
 </ul>
@@ -1140,7 +1140,7 @@ Functions</h2></td></tr>
 <li>ALL ranks participate in MPI_Sendrecv (no early return before communication)</li>
 <li>After communication, ranks with rank_valid=0 return 0 contribution</li>
 </ul>
-<p>Fermion sign:</p><ul>
+<p><a class="el" href="structFermion.html">Fermion</a> sign:</p><ul>
 <li>Applied operator-by-operator using SgnBit on intermediate states</li>
 <li>Order: c_l (if inter-PE) -&gt; c†_k (if inter-PE) -&gt; local operators</li>
 </ul>

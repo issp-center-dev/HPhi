@@ -153,7 +153,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ad7c739742ce1cad082947c7f647d1289"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check the occupation of both site 1 and site 3.  <br /></td></tr>
 <tr class="separator:ad7c739742ce1cad082947c7f647d1289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81ceaf1edd9e416156a2430f36ca6de3" id="r_a81ceaf1edd9e416156a2430f36ca6de3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIHubbardCore_8c.html#a81ceaf1edd9e416156a2430f36ca6de3">GetSgnInterAll</a> (unsigned long int isite1, unsigned long int isite2, unsigned long int isite3, unsigned long int isite4, int *Fsgn, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, unsigned long int orgbit, unsigned long int *offbit)</td></tr>
-<tr class="memdesc:a81ceaf1edd9e416156a2430f36ca6de3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the index of final wavefunction associated to \(c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}\), and Fermion sign.  <br /></td></tr>
+<tr class="memdesc:a81ceaf1edd9e416156a2430f36ca6de3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the index of final wavefunction associated to \(c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}\), and <a class="el" href="structFermion.html">Fermion</a> sign.  <br /></td></tr>
 <tr class="separator:a81ceaf1edd9e416156a2430f36ca6de3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab11c8a29700b11b3343b9ffa6b4dd47c" id="r_ab11c8a29700b11b3343b9ffa6b4dd47c"><td class="memItemLeft" align="right" valign="top">double complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mltplyMPIHubbardCore_8c.html#ab11c8a29700b11b3343b9ffa6b4dd47c">child_GC_CisAisCjtAjt_Hubbard_MPI</a> (int org_isite1, int org_ispin1, int org_isite3, int org_ispin3, double complex tmp_V, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, double complex *tmp_v0, double complex *tmp_v1)</td></tr>
 <tr class="memdesc:ab11c8a29700b11b3343b9ffa6b4dd47c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute \(c_{is}^\dagger c_{is} c_{jt}^\dagger c_{jt}\) term of grandcanonical Hubbard system.  <br /></td></tr>
@@ -2070,7 +2070,7 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Compute the index of final wavefunction associated to \(c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}\), and Fermion sign. </p>
+<p>Compute the index of final wavefunction associated to \(c_{4}^\dagger c_{3}c_{2}^\dagger c_{1}\), and <a class="el" href="structFermion.html">Fermion</a> sign. </p>
 <dl class="section return"><dt>Returns</dt><dd>1 if relevant, 0 if irrelevant </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -2078,7 +2078,7 @@ Youhei Yamaji (The University of Tokyo) </dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite2</td><td>Site 2  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite3</td><td>Site 3  </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">isite4</td><td>Site 4  </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">Fsgn</td><td>Fermion sign  </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">Fsgn</td><td><a class="el" href="structFermion.html">Fermion</a> sign  </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">X</td><td></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">orgbit</td><td>Index of the initial state  </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">offbit</td><td>Index of the final state </td></tr>

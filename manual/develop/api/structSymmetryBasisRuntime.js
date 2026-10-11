@@ -29,6 +29,7 @@ var structSymmetryBasisRuntime =
     [ "full_dim", "structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda", null ],
     [ "group_inverse", "structSymmetryBasisRuntime.html#a646d3eb87bf7a7057d95903af94a5b3d", null ],
     [ "group_order", "structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e", null ],
+    [ "kondo_local_sign", "structSymmetryBasisRuntime.html#a8d2fa46d5f746c18f9b786ab344cf203", null ],
     [ "local_basis", "structSymmetryBasisRuntime.html#a5f31966acf72615aaafa06b03b696242", null ],
     [ "local_capacity", "structSymmetryBasisRuntime.html#a9617ef19325a42d6da89140c5b183cb3", null ],
     [ "local_dim", "structSymmetryBasisRuntime.html#a6fc83a27cb979fead30c5b84a03848b3", null ],

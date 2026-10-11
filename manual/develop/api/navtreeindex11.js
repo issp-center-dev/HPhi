@@ -1,5 +1,8 @@
 var NAVTREEINDEX11 =
 {
+"structCanonicalColumnContext.html":[9,0,3],
+"structCanonicalColumnContext.html#a17e2c3ad3c6f703d51873ca6d43651dd":[9,0,3,0],
+"structCanonicalColumnContext.html#aab9dd5cc6e302ef12baf2235ecec2656":[9,0,3,1],
 "structCanonicalColumnContext.html#ab05fcbce8fc6ce02c3ee481ae93d35f1":[9,0,3,2],
 "structCanonicalColumnContext.html#ab7f9e27e2918ed9c7ce07396dfc06389":[9,0,3,3],
 "structCheckList.html":[9,0,4],
@@ -246,8 +249,5 @@ var NAVTREEINDEX11 =
 "structDenseSymmetryColumn.html":[9,0,11],
 "structDenseSymmetryColumn.html#a149b24f2b7b4d6a76f72c9885339fed3":[9,0,11,0],
 "structDenseSymmetryColumn.html#a8cfa6c104461f827a9b841dbf0844460":[9,0,11,1],
-"structDiagonalContext.html":[9,0,12],
-"structDiagonalContext.html#a392393d9b85643cf845687ea6be37542":[9,0,12,2],
-"structDiagonalContext.html#a8b54a7664f608cb8c15d1da4206bde68":[9,0,12,1],
-"structDiagonalContext.html#aec817f45eac98efb365fff720291f556":[9,0,12,0]
+"structDiagonalContext.html":[9,0,12]
 };

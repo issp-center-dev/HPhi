@@ -6,7 +6,7 @@ var searchData=
   ['dcomegamin_3',['dcOmegaMin',['../structDefineList.html#a6e00e4dafdf629e302e8755c1048cd0b',1,'DefineList']]],
   ['dcomegaorg_4',['dcOmegaOrg',['../structDefineList.html#a1f44ba4fcb830965aa80dc95a8affe31',1,'DefineList']]],
   ['debug_5fecho_5',['debug_echo',['../structSymmetryRepresentativeBatchOptions.html#ab056362215f4e37cc437322d9bb20c8b',1,'SymmetryRepresentativeBatchOptions']]],
-  ['def_6',['def',['../structBindStruct.html#a365c4c2952a7e0157c4902449c116b24',1,'BindStruct::Def'],['../structDiagonalContext.html#aec817f45eac98efb365fff720291f556',1,'DiagonalContext::def'],['../structRawTransitionContext.html#a0da1f6100c9ea6d705c905e3fcf2499d',1,'RawTransitionContext::def'],['../structPolynomial.html#a0afe2b3d2a121bd62b595957bb424631',1,'Polynomial::def']]],
+  ['def_6',['def',['../structBindStruct.html#a365c4c2952a7e0157c4902449c116b24',1,'BindStruct::Def'],['../structDiagonalContext.html#aec817f45eac98efb365fff720291f556',1,'DiagonalContext::def'],['../structPolynomial.html#ab8cea79748ab6e3f6b4e19971f6b0bfd',1,'Polynomial::def'],['../structRawTransitionContext.html#a0da1f6100c9ea6d705c905e3fcf2499d',1,'RawTransitionContext::def']]],
   ['demoted_5finput_5fham_7',['demoted_input_ham',['../structTraceExecutionPlan.html#a03f4bbc24efad9d88d9407a6e5edd4b9',1,'TraceExecutionPlan']]],
   ['demoted_5fmemory_8',['demoted_memory',['../structTraceExecutionPlan.html#abd23dc2effd153998e1054ffa2886285',1,'TraceExecutionPlan']]],
   ['demoted_5fshared_5fevaluator_9',['demoted_shared_evaluator',['../structTraceExecutionPlan.html#aec97670d450bd56cddf93ca27a328eef',1,'TraceExecutionPlan']]],

@@ -170,7 +170,7 @@ $(document).ready(function(){initNavTree('lapack__diag_8c_source.html',''); init
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keywordtype">int</span> descA[9];</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keywordtype">int</span> ierr;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Using ELPA (%s)\n\n&quot;</span>,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;FullDiag solver: ELPA\nUsing ELPA (%s)\n\n&quot;</span>,</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iNGPU &gt;= 1 ? <span class="stringliteral">&quot;GPU&quot;</span> : <span class="stringliteral">&quot;CPU&quot;</span>);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  MPI_Comm_size(MPI_COMM_WORLD, &amp;size);</div>
@@ -404,7 +404,7 @@ $(document).ready(function(){initNavTree('lapack__diag_8c_source.html',''); init
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  <span class="keywordflow">case</span> <a class="code hl_define" href="DefCommon_8h.html#adc523c78d103d4a5b21807a95668d7fa">SOLVER_SCALAPACK</a>:</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="global_8c.html#ae68326adc3b3862f1162832f70727b06">nproc</a> &gt; 1) {</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>      fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Using SCALAPACK\n\n&quot;</span>);</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>      fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;FullDiag solver: ScaLAPACK\nUsing SCALAPACK\n\n&quot;</span>);</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>      MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>      MPI_Comm_size(MPI_COMM_WORLD, &amp;size);</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>      MPI_Dims_create(size, 2, dims);</div>
@@ -448,64 +448,65 @@ $(document).ready(function(){initNavTree('lapack__diag_8c_source.html',''); init
 <div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>  <span class="keywordflow">default</span>: <span class="comment">/* SOLVER_LAPACK */</span></div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    solver_failed = <a class="code hl_function" href="matrixlapack_8h.html#a6591537834cf2a4f86271053cc54dd37">ZHEEVall</a>((<span class="keywordtype">int</span>)xMsize, <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>, <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>, <a class="code hl_variable" href="global_8c.html#af964b432d6b4264b8f3e88ec42754730">L_vec</a>) != 1;</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>  }</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(solver_failed) != 0) {</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Error: FullDiag eigensolver failed; no eigenvalues are written.\n&quot;</span>);</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>    FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iSolver == <a class="code hl_define" href="DefCommon_8h.html#adc523c78d103d4a5b21807a95668d7fa">SOLVER_SCALAPACK</a>) {</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>      free(Z_vec); Z_vec = NULL; <span class="comment">/* backend failure did not retain a grid */</span></div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    }</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>  }</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgSymmetryBasis) {</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    <span class="keywordtype">int</span> length = snprintf(sdt, <span class="keyword">sizeof</span>(sdt), <span class="stringliteral">&quot;%s_energy_sector.dat&quot;</span>, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.CDataFileHead);</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(length &lt; 0 || (<span class="keywordtype">size_t</span>)length &gt;= <span class="keyword">sizeof</span>(sdt)) != 0) {</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>      <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    }</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>  } <span class="keywordflow">else</span> strcpy(sdt, <a class="code hl_variable" href="global_8c.html#a6031b24d14455f2f57ac86687b13aad7">cFileNameEigenvalue_Lanczos</a>);</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>  {</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    <span class="keywordtype">int</span> open_failed = (<a class="code hl_function" href="FileIO_8c.html#a7d23a0790b28a52d128e0b93bc832cfb">childfopenMPI</a>(sdt, <span class="stringliteral">&quot;w&quot;</span>, &amp;fp) != 0) ? 1 : 0;</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span><span class="preprocessor">#ifdef MPI</span></div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    <span class="keywordtype">int</span> any_open_failed = 0;</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="comment">/* childfopenMPI opens the real output only on rank 0 and /dev/null on</span></div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span><span class="comment">       the other ranks. Propagate rank 0&#39;s failure before any rank returns,</span></div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span><span class="comment">       otherwise the remaining ranks continue into collective observable</span></div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span><span class="comment">       evaluation and deadlock. */</span></div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>    MPI_Allreduce(&amp;open_failed, &amp;any_open_failed, 1, MPI_INT, MPI_MAX,</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                  MPI_COMM_WORLD);</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>    open_failed = any_open_failed;</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    <span class="keywordflow">if</span> (open_failed) {</div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>      <span class="keywordflow">if</span> (fp != NULL) fclose(fp);</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>      <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    }</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>  }</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>  <span class="keywordflow">for</span> (i = 0; i &lt; i_max; i++) {</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgSymmetryBasis) fprintf(fp, <span class="stringliteral">&quot; %ld %.17g\n&quot;</span>, i, creal(<a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i]));</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="keywordflow">else</span> fprintf(fp, <span class="stringliteral">&quot; %ld %.10lf \n&quot;</span>, i, creal(<a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i]));</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>  }</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>  {</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    <span class="keywordtype">int</span> failed = ferror(fp) != 0;</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    <span class="keywordflow">if</span> (fclose(fp) != 0) failed = 1;</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(failed) != 0) {</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>      <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    }</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>  }</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>}</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;FullDiag solver: LAPACK\n&quot;</span>);</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    solver_failed = <a class="code hl_function" href="matrixlapack_8h.html#a6591537834cf2a4f86271053cc54dd37">ZHEEVall</a>((<span class="keywordtype">int</span>)xMsize, <a class="code hl_variable" href="global_8c.html#aade638705bab07f8514708b0422133f0">Ham</a>, <a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>, <a class="code hl_variable" href="global_8c.html#af964b432d6b4264b8f3e88ec42754730">L_vec</a>) != 1;</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>  }</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(solver_failed) != 0) {</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, <span class="stringliteral">&quot;Error: FullDiag eigensolver failed; no eigenvalues are written.\n&quot;</span>);</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iSolver == <a class="code hl_define" href="DefCommon_8h.html#adc523c78d103d4a5b21807a95668d7fa">SOLVER_SCALAPACK</a>) {</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>      free(Z_vec); Z_vec = NULL; <span class="comment">/* backend failure did not retain a grid */</span></div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    }</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>  }</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgSymmetryBasis) {</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>    <span class="keywordtype">int</span> length = snprintf(sdt, <span class="keyword">sizeof</span>(sdt), <span class="stringliteral">&quot;%s_energy_sector.dat&quot;</span>, <a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.CDataFileHead);</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(length &lt; 0 || (<span class="keywordtype">size_t</span>)length &gt;= <span class="keyword">sizeof</span>(sdt)) != 0) {</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>      <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    }</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>  } <span class="keywordflow">else</span> strcpy(sdt, <a class="code hl_variable" href="global_8c.html#a6031b24d14455f2f57ac86687b13aad7">cFileNameEigenvalue_Lanczos</a>);</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>  {</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keywordtype">int</span> open_failed = (<a class="code hl_function" href="FileIO_8c.html#a7d23a0790b28a52d128e0b93bc832cfb">childfopenMPI</a>(sdt, <span class="stringliteral">&quot;w&quot;</span>, &amp;fp) != 0) ? 1 : 0;</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span><span class="preprocessor">#ifdef MPI</span></div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="keywordtype">int</span> any_open_failed = 0;</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    <span class="comment">/* childfopenMPI opens the real output only on rank 0 and /dev/null on</span></div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span><span class="comment">       the other ranks. Propagate rank 0&#39;s failure before any rank returns,</span></div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span><span class="comment">       otherwise the remaining ranks continue into collective observable</span></div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span><span class="comment">       evaluation and deadlock. */</span></div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    MPI_Allreduce(&amp;open_failed, &amp;any_open_failed, 1, MPI_INT, MPI_MAX,</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                  MPI_COMM_WORLD);</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>    open_failed = any_open_failed;</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordflow">if</span> (open_failed) {</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>      <span class="keywordflow">if</span> (fp != NULL) fclose(fp);</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>      <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    }</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>  }</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>  <span class="keywordflow">for</span> (i = 0; i &lt; i_max; i++) {</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>-&gt;Def.iFlgSymmetryBasis) fprintf(fp, <span class="stringliteral">&quot; %ld %.17g\n&quot;</span>, i, creal(<a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i]));</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    <span class="keywordflow">else</span> fprintf(fp, <span class="stringliteral">&quot; %ld %.10lf \n&quot;</span>, i, creal(<a class="code hl_variable" href="global_8c.html#a7f64d09e17650bdbda576fd7235b8600">v0</a>[i]));</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>  }</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>  {</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    <span class="keywordtype">int</span> failed = ferror(fp) != 0;</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="keywordflow">if</span> (fclose(fp) != 0) failed = 1;</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(failed) != 0) {</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span><span class="preprocessor">#ifdef _SCALAPACK</span></div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>      FreeDistributedEigenvectors(&amp;Z_vec, descZ_vec, &amp;use_scalapack);</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>      <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    }</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>  }</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>}</div>
 </div>
 <div class="ttc" id="aDefCommon_8h_html"><div class="ttname"><a href="DefCommon_8h.html">DefCommon.h</a></div></div>
 <div class="ttc" id="aDefCommon_8h_html_a1bce64fb5a9a725734649bdf33108787"><div class="ttname"><a href="DefCommon_8h.html#a1bce64fb5a9a725734649bdf33108787">SOLVER_ELPA</a></div><div class="ttdeci">#define SOLVER_ELPA</div><div class="ttdef"><b>Definition</b> <a href="DefCommon_8h_source.html#l00036">DefCommon.h:34</a></div></div>

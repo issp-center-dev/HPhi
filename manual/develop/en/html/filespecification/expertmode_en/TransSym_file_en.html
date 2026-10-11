@@ -226,6 +226,180 @@ combinations terminate with an error.</p>
 </li>
 </ul>
 </section>
+<section id="kondo-sectors-spin-one-half-expert-mode">
+<h2>Kondo sectors (spin one-half, expert mode)<a class="headerlink" href="#kondo-sectors-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> supports the following three Kondo spaces. <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> counts
+both the <span class="math notranslate nohighlight">\(L\)</span> localized-spin sites and the <span class="math notranslate nohighlight">\(C\)</span> conduction sites.
+<code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> must mark each localized spin as spin one-half (value 1) and
+each conduction site as 0. Every group operation must preserve this mask;
+localized and conduction sites need not be contiguous or alternate.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 4.3 </span><span class="caption-text">Kondo input and fixed quantities</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 39.0%" />
+<col style="width: 37.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Space</p></th>
+<th class="head"><p>Expert input</p></th>
+<th class="head"><p>Fixed quantities</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Kondo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=2</span></code>, <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> and <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>; alternatively both <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code></p></td>
+<td><p>Conduction number and total spin z component</p></td>
+</tr>
+<tr class="row-odd"><td><p>KondoNConserved</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=2</span></code> and <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>; omit <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code>, <code class="docutils literal notranslate"><span class="pre">Ndown</span></code></p></td>
+<td><p>Conduction number only (internal model 12)</p></td>
+</tr>
+<tr class="row-even"><td><p>KondoGC</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CalcModel=5</span></code>; omit all four quantum-number keywords</p></td>
+<td><p>Neither particle number nor spin z component</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">Ncond</span></code> counts conduction electrons, whereas <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> include
+one spin occupation per localized site. Thus
+<span class="math notranslate nohighlight">\(N_\uparrow+N_\downarrow=L+N_{\rm cond}\)</span> and
+<span class="math notranslate nohighlight">\(N_\uparrow-N_\downarrow=2S_z\)</span>. Redundant explicit values must agree;
+zero is an explicit value, not an omitted keyword. Even explicit zero is
+forbidden for the four quantum-number keywords in KondoGC. The conduction
+range is <span class="math notranslate nohighlight">\(0\leq N_{\rm cond}\leq2C\)</span>. Before symmetry projection the
+NConserved and GC dimensions are <span class="math notranslate nohighlight">\(2^L\binom{2C}{N_{\rm cond}}\)</span> and
+<span class="math notranslate nohighlight">\(2^L4^C\)</span>; fixed-Sz Kondo additionally restricts total spin. Empty
+physical spaces and empty symmetry sectors are rejected. Kondo and
+KondoNConserved require <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;=</span> <span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)/2</span></code>;
+KondoGC requires the strict upper inequality.</p>
+<section id="physical-translations-and-operators">
+<h3>Physical translations and operators<a class="headerlink" href="#physical-translations-and-operators" title="Link to this heading">¶</a></h3>
+<p>Each site occupies two bits (up, down); a localized site has exactly one
+occupied bit. Let <span class="math notranslate nohighlight">\(F_g\)</span> be the full orbital permutation including
+its fermion sign and <span class="math notranslate nohighlight">\(\epsilon_L(g)\)</span> the parity of the permutation
+of localized sites. The physical operation is</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-1">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-1" title="Link to this equation">¶</a></span>\[T_{\rm phys}(g)=\epsilon_L(g)F_g,\qquad
+\chi(g)=\exp(-2\pi i m g/P),\qquad k=2\pi m/P.\]</div>
+<p>The physical momentum requires no extra shift for an even number of
+localized spins. Projected states use <span class="math notranslate nohighlight">\(\overline{\chi(g)}\)</span> and the
+smallest representative word has a positive real coefficient.</p>
+<p>Supported families are conduction <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (including complex hopping),
+on-site localized <code class="docutils literal notranslate"><span class="pre">Trans</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>, <code class="docutils literal notranslate"><span class="pre">Hund</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Ising</span></code>, <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code> and <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>. Localized operators
+must be on-site matrix units <span class="math notranslate nohighlight">\(E_i^{ab}\)</span>; hopping into, out of, or
+between localized sites is rejected. <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code> vanishes on localized sites; <code class="docutils literal notranslate"><span class="pre">PairHop</span></code> requires
+conduction sites. Mixed spin/conduction products are reduced with the
+localized matrix algebra and conduction anticommutation rules before
+checking Hermiticity, group invariance and the model’s fixed quantities.
+Transverse and compensating spin flips are permitted when those checks
+allow them. Dedicated <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> input is unsupported; allowed pair-spin
+products can be written as <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>. An empty Hamiltonian is valid.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-number">Table 4.4 </span><span class="caption-text">Kondo sector method and feature support (all three spaces)</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 19.0%" />
+<col style="width: 28.0%" />
+<col style="width: 18.0%" />
+<col style="width: 18.0%" />
+<col style="width: 17.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method (CalcType)</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>Correlations</p></th>
+<th class="head"><p>State import/export</p></th>
+<th class="head"><p>Basis layout</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Lanczos (0)</p></td>
+<td><p>Low-energy states</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Both</p></td>
+</tr>
+<tr class="row-odd"><td><p>mTPQ (1)</p></td>
+<td><p>Single-sector samples</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Both</p></td>
+</tr>
+<tr class="row-even"><td><p>FullDiag (2)</p></td>
+<td><p>All sector eigenvalues</p></td>
+<td><p>No</p></td>
+<td><p>No / No</p></td>
+<td><p>Replicated</p></td>
+</tr>
+<tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
+<td><p>Low-energy states (recommended)</p></td>
+<td><p>All six formats</p></td>
+<td><p>Yes / Yes</p></td>
+<td><p>Both</p></td>
+</tr>
+<tr class="row-even"><td><p>TimeEvolution (4)</p></td>
+<td><p>Static or driven evolution</p></td>
+<td><p>All six formats</p></td>
+<td><p>Required / Optional</p></td>
+<td><p>Both</p></td>
+</tr>
+<tr class="row-odd"><td><p>cTPQ (5)</p></td>
+<td><p>Single-sector samples</p></td>
+<td><p>All six formats</p></td>
+<td><p>No / No</p></td>
+<td><p>Both</p></td>
+</tr>
+</tbody>
+</table>
+<p>Both layouts mean <code class="docutils literal notranslate"><span class="pre">replicated</span></code> and <code class="docutils literal notranslate"><span class="pre">distributed</span></code>. MPI ranks with no
+owned sector rows still participate in collective operations and state I/O.
+FullDiag supports LAPACK (<code class="docutils literal notranslate"><span class="pre">Solver=0</span></code>), ScaLAPACK (1) and ELPA (3) when
+built with those backends; the process-grid restrictions below apply.
+The six correlation formats are <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>. Spin indices are 0 or 1;
+localized factors must be on-site. Both legacy and aggregate outputs are
+available. These are within-sector expectations, not inter-sector amplitudes.</p>
+<p>Particle-number columns retain <span class="math notranslate nohighlight">\(N=L+N_{\rm cond}\)</span> (including <code class="docutils literal notranslate"><span class="pre">num</span></code>
+and <code class="docutils literal notranslate"><span class="pre">num2</span></code>); doublon columns count conduction doublons. Total <span class="math notranslate nohighlight">\(S_z\)</span>
+and its second moment are computed from the actual vector. Existing output
+columns are unchanged, and built-in <span class="math notranslate nohighlight">\(S^2\)</span> output is not extended.
+TPQ/cTPQ sample one spatial-symmetry sector, including its fixed quantities;
+one sector is not the full thermal ensemble. Uniform and explicit cTPQ
+inverse-temperature schedules follow the rules below.</p>
+<p>Kondo checkpoints alone use version 2, phase 2 and 30 little-endian 64-bit
+header words: the version-1 fields below followed by <code class="docutils literal notranslate"><span class="pre">local_site_mask</span></code>
+and <code class="docutils literal notranslate"><span class="pre">fixed_quantity_flags</span></code>. Phase 2 denotes the physical translation
+above. Flags are 3 (Kondo), 1 (NConserved), or 0 (GC); GC has zero
+<code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> header fields. The manifest records the local mask,
+physical-space digest and fixed quantities separately from the Hamiltonian
+digest. Same model, physical space, sector, ordering, rank count and layout
+are required for import. CG evaluates an imported state without restarting
+optimization; TE starts a new time grid and permits a Hamiltonian quench.
+All four CG/TE import directions are supported. Non-Kondo checkpoints keep
+version 1 / phase 1 / 28 words unchanged.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> and <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> obey the same local-form, fixed-quantity and
+symmetry checks at every used time, before loading a state or writing a
+trajectory. Evolution keeps the basis fixed and uses the right-endpoint
+Taylor rule below. A repeated time does not bypass Hamiltonian validation.
+Twist/APBC can be represented by uniform Peierls phases in conduction
+hopping; the reserved permutation multiplier must still be 1. The chosen
+gauge and site permutation define the physical momentum convention: a
+boundary-only twist is generally not invariant under a plain translation,
+and a gauge change must not be interpreted as the same momentum label
+without transforming the symmetry action. <code class="docutils literal notranslate"><span class="pre">Laser</span></code> uses the existing
+coordinate convention, not coordinates inferred from the localized-site
+mask. It is accepted only when the resulting hopping is invariant at every
+time; for layouts incompatible with those coordinates, supply explicit
+invariant <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> hopping increments in a consistent gauge.</p>
+<p>General spin, new Standard-mode Kondo momentum generation, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>,
+<code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>, <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>, spin-axis rotations,
+antiunitary operations, multidimensional irreducible representations,
+Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
+remain unsupported. FullDiag additionally excludes state/correlation output,
+distributed basis metadata, MAGMA and nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
+</section>
+</section>
 <section id="spingc-sectors-spin-one-half-expert-mode">
 <h2>SpinGC sectors (spin one-half, expert mode)<a class="headerlink" href="#spingc-sectors-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code> with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> selects a spatial-symmetry sector of the
@@ -243,13 +417,13 @@ and complex fields), <code class="docutils literal notranslate"><span class="pre
 terms that change total <span class="math notranslate nohighlight">\(S_z\)</span>. Hermiticity and group invariance are
 still required. For <span class="math notranslate nohighlight">\(E_i^{ab}=|a\rangle_i\langle b|\)</span>, one real
 <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> row <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">j</span> <span class="pre">J</span></code> means</p>
-<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-1">
-<span class="eqno">(4.8)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-1" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-2">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-2" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
 <p>There is no additional factor of one-half. Reversed and duplicate rows add;
 a same-site row vanishes. These rules do not relax the fixed-Sz restriction
 of canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>.</p>
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-number">Table 4.3 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-number">Table 4.5 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />
@@ -323,12 +497,12 @@ are required. Neither import is solver restart; <code class="docutils literal no
 SpinGC checkpoints retain version 1 with <code class="docutils literal notranslate"><span class="pre">model=4</span></code> and zero <code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code>
 header fields. Their Hamiltonian fingerprint is
 <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code>, which includes parsed PairLift rows.
-Canonical models retain their v2 fingerprints and existing checkpoint format.
+Non-Kondo canonical models retain their v2 fingerprints and existing checkpoint format.
 The manifest has <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code> and <code class="docutils literal notranslate"><span class="pre">full_dim=2^Nsite</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> and <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive SpinGC using the right-endpoint
 Taylor rule described below. Every used slice is checked before propagation.
 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> is rejected; use invariant on-site <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or spin-product
-<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. General spin, Boost, Kondo, new Standard-mode
+<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. General spin, Boost, new Standard-mode
 SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
 operations, multidimensional irreducible representations, spectrum,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
@@ -484,11 +658,12 @@ not a restart. Raw TE binary files use their existing, different format.</p>
 <section id="time-dependent-sector-hamiltonians">
 <h2>Time-dependent sector Hamiltonians<a class="headerlink" href="#time-dependent-sector-hamiltonians" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive the sector Hamiltonian.
-<code class="docutils literal notranslate"><span class="pre">Laser</span></code> is available only for the canonical models, not SpinGC.
+<code class="docutils literal notranslate"><span class="pre">Laser</span></code> is available for the canonical models and all three Kondo spaces,
+subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for the four canonical models above, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
 spinless solver’s diagonal-TE restriction is unchanged.</p>
 <p>Before loading the initial vector or writing time-series data, HPhi checks
 every used time slice for finite coefficients, conserved quantum numbers,

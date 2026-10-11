@@ -99,6 +99,8 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "symmetry_diagonal.h", "symmetry__diagonal_8h.html", "symmetry__diagonal_8h" ],
     [ "symmetry_directory.h", "symmetry__directory_8h.html", "symmetry__directory_8h" ],
     [ "symmetry_distribution.h", "symmetry__distribution_8h.html", "symmetry__distribution_8h" ],
+    [ "symmetry_kondo.h", "symmetry__kondo_8h.html", "symmetry__kondo_8h" ],
+    [ "symmetry_kondo_terms.h", "symmetry__kondo__terms_8h.html", "symmetry__kondo__terms_8h" ],
     [ "symmetry_matvec_plan.h", "symmetry__matvec__plan_8h.html", "symmetry__matvec__plan_8h" ],
     [ "symmetry_memory_policy.h", "symmetry__memory__policy_8h.html", "symmetry__memory__policy_8h" ],
     [ "symmetry_mpi_exchange.h", "symmetry__mpi__exchange_8h.html", "symmetry__mpi__exchange_8h" ],

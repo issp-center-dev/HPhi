@@ -145,19 +145,19 @@ var NAVTREEINDEX =
 "LogMessage_8c.html#a9ec9a54f2680d0b638842e420ce000fb",
 "ProgressMessage_8h.html#a85740ac8e64c0acb39dbdb5d8976954f",
 "eigenIO_8c.html#a4dce135a2c787539fb2851ee47f5c63e",
-"functions_w.html",
-"global_8h.html#abacbc82cf67663cd6f3708f1274ac207",
-"matrixlapack_8h.html#a6591537834cf2a4f86271053cc54dd37",
-"mltplyMPIHubbard_8c.html#a18d040bbc95fb50a0320779334c18856",
-"mltplySpin_8h.html#ae74bdb8ab49465bcf40da87848266353",
-"page_setmem.html#sec_setmem_functions",
-"structCanonicalColumnContext.html#ab05fcbce8fc6ce02c3ee481ae93d35f1",
-"structEDMainCalStruct.html",
-"structSymmetryBasisRuntime.html#a5cf9cc0b0706e8a83f0d4a143cbe80f6",
-"structSymmetryRepresentativeDirectoryInfo.html#ac7df69737fa69b95d01b56e6bfa91bbd",
-"symmetry__basis__io_8h.html#a1193bae9ad315f92bd4f91eca164bbe1",
-"symmetry__memory__policy_8h.html#a270c2fd8219a6fccd13daf6ebd3b5b9f",
-"vec12_8h_source.html"
+"functions_vars_x.html",
+"global_8h.html#ab9bf65ee0b5142a132cc2013ac277db2",
+"matrixlapack_8h.html",
+"mltplyMPIHubbardCore_8h.html#af7bc5450d8bcafa8b0e218916f43ab86",
+"mltplySpin_8h.html#aa30d4a9b260f8b44f1110a6f759cf0dd",
+"page_setmem.html",
+"structCanonicalColumnContext.html",
+"structDiagonalContext.html#a392393d9b85643cf845687ea6be37542",
+"structSymmetryBasisRuntime.html#a0ec54815f178f967889feb9b29f445b8",
+"structSymmetryRepresentativeBatchStats.html#a44200b55a8fd1dad9362f3afc4951e44",
+"symmetry__basis__io_8c.html#a19d856f807b482f854f99f709980f604",
+"symmetry__matvec__plan_8c.html#a325b20ba1e48de9355050af84406ee3b",
+"symmetry__vector__halo_8h.html#a6e1bd2fc8ea746c3dc38b410bdd3103f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

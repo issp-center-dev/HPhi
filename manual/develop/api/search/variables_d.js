@@ -13,12 +13,13 @@ var searchData=
   ['orbit_10',['orbit',['../structCorrelationTransition.html#a216e710a6fa1fbdc76980c04160113ca',1,'CorrelationTransition']]],
   ['orbit_5fcount_11',['orbit_count',['../structCorrelationOrbitTable.html#a775ef76a501626212c7ef0cc49d5e477',1,'CorrelationOrbitTable']]],
   ['orbit_5fsize_12',['orbit_size',['../structSymmetryBasisVector.html#ac4f6216c682b712342e54c8c09304852',1,'SymmetryBasisVector']]],
-  ['orbits_13',['orbits',['../structCorrelationOrbitTable.html#a308eebfbec1b26630b9ba029dade55db',1,'CorrelationOrbitTable']]],
-  ['org_5fisite1_14',['org_isite1',['../structMPISpinExchangeGroup.html#a808407c64cbfe193ec89ec095f6a7020',1,'MPISpinExchangeGroup']]],
-  ['org_5fispin1_15',['org_ispin1',['../structMPISpinExchangeGroup.html#a832d3e7bf2e9f5e58ae02e17da20ef7c',1,'MPISpinExchangeGroup']]],
-  ['org_5fispin2_16',['org_ispin2',['../structMPISpinExchangeGroup.html#a0bc351eaa92cb99cfbb85164fe41931e',1,'MPISpinExchangeGroup']]],
-  ['orgtpow_17',['OrgTpow',['../structDefineList.html#a66b5c042047526bfb2665961598bc563',1,'DefineList']]],
-  ['origin_18',['origin',['../structMPITransferGroup.html#af298c3e43ba7f01011004e258676580b',1,'MPITransferGroup::origin'],['../structMPIDoubleTransferGroup.html#adc09db0f9906aeaffcdeaacb5fd0f54f',1,'MPIDoubleTransferGroup::origin'],['../structMPIInterAllGroup.html#a32b066fd1c737d7a2532a687336f1b8a',1,'MPIInterAllGroup::origin'],['../structMPISpinExchangeGroup.html#afb94a0e0adca417e9a088621f6887db8',1,'MPISpinExchangeGroup::origin']]],
-  ['outgoing_5fpeer_5fcount_19',['outgoing_peer_count',['../structSymmetryVectorHaloPlan.html#a82f5e48e008bb5c2c65b1ea831ac648c',1,'SymmetryVectorHaloPlan']]],
-  ['outputinterval_20',['OutputInterval',['../structParamList.html#a5efcfbc3b2363b6b3b4858d0d8671816',1,'ParamList']]]
+  ['orbital_13',['orbital',['../structFermion.html#acd3c4230270be735a1017db92046e2a3',1,'Fermion']]],
+  ['orbits_14',['orbits',['../structCorrelationOrbitTable.html#a308eebfbec1b26630b9ba029dade55db',1,'CorrelationOrbitTable']]],
+  ['org_5fisite1_15',['org_isite1',['../structMPISpinExchangeGroup.html#a808407c64cbfe193ec89ec095f6a7020',1,'MPISpinExchangeGroup']]],
+  ['org_5fispin1_16',['org_ispin1',['../structMPISpinExchangeGroup.html#a832d3e7bf2e9f5e58ae02e17da20ef7c',1,'MPISpinExchangeGroup']]],
+  ['org_5fispin2_17',['org_ispin2',['../structMPISpinExchangeGroup.html#a0bc351eaa92cb99cfbb85164fe41931e',1,'MPISpinExchangeGroup']]],
+  ['orgtpow_18',['OrgTpow',['../structDefineList.html#a66b5c042047526bfb2665961598bc563',1,'DefineList']]],
+  ['origin_19',['origin',['../structMPITransferGroup.html#af298c3e43ba7f01011004e258676580b',1,'MPITransferGroup::origin'],['../structMPIDoubleTransferGroup.html#adc09db0f9906aeaffcdeaacb5fd0f54f',1,'MPIDoubleTransferGroup::origin'],['../structMPIInterAllGroup.html#a32b066fd1c737d7a2532a687336f1b8a',1,'MPIInterAllGroup::origin'],['../structMPISpinExchangeGroup.html#afb94a0e0adca417e9a088621f6887db8',1,'MPISpinExchangeGroup::origin']]],
+  ['outgoing_5fpeer_5fcount_20',['outgoing_peer_count',['../structSymmetryVectorHaloPlan.html#a82f5e48e008bb5c2c65b1ea831ac648c',1,'SymmetryVectorHaloPlan']]],
+  ['outputinterval_21',['OutputInterval',['../structParamList.html#a5efcfbc3b2363b6b3b4858d0d8671816',1,'ParamList']]]
 ];

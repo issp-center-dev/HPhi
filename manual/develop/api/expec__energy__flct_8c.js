@@ -4,6 +4,7 @@ var expec__energy__flct_8c =
     [ "EnergyFlctCoeff_HalfSpinGC", "expec__energy__flct_8c.html#ad56c198726c3d5351d697c7d8a0c8372", null ],
     [ "EnergyFlctCoeff_Hubbard", "expec__energy__flct_8c.html#a72ec2be1e256b6d78aee2f7c122c4de0", null ],
     [ "EnergyFlctCoeff_HubbardGC", "expec__energy__flct_8c.html#a810621cb87e895c8bc1ee95c2c4967c0", null ],
+    [ "EvaluateHubbardMoments", "expec__energy__flct_8c.html#a8589613a5bf3f471e1fd9c36edf8ad33", null ],
     [ "expec_energy_flct", "expec__energy__flct_8c.html#a3597e163a6cc1ae642ea4f0d1ecb9ee5", null ],
     [ "expec_energy_flct_GeneralSpin", "expec__energy__flct_8c.html#aa950c0d24e077e4320072a0531bed635", null ],
     [ "expec_energy_flct_GeneralSpinGC", "expec__energy__flct_8c.html#a302e00fd432c5c485541733fb42988a1", null ],

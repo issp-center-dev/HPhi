@@ -16,7 +16,7 @@ var searchData=
   ['tend_13',['tend',['../structTimeKeepStruct.html#aa99971131764062c93f2bf54c8a0bb4b',1,'TimeKeepStruct']]],
   ['term_5findices_14',['term_indices',['../structMPISpinExchangeGroup.html#a4a916cccef8c10960645d0adcf4750f1',1,'MPISpinExchangeGroup']]],
   ['term_5fis_5fdiagonal_15',['term_is_diagonal',['../symmetry__correlation_8c.html#aa988afa350bb59fea91183c461a48cd6',1,'symmetry_correlation.c']]],
-  ['terms_16',['terms',['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial']]],
+  ['terms_16',['terms',['../structPolynomial.html#ad878f5eb07ac18ec4996c499ed0a6ae8',1,'Polynomial::terms'],['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial::terms']]],
   ['testing_17',['Testing',['../page_codingrule.html#sec_coding_testing',1,'']]],
   ['tetime_18',['TETime',['../structDefineList.html#af26d0e477bb666f009625a2c5531661b',1,'DefineList']]],
   ['tetransfer_19',['TETransfer',['../structDefineList.html#a8b120ff7907dfc198c3475b0e8e35d95',1,'DefineList']]],

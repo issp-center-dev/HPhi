@@ -1,18 +1,9 @@
 var searchData=
 [
-  ['lanczos_5feigenvalue_0',['lanczos_eigenvalue',['../Lanczos__EigenValue_8c.html#adffde20ad3202934fdc77cfa37472529',1,'Lanczos_EigenValue(struct BindStruct *X):&#160;Lanczos_EigenValue.c'],['../Lanczos__EigenValue_8h.html#adffde20ad3202934fdc77cfa37472529',1,'Lanczos_EigenValue(struct BindStruct *X):&#160;Lanczos_EigenValue.c']]],
-  ['lanczos_5feigenvector_1',['lanczos_eigenvector',['../Lanczos__EigenVector_8h.html#a4575347f442614960b1d0555ab1d1ffe',1,'Lanczos_EigenVector(struct BindStruct *X):&#160;Lanczos_EigenVector.c'],['../Lanczos__EigenVector_8c.html#a4575347f442614960b1d0555ab1d1ffe',1,'Lanczos_EigenVector(struct BindStruct *X):&#160;Lanczos_EigenVector.c']]],
-  ['lanczos_5fgettridiagonalmatrixcomponents_2',['lanczos_gettridiagonalmatrixcomponents',['../Lanczos__EigenValue_8h.html#ac536f009abb3f064667c505d46e9455f',1,'Lanczos_GetTridiagonalMatrixComponents(struct BindStruct *X, double *alpha, double *beta, double complex *_v1, unsigned long int *Lanczos_step):&#160;Lanczos_EigenValue.c'],['../Lanczos__EigenValue_8c.html#a06b0f00d313fd60d4156393dcb0e50b8',1,'Lanczos_GetTridiagonalMatrixComponents(struct BindStruct *X, double *_alpha, double *_beta, double complex *tmp_v1, unsigned long int *liLanczos_step):&#160;Lanczos_EigenValue.c']]],
-  ['lapack_5fdiag_3',['lapack_diag',['../lapack__diag_8h.html#a21085cc1f3c40e6b673bf469e6584836',1,'lapack_diag(struct BindStruct *X):&#160;lapack_diag.c'],['../lapack__diag_8c.html#a21085cc1f3c40e6b673bf469e6584836',1,'lapack_diag(struct BindStruct *X):&#160;lapack_diag.c']]],
-  ['layout_5frequires_5fchunking_4',['layout_requires_chunking',['../symmetry__mpi__exchange_8c.html#ad8a5c99900f5a0646121589fcbe7e3dc',1,'symmetry_mpi_exchange.c']]],
-  ['li_5f1d_5fallocate_5',['li_1d_allocate',['../setmemory_8c.html#a1d3db8dc3975c9439a7945dcbb2c324e',1,'li_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#a1d3db8dc3975c9439a7945dcbb2c324e',1,'li_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
-  ['li_5f2d_5fallocate_6',['li_2d_allocate',['../setmemory_8c.html#ac0357c4725bd7fd94c76acde19f4cc57',1,'li_2d_allocate(const long unsigned int N, const long unsigned int M):&#160;setmemory.c'],['../setmemory_8h.html#ac0357c4725bd7fd94c76acde19f4cc57',1,'li_2d_allocate(const long unsigned int N, const long unsigned int M):&#160;setmemory.c']]],
-  ['list_5fsymmetry_5fmethods_7',['list_symmetry_methods',['../symmetry__basis__io_8c.html#a0fab265228269c389c06ead7840af9d7',1,'symmetry_basis_io.c']]],
-  ['lobpcg_5fmain_8',['LOBPCG_Main',['../CalcByLOBPCG_8c.html#abf636cac2045e948fae38a03ed72e14d',1,'CalcByLOBPCG.c']]],
-  ['local_5fnext_5fpower_5fof_5ftwo_9',['local_next_power_of_two',['../symmetry__directory_8c.html#a7703f64398946c2fb813e32d7754b8a6',1,'symmetry_directory.c']]],
-  ['local_5fnow_5fseconds_10',['local_now_seconds',['../phys__distributed__local_8c.html#ad6629fcce64ca061f009c765887b0e52',1,'phys_distributed_local.c']]],
-  ['local_5frep_5fstate_5fhash_11',['local_rep_state_hash',['../symmetry__directory_8c.html#aa988b2edd4933d279a8611cb62d6e00f',1,'symmetry_directory.c']]],
-  ['lookup_5fresponse_5fresult_5fis_5fempty_12',['lookup_response_result_is_empty',['../symmetry__mpi__exchange_8c.html#a5c5db563adacb8363aa6725979c04602',1,'symmetry_mpi_exchange.c']]],
-  ['lui_5f1d_5fallocate_13',['lui_1d_allocate',['../setmemory_8c.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
-  ['lz_14',['lz',['../PowerLanczos_8h.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c'],['../PowerLanczos_8c.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c']]]
+  ['kondo_5fbinomial_0',['kondo_binomial',['../symmetry__state__enumerator_8c.html#aceaf06a2bbbf16879984e1a76869df79',1,'symmetry_state_enumerator.c']]],
+  ['kondo_5fcompletions_1',['kondo_completions',['../symmetry__state__enumerator_8c.html#abd4c4a86fc4a4da9b2fe12f7c3b85260',1,'symmetry_state_enumerator.c']]],
+  ['kondo_5fdiagnostic_5fstream_2',['kondo_diagnostic_stream',['../symmetry__kondo_8c.html#a895eaf7fd27031c49799e24e18c2bed2',1,'symmetry_kondo.c']]],
+  ['kondo_5ferror_3',['kondo_error',['../symmetry__kondo_8c.html#a777e47e933fa76b29d9a1696dbec6a9a',1,'symmetry_kondo.c']]],
+  ['kondo_5fstate_5fat_4',['kondo_state_at',['../symmetry__state__enumerator_8c.html#a914a0756ed0a5316e8bb9f4313e43a81',1,'symmetry_state_enumerator.c']]],
+  ['kondo_5fword_5fwidth_5fvalid_5',['kondo_word_width_valid',['../symmetry__kondo_8c.html#a5f712232d3fa3a7d34a081bd21e2e76a',1,'symmetry_kondo.c']]]
 ];

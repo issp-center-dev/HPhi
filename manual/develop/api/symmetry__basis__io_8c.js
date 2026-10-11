@@ -35,6 +35,8 @@ var symmetry__basis__io_8c =
     [ "validate_ising_coulomb_invariance", "symmetry__basis__io_8c.html#a30182c563f667c0e6da0093f649ca312", null ],
     [ "validate_ising_diagonal_invariance", "symmetry__basis__io_8c.html#acfb452d680242f5dcccb671f07e5c849", null ],
     [ "validate_ising_hund_invariance", "symmetry__basis__io_8c.html#a4ec6605676ec856a3ae2754729fee5ea", null ],
+    [ "validate_kondo_bilinears", "symmetry__basis__io_8c.html#a2e36476d10dfbbbeb2db20a2f58232de", null ],
+    [ "validate_kondo_input_forms", "symmetry__basis__io_8c.html#a984f17885cfe82911d484d3b23875d52", null ],
     [ "validate_spinless_coulomb_invariance", "symmetry__basis__io_8c.html#a613f7462aa666f491b9fbff8df674854", null ],
     [ "validate_spinless_transfer_invariance", "symmetry__basis__io_8c.html#a8ba5b42ef8bae907194ae112559a072d", null ],
     [ "validate_symmetry_method_capability", "symmetry__basis__io_8c.html#a841cb61558d114058b14a5f1c286bdc9", null ],

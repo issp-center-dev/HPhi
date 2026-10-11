@@ -140,6 +140,10 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a91ca778fb0f9037b003b0eadbb1ec9ce" id="r_a91ca778fb0f9037b003b0eadbb1ec9ce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8h.html#a91ca778fb0f9037b003b0eadbb1ec9ce">ComputeSymmetryKondoDimension</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long *dimension)</td></tr>
+<tr class="separator:a91ca778fb0f9037b003b0eadbb1ec9ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd376868d6768b572fda3a37b3427ca" id="r_a9fd376868d6768b572fda3a37b3427ca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8h.html#a9fd376868d6768b572fda3a37b3427ca">CountSymmetryKondoCompletions</a> (int model, unsigned int local_sites, unsigned int conduction_sites, int nup, int ndown, int ncond, unsigned long *count)</td></tr>
+<tr class="separator:a9fd376868d6768b572fda3a37b3427ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c83f1c3e059f4cc014ddb0030b52cd0" id="r_a1c83f1c3e059f4cc014ddb0030b52cd0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8h.html#a1c83f1c3e059f4cc014ddb0030b52cd0">InitSymmetryStateEnumerator</a> (const struct <a class="el" href="structDefineList.html">DefineList</a> *def, unsigned long int expected_raw_dim, struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator)</td></tr>
 <tr class="separator:a1c83f1c3e059f4cc014ddb0030b52cd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabf1b4a84cf97fa4ac4172ebd6f65597" id="r_aabf1b4a84cf97fa4ac4172ebd6f65597"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__state__enumerator_8h.html#aabf1b4a84cf97fa4ac4172ebd6f65597">SymmetryStateEnumeratorStateAt</a> (const struct <a class="el" href="structSymmetryStateEnumerator.html">SymmetryStateEnumerator</a> *enumerator, unsigned long int raw_index, unsigned long int *state)</td></tr>
@@ -163,6 +167,104 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a91ca778fb0f9037b003b0eadbb1ec9ce" name="a91ca778fb0f9037b003b0eadbb1ec9ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91ca778fb0f9037b003b0eadbb1ec9ce">&#9670;&#160;</a></span>ComputeSymmetryKondoDimension()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ComputeSymmetryKondoDimension </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structDefineList.html">DefineList</a> *&#160;</td>
+          <td class="paramname"><em>def</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long *&#160;</td>
+          <td class="paramname"><em>dimension</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00121">121</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8c_source.html#l00103">CountSymmetryKondoCompletions()</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00094">DefineList::NCond</a>, <a class="el" href="struct_8h_source.html#l00068">DefineList::Ndown</a>, <a class="el" href="struct_8h_source.html#l00093">DefineList::NLocSpn</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::Nup</a>, and <a class="el" href="symmetry__kondo_8c_source.html#l00156">ValidateSymmetryKondoSpace()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="check_8c_source.html#l00079">check()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00135">initialize_kondo()</a>, and <a class="el" href="symmetry__basis__io_8c_source.html#l00446">validate_symmetry_model_sector()</a>.</p>
+
+</div>
+</div>
+<a id="a9fd376868d6768b572fda3a37b3427ca" name="a9fd376868d6768b572fda3a37b3427ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fd376868d6768b572fda3a37b3427ca">&#9670;&#160;</a></span>CountSymmetryKondoCompletions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CountSymmetryKondoCompletions </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>model</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>local_sites</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>conduction_sites</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nup</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ndown</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ncond</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long *&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00103">103</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00010">HPHI_SYMMETRY_STATE_WORD_BITS</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00009">initialize_binomial_table()</a>, <a class="el" href="symmetry__kondo_8c_source.html#l00022">IsSymmetryKondoModel()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00070">kondo_completions()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00019">SymmetryStateEnumerator::ncond</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, and <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__state__enumerator_8c_source.html#l00121">ComputeSymmetryKondoDimension()</a>.</p>
+
+</div>
+</div>
 <a id="a1c83f1c3e059f4cc014ddb0030b52cd0" name="a1c83f1c3e059f4cc014ddb0030b52cd0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c83f1c3e059f4cc014ddb0030b52cd0">&#9670;&#160;</a></span>InitSymmetryStateEnumerator()</h2>
 
@@ -195,11 +297,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00052">52</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00194">194</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00043">checked_product()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00034">enumerator_binomial()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00096">DefineList::iFlgSzConserved</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00008">initialize_binomial_table()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="struct_8h_source.html#l00068">DefineList::Ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="struct_8h_source.html#l00080">DefineList::Ne</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::Nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00044">checked_product()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00035">enumerator_binomial()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="struct_8h_source.html#l00272">DefineList::iCalcModel</a>, <a class="el" href="struct_8h_source.html#l00095">DefineList::iFlgGeneralSpin</a>, <a class="el" href="struct_8h_source.html#l00096">DefineList::iFlgSzConserved</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00009">initialize_binomial_table()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00135">initialize_kondo()</a>, <a class="el" href="symmetry__kondo_8c_source.html#l00022">IsSymmetryKondoModel()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="struct_8h_source.html#l00068">DefineList::Ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="struct_8h_source.html#l00080">DefineList::Ne</a>, <a class="el" href="struct_8h_source.html#l00065">DefineList::Nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::Nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00022">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="global_8h_source.html#l00026">TRUE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00660">BuildRankLocalSymmetryBasisRun()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00716">BuildRankLocalSymmetryBasisRun()</a>.</p>
 
 </div>
 </div>
@@ -235,11 +337,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00221">221</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__state__enumerator_8c_source.html#l00369">369</a> of file <a class="el" href="symmetry__state__enumerator_8c_source.html">symmetry_state_enumerator.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00127">fixed_popcount_state_at()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00150">hubbard_state_at()</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00018">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00194">tj_state_at()</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__state__enumerator_8h_source.html#l00017">SymmetryStateEnumerator::bit_count</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00275">fixed_popcount_state_at()</a>, <a class="el" href="DefCommon_8h_source.html#l00044">Hubbard</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00298">hubbard_state_at()</a>, <a class="el" href="symmetry__kondo_8c_source.html#l00022">IsSymmetryKondoModel()</a>, <a class="el" href="symmetry__state__enumerator_8c_source.html#l00157">kondo_state_at()</a>, <a class="el" href="DefCommon_8h_source.html#l00049">KondoGC</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00013">SymmetryStateEnumerator::model</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00016">SymmetryStateEnumerator::ndown</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00014">SymmetryStateEnumerator::nsite</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00015">SymmetryStateEnumerator::nup</a>, <a class="el" href="symmetry__state__enumerator_8h_source.html#l00022">SymmetryStateEnumerator::raw_dim</a>, <a class="el" href="DefCommon_8h_source.html#l00045">Spin</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="DefCommon_8h_source.html#l00051">SpinlessFermion</a>, <a class="el" href="DefCommon_8h_source.html#l00053">tJ</a>, and <a class="el" href="symmetry__state__enumerator_8c_source.html#l00342">tj_state_at()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00660">BuildRankLocalSymmetryBasisRun()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__basis_8c_source.html#l00716">BuildRankLocalSymmetryBasisRun()</a>.</p>
 
 </div>
 </div>
