@@ -210,14 +210,14 @@ TransSym指定ファイル
 
    相関関数（``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
    ``SixBodyG``、``NBodyG``）は ``Lanczos``、``CG``、``TPQ``、``cTPQ``、
-   ``TimeEvolution`` でsector内計算されます。
+   ``TimeEvolution`` と、全固有状態についての ``FullDiag`` でsector内計算されます。
    値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
    同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタート、
    ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
-   CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。
-   未対応の組み合わせはエラーで終了します。
+   CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
+   全固有状態をこの形式で出力できます。未対応の組み合わせはエラーで終了します。
 
 
 Kondoセクター（スピン1/2、expert mode）
@@ -301,9 +301,9 @@ KondoGCは上限を含まない厳密不等号を要求します。
      - 不可 / 不可
      - 両方
    * - FullDiag (2)
-     - セクターの全固有値
-     - 不可
-     - 不可 / 不可
+     - セクターの全固有値・全固有状態
+     - 全6形式（全状態）
+     - 不可 / 全状態
      - Replicated
    * - CG / LOBCG (3)
      - 低エネルギー状態（推奨）
@@ -359,7 +359,7 @@ Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応�
 general spin、新しいStandard-modeのKondo運動量生成、 ``NBodyInterAll``、
 ``AnomalousTerm``、 ``AnomalousG``、 ``CalcSpec``、スピン軸回転、反ユニタリ操作、
 多次元既約表現、Hamiltonian I/O、solver restart、rank数変更を伴うcheckpoint
-再分配は非対応です。FullDiagはさらに状態・相関出力、distributed基底metadata、
+再分配は非対応です。FullDiagはさらにベクトル入力、distributed基底metadata、
 MAGMA、nonserial ``ExpecMode`` を除外します。
 
 
@@ -409,9 +409,9 @@ canonical ``Spin`` の固定Sz条件は変更しません。
      - 不可/不可
      - distributed / replicated
    * - FullDiag (2)
-     - sectorの全固有値
-     - 不可
-     - 不可/不可
+     - sectorの全固有値・全固有状態
+     - 全6形式（全状態）
+     - 不可/全状態
      - metadataはreplicated
    * - CG / LOBCG (3)
      - 低エネルギー状態
@@ -457,7 +457,7 @@ general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピ�
 全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
 solver restart、rank数を変更したcheckpoint再分配は対象外です。
 このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
-``AnomalousG`` も非対応です。FullDiagは固有ベクトル・相関出力、distributed基底metadata、
+``AnomalousG`` も非対応です。FullDiagはベクトル入力、distributed基底metadata、
 MAGMAと非serial ``ExpecMode`` も拒否します。
 
 8サイト横磁場のCG例
@@ -570,7 +570,8 @@ expert modeの ``CalcType=4`` は、保存済みセクターベクトルを静�
 時間発展させます。 ``InputEigenVec=1``、 ``ReStart=0``、正整数の ``ExpandCoef`` を
 指定し、namelistへ ``SpectrumVec seed_eigenvec_0`` を追加します。
 ``output/seed_eigenvec_0_rank_<rank>.dat`` は下記のsector形式が必要です。
-CGの ``OutputEigenVec=1`` で作成できます。基底・sector・MPI数・layoutは一致が
+CGの ``OutputEigenVec=1`` で作成できます。セクターFullDiagも全固有状態をこの形式で
+出力します（:ref:`Subsec:eigenvec` を参照）。基底・sector・MPI数・layoutは一致が
 必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
 ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で参照用layoutを選択できます。
 
@@ -592,7 +593,9 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
 なります。``ReStart`` は引き続き非対応です。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
-記録します。
+記録します。FullDiag由来の場合は ``source_hamiltonian_kind=sector_matrix_v1`` も
+記録します。このdigestは対角化したsector行列を表し、TEのHamiltonianとは比較
+しないため、読込ログは ``hamiltonian_changed=unknown`` を表示します。
 
 ``OutputEigenVec=1`` と正の ``OutputInterval`` により、周期出力を
 ``<prefix>_eigenvec_<step>_rank_<rank>.dat``、最終出力を別名
@@ -637,6 +640,7 @@ raw Hilbert空間を列挙し直す必要がなく、項の出現・消滅にも
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 expert modeのCGでは ``OutputEigenVec=1`` と ``InputEigenVec=1`` を使えます。
+セクターFullDiagも全固有状態を同じ形式で出力します。
 ファイル名は ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat`` で、
 状態・rankの番号は0始まりです。要素を持たないrankもファイルを出力します。
 読込には、模型・固定量子数・群と指標・sector・MPI rank数・layout・局所分担・
@@ -663,7 +667,12 @@ headerの順序は次のとおりです。
 
 ``magic`` は8 byteの ``HPHISV1\n``、versionとphaseは1、scalarは128、layoutは
 0（replicated）または1（distributed）です。 ``offset`` は0始まりです。
-``source_method`` はCalcType番号、 ``time_bits`` はIEEE binary64の物理時刻（CGでは0）です。
+``source_method`` はCalcType番号、 ``time_bits`` はIEEE binary64の物理時刻（CGと
+FullDiagでは0）です。 ``source_method=2`` （FullDiag）では ``step`` と ``time_bits`` が0、
+``state_index`` はsector次元未満で、 ``hamiltonian_digest`` には定義ファイルの
+Hamiltonian digestではなく、対角化した行列の ``hphi-sector-matrix-fnv1a64-v1``
+digest（セクター内FullDiagの節を参照）を格納します。CG/TEのファイルは従来の
+parsed digestのままで、2種類のdigestを互いに比較することはありません。
 phase 1は最小代表状態に対する正規化済み
 :math:`\sum_g\overline{\chi(g)}T_g|r\rangle` で、代表状態の係数を正の実数に固定します。
 
@@ -691,11 +700,50 @@ ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製
 
 ``output/<CDataFileHead>_energy_sector.dat`` へ0始まりの番号と全固有値を出力し、
 セクターmanifestも記録します。この固有値ファイル名は常にprefix付きです。
-通常のFullDiagは従来どおり ``Eigenvalue.dat`` を出力します。
-セクターFullDiagでは固有状態物理量、相関関数、固有ベクトルを出力しません。
-0以外の ``ExpecMode`` とMAGMAは非対応です。
-Hamiltonian/ベクトル入出力とrestartも非対応です。
-manifestにはsolver、行列storage、 ``output_scope=eigenvalues`` を記録します。
+通常のFullDiagは従来どおり ``Eigenvalue.dat`` を出力します。相関の指定がなく
+``OutputEigenVec=0`` の場合は固有値だけを出力し、manifestには従来どおり
+``output_scope=eigenvalues`` を記録します。
+
+指定した ``OneBodyG``、 ``TwoBodyG``、 ``ThreeBodyG``、 ``FourBodyG``、
+``SixBodyG``、 ``NBodyG`` の行を、上記の模型ごとの演算子規則のもとで、
+エネルギー順の **全** 固有状態について評価します。ファイルは
+``<CDataFileHead>_<stem>_eigen<state>.dat`` で、stemは ``cisajs``、
+``cisajscktalt``、 ``ThreeBody``、 ``FourBody``、 ``SixBody``、 ``NBodyG`` です。
+``OutputGreenFormat=1`` では先頭列を状態番号とする
+``<CDataFileHead>_<stem>_eigen.dat`` にまとめます。
+``OutputEigenVec=1`` は全固有状態をsector checkpoint
+``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat`` として保存します。
+次元 :math:`D` のsectorを :math:`P` rankで計算すると :math:`D\times P` 個の
+ファイルになります。保存した状態はTEの初期状態やCGの再評価に使えます
+（:ref:`Subsec:eigenvec` を参照）。縮退した準位内の状態は一意ではなく、順序・位相・
+基底はsolver、rank数、実行ごとに異なり得ます。縮退準位は平均や射影で比較して
+ください。各状態は全rankで順に処理し、分散solverでは状態をrank 0へ集めてから
+各rankの所有区間を配ります。
+
+これらの出力を指定すると、対角化の前にsector行列を検査します。全係数が有限で、
+各下三角要素 :math:`a` と対応する上三角要素 :math:`b` が
+:math:`|a-\overline{b}|\le 10^{-12}\max(1,|a|,|b|)` を満たす必要があります。
+その後、下三角から上三角を作り直し、対角の虚部を0にした行列をsolverへ渡します。
+その digest ``hphi-sector-matrix-fnv1a64-v1`` は、little-endian 64-bit wordとして
+version 1、 :math:`D`、続いて列 :math:`c=1,\dots,D`・行 :math:`r=c,\dots,D` の順に
+実部と虚部のbinary64 bit列（0は+0として）をFNV-1a 64へ入力したものです。
+出自の識別用であり、数値的な同等性の判定ではありません。複数rankのELPAでは、
+この検査のために各列を所有rankから1回ずつ配信し、各rankが合計約 :math:`16D^2`
+byteを受信します。replicated storageでは係数の通信を行いません。
+
+このときmanifestには ``output_scope=requested``、 ``requested_outputs``
+（ ``eigenvalues``・ ``correlations``・ ``eigenvectors`` のcomma区切り）、
+``matrix_source=generated``、 ``fulldiag_status=pending`` を記録します。指定した
+出力がすべて成功すると ``matrix_digest``、 ``completed_outputs``、
+``fulldiag_status=complete`` を追記します。最後の ``fulldiag_status`` 行が現在の
+状態です。途中で失敗した場合は相関・ベクトルファイルが一部残り得るため、終了
+statusとこの行を併せて確認してください。 ``CalcTimer.dat`` には
+``Sector matrix prepare`` [5600]、 ``Sector states`` [5700] と、その内訳の
+gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
+
+0以外の ``ExpecMode``、MAGMA、 ``InputEigenVec``、 ``ReStart``、 ``CalcSpec``、
+Hamiltonian入出力（ ``InputHam`` / ``OutputHam`` ）はセクターFullDiagでは
+引き続き非対応です。
 
 セクター情報ファイル
 ^^^^^^^^^^^^^^^^^^^^

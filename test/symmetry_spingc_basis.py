@@ -237,7 +237,7 @@ def backend_full_diag(root, hphi, launcher, ranks):
         path = root/'expecmode_solver{}'.format(solver)
         c.write_case(path, 8, p, chi, families, 2,
                      {'CalcMod': {'Solver': solver, 'ExpecMode': 1}})
-        c.run_case(path, hphi, 'reject', launcher, env, 'MAGMA and ExpecMode are not supported')
+        c.run_case(path, hphi, 'reject', launcher, env, 'ExpecMode=0 only')
     if any(solver == 3 for solver, _ in backends):
         # Two-site odd translation sector has dimension one: too small
         # for any multiple-rank ELPA process grid, including required np2.
@@ -304,13 +304,24 @@ def validation(root, hphi):
                            c.definition(path, 'loc.def', [(i, 0) for i in range(4)], 0)), empty)
     negative('restart', 'does not support ReStart', lambda path: append(path, 'calc.def', 'ReStart 1\n'))
     negative('spectrum', 'spectrum calculations', lambda path: append(path, 'calc.def', 'CalcSpec 1\n'))
-    negative('fulldiag_vectors', 'does not support OutputEigenVec',
-             lambda path: (replace(path, 'calc.def', 'CalcType 3', 'CalcType 2'), append(path, 'calc.def', 'OutputEigenVec 1\n')))
+    import shutil
+    vectors = root/'fulldiag_vectors'
+    shutil.copytree(base, vectors)
+    replace(vectors, 'calc.def', 'CalcType 3', 'CalcType 2')
+    append(vectors, 'calc.def', 'OutputEigenVec 1\n')
+    c.run_case(vectors, hphi, 'accept', [], dict(os.environ))
+    dim = int(manifest(vectors, 6, 4, c.mixed_families(4))['sector_dim'])
+    assert len(list((vectors/'output').glob('zvo_eigenvec_*_rank_0.dat'))) == dim
+    print('validation fulldiag_vectors accepted', flush=True)
     full = root/'valid_fulldiag'
     c.write_case(full, 4, p, chi, c.mixed_families(4), 2,
                  {'CalcMod': {'Solver': 0}})
-    negative('fulldiag_correlations', 'sector FullDiag outputs eigenvalues only',
-             lambda path: extra(path, 'OneBodyG', [(0, 1, 0, 0)]), full)
+    correlations = root/'fulldiag_correlations'
+    shutil.copytree(full, correlations)
+    extra(correlations, 'OneBodyG', [(0, 1, 0, 0)])
+    c.run_case(correlations, hphi, 'accept', [], dict(os.environ))
+    assert len(list((correlations/'output').glob('zvo_cisajs_eigen*.dat'))) == dim
+    print('validation fulldiag_correlations accepted', flush=True)
     negative('fulldiag_magma', 'MAGMA',
              lambda path: replace(path, 'calc.def', 'Solver 0', 'Solver 2'), full)
     negative('fulldiag_expecmode', 'ExpecMode',

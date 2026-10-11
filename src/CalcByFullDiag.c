@@ -18,6 +18,9 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "makeHamSym.h"
+#include "symmetry_fulldiag.h"
+#include "symmetry_hamiltonian_io.h"
+#include "symmetry_sector.h"
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
@@ -32,6 +35,12 @@ int CalcByFullDiag(
        )
 {
   int iret=0;
+  struct SymmetryHamiltonianInfo info;
+  unsigned int outputs = SymmetryFullDiagOutputMask(&(X->Bind.Def));
+  /* Eigenvalue-only sector input keeps the original path: no matrix
+   * preparation, state loop or completion record. */
+  int extended = X->Bind.Def.iFlgSymmetryBasis && outputs != SYM_FD_EIGENVALUES;
+  memset(&info, 0, sizeof(info));
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
@@ -46,6 +55,9 @@ int CalcByFullDiag(
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
   if(SumMPI_i(iret != 0) != 0) return FALSE;
+  /* Canonicalize and hash the matrix the solver receives; ELPA consumes the
+   * column panel during diagonalization. */
+  if (extended && PrepareSymmetryHamiltonian(&(X->Bind), 0, &info) != 0) return FALSE;
 
 
   if(X->Bind.Def.iOutputHam == TRUE){
@@ -66,12 +78,20 @@ int CalcByFullDiag(
   if(iret != 0) return FALSE;
 
   if (X->Bind.Def.iFlgSymmetryBasis) {
-    /* Initial sector FullDiag contract is eigenvalues only. No raw-basis
-     * observables may run; distributed eigenvectors still need cleanup. */
+    /* No raw-basis observables run on a sector basis. The distributed
+     * eigenvectors stay alive through the state loop and are released here
+     * on every path. */
+    iret = (outputs & (SYM_FD_CORRELATIONS | SYM_FD_EIGENVECTORS))
+         ? ProcessSymmetryFullDiagStates(&(X->Bind), &info) : 0;
 #ifdef _SCALAPACK
     FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
 #endif
-    fprintf(stdoutMPI, "TransSym FullDiag: sector eigenvalues written; eigenstate observables are not requested.\n");
+    if (iret == 0 && extended)
+      iret = WriteSymmetryFullDiagCompletion(&(X->Bind), info.from_file, info.matrix_digest);
+    if (iret != 0) return FALSE;
+    fprintf(stdoutMPI, extended
+            ? "TransSym FullDiag: sector eigenvalues and requested state outputs written.\n"
+            : "TransSym FullDiag: sector eigenvalues written; eigenstate observables are not requested.\n");
     return TRUE;
   }
   X->Bind.Def.St=0;

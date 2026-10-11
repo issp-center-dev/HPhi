@@ -1596,7 +1596,7 @@ static int get_nbodyg_filename(struct BindStruct *X, char *sdt)
 
 int expec_nbodyg(struct BindStruct *X, double complex *vec)
 {
-  FILE *fp;
+  FILE *fp = NULL;
   char sdt[D_FileNameMax];
   unsigned int t;
   int sector_status = 0;
@@ -1610,10 +1610,17 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     return -1;
   }
   if (get_nbodyg_filename(X, sdt) != 0) return -1;
-  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
-    if (GreenOutputOpenAggregate(X, GreenOutputNBody, &fp) != 0) return -1;
-  } else {
-    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  {
+    int open_failed = GreenOutputKindUsesAggregate(X, GreenOutputNBody)
+        ? GreenOutputOpenAggregate(X, GreenOutputNBody, &fp) != 0
+        : childfopenMPI(sdt, "w", &fp) != 0;
+    /* Only rank 0 opens the real file; agree before the sector collective. */
+    if (GreenOutputAgreeSectorError(X, open_failed) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.iFlgSymmetryBasis == TRUE)
+        GreenOutputReportSectorFailure(X, GreenOutputNBody, sdt, "open");
+      return -1;
+    }
   }
 
   if (X->Def.iFlgSymmetryBasis == TRUE) {
@@ -1635,10 +1642,15 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     write_nbodyg_line(fp, &X->Def, t, value);
   }
 
-  if (GreenOutputKindUsesAggregate(X, GreenOutputNBody)) {
-    GreenOutputCloseAggregate(GreenOutputNBody, fp);
-  } else {
-    fclose(fp);
+  {
+    int close_failed = GreenOutputKindUsesAggregate(X, GreenOutputNBody)
+        ? GreenOutputCloseAggregate(GreenOutputNBody, fp) != 0
+        : GreenOutputCloseChecked(fp) != 0;
+    if (X->Def.iFlgSymmetryBasis == TRUE &&
+        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0) {
+      if (close_failed) GreenOutputReportSectorFailure(X, GreenOutputNBody, sdt, "close");
+      return -1;
+    }
   }
   if (sector_status != 0) return -1;
   return 0;

@@ -8,6 +8,7 @@ symmetry_general_terms for every model at a size where the full space is small.
 import cmath
 import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -585,7 +586,14 @@ def fermion_raw_comparison(path, model, case, fam, ops, sector, states, requests
 def negative_tests(path, model, case, fam, ops, sector, requests):
     L = case["L"]
     write_inputs(path, model, case, fam, ops, sector["chars"], 2, {"one": requests["one"]})
-    fixture.run(path, "reject_fulldiag", fail="sector FullDiag outputs eigenvalues only")
+    # Sector FullDiag writes requested correlations for every eigenstate; the
+    # values are checked by symmetry_fulldiag_correlations. LAPACK is serial.
+    with (path / "accept_fulldiag.log").open("w") as log:
+        result = subprocess.run([fixture.HPHI, "-e", "sym.def"], cwd=str(path), stdout=log,
+                                stderr=subprocess.STDOUT, timeout=120,
+                                env=dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT="replicated"))
+    assert result.returncode == 0, (path / "accept_fulldiag.log").read_text()
+    assert (path / "output" / "zvo_cisajs_eigen0.dat").exists()
     if model == "Spin":
         write_inputs(path, model, case, fam, ops, sector["chars"], 3,
                      {"one": requests["one"], "three": [[0, 0, 0, 1, 1, 1, 1, 0, 2, 0, 2, 0]]})

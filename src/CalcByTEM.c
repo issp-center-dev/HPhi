@@ -90,6 +90,11 @@ static int record_sector_te(const struct BindStruct *X, const struct SymmetryChe
               "\nsource_time=%.17g\nsource_hamiltonian_digest=%016" PRIx64 "\n",
               view ? "time_dependent" : "static", X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
               source->state_index, source->step, source->time, source->hamiltonian_digest);
+      /* A FullDiag source digest identifies a sector matrix, not parsed H. */
+      if (source->source_method == FullDiag &&
+          (source->hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_MATRIX_V1 ||
+           fprintf(fp, "source_hamiltonian_kind=sector_matrix_v1\n") < 0))
+        error = 1;
       for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i) {
         fprintf(fp, "te_time_%u=%.17g\n", i, SymmetryTETime(&X->Def, i));
         if (view) fprintf(fp, "te_hamiltonian_%u=%016" PRIx64 "\n", i, view->digests[i]);

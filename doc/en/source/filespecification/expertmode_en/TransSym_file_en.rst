@@ -215,7 +215,8 @@ Use rules
 
    Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
    ``FourBodyG``, ``SixBodyG``, and ``NBodyG``) are computed in the sector for
-   ``Lanczos``, ``CG``, ``TPQ``, ``cTPQ``, and ``TimeEvolution``. The values are
+   ``Lanczos``, ``CG``, ``TPQ``, ``cTPQ``, ``TimeEvolution`` and, for every
+   eigenstate, ``FullDiag``. The values are
    the exact expectation values in the sector; rows that are mapped onto each
    other by a symmetry operation have the same value, and an operator that
    leaves the sector gives zero. For canonical ``Spin``,
@@ -223,7 +224,8 @@ Use rules
    raw basis; ``NBodyG`` expresses the same products. ``AnomalousG``, spectrum
    calculations, restart, and the input and output of Hamiltonians are not
    supported together with this file. Eigenvector I/O is available for CG and
-   TimeEvolution through the sector checkpoint format below. Unsupported
+   TimeEvolution through the sector checkpoint format below; FullDiag can
+   export every eigenstate in that format. Unsupported
    combinations terminate with an error.
 
 
@@ -315,9 +317,9 @@ products can be written as ``InterAll``. An empty Hamiltonian is valid.
      - No / No
      - Both
    * - FullDiag (2)
-     - All sector eigenvalues
-     - No
-     - No / No
+     - All sector eigenvalues and eigenstates
+     - All six formats, every state
+     - No / All states
      - Replicated
    * - CG / LOBCG (3)
      - Low-energy states (recommended)
@@ -383,7 +385,7 @@ General spin, new Standard-mode Kondo momentum generation, ``NBodyInterAll``,
 ``AnomalousTerm``, ``AnomalousG``, ``CalcSpec``, spin-axis rotations,
 antiunitary operations, multidimensional irreducible representations,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-remain unsupported. FullDiag additionally excludes state/correlation output,
+remain unsupported. FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial ``ExpecMode``.
 
 
@@ -435,9 +437,9 @@ of canonical ``Spin``.
      - No / No
      - Distributed or replicated
    * - FullDiag (2)
-     - All sector eigenvalues
-     - No
-     - No / No
+     - All sector eigenvalues and eigenstates
+     - All six formats, every state
+     - No / All states
      - Replicated metadata
    * - CG / LOBCG (3)
      - Low-energy states
@@ -488,8 +490,8 @@ operations, multidimensional irreducible representations, spectrum,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
 are unsupported. ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
 ``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
-rejects eigenvector/correlation output, distributed basis metadata, MAGMA,
-and nonserial ``ExpecMode``.
+rejects vector input, distributed basis metadata, MAGMA, and nonserial
+``ExpecMode``.
 
 Eight-site transverse-field CG example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -611,7 +613,8 @@ In expert mode, ``CalcType=4`` evolves a sector checkpoint with a static
 Hamiltonian. Set ``InputEigenVec=1``, ``ReStart=0``, a positive integer
 ``ExpandCoef``, and ``SpectrumVec seed_eigenvec_0`` in the namelist. The
 rank files ``output/seed_eigenvec_0_rank_<rank>.dat`` must use the sector
-format below. A CG run with ``OutputEigenVec=1`` provides such files.
+format below. A CG run with ``OutputEigenVec=1`` provides such files, and so
+does a sector FullDiag run for every eigenstate (see :ref:`Subsec:eigenvec`).
 The basis, sector, MPI size and layout must match; the Hamiltonian may differ
 for a quench. The default layout is distributed; replicated remains available
 through ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``.
@@ -639,7 +642,10 @@ by ``ExpecInterval``. ``OutputGreenFormat=1`` collects them into files indexed
 by the zero-based time-grid step. Requesting every site pair at every step can
 be expensive for large sectors. ``ReStart`` remains unsupported.
 The sector manifest records the actual time grid, Taylor order, and source
-checkpoint's method, state, step, time and Hamiltonian digest.
+checkpoint's method, state, step, time and Hamiltonian digest. For a FullDiag
+source it adds ``source_hamiltonian_kind=sector_matrix_v1``: that digest
+identifies the diagonalized sector matrix and is not compared with the TE
+Hamiltonian, so the load log reports ``hamiltonian_changed=unknown``.
 
 With ``OutputEigenVec=1`` and positive ``OutputInterval``, periodic files are
 ``<prefix>_eigenvec_<step>_rank_<rank>.dat``; the final file is separately
@@ -692,6 +698,7 @@ Sector vector checkpoints
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Expert-mode CG accepts ``OutputEigenVec=1`` and ``InputEigenVec=1``.
+Sector FullDiag writes every eigenstate in the same format.
 The files are ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat``
 with zero-based state and rank indices. All ranks write a file, including
 empty owners. Reading requires the same model, fixed quantum numbers,
@@ -724,7 +731,12 @@ is not stored. Header words, in order, are:
 ``magic`` is the eight bytes ``HPHISV1\n``; version and phase are 1;
 scalar is 128; layout is 0 (replicated) or 1 (distributed). ``offset`` is
 zero-based. ``source_method`` uses the CalcType number, and ``time_bits``
-is an IEEE binary64 physical time (zero for CG). Phase 1 uses the normalized
+is an IEEE binary64 physical time (zero for CG and FullDiag). For
+``source_method=2`` (FullDiag), ``step`` and ``time_bits`` are zero,
+``state_index`` is below the sector dimension, and ``hamiltonian_digest``
+holds the ``hphi-sector-matrix-fnv1a64-v1`` digest of the diagonalized
+matrix (see Sector FullDiag) instead of the parsed Hamiltonian digest. CG and
+TE files keep the parsed digest; the two kinds are never compared. Phase 1 uses the normalized
 :math:`\sum_g\overline{\chi(g)}T_g|r\rangle` with the smallest representative
 and a positive real coefficient at that representative.
 
@@ -752,13 +764,57 @@ a replicated Hamiltonian but does not allocate the unused replicated
 eigenvector matrix. ELPA rejects a sector smaller than its process grid;
 reduce the rank count in that case.
 
-The output is ``output/<CDataFileHead>_energy_sector.dat`` with zero-based
-eigenvalue indices and energies, accompanied by the sector manifest.
-This filename always has the data-file prefix. Ordinary FullDiag still writes
-``Eigenvalue.dat``. Sector FullDiag does not produce eigenstate observables,
-correlation files, or eigenvectors. ``ExpecMode`` other than 0 and MAGMA are
-unsupported. Hamiltonian/vector I/O and restart remain unavailable.
-The manifest records the solver, matrix storage, and ``output_scope=eigenvalues``.
+The eigenvalues are written to ``output/<CDataFileHead>_energy_sector.dat``
+with zero-based indices, accompanied by the sector manifest. This filename
+always has the data-file prefix. Ordinary FullDiag still writes
+``Eigenvalue.dat``. Without correlation requests and with
+``OutputEigenVec=0`` only these eigenvalues are produced, and the manifest
+records ``output_scope=eigenvalues`` as before.
+
+Requested ``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``, ``FourBodyG``,
+``SixBodyG`` and ``NBodyG`` rows are evaluated for **every** eigenstate in
+energy order, under the operator rules of the model given above. The files
+are ``<CDataFileHead>_<stem>_eigen<state>.dat`` with the stems ``cisajs``,
+``cisajscktalt``, ``ThreeBody``, ``FourBody``, ``SixBody`` and ``NBodyG``;
+``OutputGreenFormat=1`` writes ``<CDataFileHead>_<stem>_eigen.dat`` whose
+first column is the state. ``OutputEigenVec=1`` saves every eigenstate as a sector checkpoint
+``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat``; a sector of
+dimension :math:`D` on :math:`P` ranks gives :math:`D\times P` files. These
+states can start a TE run or be re-evaluated by CG, see
+:ref:`Subsec:eigenvec`. States within a degenerate level are not unique:
+their order, phase and basis can differ between solvers, rank counts or
+runs. Compare degenerate levels through averages or projectors. Each state
+is processed by all ranks in turn; for distributed solvers it is gathered on
+rank 0 and its owned blocks are scattered.
+
+With these outputs, the sector matrix is checked before diagonalization:
+every coefficient must be finite and :math:`|a-\overline{b}|\le
+10^{-12}\max(1,|a|,|b|)` must hold for each lower element :math:`a` and its
+upper partner :math:`b`. The upper triangle is then rebuilt from the lower
+one and diagonal imaginary parts are set to zero; this matrix is passed to
+the solver. Its digest ``hphi-sector-matrix-fnv1a64-v1`` is FNV-1a 64 over
+little-endian 64-bit words: version 1, :math:`D`, then for each column
+:math:`c=1,\dots,D` and row :math:`r=c,\dots,D` the binary64 bits of the
+real and imaginary parts (zero hashed as +0). It is a provenance
+fingerprint, not a numerical equivalence test. With ELPA on several ranks
+this check broadcasts each column once from its owner, about :math:`16D^2`
+bytes per rank in total; replicated storage needs no coefficient
+communication.
+
+The manifest of such a run has ``output_scope=requested``,
+``requested_outputs`` (a comma list of ``eigenvalues``, ``correlations`` and
+``eigenvectors``), ``matrix_source=generated`` and
+``fulldiag_status=pending``. After every requested output succeeded,
+``matrix_digest``, ``completed_outputs`` and ``fulldiag_status=complete`` are
+appended; the last ``fulldiag_status`` line is the current state. A failed
+run can leave some correlation or vector files, so use the exit status
+together with that line. ``CalcTimer.dat`` then shows ``Sector matrix
+prepare`` [5600], ``Sector states`` [5700] and its gather/scatter [5710],
+correlation [5720] and checkpoint [5730] parts.
+
+``ExpecMode`` other than 0, MAGMA, ``InputEigenVec``, ``ReStart``,
+``CalcSpec`` and Hamiltonian I/O (``InputHam``/``OutputHam``) remain
+unavailable for sector FullDiag.
 
 Sector manifest
 ~~~~~~~~~~~~~~~
