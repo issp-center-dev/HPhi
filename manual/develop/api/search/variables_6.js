@@ -28,7 +28,8 @@ var searchData=
   ['global_5fsample_5fentries_25',['global_sample_entries',['../structSymmetryBasisDistributionStats.html#a0c4abe35838c32be49ab115467336fec',1,'SymmetryBasisDistributionStats']]],
   ['global_5fsample_5fgap_5fmax_26',['global_sample_gap_max',['../structSymmetryBasisDistributionStats.html#a1fb2c39767820d49801dbc1709bb6da5',1,'SymmetryBasisDistributionStats']]],
   ['global_5fsample_5fgap_5fsum_27',['global_sample_gap_sum',['../structSymmetryBasisDistributionStats.html#a23c772cf5058c471df8217a78da96b19',1,'SymmetryBasisDistributionStats']]],
-  ['group_5finverse_28',['group_inverse',['../structSymmetryBasisRuntime.html#a646d3eb87bf7a7057d95903af94a5b3d',1,'SymmetryBasisRuntime']]],
-  ['group_5forder_29',['group_order',['../structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e',1,'SymmetryBasisRuntime']]],
-  ['groups_30',['groups',['../structMPIBatchedTransfers.html#a413e20a77504c2751037c47e70e1b5a6',1,'MPIBatchedTransfers::groups'],['../structMPIBatchedDoubleTransfers.html#a7dfed2cad850e2cd0541c1f7c4df9312',1,'MPIBatchedDoubleTransfers::groups'],['../structMPIBatchedInterAll.html#af2e0818ee1bf7817001521010f504ad7',1,'MPIBatchedInterAll::groups'],['../structMPIBatchedSpinExchange.html#a87c6c6aab2a1f72b87aa29e99b8b221b',1,'MPIBatchedSpinExchange::groups']]]
+  ['group_5fdigest_28',['group_digest',['../structSymmetryHamiltonianIdentity.html#ad63b5cfca0b892a44f0cd815fe62d05e',1,'SymmetryHamiltonianIdentity']]],
+  ['group_5finverse_29',['group_inverse',['../structSymmetryBasisRuntime.html#a646d3eb87bf7a7057d95903af94a5b3d',1,'SymmetryBasisRuntime']]],
+  ['group_5forder_30',['group_order',['../structSymmetryBasisRuntime.html#aafb860948a2c395960cd5b8356f5781e',1,'SymmetryBasisRuntime']]],
+  ['groups_31',['groups',['../structMPIBatchedTransfers.html#a413e20a77504c2751037c47e70e1b5a6',1,'MPIBatchedTransfers::groups'],['../structMPIBatchedDoubleTransfers.html#a7dfed2cad850e2cd0541c1f7c4df9312',1,'MPIBatchedDoubleTransfers::groups'],['../structMPIBatchedInterAll.html#af2e0818ee1bf7817001521010f504ad7',1,'MPIBatchedInterAll::groups'],['../structMPIBatchedSpinExchange.html#a87c6c6aab2a1f72b87aa29e99b8b221b',1,'MPIBatchedSpinExchange::groups']]]
 ];

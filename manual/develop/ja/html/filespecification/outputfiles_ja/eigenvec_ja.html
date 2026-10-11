@@ -66,6 +66,62 @@ FullDiagのリスタート機能ではありません。FullDiagでは常に対�
 <span class="math notranslate nohighlight">\(N_{\rm H}^2\)</span> 個の複素数成分を出力するため、ディスク使用量は
 <span class="math notranslate nohighlight">\(O(N_{\rm H}^2)\)</span> になります。</p>
 </section>
+<section id="sector-fulldiag">
+<h2>sector FullDiagの固有状態<a class="headerlink" href="#sector-fulldiag" title="Link to this heading">¶</a></h2>
+<p>エキスパートモードで <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定し、<code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> と
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> を与えると、sector内の <strong>全</strong> 固有状態を
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code> に保存します。状態番号&amp;&amp;はエネルギー昇順の
+0始まりで、<code class="docutils literal notranslate"><span class="pre">##_energy_sector.dat</span></code> と同じ順序です。縮退した準位内の状態は
+一意ではなく、順序・位相・基底はsolverや実行ごとに異なり得ます。
+各MPIランクは所有成分を持たない場合も含めて自身の区間を出力するため、
+次元 <span class="math notranslate nohighlight">\(D\)</span> のsectorを <span class="math notranslate nohighlight">\(P\)</span> ランクで計算すると
+<span class="math notranslate nohighlight">\(D\times P\)</span> 個のファイルになります
+（<span class="math notranslate nohighlight">\(D=10{,}000\)</span>、<span class="math notranslate nohighlight">\(P=16\)</span> なら160,000個）。状態範囲の指定は
+できません。</p>
+<p>これらのファイルは上記のrawバイナリ配置ではなく、<a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> に
+記載したsector checkpoint形式です。raw FullDiagと意図的に同じファイル名を
+使っており、<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> の有無で形式が決まります。読み込む前に、どちらの
+計算の出力かを確認してください。ヘッダには <code class="docutils literal notranslate"><span class="pre">source_method=2</span></code>
+（FullDiag）、状態番号、step 0、time 0と、定義ファイルのHamiltonian
+digestではなく対角化した行列の <code class="docutils literal notranslate"><span class="pre">hphi-sector-matrix-fnv1a64-v1</span></code> digestを
+記録します。</p>
+<p>保存した状態は、同じsector・MPIランク数・基底順序・位相・layoutの計算で
+再利用できます。</p>
+<ul class="simple">
+<li><p>時間発展: 例えば状態2のランク別ファイルを、別の実行ディレクトリの
+<code class="docutils literal notranslate"><span class="pre">output/seed_rank_$$.dat</span></code> へコピーし、namelistに <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed</span></code>
+を加えます（<code class="docutils literal notranslate"><span class="pre">CalcType=4</span></code>、<code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>）。TEは自身の
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;</span></code> ファイルを出力するため、同じディレクトリでは
+他のFullDiag状態を上書きします。</p></li>
+<li><p>CG: <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> は <code class="docutils literal notranslate"><span class="pre">##_eigenvec_0</span></code> から
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_(exct-1)</span></code> を読み込み、反復せずにCG入力のHamiltonianで
+再評価します。再評価だけなら <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=0</span></code> を指定してください。
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> は入力ファイルをCGのcheckpointで上書きし、CGの
+相関ファイルもFullDiagと同じ名前（ <code class="docutils literal notranslate"><span class="pre">##_cisajs_eigen&amp;&amp;.dat</span></code> など）で
+出力します。元のFullDiagの出力を残すには別ディレクトリへコピーしてください。</p></li>
+</ul>
+<p>TEとCGの既定layoutは <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=distributed</span></code> ですが、
+FullDiagはreplicated layoutで状態を書きます。利用側の実行では
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> を指定してください。利用側は
+自身の定義ファイルのHamiltonianを評価し、quenchも可能です。FullDiagの
+digestは行列digestなので、読込ログは
+<code class="docutils literal notranslate"><span class="pre">source_hamiltonian_kind=sector_matrix_v1</span> <span class="pre">hamiltonian_changed=unknown</span></code>
+を表示します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">fulldiag/</span></code> で2ランクのFullDiagを実行した後、状態2からTEを行う
+POSIX shellの例:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mkdir -p te/output
+cp fulldiag/*.def te/
+for rank in 0 1; do
+  cp fulldiag/output/zvo_eigenvec_2_rank_${rank}.dat \
+     te/output/seed_rank_${rank}.dat
+done
+# te/ で calc.def に CalcType 4 と InputEigenVec 1 を設定し、
+# TEOneBody の時刻表と "SpectrumVec seed" を namelist に加えてから、
+# 同じ2ランクで実行します:
+# HPHI_SYMMETRY_BASIS_LAYOUT=replicated mpiexec -np 2 HPhi -e namelist.def
+</pre></div>
+</div>
+</section>
 </section>
 
 

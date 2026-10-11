@@ -80,6 +80,62 @@ the full Hilbert-space dimension. Thus, enabling this option writes
 <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> files containing <span class="math notranslate nohighlight">\(N_{\rm H}\)</span> complex
 components each; disk usage is <span class="math notranslate nohighlight">\(O(N_{\rm H}^2)\)</span>.</p>
 </section>
+<section id="sector-fulldiag-eigenstates">
+<h2>Sector FullDiag eigenstates<a class="headerlink" href="#sector-fulldiag-eigenstates" title="Link to this heading">¶</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> in expert mode, <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> and <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>
+save <strong>every</strong> sector eigenstate as
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code>. The state number &amp;&amp; is zero-based in
+ascending energy, the same order as <code class="docutils literal notranslate"><span class="pre">##_energy_sector.dat</span></code>. States within
+a degenerate level are not unique: their order, phase and basis can differ
+between solvers or runs. Every MPI rank writes its own block, including
+ranks that own no component, so a sector of dimension <span class="math notranslate nohighlight">\(D\)</span> run on
+<span class="math notranslate nohighlight">\(P\)</span> ranks writes <span class="math notranslate nohighlight">\(D\times P\)</span> files (160,000 files for
+<span class="math notranslate nohighlight">\(D=10{,}000\)</span> and <span class="math notranslate nohighlight">\(P=16\)</span>). Selecting a range of states is not
+available.</p>
+<p>These files use the sector checkpoint format described in
+<a class="reference internal" href="../expertmode_en/TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>, not the raw binary layout above. The names are
+deliberately the same as for raw FullDiag; whether <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> is used
+decides the format, so check the run before reading a file. The header
+records <code class="docutils literal notranslate"><span class="pre">source_method=2</span></code> (FullDiag), the state number, step 0, time 0 and
+the <code class="docutils literal notranslate"><span class="pre">hphi-sector-matrix-fnv1a64-v1</span></code> digest of the diagonalized matrix
+instead of the definition-file Hamiltonian digest.</p>
+<p>A saved state can be reused in the same sector, with the same MPI rank
+count, basis order, phase and layout:</p>
+<ul class="simple">
+<li><p>Time evolution: copy the rank files of the chosen state, for example
+state 2, to <code class="docutils literal notranslate"><span class="pre">output/seed_rank_$$.dat</span></code> of a separate run directory and
+add <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed</span></code> to the namelist (<code class="docutils literal notranslate"><span class="pre">CalcType=4</span></code>,
+<code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>). TE writes its own <code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;</span></code> files, which
+would overwrite other FullDiag states in the same directory.</p></li>
+<li><p>CG: <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> reads <code class="docutils literal notranslate"><span class="pre">##_eigenvec_0</span></code> to
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_(exct-1)</span></code> and evaluates them with the CG input Hamiltonian
+without iterating. Use <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=0</span></code> for this re-evaluation;
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> overwrites the input files with CG checkpoints, and
+CG writes its correlation files under the same names as FullDiag
+(<code class="docutils literal notranslate"><span class="pre">##_cisajs_eigen&amp;&amp;.dat</span></code> and so on). Copy the FullDiag files to a
+separate directory to keep the originals.</p></li>
+</ul>
+<p>TE and CG use <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=distributed</span></code> by default, while
+FullDiag writes replicated-layout states. Set
+<code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> for the consumer run. The consumer
+evaluates the Hamiltonian of its own definition files; a quench is allowed.
+Because the FullDiag digest is a matrix digest, the load log reports
+<code class="docutils literal notranslate"><span class="pre">source_hamiltonian_kind=sector_matrix_v1</span> <span class="pre">hamiltonian_changed=unknown</span></code>.</p>
+<p>A portable POSIX shell example for a TE run from state 2, after a two-rank
+FullDiag run in <code class="docutils literal notranslate"><span class="pre">fulldiag/</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mkdir -p te/output
+cp fulldiag/*.def te/
+for rank in 0 1; do
+  cp fulldiag/output/zvo_eigenvec_2_rank_${rank}.dat \
+     te/output/seed_rank_${rank}.dat
+done
+# In te/: set CalcType 4 and InputEigenVec 1 in calc.def, add a
+# TEOneBody time grid and "SpectrumVec seed" to the namelist, then run
+# with the same two MPI ranks:
+# HPHI_SYMMETRY_BASIS_LAYOUT=replicated mpiexec -np 2 HPhi -e namelist.def
+</pre></div>
+</div>
+</section>
 </section>
 
 

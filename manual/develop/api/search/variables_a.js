@@ -37,7 +37,7 @@ var searchData=
   ['local_5fsample_5fentries_34',['local_sample_entries',['../structSymmetryBasisDistributionStats.html#a1a9644ccc03a5c5c15bca050801e58eb',1,'SymmetryBasisDistributionStats']]],
   ['local_5fsample_5fgap_35',['local_sample_gap',['../structSymmetryBasisDistributionStats.html#abf72111ce7f42567aa2b7e31de014876',1,'SymmetryBasisDistributionStats']]],
   ['local_5fsite_36',['local_site',['../structSymmetryKondoMonomial.html#a544e6f7e0bda384aaa1b949b4df7e8b6',1,'SymmetryKondoMonomial']]],
-  ['local_5fsite_5fmask_37',['local_site_mask',['../structSymmetryStateEnumerator.html#a1d3fec0676255ad3e05b402558909c1b',1,'SymmetryStateEnumerator::local_site_mask'],['../structSymmetryKondoIdentity.html#ace73921ab62855a7af843c27add0c0fd',1,'SymmetryKondoIdentity::local_site_mask']]],
+  ['local_5fsite_5fmask_37',['local_site_mask',['../structSymmetryStateEnumerator.html#a1d3fec0676255ad3e05b402558909c1b',1,'SymmetryStateEnumerator::local_site_mask'],['../structSymmetryKondoIdentity.html#ace73921ab62855a7af843c27add0c0fd',1,'SymmetryKondoIdentity::local_site_mask'],['../structSymmetryHamiltonianIdentity.html#a6c34adb4c03b51c15a1c53117d3354bf',1,'SymmetryHamiltonianIdentity::local_site_mask']]],
   ['local_5fsurvivor_5fentries_38',['local_survivor_entries',['../structSymmetryBasisDistributionStats.html#aface569e93ce19db4bcb8e529e157a7d',1,'SymmetryBasisDistributionStats']]],
   ['locspn_39',['LocSpn',['../structDefineList.html#a37288a1682503fcf1d0e8c1916b55827',1,'DefineList']]]
 ];

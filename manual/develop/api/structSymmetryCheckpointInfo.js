@@ -1,6 +1,7 @@
 var structSymmetryCheckpointInfo =
 [
     [ "hamiltonian_digest", "structSymmetryCheckpointInfo.html#a25ec2079f6e04340a953c9944593ecba", null ],
+    [ "hamiltonian_digest_kind", "structSymmetryCheckpointInfo.html#aab16599fe7ad8db185c76c79b3efe987", null ],
     [ "source_method", "structSymmetryCheckpointInfo.html#a3d152794ed17e1d7ae09f009db934fbf", null ],
     [ "state_index", "structSymmetryCheckpointInfo.html#ab34a33b27549fbe0516e9f633efd8d95", null ],
     [ "step", "structSymmetryCheckpointInfo.html#a62b6f32d4debab8984eb8eecc728d333", null ],

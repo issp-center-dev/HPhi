@@ -1,8 +1,22 @@
 var searchData=
 [
-  ['time_0',['TIME',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55bae9e4c627760f36823cdd153c24229157',1,'symmetry_checkpoint.c']]],
-  ['trace_5fq_5fenergy_1',['TRACE_Q_ENERGY',['../expec__trace_8h.html#a60ef16cc6aa4d2ad6804947ec92d98dfa28f0551ceee504762fd25209c696d321',1,'expec_trace.h']]],
-  ['trace_5fq_5fnquant_2',['TRACE_Q_NQUANT',['../expec__trace_8h.html#a60ef16cc6aa4d2ad6804947ec92d98dfa8f35b86388dfcb785847eb61b97b2bd7',1,'expec_trace.h']]],
-  ['trace_5fq_5fonebody_3',['TRACE_Q_ONEBODY',['../expec__trace_8h.html#a60ef16cc6aa4d2ad6804947ec92d98dfad9c9196c3abd13f2fb31eadb3fd8cdb5',1,'expec_trace.h']]],
-  ['trace_5fq_5ftwobody_4',['TRACE_Q_TWOBODY',['../expec__trace_8h.html#a60ef16cc6aa4d2ad6804947ec92d98dfa18d48bd645514dc705753ef18c10ef92',1,'expec_trace.h']]]
+  ['scalar_0',['SCALAR',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba7efbb6cac96595e63e8fa171bde1eb68',1,'symmetry_checkpoint.c']]],
+  ['sector_5fcount_1',['SECTOR_COUNT',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba791d4bc960c894523568536d4c316049',1,'symmetry_checkpoint.c']]],
+  ['sector_5fsum_2',['SECTOR_SUM',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55baac2968ee05e0fad937b24c97165d3de8',1,'symmetry_checkpoint.c']]],
+  ['sector_5fxor_3',['SECTOR_XOR',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55baa9b0e58df8f379e2e4cbef716cb5402d',1,'symmetry_checkpoint.c']]],
+  ['state_4',['STATE',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55bab21bb6164a68674f388520d4d59e4da1',1,'symmetry_checkpoint.c']]],
+  ['step_5',['STEP',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55bac0ba526afb7f54207517b48a892961c2',1,'symmetry_checkpoint.c']]],
+  ['sym_5ffd_5fcorrelations_6',['SYM_FD_CORRELATIONS',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262acecb9162da7908260315edd16a8f8ca2',1,'symmetry_sector.h']]],
+  ['sym_5ffd_5feigenvalues_7',['SYM_FD_EIGENVALUES',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262a3b0cd8e1e073b271903a999691f666bc',1,'symmetry_sector.h']]],
+  ['sym_5ffd_5feigenvectors_8',['SYM_FD_EIGENVECTORS',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262af7f713b1afdfb2d61a915c7f6e494e22',1,'symmetry_sector.h']]],
+  ['sym_5ffd_5fhamiltonian_9',['SYM_FD_HAMILTONIAN',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262afbf99c74e8a8922b5639b126f02883d1',1,'symmetry_sector.h']]],
+  ['symmetry_5fbasis_5fdigest_5fdistributed_5fglobal_5fbeta_10',['SYMMETRY_BASIS_DIGEST_DISTRIBUTED_GLOBAL_BETA',['../symmetry__basis_8h.html#aeae344538a65d9992c200691c3953b4babfd004acfc0510e89edcf598165dba2d',1,'symmetry_basis.h']]],
+  ['symmetry_5fbasis_5fdigest_5finvalid_11',['SYMMETRY_BASIS_DIGEST_INVALID',['../symmetry__basis_8h.html#aeae344538a65d9992c200691c3953b4baa54f855f5880b070a93e5267f5b647d4',1,'symmetry_basis.h']]],
+  ['symmetry_5fbasis_5fdigest_5freplicated_5ffnv1a64_12',['SYMMETRY_BASIS_DIGEST_REPLICATED_FNV1A64',['../symmetry__basis_8h.html#aeae344538a65d9992c200691c3953b4bada8df0eaa6ce063525d35618bd20b4b8',1,'symmetry_basis.h']]],
+  ['symmetry_5fbasis_5fdistributed_13',['SYMMETRY_BASIS_DISTRIBUTED',['../symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7a808d9a9b42b89191148fdcaaac953b8a',1,'symmetry_basis.h']]],
+  ['symmetry_5fbasis_5freplicated_14',['SYMMETRY_BASIS_REPLICATED',['../symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7a06fd502fc531751f26b0dd19b922267b',1,'symmetry_basis.h']]],
+  ['symmetry_5fcolumn_5fu32_15',['SYMMETRY_COLUMN_U32',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398ad91b17c594be85913c2aad66a528df7b',1,'symmetry_matvec_plan.h']]],
+  ['symmetry_5fcolumn_5fu64_16',['SYMMETRY_COLUMN_U64',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398a4cae16bc473efbd650032fc2cd88a785',1,'symmetry_matvec_plan.h']]],
+  ['symmetry_5fhamiltonian_5fmatrix_5fv1_17',['SYMMETRY_HAMILTONIAN_MATRIX_V1',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6cab83e5d1a16c33904b58d09561e1184b5',1,'symmetry_checkpoint.h']]],
+  ['symmetry_5fhamiltonian_5fparsed_18',['SYMMETRY_HAMILTONIAN_PARSED',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6ca0c5cfa7383ac944539258051fa454f41',1,'symmetry_checkpoint.h']]]
 ];

@@ -1,5 +1,13 @@
 var NAVTREEINDEX9 =
 {
+"mltplySpin_8h.html#a0c1d4e0eca7da30233d96a251ea125f9":[10,0,1,67,7],
+"mltplySpin_8h.html#a1a67484ef2dc45228cb0df6a018a6020":[10,0,1,67,1],
+"mltplySpin_8h.html#a20cf25deeca80bc9540511bcb0b79243":[10,0,1,67,8],
+"mltplySpin_8h.html#a367fcb99b257491d4370cdef55e496de":[10,0,1,67,12],
+"mltplySpin_8h.html#a49705894462616c2d3184fb2514c9ff9":[10,0,1,67,11],
+"mltplySpin_8h.html#a60dc2f1f62e571e890181e959ac95bb2":[10,0,1,67,6],
+"mltplySpin_8h.html#a64d16a2825abf713057dc6ddec33547c":[10,0,1,67,4],
+"mltplySpin_8h.html#aa1326905a9352030ff148324e2dba110":[10,0,1,67,0],
 "mltplySpin_8h.html#aa30d4a9b260f8b44f1110a6f759cf0dd":[10,0,1,67,3],
 "mltplySpin_8h.html#aa338a5dff7b9ce8ed3c19ff7300eeb6c":[10,0,1,67,10],
 "mltplySpin_8h.html#aaacfb2aca0416786e4c48f0d5361152e":[10,0,1,67,9],
@@ -241,13 +249,5 @@ var NAVTREEINDEX9 =
 "page_codingrule.html#sec_coding_mpi":[0,3],
 "page_codingrule.html#sec_coding_naming":[0,1],
 "page_codingrule.html#sec_coding_openmp":[0,2],
-"page_codingrule.html#sec_coding_testing":[0,6],
-"page_codingrule.html#subsec_functions":[0,1,0],
-"page_codingrule.html#subsec_macros":[0,1,2],
-"page_codingrule.html#subsec_variables":[0,1,1],
-"page_log.html":[3],
-"page_log.html#sec_log_debug":[3,3],
-"page_log.html#sec_log_error":[3,1],
-"page_log.html#sec_log_progress":[3,0],
-"page_log.html#sec_log_time":[3,2]
+"page_codingrule.html#sec_coding_testing":[0,6]
 };

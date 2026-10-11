@@ -50,8 +50,9 @@ var searchData=
   ['requested_47',['requested',['../structSymmetryOptionGate.html#aa1161cf81c2f221b29ee877d33eb3ed0',1,'SymmetryOptionGate']]],
   ['reserved_48',['reserved',['../structCorrelationTransition.html#a0410b46a6c1e072f141dfe21a4b9f42d',1,'CorrelationTransition']]],
   ['restart_49',['restart',['../structSymmetryMethodCapability.html#a0a69eff1af1d9099fea006564bbde987',1,'SymmetryMethodCapability']]],
-  ['row_5fnnz_5fmax_50',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
-  ['row_5fptr_51',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
-  ['rowptr_52',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
-  ['runtime_5fbuffer_5fbytes_53',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
+  ['root_50',['root',['../structStateBuffers.html#a3f0597053d21ac7a2b5ec8f7a17638ba',1,'StateBuffers']]],
+  ['row_5fnnz_5fmax_51',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
+  ['row_5fptr_52',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
+  ['rowptr_53',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
+  ['runtime_5fbuffer_5fbytes_54',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
 ];

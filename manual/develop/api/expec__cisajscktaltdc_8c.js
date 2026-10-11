@@ -1,5 +1,6 @@
 var expec__cisajscktaltdc_8c =
 [
+    [ "close_green_file", "expec__cisajscktaltdc_8c.html#a8878a245a21435be6a166e7a5c9c35a3", null ],
     [ "expec_cisajscktalt_Hubbard", "expec__cisajscktaltdc_8c.html#a57e6093abb7b98c433e953764b892d15", null ],
     [ "expec_cisajscktalt_HubbardGC", "expec__cisajscktaltdc_8c.html#a5780ffd65b489119e7d7eb9617e2d3a0", null ],
     [ "expec_cisajscktalt_Spin", "expec__cisajscktaltdc_8c.html#a918ce8a912fe44cd3f9e49f6b8ca0581", null ],
@@ -14,5 +15,6 @@ var expec__cisajscktaltdc_8c =
     [ "expec_Sixbody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a522e2d5ad822804118592435024471ee", null ],
     [ "expec_Threebody_SpinGCHalf", "expec__cisajscktaltdc_8c.html#a2c06d1733daee29acca9c29f50964c32", null ],
     [ "expec_Threebody_SpinGeneral", "expec__cisajscktaltdc_8c.html#a25d91b20439dd2de25f95e29d8c3fc39", null ],
+    [ "open_green_file", "expec__cisajscktaltdc_8c.html#a261887fc759eb6cd181709b049c480bc", null ],
     [ "write_symmetry_green_row", "expec__cisajscktaltdc_8c.html#a445e3126cc45c5cba57ba43dbb0e1377", null ]
 ];

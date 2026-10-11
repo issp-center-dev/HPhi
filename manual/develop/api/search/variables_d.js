@@ -21,5 +21,6 @@ var searchData=
   ['orgtpow_18',['OrgTpow',['../structDefineList.html#a66b5c042047526bfb2665961598bc563',1,'DefineList']]],
   ['origin_19',['origin',['../structMPITransferGroup.html#af298c3e43ba7f01011004e258676580b',1,'MPITransferGroup::origin'],['../structMPIDoubleTransferGroup.html#adc09db0f9906aeaffcdeaacb5fd0f54f',1,'MPIDoubleTransferGroup::origin'],['../structMPIInterAllGroup.html#a32b066fd1c737d7a2532a687336f1b8a',1,'MPIInterAllGroup::origin'],['../structMPISpinExchangeGroup.html#afb94a0e0adca417e9a088621f6887db8',1,'MPISpinExchangeGroup::origin']]],
   ['outgoing_5fpeer_5fcount_20',['outgoing_peer_count',['../structSymmetryVectorHaloPlan.html#a82f5e48e008bb5c2c65b1ea831ac648c',1,'SymmetryVectorHaloPlan']]],
-  ['outputinterval_21',['OutputInterval',['../structParamList.html#a5efcfbc3b2363b6b3b4858d0d8671816',1,'ParamList']]]
+  ['outputinterval_21',['OutputInterval',['../structParamList.html#a5efcfbc3b2363b6b3b4858d0d8671816',1,'ParamList']]],
+  ['owned_22',['owned',['../structStateBuffers.html#adfe534804d849930b9908dd549599582',1,'StateBuffers']]]
 ];

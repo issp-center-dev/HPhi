@@ -213,7 +213,8 @@ terms remain unsupported. SpinGC supports <code class="docutils literal notransl
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
 <p>Correlation functions (<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
 <code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>) are computed in the sector for
-<code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code>. The values are
+<code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> and, for every
+eigenstate, <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>. The values are
 the exact expectation values in the sector; rows that are mapped onto each
 other by a symmetry operation have the same value, and an operator that
 leaves the sector gives zero. For canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>,
@@ -221,7 +222,8 @@ leaves the sector gives zero. For canonical <code class="docutils literal notran
 raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products. <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, spectrum
 calculations, restart, and the input and output of Hamiltonians are not
 supported together with this file. Eigenvector I/O is available for CG and
-TimeEvolution through the sector checkpoint format below. Unsupported
+TimeEvolution through the sector checkpoint format below; FullDiag can
+export every eigenstate in that format. Unsupported
 combinations terminate with an error.</p>
 </li>
 </ul>
@@ -327,9 +329,9 @@ products can be written as <code class="docutils literal notranslate"><span clas
 <td><p>Both</p></td>
 </tr>
 <tr class="row-even"><td><p>FullDiag (2)</p></td>
-<td><p>All sector eigenvalues</p></td>
-<td><p>No</p></td>
-<td><p>No / No</p></td>
+<td><p>All sector eigenvalues and eigenstates</p></td>
+<td><p>All six formats, every state</p></td>
+<td><p>No / All states</p></td>
 <td><p>Replicated</p></td>
 </tr>
 <tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
@@ -396,7 +398,7 @@ invariant <code class="docutils literal notranslate"><span class="pre">TEOneBody
 <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>, <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>, spin-axis rotations,
 antiunitary operations, multidimensional irreducible representations,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-remain unsupported. FullDiag additionally excludes state/correlation output,
+remain unsupported. FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
 </section>
 </section>
@@ -453,9 +455,9 @@ of canonical <code class="docutils literal notranslate"><span class="pre">Spin</
 <td><p>Distributed or replicated</p></td>
 </tr>
 <tr class="row-even"><td><p>FullDiag (2)</p></td>
-<td><p>All sector eigenvalues</p></td>
-<td><p>No</p></td>
-<td><p>No / No</p></td>
+<td><p>All sector eigenvalues and eigenstates</p></td>
+<td><p>All six formats, every state</p></td>
+<td><p>No / All states</p></td>
 <td><p>Replicated metadata</p></td>
 </tr>
 <tr class="row-odd"><td><p>CG / LOBCG (3)</p></td>
@@ -508,8 +510,8 @@ operations, multidimensional irreducible representations, spectrum,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
 are unsupported. <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code> and
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> are not supported in this SpinGC sector path. FullDiag also
-rejects eigenvector/correlation output, distributed basis metadata, MAGMA,
-and nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
+rejects vector input, distributed basis metadata, MAGMA, and nonserial
+<code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
 <section id="eight-site-transverse-field-cg-example">
 <h3>Eight-site transverse-field CG example<a class="headerlink" href="#eight-site-transverse-field-cg-example" title="Link to this heading">¶</a></h3>
 <p>In an empty directory, save the following standard-library Python code as
@@ -620,7 +622,8 @@ outputs describe a single sector, not the sum over all sectors.</p>
 Hamiltonian. Set <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>, <code class="docutils literal notranslate"><span class="pre">ReStart=0</span></code>, a positive integer
 <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>, and <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed_eigenvec_0</span></code> in the namelist. The
 rank files <code class="docutils literal notranslate"><span class="pre">output/seed_eigenvec_0_rank_&lt;rank&gt;.dat</span></code> must use the sector
-format below. A CG run with <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> provides such files.
+format below. A CG run with <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> provides such files, and so
+does a sector FullDiag run for every eigenstate (see <a class="reference internal" href="../outputfiles_en/eigenvec_en.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a>).
 The basis, sector, MPI size and layout must match; the Hamiltonian may differ
 for a quench. The default layout is distributed; replicated remains available
 through <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code>.</p>
@@ -645,7 +648,10 @@ by <code class="docutils literal notranslate"><span class="pre">ExpecInterval</s
 by the zero-based time-grid step. Requesting every site pair at every step can
 be expensive for large sectors. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> remains unsupported.
 The sector manifest records the actual time grid, Taylor order, and source
-checkpoint’s method, state, step, time and Hamiltonian digest.</p>
+checkpoint’s method, state, step, time and Hamiltonian digest. For a FullDiag
+source it adds <code class="docutils literal notranslate"><span class="pre">source_hamiltonian_kind=sector_matrix_v1</span></code>: that digest
+identifies the diagonalized sector matrix and is not compared with the TE
+Hamiltonian, so the load log reports <code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=unknown</span></code>.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> and positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code>, periodic files are
 <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;_eigenvec_&lt;step&gt;_rank_&lt;rank&gt;.dat</span></code>; the final file is separately
 named <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;_eigenvec_final_rank_&lt;rank&gt;.dat</span></code>. In these sector headers,
@@ -692,6 +698,7 @@ digest is written into that row’s checkpoint header.</p>
 <section id="sector-vector-checkpoints">
 <h2>Sector vector checkpoints<a class="headerlink" href="#sector-vector-checkpoints" title="Link to this heading">¶</a></h2>
 <p>Expert-mode CG accepts <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> and <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>.
+Sector FullDiag writes every eigenstate in the same format.
 The files are <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;rank&gt;.dat</span></code>
 with zero-based state and rank indices. All ranks write a file, including
 empty owners. Reading requires the same model, fixed quantum numbers,
@@ -720,7 +727,12 @@ source_method state_index step time_bits payload_xor payload_sum
 <p><code class="docutils literal notranslate"><span class="pre">magic</span></code> is the eight bytes <code class="docutils literal notranslate"><span class="pre">HPHISV1\n</span></code>; version and phase are 1;
 scalar is 128; layout is 0 (replicated) or 1 (distributed). <code class="docutils literal notranslate"><span class="pre">offset</span></code> is
 zero-based. <code class="docutils literal notranslate"><span class="pre">source_method</span></code> uses the CalcType number, and <code class="docutils literal notranslate"><span class="pre">time_bits</span></code>
-is an IEEE binary64 physical time (zero for CG). Phase 1 uses the normalized
+is an IEEE binary64 physical time (zero for CG and FullDiag). For
+<code class="docutils literal notranslate"><span class="pre">source_method=2</span></code> (FullDiag), <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">time_bits</span></code> are zero,
+<code class="docutils literal notranslate"><span class="pre">state_index</span></code> is below the sector dimension, and <code class="docutils literal notranslate"><span class="pre">hamiltonian_digest</span></code>
+holds the <code class="docutils literal notranslate"><span class="pre">hphi-sector-matrix-fnv1a64-v1</span></code> digest of the diagonalized
+matrix (see Sector FullDiag) instead of the parsed Hamiltonian digest. CG and
+TE files keep the parsed digest; the two kinds are never compared. Phase 1 uses the normalized
 <span class="math notranslate nohighlight">\(\sum_g\overline{\chi(g)}T_g|r\rangle\)</span> with the smallest representative
 and a positive real coefficient at that representative.</p>
 <p>Group, sector and Hamiltonian fingerprints use the manifest algorithms.
@@ -745,13 +757,53 @@ multiple ranks builds only its owned column panel. ScaLAPACK currently builds
 a replicated Hamiltonian but does not allocate the unused replicated
 eigenvector matrix. ELPA rejects a sector smaller than its process grid;
 reduce the rank count in that case.</p>
-<p>The output is <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_energy_sector.dat</span></code> with zero-based
-eigenvalue indices and energies, accompanied by the sector manifest.
-This filename always has the data-file prefix. Ordinary FullDiag still writes
-<code class="docutils literal notranslate"><span class="pre">Eigenvalue.dat</span></code>. Sector FullDiag does not produce eigenstate observables,
-correlation files, or eigenvectors. <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> other than 0 and MAGMA are
-unsupported. Hamiltonian/vector I/O and restart remain unavailable.
-The manifest records the solver, matrix storage, and <code class="docutils literal notranslate"><span class="pre">output_scope=eigenvalues</span></code>.</p>
+<p>The eigenvalues are written to <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_energy_sector.dat</span></code>
+with zero-based indices, accompanied by the sector manifest. This filename
+always has the data-file prefix. Ordinary FullDiag still writes
+<code class="docutils literal notranslate"><span class="pre">Eigenvalue.dat</span></code>. Without correlation requests and with
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=0</span></code> only these eigenvalues are produced, and the manifest
+records <code class="docutils literal notranslate"><span class="pre">output_scope=eigenvalues</span></code> as before.</p>
+<p>Requested <code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> rows are evaluated for <strong>every</strong> eigenstate in
+energy order, under the operator rules of the model given above. The files
+are <code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_&lt;stem&gt;_eigen&lt;state&gt;.dat</span></code> with the stems <code class="docutils literal notranslate"><span class="pre">cisajs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cisajscktalt</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBody</span></code>, <code class="docutils literal notranslate"><span class="pre">FourBody</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBody</span></code> and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>;
+<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> writes <code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_&lt;stem&gt;_eigen.dat</span></code> whose
+first column is the state. <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> saves every eigenstate as a sector checkpoint
+<code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;rank&gt;.dat</span></code>; a sector of
+dimension <span class="math notranslate nohighlight">\(D\)</span> on <span class="math notranslate nohighlight">\(P\)</span> ranks gives <span class="math notranslate nohighlight">\(D\times P\)</span> files. These
+states can start a TE run or be re-evaluated by CG, see
+<a class="reference internal" href="../outputfiles_en/eigenvec_en.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a>. States within a degenerate level are not unique:
+their order, phase and basis can differ between solvers, rank counts or
+runs. Compare degenerate levels through averages or projectors. Each state
+is processed by all ranks in turn; for distributed solvers it is gathered on
+rank 0 and its owned blocks are scattered.</p>
+<p>With these outputs, the sector matrix is checked before diagonalization:
+every coefficient must be finite and <span class="math notranslate nohighlight">\(|a-\overline{b}|\le
+10^{-12}\max(1,|a|,|b|)\)</span> must hold for each lower element <span class="math notranslate nohighlight">\(a\)</span> and its
+upper partner <span class="math notranslate nohighlight">\(b\)</span>. The upper triangle is then rebuilt from the lower
+one and diagonal imaginary parts are set to zero; this matrix is passed to
+the solver. Its digest <code class="docutils literal notranslate"><span class="pre">hphi-sector-matrix-fnv1a64-v1</span></code> is FNV-1a 64 over
+little-endian 64-bit words: version 1, <span class="math notranslate nohighlight">\(D\)</span>, then for each column
+<span class="math notranslate nohighlight">\(c=1,\dots,D\)</span> and row <span class="math notranslate nohighlight">\(r=c,\dots,D\)</span> the binary64 bits of the
+real and imaginary parts (zero hashed as +0). It is a provenance
+fingerprint, not a numerical equivalence test. With ELPA on several ranks
+this check broadcasts each column once from its owner, about <span class="math notranslate nohighlight">\(16D^2\)</span>
+bytes per rank in total; replicated storage needs no coefficient
+communication.</p>
+<p>The manifest of such a run has <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code>,
+<code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code> (a comma list of <code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code>, <code class="docutils literal notranslate"><span class="pre">correlations</span></code> and
+<code class="docutils literal notranslate"><span class="pre">eigenvectors</span></code>), <code class="docutils literal notranslate"><span class="pre">matrix_source=generated</span></code> and
+<code class="docutils literal notranslate"><span class="pre">fulldiag_status=pending</span></code>. After every requested output succeeded,
+<code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code>, <code class="docutils literal notranslate"><span class="pre">completed_outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">fulldiag_status=complete</span></code> are
+appended; the last <code class="docutils literal notranslate"><span class="pre">fulldiag_status</span></code> line is the current state. A failed
+run can leave some correlation or vector files, so use the exit status
+together with that line. <code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> then shows <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span>
+<span class="pre">prepare</span></code> [5600], <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">states</span></code> [5700] and its gather/scatter [5710],
+correlation [5720] and checkpoint [5730] parts.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> other than 0, MAGMA, <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code>, <code class="docutils literal notranslate"><span class="pre">ReStart</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> and Hamiltonian I/O (<code class="docutils literal notranslate"><span class="pre">InputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>) remain
+unavailable for sector FullDiag.</p>
 </section>
 <section id="sector-manifest">
 <h2>Sector manifest<a class="headerlink" href="#sector-manifest" title="Link to this heading">¶</a></h2>

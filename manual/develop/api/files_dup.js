@@ -90,6 +90,8 @@ var files_dup =
     [ "symmetry_diagonal.c", "symmetry__diagonal_8c.html", "symmetry__diagonal_8c" ],
     [ "symmetry_directory.c", "symmetry__directory_8c.html", "symmetry__directory_8c" ],
     [ "symmetry_distribution.c", "symmetry__distribution_8c.html", "symmetry__distribution_8c" ],
+    [ "symmetry_fulldiag.c", "symmetry__fulldiag_8c.html", "symmetry__fulldiag_8c" ],
+    [ "symmetry_hamiltonian_io.c", "symmetry__hamiltonian__io_8c.html", "symmetry__hamiltonian__io_8c" ],
     [ "symmetry_kondo.c", "symmetry__kondo_8c.html", "symmetry__kondo_8c" ],
     [ "symmetry_kondo_terms.c", "symmetry__kondo__terms_8c.html", "symmetry__kondo__terms_8c" ],
     [ "symmetry_matvec_plan.c", "symmetry__matvec__plan_8c.html", "symmetry__matvec__plan_8c" ],
