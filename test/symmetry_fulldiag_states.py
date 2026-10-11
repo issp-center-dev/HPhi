@@ -171,12 +171,87 @@ def checkpoint_mode(hphi, probe, launcher, ranks):
             reject(source, probe, 0, [], f'reject_rank_count_{label}', HEADER_ERROR)
 
 
+GREEN_GLOBS = ('*cisajs*', '*ThreeBody*', '*FourBody*', '*SixBody*', '*NBodyG*')
+
+
+def fresh_output(case):
+    if (case.path/'output').exists():
+        shutil.rmtree(case.path/'output')
+
+
+def check_manifest(output, requested, digest):
+    text = (output/'zvo_symmetry_sector.dat').read_text()
+    manifest = common.read_manifest(output)
+    assert manifest['output_scope'] == 'requested', manifest
+    assert manifest['requested_outputs'] == requested
+    assert manifest['matrix_source'] == 'generated'
+    # pending is written before the solver, complete is appended last.
+    assert text.index('fulldiag_status=pending') < text.index('fulldiag_status=complete')
+    assert manifest['fulldiag_status'] == 'complete'
+    assert manifest['completed_outputs'] == requested
+    assert manifest['matrix_digest'] == f'hphi-sector-matrix-fnv1a64-v1:{digest:016x}'
+
+
+def states_mode(hphi, launcher, ranks):
+    selection = common.selected_cases()
+    root = common.suite_root(f'states-{selection}')
+    backends = common.solver_backends(launcher, ranks)
+    exercised, eigenvalue_only = {}, set()
+    for case in common.cases(root, selection):
+        dim = len(case.hq)
+        for solver, label, backend_launcher in backends:
+            backend_ranks = common.spingc.mpi_size(backend_launcher)
+            fresh_output(case)
+            if solver == 3 and dim < common.grid_max(backend_ranks):
+                # ELPA keeps rejecting a sector smaller than its process grid.
+                common.run_fd(case, hphi, solver, {'OutputEigenVec': 1}, backend_launcher,
+                              f'grid_reject_{label}', 'smaller than the process grid')
+                assert not list((case.path/'output').glob('*eigenvec*'))
+                continue
+            text = common.run_fd(case, hphi, solver, {'OutputEigenVec': 1}, backend_launcher,
+                                 f'states_{label}')
+            assert f'FullDiag solver: {label}' in text, text
+            output = case.path/'output'
+            energies = np.loadtxt(output/'zvo_energy_sector.dat', ndmin=2)
+            np.testing.assert_array_equal(energies[:, 0], np.arange(dim))
+            vectors, headers = common.read_states(output, dim, backend_ranks)
+            common.check_eigensystem(case.hq, energies[:, 1], vectors)
+            digest = int(headers[0][0][W.HAMILTONIAN])
+            for state, parts in enumerate(headers):
+                for header in parts:
+                    assert int(header[W.METHOD]) == FULLDIAG and int(header[W.STATE]) == state
+                    assert int(header[W.STEP]) == 0 and int(header[W.TIME]) == 0
+                    assert int(header[W.HAMILTONIAN]) == digest
+            check_manifest(output, 'eigenvalues,eigenvectors', digest)
+            assert len(list(output.glob('zvo_eigenvec_*_rank_*.dat'))) == dim*backend_ranks
+            for pattern in GREEN_GLOBS + ('*phys*', 'Eigenvalue.dat'):
+                assert not list(output.glob(pattern)), pattern
+            exercised.setdefault(label, []).append((case.name, dim, backend_ranks))
+            print(f'{case.name} {label} np={backend_ranks}: {dim} states, residual/subspace PASS',
+                  flush=True)
+            if label in eigenvalue_only:
+                continue
+            # Eigenvalue-only input: no state post-processing, old manifest.
+            fresh_output(case)
+            common.run_fd(case, hphi, solver, {}, backend_launcher, f'eigenvalues_{label}')
+            manifest = common.read_manifest(case.path/'output')
+            assert manifest['output_scope'] == 'eigenvalues' and 'fulldiag_status' not in manifest
+            assert not list((case.path/'output').glob('*eigenvec*'))
+            eigenvalue_only.add(label)
+    for label, runs in exercised.items():
+        print(f'{label} exercised: ' + ', '.join(f'{name}(D={dim},np={n})' for name, dim, n in runs),
+              flush=True)
+    return exercised
+
+
 def main():
     hphi = Path(sys.argv[1]).resolve()
     mode = sys.argv[2] if len(sys.argv) > 2 else 'states'
     launcher, ranks = common.launcher_from_env()
     if mode == 'checkpoint':
         checkpoint_mode(hphi, common.probe_executable(hphi), launcher, ranks)
+    elif mode == 'states':
+        states_mode(hphi, launcher, ranks)
     else:
         raise ValueError(mode)
     print(f'sector FullDiag states ({mode}) PASS', flush=True)

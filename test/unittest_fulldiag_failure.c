@@ -4,6 +4,9 @@
 #include "matrixlapack.h"
 #include "wrapperMPI.h"
 #include "FileIO.h"
+#include "symmetry_fulldiag.h"
+#include "symmetry_hamiltonian_io.h"
+#include "symmetry_sector.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -37,6 +40,17 @@ int ZHEEVall(int n, double complex **a, double complex *r, double complex **v)
   for (i = 0; i < n; ++i) r[i] = i + 0.25;
   return 1;
 }
+/* Sector post-processing is not reached by these raw-basis contracts. */
+unsigned int SymmetryFullDiagOutputMask(const struct DefineList *def) { (void)def; return 1u; }
+int PrepareSymmetryHamiltonian(const struct BindStruct *x, int from_file,
+                               struct SymmetryHamiltonianInfo *info)
+{ (void)x; (void)from_file; (void)info; return -1; }
+int ProcessSymmetryFullDiagStates(const struct BindStruct *x,
+                                  const struct SymmetryHamiltonianInfo *info)
+{ (void)x; (void)info; return -1; }
+int WriteSymmetryFullDiagCompletion(const struct BindStruct *x, int from_file,
+                                    uint64_t digest)
+{ (void)x; (void)from_file; (void)digest; return -1; }
 int childfopenMPI(const char *name, const char *mode, FILE **fp)
 {
   (void)name; (void)mode;

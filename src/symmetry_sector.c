@@ -272,6 +272,75 @@ int WriteSymmetryCanonicalTPQSchedule(const struct BindStruct *X, int rows,
   return 0;
 }
 
+unsigned int SymmetryFullDiagOutputMask(const struct DefineList *def)
+{
+  unsigned int outputs = SYM_FD_EIGENVALUES;
+  if (def->iOutputHam) return SYM_FD_HAMILTONIAN;
+  if (def->NCisAjt > 0 || def->NCisAjtCkuAlvDC > 0 || def->NTBody > 0 ||
+      def->NFBody > 0 || def->NSBody > 0 || def->NNBodyG > 0)
+    outputs |= SYM_FD_CORRELATIONS;
+  if (def->iOutputEigenVec) outputs |= SYM_FD_EIGENVECTORS;
+  return outputs;
+}
+
+/* Comma list in the fixed order eigenvalues, correlations, eigenvectors,
+ * hamiltonian. */
+static void format_fulldiag_outputs(unsigned int outputs, char *buffer, size_t size)
+{
+  static const struct { unsigned int bit; const char *name; } names[] = {
+    { SYM_FD_EIGENVALUES, "eigenvalues" }, { SYM_FD_CORRELATIONS, "correlations" },
+    { SYM_FD_EIGENVECTORS, "eigenvectors" }, { SYM_FD_HAMILTONIAN, "hamiltonian" }
+  };
+  size_t used = 0;
+  buffer[0] = '\0';
+  for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); ++i) {
+    int written;
+    if (!(outputs & names[i].bit)) continue;
+    written = snprintf(buffer + used, size - used, "%s%s", used ? "," : "", names[i].name);
+    if (written < 0 || (size_t)written >= size - used) return;
+    used += (size_t)written;
+  }
+}
+
+static int manifest_name(const struct DefineList *def, char *name, size_t size)
+{
+  int length = snprintf(name, size, "%s%ssymmetry_sector.dat",
+                        def->iOutputDataHead == 1 ? def->CDataFileHead : "",
+                        def->iOutputDataHead == 1 ? "_" : "");
+  return length < 0 || (size_t)length + strlen(cParentOutputFolder) >= size ? -1 : 0;
+}
+
+int WriteSymmetryFullDiagCompletion(const struct BindStruct *X,
+    int from_file, uint64_t matrix_digest)
+{
+  const struct DefineList *def = &X->Def;
+  char name[D_FileNameMax], outputs[64];
+  FILE *fp = NULL;
+  int error = !def->iFlgSymmetryBasis || def->iCalcType != FullDiag ||
+              (from_file != 0 && from_file != 1) || from_file != (def->iInputHam != 0);
+  if (SumMPI_i(error) != 0) {
+    fprintf(stdoutMPI, "Error: invalid TransSym FullDiag completion record.\n");
+    return -1;
+  }
+  if (myrank == 0) {
+    error = manifest_name(def, name, sizeof(name)) != 0;
+    if (!error && childfopenMPI(name, "a", &fp) != 0) error = 1;
+    if (!error) {
+      format_fulldiag_outputs(SymmetryFullDiagOutputMask(def), outputs, sizeof(outputs));
+      if (fprintf(fp, "matrix_digest=hphi-sector-matrix-fnv1a64-v1:%016" PRIx64
+                  "\ncompleted_outputs=%s\nfulldiag_status=complete\n",
+                  matrix_digest, outputs) < 0) error = 1;
+      if (ferror(fp)) error = 1;
+      if (fclose(fp) != 0) error = 1;
+    }
+  }
+  if (SumMPI_i(error) != 0) {
+    fprintf(stdoutMPI, "Error: could not record TransSym FullDiag completion in the sector manifest.\n");
+    return -1;
+  }
+  return 0;
+}
+
 int WriteSymmetrySectorManifest(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
@@ -365,10 +434,22 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       if (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
         fprintf(fp, "ensemble=single_symmetry_sector\nnum_ave=%d\nlarge_value=%.17g\ninitial_vec_type=%d\n",
                 NumAve, LargeValue, def->iInitialVecType);
-      if (def->iCalcType == FullDiag)
-        fprintf(fp, "output_scope=eigenvalues\nsolver_id=%d\neigenvalue_file=%s_energy_sector.dat\nmatrix_storage=%s\n",
+      if (def->iCalcType == FullDiag) {
+        unsigned int outputs = SymmetryFullDiagOutputMask(def);
+        if (outputs == SYM_FD_EIGENVALUES) {
+          fprintf(fp, "output_scope=eigenvalues\n");
+        } else {
+          /* Requested, not yet produced: completion is appended at the end. */
+          char requested[64];
+          format_fulldiag_outputs(outputs, requested, sizeof(requested));
+          fprintf(fp, "output_scope=requested\nrequested_outputs=%s\nmatrix_source=%s\n"
+                  "fulldiag_status=pending\n",
+                  requested, def->iInputHam ? "input" : "generated");
+        }
+        fprintf(fp, "solver_id=%d\neigenvalue_file=%s_energy_sector.dat\nmatrix_storage=%s\n",
                 def->iSolver, def->CDataFileHead,
                 def->iSolver == SOLVER_ELPA && nproc > 1 ? "column_panel" : "replicated");
+      }
       if (ferror(fp)) error = 1;
       if (fclose(fp) != 0) error = 1;
     }

@@ -70,8 +70,13 @@ def main():
     negative('nontranslation', 'invariance', gc, {'families': {'Trans': [(0, 0, 0, 0, .2, 0)]}})
     for field in ('OutputHam', 'InputHam', 'ReStart', 'CalcSpec'):
         negative('option_'+field, 'does not support '+field if field != 'CalcSpec' else 'spectrum calculations', gc, {'CalcMod': {field: 1}}, method=2 if field == 'OutputHam' else 3)
-    for field in ('OutputEigenVec', 'InputEigenVec'):
-        negative('fulldiag_'+field, field, gc, {'CalcMod': {field: 1}}, method=2)
+    negative('fulldiag_InputEigenVec', 'InputEigenVec', gc, {'CalcMod': {'InputEigenVec': 1}}, method=2)
+    # Sector FullDiag saves every eigenstate; symmetry_fulldiag_states checks them.
+    vectors = expert_case(root/'fulldiag_OutputEigenVec', gc, method=2,
+                          options={'CalcMod': {'OutputEigenVec': 1}}, empty=True)
+    run_case(vectors, hphi, 'validation', [], dict(os.environ))
+    assert list((vectors/'output').glob('zvo_eigenvec_*_rank_0.dat'))
+    print('fulldiag_OutputEigenVec: accepted')
     # The new early guard must not restrict raw KondoGC InterAll input.
     raw = expert_case(root/'raw_gc_crossed_interall',
                       Case('KondoGC', 1, 'block', None, None, 0), method=2,

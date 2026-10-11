@@ -339,7 +339,7 @@ static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
   { Lanczos,       "Lanczos",       1,      1,   1,   0,   0,   0,    0,   0,   0   },
   { TPQCalc,       "TPQ",           1,      1,   1,   0,   0,   0,    0,   0,   0   },
-  { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { FullDiag,      "FullDiag",      1,      0,   0,   0,   0,   1,    0,   0,   0   },
   { CG,            "CG",            1,      1,   1,   0,   0,   1,    1,   0,   0   },
   { TimeEvolution, "TimeEvolution", 1,      1,   1,   0,   0,   1,    1,   0,   0   },
   { cTPQ,          "cTPQ",          1,      1,   1,   0,   0,   0,    0,   0,   0   },

@@ -304,8 +304,15 @@ def validation(root, hphi):
                            c.definition(path, 'loc.def', [(i, 0) for i in range(4)], 0)), empty)
     negative('restart', 'does not support ReStart', lambda path: append(path, 'calc.def', 'ReStart 1\n'))
     negative('spectrum', 'spectrum calculations', lambda path: append(path, 'calc.def', 'CalcSpec 1\n'))
-    negative('fulldiag_vectors', 'does not support OutputEigenVec',
-             lambda path: (replace(path, 'calc.def', 'CalcType 3', 'CalcType 2'), append(path, 'calc.def', 'OutputEigenVec 1\n')))
+    import shutil
+    vectors = root/'fulldiag_vectors'
+    shutil.copytree(base, vectors)
+    replace(vectors, 'calc.def', 'CalcType 3', 'CalcType 2')
+    append(vectors, 'calc.def', 'OutputEigenVec 1\n')
+    c.run_case(vectors, hphi, 'accept', [], dict(os.environ))
+    dim = int(manifest(vectors, 6, 4, c.mixed_families(4))['sector_dim'])
+    assert len(list((vectors/'output').glob('zvo_eigenvec_*_rank_0.dat'))) == dim
+    print('validation fulldiag_vectors accepted', flush=True)
     full = root/'valid_fulldiag'
     c.write_case(full, 4, p, chi, c.mixed_families(4), 2,
                  {'CalcMod': {'Solver': 0}})

@@ -325,3 +325,60 @@ def read_fd_state(path: Path, state: int, ranks: int,
         offset += size
     assert offset == dim and np.isfinite(vector).all()
     return vector, headers
+
+
+def check_eigensystem(hq, energies, vectors):
+    """Orthonormal eigenvectors of the independent Hq; degenerate clusters
+    are compared as subspaces, isolated states up to a global phase."""
+    d = len(hq)
+    np.testing.assert_allclose(vectors.conj().T @ vectors, np.eye(d),
+                               rtol=0, atol=1e-10)
+    residuals = np.linalg.norm(hq @ vectors - vectors * energies, axis=0)
+    scale = max(1., np.linalg.norm(hq, 'fro'))
+    assert np.max(residuals / (scale*np.linalg.norm(vectors, axis=0))) <= 1e-10
+    expected, reference = np.linalg.eigh(hq)
+    np.testing.assert_allclose(energies, expected, rtol=0, atol=3e-8)
+    for start, end in cluster_edges(hq):
+        actual = vectors[:, start:end]
+        target = reference[:, start:end]
+        np.testing.assert_allclose(actual @ actual.conj().T,
+                                   target @ target.conj().T, rtol=0, atol=2e-8)
+        if end-start == 1:
+            v, u = actual[:, 0], target[:, 0]
+            overlap = np.vdot(u, v)
+            assert abs(overlap) > 0
+            assert np.linalg.norm(v*np.conj(overlap)/abs(overlap)-u) <= 2e-8
+
+
+def cluster_edges(hq):
+    """Degenerate clusters: adjacent independent eigenvalue gaps at most
+    1e-10*max(1, ||Hq||_2)."""
+    expected = np.linalg.eigvalsh(hq)
+    gaps = np.diff(expected)
+    edges = [0, *(np.flatnonzero(gaps > 1e-10*max(1., np.linalg.norm(hq, 2)))+1), len(hq)]
+    return list(zip(edges, edges[1:]))
+
+
+def read_states(output: Path, dim: int, ranks: int):
+    columns, headers = [], []
+    for state in range(dim):
+        vector, parts = read_fd_state(output, state, ranks)
+        columns.append(vector)
+        headers.append(parts)
+    return np.column_stack(columns), headers
+
+
+def read_manifest(output: Path) -> dict[str, str]:
+    """Last occurrence wins: the FullDiag status is appended on completion."""
+    return read_key_values(Path(output)/'zvo_symmetry_sector.dat')
+
+
+def grid_max(ranks: int) -> int:
+    divisors = [d for d in range(1, int(ranks**0.5)+1) if ranks % d == 0]
+    return ranks // max(divisors)
+
+
+def selected_cases() -> str:
+    selection = os.environ.get('HPHI_FD_CASES', 'all')
+    assert selection in ('all', 'boundary'), selection
+    return selection

@@ -22,6 +22,17 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
 int ComputeSymmetrySectorDigest(const struct SymmetryBasisRuntime *sym,
                                 struct SymmetrySectorDigest *digest);
 int WriteSymmetrySectorManifest(const struct BindStruct *X);
+/* Sector FullDiag outputs. The mask helper is pure: OutputHam alone, or
+ * eigenvalues plus each requested correlation/eigenvector output. */
+enum SymmetryFullDiagOutput {
+  SYM_FD_EIGENVALUES = 1u, SYM_FD_CORRELATIONS = 2u,
+  SYM_FD_EIGENVECTORS = 4u, SYM_FD_HAMILTONIAN = 8u
+};
+unsigned int SymmetryFullDiagOutputMask(const struct DefineList *def);
+/* Collective: appends the matrix digest, the completed outputs and
+ * fulldiag_status=complete to the manifest after every output succeeded. */
+int WriteSymmetryFullDiagCompletion(const struct BindStruct *X,
+    int from_file, uint64_t matrix_digest);
 /* Append the validated cTPQ schedule before producing any thermal data. */
 int WriteSymmetryCanonicalTPQSchedule(const struct BindStruct *X, int rows,
                                      const double *beta, const int *orders);

@@ -102,9 +102,12 @@ def check_sector(path, model, length, momentum, states, raw, projector):
     if model == "Spin" and momentum == 0:
         execute(path, "layout_reject", calc, layout="distributed",
                 failure="distributed symmetry basis is supported for TransSym Lanczos, TPQ, CG, TimeEvolution and cTPQ runs only")
-        for option in ["ReStart", "InputEigenVec", "OutputEigenVec", "InputHam", "OutputHam"]:
+        for option in ["ReStart", "InputEigenVec", "InputHam", "OutputHam"]:
             execute(path, "reject_"+option, calc + option + " 1\n",
                     failure="does not support " + option)
+        # Every sector eigenstate is saved; symmetry_fulldiag_states checks them.
+        execute(path, "accept_OutputEigenVec", calc + "OutputEigenVec 1\n")
+        assert len(list((path / "output").glob("zvo_eigenvec_*_rank_0.dat"))) == dim
         fixture.definition(path, "one.def", [[0, 0, 0, 0]])
         original = (path / "sym.def").read_text()
         (path / "sym.def").write_text(original + "OneBodyG one.def\n")
