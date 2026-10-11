@@ -9,6 +9,7 @@ import struct
 
 import numpy as np
 import symmetry_general_terms as fixture
+from symmetry_reference import canonical_basis, check_basis
 
 fixture.ROOT = Path("symmetry_checkpoint")
 fixture.ROOT.mkdir(exist_ok=True)
@@ -24,14 +25,8 @@ def read_file(path):
 
 
 def check_sector(path, model, length, momentum, states, raw, projector):
-    columns, covered = [], set()
-    for index in range(len(states)):
-        if index in covered or np.linalg.norm(projector[:, index]) < 1e-12:
-            continue
-        col = projector[:, index]
-        covered.update(np.flatnonzero(abs(col) > 1e-12))
-        columns.append(col / np.linalg.norm(col))
-    basis = np.column_stack(columns)
+    basis = canonical_basis(projector)
+    check_basis(projector, basis)
     h = basis.conj().T @ raw @ basis
     dim = h.shape[0]
     calc = (path / "calc.def").read_text()

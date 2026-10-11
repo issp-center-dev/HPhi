@@ -987,6 +987,22 @@ if(ELPA_FOUND)
     set_property(TEST symmetry_fulldiag APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
 endif()
 
+# Sector FullDiag state/correlation/reuse suites: one shell per suite, the
+# CTest name selects its mode.
+function(add_sector_fd_test name suite mode)
+  add_test(NAME ${name} COMMAND /bin/sh
+    ${CMAKE_SOURCE_DIR}/test/${suite}.sh ${mode})
+  set_tests_properties(${name} PROPERTIES
+    LABELS "symmetry;fulldiag" TIMEOUT 1800)
+  if(USE_SCALAPACK)
+    set_property(TEST ${name} APPEND PROPERTY ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+  endif()
+  if(ELPA_FOUND)
+    set_property(TEST ${name} APPEND PROPERTY ENVIRONMENT "HPHI_HAS_ELPA=1")
+  endif()
+endfunction()
+add_sector_fd_test(symmetry_fulldiag_reference symmetry_fulldiag_reference all)
+
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite
     ${CMAKE_SOURCE_DIR}/test/unittest_komega_bicg_nonfinite.c)
