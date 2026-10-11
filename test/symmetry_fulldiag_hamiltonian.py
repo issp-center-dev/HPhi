@@ -70,6 +70,42 @@ def known_matrix(dim):
     return h
 
 
+def check_hermitian_boundaries(case, probe_exe, solver, label, launcher):
+    # Exercise PrepareSymmetryHamiltonian without asking a dense solver to
+    # diagonalize values near DBL_MAX. The expected canonical entries are
+    # fixed independently of the production tolerance calculation.
+    failures = []
+    for suffix, accepted in (
+            ('diagonal-below', True), ('diagonal-above', False),
+            ('pair-below', True), ('pair-above', False),
+            ('large-hermitian', True), ('large-near', True),
+            ('large-outside', False), ('large-nonhermitian', False),
+            ('large-diagonal', False), ('large-diagonal-below', True),
+            ('large-diagonal-above', False)):
+        action = f'fulldiag-matrix-{suffix}'
+        try:
+            common.run_probe(case, probe_exe, solver, launcher, action, f'{suffix}_{label}',
+                             None if accepted else 'sector Hamiltonian is not Hermitian')
+            if not accepted:
+                assert not (case.path/'matrix-contract.dat').exists()
+                continue
+            contract, lower, _ = read_contract(case, common.spingc.mpi_size(launcher))
+            expected = known_matrix(len(case.hq))
+            if suffix.startswith('diagonal-'):
+                expected[0, 0] = 1.0
+            elif suffix.startswith('pair-'):
+                expected[1, 0] = 1.07
+            else:
+                expected[0, 0] = 1.4e308
+                expected[1, 0] = complex(1.4e308, 1.4e308)
+            np.testing.assert_array_equal(lower, np.tril(expected))
+            assert contract['matrix_digest'] == common.matrix_digest(expected)
+        except AssertionError as error:
+            failures.append(f'{suffix}: {error}')
+    assert not failures, '\n'.join(failures)
+    print(f'{case.name} {label}: 11 Hermitian numeric boundary cases PASS', flush=True)
+
+
 def contract_mode(hphi, probe_exe, launcher, ranks):
     root = common.suite_root('hamiltonian-contract')
     backends = common.solver_backends(launcher, ranks)
@@ -102,6 +138,7 @@ def contract_mode(hphi, probe_exe, launcher, ranks):
             if case.name != 'Spin_L6_k0' or label in negative_done:
                 continue
             negative_done.add(label)
+            check_hermitian_boundaries(case, probe_exe, solver, label, backend_launcher)
             for action, message in (
                     ('fulldiag-matrix-nan', 'sector Hamiltonian has a non-finite element'),
                     ('fulldiag-matrix-nonhermitian', 'sector Hamiltonian is not Hermitian'),

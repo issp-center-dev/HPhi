@@ -183,12 +183,21 @@ static int finite_element(double complex value)
   return isfinite(creal(value)) && isfinite(cimag(value));
 }
 
-/* |a - conj(b)| <= 1e-12 max(1, |a|, |b|); for a diagonal a == b this
- * bounds the imaginary part with the same scale. */
-static int hermitian_pair(double complex lower, double complex upper)
+/* Off diagonal: |a - conj(b)| <= tol max(1, |a|, |b|).
+ * Diagonal: |Im(a)| <= tol max(1, |a|), without the factor two from a-conj(a).
+ * Inputs have finite components, but their magnitudes/difference may overflow.
+ * Scale by a power of two first: norms/difference stay bounded by sqrt(8),
+ * without rounding each operand through division before subtracting. */
+static int hermitian_pair(double complex lower, double complex upper, int diagonal)
 {
-  double scale = fmax(1.0, fmax(cabs(lower), cabs(upper)));
-  return cabs(lower - conj(upper)) <= HERMITIAN_TOLERANCE * scale;
+  double scale = fmax(1.0, fmax(fmax(fabs(creal(lower)), fabs(cimag(lower))),
+                               fmax(fabs(creal(upper)), fabs(cimag(upper)))));
+  int exponent = ilogb(scale) + 1;
+  double lr = scalbn(creal(lower), -exponent), li = scalbn(cimag(lower), -exponent);
+  double ur = scalbn(creal(upper), -exponent), ui = scalbn(cimag(upper), -exponent);
+  double bound = HERMITIAN_TOLERANCE *
+      fmax(scalbn(1.0, -exponent), fmax(hypot(lr, li), hypot(ur, ui)));
+  return (diagonal ? fabs(li) : hypot(lr - ur, li + ui)) <= bound;
 }
 
 static uint64_t hash_component(uint64_t hash, double value)
@@ -235,7 +244,7 @@ static int prepare_replicated(unsigned long dim, uint64_t *digest)
         nonfinite = 1;
         break;
       }
-      if (!hermitian_pair(lower, upper)) {
+      if (!hermitian_pair(lower, upper, row == col)) {
         note_element("not Hermitian", row, col);
         nonhermitian = 1;
         break;
@@ -293,7 +302,7 @@ static int prepare_panel(unsigned long dim, uint64_t *digest)
       } else if (owns_column(row)) {
         double complex upper = read_owned(col, row);
         if (!finite_element(upper)) flags |= 1;
-        else if (!hermitian_pair(lower, upper)) flags |= 2;
+        else if (!hermitian_pair(lower, upper, row == col)) flags |= 2;
         if (flags) note_element(flags & 1 ? "not finite" : "not Hermitian", row, col);
       }
     }

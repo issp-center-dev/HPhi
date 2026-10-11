@@ -69,6 +69,52 @@ static int mutate(const struct BindStruct *X, const char *action)
     if (owns(1)) *element(1, 1) += 1e-14*I;
     return 0;
   }
+  if (strcmp(action, "fulldiag-matrix-diagonal-below") == 0 ||
+      strcmp(action, "fulldiag-matrix-diagonal-above") == 0) {
+    write_known_matrix(dim);
+    double imag = nextafter(1e-12,
+        strcmp(action, "fulldiag-matrix-diagonal-below") == 0 ? 0.0 : INFINITY);
+    if (owns(1)) *element(1, 1) = 1.0 + imag*I;
+    return 0;
+  }
+  if (strcmp(action, "fulldiag-matrix-pair-below") == 0 ||
+      strcmp(action, "fulldiag-matrix-pair-above") == 0) {
+    if (dim < 2) return -1;
+    write_known_matrix(dim);
+    double upper = 1.07000000000107;
+    if (strcmp(action, "fulldiag-matrix-pair-below") == 0)
+      upper = nextafter(upper, 1.07);
+    if (owns(1)) *element(2, 1) = 1.07;
+    if (owns(2)) *element(1, 2) = upper;
+    return 0;
+  }
+  if (strncmp(action, "fulldiag-matrix-large-", 22) == 0) {
+    if (dim < 2) return -1;
+    write_known_matrix(dim);
+    double complex lower = 1.4e308 + 1.4e308*I;
+    double complex upper = conj(lower), diagonal = 1.4e308;
+    if (strcmp(action, "fulldiag-matrix-large-hermitian") == 0) {
+      /* Exact conjugates whose mathematical magnitudes exceed DBL_MAX. */
+    } else if (strcmp(action, "fulldiag-matrix-large-near") == 0) {
+      upper += 1.5e296; /* Below 1e-12 * sqrt(2) * 1.4e308. */
+    } else if (strcmp(action, "fulldiag-matrix-large-outside") == 0) {
+      upper += 3e296;
+    } else if (strcmp(action, "fulldiag-matrix-large-nonhermitian") == 0) {
+      upper = -1.4e308 + 1.4e308*I;
+    } else if (strcmp(action, "fulldiag-matrix-large-diagonal") == 0) {
+      diagonal = lower;
+    } else if (strcmp(action, "fulldiag-matrix-large-diagonal-below") == 0) {
+      diagonal += 1e296*I;
+    } else if (strcmp(action, "fulldiag-matrix-large-diagonal-above") == 0) {
+      diagonal += 3e296*I;
+    } else return -1;
+    if (owns(1)) {
+      *element(1, 1) = diagonal;
+      *element(2, 1) = lower;
+    }
+    if (owns(2)) *element(1, 2) = upper;
+    return 0;
+  }
   if (strcmp(action, "fulldiag-matrix-rank-mismatch") == 0) {
     /* Each rank alone is finite and Hermitian; only the rank agreement fails. */
     if (iHamPanelActive || nproc < 2) return -1;
