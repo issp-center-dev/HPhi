@@ -619,6 +619,7 @@ add_test(
 )
 add_hphi_test(fulldiag_kondo_chain)
 add_hphi_test(kondo_nconserved_dimension)
+add_hphi_test(fulldiag_kondo_nconserved_layout)
 add_hphi_test(fulldiag_spin_tri)
 add_hphi_test(fulldiag_genspin_ladder)
 add_hphi_test(fulldiag_hubbardgc_tri)
@@ -645,7 +646,7 @@ set_tests_properties(
     fulldiag_kondo_chain fulldiag_kondogc_chain
     PROPERTIES LABELS "fulldiag;kondo")
 set_tests_properties(
-    kondo_nconserved_dimension
+    kondo_nconserved_dimension fulldiag_kondo_nconserved_layout
     PROPERTIES LABELS "fulldiag;kondo;validation")
 set_tests_properties(
     fulldiag_tj_calchs1
