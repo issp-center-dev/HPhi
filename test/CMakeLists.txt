@@ -1009,6 +1009,8 @@ add_sector_fd_test(symmetry_fulldiag_correlations symmetry_fulldiag_correlations
 add_sector_fd_test(symmetry_fulldiag_green_failures symmetry_fulldiag_failures green)
 set_tests_properties(symmetry_fulldiag_green_failures PROPERTIES TIMEOUT 300)
 add_sector_fd_test(symmetry_fulldiag_reuse symmetry_fulldiag_reuse all)
+add_sector_fd_test(symmetry_fulldiag_io_failures symmetry_fulldiag_failures io)
+set_tests_properties(symmetry_fulldiag_io_failures PROPERTIES TIMEOUT 300)
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite

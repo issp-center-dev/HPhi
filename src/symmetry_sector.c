@@ -275,11 +275,12 @@ int WriteSymmetryCanonicalTPQSchedule(const struct BindStruct *X, int rows,
 unsigned int SymmetryFullDiagOutputMask(const struct DefineList *def)
 {
   unsigned int outputs = SYM_FD_EIGENVALUES;
-  if (def->iOutputHam) return SYM_FD_HAMILTONIAN;
+  /* TRUE, as CG and raw FullDiag test these flags. */
+  if (def->iOutputHam == TRUE) return SYM_FD_HAMILTONIAN;
   if (def->NCisAjt > 0 || def->NCisAjtCkuAlvDC > 0 || def->NTBody > 0 ||
       def->NFBody > 0 || def->NSBody > 0 || def->NNBodyG > 0)
     outputs |= SYM_FD_CORRELATIONS;
-  if (def->iOutputEigenVec) outputs |= SYM_FD_EIGENVECTORS;
+  if (def->iOutputEigenVec == TRUE) outputs |= SYM_FD_EIGENVECTORS;
   return outputs;
 }
 

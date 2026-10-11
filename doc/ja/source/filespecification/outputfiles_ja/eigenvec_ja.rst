@@ -73,8 +73,9 @@ digestではなく対角化した行列の ``hphi-sector-matrix-fnv1a64-v1`` dig
 * CG: ``InputEigenVec=1`` は ``##_eigenvec_0`` から
   ``##_eigenvec_(exct-1)`` を読み込み、反復せずにCG入力のHamiltonianで
   再評価します。再評価だけなら ``OutputEigenVec=0`` を指定してください。
-  ``OutputEigenVec=1`` は入力ファイルをCGのcheckpointで上書きします。
-  元のFullDiag状態を残すには別ディレクトリへコピーしてください。
+  ``OutputEigenVec=1`` は入力ファイルをCGのcheckpointで上書きし、CGの
+  相関ファイルもFullDiagと同じ名前（ ``##_cisajs_eigen&&.dat`` など）で
+  出力します。元のFullDiagの出力を残すには別ディレクトリへコピーしてください。
 
 TEとCGの既定layoutは ``HPHI_SYMMETRY_BASIS_LAYOUT=distributed`` ですが、
 FullDiagはreplicated layoutで状態を書きます。利用側の実行では

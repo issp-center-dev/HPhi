@@ -10,6 +10,9 @@
 #include "symmetry_kondo.h"
 #include "symmetry_sector.h"
 #include "wrapperMPI.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
+#endif
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -116,8 +119,10 @@ int BuildSymmetryHamiltonianIdentity(const struct BindStruct *X,
   return 0;
 }
 
+#ifdef MPI
 /* Storage adapter: replicated Ham[row][col] or the ELPA owned-column panel,
- * Ham_local[(col-HamColBegin)*HamPanelLd + row-1]. Indices are 1-based. */
+ * Ham_local[(col-HamColBegin)*HamPanelLd + row-1]. Indices are 1-based.
+ * Only the panel path, which needs MPI, uses it. */
 static int owns_column(unsigned long col)
 {
   return !iHamPanelActive ||
@@ -144,7 +149,6 @@ static void set_owned(unsigned long row, unsigned long col, double complex value
 static int broadcast_column(unsigned long dim, unsigned long col,
                             double complex *buffer)
 {
-#ifdef MPI
   unsigned long chunk = (dim + (unsigned long)nproc - 1) / (unsigned long)nproc;
   int owner = (int)((col - 1) / chunk);
   if (owner == myrank)
@@ -152,11 +156,8 @@ static int broadcast_column(unsigned long dim, unsigned long col,
            dim * sizeof(*buffer));
   return MPI_Bcast(buffer, (int)dim, MPI_DOUBLE_COMPLEX, owner, MPI_COMM_WORLD)
          == MPI_SUCCESS ? 0 : -1;
-#else
-  (void)dim; (void)col; (void)buffer;
-  return -1;
-#endif
 }
+#endif
 
 static int validate_storage(unsigned long dim)
 {
@@ -267,6 +268,9 @@ static int prepare_panel(unsigned long dim, uint64_t *digest)
 {
   double complex *column = malloc(dim * sizeof(*column));
   uint64_t hash = SymmetryHashInteger(FNV_OFFSET, MATRIX_DIGEST_VERSION, 8);
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (SymmetryFullDiagTestFail("matrix_alloc")) { free(column); column = NULL; }
+#endif
   if (SumMPI_i(column == NULL) != 0) {
     free(column);
     fprintf(stdoutMPI, "Error: sector Hamiltonian column buffer allocation failed.\n");
@@ -283,14 +287,15 @@ static int prepare_panel(unsigned long dim, uint64_t *digest)
     for (unsigned long row = col; row <= dim && !flags; ++row) {
       double complex lower = column[row - 1];
       if (!finite_element(lower)) {
+        /* Every rank received this element; report it once. */
         flags |= 1;
+        if (myrank == 0) note_element("not finite", row, col);
       } else if (owns_column(row)) {
         double complex upper = read_owned(col, row);
         if (!finite_element(upper)) flags |= 1;
         else if (!hermitian_pair(lower, upper)) flags |= 2;
+        if (flags) note_element(flags & 1 ? "not finite" : "not Hermitian", row, col);
       }
-      if (flags && (owns_column(row) || myrank == 0))
-        note_element(flags & 1 ? "not finite" : "not Hermitian", row, col);
     }
     if (MPI_Allreduce(&flags, &any, 1, MPI_INT, MPI_BOR, MPI_COMM_WORLD) != MPI_SUCCESS)
       any = 1;

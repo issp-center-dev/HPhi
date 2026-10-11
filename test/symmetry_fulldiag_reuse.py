@@ -52,8 +52,9 @@ def produce(case, hphi, solver, launcher, label):
     """FullDiag with every state saved; the states are kept in a store."""
     if (case.path/'output').exists():
         shutil.rmtree(case.path/'output')
-    common.run_fd(case, hphi, solver, {'OutputEigenVec': 1, 'OutputGreenFormat': 0},
-                  launcher, f'produce_{label}')
+    text = common.run_fd(case, hphi, solver, {'OutputEigenVec': 1, 'OutputGreenFormat': 0},
+                         launcher, f'produce_{label}')
+    assert f'FullDiag solver: {label}' in text, text
     store = case.path.parent/f'{case.name}_{label}_states'
     if store.exists():
         shutil.rmtree(store)
@@ -100,7 +101,7 @@ def word_time(word):
 
 
 def check_te(case, path, hphi, launcher, ranks, label, seed, state, h, source_digest):
-    text = spingc.run_case(path, hphi, label, launcher, environment())
+    text = common.run_consumer(path, hphi, label, launcher, environment())
     assert KIND_LINE in text, text
     manifest = common.read_manifest(path/'output')
     assert int(manifest['source_method']) == FULLDIAG and int(manifest['source_state']) == state
@@ -157,7 +158,7 @@ def check_cg(case, path, hphi, launcher, ranks, label, vectors, energies):
     common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0,
                                 'OutputGreenFormat': 0})
     common.set_mod_file(path, {'exct': count})
-    text = spingc.run_case(path, hphi, label, launcher, environment())
+    text = common.run_consumer(path, hphi, label, launcher, environment())
     assert 'An Eigenvector is inputted.' in text and 'Residual-2-norm' not in text, text
     assert KIND_LINE in text
     energy = [float(line.split()[1]) for line in (path/'output'/'zvo_energy.dat').read_text().splitlines()
@@ -183,25 +184,30 @@ def negatives(cases, case, store, hphi, launcher, ranks, label):
     path = consumer(case, f'{case.name}_{label}_default_layout')
     copy_state(store, 0, path, 'seed', ranks)
     set_te_inputs(path)
-    spingc.run_case(path, hphi, 'te_default_layout', launcher, environment(None), header_error)
+    common.run_consumer(path, hphi, 'te_default_layout', launcher, environment(None), header_error)
+    path = consumer(case, f'{case.name}_{label}_cg_default_layout')
+    copy_state(store, 0, path, 'zvo_eigenvec_0', ranks)
+    common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0})
+    common.set_mod_file(path, {'exct': 1})
+    common.run_consumer(path, hphi, 'cg_default_layout', launcher, environment(None), header_error)
     if ranks > 1:
         path = consumer(case, f'{case.name}_{label}_rank_count')
         copy_state(store, 0, path, 'seed', ranks)
         set_te_inputs(path)
-        spingc.run_case(path, hphi, 'te_rank_count', [], environment(), header_error)
+        common.run_consumer(path, hphi, 'te_rank_count', [], environment(), header_error)
     same = next(other for other in cases if other.model == case.model and other is not case
                 and len(other.hq) == len(case.hq))
     path = consumer(same, f'{same.name}_{label}_other_sector')
     copy_state(store, 0, path, 'zvo_eigenvec_0', ranks)
     common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0})
     common.set_mod_file(path, {'exct': 1})
-    spingc.run_case(path, hphi, 'cg_other_sector', launcher, environment(), header_error)
+    common.run_consumer(path, hphi, 'cg_other_sector', launcher, environment(), header_error)
     if len(case.hq) > 1:
         path = consumer(case, f'{case.name}_{label}_state_number')
         copy_state(store, 1, path, 'zvo_eigenvec_0', ranks)
         common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0})
         common.set_mod_file(path, {'exct': 1})
-        spingc.run_case(path, hphi, 'cg_state_number', launcher, environment(),
+        common.run_consumer(path, hphi, 'cg_state_number', launcher, environment(),
                         'symmetry checkpoint state index or step is invalid for CG input')
     print(f'{case.name} {label}: layout/rank/sector/state rejections PASS', flush=True)
 
@@ -215,7 +221,7 @@ def kondo_layout_negative(root, case, store, hphi, launcher, ranks, label):
                        options={'CalcMod': {'InputEigenVec': 1}, 'ModPara': {'exct': 1}})
     (path/'output').mkdir(exist_ok=True)
     copy_state(store, 0, path, 'zvo_eigenvec_0', ranks)
-    spingc.run_case(path, hphi, 'cg_kondo_layout', launcher, environment(),
+    common.run_consumer(path, hphi, 'cg_kondo_layout', launcher, environment(),
                     'checkpoint header / sector / layout validation failed')
     print(f'{case.name} {label}: Kondo local-site layout rejection PASS', flush=True)
 
@@ -235,7 +241,7 @@ def main():
             seen.add(case.model)
     if selection == 'boundary':
         chosen = cases
-    worst, negatives_done, quenches = 0., set(), 0
+    worst, negatives_done, quenches, exercised = 0., set(), 0, {}
     for case in chosen:
         if not common.attach_correlations(case, False):
             case.operators = {}
@@ -271,6 +277,7 @@ def main():
             check_cg(case, path, hphi, backend_launcher, n, 'cg', vectors, energies)
             print(f'{case.name} {label} np={n}: TE static/quench and CG re-evaluation PASS',
                   flush=True)
+            exercised.setdefault(label, []).append((case.name, dim, n))
             if label not in negatives_done and selection == 'all':
                 negatives(cases, case, store, hphi, backend_launcher, n, label)
                 negatives_done.add(label)
@@ -278,6 +285,7 @@ def main():
                 kondo_layout_negative(root, case, store, hphi, backend_launcher, n, label)
                 negatives_done.add(f'kondo_{label}')
     assert quenches > 0, 'no noncommuting quench was exercised'
+    common.require_backends(exercised)
     print(f'sector FullDiag reuse ({selection}): {len(seen)} models, {quenches} quenches, '
           f'worst state error {worst:.2e} PASS', flush=True)
 

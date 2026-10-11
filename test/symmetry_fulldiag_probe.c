@@ -235,6 +235,17 @@ done:
   return status;
 }
 
+int SymmetryFullDiagTestFail(const char *stage)
+{
+  static int fired;
+  const char *wanted = getenv("HPHI_TEST_FD_FAIL");
+  const char *rank_text = getenv("HPHI_TEST_FD_FAIL_RANK");
+  if (fired || wanted == NULL || rank_text == NULL ||
+      strcmp(wanted, stage) != 0 || atoi(rank_text) != myrank) return 0;
+  fired = 1;
+  return 1;
+}
+
 int SymmetryFullDiagProbe(struct BindStruct *X, const char *action)
 {
   int invalid = X == NULL || action == NULL || X->Sym == NULL ||

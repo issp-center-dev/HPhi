@@ -241,6 +241,7 @@ def states_mode(hphi, launcher, ranks):
     for label, runs in exercised.items():
         print(f'{label} exercised: ' + ', '.join(f'{name}(D={dim},np={n})' for name, dim, n in runs),
               flush=True)
+    common.require_backends(exercised)
     return exercised
 
 

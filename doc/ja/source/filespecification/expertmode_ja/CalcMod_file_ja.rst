@@ -125,6 +125,9 @@ CalcModファイル
    から選択することが出来ます。
    FullDiag計算では、全固有ベクトルが出力されます。MPI実行時も、
    各ファイルには分割されていない1本の固有ベクトルが格納されます。
+   ``TransSym`` 指定時のFullDiagは、全sector固有状態を同じファイル名で、
+   状態とMPIランクごとのsector checkpointとして保存します
+   （:ref:`Subsec:eigenvec` を参照）。
 
 -  ``InputEigenVec``
 
@@ -191,6 +194,7 @@ CalcModファイル
      分散形式で生成されるため、``OutputHam``/``InputHam`` の指定は起動時に
      エラーとして拒否されます。ハミルトニアンの入出力が必要な場合は
      1プロセスで実行するか、別の ``Solver`` を使用してください。
+   | ``TransSym`` 指定時は ``OutputHam``/``InputHam`` を使えません。
 
 -  ``OutputExcitedVec``
 
@@ -491,9 +495,11 @@ SpinGCの対称性セクター指定
 
 ``TransSym`` と ``CalcModel=4`` は、固定Szのないスピン1/2で
 ``CalcType=0,1,2,3,4,5`` に対応します。基底状態計算はCG（3）を使います。
-FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）による固有値のみで、
-MAGMA、相関、ベクトル入出力、非serial ExpecModeは非対応です。
+FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）を使い、指定した相関と
+全固有状態（ ``OutputEigenVec=1`` ）を出力できます。MAGMA、ベクトル入力、
+Hamiltonian入出力、非serial ExpecModeは非対応です。
 CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
+どちらもFullDiagの固有状態を読み込めます。
 読込は新しい評価・時間列を開始する操作でありrestartではありません。
 全sector手法で ``ReStart`` は非対応です。機能表と実行可能なexpert入力例は
 :ref:`Subsec:TransSym` を参照してください。

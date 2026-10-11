@@ -20,6 +20,9 @@
 #include "symmetry_hamiltonian_io.h"
 #include "symmetry_sector.h"
 #include "wrapperMPI.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
+#endif
 #ifdef _SCALAPACK
 #include "matrixscalapack.h"
 #endif
@@ -121,6 +124,9 @@ static int allocate_buffers(const struct BindStruct *X, struct StateBuffers *buf
 {
   int invalid;
   buffers->owned = calloc(X->Sym->local_dim + 1, sizeof(*buffers->owned));
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (SymmetryFullDiagTestFail("vector_alloc")) { free(buffers->owned); buffers->owned = NULL; }
+#endif
   invalid = buffers->owned == NULL;
 #ifdef _SCALAPACK
   if (use_scalapack) {
@@ -219,14 +225,21 @@ int ProcessSymmetryFullDiagStates(const struct BindStruct *X,
                expec_cisajscktaltdc(&local, buffers.owned) != 0 ||
                expec_nbodyg(&local, buffers.owned) != 0;
       StopTimer(5720);
-      if (failed) goto cleanup;
+      if (failed) {
+        fprintf(stdoutMPI, "Error: correlations of sector FullDiag eigenstate %lu failed.\n", state);
+        goto cleanup;
+      }
     }
     /* A state is saved only after its correlations succeeded. */
     if (outputs & SYM_FD_EIGENVECTORS) {
       StartTimer(5730);
       failed = write_state(&local, state, buffers.owned, info) != 0;
       StopTimer(5730);
-      if (failed) goto cleanup;
+      if (failed) {
+        fprintf(stdoutMPI, "Error: sector FullDiag eigenstate %lu could not be saved as %s_eigenvec_%lu_rank_*.dat.\n",
+                state, X->Def.CDataFileHead, state);
+        goto cleanup;
+      }
     }
   }
   status = 0;

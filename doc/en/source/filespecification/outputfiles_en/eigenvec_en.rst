@@ -92,8 +92,10 @@ count, basis order, phase and layout:
 * CG: ``InputEigenVec=1`` reads ``##_eigenvec_0`` to
   ``##_eigenvec_(exct-1)`` and evaluates them with the CG input Hamiltonian
   without iterating. Use ``OutputEigenVec=0`` for this re-evaluation;
-  ``OutputEigenVec=1`` overwrites the input files with CG checkpoints. Copy
-  the FullDiag files to a separate directory to keep the originals.
+  ``OutputEigenVec=1`` overwrites the input files with CG checkpoints, and
+  CG writes its correlation files under the same names as FullDiag
+  (``##_cisajs_eigen&&.dat`` and so on). Copy the FullDiag files to a
+  separate directory to keep the originals.
 
 TE and CG use ``HPHI_SYMMETRY_BASIS_LAYOUT=distributed`` by default, while
 FullDiag writes replicated-layout states. Set

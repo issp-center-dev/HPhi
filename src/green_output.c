@@ -4,6 +4,9 @@
 #include "FileIO.h"
 #include "global.h"
 #include "wrapperMPI.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
+#endif
 #include <string.h>
 #include <stdlib.h>
 #ifdef MPI
@@ -131,6 +134,9 @@ int GreenOutputCloseChecked(FILE *fp)
   if (fp == NULL) return -1;
   failed = ferror(fp) != 0;
   if (fclose(fp) != 0) failed = 1;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (SymmetryFullDiagTestFail("green_close")) failed = 1;
+#endif
   return failed ? -1 : 0;
 }
 

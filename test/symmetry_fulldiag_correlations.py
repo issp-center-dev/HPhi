@@ -56,7 +56,8 @@ def check_case(case, hphi, solver, label, launcher, ranks, with_correlations, pl
     dim = len(case.hq)
     tag = f'{case.name} {label} np={ranks}'
     # Correlations and states together: each row against the saved state.
-    _, output = run(case, hphi, solver, launcher, f'both_{label}', True, False)
+    text, output = run(case, hphi, solver, launcher, f'both_{label}', True, False)
+    assert f'FullDiag solver: {label}' in text, text
     energies = np.loadtxt(output/'zvo_energy_sector.dat', ndmin=2)[:, 1]
     vectors, _ = common.read_states(output, dim, ranks)
     common.check_eigensystem(case.hq, energies, vectors)
@@ -130,6 +131,7 @@ def main():
     for label, runs in exercised.items():
         print(f'{label} exercised: ' + ', '.join(f'{name}(D={dim},np={n})' for name, dim, n in runs),
               flush=True)
+    common.require_backends(exercised)
     print(f'sector FullDiag correlations ({selection}): {len(models)} models PASS', flush=True)
 
 

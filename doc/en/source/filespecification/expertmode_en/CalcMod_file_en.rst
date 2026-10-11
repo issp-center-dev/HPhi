@@ -147,6 +147,9 @@ The parameters correlated with the keywords are as follows.
    | 1: Output an eigenvector.
    | In FullDiag calculations, all eigenvectors are output. Each file
      contains one complete eigenvector, including in MPI runs.
+   | With ``TransSym``, FullDiag saves every sector eigenstate as a sector
+     checkpoint, one file per state and MPI rank, under the same names;
+     see :ref:`Subsec:eigenvec`.
 
 *  ``InputEigenVec``
 
@@ -211,6 +214,7 @@ The parameters correlated with the keywords are as follows.
      Hamiltonian is generated in distributed form, so ``OutputHam``/``InputHam``
      are rejected at startup. To output or input the Hamiltonian, run with
      1 MPI process or use a different ``Solver``.
+   | ``OutputHam``/``InputHam`` are not available with ``TransSym``.
 
 *  ``OutputExcitedVec``
 
@@ -511,10 +515,11 @@ SpinGC symmetry-sector options
 
 With ``TransSym``, ``CalcModel=4`` supports spin one-half without fixed Sz
 for ``CalcType=0,1,2,3,4,5``. Use CG (3) for ground-state calculations.
-FullDiag (2) provides eigenvalues only with Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA);
-MAGMA, correlations, vector I/O and nonserial ExpecMode are unsupported.
+FullDiag (2) uses Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA) and can write requested
+correlations and every eigenstate (``OutputEigenVec=1``); MAGMA, vector input,
+Hamiltonian I/O and nonserial ExpecMode are unsupported.
 CG accepts sector vector import/export; TE requires sector vector import and
-optionally exports vectors. Import starts a new evaluation/time grid, not a
+optionally exports vectors. Both can import FullDiag eigenstates. Import starts a new evaluation/time grid, not a
 restart: ``ReStart`` is unsupported for every sector method.
 For the full feature table and a runnable expert example, see :ref:`Subsec:TransSym`.
 

@@ -204,6 +204,18 @@ def execute_case(case, executable, solver, flags, launcher, label, expected_erro
     return text
 
 
+def run_consumer(path: Path, executable: Path, label: str, launcher: list[str],
+                 env: dict, expected_error: str | None = None) -> str:
+    """symmetry_spingc_common.run_case, keeping the log of a timed-out run."""
+    try:
+        return spingc.run_case(path, executable, label, launcher, env, expected_error)
+    except subprocess.TimeoutExpired as error:
+        log = Path(path)/f'{label}.log'
+        log.write_text(_decoded(error.stdout) + _decoded(error.stderr))
+        print(log.read_text(), flush=True)
+        raise
+
+
 def run_fd(case: FDCase, executable: Path, solver: int,
            flags: dict[str, int], launcher: list[str], label: str,
            expected_error: str | None = None, timeout: int = 120,
@@ -355,7 +367,11 @@ def cluster_edges(hq):
     1e-10*max(1, ||Hq||_2)."""
     expected = np.linalg.eigvalsh(hq)
     gaps = np.diff(expected)
-    edges = [0, *(np.flatnonzero(gaps > 1e-10*max(1., np.linalg.norm(hq, 2)))+1), len(hq)]
+    scale = max(1., np.linalg.norm(hq, 2))
+    # Fixtures avoid gaps near the threshold, where solver rounding decides.
+    ambiguous = gaps[(gaps > 1e-10*scale) & (gaps <= 1e-6*scale)]
+    assert not len(ambiguous), ('ambiguous degeneracy gap', ambiguous, scale)
+    edges = [0, *(np.flatnonzero(gaps > 1e-10*scale)+1), len(hq)]
     return list(zip(edges, edges[1:]))
 
 
@@ -376,6 +392,27 @@ def read_manifest(output: Path) -> dict[str, str]:
 def grid_max(ranks: int) -> int:
     divisors = [d for d in range(1, int(ranks**0.5)+1) if ranks % d == 0]
     return ranks // max(divisors)
+
+
+def require_backends(exercised) -> None:
+    """HPHI_FD_REQUIRE_BACKENDS lists backends that must have run a case
+    to a normal exit with independent numerical checks passed. Rejections
+    (for example ELPA's process-grid check) never count."""
+    required = set(filter(None, os.environ.get('HPHI_FD_REQUIRE_BACKENDS', '').split(',')))
+    assert required <= {'LAPACK', 'ScaLAPACK', 'ELPA'}, required
+    assert required <= set(exercised), ('required backends not exercised',
+                                        sorted(required), sorted(exercised))
+    if selected_cases() == 'boundary' and 'ELPA' in required:
+        # Mandatory ELPA success: Spin L8, 2Sz=0, k=0 (raw 70, D=10).
+        runs = [run for run in exercised['ELPA'] if run[0] == 'Spin_L8_k0']
+        assert runs and all(dim == 10 for _, dim, _ in runs), exercised['ELPA']
+        for _, dim, ranks in runs:
+            empty = sum(block_range(dim, ranks, rank)[1] == 0 for rank in range(ranks))
+            assert dim >= grid_max(ranks), (dim, ranks)
+            if ranks == 16:
+                assert grid_max(ranks) == 4 and empty == 6, (ranks, empty)
+            print(f'ELPA boundary case Spin_L8_k0: D={dim}, np={ranks}, '
+                  f'grid max {grid_max(ranks)}, {empty} empty vector owners', flush=True)
 
 
 def selected_cases() -> str:

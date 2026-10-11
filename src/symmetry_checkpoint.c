@@ -7,6 +7,9 @@
 #include "symmetry_kondo.h"
 #include "symmetry_checkpoint.h"
 #include "wrapperMPI.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
+#endif
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -194,12 +197,27 @@ int WriteSymmetryCheckpoint(const struct BindStruct *X, const char *name,
   fp = fopen(temporary, "wb");
   created = fp != NULL;
   invalid = fp == NULL;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (!invalid && SymmetryFullDiagTestFail("checkpoint_write")) {
+    /* A real short write, reported like an fwrite shortfall. */
+    const unsigned char partial[4] = {0};
+    fwrite(partial, 1, sizeof(partial), fp);
+    invalid = 1;
+  }
+#endif
   for (int i = 0; !invalid && i < words; ++i) invalid = put_word(fp, header[i]) != 0;
   for (unsigned long i = 1; !invalid && i <= X->Sym->local_dim; ++i)
     invalid = put_word(fp, double_word(creal(vector[i]))) != 0 ||
               put_word(fp, double_word(cimag(vector[i]))) != 0;
   if (fp != NULL && fclose(fp) != 0) invalid = 1;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (created && SymmetryFullDiagTestFail("checkpoint_close")) invalid = 1;
+#endif
   if (failure(invalid, "write")) { if (created) remove(temporary); return -1; }
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (SymmetryFullDiagTestFail("checkpoint_rename")) invalid = 1;
+  else
+#endif
   invalid = rename(temporary, path) != 0;
   if (failure(invalid, "publish")) { remove(temporary); return -1; }
   return 0;
