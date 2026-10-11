@@ -56,8 +56,8 @@ def green_mode(hphi, launcher, ranks):
                   f'{blocked} rejected on every rank', flush=True)
 
 
-# PR-A stages: (stage, rank, backends, diagnostic, flags). Allocation and
-# checkpoint stages fail on rank 1, root-only output stages on rank 0.
+# (stage, rank, backends, diagnostic, flags). Allocation and checkpoint
+# stages fail on rank 1, root-only output stages on rank 0.
 IO_STAGES = (
     ('vector_alloc', 1, ('ScaLAPACK', 'ELPA'),
      'sector FullDiag state buffer allocation failed', {'OutputEigenVec': 1}),
@@ -71,7 +71,16 @@ IO_STAGES = (
      'symmetry checkpoint publish failed', {'OutputEigenVec': 1}),
     ('green_close', 0, ('ScaLAPACK', 'ELPA'),
      'sector correlation output close failed', {'OutputEigenVec': 0}),
+    ('matrix_write', 0, ('ScaLAPACK', 'ELPA'),
+     'sector Hamiltonian output write failed', {'OutputHam': 1}),
+    ('matrix_close', 0, ('ScaLAPACK', 'ELPA'),
+     'sector Hamiltonian output write failed', {'OutputHam': 1}),
+    ('matrix_rename', 0, ('ScaLAPACK', 'ELPA'),
+     'sector Hamiltonian output publish failed', {'OutputHam': 1}),
 )
+# The matrix writer has a replicated (ScaLAPACK) and a column-panel (ELPA)
+# path; every available one is exercised.
+MATRIX_OUTPUT_STAGES = ('matrix_write', 'matrix_close', 'matrix_rename')
 
 
 def io_mode(hphi, launcher, ranks):
@@ -100,30 +109,45 @@ def io_mode(hphi, launcher, ranks):
         if not usable:
             print(f'{stage} not exercised: needs {"/".join(labels)} in this build', flush=True)
             continue
-        label = usable[-1]
-        env = {'HPHI_TEST_FD_FAIL': stage, 'HPHI_TEST_FD_FAIL_RANK': str(rank)}
-        output = case.path/'output'
-        if output.exists():
-            shutil.rmtree(output)
-        common.run_fd(case, probe, backends[label], {**flags, 'OutputGreenFormat': 0},
-                      launcher, f'{stage}_{label}', message, timeout=TIMEOUT, env_extra=env)
-        manifest = (output/'zvo_symmetry_sector.dat').read_text()
-        assert 'fulldiag_status=complete' not in manifest, (stage, manifest)
-        if stage.startswith('checkpoint'):
-            # The failed state is never published, and no temporary remains.
-            assert not (output/f'zvo_eigenvec_0_rank_{rank}.dat').exists(), stage
-            assert not list(output.glob('*.part')), stage
-        exercised.append((stage, label))
-        print(f'{stage} on rank {rank} with {label} np={ranks}: every rank stopped', flush=True)
-        # The same environment does not reach production HPhi.
-        if output.exists():
-            shutil.rmtree(output)
-        common.run_fd(case, hphi, backends[label], {**flags, 'OutputGreenFormat': 0},
-                      launcher, f'{stage}_{label}_production', timeout=TIMEOUT, env_extra=env)
-        assert common.read_manifest(output)['fulldiag_status'] == 'complete'
+        for label in usable if stage in MATRIX_OUTPUT_STAGES else usable[-1:]:
+            io_stage(case, hphi, probe, backends, launcher, ranks, stage, rank, label,
+                     message, flags)
+            exercised.append((stage, label))
     assert exercised, 'no I/O failure stage was exercised'
     if os.environ.get('HPHI_HAS_ELPA') == '1':
         assert ('matrix_alloc', 'ELPA') in exercised
+    assert {stage for stage, _ in exercised} >= set(MATRIX_OUTPUT_STAGES), exercised
+
+
+def io_stage(case, hphi, probe, backends, launcher, ranks, stage, rank, label, message, flags):
+    """One injected failure on one rank, then the production control."""
+    env = {'HPHI_TEST_FD_FAIL': stage, 'HPHI_TEST_FD_FAIL_RANK': str(rank)}
+    output = case.path/'output'
+    if output.exists():
+        shutil.rmtree(output)
+    sentinel = b'%% a matrix from an earlier run\n'
+    if stage in MATRIX_OUTPUT_STAGES:
+        output.mkdir()
+        (output/MATRIX).write_bytes(sentinel)
+    common.run_fd(case, probe, backends[label], {**flags, 'OutputGreenFormat': 0},
+                  launcher, f'{stage}_{label}', message, timeout=TIMEOUT, env_extra=env)
+    manifest = (output/'zvo_symmetry_sector.dat').read_text()
+    assert 'fulldiag_status=complete' not in manifest, (stage, manifest)
+    if stage.startswith('checkpoint'):
+        # The failed state is never published, and no temporary remains.
+        assert not (output/f'zvo_eigenvec_0_rank_{rank}.dat').exists(), stage
+        assert not list(output.glob('*.part')), stage
+    if stage in MATRIX_OUTPUT_STAGES:
+        # The earlier file under the final name is untouched, no temporary is left.
+        assert (output/MATRIX).read_bytes() == sentinel, stage
+        assert not list(output.glob('*.part')), stage
+    print(f'{stage} on rank {rank} with {label} np={ranks}: every rank stopped', flush=True)
+    # The same environment does not reach production HPhi.
+    if output.exists():
+        shutil.rmtree(output)
+    common.run_fd(case, hphi, backends[label], {**flags, 'OutputGreenFormat': 0},
+                  launcher, f'{stage}_{label}_production', timeout=TIMEOUT, env_extra=env)
+    assert common.read_manifest(output)['fulldiag_status'] == 'complete'
 
 
 MATRIX = 'zvo_ham_sector.mtx'

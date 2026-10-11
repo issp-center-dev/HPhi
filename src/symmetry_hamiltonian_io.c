@@ -957,6 +957,12 @@ int OutputSymmetryHamiltonian(const struct BindStruct *X,
       break;
     }
     if (myrank == 0) {
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+      if (SymmetryFullDiagTestFail("matrix_write")) {
+        fputs("1 ", fp); /* a real short write, reported like a failed fprintf */
+        failed = 1;
+      } else
+#endif
       failed = write_column(fp, dim, col, column) != 0;
     }
     if (iHamPanelActive ? SumMPI_i(failed) != 0 : failed) break;
@@ -965,6 +971,9 @@ int OutputSymmetryHamiltonian(const struct BindStruct *X,
     if (fflush(fp) != 0 || ferror(fp)) failed = 1;
     if (fclose(fp) != 0) failed = 1;
     fp = NULL;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    if (SymmetryFullDiagTestFail("matrix_close")) failed = 1;
+#endif
   }
   if (SumMPI_i(failed) != 0) {
     if (created) remove(temporary);
@@ -972,6 +981,10 @@ int OutputSymmetryHamiltonian(const struct BindStruct *X,
     goto done;
   }
   if (myrank == 0) {
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    if (SymmetryFullDiagTestFail("matrix_rename")) failed = 1;
+    else
+#endif
     failed = rename(temporary, path) != 0;
     if (failed) remove(temporary);
   }

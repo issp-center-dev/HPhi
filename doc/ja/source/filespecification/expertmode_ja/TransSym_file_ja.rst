@@ -214,10 +214,12 @@ TransSym指定ファイル
    値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
-   同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタート、
-   ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
+   同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタートは
+   本ファイルと併用できません。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
-   全固有状態をこの形式で出力できます。未対応の組み合わせはエラーで終了します。
+   全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
+   識別情報付きのsector行列ファイル（:ref:`Subsec:ham`）を使います。
+   未対応の組み合わせはエラーで終了します。
 
 
 Kondoセクター（スピン1/2、expert mode）
@@ -358,8 +360,9 @@ Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応�
 
 general spin、新しいStandard-modeのKondo運動量生成、 ``NBodyInterAll``、
 ``AnomalousTerm``、 ``AnomalousG``、 ``CalcSpec``、スピン軸回転、反ユニタリ操作、
-多次元既約表現、Hamiltonian I/O、solver restart、rank数変更を伴うcheckpoint
-再分配は非対応です。FullDiagはさらにベクトル入力、distributed基底metadata、
+多次元既約表現、solver restart、rank数変更を伴うcheckpoint
+再分配は非対応です。Hamiltonian I/OはFullDiagのsector行列ファイルに限ります。
+FullDiagはさらにベクトル入力、distributed基底metadata、
 MAGMA、nonserial ``ExpecMode`` を除外します。
 
 
@@ -454,8 +457,9 @@ SpinGCは ``TEOneBody`` / ``TETwoBody`` の駆動に対応し、下記の右端T
 使用する全時刻の入力を伝播前に検査します。``Laser`` は拒否されます。
 代わりに、群不変なサイト内 ``TEOneBody`` またはスピン積の ``TETwoBody`` を指定してください。
 general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
-solver restart、rank数を変更したcheckpoint再分配は対象外です。
+全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、
+solver restart、rank数を変更したcheckpoint再分配は対象外です（Hamiltonian入出力は
+FullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
 ``AnomalousG`` も非対応です。FullDiagはベクトル入力、distributed基底metadata、
 MAGMAと非serial ``ExpecMode`` も拒否します。
@@ -720,7 +724,7 @@ ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製
 ください。各状態は全rankで順に処理し、分散solverでは状態をrank 0へ集めてから
 各rankの所有区間を配ります。
 
-これらの出力を指定すると、対角化の前にsector行列を検査します。全係数が有限で、
+これらの出力または ``OutputHam`` / ``InputHam`` を指定すると、対角化の前にsector行列を検査します。全係数が有限で、
 各下三角要素 :math:`a` と対応する上三角要素 :math:`b` が
 :math:`|a-\overline{b}|\le 10^{-12}\max(1,|a|,|b|)` を満たす必要があります。
 その後、下三角から上三角を作り直し、対角の虚部を0にした行列をsolverへ渡します。
@@ -732,18 +736,43 @@ version 1、 :math:`D`、続いて列 :math:`c=1,\dots,D`・行 :math:`r=c,\dots
 byteを受信します。replicated storageでは係数の通信を行いません。
 
 このときmanifestには ``output_scope=requested``、 ``requested_outputs``
-（ ``eigenvalues``・ ``correlations``・ ``eigenvectors`` のcomma区切り）、
-``matrix_source=generated``、 ``fulldiag_status=pending`` を記録します。指定した
+（ ``eigenvalues``・ ``correlations``・ ``eigenvectors``・ ``hamiltonian`` の
+comma区切り）、 ``matrix_source`` （ ``generated`` または ``input`` ）、
+``fulldiag_status=pending`` を記録します。指定した
 出力がすべて成功すると ``matrix_digest``、 ``completed_outputs``、
 ``fulldiag_status=complete`` を追記します。最後の ``fulldiag_status`` 行が現在の
 状態です。途中で失敗した場合は相関・ベクトルファイルが一部残り得るため、終了
-statusとこの行を併せて確認してください。 ``CalcTimer.dat`` には
+statusとこの行を併せて確認してください。
+
+``OutputHam=1`` は、上記の検査とcanonical化を行った行列を
+``output/<CDataFileHead>_ham_sector.mtx`` へ書いて終了します。形式は
+:ref:`Subsec:ham` に記載した、 ``% HPHI`` 識別行付きのMatrix Market下三角
+（有効数字17桁）です。いったん ``.part`` へ書き、すべての書込みとcloseが
+成功した後に最終名へrenameします。manifestの ``requested_outputs`` と
+``completed_outputs`` は ``hamiltonian`` だけで、固有値・相関・固有状態は
+出力しません。複数rankのELPAでは各列を所有rankから配信して、計数と出力の
+2回の走査を行います。
+
+``InputHam=1`` は同じファイルを読み込みます。rootが1行ずつ検査し、
+識別キーが現在の入力のsectorと一致しない場合（同じ次元の別sectorを含む）や
+形式・添字・係数に誤りがある場合は、対角化の前に全rankで終了します。
+データ行は一定件数ごとに全rankへ配ります。複数rankのELPAでは各rankが自身の列だけを、
+他のsolverでは全rankが行列全体を格納します。
+座標の重複は列ごとに一意な担当rankが検出します。その後、生成した行列と同じ検査と
+canonical化を行い、読み込んだ値の ``matrix_digest`` を記録します。manifestは
+``matrix_source=input`` で、固有値だけの指定でも ``output_scope=requested`` と
+なります。行列ファイルはrank数やsolverを変えて読み込めますが、固有状態の
+checkpointは同じrank数・layoutで使います。保存した状態をTEやCGで使うと、
+利用側の定義ファイルのHamiltonianで評価されます。
+
+``CalcTimer.dat`` には
+``Sector matrix input`` [5800]、 ``Sector matrix output`` [5900]、
 ``Sector matrix prepare`` [5600]、 ``Sector states`` [5700] と、その内訳の
 gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
+[5800] は読込後の [5600] を含み、 ``MakeHam`` [5100] の内側で計測されます。
 
-0以外の ``ExpecMode``、MAGMA、 ``InputEigenVec``、 ``ReStart``、 ``CalcSpec``、
-Hamiltonian入出力（ ``InputHam`` / ``OutputHam`` ）はセクターFullDiagでは
-引き続き非対応です。
+0以外の ``ExpecMode``、MAGMA、 ``InputEigenVec``、 ``ReStart``、 ``CalcSpec``
+はセクターFullDiagでは引き続き非対応です。
 
 セクター情報ファイル
 ^^^^^^^^^^^^^^^^^^^^

@@ -191,10 +191,16 @@ CalcModファイル
    から選択することが出来ます。
 
    | 注: ``Solver 3`` (ELPA) を複数MPIプロセスで使用する場合、ハミルトニアンは
-     分散形式で生成されるため、``OutputHam``/``InputHam`` の指定は起動時に
-     エラーとして拒否されます。ハミルトニアンの入出力が必要な場合は
-     1プロセスで実行するか、別の ``Solver`` を使用してください。
-   | ``TransSym`` 指定時は ``OutputHam``/``InputHam`` を使えません。
+     分散形式で生成されるため、``TransSym`` を指定しない通常のFullDiagでは
+     ``OutputHam``/``InputHam`` の指定は起動時にエラーとして拒否されます。
+     ハミルトニアンの入出力が必要な場合は1プロセスで実行するか、別の
+     ``Solver`` を使用してください。
+   | ``TransSym`` を指定したFullDiagでは、 ``OutputHam=1`` がsectorの行列を
+     識別情報付きのMatrix Market形式 ``##_ham_sector.mtx`` で出力して終了し、
+     ``InputHam=1`` がその行列を読み込んで対角化します。この形式はMPIランク数と
+     ``Solver`` （ELPAの複数ランクを含む）を変えて読み込めます。
+     :ref:`Subsec:ham` を参照してください。他の計算手法では ``TransSym`` と
+     併用できません。
 
 -  ``OutputExcitedVec``
 
