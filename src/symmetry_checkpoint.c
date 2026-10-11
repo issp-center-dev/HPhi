@@ -171,10 +171,22 @@ int WriteSymmetryCheckpoint(const struct BindStruct *X, const char *name,
   if (make_header(X, name, header, path) != 0) return -1;
   int words = header[VERSION] == 2 ? V2_WORDS : V1_WORDS;
   if (failure(info == NULL || vector == NULL, "output arguments")) return -1;
-  if (failure(!isfinite(info->time) || (info->source_method != CG &&
-                                      info->source_method != TimeEvolution), "output provenance")) return -1;
+  invalid = !isfinite(info->time);
+  if (!invalid && info->source_method == FullDiag) {
+    /* A FullDiag state records the canonical matrix it diagonalized. */
+    invalid = info->hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_MATRIX_V1 ||
+              info->step != 0 || info->time != 0 || info->state_index >= X->Sym->dim;
+  } else if (!invalid) {
+    invalid = (info->source_method != CG && info->source_method != TimeEvolution) ||
+              info->hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_PARSED;
+  }
+  if (failure(invalid, "output provenance")) return -1;
   header[METHOD] = info->source_method; header[STATE] = info->state_index;
   header[STEP] = info->step; header[TIME] = double_word(info->time);
+  if (info->source_method == FullDiag) {
+    header[TIME] = 0; /* +0.0 */
+    header[HAMILTONIAN] = info->hamiltonian_digest;
+  }
   if (vector_digest(X, vector, &header[DATA_XOR], &header[DATA_SUM]) != 0 ||
       consistent_header(header, words) != 0) return -1;
   int length = snprintf(temporary, sizeof(temporary), "%s.part", path);
@@ -233,8 +245,13 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                          i == LOCAL_SITE_MASK ? "local site mask" : "fixed quantity flags",
                          header[i], expected[i]);
   }
-  if (!invalid) invalid = !isfinite(word_double(header[TIME])) ||
-                         (header[METHOD] != CG && header[METHOD] != TimeEvolution);
+  if (!invalid) {
+    invalid = !isfinite(word_double(header[TIME]));
+    if (header[METHOD] == FullDiag)
+      invalid |= header[STEP] != 0 || header[TIME] != 0 || header[STATE] >= header[DIM];
+    else
+      invalid |= header[METHOD] != CG && header[METHOD] != TimeEvolution;
+  }
   if (failure(invalid, "header / sector / layout validation")) goto fail;
   if (consistent_header(header, words) != 0) goto fail;
   if (X->Sym->local_dim >= SIZE_MAX / sizeof(*temporary)) invalid = 1;
@@ -256,10 +273,20 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
   info->source_method = header[METHOD]; info->state_index = header[STATE];
   info->step = header[STEP]; info->time = word_double(header[TIME]);
   info->hamiltonian_digest = header[HAMILTONIAN];
-  fprintf(stdoutMPI, "Symmetry checkpoint loaded: state=%" PRIu64 " step=%" PRIu64
-          " time=%.17g source_hamiltonian=%016" PRIx64 " hamiltonian_changed=%s\n",
-          info->state_index, info->step, info->time, info->hamiltonian_digest,
-          header[HAMILTONIAN] != expected[HAMILTONIAN] ? "yes" : "no");
+  info->hamiltonian_digest_kind = header[METHOD] == FullDiag
+      ? SYMMETRY_HAMILTONIAN_MATRIX_V1 : SYMMETRY_HAMILTONIAN_PARSED;
+  if (header[METHOD] == FullDiag) {
+    /* A matrix digest is not comparable with the parsed-H digest. */
+    fprintf(stdoutMPI, "Symmetry checkpoint loaded: state=%" PRIu64 " step=%" PRIu64
+            " time=%.17g source_hamiltonian=%016" PRIx64
+            " source_hamiltonian_kind=sector_matrix_v1 hamiltonian_changed=unknown\n",
+            info->state_index, info->step, info->time, info->hamiltonian_digest);
+  } else {
+    fprintf(stdoutMPI, "Symmetry checkpoint loaded: state=%" PRIu64 " step=%" PRIu64
+            " time=%.17g source_hamiltonian=%016" PRIx64 " hamiltonian_changed=%s\n",
+            info->state_index, info->step, info->time, info->hamiltonian_digest,
+            header[HAMILTONIAN] != expected[HAMILTONIAN] ? "yes" : "no");
+  }
   free(temporary);
   return 0;
 fail:

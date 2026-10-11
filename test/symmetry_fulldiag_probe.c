@@ -9,6 +9,7 @@ struct BindStruct;
 #include "wrapperMPI.h"
 #include "makeHamSym.h"
 #include "symmetry_basis.h"
+#include "symmetry_checkpoint.h"
 #include "symmetry_hamiltonian_io.h"
 #include "symmetry_fulldiag_probe.h"
 
@@ -143,6 +144,97 @@ static int matrix_action(struct BindStruct *X, const char *action)
   return 1;
 }
 
+/* Rank-local view for checkpoint I/O; every pointer is borrowed. */
+static struct BindStruct local_view(const struct BindStruct *X)
+{
+  struct BindStruct local = *X;
+  local.Check.idim_max = X->Sym->local_dim;
+  local.Check.idim_maxMPI = X->Sym->dim;
+  return local;
+}
+
+static int state_name(char *name, size_t size, const struct BindStruct *X, int contract)
+{
+  int length = contract
+      ? snprintf(name, size, "contract_rank_%d.dat", myrank)
+      : snprintf(name, size, "%s_eigenvec_0_rank_%d.dat", X->Def.CDataFileHead, myrank);
+  return SumMPI_i(length < 0 || (size_t)length >= size) != 0 ? -1 : 0;
+}
+
+/* Write global basis vector 1 with FullDiag provenance, read it back into a
+ * separate array, then also publish it under the regular state-0 name. */
+static int checkpoint_action(struct BindStruct *X, const char *action)
+{
+  struct SymmetryHamiltonianInfo info;
+  struct SymmetryCheckpointInfo loaded;
+  struct BindStruct local = local_view(X);
+  double complex *vector = NULL, *readback = NULL;
+  char name[D_FileNameMax];
+  int status = -1;
+  if (SumMPI_i(makeHamSym(X) != 0) != 0 ||
+      SumMPI_i(mutate(X, strcmp(action, "fulldiag-checkpoint-known") == 0
+                         ? "fulldiag-matrix-known" : "fulldiag-matrix") != 0) != 0 ||
+      PrepareSymmetryHamiltonian(X, 0, &info) != 0) return -1;
+  vector = calloc(X->Sym->local_dim + 1, sizeof(*vector));
+  readback = calloc(X->Sym->local_dim + 1, sizeof(*readback));
+  if (SumMPI_i(vector == NULL || readback == NULL) != 0) goto done;
+  if (X->Sym->local_offset == 0 && X->Sym->local_dim > 0) vector[1] = 1;
+  struct SymmetryCheckpointInfo source = {
+    .source_method = FullDiag, .state_index = 0, .step = 0, .time = 0,
+    .hamiltonian_digest = info.matrix_digest,
+    .hamiltonian_digest_kind = SYMMETRY_HAMILTONIAN_MATRIX_V1
+  };
+  if (state_name(name, sizeof(name), X, 1) != 0 ||
+      WriteSymmetryCheckpoint(&local, name, vector, &source) != 0) goto done;
+  memset(&loaded, 0xff, sizeof(loaded));
+  if (ReadSymmetryCheckpoint(&local, name, readback, &loaded) != 0) goto done;
+  int mismatch = memcmp(vector, readback, (X->Sym->local_dim + 1) * sizeof(*vector)) != 0 ||
+                 loaded.source_method != FullDiag || loaded.state_index != 0 ||
+                 loaded.step != 0 || loaded.time != 0 ||
+                 loaded.hamiltonian_digest != info.matrix_digest ||
+                 loaded.hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_MATRIX_V1;
+  if (SumMPI_i(mismatch) != 0) {
+    fprintf(stdoutMPI, "Error: FullDiag probe checkpoint round-trip changed the state or provenance.\n");
+    goto done;
+  }
+  fprintf(stdoutMPI, "FullDiagProbe checkpoint round-trip ok\n");
+  if (state_name(name, sizeof(name), X, 0) != 0 ||
+      WriteSymmetryCheckpoint(&local, name, vector, &source) != 0) goto done;
+  if (SumMPI_i(write_contract(&info) != 0) != 0) goto done;
+  status = 1;
+done:
+  free(vector);
+  free(readback);
+  return status;
+}
+
+/* Read the regular state-0 files; a rejected file must not touch the vector. */
+static int checkpoint_read_action(struct BindStruct *X)
+{
+  struct SymmetryCheckpointInfo loaded;
+  struct BindStruct local = local_view(X);
+  size_t count = X->Sym->local_dim + 1;
+  double complex *vector = malloc(count * sizeof(*vector));
+  double complex *sentinel = malloc(count * sizeof(*sentinel));
+  char name[D_FileNameMax];
+  int status = -1;
+  if (SumMPI_i(vector == NULL || sentinel == NULL) != 0) goto done;
+  for (size_t i = 0; i < count; ++i) vector[i] = sentinel[i] = 7.0 + 7.0*I;
+  if (state_name(name, sizeof(name), X, 0) != 0) goto done;
+  if (ReadSymmetryCheckpoint(&local, name, vector, &loaded) != 0) {
+    if (SumMPI_i(memcmp(vector, sentinel, count * sizeof(*vector)) != 0) == 0)
+      fprintf(stdoutMPI, "FullDiagProbe sentinel intact after rejected checkpoint.\n");
+    goto done;
+  }
+  fprintf(stdoutMPI, "FullDiagProbe checkpoint read ok state=%" PRIu64 " kind=%" PRIu64 "\n",
+          loaded.state_index, loaded.hamiltonian_digest_kind);
+  status = 1;
+done:
+  free(vector);
+  free(sentinel);
+  return status;
+}
+
 int SymmetryFullDiagProbe(struct BindStruct *X, const char *action)
 {
   int invalid = X == NULL || action == NULL || X->Sym == NULL ||
@@ -155,6 +247,9 @@ int SymmetryFullDiagProbe(struct BindStruct *X, const char *action)
     return -1;
   }
   if (strncmp(action, "fulldiag-matrix", 15) == 0) return matrix_action(X, action);
+  if (strcmp(action, "fulldiag-checkpoint") == 0 ||
+      strcmp(action, "fulldiag-checkpoint-known") == 0) return checkpoint_action(X, action);
+  if (strcmp(action, "fulldiag-checkpoint-read") == 0) return checkpoint_read_action(X);
   fprintf(stdoutMPI, "Error: unknown FullDiag probe action %s.\n", action);
   return -1;
 }

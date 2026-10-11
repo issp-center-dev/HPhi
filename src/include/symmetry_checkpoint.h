@@ -5,12 +5,23 @@
 #include <stdint.h>
 struct BindStruct;
 
+/* What the HAMILTONIAN word identifies. CG/TimeEvolution store the digest
+ * of the parsed definition-file H; FullDiag stores the canonical sector
+ * matrix digest. The two are never compared with each other. */
+enum SymmetryHamiltonianDigestKind {
+  SYMMETRY_HAMILTONIAN_PARSED = 0,
+  SYMMETRY_HAMILTONIAN_MATRIX_V1 = 1
+};
+
 struct SymmetryCheckpointInfo {
   uint64_t source_method;
   uint64_t state_index;
   uint64_t step;
   double time;
   uint64_t hamiltonian_digest;
+  /* Appended: existing five-field initializers keep PARSED (0). A reader
+   * derives it from METHOD on success. */
+  uint64_t hamiltonian_digest_kind;
 };
 
 /* Collective, including ranks with no vector elements. Paths are relative to
