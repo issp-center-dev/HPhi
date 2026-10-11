@@ -529,3 +529,79 @@ def zero_hamiltonian_case(root: Path) -> FDCase:
     return FDCase(name, 'SpinGC', root/name, np.arange(1 << nsite), basis,
                   np.zeros((dim, dim), complex), {}, nsite, 0)
 
+
+def set_calc_file(path: Path, updates: dict):
+    """Update CalcMod keys; TE/CG consumers always use Solver 0 and NGPU 0."""
+    values = dict(line.split() for line in (Path(path)/'calc.def').read_text().splitlines()
+                  if line.strip() and not line.lstrip().startswith('#'))
+    if int(updates.get('CalcType', values.get('CalcType', 2))) != 2:
+        values.update(Solver='0', NGPU='0')
+    values.update({key: str(value) for key, value in updates.items()})
+    (Path(path)/'calc.def').write_text(''.join(f'{k} {v}\n' for k, v in values.items()))
+
+
+def set_mod_file(path: Path, updates: dict):
+    lines = (Path(path)/'mod.def').read_text().splitlines()
+    head, body = lines[:8], lines[8:]
+    values = dict(line.split() for line in body if line.strip())
+    values.update({key: str(value) for key, value in updates.items()})
+    (Path(path)/'mod.def').write_text('\n'.join(head) + '\n'
+                                     + ''.join(f'{k} {v}\n' for k, v in values.items()))
+
+
+def read_green_file(file: Path, rows: list[tuple[int, ...]]) -> np.ndarray:
+    data = np.loadtxt(file, ndmin=2)
+    expected = np.asarray(rows, dtype=float)
+    assert data.shape == (len(rows), expected.shape[1]+2), (file, data.shape)
+    np.testing.assert_array_equal(data[:, :-2], expected)
+    return data[:, -2] + 1j*data[:, -1]
+
+
+def uniform_quench(case: FDCase, coefficient: float):
+    """Translation-invariant diagonal InterAll term and its independent Oq.
+
+    Spin/SpinGC/tJ: sum Sz_i Sz_i+1; SpinlessFermion: sum n_i n_i+1;
+    Hubbard: sum n_i n_i+1 with n = n_up + n_down; Kondo: sum over cells
+    Sloc_z Scond_z (spin index 0 is Sz=+1/2). For three tJ electrons on the
+    four-site ring, sum n_i n_i+1 is the constant 2, a mere energy shift."""
+    rows, terms = [], []
+    if case.model in KONDO_MODELS:
+        cells = case.kondo.cells
+        for j in range(cells):
+            l, c = j, cells + j  # block layout of the fixtures
+            for s, sz in ((0, .5), (1, -.5)):
+                for t, tz in ((0, .5), (1, -.5)):
+                    rows.append((l, s, l, s, c, t, c, t, coefficient*sz*tz, 0))
+    else:
+        L = case.length
+        spins = (0,) if case.model == 'SpinlessFermion' else (0, 1)
+        for i in range(L):
+            j = (i+1) % L
+            for s in spins:
+                for t in spins:
+                    if case.model in ('Spin', 'SpinGC', 'tJ'):
+                        value = coefficient*.25*(1 if s == t else -1)
+                    else:
+                        value = coefficient
+                    rows.append((i, s, i, s, j, t, j, t, value, 0))
+    if case.model == 'SpinGC':
+        raw = spingc.families_matrix(case.length, {'InterAll': rows})
+        delta = case.basis.conj().T @ raw @ case.basis
+    elif case.model in KONDO_MODELS:
+        from symmetry_kondo_reference import apply_operator
+        applied = np.zeros(case.basis.shape, complex)
+        for row in rows:
+            factors = (tuple(row[0:4]), tuple(row[4:8]))
+            applied += row[8]*np.column_stack([apply_operator(case.kondo, factors, column)
+                                                for column in case.basis.T])
+        delta = case.basis.conj().T @ applied
+    else:
+        saved = general.ROOT
+        import symmetry_correlation as correlation
+        general.ROOT = saved
+        states = [int(s) for s in case.states]
+        raw = sum(correlation.matrix(case.model, case.length, states,
+                                     (tuple(row[0:4]), tuple(row[4:8])), row[8]) for row in rows)
+        delta = case.basis.conj().T @ raw @ case.basis
+    np.testing.assert_allclose(delta, delta.conj().T, rtol=0, atol=1e-12)
+    return rows, delta
