@@ -13,6 +13,7 @@ struct SymmetrySectorDigest {
   uint64_t sum_hash;
 };
 
+int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *digest);
 int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest);
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest);
 /* Collective: all ranks must call, including ranks with no local entries. */

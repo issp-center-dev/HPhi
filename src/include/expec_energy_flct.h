@@ -20,6 +20,8 @@ int expec_energy_flct(struct BindStruct *X);
 
 int expec_energy_flct_Hubbard(struct BindStruct *X);
 
+int EvaluateHubbardMoments(struct BindStruct *X, const double complex *vec);
+
 int expec_energy_flct_HubbardGC(struct BindStruct *X);
 
 int expec_energy_flct_HalfSpinGC(struct BindStruct *X);

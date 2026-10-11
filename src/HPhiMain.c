@@ -33,8 +33,8 @@
 #include "splash.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
-#ifdef HPHI_TEST_SPINGC_PROBE
-#include "symmetry_spingc_probe.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
 #endif
 #include "symmetry_sector.h"
 #include "symmetry_basis_io.h"
@@ -951,9 +951,9 @@ int main(int argc, char* argv[]){
       StopTimer(2000);
     }
       
-#ifdef HPHI_TEST_SPINGC_PROBE
+#ifdef HPHI_TEST_SYMMETRY_PROBE
     {
-      int probe_status = SpinGCProbeBeforeSolver(&X.Bind);
+      int probe_status = SymmetryProbeBeforeSolver(&X.Bind);
       if (probe_status < 0) exitMPI(-1);
       if (probe_status > 0) {
         StopTimer(0);

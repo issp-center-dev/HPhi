@@ -4,18 +4,19 @@
 #include "DefCommon.h"
 #include "symmetry_state_enumerator.h"
 #include "struct.h"
+#include "symmetry_kondo.h"
 
 static int initialize_binomial_table(
-    struct SymmetryStateEnumerator *enumerator)
+    struct SymmetryStateEnumerator *enumerator, unsigned int maximum)
 {
   unsigned int n, k;
   if (enumerator == NULL ||
-      enumerator->nsite > HPHI_SYMMETRY_STATE_WORD_BITS) {
+      maximum > HPHI_SYMMETRY_STATE_WORD_BITS) {
     return -1;
   }
   memset(enumerator->binomial, 0, sizeof(enumerator->binomial));
   enumerator->binomial[0][0] = 1UL;
-  for (n = 1U; n <= enumerator->nsite; n++) {
+  for (n = 1U; n <= maximum; n++) {
     enumerator->binomial[n][0] = 1UL;
     enumerator->binomial[n][n] = 1UL;
     for (k = 1U; k < n; k++) {
@@ -49,6 +50,147 @@ static int checked_product(unsigned long int lhs,
   return 0;
 }
 
+
+/* Dimension arithmetic has a signed-index bound; Pascal's triangle above
+ * separately checks the unsigned intermediate coefficients. */
+static int dimension_product(unsigned long a, unsigned long b, unsigned long *result)
+{
+  if (a > LONG_MAX || b > LONG_MAX || (b && a > (unsigned long)LONG_MAX / b))
+    return -1;
+  *result = a * b;
+  return 0;
+}
+
+static unsigned long kondo_binomial(const struct SymmetryStateEnumerator *e,
+                                    unsigned int n, int k)
+{
+  return k < 0 || (unsigned int)k > n ? 0UL : e->binomial[n][k];
+}
+
+static int kondo_completions(const struct SymmetryStateEnumerator *e, unsigned int l,
+                             unsigned int c, int up, int down, int nc,
+                             unsigned long *count)
+{
+  unsigned long total = 0, a, b, term;
+  unsigned int u, exponent;
+  if (e->model == Kondo) {
+    if (up < 0 || down < 0 || (unsigned int)up > l + c || (unsigned int)down > l + c) {
+      *count = 0;
+      return 0;
+    }
+    for (u = 0; u <= l; ++u) {
+      a = kondo_binomial(e, c, up - (int)u);
+      b = kondo_binomial(e, c, down - (int)l + (int)u);
+      if (!a || !b)
+        continue;
+      if (dimension_product(a, b, &term) ||
+          dimension_product(term, e->binomial[l][u], &term) ||
+          term > (unsigned long)LONG_MAX || total > (unsigned long)LONG_MAX - term)
+        return -1;
+      total += term;
+    }
+  } else {
+    total = e->model == KondoGC ? 1UL : kondo_binomial(e, 2 * c, nc);
+    exponent = l + (e->model == KondoGC ? 2 * c : 0U);
+    for (u = 0; u < exponent; ++u)
+      if (dimension_product(total, 2UL, &total))
+        return -1;
+  }
+  *count = total;
+  return 0;
+}
+
+int CountSymmetryKondoCompletions(int model, unsigned int local_sites,
+                                  unsigned int conduction_sites, int nup, int ndown,
+                                  int ncond, unsigned long *count)
+{
+  struct SymmetryStateEnumerator e;
+  unsigned int maximum;
+  if (!count || !IsSymmetryKondoModel(model) ||
+      local_sites > HPHI_SYMMETRY_STATE_WORD_BITS ||
+      conduction_sites > HPHI_SYMMETRY_STATE_WORD_BITS / 2U)
+    return -1;
+  memset(&e, 0, sizeof(e));
+  e.model = model;
+  maximum = local_sites > 2 * conduction_sites ? local_sites : 2 * conduction_sites;
+  if (initialize_binomial_table(&e, maximum))
+    return -1;
+  return kondo_completions(&e, local_sites, conduction_sites, nup, ndown, ncond, count);
+}
+
+int ComputeSymmetryKondoDimension(const struct DefineList *def, unsigned long *dimension)
+{
+  unsigned long result;
+  if (!dimension || ValidateSymmetryKondoSpace(def))
+    return -1;
+  if (CountSymmetryKondoCompletions(def->iCalcModel, def->NLocSpn,
+                                    def->Nsite - def->NLocSpn, def->Nup, def->Ndown,
+                                    def->NCond, &result) ||
+      !result)
+    return -1;
+  *dimension = result;
+  return 0;
+}
+
+static int initialize_kondo(const struct DefineList *def, unsigned long expected,
+                            struct SymmetryStateEnumerator *e)
+{
+  unsigned int site, maximum, l = def->NLocSpn, c = def->Nsite - l;
+  unsigned long dimension;
+  if (ComputeSymmetryKondoDimension(def, &dimension) || dimension != expected ||
+      SymmetryKondoLocalMask(def, &e->local_site_mask))
+    return -1;
+  e->bit_count = 2 * def->Nsite;
+  e->ncond = def->NCond;
+  e->raw_dim = dimension;
+  maximum = l > 2 * c ? l : 2 * c;
+  if (initialize_binomial_table(e, maximum))
+    return -1;
+  for (site = 0; site < e->nsite; ++site) {
+    unsigned int local = (unsigned int)((e->local_site_mask >> site) & 1UL);
+    e->prefix_local[site + 1] = e->prefix_local[site] + local;
+    e->prefix_conduction[site + 1] = e->prefix_conduction[site] + 1U - local;
+  }
+  return 0;
+}
+
+static int kondo_state_at(const struct SymmetryStateEnumerator *e, unsigned long rank,
+                          unsigned long *state)
+{
+  unsigned int site = e->nsite;
+  int up = (int)e->nup, down = (int)e->ndown, nc = (int)e->ncond;
+  unsigned long word = 0;
+  while (site-- > 0U) {
+    unsigned int digit, local = (unsigned int)((e->local_site_mask >> site) & 1UL);
+    for (digit = 0; digit < 4; ++digit) {
+      unsigned long completions;
+      int next_up = up - (int)(digit & 1U), next_down = down - (int)(digit >> 1);
+      int next_nc = nc - (local ? 0 : (int)((digit & 1U) + (digit >> 1)));
+      if (local && (digit == 0 || digit == 3))
+        continue;
+      if (kondo_completions(e, e->prefix_local[site], e->prefix_conduction[site], next_up,
+                            next_down, next_nc, &completions))
+        return -1;
+      if (rank > completions) {
+        rank -= completions;
+        continue;
+      }
+      word |= (unsigned long)digit << (2 * site);
+      up = next_up;
+      down = next_down;
+      nc = next_nc;
+      break;
+    }
+    if (digit == 4)
+      return -1;
+  }
+  if (rank != 1 || (e->model == Kondo && (up || down)) ||
+      (e->model == KondoNConserved && nc))
+    return -1;
+  *state = word;
+  return 0;
+}
+
 int InitSymmetryStateEnumerator(
     const struct DefineList *def,
     unsigned long int expected_raw_dim,
@@ -64,6 +206,12 @@ int InitSymmetryStateEnumerator(
   initialized.nsite = def->Nsite;
   initialized.nup = def->Nup;
   initialized.ndown = def->Ndown;
+
+  if (IsSymmetryKondoModel(def->iCalcModel)) {
+    if (initialize_kondo(def, expected_raw_dim, &initialized)) return -1;
+    *enumerator = initialized;
+    return 0;
+  }
 
   if (def->iCalcModel == SpinGC) {
     if (def->iFlgGeneralSpin != FALSE || def->Nsite >= word_bits) return -1;
@@ -107,7 +255,7 @@ int InitSymmetryStateEnumerator(
   default:
     return -1;
   }
-  if (initialize_binomial_table(&initialized) != 0) return -1;
+  if (initialize_binomial_table(&initialized, initialized.nsite) != 0) return -1;
   up_dim = enumerator_binomial(
       &initialized, initialized.nsite, initialized.nup);
   if (initialized.model == Hubbard || initialized.model == tJ) {
@@ -231,6 +379,12 @@ int SymmetryStateEnumeratorStateAt(
       enumerator->raw_dim == 0UL ||
       raw_index == 0UL || raw_index > enumerator->raw_dim) {
     return -1;
+  }
+  if (IsSymmetryKondoModel(enumerator->model)) {
+    if (!enumerator->nsite || enumerator->nsite > word_bits / 2U ||
+        (enumerator->model == KondoGC && enumerator->nsite == word_bits / 2U) ||
+        enumerator->bit_count != 2U * enumerator->nsite) return -1;
+    return kondo_state_at(enumerator, raw_index, state);
   }
   if (enumerator->model == SpinGC) {
     if (enumerator->nsite == 0U || enumerator->nsite >= word_bits ||

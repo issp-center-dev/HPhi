@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <math.h>
 #include "symmetry_terms.h"
+#include "symmetry_kondo.h"
 
 #include "DefCommon.h"
 #include "symmetry_diagonal.h"
@@ -45,7 +46,8 @@ int EvaluateSymmetryStateDiagonal(
   unsigned int bit_count;
   struct DiagonalContext context = {def, state, 0.0};
   if (def == NULL || diagonal == NULL || def->Nsite == 0U) return -1;
-  if ((def->iCalcModel == Hubbard || def->iCalcModel == tJ)) {
+  if (def->iCalcModel == Hubbard || def->iCalcModel == tJ ||
+      IsSymmetryKondoModel(def->iCalcModel)) {
     if (def->Nsite > word_bits / 2U) return -1;
     bit_count = 2U * def->Nsite;
   } else if (def->iCalcModel == Spin || def->iCalcModel == SpinGC ||
@@ -56,6 +58,8 @@ int EvaluateSymmetryStateDiagonal(
     return -1;
   }
   if (!state_fits_width(state, bit_count)) return -1;
+  if (IsSymmetryKondoModel(def->iCalcModel) &&
+      !SymmetryKondoStateIsPhysical(def, state)) return -1;
 
   if (EnumerateSymmetryTerms(def, 0, accumulate_diagonal, &context)) return -1;
   *diagonal = context.value;

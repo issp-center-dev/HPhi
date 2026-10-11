@@ -51,7 +51,7 @@ static int lapack_diag_elpa(struct BindStruct *X, long int xMsize) {
   int descA[9];
   int ierr;
 
-  fprintf(stdoutMPI, "Using ELPA (%s)\n\n",
+  fprintf(stdoutMPI, "FullDiag solver: ELPA\nUsing ELPA (%s)\n\n",
           X->Def.iNGPU >= 1 ? "GPU" : "CPU");
 
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -293,7 +293,7 @@ struct BindStruct *X//!<[inout]
   case SOLVER_SCALAPACK:
 #ifdef _SCALAPACK
     if (nproc > 1) {
-      fprintf(stdoutMPI, "Using SCALAPACK\n\n");
+      fprintf(stdoutMPI, "FullDiag solver: ScaLAPACK\nUsing SCALAPACK\n\n");
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
       MPI_Comm_size(MPI_COMM_WORLD, &size);
       MPI_Dims_create(size, 2, dims);
@@ -337,6 +337,7 @@ struct BindStruct *X//!<[inout]
     break;
 
   default: /* SOLVER_LAPACK */
+    fprintf(stdoutMPI, "FullDiag solver: LAPACK\n");
     solver_failed = ZHEEVall((int)xMsize, Ham, v0, L_vec) != 1;
     break;
   }

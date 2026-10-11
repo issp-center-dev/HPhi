@@ -6,6 +6,8 @@
 #include "symmetry_basis.h"
 #include "symmetry_basis_io.h"
 #include "symmetry_terms.h"
+#include "symmetry_kondo.h"
+#include "symmetry_state_enumerator.h"
 #include "readdef.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -445,9 +447,16 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
 {
   if (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
       def->iCalcModel != SpinlessFermion &&
-      def->iCalcModel != Hubbard && def->iCalcModel != tJ) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, and tJ models.\n");
+      def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+      !IsSymmetryKondoModel(def->iCalcModel)) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, tJ, and Kondo models.\n");
     return -1;
+  }
+  if (IsSymmetryKondoModel(def->iCalcModel)) {
+    unsigned long dimension;
+    if (ValidateSymmetryKondoSpace(def) != 0 ||
+        ComputeSymmetryKondoDimension(def, &dimension) != 0) return -1;
+    if (ValidateSymmetryGroupInput(def) != 0) return -1;
   }
   if ((def->iCalcModel == Spin || def->iCalcModel == SpinGC) &&
       def->iFlgGeneralSpin != FALSE) {
@@ -593,12 +602,61 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
       cap, gates, sizeof(gates) / sizeof(gates[0]));
 }
 
+static int validate_kondo_bilinears(const struct DefineList *def,
+                                    int **rows, unsigned int count,
+                                    unsigned int factors, const char *family)
+{
+  for (unsigned int i = 0; i < count; ++i) {
+    if (rows == NULL || rows[i] == NULL) return -1;
+    for (unsigned int j = 0; j < factors; ++j) {
+      const int *b = rows[i] + 4*j;
+      if (b[0] < 0 || b[2] < 0 || (unsigned int)b[0] >= def->Nsite ||
+          (unsigned int)b[2] >= def->Nsite || b[1] < 0 || b[1] > 1 ||
+          b[3] < 0 || b[3] > 1) {
+        fprintf(stdoutMPI, "Error: Kondo TransSym %s has invalid site/spin indices.\n", family);
+        return -1;
+      }
+      if ((def->LocSpn[b[0]] == LOCSPIN || def->LocSpn[b[2]] == LOCSPIN) &&
+          b[0] != b[2]) {
+        fprintf(stdoutMPI, "Error: Kondo TransSym %s requires onsite local bilinears.\n", family);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+static int validate_kondo_input_forms(const struct DefineList *def)
+{
+  if (!IsSymmetryKondoModel(def->iCalcModel)) return 0;
+  /* The reader checks original InterAll rows before reusing that array as
+   * scratch; this remaining-array check is not the input-format boundary. */
+  if (validate_kondo_bilinears(def, def->GeneralTransfer, def->NTransfer, 1, "Transfer") ||
+      validate_kondo_bilinears(def, def->InterAll, def->NInterAll, 2, "InterAll") ||
+      validate_kondo_bilinears(def, def->CisAjt, def->NCisAjt, 1, "OneBodyG") ||
+      validate_kondo_bilinears(def, def->CisAjtCkuAlvDC, def->NCisAjtCkuAlvDC, 2, "TwoBodyG") ||
+      validate_kondo_bilinears(def, def->TBody, def->NTBody, 3, "ThreeBodyG") ||
+      validate_kondo_bilinears(def, def->FBody, def->NFBody, 4, "FourBodyG") ||
+      validate_kondo_bilinears(def, def->SBody, def->NSBody, 6, "SixBodyG")) return -1;
+  for (unsigned int i = 0; i < def->NPairHopping; ++i) {
+    const int *sites = def->PairHopping[i];
+    if (sites[0] < 0 || sites[1] < 0 || (unsigned int)sites[0] >= def->Nsite ||
+        (unsigned int)sites[1] >= def->Nsite ||
+        def->LocSpn[sites[0]] != ITINERANT || def->LocSpn[sites[1]] != ITINERANT) {
+      fprintf(stdoutMPI, "Error: Kondo TransSym PairHop requires conduction sites.\n");
+      return -1;
+    }
+  }
+  return 0;
+}
+
 /* 4. Model-specific Hamiltonian term families. */
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
   if (def->NNBodyInterAll || def->NAnomalousTerm ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
       (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetryKondoModel(def->iCalcModel) &&
        (def->NCoulombIntra || def->NPairHopping)) ||
       (def->iCalcModel == SpinlessFermion &&
        (def->NHundCoupling || def->NIsingCoupling || def->NExchangeCoupling))) {
@@ -626,6 +684,7 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   if (validate_symmetry_method_capability(def) != 0) return -1;
   if (validate_symmetry_output_capability(def) != 0) return -1;
   if (validate_symmetry_term_families(def) != 0) return -1;
+  if (validate_kondo_input_forms(def) != 0) return -1;
   return 0;
 }
 
@@ -1055,6 +1114,14 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* Validate the active view before physical projection: forbidden local
+   * hopping can project to zero and escape the mixed-polynomial validator.
+   * This array also contains the current TE rows, unlike the static input
+   * array checked by ValidateSymmetryRuntimeOptions. InterAll input forms
+   * are checked by the reader before its internal crossed-row rewrite. */
+  if (IsSymmetryKondoModel(def->iCalcModel) &&
+      validate_kondo_bilinears(def, def->EDGeneralTransfer, def->EDNTransfer,
+                               1, "Transfer")) return -1;
   /* Preserve established diagnostics for the original subset. Extended
    * inputs use a combined polynomial, including cross-family cancellations. */
   if (SymmetryUsesExtendedTerms(def))

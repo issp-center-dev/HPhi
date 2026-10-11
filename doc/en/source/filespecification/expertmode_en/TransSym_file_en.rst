@@ -227,6 +227,166 @@ Use rules
    combinations terminate with an error.
 
 
+Kondo sectors (spin one-half, expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``TransSym`` supports the following three Kondo spaces. ``Nsite`` counts
+both the :math:`L` localized-spin sites and the :math:`C` conduction sites.
+``LocSpin`` must mark each localized spin as spin one-half (value 1) and
+each conduction site as 0. Every group operation must preserve this mask;
+localized and conduction sites need not be contiguous or alternate.
+
+.. list-table:: Kondo input and fixed quantities
+   :header-rows: 1
+   :widths: 24 39 37
+
+   * - Space
+     - Expert input
+     - Fixed quantities
+   * - Kondo
+     - ``CalcModel=2``, ``Ncond`` and ``2Sz``; alternatively both ``Nup`` and ``Ndown``
+     - Conduction number and total spin z component
+   * - KondoNConserved
+     - ``CalcModel=2`` and ``Ncond``; omit ``2Sz``, ``Nup``, ``Ndown``
+     - Conduction number only (internal model 12)
+   * - KondoGC
+     - ``CalcModel=5``; omit all four quantum-number keywords
+     - Neither particle number nor spin z component
+
+``Ncond`` counts conduction electrons, whereas ``Nup`` and ``Ndown`` include
+one spin occupation per localized site. Thus
+:math:`N_\uparrow+N_\downarrow=L+N_{\rm cond}` and
+:math:`N_\uparrow-N_\downarrow=2S_z`. Redundant explicit values must agree;
+zero is an explicit value, not an omitted keyword. Even explicit zero is
+forbidden for the four quantum-number keywords in KondoGC. The conduction
+range is :math:`0\leq N_{\rm cond}\leq2C`. Before symmetry projection the
+NConserved and GC dimensions are :math:`2^L\binom{2C}{N_{\rm cond}}` and
+:math:`2^L4^C`; fixed-Sz Kondo additionally restricts total spin. Empty
+physical spaces and empty symmetry sectors are rejected. Kondo and
+KondoNConserved require ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2``;
+KondoGC requires the strict upper inequality.
+
+Physical translations and operators
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each site occupies two bits (up, down); a localized site has exactly one
+occupied bit. Let :math:`F_g` be the full orbital permutation including
+its fermion sign and :math:`\epsilon_L(g)` the parity of the permutation
+of localized sites. The physical operation is
+
+.. math::
+
+   T_{\rm phys}(g)=\epsilon_L(g)F_g,\qquad
+   \chi(g)=\exp(-2\pi i m g/P),\qquad k=2\pi m/P.
+
+The physical momentum requires no extra shift for an even number of
+localized spins. Projected states use :math:`\overline{\chi(g)}` and the
+smallest representative word has a positive real coefficient.
+
+Supported families are conduction ``Trans`` (including complex hopping),
+on-site localized ``Trans``, ``CoulombIntra``, ``CoulombInter``, ``Hund``,
+``Ising``, ``Exchange``, ``PairHop`` and ``InterAll``. Localized operators
+must be on-site matrix units :math:`E_i^{ab}`; hopping into, out of, or
+between localized sites is rejected. ``CoulombIntra`` vanishes on localized sites; ``PairHop`` requires
+conduction sites. Mixed spin/conduction products are reduced with the
+localized matrix algebra and conduction anticommutation rules before
+checking Hermiticity, group invariance and the model's fixed quantities.
+Transverse and compensating spin flips are permitted when those checks
+allow them. Dedicated ``PairLift`` input is unsupported; allowed pair-spin
+products can be written as ``InterAll``. An empty Hamiltonian is valid.
+
+.. list-table:: Kondo sector method and feature support (all three spaces)
+   :header-rows: 1
+   :widths: 19 28 18 18 17
+
+   * - Method (CalcType)
+     - Result
+     - Correlations
+     - State import/export
+     - Basis layout
+   * - Lanczos (0)
+     - Low-energy states
+     - All six formats
+     - No / No
+     - Both
+   * - mTPQ (1)
+     - Single-sector samples
+     - All six formats
+     - No / No
+     - Both
+   * - FullDiag (2)
+     - All sector eigenvalues
+     - No
+     - No / No
+     - Replicated
+   * - CG / LOBCG (3)
+     - Low-energy states (recommended)
+     - All six formats
+     - Yes / Yes
+     - Both
+   * - TimeEvolution (4)
+     - Static or driven evolution
+     - All six formats
+     - Required / Optional
+     - Both
+   * - cTPQ (5)
+     - Single-sector samples
+     - All six formats
+     - No / No
+     - Both
+
+Both layouts mean ``replicated`` and ``distributed``. MPI ranks with no
+owned sector rows still participate in collective operations and state I/O.
+FullDiag supports LAPACK (``Solver=0``), ScaLAPACK (1) and ELPA (3) when
+built with those backends; the process-grid restrictions below apply.
+The six correlation formats are ``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
+``FourBodyG``, ``SixBodyG`` and ``NBodyG``. Spin indices are 0 or 1;
+localized factors must be on-site. Both legacy and aggregate outputs are
+available. These are within-sector expectations, not inter-sector amplitudes.
+
+Particle-number columns retain :math:`N=L+N_{\rm cond}` (including ``num``
+and ``num2``); doublon columns count conduction doublons. Total :math:`S_z`
+and its second moment are computed from the actual vector. Existing output
+columns are unchanged, and built-in :math:`S^2` output is not extended.
+TPQ/cTPQ sample one spatial-symmetry sector, including its fixed quantities;
+one sector is not the full thermal ensemble. Uniform and explicit cTPQ
+inverse-temperature schedules follow the rules below.
+
+Kondo checkpoints alone use version 2, phase 2 and 30 little-endian 64-bit
+header words: the version-1 fields below followed by ``local_site_mask``
+and ``fixed_quantity_flags``. Phase 2 denotes the physical translation
+above. Flags are 3 (Kondo), 1 (NConserved), or 0 (GC); GC has zero
+``nup/ndown/ne`` header fields. The manifest records the local mask,
+physical-space digest and fixed quantities separately from the Hamiltonian
+digest. Same model, physical space, sector, ordering, rank count and layout
+are required for import. CG evaluates an imported state without restarting
+optimization; TE starts a new time grid and permits a Hamiltonian quench.
+All four CG/TE import directions are supported. Non-Kondo checkpoints keep
+version 1 / phase 1 / 28 words unchanged.
+
+``TEOneBody`` and ``TETwoBody`` obey the same local-form, fixed-quantity and
+symmetry checks at every used time, before loading a state or writing a
+trajectory. Evolution keeps the basis fixed and uses the right-endpoint
+Taylor rule below. A repeated time does not bypass Hamiltonian validation.
+Twist/APBC can be represented by uniform Peierls phases in conduction
+hopping; the reserved permutation multiplier must still be 1. The chosen
+gauge and site permutation define the physical momentum convention: a
+boundary-only twist is generally not invariant under a plain translation,
+and a gauge change must not be interpreted as the same momentum label
+without transforming the symmetry action. ``Laser`` uses the existing
+coordinate convention, not coordinates inferred from the localized-site
+mask. It is accepted only when the resulting hopping is invariant at every
+time; for layouts incompatible with those coordinates, supply explicit
+invariant ``TEOneBody`` hopping increments in a consistent gauge.
+
+General spin, new Standard-mode Kondo momentum generation, ``NBodyInterAll``,
+``AnomalousTerm``, ``AnomalousG``, ``CalcSpec``, spin-axis rotations,
+antiunitary operations, multidimensional irreducible representations,
+Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
+remain unsupported. FullDiag additionally excludes state/correlation output,
+distributed basis metadata, MAGMA and nonserial ``ExpecMode``.
+
+
 SpinGC sectors (spin one-half, expert mode)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -316,13 +476,13 @@ are required. Neither import is solver restart; ``ReStart`` remains rejected.
 SpinGC checkpoints retain version 1 with ``model=4`` and zero ``nup/ndown/ne``
 header fields. Their Hamiltonian fingerprint is
 ``hphi-parsed-hamiltonian-fnv1a64-v3``, which includes parsed PairLift rows.
-Canonical models retain their v2 fingerprints and existing checkpoint format.
+Non-Kondo canonical models retain their v2 fingerprints and existing checkpoint format.
 The manifest has ``fixed_quantities=none`` and ``full_dim=2^Nsite``.
 
 ``TEOneBody`` and ``TETwoBody`` may drive SpinGC using the right-endpoint
 Taylor rule described below. Every used slice is checked before propagation.
 ``Laser`` is rejected; use invariant on-site ``TEOneBody`` or spin-product
-``TETwoBody`` entries instead. General spin, Boost, Kondo, new Standard-mode
+``TETwoBody`` entries instead. General spin, Boost, new Standard-mode
 SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
 operations, multidimensional irreducible representations, spectrum,
 Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
@@ -494,11 +654,12 @@ Time-dependent sector Hamiltonians
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``TEOneBody`` or ``TETwoBody`` may drive the sector Hamiltonian.
-``Laser`` is available only for the canonical models, not SpinGC.
+``Laser`` is available for the canonical models and all three Kondo spaces,
+subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for the four canonical models above, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
 spinless solver's diagonal-TE restriction is unchanged.
 
 Before loading the initial vector or writing time-series data, HPhi checks

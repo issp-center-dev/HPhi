@@ -300,7 +300,8 @@ def validation(root, hphi):
     negative('unsupported_method', 'CalcType:',
              lambda path: replace(path, 'calc.def', 'CalcType 3', 'CalcType 6'))
     negative('unsupported_model', 'supports only SpinGC, Spin',
-             lambda path: replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 5'), empty)
+             lambda path: (replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 3'),
+                           c.definition(path, 'loc.def', [(i, 0) for i in range(4)], 0)), empty)
     negative('restart', 'does not support ReStart', lambda path: append(path, 'calc.def', 'ReStart 1\n'))
     negative('spectrum', 'spectrum calculations', lambda path: append(path, 'calc.def', 'CalcSpec 1\n'))
     negative('fulldiag_vectors', 'does not support OutputEigenVec',

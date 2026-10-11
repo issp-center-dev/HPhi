@@ -38,6 +38,7 @@
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_kondo.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -102,6 +103,7 @@ int CheckInterAllCondition(
         int iCalcModel,
         int Nsite,
         int iFlgGeneralSpin,
+        int iFlgSymmetryBasis,
         int *iLocSpin,
         int isite1, int isigma1,
         int isite2, int isigma2,
@@ -1344,10 +1346,18 @@ int ReadDefFileNInt(
 
   //Sz, Ncond
   switch(X->iCalcModel){
+  case Kondo:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw Kondo normalization below. */
+    /* fall through */
   case Spin:
   case Hubbard:
   case tJ:
-  case Kondo: 
   case SpinlessFermion:
    
     if(iReadNCond==TRUE){
@@ -1439,6 +1449,15 @@ int ReadDefFileNInt(
       }
     }
     break;
+  case KondoGC:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw GC warning below. */
+    /* fall through */
   case SpinGC:
     if (X->iFlgSymmetryBasis &&
         (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
@@ -1447,7 +1466,6 @@ int ReadDefFileNInt(
     }
     /* Preserve the raw GC warning below. */
     /* fall through */
-  case KondoGC:
   case HubbardGC:
   case tJGC:
   case SpinlessFermionGC:  
@@ -1937,7 +1955,8 @@ int ReadDefFileIdxPara(
                  &dvalue_im
           );
 
-          if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
+          if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin,
+                                     X->iFlgSymmetryBasis, X->LocSpn,
                                      isite1, isigma1, isite2, isigma2,
                                      isite3, isigma3, isite4, isigma4) != 0) {
             fclose(fp);
@@ -2585,7 +2604,8 @@ int ReadDefFileIdxPara(
                      &dvalue_re,
                      &dvalue_im
               );
-              if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
+              if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin,
+                                     X->iFlgSymmetryBasis, X->LocSpn,
                                          isite1, isigma1, isite2, isigma2,
                                          isite3, isigma3, isite4, isigma4) != 0) {
                 fclose(fp);
@@ -4129,6 +4149,7 @@ int GetFileNameByKW(
  * @param[in] iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.).
  * @param[in] Nsite  A total number of site.
  * @param[in] iFlgGeneralSpin  Flag for general spin (TRUE: General Spin, FALSE: Spin-1/2).
+ * @param[in] iFlgSymmetryBasis Whether original rows target a TransSym sector.
  * @param[in] iLocInfo An array with the value of S at each site
  * @param[in] isite1 a site number on the site A.
  * @param[in] isigma1 a spin index on the site A.
@@ -4147,6 +4168,7 @@ int CheckInterAllCondition(
         int iCalcModel,
         int Nsite,
         int iFlgGeneralSpin,
+        int iFlgSymmetryBasis,
         int *iLocInfo,
         int isite1, int isigma1,
         int isite2, int isigma2,
@@ -4170,8 +4192,10 @@ int CheckInterAllCondition(
       return -1;
     }
   }
-  //else if(iCalcModel == Kondo){
-  else if(iCalcModel == Kondo || iCalcModel == KondoNConserved){
+  /* Check original GC sector rows before diagonal extraction and Hermitian
+   * pairing reuse InterAll as scratch storage. Raw GC keeps its old scope. */
+  else if(iCalcModel == Kondo || iCalcModel == KondoNConserved ||
+          (iCalcModel == KondoGC && iFlgSymmetryBasis == TRUE)){
     if(CheckFormatForKondoInt(isite1, isite2, isite3, isite4, iLocInfo)!=0){
       return -1;
     }

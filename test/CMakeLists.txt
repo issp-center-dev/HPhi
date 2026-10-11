@@ -50,11 +50,12 @@ macro(add_hphi_mpi_test_with_srcdir test_name mode)
     )
 endmacro()
 
-add_executable(unittest_symmetry_basis
-    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
+add_executable(unittest_symmetry_kondo
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
@@ -62,6 +63,41 @@ add_executable(unittest_symmetry_basis
     ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
+    ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c)
+target_include_directories(unittest_symmetry_kondo
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_kondo PRIVATE
+    DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_kondo m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_kondo ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_kondo OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_kondo
+    COMMAND unittest_symmetry_kondo)
+set_tests_properties(unittest_symmetry_kondo
+    PROPERTIES LABELS "unit;symmetry")
+
+add_executable(unittest_symmetry_basis
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_matvec_plan.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
@@ -87,9 +123,30 @@ add_test(NAME unittest_symmetry_basis
 set_tests_properties(unittest_symmetry_basis
     PROPERTIES LABELS "unit;symmetry")
 
+add_executable(unittest_symmetry_kondo_terms
+    ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_kondo_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
+target_include_directories(unittest_symmetry_kondo_terms
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_symmetry_kondo_terms PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_symmetry_kondo_terms m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_symmetry_kondo_terms ${MPI_C_LIBRARIES})
+endif()
+if(TARGET OpenMP::OpenMP_C)
+    target_link_libraries(unittest_symmetry_kondo_terms OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_symmetry_kondo_terms COMMAND unittest_symmetry_kondo_terms)
+set_tests_properties(unittest_symmetry_kondo_terms PROPERTIES LABELS "unit;symmetry")
+
 add_executable(unittest_symmetry_spingc_terms
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_spingc_terms.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c)
 target_include_directories(unittest_symmetry_spingc_terms
     PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
@@ -113,6 +170,7 @@ add_executable(unittest_symmetry_correlation
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_distribution.c
@@ -120,6 +178,7 @@ add_executable(unittest_symmetry_correlation
     ${CMAKE_SOURCE_DIR}/src/symmetry_memory_policy.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_mpi_exchange.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_state_enumerator.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_vector_halo.c
     ${CMAKE_SOURCE_DIR}/src/mltplySpinSym.c
     ${CMAKE_SOURCE_DIR}/src/bitcalc.c
@@ -774,6 +833,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/CheckMPI.c
     ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
     ${CMAKE_SOURCE_DIR}/src/readdef.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/sz.c
     ${CMAKE_SOURCE_DIR}/src/xsetmem.c
     ${CMAKE_SOURCE_DIR}/src/input.c
@@ -794,6 +854,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_basis_io.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_diagonal.c
+    ${CMAKE_SOURCE_DIR}/src/symmetry_kondo_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_terms.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_correlation.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_directory.c
@@ -1480,3 +1541,33 @@ if(ELPA_FOUND)
     set_property(TEST symmetry_spingc_fulldiag APPEND PROPERTY
         ENVIRONMENT "HPHI_HAS_ELPA=1")
 endif()
+
+add_hphi_test(symmetry_kondo_basis)
+set_tests_properties(symmetry_kondo_basis PROPERTIES LABELS "symmetry;kondo;basis")
+add_hphi_test(symmetry_kondo_validation)
+set_tests_properties(symmetry_kondo_validation PROPERTIES LABELS "symmetry;kondo;validation")
+add_hphi_test(symmetry_kondo_fulldiag)
+set_tests_properties(symmetry_kondo_fulldiag PROPERTIES LABELS "symmetry;kondo;fulldiag")
+add_hphi_test(symmetry_kondo_observables)
+set_tests_properties(symmetry_kondo_observables PROPERTIES LABELS "symmetry;kondo;lobcg;lanczos;correlation")
+
+add_hphi_test(symmetry_kondo_thermal)
+set_tests_properties(symmetry_kondo_thermal PROPERTIES LABELS "symmetry;kondo;tpq;ctpq;correlation")
+
+add_hphi_test(symmetry_kondo_checkpoint)
+set_tests_properties(symmetry_kondo_checkpoint PROPERTIES LABELS "symmetry;kondo;checkpoint;lobcg")
+
+add_hphi_test(symmetry_kondo_te)
+set_tests_properties(symmetry_kondo_te PROPERTIES LABELS "symmetry;kondo;te;checkpoint;correlation")
+
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_kondo_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_kondo_fulldiag APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
+set_tests_properties(symmetry_kondo_basis symmetry_kondo_observables
+    symmetry_kondo_checkpoint symmetry_kondo_thermal symmetry_kondo_te
+    symmetry_kondo_fulldiag PROPERTIES TIMEOUT 1800)
