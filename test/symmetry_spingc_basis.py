@@ -237,7 +237,7 @@ def backend_full_diag(root, hphi, launcher, ranks):
         path = root/'expecmode_solver{}'.format(solver)
         c.write_case(path, 8, p, chi, families, 2,
                      {'CalcMod': {'Solver': solver, 'ExpecMode': 1}})
-        c.run_case(path, hphi, 'reject', launcher, env, 'MAGMA and ExpecMode are not supported')
+        c.run_case(path, hphi, 'reject', launcher, env, 'ExpecMode=0 only')
     if any(solver == 3 for solver, _ in backends):
         # Two-site odd translation sector has dimension one: too small
         # for any multiple-rank ELPA process grid, including required np2.
