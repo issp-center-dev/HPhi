@@ -1,14 +1,18 @@
 /* Sector FullDiag state post-processing, one eigenstate at a time.
  *
  * Every rank receives its owned block of the state, so the existing sector
- * checkpoint (and correlation) code runs unchanged on a rank-local view of
- * the solver context. The view borrows every pointer; only its scalar
+ * correlation and checkpoint code runs unchanged on a rank-local view of the
+ * solver context. The view borrows every pointer; only its scalar
  * dimensions and the state number differ from the solver context. */
 #include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include "Common.h"
 #include "CalcTime.h"
+#include "expec_cisajs.h"
+#include "expec_cisajscktaltdc.h"
+#include "green_output.h"
+#include "nbody_correlation.h"
 #include "symmetry_basis.h"
 #include "symmetry_checkpoint.h"
 #include "symmetry_distribution.h"
@@ -193,6 +197,9 @@ int ProcessSymmetryFullDiagStates(const struct BindStruct *X,
     fprintf(stdoutMPI, "Error: sector FullDiag state buffer allocation failed.\n");
     goto cleanup;
   }
+  /* Aggregate Green files are truncated once; states then append in order. */
+  if ((outputs & SYM_FD_CORRELATIONS) && GreenOutputInitializeAggregateFiles(&local) != 0)
+    goto cleanup;
   for (unsigned long state = 0; state < X->Sym->dim; ++state) {
     int failed;
     local.Phys.eigen_num = (int)state;
@@ -204,6 +211,17 @@ int ProcessSymmetryFullDiagStates(const struct BindStruct *X,
       goto cleanup;
     }
     if (check_state(X, state, buffers.owned) != 0) goto cleanup;
+    if (outputs & SYM_FD_CORRELATIONS) {
+      /* Each wrapper returns the same result on every rank, so the
+       * short-circuit keeps the collective sequence aligned. */
+      StartTimer(5720);
+      failed = expec_cisajs(&local, buffers.owned) != 0 ||
+               expec_cisajscktaltdc(&local, buffers.owned) != 0 ||
+               expec_nbodyg(&local, buffers.owned) != 0;
+      StopTimer(5720);
+      if (failed) goto cleanup;
+    }
+    /* A state is saved only after its correlations succeeded. */
     if (outputs & SYM_FD_EIGENVECTORS) {
       StartTimer(5730);
       failed = write_state(&local, state, buffers.owned, info) != 0;

@@ -179,6 +179,33 @@ done:
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
+/* Opens one Green output; for a sector basis every rank agrees on the
+ * rank-0 open result before any collective. */
+static int open_green_file(struct BindStruct *X, GreenOutputKind kind,
+                           const char *name, FILE **fp)
+{
+  int failed = GreenOutputKindUsesAggregate(X, kind)
+      ? GreenOutputOpenAggregate(X, kind, fp) != 0
+      : childfopenMPI(name, "w", fp) != 0;
+  if (GreenOutputAgreeSectorError(X, failed) == 0) return 0;
+  if (*fp != NULL) fclose(*fp);
+  *fp = NULL;
+  if (X->Def.iFlgSymmetryBasis == TRUE)
+    GreenOutputReportSectorFailure(X, kind, name, "open");
+  return -1;
+}
+
+static int close_green_file(struct BindStruct *X, GreenOutputKind kind,
+                            const char *name, FILE *fp)
+{
+  int failed = GreenOutputKindUsesAggregate(X, kind)
+      ? GreenOutputCloseAggregate(kind, fp) != 0
+      : GreenOutputCloseChecked(fp) != 0;
+  if (failed && X->Def.iFlgSymmetryBasis == TRUE)
+    GreenOutputReportSectorFailure(X, kind, name, "close");
+  return failed;
+}
+
 int expec_cisajscktaltdc
 (
  struct BindStruct *X,
@@ -256,40 +283,33 @@ int expec_cisajscktaltdc
             "Error: ThreeBodyG/FourBodyG/SixBodyG for canonical Spin is not supported. Use SpinGC or remove the N-body Green function request.\n");
     return -1;
   }
-  if(X->Def.NCisAjtCkuAlvDC>0){
-    // If the number of two-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputTwoBody, &fp) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
-    }
-  }
+  /* Files of unrequested families are not opened; their pointers alias fp.
+   * On a failed open, close only the files this rank opened before. */
+  if(X->Def.NCisAjtCkuAlvDC>0 &&
+     open_green_file(X, GreenOutputTwoBody, sdt, &fp) != 0) return -1;
   if(X->Def.NTBody>0){
-    // If the number of three-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputThreeBody, &fp_2) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_2, "w", &fp_2) != 0) return -1;
+    if (open_green_file(X, GreenOutputThreeBody, sdt_2, &fp_2) != 0) {
+      if (fp != NULL) fclose(fp);
+      return -1;
     }
   }else{
     fp_2 = fp;
   }
   if(X->Def.NFBody>0){
-    // If the number of four-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputFourBody, &fp_3) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_3, "w", &fp_3) != 0) return -1;
+    if (open_green_file(X, GreenOutputFourBody, sdt_3, &fp_3) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.NTBody>0) fclose(fp_2);
+      return -1;
     }
   }else{
     fp_3 = fp;
   }
   if(X->Def.NSBody>0){
-    // If the number of six-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputSixBody, &fp_4) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_4, "w", &fp_4) != 0) return -1;
+    if (open_green_file(X, GreenOutputSixBody, sdt_4, &fp_4) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.NTBody>0) fclose(fp_2);
+      if (X->Def.NFBody>0) fclose(fp_3);
+      return -1;
     }
   }else{
     fp_4 = fp;
@@ -589,37 +609,19 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  if(X->Def.NCisAjtCkuAlvDC>0){
-    // If the number of two-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
-      GreenOutputCloseAggregate(GreenOutputTwoBody, fp);
-    } else {
-      fclose(fp);
-    }
-  }
-  if(X->Def.NTBody>0){
-    // If the number of three-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
-      GreenOutputCloseAggregate(GreenOutputThreeBody, fp_2);
-    } else {
-      fclose(fp_2);
-    }
-  }
-  if(X->Def.NFBody>0){
-    // If the number of four-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
-      GreenOutputCloseAggregate(GreenOutputFourBody, fp_3);
-    } else {
-      fclose(fp_3);
-    }
-  }
-  if(X->Def.NSBody>0){
-    // If the number of six-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
-      GreenOutputCloseAggregate(GreenOutputSixBody, fp_4);
-    } else {
-      fclose(fp_4);
-    }
+  {
+    int close_failed = 0;
+    if(X->Def.NCisAjtCkuAlvDC>0)
+      close_failed |= close_green_file(X, GreenOutputTwoBody, sdt, fp);
+    if(X->Def.NTBody>0)
+      close_failed |= close_green_file(X, GreenOutputThreeBody, sdt_2, fp_2);
+    if(X->Def.NFBody>0)
+      close_failed |= close_green_file(X, GreenOutputFourBody, sdt_3, fp_3);
+    if(X->Def.NSBody>0)
+      close_failed |= close_green_file(X, GreenOutputSixBody, sdt_4, fp_4);
+    if (X->Def.iFlgSymmetryBasis == TRUE &&
+        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0)
+      return -1;
   }
 
   if (sector_status != 0) return -1;

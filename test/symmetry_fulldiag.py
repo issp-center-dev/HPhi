@@ -111,7 +111,10 @@ def check_sector(path, model, length, momentum, states, raw, projector):
         fixture.definition(path, "one.def", [[0, 0, 0, 0]])
         original = (path / "sym.def").read_text()
         (path / "sym.def").write_text(original + "OneBodyG one.def\n")
-        execute(path, "correlation_reject", calc, failure="sector FullDiag outputs eigenvalues only")
+        # Requested correlations are written for every sector eigenstate;
+        # symmetry_fulldiag_correlations checks their values.
+        execute(path, "correlation_accept", calc)
+        assert len(list((path / "output").glob("zvo_cisajs_eigen*.dat"))) == dim
         (path / "sym.def").write_text(original)
         for solver, launcher in backends:
             if solver == 3 and dim < grid_max:

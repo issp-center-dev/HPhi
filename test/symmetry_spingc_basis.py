@@ -316,8 +316,12 @@ def validation(root, hphi):
     full = root/'valid_fulldiag'
     c.write_case(full, 4, p, chi, c.mixed_families(4), 2,
                  {'CalcMod': {'Solver': 0}})
-    negative('fulldiag_correlations', 'sector FullDiag outputs eigenvalues only',
-             lambda path: extra(path, 'OneBodyG', [(0, 1, 0, 0)]), full)
+    correlations = root/'fulldiag_correlations'
+    shutil.copytree(full, correlations)
+    extra(correlations, 'OneBodyG', [(0, 1, 0, 0)])
+    c.run_case(correlations, hphi, 'accept', [], dict(os.environ))
+    assert len(list((correlations/'output').glob('zvo_cisajs_eigen*.dat'))) == dim
+    print('validation fulldiag_correlations accepted', flush=True)
     negative('fulldiag_magma', 'MAGMA',
              lambda path: replace(path, 'calc.def', 'Solver 0', 'Solver 2'), full)
     negative('fulldiag_expecmode', 'ExpecMode',

@@ -800,6 +800,7 @@ void OutputTimer(struct BindStruct *X) {
         StampTime(fp, "    Sector matrix prepare", 5600);
         StampTime(fp, "    Sector states", 5700);
         StampTime(fp, "      Sector state gather/scatter", 5710);
+        StampTime(fp, "      Sector correlations", 5720);
         StampTime(fp, "      Sector checkpoints", 5730);
       }
     }

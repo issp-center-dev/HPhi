@@ -382,3 +382,150 @@ def selected_cases() -> str:
     selection = os.environ.get('HPHI_FD_CASES', 'all')
     assert selection in ('all', 'boundary'), selection
     return selection
+
+
+GREEN_STEMS = {'one': 'cisajs', 'two': 'cisajscktalt', 'three': 'ThreeBody',
+               'four': 'FourBody', 'six': 'SixBody', 'nbody': 'NBodyG'}
+GREEN_KEYWORDS = {'one': 'OneBodyG', 'two': 'TwoBodyG', 'three': 'ThreeBodyG',
+                  'four': 'FourBodyG', 'six': 'SixBodyG', 'nbody': 'NBodyG'}
+GREEN_FACTORS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'six': 6}
+
+
+def row_factors(kind, row):
+    data, count = (row[1:], row[0]) if kind == 'nbody' else (row, GREEN_FACTORS[kind])
+    assert len(data) == 4*count, (kind, row)
+    return tuple(tuple(data[4*f:4*f+4]) for f in range(count))
+
+
+def _with_duplicate(requests):
+    """Every family also carries a repeated row."""
+    out = {}
+    for kind, rows in requests.items():
+        rows = [list(row) for row in rows]
+        if not any(rows[i] == rows[j] for i in range(len(rows)) for j in range(i)):
+            rows.append(list(rows[0]))
+        out[kind] = rows
+    return out
+
+
+def _canonical_requests(case):
+    saved = general.ROOT
+    import symmetry_correlation as correlation  # sets its own fixture ROOT on import
+    general.ROOT = saved
+    requests = _with_duplicate(correlation.green_requests(case.model, case.length))
+    states = [int(s) for s in case.states]
+    operators = {kind: [(tuple(row), case.basis.conj().T @ correlation.matrix(
+                    case.model, case.length, states, row_factors(kind, row)) @ case.basis)
+                        for row in rows] for kind, rows in requests.items()}
+    return requests, operators
+
+
+def _spingc_requests(case):
+    import symmetry_spingc_observables as observables
+    nsite = case.length
+    requests = {}
+    for kind, rows in observables.CORRELATION_REQUESTS.items():
+        kept = [row for row in rows
+                if all(max(f[0], f[2]) < nsite for f in row_factors(kind, row))]
+        assert kept, kind
+        requests[kind] = kept
+    requests = _with_duplicate(requests)
+    operators = {kind: [(tuple(row), case.basis.conj().T @
+                         observables.correlation_operator(nsite, kind, row) @ case.basis)
+                        for row in rows] for kind, rows in requests.items()}
+    return requests, operators
+
+
+def _kondo_requests(case):
+    from symmetry_kondo_reference import apply_operator
+    if case.kondo is None:
+        return None, None  # explicit-mask KondoGC geometry: no Case for the oracle
+    if case.kondo.cells == 3:
+        import symmetry_kondo_observables as observables
+        requests = observables.correlation_requests()
+    else:
+        # Two-cell block geometry: local 0, 1 and conduction 2, 3.
+        hop, flip, up = [2, 0, 3, 0], [0, 0, 0, 1], [1, 0, 1, 0]
+        requests = {'one': [hop, flip, hop],
+                    'two': [hop + up, flip + [3, 1, 3, 0], [0, 0, 0, 1, 0, 1, 0, 0], hop + up],
+                    'nbody': [[3] + hop + up + [2, 1, 2, 1], [3] + hop + up + [2, 1, 2, 1]]}
+    requests = _with_duplicate(requests)
+    operators = {}
+    for kind, rows in requests.items():
+        operators[kind] = []
+        for row in rows:
+            factors = row_factors(kind, row)
+            applied = np.column_stack([apply_operator(case.kondo, factors, column)
+                                       for column in case.basis.T])
+            operators[kind].append((tuple(row), case.basis.conj().T @ applied))
+    return requests, operators
+
+
+def attach_correlations(case: FDCase, aggregate: bool) -> bool:
+    """Write independent correlation requests and their sector operators.
+
+    Returns False when the fixture has no independent operator oracle."""
+    if case.model in KONDO_MODELS:
+        requests, operators = _kondo_requests(case)
+    elif case.model == 'SpinGC':
+        requests, operators = _spingc_requests(case)
+    else:
+        requests, operators = _canonical_requests(case)
+    if requests is None:
+        return False
+    namelist = (case.path/'sym.def').read_text()
+    for kind, rows in requests.items():
+        spingc.definition(case.path, GREEN_STEMS[kind]+'.def', rows)
+        line = f'{GREEN_KEYWORDS[kind]} {GREEN_STEMS[kind]}.def\n'
+        if line not in namelist:
+            namelist += line
+    (case.path/'sym.def').write_text(namelist)
+    set_calc_keys(case, {'OutputGreenFormat': int(aggregate)})
+    case.operators = operators
+    return True
+
+
+def set_calc_keys(case: FDCase, updates: dict):
+    values = dict(line.split() for line in (case.path/'calc.def').read_text().splitlines()
+                  if line.strip() and not line.lstrip().startswith('#'))
+    values.update({key: str(value) for key, value in updates.items()})
+    (case.path/'calc.def').write_text(''.join(f'{k} {v}\n' for k, v in values.items()))
+
+
+def read_green(output: Path, family: str, states: int, aggregate: bool,
+               rows: list[tuple[int, ...]]) -> np.ndarray:
+    """(states, rows) complex values; index columns must equal the requests."""
+    stem = GREEN_STEMS[family]
+    expected = np.asarray(rows, dtype=float)
+    values = np.empty((states, len(rows)), complex)
+    if aggregate:
+        data = np.loadtxt(Path(output)/f'zvo_{stem}_eigen.dat', ndmin=2)
+        assert data.shape == (states*len(rows), expected.shape[1]+3), (stem, data.shape)
+        np.testing.assert_array_equal(data[:, 0], np.repeat(np.arange(states), len(rows)))
+        blocks = data[:, 1:].reshape(states, len(rows), -1)
+    else:
+        blocks = []
+        for state in range(states):
+            data = np.loadtxt(Path(output)/f'zvo_{stem}_eigen{state}.dat', ndmin=2)
+            assert data.shape == (len(rows), expected.shape[1]+2), (stem, state, data.shape)
+            blocks.append(data)
+        blocks = np.asarray(blocks)
+    for state in range(states):
+        np.testing.assert_array_equal(blocks[state][:, :-2], expected)
+        values[state] = blocks[state][:, -2] + 1j*blocks[state][:, -1]
+    return values
+
+
+def zero_hamiltonian_case(root: Path) -> FDCase:
+    """SpinGC L4 k0 without terms: every sector state is degenerate."""
+    nsite = 4
+    perms = [[(i+g) % nsite for i in range(nsite)] for g in range(nsite)]
+    chars = np.ones(nsite)
+    basis, _, projector = spingc.sector_basis(nsite, perms, chars)
+    check_basis(projector, basis)
+    name = 'SpinGC_zero_L4_k0'
+    spingc.write_case(root/name, nsite, perms, chars, {}, 2, {})
+    dim = basis.shape[1]
+    return FDCase(name, 'SpinGC', root/name, np.arange(1 << nsite), basis,
+                  np.zeros((dim, dim), complex), {}, nsite, 0)
+
