@@ -201,8 +201,15 @@ def external_edit(case, exported):
     weight = np.tril(np.abs(np.outer(ground, ground)), -1)
     row, col = np.unravel_index(np.argmax(weight), weight.shape)
     product = np.conj(ground[row]) * ground[col]
-    edited[row, col] += .1 * np.conj(product) / abs(product)
+    direction = np.conj(product) / abs(product)
+    edited[row, col] += .1 * direction
     edited[col, row] = np.conj(edited[row, col])
+    if np.linalg.norm(case.hq @ edited - edited @ case.hq) <= 1e-8:
+        # An equal-diagonal two-state block can make the first edit commute
+        # with Hq. A transverse phase preserves the positive ground-state
+        # shift while allowing TE to distinguish the two Hamiltonians.
+        edited[row, col] += .05j * direction
+        edited[col, row] = np.conj(edited[row, col])
     return edited
 
 
@@ -238,7 +245,21 @@ def check_external(case, hphi, solver, launcher, ranks, label):
     digest = common.matrix_digest(edited)
     assert int(headers[0][0][W.HAMILTONIAN]) == digest
     # The state of the edited H evolves under the consumer H.
-    state = min(1, dim-1)
+    state = 0
+    if dim > 1:
+        applied = case.hq @ vectors
+        means = np.sum(vectors.conj()*applied, axis=0).real
+        residuals = np.linalg.norm(applied-vectors*means, axis=0)
+        state = int(np.argmax(residuals))
+        seed = vectors[:, state]
+        separation = state_distance(exact_state(case.hq, seed, TIMES[-1]),
+                                    exact_state(edited, seed, TIMES[-1]))
+        assert separation > 100*ATOL, \
+            (case.name, label, state, 'external TE cannot distinguish the two Hamiltonians', separation)
+        print(f'{case.name} {label}: external TE state {state}, H separation {separation:.2e}',
+              flush=True)
+    else:
+        print(f'{case.name} {label}: D=1, stationary TE coverage', flush=True)
     path = consumer(case, f'{case.name}_{label}_external_te')
     copy_state(store, state, path, 'seed', ranks)
     set_te_inputs(path)

@@ -279,13 +279,14 @@ def precision(case, hphi, solver, launcher, label, metadata, exported):
         path.write_bytes(('\r\n'.join(lines) + '\r\n% trailing comment\r\n\r\n').encode())
     import_matrix(case, hphi, solver, launcher, f'{label}_precision', h, writer)
 
-    def unterminated(path):
-        # The longest accepted line (511 bytes) ends the file without a line end.
-        common.write_sector_matrix(path, metadata, h)
-        lines = path.read_text().splitlines()
-        lines[-1] = lines[-1].ljust(511)
-        path.write_text('\n'.join(lines))
-    import_matrix(case, hphi, solver, launcher, f'{label}_unterminated', h, unterminated)
+    for ending, suffix in (('', 'unterminated'), ('\n', 'limit_lf'), ('\r\n', 'limit_crlf')):
+        def longest_line(path):
+            # 511 bytes including LF/CRLF, or 511 bytes at EOF without a line end.
+            common.write_sector_matrix(path, metadata, h)
+            lines = path.read_text().splitlines()
+            lines[-1] = lines[-1].ljust(511-len(ending))
+            path.write_bytes(('\n'.join(lines) + ending).encode())
+        import_matrix(case, hphi, solver, launcher, f'{label}_{suffix}', h, longest_line)
     zero = np.zeros_like(h)
     import_matrix(case, hphi, solver, launcher, f'{label}_zero', zero,
                   lambda path: common.write_matrix_records(path, metadata, len(h), []))

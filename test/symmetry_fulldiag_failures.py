@@ -242,9 +242,16 @@ def matrix_negatives(metadata, dim, nnz):
         ('missing_record', lambda lines: lines.pop(), 'fewer records than declared'),
         ('extra_record', lambda lines: lines.append(lines[first]), 'unexpected content after'),
         ('extra_token', record(1, 1, '0.5 0 7'), 'malformed record'),
+        # fgets/strlen can hide the suffix at EOF instead of rejecting it.
+        ('nul_last_record', lambda lines: lines.__setitem__(-1, lines[-1] + '\0 77'),
+         'NUL'),
+        ('nul_trailer', lambda lines: lines.append('\0 99 99 invalid extra record'), 'NUL'),
         ('bad_number', record(1, 1, '0.5x 0'), 'malformed record'),
         ('comment_in_records', insert(first, '% a comment between records'), 'malformed record'),
         ('long_line', record(1, 1, '0.5 ' + '0'*600), 'too long'),
+        ('line_limit_lf', lambda lines: lines.__setitem__(-1, lines[-1].ljust(511)), 'too long'),
+        ('line_limit_crlf', lambda lines: lines.__setitem__(-1, lines[-1].ljust(510) + '\r'),
+         'too long'),
     ]
     return out
 

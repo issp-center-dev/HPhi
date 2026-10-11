@@ -483,21 +483,25 @@ struct MatrixReader {
 };
 
 /* 1 for a line without its LF/CRLF, 0 at the end of the file, -1 for a
- * read error or a line that does not fit the buffer. */
+ * read error, embedded NUL or a line that does not fit the buffer. */
 static int read_line(struct MatrixReader *reader)
 {
-  size_t length;
-  if (fgets(reader->text, sizeof(reader->text), reader->fp) == NULL)
+  size_t length = 0;
+  int byte = fgetc(reader->fp);
+  if (byte == EOF)
     return ferror(reader->fp) ? -1 : 0;
   reader->line++;
-  length = strlen(reader->text);
-  if (length > 0 && reader->text[length - 1] == '\n') {
-    reader->text[--length] = '\0';
-  } else if (!feof(reader->fp)) {
-    /* A full buffer is only accepted as the unterminated last line. */
-    if (fgetc(reader->fp) != EOF || ferror(reader->fp)) return -1;
-  }
-  if (length > 0 && reader->text[length - 1] == '\r') reader->text[--length] = '\0';
+  do {
+    /* Count physical bytes, including the line end, before treating them as
+     * a C string. A NUL in the file must not hide records or extra tokens. */
+    if (byte == '\0' || length == sizeof(reader->text) - 1) return -1;
+    reader->text[length++] = (char)byte;
+    if (byte == '\n') break;
+  } while ((byte = fgetc(reader->fp)) != EOF);
+  if (ferror(reader->fp)) return -1;
+  if (length > 0 && reader->text[length - 1] == '\n') --length;
+  if (length > 0 && reader->text[length - 1] == '\r') --length;
+  reader->text[length] = '\0';
   return 1;
 }
 
@@ -513,7 +517,7 @@ static void reader_error(const struct MatrixReader *reader, const char *format, 
 
 static void unreadable_line(const struct MatrixReader *reader)
 {
-  reader_error(reader, "line is too long (at most %d bytes including its line end) or unreadable",
+  reader_error(reader, "line contains NUL, is too long (at most %d bytes including its line end) or unreadable",
                LINE_LENGTH - 1);
 }
 
