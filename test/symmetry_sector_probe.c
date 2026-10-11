@@ -14,6 +14,7 @@ struct BindStruct;
 #include "expec_totalspin.h"
 #include "expec_energy_flct.h"
 #include "symmetry_sector_probe.h"
+#include "symmetry_fulldiag_probe.h"
 
 static const char *probe_action(const struct BindStruct *X, int *legacy)
 {
@@ -141,6 +142,8 @@ int SymmetryProbeBeforeSolver(struct BindStruct *X)
     X->Def.Nup = 1; X->Def.Ndown = 2; X->Def.Ne = 3;
     fprintf(stdoutMPI, "SpinGCProbe poisoned fixed fields after basis setup.\n");
   }
+  if (action != NULL && strncmp(action, "fulldiag-", 9) == 0)
+    return SymmetryFullDiagProbe(X, action);
   if (action == NULL || strcmp(action, "lanczos") == 0) return 0;
   if (strcmp(action, "matvec") && strcmp(action, "apply") && strcmp(action, "moments") &&
       strcmp(action, "invalid-correlation"))

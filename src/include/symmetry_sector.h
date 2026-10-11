@@ -13,6 +13,8 @@ struct SymmetrySectorDigest {
   uint64_t sum_hash;
 };
 
+/* FNV-1a 64-bit step over the low `bytes` (4 or 8) little-endian bytes. */
+uint64_t SymmetryHashInteger(uint64_t hash, uint64_t value, unsigned int bytes);
 int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *digest);
 int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest);
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest);

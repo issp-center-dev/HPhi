@@ -23,6 +23,7 @@ target_sources(HPhi PRIVATE
   symmetry_diagonal.c symmetry_terms.c symmetry_correlation.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_memory_policy.c symmetry_mpi_exchange.c
   symmetry_state_enumerator.c symmetry_sector.c symmetry_checkpoint.c symmetry_te.c
+  symmetry_hamiltonian_io.c
   symmetry_observables.c symmetry_kondo.c symmetry_kondo_terms.c
   symmetry_vector_halo.c
 )
@@ -147,7 +148,8 @@ install(TARGETS HPhi RUNTIME DESTINATION bin)
 # Test-only entry point sharing the configured production source/flags.
 get_target_property(_sector_sources HPhi SOURCES)
 add_executable(unittest_symmetry_sector_probe ${_sector_sources}
-  ${CMAKE_SOURCE_DIR}/test/symmetry_sector_probe.c)
+  ${CMAKE_SOURCE_DIR}/test/symmetry_sector_probe.c
+  ${CMAKE_SOURCE_DIR}/test/symmetry_fulldiag_probe.c)
 foreach(_sector_property INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
     COMPILE_OPTIONS LINK_LIBRARIES LINK_FLAGS)
   get_target_property(_sector_value HPhi ${_sector_property})

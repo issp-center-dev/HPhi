@@ -16,7 +16,7 @@
 #define FNV_PRIME UINT64_C(1099511628211)
 
 /* Explicit little-endian encoding; never hash struct padding/native endian. */
-static uint64_t hash_integer(uint64_t hash, uint64_t value, unsigned int bytes)
+uint64_t SymmetryHashInteger(uint64_t hash, uint64_t value, unsigned int bytes)
 {
   unsigned int b;
   for (b = 0; b < bytes; ++b) {
@@ -40,7 +40,7 @@ static int hash_double(uint64_t *hash, double value)
   if (sizeof(value) != sizeof(bits) || DBL_MANT_DIG != 53 ||
       DBL_MAX_EXP != 1024 || !isfinite(value)) return -1;
   memcpy(&bits, &value, sizeof(bits));
-  *hash = hash_integer(*hash, bits, 8);
+  *hash = SymmetryHashInteger(*hash, bits, 8);
   return 0;
 }
 
@@ -73,7 +73,7 @@ int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *dige
   const uint64_t fields[] = {def->iCalcModel, def->Nsite, identity.local_site_mask,
     identity.fixed_flags, identity.nup, identity.ndown, identity.ne, identity.phase};
   for (unsigned int i = 0; i < sizeof(fields)/sizeof(fields[0]); ++i)
-    hash = hash_integer(hash, fields[i], 8);
+    hash = SymmetryHashInteger(hash, fields[i], 8);
   *digest = hash;
   return 0;
 }
@@ -104,16 +104,16 @@ int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest)
     entries[g].nsite = def->Nsite;
   }
   qsort(entries, def->NSymTrans, sizeof(*entries), compare_group_entries);
-  hash = hash_integer(hash, def->Nsite, 4);
-  hash = hash_integer(hash, def->NSymTrans, 4);
+  hash = SymmetryHashInteger(hash, def->Nsite, 4);
+  hash = SymmetryHashInteger(hash, def->NSymTrans, 4);
   for (g = 0; g < def->NSymTrans; ++g) {
     for (site = 0; site < def->Nsite; ++site) {
-      hash = hash_integer(hash, (uint32_t)entries[g].perm[site], 4);
-      hash = hash_integer(hash, (uint32_t)entries[g].anti[site], 4);
+      hash = SymmetryHashInteger(hash, (uint32_t)entries[g].perm[site], 4);
+      hash = SymmetryHashInteger(hash, (uint32_t)entries[g].anti[site], 4);
     }
-    hash = hash_integer(hash,
+    hash = SymmetryHashInteger(hash,
         (uint64_t)(int64_t)llround(1e10 * creal(entries[g].character)), 8);
-    hash = hash_integer(hash,
+    hash = SymmetryHashInteger(hash,
         (uint64_t)(int64_t)llround(1e10 * cimag(entries[g].character)), 8);
   }
   free(entries);
@@ -128,13 +128,13 @@ static int hash_terms(uint64_t *hash, const char *tag, unsigned int count,
 {
   unsigned int term, col;
   *hash = hash_tag(*hash, tag);
-  *hash = hash_integer(*hash, count, 4);
+  *hash = SymmetryHashInteger(*hash, count, 4);
   if (count > 0 && (indices == NULL ||
                    (real_values == NULL && complex_values == NULL))) return -1;
   for (term = 0; term < count; ++term) {
     if (indices[term] == NULL) return -1;
     for (col = 0; col < width; ++col)
-      *hash = hash_integer(*hash, (uint32_t)indices[term][col], 4);
+      *hash = SymmetryHashInteger(*hash, (uint32_t)indices[term][col], 4);
     if (hash_double(hash, real_values != NULL ? real_values[term] :
                     creal(complex_values[term])) != 0) return -1;
     if (complex_values != NULL &&
@@ -157,9 +157,9 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
   if (def->NNBodyInterAll || def->NAnomalousTerm ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling))
     return -1;
-  hash = hash_integer(hash, (uint32_t)def->iCalcModel, 4);
-  hash = hash_integer(hash, def->Nsite, 4);
-  hash = hash_integer(hash, def->NIsingCoupling, 4);
+  hash = SymmetryHashInteger(hash, (uint32_t)def->iCalcModel, 4);
+  hash = SymmetryHashInteger(hash, def->Nsite, 4);
+  hash = SymmetryHashInteger(hash, def->NIsingCoupling, 4);
   if (hash_terms(&hash, "transfer", def->EDNTransfer, 4,
                  def->EDGeneralTransfer, NULL, def->EDParaGeneralTransfer) ||
       hash_terms(&hash, "coulomb_intra", def->NCoulombIntra, 1,
@@ -178,11 +178,11 @@ int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *dig
       hash_terms(&hash, "interall_offdiagonal", def->NInterAll_OffDiagonal, 8,
                  def->InterAll_OffDiagonal, NULL, def->ParaInterAll_OffDiagonal)) return -1;
   hash = hash_tag(hash, "chemical_potential");
-  hash = hash_integer(hash, def->EDNChemi, 4);
+  hash = SymmetryHashInteger(hash, def->EDNChemi, 4);
   if (def->EDNChemi && (!def->EDChemi || !def->EDSpinChemi || !def->EDParaChemi)) return -1;
   for (unsigned int i = 0; i < def->EDNChemi; ++i) {
-    hash = hash_integer(hash, (uint32_t)def->EDChemi[i], 4);
-    hash = hash_integer(hash, (uint32_t)def->EDSpinChemi[i], 4);
+    hash = SymmetryHashInteger(hash, (uint32_t)def->EDChemi[i], 4);
+    hash = SymmetryHashInteger(hash, (uint32_t)def->EDSpinChemi[i], 4);
     if (hash_double(&hash, def->EDParaChemi[i])) return -1;
   }
   if (def->iCalcModel == SpinGC &&
@@ -210,9 +210,9 @@ int ComputeSymmetrySectorDigest(const struct SymmetryBasisRuntime *sym,
         SymmetryBasisReplicatedGlobalEntry(sym, i) : SymmetryBasisLocalEntry(sym, i);
     uint64_t hash = hash_tag(FNV_OFFSET, "hphi-sector-multiset-v1");
     if (entry == NULL) { error = 1; break; }
-    hash = hash_integer(hash, (uint64_t)entry->rep_state, 8);
-    hash = hash_integer(hash, entry->orbit_size, 4);
-    hash = hash_integer(hash, entry->stabilizer_size, 4);
+    hash = SymmetryHashInteger(hash, (uint64_t)entry->rep_state, 8);
+    hash = SymmetryHashInteger(hash, entry->orbit_size, 4);
+    hash = SymmetryHashInteger(hash, entry->stabilizer_size, 4);
     local.count++;
     local.xor_hash ^= hash;
     local.sum_hash += hash;

@@ -1002,6 +1002,7 @@ function(add_sector_fd_test name suite mode)
   endif()
 endfunction()
 add_sector_fd_test(symmetry_fulldiag_reference symmetry_fulldiag_reference all)
+add_sector_fd_test(symmetry_fulldiag_hamiltonian_contract symmetry_fulldiag_hamiltonian contract)
 
 # Unit test: komega BiCG non-finite guard
 add_executable(unittest_komega_bicg_nonfinite

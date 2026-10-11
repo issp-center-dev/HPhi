@@ -173,14 +173,14 @@ def _decoded(output):
 
 
 def execute_case(case, executable, solver, flags, launcher, label, expected_error,
-                 timeout=120):
+                 timeout=120, env_extra=None):
     values = dict(line.split() for line in (case.path/'calc.def').read_text().splitlines()
                   if line.strip() and not line.lstrip().startswith('#'))
     values.update(CalcType=2, Solver=solver, NGPU=0, OutputEigenVec=0,
                   InputEigenVec=0, InputHam=0, OutputHam=0)
     values.update(flags)
     (case.path/'calc.def').write_text(''.join(f'{key} {value}\n' for key, value in values.items()))
-    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='replicated')
+    env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='replicated', **(env_extra or {}))
     launcher = list(launcher)
     # Same established rule as symmetry_spingc_common.run_case: a single-rank
     # launcher can split an MPI_Abort diagnostic between the two streams.
@@ -206,9 +206,76 @@ def execute_case(case, executable, solver, flags, launcher, label, expected_erro
 
 def run_fd(case: FDCase, executable: Path, solver: int,
            flags: dict[str, int], launcher: list[str], label: str,
-           expected_error: str | None = None, timeout: int = 120) -> str:
+           expected_error: str | None = None, timeout: int = 120,
+           env_extra: dict[str, str] | None = None) -> str:
     return execute_case(case, executable, solver, flags, launcher, label,
-                        expected_error, timeout)
+                        expected_error, timeout, env_extra)
+
+
+def probe_executable(hphi: Path) -> Path:
+    return Path(hphi).resolve().with_name('unittest_symmetry_sector_probe')
+
+
+def read_key_values(path: Path) -> dict[str, str]:
+    return dict(line.split('=', 1) for line in Path(path).read_text().splitlines() if line)
+
+
+def run_probe(case: FDCase, executable: Path, solver: int, launcher: list[str],
+              action: str, label: str, expected_error: str | None = None,
+              clean: bool = True, flags: dict[str, int] | None = None) -> str:
+    """Run a test-probe action; clean drops the previous output and dumps."""
+    if clean:
+        for stale in case.path.glob('matrix-contract*.dat'):
+            stale.unlink()
+        for stale in case.path.glob('output/contract_rank_*'):
+            stale.unlink()
+        if (case.path/'output').exists():
+            shutil.rmtree(case.path/'output')
+    return run_fd(case, executable, solver, flags or {}, launcher, label, expected_error,
+                  env_extra={'HPHI_TEST_SYMMETRY_ACTION': action})
+
+
+def solver_backends(launcher: list[str], ranks: int) -> list[tuple[int, str, list[str]]]:
+    """LAPACK runs serially (HPhi's one-process contract); distributed
+    backends need the requested multi-rank launcher and a configured build."""
+    backends = [(0, 'LAPACK', [])]
+    if ranks > 1 and os.environ.get('HPHI_HAS_SCALAPACK') == '1':
+        backends.append((1, 'ScaLAPACK', launcher))
+    if ranks > 1 and os.environ.get('HPHI_HAS_ELPA') == '1':
+        backends.append((3, 'ELPA', launcher))
+    return backends
+
+
+def matrix_digest(h):
+    """hphi-sector-matrix-fnv1a64-v1 of the lower triangle, column-major."""
+    import struct
+    value = 14695981039346656037
+
+    def feed(word):
+        nonlocal value
+        for byte in struct.pack('<Q', word):
+            value = ((value ^ byte) * 1099511628211) & ((1 << 64)-1)
+    feed(1); feed(len(h))
+    for col in range(len(h)):
+        for row in range(col, len(h)):
+            for part in (h[row, col].real, h[row, col].imag):
+                bits = struct.unpack('<Q', struct.pack('<d', float(part) if part else 0.))[0]
+                feed(bits)
+    return value
+
+
+def basis_order(case: FDCase, group_order: int) -> int:
+    """Independent FNV-1a stream of index, representative, orbit, stabilizer."""
+    import struct
+    value = 14695981039346656037
+    for index, column in enumerate(case.basis.T, start=1):
+        support = np.flatnonzero(abs(column) > 1e-12)
+        orbit = len(support)
+        assert group_order % orbit == 0, (case.name, orbit, group_order)
+        for word in (index, int(case.states[support[0]]), orbit, group_order // orbit):
+            for byte in struct.pack('<Q', word):
+                value = ((value ^ byte) * 1099511628211) & ((1 << 64)-1)
+    return value
 
 
 def checkpoint_part(file):

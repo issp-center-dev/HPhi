@@ -33,12 +33,10 @@ static const char *identity_names[HAMILTONIAN] = {
 };
 #define CHECKPOINT_MAGIC UINT64_C(0x0a31565349485048)
 #define FNV_OFFSET UINT64_C(14695981039346656037)
-#define FNV_PRIME UINT64_C(1099511628211)
 
 static uint64_t hash_word(uint64_t hash, uint64_t value)
 {
-  for (int i = 0; i < 8; ++i) { hash ^= value & 255; hash *= FNV_PRIME; value >>= 8; }
-  return hash;
+  return SymmetryHashInteger(hash, value, 8);
 }
 static uint64_t double_word(double value)
 {

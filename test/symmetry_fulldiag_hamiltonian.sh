@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+suite=$(basename "$0" .sh)
+mode=${1:-all}
+python3 "$script_dir/$suite.py" ../src/HPhi "$mode"
