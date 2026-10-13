@@ -431,6 +431,10 @@ add_hphi_test(lanczos_genspin_ladder_restart)
 add_hphi_test(lanczos_restart_env_guard)
 set_tests_properties(lanczos_restart_env_guard PROPERTIES
     LABELS "lanczos;restart;validation" TIMEOUT 600)
+add_hphi_test(lanczos_restart_tm_sequence)
+set_tests_properties(lanczos_restart_tm_sequence PROPERTIES
+    LABELS "lanczos;restart;validation" TIMEOUT 600
+    ENVIRONMENT "OMP_NUM_THREADS=1")
 
 # Lanczos test labels
 set_tests_properties(
