@@ -1,109 +1,74 @@
 Restart Mechanism
 =================
 
-This section describes the restart mechanism in :math:`{\mathcal H}\Phi`.
+This section describes the legacy restart and eigenvector-input
+mechanisms in :math:`{\mathcal H}\Phi`.
 
-Overview
---------
+``ReStart`` modes
+-----------------
 
-:math:`{\mathcal H}\Phi` supports checkpoint/restart functionality, allowing:
+In the ``CalcMod`` input file, ``ReStart`` selects solver continuation:
 
-- Resumption of interrupted calculations
-- Breaking large calculations into smaller jobs
-- Iterative refinement of eigenvectors
+* ``0``: no restart
+* ``1``: write restart data
+* ``2``: read restart data and write updated restart data
+* ``3``: read restart data
 
-Restart Files
--------------
+The legacy files depend on the solver:
 
-The following files are used for restart:
+* Ground-state Lanczos writes ``##_recalcvec_rank_$$.dat`` and
+  ``##_TMComponents.dat``. The latter records the MPI process and OpenMP
+  thread counts. A mismatch is rejected; an older file without the
+  environment line is accepted with a warning.
+* LOBPCG (CG), TPQ, and cTPQ write
+  ``tmpvec_set&&_rank_$$.dat``. These names do not contain
+  ``CDataFileHead``.
+* Real-time evolution writes ``##_eigenvec_&&_rank_$$.dat`` when
+  ``OutputEigenVec=1``. The header records the next step to execute.
 
-**Eigenvector files**
-  ``zvo_eigenvec_{rank}_set{set}.dat``
-    Stores the eigenvector for each MPI rank.
+See the output-file reference for the binary layouts. These formats are
+platform-dependent.
 
-**Restart vector files**
-  ``restart_{rank}.dat``
-    Contains the Lanczos vectors needed to resume iteration.
+``InputEigenVec`` modes
+-----------------------
 
-**Tri-diagonal matrix**
-  ``zvo_Lanczos_Step.dat``
-    Stores the Lanczos coefficients.
+``InputEigenVec`` loads a saved eigenvector; it is distinct from
+``ReStart``:
 
-Input/Output Settings
----------------------
+* ``0``: do not load an eigenvector.
+* ``1``: load the eigenvector and use it directly.
+* ``2``: load the eigenvector, apply :math:`H` once, and normalize the
+  resulting vector before evaluating observables (legacy Lanczos input
+  path).
 
-In the ``CalcMod`` input file:
+Loading an eigenvector does not resume the eigensolver iteration.
+``OutputEigenVec=1`` writes the resulting eigenvector files.
 
-``iInputEigenVec``
-  - ``0``: Start from random or specified initial vector (default)
-  - ``1``: Read eigenvector from file and recalculate
-  - ``2``: Read eigenvector from file
+Iteration limits
+----------------
 
-``iOutputEigenVec``
-  - ``0``: Do not output eigenvector (default)
-  - ``1``: Output eigenvector to file
+For legacy Lanczos and LOBPCG restart, ``Lanczos_max`` is the number of
+additional iterations after the saved point. For TPQ/cTPQ and real-time
+evolution it is the total step count, so it must exceed the saved step.
 
-Usage Examples
---------------
+MPI requirements
+----------------
 
-**Initial calculation with eigenvector output**
+Each MPI process reads its own rank file. The number of MPI processes
+must match the run that wrote the legacy restart or eigenvector files;
+changing the process count is not supported by these formats. Use the
+same model, Hilbert-space decomposition, OpenMP thread count where
+required, and compatible executable architecture.
 
-Set ``iOutputEigenVec = 1`` in the CalcMod file.
-After the calculation completes, eigenvector files will be written.
+Legacy output limitations
+-------------------------
 
-**Restart from eigenvector**
+The current real-time evolution continuation reopens ``SS.dat`` and
+``Norm.dat`` in write mode, so earlier time-series rows are replaced.
+The legacy TPQ/cTPQ ``tmpvec`` file does not store
+``global_1st_norm``; continued ``Norm_rand`` rows therefore use zero in
+that column.
 
-Set ``iInputEigenVec = 1`` and ``iOutputEigenVec = 1``.
-The calculation will read the eigenvector from the previous run
-and refine it.
-
-**Calculate expectation values only**
-
-Set ``iInputEigenVec = 2``.
-The eigenvector will be read and used to compute observables
-without further diagonalization.
-
-File Format
------------
-
-Eigenvector files are stored in binary format for efficiency.
-Each file contains:
-
-1. Header information (system size, etc.)
-2. Complex double array of eigenvector components
-
-The files are platform-dependent due to binary format.
-Ensure restart files are used on the same architecture.
-
-MPI Considerations
-------------------
-
-When using MPI, each process writes and reads its own restart files.
-The number of MPI processes must match between the original and restart runs.
-
-If you need to change the process count, you must:
-
-1. Gather all eigenvector files
-2. Redistribute the data
-3. Split into new per-process files
-
-Common Issues
--------------
-
-**File not found**
-  Ensure restart files are in the working directory with correct names.
-
-**Process count mismatch**
-  The number of MPI processes must match the original calculation.
-
-**File corruption**
-  If calculations produce unexpected results after restart,
-  the restart files may be corrupted. Delete them and start fresh.
-
-Best Practices
---------------
-
-- Regularly save eigenvector files during long calculations
-- Keep backup copies of restart files
-- Verify results after restart by checking conserved quantities
-- Document the calculation parameters used with each restart file
+Before a long continuation, keep backup copies of the restart files and
+the time-series outputs, and verify the conserved quantities after the
+restart.

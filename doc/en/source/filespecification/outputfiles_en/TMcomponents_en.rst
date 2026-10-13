@@ -3,61 +3,35 @@
 TMcomponents.dat
 ----------------
 
-This file is the outputted files for the components of the tridiagonal
-matrix and the norm of the excited state to recalculate the dynamical
-Green’s function by the Lanczos method. The file format is of the binary
-type. An example of the file format is as follows.
-
-.. _file_name_22:
+This text file stores the tridiagonal-matrix components and the initial
+norm used by Lanczos restart and recalculation.
 
 File name
 ~~~~~~~~~
 
-*  ##_TMcomponents.dat
+*  ``##_TMComponents.dat``
 
-## indicates [string02] in a ModPara file and $$ is the number of rank.
-
-.. _file_format_46:
+``##`` is ``CDataFileHead`` in the ModPara file.
 
 File format
 ~~~~~~~~~~~
 
-*  Line 1: [int01]
+*  Line 1: ``step``
+*  Line 2: ``dnorm``
+*  The next ``step`` lines: ``alpha beta``
+*  Ground-state restart only, final line:
+   ``# nproc P nthreads T``
 
-*  Line 2: [double01]
+``alpha`` and ``beta`` are the Lanczos tridiagonal components
+:math:`\alpha_i` and :math:`\beta_i`. The final comment records the MPI
+process and OpenMP thread counts used to write the corresponding
+``recalcvec`` files. A ground-state restart rejects a different process
+or thread count. Older files without this comment are accepted with a
+warning and therefore must be restarted with the same environment.
 
-*  Lines 3-:
-   [double02]  [double03].
-
-.. _parameters_44:
-
-Parameters
-~~~~~~~~~~
-
-*  [int01]
-
-   **Type :** Int
-
-   **Description :** The step for calculating dynamical Green’s
-   functions by the Lanczos method :math:`N_d`.
-
-*  [double01]
-
-   **Type :** Double
-
-   **Description :** The value of the norm of the excited state.
-
-*  [double02], [double03]
-
-   **Type :** Double
-
-   | **Description :** The value of the components of the tridiagonal
-     matrix to recalculate dynamical Green’s functions by the Lanczos
-     method :math:`\alpha_i, \beta_i (i =1,\cdots N_d)`.
-     [double02] is :math:`\alpha_i` and
-     [double03] is :math:`\beta_i`.
+Spectrum ``CalcSpec`` files retain their existing text format and do not
+contain the environment comment.
 
 .. raw:: latex
 
    \newpage
-
