@@ -425,6 +425,9 @@ add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
 add_hphi_test(lanczos_genspin_ladder_restart)
+add_hphi_test(lanczos_restart_env_guard)
+set_tests_properties(lanczos_restart_env_guard PROPERTIES
+    LABELS "lanczos;restart;validation" TIMEOUT 600)
 
 # Lanczos test labels
 set_tests_properties(
