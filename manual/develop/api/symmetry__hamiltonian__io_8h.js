@@ -3,5 +3,7 @@ var symmetry__hamiltonian__io_8h =
     [ "SymmetryHamiltonianIdentity", "structSymmetryHamiltonianIdentity.html", "structSymmetryHamiltonianIdentity" ],
     [ "SymmetryHamiltonianInfo", "structSymmetryHamiltonianInfo.html", "structSymmetryHamiltonianInfo" ],
     [ "BuildSymmetryHamiltonianIdentity", "symmetry__hamiltonian__io_8h.html#a07d5a2bed75bba1c099cdf1b5931beb8", null ],
+    [ "InputSymmetryHamiltonian", "symmetry__hamiltonian__io_8h.html#a4bfc27e00fd306a33b136dd9c9a85c0e", null ],
+    [ "OutputSymmetryHamiltonian", "symmetry__hamiltonian__io_8h.html#a2fc8cc502e72242a3a04b616b2ad290c", null ],
     [ "PrepareSymmetryHamiltonian", "symmetry__hamiltonian__io_8h.html#ad8a682459309bbe52aa33f8f0deab057", null ]
 ];

@@ -14,7 +14,7 @@ var searchData=
   ['eigenvec_5finput_11',['eigenvec_input',['../structSymmetryMethodCapability.html#aae50ef9bf4a909fc8165020ff3c05443',1,'SymmetryMethodCapability']]],
   ['eigenvec_5foutput_12',['eigenvec_output',['../structSymmetryMethodCapability.html#a48920b66d884cc335f5d3ca979d3960e',1,'SymmetryMethodCapability']]],
   ['elapsed_20time_20for_20new_20functions_13',['Compute elapsed time for new functions',['../page_time.html',1,'']]],
-  ['emit_14',['emit',['../symmetry__terms_8c.html#aadedc3aa938b85c70b5a8fe763c23aae',1,'emit(const struct DefineList *def, int kind, unsigned int factors, const int *index, double complex value, SymmetryTermCallback callback, void *context):&#160;symmetry_terms.c'],['../symmetry__terms_8c.html#a6f4dfa1a4ec143c177522ef2757886d4',1,'EMIT:&#160;symmetry_terms.c']]],
+  ['emit_14',['emit',['../symmetry__terms_8c.html#a6f4dfa1a4ec143c177522ef2757886d4',1,'EMIT:&#160;symmetry_terms.c'],['../symmetry__terms_8c.html#aadedc3aa938b85c70b5a8fe763c23aae',1,'emit(const struct DefineList *def, int kind, unsigned int factors, const int *index, double complex value, SymmetryTermCallback callback, void *context):&#160;symmetry_terms.c']]],
   ['emit_5fcanonicalized_5ftransition_15',['emit_canonicalized_transition',['../symmetry__matvec__plan_8c.html#ae6009f95400b557bae3633c0ae097235',1,'symmetry_matvec_plan.c']]],
   ['emit_5fcolumn_5ftransition_16',['emit_column_transition',['../symmetry__matvec__plan_8c.html#aed1824faec0c911c919e6f640bd66a7d',1,'symmetry_matvec_plan.c']]],
   ['enabled_17',['enabled',['../structSymmetryMethodCapability.html#a21dedf362416ec135079194f39b78111',1,'SymmetryMethodCapability::enabled'],['../structSymmetryBasisRuntime.html#aa2541bc58e9d987fd411b6d89f413424',1,'SymmetryBasisRuntime::enabled']]],

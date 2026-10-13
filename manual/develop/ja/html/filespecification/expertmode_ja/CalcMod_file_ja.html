@@ -203,10 +203,16 @@ raw最終vectorのファイル名は従来の <code class="docutils literal notr
 から選択することが出来ます。</p>
 <div class="line-block">
 <div class="line">注: <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) を複数MPIプロセスで使用する場合、ハミルトニアンは
-分散形式で生成されるため、<code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> の指定は起動時に
-エラーとして拒否されます。ハミルトニアンの入出力が必要な場合は
-1プロセスで実行するか、別の <code class="docutils literal notranslate"><span class="pre">Solver</span></code> を使用してください。</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> 指定時は <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> を使えません。</div>
+分散形式で生成されるため、<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定しない通常のFullDiagでは
+<code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> の指定は起動時にエラーとして拒否されます。
+ハミルトニアンの入出力が必要な場合は1プロセスで実行するか、別の
+<code class="docutils literal notranslate"><span class="pre">Solver</span></code> を使用してください。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定したFullDiagでは、 <code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> がsectorの行列を
+識別情報付きのMatrix Market形式 <code class="docutils literal notranslate"><span class="pre">##_ham_sector.mtx</span></code> で出力して終了し、
+<code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> がその行列を読み込んで対角化します。この形式はMPIランク数と
+<code class="docutils literal notranslate"><span class="pre">Solver</span></code> （ELPAの複数ランクを含む）を変えて読み込めます。
+<a class="reference internal" href="../outputfiles_ja/ham_ja.html#subsec-ham"><span class="std std-ref">ham.dat</span></a> を参照してください。他の計算手法では <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と
+併用できません。</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>

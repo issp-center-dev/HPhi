@@ -85,6 +85,12 @@ digestは行列digestなので、読込ログは
 ``source_hamiltonian_kind=sector_matrix_v1 hamiltonian_changed=unknown``
 を表示します。
 
+編集した行列や外部で作成した行列を ``InputHam=1`` で対角化した状態
+（:ref:`Subsec:ham`）も同様です。ヘッダはその行列のdigestを持ちますが、
+利用側は自身の定義ファイルのHamiltonianを使います。CGは編集した行列の固有値を
+再現せず、そのHamiltonianで :math:`\langle v|H|v\rangle` を再評価し、TEも
+そのHamiltonianで時間発展します。
+
 ``fulldiag/`` で2ランクのFullDiagを実行した後、状態2からTEを行う
 POSIX shellの例:
 

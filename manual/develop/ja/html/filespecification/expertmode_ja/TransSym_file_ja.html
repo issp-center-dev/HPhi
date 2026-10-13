@@ -213,10 +213,12 @@ spinlessのraw solverでは非対角 <code class="docutils literal notranslate">
 値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
 sectorの外へ出る演算子は0になります。canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> はraw基底と同様に起動時に拒否されます。
-同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、スペクトル計算、リスタート、
-ハミルトニアンの入出力は本ファイルと併用できません。固有ベクトルの入出力は、
+同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、スペクトル計算、リスタートは
+本ファイルと併用できません。固有ベクトルの入出力は、
 CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
-全固有状態をこの形式で出力できます。未対応の組み合わせはエラーで終了します。</p>
+全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
+識別情報付きのsector行列ファイル（<a class="reference internal" href="../outputfiles_ja/ham_ja.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>）を使います。
+未対応の組み合わせはエラーで終了します。</p>
 </li>
 </ul>
 </section>
@@ -373,8 +375,9 @@ Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応�
 場合は、整合するゲージで明示的な不変 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> hopping増分を指定してください。</p>
 <p>general spin、新しいStandard-modeのKondo運動量生成、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
 <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>、 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>、スピン軸回転、反ユニタリ操作、
-多次元既約表現、Hamiltonian I/O、solver restart、rank数変更を伴うcheckpoint
-再分配は非対応です。FullDiagはさらにベクトル入力、distributed基底metadata、
+多次元既約表現、solver restart、rank数変更を伴うcheckpoint
+再分配は非対応です。Hamiltonian I/OはFullDiagのsector行列ファイルに限ります。
+FullDiagはさらにベクトル入力、distributed基底metadata、
 MAGMA、nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> を除外します。</p>
 </section>
 </section>
@@ -476,8 +479,9 @@ Hamiltonian fingerprintは解析済みPairLift行を含む
 使用する全時刻の入力を伝播前に検査します。<code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否されます。
 代わりに、群不変なサイト内 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> またはスピン積の <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を指定してください。
 general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、Hamiltonian入出力、
-solver restart、rank数を変更したcheckpoint再分配は対象外です。
+全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、
+solver restart、rank数を変更したcheckpoint再分配は対象外です（Hamiltonian入出力は
+FullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> も非対応です。FullDiagはベクトル入力、distributed基底metadata、
 MAGMAと非serial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> も拒否します。</p>
@@ -712,7 +716,7 @@ ScaLAPACKは現段階ではHamiltonianを複製しますが、使わない複製
 基底はsolver、rank数、実行ごとに異なり得ます。縮退準位は平均や射影で比較して
 ください。各状態は全rankで順に処理し、分散solverでは状態をrank 0へ集めてから
 各rankの所有区間を配ります。</p>
-<p>これらの出力を指定すると、対角化の前にsector行列を検査します。全係数が有限で、
+<p>これらの出力または <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code> / <code class="docutils literal notranslate"><span class="pre">InputHam</span></code> を指定すると、対角化の前にsector行列を検査します。全係数が有限で、
 各下三角要素 <span class="math notranslate nohighlight">\(a\)</span> と対応する上三角要素 <span class="math notranslate nohighlight">\(b\)</span> が
 <span class="math notranslate nohighlight">\(|a-\overline{b}|\le 10^{-12}\max(1,|a|,|b|)\)</span> を満たす必要があります。
 その後、下三角から上三角を作り直し、対角の虚部を0にした行列をsolverへ渡します。
@@ -723,17 +727,39 @@ version 1、 <span class="math notranslate nohighlight">\(D\)</span>、続いて
 この検査のために各列を所有rankから1回ずつ配信し、各rankが合計約 <span class="math notranslate nohighlight">\(16D^2\)</span>
 byteを受信します。replicated storageでは係数の通信を行いません。</p>
 <p>このときmanifestには <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code>、 <code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code>
-（ <code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code>・ <code class="docutils literal notranslate"><span class="pre">correlations</span></code>・ <code class="docutils literal notranslate"><span class="pre">eigenvectors</span></code> のcomma区切り）、
-<code class="docutils literal notranslate"><span class="pre">matrix_source=generated</span></code>、 <code class="docutils literal notranslate"><span class="pre">fulldiag_status=pending</span></code> を記録します。指定した
+（ <code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code>・ <code class="docutils literal notranslate"><span class="pre">correlations</span></code>・ <code class="docutils literal notranslate"><span class="pre">eigenvectors</span></code>・ <code class="docutils literal notranslate"><span class="pre">hamiltonian</span></code> の
+comma区切り）、 <code class="docutils literal notranslate"><span class="pre">matrix_source</span></code> （ <code class="docutils literal notranslate"><span class="pre">generated</span></code> または <code class="docutils literal notranslate"><span class="pre">input</span></code> ）、
+<code class="docutils literal notranslate"><span class="pre">fulldiag_status=pending</span></code> を記録します。指定した
 出力がすべて成功すると <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code>、 <code class="docutils literal notranslate"><span class="pre">completed_outputs</span></code>、
 <code class="docutils literal notranslate"><span class="pre">fulldiag_status=complete</span></code> を追記します。最後の <code class="docutils literal notranslate"><span class="pre">fulldiag_status</span></code> 行が現在の
 状態です。途中で失敗した場合は相関・ベクトルファイルが一部残り得るため、終了
-statusとこの行を併せて確認してください。 <code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> には
+statusとこの行を併せて確認してください。</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> は、上記の検査とcanonical化を行った行列を
+<code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_ham_sector.mtx</span></code> へ書いて終了します。形式は
+<a class="reference internal" href="../outputfiles_ja/ham_ja.html#subsec-ham"><span class="std std-ref">ham.dat</span></a> に記載した、 <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> 識別行付きのMatrix Market下三角
+（有効数字17桁）です。いったん <code class="docutils literal notranslate"><span class="pre">.part</span></code> へ書き、すべての書込みとcloseが
+成功した後に最終名へrenameします。manifestの <code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code> と
+<code class="docutils literal notranslate"><span class="pre">completed_outputs</span></code> は <code class="docutils literal notranslate"><span class="pre">hamiltonian</span></code> だけで、固有値・相関・固有状態は
+出力しません。複数rankのELPAでは各列を所有rankから配信して、計数と出力の
+2回の走査を行います。</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> は同じファイルを読み込みます。rootが1行ずつ検査し、
+識別キーが現在の入力のsectorと一致しない場合（同じ次元の別sectorを含む）や
+形式・添字・係数に誤りがある場合は、対角化の前に全rankで終了します。
+データ行は一定件数ごとに全rankへ配ります。複数rankのELPAでは各rankが自身の列だけを、
+他のsolverでは全rankが行列全体を格納します。
+座標の重複は列ごとに一意な担当rankが検出します。その後、生成した行列と同じ検査と
+canonical化を行い、読み込んだ値の <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code> を記録します。manifestは
+<code class="docutils literal notranslate"><span class="pre">matrix_source=input</span></code> で、固有値だけの指定でも <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code> と
+なります。行列ファイルはrank数やsolverを変えて読み込めますが、固有状態の
+checkpointは同じrank数・layoutで使います。保存した状態をTEやCGで使うと、
+利用側の定義ファイルのHamiltonianで評価されます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> には
+<code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">input</span></code> [5800]、 <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">output</span></code> [5900]、
 <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">prepare</span></code> [5600]、 <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">states</span></code> [5700] と、その内訳の
-gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。</p>
-<p>0以外の <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>、MAGMA、 <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code>、 <code class="docutils literal notranslate"><span class="pre">ReStart</span></code>、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>、
-Hamiltonian入出力（ <code class="docutils literal notranslate"><span class="pre">InputHam</span></code> / <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code> ）はセクターFullDiagでは
-引き続き非対応です。</p>
+gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
+[5800] は読込後の [5600] を含み、 <code class="docutils literal notranslate"><span class="pre">MakeHam</span></code> [5100] の内側で計測されます。</p>
+<p>0以外の <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>、MAGMA、 <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code>、 <code class="docutils literal notranslate"><span class="pre">ReStart</span></code>、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>
+はセクターFullDiagでは引き続き非対応です。</p>
 </section>
 <section id="id7">
 <h2>セクター情報ファイル<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>

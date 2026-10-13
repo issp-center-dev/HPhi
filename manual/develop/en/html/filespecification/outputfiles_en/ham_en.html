@@ -95,6 +95,100 @@ represent real and imaginary part of the Hamiltonian, respectively.</p>
 </li>
 </ul>
 </section>
+<section id="sector-fulldiag-hamiltonian">
+<h2>Sector FullDiag Hamiltonian<a class="headerlink" href="#sector-fulldiag-hamiltonian" title="Link to this heading">¶</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> (<a class="reference internal" href="../expertmode_en/TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>) and expert-mode <code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code>,
+<code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> writes the <span class="math notranslate nohighlight">\(D\times D\)</span> Hamiltonian of the selected
+sector to <code class="docutils literal notranslate"><span class="pre">output/##_ham_sector.mtx</span></code> and stops; no eigenvalues,
+correlations or eigenstates are computed. <code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> reads the same file
+and diagonalizes that matrix. Such a run can still write, besides the
+eigenvalues, the requested correlations and, with <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>, every
+eigenstate. <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code> and <code class="docutils literal notranslate"><span class="pre">InputHam</span></code> cannot be combined.</p>
+<p>The file is a Matrix Market <code class="docutils literal notranslate"><span class="pre">coordinate</span> <span class="pre">complex</span> <span class="pre">hermitian</span></code> matrix. Its basis
+is HPhi’s ordered sector representatives with their phase convention, and the
+<code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span> <span class="pre">key=value</span></code> lines identify that basis. An example for a spin chain
+with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> (6 sites, momentum <span class="math notranslate nohighlight">\(k=1\)</span>, <span class="math notranslate nohighlight">\(D=3\)</span>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%%MatrixMarket matrix coordinate complex hermitian
+% HPHI format=sector-hamiltonian-v1
+% HPHI scalar=complex-binary64
+% HPHI model=Spin
+% HPHI nsite=6
+% HPHI nup=3
+% HPHI ndown=3
+% HPHI ne=3
+% HPHI local_site_mask=0000000000000000
+% HPHI fixed_flags=0
+% HPHI phase=1
+% HPHI full_dim=20
+% HPHI sector_dim=3
+% HPHI group_digest=8a08ff3f5c2433e3
+% HPHI sector_count=3
+% HPHI sector_xor=ba8fc1732fc70785
+% HPHI sector_sum=640126bcd43ffa9b
+% HPHI basis_order=110eb94c9a548c63
+3 3 6
+1 1 0.80000000000000004 0
+2 1 0.62 -0.11
+3 1 0.21473720558371184 0.59193575034635193
+2 2 0.48999999999999999 0
+3 2 0.40526279441628799 0.48193575034635183
+3 3 0.48999999999999999 0
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Line 1 is <code class="docutils literal notranslate"><span class="pre">%%MatrixMarket</span> <span class="pre">matrix</span> <span class="pre">coordinate</span> <span class="pre">complex</span> <span class="pre">hermitian</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> lines hold each of the following 17 keys once, in any
+order. Integers are decimal; masks and digests have 16 hexadecimal digits:
+<code class="docutils literal notranslate"><span class="pre">format=sector-hamiltonian-v1</span></code>, <code class="docutils literal notranslate"><span class="pre">scalar=complex-binary64</span></code>, <code class="docutils literal notranslate"><span class="pre">model</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Spin</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>, <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>, <code class="docutils literal notranslate"><span class="pre">tJ</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Kondo</span></code>, <code class="docutils literal notranslate"><span class="pre">KondoNConserved</span></code>, <code class="docutils literal notranslate"><span class="pre">KondoGC</span></code>), <code class="docutils literal notranslate"><span class="pre">nsite</span></code>, <code class="docutils literal notranslate"><span class="pre">nup</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ndown</span></code>, <code class="docutils literal notranslate"><span class="pre">ne</span></code>, <code class="docutils literal notranslate"><span class="pre">local_site_mask</span></code>, <code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code>, <code class="docutils literal notranslate"><span class="pre">phase</span></code>,
+<code class="docutils literal notranslate"><span class="pre">full_dim</span></code>, <code class="docutils literal notranslate"><span class="pre">sector_dim</span></code>, <code class="docutils literal notranslate"><span class="pre">group_digest</span></code>, <code class="docutils literal notranslate"><span class="pre">sector_count</span></code>,
+<code class="docutils literal notranslate"><span class="pre">sector_xor</span></code>, <code class="docutils literal notranslate"><span class="pre">sector_sum</span></code> and <code class="docutils literal notranslate"><span class="pre">basis_order</span></code>. The values are the
+basis identity of a sector checkpoint; some of them, such as the group and
+sector digests, also appear in the sector manifest of
+<a class="reference internal" href="../expertmode_en/TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>.</p></li>
+<li><p>The dimension line is <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">D</span> <span class="pre">nnz</span></code> and each data line is
+<code class="docutils literal notranslate"><span class="pre">row</span> <span class="pre">column</span> <span class="pre">real</span> <span class="pre">imag</span></code>. Only the one-based lower triangle
+(<span class="math notranslate nohighlight">\({\rm row}\ge{\rm column}\)</span>) is written. HPhi writes the nonzero
+elements column by column with increasing rows, using 17 significant digits
+(a signed zero is written as +0), so the file restores the binary64 values
+that were diagonalized.</p></li>
+</ul>
+<p>On input the data lines may come in any order and may include explicit zeros.
+Missing elements are zero and the upper triangle is the complex conjugate of
+the lower one. Diagonal imaginary parts must be exactly zero. Blank lines and
+general <code class="docutils literal notranslate"><span class="pre">%</span></code> comments may appear between line 1 and the dimension line and
+after the last data line; LF and CRLF line ends are accepted.</p>
+<p>Identity keys that do not match the sector of the current input (including
+another sector of the same dimension), a missing, repeated or unknown key, a
+malformed value, a dimension or <code class="docutils literal notranslate"><span class="pre">nnz</span></code> mismatch, an index out of range or in
+the upper triangle, a repeated coordinate (zeros included), a non-finite
+value, a nonzero diagonal imaginary part, fewer or more data lines than
+declared, an extra token and an overlong line are errors: every MPI rank
+stops before the diagonalization.</p>
+<p>Keep the <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> lines when editing coefficients. A matrix made by other
+tools is read under the same rules if its basis identity matches; differing
+from the Hamiltonian of the definition files is not an error. For example,
+this POSIX shell snippet doubles every coefficient and hence every eigenvalue:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>awk '/^%/ || NF != 4 { print; next }
+     { $3 = sprintf("%.17g", 2 * $3); $4 = sprintf("%.17g", 2 * $4); print }' \
+    output/zvo_ham_sector.mtx &gt; edited.mtx
+mv edited.mtx output/zvo_ham_sector.mtx
+# Set OutputHam 0 and InputHam 1 in calc.def and run the same input.
+</pre></div>
+</div>
+<p>The matrix file of a basis can be read with another MPI rank count and solver
+(LAPACK, ScaLAPACK or ELPA). Even with ELPA on several ranks each rank keeps
+only its own columns; the root reads the data lines and distributes them in
+fixed-size chunks. Eigenstate checkpoints, in contrast, need the rank count
+and layout they were written with.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> run records <code class="docutils literal notranslate"><span class="pre">matrix_source=input</span></code> and the <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code>
+of the values read in the manifest, and its eigenstate checkpoints carry that
+digest. TE or CG runs that use these states evolve or re-evaluate them with the
+Hamiltonian of their own definition files (<a class="reference internal" href="eigenvec_en.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a>), so their
+energies need not equal the eigenvalues of the edited matrix.</p>
+</section>
 </section>
 
 

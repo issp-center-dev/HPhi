@@ -104,6 +104,13 @@ evaluates the Hamiltonian of its own definition files; a quench is allowed.
 Because the FullDiag digest is a matrix digest, the load log reports
 ``source_hamiltonian_kind=sector_matrix_v1 hamiltonian_changed=unknown``.
 
+The same holds for states of an ``InputHam=1`` run, which diagonalized an
+edited or externally made sector matrix (:ref:`Subsec:ham`). Their header
+carries the digest of that matrix, and the consumer still uses the
+Hamiltonian of its own definition files: CG re-evaluates
+:math:`\langle v|H|v\rangle` with that Hamiltonian instead of reproducing
+the eigenvalues of the edited matrix, and TE evolves the state with it.
+
 A portable POSIX shell example for a TE run from state 2, after a two-rank
 FullDiag run in ``fulldiag/``:
 

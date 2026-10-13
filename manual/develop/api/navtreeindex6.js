@@ -60,8 +60,8 @@ var NAVTREEINDEX6 =
 "globals_enum.html":[10,1,4],
 "globals_eval.html":[10,1,5],
 "globals_f.html":[10,1,0,5],
-"globals_func.html":[10,1,1],
 "globals_func.html":[10,1,1,0],
+"globals_func.html":[10,1,1],
 "globals_func_b.html":[10,1,1,1],
 "globals_func_c.html":[10,1,1,2],
 "globals_func_d.html":[10,1,1,3],
@@ -114,10 +114,11 @@ var NAVTREEINDEX6 =
 "globals_vars_l.html":[10,1,2,9],
 "globals_vars_m.html":[10,1,2,10],
 "globals_vars_n.html":[10,1,2,11],
-"globals_vars_s.html":[10,1,2,12],
-"globals_vars_t.html":[10,1,2,13],
-"globals_vars_v.html":[10,1,2,14],
-"globals_vars_x.html":[10,1,2,15],
+"globals_vars_r.html":[10,1,2,12],
+"globals_vars_s.html":[10,1,2,13],
+"globals_vars_t.html":[10,1,2,14],
+"globals_vars_v.html":[10,1,2,15],
+"globals_vars_x.html":[10,1,2,16],
 "globals_w.html":[10,1,0,21],
 "globals_x.html":[10,1,0,22],
 "globals_z.html":[10,1,0,23],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "matrixlapack_8c.html#a2da8c4a1bcaabe1c6da36cc95fa05ccb":[10,0,45,6],
 "matrixlapack_8c.html#a2dd5dfb659b5fc0621e58907648532d2":[10,0,45,2],
 "matrixlapack_8c.html#a38ab897cf91d3022b8ba2de845f7a6ae":[10,0,45,4],
-"matrixlapack_8c.html#a39e7fcf71121e849b2cfe07980fa4869":[10,0,45,9],
-"matrixlapack_8c.html#a596697b79bdc66f04188551b1366d4fd":[10,0,45,11]
+"matrixlapack_8c.html#a39e7fcf71121e849b2cfe07980fa4869":[10,0,45,9]
 };

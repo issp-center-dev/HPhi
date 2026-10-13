@@ -107,6 +107,11 @@ FullDiagはreplicated layoutで状態を書きます。利用側の実行では
 digestは行列digestなので、読込ログは
 <code class="docutils literal notranslate"><span class="pre">source_hamiltonian_kind=sector_matrix_v1</span> <span class="pre">hamiltonian_changed=unknown</span></code>
 を表示します。</p>
+<p>編集した行列や外部で作成した行列を <code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> で対角化した状態
+（<a class="reference internal" href="ham_ja.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>）も同様です。ヘッダはその行列のdigestを持ちますが、
+利用側は自身の定義ファイルのHamiltonianを使います。CGは編集した行列の固有値を
+再現せず、そのHamiltonianで <span class="math notranslate nohighlight">\(\langle v|H|v\rangle\)</span> を再評価し、TEも
+そのHamiltonianで時間発展します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">fulldiag/</span></code> で2ランクのFullDiagを実行した後、状態2からTEを行う
 POSIX shellの例:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mkdir -p te/output

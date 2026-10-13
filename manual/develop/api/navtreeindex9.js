@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"mltplySpin_8h.html#a020b096c079862b71fb71eb799e95180":[10,0,1,67,5],
 "mltplySpin_8h.html#a0c1d4e0eca7da30233d96a251ea125f9":[10,0,1,67,7],
 "mltplySpin_8h.html#a1a67484ef2dc45228cb0df6a018a6020":[10,0,1,67,1],
 "mltplySpin_8h.html#a20cf25deeca80bc9540511bcb0b79243":[10,0,1,67,8],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "page_codingrule.html#sec_coding_memory":[0,4],
 "page_codingrule.html#sec_coding_mpi":[0,3],
 "page_codingrule.html#sec_coding_naming":[0,1],
-"page_codingrule.html#sec_coding_openmp":[0,2],
-"page_codingrule.html#sec_coding_testing":[0,6]
+"page_codingrule.html#sec_coding_openmp":[0,2]
 };

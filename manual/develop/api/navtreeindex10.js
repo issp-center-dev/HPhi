@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"page_codingrule.html#sec_coding_testing":[0,6],
 "page_codingrule.html#subsec_functions":[0,1,0],
 "page_codingrule.html#subsec_macros":[0,1,2],
 "page_codingrule.html#subsec_variables":[0,1,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "structBindStruct.html#ad957788ed202e9244b96c1a6e531ff15":[9,0,1,0],
 "structBindStruct.html#ae3f45c24f80b6811ff09e4b6374b6110":[9,0,1,5],
 "structBoostList.html":[9,0,2],
-"structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703":[9,0,2,1],
-"structBoostList.html#a1dad7c40df79747182b9100445852830":[9,0,2,7]
+"structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703":[9,0,2,1]
 };

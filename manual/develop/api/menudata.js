@@ -145,6 +145,7 @@ var menudata={children:[
 {text:"l",url:"globals_vars_l.html#index_l"},
 {text:"m",url:"globals_vars_m.html#index_m"},
 {text:"n",url:"globals_vars_n.html#index_n"},
+{text:"r",url:"globals_vars_r.html#index_r"},
 {text:"s",url:"globals_vars_s.html#index_s"},
 {text:"t",url:"globals_vars_t.html#index_t"},
 {text:"v",url:"globals_vars_v.html#index_v"},

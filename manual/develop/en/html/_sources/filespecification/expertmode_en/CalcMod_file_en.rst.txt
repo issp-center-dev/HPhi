@@ -211,10 +211,16 @@ The parameters correlated with the keywords are as follows.
    | 1: input Hamiltonian.
 
    | Note: with ``Solver 3`` (ELPA) and more than one MPI process, the
-     Hamiltonian is generated in distributed form, so ``OutputHam``/``InputHam``
-     are rejected at startup. To output or input the Hamiltonian, run with
-     1 MPI process or use a different ``Solver``.
-   | ``OutputHam``/``InputHam`` are not available with ``TransSym``.
+     Hamiltonian is generated in distributed form, so ordinary FullDiag
+     without ``TransSym`` rejects ``OutputHam``/``InputHam`` at startup. To
+     output or input that Hamiltonian, run with 1 MPI process or use a
+     different ``Solver``.
+   | With ``TransSym``, FullDiag ``OutputHam=1`` writes the sector matrix as
+     the identified Matrix Market file ``##_ham_sector.mtx`` and stops, and
+     ``InputHam=1`` reads and diagonalizes that matrix. The file can be read
+     with another MPI rank count and ``Solver``, including ELPA on several
+     ranks; see :ref:`Subsec:ham`. Other methods do not accept these keywords
+     with ``TransSym``.
 
 *  ``OutputExcitedVec``
 

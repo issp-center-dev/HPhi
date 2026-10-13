@@ -91,6 +91,92 @@
 </li>
 </ul>
 </section>
+<section id="sector-fulldiag">
+<h2>sector FullDiagのハミルトニアン<a class="headerlink" href="#sector-fulldiag" title="Link to this heading">¶</a></h2>
+<p>エキスパートモードで <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> （<a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a>）を指定した
+<code class="docutils literal notranslate"><span class="pre">CalcType=2</span></code> では、 <code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> が選択したsectorの <span class="math notranslate nohighlight">\(D\times D\)</span>
+ハミルトニアンを <code class="docutils literal notranslate"><span class="pre">output/##_ham_sector.mtx</span></code> へ出力して終了します。
+固有値・相関・固有状態は計算しません。 <code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> は同じファイルを読み込み、
+その行列を対角化します。このときも固有値に加えて、指定した相関と
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> の全固有状態を出力できます。 <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code> と
+<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> の同時指定はできません。</p>
+<p>ファイルはMatrix Marketの <code class="docutils literal notranslate"><span class="pre">coordinate</span> <span class="pre">complex</span> <span class="pre">hermitian</span></code> 形式です。
+基底はHPhiのsector代表元の順序と位相規約で、 <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span> <span class="pre">key=value</span></code> の行が
+その基底を識別します。次はTransSymを指定したスピン鎖（6サイト、運動量 <span class="math notranslate nohighlight">\(k=1\)</span> 、 <span class="math notranslate nohighlight">\(D=3\)</span> ）の出力例です。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%%MatrixMarket matrix coordinate complex hermitian
+% HPHI format=sector-hamiltonian-v1
+% HPHI scalar=complex-binary64
+% HPHI model=Spin
+% HPHI nsite=6
+% HPHI nup=3
+% HPHI ndown=3
+% HPHI ne=3
+% HPHI local_site_mask=0000000000000000
+% HPHI fixed_flags=0
+% HPHI phase=1
+% HPHI full_dim=20
+% HPHI sector_dim=3
+% HPHI group_digest=8a08ff3f5c2433e3
+% HPHI sector_count=3
+% HPHI sector_xor=ba8fc1732fc70785
+% HPHI sector_sum=640126bcd43ffa9b
+% HPHI basis_order=110eb94c9a548c63
+3 3 6
+1 1 0.80000000000000004 0
+2 1 0.62 -0.11
+3 1 0.21473720558371184 0.59193575034635193
+2 2 0.48999999999999999 0
+3 2 0.40526279441628799 0.48193575034635183
+3 3 0.48999999999999999 0
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>1行目は <code class="docutils literal notranslate"><span class="pre">%%MatrixMarket</span> <span class="pre">matrix</span> <span class="pre">coordinate</span> <span class="pre">complex</span> <span class="pre">hermitian</span></code> です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> の行は次の17個のキーを1回ずつ持ちます（順序は任意）。
+整数は10進、maskとdigestは16桁の16進です。
+<code class="docutils literal notranslate"><span class="pre">format=sector-hamiltonian-v1</span></code>、 <code class="docutils literal notranslate"><span class="pre">scalar=complex-binary64</span></code>、
+<code class="docutils literal notranslate"><span class="pre">model</span></code> （ <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>、 <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code>、
+<code class="docutils literal notranslate"><span class="pre">tJ</span></code>、 <code class="docutils literal notranslate"><span class="pre">Kondo</span></code>、 <code class="docutils literal notranslate"><span class="pre">KondoNConserved</span></code>、 <code class="docutils literal notranslate"><span class="pre">KondoGC</span></code> ）、
+<code class="docutils literal notranslate"><span class="pre">nsite</span></code>、 <code class="docutils literal notranslate"><span class="pre">nup</span></code>、 <code class="docutils literal notranslate"><span class="pre">ndown</span></code>、 <code class="docutils literal notranslate"><span class="pre">ne</span></code>、 <code class="docutils literal notranslate"><span class="pre">local_site_mask</span></code>、
+<code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code>、 <code class="docutils literal notranslate"><span class="pre">phase</span></code>、 <code class="docutils literal notranslate"><span class="pre">full_dim</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_dim</span></code>、
+<code class="docutils literal notranslate"><span class="pre">group_digest</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_count</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_xor</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_sum</span></code>、
+<code class="docutils literal notranslate"><span class="pre">basis_order</span></code> 。値はsector checkpointの基底識別と同じです。群とsectorの
+digestなど一部は <a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> のmanifestにも記録されます。</p></li>
+<li><p>次元行は <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">D</span> <span class="pre">nnz</span></code> 、データ行は <code class="docutils literal notranslate"><span class="pre">row</span> <span class="pre">column</span> <span class="pre">real</span> <span class="pre">imag</span></code> です。
+1始まりの下三角（ <span class="math notranslate nohighlight">\({\rm row}\ge{\rm column}\)</span> ）だけを書きます。
+HPhiは列の昇順・列内の行の昇順に、0でない要素だけを有効数字17桁で書きます
+（符号付きの0は+0とします）。対角化した行列と同じbinary64値に戻ります。</p></li>
+</ul>
+<p>読込では、行の順序は任意で、明示的な0も書けます。書かれていない要素は0、
+上三角は下三角の複素共役です。対角の虚部は厳密に0でなければなりません。
+1行目と次元行の間および最後のデータ行の後には、空行と一般の <code class="docutils literal notranslate"><span class="pre">%</span></code> コメントを
+置けます。改行はLFとCRLFのどちらでも読めます。</p>
+<p>識別キーが現在の入力のsectorと一致しない場合（同じ次元の別sectorを含む）、
+キーの欠落・重複・未知のキー、値の書式違い、次元・ <code class="docutils literal notranslate"><span class="pre">nnz</span></code> の不一致、範囲外や
+上三角の添字、座標の重複（0を含む）、非有限値、0でない対角虚部、宣言より
+少ない・多いデータ行、1行内の余分なtoken、長すぎる行は、エラーとして
+対角化の前に全MPIランクで終了します。</p>
+<p>行列の係数を編集しても <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> の行は残してください。基底識別が一致すれば、
+外部で作成した行列も同じ規則で読み込めます。定義ファイルのハミルトニアンと
+係数が異なることはエラーにしません。例えば、全係数を2倍して固有値を2倍にする
+POSIX shellの例は次のとおりです。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>awk '/^%/ || NF != 4 { print; next }
+     { $3 = sprintf("%.17g", 2 * $3); $4 = sprintf("%.17g", 2 * $4); print }' \
+    output/zvo_ham_sector.mtx &gt; edited.mtx
+mv edited.mtx output/zvo_ham_sector.mtx
+# calc.def の OutputHam を 0、InputHam を 1 にして同じ入力で実行します。
+</pre></div>
+</div>
+<p>同じ基底の行列ファイルは、MPIランク数とsolver（LAPACK、ScaLAPACK、ELPA）を
+変えて読み込めます。複数ランクのELPAでも、各ランクは自身の担当列だけを保持し、
+ルートが読んだデータ行を一定件数ごとに配ります。一方、固有状態のcheckpointは
+保存時と同じランク数とlayoutが必要です。</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> の実行では、manifestに <code class="docutils literal notranslate"><span class="pre">matrix_source=input</span></code> と、読み込んだ値の
+<code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code> を記録し、固有状態のcheckpointもこのdigestを持ちます。
+保存した状態をTEやCGへ渡すと、利用側は自身の定義ファイルのハミルトニアンで
+時間発展・再評価します（ <a class="reference internal" href="eigenvec_ja.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a> ）。編集した行列の固有値とは
+一致しないことがあります。</p>
+</section>
 </section>
 
 

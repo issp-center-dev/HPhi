@@ -13,8 +13,9 @@ var searchData=
   ['fnv1a64_10',['fnv1a64',['../structSymmetryBasisDigest.html#a646e03df2b08551cc8d51507314aaf07',1,'SymmetryBasisDigest']]],
   ['force_5fchunked_11',['force_chunked',['../structSymmetryRepresentativeBatchOptions.html#a4c14755f2350f4c99becc790b1533378',1,'SymmetryRepresentativeBatchOptions::force_chunked'],['../structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045',1,'SymmetryMpiExchangeOptions::force_chunked']]],
   ['found_12',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
-  ['from_5ffile_13',['from_file',['../structSymmetryHamiltonianInfo.html#a329c62432b8f249ea2f0e69525ffd766',1,'SymmetryHamiltonianInfo']]],
-  ['fsgn_14',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
-  ['full_5fdim_15',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime::full_dim'],['../structSymmetryHamiltonianIdentity.html#a149210e504f4b18321c6ae7c4634dd15',1,'SymmetryHamiltonianIdentity::full_dim']]],
-  ['full_5fv1_16',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
+  ['fp_13',['fp',['../structMatrixReader.html#a3383f62df8cb74fa4b9d66a85333c20b',1,'MatrixReader']]],
+  ['from_5ffile_14',['from_file',['../structSymmetryHamiltonianInfo.html#a329c62432b8f249ea2f0e69525ffd766',1,'SymmetryHamiltonianInfo']]],
+  ['fsgn_15',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
+  ['full_5fdim_16',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime::full_dim'],['../structSymmetryHamiltonianIdentity.html#a149210e504f4b18321c6ae7c4634dd15',1,'SymmetryHamiltonianIdentity::full_dim']]],
+  ['full_5fv1_17',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
 ];

@@ -24,6 +24,7 @@ var annotated_dup =
     [ "LargeList", "structLargeList.html", "structLargeList" ],
     [ "LegacyApplyContext", "structLegacyApplyContext.html", "structLegacyApplyContext" ],
     [ "LocalBlock", "structLocalBlock.html", "structLocalBlock" ],
+    [ "MatrixReader", "structMatrixReader.html", "structMatrixReader" ],
     [ "Monomial", "structMonomial.html", "structMonomial" ],
     [ "MPIBatchedDoubleTransfers", "structMPIBatchedDoubleTransfers.html", "structMPIBatchedDoubleTransfers" ],
     [ "MPIBatchedInterAll", "structMPIBatchedInterAll.html", "structMPIBatchedInterAll" ],

@@ -220,10 +220,12 @@ other by a symmetry operation have the same value, and an operator that
 leaves the sector gives zero. For canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>,
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> are rejected at startup as in the
 raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products. <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, spectrum
-calculations, restart, and the input and output of Hamiltonians are not
-supported together with this file. Eigenvector I/O is available for CG and
+calculations and restart are not supported together with this file.
+Eigenvector I/O is available for CG and
 TimeEvolution through the sector checkpoint format below; FullDiag can
-export every eigenstate in that format. Unsupported
+export every eigenstate in that format. Hamiltonian input and output are
+available for FullDiag only, through the identified sector matrix file
+(<a class="reference internal" href="../outputfiles_en/ham_en.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>). Unsupported
 combinations terminate with an error.</p>
 </li>
 </ul>
@@ -397,8 +399,9 @@ invariant <code class="docutils literal notranslate"><span class="pre">TEOneBody
 <p>General spin, new Standard-mode Kondo momentum generation, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>,
 <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>, <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>, <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>, spin-axis rotations,
 antiunitary operations, multidimensional irreducible representations,
-Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-remain unsupported. FullDiag additionally excludes vector input,
+solver restart and rank-changing checkpoint redistribution remain
+unsupported. Hamiltonian I/O is limited to the FullDiag sector matrix file.
+FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
 </section>
 </section>
@@ -507,8 +510,8 @@ Taylor rule described below. Every used slice is checked before propagation.
 <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. General spin, Boost, new Standard-mode
 SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
 operations, multidimensional irreducible representations, spectrum,
-Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-are unsupported. <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code> and
+solver restart and rank-changing checkpoint redistribution are unsupported
+(Hamiltonian I/O is limited to the FullDiag sector matrix file). <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code> and
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> are not supported in this SpinGC sector path. FullDiag also
 rejects vector input, distributed basis metadata, MAGMA, and nonserial
 <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code>.</p>
@@ -778,7 +781,8 @@ their order, phase and basis can differ between solvers, rank counts or
 runs. Compare degenerate levels through averages or projectors. Each state
 is processed by all ranks in turn; for distributed solvers it is gathered on
 rank 0 and its owned blocks are scattered.</p>
-<p>With these outputs, the sector matrix is checked before diagonalization:
+<p>With these outputs, or with <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code>, the sector matrix is
+checked before diagonalization:
 every coefficient must be finite and <span class="math notranslate nohighlight">\(|a-\overline{b}|\le
 10^{-12}\max(1,|a|,|b|)\)</span> must hold for each lower element <span class="math notranslate nohighlight">\(a\)</span> and its
 upper partner <span class="math notranslate nohighlight">\(b\)</span>. The upper triangle is then rebuilt from the lower
@@ -792,18 +796,43 @@ this check broadcasts each column once from its owner, about <span class="math n
 bytes per rank in total; replicated storage needs no coefficient
 communication.</p>
 <p>The manifest of such a run has <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code>,
-<code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code> (a comma list of <code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code>, <code class="docutils literal notranslate"><span class="pre">correlations</span></code> and
-<code class="docutils literal notranslate"><span class="pre">eigenvectors</span></code>), <code class="docutils literal notranslate"><span class="pre">matrix_source=generated</span></code> and
-<code class="docutils literal notranslate"><span class="pre">fulldiag_status=pending</span></code>. After every requested output succeeded,
+<code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code> (a comma list of <code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code>, <code class="docutils literal notranslate"><span class="pre">correlations</span></code>,
+<code class="docutils literal notranslate"><span class="pre">eigenvectors</span></code> and <code class="docutils literal notranslate"><span class="pre">hamiltonian</span></code>), <code class="docutils literal notranslate"><span class="pre">matrix_source</span></code> (<code class="docutils literal notranslate"><span class="pre">generated</span></code> or
+<code class="docutils literal notranslate"><span class="pre">input</span></code>) and <code class="docutils literal notranslate"><span class="pre">fulldiag_status=pending</span></code>. After every requested output succeeded,
 <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code>, <code class="docutils literal notranslate"><span class="pre">completed_outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">fulldiag_status=complete</span></code> are
 appended; the last <code class="docutils literal notranslate"><span class="pre">fulldiag_status</span></code> line is the current state. A failed
 run can leave some correlation or vector files, so use the exit status
-together with that line. <code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> then shows <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span>
-<span class="pre">prepare</span></code> [5600], <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">states</span></code> [5700] and its gather/scatter [5710],
-correlation [5720] and checkpoint [5730] parts.</p>
-<p><code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> other than 0, MAGMA, <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code>, <code class="docutils literal notranslate"><span class="pre">ReStart</span></code>,
-<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> and Hamiltonian I/O (<code class="docutils literal notranslate"><span class="pre">InputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>) remain
-unavailable for sector FullDiag.</p>
+together with that line.</p>
+<p><code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> writes the checked and canonicalized matrix to
+<code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_ham_sector.mtx</span></code> and stops. The format, described in
+<a class="reference internal" href="../outputfiles_en/ham_en.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>, is a Matrix Market lower triangle with 17 significant
+digits and <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">HPHI</span></code> identity lines. The file is written as <code class="docutils literal notranslate"><span class="pre">.part</span></code> and
+renamed to its final name only after every write and the close succeeded.
+The manifest’s <code class="docutils literal notranslate"><span class="pre">requested_outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">completed_outputs</span></code> are
+<code class="docutils literal notranslate"><span class="pre">hamiltonian</span></code> alone; no eigenvalues, correlations or eigenstates are
+written. With ELPA on several ranks each column is broadcast from its owner
+for the two passes that count and write the elements.</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> reads that file. The root checks it line by line; identity
+keys that do not match the sector of the current input (including another
+sector of the same dimension) and any format, index or coefficient error stop
+every rank before the diagonalization. The data lines are sent to all ranks
+in fixed-size chunks; with ELPA on several ranks each rank stores only its
+own columns, while the other solvers keep the whole matrix on every rank. A
+repeated coordinate is detected by the unique owner rank of its column. The matrix
+then goes through the same check and canonicalization as a generated one, and
+the <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code> of the values read is recorded. The manifest has
+<code class="docutils literal notranslate"><span class="pre">matrix_source=input</span></code> and <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code> even when only
+eigenvalues are requested. The matrix file can be read with another rank
+count or solver, whereas eigenstate checkpoints need the same rank count and
+layout. States saved by such a run are evaluated with the Hamiltonian of the
+consumer’s definition files when TE or CG uses them.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> then shows <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">input</span></code> [5800], <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span>
+<span class="pre">output</span></code> [5900], <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">prepare</span></code> [5600], <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">states</span></code> [5700]
+and its gather/scatter [5710], correlation [5720] and checkpoint [5730]
+parts; [5800] includes the [5600] that follows the read and is itself part
+of <code class="docutils literal notranslate"><span class="pre">MakeHam</span></code> [5100].</p>
+<p><code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> other than 0, MAGMA, <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code>, <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> and
+<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> remain unavailable for sector FullDiag.</p>
 </section>
 <section id="sector-manifest">
 <h2>Sector manifest<a class="headerlink" href="#sector-manifest" title="Link to this heading">¶</a></h2>

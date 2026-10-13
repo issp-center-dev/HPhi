@@ -48,11 +48,12 @@ var searchData=
   ['request_5fkeys_45',['request_keys',['../structSymmetryUnresolvedMatvecBlock.html#a605fce3a923b267848c158b86f75f977',1,'SymmetryUnresolvedMatvecBlock']]],
   ['request_5flayout_5fready_46',['request_layout_ready',['../structSymmetryVectorHaloPlan.html#aa5c3657e304cfdca80c41226c2534e47',1,'SymmetryVectorHaloPlan']]],
   ['requested_47',['requested',['../structSymmetryOptionGate.html#aa1161cf81c2f221b29ee877d33eb3ed0',1,'SymmetryOptionGate']]],
-  ['reserved_48',['reserved',['../structCorrelationTransition.html#a0410b46a6c1e072f141dfe21a4b9f42d',1,'CorrelationTransition']]],
-  ['restart_49',['restart',['../structSymmetryMethodCapability.html#a0a69eff1af1d9099fea006564bbde987',1,'SymmetryMethodCapability']]],
-  ['root_50',['root',['../structStateBuffers.html#a3f0597053d21ac7a2b5ec8f7a17638ba',1,'StateBuffers']]],
-  ['row_5fnnz_5fmax_51',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
-  ['row_5fptr_52',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
-  ['rowptr_53',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
-  ['runtime_5fbuffer_5fbytes_54',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
+  ['required_5fkeys_48',['required_keys',['../symmetry__hamiltonian__io_8c.html#a367c86b5d78c4fc59c7fc9ed426707d7',1,'symmetry_hamiltonian_io.c']]],
+  ['reserved_49',['reserved',['../structCorrelationTransition.html#a0410b46a6c1e072f141dfe21a4b9f42d',1,'CorrelationTransition']]],
+  ['restart_50',['restart',['../structSymmetryMethodCapability.html#a0a69eff1af1d9099fea006564bbde987',1,'SymmetryMethodCapability']]],
+  ['root_51',['root',['../structStateBuffers.html#a3f0597053d21ac7a2b5ec8f7a17638ba',1,'StateBuffers']]],
+  ['row_5fnnz_5fmax_52',['row_nnz_max',['../structSymmetryMatvecPlan.html#a867abe492927c5f1a37ea97e7410ac8b',1,'SymmetryMatvecPlan']]],
+  ['row_5fptr_53',['row_ptr',['../structSymmetryUnresolvedMatvecBlock.html#a088645a421b9462f07126c8d487afa3e',1,'SymmetryUnresolvedMatvecBlock::row_ptr'],['../structSymmetryMatvecBlock.html#a28fc3340ffa2483d339d801aaf77d0cc',1,'SymmetryMatvecBlock::row_ptr'],['../structSymmetryMatvecPlan.html#ab7f7315ea0a6126682f29ff91a0535fa',1,'SymmetryMatvecPlan::row_ptr'],['../structSymmetryMatvecBlockView.html#a9f7e469c06bab0d8fb17dbae1c301fac',1,'SymmetryMatvecBlockView::row_ptr']]],
+  ['rowptr_54',['rowptr',['../structTraceHamCsr.html#af81d95028535536c5adf37c07d736373',1,'TraceHamCsr']]],
+  ['runtime_5fbuffer_5fbytes_55',['runtime_buffer_bytes',['../structSymmetryVectorHaloPlan.html#a1ab2ebc59aab609607530b7060fca77d',1,'SymmetryVectorHaloPlan']]]
 ];

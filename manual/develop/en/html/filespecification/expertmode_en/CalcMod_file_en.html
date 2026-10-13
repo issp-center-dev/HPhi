@@ -223,10 +223,16 @@ step. Missing, truncated, non-finite or incompatible input fails collectively.</
 </div>
 <div class="line-block">
 <div class="line">Note: with <code class="docutils literal notranslate"><span class="pre">Solver</span> <span class="pre">3</span></code> (ELPA) and more than one MPI process, the
-Hamiltonian is generated in distributed form, so <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code>
-are rejected at startup. To output or input the Hamiltonian, run with
-1 MPI process or use a different <code class="docutils literal notranslate"><span class="pre">Solver</span></code>.</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> are not available with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</div>
+Hamiltonian is generated in distributed form, so ordinary FullDiag
+without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> rejects <code class="docutils literal notranslate"><span class="pre">OutputHam</span></code>/<code class="docutils literal notranslate"><span class="pre">InputHam</span></code> at startup. To
+output or input that Hamiltonian, run with 1 MPI process or use a
+different <code class="docutils literal notranslate"><span class="pre">Solver</span></code>.</div>
+<div class="line">With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, FullDiag <code class="docutils literal notranslate"><span class="pre">OutputHam=1</span></code> writes the sector matrix as
+the identified Matrix Market file <code class="docutils literal notranslate"><span class="pre">##_ham_sector.mtx</span></code> and stops, and
+<code class="docutils literal notranslate"><span class="pre">InputHam=1</span></code> reads and diagonalizes that matrix. The file can be read
+with another MPI rank count and <code class="docutils literal notranslate"><span class="pre">Solver</span></code>, including ELPA on several
+ranks; see <a class="reference internal" href="../outputfiles_en/ham_en.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>. Other methods do not accept these keywords
+with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>.</div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputExcitedVec</span></code></p>

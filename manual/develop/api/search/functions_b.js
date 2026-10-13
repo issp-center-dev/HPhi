@@ -8,12 +8,13 @@ var searchData=
   ['li_5f1d_5fallocate_5',['li_1d_allocate',['../setmemory_8c.html#a1d3db8dc3975c9439a7945dcbb2c324e',1,'li_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#a1d3db8dc3975c9439a7945dcbb2c324e',1,'li_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
   ['li_5f2d_5fallocate_6',['li_2d_allocate',['../setmemory_8h.html#ac0357c4725bd7fd94c76acde19f4cc57',1,'li_2d_allocate(const long unsigned int N, const long unsigned int M):&#160;setmemory.c'],['../setmemory_8c.html#ac0357c4725bd7fd94c76acde19f4cc57',1,'li_2d_allocate(const long unsigned int N, const long unsigned int M):&#160;setmemory.c']]],
   ['list_5fsymmetry_5fmethods_7',['list_symmetry_methods',['../symmetry__basis__io_8c.html#a0fab265228269c389c06ead7840af9d7',1,'symmetry_basis_io.c']]],
-  ['lobpcg_5fmain_8',['LOBPCG_Main',['../CalcByLOBPCG_8c.html#abf636cac2045e948fae38a03ed72e14d',1,'CalcByLOBPCG.c']]],
-  ['local_5fblock_9',['local_block',['../symmetry__kondo__terms_8c.html#af2a112f1c4105d82db3fc16925024cc6',1,'symmetry_kondo_terms.c']]],
-  ['local_5fnext_5fpower_5fof_5ftwo_10',['local_next_power_of_two',['../symmetry__directory_8c.html#a7703f64398946c2fb813e32d7754b8a6',1,'symmetry_directory.c']]],
-  ['local_5fnow_5fseconds_11',['local_now_seconds',['../phys__distributed__local_8c.html#ad6629fcce64ca061f009c765887b0e52',1,'phys_distributed_local.c']]],
-  ['local_5frep_5fstate_5fhash_12',['local_rep_state_hash',['../symmetry__directory_8c.html#aa988b2edd4933d279a8611cb62d6e00f',1,'symmetry_directory.c']]],
-  ['lookup_5fresponse_5fresult_5fis_5fempty_13',['lookup_response_result_is_empty',['../symmetry__mpi__exchange_8c.html#a5c5db563adacb8363aa6725979c04602',1,'symmetry_mpi_exchange.c']]],
-  ['lui_5f1d_5fallocate_14',['lui_1d_allocate',['../setmemory_8c.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
-  ['lz_15',['lz',['../PowerLanczos_8h.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c'],['../PowerLanczos_8c.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c']]]
+  ['load_5fcolumn_8',['load_column',['../symmetry__hamiltonian__io_8c.html#ae228658bdba82a25cf6763205878fe46',1,'symmetry_hamiltonian_io.c']]],
+  ['lobpcg_5fmain_9',['LOBPCG_Main',['../CalcByLOBPCG_8c.html#abf636cac2045e948fae38a03ed72e14d',1,'CalcByLOBPCG.c']]],
+  ['local_5fblock_10',['local_block',['../symmetry__kondo__terms_8c.html#af2a112f1c4105d82db3fc16925024cc6',1,'symmetry_kondo_terms.c']]],
+  ['local_5fnext_5fpower_5fof_5ftwo_11',['local_next_power_of_two',['../symmetry__directory_8c.html#a7703f64398946c2fb813e32d7754b8a6',1,'symmetry_directory.c']]],
+  ['local_5fnow_5fseconds_12',['local_now_seconds',['../phys__distributed__local_8c.html#ad6629fcce64ca061f009c765887b0e52',1,'phys_distributed_local.c']]],
+  ['local_5frep_5fstate_5fhash_13',['local_rep_state_hash',['../symmetry__directory_8c.html#aa988b2edd4933d279a8611cb62d6e00f',1,'symmetry_directory.c']]],
+  ['lookup_5fresponse_5fresult_5fis_5fempty_14',['lookup_response_result_is_empty',['../symmetry__mpi__exchange_8c.html#a5c5db563adacb8363aa6725979c04602',1,'symmetry_mpi_exchange.c']]],
+  ['lui_5f1d_5fallocate_15',['lui_1d_allocate',['../setmemory_8c.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#a541c7f55b58e28698f1f5a378c721650',1,'lui_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
+  ['lz_16',['lz',['../PowerLanczos_8h.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c'],['../PowerLanczos_8c.html#a01b67823b598ecf0f8453e68f29b691e',1,'Lz(struct BindStruct *X, double alpha, double *Lz_Ene, double *Lz_Var, double E1, double E2, double E3, double E4):&#160;PowerLanczos.c']]]
 ];

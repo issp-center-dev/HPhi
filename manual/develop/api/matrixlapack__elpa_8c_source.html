@@ -161,12 +161,12 @@ $(document).ready(function(){initNavTree('matrixlapack__elpa_8c_source.html','')
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">/* elpa_set for int values with mandatory error check. */</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">static</span> <span class="keywordtype">int</span> SetElpaInt(elpa_t handle, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">int</span> value) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">static</span> <span class="keywordtype">int</span> SetElpaInt(elpa_t handle, <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, <span class="keywordtype">int</span> value) {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keywordtype">int</span> error = ELPA_OK;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  elpa_set(handle, name, value, &amp;error);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  elpa_set(handle, <a class="code hl_variable" href="symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, value, &amp;error);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">if</span> (error != ELPA_OK) {</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    fprintf(stdout, <span class="stringliteral">&quot;  Error: elpa_set(\&quot;%s\&quot;, %d) failed: %s\n&quot;</span>,</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            name, value, elpa_strerr(error));</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <a class="code hl_variable" href="symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, value, elpa_strerr(error));</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  }</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keywordflow">return</span> 0;</div>
@@ -279,6 +279,7 @@ $(document).ready(function(){initNavTree('matrixlapack__elpa_8c_source.html','')
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>}</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span><span class="preprocessor">#endif </span><span class="comment">/* _ELPA */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="amatrixlapack__elpa_8h_html"><div class="ttname"><a href="matrixlapack__elpa_8h.html">matrixlapack_elpa.h</a></div></div>
+<div class="ttc" id="asymmetry__hamiltonian__io_8c_html_a8f8f80d37794cde9472343e4487ba3eb"><div class="ttname"><a href="symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a></div><div class="ttdeci">const char * name</div><div class="ttdef"><b>Definition</b> <a href="symmetry__hamiltonian__io_8c_source.html#l00383">symmetry_hamiltonian_io.c:383</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
