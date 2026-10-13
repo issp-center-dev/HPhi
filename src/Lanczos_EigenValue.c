@@ -841,7 +841,7 @@ int ReadTMComponents(
   sscanf(ctmp,"%lf \n", &dnorm);
   unsigned long int rows = 0;
   int meta_nproc = -1, meta_nthreads = -1;
-  while(fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
+  while(fgetsMPIAllowComments(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
     const char *p = ctmp;
     while (*p == ' ' || *p == '\t') ++p;
     if (*p == '#') {

@@ -60,7 +60,8 @@ match = re.search(r"^# nproc (\d+) nthreads 1$", tm_text, flags=re.M)
 assert match, tm_text
 saved_nproc = int(match.group(1))
 assert saved_nproc == max(1, len(MPI) and int(MPI[-1]) or 1), (saved_nproc, MPI)
-run("same", 1000, "restart_in", 1)
+same_text = run("same", 1000, "restart_in", 1)
+assert "Warning: TMComponents has no environment line" not in same_text, same_text
 
 run("out", 10, "restart_out", 1)
 status, mismatch_text = execute("mismatch", 1000, "restart_in", 2)

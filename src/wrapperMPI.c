@@ -261,16 +261,11 @@ FILE* fopenMPI(
 
   return fp;
 }/*FILE* fopenMPI*/
-/**
-@brief MPI file I/O (get a line, fgets) wrapper.
-Only the root node (::myrank = 0) reads and broadcast string.
-@return The same as that of fgets
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
-char* fgetsMPI(
+static char* fgetsMPIImpl(
   char* InputString,//!<[out] read line.
   int maxcount,//!<[in] Length of string
-  FILE* fp//!<[in] file pointer
+  FILE* fp,//!<[in] file pointer
+  int skip_comments//!<[in] Skip blank and comment lines when nonzero.
 ){
   int inull;
   char *ctmp;
@@ -289,7 +284,8 @@ char* fgetsMPI(
       inull = 1;
     }
     
-    while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
+    while(skip_comments &&
+          (*InputString == '\n' || strncmp(InputString, "#", 1)==0)){
       ctmp = fgets(InputString, maxcount, fp);
       if (ctmp == NULL){
         inull=1;
@@ -306,7 +302,32 @@ char* fgetsMPI(
   }
 
   return ctmp;
+}/*char* fgetsMPIImpl*/
+/**
+@brief MPI file I/O (get a non-comment line, fgets) wrapper.
+Only the root node (::myrank = 0) reads and broadcasts the string.
+@return The same as that of fgets
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+char* fgetsMPI(
+  char* InputString,//!<[out] read line.
+  int maxcount,//!<[in] Length of string
+  FILE* fp//!<[in] file pointer
+){
+  return fgetsMPIImpl(InputString, maxcount, fp, 1);
 }/*char* fgetsMPI*/
+/**
+@brief MPI file I/O wrapper that preserves blank and comment lines.
+Only the root node (::myrank = 0) reads and broadcasts the string.
+@return The same as that of fgets
+*/
+char* fgetsMPIAllowComments(
+  char* InputString,//!<[out] read line.
+  int maxcount,//!<[in] Length of string
+  FILE* fp//!<[in] file pointer
+){
+  return fgetsMPIImpl(InputString, maxcount, fp, 0);
+}/*char* fgetsMPIAllowComments*/
 /**
 @brief MPI barrier wrapper.
 @author Mitsuaki Kawamura (The University of Tokyo)
