@@ -376,6 +376,9 @@ set_tests_properties(symmetry_spingc_correlation_memory_limit PROPERTIES
     ENVIRONMENT "HPHI_TEST_CORRELATION_MEMORY_FAILURE=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=40000")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
+add_hphi_mpi_test(kondogc_mpi_localspin_reject min:4)
+set_tests_properties(kondogc_mpi_localspin_reject PROPERTIES
+    LABELS "kondo;mpi;validation")
 add_hphi_test(lanczos_spin_calchs_minus1)
 add_hphi_test(symmetry_spin_chain_lanczos)
 add_hphi_test(lanczos_spin_ladder_DM)
