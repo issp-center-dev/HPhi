@@ -870,12 +870,13 @@ int CalcByLOBPCG(
         exitMPI(-1);
       }
       byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      fclose(fp);
+      fp = NULL;
 #pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
       for (idim = 0; idim < i_max; idim++) {
         L_vec[ie][idim] = v1[idim + 1];
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-    if (!X->Bind.Def.iFlgSymmetryBasis) fclose(fp);
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 
     if(!X->Bind.Def.iFlgSymmetryBasis && byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
