@@ -32,4 +32,21 @@ int BuildSymmetryHamiltonianIdentity(const struct BindStruct *X,
 int PrepareSymmetryHamiltonian(const struct BindStruct *X, int from_file,
     struct SymmetryHamiltonianInfo *info);
 
+/* <head>_ham_sector.mtx in the output directory: a Matrix Market
+ * "coordinate complex hermitian" lower triangle with 17 significant digits,
+ * preceded by one "% HPHI key=value" line for format, scalar and each
+ * identity field. Both are collective and return 0 on every rank or -1 on
+ * every rank.
+ *
+ * Input zeroes the stored H, reads and validates the file on the root,
+ * sends the records in chunks to every rank (a column panel keeps only its
+ * own columns, replicated storage every record), detects duplicates by
+ * column owner and ends with Prepare(X, 1, info).
+ * Output writes the prepared matrix through <name>.part and renames it
+ * only after every write and the close succeeded. */
+int InputSymmetryHamiltonian(const struct BindStruct *X,
+    struct SymmetryHamiltonianInfo *info);
+int OutputSymmetryHamiltonian(const struct BindStruct *X,
+    const struct SymmetryHamiltonianInfo *info);
+
 #endif

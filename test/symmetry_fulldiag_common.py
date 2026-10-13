@@ -276,6 +276,70 @@ def matrix_digest(h):
     return value
 
 
+MATRIX_HEADER = '%%MatrixMarket matrix coordinate complex hermitian'
+MATRIX_KEYS = ('format', 'scalar', 'model', 'nsite', 'nup', 'ndown', 'ne',
+               'local_site_mask', 'fixed_flags', 'phase', 'full_dim', 'sector_dim',
+               'group_digest', 'sector_count', 'sector_xor', 'sector_sum', 'basis_order')
+MATRIX_HEX_KEYS = ('local_site_mask', 'group_digest', 'sector_xor', 'sector_sum',
+                   'basis_order')
+
+
+def read_sector_matrix(file: Path) -> tuple[dict[str, str], np.ndarray]:
+    """Independent reader of <head>_ham_sector.mtx: its metadata and full Hq.
+
+    The metadata keys must appear once each, in the documented order; the
+    lower-triangle records rebuild the upper triangle by conjugation."""
+    lines = Path(file).read_text().splitlines()
+    assert lines and lines[0] == MATRIX_HEADER, lines[:1]
+    metadata, index = {}, 1
+    while lines[index].startswith('%') or not lines[index].strip():
+        if lines[index].startswith('% HPHI '):
+            key, value = lines[index][len('% HPHI '):].split('=', 1)
+            assert key in MATRIX_KEYS and key not in metadata, key
+            metadata[key] = value
+        index += 1
+    assert tuple(metadata) == MATRIX_KEYS, list(metadata)
+    for key in MATRIX_HEX_KEYS:
+        assert len(metadata[key]) == 16, (key, metadata[key])
+    rows, cols, nnz = map(int, lines[index].split())
+    assert rows == cols == int(metadata['sector_dim']) and nnz <= rows*(rows+1)//2
+    records = lines[index+1:index+1+nnz]
+    assert len(records) == nnz, (len(records), nnz)
+    lower = np.zeros((rows, rows), complex)
+    seen = set()
+    for line in records:
+        row, col, real, imag = line.split()
+        row, col = int(row), int(col)
+        assert 1 <= col <= row <= rows and (row, col) not in seen, line
+        seen.add((row, col))
+        lower[row-1, col-1] = complex(float(real), float(imag))
+    for line in lines[index+1+nnz:]:
+        assert not line.strip() or (line.startswith('%') and not line.startswith('% HPHI')), line
+    assert np.isfinite(lower).all() and np.all(np.diag(lower).imag == 0)
+    return metadata, lower + np.tril(lower, -1).conj().T
+
+
+def matrix_records(h: np.ndarray, explicit_zeros=()) -> list[tuple[int, int, complex]]:
+    """Column-major lower-triangle nonzeros (1-based), plus explicit zeros."""
+    dim = len(h)
+    return [(row, col, complex(h[row-1, col-1])) for col in range(1, dim+1)
+            for row in range(col, dim+1)
+            if h[row-1, col-1] != 0 or (row, col) in explicit_zeros]
+
+
+def write_matrix_records(file: Path, metadata: dict[str, str], dim: int,
+                         records: list[tuple[int, int, complex]]) -> None:
+    lines = [MATRIX_HEADER] + [f'% HPHI {key}={metadata[key]}' for key in MATRIX_KEYS]
+    lines.append(f'{dim} {dim} {len(records)}')
+    lines += [f'{row} {col} {value.real:.17g} {value.imag:.17g}' for row, col, value in records]
+    Path(file).write_text('\n'.join(lines) + '\n')
+
+
+def write_sector_matrix(file: Path, metadata: dict[str, str], h: np.ndarray) -> None:
+    """Independent writer: 17 significant digits, lower triangle only."""
+    write_matrix_records(file, metadata, len(h), matrix_records(h))
+
+
 def basis_order(case: FDCase, group_order: int) -> int:
     """Independent FNV-1a stream of index, representative, orbit, stabilizer."""
     import struct

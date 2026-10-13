@@ -68,8 +68,8 @@ def main():
              {'families': {'AnomalousG': [(0, 2, 0, 2, 1)]}})
     negative('nonhermitian' , 'Hermite', gc, {'families': {'Trans': [(2, 0, 3, 0, .2, .1)]}})
     negative('nontranslation', 'invariance', gc, {'families': {'Trans': [(0, 0, 0, 0, .2, 0)]}})
-    for field in ('OutputHam', 'InputHam', 'ReStart', 'CalcSpec'):
-        negative('option_'+field, 'does not support '+field if field != 'CalcSpec' else 'spectrum calculations', gc, {'CalcMod': {field: 1}}, method=2 if field == 'OutputHam' else 3)
+    for field in ('InputHam', 'ReStart', 'CalcSpec'):
+        negative('option_'+field, 'does not support '+field if field != 'CalcSpec' else 'spectrum calculations', gc, {'CalcMod': {field: 1}})
     negative('fulldiag_InputEigenVec', 'InputEigenVec', gc, {'CalcMod': {'InputEigenVec': 1}}, method=2)
     # Sector FullDiag saves every eigenstate; symmetry_fulldiag_states checks them.
     vectors = expert_case(root/'fulldiag_OutputEigenVec', gc, method=2,
@@ -77,6 +77,12 @@ def main():
     run_case(vectors, hphi, 'validation', [], dict(os.environ))
     assert list((vectors/'output').glob('zvo_eigenvec_*_rank_0.dat'))
     print('fulldiag_OutputEigenVec: accepted')
+    # Sector FullDiag writes the Matrix Market H; symmetry_fulldiag_hamiltonian checks it.
+    matrix = expert_case(root/'fulldiag_OutputHam', gc, method=2,
+                         options={'CalcMod': {'OutputHam': 1}}, empty=True)
+    run_case(matrix, hphi, 'validation', [], dict(os.environ))
+    assert (matrix/'output'/'zvo_ham_sector.mtx').exists()
+    print('fulldiag_OutputHam: accepted')
     # The new early guard must not restrict raw KondoGC InterAll input.
     raw = expert_case(root/'raw_gc_crossed_interall',
                       Case('KondoGC', 1, 'block', None, None, 0), method=2,

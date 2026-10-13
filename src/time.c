@@ -795,8 +795,12 @@ void OutputTimer(struct BindStruct *X) {
     StampTime(fp, "      mltply in expec_energy_flct ", 5302);
         StampTime(fp, "    Output", 5400);
       StampTime(fp, "    OutputHam", 5500);
-      /* Only sector state/correlation/matrix requests start these timers. */
-      if (X->Def.iFlgSymmetryBasis && Timer[5600] + Timer[5700] > 0.0) {
+      /* Only sector state/correlation/matrix requests start these timers.
+         Input (5800) contains its prepare step (5600). */
+      if (X->Def.iFlgSymmetryBasis &&
+          Timer[5600] + Timer[5700] + Timer[5800] + Timer[5900] > 0.0) {
+        StampTime(fp, "    Sector matrix input", 5800);
+        StampTime(fp, "    Sector matrix output", 5900);
         StampTime(fp, "    Sector matrix prepare", 5600);
         StampTime(fp, "    Sector states", 5700);
         StampTime(fp, "      Sector state gather/scatter", 5710);

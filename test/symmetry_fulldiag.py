@@ -102,9 +102,26 @@ def check_sector(path, model, length, momentum, states, raw, projector):
     if model == "Spin" and momentum == 0:
         execute(path, "layout_reject", calc, layout="distributed",
                 failure="distributed symmetry basis is supported for TransSym Lanczos, TPQ, CG, TimeEvolution and cTPQ runs only")
-        for option in ["ReStart", "InputEigenVec", "InputHam", "OutputHam"]:
+        for option in ["ReStart", "InputEigenVec"]:
             execute(path, "reject_"+option, calc + option + " 1\n",
                     failure="does not support " + option)
+        # The sector matrix is written and read back; symmetry_fulldiag_hamiltonian
+        # checks its values, identity and edits.
+        shutil.rmtree(path / "output")
+        (path / "output").mkdir()
+        execute(path, "accept_OutputHam", calc + "OutputHam 1\n")
+        assert (path / "output/zvo_ham_sector.mtx").exists()
+        assert not (path / "output/zvo_energy_sector.dat").exists()
+        execute(path, "accept_InputHam", calc + "InputHam 1\n")
+        np.testing.assert_allclose(np.loadtxt(path / "output/zvo_energy_sector.dat", ndmin=2)[:, 1],
+                                   expected, rtol=0, atol=3e-8)
+        # Eigenvalues only, but the matrix source is a requested input.
+        manifest = dict(line.split("=", 1) for line in
+                        (path / "output/zvo_symmetry_sector.dat").read_text().splitlines() if line)
+        assert manifest["output_scope"] == "requested", manifest
+        assert manifest["requested_outputs"] == manifest["completed_outputs"] == "eigenvalues"
+        assert manifest["matrix_source"] == "input" and manifest["fulldiag_status"] == "complete"
+        assert manifest["matrix_digest"].startswith("hphi-sector-matrix-fnv1a64-v1:")
         # Every sector eigenstate is saved; symmetry_fulldiag_states checks them.
         execute(path, "accept_OutputEigenVec", calc + "OutputEigenVec 1\n")
         assert len(list((path / "output").glob("zvo_eigenvec_*_rank_0.dat"))) == dim

@@ -45,6 +45,11 @@ unsigned int SymmetryFullDiagOutputMask(const struct DefineList *def) { (void)de
 int PrepareSymmetryHamiltonian(const struct BindStruct *x, int from_file,
                                struct SymmetryHamiltonianInfo *info)
 { (void)x; (void)from_file; (void)info; return -1; }
+int InputSymmetryHamiltonian(const struct BindStruct *x, struct SymmetryHamiltonianInfo *info)
+{ (void)x; (void)info; return -1; }
+int OutputSymmetryHamiltonian(const struct BindStruct *x,
+                              const struct SymmetryHamiltonianInfo *info)
+{ (void)x; (void)info; return -1; }
 int ProcessSymmetryFullDiagStates(const struct BindStruct *x,
                                   const struct SymmetryHamiltonianInfo *info)
 { (void)x; (void)info; return -1; }

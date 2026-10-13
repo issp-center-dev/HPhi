@@ -222,10 +222,12 @@ Use rules
    leaves the sector gives zero. For canonical ``Spin``,
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected at startup as in the
    raw basis; ``NBodyG`` expresses the same products. ``AnomalousG``, spectrum
-   calculations, restart, and the input and output of Hamiltonians are not
-   supported together with this file. Eigenvector I/O is available for CG and
+   calculations and restart are not supported together with this file.
+   Eigenvector I/O is available for CG and
    TimeEvolution through the sector checkpoint format below; FullDiag can
-   export every eigenstate in that format. Unsupported
+   export every eigenstate in that format. Hamiltonian input and output are
+   available for FullDiag only, through the identified sector matrix file
+   (:ref:`Subsec:ham`). Unsupported
    combinations terminate with an error.
 
 
@@ -384,8 +386,9 @@ invariant ``TEOneBody`` hopping increments in a consistent gauge.
 General spin, new Standard-mode Kondo momentum generation, ``NBodyInterAll``,
 ``AnomalousTerm``, ``AnomalousG``, ``CalcSpec``, spin-axis rotations,
 antiunitary operations, multidimensional irreducible representations,
-Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-remain unsupported. FullDiag additionally excludes vector input,
+solver restart and rank-changing checkpoint redistribution remain
+unsupported. Hamiltonian I/O is limited to the FullDiag sector matrix file.
+FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial ``ExpecMode``.
 
 
@@ -487,8 +490,8 @@ Taylor rule described below. Every used slice is checked before propagation.
 ``TETwoBody`` entries instead. General spin, Boost, new Standard-mode
 SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
 operations, multidimensional irreducible representations, spectrum,
-Hamiltonian I/O, solver restart and rank-changing checkpoint redistribution
-are unsupported. ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
+solver restart and rank-changing checkpoint redistribution are unsupported
+(Hamiltonian I/O is limited to the FullDiag sector matrix file). ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
 ``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
 rejects vector input, distributed basis metadata, MAGMA, and nonserial
 ``ExpecMode``.
@@ -787,7 +790,8 @@ runs. Compare degenerate levels through averages or projectors. Each state
 is processed by all ranks in turn; for distributed solvers it is gathered on
 rank 0 and its owned blocks are scattered.
 
-With these outputs, the sector matrix is checked before diagonalization:
+With these outputs, or with ``OutputHam``/``InputHam``, the sector matrix is
+checked before diagonalization:
 every coefficient must be finite and :math:`|a-\overline{b}|\le
 10^{-12}\max(1,|a|,|b|)` must hold for each lower element :math:`a` and its
 upper partner :math:`b`. The upper triangle is then rebuilt from the lower
@@ -802,19 +806,47 @@ bytes per rank in total; replicated storage needs no coefficient
 communication.
 
 The manifest of such a run has ``output_scope=requested``,
-``requested_outputs`` (a comma list of ``eigenvalues``, ``correlations`` and
-``eigenvectors``), ``matrix_source=generated`` and
-``fulldiag_status=pending``. After every requested output succeeded,
+``requested_outputs`` (a comma list of ``eigenvalues``, ``correlations``,
+``eigenvectors`` and ``hamiltonian``), ``matrix_source`` (``generated`` or
+``input``) and ``fulldiag_status=pending``. After every requested output succeeded,
 ``matrix_digest``, ``completed_outputs`` and ``fulldiag_status=complete`` are
 appended; the last ``fulldiag_status`` line is the current state. A failed
 run can leave some correlation or vector files, so use the exit status
-together with that line. ``CalcTimer.dat`` then shows ``Sector matrix
-prepare`` [5600], ``Sector states`` [5700] and its gather/scatter [5710],
-correlation [5720] and checkpoint [5730] parts.
+together with that line.
 
-``ExpecMode`` other than 0, MAGMA, ``InputEigenVec``, ``ReStart``,
-``CalcSpec`` and Hamiltonian I/O (``InputHam``/``OutputHam``) remain
-unavailable for sector FullDiag.
+``OutputHam=1`` writes the checked and canonicalized matrix to
+``output/<CDataFileHead>_ham_sector.mtx`` and stops. The format, described in
+:ref:`Subsec:ham`, is a Matrix Market lower triangle with 17 significant
+digits and ``% HPHI`` identity lines. The file is written as ``.part`` and
+renamed to its final name only after every write and the close succeeded.
+The manifest's ``requested_outputs`` and ``completed_outputs`` are
+``hamiltonian`` alone; no eigenvalues, correlations or eigenstates are
+written. With ELPA on several ranks each column is broadcast from its owner
+for the two passes that count and write the elements.
+
+``InputHam=1`` reads that file. The root checks it line by line; identity
+keys that do not match the sector of the current input (including another
+sector of the same dimension) and any format, index or coefficient error stop
+every rank before the diagonalization. The data lines are sent to all ranks
+in fixed-size chunks; with ELPA on several ranks each rank stores only its
+own columns, while the other solvers keep the whole matrix on every rank. A
+repeated coordinate is detected by the unique owner rank of its column. The matrix
+then goes through the same check and canonicalization as a generated one, and
+the ``matrix_digest`` of the values read is recorded. The manifest has
+``matrix_source=input`` and ``output_scope=requested`` even when only
+eigenvalues are requested. The matrix file can be read with another rank
+count or solver, whereas eigenstate checkpoints need the same rank count and
+layout. States saved by such a run are evaluated with the Hamiltonian of the
+consumer's definition files when TE or CG uses them.
+
+``CalcTimer.dat`` then shows ``Sector matrix input`` [5800], ``Sector matrix
+output`` [5900], ``Sector matrix prepare`` [5600], ``Sector states`` [5700]
+and its gather/scatter [5710], correlation [5720] and checkpoint [5730]
+parts; [5800] includes the [5600] that follows the read and is itself part
+of ``MakeHam`` [5100].
+
+``ExpecMode`` other than 0, MAGMA, ``InputEigenVec``, ``ReStart`` and
+``CalcSpec`` remain unavailable for sector FullDiag.
 
 Sector manifest
 ~~~~~~~~~~~~~~~
