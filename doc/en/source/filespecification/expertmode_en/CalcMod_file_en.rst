@@ -177,7 +177,7 @@ The parameters correlated with the keywords are as follows.
 
    CG, mTPQ, cTPQ and TimeEvolution use the v3 manifest format in raw and
    ``TransSym`` bases. The saved and current MPI process counts must match in
-   this release, and a sector continuation must keep its basis layout.
+   this release; sector v3 continuation permits metadata layout 0/1 changes.
    ``ReStart=3`` never rewrites the checkpoint. v3 ``Lanczos_max`` is an
    absolute final bound. A no-op at a lowered bound evaluates the restored
    state without adding history rows or rewriting the checkpoint. A terminal
@@ -536,7 +536,8 @@ Hamiltonian I/O and nonserial ExpecMode are unsupported.
 CG accepts sector vector import/export; TE accepts sector vector import and
 optionally exports vectors. Both can import FullDiag eigenstates. Import starts
 a new evaluation/time grid. Separately, CG, TPQ, cTPQ and TimeEvolution support
-same-process-count, same-layout v3 solver continuation; FullDiag and Lanczos do
+same-process-count v3 solver continuation, including sector metadata layout
+0/1 changes; FullDiag and Lanczos do
 not use that sector continuation path.
 For the full feature table and a runnable expert example, see :ref:`Subsec:TransSym`.
 

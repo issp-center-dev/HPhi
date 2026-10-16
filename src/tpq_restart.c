@@ -21,47 +21,6 @@ static uint64_t keep_below(const struct TPQRestartPlan *plan, int set)
   return (uint64_t)plan->legacy_steps[set];
 }
 
-/* check_identity() already compares each saved set with the runtime basis.
- * LAYOUT is deliberately runtime-compatible rather than runtime-identical,
- * so compare it separately across the currently required v3 TPQ sets. */
-static int validate_v3_layouts(const struct BindStruct *X,
-                               const struct TPQRestartPlan *plan)
-{
-  uint64_t reference = UINT64_MAX;
-  int failed = 0;
-  if (myrank == 0) {
-    for (int set = 0; set < plan->numave && !failed; ++set) {
-      if (plan->sources[set] != RESTART_SOURCE_V3) continue;
-      const struct RestartManifestRow *row =
-          RestartManifestFind(&plan->manifest, (uint64_t)set);
-      char rel[D_FileNameMax], path[D_FileNameMax];
-      uint64_t word = 0;
-      int n = row == NULL ? -1 :
-          snprintf(rel, sizeof(rel), cFileNameRestartVector,
-                   X->Def.CDataFileHead, set, RESTART_COMP_STATE,
-                   (int)row->gen, 0);
-      int m = n < 0 || n >= (int)sizeof(rel) ? -1 :
-          snprintf(path, sizeof(path), "%s%s", cParentOutputFolder, rel);
-      FILE *fp = m < 0 || m >= (int)sizeof(path) ? NULL : fopen(path, "rb");
-      if (fp == NULL) {
-        failed = 1;
-        continue;
-      }
-      for (int i = 0; i <= RW_LAYOUT && !failed; ++i)
-        failed = RestartGetWord(fp, &word) != 0;
-      if (fclose(fp) != 0) failed = 1;
-      if (!failed && reference == UINT64_MAX) reference = word;
-      else if (!failed && reference != word) failed = 1;
-    }
-  }
-  if (SumMPI_i(failed) != 0) {
-    fprintf(stdoutMPI,
-            "Error: restart checkpoint TPQ set identities differ (basis layout).\n");
-    return -1;
-  }
-  return 0;
-}
-
 int TPQRestartPlanSets(struct BindStruct *X, int numave,
                        struct TPQRestartPlan *plan)
 {
@@ -106,7 +65,9 @@ int TPQRestartPlanSets(struct BindStruct *X, int numave,
     }
     plan->any_resume |= plan->sources[set] != RESTART_SOURCE_NONE;
   }
-  if (validate_v3_layouts(X, plan) != 0) goto fail;
+  /* Each set is an independent publication unit. Its headers have already
+   * been checked against the runtime logical basis; compatible metadata
+   * layouts may differ between sets after an interrupted ReStart=2. */
   plan->boundaries_validated = 1;
   return 0;
 fail:

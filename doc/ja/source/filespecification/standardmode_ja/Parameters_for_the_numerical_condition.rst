@@ -25,8 +25,8 @@
    反復が終了した時点で再計算用のデータをファイル出力する。
 
    CG、mTPQ、cTPQ、TimeEvolutionはraw基底と ``TransSym`` 基底でv3継続
-   checkpointを使います。このreleaseでは同じMPI process数、sectorでは同じbasis
-   layoutが必要です。``EigenVecIO="In"`` の状態importは新しい評価・時刻列を開始し、
+   checkpointを使います。このreleaseでは同じMPI process数が必要ですが、v3では
+   sector metadata layout 0/1の変更を許します。``EigenVecIO="In"`` の状態importは新しい評価・時刻列を開始し、
    solver継続ではありません。Lanczos/spectrum restartは別のlegacy経路です。
 
 *  ``CheckpointInterval``

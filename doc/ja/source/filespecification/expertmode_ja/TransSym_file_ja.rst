@@ -215,8 +215,8 @@ TransSym指定ファイル
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
    同じ積は ``NBodyG`` で指定できます。``AnomalousG`` とスペクトル計算は
-   本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionは同じMPI process数・
-   同じbasis layoutでv3 solver継続に対応します。固有ベクトルの入出力は、
+   本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionは同じMPI process数で
+   v3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
    全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
    識別情報付きのsector行列ファイル（:ref:`Subsec:ham`）を使います。
@@ -325,7 +325,8 @@ KondoGCは上限を含まない厳密不等号を要求します。
      - 両方
 
 両方とは ``replicated`` と ``distributed`` です。CG、mTPQ、cTPQ、TimeEvolutionは
-同じprocess数・同じlayoutでv3継続に対応し、状態import/export欄とは別の機能です。
+同じprocess数でv3継続に対応し、metadata layout 0/1の変更も許します。
+状態import/export欄とは別の機能です。
 所有するセクター行が0のMPI
 rankもcollectiveと状態I/Oへ参加します。FullDiagはbuildに含まれるLAPACK
 （``Solver=0``）、ScaLAPACK（1）、ELPA（3）に対応し、後述のprocess grid制約が
@@ -451,8 +452,8 @@ CGに ``Sz2`` 列は追加しません。mTPQとcTPQは **単一の空間対称�
 CGのベクトル読込は入力状態を評価し、最適化を再開しません。TEの読込は新しい時間列を
 開始し、同一sector内のHamiltonian変更（quench）も許します。rank数、所有範囲、模型、
 sectorと位相規約は一致させます。どちらもsolver restartではありません。``ReStart`` は
-これとは別に、process数とlayoutを変えないCG、mTPQ、cTPQ、TimeEvolutionのv3 dataを
-継続します。
+これとは別に、同じprocess数でCG、mTPQ、cTPQ、TimeEvolutionのv3 dataを
+継続します。metadata layout 0/1の変更も許します。
 SpinGC checkpointもversion 1で、headerは ``model=4``、``nup/ndown/ne`` は0です。
 Hamiltonian fingerprintは解析済みPairLift行を含む
 ``hphi-parsed-hamiltonian-fnv1a64-v3`` です。非Kondoのcanonical模型はv2と既存checkpoint形式を
@@ -542,8 +543,8 @@ SSの ``phys_var`` 列は従来どおり :math:`\langle H^2\rangle` で、
 エネルギー平均の二乗を引いた分散ではありません。
 ``OutputGreenFormat=1`` によりSS/Norm/Flctと相関関数の集約出力を使えます。
 相関関数は ``ExpecInterval`` が選ぶTPQ評価stepで再計算されます。大規模sectorで
-全site pairを毎step要求すると高コストになります。v3 restartは同じprocess数・
-同じlayoutで利用できます。TPQの状態vector import/exportとスペクトルは
+全site pairを毎step要求すると高コストになります。v3 restartは同じprocess数で
+利用でき、metadata layout 0/1の変更も許します。TPQの状態vector import/exportとスペクトルは
 ``TransSym`` と併用できません。
 
 計算結果は **単一の対称性セクター内** のtraceを推定します。
@@ -567,7 +568,8 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 両flagは0または1です。行 ``i`` の次数はbeta ``i`` から ``i+1`` への発展に使い、
 最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
 ``eigen`` が非ゼロの行を拒否します。ベクトル入出力は引き続き非対応です。
-一様scheduleのcTPQは同じprocess数・同じlayoutでv3 restartを利用できますが、
+一様scheduleのcTPQは同じprocess数でv3 restartを利用でき、metadata layout 0/1の
+変更も許しますが、
 ``InvTemp`` は ``ReStart=2`` または3と組み合わせられません。
 明示scheduleでは初期点と ``physcal=1`` の行で相関関数を出力します。``InvTemp`` を
 指定しない場合は ``ExpecInterval`` が出力stepを選びます。``OutputGreenFormat=1`` は
@@ -604,7 +606,8 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 時間間隔を減らして収束を確認してください。相関関数は伝播後、``ExpecInterval`` が
 選ぶstepで評価されます。``OutputGreenFormat=1`` は0始まりの時刻stepを添字として
 集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
-なります。v3 ``ReStart`` は同じprocess数・同じlayoutで保存済みTE時計を継続し、
+なります。v3 ``ReStart`` は同じprocess数で保存済みTE時計を継続し、metadata layout
+0/1の変更も許します。
 import来歴を新しい時計としては使いません。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
 記録します。FullDiag由来の場合は ``source_hamiltonian_kind=sector_matrix_v1`` も
@@ -661,6 +664,8 @@ expert modeのCGでは ``OutputEigenVec=1`` と ``InputEigenVec=1`` を使えま
 global indexと代表状態の対応・基底位相規約の一致が必要です。
 従来のraw基底vectorと ``InputEigenVec=2`` はこのimport形式では拒否します。
 solver継続には :ref:`Subsec:restart_v3` の別のv3 manifest/vector fileを使います。
+v3は同じrank数でmetadata layout 0/1を変更した状態importにも対応します。
+上記の同じlayoutの制約は旧v1/v2形式に適用されます。
 CGの入力実行は与えた状態の物理量を評価し、固有状態の再計算や反復再開は行いません。
 
 生成時のHamiltonian digestは別に記録し、同一sector内のquench用に現在のHamiltonianと

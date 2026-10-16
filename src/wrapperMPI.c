@@ -459,8 +459,8 @@ int SumMPI_i(
   int idim//!<[in] Value to be summed
 ) {
   /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above).
-     Not currently called from the expec_* layer, but kept on the frozen
-     ExpecLocal allow-list as harmless headroom. */
+     Observable output agreement uses this locally; the FullDiag driver
+     aggregates failures only after leaving the uneven owned-state loop. */
   if (iExpecLocal) return idim;
 #ifdef MPI
   int ierr;

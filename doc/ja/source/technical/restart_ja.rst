@@ -13,12 +13,15 @@ solverの継続
 ``CalcMod`` の ``ReStart`` は、0が継続なし、1が新規計算とcheckpoint出力、
 2がcheckpoint読込と更新、3が読込のみです。v3 manifest/vector形式はraw基底と
 ``TransSym`` 基底のCG、mTPQ、cTPQ、TimeEvolutionで使われます。このreleaseでは
-保存時と現在のMPI process数が同じでなければなりません。sector継続ではbasis
-layoutも同じである必要があります。rank再配置とlayout変更は拒否します。
+保存時と現在のMPI process数が同じでなければなりません。sector v3継続ではmetadata
+layoutを ``replicated`` (0) と ``distributed`` (1) の間で変更できます。vectorの
+所有範囲とglobal順序は変わりません。rank再配置には対応していません。
 
 v3継続の ``Lanczos_max`` は絶対的な最終上限です。CGは保存した反復label、
-TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。保存stepが小さくした
-上限以上なら、復元状態を評価し、時系列行を追加せず、checkpointも書き直しません。
+TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。CGでは上限が保存反復label
+より小さい場合、TPQ/cTPQとTimeEvolutionでは上限が保存した次step以下の場合、
+復元状態を評価し、時系列行を追加せず、checkpointも書き直しません。CGは
+``Lanczos_max`` と同じlabelの反復を含み、TPQ/cTPQとTimeEvolutionはそのstepを含みません。
 収束終端CG checkpointは現在の ``LanczosEps`` で再判定します。厳しい許容誤差では
 反復を再開できますが、上限によるno-opを現在も収束しているとは表示しません。
 
@@ -33,8 +36,9 @@ TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。保存step
 状態importでは模型、basis identity、sector、phase、payload長、norm、digestを検証します。
 source method/state/step/timeとsolver scalarは来歴であり、source solverを再開しません。
 CGはimport状態を評価し、TimeEvolutionは現在の時刻表のstep 0から開始します。v3 importは
-現在、同じprocess数を必要とし、sector importは同じlayoutも必要です。必要なcopy手順は
-出力ファイル仕様に示します。
+現在、同じprocess数を必要とします。sector v3 importではmetadata layout 0/1の
+変更を許しますが、旧sector v1/v2 importは同じlayoutが必要です。rank再配置とv1/v2の
+layout制約緩和はこのreleaseの対象外です。必要なcopy手順は出力ファイル仕様に示します。
 
 legacyとspectrumの挙動
 ----------------------

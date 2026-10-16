@@ -323,26 +323,33 @@ for i, arg in enumerate(rc.MPI[:-1]):
     if arg in ("-np", "-n"):
         np_ = int(rc.MPI[i + 1])
 
-if MODE == "ctpq":
-    # Both injected failures are rank-local. The bounded subprocess catches a
-    # hang, while the marker set proves every rank crossed the agreement
-    # boundary before the top-level MPI abort can terminate its peers.
-    failure_cases = (
-        ("ctpq_output_open", False, "cTPQ output open failed", "output_open"),
-        ("ctpq_expec_status", True, "cTPQ driver operation failed", "driver"),
-    )
-    for stage, observations, diagnostic, marker_stage in failure_cases:
-        for rank in sorted({0, np_ - 1}):
-            bad = prepare("{}_rank{}".format(stage, rank), 0, numave=1,
-                          lanczos_max=2, observations=observations)
-            text = rc.run(bad, "injected_failure", binary=rc.probe(),
-                          fail=diagnostic, timeout=60,
-                          env={"HPHI_TEST_FD_FAIL": stage,
-                               "HPHI_TEST_FD_FAIL_RANK": str(rank)})
-            agreed = {int(value) for value in re.findall(
-                r"cTPQ agreed failure stage={} rank=([0-9]+)".format(
-                    marker_stage), text)}
-            assert agreed == set(range(np_)), (stage, rank, agreed, np_)
+# The same outer-driver discipline is required by both TPQ methods.
+solver_name = "cTPQ" if MODE == "ctpq" else "mTPQ"
+failure_cases = [
+    (MODE + "_output_open", False, solver_name + " output open failed", "output_open"),
+    (MODE + "_expec_status", True, solver_name + " driver operation failed", "driver"),
+]
+if MODE == "tpq":
+    failure_cases.append(("tpq_output_close", False,
+                          "mTPQ output close failed", "output_close"))
+for stage, observations, diagnostic, marker_stage in failure_cases:
+    for rank in sorted({0, np_ - 1}):
+        bad = prepare("{}_rank{}".format(stage, rank), 0, numave=1,
+                      lanczos_max=2, observations=observations)
+        text = rc.run(bad, "injected_failure", binary=rc.probe(),
+                      fail=diagnostic, timeout=60,
+                      env={"HPHI_TEST_FD_FAIL": stage,
+                           "HPHI_TEST_FD_FAIL_RANK": str(rank)})
+        agreed = {int(value) for value in re.findall(
+            r"{} agreed failure stage={} rank=([0-9]+)".format(
+                solver_name, marker_stage), text)}
+        assert agreed == set(range(np_)), (stage, rank, agreed, np_)
+        assert "MPI_ERR" not in text, text
+
+# Actual libc root-open failures and inner observable agreement, including
+# publication preservation on a failed ReStart=2 continuation.
+import restart_observable_failures as output_failures
+output_failures.tpq_failures(ROOT, METHOD)
 
 for rank in sorted({0, np_ - 1}):
     bad = ROOT / "alloc_{}".format(rank)
@@ -540,23 +547,69 @@ if MODE in ("tpq", "ctpq"):
             assert series_snapshot(missing) == missing_series
             assert checkpoint_snapshot(missing) == missing_checkpoints
 
-        # Both layout values are individually reader-compatible. They are not
-        # valid when mixed across required TPQ sets in one saved unit.
-        mixed = clone("sector_mixed_layout", 1, False)
-        env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT="replicated")
-        rc.run(mixed, "first", env=env, namelist="sym.def")
-        row = rc.manifest(mixed)[1][1]
-        for q in rc.restart_files(mixed, "zvo", 1, 0, row["gen"]):
-            data = bytearray(q.read_bytes())
-            old_layout = struct.unpack_from("<Q", data, 8 * 13)[0]
-            struct.pack_into("<Q", data, 8 * 13, 1 - old_layout)
-            q.write_bytes(data)
-        before = series_snapshot(mixed)
-        assert_series_families(before, split_green=True)
-        rc.set_key(mixed, "calc.def", "ReStart", 3)
-        rc.run(mixed, "reject_mixed_layout", env=env, namelist="sym.def",
-               fail="TPQ set identities differ")
-        assert series_snapshot(mixed) == before
+            # Independent set publication may leave a valid mixed-layout
+            # manifest. Exercise BOTH directions with two existing sets.
+            other = "replicated" if layout == "distributed" else "distributed"
+            target_env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=other)
+            switch = clone("switch_" + layout, 1, True, lanczos_max=6)
+            rc.run(switch, "initial", env=env, namelist="sym.def")
+            rc.set_key(switch, "calc.def", "ReStart", 2)
+            rc.set_key(switch, "mod.def", "Lanczos_max", 10)
+            rc.set_key(switch, "mod.def", "CheckpointInterval", 3)
+            text = rc.run(switch, "switch_set0", binary=rc.probe(),
+                          env=dict(target_env, HPHI_TEST_RESTART_ABORT_AFTER="0:7"),
+                          namelist="sym.def")
+            rows = rc.manifest(switch)[1]
+            assert rows[0]["step"] == 7 and rows[1]["step"] == 6, rows
+            for set_index, expected_layout in ((0, other), (1, layout)):
+                headers = [rc.v3_header(q)[0] for q in rc.restart_files(
+                    switch, "zvo", set_index, 0, rows[set_index]["gen"])]
+                assert len(headers) == np_
+                assert {h[13] for h in headers} == {
+                    1 if expected_layout == "distributed" else 0}
+                if np_ > 4:
+                    assert any(h[15] == 0 for h in headers), headers
+            for restart in (2, 3):
+                resumed = ROOT / ("switch_{}_mode{}".format(layout, restart))
+                shutil.copytree(switch, resumed)
+                before = checkpoint_snapshot(resumed)
+                rc.set_key(resumed, "calc.def", "ReStart", restart)
+                if restart == 3:
+                    rc.set_key(resumed, "mod.def", "CheckpointInterval", 0)
+                rc.run(resumed, "continue", env=target_env, namelist="sym.def")
+                compare_sector(growth_ref, resumed, True)
+                if restart == 3:
+                    assert checkpoint_snapshot(resumed) == before
+                else:
+                    assert {r["step"] for r in rc.manifest(resumed)[1].values()} == {10}
+
+        # Logical identity must match the runtime basis even though metadata
+        # layout is compatible. Invalid layout and within-set disagreement
+        # remain rejected before any output recovery.
+        for damage in ("identity", "invalid_layout", "within_set_layout"):
+            if damage == "within_set_layout" and np_ == 1:
+                continue
+            bad = clone("sector_bad_" + damage, 1, False)
+            env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT="replicated")
+            rc.run(bad, "first", env=env, namelist="sym.def")
+            row = rc.manifest(bad)[1][1]
+            files = rc.restart_files(bad, "zvo", 1, 0, row["gen"])
+            if damage == "within_set_layout":
+                files = files[-1:]
+            for q in files:
+                data = bytearray(q.read_bytes())
+                word = 16 if damage == "identity" else 13
+                value = struct.unpack_from("<Q", data, 8 * word)[0] ^ 1
+                if damage == "invalid_layout":
+                    value = 2
+                struct.pack_into("<Q", data, 8 * word, value)
+                q.write_bytes(data)
+            before = series_snapshot(bad)
+            assert_series_families(before, split_green=True)
+            rc.set_key(bad, "calc.def", "ReStart", 3)
+            rc.run(bad, "reject_" + damage, env=env, namelist="sym.def",
+                   fail="restart checkpoint")
+            assert series_snapshot(bad) == before
 
     sector_fixture.prepare("Spin", 6, sector_test=sector_callback,
                            sector_momenta=(0,))

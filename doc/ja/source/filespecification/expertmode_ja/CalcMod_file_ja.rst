@@ -155,8 +155,8 @@ CalcModファイル
    から選択することが出来ます。
 
    CG、mTPQ、cTPQ、TimeEvolutionはraw基底と ``TransSym`` 基底でv3 manifest形式を
-   使います。このreleaseでは保存時と現在のMPI process数が同じ必要があり、sector継続は
-   basis layoutも維持します。``ReStart=3`` はcheckpointを書き直しません。v3の
+   使います。このreleaseでは保存時と現在のMPI process数が同じである必要があります。
+   sector v3継続ではmetadata layout 0/1の変更を許します。``ReStart=3`` はcheckpointを書き直しません。v3の
    ``Lanczos_max`` は絶対的な最終上限です。小さくした上限でno-opになる場合、復元状態を
    評価しますが、履歴行の追加とcheckpoint更新は行いません。CG収束終端checkpointは現在の
    ``LanczosEps`` で再判定し、厳しい許容誤差では反復を再開できます。上限によるno-opは
@@ -515,7 +515,8 @@ Hamiltonian入出力、非serial ExpecModeは非対応です。
 CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
 どちらもFullDiagの固有状態を読み込めます。
 読込は新しい評価・時間列を開始する操作です。これとは別にCG、TPQ、cTPQ、
-TimeEvolutionは同じprocess数・同じlayoutでv3 solver継続に対応します。
+TimeEvolutionは同じprocess数でv3 solver継続に対応し、sector metadata layout 0/1の
+変更も許します。
 FullDiagとLanczosはこのsector継続経路を使いません。機能表と実行可能なexpert入力例は
 :ref:`Subsec:TransSym` を参照してください。
 

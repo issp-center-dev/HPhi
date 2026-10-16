@@ -179,19 +179,18 @@ done:
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-/* Opens one Green output; for a sector basis every rank agrees on the
- * rank-0 open result before any collective. */
+/* Agree on the root open result before any numerical collective.
+ * SumMPI_i remains local inside FullDiag ExpecLocal sessions. */
 static int open_green_file(struct BindStruct *X, GreenOutputKind kind,
                            const char *name, FILE **fp)
 {
   int failed = GreenOutputKindUsesAggregate(X, kind)
       ? GreenOutputOpenAggregate(X, kind, fp) != 0
       : childfopenMPI(name, "w", fp) != 0;
-  if (GreenOutputAgreeSectorError(X, failed) == 0) return 0;
+  if (GreenOutputAgreeError(X, failed) == 0) return 0;
   if (*fp != NULL) fclose(*fp);
   *fp = NULL;
-  if (X->Def.iFlgSymmetryBasis == TRUE)
-    GreenOutputReportSectorFailure(X, kind, name, "open");
+  GreenOutputReportFailure(X, kind, name, "open");
   return -1;
 }
 
@@ -201,8 +200,8 @@ static int close_green_file(struct BindStruct *X, GreenOutputKind kind,
   int failed = GreenOutputKindUsesAggregate(X, kind)
       ? GreenOutputCloseAggregate(kind, fp) != 0
       : GreenOutputCloseChecked(fp) != 0;
-  if (failed && X->Def.iFlgSymmetryBasis == TRUE)
-    GreenOutputReportSectorFailure(X, kind, name, "close");
+  if (failed)
+    GreenOutputReportFailure(X, kind, name, "close");
   return failed;
 }
 
@@ -619,8 +618,7 @@ int expec_cisajscktaltdc
       close_failed |= close_green_file(X, GreenOutputFourBody, sdt_3, fp_3);
     if(X->Def.NSBody>0)
       close_failed |= close_green_file(X, GreenOutputSixBody, sdt_4, fp_4);
-    if (X->Def.iFlgSymmetryBasis == TRUE &&
-        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0)
+    if (GreenOutputAgreeError(X, sector_status != 0 || close_failed) != 0)
       return -1;
   }
 

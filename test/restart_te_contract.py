@@ -156,6 +156,10 @@ def exercise(seed, sector=False, layout=None, is_laser=False):
     saved_payloads = [rc.v3_header(p)[1].tobytes() for p in files]
     saved_times = [rc.v3_header(p)[0][25] for p in files]
     saved = checkpoints(cont)
+    if not sector and not is_laser:
+        import restart_observable_failures as output_failures
+        for aggregate in (False, True):
+            output_failures.exercise(cont, "one", aggregate, 6, te=True)
     prefix = series(cont)
     rc.set_key(cont, 'calcmod.def', 'InputEigenVec', 0)
     rc.set_key(cont, 'calcmod.def', 'ReStart', 3)

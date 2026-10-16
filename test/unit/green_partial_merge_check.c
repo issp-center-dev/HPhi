@@ -254,6 +254,21 @@ int main(int argc, char **argv) {
   X.Def.iCalcType = FullDiag; /* family 3: "_eigen" aggregate file names */
   X.Def.CDataFileHead = "zvo";
 
+  /* The same helper is collective for raw solver observables, but must stay
+     local in uneven FullDiag owned-state loops. Rank r makes r+1 calls;
+     an accidental communicator collective here would mismatch or hang. */
+  CHECK(GreenOutputAgreeError(&X, g_rank == nprocs - 1) != 0,
+        "raw output failure must reach every rank");
+  ExpecLocalEnter();
+  for (int state = 0; state <= g_rank; ++state) {
+    CHECK(GreenOutputAgreeError(&X, 0) == 0,
+          "ExpecLocal output success must remain local");
+    CHECK(GreenOutputAgreeError(&X, 1) != 0,
+          "ExpecLocal output failure must remain local");
+  }
+  ExpecLocalLeave();
+  CHECK(SumMPI_i(1) == nprocs, "outer agreement resumes after ExpecLocal");
+
   /* ---- Pre-clean every kind used below (spec: clear final/part before
      each scenario so "not published"/"still present" stats are meaningful,
      not accidental leftovers from an earlier run of this binary). ---- */

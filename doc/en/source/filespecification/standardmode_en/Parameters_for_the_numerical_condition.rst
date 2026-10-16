@@ -24,7 +24,7 @@ Parameters for the numerical condition
 
    CG, mTPQ, cTPQ and TimeEvolution use v3 continuation checkpoints in raw
    and ``TransSym`` bases. This release requires the same MPI process count
-   and, for a sector, the same basis layout. State import through
+   and permits sector metadata layout 0/1 changes for v3. State import through
    ``EigenVecIO="In"`` starts a new evaluation or time grid and is not solver
    continuation. Lanczos/spectrum restart remains a separate legacy path.
 

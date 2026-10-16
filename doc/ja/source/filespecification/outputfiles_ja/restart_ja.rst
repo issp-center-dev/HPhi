@@ -5,7 +5,10 @@ v3 solver restartファイル
 
 CG、mTPQ、cTPQ、TimeEvolutionは ``ReStart`` 継続にこの形式を使います。
 このreleaseは保存時と現在のMPI process数が同じ場合だけを受理し、``TransSym``
-継続ではbasis layoutも同じである必要があります。
+v3継続ではmetadata layoutを ``replicated`` (0) と ``distributed`` (1) の間で
+変更できます。vectorの所有範囲と順序は変わりません。独立して公開するTPQ set間では
+保存layoutが異なる場合がありますが、同じset内の全rank fileは一致が必要です。
+旧sector v1/v2 importでは同じlayoutが必要です。このreleaseはrank再配置に非対応です。
 
 名前、単位、manifest
 --------------------

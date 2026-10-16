@@ -122,10 +122,19 @@ int GreenOutputWriteIndexPrefix(FILE *fp, const struct BindStruct *X)
   }
 }
 
-int GreenOutputAgreeSectorError(const struct BindStruct *X, int failed)
+int GreenOutputAgreeError(const struct BindStruct *X, int failed)
 {
-  if (X->Def.iFlgSymmetryBasis) return SumMPI_i(failed != 0) != 0 ? -1 : 0;
-  return failed ? -1 : 0;
+  (void)X;
+  /* This wrapper is deliberately local in ExpecLocal sessions: FullDiag
+   * owners can evaluate different numbers of states and agree only after
+   * leaving the session. Raw solver observables need the same agreement as
+   * sector observables before entering their numerical reductions. */
+  if (SumMPI_i(failed != 0) == 0) return 0;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  fprintf(stdout, "Green output agreed failure rank=%d\n", myrank);
+  fflush(stdout);
+#endif
+  return -1;
 }
 
 int GreenOutputCloseChecked(FILE *fp)
@@ -140,13 +149,14 @@ int GreenOutputCloseChecked(FILE *fp)
   return failed ? -1 : 0;
 }
 
-int GreenOutputReportSectorFailure(const struct BindStruct *X, GreenOutputKind kind,
+int GreenOutputReportFailure(const struct BindStruct *X, GreenOutputKind kind,
                                    const char *name, const char *operation)
 {
   char aggregate[D_FileNameMax];
   if (GreenOutputKindUsesAggregate(X, kind) &&
       GreenOutputFileName(X, kind, aggregate) == 0) name = aggregate;
-  fprintf(stdoutMPI, "Error: sector correlation output %s failed for %s.\n", operation, name);
+  fprintf(stdoutMPI, "Error: %scorrelation output %s failed for %s.\n",
+          X->Def.iFlgSymmetryBasis ? "sector " : "", operation, name);
   return -1;
 }
 
@@ -157,19 +167,15 @@ static int GreenOutputTruncateFile(struct BindStruct *X, GreenOutputKind kind)
   int failed;
   if (!GreenOutputKindUsesAggregate(X, kind)) return 0;
   if (GreenOutputFileName(X, kind, sdt) != 0) return -1;
-  /* Open and close are agreed separately for a sector basis. */
+  /* Agree open and close separately, before the next output/observable. */
   failed = childfopenMPI(sdt, "w", &fp) != 0;
-  if (GreenOutputAgreeSectorError(X, failed) != 0) {
+  if (GreenOutputAgreeError(X, failed) != 0) {
     if (fp != NULL) fclose(fp);
-    if (X->Def.iFlgSymmetryBasis) GreenOutputReportSectorFailure(X, kind, sdt, "open");
+    GreenOutputReportFailure(X, kind, sdt, "open");
     return -1;
   }
-  if (!X->Def.iFlgSymmetryBasis) {
-    fclose(fp);
-    return 0;
-  }
-  if (GreenOutputAgreeSectorError(X, GreenOutputCloseChecked(fp) != 0) != 0)
-    return GreenOutputReportSectorFailure(X, kind, sdt, "close");
+  if (GreenOutputAgreeError(X, GreenOutputCloseChecked(fp) != 0) != 0)
+    return GreenOutputReportFailure(X, kind, sdt, "close");
   return 0;
 }
 
@@ -245,9 +251,17 @@ static int GreenOutputInitializeTPQDataFile(struct BindStruct *X, GreenOutputTPQ
   if (GreenOutputTPQDataFileName(X, kind, sdt) != 0) return -1;
   header = GreenOutputTPQDataHeader(kind);
   if (header == NULL) return -1;
-  if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  int failed = childfopenMPI(sdt, "w", &fp) != 0;
+  if (GreenOutputAgreeError(X, failed) != 0) {
+    if (fp != NULL) fclose(fp);
+    fprintf(stdoutMPI, "Error: TPQ aggregate output open failed for %s.\n", sdt);
+    return -1;
+  }
   fprintf(fp, "%s", header);
-  fclose(fp);
+  if (GreenOutputAgreeError(X, GreenOutputCloseChecked(fp) != 0) != 0) {
+    fprintf(stdoutMPI, "Error: TPQ aggregate output close failed for %s.\n", sdt);
+    return -1;
+  }
   return 0;
 }
 
@@ -373,7 +387,13 @@ int GreenOutputOpenAggregate(struct BindStruct *X, GreenOutputKind kind, FILE **
   if (GreenOutputFileName(X, kind, final_sdt) != 0) return -1;
 
   if (!g_greenOutputPartialActive) {
-    return childfopenMPI(final_sdt, GreenOutputOpenMode(X), fp);
+    int failed = childfopenMPI(final_sdt, GreenOutputOpenMode(X), fp) != 0;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    if (SymmetryFullDiagTestFail("green_open")) failed = 1;
+#endif
+    /* The observable caller agrees before numerical work and closes every
+     * successfully opened peer handle if any rank reports failure. */
+    return failed ? -1 : 0;
   }
   if (kind < 0 || kind > GreenOutputAnomalous) return -1;
 
@@ -414,8 +434,9 @@ int GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp)
   {
     GreenOutputManifestRecord *rec = &g_greenOutputManifest[kind];
     long int pos = ftell(fp);
+    int write_failed = ferror(fp) != 0;
     int close_rc = fclose(fp);
-    int ok = (pos >= 0 && close_rc == 0);
+    int ok = (pos >= 0 && !write_failed && close_rc == 0);
     if (ok) rec->bytes = pos;
     if (!ok) g_greenOutputCloseFailed[kind] = 1;
     rec->closed_ok = g_greenOutputCloseFailed[kind] ? 0 : 1;

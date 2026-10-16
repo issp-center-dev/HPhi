@@ -581,7 +581,7 @@ static int get_anomalousg_filename(struct BindStruct *X, char *sdt)
 
 int expec_anomalousg(struct BindStruct *X, double complex *vec)
 {
-  FILE *fp;
+  FILE *fp = NULL;
   char sdt[D_FileNameMax];
   unsigned int t;
   int use_aggregate;
@@ -593,10 +593,12 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
   }
   if (get_anomalousg_filename(X, sdt) != 0) return -1;
   use_aggregate = GreenOutputKindUsesAggregate(X, GreenOutputAnomalous);
-  if (use_aggregate) {
-    if (GreenOutputOpenAggregate(X, GreenOutputAnomalous, &fp) != 0) return -1;
-  } else {
-    if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
+  int failed = use_aggregate
+      ? GreenOutputOpenAggregate(X, GreenOutputAnomalous, &fp) != 0
+      : childfopenMPI(sdt, "w", &fp) != 0;
+  if (GreenOutputAgreeError(X, failed) != 0) {
+    if (fp != NULL) fclose(fp);
+    return GreenOutputReportFailure(X, GreenOutputAnomalous, sdt, "open");
   }
 
   for (t = 0; t < X->Def.NAnomalousG; t++) {
@@ -605,10 +607,10 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
     write_anomalousg_line(fp, &X->Def, t, value);
   }
 
-  if (use_aggregate) {
-    GreenOutputCloseAggregate(GreenOutputAnomalous, fp);
-  } else {
-    fclose(fp);
-  }
+  failed = use_aggregate
+      ? GreenOutputCloseAggregate(GreenOutputAnomalous, fp) != 0
+      : GreenOutputCloseChecked(fp) != 0;
+  if (GreenOutputAgreeError(X, failed) != 0)
+    return GreenOutputReportFailure(X, GreenOutputAnomalous, sdt, "close");
   return 0;
 }

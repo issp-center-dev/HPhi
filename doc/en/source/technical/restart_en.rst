@@ -15,14 +15,17 @@ Solver continuation
 and 3 reads checkpoints without rewriting them. The v3 manifest and vector
 format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and ``TransSym``
 bases. This release requires the saved and current MPI process counts to be
-equal. Sector continuation also requires the same basis layout. Rank
-redistribution and layout changes are rejected.
+equal. Sector v3 continuation permits metadata layout changes between
+``replicated`` (0) and ``distributed`` (1); vector ownership and global order
+remain unchanged. Rank redistribution is not supported.
 
 ``Lanczos_max`` is an absolute final bound for v3 continuation. CG resumes at
 the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
-step. If the saved step is at or beyond a lowered bound, HPhi evaluates the
-restored state, does not add time-series rows, and does not rewrite a
-checkpoint. A terminal CG checkpoint is rechecked with the current
+step. If the bound is below the saved CG iteration label, or at or below
+the saved TPQ/cTPQ/TimeEvolution next step, HPhi evaluates the restored state,
+does not add time-series rows, and does not rewrite a checkpoint. CG includes
+the iteration labeled ``Lanczos_max``, whereas TPQ/cTPQ/TimeEvolution exclude
+that step. A terminal CG checkpoint is rechecked with the current
 ``LanczosEps``. A stricter tolerance can resume iterations; an upper-limit
 no-op must not be described as currently converged.
 
@@ -38,8 +41,10 @@ State import validates the model, basis identity, sector and phase, payload
 length, norm and digest. Source method, state, step, time and solver scalars
 are provenance; they do not resume the source solver. CG evaluates an imported
 state. TimeEvolution starts at step zero on its current time grid. v3 imports
-currently require the same process count, and sector imports require the same
-layout. The output-file reference gives the required copy procedure.
+currently require the same process count. Sector v3 imports permit metadata
+layout 0/1 changes, while old sector v1/v2 imports still require the same
+layout. Rank redistribution and v1/v2 layout relaxation are not supported in
+this release. The output-file reference gives the required copy procedure.
 
 Legacy and spectrum behavior
 ----------------------------

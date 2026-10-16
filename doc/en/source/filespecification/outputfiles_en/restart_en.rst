@@ -5,7 +5,11 @@ v3 solver restart files
 
 CG, mTPQ, cTPQ and TimeEvolution use these files for ``ReStart`` continuation.
 This release accepts only the same saved and current MPI process count; a
-``TransSym`` continuation also requires the same basis layout.
+``TransSym`` v3 continuation permits metadata layout 0/1 changes between
+``replicated`` and ``distributed`` without changing vector ownership or order.
+Independently published TPQ sets may therefore have different saved layouts;
+all rank files within one set must agree. Old sector v1/v2 imports still require
+the same layout. Rank redistribution is not supported in this release.
 
 Names, units and manifest
 -------------------------
