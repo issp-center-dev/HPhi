@@ -165,7 +165,7 @@ The version number is printed in the following form, and :math:`{\mathcal H}\Phi
 
 ::
 
- HPhi version 3.7.0 (211bd466)
+ HPhi version 3.7.1 (9de48b70)
 
 The string in the parentheses is the first 8 digits of the hash of the git commit
 from which :math:`{\mathcal H}\Phi` was built.
