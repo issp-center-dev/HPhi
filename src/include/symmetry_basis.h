@@ -80,6 +80,9 @@ struct SymmetryBasisRuntime {
   unsigned long int *rep_hash_keys;
   unsigned long int *rep_hash_values;
   unsigned int *group_inverse;
+  /* Runtime-owned Kondo local permutation signs, immutable after preparation.
+   * NULL for other models or standalone runtimes using the checked action. */
+  int *kondo_local_sign;
   unsigned long int local_offset;
   unsigned long int local_dim;
   unsigned long long basis_raw_states;
@@ -180,6 +183,8 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
                                   unsigned long int state,
                                   struct SymmetryCanonicalResult *result);
 int ActivateSymmetryBasisDimension(struct BindStruct *X);
+/* FullDiag owns global-sized work vectors; matvec ownership stays separate. */
+int ActivateSymmetryFullDiagDimension(struct BindStruct *X);
 int SymmetryBasisGlobalToLocal(const struct SymmetryBasisRuntime *sym,
                                unsigned long int global_index,
                                unsigned long int *local_index);

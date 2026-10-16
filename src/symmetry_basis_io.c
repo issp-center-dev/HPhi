@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include "symmetry_basis.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_terms.h"
+#include "symmetry_kondo.h"
+#include "symmetry_state_enumerator.h"
 #include "readdef.h"
 #include "struct.h"
 #include "wrapperMPI.h"
@@ -289,9 +292,10 @@ static int has_fixed_spinless_sector(const struct DefineList *def)
   return def->iCalcModel == SpinlessFermion && def->Ne <= def->Nsite;
 }
 
-static int has_fixed_hubbard_sector(const struct DefineList *def)
+static int has_fixed_spinful_sector(const struct DefineList *def)
 {
-  return def->iCalcModel == Hubbard &&
+  return (def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+         (def->iCalcModel != tJ || def->Ne <= def->Nsite) &&
          def->Nup <= def->Nsite &&
          def->Ndown <= def->Nsite &&
          def->Ne == def->Nup + def->Ndown;
@@ -314,8 +318,8 @@ static int has_fixed_hubbard_sector(const struct DefineList *def)
  *   ham_output          OutputHam.
  *   ham_input           InputHam.
  *
- * Every feature column is 0 for every method in this version, so TransSym
- * runs output energy/norm/convergence only.
+ * Correlation output is available for Lanczos, CG, TPQ, cTPQ, time
+ * evolution and FullDiag (every sector eigenstate).
  */
 struct SymmetryMethodCapability {
   int calc_type;
@@ -333,12 +337,12 @@ struct SymmetryMethodCapability {
 
 static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
-  { Lanczos,       "Lanczos",       1,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { TPQCalc,       "TPQ",           0,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { FullDiag,      "FullDiag",      0,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { CG,            "CG",            1,      1,   0,   0,   0,   0,    0,   0,   0   },
-  { TimeEvolution, "TimeEvolution", 0,      0,   0,   0,   0,   0,    0,   0,   0   },
-  { cTPQ,          "cTPQ",          0,      0,   0,   0,   0,   0,    0,   0,   0   },
+  { Lanczos,       "Lanczos",       1,      1,   1,   0,   0,   0,    0,   0,   0   },
+  { TPQCalc,       "TPQ",           1,      1,   1,   0,   0,   0,    0,   0,   0   },
+  { FullDiag,      "FullDiag",      1,      0,   1,   0,   0,   1,    0,   1,   1   },
+  { CG,            "CG",            1,      1,   1,   0,   0,   1,    1,   0,   0   },
+  { TimeEvolution, "TimeEvolution", 1,      1,   1,   0,   0,   1,    1,   0,   0   },
+  { cTPQ,          "cTPQ",          1,      1,   1,   0,   0,   0,    0,   0,   0   },
 };
 
 /* Fails to compile when a CalcType is added without a row in the table. */
@@ -441,13 +445,27 @@ static int reject_first_unsupported_option(const struct SymmetryMethodCapability
 /* 1. Model and conserved-quantity sector. */
 static int validate_symmetry_model_sector(const struct DefineList *def)
 {
-  if (def->iCalcModel != Spin && def->iCalcModel != SpinlessFermion &&
-      def->iCalcModel != Hubbard) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only Spin, SpinlessFermion, and Hubbard canonical models.\n");
+  if (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
+      def->iCalcModel != SpinlessFermion &&
+      def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+      !IsSymmetryKondoModel(def->iCalcModel)) {
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, tJ, and Kondo models.\n");
     return -1;
   }
-  if (def->iCalcModel == Spin && def->iFlgGeneralSpin != FALSE) {
+  if (IsSymmetryKondoModel(def->iCalcModel)) {
+    unsigned long dimension;
+    if (ValidateSymmetryKondoSpace(def) != 0 ||
+        ComputeSymmetryKondoDimension(def, &dimension) != 0) return -1;
+    if (ValidateSymmetryGroupInput(def) != 0) return -1;
+  }
+  if ((def->iCalcModel == Spin || def->iCalcModel == SpinGC) &&
+      def->iFlgGeneralSpin != FALSE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinGC &&
+      (def->Nsite == 0 || def->Nsite >= CHAR_BIT * sizeof(unsigned long))) {
+    fprintf(stdoutMPI, "Error: SpinGC TransSym Nsite must satisfy 0 < Nsite < CHAR_BIT * sizeof(unsigned long).\n");
     return -1;
   }
   if (def->iCalcModel == Spin && has_fixed_spin_sector(def) != TRUE) {
@@ -458,8 +476,10 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
     fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis requires fixed Ncond/Ne.\n");
     return -1;
   }
-  if (def->iCalcModel == Hubbard && has_fixed_hubbard_sector(def) != TRUE) {
-    fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis requires fixed Nup/Ndown.\n");
+  if ((def->iCalcModel == Hubbard || def->iCalcModel == tJ) &&
+      has_fixed_spinful_sector(def) != TRUE) {
+    fprintf(stdoutMPI, "Error: TransSym %s symmetry basis requires fixed Nup/Ndown.\n",
+            def->iCalcModel == tJ ? "tJ" : "Hubbard");
     return -1;
   }
   return 0;
@@ -507,6 +527,21 @@ static int validate_symmetry_method_capability(const struct DefineList *def)
     return -1;
   }
   if (cap->enabled == 0) return reject_unsupported_method(cap);
+  if (def->iCalcType == TimeEvolution) {
+    if (def->iInputEigenVec != 1) {
+      fprintf(stdoutMPI, "Error: TransSym TimeEvolution requires sector checkpoint InputEigenVec=1.\n");
+      return -1;
+    }
+  }
+  if (def->iCalcType == CG && def->iInputEigenVec > 1) {
+    fprintf(stdoutMPI, "Error: TransSym CG supports binary sector checkpoint InputEigenVec=1 only.\n");
+    return -1;
+  }
+  if (def->iCalcType == FullDiag &&
+      (def->iSolver == SOLVER_MAGMA || def->iExpecMode != EXPECMODE_SERIAL)) {
+    fprintf(stdoutMPI, "Error: TransSym FullDiag supports LAPACK/ScaLAPACK/ELPA with ExpecMode=0 only; MAGMA and ExpecMode=1/2 are not supported.\n");
+    return -1;
+  }
   return 0;
 }
 
@@ -515,7 +550,25 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
 {
   const struct SymmetryMethodCapability *cap =
       find_symmetry_method_capability(def->iCalcType);
-  static const char correlation_reason[] = "it outputs energy/norm/convergence only";
+  const char *correlation_reason = (def->iCalcType == TPQCalc || def->iCalcType == cTPQ)
+      ? "sector TPQ outputs SS/Norm/Flct only"
+      : "it outputs energy/norm/convergence only";
+  if (def->iCalcModel == Spin &&
+      (def->NTBody > 0 || def->NFBody > 0 || def->NSBody > 0)) {
+    fprintf(stdoutMPI,
+            "Error: ThreeBodyG/FourBodyG/SixBodyG for canonical Spin is not supported. "
+            "Use SpinGC or remove the N-body Green function request. "
+            "In a TransSym sector, NBodyG expresses the same products.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinGC) {
+    for (unsigned int i = 0; i < def->NCisAjt; ++i) {
+      if (def->CisAjt[i][0] != def->CisAjt[i][2]) {
+        fprintf(stdoutMPI, "Error: SpinGC TransSym OneBodyG requires onsite operators.\n");
+        return -1;
+      }
+    }
+  }
   const struct SymmetryOptionGate gates[] = {
     { "spectrum calculations",
       "CalcSpec is not available in this version",
@@ -539,47 +592,75 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
     { "correlation functions (NBodyG)", correlation_reason,
       def->NNBodyG > 0,
       symmetry_method_supports(cap, cap->correlation) },
+    { "correlation functions (AnomalousG)",
+      "AnomalousG is not available in a canonical sector",
+      def->NAnomalousG > 0,
+      0 },
   };
   return reject_first_unsupported_option(
       cap, gates, sizeof(gates) / sizeof(gates[0]));
 }
 
+static int validate_kondo_bilinears(const struct DefineList *def,
+                                    int **rows, unsigned int count,
+                                    unsigned int factors, const char *family)
+{
+  for (unsigned int i = 0; i < count; ++i) {
+    if (rows == NULL || rows[i] == NULL) return -1;
+    for (unsigned int j = 0; j < factors; ++j) {
+      const int *b = rows[i] + 4*j;
+      if (b[0] < 0 || b[2] < 0 || (unsigned int)b[0] >= def->Nsite ||
+          (unsigned int)b[2] >= def->Nsite || b[1] < 0 || b[1] > 1 ||
+          b[3] < 0 || b[3] > 1) {
+        fprintf(stdoutMPI, "Error: Kondo TransSym %s has invalid site/spin indices.\n", family);
+        return -1;
+      }
+      if ((def->LocSpn[b[0]] == LOCSPIN || def->LocSpn[b[2]] == LOCSPIN) &&
+          b[0] != b[2]) {
+        fprintf(stdoutMPI, "Error: Kondo TransSym %s requires onsite local bilinears.\n", family);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+static int validate_kondo_input_forms(const struct DefineList *def)
+{
+  if (!IsSymmetryKondoModel(def->iCalcModel)) return 0;
+  /* The reader checks original InterAll rows before reusing that array as
+   * scratch; this remaining-array check is not the input-format boundary. */
+  if (validate_kondo_bilinears(def, def->GeneralTransfer, def->NTransfer, 1, "Transfer") ||
+      validate_kondo_bilinears(def, def->InterAll, def->NInterAll, 2, "InterAll") ||
+      validate_kondo_bilinears(def, def->CisAjt, def->NCisAjt, 1, "OneBodyG") ||
+      validate_kondo_bilinears(def, def->CisAjtCkuAlvDC, def->NCisAjtCkuAlvDC, 2, "TwoBodyG") ||
+      validate_kondo_bilinears(def, def->TBody, def->NTBody, 3, "ThreeBodyG") ||
+      validate_kondo_bilinears(def, def->FBody, def->NFBody, 4, "FourBodyG") ||
+      validate_kondo_bilinears(def, def->SBody, def->NSBody, 6, "SixBodyG")) return -1;
+  for (unsigned int i = 0; i < def->NPairHopping; ++i) {
+    const int *sites = def->PairHopping[i];
+    if (sites[0] < 0 || sites[1] < 0 || (unsigned int)sites[0] >= def->Nsite ||
+        (unsigned int)sites[1] >= def->Nsite ||
+        def->LocSpn[sites[0]] != ITINERANT || def->LocSpn[sites[1]] != ITINERANT) {
+      fprintf(stdoutMPI, "Error: Kondo TransSym PairHop requires conduction sites.\n");
+      return -1;
+    }
+  }
+  return 0;
+}
+
 /* 4. Model-specific Hamiltonian term families. */
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
-  if (def->iCalcModel == Spin) {
-    if (def->NTransfer > 0 || def->NPairHopping > 0 || def->NPairLiftCoupling > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 rejects unsupported Spin term families.\n");
-      return -1;
-    }
-    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 || def->NInterAll > 0) {
-      fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only.\n");
-      return -1;
-    }
-    if (def->NCoulombInter != def->NIsingCoupling ||
-        def->NHundCoupling != def->NIsingCoupling) {
-      fprintf(stdoutMPI,
-              "Error: TransSym symmetry basis v1 supports Exchange and Ising terms only; "
-              "direct CoulombInter/Hund terms are not supported.\n");
-      return -1;
-    }
-  } else if (def->iCalcModel == SpinlessFermion) {
-    if (def->EDNChemi > 0 || def->NCoulombIntra > 0 ||
-        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
-        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym SpinlessFermion symmetry basis supports Transfer and CoulombInter terms only.\n");
-      return -1;
-    }
-  } else if (def->iCalcModel == Hubbard) {
-    if (def->EDNChemi > 0 || def->NCoulombInter > 0 ||
-        def->NHundCoupling > 0 || def->NIsingCoupling > 0 || def->NExchangeCoupling > 0 ||
-        def->NPairHopping > 0 || def->NPairLiftCoupling > 0 || def->NInterAll > 0 ||
-        def->NNBodyInterAll > 0 || def->NAnomalousTerm > 0) {
-      fprintf(stdoutMPI, "Error: TransSym Hubbard symmetry basis supports Transfer and CoulombIntra terms only.\n");
-      return -1;
-    }
+  if (def->NNBodyInterAll || def->NAnomalousTerm ||
+      (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
+      (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetryKondoModel(def->iCalcModel) &&
+       (def->NCoulombIntra || def->NPairHopping)) ||
+      (def->iCalcModel == SpinlessFermion &&
+       (def->NHundCoupling || def->NIsingCoupling || def->NExchangeCoupling))) {
+    fprintf(stdoutMPI, "Error: TransSym rejects unsupported term families for this canonical model.\n");
+    return -1;
   }
   return 0;
 }
@@ -591,9 +672,18 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
   /* The order fixes which message is printed first for an input that
    * violates several rules; keep it when adding checks. */
   if (validate_symmetry_model_sector(def) != 0) return -1;
+  if (X->Boost.flgBoost) {
+    fprintf(stdoutMPI, "Error: TransSym does not support Boost.\n");
+    return -1;
+  }
+  if (def->iCalcModel == SpinGC && def->NLaser) {
+    fprintf(stdoutMPI, "Error: SpinGC TransSym does not support Laser; use TEOneBody/TETwoBody.\n");
+    return -1;
+  }
   if (validate_symmetry_method_capability(def) != 0) return -1;
   if (validate_symmetry_output_capability(def) != 0) return -1;
   if (validate_symmetry_term_families(def) != 0) return -1;
+  if (validate_kondo_input_forms(def) != 0) return -1;
   return 0;
 }
 
@@ -1023,6 +1113,18 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
 {
   const struct DefineList *def = &X->Def;
   if (def->iFlgSymmetryBasis == FALSE) return 0;
+  /* Validate the active view before physical projection: forbidden local
+   * hopping can project to zero and escape the mixed-polynomial validator.
+   * This array also contains the current TE rows, unlike the static input
+   * array checked by ValidateSymmetryRuntimeOptions. InterAll input forms
+   * are checked by the reader before its internal crossed-row rewrite. */
+  if (IsSymmetryKondoModel(def->iCalcModel) &&
+      validate_kondo_bilinears(def, def->EDGeneralTransfer, def->EDNTransfer,
+                               1, "Transfer")) return -1;
+  /* Preserve established diagnostics for the original subset. Extended
+   * inputs use a combined polynomial, including cross-family cancellations. */
+  if (SymmetryUsesExtendedTerms(def))
+    return ValidateSymmetryTerms(def);
   if (def->iCalcModel == Spin) {
     if (validate_exchange_invariance(def) != 0) return -1;
     if (validate_ising_diagonal_invariance(def) != 0) return -1;
@@ -1033,5 +1135,5 @@ int ValidateSymmetryHamiltonian(const struct BindStruct *X)
     if (validate_hubbard_transfer_invariance(def) != 0) return -1;
     if (validate_hubbard_coulomb_intra_invariance(def) != 0) return -1;
   }
-  return 0;
+  return ValidateSymmetryTerms(def);
 }

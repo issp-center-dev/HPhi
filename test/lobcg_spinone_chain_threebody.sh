@@ -10,7 +10,7 @@ mkdir -p lobcg_spinone_chain_threebody/
 cp  $1/test/SpinOneThreeBody.py ./lobcg_spinone_chain_threebody
 cd  ./lobcg_spinone_chain_threebody
   python3 SpinOneThreeBody.py generate
-  ../../src/HPhi -sdry stan.in
+  ${MPIRUNFC} ../../src/HPhi -sdry stan.in
   ${MPIRUN} ../../src/HPhi -e open_namelist.def
   #../../src/HPhi -e open_namelist.def
   python3 SpinOneThreeBody.py aft

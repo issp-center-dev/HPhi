@@ -104,7 +104,7 @@ echo "Part 1: 2-site singlet, J=${J1}, expect E=${ref1}"
 rm -rf part1; mkdir -p part1; cd part1
 gen_input 2 ${J1}
 rm -rf output; mkdir -p output
-${hphi} -e namelist.def > run.log 2>&1 || { cat run.log; fail "Part 1: HPhi failed"; }
+${MPIRUNFC} ${hphi} -e namelist.def > run.log 2>&1 || { cat run.log; fail "Part 1: HPhi failed"; }
 grep -q "Error: in sz" run.log && { cat run.log; fail "Part 1: Error in sz"; }
 e1=$(awk '/^Energy/{print $2; exit}' output/zvo_energy.dat)
 energy_ok "${e1}" "${ref1}" || fail "Part 1: E=${e1} != ${ref1} (=-J singlet)"

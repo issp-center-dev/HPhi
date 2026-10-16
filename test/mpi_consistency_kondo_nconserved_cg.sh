@@ -53,7 +53,7 @@ assert_total_dimension() {
 write_input
 
 rm -rf output
-../../src/HPhi -s stan.in > serial.log 2>&1 || { cat serial.log; fail "serial HPhi failed"; }
+${MPIRUNFC} ../../src/HPhi -s stan.in > serial.log 2>&1 || { cat serial.log; fail "serial HPhi failed"; }
 assert_total_dimension serial serial.log 448
 serial_energy=$(extract_energy output/zvo_energy.dat)
 [ -n "${serial_energy}" ] || fail "serial energy was not written"

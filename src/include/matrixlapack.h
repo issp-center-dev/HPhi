@@ -35,6 +35,8 @@
 int DSEVvalue(int xNsize, double **A, double *r);
 int DSEVvector(int xNsize, double **A, double *r, double **vec);
 
+/* Zero-based dense buffers. Returns 1 on success, 0 on failure; callers must
+ * translate this legacy convention before publishing eigenvalues. */
 int ZHEEVall(int xNsize, double complex **A, double complex *r,double complex **vec);
 
 #endif

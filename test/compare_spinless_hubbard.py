@@ -9,6 +9,7 @@ implementations including off-diagonal terms.
 
 import os
 import subprocess
+import shlex
 import sys
 import tempfile
 
@@ -254,6 +255,7 @@ def main():
         sys.exit(1)
 
     hphi_path = os.path.abspath(sys.argv[1])
+    mpi_prefix = shlex.split(sys.argv[2]) if len(sys.argv) > 2 else []
     nsites = 4
     nelec = 2
     vval = 0.5
@@ -264,11 +266,11 @@ def main():
 
         # Run SpinlessFermion
         generate_spinless_inputs(spinless_dir, nsites, nelec, vval)
-        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
+        subprocess.run(mpi_prefix + [hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
 
         # Run Hubbard
         generate_hubbard_inputs(hubbard_dir, nsites, nelec, vval)
-        subprocess.run([hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
+        subprocess.run(mpi_prefix + [hphi_path, "-e", "namelist.def"], capture_output=True, check=True)
 
         # Compare one-body and two-body Green's functions
         spinless_onebody = read_greenone(os.path.join(spinless_dir, "output", "zvo_cisajs.dat"))

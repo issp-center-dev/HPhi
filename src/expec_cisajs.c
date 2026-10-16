@@ -27,6 +27,8 @@
 #include "mltplyMPISpinlessFermion.h"
 #include "green_output.h"
 #include "green_row_format.h"
+#include "symmetry_correlation.h"
+#include "symmetry_mpi_exchange.h"
 
 /**
  * @file   expec_cisajs.c
@@ -62,6 +64,56 @@ int expec_cisajs_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajs_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
 
+static int expec_cisajs_Symmetry(struct BindStruct *X, double complex *vec,
+                                 FILE **_fp)
+{
+  unsigned int i, n = 0;
+  int *index = NULL;
+  long *map = NULL;
+  struct SymmetryCorrelationOperator *ops = NULL;
+  double complex *values = NULL;
+  int status = -1, local_error;
+  index = (int *)malloc((4U * (size_t)X->Def.NCisAjt + 4U) * sizeof(*index));
+  map = (long *)malloc(((size_t)X->Def.NCisAjt + 1U) * sizeof(*map));
+  ops = (struct SymmetryCorrelationOperator *)calloc(
+      (size_t)X->Def.NCisAjt + 1U, sizeof(*ops));
+  values = (double complex *)calloc(
+      (size_t)X->Def.NCisAjt + 1U, sizeof(*values));
+  local_error = index == NULL || map == NULL || ops == NULL || values == NULL;
+  if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), local_error) != 0)
+    goto done;
+  for (i = 0; i < X->Def.NCisAjt; ++i) {
+    const int *row = X->Def.CisAjt[i];
+    if (X->Def.iCalcModel == Spin && row[0] != row[2]) {
+      map[i] = -1L;
+      continue;
+    }
+    memcpy(index + 4U * n, row, 4U * sizeof(*index));
+    ops[n].factors = 1U;
+    ops[n].index = index + 4U * n;
+    map[i] = (long)n++;
+  }
+  if (n > 0U && SymmetryCorrelationExpectation(X, vec, ops, n, values) != 0)
+    goto done;
+  for (i = 0; i < X->Def.NCisAjt; ++i) {
+    double complex value = map[i] >= 0L ? values[map[i]] : 0.0;
+    GreenOutputWriteIndexPrefix(*_fp, X);
+    fprintf(*_fp, GREEN_ONEBODY_ROW_FORMAT,
+            (unsigned long)X->Def.CisAjt[i][0],
+            (unsigned long)X->Def.CisAjt[i][1],
+            (unsigned long)X->Def.CisAjt[i][2],
+            (unsigned long)X->Def.CisAjt[i][3],
+            creal(value), cimag(value));
+  }
+  status = 0;
+done:
+  free(index);
+  free(map);
+  free(ops);
+  free(values);
+  return status;
+}
+
 
 /**
  * @brief Compute one-body Green's functions \f$\langle\psi| c^\dagger_{i,s} c_{j,s} |\psi\rangle\f$
@@ -91,7 +143,7 @@ int expec_cisajs_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **
  */
 int expec_cisajs(struct BindStruct *X,double complex *vec){
 
-  FILE *fp;
+  FILE *fp = NULL;
   char sdt[D_FileNameMax];
 
   long unsigned int irght,ilft,ihfbit;
@@ -99,6 +151,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
   //For TPQ
   int step=0;
   int rand_i=0;
+  int sector_status = 0;
 
   if(X->Def.NCisAjt <1) return 0;
 
@@ -145,16 +198,21 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     //vec=v0;
     break;
   }
-  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
-    if (GreenOutputOpenAggregate(X, GreenOutputOneBody, &fp) != 0) {
-      return -1;
-    }
-  } else {
-    if (childfopenMPI(sdt, "w", &fp) != 0) {
+  {
+    int open_failed = GreenOutputKindUsesAggregate(X, GreenOutputOneBody)
+        ? GreenOutputOpenAggregate(X, GreenOutputOneBody, &fp) != 0
+        : childfopenMPI(sdt, "w", &fp) != 0;
+    /* Only rank 0 opens the real file; agree before the sector collective. */
+    if (GreenOutputAgreeSectorError(X, open_failed) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.iFlgSymmetryBasis == TRUE)
+        GreenOutputReportSectorFailure(X, GreenOutputOneBody, sdt, "open");
       return -1;
     }
   }
-  switch(X->Def.iCalcModel){
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    sector_status = expec_cisajs_Symmetry(X, vec, &fp);
+  } else switch(X->Def.iCalcModel){
   case HubbardGC:
     if(expec_cisajs_HubbardGC(X, vec, &fp)!=0){
         return -1;
@@ -304,10 +362,15 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     return -1;
   }
 
-  if (GreenOutputKindUsesAggregate(X, GreenOutputOneBody)) {
-    GreenOutputCloseAggregate(GreenOutputOneBody, fp);
-  } else {
-    fclose(fp);
+  {
+    int close_failed = GreenOutputKindUsesAggregate(X, GreenOutputOneBody)
+        ? GreenOutputCloseAggregate(GreenOutputOneBody, fp) != 0
+        : GreenOutputCloseChecked(fp) != 0;
+    if (X->Def.iFlgSymmetryBasis == TRUE &&
+        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0) {
+      if (close_failed) GreenOutputReportSectorFailure(X, GreenOutputOneBody, sdt, "close");
+      return -1;
+    }
   }
   if(X->Def.St==0){
     if(X->Def.iCalcType==Lanczos){
@@ -325,6 +388,7 @@ int expec_cisajs(struct BindStruct *X,double complex *vec){
     TimeKeeper(X, cFileNameTimeKeep, cCGExpecOneBodyGFinish, "a");
     fprintf(stdoutMPI, "%s", cLogCGExpecOneBodyGEnd);
   }
+  if (sector_status != 0) return -1;
   return 0;
 }
 

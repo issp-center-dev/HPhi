@@ -61,10 +61,10 @@ EigenvecIO = "out"
 EOF
 
 echo "  [serial] Input generation..."
-run_hphi "  [serial] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+run_hphi "  [serial] Input generation" hphi_sdry.log ${MPIRUNFC} ../../${HPHI} -sdry stan_gs.in
 
 echo "  [serial] Ground state..."
-run_hphi "  [serial] Ground state" hphi_gs.log ../../${HPHI} -e namelist.def
+run_hphi "  [serial] Ground state" hphi_gs.log ${MPIRUNFC} ../../${HPHI} -e namelist.def
 
 # Create TETwoBody: step 0 empty, step 1-19 with inter-PE InterAll
 write_tetwobody_def
@@ -76,10 +76,12 @@ sed -e 's/^CalcType.*/CalcType   4/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
+# The ground-state input does not set the TE Taylor expansion order.
+printf 'ExpandCoef 10\n' >> modpara.def
 echo "   TETwoBody  tetwobody.def" >> namelist.def
 
 echo "  [serial] Time evolution..."
-run_hphi "  [serial] Time evolution" hphi_te.log ../../${HPHI} -e namelist.def
+run_hphi "  [serial] Time evolution" hphi_te.log ${MPIRUNFC} ../../${HPHI} -e namelist.def
 cd ../..
 
 # ---- MPI run ----
@@ -98,7 +100,7 @@ EigenvecIO = "out"
 EOF
 
 echo "  [mpi] Input generation..."
-run_hphi "  [mpi] Input generation" hphi_sdry.log ../../${HPHI} -sdry stan_gs.in
+run_hphi "  [mpi] Input generation" hphi_sdry.log ${MPIRUNFC} ../../${HPHI} -sdry stan_gs.in
 
 echo "  [mpi] Ground state..."
 run_hphi "  [mpi] Ground state" hphi_gs.log ${MPIRUN} ../../${HPHI} -e namelist.def
@@ -111,6 +113,8 @@ sed -e 's/^CalcType.*/CalcType   4/' \
     calcmod.def > _t && mv _t calcmod.def
 sed -e "s/^Lanczos_max.*/Lanczos_max    ${TE_STEPS}/" \
     modpara.def > _t && mv _t modpara.def
+# The ground-state input does not set the TE Taylor expansion order.
+printf 'ExpandCoef 10\n' >> modpara.def
 echo "   TETwoBody  tetwobody.def" >> namelist.def
 
 echo "  [mpi] Time evolution..."

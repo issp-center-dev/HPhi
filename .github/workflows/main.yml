@@ -46,7 +46,33 @@ jobs:
           MPIRUN: mpiexec --oversubscribe -np 2
         run: |
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
-            -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|fulldiag_output_open_failure_scalapack|fulldiag_eigenvector_output_elpa_np2|fulldiag_eigenvector_output_scalapack_np2|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2)$'
+            -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|fulldiag_output_open_failure_scalapack|fulldiag_eigenvector_output_elpa_np2|fulldiag_eigenvector_output_scalapack_np2|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2|symmetry_spingc_fulldiag|symmetry_kondo_fulldiag)$'
+
+      - name: Sector FullDiag states, correlations, matrix I/O and reuse (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^(symmetry_fulldiag|symmetry_fulldiag_(reference|hamiltonian_contract|checkpoint_contract|states|correlations|green_failures|hamiltonian|matrix_failures|reuse|io_failures))$'
+
+      - name: Sector FullDiag empty-owner regression (4 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 4
+          HPHI_FD_CASES: boundary
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_fulldiag_(states|correlations|hamiltonian|reuse)$'
+
+      - name: Sector FullDiag empty-owner regression (16 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 16
+          HPHI_FD_CASES: boundary
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_fulldiag_(states|correlations|hamiltonian|reuse)$'
 
       - name: ELPA three-rank regression tests
         env:
@@ -122,11 +148,11 @@ jobs:
         shell: bash
         run: ctest -V -LE "consistency|batching"
 
-      - name: ctest (mpisize=3/9, spinone only)
+      - name: ctest (mpisize=3/9, spin-1 tests only)
         if: ${{ matrix.mpisize == 3 || matrix.mpisize == 9 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -R spinone
+        run: ctest -V -R "spinone|threebody_generalspin"
 
       - name: ctest (mpisize=4, baseline)
         if: ${{ matrix.mpisize == 4 }}

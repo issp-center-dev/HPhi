@@ -247,7 +247,7 @@ CG method
  
 
 TPQ (mTPQ/cTPQ) method
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *  ``Lanczos_max``
 
@@ -424,8 +424,14 @@ Real time evolution method
 
    **Type :** Int (positive integer)
 
-   **Description :** An integer giving the expansion order :math:`n` for
-   real-time evolution method;
+   **Description :** A required positive integer less than ``INT_MAX`` giving
+   the expansion order :math:`n` for the real-time evolution method;
+
+   Older raw expert-mode TE inputs that omitted this parameter silently used
+   first-order Taylor propagation. Such inputs now fail validation; set
+   ``ExpandCoef=1`` explicitly to retain that order, or select a higher order
+   after checking convergence. Standard-mode inputs are unaffected because
+   StdFace always writes this parameter.
 
    .. math:: \exp\left(-i \mathcal{H} \Delta t \right) = \sum_{i=0}^{N}\frac{1}{n!}\left(-i \mathcal{H} \Delta t \right)^n.
 
@@ -446,7 +452,23 @@ Real time evolution method
    | **Description :** An integer giving the interval steps of output
      the wave function.
    | The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod``
-     file.
+     file. A positive ``OutputInterval`` is then required. Explicit interval
+     and iteration-count values must be finite integers less than ``INT_MAX``.
+
+
+SpinGC with TransSym
+~~~~~~~~~~~~~~~~~~~~
+
+For a spin-one-half SpinGC sector (``CalcModel=4``), omit ``2Sz``, ``Nup``,
+``Ndown`` and ``Ncond``. Explicit values, including zero, are rejected rather
+than ignored. The allowed site count is
+``0 < Nsite < CHAR_BIT * sizeof(unsigned long)``.
+``Lanczos_max``, ``initial_iv`` and CG convergence parameters retain their
+usual meaning. TPQ/cTPQ parameters describe samples within one symmetry
+sector; ``InvTemp`` cannot request eigenvector output in sector cTPQ.
+TE uses positive ``ExpandCoef``, a finite nondecreasing time grid, and
+``ExpecInterval``/``OutputInterval`` for observables/checkpoints. See
+:ref:`Subsec:TransSym` for magnetization moments, import semantics and examples.
 
 .. raw:: latex
 

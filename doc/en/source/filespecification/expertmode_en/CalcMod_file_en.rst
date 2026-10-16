@@ -147,6 +147,9 @@ The parameters correlated with the keywords are as follows.
    | 1: Output an eigenvector.
    | In FullDiag calculations, all eigenvectors are output. Each file
      contains one complete eigenvector, including in MPI runs.
+   | With ``TransSym``, FullDiag saves every sector eigenstate as a sector
+     checkpoint, one file per state and MPI rank, under the same names;
+     see :ref:`Subsec:eigenvec`.
 
 *  ``InputEigenVec``
 
@@ -165,6 +168,19 @@ The parameters correlated with the keywords are as follows.
    | 1: Output a restart vector
    | 2: Input a restart vector and output a new restart vector
    | 3: Input a restart vector.
+
+   For raw-basis TimeEvolution, the binary vector header stores the **next**
+   step to execute. Periodic and final output use this same convention.
+   A restart requires that step to be in ``[0, Lanczos_max)`` and identical
+   across ranks. Keep the Hamiltonian and time grid consistent with the
+   original run. With ``ReStart=0`` the input is a new initial state and its
+   saved step is ignored.
+   Older periodic TE files stored the completed step, so their header step
+   must be incremented by one before use as a restart; older final files
+   already stored the next step. The final raw vector retains the legacy
+   ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` alias. Periodic filenames use
+   the completed step as their index, even though the header stores the next
+   step. Missing, truncated, non-finite or incompatible input fails collectively.
 
 *  ``CalcSpec``
 
@@ -195,9 +211,16 @@ The parameters correlated with the keywords are as follows.
    | 1: input Hamiltonian.
 
    | Note: with ``Solver 3`` (ELPA) and more than one MPI process, the
-     Hamiltonian is generated in distributed form, so ``OutputHam``/``InputHam``
-     are rejected at startup. To output or input the Hamiltonian, run with
-     1 MPI process or use a different ``Solver``.
+     Hamiltonian is generated in distributed form, so ordinary FullDiag
+     without ``TransSym`` rejects ``OutputHam``/``InputHam`` at startup. To
+     output or input that Hamiltonian, run with 1 MPI process or use a
+     different ``Solver``.
+   | With ``TransSym``, FullDiag ``OutputHam=1`` writes the sector matrix as
+     the identified Matrix Market file ``##_ham_sector.mtx`` and stops, and
+     ``InputHam=1`` reads and diagonalizes that matrix. The file can be read
+     with another MPI rank count and ``Solver``, including ELPA on several
+     ranks; see :ref:`Subsec:ham`. Other methods do not accept these keywords
+     with ``TransSym``.
 
 *  ``OutputExcitedVec``
 
@@ -491,6 +514,20 @@ The parameters correlated with the keywords are as follows.
      the single-process (serial) format, with the S2 column included, for
      every ``Solver``/``ExpecMode`` combination. This is an intentional
      correctness fix, independent of ``ExpecMode``'s value.
+
+
+SpinGC symmetry-sector options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With ``TransSym``, ``CalcModel=4`` supports spin one-half without fixed Sz
+for ``CalcType=0,1,2,3,4,5``. Use CG (3) for ground-state calculations.
+FullDiag (2) uses Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA) and can write requested
+correlations and every eigenstate (``OutputEigenVec=1``); MAGMA, vector input,
+Hamiltonian I/O and nonserial ExpecMode are unsupported.
+CG accepts sector vector import/export; TE requires sector vector import and
+optionally exports vectors. Both can import FullDiag eigenstates. Import starts a new evaluation/time grid, not a
+restart: ``ReStart`` is unsupported for every sector method.
+For the full feature table and a runnable expert example, see :ref:`Subsec:TransSym`.
 
 .. raw:: latex
 

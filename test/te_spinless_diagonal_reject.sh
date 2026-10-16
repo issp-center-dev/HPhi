@@ -24,7 +24,7 @@ prepare_spinless_case() {
     printf '     SpectrumVec  zvo_eigenvec_0\n' >> namelist.def
 
     sed -e 's/^OutputEigenVec.*/OutputEigenVec   1/' calcmod.def > _t && mv _t calcmod.def
-    "${HPHI}" -e namelist.def > gs.log 2>&1
+    ${MPIRUNFC} "${HPHI}" -e namelist.def > gs.log 2>&1
 
     sed -e 's/^CalcType.*/CalcType   4/' \
         -e 's/^InputEigenVec.*/InputEigenVec   1/' \
@@ -87,7 +87,7 @@ run_expect_reject() {
   (
     cd "${name}"
     set +e
-    "${HPHI}" -e namelist.def > te.log 2>&1
+    ${MPIRUNFC} "${HPHI}" -e namelist.def > te.log 2>&1
     rc=$?
     set -e
 
@@ -111,7 +111,7 @@ run_expect_accept() {
   write_offdiag_teonebody "${name}"
   (
     cd "${name}"
-    if ! "${HPHI}" -e namelist.def > te.log 2>&1; then
+    if ! ${MPIRUNFC} "${HPHI}" -e namelist.def > te.log 2>&1; then
       echo "[${name}] ERROR: off-diagonal-only Spinless TE run failed" >&2
       tail -40 te.log >&2
       exit 1

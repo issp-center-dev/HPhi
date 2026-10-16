@@ -254,7 +254,7 @@ TPQ法で使用するパラメータ
 
    .. math:: U(\Delta\tau) = \sum_{n=0}^{n_{\rm max}}\frac{1}{n!}\left(-\frac{\Delta\tau}{2}\mathcal{H}\right)^n .
 
-   詳しくは, :ref:`Ch:algorithm`を参照してください.
+   詳しくは, :ref:`Ch:algorithm` を参照してください.
 
  
 
@@ -387,6 +387,13 @@ TPQ法で使用するパラメータ
 
 -  ``ExpandCoef``
 
+   実時間発展では指定が必須です。 ``INT_MAX`` 未満の正の整数を指定してください。
+
+   旧版のraw expert-mode TEでは、省略すると警告なく1次Taylor伝播を行っていました。
+   現在は入力エラーになります。同じ次数を保つ場合は ``ExpandCoef=1`` を明示し、
+   高次を選ぶ場合は収束を確認してください。Standard modeではStdFaceが必ず
+   この値を出力するため、この変更の影響はありません。
+
    **形式 :** int型 (自然数)
 
    **説明 :** 微小時間\ :math:`\Delta t`\ に対して実時間発展を行う際の
@@ -404,11 +411,27 @@ TPQ法で使用するパラメータ
 
 -  ``OutputInterval``
 
+   ``OutputEigenVec=1`` の場合は正の値が必要です。明示指定したintervalと反復回数は
+   ``INT_MAX`` 未満の有限な整数に限ります。
+
    **形式 :** int型 (自然数)
 
    **説明 :** 時間発展中の波動関数を出力するステップ間隔を指定する整数。
    (``CalcMod``\ ファイルで\ ``OutputEigenVec=1``\ にすると有効になります)
 
+
+
+TransSymを使うSpinGC
+~~~~~~~~~~~~~~~~~~~~
+
+スピン1/2のSpinGC sector（``CalcModel=4``）では ``2Sz``、``Nup``、
+``Ndown``、``Ncond`` を省略してください。0を含む明示指定は無視せず拒否します。
+サイト数は ``0 < Nsite < CHAR_BIT * sizeof(unsigned long)`` に制限されます。
+``Lanczos_max``、``initial_iv``、CG収束パラメータは通常の意味を持ちます。
+TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector cTPQの
+``InvTemp`` は固有ベクトル出力を要求できません。TEは正の ``ExpandCoef``、
+有限で非減少の時間列、観測量・checkpointの ``ExpecInterval`` / ``OutputInterval``
+を使います。磁化モーメント、読込の意味、入力例は :ref:`Subsec:TransSym` を参照してください。
 
 .. raw:: latex
 

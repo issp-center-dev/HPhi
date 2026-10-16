@@ -16,15 +16,14 @@
 /**
  * @file CalcByTEM.c
  *
- * @brief Real-time evolution calculation using Suzuki-Trotter decomposition
+ * @brief Real-time evolution calculation using a Taylor polynomial
  *
  * Implements time evolution of quantum states:
  *   |psi(t+dt)> = exp(-i H dt) |psi(t)>
  *
  * Method:
- * Uses Krylov subspace method (similar to Lanczos) for the matrix exponential.
- * The time evolution operator is approximated using a polynomial expansion
- * in the Krylov basis.
+ * Uses a truncated Taylor polynomial of the matrix exponential, followed
+ * by normalization.
  *
  * Time-dependent Hamiltonian:
  * - Supports time-dependent transfer integrals (laser pulses, etc.)
@@ -35,7 +34,7 @@
  * 1. Read initial state from file (must be provided)
  * 2. For each time step:
  *    a. Update time-dependent Hamiltonian if needed
- *    b. Apply exp(-i H dt) via Krylov approximation
+ *    b. Apply the Taylor polynomial of exp(-i H dt)
  *    c. Every ExpecInterval steps, compute observables
  *
  * Output:
@@ -60,9 +59,90 @@
 #include "FileIO.h"
 #include "wrapperMPI.h"
 #include "HPhiTrans.h"
+#include <math.h>
+#include <limits.h>
+#include <inttypes.h>
+#include "symmetry_checkpoint.h"
+#include "symmetry_te.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
 
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
+
+/* A sector checkpoint is a state import, not a continuation of its solver clock. */
+static int record_sector_te(const struct BindStruct *X, const struct SymmetryCheckpointInfo *source,
+                             const struct SymmetryTEHamiltonian *view)
+{
+  char name[D_FileNameMax];
+  FILE *fp = NULL;
+  int error = 0;
+  if (myrank == 0) {
+    int n = snprintf(name, sizeof(name), "%s%ssymmetry_sector.dat",
+                     X->Def.iOutputDataHead ? X->Def.CDataFileHead : "",
+                     X->Def.iOutputDataHead ? "_" : "");
+    error = n < 0 || (size_t)n + strlen(cParentOutputFolder) >= sizeof(name);
+    if (!error) error = childfopenMPI(name, "a", &fp) != 0;
+    if (!error) {
+      fprintf(fp, "te_hamiltonian=%s\nte_steps=%u\nexpand_coef=%d\n"
+              "source_method=%" PRIu64 "\nsource_state=%" PRIu64 "\nsource_step=%" PRIu64
+              "\nsource_time=%.17g\nsource_hamiltonian_digest=%016" PRIx64 "\n",
+              view ? "time_dependent" : "static", X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
+              source->state_index, source->step, source->time, source->hamiltonian_digest);
+      /* A FullDiag source digest identifies a sector matrix, not parsed H. */
+      if (source->source_method == FullDiag &&
+          (source->hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_MATRIX_V1 ||
+           fprintf(fp, "source_hamiltonian_kind=sector_matrix_v1\n") < 0))
+        error = 1;
+      for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i) {
+        fprintf(fp, "te_time_%u=%.17g\n", i, SymmetryTETime(&X->Def, i));
+        if (view) fprintf(fp, "te_hamiltonian_%u=%016" PRIx64 "\n", i, view->digests[i]);
+      }
+      if (view) fprintf(fp, "te_integrator=right_endpoint_taylor\nte_plan_update=rebuild_with_fixed_basis\n");
+      if (ferror(fp)) error = 1;
+      if (fclose(fp) != 0) error = 1;
+    }
+  }
+  if (SumMPI_i(error) != 0) {
+    fprintf(stdoutMPI, "Error: failed to record symmetry TE schedule.\n");
+    return -1;
+  }
+  return 0;
+}
+
+static int write_sector_te_vector(struct BindStruct *X, int step, double time,
+                                  uint64_t state, int final)
+{
+  char name[D_FileNameMax];
+  int n = final ? snprintf(name, sizeof(name), "%s_eigenvec_final_rank_%d.dat", X->Def.CDataFileHead, myrank)
+                : snprintf(name, sizeof(name), "%s_eigenvec_%d_rank_%d.dat", X->Def.CDataFileHead, step, myrank);
+  if (SumMPI_i(n < 0 || (size_t)n >= sizeof(name)) != 0) return -1;
+  struct SymmetryCheckpointInfo info = {TimeEvolution, state, (uint64_t)step, time, 0};
+  return WriteSymmetryCheckpoint(X, name, v1, &info);
+}
+
+static int write_raw_te_vector(struct BindStruct *X, int label, int next_step)
+{
+  char name[D_FileNameMax];
+  FILE *fp = NULL;
+  int length = snprintf(name, sizeof(name), "%s_eigenvec_%d_rank_%d.dat",
+                        X->Def.CDataFileHead, label, myrank);
+  int failed = length < 0 || (size_t)length + strlen(cParentOutputFolder) >= sizeof(name);
+  if (SumMPI_i(failed) != 0) return -1;
+  failed = childfopenALL(name, "wb", &fp) != 0;
+  if (!failed) {
+    failed = fwrite(&next_step, sizeof(next_step), 1, fp) != 1 ||
+             fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp) != 1 ||
+             fwrite(v1, sizeof(*v1), X->Check.idim_max + 1, fp) != X->Check.idim_max + 1;
+    if (fclose(fp) != 0) failed = 1;
+  }
+  if (SumMPI_i(failed) != 0) {
+    fprintf(stdoutMPI, "Error: failed to write TE vector on one or more ranks.\n");
+    return -1;
+  }
+  return 0;
+}
 
 /**
  * @brief Main driver for real-time evolution calculation
@@ -91,11 +171,13 @@ void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
  * @author Kota Ido (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
-int CalcByTEM(
+static int calc_by_tem(
         const int ExpecInterval,
-        struct EDMainCalStruct *X
+        struct EDMainCalStruct *X,
+        struct SymmetryTEHamiltonian *view
 ) {
-  char *defname;
+  struct SymmetryCheckpointInfo source = {0};
+  char *defname = NULL;
   char sdt[D_FileNameMax];
   char sdt_phys[D_FileNameMax];
   char sdt_norm[D_FileNameMax];
@@ -103,14 +185,39 @@ int CalcByTEM(
   int rand_i=0;
   int step_initial = 0;
   long int i_max = 0;
-  FILE *fp;
+  FILE *fp = NULL;
   double Time = X->Bind.Def.Param.Tinit;
   double dt = ((X->Bind.Def.NLaser==0)? 0.0: X->Bind.Def.Param.TimeSlice);
 
-  if(X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
+  int invalid = X->Bind.Def.Param.ExpandCoef < 1 ||
+                X->Bind.Def.Param.ExpandCoef == INT_MAX || ExpecInterval <= 0 ||
+                (X->Bind.Def.iOutputEigenVec && X->Bind.Def.Param.OutputInterval <= 0);
+  if (SumMPI_i(invalid) != 0) {
+    fprintf(stdoutMPI, "Error: TE requires positive ExpandCoef, ExpecInterval and vector OutputInterval.\n");
+    return -1;
+  }
+  if (!isfinite(Time) || !isfinite(dt) || dt < 0) {
+    fprintf(stdoutMPI, "Error: TE requires finite initial time and nonnegative time step.\n");
+    return -1;
+  }
+  if (!(view && X->Bind.Def.NLaser) && X->Bind.Def.NTETimeSteps < X->Bind.Def.Lanczos_max){
     fprintf(stdoutMPI, "Error: NTETimeSteps must be larger than Lanczos_max.\n");
     return -1;
   }
+  if (X->Bind.Def.NLaser == 0) {
+    invalid = X->Bind.Def.TETime == NULL;
+    for (unsigned int i = 0; !invalid && i < X->Bind.Def.Lanczos_max; ++i) {
+      double time = X->Bind.Def.TETime[i];
+      invalid = !isfinite(time) ||
+                (i > 0 && (time < X->Bind.Def.TETime[i-1] ||
+                           !isfinite(time-X->Bind.Def.TETime[i-1])));
+    }
+    if (SumMPI_i(invalid) != 0) {
+      fprintf(stdoutMPI, "Error: TE time grid must be finite and nondecreasing.\n");
+      return -1;
+    }
+  }
+  if (view && ValidateSymmetryTESchedule(&(X->Bind), view) != 0) return -1;
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTEM_Start);
@@ -121,27 +228,58 @@ int CalcByTEM(
     //input v1
     fprintf(stdoutMPI, "%s","An Initial Vector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
-    GetFileNameByKW(KWSpectrumVec, &defname);
-    strcat(defname, "_rank_%d.dat");
-    sprintf(sdt, defname, myrank);
-    childfopenALL(sdt, "rb", &fp);
-    if (fp == NULL) {
-      fprintf(stderr, "Error: A file of Inputvector does not exist.\n");
-      fclose(fp);
-      exitMPI(-1);
+    invalid = GetFileNameByKW(KWSpectrumVec, &defname) != 0 || defname == NULL;
+    int length = invalid ? -1 : snprintf(sdt, sizeof(sdt), "%s_rank_%d.dat", defname, myrank);
+    if (SumMPI_i(length < 0 || (size_t)length + strlen(cParentOutputFolder) >= sizeof(sdt)) != 0) {
+      fprintf(stdoutMPI, "Error: missing or overlong TE SpectrumVec filename.\n");
+      return -1;
     }
-    fread(&step_initial, sizeof(int), 1, fp);
-    fread(&i_max, sizeof(long int), 1, fp);
-    if (i_max != X->Bind.Check.idim_max) {
-      fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-      fclose(fp);
-      exitMPI(-1);
-    }
-    fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
-    if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT) {
-      step_initial = 0;
-    }
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      if (ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &source) != 0) return -1;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+      double norm2 = 0;
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i)
+        norm2 += creal(conj(v1[i])*v1[i]);
+      if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", 0, 0,
+                                   sqrt(SumMPI_d(norm2))) != 0) return -1;
+#endif
+      if (record_sector_te(&(X->Bind), &source, view) != 0) return -1;
+    } else {
+      invalid = childfopenALL(sdt, "rb", &fp) != 0;
+      if (!invalid) {
+        invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
+                  fread(&i_max, sizeof(i_max), 1, fp) != 1 ||
+                  i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
+        if (!invalid) invalid = fread(v1, sizeof(*v1), X->Bind.Check.idim_max + 1, fp)
+                                    != X->Bind.Check.idim_max + 1;
+        if (!invalid && (fgetc(fp) != EOF || ferror(fp))) invalid = 1;
+        if (fclose(fp) != 0) invalid = 1;
+        fp = NULL;
+      }
+      if (SumMPI_i(invalid) != 0) {
+        fprintf(stdoutMPI, "Error: missing, truncated or incompatible TE Inputvector file.\n");
+        return -1;
+      }
+      double norm = 0;
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) {
+        double re = creal(v1[i]), im = cimag(v1[i]);
+        if (!isfinite(re) || !isfinite(im)) invalid = 1;
+        norm += re*re + im*im;
+      }
+      norm = SumMPI_d(norm);
+      if (SumMPI_i(invalid || !isfinite(norm) || norm <= 0) != 0) {
+        fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
+        return -1;
+      }
+      if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT)
+        step_initial = 0;
+      int root_step = BcastMPI_i(0, step_initial);
+      if (SumMPI_i(step_initial < 0 || (unsigned int)step_initial >= X->Bind.Def.Lanczos_max ||
+                   step_initial != root_step) != 0) {
+        fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
+        return -1;
+      }
+      }
   }
 
   if(X->Bind.Def.iOutputDataHead==1){
@@ -185,6 +323,24 @@ int CalcByTEM(
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
+  if (step_initial > 0) {
+    /* Raw TE files store the next step. Restore H|psi> at the preceding
+     * time point: MultiplyForTEM consumes both psi (v1) and H psi (v0).
+     * Without this, a restarted run silently loses its first Taylor term. */
+    step_i = X->Bind.Def.istep = step_initial - 1;
+    if (X->Bind.Def.NLaser > 0) {
+      double previous_time = Time + (step_initial - 1) * dt;
+      Time += step_initial * dt;
+      if (!isfinite(previous_time) || !isfinite(Time)) return -1;
+      TransferWithPeierls(&(X->Bind), previous_time);
+    } else if (X->Bind.Def.NTETransferMax > 0) {
+      MakeTEDTransfer(&(X->Bind), step_initial - 1);
+    } else if (X->Bind.Def.NTEInterAllMax > 0) {
+      MakeTEDInterAll(&(X->Bind), step_initial - 1);
+    }
+    for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
+    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+  }
   int progress_interval = X->Bind.Def.Lanczos_max / 10;
   if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 when Lanczos_max < 10 */
   for (step_i = step_initial; step_i < X->Bind.Def.Lanczos_max; step_i++) {
@@ -198,7 +354,17 @@ int CalcByTEM(
       fprintf(stdoutMPI, cLogTEStep, step_i, X->Bind.Def.Lanczos_max);
     }
 
-    if(X->Bind.Def.NLaser !=0) {
+    if (view) {
+      Time = SymmetryTETime(&view->base, step_i);
+      dt = step_i ? Time - SymmetryTETime(&view->base, step_i - 1) : 0;
+      if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_i, Time) != 0 ||
+          RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
+      X->Bind.Def.Param.TimeSlice = dt;
+      /* All Taylor powers use the SAME current H, including the first one. */
+      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
+      if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+    }
+    else if(X->Bind.Def.NLaser !=0) {
       TransferWithPeierls(&(X->Bind), Time);
     }
     else {
@@ -230,12 +396,12 @@ int CalcByTEM(
     else {
       TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "a", step_i);
     }
-    MultiplyForTEM(&(X->Bind));
+    if (MultiplyForTEM(&(X->Bind)) != 0) return -1;
     //Add Diagonal Parts
     //Multiply Diagonal
-    expec_energy_flct(&(X->Bind));
+    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
 
-    if(X->Bind.Def.NLaser >0 ) Time+=dt;
+    if(!view && X->Bind.Def.NLaser >0 ) Time+=dt;
     if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
@@ -273,32 +439,31 @@ int CalcByTEM(
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
-        sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, step_i, myrank);
-        if (childfopenALL(sdt, "wb", &fp) != 0) {
-          fclose(fp);
-          exitMPI(-1);
-        }
-        fwrite(&step_i, sizeof(step_i), 1, fp);
-        fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
-        fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-        fclose(fp);
+        if (X->Bind.Def.iFlgSymmetryBasis) {
+          if (write_sector_te_vector(&(X->Bind), step_i, Time, source.state_index, 0) != 0) return -1;
+        } else if (write_raw_te_vector(&(X->Bind), step_i, step_i + 1) != 0) return -1;
       }
     }
   }
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
-    sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, rand_i, myrank);
-    if (childfopenALL(sdt, "wb", &fp) != 0) {
-      fclose(fp);
-      exitMPI(-1);
-    }
-    fwrite(&step_i, sizeof(step_i), 1, fp);
-    fwrite(&X->Bind.Check.idim_max, sizeof(long int), 1, fp);
-    fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-    fclose(fp);
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      if (write_sector_te_vector(&(X->Bind), step_i - 1, Time, source.state_index, 1) != 0) return -1;
+    } else if (write_raw_te_vector(&(X->Bind), rand_i, step_i) != 0) return -1;
   }
 
   fprintf(stdoutMPI, "%s",cLogTEM_End);
   return 0;
+}
+
+int CalcByTEM(const int ExpecInterval, struct EDMainCalStruct *X)
+{
+  if (!SymmetryTEIsDynamic(&X->Bind.Def)) return calc_by_tem(ExpecInterval, X, NULL);
+  struct SymmetryTEHamiltonian view = {0};
+  view.base = X->Bind.Def;
+  int result = calc_by_tem(ExpecInterval, X, &view);
+  X->Bind.Def = view.base;
+  FreeSymmetryTEHamiltonian(&view);
+  return result;
 }
 
 /// \brief Set transfer integrals at timeidx-th time

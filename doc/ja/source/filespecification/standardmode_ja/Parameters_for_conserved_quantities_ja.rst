@@ -52,6 +52,11 @@
      (``t'``, ``t''``)、非局所 Coulomb 項 (``V``/``CoulombInter``)、
      一般相互作用、pair 項は ``MomentumIndex`` と併用できません。
 
+   上記の対応3模型で生成されるLanczos入力は、リンク先のexpert mode節と同じく、
+   TransSym基底の既定layoutとして ``distributed`` を使用します。
+   開発者向けの明示的なrollbackは ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で、
+   通常運用ではなく比較・診断を目的とする設定です。
+
    各運動量点の最低エネルギーを求めるには、``MomentumIndex`` だけを
    変更し、:math:`m=0,\ldots,L-1` ごとにスタンダードモードの計算を
    個別に実行します。例えば6サイトのスピン鎖の :math:`m=1`

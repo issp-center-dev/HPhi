@@ -15,16 +15,16 @@ mkdir -p lanczos_spinless_calchs0
 cd lanczos_spinless_calchs0
 
 # Generate an 8-site, 3-particle SpinlessFermion input (default CalcHS=1).
-python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "${HPHI}" -m SpinlessFermion -s 8 -n 3 > gen.log 2>&1
+python3 "${SRCDIR}/test/testSpinlessCalc.py" -p "${HPHI}" -mpi "${MPIRUNFC}" -m SpinlessFermion -s 8 -n 3 > gen.log 2>&1
 
 rm -rf output
-${HPHI} -e namelist.def > log_calchs1.txt 2>&1
+${MPIRUNFC} ${HPHI} -e namelist.def > log_calchs1.txt 2>&1
 e1=$(awk 'NR==1{print $2}' output/zvo_energy.dat)
 
 # Same input, basis built via the CalcHS=0 (calculate_jb_Spin_Old) path.
 echo "CalcHS         0" >> modpara.def
 rm -rf output
-${HPHI} -e namelist.def > log_calchs0.txt 2>&1
+${MPIRUNFC} ${HPHI} -e namelist.def > log_calchs0.txt 2>&1
 e0=$(awk 'NR==1{print $2}' output/zvo_energy.dat)
 
 echo "E(CalcHS=1)=${e1}  E(CalcHS=0)=${e0}"

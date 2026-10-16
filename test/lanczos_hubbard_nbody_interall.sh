@@ -34,7 +34,7 @@ EOF
   else
     printf "nelec = 4\n2Sz = 0\n" >> stan.in
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 
@@ -66,7 +66,7 @@ NNBodyInterAll 2
 2 3 0 0 0 1 1 1 1 0.3700000000000000 0.1100000000000000
 2 1 1 1 1 0 0 3 0 0.3700000000000000 -0.1100000000000000
 EOF
-run_hphi log_nbody.txt "${hphi}" -e namelist.def
+run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_nbody.dat
 cd ..
 
@@ -81,7 +81,7 @@ NInterAll 2
 3 0 0 0 1 1 1 1 0.3700000000000000 0.1100000000000000
 1 1 1 1 0 0 3 0 0.3700000000000000 -0.1100000000000000
 EOF
-run_hphi log_legacy.txt "${hphi}" -e namelist.def
+run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_legacy.dat
 cd ..
 
@@ -102,7 +102,7 @@ NNBodyInterAll 2
 2 0 0 0 1 1 1 1 0 0.1700000000000000 0.0300000000000000
 2 1 0 1 1 0 1 0 0 0.1700000000000000 -0.0300000000000000
 EOF
-run_hphi log_nbody_ncond.txt "${hphi}" -e namelist.def
+run_hphi log_nbody_ncond.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_nbody_ncond.dat
 cd ..
 
@@ -117,7 +117,7 @@ NInterAll 2
 0 0 0 1 1 1 1 0 0.1700000000000000 0.0300000000000000
 1 0 1 1 0 1 0 0 0.1700000000000000 -0.0300000000000000
 EOF
-run_hphi log_legacy_ncond.txt "${hphi}" -e namelist.def
+run_hphi log_legacy_ncond.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_energy.dat ../energy_legacy_ncond.dat
 cd ..
 

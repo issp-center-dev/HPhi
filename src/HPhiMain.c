@@ -33,6 +33,10 @@
 #include "splash.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
+#include "symmetry_sector.h"
 #include "symmetry_basis_io.h"
 #include "symmetry_matvec_plan.h"
 
@@ -663,7 +667,12 @@ static int parse_symmetry_basis_layout(const struct BindStruct *X)
     return -1;
   }
   if (value == NULL) {
-    layout = X->Def.iFlgSymmetryBasis == TRUE && X->Def.iCalcType == CG
+    layout = X->Def.iFlgSymmetryBasis == TRUE &&
+                 (X->Def.iCalcType == Lanczos ||
+                  X->Def.iCalcType == CG ||
+                  X->Def.iCalcType == TPQCalc ||
+                  X->Def.iCalcType == cTPQ ||
+                  X->Def.iCalcType == TimeEvolution)
                  ? SYMMETRY_BASIS_DISTRIBUTED
                  : SYMMETRY_BASIS_REPLICATED;
   } else if (strcmp(value, "replicated") == 0) {
@@ -724,12 +733,26 @@ static void report_symmetry_basis_layout_selection(
   if (myrank != 0 || X->Def.iFlgSymmetryBasis != TRUE) return;
   value = getenv("HPHI_SYMMETRY_BASIS_LAYOUT");
   if (value == NULL) {
-    reason = X->Def.iCalcType == CG
+    reason = X->Def.iCalcType == Lanczos
+                 ? "default for TransSym Lanczos"
+                 : X->Def.iCalcType == CG
                  ? "default for TransSym CG"
-                 : "default outside TransSym CG";
+                 : X->Def.iCalcType == TPQCalc ? "default for TransSym TPQ"
+                 : X->Def.iCalcType == cTPQ ? "default for TransSym cTPQ"
+                 : X->Def.iCalcType == TimeEvolution ? "default for TransSym TimeEvolution"
+                 : X->Def.iCalcType == FullDiag ? "default for TransSym FullDiag"
+                 : "default outside TransSym";
+  } else if (layout == SYMMETRY_BASIS_REPLICATED &&
+             X->Def.iCalcType == Lanczos) {
+    reason = "explicit rollback for TransSym Lanczos";
   } else if (layout == SYMMETRY_BASIS_REPLICATED &&
              X->Def.iCalcType == CG) {
     reason = "explicit rollback for TransSym CG";
+  } else if (layout == SYMMETRY_BASIS_REPLICATED &&
+             X->Def.iCalcType == TPQCalc) {
+    reason = "explicit rollback for TransSym TPQ";
+  } else if (layout == SYMMETRY_BASIS_REPLICATED && X->Def.iCalcType == cTPQ) {
+    reason = "explicit rollback for TransSym cTPQ";
   } else {
     reason = "explicit environment";
   }
@@ -874,7 +897,9 @@ int main(int argc, char* argv[]){
         exitMPI(-1);
       }
       StartTimer(1114);
-      if (ActivateSymmetryBasisDimension(&(X.Bind)) != 0) {
+      if ((X.Bind.Def.iCalcType == FullDiag
+               ? ActivateSymmetryFullDiagDimension(&(X.Bind))
+               : ActivateSymmetryBasisDimension(&(X.Bind))) != 0) {
         StopTimer(1114);
         StopTimer(1100);
         exitMPI(-1);
@@ -882,6 +907,9 @@ int main(int argc, char* argv[]){
       if (ValidateSymmetrySectorOptions(&(X.Bind)) != 0) {
         StopTimer(1114);
         StopTimer(1100);
+        exitMPI(-1);
+      }
+      if (WriteSymmetrySectorManifest(&(X.Bind)) != 0) {
         exitMPI(-1);
       }
       StopTimer(1114);
@@ -897,14 +925,16 @@ int main(int argc, char* argv[]){
     }
     if (X.Bind.Def.iFlgSymmetryBasis == TRUE) {
       StopTimer(1113);
-      StartTimer(1101);
-      if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
-               ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
-               : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
+      if (X.Bind.Def.iCalcType != FullDiag) {
+        StartTimer(1101);
+        if ((symmetry_basis_layout == SYMMETRY_BASIS_DISTRIBUTED
+                 ? BuildSymmetryDistributedMatvecPlan(&(X.Bind))
+                 : BuildSymmetryMatvecPlan(&(X.Bind))) != 0) {
+          StopTimer(1101);
+          exitMPI(-1);
+        }
         StopTimer(1101);
-        exitMPI(-1);
       }
-      StopTimer(1101);
     } else {
       StartTimer(1000);
       if(sz(&(X.Bind), list_1, list_2_1, list_2_2)!=0){
@@ -921,6 +951,21 @@ int main(int argc, char* argv[]){
       StopTimer(2000);
     }
       
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    {
+      int probe_status = SymmetryProbeBeforeSolver(&X.Bind);
+      if (probe_status < 0) exitMPI(-1);
+      if (probe_status > 0) {
+        StopTimer(0);
+        OutputTimer(&X.Bind);
+        FreeSymmetryBasis(X.Bind.Sym);
+        X.Bind.Sym = NULL;
+        FinalizeMPI();
+        return 0;
+      }
+    }
+#endif
+
     switch (X.Bind.Def.iCalcType) {
     case Lanczos:
       StartTimer(4000);

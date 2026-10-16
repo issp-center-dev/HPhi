@@ -18,7 +18,7 @@ expect_fail() {
   pattern="$2"
   cd "${dir}"
   set +e
-  "${hphi}" -e namelist.def > log.txt 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > log.txt 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then
@@ -47,7 +47,7 @@ J = 0.0
 Lanczos_max = 50
 initial_iv = 1
 EOF
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   printf '    NBodyG  nbodyg.def\n' >> namelist.def
   cd ..
@@ -68,7 +68,7 @@ J = 0.0
 Lanczos_max = 50
 initial_iv = 1
 EOF
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   printf '    NBodyG  nbodyg.def\n' >> namelist.def
   cd ..
@@ -202,7 +202,7 @@ expect_fail bad_spin "Spin index of NBodyInterAll is incorrect"
 expect_fail zero_interall "zero same-site operator product"
 expect_fail bad_pair "Hermite pair has inconsistent factors"
 cd spin_general_accept
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 expect_fail spin_general_bad_interall_sz "does not conserve total Sz"
 expect_fail spin_general_bad_nbodyg_sz "does not conserve total Sz"

@@ -14,6 +14,7 @@
 #include "symmetry_directory.h"
 #include "symmetry_distribution.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_terms.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_vector_halo.h"
 #include "wrapperMPI.h"
@@ -112,17 +113,105 @@ static int emit_canonicalized_transition(const struct BindStruct *X,
   return callback(result.basis_index, coefficient, context);
 }
 
+/* Traverse off-diagonal terms once for both replicated columns and
+ * distributed count/fill passes. Preserve term order and duplicate emissions;
+ * callbacks decide whether to canonicalize, count, or store each transition. */
+typedef int (*SymmetryRawTransitionCallback)(
+    unsigned long int state, double complex coefficient, void *context);
+
+static int enumerate_legacy_offdiagonal_transitions(
+    const struct DefineList *def,
+    unsigned long int state,
+    SymmetryRawTransitionCallback callback,
+    void *context)
+{
+  unsigned int p;
+  if (def == NULL || callback == NULL) return -1;
+  if (def->iCalcModel == Spin) {
+    for (p = 0U; p < def->NExchangeCoupling; p++) {
+      unsigned long int out_state;
+      if (apply_exchange_halfspin(state, def->ExchangeCoupling[p][0],
+                                  def->ExchangeCoupling[p][1], &out_state) == TRUE &&
+          callback(out_state, def->ParaExchangeCoupling[p], context) != 0)
+        return -1;
+    }
+  } else if (def->iCalcModel == SpinlessFermion || def->iCalcModel == Hubbard) {
+    for (p = 0U; p < def->EDNTransfer; p += 2U) {
+      unsigned long int out_state;
+      double complex hval;
+      double complex trans = -def->EDParaGeneralTransfer[p];
+      int found;
+      if (def->iCalcModel == SpinlessFermion) {
+        found = apply_spinless_hopping_hermite(
+            state, (unsigned int)def->EDGeneralTransfer[p][0],
+            (unsigned int)def->EDGeneralTransfer[p][2], trans, &out_state, &hval);
+      } else {
+        found = apply_hubbard_hopping_hermite(
+            state, (unsigned int)def->EDGeneralTransfer[p][0],
+            (unsigned int)def->EDGeneralTransfer[p][1],
+            (unsigned int)def->EDGeneralTransfer[p][2],
+            (unsigned int)def->EDGeneralTransfer[p][3], trans, &out_state, &hval);
+      }
+      if (found == TRUE && callback(out_state, hval, context) != 0) return -1;
+    }
+  } else {
+    return -1;
+  }
+  return 0;
+}
+
+struct RawTransitionContext {
+  const struct DefineList *def;
+  unsigned long state;
+  SymmetryRawTransitionCallback callback;
+  void *context;
+};
+
+static int apply_raw_term(const struct SymmetryTerm *term, void *context)
+{
+  struct RawTransitionContext *raw = context;
+  unsigned long out;
+  double complex value;
+  int status = ApplySymmetryTerm(raw->def, term, raw->state, &out, &value);
+  if (status < 0) return -1;
+  return status ? raw->callback(out, value, raw->context) : 0;
+}
+
+static int enumerate_raw_offdiagonal_transitions(
+    const struct DefineList *def, unsigned long state,
+    SymmetryRawTransitionCallback callback, void *context)
+{
+  struct RawTransitionContext raw = {def, state, callback, context};
+  if (!def || !callback) return -1;
+  if (!SymmetryUsesExtendedTerms(def))
+    return enumerate_legacy_offdiagonal_transitions(def, state, callback, context);
+  return EnumerateSymmetryTerms(def, 1, apply_raw_term, &raw);
+}
+
+struct CanonicalColumnContext {
+  const struct BindStruct *X;
+  unsigned long int beta;
+  SymmetryEntryCallback callback;
+  void *context;
+};
+
+static int emit_column_transition(unsigned long int state,
+                                   double complex coefficient, void *context)
+{
+  const struct CanonicalColumnContext *column = context;
+  return emit_canonicalized_transition(column->X, column->beta, state,
+                                       coefficient, column->callback, column->context);
+}
+
 int SymmetryEnumerateColumn(const struct BindStruct *X,
                             unsigned long int beta,
                             SymmetryEntryCallback callback,
                             void *context)
 {
   const struct SymmetryBasisVector *source;
-  unsigned int p;
+  struct CanonicalColumnContext column = {X, beta, callback, context};
   if (X == NULL || X->Sym == NULL || callback == NULL || beta == 0UL ||
-      beta > X->Sym->dim) {
-    return -1;
-  }
+      beta > X->Sym->dim) return -1;
   if (X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED) {
     fprintf(stdoutMPI,
             "Error: distributed symmetry basis column enumeration is "
@@ -131,64 +220,20 @@ int SymmetryEnumerateColumn(const struct BindStruct *X,
   }
   source = SymmetryBasisReplicatedGlobalEntry(X->Sym, beta);
   if (source == NULL) return -1;
-
   if (callback(beta, source->diagonal, context) != 0) return -1;
+  return enumerate_raw_offdiagonal_transitions(
+      &X->Def, source->rep_state, emit_column_transition, &column);
+}
 
-  if (X->Def.iCalcModel == Spin) {
-    for (p = 0; p < X->Def.NExchangeCoupling; p++) {
-      unsigned long int out_state;
-      if (apply_exchange_halfspin(source->rep_state,
-                                  X->Def.ExchangeCoupling[p][0],
-                                  X->Def.ExchangeCoupling[p][1],
-                                  &out_state) == TRUE &&
-          emit_canonicalized_transition(X, beta, out_state,
-                                        X->Def.ParaExchangeCoupling[p],
-                                        callback, context) != 0) {
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  if (X->Def.iCalcModel == SpinlessFermion) {
-    for (p = 0; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      unsigned int site1 = (unsigned int)X->Def.EDGeneralTransfer[p][0];
-      unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
-      if (apply_spinless_hopping_hermite(source->rep_state,
-                                         site1, site2, trans,
-                                         &out_state, &hval) == TRUE &&
-          emit_canonicalized_transition(X, beta, out_state, hval,
-                                        callback, context) != 0) {
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  if (X->Def.iCalcModel == Hubbard) {
-    for (p = 0; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      unsigned int site1 = (unsigned int)X->Def.EDGeneralTransfer[p][0];
-      unsigned int spin1 = (unsigned int)X->Def.EDGeneralTransfer[p][1];
-      unsigned int site2 = (unsigned int)X->Def.EDGeneralTransfer[p][2];
-      unsigned int spin2 = (unsigned int)X->Def.EDGeneralTransfer[p][3];
-      if (apply_hubbard_hopping_hermite(source->rep_state,
-                                        site1, spin1, site2, spin2, trans,
-                                        &out_state, &hval) == TRUE &&
-          emit_canonicalized_transition(X, beta, out_state, hval,
-                                        callback, context) != 0) {
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  return -1;
+static int count_raw_transition(unsigned long int state,
+                                 double complex coefficient, void *context)
+{
+  size_t *count = context;
+  (void)state;
+  (void)coefficient;
+  if (*count == SIZE_MAX) return -1;
+  ++*count;
+  return 0;
 }
 
 static int count_unresolved_row_transitions(
@@ -196,52 +241,10 @@ static int count_unresolved_row_transitions(
     unsigned long int state,
     size_t *transition_count)
 {
-  size_t count = 1U;
-  unsigned int p;
+  size_t count = 1U; /* The diagonal slot is always present. */
   if (X == NULL || transition_count == NULL) return -1;
-  if (X->Def.iCalcModel == Spin) {
-    for (p = 0U; p < X->Def.NExchangeCoupling; p++) {
-      unsigned long int out_state;
-      if (apply_exchange_halfspin(
-              state, X->Def.ExchangeCoupling[p][0],
-              X->Def.ExchangeCoupling[p][1], &out_state) == TRUE) {
-        if (count == SIZE_MAX) return -1;
-        count++;
-      }
-    }
-  } else if (X->Def.iCalcModel == SpinlessFermion) {
-    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      if (apply_spinless_hopping_hermite(
-              state,
-              (unsigned int)X->Def.EDGeneralTransfer[p][0],
-              (unsigned int)X->Def.EDGeneralTransfer[p][2],
-              trans, &out_state, &hval) == TRUE) {
-        if (count == SIZE_MAX) return -1;
-        count++;
-      }
-    }
-  } else if (X->Def.iCalcModel == Hubbard) {
-    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      if (apply_hubbard_hopping_hermite(
-              state,
-              (unsigned int)X->Def.EDGeneralTransfer[p][0],
-              (unsigned int)X->Def.EDGeneralTransfer[p][1],
-              (unsigned int)X->Def.EDGeneralTransfer[p][2],
-              (unsigned int)X->Def.EDGeneralTransfer[p][3],
-              trans, &out_state, &hval) == TRUE) {
-        if (count == SIZE_MAX) return -1;
-        count++;
-      }
-    }
-  } else {
-    return -1;
-  }
+  if (enumerate_raw_offdiagonal_transitions(
+          &X->Def, state, count_raw_transition, &count) != 0) return -1;
   *transition_count = count;
   return 0;
 }
@@ -266,6 +269,21 @@ static int append_unresolved_transition(
   return 0;
 }
 
+struct UnresolvedRowContext {
+  const struct BindStruct *X;
+  struct SymmetryUnresolvedTransition *transitions;
+  size_t next;
+  size_t end;
+};
+
+static int store_raw_transition(unsigned long int state,
+                                 double complex coefficient, void *context)
+{
+  struct UnresolvedRowContext *row = context;
+  return append_unresolved_transition(row->X, state, coefficient,
+                                      row->transitions, &row->next, row->end);
+}
+
 static int fill_unresolved_row_transitions(
     const struct BindStruct *X,
     const struct SymmetryBasisVector *source,
@@ -273,63 +291,16 @@ static int fill_unresolved_row_transitions(
     size_t begin,
     size_t end)
 {
-  size_t next = begin;
-  unsigned int p;
-  if (X == NULL || source == NULL || transitions == NULL || begin >= end) {
+  struct UnresolvedRowContext row = {X, transitions, begin, end};
+  if (X == NULL || source == NULL || transitions == NULL || begin >= end)
     return -1;
-  }
-  transitions[next].rep_state = 0UL;
-  transitions[next].phased_hval = source->diagonal;
-  transitions[next].is_diagonal = TRUE;
-  next++;
-  if (X->Def.iCalcModel == Spin) {
-    for (p = 0U; p < X->Def.NExchangeCoupling; p++) {
-      unsigned long int out_state;
-      if (apply_exchange_halfspin(
-              source->rep_state, X->Def.ExchangeCoupling[p][0],
-              X->Def.ExchangeCoupling[p][1], &out_state) == TRUE &&
-          append_unresolved_transition(
-              X, out_state, X->Def.ParaExchangeCoupling[p],
-              transitions, &next, end) != 0) {
-        return -1;
-      }
-    }
-  } else if (X->Def.iCalcModel == SpinlessFermion) {
-    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      if (apply_spinless_hopping_hermite(
-              source->rep_state,
-              (unsigned int)X->Def.EDGeneralTransfer[p][0],
-              (unsigned int)X->Def.EDGeneralTransfer[p][2],
-              trans, &out_state, &hval) == TRUE &&
-          append_unresolved_transition(
-              X, out_state, hval, transitions, &next, end) != 0) {
-        return -1;
-      }
-    }
-  } else if (X->Def.iCalcModel == Hubbard) {
-    for (p = 0U; p < X->Def.EDNTransfer; p += 2U) {
-      unsigned long int out_state;
-      double complex hval;
-      double complex trans = -X->Def.EDParaGeneralTransfer[p];
-      if (apply_hubbard_hopping_hermite(
-              source->rep_state,
-              (unsigned int)X->Def.EDGeneralTransfer[p][0],
-              (unsigned int)X->Def.EDGeneralTransfer[p][1],
-              (unsigned int)X->Def.EDGeneralTransfer[p][2],
-              (unsigned int)X->Def.EDGeneralTransfer[p][3],
-              trans, &out_state, &hval) == TRUE &&
-          append_unresolved_transition(
-              X, out_state, hval, transitions, &next, end) != 0) {
-        return -1;
-      }
-    }
-  } else {
-    return -1;
-  }
-  return next == end ? 0 : -1;
+  transitions[row.next].rep_state = 0UL;
+  transitions[row.next].phased_hval = source->diagonal;
+  transitions[row.next].is_diagonal = TRUE;
+  row.next++;
+  if (enumerate_raw_offdiagonal_transitions(
+          &X->Def, source->rep_state, store_raw_transition, &row) != 0) return -1;
+  return row.next == end ? 0 : -1;
 }
 
 static int compare_unresolved_request_key(

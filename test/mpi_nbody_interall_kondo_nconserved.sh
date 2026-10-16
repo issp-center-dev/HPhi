@@ -85,19 +85,19 @@ mkdir -p serial mpi legacy
 
 cd serial
 write_input
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 write_nbody
-run_hphi log_serial.txt "${hphi}" -e namelist.def
+run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 assert_total_dimension serial log_serial.txt 448
 cp output/zvo_energy.dat ../energy_serial.dat
 cd ..
 
 cd legacy
 write_input
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 append_transfer_reference
-run_hphi log_legacy.txt "${hphi}" -e namelist.def
+run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 assert_total_dimension legacy log_legacy.txt 448
 cp output/zvo_energy.dat ../energy_legacy.dat
 cd ..

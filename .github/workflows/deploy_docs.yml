@@ -9,6 +9,13 @@ on:
       - '!gh-pages'
     tags: '*'
 
+# Every source branch and tag publishes to the same gh-pages branch.
+# Serialize checkout through push, and retain queued release deployments.
+concurrency:
+  group: docs-gh-pages
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

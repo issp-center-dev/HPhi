@@ -36,7 +36,7 @@ initial_iv = 1
 EOF
 
 # Generate the standard-mode definition files (serial -sdry; np-independent).
-../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
+${MPIRUNFC} ../../src/HPhi -sdry stan.in > log_sdry.txt 2>&1
 
 # Off-diagonal InterAll terms whose inter-process factor (site 3) is a number
 # operator n_3. Each pair is the term and its Hermitian conjugate (operator

@@ -102,7 +102,7 @@ num       64
   11    1   11    0    2    1    2    0    3    1    3    1    4    1    4    0    1    1    1    0    0    1    0    1 
 EOF
 
-../../src/HPhi -sdry stan.in
+${MPIRUNFC} ../../src/HPhi -sdry stan.in
 
 echo   "SixBodyG    green6.def" >> namelist.def
 

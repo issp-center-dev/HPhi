@@ -41,7 +41,7 @@ EOF
 
 # Run without MPI
 echo "Running without MPI..."
-../../src/HPhi -s stan.in
+${MPIRUNFC} ../../src/HPhi -s stan.in
 cp output/zvo_energy.dat energy_nompi.dat
 
 # Clean output for MPI run

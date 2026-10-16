@@ -21,9 +21,11 @@ target_sources(HPhi PRIVATE
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
   version.c
   nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
-  symmetry_diagonal.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
+  symmetry_diagonal.c symmetry_terms.c symmetry_correlation.c symmetry_directory.c symmetry_distribution.c symmetry_matvec_plan.c
   symmetry_memory_policy.c symmetry_mpi_exchange.c
-  symmetry_state_enumerator.c
+  symmetry_state_enumerator.c symmetry_sector.c symmetry_checkpoint.c symmetry_te.c
+  symmetry_hamiltonian_io.c symmetry_fulldiag.c
+  symmetry_observables.c symmetry_kondo.c symmetry_kondo_terms.c
   symmetry_vector_halo.c
 )
 
@@ -55,7 +57,7 @@ target_sources(HPhi PRIVATE
 
 # Full diagonalization
 target_sources(HPhi PRIVATE
-  CalcByFullDiag.c lapack_diag.c makeHam.c expec_trace_ham.c
+  CalcByFullDiag.c lapack_diag.c makeHam.c makeHamSym.c expec_trace_ham.c
   matrixlapack.c matrixlapack_magma.c matrixlapack_elpa.c matrixscalapack.c
 )
 
@@ -161,3 +163,25 @@ endif(USE_SCALAPACK)
 
 
 install(TARGETS HPhi RUNTIME DESTINATION bin)
+
+# Test-only entry point sharing the configured production source/flags.
+get_target_property(_sector_sources HPhi SOURCES)
+add_executable(unittest_symmetry_sector_probe ${_sector_sources}
+  ${CMAKE_SOURCE_DIR}/test/symmetry_sector_probe.c
+  ${CMAKE_SOURCE_DIR}/test/symmetry_fulldiag_probe.c)
+foreach(_sector_property INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
+    COMPILE_OPTIONS LINK_LIBRARIES LINK_FLAGS)
+  get_target_property(_sector_value HPhi ${_sector_property})
+  if(NOT "${_sector_value}" MATCHES "-NOTFOUND$")
+    set_property(TARGET unittest_symmetry_sector_probe
+      PROPERTY ${_sector_property} "${_sector_value}")
+  endif()
+endforeach()
+target_compile_definitions(unittest_symmetry_sector_probe PRIVATE HPHI_TEST_SYMMETRY_PROBE)
+target_include_directories(unittest_symmetry_sector_probe PRIVATE ${CMAKE_SOURCE_DIR}/test)
+
+add_custom_command(TARGET unittest_symmetry_sector_probe POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:unittest_symmetry_sector_probe>
+    $<TARGET_FILE_DIR:unittest_symmetry_sector_probe>/unittest_symmetry_spingc_probe${CMAKE_EXECUTABLE_SUFFIX})
+add_custom_target(unittest_symmetry_spingc_probe DEPENDS unittest_symmetry_sector_probe)

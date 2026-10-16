@@ -25,7 +25,7 @@ below, so keep the form "#define NAME number".
 */
 #define HPHI_VERSION_MAJOR 3
 #define HPHI_VERSION_MINOR 7
-#define HPHI_VERSION_PATCH 0
+#define HPHI_VERSION_PATCH 1
 
 const char *GetGitHash(void);
 

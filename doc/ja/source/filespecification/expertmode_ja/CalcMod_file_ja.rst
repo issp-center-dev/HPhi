@@ -125,6 +125,9 @@ CalcModファイル
    から選択することが出来ます。
    FullDiag計算では、全固有ベクトルが出力されます。MPI実行時も、
    各ファイルには分割されていない1本の固有ベクトルが格納されます。
+   ``TransSym`` 指定時のFullDiagは、全sector固有状態を同じファイル名で、
+   状態とMPIランクごとのsector checkpointとして保存します
+   （:ref:`Subsec:eigenvec` を参照）。
 
 -  ``InputEigenVec``
 
@@ -145,6 +148,16 @@ CalcModファイル
    2: リスタートベクトル入力あり、出力あり
    3: リスタートベクトル入力あり、出力なし
    から選択することが出来ます。
+
+   raw基底のTimeEvolutionでは、binary vectorのheaderに **次に実行するstep** を保存し、
+   途中保存と最終保存で同じ規約を使います。restartには全rankのstepが一致し、
+   ``[0, Lanczos_max)`` にあることが必要です。Hamiltonianと時刻列は前回と整合させてください。
+   ``ReStart=0`` は新しい初期状態として扱い、保存されたstepは使いません。
+   旧版の途中保存ファイルは完了したstepを保存していたため、restartに使う際にはheaderのstepを
+   1増やす必要があります。旧版の最終保存ファイルは既に次stepを保存していました。
+   raw最終vectorのファイル名は従来の ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` を維持します。
+   途中保存のファイル名は完了したstep番号ですが、headerは次stepです。
+   欠損・truncation・非有限値・非互換な入力は全rankで異常終了します。
 
 -  ``CalcSpec``
 
@@ -178,9 +191,16 @@ CalcModファイル
    から選択することが出来ます。
 
    | 注: ``Solver 3`` (ELPA) を複数MPIプロセスで使用する場合、ハミルトニアンは
-     分散形式で生成されるため、``OutputHam``/``InputHam`` の指定は起動時に
-     エラーとして拒否されます。ハミルトニアンの入出力が必要な場合は
-     1プロセスで実行するか、別の ``Solver`` を使用してください。
+     分散形式で生成されるため、``TransSym`` を指定しない通常のFullDiagでは
+     ``OutputHam``/``InputHam`` の指定は起動時にエラーとして拒否されます。
+     ハミルトニアンの入出力が必要な場合は1プロセスで実行するか、別の
+     ``Solver`` を使用してください。
+   | ``TransSym`` を指定したFullDiagでは、 ``OutputHam=1`` がsectorの行列を
+     識別情報付きのMatrix Market形式 ``##_ham_sector.mtx`` で出力して終了し、
+     ``InputHam=1`` がその行列を読み込んで対角化します。この形式はMPIランク数と
+     ``Solver`` （ELPAの複数ランクを含む）を変えて読み込めます。
+     :ref:`Subsec:ham` を参照してください。他の計算手法では ``TransSym`` と
+     併用できません。
 
 -  ``OutputExcitedVec``
 
@@ -474,6 +494,21 @@ CalcModファイル
      いました。stdout進捗行は、``Solver``/``ExpecMode`` の組合せに
      依らず、常にS2列を含む1プロセス (逐次) 実行と同じ形式になりました。
      これは ``ExpecMode`` の値によらない、意図的な修正です。
+
+
+SpinGCの対称性セクター指定
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``TransSym`` と ``CalcModel=4`` は、固定Szのないスピン1/2で
+``CalcType=0,1,2,3,4,5`` に対応します。基底状態計算はCG（3）を使います。
+FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）を使い、指定した相関と
+全固有状態（ ``OutputEigenVec=1`` ）を出力できます。MAGMA、ベクトル入力、
+Hamiltonian入出力、非serial ExpecModeは非対応です。
+CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
+どちらもFullDiagの固有状態を読み込めます。
+読込は新しい評価・時間列を開始する操作でありrestartではありません。
+全sector手法で ``ReStart`` は非対応です。機能表と実行可能なexpert入力例は
+:ref:`Subsec:TransSym` を参照してください。
 
 .. raw:: latex
 

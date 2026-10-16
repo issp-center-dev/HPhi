@@ -124,7 +124,7 @@ EOF
       printf "2Sz = 0\n"
     } >> stan.in
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 
@@ -144,7 +144,7 @@ ncond = 2
 Lanczos_max = 120
 initial_iv = 1
 EOF
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 
@@ -301,14 +301,14 @@ run_tj_case() {
   cd nbody
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   write_tj_nbody
-  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_nbody_energy.dat"
   cd ..
 
   cd legacy
   write_diag_transfer 0 0 -0.1900000000000000
   write_tj_interall
-  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_legacy_energy.dat"
   cd ..
 
@@ -329,7 +329,7 @@ run_kondo_case() {
   cd nbody
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   write_kondo_nbody
-  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_nbody_energy.dat"
   cd ..
 
@@ -337,7 +337,7 @@ run_kondo_case() {
   printf '        InterAll  interall.def\n' >> namelist.def
   write_diag_transfer 2 0 -0.1900000000000000
   write_kondo_interall
-  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_legacy_energy.dat"
   cd ..
 
@@ -357,13 +357,13 @@ run_tjn_case() {
   cd nbody
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   write_tjn_nbody
-  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_nbody_energy.dat"
   cd ..
 
   cd legacy
   append_tjn_transfer
-  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_legacy_energy.dat"
   cd ..
 
@@ -383,13 +383,13 @@ run_kondon_case() {
   cd nbody
   printf '   NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   write_kondon_nbody
-  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_nbody_energy.dat"
   cd ..
 
   cd legacy
   write_kondon_transfer
-  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   save_ground_energy "../${label}_legacy_energy.dat"
   cd ..
 

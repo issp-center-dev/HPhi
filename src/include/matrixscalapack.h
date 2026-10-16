@@ -41,7 +41,7 @@ long int numroc_(const long int *n, const long int *nb, const int *iproc,
 void pzheev_(char *jobz, char *uplo, const long int *n, double complex *a,
              const int *ia, const int *ja, int *desca, double *w,
              double complex *z, const int *iz, const int *jz, int *descz,
-             double complex *work, const long int *lwork, double complex *rwork,
+             double complex *work, const long int *lwork, double *rwork,
              const long int *lrwork, int *info );
 void pzgemr2d_(long int *m, long int *n,
                double complex *A, long int *ia, long int *ja, int *desca,

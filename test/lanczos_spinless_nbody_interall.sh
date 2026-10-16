@@ -52,7 +52,7 @@ NNBodyInterAll 3
 1 1 0 0 0 0.3700000000000000 -0.1100000000000000
 2 2 0 2 0 4 0 4 0 0.2300000000000000 0.0000000000000000
 EOF
-  run_hphi log_nbody.txt "${hphi}" -e namelist.def
+  run_hphi log_nbody.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   cp output/zvo_energy.dat "../${tag}_energy_nbody.dat"
   cd ..
 
@@ -76,7 +76,7 @@ NCoulombInter          1
 =============================================
 2 4 0.2300000000000000
 EOF
-  run_hphi log_legacy.txt "${hphi}" -e namelist.def
+  run_hphi log_legacy.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   cp output/zvo_energy.dat "../${tag}_energy_legacy.dat"
   cd ..
 

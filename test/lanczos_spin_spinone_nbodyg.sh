@@ -27,7 +27,7 @@ initial_iv = 1
 EOF
 
 rm -rf output
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyG  nbodyg.def\n' >> namelist.def
 
 cat > nbodyg.def <<EOF
@@ -43,7 +43,7 @@ NNBodyG 5
 2 0 2 0 1 0 2 0 1
 EOF
 
-run_hphi log_lanczos.txt "${hphi}" -e namelist.def
+run_hphi log_lanczos.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 test -f output/zvo_NBodyG.dat || { echo "zvo_NBodyG.dat was not generated"; exit 1; }
 
 awk 'NF >= 7 {count++} END{exit count == 5 ? 0 : 1}' output/zvo_NBodyG.dat || {

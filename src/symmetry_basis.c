@@ -11,6 +11,7 @@
 #include "symmetry_matvec_plan.h"
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_state_enumerator.h"
+#include "symmetry_kondo.h"
 #include "struct.h"
 #include "CalcTime.h"
 #include "wrapperMPI.h"
@@ -168,16 +169,72 @@ int SymmetryApplyToState(const struct DefineList *def,
   memset(result, 0, sizeof(*result));
   switch (def->iCalcModel) {
   case Spin:
+  case SpinGC:
     result->state = SymmetryApplyToSpinBits(state, def->SymTrans[op], def->Nsite);
     result->amplitude = 1.0;
     return 0;
   case SpinlessFermion:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 1U, result);
+  case Kondo:
+  case KondoNConserved:
+  case KondoGC: {
+    int local_sign;
+    if (SymmetryKondoPermutationSign(def, def->SymTrans[op], &local_sign) ||
+        apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result))
+      return -1;
+    result->amplitude *= local_sign;
+    return 0;
+  }
   case Hubbard:
+  case tJ:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);
   default:
     return -1;
   }
+}
+
+/* The owning runtime is prepared before parallel enumeration. Its lattice,
+ * group and LocSpn are fixed for the runtime lifetime (TE only replaces terms).
+ * Standalone/incomplete runtimes use the checked public action instead. */
+static int apply_runtime_symmetry_to_state(
+    const struct DefineList *def,
+    const struct SymmetryBasisRuntime *sym,
+    unsigned long int state,
+    unsigned int op,
+    struct SymmetryTransformResult *result)
+{
+  if (def == NULL || result == NULL || op >= def->NSymTrans) return -1;
+  if (sym == NULL || sym->kondo_local_sign == NULL ||
+      !IsSymmetryKondoModel(def->iCalcModel)) {
+    return SymmetryApplyToState(def, state, op, result);
+  }
+  memset(result, 0, sizeof(*result));
+  if (sym->nsite != def->Nsite || sym->group_order != def->NSymTrans)
+    return -1;
+  if (apply_fermion_site_permutation(
+          state, def->SymTrans[op], def->Nsite, 2U, result) != 0) return -1;
+  result->amplitude *= sym->kondo_local_sign[op];
+  return 0;
+}
+
+static int prepare_kondo_local_signs(const struct DefineList *def,
+                                     struct SymmetryBasisRuntime *sym)
+{
+  unsigned int g;
+  if (!IsSymmetryKondoModel(def->iCalcModel)) return 0;
+  if (def->NSymTrans == 0U || def->SymTrans == NULL ||
+      ValidateSymmetryKondoSpace(def) != 0) return -1;
+#if SIZE_MAX <= UINT_MAX
+  if (def->NSymTrans > SIZE_MAX / sizeof(*sym->kondo_local_sign)) return -1;
+#endif
+  sym->kondo_local_sign = (int *)malloc(
+      (size_t)def->NSymTrans * sizeof(*sym->kondo_local_sign));
+  if (sym->kondo_local_sign == NULL) return -1;
+  for (g = 0U; g < def->NSymTrans; ++g) {
+    if (SymmetryKondoPermutationSign(
+            def, def->SymTrans[g], &sym->kondo_local_sign[g]) != 0) return -1;
+  }
+  return 0;
 }
 
 static int same_perm(const int *a, const int *b, unsigned int nsite)
@@ -452,7 +509,7 @@ static int find_representative_state(const struct DefineList *def,
   if (op_rep_to_state != NULL) *op_rep_to_state = UINT_MAX;
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
+    if (apply_runtime_symmetry_to_state(def, sym, state, g, &moved) != 0) return -1;
     if (transform_calls != NULL) (*transform_calls)++;
     if (moved.state < *rep) {
       *rep = moved.state;
@@ -470,6 +527,7 @@ static int find_representative_state(const struct DefineList *def,
 }
 
 static int analyze_basis_candidate(const struct DefineList *def,
+                                   const struct SymmetryBasisRuntime *sym,
                                    unsigned long int state,
                                    int *is_representative,
                                    unsigned int *orbit_size,
@@ -483,7 +541,7 @@ static int analyze_basis_candidate(const struct DefineList *def,
   *stabilizer_sum = 0.0;
   for (g = 0; g < def->NSymTrans; g++) {
     struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(def, state, g, &moved) != 0) return -1;
+    if (apply_runtime_symmetry_to_state(def, sym, state, g, &moved) != 0) return -1;
     if (transform_calls != NULL) (*transform_calls)++;
     if (moved.state < state) return 0;
     if (moved.state == state) {
@@ -763,7 +821,7 @@ int BuildRankLocalSymmetryBasisRun(
         collector->error = 1;
         continue;
       }
-      if (analyze_basis_candidate(&X->Def, state, &is_representative,
+      if (analyze_basis_candidate(&X->Def, sym, state, &is_representative,
                                   &orbit_size, &stabilizer_size,
                                   &stabilizer_sum,
                                   &collector->transform_calls) != 0) {
@@ -1000,6 +1058,9 @@ int BuildSymmetryBasisForLayout(
   sym->nsite = X->Def.Nsite;
   sym->group_order = X->Def.NSymTrans;
   sym->full_dim = full_dim;
+  local_error = prepare_kondo_local_signs(&X->Def, sym) != 0 ? 1 : 0;
+  global_error = SumMPI_i(local_error);
+  if (global_error != 0) goto fail;
   local_error = build_group_inverse(&X->Def, sym) != 0 ? 1 : 0;
   global_error = SumMPI_i(local_error);
   if (global_error != 0) goto fail;
@@ -1140,8 +1201,9 @@ int SymmetryFindRepresentative(
       op_rep_to_state < X->Def.NSymTrans) {
     struct SymmetryTransformResult moved;
     double complex phase;
-    if (SymmetryApplyToState(&X->Def, rep_state, op_rep_to_state,
-                             &moved) != 0 || moved.state != state) {
+    if (apply_runtime_symmetry_to_state(
+            &X->Def, X->Sym, rep_state, op_rep_to_state,
+            &moved) != 0 || moved.state != state) {
       return -1;
     }
     phase = X->Def.SymTransChar[op_rep_to_state] * moved.amplitude;
@@ -1170,7 +1232,8 @@ int SymmetryFindRepresentative(
 
   for (g = 0; g < X->Def.NSymTrans; g++) {
     struct SymmetryTransformResult moved;
-    if (SymmetryApplyToState(&X->Def, rep_state, g, &moved) != 0) return -1;
+    if (apply_runtime_symmetry_to_state(
+            &X->Def, X->Sym, rep_state, g, &moved) != 0) return -1;
     if (moved.state == state) {
       result->rep_state = rep_state;
       result->op_rep_to_state = g;
@@ -1214,6 +1277,19 @@ int SymmetryCanonicalizeSpinState(const struct BindStruct *X,
                                   struct SymmetryCanonicalResult *result)
 {
   return SymmetryCanonicalizeState(X, state, result);
+}
+
+int ActivateSymmetryFullDiagDimension(struct BindStruct *X)
+{
+  if (X == NULL || X->Def.iCalcType != FullDiag || X->Sym == NULL ||
+      X->Sym->enabled != TRUE || X->Sym->basis_layout != SYMMETRY_BASIS_REPLICATED ||
+      X->Sym->basis == NULL || X->Sym->dim == 0 || X->Sym->dim > INT_MAX ||
+      X->Sym->matvec_plan != NULL) return -1;
+  if (SymmetryBlockRange(X->Sym->dim, myrank, nproc,
+                         &X->Sym->local_offset, &X->Sym->local_dim) != 0) return -1;
+  X->Check.idim_max = X->Sym->dim;
+  X->Check.idim_maxMPI = X->Sym->dim;
+  return 0;
 }
 
 int ActivateSymmetryBasisDimension(struct BindStruct *X)
@@ -1506,7 +1582,8 @@ int ValidateSymmetrySectorOptions(const struct BindStruct *X)
 {
   if (X->Def.iFlgSymmetryBasis == FALSE) return 0;
   if (X->Sym == NULL || X->Sym->enabled != TRUE) return 0;
-  if (X->Def.k_exct > X->Sym->dim) {
+  if ((X->Def.iCalcType == CG || X->Def.iCalcType == Lanczos) &&
+      X->Def.k_exct > X->Sym->dim) {
     fprintf(stdoutMPI,
             "Error: TransSym sector dimension %lu is smaller than exct=%u.\n",
             X->Sym->dim, X->Def.k_exct);
@@ -1526,6 +1603,7 @@ void FreeSymmetryBasis(struct SymmetryBasisRuntime *sym)
   free(sym->rep_hash_keys);
   free(sym->rep_hash_values);
   free(sym->group_inverse);
+  free(sym->kondo_local_sign);
   free(sym->mpi_recvcounts);
   free(sym->mpi_displs);
   free(sym->mpi_full_v1);

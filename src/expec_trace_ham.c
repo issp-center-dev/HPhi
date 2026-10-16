@@ -243,7 +243,7 @@ static void merge_sort_seg(long int *col, double complex *v, long int len,
  *  HubbardGC uses the GC (bare (k-1)) helper; Hubbard/tJ/tJGC/Kondo/KondoGC
  *  (and the N-conserved variants) use the canonical list_1 helper.
  * ------------------------------------------------------------------ */
-static void trace_fill_diag(struct BindStruct *X, long int n, int n_diag,
+static int trace_fill_diag(struct BindStruct *X, long int n, int n_diag,
                             double *diag[3]) {
   long int i;
   if (n_diag == 3) {
@@ -251,7 +251,7 @@ static void trace_fill_diag(struct BindStruct *X, long int n, int n_diag,
     double D, N, S;
     for (i = 0; i < n; i++) {
       if (gc) EnergyFlctCoeff_HubbardGC(X, i + 1, &D, &N, &S);
-      else    EnergyFlctCoeff_Hubbard(X, i + 1, &D, &N, &S);
+      else if (EnergyFlctCoeff_Hubbard(X, i + 1, &D, &N, &S) != 0) return -1;
       diag[0][i] = D;
       diag[1][i] = N;
       diag[2][i] = S;
@@ -264,6 +264,7 @@ static void trace_fill_diag(struct BindStruct *X, long int n, int n_diag,
       diag[0][i] = S;
     }
   }
+  return 0;
 }
 
 /* Restore the saved sink hook and mode; used on every exit path. */
@@ -457,7 +458,14 @@ int TraceHamCollect(struct BindStruct *X, size_t cap_bytes,
   assert(g_rowptr[n] == w);
 
   /* Fill the energy-family diagonal coefficient arrays (Task 3). */
-  trace_fill_diag(X, n, n_diag, diag);
+  if (trace_fill_diag(X, n, n_diag, diag) != 0) {
+    free(g_rowptr); g_rowptr = NULL;
+    free(g_colidx); g_colidx = NULL;
+    free(g_val); g_val = NULL;
+    free(y);
+    for (di = 0; di < 3; di++) free(diag[di]);
+    return 0;
+  }
 
   csr->n = n;
   csr->nnz = w;

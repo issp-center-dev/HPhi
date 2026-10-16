@@ -39,6 +39,7 @@
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
 #include "symmetry_basis_io.h"
+#include "symmetry_kondo.h"
 #ifdef MPI
 #include <mpi.h>
 #endif
@@ -103,6 +104,7 @@ int CheckInterAllCondition(
         int iCalcModel,
         int Nsite,
         int iFlgGeneralSpin,
+        int iFlgSymmetryBasis,
         int *iLocSpin,
         int isite1, int isigma1,
         int isite2, int isigma2,
@@ -545,19 +547,6 @@ int ReadcalcmodFile(
     return (-1);
   }
 
-  /* SpinlessFermion / SpinlessFermionGC are not supported for FullDiag in this
-     version: makeHam has no spinless branch, so the hopping (Trans) term is
-     silently dropped from the FullDiag Hamiltonian, and the FullDiag phys
-     output never populates the particle number for these models. Both make the
-     published results incorrect, so reject the combination at startup rather
-     than compute (and write out) wrong physics. Full support is tracked
-     separately. */
-  if (X->iCalcType == FullDiag &&
-      (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC)) {
-    fprintf(stdoutMPI, cErrSpinlessFullDiag, defname);
-    return (-1);
-  }
-
   /* CalcSpectrumByFullDiag() (src/CalcSpectrumByFullDiag.c) reads eigenvectors
      out of L_vec after calling lapack_diag(). SOLVER_ELPA never fills L_vec
      (eigenvectors stay distributed in Z_vec; see lapack_diag_elpa()), and
@@ -572,19 +561,6 @@ int ReadcalcmodFile(
       fprintf(stdoutMPI, cErrSpectrumFullDiagSolver, defname, X->iSolver);
       return (-1);
     }
-  }
-
-  /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
-     as a distributed block-cyclic panel rather than the full replicated
-     matrix. OutputHam/InputHam need the full replicated matrix, so that
-     combination must be rejected at startup. Serial (nproc==1) runs are
-     unaffected: the replicated matrix is still available there. Scoped to
-     FullDiag: the panel path only exists there, and OutputHam/InputHam with
-     other calc types must keep their previous (ignored) behavior. */
-  if (X->iCalcType == FullDiag && X->iSolver == SOLVER_ELPA && nproc > 1
-      && (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
-    fprintf(stdoutMPI, cErrElpaHamIO, defname);
-    return (-1);
   }
 
   /* ExpecMode selects the observable-evaluation kernel for FullDiag
@@ -921,6 +897,11 @@ int ReadDefFileNInt(
                 iReadNCond = TRUE;
               }
               else if (CheckWords(ctmp, "Lanczos_max") == 0) {
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: Lanczos_max must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Lanczos_max = (int) dtmp;
               }
               else if (CheckWords(ctmp, "initial_iv") == 0) {
@@ -948,9 +929,19 @@ int ReadDefFileNInt(
                 X->Param.TimeSlice=dtmp;
               }
               else if(strcmp(ctmp, "ExpandCoef")==0){
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: ExpandCoef must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Param.ExpandCoef=(int)dtmp;
               }
               else if(strcmp(ctmp, "OutputInterval")==0){
+                if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: OutputInterval must be a positive integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
                 X->Param.OutputInterval=(int)dtmp;
               }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {
@@ -1311,6 +1302,29 @@ int ReadDefFileNInt(
     fclose(fp);
   }
 
+  /* TransSym is read after CalcMod. Only the sector-specific dense builder
+     supports canonical spinless FullDiag; the raw makeHam path still does not. */
+  if (X->iCalcType == FullDiag &&
+      (X->iCalcModel == SpinlessFermionGC ||
+       (X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis == FALSE))) {
+    fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
+    return -1;
+  }
+
+  /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
+     as a distributed column panel rather than the full replicated matrix.
+     The raw OutputHam/InputHam need the full replicated matrix, so that
+     combination is rejected at startup; the TransSym sector reader/writer
+     works on the panel. Checked after TransSym is known. Serial (nproc==1)
+     runs are unaffected, and other calc types keep their previous (ignored)
+     behavior. */
+  if (X->iCalcType == FullDiag && X->iSolver == SOLVER_ELPA && nproc > 1 &&
+      X->iFlgSymmetryBasis == FALSE &&
+      (X->iOutputHam == TRUE || X->iInputHam == TRUE)) {
+    fprintf(stdoutMPI, cErrElpaHamIO, cFileNameListFile[KWCalcMod]);
+    return (-1);
+  }
+
   if (iReadNup != iReadNdown) {
     fprintf(stdoutMPI, "Error in %s\n Nup and Ndown must be specified together.\n",
             cFileNameListFile[KWModPara]);
@@ -1334,10 +1348,18 @@ int ReadDefFileNInt(
 
   //Sz, Ncond
   switch(X->iCalcModel){
+  case Kondo:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw Kondo normalization below. */
+    /* fall through */
   case Spin:
   case Hubbard:
   case tJ:
-  case Kondo: 
   case SpinlessFermion:
    
     if(iReadNCond==TRUE){
@@ -1429,8 +1451,23 @@ int ReadDefFileNInt(
       }
     }
     break;
-  case SpinGC:
   case KondoGC:
+    if (X->iFlgSymmetryBasis == TRUE) {
+      if (NormalizeSymmetryKondoQuantumNumbers(
+              X, iReadNCond, X->iFlgSzConserved, iReadNup, iReadNdown) != 0)
+        return -1;
+      break;
+    }
+    /* Preserve the raw GC warning below. */
+    /* fall through */
+  case SpinGC:
+    if (X->iFlgSymmetryBasis &&
+        (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
+      fprintf(stdoutMPI, "Error: SpinGC TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n");
+      return -1;
+    }
+    /* Preserve the raw GC warning below. */
+    /* fall through */
   case HubbardGC:
   case tJGC:
   case SpinlessFermionGC:  
@@ -1920,7 +1957,8 @@ int ReadDefFileIdxPara(
                  &dvalue_im
           );
 
-          if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
+          if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin,
+                                     X->iFlgSymmetryBasis, X->LocSpn,
                                      isite1, isigma1, isite2, isigma2,
                                      isite3, isigma3, isite4, isigma4) != 0) {
             fclose(fp);
@@ -1994,7 +2032,11 @@ int ReadDefFileIdxPara(
                 return (-1);
             }
 
-            if(ArrangeInterAllOffDiagonal(
+            /* The symmetry term iterator applies spinless products directly.
+             * The legacy raw spinless matvec has no InterAll off-diagonal
+             * path, so retain its existing rejection outside TransSym. */
+            if (!(X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis) &&
+                ArrangeInterAllOffDiagonal(
                     X->NInterAll_OffDiagonal,
                     X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
                     X->iCalcModel
@@ -2564,7 +2606,8 @@ int ReadDefFileIdxPara(
                      &dvalue_re,
                      &dvalue_im
               );
-              if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin, X->LocSpn,
+              if (CheckInterAllCondition(X->iCalcModel, X->Nsite, X->iFlgGeneralSpin,
+                                     X->iFlgSymmetryBasis, X->LocSpn,
                                          isite1, isigma1, isite2, isigma2,
                                          isite3, isigma3, isite4, isigma4) != 0) {
                 fclose(fp);
@@ -2624,7 +2667,8 @@ int ReadDefFileIdxPara(
                   return (-1);
               }
 
-                if(ArrangeInterAllOffDiagonal(
+                if (!(X->iFlgSymmetryBasis && X->iCalcModel == SpinlessFermion) &&
+                   ArrangeInterAllOffDiagonal(
                         X->NTEInterAllOffDiagonal[idx],
                         X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
                         X->iCalcModel
@@ -4102,6 +4146,7 @@ int GetFileNameByKW(
  * @param[in] iCalcModel Target Model defined in CalcMod file (ex. Spin, SpinGC etc.).
  * @param[in] Nsite  A total number of site.
  * @param[in] iFlgGeneralSpin  Flag for general spin (TRUE: General Spin, FALSE: Spin-1/2).
+ * @param[in] iFlgSymmetryBasis Whether original rows target a TransSym sector.
  * @param[in] iLocInfo An array with the value of S at each site
  * @param[in] isite1 a site number on the site A.
  * @param[in] isigma1 a spin index on the site A.
@@ -4120,6 +4165,7 @@ int CheckInterAllCondition(
         int iCalcModel,
         int Nsite,
         int iFlgGeneralSpin,
+        int iFlgSymmetryBasis,
         int *iLocInfo,
         int isite1, int isigma1,
         int isite2, int isigma2,
@@ -4143,8 +4189,10 @@ int CheckInterAllCondition(
       return -1;
     }
   }
-  //else if(iCalcModel == Kondo){
-  else if(iCalcModel == Kondo || iCalcModel == KondoNConserved){
+  /* Check original GC sector rows before diagonal extraction and Hermitian
+   * pairing reuse InterAll as scratch storage. Raw GC keeps its old scope. */
+  else if(iCalcModel == Kondo || iCalcModel == KondoNConserved ||
+          (iCalcModel == KondoGC && iFlgSymmetryBasis == TRUE)){
     if(CheckFormatForKondoInt(isite1, isite2, isite3, isite4, iLocInfo)!=0){
       return -1;
     }

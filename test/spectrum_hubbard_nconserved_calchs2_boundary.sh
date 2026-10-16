@@ -29,7 +29,7 @@ nelec = ${nelec}
 EigenVecIO = "out"
 EOF
 
-  ${HPHI} -s stan_gs.in > log_gs.txt 2>&1
+  ${MPIRUNFC} ${HPHI} -s stan_gs.in > log_gs.txt 2>&1
 
   cat > calcmod_cg.def <<EOF
 CalcType   3
@@ -105,7 +105,7 @@ EOF
      SpectrumVec  zvo_eigenvec_0
 EOF
 
-  ${HPHI} -e namelist_cg.def > log_spectrum.txt 2>&1
+  ${MPIRUNFC} ${HPHI} -e namelist_cg.def > log_spectrum.txt 2>&1
   test -s output/zvo_DynamicalGreen.dat
   cd ..
 }

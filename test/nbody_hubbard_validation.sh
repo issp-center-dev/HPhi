@@ -18,7 +18,7 @@ expect_fail() {
   pattern="$2"
   cd "${dir}"
   set +e
-  "${hphi}" -e namelist.def > log.txt 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > log.txt 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then
@@ -75,7 +75,7 @@ EOF
   else
     printf "nelec = 4\n2Sz = 0\n" >> stan.in
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
   printf '    NBodyG  nbodyg.def\n' >> namelist.def
   cd ..
@@ -244,10 +244,10 @@ NNBodyG 1
 EOF
 
 cd accept
-run_hphi log_accept.txt "${hphi}" -e namelist.def
+run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 cd accept_ncond
-run_hphi log_accept_ncond.txt "${hphi}" -e namelist.def
+run_hphi log_accept_ncond.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
 check_nbodyg_output accept_ncond
 

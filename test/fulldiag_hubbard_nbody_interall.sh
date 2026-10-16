@@ -39,7 +39,7 @@ initial_iv = 1
 EOF
 
 rm -rf output
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 
 cat > nbodyinterall.def <<EOF
@@ -53,14 +53,14 @@ NNBodyInterAll 3
 2 1 1 1 1 0 0 3 0 0.2500000000000000 0.0000000000000000
 EOF
 
-run_hphi log_lanczos.txt "${hphi}" -e namelist.def
+run_hphi log_lanczos.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 e_lanczos=$(awk '/^Energy/{print $2; exit}' output/zvo_energy.dat)
 
 sed -e 's/^CalcType.*/CalcType   2/' -e 's/^OutputHam.*/OutputHam   0/' calcmod.def > calcmod.fulldiag
 mv calcmod.def calcmod.lanczos
 mv calcmod.fulldiag calcmod.def
 rm -rf output
-run_hphi log_fulldiag.txt "${hphi}" -e namelist.def
+run_hphi log_fulldiag.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 if [ -f output/zvo_phys.dat ]; then
   e_fulldiag=$(awk 'NR==2{print $1; exit}' output/zvo_phys.dat)
 else
@@ -72,7 +72,7 @@ compare_scalar "Hubbard NBodyInterAll Lanczos/FullDiag energy mismatch" "${e_lan
 sed -e 's/^OutputHam.*/OutputHam   1/' calcmod.def > calcmod.outputham
 mv calcmod.outputham calcmod.def
 rm -rf output
-run_hphi log_outputham.txt "${hphi}" -e namelist.def
+run_hphi log_outputham.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 
 test -f output/zvo_Ham.dat || { echo "zvo_Ham.dat was not generated"; exit 1; }
 awk 'NR>2 && $1 != $2 {found=1} END{exit found ? 0 : 1}' output/zvo_Ham.dat || {
@@ -103,7 +103,7 @@ initial_iv = 1
 EOF
 
 rm -rf output
-run_hphi log_ncond_sdry.txt "${hphi}" -sdry stan_ncond.in
+run_hphi log_ncond_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan_ncond.in
 printf '    NBodyInterAll  nbodyinterall.def\n' >> namelist.def
 cat > nbodyinterall.def <<EOF
 ========================
@@ -115,14 +115,14 @@ NNBodyInterAll 2
 2 1 0 1 1 0 1 0 0 0.1700000000000000 -0.0300000000000000
 EOF
 
-run_hphi log_ncond_lanczos.txt "${hphi}" -e namelist.def
+run_hphi log_ncond_lanczos.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 e_ncond_lanczos=$(awk '/^Energy/{print $2; exit}' output/zvo_energy.dat)
 
 sed -e 's/^CalcType.*/CalcType   2/' -e 's/^OutputHam.*/OutputHam   0/' calcmod.def > calcmod.ncond.fulldiag
 mv calcmod.def calcmod.ncond.lanczos
 mv calcmod.ncond.fulldiag calcmod.def
 rm -rf output
-run_hphi log_ncond_fulldiag.txt "${hphi}" -e namelist.def
+run_hphi log_ncond_fulldiag.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 if [ -f output/zvo_phys.dat ]; then
   e_ncond_fulldiag=$(awk 'NR==2{print $1; exit}' output/zvo_phys.dat)
 else

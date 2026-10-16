@@ -18,7 +18,7 @@ expect_fail() {
   pattern="$2"
   cd "${dir}"
   set +e
-  "${hphi}" -e namelist.def > log.txt 2>&1
+  ${MPIRUNFC} "${hphi}" -e namelist.def > log.txt 2>&1
   rc=$?
   set -e
   if [ "${rc}" -eq 0 ]; then
@@ -61,7 +61,7 @@ Lanczos_max = 50
 initial_iv = 1
 EOF
   fi
-  run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+  run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
   cd ..
 }
 

@@ -3,7 +3,7 @@
 mkdir -p spinless_onebody_sigma_validation/
 cd spinless_onebody_sigma_validation
 
-python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -m "SpinlessFermion" -s 4
+python3 "$1/test/testSpinlessCalc.py" -p "../../src/HPhi" -mpi "${MPIRUNFC}" -m "SpinlessFermion" -s 4
 
 cat > greenone.def <<'EODEF'
 ===============================
@@ -15,7 +15,7 @@ NCisAjs         1
 EODEF
 
 set +e
-../../src/HPhi -e namelist.def > run.log 2>&1
+${MPIRUNFC} ../../src/HPhi -e namelist.def > run.log 2>&1
 rc=$?
 set -e
 

@@ -17,6 +17,13 @@
 #include "input.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include "makeHamSym.h"
+#include "symmetry_fulldiag.h"
+#include "symmetry_hamiltonian_io.h"
+#include "symmetry_sector.h"
+#ifdef _SCALAPACK
+#include "matrixscalapack.h"
+#endif
 
  /// \brief Parent function for FullDiag mode
  /// \param X [in,out] Struct to get information about file header names, dimension of hirbert space, calc type, physical quantities.
@@ -28,26 +35,47 @@ int CalcByFullDiag(
        )
 {
   int iret=0;
+  struct SymmetryHamiltonianInfo info;
+  unsigned int outputs = SymmetryFullDiagOutputMask(&(X->Bind.Def));
+  /* Eigenvalue-only sector input with the generated H keeps the original
+   * path: no matrix preparation, state loop or completion record. */
+  int extended = X->Bind.Def.iFlgSymmetryBasis &&
+                 (outputs != SYM_FD_EIGENVALUES || X->Bind.Def.iInputHam);
+  memset(&info, 0, sizeof(info));
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_Start);
   StartTimer(5100);
   if(X->Bind.Def.iInputHam==FALSE){
-    makeHam(&(X->Bind));
+    iret = X->Bind.Def.iFlgSymmetryBasis
+        ? makeHamSym(&(X->Bind)) : makeHam(&(X->Bind));
   }
   else if(X->Bind.Def.iInputHam==TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_Start);
-    inputHam(&(X->Bind));
+    /* The sector reader ends with Prepare(X, 1, info). */
+    iret = X->Bind.Def.iFlgSymmetryBasis
+        ? InputSymmetryHamiltonian(&(X->Bind), &info) : inputHam(&(X->Bind));
     fprintf(stdoutMPI, "%s", cLogFullDiag_InputHam_End);
   }
   StopTimer(5100);
   fprintf(stdoutMPI, "%s", cLogFullDiag_SetHam_End);
-  if(iret != 0) return FALSE;
+  if(SumMPI_i(iret != 0) != 0) return FALSE;
+  /* Canonicalize and hash the matrix the solver receives; ELPA consumes the
+   * column panel during diagonalization. */
+  if (!X->Bind.Def.iInputHam && extended &&
+      PrepareSymmetryHamiltonian(&(X->Bind), 0, &info) != 0) return FALSE;
 
 
   if(X->Bind.Def.iOutputHam == TRUE){
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_Start);
-    StartTimer(5500);
-    iret=outputHam(&(X->Bind));
-    StopTimer(5500);
+    if (X->Bind.Def.iFlgSymmetryBasis) {
+      /* The prepared matrix is the export; no diagonalization follows. */
+      iret = OutputSymmetryHamiltonian(&(X->Bind), &info);
+      if (iret == 0)
+        iret = WriteSymmetryFullDiagCompletion(&(X->Bind), 0, info.matrix_digest);
+    } else {
+      StartTimer(5500);
+      iret=outputHam(&(X->Bind));
+      StopTimer(5500);
+    }
     fprintf(stdoutMPI, "%s", cLogFullDiag_OutputHam_End);
     if(iret != 0) return FALSE;
     return TRUE;
@@ -60,6 +88,23 @@ int CalcByFullDiag(
   fprintf(stdoutMPI, "%s", cLogFullDiag_End);
   if(iret != 0) return FALSE;
 
+  if (X->Bind.Def.iFlgSymmetryBasis) {
+    /* No raw-basis observables run on a sector basis. The distributed
+     * eigenvectors stay alive through the state loop and are released here
+     * on every path. */
+    iret = (outputs & (SYM_FD_CORRELATIONS | SYM_FD_EIGENVECTORS))
+         ? ProcessSymmetryFullDiagStates(&(X->Bind), &info) : 0;
+#ifdef _SCALAPACK
+    FreeDistributedEigenvectors(&Z_vec, descZ_vec, &use_scalapack);
+#endif
+    if (iret == 0 && extended)
+      iret = WriteSymmetryFullDiagCompletion(&(X->Bind), info.from_file, info.matrix_digest);
+    if (iret != 0) return FALSE;
+    fprintf(stdoutMPI, extended
+            ? "TransSym FullDiag: sector eigenvalues and requested state outputs written.\n"
+            : "TransSym FullDiag: sector eigenvalues written; eigenstate observables are not requested.\n");
+    return TRUE;
+  }
   X->Bind.Def.St=0;
   fprintf(stdoutMPI, "%s", cLogFullDiag_ExpecValue_Start);
   StartTimer(5300);

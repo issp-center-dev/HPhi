@@ -31,6 +31,8 @@
 #include "green_output.h"
 #include "green_row_format.h"
 #include "rearray_interactions.h"
+#include "symmetry_correlation.h"
+#include "symmetry_mpi_exchange.h"
 
 /**
  * @file   expec_cisajscktaltdc.c
@@ -56,6 +58,86 @@ int expec_cisajscktalt_SpinGeneral(struct BindStruct *X,double complex *vec, FIL
 int expec_cisajscktalt_SpinGC(struct BindStruct *X,double complex *vec, FILE **_fp,FILE **_fp_2,FILE **_fp_3,FILE **_fp_4);
 int expec_cisajscktalt_SpinGCHalf(struct BindStruct *X,double complex *vec, FILE **_fp);
 int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, FILE **_fp);
+
+static void write_symmetry_green_row(FILE *fp, struct BindStruct *X,
+                                     const int *row, unsigned int factors,
+                                     double complex value)
+{
+  unsigned int k, nint = 4U * factors;
+  GreenOutputWriteIndexPrefix(fp, X);
+  for (k = 0; k < nint; ++k) {
+    /* Preserve the legacy fixed-body raw layout, including its grouping
+     * spaces before factors four and five. */
+    if ((factors >= 4U && k == 12U) || (factors >= 6U && k == 16U)) fputc(' ', fp);
+    fprintf(fp, " %4ld", (long)row[k]);
+  }
+  if ((factors == 2U && X->Def.iCalcModel == Spin) || factors >= 3U)
+    fprintf(fp, " %.10lf %.10lf \n", creal(value), cimag(value));
+  else
+    fprintf(fp, " %.10lf %.10lf\n", creal(value), cimag(value));
+}
+
+static int expec_cisajscktalt_Symmetry(struct BindStruct *X,
+                                       double complex *vec,
+                                       FILE **fp2, FILE **fp3,
+                                       FILE **fp4, FILE **fp6)
+{
+  struct CorrelationKind {
+    int **rows;
+    unsigned int count;
+    unsigned int factors;
+    FILE *fp;
+  } kinds[4] = {
+    { X->Def.CisAjtCkuAlvDC, X->Def.NCisAjtCkuAlvDC, 2U, *fp2 },
+    { X->Def.TBody, X->Def.NTBody, 3U, *fp3 },
+    { X->Def.FBody, X->Def.NFBody, 4U, *fp4 },
+    { X->Def.SBody, X->Def.NSBody, 6U, *fp6 }
+  };
+  size_t total = 0, ints = 0, n = 0, slot = 0, off = 0;
+  unsigned int kind, i;
+  int *index = NULL;
+  long *map = NULL;
+  struct SymmetryCorrelationOperator *ops = NULL;
+  double complex *values = NULL;
+  int status = -1, local_error;
+  for (kind = 0; kind < 4U; ++kind) {
+    total += kinds[kind].count;
+    ints += (size_t)kinds[kind].count * 4U * kinds[kind].factors;
+  }
+  index = (int *)malloc((ints + 4U) * sizeof(*index));
+  map = (long *)malloc((total + 1U) * sizeof(*map));
+  ops = (struct SymmetryCorrelationOperator *)calloc(total + 1U, sizeof(*ops));
+  values = (double complex *)calloc(total + 1U, sizeof(*values));
+  local_error = index == NULL || map == NULL || ops == NULL || values == NULL;
+  if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), local_error) != 0)
+    goto done;
+  for (kind = 0; kind < 4U; ++kind) {
+    for (i = 0; i < kinds[kind].count; ++i, ++slot) {
+      const int *row = kinds[kind].rows[i];
+      unsigned int len = 4U * kinds[kind].factors;
+      memcpy(index + off, row, len * sizeof(*index));
+      ops[n].factors = kinds[kind].factors;
+      ops[n].index = index + off;
+      map[slot] = (long)n++;
+      off += len;
+    }
+  }
+  if (n > 0U && SymmetryCorrelationExpectation(X, vec, ops, n, values) != 0)
+    goto done;
+  slot = 0;
+  for (kind = 0; kind < 4U; ++kind)
+    for (i = 0; i < kinds[kind].count; ++i, ++slot)
+      write_symmetry_green_row(kinds[kind].fp, X, kinds[kind].rows[i],
+                               kinds[kind].factors,
+                               map[slot] >= 0L ? values[map[slot]] : 0.0);
+  status = 0;
+done:
+  free(index);
+  free(map);
+  free(ops);
+  free(values);
+  return status;
+}
 
 /**
  * @brief Compute two-body Green's functions <psi| c†_i c_j c†_k c_l |psi>
@@ -97,6 +179,33 @@ int expec_cisajscktalt_SpinGCGeneral(struct BindStruct *X,double complex *vec, F
  * @author Takahiro Misawa (The University of Tokyo)
  * @author Kazuyoshi Yoshimi (The University of Tokyo)
  */
+/* Opens one Green output; for a sector basis every rank agrees on the
+ * rank-0 open result before any collective. */
+static int open_green_file(struct BindStruct *X, GreenOutputKind kind,
+                           const char *name, FILE **fp)
+{
+  int failed = GreenOutputKindUsesAggregate(X, kind)
+      ? GreenOutputOpenAggregate(X, kind, fp) != 0
+      : childfopenMPI(name, "w", fp) != 0;
+  if (GreenOutputAgreeSectorError(X, failed) == 0) return 0;
+  if (*fp != NULL) fclose(*fp);
+  *fp = NULL;
+  if (X->Def.iFlgSymmetryBasis == TRUE)
+    GreenOutputReportSectorFailure(X, kind, name, "open");
+  return -1;
+}
+
+static int close_green_file(struct BindStruct *X, GreenOutputKind kind,
+                            const char *name, FILE *fp)
+{
+  int failed = GreenOutputKindUsesAggregate(X, kind)
+      ? GreenOutputCloseAggregate(kind, fp) != 0
+      : GreenOutputCloseChecked(fp) != 0;
+  if (failed && X->Def.iFlgSymmetryBasis == TRUE)
+    GreenOutputReportSectorFailure(X, kind, name, "close");
+  return failed;
+}
+
 int expec_cisajscktaltdc
 (
  struct BindStruct *X,
@@ -104,13 +213,14 @@ int expec_cisajscktaltdc
  )
 {
 
-  FILE *fp,*fp_2,*fp_3,*fp_4;
+  FILE *fp = NULL, *fp_2 = NULL, *fp_3 = NULL, *fp_4 = NULL;
   char sdt[D_FileNameMax],sdt_2[D_FileNameMax],sdt_3[D_FileNameMax],sdt_4[D_FileNameMax],*tmp_char;
   long unsigned int irght,ilft,ihfbit;
 
   //For TPQ
   int step=0;
   int rand_i=0;
+  int sector_status = 0;
 
   if(X->Def.NCisAjtCkuAlvDC < 1 && X->Def.NTBody < 1 && X->Def.NFBody < 1 && X->Def.NSBody < 1) return 0;
   X->Large.mode=M_CORR;
@@ -173,46 +283,42 @@ int expec_cisajscktaltdc
             "Error: ThreeBodyG/FourBodyG/SixBodyG for canonical Spin is not supported. Use SpinGC or remove the N-body Green function request.\n");
     return -1;
   }
-  if(X->Def.NCisAjtCkuAlvDC>0){
-    // If the number of two-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputTwoBody, &fp) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
-    }
-  }
+  /* Files of unrequested families are not opened; their pointers alias fp.
+   * On a failed open, close only the files this rank opened before. */
+  if(X->Def.NCisAjtCkuAlvDC>0 &&
+     open_green_file(X, GreenOutputTwoBody, sdt, &fp) != 0) return -1;
   if(X->Def.NTBody>0){
-    // If the number of three-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputThreeBody, &fp_2) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_2, "w", &fp_2) != 0) return -1;
+    if (open_green_file(X, GreenOutputThreeBody, sdt_2, &fp_2) != 0) {
+      if (fp != NULL) fclose(fp);
+      return -1;
     }
   }else{
     fp_2 = fp;
   }
   if(X->Def.NFBody>0){
-    // If the number of four-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputFourBody, &fp_3) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_3, "w", &fp_3) != 0) return -1;
+    if (open_green_file(X, GreenOutputFourBody, sdt_3, &fp_3) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.NTBody>0) fclose(fp_2);
+      return -1;
     }
   }else{
     fp_3 = fp;
   }
   if(X->Def.NSBody>0){
-    // If the number of six-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
-      if (GreenOutputOpenAggregate(X, GreenOutputSixBody, &fp_4) != 0) return -1;
-    } else {
-      if (childfopenMPI(sdt_4, "w", &fp_4) != 0) return -1;
+    if (open_green_file(X, GreenOutputSixBody, sdt_4, &fp_4) != 0) {
+      if (fp != NULL) fclose(fp);
+      if (X->Def.NTBody>0) fclose(fp_2);
+      if (X->Def.NFBody>0) fclose(fp_3);
+      return -1;
     }
   }else{
     fp_4 = fp;
   }
 
-  switch(X->Def.iCalcModel){
+  if (X->Def.iFlgSymmetryBasis == TRUE) {
+    sector_status = expec_cisajscktalt_Symmetry(
+        X, vec, &fp, &fp_2, &fp_3, &fp_4);
+  } else switch(X->Def.iCalcModel){
   case HubbardGC:
       if(expec_cisajscktalt_HubbardGC(X, vec, &fp)!=0){
           return -1;
@@ -503,38 +609,22 @@ int expec_cisajscktaltdc
     return -1;
   }
   
-  if(X->Def.NCisAjtCkuAlvDC>0){
-    // If the number of two-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputTwoBody)) {
-      GreenOutputCloseAggregate(GreenOutputTwoBody, fp);
-    } else {
-      fclose(fp);
-    }
+  {
+    int close_failed = 0;
+    if(X->Def.NCisAjtCkuAlvDC>0)
+      close_failed |= close_green_file(X, GreenOutputTwoBody, sdt, fp);
+    if(X->Def.NTBody>0)
+      close_failed |= close_green_file(X, GreenOutputThreeBody, sdt_2, fp_2);
+    if(X->Def.NFBody>0)
+      close_failed |= close_green_file(X, GreenOutputFourBody, sdt_3, fp_3);
+    if(X->Def.NSBody>0)
+      close_failed |= close_green_file(X, GreenOutputSixBody, sdt_4, fp_4);
+    if (X->Def.iFlgSymmetryBasis == TRUE &&
+        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0)
+      return -1;
   }
-  if(X->Def.NTBody>0){
-    // If the number of three-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputThreeBody)) {
-      GreenOutputCloseAggregate(GreenOutputThreeBody, fp_2);
-    } else {
-      fclose(fp_2);
-    }
-  }
-  if(X->Def.NFBody>0){
-    // If the number of four-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputFourBody)) {
-      GreenOutputCloseAggregate(GreenOutputFourBody, fp_3);
-    } else {
-      fclose(fp_3);
-    }
-  }
-  if(X->Def.NSBody>0){
-    // If the number of six-body interactions is zero, the file name is not used.
-    if (GreenOutputKindUsesAggregate(X, GreenOutputSixBody)) {
-      GreenOutputCloseAggregate(GreenOutputSixBody, fp_4);
-    } else {
-      fclose(fp_4);
-    }
-  }
+
+  if (sector_status != 0) return -1;
   
   if(X->Def.iCalcType==Lanczos){
     if(X->Def.St==0){

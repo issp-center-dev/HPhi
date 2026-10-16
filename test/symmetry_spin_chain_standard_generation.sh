@@ -67,7 +67,10 @@ grep -q "^# MomentumIndex 1$" qptransidx.def
 grep -q "TransSym metadata: MomentumIndex=1" auto.log
 grep -q "TransSym  qptransidx.def" namelist.def
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" auto.log
-grep -q "Symmetry matvec: mode=plan vector_exchange=halo" auto.log
+grep -q "Symmetry distributed matvec:" auto.log
+grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." auto.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 grep -q "columns=local/ghost-slots" auto.log
 awk 'NF == 3 && $1 == 1 {found=1; re=$2; im=$3; if(re<0) re=-re; if(im+0.8660254037844386<0) d=-(im+0.8660254037844386); else d=(im+0.8660254037844386); ok=(re-0.5 < 0.000001 && re-0.5 > -0.000001 && d < 0.000001)} END{exit found && ok ? 0 : 1}' qptransidx.def
 
@@ -84,7 +87,10 @@ test -n "${expert_energy}"
 diff=`awk -v a="${auto_energy}" -v b="${expert_energy}" 'BEGIN{d=a-b; if(d<0)d=-d; printf "%8.6f", d}'`
 test "${diff}" = "0.000000"
 grep -q "Symmetry basis: raw_dim=20 sector_dim=3 group_order=6" expert.log
-grep -q "Symmetry matvec: mode=plan vector_exchange=halo" expert.log
+grep -q "Symmetry distributed matvec:" expert.log
+grep -q "Symmetry basis layout: distributed (default for TransSym Lanczos)." expert.log
+grep -q '^calc_type=Lanczos$' output/symmetry_sector.dat
+grep -q '^basis_layout=distributed$' output/symmetry_sector.dat
 grep -q "columns=local/ghost-slots" expert.log
 if grep -q "TransSym metadata" expert.log; then
     cat expert.log

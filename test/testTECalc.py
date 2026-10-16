@@ -196,19 +196,26 @@ if __name__ == "__main__":
                         nargs='?', default="", type=str, choices=None,
                         help=('MPI command'),
                         metavar=None)
+    parser.add_argument('-mpifc', '--mpifc', action='store', dest='mpifc',
+                        nargs='?', default=os.environ.get("MPIRUNFC", ""),
+                        type=str, choices=None,
+                        help=('Launcher prefix for serial runs (-sdry); '
+                              'defaults to $MPIRUNFC'),
+                        metavar=None)
     
     args = parser.parse_args()
     PathToHPhi=args.path
     Model = "\""+args.model+"\""
     InteractionType = args.interaction
     MPIRUN=str(args.mpi)
+    MPIRUNFC=str(args.mpifc)
     InfoTE={"NTimeSteps":100, "dt":0.01}
 
     # Make standard input file
 
     sin=StandardIni(Model=Model)
     MakeStandard(sin, "stan.in")
-    subprocess.call(PathToHPhi+" -sdry ./stan.in", shell=True)
+    subprocess.call((MPIRUNFC+" "+PathToHPhi+" -sdry ./stan.in").strip(), shell=True)
 
     #[s] Make CalcMod file
     #For Lanczos
@@ -240,8 +247,12 @@ if __name__ == "__main__":
     shutil.copyfile("modpara.def", "modpara1.def")
     #For TE
     replaceStr("modpara.def", "Lanczos_max    2000", "Lanczos_max    100")
-    f=open("modpara", "a")
-    f.write("       ExpandCoef     10\n")
+    f=open("modpara.def", "a")
+    # Historical reference tables used first-order propagation: this used to
+    # append to an unused file named "modpara", leaving the effective order
+    # at one. Specify that order explicitly to preserve this regression oracle.
+    # Higher Taylor orders are exercised by te_contract.
+    f.write("       ExpandCoef     1\n")
     f.close()
     shutil.copyfile("modpara.def", "modpara2.def")
     #[e] Make ModPara file    

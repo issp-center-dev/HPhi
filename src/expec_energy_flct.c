@@ -41,6 +41,7 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include "symmetry_basis.h"
+#include "symmetry_observables.h"
 
 /**
  * @brief Calculate energy expectation value and variance
@@ -125,13 +126,14 @@ int expec_energy_flct(struct BindStruct *X){
   case tJ:
   case tJGC:
   case Kondo:
+  case KondoNConserved:
   case KondoGC:
       if (expec_energy_flct_Hubbard(X) != 0) return -1;
   break;
   
   case SpinGC:
   if(X->Def.iFlgGeneralSpin == FALSE) {
-      expec_energy_flct_HalfSpinGC(X);
+      if (expec_energy_flct_HalfSpinGC(X) != 0) return -1;
   }
   else{//for generalspin
       expec_energy_flct_GeneralSpinGC(X);
@@ -193,8 +195,9 @@ int expec_energy_flct(struct BindStruct *X){
     nCalcExpec=5302;
   }
   StartTimer(nCalcExpec);
-  mltply(X, v0, v1); // v0+=H*v1
+  int matvec_status = mltply(X, v0, v1); // v0+=H*v1
   StopTimer(nCalcExpec);
+  if (matvec_status != 0) return -1;
 /* switch -> SpinGCBoost */
 
   dam_pr=0.0;
@@ -290,7 +293,7 @@ int expec_energy_flct_HubbardGC(struct BindStruct *X) {
 /// \param X [in, out] X Struct to get information about file header names, dimension of hirbert space, calc type and output physical quantities.
 /// \retval 0 normally finished.
 /// \retval -1 abnormally finished.
-int expec_energy_flct_Hubbard(struct BindStruct *X){
+int EvaluateHubbardMoments(struct BindStruct *X, const double complex *vec){
     long unsigned int j;
     double D,N,S;
     double tmp_D,tmp_D2;
@@ -299,11 +302,13 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     double tmp_v02;
     long unsigned int i_max;
     int use_symmetry_basis;
+    int coefficient_error = 0;
+    if (SumMPI_i(X == NULL || vec == NULL) != 0) return -1;
     i_max=X->Check.idim_max;
 
     use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
-    if (use_symmetry_basis == TRUE &&
-        SymmetryBasisOwnedStorageReady(X->Sym, i_max) != TRUE) {
+    if (SumMPI_i(use_symmetry_basis == TRUE &&
+        SymmetryBasisOwnedStorageReady(X->Sym, i_max) != TRUE) != 0) {
         return -1;
     }
 
@@ -314,12 +319,19 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     tmp_Sz       = 0.0;
     tmp_Sz2      = 0.0;
 
-#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) default(none) shared(v0) \
+#pragma omp parallel for reduction(+:tmp_D,tmp_D2,tmp_N,tmp_N2,tmp_Sz,tmp_Sz2) reduction(|:coefficient_error) default(none) shared(vec) \
   firstprivate(i_max, X) \
   private(j, tmp_v02,D,N,S)
     for(j = 1; j <= i_max; j++) {
-        tmp_v02 = conj(v0[j]) * v0[j];
-        EnergyFlctCoeff_Hubbard(X, (long int)j, &D, &N, &S);
+        if (!isfinite(creal(vec[j])) || !isfinite(cimag(vec[j]))) {
+            coefficient_error = 1;
+            continue;
+        }
+        tmp_v02 = creal(conj(vec[j]) * vec[j]);
+        if (EnergyFlctCoeff_Hubbard(X, (long int)j, &D, &N, &S) != 0) {
+            coefficient_error = 1;
+            continue;
+        }
 
         tmp_D += tmp_v02 * D;
         tmp_D2 += tmp_v02 * D * D;
@@ -327,15 +339,24 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
         tmp_N2 += tmp_v02 * N * N;
         tmp_Sz += tmp_v02 * S;
         tmp_Sz2 += tmp_v02 * S * S;
+        if (!isfinite(tmp_D) || !isfinite(tmp_D2) ||
+            !isfinite(tmp_N) || !isfinite(tmp_N2) ||
+            !isfinite(tmp_Sz) || !isfinite(tmp_Sz2)) coefficient_error = 1;
     }
 
 
+    if (SumMPI_i(coefficient_error) != 0) return -1;
     tmp_D        = SumMPI_d(tmp_D);
     tmp_D2       = SumMPI_d(tmp_D2);
     tmp_N        = SumMPI_d(tmp_N);
     tmp_N2       = SumMPI_d(tmp_N2);
     tmp_Sz       = SumMPI_d(tmp_Sz);
     tmp_Sz2      = SumMPI_d(tmp_Sz2);
+
+    coefficient_error = !isfinite(tmp_D) || !isfinite(tmp_D2) ||
+                        !isfinite(tmp_N) || !isfinite(tmp_N2) ||
+                        !isfinite(tmp_Sz) || !isfinite(tmp_Sz2);
+    if (SumMPI_i(coefficient_error) != 0) return -1;
 
     X->Phys.doublon   = tmp_D;
     X->Phys.doublon2  = tmp_D2;
@@ -346,6 +367,10 @@ int expec_energy_flct_Hubbard(struct BindStruct *X){
     X->Phys.num_up    = 0.5*(tmp_N+tmp_Sz);
     X->Phys.num_down  = 0.5*(tmp_N-tmp_Sz);
     return 0;
+}
+
+int expec_energy_flct_Hubbard(struct BindStruct *X){
+    return EvaluateHubbardMoments(X, v0);
 }
 
 ///
@@ -359,6 +384,9 @@ int expec_energy_flct_HalfSpinGC(struct BindStruct *X){
     double tmp_v02;
     long unsigned int i_max;
     i_max=X->Check.idim_max;
+
+    if (X->Def.iFlgSymmetryBasis == TRUE)
+        return EvaluateSymmetrySpinGCMoments(X, v0);
 
     // tentative doublon
     tmp_Sz       = 0.0;
@@ -638,14 +666,18 @@ int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X) {
  *  signature carries only X and k); the numerical result is bit-identical.
  * ================================================================= */
 
-void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
+int EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
                              double *D, double *N, double *S) {
     long unsigned int isite1;
     long unsigned int is1_up_a, is1_up_b, is1_down_a, is1_down_b;
     int bit_up, bit_down, bit_D;
     long unsigned int ibit_up, ibit_down, ibit_D, tmp_list_1;
     unsigned int l_ibit1, u_ibit1, i_32;
-    int use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
+    int use_symmetry_basis;
+    if (X == NULL || D == NULL || N == NULL || S == NULL ||
+        k <= 0 || (unsigned long)k > X->Check.idim_max || X->Def.Tpow == NULL)
+        return -1;
+    use_symmetry_basis = X->Def.iFlgSymmetryBasis == TRUE;
 
     i_32 = (unsigned int)(pow(2,32)-1);
 
@@ -666,8 +698,10 @@ void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
     if (use_symmetry_basis == TRUE) {
         const struct SymmetryBasisVector *entry =
             SymmetryBasisLocalEntry(X->Sym, (unsigned long int)k);
+        if (entry == NULL) return -1;
         tmp_list_1 = entry->rep_state;
     } else {
+        if (list_1 == NULL) return -1;
         tmp_list_1 = list_1[k];
     }
 // isite1 > X->Def.Nsite
@@ -711,6 +745,7 @@ void EnergyFlctCoeff_Hubbard(struct BindStruct *X, long int k,
     *D = bit_D;
     *N = bit_up + bit_down;
     *S = bit_up - bit_down;
+    return 0;
 }
 
 void EnergyFlctCoeff_HubbardGC(struct BindStruct *X, long int k,

@@ -21,6 +21,7 @@
 #include "check.h"
 #include "wrapperMPI.h"
 #include "CheckMPI.h"
+#include "symmetry_state_enumerator.h"
 
 /**
  * @file   check.c
@@ -214,6 +215,12 @@ int check(struct BindStruct *X){
     break;
     
   case Kondo:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryKondoDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     //idim_max
     // calculation of dimension
     // Nup      = u_loc+u_cond
@@ -240,6 +247,12 @@ int check(struct BindStruct *X){
     }
     break;
   case KondoNConserved:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryKondoDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     //idim_max
     // calculation of dimension
     // Nup      = u_loc+u_cond
@@ -268,6 +281,12 @@ int check(struct BindStruct *X){
     break;
  
   case KondoGC:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryKondoDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     comb_sum = 1;
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
     NLocSpn = X->Def.NLocSpn;

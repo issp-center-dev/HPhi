@@ -47,7 +47,7 @@ EigenvecIO = "out"
 EOF
 
 echo "Running Lanczos without MPI..."
-../../src/HPhi -s stan.in
+${MPIRUNFC} ../../src/HPhi -s stan.in
 
 # Time evolution without MPI
 cat > stan_te.in <<EOF
@@ -74,7 +74,7 @@ VecPotL = 0.5
 EOF
 
 echo "Running Time Evolution without MPI..."
-../../src/HPhi -s stan_te.in
+${MPIRUNFC} ../../src/HPhi -s stan_te.in
 cp output/Flct.dat flct_nompi.dat
 
 # Clean and run with MPI

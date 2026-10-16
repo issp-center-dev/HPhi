@@ -27,7 +27,7 @@ nelec = 4
 EigenVecIO = "out"
 EOF
 
-${HPHI} -s stan_gs.in
+${MPIRUNFC} ${HPHI} -s stan_gs.in
 
 #
 # Off-diagonal density-density spectrum (expert mode)
@@ -104,7 +104,7 @@ cat > namelist_cg.def <<EOF
      SpectrumVec  zvo_eigenvec_0
 EOF
 
-${HPHI} -e namelist_cg.def
+${MPIRUNFC} ${HPHI} -e namelist_cg.def
 
 cat > reference.dat <<EOF
 0.0000000000 0.0000000000 0.3775198728 -2.3744943609

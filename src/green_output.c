@@ -4,6 +4,9 @@
 #include "FileIO.h"
 #include "global.h"
 #include "wrapperMPI.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
+#endif
 #include <string.h>
 #include <stdlib.h>
 #ifdef MPI
@@ -119,14 +122,54 @@ int GreenOutputWriteIndexPrefix(FILE *fp, const struct BindStruct *X)
   }
 }
 
+int GreenOutputAgreeSectorError(const struct BindStruct *X, int failed)
+{
+  if (X->Def.iFlgSymmetryBasis) return SumMPI_i(failed != 0) != 0 ? -1 : 0;
+  return failed ? -1 : 0;
+}
+
+int GreenOutputCloseChecked(FILE *fp)
+{
+  int failed;
+  if (fp == NULL) return -1;
+  failed = ferror(fp) != 0;
+  if (fclose(fp) != 0) failed = 1;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  if (SymmetryFullDiagTestFail("green_close")) failed = 1;
+#endif
+  return failed ? -1 : 0;
+}
+
+int GreenOutputReportSectorFailure(const struct BindStruct *X, GreenOutputKind kind,
+                                   const char *name, const char *operation)
+{
+  char aggregate[D_FileNameMax];
+  if (GreenOutputKindUsesAggregate(X, kind) &&
+      GreenOutputFileName(X, kind, aggregate) == 0) name = aggregate;
+  fprintf(stdoutMPI, "Error: sector correlation output %s failed for %s.\n", operation, name);
+  return -1;
+}
+
 static int GreenOutputTruncateFile(struct BindStruct *X, GreenOutputKind kind)
 {
   FILE *fp = NULL;
   char sdt[D_FileNameMax];
+  int failed;
   if (!GreenOutputKindUsesAggregate(X, kind)) return 0;
   if (GreenOutputFileName(X, kind, sdt) != 0) return -1;
-  if (childfopenMPI(sdt, "w", &fp) != 0) return -1;
-  fclose(fp);
+  /* Open and close are agreed separately for a sector basis. */
+  failed = childfopenMPI(sdt, "w", &fp) != 0;
+  if (GreenOutputAgreeSectorError(X, failed) != 0) {
+    if (fp != NULL) fclose(fp);
+    if (X->Def.iFlgSymmetryBasis) GreenOutputReportSectorFailure(X, kind, sdt, "open");
+    return -1;
+  }
+  if (!X->Def.iFlgSymmetryBasis) {
+    fclose(fp);
+    return 0;
+  }
+  if (GreenOutputAgreeSectorError(X, GreenOutputCloseChecked(fp) != 0) != 0)
+    return GreenOutputReportSectorFailure(X, kind, sdt, "close");
   return 0;
 }
 
@@ -362,7 +405,7 @@ int GreenOutputCloseAggregate(GreenOutputKind kind, FILE *fp)
 {
   if (fp == NULL) return -1;
   if (!g_greenOutputPartialActive) {
-    return (fclose(fp) == 0) ? 0 : -1;
+    return GreenOutputCloseChecked(fp);
   }
   if (kind < 0 || kind > GreenOutputAnomalous) {
     fclose(fp);

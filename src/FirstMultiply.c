@@ -19,6 +19,7 @@
 #include "common/setmemory.h"
 #include "wrapperMPI.h"
 #include "CalcTime.h"
+#include <math.h>
 
 /**
  * @file   FirstMultiply.c
@@ -43,17 +44,17 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
   long int i, i_max;
   double complex dnorm;
   double Ns;
-  long unsigned int u_long_i;
-  dsfmt_t dsfmt;
-  int mythread;
-
-  Ns = 1.0*X->Def.NsiteMPI;
-  i_max = X->Check.idim_max;
 
   /**@brief
   Initialize v1 and v0 = v1
   */
-  MakeIniVec(rand_i,X);
+  if (MakeIniVec(rand_i,X) != 0) return -1;
+  Ns = 1.0*X->Def.NsiteMPI;
+  i_max = X->Check.idim_max;
+  if (SumMPI_i(Ns <= 0.0 || !isfinite(LargeValue)) != 0) {
+    fprintf(stdoutMPI, "Error: invalid mTPQ scaling parameters.\n");
+    return -1;
+  }
   
   TimeKeeperWithRandAndStep(X, cFileNameTimeKeep, cTPQStep, "a", rand_i, step_i);
    
@@ -74,6 +75,10 @@ int FirstMultiply(int rand_i, struct BindStruct *X) {
     dnorm += conj(v0[i])*v0[i];
   }
   dnorm = SumMPI_dc(dnorm);
+  if (!isfinite(creal(dnorm)) || !isfinite(cimag(dnorm)) || creal(dnorm) <= 0.0) {
+    fprintf(stdoutMPI, "Error: mTPQ first step has zero or non-finite global norm.\n");
+    return -1;
+  }
   dnorm=sqrt(dnorm);
   global_norm = dnorm;
 #pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max, dnorm)

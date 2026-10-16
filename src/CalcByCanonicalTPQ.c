@@ -27,6 +27,12 @@
 #include "wrapperMPI.h"
 #include "CalcTime.h"
 #include <ctype.h>
+#include <math.h>
+#include <limits.h>
+#include "symmetry_sector.h"
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_sector_probe.h"
+#endif
 #ifdef MPI
     #include <mpi.h>
 #endif
@@ -130,6 +136,15 @@ int CalcByCanonicalTPQ(
                         invtemp_status = -1;
                     }else{
                         num_lines = read_lines;
+                        if (X->Bind.Def.iFlgSymmetryBasis) {
+                            for (int row = 0; row < num_lines; ++row) {
+                                if (read_eigen[row] != 0) {
+                                    fprintf(stdoutMPI, "Error: TransSym cTPQ does not support InvTemp eigenvector output.\n");
+                                    invtemp_status = -1;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -188,6 +203,15 @@ int CalcByCanonicalTPQ(
         }else{
             fprintf(stdoutMPI, "In cTPQ calc., ExpandCoef is specified as %d. \n",X->Bind.Def.Param.ExpandCoef);
         }
+    }
+    if (!flag_read_invtemp && (!isfinite(LargeValue) || LargeValue <= 0 ||
+                              !isfinite(1.0 / LargeValue))) {
+        fprintf(stdoutMPI, "Error: cTPQ LargeValue must define a finite positive inverse-temperature step.\n");
+        return -1;
+    }
+    if (WriteSymmetryCanonicalTPQSchedule(&(X->Bind), num_lines, read_invtemp, read_nmax) != 0) {
+        free(read_invtemp); free(read_nmax); free(read_physcal); free(read_eigen);
+        return -1;
     }
     X->Bind.Def.St=0;
     fprintf(stdoutMPI, "%s", cLogTPQ_Start);
@@ -306,7 +330,18 @@ int CalcByCanonicalTPQ(
             /**@brief
              Initialize v1 and v0 = v1
             */
-            MakeIniVec(rand_i, &(X->Bind)); 
+            iret = MakeIniVec(rand_i, &(X->Bind));
+            if (iret != 0) {
+                StopTimer(3100);
+                return -1;
+            }
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+            if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", rand_i, 0,
+                                         global_1st_norm) != 0) {
+                StopTimer(3100);
+                return -1;
+            }
+#endif
             /*[s] tau*/
             inv_temp  = 0.0;
             delta_tau = 1.0/LargeValue;
@@ -391,8 +426,9 @@ int CalcByCanonicalTPQ(
             TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cTPQStep, "a", rand_i, step_i);
             StopTimer(3600);
             StartTimer(3500);
-            MultiplyForCanonicalTPQ(&(X->Bind),delta_tau); // v0=exp[-delta_tau*H/2]*v1 in 4th order
+            iret = MultiplyForCanonicalTPQ(&(X->Bind), delta_tau);
             StopTimer(3500);
+            if (iret != 0) return -1;
 
             StartTimer(3200);
             iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
@@ -561,7 +597,7 @@ int func_read_invtemp(double *read_invtemp, int *read_nmax, int *read_physcal, i
     int line_no = 0;
     while (fgets(line, sizeof(line), file) != NULL) {
         double invtemp_tmp;
-        int nmax_tmp, physcal_tmp, eigen_tmp;
+        double nmax_tmp, physcal_tmp, eigen_tmp;
         int nread = 0;
         char *cursor = line;
         line_no++;
@@ -575,7 +611,7 @@ int func_read_invtemp(double *read_invtemp, int *read_nmax, int *read_physcal, i
             return -2;
         }
 
-        if (sscanf(cursor, "%lf %d %d %d %n",
+        if (sscanf(cursor, "%lf %lf %lf %lf %n",
                    &invtemp_tmp, &nmax_tmp, &physcal_tmp, &eigen_tmp, &nread) != 4) {
             fprintf(stderr, "Error: invalid InvTemp row %d in file: %s\n", line_no, file_name);
             fclose(file);
@@ -589,6 +625,13 @@ int func_read_invtemp(double *read_invtemp, int *read_nmax, int *read_physcal, i
             return -3;
         }
 
+        if (!isfinite(invtemp_tmp) || (i == 0 ? invtemp_tmp != 0 : invtemp_tmp < read_invtemp[i-1]) ||
+            !isfinite(nmax_tmp) || nmax_tmp < 1 || nmax_tmp >= INT_MAX || floor(nmax_tmp) != nmax_tmp ||
+            (physcal_tmp != 0 && physcal_tmp != 1) || (eigen_tmp != 0 && eigen_tmp != 1)) {
+            fprintf(stderr, "Error: invalid InvTemp row %d: beta must start at zero and be finite and nondecreasing, nmax must be a positive integer, flags must be 0 or 1.\n", line_no);
+            fclose(file);
+            return -3;
+        }
         read_invtemp[i] = invtemp_tmp;
         read_nmax[i] = nmax_tmp;
         read_physcal[i] = physcal_tmp;

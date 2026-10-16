@@ -190,14 +190,14 @@ grep -q "duplicate TransSym permutation entry" duplicate.log
 
 write_common_defs
 write_valid_transsym
-perl -0pi -e 's/CalcType 0/CalcType 2/' calcmod.def
-if ../../src/HPhi -e namelist.def > fulldiag.log 2>&1; then
-    cat fulldiag.log
+perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
+if ../../src/HPhi -e namelist.def > time_evolution.log 2>&1; then
+    cat time_evolution.log
     exit 1
 fi
-grep -q "does not support FullDiag" fulldiag.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution.log
 
-for calc_type in 1 4 5; do
+for calc_type in 4; do
     write_common_defs
     write_valid_transsym
     perl -0pi -e "s/CalcType 0/CalcType ${calc_type}/" calcmod.def
@@ -206,7 +206,7 @@ for calc_type in 1 4 5; do
         cat "${log}"
         exit 1
     fi
-    grep -q "supports only Lanczos and CG" "${log}"
+    grep -q "requires sector checkpoint InputEigenVec=1" "${log}"
 done
 
 write_common_defs
@@ -249,7 +249,7 @@ if ../../src/HPhi -e namelist.def > interall.log 2>&1; then
     cat interall.log
     exit 1
 fi
-grep -q "Exchange and Ising terms only" interall.log
+grep -q "Hamiltonian invariance failed" interall.log
 
 write_common_defs
 write_valid_transsym
@@ -321,11 +321,9 @@ Exchange exchange.def
 CoulombInter coulombinter.def
 TransSym qptransidx.def
 EOF
-if ../../src/HPhi -e namelist.def > direct_coulombinter.log 2>&1; then
-    cat direct_coulombinter.log
-    exit 1
-fi
-grep -q "direct CoulombInter/Hund terms are not supported" direct_coulombinter.log
+# Spin density is the identity, so even a single CoulombInter bond is invariant.
+run_hphi direct_coulombinter.log ../../src/HPhi -e namelist.def
+grep -q "Symmetry basis: raw_dim=6 sector_dim=2 group_order=4" direct_coulombinter.log
 
 write_common_defs
 write_valid_transsym
@@ -349,7 +347,7 @@ if ../../src/HPhi -e namelist.def > direct_hund.log 2>&1; then
     cat direct_hund.log
     exit 1
 fi
-grep -q "direct CoulombInter/Hund terms are not supported" direct_hund.log
+grep -q "Hamiltonian invariance failed" direct_hund.log
 
 write_common_defs
 cat > qptransidx.def <<EOF
@@ -434,17 +432,17 @@ for flag in ReStart InputEigenVec; do
     grep -q "does not support ${flag}" "${log}"
 done
 
-# An unsupported method names itself and lists the supported ones.
+# Sector TE requires an explicit checkpoint import.
 write_common_defs
 write_valid_transsym
 write_base_namelist
-perl -0pi -e 's/CalcType 0/CalcType 2/' calcmod.def
-if ../../src/HPhi -e namelist.def > fulldiag_supported_methods.log 2>&1; then
-    cat fulldiag_supported_methods.log
+perl -0pi -e 's/CalcType 0/CalcType 4/' calcmod.def
+if ../../src/HPhi -e namelist.def > time_evolution_supported_methods.log 2>&1; then
+    cat time_evolution_supported_methods.log
     exit 1
 fi
-grep -q "does not support FullDiag" fulldiag_supported_methods.log
-grep -q "supports only Lanczos and CG" fulldiag_supported_methods.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution_supported_methods.log
+grep -q "requires sector checkpoint InputEigenVec=1" time_evolution_supported_methods.log
 
 write_common_defs
 write_valid_transsym

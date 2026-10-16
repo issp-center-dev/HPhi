@@ -28,7 +28,7 @@ U = 2.0
 Lanczos_max = 120
 initial_iv = 1
 EOF
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    NBodyG  nbodyg.def\n' >> namelist.def
 cat > nbodyg.def <<EOF
 ========================
@@ -40,7 +40,7 @@ NNBodyG 3
 1 3 0 0 0
 2 3 0 0 0 1 1 1 1
 EOF
-run_hphi log_serial.txt "${hphi}" -e namelist.def
+run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cp output/zvo_NBodyG.dat ../nbodyg_serial.dat
 cd ..
 

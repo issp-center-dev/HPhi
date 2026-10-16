@@ -47,6 +47,8 @@
 #include "mltplyMPISpin.h"
 #include "mltplyMPISpinCore.h"
 #include "expec_totalspin.h"
+#include "expec_energy_flct.h"
+#include "symmetry_observables.h"
 
 /**
  * @brief Calculate total spin \f$\langle S^2 \rangle\f$ and \f$\langle S_z \rangle\f$
@@ -681,15 +683,22 @@ int expec_totalSz(
  double complex *vec
 ) {
   X->Large.mode = M_TOTALS;
+  if (X->Def.iFlgSymmetryBasis == TRUE &&
+      (X->Def.iCalcModel == Kondo || X->Def.iCalcModel == KondoGC ||
+       X->Def.iCalcModel == KondoNConserved))
+    return EvaluateHubbardMoments(X, vec);
   switch (X->Def.iCalcModel) {
     case Spin:
       X->Phys.Sz = X->Def.Total2SzMPI / 2.;
       break;
     case SpinGC:
+      if (X->Def.iFlgSymmetryBasis == TRUE)
+        return EvaluateSymmetrySpinGCMoments(X, vec);
       totalSz_SpinGC(X, vec);
       break;
     case Hubbard:
     case Kondo:
+    case KondoNConserved:
       X->Phys.Sz = X->Def.Total2SzMPI / 2.;
 
       break;

@@ -78,7 +78,7 @@ initial_iv = 1
 EOF
 
 rm -rf output
-run_hphi log_sdry.txt "${hphi}" -sdry stan.in
+run_hphi log_sdry.txt ${MPIRUNFC} "${hphi}" -sdry stan.in
 printf '    AnomalousTerm  anomalousterm.def\n' >> namelist.def
 printf '    AnomalousG     anomalousg.def\n' >> namelist.def
 sed -e 's/^OutputEigenVec.*/OutputEigenVec   1/' calcmod.def > calcmod.outvec
@@ -106,7 +106,7 @@ EOF
 
 # ED reference for H = 0.3 * (c_up c_down + c_down^dagger c_up^dagger):
 # <0|H|up down> = -0.3, so E0 = -0.3 and both anomalous expectations are -0.5.
-run_hphi log_lanczos.txt "${hphi}" -e namelist.def
+run_hphi log_lanczos.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 test -f output/zvo_AnomalousG.dat || { echo "zvo_AnomalousG.dat was not generated"; exit 1; }
 check_energy_file output/zvo_energy.dat
 check_anomalousg_file output/zvo_AnomalousG.dat
@@ -130,7 +130,7 @@ sed -e 's/^CalcType.*/CalcType   4/' \
 cp modpara.def modpara.lanczos
 sed -e 's/^Lanczos_max.*/Lanczos_max    2/' modpara.lanczos > modpara.def
 printf 'ExpandCoef     10\n' >> modpara.def
-run_hphi log_te.txt "${hphi}" -e namelist_te.def
+run_hphi log_te.txt ${MPIRUNFC} "${hphi}" -e namelist_te.def
 test -f output/zvo_AnomalousG_step0.dat || { echo "zvo_AnomalousG_step0.dat was not generated"; exit 1; }
 check_anomalousg_file output/zvo_AnomalousG_step0.dat
 mv modpara.lanczos modpara.def
@@ -141,7 +141,7 @@ sed -e 's/^CalcType.*/CalcType   2/' \
     calcmod.lanczos > calcmod.fulldiag
 mv calcmod.fulldiag calcmod.def
 rm -rf output
-run_hphi log_fulldiag.txt "${hphi}" -e namelist.def
+run_hphi log_fulldiag.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 test -f output/zvo_AnomalousG_eigen0.dat || { echo "zvo_AnomalousG_eigen0.dat was not generated"; exit 1; }
 check_phys_file output/zvo_phys.dat
 check_anomalousg_file output/zvo_AnomalousG_eigen0.dat
@@ -149,7 +149,7 @@ check_anomalousg_file output/zvo_AnomalousG_eigen0.dat
 sed -e 's/^OutputHam.*/OutputHam   1/' calcmod.def > calcmod.outputham
 mv calcmod.outputham calcmod.def
 rm -rf output
-run_hphi log_outputham.txt "${hphi}" -e namelist.def
+run_hphi log_outputham.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 test -f output/zvo_Ham.dat || { echo "zvo_Ham.dat was not generated"; exit 1; }
 awk -v t="${tol}" '
   NR > 2 && $1 != $2 {

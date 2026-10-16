@@ -21,7 +21,7 @@ NumAve = 10
 Lanczos_max = 160
 EOF
 
-../../src/HPhi -sdry stan.in
+${MPIRUNFC} ../../src/HPhi -sdry stan.in
 
 
 cat > calcmod.def <<EOF

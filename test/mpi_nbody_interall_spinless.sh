@@ -49,7 +49,7 @@ run_case() {
   make_case "serial_${tag}" "${model}"
 
   cd "serial_${tag}"
-  run_hphi log_serial.txt "${hphi}" -e namelist.def
+  run_hphi log_serial.txt ${MPIRUNFC} "${hphi}" -e namelist.def
   cp output/zvo_energy.dat "../energy_serial_${tag}.dat"
   cd ..
 

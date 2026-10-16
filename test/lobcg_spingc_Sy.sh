@@ -25,7 +25,7 @@ exct = 1
 LanczosEps = 16
 EOF
 
-${MPIRUN} ../../src/HPhi -sdry stan.in
+${MPIRUNFC} ../../src/HPhi -sdry stan.in
 cat > trans.def <<EOF
 ===
 N 2

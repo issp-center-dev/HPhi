@@ -5,6 +5,7 @@
 #include <limits.h>
 #include "DefCommon.h"
 #include "mltplySpinSym.h"
+#include "makeHamSym.h"
 #include "symmetry_basis.h"
 #include "symmetry_diagonal.h"
 #include "symmetry_directory.h"
@@ -29,6 +30,10 @@ long unsigned int *list_1 = NULL;
 long unsigned int *list_2_1 = NULL;
 long unsigned int *list_2_2 = NULL;
 double *list_Diagonal = NULL;
+double complex **Ham = NULL, *Ham_local = NULL;
+int iHamPanelActive = 0, iHamSinkMode = 0;
+long HamColBegin, HamColEnd, HamPanelLd;
+void (*hamCollectSink)(long, long, double complex) = NULL;
 int g_tj_odd_split_guard_enabled = 0;
 long unsigned int g_tj_odd_split_up_mask = 0;
 long unsigned int g_tj_odd_split_down_mask = 0;
@@ -723,7 +728,8 @@ static int state_matches_sector(int model,
                                 unsigned int nup,
                                 unsigned int ndown)
 {
-  if (model == Hubbard) {
+  if ((model == Hubbard || model == tJ)) {
+    if (model == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
     return (unsigned int)count_hubbard_spin(state, nsite, 0U) == nup &&
            (unsigned int)count_hubbard_spin(state, nsite, 1U) == ndown;
   }
@@ -739,7 +745,7 @@ static void assert_state_enumerator_sequence(int model,
 {
   struct DefineList def;
   struct SymmetryStateEnumerator enumerator;
-  unsigned long int limit = 1UL << (model == Hubbard ? 2U * nsite : nsite);
+  unsigned long int limit = 1UL << ((model == Hubbard || model == tJ) ? 2U * nsite : nsite);
   unsigned long int state, raw, dim = 0UL;
   unsigned long int *states;
   int failed = 0;
@@ -814,10 +820,58 @@ static void assert_state_enumerator_exact(void)
           assert_state_enumerator_sequence(
               Hubbard, nsite, nup, ndown, thread_count,
               "Hubbard raw-state enumerator matches numeric list_1 order");
+          if (nup + ndown <= nsite)
+            assert_state_enumerator_sequence(
+                tJ, nsite, nup, ndown, thread_count,
+                "tJ enumerator matches exhaustive no-double-occupancy states");
         }
       }
     }
   }
+
+  for (nsite = 1U; nsite <= 8U; nsite++) {
+    unsigned long int raw_dim = 1UL << nsite;
+    memset(&def, 0, sizeof(def));
+    def.iCalcModel = SpinGC;
+    def.Nsite = nsite;
+    def.Nup = 1U;
+    def.Ndown = 2U;
+    assert_int_eq(InitSymmetryStateEnumerator(&def, raw_dim, &enumerator), 0,
+                  "SpinGC init");
+    for (state = 1UL; state <= raw_dim; state++) {
+      unsigned long int enumerated_state = ULONG_MAX;
+      assert_int_eq(
+          SymmetryStateEnumeratorStateAt(&enumerator, state, &enumerated_state),
+          0, "SpinGC state");
+      assert_ulong_eq(enumerated_state, state - 1UL, "SpinGC all bit states");
+    }
+  }
+
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = SpinGC;
+  def.Nsite = 3U;
+  def.Nup = 1U;
+  def.Ndown = 2U;
+  state = 123UL;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), 0,
+                "SpinGC boundary init");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 0UL, &state), -1,
+                "SpinGC index zero rejects");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 9UL, &state), -1,
+                "SpinGC index overflow rejects");
+  assert_ulong_eq(state, 123UL, "failed SpinGC enumeration preserves output");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 7UL, &enumerator), -1,
+                "SpinGC dimension mismatch rejects");
+  def.iFlgGeneralSpin = TRUE;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), -1,
+                "general SpinGC rejects");
+  def.iFlgGeneralSpin = FALSE;
+  def.Nsite = 0U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "zero-site SpinGC rejects");
+  def.Nsite = word_bits;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "word-width SpinGC rejects");
 
   memset(&def, 0, sizeof(def));
   def.iCalcModel = Spin;
@@ -846,9 +900,6 @@ static void assert_state_enumerator_exact(void)
   assert_int_eq(InitSymmetryStateEnumerator(&def, 6UL, &enumerator), -1,
                 "general Spin rejects");
   def.iFlgGeneralSpin = FALSE;
-  def.iCalcModel = SpinGC;
-  assert_int_eq(InitSymmetryStateEnumerator(&def, 16UL, &enumerator), -1,
-                "unsupported model rejects");
   def.iCalcModel = Spin;
   def.Nsite = word_bits + 1U;
   def.Nup = 0U;
@@ -884,6 +935,24 @@ static void assert_state_enumerator_exact(void)
   assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
                 "full Hubbard sector at word width enumerates");
   assert_ulong_eq(state, ULONG_MAX, "full Hubbard word-width state is exact");
+  def.iCalcModel = tJ;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "tJ rejects excess filling");
+  def.Ndown = 0U;
+  def.Ne = def.Nup;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "fully polarized tJ at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "fully polarized tJ at word width enumerates");
+  assert_ulong_eq(state, ULONG_MAX / 3UL, "tJ up-only word-width state is exact");
+  def.Nup = 0U;
+  def.Ndown = def.Nsite;
+  def.Ne = def.Ndown;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "down-polarized tJ at word width initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "down-polarized tJ at word width enumerates");
+  assert_ulong_eq(state, (ULONG_MAX / 3UL) << 1U, "tJ down-only word-width state is exact");
   assert_int_eq(InitSymmetryStateEnumerator(NULL, 1UL, &enumerator), -1,
                 "null definition rejects");
   assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, NULL), -1,
@@ -1013,6 +1082,8 @@ static void assert_state_diagonal_exact(void)
   const int hubbard_sites[6] = {0, 1, 2, 3, 1, 3};
   unsigned int index;
   double diagonal = 19.25;
+  double spin_diagonal;
+  double spingc_diagonal;
   int thread_count;
 #ifdef _OPENMP
   int saved_dynamic = omp_get_dynamic();
@@ -1085,7 +1156,18 @@ static void assert_state_diagonal_exact(void)
       EvaluateSymmetryStateDiagonal(
           &invalid, 1UL << invalid.Nsite, &diagonal),
       -1, "state bits outside model width reject");
+  invalid = spin_def;
   invalid.iCalcModel = SpinGC;
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&spin_def, 0x15UL,
+                                               &spin_diagonal),
+                0, "Spin diagonal fixture evaluates");
+  assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0x15UL,
+                                               &spingc_diagonal),
+                0, "SpinGC diagonal model accepts");
+  assert_double_bitwise(spingc_diagonal, spin_diagonal,
+                        "SpinGC diagonal matches Spin local algebra");
+  invalid = spinless_def;
+  invalid.iCalcModel = Kondo;
   assert_int_eq(EvaluateSymmetryStateDiagonal(&invalid, 0UL, &diagonal), -1,
                 "unsupported diagonal model rejects");
   invalid = spinless_def;
@@ -1331,8 +1413,18 @@ static void assert_spin_permutation_states(const int *perm,
                                            unsigned int nsite,
                                            const char *label)
 {
+  const int models[2] = {Spin, SpinGC};
+  struct DefineList def;
+  struct SymmetryTransformResult result;
+  int *perm_rows_local[1];
   unsigned long int state;
   unsigned long int limit = 1UL << nsite;
+  unsigned int model_index;
+  memset(&def, 0, sizeof(def));
+  perm_rows_local[0] = (int *)perm;
+  def.Nsite = nsite;
+  def.NSymTrans = 1U;
+  def.SymTrans = perm_rows_local;
   for (state = 0UL; state < limit; state++) {
     unsigned long int expected = 0UL;
     unsigned int site;
@@ -1345,6 +1437,17 @@ static void assert_spin_permutation_states(const int *perm,
       fprintf(stderr, "%s: state=%#lx expected=%#lx\n",
               label, state, expected);
       exit(1);
+    }
+    for (model_index = 0U; model_index < 2U; model_index++) {
+      def.iCalcModel = models[model_index];
+      if (SymmetryApplyToState(&def, state, 0U, &result) != 0 ||
+          result.state != expected || result.amplitude != 1.0) {
+        fprintf(stderr,
+                "%s: model=%d state=%#lx expected=%#lx amplitude=%g\n",
+                label, models[model_index], state, expected,
+                creal(result.amplitude));
+        exit(1);
+      }
     }
   }
 }
@@ -3182,6 +3285,82 @@ static void assert_streaming_basis_without_raw_lists(void)
   FreeSymmetryBasis(X.Sym);
 }
 
+static void assert_dense_builder_matches_raw(struct BindStruct *X, const char *label)
+{
+  unsigned long n = X->Sym->dim, row, col;
+  int pass;
+  double complex **reference;
+  Ham = calloc(n + 1, sizeof(*Ham));
+  if (Ham == NULL) exit(1);
+  for (row = 0; row <= n; ++row) {
+    Ham[row] = calloc(n + 1, sizeof(**Ham));
+    if (Ham[row] == NULL) exit(1);
+  }
+  /* Repeat on the same destination: entries must not accumulate across calls. */
+  for (pass = 0; pass < 2; ++pass) {
+    unsigned long *saved_list = list_1;
+    double *saved_diagonal = list_Diagonal;
+    int status;
+    list_1 = NULL; list_Diagonal = NULL;
+    status = makeHamSym(X);
+    list_1 = saved_list; list_Diagonal = saved_diagonal;
+    if (status != 0) { fprintf(stderr, "%s: dense builder failed\n", label); exit(1); }
+    for (col = 1; col <= n; ++col)
+      for (row = 1; row <= n; ++row) {
+        assert_complex_close(Ham[row][col], raw_reference_matrix_element(X, row, col), 1e-10, label);
+        assert_complex_close(Ham[row][col], conj(Ham[col][row]), 1e-10, "dense Hermiticity");
+      }
+  }
+  reference = Ham;
+  Ham = NULL; /* Panel builder must never touch the replicated allocation. */
+  iHamPanelActive = 1;
+  HamPanelLd = (long)n;
+  for (col = 1; col <= n; col += 2) {
+    HamColBegin = (long)col;
+    HamColEnd = (long)(col + 1 <= n ? col + 1 : col);
+    Ham_local = calloc(n * 2, sizeof(*Ham_local));
+    if (Ham_local == NULL) exit(1);
+    for (pass = 0; pass < 2; ++pass) {
+      long j;
+      if (makeHamSym(X) != 0) { fprintf(stderr, "%s: panel builder failed\n", label); exit(1); }
+      for (j = HamColBegin; j <= HamColEnd; ++j)
+        for (row = 1; row <= n; ++row)
+          assert_complex_close(Ham_local[(j-HamColBegin)*n+row-1], reference[row][j], 1e-13, "dense panel identity");
+    }
+    free(Ham_local);
+  }
+  {
+    double complex sentinel = 987.0;
+    Ham_local = &sentinel;
+    HamColBegin = 1; HamColEnd = 0;
+    assert_ulong_eq(makeHamSym(X) == 0 && sentinel == 987.0, 1, "empty dense panel");
+    HamColBegin = 0; HamColEnd = 1;
+    assert_ulong_eq(makeHamSym(X) == -1, 1, "invalid dense panel range");
+    HamColBegin = 1; HamColEnd = 1; HamPanelLd = (long)n + 1;
+    assert_ulong_eq(makeHamSym(X) == -1, 1, "invalid dense panel leading dimension");
+  }
+  Ham_local = NULL;
+  iHamPanelActive = 0;
+  assert_ulong_eq(makeHamSym(X) == -1, 1, "missing dense destination");
+  assert_ulong_eq(makeHamSym(NULL) == -1, 1, "missing dense definition");
+  X->Sym->basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
+  assert_ulong_eq(makeHamSym(X) == -1, 1, "dense builder requires replicated metadata");
+  X->Sym->basis_layout = SYMMETRY_BASIS_REPLICATED;
+  {
+    int original_method = X->Def.iCalcType;
+    X->Def.iCalcType = FullDiag;
+    assert_ulong_eq(ActivateSymmetryFullDiagDimension(X) == 0, 1, "FullDiag activation");
+    assert_ulong_eq(X->Check.idim_max, n, "FullDiag global work dimension");
+    assert_ulong_eq(X->Check.idim_maxMPI, n, "FullDiag global MPI dimension");
+    X->Sym->basis_layout = SYMMETRY_BASIS_DISTRIBUTED;
+    assert_ulong_eq(ActivateSymmetryFullDiagDimension(X) == -1, 1, "FullDiag rejects distributed metadata");
+    X->Sym->basis_layout = SYMMETRY_BASIS_REPLICATED;
+    X->Def.iCalcType = original_method;
+  }
+  for (row = 0; row <= n; ++row) free(reference[row]);
+  free(reference);
+}
+
 static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
                                                     unsigned int nup,
                                                     unsigned int momentum_index,
@@ -3204,6 +3383,7 @@ static void assert_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -3236,6 +3416,7 @@ static void assert_spinless_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
@@ -3268,6 +3449,7 @@ static void assert_hubbard_canonicalized_matrix_matches_raw(unsigned int nsite,
       assert_complex_close(canonical_value, raw_value, 1.0e-10, label);
     }
   }
+  assert_dense_builder_matches_raw(&X, label);
   FreeSymmetryBasis(X.Sym);
   free(list_1);
   free(list_Diagonal);
