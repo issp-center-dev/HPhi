@@ -571,3 +571,16 @@ double complex VecProdMPI(
 
   return(prod);
 }/*double complex VecProdMPI*/
+
+unsigned long int ExscanMPI_li(unsigned long int value)
+{
+#ifdef MPI
+  unsigned long int result = 0;
+  int ierr = MPI_Exscan(&value, &result, 1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+  if (ierr != 0) exitMPI(-1);
+  return myrank == 0 ? 0 : result;
+#else
+  (void)value;
+  return 0;
+#endif
+}

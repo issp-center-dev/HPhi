@@ -73,21 +73,17 @@ static int failure(int invalid, const char *stage)
   fprintf(stdoutMPI, "Error: symmetry checkpoint %s failed.\n", stage);
   return -1;
 }
-static int make_header(const struct BindStruct *X, const char *name,
-                       uint64_t *header, char *path)
+int SymmetryCheckpointIdentityWords(const struct BindStruct *X, uint64_t *header)
 {
   struct SymmetrySectorDigest sector;
   uint64_t group = 0, hamiltonian = 0, order = FNV_OFFSET;
-  int invalid = X == NULL || name == NULL || sizeof(double) != 8 || sizeof(double complex) != 16 ||
+  int invalid = X == NULL || header == NULL || sizeof(double) != 8 || sizeof(double complex) != 16 ||
                 DBL_MANT_DIG != 53 || DBL_MAX_EXP != 1024;
   if (!invalid)
     invalid = !X->Def.iFlgSymmetryBasis || X->Sym == NULL ||
               X->Sym->enabled != TRUE || X->Check.idim_max != X->Sym->local_dim ||
               X->Check.idim_maxMPI != X->Sym->dim;
   if (failure(invalid, "runtime validation")) return -1;
-  int length = snprintf(path, D_FileNameMax, "%s%s", cParentOutputFolder, name);
-  invalid = length < 0 || length >= D_FileNameMax || name[0] == '\0';
-  if (failure(invalid, "path validation")) return -1;
   if (ComputeSymmetrySectorDigest(X->Sym, &sector) != 0) return -1;
   invalid = ComputeSymmetryGroupDigest(&X->Def, &group) != 0 ||
             ComputeSymmetryHamiltonianDigest(&X->Def, &hamiltonian) != 0;
@@ -124,6 +120,15 @@ static int make_header(const struct BindStruct *X, const char *name,
   header[SECTOR_XOR] = sector.xor_hash; header[SECTOR_SUM] = sector.sum_hash;
   header[ORDER] = order; header[HAMILTONIAN] = hamiltonian;
   return 0;
+}
+static int make_header(const struct BindStruct *X, const char *name,
+                       uint64_t *header, char *path)
+{
+  if (failure(name == NULL, "path validation")) return -1;
+  int length = snprintf(path, D_FileNameMax, "%s%s", cParentOutputFolder, name);
+  if (failure(length < 0 || length >= D_FileNameMax || name[0] == '\0',
+              "path validation")) return -1;
+  return SymmetryCheckpointIdentityWords(X, header);
 }
 /* Catch mixed checkpoint sets, including different H/time/state provenance.
  * Rank-specific identity fields were separately checked against the runtime. */

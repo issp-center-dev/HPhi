@@ -66,4 +66,6 @@ void ExpecLocalSetError(void);
     last ExpecLocalEnter(). Always defined. */
 int  ExpecLocalError(void);
 
+unsigned long int ExscanMPI_li(unsigned long int value);
+
 #endif

@@ -68,8 +68,15 @@ def main():
              {'families': {'AnomalousG': [(0, 2, 0, 2, 1)]}})
     negative('nonhermitian' , 'Hermite', gc, {'families': {'Trans': [(2, 0, 3, 0, .2, .1)]}})
     negative('nontranslation', 'invariance', gc, {'families': {'Trans': [(0, 0, 0, 0, .2, 0)]}})
-    for field in ('InputHam', 'ReStart', 'CalcSpec'):
+    for field in ('InputHam', 'CalcSpec'):
         negative('option_'+field, 'does not support '+field if field != 'CalcSpec' else 'spectrum calculations', gc, {'CalcMod': {field: 1}})
+    restart = expert_case(root/'option_ReStart', gc, method=3,
+                          options={'CalcMod': {'ReStart': 1}}, empty=True)
+    run_case(restart, hphi, 'accepted', [], dict(os.environ))
+    restart_manifest = (restart/'output/zvo_restart_manifest.dat').read_text()
+    assert 'method CG\n' in restart_manifest and 'basis sector\n' in restart_manifest
+    assert len(list((restart/'output').glob('zvo_restart_set0_comp*_gen*_rank_0.dat'))) == 2
+    print('option_ReStart: CG v3 restart accepted')
     negative('fulldiag_InputEigenVec', 'InputEigenVec', gc, {'CalcMod': {'InputEigenVec': 1}}, method=2)
     # Sector FullDiag saves every eigenstate; symmetry_fulldiag_states checks them.
     vectors = expert_case(root/'fulldiag_OutputEigenVec', gc, method=2,

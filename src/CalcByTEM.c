@@ -64,6 +64,9 @@
 #include <inttypes.h>
 #include "symmetry_checkpoint.h"
 #include "symmetry_te.h"
+#include "restart_checkpoint.h"
+#include "restart_manifest.h"
+#include "restart_output.h"
 #ifdef HPHI_TEST_SYMMETRY_PROBE
 #include "symmetry_sector_probe.h"
 #endif
@@ -71,9 +74,95 @@
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx);
 void MakeTEDInterAll(struct BindStruct *X, const int timeidx);
 
-/* A sector checkpoint is a state import, not a continuation of its solver clock. */
+/* Driver helpers run outside ExpecLocal; agree even raw rank-local failures. */
+#define TE_AGREE_OR_RETURN(call) do { int te_failed = (call) != 0; \
+  if (SumMPI_i(te_failed) != 0) return -1; } while (0)
+
+static int te_open(const char *name, const char *mode, FILE **fp)
+{
+  *fp = NULL;
+  int failed = childfopenMPI(name, mode, fp) != 0;
+  if (SumMPI_i(failed) != 0) {
+    if (*fp) fclose(*fp);
+    fprintf(stdoutMPI, "Error: failed to open TE output %s.\n", name);
+    return -1;
+  }
+  return 0;
+}
+
+static double te_time_label(const struct BindStruct *X,
+                            const struct SymmetryTEHamiltonian *view, int step, double dt)
+{
+  return view ? SymmetryTETime(&view->base, step - 1) :
+         X->Def.NLaser ? X->Def.Param.Tinit + step * dt : X->Def.TETime[step - 1];
+}
+
+static int te_checkpoint_write(struct BindStruct *X, int next_step, double time)
+{
+  const uint64_t zero = 0;
+  const struct RestartUnit unit = {1, &zero, 1};
+  const struct RestartVectorInfo info = {TimeEvolution, 0, next_step, time, 1, 0, 0, 0, 0};
+  double complex *const components[] = {v1};
+  double complex *const *const vectors[] = {components};
+  return RestartWriteUnit(X, &unit, vectors, &info, 0);
+}
+
+static int te_restore(struct BindStruct *X, const struct SymmetryTEHamiltonian *view,
+                      double dt, int *step_initial, double *restored_time,
+                      int *is_v3, int *legacy_step)
+{
+  struct RestartManifest manifest;
+  enum RestartSource source;
+  int exists;
+  *is_v3 = 0; *legacy_step = 0;
+  if (X->Def.iReStart != RESTART_INOUT && X->Def.iReStart != RESTART_IN) return 0;
+  if (RestartManifestLoad(X, &manifest, &exists) != 0) return -1;
+  /* Only the manifest selects continuation here. SpectrumVec is classified
+   * by the import dispatcher below; its raw sentinel preserves legacy STEP. */
+  if (RestartClassifySet(X, exists ? &manifest : NULL, 0, NULL,
+                         &source, legacy_step) != 0) {
+    RestartManifestFree(&manifest); return -1;
+  }
+  if (source != RESTART_SOURCE_V3) { RestartManifestFree(&manifest); return 0; }
+  struct RestartVectorInfo info;
+  int result = RestartReadVector(X, RestartManifestFind(&manifest, 0), RESTART_COMP_STATE,
+                                RESTART_READ_CONTINUATION, v1, &info);
+  RestartManifestFree(&manifest);
+  if (result != 0) return -1;
+  int step = (int)info.step; /* Reader validated 1 <= STEP <= INT_MAX-1. */
+  int uses_table = !(view ? view->base.NLaser : X->Def.NLaser);
+  if (SumMPI_i(uses_table && (unsigned int)step > X->Def.NTETimeSteps) != 0) {
+    fprintf(stdoutMPI, "Error: time table shorter than the saved checkpoint (needs %d entries).\n", step);
+    return -1;
+  }
+  double expected = te_time_label(X, view, step, dt);
+  double tolerance = fmax(1e-15, 1e-12 * fabs(expected));
+  if (SumMPI_i(!isfinite(expected) || fabs(info.time - expected) > tolerance) != 0) {
+    fprintf(stdoutMPI, "Error: time grid changed: checkpoint time %.17g, grid %.17g at step %d.\n",
+            info.time, expected, step);
+    return -1;
+  }
+  *step_initial = step; *restored_time = info.time; *is_v3 = 1;
+  return 0;
+}
+
+static int te_recover_green(struct BindStruct *X, const struct RestartSeriesRule *rule)
+{
+  const unsigned int counts[] = {X->Def.NCisAjt, X->Def.NCisAjtCkuAlvDC,
+    X->Def.NTBody, X->Def.NFBody, X->Def.NSBody, X->Def.NNBodyG, X->Def.NAnomalousG};
+  const struct RestartSeriesSpec spec = {"#", -1, 0, 1, rule, 0};
+  for (int kind = GreenOutputOneBody; kind <= GreenOutputAnomalous; ++kind) {
+    if (!counts[kind] || !GreenOutputKindUsesAggregate(X, (GreenOutputKind)kind)) continue;
+    char name[D_FileNameMax];
+    TE_AGREE_OR_RETURN(GreenOutputFileName(X, (GreenOutputKind)kind, name));
+    if (RestartRecoverTimeSeries(X, name, &spec) != 0) return -1;
+  }
+  return 0;
+}
+
+/* Record the TE schedule and, for continuation, its restored source clock. */
 static int record_sector_te(const struct BindStruct *X, const struct SymmetryCheckpointInfo *source,
-                             const struct SymmetryTEHamiltonian *view)
+                             const struct SymmetryTEHamiltonian *view, int continuation)
 {
   char name[D_FileNameMax];
   FILE *fp = NULL;
@@ -85,16 +174,12 @@ static int record_sector_te(const struct BindStruct *X, const struct SymmetryChe
     error = n < 0 || (size_t)n + strlen(cParentOutputFolder) >= sizeof(name);
     if (!error) error = childfopenMPI(name, "a", &fp) != 0;
     if (!error) {
-      fprintf(fp, "te_hamiltonian=%s\nte_steps=%u\nexpand_coef=%d\n"
-              "source_method=%" PRIu64 "\nsource_state=%" PRIu64 "\nsource_step=%" PRIu64
-              "\nsource_time=%.17g\nsource_hamiltonian_digest=%016" PRIx64 "\n",
-              view ? "time_dependent" : "static", X->Def.Lanczos_max, X->Def.Param.ExpandCoef, source->source_method,
-              source->state_index, source->step, source->time, source->hamiltonian_digest);
-      /* A FullDiag source digest identifies a sector matrix, not parsed H. */
-      if (source->source_method == FullDiag &&
-          (source->hamiltonian_digest_kind != SYMMETRY_HAMILTONIAN_MATRIX_V1 ||
-           fprintf(fp, "source_hamiltonian_kind=sector_matrix_v1\n") < 0))
-        error = 1;
+      fprintf(fp, "te_hamiltonian=%s\nte_steps=%u\nexpand_coef=%d\n",
+              view ? "time_dependent" : "static", X->Def.Lanczos_max, X->Def.Param.ExpandCoef);
+      /* Imports already record their complete provenance in the dispatcher. */
+      if (continuation) fprintf(fp, "source_method=%" PRIu64 "\nsource_state=%" PRIu64
+                                "\nsource_step=%" PRIu64 "\nsource_time=%.17g\ncontinuation=yes\n",
+                                source->source_method, source->state_index, source->step, source->time);
       for (unsigned int i = 0; i < X->Def.Lanczos_max; ++i) {
         fprintf(fp, "te_time_%u=%.17g\n", i, SymmetryTETime(&X->Def, i));
         if (view) fprintf(fp, "te_hamiltonian_%u=%016" PRIx64 "\n", i, view->digests[i]);
@@ -191,7 +276,8 @@ static int calc_by_tem(
 
   int invalid = X->Bind.Def.Param.ExpandCoef < 1 ||
                 X->Bind.Def.Param.ExpandCoef == INT_MAX || ExpecInterval <= 0 ||
-                (X->Bind.Def.iOutputEigenVec && X->Bind.Def.Param.OutputInterval <= 0);
+                ((X->Bind.Def.iOutputEigenVec || X->Bind.Def.iReStart == RESTART_OUT ||
+                  X->Bind.Def.iReStart == RESTART_INOUT) && X->Bind.Def.Param.OutputInterval <= 0);
   if (SumMPI_i(invalid) != 0) {
     fprintf(stdoutMPI, "Error: TE requires positive ExpandCoef, ExpecInterval and vector OutputInterval.\n");
     return -1;
@@ -221,10 +307,15 @@ static int calc_by_tem(
   step_spin = ExpecInterval;
   X->Bind.Def.St = 0;
   fprintf(stdoutMPI, "%s", cLogTEM_Start);
-  if (X->Bind.Def.iInputEigenVec == FALSE) {
+  int is_v3 = 0, legacy_step = 0;
+  double restored_time = 0;
+  if (te_restore(&(X->Bind), view, dt, &step_initial, &restored_time, &is_v3, &legacy_step) != 0)
+    return -1;
+  if (!is_v3 && X->Bind.Def.iInputEigenVec == FALSE) {
     fprintf(stderr, "Error: A file of Inputvector is not inputted.\n");
     return -1;
-  } else {
+  }
+  if (!is_v3) {
     //input v1
     fprintf(stdoutMPI, "%s","An Initial Vector is inputted.\n");
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, c_InputEigenVectorStart, "a");
@@ -234,17 +325,27 @@ static int calc_by_tem(
       fprintf(stdoutMPI, "Error: missing or overlong TE SpectrumVec filename.\n");
       return -1;
     }
-    if (X->Bind.Def.iFlgSymmetryBasis) {
-      if (ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &source) != 0) return -1;
+    struct RestartVectorInfo provenance;
+    enum RestartFileFormat format;
+    int source_ranks;
+    int imported = RestartImportVector(&(X->Bind), defname, v1, &provenance, &format, &source_ranks);
+    if (imported == -1) return -1;
+    if (imported == 0) {
+      step_initial = 0;
+      if (X->Bind.Def.iFlgSymmetryBasis) {
+        /* Old sector OutputEigenVec retains the imported state label. v3
+         * starts a new solver set at zero, independently of its provenance. */
+        if (format != RESTART_FORMAT_V3) source.state_index = provenance.set;
 #ifdef HPHI_TEST_SYMMETRY_PROBE
-      double norm2 = 0;
-      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i)
-        norm2 += creal(conj(v1[i])*v1[i]);
-      if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", 0, 0,
-                                   sqrt(SumMPI_d(norm2))) != 0) return -1;
+        double norm2 = 0;
+        for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i)
+          norm2 += creal(conj(v1[i])*v1[i]);
+        TE_AGREE_OR_RETURN(SymmetryProbeWriteVector(&(X->Bind), v1, "initial", 0, 0,
+                                                    sqrt(SumMPI_d(norm2))));
 #endif
-      if (record_sector_te(&(X->Bind), &source, view) != 0) return -1;
-    } else {
+        if (record_sector_te(&(X->Bind), NULL, view, 0) != 0) return -1;
+      }
+    } else { /* -2: same-rank legacy raw; keep ReStart=2/3 stored STEP. */
       invalid = childfopenALL(sdt, "rb", &fp) != 0;
       if (!invalid) {
         invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
@@ -271,75 +372,101 @@ static int calc_by_tem(
         fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
         return -1;
       }
-      if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT)
-        step_initial = 0;
+      int continuing = X->Bind.Def.iReStart == RESTART_INOUT || X->Bind.Def.iReStart == RESTART_IN;
+      if (!continuing) step_initial = 0;
       int root_step = BcastMPI_i(0, step_initial);
-      if (SumMPI_i(step_initial < 0 || (unsigned int)step_initial >= X->Bind.Def.Lanczos_max ||
-                   step_initial != root_step) != 0) {
+      if (SumMPI_i(step_initial < (continuing ? 1 : 0) ||
+                   (unsigned int)step_initial >= X->Bind.Def.Lanczos_max || step_initial != root_step) != 0) {
         fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
         return -1;
       }
-      }
+      if (continuing) legacy_step = step_initial;
+    }
   }
+
+  if (is_v3 && X->Bind.Def.iFlgSymmetryBasis) {
+    source.source_method = TimeEvolution;
+    source.step = step_initial; source.time = restored_time;
+    if (record_sector_te(&(X->Bind), &source, view, 1) != 0) return -1;
+  }
+  int recover = is_v3 || (legacy_step > 0 &&
+    (X->Bind.Def.iReStart == RESTART_INOUT || X->Bind.Def.iReStart == RESTART_IN));
+  const struct RestartSeriesRule rule = {0, is_v3 ? step_initial : legacy_step};
+  const struct RestartSeriesSpec series = {"#", -1, -1, 1, &rule, 0};
 
   if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_phys, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameSS);
   }else{
     sprintf(sdt_phys, "%s", cFileNameSS);
   }
-  if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
-    return -1;
+  if (recover) {
+    if (RestartRecoverTimeSeries(&(X->Bind), sdt_phys, &series) != 0) return -1;
+  } else {
+    if (te_open(sdt_phys, "w", &fp) != 0) return -1;
+    fprintf(fp, "%s", cLogSS);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
   }
-  fprintf(fp, "%s",cLogSS);
-  fclose(fp);
 
   if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_norm, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameNorm);
   }else{
     sprintf(sdt_norm, "%s", cFileNameNorm);
   }
-  if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
-    return -1;
+  if (recover) {
+    if (RestartRecoverTimeSeries(&(X->Bind), sdt_norm, &series) != 0) return -1;
+  } else {
+    if (te_open(sdt_norm, "w", &fp) != 0) return -1;
+    fprintf(fp, "%s", cLogNorm);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
   }
-  fprintf(fp, "%s",cLogNorm);
-  fclose(fp);
 
   if(X->Bind.Def.iOutputDataHead==1){
     sprintf(sdt_flct, "%s_%s", X->Bind.Def.CDataFileHead, cFileNameFlct);
   }else{
     sprintf(sdt_flct, "%s", cFileNameFlct);
   }
-  if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
-    return -1;
+  if (recover) {
+    if (RestartRecoverTimeSeries(&(X->Bind), sdt_flct, &series) != 0) return -1;
+  } else {
+    if (te_open(sdt_flct, "w", &fp) != 0) return -1;
+    fprintf(fp, "%s", cLogFlct);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
   }
-  fprintf(fp, "%s",cLogFlct);
-  fclose(fp);
 
-  if (X->Bind.Def.iReStart == RESTART_NOT || X->Bind.Def.iReStart == RESTART_OUT) {
-    if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
-      return -1;
-    }
+  if (recover) {
+    if (te_recover_green(&(X->Bind), &rule) != 0) return -1;
+  } else {
+    TE_AGREE_OR_RETURN(GreenOutputInitializeAggregateFiles(&(X->Bind)));
   }
+  int no_remaining = is_v3 && (unsigned int)step_initial >= X->Bind.Def.Lanczos_max;
+  if (is_v3) Time = restored_time;
+  if (no_remaining) fprintf(stdoutMPI, "TE: no remaining steps (saved step %d).\n", step_initial);
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
-  if (step_initial > 0) {
+  /* Raw no-op has only vector output, so no H psi reconstruction is needed.
+   * In particular Laser has no saved-step table-length contract. Sector
+   * output still needs its preceding Hamiltonian/digest selected. */
+  if (step_initial > 0 && (!no_remaining || X->Bind.Def.iFlgSymmetryBasis)) {
     /* Raw TE files store the next step. Restore H|psi> at the preceding
      * time point: MultiplyForTEM consumes both psi (v1) and H psi (v0).
      * Without this, a restarted run silently loses its first Taylor term. */
     step_i = X->Bind.Def.istep = step_initial - 1;
-    if (X->Bind.Def.NLaser > 0) {
-      double previous_time = Time + (step_initial - 1) * dt;
-      Time += step_initial * dt;
+    if (view) {
+      if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_initial - 1, restored_time) != 0 ||
+          RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
+    } else if (X->Bind.Def.NLaser > 0) {
+      double previous_time = X->Bind.Def.Param.Tinit + (step_initial - 1) * dt;
+      Time = is_v3 ? restored_time : X->Bind.Def.Param.Tinit + step_initial * dt;
       if (!isfinite(previous_time) || !isfinite(Time)) return -1;
-      TransferWithPeierls(&(X->Bind), previous_time);
+      TE_AGREE_OR_RETURN(TransferWithPeierls(&(X->Bind), previous_time));
     } else if (X->Bind.Def.NTETransferMax > 0) {
       MakeTEDTransfer(&(X->Bind), step_initial - 1);
     } else if (X->Bind.Def.NTEInterAllMax > 0) {
       MakeTEDInterAll(&(X->Bind), step_initial - 1);
     }
     for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
-    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+    TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
   }
   int progress_interval = X->Bind.Def.Lanczos_max / 10;
   if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 when Lanczos_max < 10 */
@@ -362,10 +489,10 @@ static int calc_by_tem(
       X->Bind.Def.Param.TimeSlice = dt;
       /* All Taylor powers use the SAME current H, including the first one. */
       for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
-      if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+      TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
     }
     else if(X->Bind.Def.NLaser !=0) {
-      TransferWithPeierls(&(X->Bind), Time);
+      TE_AGREE_OR_RETURN(TransferWithPeierls(&(X->Bind), Time));
     }
     else {
       // common procedure
@@ -396,46 +523,38 @@ static int calc_by_tem(
     else {
       TimeKeeperWithStep(&(X->Bind), cFileNameTEStep, cTEStep, "a", step_i);
     }
-    if (MultiplyForTEM(&(X->Bind)) != 0) return -1;
+    TE_AGREE_OR_RETURN(MultiplyForTEM(&(X->Bind)));
     //Add Diagonal Parts
     //Multiply Diagonal
-    if (expec_energy_flct(&(X->Bind)) != 0) return -1;
+    TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
 
     if(!view && X->Bind.Def.NLaser >0 ) Time+=dt;
-    if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
+    if (te_open(sdt_phys, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf  %.16lf %.16lf %.16lf %.16lf %d\n", Time, X->Bind.Phys.energy, X->Bind.Phys.var,
             X->Bind.Phys.doublon, X->Bind.Phys.num, step_i);
-    fclose(fp);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
 
-    if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
+    if (te_open(sdt_norm, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf %.16lf %d\n", Time, global_norm, step_i);
-    fclose(fp);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
 
-    if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
+    if (te_open(sdt_flct, "a", &fp) != 0) {
       return -1;
     }
     fprintf(fp, "%.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %.16lf %d\n", Time,X->Bind.Phys.num,X->Bind.Phys.num2, X->Bind.Phys.doublon,X->Bind.Phys.doublon2, X->Bind.Phys.Sz,X->Bind.Phys.Sz2,step_i);
-    fclose(fp);
+    TE_AGREE_OR_RETURN(GreenOutputCloseChecked(fp));
 
 
 
     if (step_i % step_spin == 0) {
-      if (expec_cisajs(&(X->Bind), v1) != 0) {
-        return -1;
-      }
-      if (expec_cisajscktaltdc(&(X->Bind), v1) != 0) {
-        return -1;
-      }
-      if (expec_nbodyg(&(X->Bind), v1) != 0) {
-        return -1;
-      }
-      if (expec_anomalousg(&(X->Bind), v1) != 0) {
-        return -1;
-      }
+      TE_AGREE_OR_RETURN(expec_cisajs(&(X->Bind), v1));
+      TE_AGREE_OR_RETURN(expec_cisajscktaltdc(&(X->Bind), v1));
+      TE_AGREE_OR_RETURN(expec_nbodyg(&(X->Bind), v1));
+      TE_AGREE_OR_RETURN(expec_anomalousg(&(X->Bind), v1));
     }
     if (X->Bind.Def.iOutputEigenVec == TRUE) {
       if (step_i % X->Bind.Def.Param.OutputInterval == 0) {
@@ -444,11 +563,17 @@ static int calc_by_tem(
         } else if (write_raw_te_vector(&(X->Bind), step_i, step_i + 1) != 0) return -1;
       }
     }
+    if ((X->Bind.Def.iReStart == RESTART_OUT || X->Bind.Def.iReStart == RESTART_INOUT) &&
+        (step_i + 1) % X->Bind.Def.Param.OutputInterval == 0)
+      if (te_checkpoint_write(&(X->Bind), step_i + 1, Time) != 0) return -1;
   }
+  if (!no_remaining && (X->Bind.Def.iReStart == RESTART_OUT || X->Bind.Def.iReStart == RESTART_INOUT))
+    if (te_checkpoint_write(&(X->Bind), step_i, Time) != 0) return -1;
   if (X->Bind.Def.iOutputEigenVec == TRUE) {
     if (X->Bind.Def.iFlgSymmetryBasis) {
-      if (write_sector_te_vector(&(X->Bind), step_i - 1, Time, source.state_index, 1) != 0) return -1;
-    } else if (write_raw_te_vector(&(X->Bind), rand_i, step_i) != 0) return -1;
+      if (write_sector_te_vector(&(X->Bind), no_remaining ? step_initial : step_i - 1,
+                                 no_remaining ? restored_time : Time, source.state_index, 1) != 0) return -1;
+    } else if (write_raw_te_vector(&(X->Bind), no_remaining ? step_initial : rand_i, step_i) != 0) return -1;
   }
 
   fprintf(stdoutMPI, "%s",cLogTEM_End);

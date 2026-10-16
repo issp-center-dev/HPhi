@@ -159,6 +159,12 @@ The parameters correlated with the keywords are as follows.
    | 0: Not input an eigenvector
    | 1: Input an eigenvector.
 
+   State import is distinct from solver continuation. CG evaluates the
+   supplied state without resuming optimization. TimeEvolution starts a new
+   clock at step zero. v3 import records the source method, state, step, time
+   and scalar values as provenance, while still requiring matching basis
+   identity and phase. See :ref:`Subsec:restart_v3` for the copy procedure.
+
 *  ``ReStart``
 
    **Type :** Int (default value: 0)
@@ -169,18 +175,21 @@ The parameters correlated with the keywords are as follows.
    | 2: Input a restart vector and output a new restart vector
    | 3: Input a restart vector.
 
-   For raw-basis TimeEvolution, the binary vector header stores the **next**
-   step to execute. Periodic and final output use this same convention.
-   A restart requires that step to be in ``[0, Lanczos_max)`` and identical
-   across ranks. Keep the Hamiltonian and time grid consistent with the
-   original run. With ``ReStart=0`` the input is a new initial state and its
-   saved step is ignored.
-   Older periodic TE files stored the completed step, so their header step
-   must be incremented by one before use as a restart; older final files
-   already stored the next step. The final raw vector retains the legacy
-   ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` alias. Periodic filenames use
-   the completed step as their index, even though the header stores the next
-   step. Missing, truncated, non-finite or incompatible input fails collectively.
+   CG, mTPQ, cTPQ and TimeEvolution use the v3 manifest format in raw and
+   ``TransSym`` bases. The saved and current MPI process counts must match in
+   this release, and a sector continuation must keep its basis layout.
+   ``ReStart=3`` never rewrites the checkpoint. v3 ``Lanczos_max`` is an
+   absolute final bound. A no-op at a lowered bound evaluates the restored
+   state without adding history rows or rewriting the checkpoint. A terminal
+   CG checkpoint is rechecked with the current ``LanczosEps``; a stricter
+   tolerance can resume it, while an upper-limit no-op makes no current
+   convergence claim. Missing or corrupt manifest-referenced v3 data is fatal
+   and does not fall back to legacy files. See :ref:`Subsec:restart_v3`.
+
+   Legacy raw CG/TPQ and TimeEvolution inputs remain readable with their
+   historical meanings. In particular, legacy CG starts additional iteration
+   labels at one and does not restore the old ``Lanczos_Step`` prefix.
+   Ground-state Lanczos and ``CalcSpec`` restart remain separate legacy paths.
 
 *  ``CalcSpec``
 
@@ -524,9 +533,11 @@ for ``CalcType=0,1,2,3,4,5``. Use CG (3) for ground-state calculations.
 FullDiag (2) uses Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA) and can write requested
 correlations and every eigenstate (``OutputEigenVec=1``); MAGMA, vector input,
 Hamiltonian I/O and nonserial ExpecMode are unsupported.
-CG accepts sector vector import/export; TE requires sector vector import and
-optionally exports vectors. Both can import FullDiag eigenstates. Import starts a new evaluation/time grid, not a
-restart: ``ReStart`` is unsupported for every sector method.
+CG accepts sector vector import/export; TE accepts sector vector import and
+optionally exports vectors. Both can import FullDiag eigenstates. Import starts
+a new evaluation/time grid. Separately, CG, TPQ, cTPQ and TimeEvolution support
+same-process-count, same-layout v3 solver continuation; FullDiag and Lanczos do
+not use that sector continuation path.
 For the full feature table and a runnable expert example, see :ref:`Subsec:TransSym`.
 
 .. raw:: latex

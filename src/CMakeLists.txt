@@ -17,6 +17,8 @@ add_executable(HPhi)
 target_sources(HPhi PRIVATE
   FileIO.c HPhiMain.c HPhiTrans.c bitcalc.c check.c CheckMPI.c
   dSFMT.c diagonalcalc.c global.c log.c input.c output.c output_list.c
+  restart_manifest.c restart_manifest_io.c restart_digest.c restart_checkpoint.c
+  restart_output.c restart_output_core.c tpq_restart.c
   readdef.c sz.c vec12.c xsetmem.c ErrorMessage.c LogMessage.c
   ProgressMessage.c wrapperMPI.c splash.c time.c eigenIO.c struct.c
   nbody_interall.c anomalous_pair.c green_output.c symmetry_basis.c symmetry_basis_io.c
@@ -149,7 +151,8 @@ install(TARGETS HPhi RUNTIME DESTINATION bin)
 get_target_property(_sector_sources HPhi SOURCES)
 add_executable(unittest_symmetry_sector_probe ${_sector_sources}
   ${CMAKE_SOURCE_DIR}/test/symmetry_sector_probe.c
-  ${CMAKE_SOURCE_DIR}/test/symmetry_fulldiag_probe.c)
+  ${CMAKE_SOURCE_DIR}/test/symmetry_fulldiag_probe.c
+  ${CMAKE_SOURCE_DIR}/test/restart_probe.c)
 foreach(_sector_property INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
     COMPILE_OPTIONS LINK_LIBRARIES LINK_FLAGS)
   get_target_property(_sector_value HPhi ${_sector_property})

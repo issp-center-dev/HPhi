@@ -8,6 +8,9 @@ tmpvecファイル
 TPQ/cTPQ法およびLOBPCG（CG）法のlegacy ``ReStart`` で使用する
 バイナリファイルです。基底状態Lanczos法はこの形式を使用せず、
 ``recalcvec`` と ``TMComponents`` を使用します。
+新しいcheckpointは :ref:`Subsec:restart_v3` のv3 manifest形式を使い、
+``tmpvec`` を出力しません。legacy CGの ``Lanczos_max`` は追加反復数で、表示する
+反復labelを1から開始し、以前の ``Lanczos_Step`` prefixを復旧しません。
 
 ファイル名
 ^^^^^^^^^^

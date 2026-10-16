@@ -10,8 +10,6 @@ import numpy as np
 import symmetry_correlation as correlation
 import symmetry_general_terms as fixture
 
-fixture.ROOT = Path('symmetry_te')
-fixture.ROOT.mkdir(exist_ok=True)
 
 
 def vector(path, label, expected_step, expected_time):
@@ -188,7 +186,7 @@ def check(path, model, length, momentum, states, raw, projector):
                     (path / 'calc.def').write_text(te_calc.replace('InputEigenVec 1', 'InputEigenVec 2'))
                     fixture.run(path, 'reject_input_'+layout, layout=layout, fail='requires sector checkpoint InputEigenVec=1')
                     (path / 'calc.def').write_text(te_calc + 'ReStart 1\n')
-                    fixture.run(path, 'reject_restart_'+layout, layout=layout, fail='ReStart')
+                    fixture.run(path, 'publish_restart_'+layout, layout=layout)
                     (path / 'calc.def').write_text(te_calc)
                     (path / 'times.def').write_text('====\nNTimeSteps 5\n====\n====\n====\n' + ''.join('{} 1\n0 0 0 0 .1 0\n'.format(t) for t in times))
                     fixture.run(path, 'reject_dynamic_'+layout, layout=layout, fail='preflight failed at step 0')
@@ -199,5 +197,34 @@ def check(path, model, length, momentum, states, raw, projector):
     print('{} k={}: static quench, every vector and observable PASS'.format(model, momentum))
 
 
-for model, length in [('Spin', 6), ('SpinlessFermion', 6), ('Hubbard', 4), ('tJ', 4)]:
-    fixture.prepare(model, length, sector_test=check)
+def build_restart_seed(source, target, layout):
+    """Reuse the projected-model fixture for a single seeded TE restart case."""
+    import restart_common as rc
+    target.mkdir()
+    for p in source.glob('*.def'):
+        shutil.copyfile(p, target / p.name)
+    # Retain the sector definitions while exposing the common restart names.
+    for old, new in [('calc.def', 'calcmod.def'), ('mod.def', 'modpara.def')]:
+        shutil.copyfile(target / old, target / new)
+    names = (target / 'sym.def').read_text().replace('mod.def', 'modpara.def').replace('calc.def', 'calcmod.def')
+    (target / 'namelist.def').write_text(names)
+    rc.set_key(target, 'calcmod.def', 'OutputEigenVec', 1)
+    rc.set_key(target, 'modpara.def', 'exct', 1)
+    rc.set_key(target, 'modpara.def', 'nvec', 1)
+    rc.run(target, 'seed', env={'HPHI_SYMMETRY_BASIS_LAYOUT': layout})
+    for p in (target / 'output').glob('zvo_eigenvec_0_rank_*.dat'):
+        shutil.copyfile(p, p.with_name(p.name.replace('zvo_', 'seed_')))
+    # Quench the same translation-invariant density interaction as check().
+    inter = target / 'InterAll.def'
+    rows = [line.split() for line in inter.read_text().splitlines()[5:] if line.strip()]
+    length = len((target / 'loc.def').read_text().splitlines()[5:])
+    rows.extend([[i, 0, i, 0, (i+1) % length, 0, (i+1) % length, 0, .27, 0]
+                 for i in range(length)])
+    fixture.definition(target, 'InterAll.def', rows)
+
+
+if __name__ == '__main__':
+    fixture.ROOT = Path('symmetry_te')
+    fixture.ROOT.mkdir(exist_ok=True)
+    for model, length in [('Spin', 6), ('SpinlessFermion', 6), ('Hubbard', 4), ('tJ', 4)]:
+        fixture.prepare(model, length, sector_test=check)

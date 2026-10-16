@@ -143,6 +143,8 @@
      - 再計算ベクトル
    * - :doc:`zvo_excited*.dat <excitedvec_ja>`
      - 励起状態ベクトル
+   * - :doc:`v3 restart manifest/vector <restart_ja>`
+     - 原子的なsolver継続checkpoint
 
 **動的グリーン関数**
 
@@ -259,6 +261,7 @@ TPQ（有限温度）出力
    tmpvec_ja
    recalcvec_ja
    excitedvec_ja
+   restart_ja
 
 動的グリーン関数
 ^^^^^^^^^^^^^^^^

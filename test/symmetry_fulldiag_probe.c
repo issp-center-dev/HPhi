@@ -284,10 +284,14 @@ done:
 int SymmetryFullDiagTestFail(const char *stage)
 {
   static int fired;
+  static unsigned long matched;
   const char *wanted = getenv("HPHI_TEST_FD_FAIL");
   const char *rank_text = getenv("HPHI_TEST_FD_FAIL_RANK");
   if (fired || wanted == NULL || rank_text == NULL ||
       strcmp(wanted, stage) != 0 || atoi(rank_text) != myrank) return 0;
+  const char *skip = getenv("HPHI_TEST_FD_FAIL_SKIP");
+  unsigned long count = skip == NULL ? 0 : strtoul(skip, NULL, 10);
+  if (matched++ < count) return 0;
   fired = 1;
   return 1;
 }

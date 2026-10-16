@@ -38,6 +38,7 @@ struct ParamList {
     int OutputInterval;
     int ExpandCoef;
     int ExpecInterval;
+    int CheckpointInterval;   /**< v3 continuation checkpoint period for CG/TPQ/cTPQ (0: end only) */
 };
 /**
 @brief Definision of system (Hamiltonian) etc.
@@ -269,6 +270,8 @@ struct DefineList {
   int iInitialVecType;/**<@brief Switch for type of inital vectors. 
                       0:complex type, 1: real type. default value is set as 0 in readdef.c*/
   int iFlgFiniteTemperature;/**<@brief ???*/
+  int iCalcModelInput; /**< Model before sz() changes NConserved models. */
+  int iRestartFixedFlags; /**< bit0: fixed Ne; bit1: fixed Sz. */
   int iCalcModel;/**<@brief Switch for model. 0:Hubbard, 1:Spin, 2:Kondo, 
                  3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;/**<@brief Switch for output mode. 0: OneBodyG and TwoBodyG. 
@@ -323,6 +326,7 @@ struct DefineList {
      - 0: not restart
      - 1:restart (output restart vector),
      - 2: restart (input and output restart vector) */
+  int RestartSourceRanks;   /**< MPI rank count of the files to read (0: same as this run) */
   int iFlgMPI;/**<@brief MPI mode
     - 0: butterfly
     - 1: Parallel Interaction [to be supported]

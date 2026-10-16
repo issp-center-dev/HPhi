@@ -54,6 +54,9 @@
 #include "phys.h"
 #include "symmetry_basis.h"
 #include "symmetry_checkpoint.h"
+#include "restart_checkpoint.h"
+#include "restart_manifest.h"
+#include "restart_output.h"
 #ifdef HPHI_TEST_SYMMETRY_PROBE
 #include "symmetry_sector_probe.h"
 #endif
@@ -180,74 +183,20 @@ static double calc_preshift(
 }/*void calc_preshift*/
 /*
 @brief Compute initial guess for LOBPCG.
-If this is resuterting run, read from files.
+Restart restoration is handled separately before random initialization.
 */
 static void Initialize_wave(
   struct BindStruct *X,//!<[inout]
   double complex **wave//!<[out] [exct][CheckList::idim_max] initial eigenvector
 ) 
 {
-  FILE *fp;
-  char sdt[D_FileNameMax];
-  size_t byte_size = 0;
-
-  int iproc, ie, ierr;
+  int iproc, ie;
   long int idim, iv, i_max;
   unsigned long int i_max_tmp, sum_i_max;
   int mythread;
   double dnorm;
-  /*
-  For DSFMT
-  */
   long unsigned int u_long_i;
   dsfmt_t dsfmt;
-  /**@brief
-  (A) For restart: Read saved eigenvector files (as binary files) from each processor
-  */
-  if (X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN) {
-    //StartTimer(3600);
-    //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
-    fprintf(stdoutMPI, "%s", cLogInputVecStart);
-
-    ierr = 0;
-    for (ie = 0; ie < X->Def.k_exct; ie++) {
-
-      sprintf(sdt, cFileNameInputVector, ie, myrank);
-      childfopenALL(sdt, "rb", &fp);
-      if (fp == NULL) {
-        fprintf(stderr, "Restart file is not found (rank %d).\n", myrank);
-        ierr = 1;
-        break;
-      }
-      else {
-        byte_size = fread(&iproc, sizeof(int), 1, fp);
-        byte_size = fread(&i_max, sizeof(unsigned long int), 1, fp);
-        //fprintf(stdoutMPI, "Debug: i_max=%ld, step_i=%d\n", i_max, step_i);
-        if (i_max != X->Check.idim_max) {
-          fprintf(stderr, "Error: Invalid restart file.\n");
-          exitMPI(-1);
-        }
-        byte_size = fread(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
-        fclose(fp);
-      }
-    }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-
-    /* All ranks must agree on the fallback: restart files are per-rank and a
-       partially missing set would otherwise let some ranks return early while
-       others enter the scratch path, whose MPI collectives do not match. */
-    ierr = (int)MaxMPI_li((unsigned long int)ierr);
-    if (ierr != 0) fprintf(stdoutMPI, "Start from scratch.\n");
-
-    if (ierr == 0) {
-      //TimeKeeperWithRandAndStep(X, cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-      fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-      //StopTimer(3600);
-      if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
-      return;
-    }/*if (ierr == 0)*/
-
-  }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
-
   /**@brief
   (B) For scratch (including the case that restart files are not found):
   initialize eigenvectors in the same way as TPQ and Lanczos.
@@ -326,34 +275,115 @@ static void Initialize_wave(
     }
   }/*else if(initial_mode==1)*/
 }/*static void Initialize_wave*/
-/**
-@brief Output eigenvectors for restart LOBPCG method
-*/
-static void Output_restart(
-  struct BindStruct *X,//!<[inout]
-  double complex **wave//!<[in] [exct][CheckList::idim_max] initial eigenvector
-)
+/* Header and complete-unit validation precede this legacy X-only read. */
+static int legacy_initialize_wave(struct BindStruct *X, double complex **wave)
 {
-  FILE *fp;
-  size_t byte_size = 0;
-  char sdt[D_FileNameMax];
-  int ie;
+  fprintf(stdoutMPI, "%s", cLogInputVecStart);
+  for (int ie = 0; ie < X->Def.k_exct; ++ie) {
+    FILE *fp = NULL;
+    char name[D_FileNameMax];
+    int step, bad;
+    unsigned long dim;
+    sprintf(name, cFileNameInputVector, ie, myrank);
+    childfopenALL(name, "rb", &fp);
+    bad = fp == NULL;
+    if (!bad) {
+      bad = fread(&step, sizeof(step), 1, fp) != 1 ||
+            fread(&dim, sizeof(dim), 1, fp) != 1 || dim != X->Check.idim_max;
+      if (!bad) bad = fread(wave[ie], sizeof(double complex), dim + 1, fp) != dim + 1;
+      bad |= fclose(fp) != 0;
+    }
+    if (SumMPI_i(bad) != 0) {
+      fprintf(stdoutMPI, "Error: CG legacy restart read failed.\n"); return -1;
+    }
+  }
+  fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+  return 0;
+}
 
-  //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
-  fprintf(stdoutMPI, "%s", cLogOutputVecStart);
-  
-  for (ie = 0; ie < X->Def.k_exct; ie++) {
-    sprintf(sdt, cFileNameOutputVector, ie, myrank);
-    if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
-    byte_size = fwrite(&X->Large.itr, sizeof(X->Large.itr), 1, fp);
-    byte_size = fwrite(&X->Check.idim_max, sizeof(X->Check.idim_max), 1, fp);
-    byte_size = fwrite(wave[ie], sizeof(complex double), X->Check.idim_max + 1, fp);
-    fclose(fp);
-  }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-  //TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-  fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
-  if(byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
-}/*static void Output_restart*/
+static int cg_checkpoint_write(struct BindStruct *X, double complex ***wxp, const double *eig, uint64_t step, uint64_t flags)
+{
+  int n = X->Def.k_exct;
+  uint64_t *sets = malloc(n * sizeof(*sets));
+  struct RestartVectorInfo *infos = malloc(n * sizeof(*infos));
+  double complex ***vectors = malloc(n * sizeof(*vectors));   /* vectors[ie][comp] */
+  double complex **pairs = malloc(2 * n * sizeof(*pairs));
+  if (SumMPI_i(sets == NULL || infos == NULL || vectors == NULL || pairs == NULL) != 0) {
+    free(sets); free(infos); free(vectors); free(pairs); return -1;
+  }
+  for (int ie = 0; ie < n; ++ie) {
+    sets[ie] = (uint64_t)ie;
+    pairs[2*ie] = wxp[1][ie]; pairs[2*ie + 1] = wxp[2][ie]; vectors[ie] = &pairs[2*ie];
+    struct RestartVectorInfo info = {CG, (uint64_t)ie, step, 0.0, (uint64_t)n, flags, eig[ie], 0.0, 0.0};
+    infos[ie] = info;
+  }
+  struct RestartUnit unit = {n, sets, 2};
+  int result = RestartWriteUnit(X, &unit, (double complex *const *const *)vectors, infos, flags);
+  free(sets); free(infos); free(vectors); free(pairs);
+  return result;
+}
+
+/* Returns 0 fresh, 1 v3, 2 legacy, -1 error. On 1: wxp[1]=X, wxp[2]=P, eig restored, *step_start=STEP, *converged_flag=FLAGS bit0. */
+static int cg_restore(struct BindStruct *X, double complex ***wxp, double *eig, int *step_start, int *converged_flag)
+{
+  struct RestartManifest m; int exists, legacy_step; enum RestartSource source;
+  *step_start = 1; *converged_flag = 0;
+  if (X->Def.iReStart != RESTART_INOUT && X->Def.iReStart != RESTART_IN) return 0;
+  if (RestartManifestLoad(X, &m, &exists) != 0) return -1;
+  /* Classify the complete block before selecting a fresh or legacy path. */
+  enum RestartSource first_source = RESTART_SOURCE_NONE;
+  int first_legacy_step = 0;
+  const struct RestartManifestRow *unit_first = exists ? RestartManifestFind(&m, 0) : NULL;
+  for (int ie = 0; ie < X->Def.k_exct; ++ie) {
+    const struct RestartManifestRow *row = exists ? RestartManifestFind(&m, (uint64_t)ie) : NULL;
+    if (row != NULL && unit_first != NULL &&
+        (row->gen != unit_first->gen || row->ranks != unit_first->ranks || row->step != unit_first->step)) {
+      fprintf(stdoutMPI, "Error: CG restart unit is incomplete or mixed (state %d).\n", ie);
+      RestartManifestFree(&m); return -1;
+    }
+    if (RestartClassifySet(X, exists ? &m : NULL, (uint64_t)ie, cFileNameInputVector,
+                           &source, &legacy_step) != 0) { RestartManifestFree(&m); return -1; }
+    if (ie == 0) { first_source = source; first_legacy_step = legacy_step; }
+    else if (source != first_source || (source == RESTART_SOURCE_LEGACY && legacy_step != first_legacy_step)) {
+      fprintf(stdoutMPI, "Error: CG restart unit is incomplete or mixed (state %d).\n", ie);
+      RestartManifestFree(&m); return -1;
+    }
+  }
+  source = first_source;
+  if (source == RESTART_SOURCE_NONE) {
+    RestartManifestFree(&m);
+    if (X->Def.iReStart == RESTART_IN) { fprintf(stdoutMPI, "Error: restart manifest is required for ReStart=3.\n"); return -1; }
+    fprintf(stdoutMPI, "Start from scratch.\n"); return 0;
+  }
+  if (source == RESTART_SOURCE_LEGACY) { RestartManifestFree(&m); return legacy_initialize_wave(X, wxp[1]) == 0 ? 2 : -1; }
+  if (m.method != CG) { fprintf(stdoutMPI, "Error: restart manifest belongs to another method.\n"); RestartManifestFree(&m); return -1; }
+  const struct RestartManifestRow *first = RestartManifestFind(&m, 0);
+  struct RestartVectorInfo first_info = {0};
+  for (int ie = 0; ie < X->Def.k_exct; ++ie) {
+    const struct RestartManifestRow *row = RestartManifestFind(&m, (uint64_t)ie);
+    struct RestartVectorInfo ix, ip;
+    int bad = row == NULL || row->ncomp != 2 || row->gen != first->gen || row->ranks != first->ranks || row->step != first->step;
+    if (SumMPI_i(bad) != 0) { fprintf(stdoutMPI, "Error: CG restart unit is incomplete or mixed (state %d).\n", ie); RestartManifestFree(&m); return -1; }
+    if (RestartReadVector(X, row, RESTART_COMP_STATE, RESTART_READ_CONTINUATION, wxp[1][ie], &ix) != 0 ||
+        RestartReadVector(X, row, RESTART_COMP_DIRECTION, RESTART_READ_CONTINUATION, wxp[2][ie], &ip) != 0) { RestartManifestFree(&m); return -1; }
+    bad = ix.step != ip.step || ix.flags != ip.flags || ix.time != ip.time || ix.nset != ip.nset ||
+          ix.scalar_a != ip.scalar_a || ix.scalar_b != ip.scalar_b || ix.scalar_c != ip.scalar_c;   /* §4.3 component unit (Q3) */
+    if (SumMPI_i(bad) != 0) { fprintf(stdoutMPI, "Error: CG restart component scalars differ (state %d).\n", ie); RestartManifestFree(&m); return -1; }
+    eig[ie] = ix.scalar_a;
+    if (ie == 0) {
+      first_info = ix;
+      *step_start = (int)ix.step; *converged_flag = (int)(ix.flags & 1);
+    }
+    bad = ix.step != first_info.step || ix.flags != first_info.flags || ix.time != first_info.time ||
+          ix.nset != first_info.nset || ix.scalar_b != first_info.scalar_b || ix.scalar_c != first_info.scalar_c;
+    if (SumMPI_i(bad) != 0) {
+      fprintf(stdoutMPI, "Error: CG restart states carry different steps, flags or scalars.\n");
+      RestartManifestFree(&m); return -1;
+    }
+  }
+  RestartManifestFree(&m);
+  return 1;
+}
 
 static int CheckedLOBPCGWorkspaceElements(
     const struct BindStruct *X,
@@ -456,7 +486,10 @@ int LOBPCG_Main(
   <li>Set initial guess of wavefunction: 
   @f${\bf x}=@f$initial guess</li>
   */
-  Initialize_wave(X, wxp[1]);
+  int stp_start = 1, converged_flag = 0;
+  int restored = cg_restore(X, wxp, eig, &stp_start, &converged_flag);
+  if (restored < 0) return -1;
+  if (restored == 0) Initialize_wave(X, wxp[1]);
 
   TimeKeeper(X, cFileNameTimeKeep, cLanczos_EigenValueStart, "a");
 
@@ -464,28 +497,58 @@ int LOBPCG_Main(
     for (idim = 1; idim <= i_max; idim++) hwxp[1][ie][idim] = 0.0;
   for (ie = 0; ie < X->Def.k_exct; ie++) 
     mltply(X, hwxp[1][ie], wxp[1][ie]);
-  stp = 1;
-  TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", 0);
-
-  for (ie = 0; ie < X->Def.k_exct; ie++){
-    for (idim = 1; idim <= i_max; idim++) wxp[2][ie][idim] = 0.0;
+  TimeKeeperWithStep(X, cFileNameTimeKeep, cLanczos_EigenValueStep, "a", stp_start - 1);
+  for (ie = 0; ie < X->Def.k_exct; ie++) {
     for (idim = 1; idim <= i_max; idim++) hwxp[2][ie][idim] = 0.0;
-
-    eig[ie] = creal(VecProdMPI(i_max, wxp[1][ie], hwxp[1][ie]));
-  }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
-
+    if (restored == 1) mltply(X, hwxp[2][ie], wxp[2][ie]);
+    else {
+      for (idim = 1; idim <= i_max; idim++) wxp[2][ie][idim] = 0.0;
+      eig[ie] = creal(VecProdMPI(i_max, wxp[1][ie], hwxp[1][ie]));
+    }
+  }
+  int write_checkpoints = X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT;
+  int noop = 0, converged_now = 0;
+  if (restored == 1 && converged_flag) {
+    eigabs_max = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ++ie)
+      if (fabs(eig[ie]) > eigabs_max) eigabs_max = fabs(eig[ie]);
+    eps_LOBPCG = pow(10, -0.5 * X->Def.LanczosEps);
+    if (eigabs_max > 1.0) eps_LOBPCG *= eigabs_max;
+    dnormmax = 0.0;
+    for (ie = 0; ie < X->Def.k_exct; ++ie) {
+      for (idim = 1; idim <= i_max; ++idim)
+        wxp[0][ie][idim] = hwxp[1][ie][idim] - eig[ie] * wxp[1][ie][idim];
+      dnorm = sqrt(creal(VecProdMPI(i_max, wxp[0][ie], wxp[0][ie])));
+      if (dnorm > dnormmax) dnormmax = dnorm;
+    }
+    converged_now = dnormmax < eps_LOBPCG;
+  }
+  /* Exhausted budgets require evaluation even if saved convergence is no longer valid. */
+  noop = restored == 1 && (converged_now || stp_start > X->Def.Lanczos_max);
   sprintf(sdt_2, cFileNameLanczosStep, X->Def.CDataFileHead);
-  childfopenMPI(sdt_2, "w", &fp);
+  if (restored == 1) {
+    struct RestartSeriesRule rule = {0, (uint64_t)stp_start + (uint64_t)converged_now};
+    struct RestartSeriesSpec spec = {"Step", -1, 0, 1, &rule, 0};
+    if (RestartRecoverTimeSeries(X, sdt_2, &spec) != 0) return -1;
+  } else {
+    childfopenMPI(sdt_2, "w", &fp);
+    fprintf(fp, "    Step   Residual-2-norm     Threshold      Energy\n");
+    fclose(fp);
+  }
   fprintf(stdoutMPI, "    Step   Residual-2-norm     Threshold      Energy\n");
-  fprintf(fp, "    Step   Residual-2-norm     Threshold      Energy\n");
-  fclose(fp);
+  if (noop) {
+    fprintf(stdoutMPI, "  LOBPCG: no remaining steps (saved step %d, Lanczos_max %d%s).\n",
+            stp_start, X->Def.Lanczos_max,
+            converged_now ? ", converged" : ", convergence not confirmed at current tolerance");
+    iconv = converged_now ? 0 : -1;
+  }
 
   nsub_cut = nsub;
   /**@brief
   <li>@b DO LOBPCG loop</li>
   <ul>
   */
-  for (stp = 1; stp <= X->Def.Lanczos_max; stp++) {
+  for (stp = stp_start; !noop && stp <= X->Def.Lanczos_max; stp++) {
     /**@brief
     <li>Scale convergence threshold with the absolute value of eigenvalue
     for numerical stability</li>
@@ -673,7 +736,14 @@ int LOBPCG_Main(
       }/* for (ie = 0; ie < X->Def.k_exct; ie++)*/
     }/*for (ii = 1; ii < 3; ii++)*/
 
-  }/*for (stp = 1; stp <= X->Def.Lanczos_max; stp++)*/
+    /* X/P and Ritz values now describe the next iteration. */
+    if (write_checkpoints && X->Def.Param.CheckpointInterval > 0 &&
+        stp % X->Def.Param.CheckpointInterval == 0 &&
+        cg_checkpoint_write(X, wxp, eig, (uint64_t)stp + 1, 0) != 0) return -1;
+  }
+  /* Preserve the iteration state before final degenerate-block orthogonalization. */
+  if (!noop && write_checkpoints &&
+      cg_checkpoint_write(X, wxp, eig, (uint64_t)stp, iconv == 0 ? 1 : 0) != 0) return -1;
   /**@brief
   </ul>
   <li>@b END @b DO LOBPCG iteration
@@ -735,14 +805,11 @@ int LOBPCG_Main(
   free_cd_2d_allocate(work);
   free_cd_3d_allocate(hwxp);
   /**@brief
-  <li>Output resulting vectors for restart</li>
+  <li>A non-converged checkpoint-only run has no final observables.</li>
   */
-  if (X->Def.iReStart == RESTART_OUT || X->Def.iReStart == RESTART_INOUT){
-      Output_restart(X, wxp[1]);
-      if(iconv != 0) {
-          sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
-          return 1;
-      }
+  if (!noop && write_checkpoints && iconv != 0) {
+    free_cd_3d_allocate(wxp);
+    return 1;
   }
   /**@brief
   <li>Just Move wxp[1] into ::L_vec. The latter must be start from 0-index (the same as FullDiag)</li>
@@ -762,7 +829,7 @@ int LOBPCG_Main(
   v0 = cd_1d_allocate(X->Check.idim_max + 1);
   v1 = cd_1d_allocate(X->Check.idim_max + 1);
   vg = cd_1d_allocate(X->Check.idim_max + 1);
-  if (iconv != 0) {
+  if (iconv != 0 && !noop) {
     sprintf(sdt, "%s", cLogLanczos_EigenValueNotConverged);
     return -1;
   }
@@ -835,43 +902,47 @@ int CalcByLOBPCG(
     */
     fprintf(stdoutMPI, "An Eigenvector is inputted.\n");
     L_vec = cd_2d_allocate(X->Bind.Def.k_exct, X->Bind.Check.idim_max + 1);
-    if (X->Bind.Def.iFlgSymmetryBasis) {
-      int invalid = L_vec == NULL;
-      for (ie = 0; !invalid && ie < X->Bind.Def.k_exct; ++ie) invalid = L_vec[ie] == NULL;
-      if (SumMPI_i(invalid) != 0) return FALSE;
-    }
+    int invalid = L_vec == NULL;
+    for (ie = 0; !invalid && ie < X->Bind.Def.k_exct; ++ie) invalid = L_vec[ie] == NULL;
+    if (SumMPI_i(invalid) != 0) return FALSE;
     for (ie = 0; ie < X->Bind.Def.k_exct; ie++) {
       TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecStart, "a");
-      if (X->Bind.Def.iFlgSymmetryBasis) {
-        struct SymmetryCheckpointInfo info;
-        int length = snprintf(sdt, sizeof(sdt), "%s_eigenvec_%ld_rank_%d.dat",
-                              X->Bind.Def.CDataFileHead, ie, myrank);
-        if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0 ||
-            ReadSymmetryCheckpoint(&(X->Bind), sdt, v1, &info) != 0) return FALSE;
-        if (SumMPI_i(info.state_index != (uint64_t)ie || info.step > INT_MAX) != 0) {
+      struct RestartVectorInfo info;
+      enum RestartFileFormat format;
+      int source_ranks;
+      int length = snprintf(sdt, sizeof(sdt), "%s_eigenvec_%ld", X->Bind.Def.CDataFileHead, ie);
+      if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0) return FALSE;
+      int imported = RestartImportVector(&(X->Bind), sdt, v1, &info, &format, &source_ranks);
+      if (imported == -1) return FALSE;
+      if (imported == 0) {
+        if (format != RESTART_FORMAT_V3 &&
+            SumMPI_i(info.set != (uint64_t)ie || info.step > INT_MAX) != 0) {
           fprintf(stdoutMPI, "Error: symmetry checkpoint state index or step is invalid for CG input.\n");
           return FALSE;
         }
-        X->Bind.Large.itr = (int)info.step;
+        X->Bind.Large.itr = format == RESTART_FORMAT_V3 ? 0 : (int)info.step;
+        step_i = 0;
         for (idim = 0; idim < X->Bind.Check.idim_max; ++idim)
           L_vec[ie][idim] = v1[idim + 1];
         continue;
       }
       sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
-      childfopenALL(sdt, "rb", &fp);
-      if (fp == NULL) {
-        fprintf(stderr, "Error: Inputvector file is not found.\n");
-        exitMPI(-1);
+      invalid = childfopenALL(sdt, "rb", &fp) != 0;
+      if (!invalid) {
+        invalid = fread(&step_i, sizeof(int), 1, fp) != 1 ||
+                  fread(&i_max, sizeof(long int), 1, fp) != 1 ||
+                  i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
+        if (!invalid) {
+          byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+          invalid = byte_size != X->Bind.Check.idim_max + 1;
+        }
+        if (fclose(fp) != 0) invalid = 1;
+        fp = NULL;
       }
-      byte_size = fread(&step_i, sizeof(int), 1, fp);
-      byte_size = fread(&i_max, sizeof(long int), 1, fp);
-      if (i_max != X->Bind.Check.idim_max) {
-        fprintf(stderr, "Error: Invalid Inputvector file.\n");
-        exitMPI(-1);
+      if (SumMPI_i(invalid) != 0) {
+        fprintf(stdoutMPI, "Error: missing, truncated or incompatible CG Inputvector file.\n");
+        return FALSE;
       }
-      byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-      fclose(fp);
-      fp = NULL;
 #pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
       for (idim = 0; idim < i_max; idim++) {
         L_vec[ie][idim] = v1[idim + 1];
@@ -879,7 +950,6 @@ int CalcByLOBPCG(
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
     TimeKeeper(&(X->Bind), cFileNameTimeKeep, cReadEigenVecFinish, "a");
 
-    if(!X->Bind.Def.iFlgSymmetryBasis && byte_size == 0) printf("byte_size : %d\n", (int)byte_size);
   }/*X->Bind.Def.iInputEigenVec == TRUE*/
 
   fprintf(stdoutMPI, "%s", cLogLanczos_EigenVecEnd);

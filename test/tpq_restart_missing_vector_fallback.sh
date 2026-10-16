@@ -29,7 +29,7 @@ J = 1.0
 Lanczos_max = 3
 LargeValue = 5
 NumAve = 1
-Restart = "Restart_in"
+Restart = "Restart"
 outputmode = "None"
 EOF
 
@@ -65,7 +65,7 @@ EOF
     cat > calcmod.def <<EOF
 CalcType   5
 CalcModel   4
-ReStart   3
+ReStart   2
 CalcSpec   0
 CalcEigenVec   0
 InitialVecType   0

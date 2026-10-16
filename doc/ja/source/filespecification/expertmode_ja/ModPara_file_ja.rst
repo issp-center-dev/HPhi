@@ -90,6 +90,23 @@ ModParaファイル
    **説明 :**
    アウトプットファイルのヘッダ。例えば、一体のGreen関数の出力ファイル名が\ **xxx\_Lanczos\_cisajs.dat**\ として出力されます(xxxに\ ``CDataFileHead``\ で指定した文字が記載)。
 
+-  ``CheckpointInterval``
+
+   **形式 :** int型 (0以上 ``INT_MAX`` 未満、デフォルト値 0)
+
+   **説明 :** CG、mTPQ、cTPQのv3継続checkpoint周期です。0は終端だけで
+   書きます。正の値には ``ReStart=1`` または2が必要です。TimeEvolutionでは
+   使わず、``OutputInterval`` を使います。
+
+-  ``RestartSourceRanks``
+
+   **形式 :** int型 (0以上 ``INT_MAX`` 未満、デフォルト値 0)
+
+   **説明 :** restart/import fileに期待するMPI process数です。0は現在の
+   process数を表します。正の値は自己記述v3/sector fileと一致する必要があります。
+   このreleaseは保存時と現在のprocess数が異なる読込を拒否します。このparameterは
+   source検証用であり、再配置を有効にしません。
+
 -  ``Nsite``
 
    **形式 :** int型 (自然数)
@@ -204,7 +221,8 @@ CG法で使用するパラメータ
    指定した精度内で収束した場合には、これより短い回数で終了します。
    この回数以内で収束しない場合はエラー終了します。
    legacy LOBPCGリスタートでは、\ ``Lanczos_max``\ は保存点からの
-   **追加**反復数です。
+   **追加**反復数です。v3 CG継続では絶対的な最終反復labelです。保存した次labelより
+   小さい場合は反復せず復元vectorを評価します。この上限no-opは現在の収束を主張しません。
 
 -  ``LanczosEps``
 
@@ -223,7 +241,8 @@ TPQ法で使用するパラメータ
    **形式 :** int型 (自然数)
 
    **説明 :** TPQ法の総ステップ数を与えます。
-   TPQ/cTPQリスタートでも絶対的な総step数を表し、保存stepより大きな値が必要です。
+   TPQ/cTPQリスタートでも絶対的な総step数を表します。保存した次step以下も有効な
+   no-opで、時系列行を追加せずcheckpointを書き直さずに復元状態を評価します。
 
 -  ``LargeValue``
 
@@ -385,7 +404,8 @@ TPQ法で使用するパラメータ
    **形式 :** int型 (自然数)
 
    **説明 :** 実時間発展法の総ステップ数を与えます。
-   リスタートでも絶対的な総step数を表し、保存された次stepより大きな値が必要です。
+   v3リスタートでも絶対的な総step数を表します。保存された次step以下は、
+   時刻表境界の検証後に有効なno-opです。
 
 -  ``ExpandCoef``
 
@@ -413,7 +433,9 @@ TPQ法で使用するパラメータ
 
 -  ``OutputInterval``
 
-   ``OutputEigenVec=1`` の場合は正の値が必要です。明示指定したintervalと反復回数は
+   ``OutputEigenVec=1`` の場合、および ``ReStart=1`` または2でv3 TimeEvolution
+   continuation checkpointを書く場合は正の値が必要です。時刻表は保存された次stepを
+   含む必要があります。明示指定したintervalと反復回数は
    ``INT_MAX`` 未満の有限な整数に限ります。
 
    **形式 :** int型 (自然数)

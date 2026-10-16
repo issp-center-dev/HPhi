@@ -24,12 +24,36 @@
    ``"Restart"``\ では再計算用のデータをファイルから受け取り途中から計算を始め、
    反復が終了した時点で再計算用のデータをファイル出力する。
 
+   CG、mTPQ、cTPQ、TimeEvolutionはraw基底と ``TransSym`` 基底でv3継続
+   checkpointを使います。このreleaseでは同じMPI process数、sectorでは同じbasis
+   layoutが必要です。``EigenVecIO="In"`` の状態importは新しい評価・時刻列を開始し、
+   solver継続ではありません。Lanczos/spectrum restartは別のlegacy経路です。
+
+*  ``CheckpointInterval``
+
+   **形式 :** 0以上 ``INT_MAX`` 未満の整数（デフォルトは省略で、``0`` と同じ）
+
+   **説明 :** CG、mTPQ、cTPQの周期v3 checkpoint間隔です。0は終端だけで
+   出力します。正の値には ``Restart_out`` または ``Restart`` が必要です。
+   TimeEvolutionは代わりに ``OutputInterval`` を使います。Standard modeは
+   指定された場合だけこのexpert parameterを出力します。
+
+*  ``RestartSourceRanks``
+
+   **形式 :** 0以上 ``INT_MAX`` 未満の整数（デフォルトは省略で、``0`` と同じ）
+
+   **説明 :** restart/import vector fileに期待するprocess数です。0は現在の数です。
+   このreleaseは異なる保存process数を拒否するため、sourceを検証しますが再配置は
+   行いません。Standard modeは指定された場合だけ出力します。
+
 *  ``Lanczos_max``
 
    **形式 :** 整数(デフォルト値は\ ``2000``)
 
    **説明 :** ランチョスステップの上限、LOBCGステップの上限、
-   TPQステップ数、時間発展ステップ数、BiCGステップの上限を指定します。
+   TPQステップ数、時間発展ステップ数、BiCGステップの上限を指定します。v3継続では
+   絶対的な総数・最終上限で、小さくして保存した次step未満にしても有効なno-op評価に
+   なります。legacy CGとLanczosは従来の追加stepの意味を維持します。
 
 *  ``initial_iv``
 

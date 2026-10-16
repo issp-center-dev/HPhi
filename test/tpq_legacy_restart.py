@@ -2,12 +2,12 @@
 import os
 import shlex
 import shutil
-import struct
 import subprocess
 import sys
 from pathlib import Path
 
 import numpy as np
+import restart_common as rc
 
 
 HPHI = str(Path(sys.argv[1]).resolve())
@@ -48,25 +48,8 @@ def make_legacy_fixture(path):
     output = path / "output"
     manifest = output / "zvo_restart_manifest.dat"
     if manifest.exists():
-        for line in manifest.read_text().splitlines():
-            fields = line.split()
-            if not fields or fields[0] != "set":
-                continue
-            set_index, ranks, generation = int(fields[1]), int(fields[3]), int(fields[5])
-            for rank in range(ranks):
-                data = (
-                    output
-                    / "zvo_restart_set{}_comp0_gen{}_rank_{}.dat".format(
-                        set_index, generation, rank
-                    )
-                ).read_bytes()
-                words = struct.unpack_from("<40Q", data)
-                dimension, step = words[15], words[24]
-                assert words[1] == 3 and len(data) == 320 + 16 * dimension
-                values = np.frombuffer(data, dtype="<c16", offset=320).astype(np.complex128)
-                (output / "tmpvec_set{}_rank_{}.dat".format(set_index, rank)).write_bytes(
-                    struct.pack("=iQ", step, dimension) + bytes(16) + values.tobytes()
-                )
+        for set_index in sorted(rc.manifest(path)[1]):
+            rc.v3_to_legacy_tmpvec(path, "zvo", set_index)
         manifest.unlink()
         for checkpoint in output.glob("zvo_restart_set*"):
             checkpoint.unlink()

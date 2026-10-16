@@ -1,74 +1,72 @@
-Restart Mechanism
-=================
+Restart and state import
+========================
 
-This section describes the legacy restart and eigenvector-input
-mechanisms in :math:`{\mathcal H}\Phi`.
+HPhi has three independent mechanisms. ``ReStart`` continues a solver from
+its saved algorithmic state. ``InputEigenVec=1`` imports a state for CG
+evaluation or as the first state of a new TimeEvolution clock. ``CalcSpec``
+4/5 resumes the Lanczos spectrum sequence through ``TMComponents`` and
+``recalcvec``. Files from one mechanism must not be substituted for another.
 
-``ReStart`` modes
------------------
+Solver continuation
+-------------------
 
-In the ``CalcMod`` input file, ``ReStart`` selects solver continuation:
+``ReStart`` has the following values in ``CalcMod``: 0 disables continuation,
+1 starts a new run and writes checkpoints, 2 reads and updates checkpoints,
+and 3 reads checkpoints without rewriting them. The v3 manifest and vector
+format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and ``TransSym``
+bases. This release requires the saved and current MPI process counts to be
+equal. Sector continuation also requires the same basis layout. Rank
+redistribution and layout changes are rejected.
 
-* ``0``: no restart
-* ``1``: write restart data
-* ``2``: read restart data and write updated restart data
-* ``3``: read restart data
+``Lanczos_max`` is an absolute final bound for v3 continuation. CG resumes at
+the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
+step. If the saved step is at or beyond a lowered bound, HPhi evaluates the
+restored state, does not add time-series rows, and does not rewrite a
+checkpoint. A terminal CG checkpoint is rechecked with the current
+``LanczosEps``. A stricter tolerance can resume iterations; an upper-limit
+no-op must not be described as currently converged.
 
-The legacy files depend on the solver:
+``CheckpointInterval`` controls periodic CG, mTPQ and cTPQ checkpoints. Zero
+means end-only. TimeEvolution uses ``OutputInterval`` for continuation
+checkpoints, and its time table must contain the saved next step. See
+:doc:`the restart file specification <../filespecification/outputfiles_en/restart_en>`.
 
-* Ground-state Lanczos writes ``##_recalcvec_rank_$$.dat`` and
-  ``##_TMComponents.dat``. The latter records the MPI process and OpenMP
-  thread counts. A mismatch is rejected; an older file without the
-  environment line is accepted with a warning.
-* LOBPCG (CG), TPQ, and cTPQ write
-  ``tmpvec_set&&_rank_$$.dat``. These names do not contain
-  ``CDataFileHead``.
-* Real-time evolution writes ``##_eigenvec_&&_rank_$$.dat`` when
-  ``OutputEigenVec=1``. The header records the next step to execute.
+State import
+------------
 
-See the output-file reference for the binary layouts. These formats are
-platform-dependent.
+State import validates the model, basis identity, sector and phase, payload
+length, norm and digest. Source method, state, step, time and solver scalars
+are provenance; they do not resume the source solver. CG evaluates an imported
+state. TimeEvolution starts at step zero on its current time grid. v3 imports
+currently require the same process count, and sector imports require the same
+layout. The output-file reference gives the required copy procedure.
 
-``InputEigenVec`` modes
------------------------
+Legacy and spectrum behavior
+----------------------------
 
-``InputEigenVec`` loads a saved eigenvector; it is distinct from
-``ReStart``:
+Legacy raw ``tmpvec_set*_rank_*.dat`` remains readable by CG and TPQ/cTPQ.
+Legacy CG keeps its historical additional-iteration meaning: iteration labels
+restart at one and the old ``Lanczos_Step`` prefix is not recovered. Legacy
+TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
+step when possible. Old sector v1/v2 files are state-import formats, not solver
+continuation checkpoints.
 
-* ``0``: do not load an eigenvector.
-* ``1``: load the eigenvector and use it directly.
-* ``2``: load the eigenvector, apply :math:`H` once, and normalize the
-  resulting vector before evaluating observables (legacy Lanczos input
-  path).
+Ground-state Lanczos and ``CalcSpec`` 4/5 retain their existing
+``TMComponents``/``recalcvec`` behavior and iteration meaning. They do not use
+the v3 solver manifest.
 
-Loading an eigenvector does not resume the eigensolver iteration.
-``OutputEigenVec=1`` writes the resulting eigenvector files.
+Output recovery
+---------------
 
-Iteration limits
-----------------
+Before appending, HPhi validates every required checkpoint, removes complete
+rows at or after the recovery boundary, drops an incomplete final line, and
+rejects malformed interior rows. A missing history file is created and only
+new rows can then be written; a missing prefix cannot be reconstructed.
+Per-set files and CG/TimeEvolution histories reproduce uninterrupted row
+order. Shared TPQ aggregate files follow execution order, so compare them by
+sorted ``(set, step, observable)`` keys when several sets resume.
 
-For legacy Lanczos and LOBPCG restart, ``Lanczos_max`` is the number of
-additional iterations after the saved point. For TPQ/cTPQ and real-time
-evolution it is the total step count, so it must exceed the saved step.
-
-MPI requirements
-----------------
-
-Each MPI process reads its own rank file. The number of MPI processes
-must match the run that wrote the legacy restart or eigenvector files;
-changing the process count is not supported by these formats. Use the
-same model, Hilbert-space decomposition, OpenMP thread count where
-required, and compatible executable architecture.
-
-Legacy output limitations
--------------------------
-
-The current real-time evolution continuation reopens ``SS.dat`` and
-``Norm.dat`` in write mode, so earlier time-series rows are replaced.
-The legacy TPQ/cTPQ ``tmpvec`` file does not store
-``global_1st_norm``; continued ``Norm_rand`` rows therefore use zero in
-that column.
-
-Before a long continuation, keep backup copies of the restart files and
-the time-series outputs, and verify the conserved quantities after the
-restart.
+The ``CalcTimer.dat`` rows ``Restart write`` (7100), ``Restart read`` (7110)
+and ``Restart recover outputs`` (7120) measure v3 publication, continuation
+vector loading, and time-series validation/rewrite respectively. They are
+instrumentation totals, not a controlled storage benchmark.
