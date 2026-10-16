@@ -30,6 +30,9 @@ TPQ/cTPQで ``OutputGreenFormat=1`` を指定した場合、この物理量は
 各データ行は ``set step inv_temp global_norm global_1st_norm`` の順に
 なります。このモードでは ``Norm_rand??.dat`` は作成されません。
 
+legacy ``tmpvec`` 形式はベクトルとstepだけを保存します。このためlegacy
+TPQ/cTPQ継続後の行では、復元できない ``global_1st_norm`` を0として出力します。
+
 ファイル形式
 ^^^^^^^^^^^^
 

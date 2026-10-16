@@ -60,6 +60,8 @@
 <code class="docutils literal notranslate"><span class="pre">Norm_tpq.dat</span></code> に出力されます。この集約ファイルには全runが含まれ、
 各データ行は <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span> <span class="pre">inv_temp</span> <span class="pre">global_norm</span> <span class="pre">global_1st_norm</span></code> の順に
 なります。このモードでは <code class="docutils literal notranslate"><span class="pre">Norm_rand??.dat</span></code> は作成されません。</p>
+<p>legacy <code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> 形式はベクトルとstepだけを保存します。このためlegacy
+TPQ/cTPQ継続後の行では、復元できない <code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code> を0として出力します。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>

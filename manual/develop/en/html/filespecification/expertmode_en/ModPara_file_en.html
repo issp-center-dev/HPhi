@@ -184,8 +184,9 @@ value is 1.</p>
 <p><strong>Description :</strong> The maximum number of Lanczos steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
-must be larger than that of the previous calculation.</p>
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. For a legacy Lanczos restart, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is the
+number of <strong>additional</strong> steps after the saved step, not an absolute
+final step.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">exct</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -221,8 +222,8 @@ and a first excited state when <code class="docutils literal notranslate"><span 
 <p><strong>Description :</strong> The maximum number of iteration steps in the
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
-<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
-must be larger than that of the previous calculation.</p>
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. For a legacy LOBPCG restart, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is the
+number of <strong>additional</strong> iterations after the saved point.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -238,8 +239,8 @@ the 2-norm of the residual vector becomes smaller than
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of TPQ steps is specified with
-this parameter. In the case of restart calculation, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>
-must be larger than that of the previous calculation.</p>
+this parameter. This remains an absolute total step count during a
+TPQ/cTPQ restart and must be larger than the saved step.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
@@ -377,8 +378,8 @@ keeps the single-bra behavior.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of real time evolution steps is
-specified with this parameter. In the case of restart calculation,
-<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> must be larger than that of the previous calculation.</p>
+specified with this parameter. This remains an absolute total step
+count during restart and must be larger than the saved next step.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>

@@ -12,11 +12,10 @@
     <script src="../../_static/documentation_options.js?v=86e43a22"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="eigenvec.dat" href="excitedvec_en.html" />
-    <link rel="prev" title="tmpvec.dat" href="tmpvec_en.html" />
+    <link rel="prev" title="tmpvec files" href="tmpvec_en.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -36,61 +35,39 @@
             
   <section id="recalcvec-dat">
 <h1>recalcvec.dat<a class="headerlink" href="#recalcvec-dat" title="Link to this heading">¶</a></h1>
-<p>This file is the outputted file for two vectors to recalculate the
-dynamical Green’s function by the Lanczos method. The file format is of
-the binary type. An example of the file format is as follows.</p>
+<p>This per-rank binary file stores the vectors required to continue a
+ground-state Lanczos calculation or a shifted-BiCG spectrum calculation.</p>
 <section id="file-name">
-<span id="file-name-21"></span><h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
+<h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>##_recalcvec_rank_$$.dat</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">##_recalcvec_rank_$$.dat</span></code></p></li>
 </ul>
-<p>## indicates [string02] in a ModPara file and $$ is the number of rank.</p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span></code> is <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> in the ModPara file, and <code class="docutils literal notranslate"><span class="pre">$$</span></code> is the MPI
+rank.</p>
 </section>
 <section id="file-format">
-<span id="file-format-45"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Line 1: [int01]</p></li>
-<li><p>Line 2: [int02]</p></li>
-<li><p>Lines 3 - 3+ [int02]:
-[double01]  [double02]</p></li>
-<li><p>Lines 4+ [int02] -
-4+2 <span class="math notranslate nohighlight">\(\times\)</span> [int02]:
-[double03]  [double04].</p></li>
-</ul>
-</section>
-<section id="parameters">
-<span id="parameters-43"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p>[int01]</p>
-<p><strong>Type :</strong> Int</p>
-<p><strong>Description :</strong> The step for calculating dynamical Green’s
-functions by the Lanczos method <span class="math notranslate nohighlight">\(N_d\)</span>.</p>
-</li>
-<li><p>[int02]</p>
-<p><strong>Type :</strong> Long Int</p>
-<p><strong>Description :</strong> The total number of targets of the Hilbert spaces.</p>
-</li>
-<li><p>[double01], [double02]</p>
-<p><strong>Type :</strong> Double</p>
-<div class="line-block">
-<div class="line"><strong>Description :</strong> The value of the vector <span class="math notranslate nohighlight">\(\boldsymbol{v}_{k+1}\)</span> for
-recalculating dynamical Green’s functions by the Lanczos method.</div>
-<div class="line">[double01] and [double02]
-are a real part and an imaginary part of <span class="math notranslate nohighlight">\(\boldsymbol{v}_{k+1}\)</span>,
-respectively. The fist component is not used for calculation.</div>
+<h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<p>Ground-state Lanczos writes:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unsigned long step;
+unsigned long local_size;
+complex double v0[local_size + 1];
+complex double v1[local_size + 1];
+</pre></div>
 </div>
-</li>
-<li><p>[double03], [double04]</p>
-<p><strong>Type :</strong> Double</p>
-<div class="line-block">
-<div class="line"><strong>Description :</strong> The value of the vector <span class="math notranslate nohighlight">\(\boldsymbol{v}_{k}\)</span> for
-recalculating dynamical Green’s functions by the Lanczos method.</div>
-<div class="line">[double03] and [double04]
-are a real part and an imaginary part of <span class="math notranslate nohighlight">\(\boldsymbol{v}_{k}\)</span>,
-respectively. The fist component is not used for calculation.</div>
+<p>The two header fields are written separately, followed by the two
+Lanczos vectors. Index zero of each vector is unused.</p>
+<p>Shifted BiCG writes a different legacy payload:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int step_or_status;
+unsigned long local_size;
+complex double residual[local_size + 1];
+complex double old_residual[local_size + 1];
+complex double shadow_residual[local_size + 1];
+complex double old_shadow_residual[local_size + 1];
+</pre></div>
 </div>
-</li>
-</ul>
+<p>The binary representation is platform-dependent. A restart must use
+the same MPI process count and local dimensions as the run that wrote
+the files.</p>
 </section>
 </section>
 
@@ -142,7 +119,7 @@ respectively. The fist component is not used for calculation.</div>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
   <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
-      <li>Previous: <a href="tmpvec_en.html" title="previous chapter">tmpvec.dat</a></li>
+      <li>Previous: <a href="tmpvec_en.html" title="previous chapter">tmpvec files</a></li>
       <li>Next: <a href="excitedvec_en.html" title="next chapter">eigenvec.dat</a></li>
   </ul></li>
   </ul></li>

@@ -36,49 +36,32 @@
             
   <section id="tmcomponents-dat">
 <h1>TMcomponents.dat<a class="headerlink" href="#tmcomponents-dat" title="Link to this heading">¶</a></h1>
-<p>This file is the outputted files for the components of the tridiagonal
-matrix and the norm of the excited state to recalculate the dynamical
-Green’s function by the Lanczos method. The file format is of the binary
-type. An example of the file format is as follows.</p>
+<p>This text file stores the tridiagonal-matrix components and the initial
+norm used by Lanczos restart and recalculation.</p>
 <section id="file-name">
-<span id="file-name-22"></span><h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
+<h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>##_TMcomponents.dat</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code></p></li>
 </ul>
-<p>## indicates [string02] in a ModPara file and $$ is the number of rank.</p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span></code> is <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> in the ModPara file.</p>
 </section>
 <section id="file-format">
-<span id="file-format-46"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
+<h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Line 1: [int01]</p></li>
-<li><p>Line 2: [double01]</p></li>
-<li><p>Lines 3-:
-[double02]  [double03].</p></li>
+<li><p>Line 1: <code class="docutils literal notranslate"><span class="pre">step</span></code></p></li>
+<li><p>Line 2: <code class="docutils literal notranslate"><span class="pre">dnorm</span></code></p></li>
+<li><p>The next <code class="docutils literal notranslate"><span class="pre">step</span></code> lines: <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">beta</span></code></p></li>
+<li><p>Ground-state restart only, final line:
+<code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">nproc</span> <span class="pre">P</span> <span class="pre">nthreads</span> <span class="pre">T</span></code></p></li>
 </ul>
-</section>
-<section id="parameters">
-<span id="parameters-44"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p>[int01]</p>
-<p><strong>Type :</strong> Int</p>
-<p><strong>Description :</strong> The step for calculating dynamical Green’s
-functions by the Lanczos method <span class="math notranslate nohighlight">\(N_d\)</span>.</p>
-</li>
-<li><p>[double01]</p>
-<p><strong>Type :</strong> Double</p>
-<p><strong>Description :</strong> The value of the norm of the excited state.</p>
-</li>
-<li><p>[double02], [double03]</p>
-<p><strong>Type :</strong> Double</p>
-<div class="line-block">
-<div class="line"><strong>Description :</strong> The value of the components of the tridiagonal
-matrix to recalculate dynamical Green’s functions by the Lanczos
-method <span class="math notranslate nohighlight">\(\alpha_i, \beta_i (i =1,\cdots N_d)\)</span>.
-[double02] is <span class="math notranslate nohighlight">\(\alpha_i\)</span> and
-[double03] is <span class="math notranslate nohighlight">\(\beta_i\)</span>.</div>
-</div>
-</li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="docutils literal notranslate"><span class="pre">beta</span></code> are the Lanczos tridiagonal components
+<span class="math notranslate nohighlight">\(\alpha_i\)</span> and <span class="math notranslate nohighlight">\(\beta_i\)</span>. The final comment records the MPI
+process and OpenMP thread counts used to write the corresponding
+<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> files. A ground-state restart rejects a different process
+or thread count. Older files without this comment are accepted with a
+warning and therefore must be restarted with the same environment.</p>
+<p>Spectrum <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> files retain their existing text format and do not
+contain the environment comment.</p>
 </section>
 </section>
 

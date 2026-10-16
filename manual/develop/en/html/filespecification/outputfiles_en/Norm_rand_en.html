@@ -62,6 +62,9 @@ written to <code class="docutils literal notranslate"><span class="pre">Norm_tpq
 runs, and each data row starts with <code class="docutils literal notranslate"><span class="pre">set</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code>:
 <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">step</span> <span class="pre">inv_temp</span> <span class="pre">global_norm</span> <span class="pre">global_1st_norm</span></code>. The split
 <code class="docutils literal notranslate"><span class="pre">Norm_rand??.dat</span></code> files are not created in this mode.</p>
+<p>The legacy <code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> format stores only the vector and step. Therefore,
+after a legacy TPQ/cTPQ continuation, <code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code> is written as
+zero for the continued rows; it cannot be reconstructed from that file.</p>
 </section>
 <section id="file-format">
 <span id="file-format-30"></span><h2>File format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>

@@ -7,8 +7,10 @@ Norm.dat
 
 | (For the real time evolution method) This file is outputted to show
   the calculation process information for the real time evolution
-  method. In the restart calculation, the values are added to the
-  previous file. An example of the file format is as follows.
+  method. In the current legacy restart path, this file is reopened in
+  write mode; previous rows are replaced rather than appended. Preserve
+  a copy before restarting if the earlier time series is required. An
+  example of the file format is as follows.
 
 ::
 
@@ -40,7 +42,7 @@ File format
 *  Line 1: Header
 
 *  Lines 2-: [double01]
-   [double02] [int01].
+   [double02] [double03] [int01].
 
 .. _parameters_34:
 
@@ -58,6 +60,13 @@ Parameters
    **Type :** Double
 
    **Description :** The norm of a wave function at :math:`t`.
+
+*  [double03]
+
+   **Type :** Double
+
+   **Description :** The initial norm value carried by the solver. It is
+   zero for the current real-time evolution output.
 
 *  [int01]
 

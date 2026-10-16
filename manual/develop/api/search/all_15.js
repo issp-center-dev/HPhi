@@ -102,7 +102,7 @@ var searchData=
   ['request_5flayout_5fready_99',['request_layout_ready',['../structSymmetryVectorHaloPlan.html#aa5c3657e304cfdca80c41226c2534e47',1,'SymmetryVectorHaloPlan']]],
   ['requested_100',['requested',['../structSymmetryOptionGate.html#aa1161cf81c2f221b29ee877d33eb3ed0',1,'SymmetryOptionGate']]],
   ['require_5fline_5fend_101',['require_line_end',['../anomalous__pair_8c.html#a67c427c262bc5e386eade404801d6649',1,'anomalous_pair.c']]],
-  ['required_5fkeys_102',['required_keys',['../symmetry__hamiltonian__io_8c.html#abc6126af1d45847bc59afa0aa3216b04a4a7ed99043a2b4f2122815140a44fa13',1,'REQUIRED_KEYS:&#160;symmetry_hamiltonian_io.c'],['../symmetry__hamiltonian__io_8c.html#a367c86b5d78c4fc59c7fc9ed426707d7',1,'required_keys:&#160;symmetry_hamiltonian_io.c']]],
+  ['required_5fkeys_102',['required_keys',['../symmetry__hamiltonian__io_8c.html#a367c86b5d78c4fc59c7fc9ed426707d7',1,'required_keys:&#160;symmetry_hamiltonian_io.c'],['../symmetry__hamiltonian__io_8c.html#abc6126af1d45847bc59afa0aa3216b04a4a7ed99043a2b4f2122815140a44fa13',1,'REQUIRED_KEYS:&#160;symmetry_hamiltonian_io.c']]],
   ['reserved_103',['reserved',['../structCorrelationTransition.html#a0410b46a6c1e072f141dfe21a4b9f42d',1,'CorrelationTransition']]],
   ['reset_5fbasis_5fresult_104',['reset_basis_result',['../symmetry__mpi__exchange_8c.html#a54a71b5dc184dce120fa3d5f1eadead9',1,'symmetry_mpi_exchange.c']]],
   ['reset_5flookup_5fresponse_5fresult_105',['reset_lookup_response_result',['../symmetry__mpi__exchange_8c.html#a36f3a230f4a9419925d9c32695541a83',1,'symmetry_mpi_exchange.c']]],

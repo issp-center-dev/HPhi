@@ -2,59 +2,36 @@
 
 .. _Subsec:restart:
 
-tmpvec.dat
-~~~~~~~~~~
+tmpvecファイル
+~~~~~~~~~~~~~~
 
-CalcModファイルのReStart=1, 2の場合に、計算途中のベクトルを出力します。
-ファイルはバイナリ形式で出力されます。
-ファイル名およびファイル形式は以下の通りです(ファイル形式はeigenvec.datと同様です)。
+TPQ/cTPQ法およびLOBPCG（CG）法のlegacy ``ReStart`` で使用する
+バイナリファイルです。基底状態Lanczos法はこの形式を使用せず、
+``recalcvec`` と ``TMComponents`` を使用します。
 
 ファイル名
 ^^^^^^^^^^
 
--  Lanczos法：##\_tmpvec\_rank\_$$.dat
+-  ``tmpvec_set&&_rank_$$.dat``
 
--  TPQ法, LOBPCG法：##\_tmpvec\_set\_&&\_rank\_$$.dat
-
-##はModParaファイル内の[string02]で指定されるヘッダ、
-$$はランク番号を表します。また、&&はTPQ時のサンプリングの番号
-もしくはLOBPCG法での固有値の番号を表します。
+``&&`` は0始まりのTPQサンプル番号またはLOBPCG固有状態番号、
+``$$`` はMPIランク番号です。ファイル名に ``CDataFileHead`` は付きません。
 
 ファイル形式
 ^^^^^^^^^^^^
 
-次のようなソースコードを用いて、バイナリファイルとして出力されます
-(実際の :math:`{\mathcal H}\Phi`\ のソースコードとは変数名等が異なります)。
-
-| Lanczos
+対応する64 bit環境では、先頭に12 byteのヘッダがあり、その後に
+複素ベクトルが1本続きます。
 
 ::
 
-    fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
-    fwrite(&number_of_interations, sizeof(int), 1,fp);
-    fwrite(&local_size, sizeof(unsigned long int),1,fp);
-    fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
-    fwrite(&second_last_vector[0], sizeof(complex double),local_size+1, fp);
-    fclose(fp);
+    fwrite(&step, sizeof(int), 1, fp);
+    fwrite(&local_size, sizeof(unsigned long int), 1, fp);
+    fwrite(&vector[0], sizeof(complex double), local_size + 1, fp);
 
-| TPQおよびLOBPCG
-
-::
-
-    fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
-    fwrite(&number_of_interations, sizeof(int), 1,fp);
-    fwrite(&local_size, sizeof(unsigned long int),1,fp);
-    fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
-    fclose(fp);
-
-ただし、\ ``number_of_interations``\ は反復回数、
-``local_size``\ は固有ベクトルのサイズ(MPI並列を使っている場合は全ヒルベルト次元とは異なります)、
-``last_vector``\ は最後の反復でのベクトル、
-``second_last_vector``\ は最後から2番目の反復でのベクトルをそれぞれ表します。
-
-※
-``last_vector``\ 、\ ``second_last_vector``\ の一番最初の成分に計算に使用しない値が入っています。
-
+``step`` は保存した反復番号、``local_size`` は各ランクが保持する
+ベクトル次元です。互換性のため ``local_size + 1`` 個の複素数を保存し、
+``vector[0]`` は計算には使用しません。バイナリ表現は環境に依存します。
 
 .. raw:: latex
 

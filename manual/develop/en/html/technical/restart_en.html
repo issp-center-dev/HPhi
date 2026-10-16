@@ -36,110 +36,70 @@
             
   <section id="restart-mechanism">
 <h1><span class="section-number">6.6. </span>Restart Mechanism<a class="headerlink" href="#restart-mechanism" title="Link to this heading">¶</a></h1>
-<p>This section describes the restart mechanism in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
-<section id="overview">
-<h2><span class="section-number">6.6.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> supports checkpoint/restart functionality, allowing:</p>
+<p>This section describes the legacy restart and eigenvector-input
+mechanisms in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
+<section id="restart-modes">
+<h2><span class="section-number">6.6.1. </span><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> modes<a class="headerlink" href="#restart-modes" title="Link to this heading">¶</a></h2>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> input file, <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> selects solver continuation:</p>
 <ul class="simple">
-<li><p>Resumption of interrupted calculations</p></li>
-<li><p>Breaking large calculations into smaller jobs</p></li>
-<li><p>Iterative refinement of eigenvectors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: no restart</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: write restart data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: read restart data and write updated restart data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>: read restart data</p></li>
 </ul>
-</section>
-<section id="restart-files">
-<h2><span class="section-number">6.6.2. </span>Restart Files<a class="headerlink" href="#restart-files" title="Link to this heading">¶</a></h2>
-<p>The following files are used for restart:</p>
-<dl class="simple">
-<dt><strong>Eigenvector files</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">zvo_eigenvec_{rank}_set{set}.dat</span></code></dt><dd><p>Stores the eigenvector for each MPI rank.</p>
-</dd>
-</dl>
-</dd>
-<dt><strong>Restart vector files</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">restart_{rank}.dat</span></code></dt><dd><p>Contains the Lanczos vectors needed to resume iteration.</p>
-</dd>
-</dl>
-</dd>
-<dt><strong>Tri-diagonal matrix</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">zvo_Lanczos_Step.dat</span></code></dt><dd><p>Stores the Lanczos coefficients.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</section>
-<section id="input-output-settings">
-<h2><span class="section-number">6.6.3. </span>Input/Output Settings<a class="headerlink" href="#input-output-settings" title="Link to this heading">¶</a></h2>
-<p>In the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> input file:</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Start from random or specified initial vector (default)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Read eigenvector from file and recalculate</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: Read eigenvector from file</p></li>
-</ul>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Do not output eigenvector (default)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Output eigenvector to file</p></li>
-</ul>
-</dd>
-</dl>
-</section>
-<section id="usage-examples">
-<h2><span class="section-number">6.6.4. </span>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading">¶</a></h2>
-<p><strong>Initial calculation with eigenvector output</strong></p>
-<p>Set <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> in the CalcMod file.
-After the calculation completes, eigenvector files will be written.</p>
-<p><strong>Restart from eigenvector</strong></p>
-<p>Set <code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code>.
-The calculation will read the eigenvector from the previous run
-and refine it.</p>
-<p><strong>Calculate expectation values only</strong></p>
-<p>Set <code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">2</span></code>.
-The eigenvector will be read and used to compute observables
-without further diagonalization.</p>
-</section>
-<section id="file-format">
-<h2><span class="section-number">6.6.5. </span>File Format<a class="headerlink" href="#file-format" title="Link to this heading">¶</a></h2>
-<p>Eigenvector files are stored in binary format for efficiency.
-Each file contains:</p>
-<ol class="arabic simple">
-<li><p>Header information (system size, etc.)</p></li>
-<li><p>Complex double array of eigenvector components</p></li>
-</ol>
-<p>The files are platform-dependent due to binary format.
-Ensure restart files are used on the same architecture.</p>
-</section>
-<section id="mpi-considerations">
-<h2><span class="section-number">6.6.6. </span>MPI Considerations<a class="headerlink" href="#mpi-considerations" title="Link to this heading">¶</a></h2>
-<p>When using MPI, each process writes and reads its own restart files.
-The number of MPI processes must match between the original and restart runs.</p>
-<p>If you need to change the process count, you must:</p>
-<ol class="arabic simple">
-<li><p>Gather all eigenvector files</p></li>
-<li><p>Redistribute the data</p></li>
-<li><p>Split into new per-process files</p></li>
-</ol>
-</section>
-<section id="common-issues">
-<h2><span class="section-number">6.6.7. </span>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">¶</a></h2>
-<dl class="simple">
-<dt><strong>File not found</strong></dt><dd><p>Ensure restart files are in the working directory with correct names.</p>
-</dd>
-<dt><strong>Process count mismatch</strong></dt><dd><p>The number of MPI processes must match the original calculation.</p>
-</dd>
-<dt><strong>File corruption</strong></dt><dd><p>If calculations produce unexpected results after restart,
-the restart files may be corrupted. Delete them and start fresh.</p>
-</dd>
-</dl>
-</section>
-<section id="best-practices">
-<h2><span class="section-number">6.6.8. </span>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<p>The legacy files depend on the solver:</p>
 <ul class="simple">
-<li><p>Regularly save eigenvector files during long calculations</p></li>
-<li><p>Keep backup copies of restart files</p></li>
-<li><p>Verify results after restart by checking conserved quantities</p></li>
-<li><p>Document the calculation parameters used with each restart file</p></li>
+<li><p>Ground-state Lanczos writes <code class="docutils literal notranslate"><span class="pre">##_recalcvec_rank_$$.dat</span></code> and
+<code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code>. The latter records the MPI process and OpenMP
+thread counts. A mismatch is rejected; an older file without the
+environment line is accepted with a warning.</p></li>
+<li><p>LOBPCG (CG), TPQ, and cTPQ write
+<code class="docutils literal notranslate"><span class="pre">tmpvec_set&amp;&amp;_rank_$$.dat</span></code>. These names do not contain
+<code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>.</p></li>
+<li><p>Real-time evolution writes <code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code> when
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>. The header records the next step to execute.</p></li>
 </ul>
+<p>See the output-file reference for the binary layouts. These formats are
+platform-dependent.</p>
+</section>
+<section id="inputeigenvec-modes">
+<h2><span class="section-number">6.6.2. </span><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> modes<a class="headerlink" href="#inputeigenvec-modes" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> loads a saved eigenvector; it is distinct from
+<code class="docutils literal notranslate"><span class="pre">ReStart</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: do not load an eigenvector.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: load the eigenvector and use it directly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: load the eigenvector, apply <span class="math notranslate nohighlight">\(H\)</span> once, and normalize the
+resulting vector before evaluating observables (legacy Lanczos input
+path).</p></li>
+</ul>
+<p>Loading an eigenvector does not resume the eigensolver iteration.
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> writes the resulting eigenvector files.</p>
+</section>
+<section id="iteration-limits">
+<h2><span class="section-number">6.6.3. </span>Iteration limits<a class="headerlink" href="#iteration-limits" title="Link to this heading">¶</a></h2>
+<p>For legacy Lanczos and LOBPCG restart, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is the number of
+additional iterations after the saved point. For TPQ/cTPQ and real-time
+evolution it is the total step count, so it must exceed the saved step.</p>
+</section>
+<section id="mpi-requirements">
+<h2><span class="section-number">6.6.4. </span>MPI requirements<a class="headerlink" href="#mpi-requirements" title="Link to this heading">¶</a></h2>
+<p>Each MPI process reads its own rank file. The number of MPI processes
+must match the run that wrote the legacy restart or eigenvector files;
+changing the process count is not supported by these formats. Use the
+same model, Hilbert-space decomposition, OpenMP thread count where
+required, and compatible executable architecture.</p>
+</section>
+<section id="legacy-output-limitations">
+<h2><span class="section-number">6.6.5. </span>Legacy output limitations<a class="headerlink" href="#legacy-output-limitations" title="Link to this heading">¶</a></h2>
+<p>The current real-time evolution continuation reopens <code class="docutils literal notranslate"><span class="pre">SS.dat</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> in write mode, so earlier time-series rows are replaced.
+The legacy TPQ/cTPQ <code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> file does not store
+<code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code>; continued <code class="docutils literal notranslate"><span class="pre">Norm_rand</span></code> rows therefore use zero in
+that column.</p>
+<p>Before a long continuation, keep backup copies of the restart files and
+the time-series outputs, and verify the conserved quantities after the
+restart.</p>
 </section>
 </section>
 
@@ -178,14 +138,11 @@ the restart files may be corrupted. Delete them and start fresh.</p>
 <li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart Mechanism</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#overview">6.6.1. Overview</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#restart-files">6.6.2. Restart Files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#input-output-settings">6.6.3. Input/Output Settings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage-examples">6.6.4. Usage Examples</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#file-format">6.6.5. File Format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mpi-considerations">6.6.6. MPI Considerations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#common-issues">6.6.7. Common Issues</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#best-practices">6.6.8. Best Practices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restart-modes">6.6.1. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputeigenvec-modes">6.6.2. <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iteration-limits">6.6.3. Iteration limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi-requirements">6.6.4. MPI requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy-output-limitations">6.6.5. Legacy output limitations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_en.html">6.7. Parallel full diagonalization</a></li>

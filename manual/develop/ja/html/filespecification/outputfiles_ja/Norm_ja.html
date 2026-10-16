@@ -39,20 +39,23 @@
 <span id="subsec-normte"></span><h1>Norm.dat<a class="headerlink" href="#norm-dat" title="Link to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">(実時間発展法でのみ出力)
-実時間発展法でのタイムステップ毎のログを出力します。以下にファイル例を示します。</div>
+実時間発展法でのタイムステップ毎のログを出力します。
+現在のlegacyリスタート経路ではwrite modeで開き直すため、以前の行へ追記せず
+ファイルを置き換えます。以前の時系列が必要な場合はリスタート前に退避してください。
+以下にファイル例を示します。</div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # time, norm, step_i
-0.0000000000000000 0.9999999999999994 0
-0.0100000000000000 1.0000233421898765 1
-0.0200000000000000 1.0000211100654208 2
-0.0300000000000000 1.0000182214014706 3
-0.0400000000000000 1.0000148460317946 4
-0.0500000000000000 1.0000111372562455 5
-0.0600000000000000 1.0000072252313270 6
-0.0700000000000000 1.0000032174168609 7
-0.0800000000000000 0.9999992048382456 8
-0.0900000000000000 0.9999952720176869 9
-0.1000000000000000 0.9999915078951970 10
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # time, global_norm, global_1st_norm, step_i
+0.0000000000000000 0.9999999999999994 0.0000000000000000 0
+0.0100000000000000 1.0000233421898765 0.0000000000000000 1
+0.0200000000000000 1.0000211100654208 0.0000000000000000 2
+0.0300000000000000 1.0000182214014706 0.0000000000000000 3
+0.0400000000000000 1.0000148460317946 0.0000000000000000 4
+0.0500000000000000 1.0000111372562455 0.0000000000000000 5
+0.0600000000000000 1.0000072252313270 0.0000000000000000 6
+0.0700000000000000 1.0000032174168609 0.0000000000000000 7
+0.0800000000000000 0.9999992048382456 0.0000000000000000 8
+0.0900000000000000 0.9999952720176869 0.0000000000000000 9
+0.1000000000000000 0.9999915078951970 0.0000000000000000 10
 </pre></div>
 </div>
 <section id="id1">
@@ -66,7 +69,7 @@
 <p>1行目はヘッダで、2行目以降は以下のファイル形式で記載されます。</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span> <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>
-<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p></li>
+<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span> <span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p></li>
 </ul>
 </section>
 <section id="id3">
@@ -80,6 +83,10 @@
 <p><strong>形式 :</strong> double型</p>
 <p><strong>説明 :</strong>
 実時間発展法で計算される時刻<span class="math notranslate nohighlight">\(t\)</span>での波動関数(ベクトル)のノルム。</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
+<p><strong>形式 :</strong> double型</p>
+<p><strong>説明 :</strong> solverが保持する初期ノルム値。現在の実時間発展出力では0です。</p>
 </li>
 <li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
 <p><strong>形式 :</strong> int型</p>

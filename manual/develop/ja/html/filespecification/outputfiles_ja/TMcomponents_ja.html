@@ -37,45 +37,32 @@
             
   <section id="tmcomponents-dat">
 <h1>TMcomponents.dat<a class="headerlink" href="#tmcomponents-dat" title="Link to this heading">¶</a></h1>
-<p>Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイル形式は以下の通りです。</p>
+<p>Lanczos法のリスタートおよび再計算に用いる三重対角行列の要素と初期ノルムを
+保存するテキストファイルです。</p>
 <section id="id1">
 <h2>ファイル名<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>##_TMcomponents.dat</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code></p></li>
 </ul>
-<p>##はModParaファイル内の[string02]で指定されるヘッダを表します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span></code> はModParaファイルの <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> です。</p>
 </section>
 <section id="id2">
 <h2>ファイル形式<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>1行目：<span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p></li>
-<li><p>2行目：<span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p></li>
-<li><p>3行目 - <span class="math notranslate nohighlight">\([\)</span>int02<span class="math notranslate nohighlight">\(]\)</span>+3行:
-<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>  <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p></li>
+<li><p>1行目: <code class="docutils literal notranslate"><span class="pre">step</span></code></p></li>
+<li><p>2行目: <code class="docutils literal notranslate"><span class="pre">dnorm</span></code></p></li>
+<li><p>続く <code class="docutils literal notranslate"><span class="pre">step</span></code> 行: <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">beta</span></code></p></li>
+<li><p>基底状態リスタートの場合のみ、最終行:
+<code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">nproc</span> <span class="pre">P</span> <span class="pre">nthreads</span> <span class="pre">T</span></code></p></li>
 </ul>
-</section>
-<section id="id3">
-<h2>パラメータ<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span></p>
-<p><strong>形式 :</strong> int型</p>
-<p><strong>説明 :</strong>
-動的グリーン関数の計算に要したステップ数<span class="math notranslate nohighlight">\(N_d\)</span>を表します。</p>
-</li>
-<li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span></p>
-<p><strong>形式 :</strong> double型</p>
-<p><strong>説明 :</strong> 励起状態のノルムを表します。</p>
-</li>
-<li><p><span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span></p>
-<p><strong>形式 :</strong> double型</p>
-<div class="line-block">
-<div class="line"><strong>説明 :</strong>
-Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素<span class="math notranslate nohighlight">\(\alpha_i,~\beta_i~(i =1,\cdots N_d)\)</span>の値を表します。一番最初の成分に計算に使用しない値が入っています。
-<span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(\alpha_i\)</span>、<span class="math notranslate nohighlight">\([\)</span>double03<span class="math notranslate nohighlight">\(]\)</span>が<span class="math notranslate nohighlight">\(\beta_i\)</span>に対応します。</div>
-</div>
-</li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> と <code class="docutils literal notranslate"><span class="pre">beta</span></code> はLanczos三重対角行列の要素
+<span class="math notranslate nohighlight">\(\alpha_i\)</span> と <span class="math notranslate nohighlight">\(\beta_i\)</span> です。末尾のコメントには、対応する
+<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> の保存に使用したMPIプロセス数とOpenMPスレッド数を記録します。
+基底状態リスタートでは、プロセス数またはスレッド数が異なる場合は拒否します。
+この行を持たない旧形式ファイルは警告付きで読み込むため、保存時と同じ実行環境を
+使用してください。</p>
+<p>スペクトル計算の <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> ファイルは従来のテキスト形式を維持し、
+実行環境のコメント行を含みません。</p>
 </section>
 </section>
 

@@ -6,9 +6,10 @@ SS.dat
 ------
 
 | (For the real time evolution method) This file is outputted to show
-  the calculation results. In the restart calculation, the values are
-  added to the previous file. An example of the file format is as
-  follows.
+  the calculation results. In the current legacy restart path, this file
+  is reopened in write mode; previous rows are replaced rather than
+  appended. Preserve a copy before restarting if the earlier time series
+  is required. An example of the file format is as follows.
 
 ::
 

@@ -185,7 +185,7 @@ OpenMP Parallelization</h1>
 <h1><a class="anchor" id="sec_coding_mpi"></a>
 MPI Parallelization</h1>
 <p>For MPI parallelization, use the following wrapper functions:</p><ul>
-<li><a class="el" href="wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a" title="MPI file I/O (get a line, fgets) wrapper. Only the root node (myrank = 0) reads and broadcast string.">fgetsMPI()</a> instead of <code>fgets</code> </li>
+<li><a class="el" href="wrapperMPI_8h.html#a9436224cf1cda3468767ab28d9359e9a" title="MPI file I/O (get a non-comment line, fgets) wrapper. Only the root node (myrank = 0) reads and broad...">fgetsMPI()</a> instead of <code>fgets</code> </li>
 <li><code>fprintf</code>(<a class="el" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207" title="File pointer to the standard output defined in InitializeMPI()">stdoutMPI</a>,... instead of <code>printf</code>(...</li>
 <li><a class="el" href="wrapperMPI_8h.html#a2abfe04445bd797efbd04144652cfe0e" title="MPI file I/O (open) wrapper. Only the root node (myrank = 0) should be open/read/write (small) parame...">fopenMPI()</a> instead of <code>fopen</code> </li>
 <li><a class="el" href="wrapperMPI_8h.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed" title="MPI Abortation wrapper.">exitMPI()</a> instead of <code>exit</code> </li>

@@ -186,8 +186,9 @@ Lanczos method
    **Description :** The maximum number of Lanczos steps in the
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
-   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   ``Lanczos_max``. For a legacy Lanczos restart, ``Lanczos_max`` is the
+   number of **additional** steps after the saved step, not an absolute
+   final step.
 
 *  ``exct``
 
@@ -233,8 +234,8 @@ CG method
    **Description :** The maximum number of iteration steps in the
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
-   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   ``Lanczos_max``. For a legacy LOBPCG restart, ``Lanczos_max`` is the
+   number of **additional** iterations after the saved point.
 
 *  ``LanczosEps``
 
@@ -254,8 +255,8 @@ TPQ (mTPQ/cTPQ) method
    **Type :** Int (positive integer)
 
    **Description :** The total number of TPQ steps is specified with
-   this parameter. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   this parameter. This remains an absolute total step count during a
+   TPQ/cTPQ restart and must be larger than the saved step.
 
 *  ``LargeValue``
 
@@ -417,8 +418,8 @@ Real time evolution method
    **Type :** Int (positive integer)
 
    **Description :** The total number of real time evolution steps is
-   specified with this parameter. In the case of restart calculation,
-   ``Lanczos_max`` must be larger than that of the previous calculation.
+   specified with this parameter. This remains an absolute total step
+   count during restart and must be larger than the saved next step.
 
 *  ``ExpandCoef``
 

@@ -35,6 +35,10 @@ runs, and each data row starts with ``set`` and ``step``:
 ``set step inv_temp global_norm global_1st_norm``. The split
 ``Norm_rand??.dat`` files are not created in this mode.
 
+The legacy ``tmpvec`` format stores only the vector and step. Therefore,
+after a legacy TPQ/cTPQ continuation, ``global_1st_norm`` is written as
+zero for the continued rows; it cannot be reconstructed from that file.
+
 .. _file_format_30:
 
 File format

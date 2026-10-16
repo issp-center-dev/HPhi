@@ -158,7 +158,7 @@ var NAVTREEINDEX =
 "symmetry__basis_8c.html#af7b60d9d76c45c99846291160e7e8ef6",
 "symmetry__fulldiag_8c.html#a4641cc47fade4a28d69bf7372e95fb39",
 "symmetry__mpi__exchange_8h.html#a9c7571ffc1fbe840d9bd3a62e7e58856",
-"wrapperMPI_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed"
+"wrapperMPI_8c.html#ad03fb793bdd71c39a37c76a8e8fd56de"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

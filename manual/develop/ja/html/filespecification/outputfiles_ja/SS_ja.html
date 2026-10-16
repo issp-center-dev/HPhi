@@ -38,7 +38,10 @@
   <section id="ss-dat">
 <span id="subsec-sste"></span><h1>SS.dat<a class="headerlink" href="#ss-dat" title="Link to this heading">¶</a></h1>
 <div class="line-block">
-<div class="line">(実時間発展法でのみ出力)実時間発展法での各ステップ毎の計算結果を出力します。以下にファイル例を示します。</div>
+<div class="line">(実時間発展法でのみ出力)実時間発展法での各ステップ毎の計算結果を出力します。
+現在のlegacyリスタート経路ではwrite modeで開き直すため、以前の行へ追記せず
+ファイルを置き換えます。以前の時系列が必要な場合はリスタート前に退避してください。
+以下にファイル例を示します。</div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # time, energy, phys_var, phys_doublon, phys_num, step_i
 0.0000000000000000  -6.0412438187293001 38.8635272290786489 ...

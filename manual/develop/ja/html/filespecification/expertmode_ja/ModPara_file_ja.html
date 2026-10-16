@@ -170,7 +170,8 @@ ExpecInterval  20
 <p><strong>説明 :</strong> Lanczosステップを行う回数の最大値を与えます。
 指定した精度内で収束した場合には、これより短い回数で終了します。
 この回数以内で収束しない場合はエラー終了します。
-再計算を行う場合には、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>の最大数を過去のステップ数よりも大きくする必要があります。</p>
+legacy Lanczosリスタートでは、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>は絶対的な最終stepではなく、
+保存stepからの**追加**step数です。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -197,7 +198,8 @@ ExpecInterval  20
 <p><strong>説明 :</strong> CG法を行う際のステップ数の最大値を与えます。
 指定した精度内で収束した場合には、これより短い回数で終了します。
 この回数以内で収束しない場合はエラー終了します。
-再計算を行う場合には、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>の最大数を過去のステップ数よりも大きくする必要があります。</p>
+legacy LOBPCGリスタートでは、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>は保存点からの
+<a href="#id5"><span class="problematic" id="id6">**</span></a>追加**反復数です。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -212,7 +214,7 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> TPQ法の総ステップ数を与えます。
-再計算を行う場合には、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>の最大数を過去のステップ数よりも大きくする必要があります。</p>
+TPQ/cTPQリスタートでも絶対的な総step数を表し、保存stepより大きな値が必要です。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>形式 :</strong> double型 (実数)</p>
@@ -242,8 +244,8 @@ cTPQ計算の詳細は <a class="reference internal" href="../../algorithm/al-in
 </li>
 </ul>
 </section>
-<section id="id5">
-<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<section id="id7">
+<h2>動的グリーン関数の計算で使用するパラメータ<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OmegaOrg</span></code></p>
 <p><strong>形式 :</strong> complex型 (複素数)</p>
@@ -343,13 +345,13 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 </li>
 </ul>
 </section>
-<section id="id6">
-<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<section id="id8">
+<h2>実時間発展法で使用するパラメータ<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 実時間発展法の総ステップ数を与えます。
-再計算を行う場合には、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>の最大数を過去のステップ数よりも大きくする必要があります。</p>
+リスタートでも絶対的な総step数を表し、保存された次stepより大きな値が必要です。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p>実時間発展では指定が必須です。 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満の正の整数を指定してください。</p>

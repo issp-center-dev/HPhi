@@ -37,112 +37,65 @@
             
   <section id="id1">
 <h1><span class="section-number">6.6. </span>リスタート機構<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
-<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のリスタート機構を説明します。</p>
-<section id="id2">
-<h2><span class="section-number">6.6.1. </span>概要<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> はチェックポイント/リスタート機能をサポートしており、以下が可能です：</p>
+<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のlegacyリスタート機構と
+固有ベクトル入力を説明します。</p>
+<section id="restart">
+<h2><span class="section-number">6.6.1. </span><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> モード<a class="headerlink" href="#restart" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> 入力ファイルの <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> はsolverの継続方法を指定します。</p>
 <ul class="simple">
-<li><p>中断された計算の再開</p></li>
-<li><p>大規模計算を小さなジョブに分割</p></li>
-<li><p>固有ベクトルの反復的な改善</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: リスタートしない</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: リスタートデータを出力する</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: リスタートデータを読み込み、更新したデータを出力する</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>: リスタートデータを読み込む</p></li>
 </ul>
-</section>
-<section id="id3">
-<h2><span class="section-number">6.6.2. </span>リスタートファイル<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<p>以下のファイルがリスタートに使用されます：</p>
-<dl class="simple">
-<dt><strong>固有ベクトルファイル</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">zvo_eigenvec_{rank}_set{set}.dat</span></code></dt><dd><p>各MPIランクの固有ベクトルを格納。</p>
-</dd>
-</dl>
-</dd>
-<dt><strong>リスタートベクトルファイル</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">restart_{rank}.dat</span></code></dt><dd><p>反復を再開するために必要なLanczosベクトルを含む。</p>
-</dd>
-</dl>
-</dd>
-<dt><strong>三重対角行列</strong></dt><dd><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">zvo_Lanczos_Step.dat</span></code></dt><dd><p>Lanczos係数を格納。</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</section>
-<section id="id4">
-<h2><span class="section-number">6.6.3. </span>入出力設定<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> 入力ファイルで設定：</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: ランダムまたは指定された初期ベクトルから開始（デフォルト）</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: ファイルから固有ベクトルを読み込み再計算</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: ファイルから固有ベクトルを読み込む</p></li>
+<p>legacyファイルはsolverごとに異なります。</p>
+<ul class="simple">
+<li><p>基底状態Lanczos法は <code class="docutils literal notranslate"><span class="pre">##_recalcvec_rank_$$.dat</span></code> と
+<code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code> を使用します。後者にはMPIプロセス数とOpenMP
+スレッド数を記録します。不一致は拒否し、環境行を持たない旧形式は警告付きで
+読み込みます。</p></li>
+<li><p>LOBPCG（CG）、TPQ、cTPQは <code class="docutils literal notranslate"><span class="pre">tmpvec_set&amp;&amp;_rank_$$.dat</span></code> を使用します。
+このファイル名に <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> は付きません。</p></li>
+<li><p>実時間発展では <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> のとき
+<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code> を出力します。ヘッダのstepは次に実行する
+stepを表します。</p></li>
 </ul>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 固有ベクトルを出力しない（デフォルト）</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 固有ベクトルをファイルに出力</p></li>
+<p>バイナリ構造の詳細は出力ファイル仕様を参照してください。これらの形式は
+実行環境に依存します。</p>
+</section>
+<section id="inputeigenvec">
+<h2><span class="section-number">6.6.2. </span><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> モード<a class="headerlink" href="#inputeigenvec" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> は保存済み固有ベクトルの入力であり、<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> とは別です。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 固有ベクトルを読み込まない</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 固有ベクトルを読み込み、そのまま使用する</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: 固有ベクトルを読み込み、<span class="math notranslate nohighlight">\(H\)</span> を1回作用させ、規格化してから
+物理量を評価する（legacy Lanczos入力経路）</p></li>
 </ul>
-</dd>
-</dl>
+<p>固有ベクトルの入力は固有値solverの反復を再開しません。
+<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> は結果の固有ベクトルファイルを出力します。</p>
 </section>
-<section id="id5">
-<h2><span class="section-number">6.6.4. </span>使用例<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
-<p><strong>固有ベクトル出力ありの初回計算</strong></p>
-<p>CalcModファイルで <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> を設定。
-計算完了後、固有ベクトルファイルが書き込まれます。</p>
-<p><strong>固有ベクトルからのリスタート</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> と <code class="docutils literal notranslate"><span class="pre">iOutputEigenVec</span> <span class="pre">=</span> <span class="pre">1</span></code> を設定。
-計算は前回の実行から固有ベクトルを読み込み、
-それを改善します。</p>
-<p><strong>期待値のみの計算</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">iInputEigenVec</span> <span class="pre">=</span> <span class="pre">2</span></code> を設定。
-固有ベクトルが読み込まれ、追加の対角化なしに
-物理量の計算に使用されます。</p>
-</section>
-<section id="id6">
-<h2><span class="section-number">6.6.5. </span>ファイル形式<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
-<p>固有ベクトルファイルは効率のためにバイナリ形式で格納されます。
-各ファイルには以下が含まれます：</p>
-<ol class="arabic simple">
-<li><p>ヘッダー情報（システムサイズなど）</p></li>
-<li><p>固有ベクトル成分のcomplex double配列</p></li>
-</ol>
-<p>ファイルはバイナリ形式のためプラットフォーム依存です。
-リスタートファイルは同じアーキテクチャで使用してください。</p>
+<section id="id2">
+<h2><span class="section-number">6.6.3. </span>反復回数<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>legacy LanczosおよびLOBPCGリスタートでは、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> は保存点からの
+追加反復数です。TPQ/cTPQおよび実時間発展では総step数なので、保存stepより
+大きな値を指定します。</p>
 </section>
 <section id="mpi">
-<h2><span class="section-number">6.6.6. </span>MPIに関する考慮事項<a class="headerlink" href="#mpi" title="Link to this heading">¶</a></h2>
-<p>MPIを使用する場合、各プロセスは独自のリスタートファイルを
-読み書きします。
-MPIプロセス数は元の実行とリスタート実行で一致する必要があります。</p>
-<p>プロセス数を変更する必要がある場合は：</p>
-<ol class="arabic simple">
-<li><p>全ての固有ベクトルファイルを収集</p></li>
-<li><p>データを再分配</p></li>
-<li><p>新しいプロセスごとのファイルに分割</p></li>
-</ol>
+<h2><span class="section-number">6.6.4. </span>MPIの要件<a class="headerlink" href="#mpi" title="Link to this heading">¶</a></h2>
+<p>各MPIプロセスが自分のrankファイルを読み込みます。legacyリスタートおよび
+固有ベクトルファイルでは、保存時と同じMPIプロセス数が必須であり、プロセス数の
+変更には対応していません。model、Hilbert空間の分割、必要な場合はOpenMP
+スレッド数、および実行バイナリの環境も一致させてください。</p>
 </section>
-<section id="id7">
-<h2><span class="section-number">6.6.7. </span>よくある問題<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
-<dl class="simple">
-<dt><strong>ファイルが見つからない</strong></dt><dd><p>リスタートファイルが正しい名前で作業ディレクトリにあることを確認。</p>
-</dd>
-<dt><strong>プロセス数の不一致</strong></dt><dd><p>MPIプロセス数は元の計算と一致する必要があります。</p>
-</dd>
-<dt><strong>ファイルの破損</strong></dt><dd><p>リスタート後に計算が予期しない結果を生成する場合、
-リスタートファイルが破損している可能性があります。
-ファイルを削除して最初からやり直してください。</p>
-</dd>
-</dl>
-</section>
-<section id="id8">
-<h2><span class="section-number">6.6.8. </span>ベストプラクティス<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>長時間計算中は定期的に固有ベクトルファイルを保存</p></li>
-<li><p>リスタートファイルのバックアップコピーを保持</p></li>
-<li><p>リスタート後は保存量をチェックして結果を検証</p></li>
-<li><p>各リスタートファイルで使用した計算パラメータを文書化</p></li>
-</ul>
+<section id="legacy">
+<h2><span class="section-number">6.6.5. </span>legacy出力の制限<a class="headerlink" href="#legacy" title="Link to this heading">¶</a></h2>
+<p>現在の実時間発展の継続では <code class="docutils literal notranslate"><span class="pre">SS.dat</span></code> と <code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> をwrite modeで
+開き直すため、以前の時系列行を置き換えます。またlegacy TPQ/cTPQの
+<code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> は <code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code> を保存しないため、継続後の
+<code class="docutils literal notranslate"><span class="pre">Norm_rand</span></code> の同列には0を出力します。</p>
+<p>長時間計算を継続する前に、リスタートファイルと時系列出力を退避し、継続後に
+保存量を確認してください。</p>
 </section>
 </section>
 
@@ -181,14 +134,11 @@ MPIプロセス数は元の実行とリスタート実行で一致する必要�
 <li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. リスタート機構</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">6.6.1. 概要</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">6.6.2. リスタートファイル</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">6.6.3. 入出力設定</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">6.6.4. 使用例</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">6.6.5. ファイル形式</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mpi">6.6.6. MPIに関する考慮事項</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">6.6.7. よくある問題</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">6.6.8. ベストプラクティス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restart">6.6.1. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> モード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputeigenvec">6.6.2. <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> モード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.6.3. 反復回数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mpi">6.6.4. MPIの要件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy">6.6.5. legacy出力の制限</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_ja.html">6.7. 並列全対角化</a></li>
