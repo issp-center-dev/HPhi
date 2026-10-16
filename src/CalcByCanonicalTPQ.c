@@ -282,6 +282,11 @@ int CalcByCanonicalTPQ(
                 StopTimer(3200);
                 if(iret != 0) return -1;
                 step_iO = step_i-1;
+                /* Legacy tmpvec stores only the vector: rebuild the uniform
+                   imaginary-time grid and reset the first-norm column. */
+                delta_tau = 1.0 / LargeValue;
+                inv_temp = (double)(step_i - 1) * delta_tau;
+                global_1st_norm = 0.0;
                 if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
             }
         }

@@ -2,63 +2,37 @@
 
 .. _Subsec:restart:
 
-tmpvec.dat
-----------
+tmpvec files
+------------
 
-When ReStart=1, 2 in a CalcMod file, vectors after the calculation stops
-at an indicated step are outputted. The file format is of the binary
-type. An example of the file format is as follows.
-
-.. _file_name_19:
+The TPQ/cTPQ and LOBPCG (CG) solvers use these binary files for the
+legacy ``ReStart`` mechanism. Ground-state Lanczos does not use this
+format; it uses the ``recalcvec`` and ``TMComponents`` files instead.
 
 File name
 ~~~~~~~~~
 
-*  Lanczos method: ##_tmpvec_rank_$$.dat
+*  ``tmpvec_set&&_rank_$$.dat``
 
-*  TPQ and LOBPCG method: ##_tmpvec_set_&&_rank_$$.dat .
-
-## indicates [string02] in a ModPara file, and $$ is the number of rank.
-&& is the sampling number for the TPQ calculation.
-
-.. _file_format_43:
+``&&`` is the zero-based TPQ sample or LOBPCG eigenstate number, and
+``$$`` is the MPI rank. The name does **not** contain ``CDataFileHead``.
 
 File format
 ~~~~~~~~~~~
 
-This file is written through the following source code (a little
-different from the actual :math:`{\mathcal H}\Phi` source).
-
-| Lanczos
+On the supported 64-bit platforms, the file starts with a 12-byte
+header followed by one complex vector:
 
 ::
 
-    fp = fopen("zvo_tmpvec_rank_0.dat", "wb");
-    fwrite(&number_of_interations, sizeof(int), 1,fp);
-    fwrite(&local_size, sizeof(unsigned long int),1,fp);
-    fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
-    fwrite(&second_last_vector[0], sizeof(complex double),local_size+1, fp);
-    fclose(fp);
+    fwrite(&step, sizeof(int), 1, fp);
+    fwrite(&local_size, sizeof(unsigned long int), 1, fp);
+    fwrite(&vector[0], sizeof(complex double), local_size + 1, fp);
 
-| TPQ and LOBPCG
-
-::
-
-    fp = fopen("zvo_tmpvec_set_0_rank_0.dat", "wb");
-    fwrite(&number_of_interations, sizeof(int), 1,fp);
-    fwrite(&local_size, sizeof(unsigned long int),1,fp);
-    fwrite(&last_vector[0], sizeof(complex double),local_size+1, fp);
-    fclose(fp);
-
-where ``number_of_interations`` is the number of iterations,
-``local_size`` is the size of eigenvector (if MPI is used, it differs
-from the dimension of the Hilbert space), ``last_vector`` is the vector
-at the last iteration and ``second_last_vector`` is the vector at the
-second last iteration.
-
-**Note:** The fist component of ``last_vector`` and
-``second_last_vector`` (``last_vector[0]`` and
-``second_last_vector[0]``) are not used for calculation.
+``step`` is the saved iteration and ``local_size`` is the local vector
+dimension. Each file stores ``local_size + 1`` complex values because
+index zero is retained for compatibility; ``vector[0]`` is not used in
+the calculation. The binary representation is platform-dependent.
 
 .. raw:: latex
 

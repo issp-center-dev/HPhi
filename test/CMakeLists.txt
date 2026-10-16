@@ -376,6 +376,9 @@ set_tests_properties(symmetry_spingc_correlation_memory_limit PROPERTIES
     ENVIRONMENT "HPHI_TEST_CORRELATION_MEMORY_FAILURE=1;HPHI_SYMMETRY_MEMORY_LIMIT_BYTES=40000")
 add_hphi_test(lanczos_kondo_chain)
 add_hphi_test(lanczos_spin_kagome)
+add_hphi_mpi_test(kondogc_mpi_localspin_reject min:4)
+set_tests_properties(kondogc_mpi_localspin_reject PROPERTIES
+    LABELS "kondo;mpi;validation")
 add_hphi_test(lanczos_spin_calchs_minus1)
 add_hphi_test(symmetry_spin_chain_lanczos)
 add_hphi_test(lanczos_spin_ladder_DM)
@@ -425,6 +428,13 @@ add_hphi_test(lanczos_hubbard_square_restart)
 add_hphi_test(lanczos_kondo_chain_restart)
 add_hphi_test(lanczos_spin_kagome_restart)
 add_hphi_test(lanczos_genspin_ladder_restart)
+add_hphi_test(lanczos_restart_env_guard)
+set_tests_properties(lanczos_restart_env_guard PROPERTIES
+    LABELS "lanczos;restart;validation" TIMEOUT 600)
+add_hphi_test(lanczos_restart_tm_sequence)
+set_tests_properties(lanczos_restart_tm_sequence PROPERTIES
+    LABELS "lanczos;restart;validation" TIMEOUT 600
+    ENVIRONMENT "OMP_NUM_THREADS=1")
 
 # Lanczos test labels
 set_tests_properties(
@@ -1092,6 +1102,7 @@ add_hphi_test_with_srcdir(tpq_spin_kagome)
 add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
 add_hphi_test(tpq_small_lanczos_max)
 add_hphi_test(tpq_restart_missing_vector_fallback)
+add_hphi_test(tpq_legacy_restart)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
@@ -1102,6 +1113,9 @@ set_tests_properties(
 set_tests_properties(
     tpq_restart_missing_vector_fallback
     PROPERTIES LABELS "tpq;ctpq;validation")
+set_tests_properties(
+    tpq_legacy_restart
+    PROPERTIES LABELS "tpq;restart;validation" TIMEOUT 600)
 
 #
 # cTPQ

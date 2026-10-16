@@ -188,6 +188,9 @@ int CalcByTPQ(
         if(iret != 0) return -1;
 
         step_iO=step_i-1;
+        /* Legacy tmpvec does not store the first norm; avoid carrying the
+           value from a previous random-vector set. */
+        global_1st_norm = 0.0;
         if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
       }
     }
