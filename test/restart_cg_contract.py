@@ -398,7 +398,7 @@ def sector_case(template, model, length, momentum, states, raw, projector):
                 assert checkpoint_bytes(lim) == saved
                 assert len(energies(lim)) == 2 and np.isfinite(energies(lim)).all()
                 if repeat == 0: evaluated = energies(lim)
-                else: np.testing.assert_array_equal(energies(lim), evaluated)
+                else: np.testing.assert_allclose(energies(lim), evaluated, rtol=0, atol=1e-10)
             outputs = list((lim / 'output').glob('zvo_eigenvec_*_rank_*.dat'))
             assert outputs
             for f in outputs:

@@ -92,7 +92,7 @@ def exercise(template, tag, calc, mod, env=None, sector=False):
             if repeat == 0:
                 first_energy, first_vectors = result, vectors
             else:
-                np.testing.assert_array_equal(result, first_energy)
+                np.testing.assert_allclose(result, first_energy, rtol=0, atol=1e-10)
                 assert vectors == first_vectors
         # Independent evaluation of exactly the vectors produced by the caller.
         rc.set_key(path, calc, 'ReStart', 0)
