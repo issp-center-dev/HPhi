@@ -129,7 +129,6 @@ int CalcByCanonicalTPQ(
     char sdt_flct[D_FileNameMax];
     char file_name[D_FileNameMax];
     int rand_i, rand_max, iret;
-    unsigned long int i_max;
     int step_i,step_iO=0;
     FILE *fp;
     double inv_temp,delta_tau;
@@ -348,18 +347,12 @@ int CalcByCanonicalTPQ(
                 inv_temp = info.scalar_b;
                 delta_tau = info.scalar_c;
             } else {
-                int read_failed = 0;
-                sprintf(sdt, cFileNameInputVector, rand_i, myrank);
-                read_failed = childfopenALL(sdt, "rb", &fp) != 0 || fp == NULL;
-                if (!read_failed)
-                    read_failed = fread(&step_i, sizeof(step_i), 1, fp) != 1 ||
-                                  fread(&i_max, sizeof(long int), 1, fp) != 1 ||
-                                  i_max != X->Bind.Check.idim_max ||
-                                  fread(v0, sizeof(complex double),
-                                        X->Bind.Check.idim_max + 1, fp) !=
-                                      X->Bind.Check.idim_max + 1;
-                if (fp != NULL && fclose(fp) != 0) read_failed = 1;
-                if (SumMPI_i(read_failed) != 0) {
+                int source_ranks = X->Bind.Def.RestartSourceRanks > 0
+                    ? X->Bind.Def.RestartSourceRanks : nproc;
+                if (RestartReadLegacyRaw(&(X->Bind), cFileNameInputVector,
+                                         rand_i, source_ranks, v0,
+                                         &step_i) != 0 ||
+                    SumMPI_i(step_i != restart_plan.legacy_steps[rand_i]) != 0) {
                     fprintf(stdoutMPI, "Error: legacy recovery payload read failed.\n");
                     StopTimer(3600);
                     CTPQ_RETURN_ERROR();

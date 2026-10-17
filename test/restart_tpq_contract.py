@@ -294,7 +294,7 @@ for damage in ("short", "step0"):
     data = q.read_bytes()
     q.write_bytes(data[:4] if damage == "short" else struct.pack("=i", 0) + data[4:])
     before = series_snapshot(bad)
-    rc.run(bad, "reject_legacy", fail="legacy recovery")
+    rc.run(bad, "reject_legacy", fail="RestartSourceRanks is required")
     assert series_snapshot(bad) == before
 
 # TPQ FLAGS must be zero. cTPQ additionally rejects negative cumulative beta

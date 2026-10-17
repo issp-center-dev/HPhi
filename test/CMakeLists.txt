@@ -1734,3 +1734,7 @@ set_tests_properties(restart_import PROPERTIES LABELS "restart;te;validation" TI
 add_hphi_mpi_test(restart_redistribute min:4)
 set_tests_properties(restart_redistribute PROPERTIES
     LABELS "restart;mpi;validation" TIMEOUT 1800)
+
+add_hphi_mpi_test(restart_legacy_sources min:4)
+set_tests_properties(restart_legacy_sources PROPERTIES
+    LABELS "restart;mpi;validation" TIMEOUT 1800)

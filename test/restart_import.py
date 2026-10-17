@@ -171,14 +171,20 @@ def exercise(seed, root, layout=None):
     run(continuing, 'ranks', layout, fail='RestartSourceRanks does not match')
     assert snapshot(continuing) == before
     # A genuinely different destination process count, not a forged header.
-    # The MPI matrix executes np4/16 sources against an actual single-rank run.
+    # Both named-state import and manifest continuation redistribute v3 files.
     if not sector and len(files) > 1:
-        for source, name in [(target, 'changed_np_import'), (evolved, 'changed_np_continuation')]:
-            bad = clone(source, root / name)
-            rc.set_key(bad, 'calcmod.def', 'ReStart', 3)
-            before = snapshot(bad)
-            run(bad, name, fail='rank count (rank redistribution arrives in PR-3)', mpi=False)
-            assert snapshot(bad) == before
+        changed = clone(target, root / 'changed_np_import')
+        text = run(changed, 'changed_np_import', mpi=False)
+        assert 'Restart read: header files {}'.format(len(files)) in text
+        check_clock(changed, times)
+        continued = clone(evolved, root / 'changed_np_continuation')
+        rc.set_key(continued, 'calcmod.def', 'ReStart', 3)
+        expected_series = rc.rows(continued, 'SS.dat').copy()
+        text = run(continued, 'changed_np_continuation', mpi=False)
+        assert ('no remaining steps' in text and
+                'Restart read: header files {}'.format(len(files)) in text)
+        np.testing.assert_allclose(rc.rows(continued, 'SS.dat'), expected_series,
+                                   rtol=0, atol=0)
     print(('sector '+layout if sector else 'raw') + ': CG/TE import, CG evaluation, provenance, identity and ranks PASS', flush=True)
 
 

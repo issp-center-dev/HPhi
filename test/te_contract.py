@@ -145,9 +145,13 @@ saved = victim.read_bytes()
 for label, data in [("short_header", saved[:2]), ("short_payload", saved[:-1]),
                     ("trailing", saved+b"x")]:
     victim.write_bytes(data)
-    run(ROOT, label, "missing, truncated or incompatible TE Inputvector")
+    diagnostic = ("missing, truncated or incompatible TE Inputvector"
+                  if label == "short_header" and len(seeds) == 1 else
+                  "RestartSourceRanks is required")
+    run(ROOT, label, diagnostic)
 victim.unlink()
-run(ROOT, "missing", "missing, truncated or incompatible TE Inputvector")
+run(ROOT, "missing", "missing, truncated or incompatible TE Inputvector"
+    if len(seeds) == 1 else "RestartSourceRanks is required")
 victim.write_bytes(saved)
 restart_victim = ROOT / "output/restart_rank_{}.dat".format(len(seeds)-1)
 restart_saved = restart_victim.read_bytes()
@@ -156,7 +160,8 @@ bad_step[:4] = struct.pack("=i", 6)
 restart_victim.write_bytes(bad_step)
 (ROOT / "namelist.def").write_text(names.replace("seed%literal_eigenvec_0", "restart"))
 (ROOT / "calcmod.def").write_text(re.sub(r"^ReStart\s+\d+", "ReStart 3", calc, flags=re.M))
-run(ROOT, "out_of_range", "step")
+run(ROOT, "out_of_range", "TE restart step must be consistent"
+    if len(seeds) == 1 else "RestartSourceRanks is required")
 restart_victim.write_bytes(restart_saved)
 (ROOT / "namelist.def").write_text(names)
 (ROOT / "calcmod.def").write_text(calc)

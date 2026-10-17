@@ -269,7 +269,6 @@ static int calc_by_tem(
   char sdt_flct[D_FileNameMax];
   int rand_i=0;
   int step_initial = 0;
-  long int i_max = 0;
   FILE *fp = NULL;
   double Time = X->Bind.Def.Param.Tinit;
   double dt = ((X->Bind.Def.NLaser==0)? 0.0: X->Bind.Def.Param.TimeSlice);
@@ -330,7 +329,17 @@ static int calc_by_tem(
     int source_ranks;
     int imported = RestartImportVector(&(X->Bind), defname, v1, &provenance, &format, &source_ranks);
     if (imported == -1) return -1;
-    if (imported == 0) {
+    if (format == RESTART_FORMAT_LEGACY_RAW) {
+      int continuing = X->Bind.Def.iReStart == RESTART_INOUT ||
+                       X->Bind.Def.iReStart == RESTART_IN;
+      step_initial = continuing ? (int)provenance.step : 0;
+      if (SumMPI_i(step_initial < (continuing ? 1 : 0) ||
+                   (unsigned int)step_initial >= X->Bind.Def.Lanczos_max) != 0) {
+        fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
+        return -1;
+      }
+      if (continuing) legacy_step = step_initial;
+    } else {
       step_initial = 0;
       if (X->Bind.Def.iFlgSymmetryBasis) {
         /* Old sector OutputEigenVec retains the imported state label. v3
@@ -345,42 +354,6 @@ static int calc_by_tem(
 #endif
         if (record_sector_te(&(X->Bind), NULL, view, 0) != 0) return -1;
       }
-    } else { /* -2: same-rank legacy raw; keep ReStart=2/3 stored STEP. */
-      invalid = childfopenALL(sdt, "rb", &fp) != 0;
-      if (!invalid) {
-        invalid = fread(&step_initial, sizeof(step_initial), 1, fp) != 1 ||
-                  fread(&i_max, sizeof(i_max), 1, fp) != 1 ||
-                  i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
-        if (!invalid) invalid = fread(v1, sizeof(*v1), X->Bind.Check.idim_max + 1, fp)
-                                    != X->Bind.Check.idim_max + 1;
-        if (!invalid && (fgetc(fp) != EOF || ferror(fp))) invalid = 1;
-        if (fclose(fp) != 0) invalid = 1;
-        fp = NULL;
-      }
-      if (SumMPI_i(invalid) != 0) {
-        fprintf(stdoutMPI, "Error: missing, truncated or incompatible TE Inputvector file.\n");
-        return -1;
-      }
-      double norm = 0;
-      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) {
-        double re = creal(v1[i]), im = cimag(v1[i]);
-        if (!isfinite(re) || !isfinite(im)) invalid = 1;
-        norm += re*re + im*im;
-      }
-      norm = SumMPI_d(norm);
-      if (SumMPI_i(invalid || !isfinite(norm) || norm <= 0) != 0) {
-        fprintf(stdoutMPI, "Error: TE Inputvector has zero or non-finite global norm.\n");
-        return -1;
-      }
-      int continuing = X->Bind.Def.iReStart == RESTART_INOUT || X->Bind.Def.iReStart == RESTART_IN;
-      if (!continuing) step_initial = 0;
-      int root_step = BcastMPI_i(0, step_initial);
-      if (SumMPI_i(step_initial < (continuing ? 1 : 0) ||
-                   (unsigned int)step_initial >= X->Bind.Def.Lanczos_max || step_initial != root_step) != 0) {
-        fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
-        return -1;
-      }
-      if (continuing) legacy_step = step_initial;
     }
   }
 
