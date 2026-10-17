@@ -115,12 +115,23 @@ def corruption_checks(root, source, hphi, launcher, env):
 
     for word, name in [(4, 'model'), (6, 'nup'), (7, 'ndown'), (8, 'ne'),
                        (9, 'full_dim'), (11, 'rank_count'), (12, 'rank'),
-                       (13, 'layout'), (14, 'offset'), (15, 'local_dim'),
+                       (14, 'offset'), (15, 'local_dim'),
                        (16, 'sector'), (20, 'order')]:
         def mutate(files, parts, word=word):
             parts[-1][0][word] ^= 1
             store_parts(files, parts)
         reject(name, mutate, 'header / sector / layout validation')
+
+    def invalid_layout(files, parts):
+        for header, _ in parts:
+            header[13] = 5
+        store_parts(files, parts)
+    reject('invalid_layout', invalid_layout, 'header / sector / layout validation')
+    if c.mpi_size(launcher) > 1:
+        def mixed_layout(files, parts):
+            parts[-1][0][13] ^= 1
+            store_parts(files, parts)
+        reject('mixed_layout', mixed_layout, 'cross-rank metadata consistency')
 
     for name, change in [('truncated_header', lambda b: b[:32]),
                          ('truncated_payload', lambda b: b[:-1]),
@@ -147,10 +158,10 @@ def corruption_checks(root, source, hphi, launcher, env):
     path = import_copy(root, 'other_layout', source)
     other_layout = ('replicated' if env['HPHI_SYMMETRY_BASIS_LAYOUT'] == 'distributed'
                     else 'distributed')
-    text = c.run_case(path, hphi, 'other_layout', launcher,
-                      dict(env, HPHI_SYMMETRY_BASIS_LAYOUT=other_layout),
-                      'checkpoint header / sector / layout validation failed')
-    assert 'basis layout differs' in text
+    c.run_case(path, hphi, 'other_layout', launcher,
+               dict(env, HPHI_SYMMETRY_BASIS_LAYOUT=other_layout))
+    np.testing.assert_allclose(parse_energy(path)[0], parse_energy(source)[0],
+                               atol=2e-12, rtol=0)
 
     def phase(files, parts):
         vector = parts[0][1]

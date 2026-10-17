@@ -1,6 +1,7 @@
 """v3 checkpoints continue with a different MPI rank count and sector layout."""
 import os
 import shutil
+import struct
 from pathlib import Path
 
 import numpy as np
@@ -37,6 +38,12 @@ def same_history(actual, expected):
     assert actual.shape == expected.shape, (actual.shape, expected.shape)
     np.testing.assert_allclose(actual[:, 3:], expected[:, 3:], rtol=0, atol=1e-9)
     np.testing.assert_allclose(actual[:, 1], expected[:, 1], rtol=1e-6, atol=1e-12)
+
+
+def energies(path):
+    return [float(line.split()[1])
+            for line in (path / "output/zvo_energy.dat").read_text().splitlines()
+            if line.lstrip().startswith("Energy")]
 
 
 # The random initial vector depends on rank/thread count.  Compare every
@@ -117,6 +124,35 @@ def sector_scenario(path, model, length, momentum, states, raw, projector):
     run_np(path, "resume16", 16, namelist="sym.def",
            env={"HPHI_SYMMETRY_BASIS_LAYOUT": "distributed"})
     same_history(steps(path), steps(ref))
+
+    # Old sector v1 OutputEigenVec files are import-only, but their old-rank
+    # DATA checksum must still be verified before the payload is redistributed.
+    v1 = Path(str(path) + "_v1")
+    shutil.copytree(ref, v1)
+    shutil.rmtree(v1 / "output")
+    rc.set_key(v1, "calc.def", "OutputEigenVec", 1)
+    run_np(v1, "write", 4, namelist="sym.def",
+           env={"HPHI_SYMMETRY_BASIS_LAYOUT": "distributed"})
+    expected_energy = energies(v1)
+    rc.set_key(v1, "calc.def", "OutputEigenVec", 0)
+    rc.set_key(v1, "calc.def", "InputEigenVec", 1)
+    for ranks, layout in ((2, "replicated"), (16, "distributed")):
+        text = run_np(v1, "import{}".format(ranks), ranks, namelist="sym.def",
+                      env={"HPHI_SYMMETRY_BASIS_LAYOUT": layout})
+        assert ("cross-rank v1/v2 read: payload checksum verified, "
+                "basis order guaranteed by sector digest") in text
+        np.testing.assert_allclose(energies(v1), expected_energy, rtol=0, atol=1e-10)
+    files = sorted((v1 / "output").glob("zvo_eigenvec_0_rank_*.dat"))
+    victim = next(file for file in files
+                  if struct.unpack_from("<Q", file.read_bytes(), 8 * 15)[0] > 0)
+    original = victim.read_bytes()
+    data = bytearray(original)
+    real = struct.unpack_from("<d", data, 8 * 28)[0]
+    struct.pack_into("<d", data, 8 * 28, -real if real != 0 else 1e-3)
+    victim.write_bytes(data)
+    run_np(v1, "flipped", 2, namelist="sym.def", fail="payload checksum",
+           env={"HPHI_SYMMETRY_BASIS_LAYOUT": "replicated"})
+    victim.write_bytes(original)
 
 
 fixture.ROOT = ROOT / "sector"

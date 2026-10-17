@@ -61,9 +61,10 @@ int RestartReadVector(struct BindStruct *X, const struct RestartManifestRow *row
 int RestartClassifySet(struct BindStruct *X, const struct RestartManifest *manifest, uint64_t set,
                        const char *legacy_pattern, enum RestartSource *source, int *legacy_step);
 /* Import (§4.7): rank 0 inspects "<base>_rank_0.dat" and broadcasts format/ranks.
- * Returns 0 after v3/sector import, -2 for the caller's same-rank legacy raw
- * reader, or -1 on collective failure. Source solver fields are provenance;
- * finite scalars and defined FLAGS remain format requirements. */
+ * Returns 0 after v3 or sector v1/v2 import, including rank redistribution;
+ * returns -2 for the caller's same-rank legacy raw reader, or -1 on collective
+ * failure. Source solver fields are provenance; finite scalars and defined
+ * FLAGS remain format requirements. */
 enum RestartFileFormat { RESTART_FORMAT_LEGACY_RAW = 0, RESTART_FORMAT_SECTOR_V1 = 1, RESTART_FORMAT_SECTOR_V2 = 2, RESTART_FORMAT_V3 = 3 };
 int RestartImportVector(struct BindStruct *X, const char *base, double complex *vector,
                         struct RestartVectorInfo *provenance, enum RestartFileFormat *format, int *source_ranks);

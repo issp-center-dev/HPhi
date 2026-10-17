@@ -26,6 +26,14 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                            double complex *vector, struct SymmetryCheckpointInfo *info)
 { (void)X; (void)name; (void)vector; (void)info; abort(); }
 
+int SymmetryCheckpointLegacyFileHash(FILE *fp, uint64_t rank, uint64_t offset,
+                                     uint64_t local_dim, uint64_t *hash,
+                                     double *norm2)
+{
+  (void)fp; (void)rank; (void)offset; (void)local_dim; (void)hash; (void)norm2;
+  abort();
+}
+
 /* The standalone common-module target does not link the application timer. */
 void StartTimer(int id) { (void)id; }
 void StopTimer(int id) { (void)id; }

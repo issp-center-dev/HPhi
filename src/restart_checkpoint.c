@@ -499,6 +499,206 @@ static int import_probe_failure(const struct BindStruct *X, int invalid, const c
   return -1;
 }
 
+static int sector_legacy_runtime_identity(const uint64_t *expected,
+                                          const uint64_t *header, int words)
+{
+  for (int i = RW_MAGIC; i <= RW_DIM; ++i)
+    if (header[i] != expected[i]) return -1;
+  for (int i = RW_GROUP; i <= RW_SECTOR_SUM; ++i)
+    if (header[i] != expected[i]) return -1;
+  if (words == 30 &&
+      (header[RW_LOCAL_SITE_MASK] != expected[RW_LOCAL_SITE_MASK] ||
+       header[RW_FIXED_FLAGS] != expected[RW_FIXED_FLAGS])) return -1;
+  return 0;
+}
+
+static int sector_legacy_same_unit(const uint64_t *reference,
+                                   const uint64_t *header, int words)
+{
+  for (int i = 0; i < words; ++i) {
+    if (i == RW_RANK || i == RW_OFFSET || i == RW_LOCAL_DIM || i == RW_ORDER)
+      continue;
+    if (header[i] != reference[i]) return -1;
+  }
+  return 0;
+}
+
+/* Read a sector v1/v2 state with a different rank count.  The old DATA words
+ * hash each writer-rank partition, so first reproduce that checksum over every
+ * old file, then read only the intervals intersecting this run's ownership. */
+static int read_sector_cross_rank(struct BindStruct *X, const char *base,
+                                  int version, int source_ranks,
+                                  double complex *vector,
+                                  struct SymmetryCheckpointInfo *info)
+{
+  const int words = version == RESTART_FORMAT_SECTOR_V2 ? 30 : 28;
+  const uint64_t P = (uint64_t)source_ranks;
+  uint64_t expected[RESTART_V3_WORDS] = {0};
+  uint64_t reference[RESTART_V3_WORDS] = {0};
+  uint64_t *offsets = NULL, *dims = NULL;
+  int status = 0, invalid = 0;
+  if (agree(base == NULL || vector == NULL || info == NULL ||
+            (version != RESTART_FORMAT_SECTOR_V1 &&
+             version != RESTART_FORMAT_SECTOR_V2) || source_ranks < 1,
+            "sector cross-rank arguments")) return -1;
+  if (SymmetryCheckpointIdentityWords(X, expected) != 0) return -1;
+  offsets = calloc(P, sizeof(*offsets));
+  dims = calloc(P, sizeof(*dims));
+  if (agree(offsets == NULL || dims == NULL, "sector cross-rank allocation")) goto fail;
+
+  if (myrank == 0) {
+    uint64_t running = 0;
+    for (uint64_t rank = 0; rank < P && status == 0; ++rank) {
+      uint64_t header[RESTART_V3_WORDS] = {0};
+      char name[D_FileNameMax];
+      FILE *fp = NULL;
+      if (vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0) {
+        status = 1;
+        break;
+      }
+      fp = open_output(name, "rb");
+      if (fp == NULL) {
+        status = 2;
+        break;
+      }
+      for (int i = 0; i < words && status == 0; ++i)
+        if (RestartGetWord(fp, &header[i]) != 0) status = 3;
+      if (status == 0 &&
+          (sector_legacy_runtime_identity(expected, header, words) != 0 ||
+           header[RW_RANKS] != P || header[RW_RANK] != rank ||
+           header[RW_LAYOUT] > 1 || header[RW_OFFSET] != running)) status = 4;
+      if (status == 0) {
+        long end = -1;
+        uint64_t bytes = (uint64_t)(8 * words);
+        if (header[RW_LOCAL_DIM] > (UINT64_MAX - bytes) / 16 ||
+            fseek(fp, 0, SEEK_END) != 0 || (end = ftell(fp)) < 0 ||
+            (uint64_t)end != bytes + 16 * header[RW_LOCAL_DIM]) status = 5;
+      }
+      if (status == 0) {
+        double time = RestartWordDouble(header[RW_TIME]);
+        invalid = !isfinite(time) ||
+                  (header[RW_METHOD] != FullDiag && header[RW_METHOD] != CG &&
+                   header[RW_METHOD] != TimeEvolution);
+        if (header[RW_METHOD] == FullDiag)
+          invalid |= header[RW_STEP] != 0 || header[RW_TIME] != 0 ||
+                     header[RW_STATE] >= header[RW_DIM];
+        if (invalid) status = 6;
+      }
+      if (status == 0) {
+        if (rank == 0) memcpy(reference, header, sizeof(reference));
+        else if (sector_legacy_same_unit(reference, header, words) != 0) status = 7;
+      }
+      if (status == 0) {
+        if (header[RW_LOCAL_DIM] > UINT64_MAX - running) status = 8;
+        else {
+          offsets[rank] = header[RW_OFFSET];
+          dims[rank] = header[RW_LOCAL_DIM];
+          running += header[RW_LOCAL_DIM];
+        }
+      }
+      if (fclose(fp) != 0 && status == 0) status = 9;
+    }
+    if (status == 0 && running != reference[RW_DIM]) status = 10;
+  }
+  status = BcastMPI_i(0, status);
+  if (agree(status != 0, "sector cross-rank header scan")) goto fail;
+  bcast_words(reference, (uint64_t)words);
+  bcast_words(offsets, P);
+  bcast_words(dims, P);
+
+  uint64_t local_xor = 0, local_sum = 0, global_xor = 0, global_sum = 0;
+  double local_norm = 0;
+  for (uint64_t rank = (uint64_t)myrank; !invalid && rank < P; rank += (uint64_t)nproc) {
+    char name[D_FileNameMax];
+    FILE *fp = NULL;
+    uint64_t hash;
+    double norm;
+    invalid = vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0;
+    if (!invalid) fp = open_output(name, "rb");
+    invalid |= fp == NULL || fseek(fp, 8L * words, SEEK_SET) != 0 ||
+               SymmetryCheckpointLegacyFileHash(fp, rank, offsets[rank],
+                                                dims[rank], &hash, &norm) != 0;
+    if (!invalid) {
+      local_xor ^= hash;
+      local_sum += hash;
+      local_norm += norm;
+    }
+    if (fp != NULL && fclose(fp) != 0) invalid = 1;
+  }
+  if (agree(invalid, "sector v1/v2 old-partition DATA read")) goto fail;
+  allreduce_xor_sum(local_xor, local_sum, &global_xor, &global_sum);
+  double norm = SumMPI_d(local_norm);
+  invalid = global_xor != reference[RW_DATA_XOR] ||
+            global_sum != reference[RW_DATA_SUM] || !isfinite(norm) ||
+            fabs(norm - 1.0) > 1e-8;
+  if (agree(invalid, "sector v1/v2 payload checksum / norm")) goto fail;
+
+  uint64_t a = RestartLocalOffset(X);
+  if (agree(a > reference[RW_DIM] || X->Check.idim_max > reference[RW_DIM] - a ||
+            X->Check.idim_max >= SIZE_MAX / sizeof(double complex),
+            "sector cross-rank local interval")) goto fail;
+  uint64_t b = a + X->Check.idim_max;
+  double complex *temporary = calloc(X->Check.idim_max + 1, sizeof(*temporary));
+  invalid = temporary == NULL;
+  for (uint64_t rank = 0; !invalid && rank < P; ++rank) {
+    uint64_t lo, hi;
+    if (!RestartIntersect(a, b, offsets[rank], dims[rank], &lo, &hi)) continue;
+    char name[D_FileNameMax];
+    FILE *fp = NULL;
+    uint64_t byte = (uint64_t)(8 * words) + 16 * (lo - offsets[rank]);
+    invalid = vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0;
+    if (!invalid) fp = open_output(name, "rb");
+    invalid |= fp == NULL || byte > (uint64_t)LONG_MAX ||
+               fseek(fp, (long)byte, SEEK_SET) != 0;
+    for (uint64_t global = lo; !invalid && global < hi; ++global) {
+      uint64_t re_word, im_word;
+      invalid = RestartGetWord(fp, &re_word) != 0 ||
+                RestartGetWord(fp, &im_word) != 0;
+      if (!invalid) {
+        double components[2] = {RestartWordDouble(re_word),
+                                RestartWordDouble(im_word)};
+        if (!isfinite(components[0]) || !isfinite(components[1])) invalid = 1;
+        else memcpy(&temporary[(global - a) + 1], components, sizeof(components));
+      }
+    }
+    if (fp != NULL && fclose(fp) != 0) invalid = 1;
+  }
+  if (agree(invalid, "sector cross-rank payload read")) {
+    free(temporary);
+    goto fail;
+  }
+  local_norm = 0;
+  for (unsigned long i = 1; i <= X->Check.idim_max; ++i) {
+    double re = creal(temporary[i]), im = cimag(temporary[i]);
+    local_norm += re*re + im*im;
+  }
+  norm = SumMPI_d(local_norm);
+  if (agree(!isfinite(norm) || fabs(norm - 1.0) > 1e-8,
+            "sector cross-rank redistributed norm")) {
+    free(temporary);
+    goto fail;
+  }
+  memcpy(vector, temporary,
+         (X->Check.idim_max + 1) * sizeof(*temporary));
+  free(temporary);
+  info->source_method = reference[RW_METHOD];
+  info->state_index = reference[RW_STATE];
+  info->step = reference[RW_STEP];
+  info->time = RestartWordDouble(reference[RW_TIME]);
+  info->hamiltonian_digest = reference[RW_HAMILTONIAN];
+  info->hamiltonian_digest_kind = reference[RW_METHOD] == FullDiag
+      ? SYMMETRY_HAMILTONIAN_MATRIX_V1 : SYMMETRY_HAMILTONIAN_PARSED;
+  fprintf(stdoutMPI, "Symmetry checkpoint cross-rank v1/v2 read: payload checksum verified, "
+          "basis order guaranteed by sector digest (ORDER word not compared).\n");
+  free(offsets);
+  free(dims);
+  return 0;
+fail:
+  free(offsets);
+  free(dims);
+  return -1;
+}
+
 int RestartImportVector(struct BindStruct *X, const char *base, double complex *vector,
                         struct RestartVectorInfo *provenance, enum RestartFileFormat *format, int *source_ranks)
 {
@@ -542,10 +742,15 @@ int RestartImportVector(struct BindStruct *X, const char *base, double complex *
     return -2;
   }
   if (agree(!X->Def.iFlgSymmetryBasis, "sector import requires a sector basis")) return -1;
-  char name[D_FileNameMax];
   struct SymmetryCheckpointInfo info;
-  if (agree(vector_name(name, sizeof(name), X, NULL, 0, myrank, base) != 0, "import filename")) return -1;
-  if (ReadSymmetryCheckpoint(X, name, vector, &info) != 0) return -1;
+  if (ranks != nproc) {
+    if (read_sector_cross_rank(X, base, kind, ranks, vector, &info) != 0) return -1;
+  } else {
+    char name[D_FileNameMax];
+    if (agree(vector_name(name, sizeof(name), X, NULL, 0, myrank, base) != 0,
+              "import filename")) return -1;
+    if (ReadSymmetryCheckpoint(X, name, vector, &info) != 0) return -1;
+  }
   provenance->method = info.source_method; provenance->set = info.state_index;
   provenance->step = info.step; provenance->time = info.time;
   return record_import(X, provenance, info.hamiltonian_digest,

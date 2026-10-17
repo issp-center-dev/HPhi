@@ -90,7 +90,7 @@ def check_sector(path, model, length, momentum, states, raw, projector):
         original = {p: p.read_bytes() for p in output.glob("*eigenvec*.dat")}
         victim = files[-1]
         saved = victim.read_bytes()
-        for word in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20):
+        for word in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20):
             damaged = bytearray(saved)
             damaged[8*word] ^= 1
             victim.write_bytes(damaged)
@@ -133,9 +133,16 @@ def check_sector(path, model, length, momentum, states, raw, projector):
                     fail="checkpoint global norm validation failed")
         for p in files:
             p.write_bytes(original[p])
-        fixture.run(path, "reject_layout_{}".format(layout),
-                    layout="distributed" if layout == "replicated" else "replicated",
+        other_layout = "distributed" if layout == "replicated" else "replicated"
+        np.testing.assert_allclose(
+            fixture.run(path, "read_other_layout_{}".format(layout), layout=other_layout),
+            energy, atol=2e-12, rtol=0)
+        damaged = bytearray(saved)
+        struct.pack_into("<Q", damaged, 8 * 13, 5)
+        victim.write_bytes(damaged)
+        fixture.run(path, "reject_invalid_layout_{}".format(layout), layout=layout,
                     fail="checkpoint header / sector / layout validation failed")
+        victim.write_bytes(saved)
         # A different Hamiltonian is valid for a quench-capable state import.
         # A uniform fixed-Sz field changes H by a known scalar.
         transfer = path / "Trans.def"

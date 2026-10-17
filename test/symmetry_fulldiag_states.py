@@ -94,10 +94,14 @@ def negative_cases(by_name, probe, solver, launcher, label, ranks):
         shutil.copy2(file, other.path/'output'/file.name)
     reject(other, probe, solver, launcher, f'reject_other_sector_{label}', HEADER_ERROR)
     victim = files[-1]
-    for word in (W.PHASE, W.ORDER, W.LAYOUT, W.RANKS, W.RANK, W.OFFSET):
+    for word in (W.PHASE, W.ORDER, W.RANKS, W.RANK, W.OFFSET):
         flip_word(victim, word)
         reject(source, probe, solver, launcher, f'reject_{word.name.lower()}_{label}', HEADER_ERROR)
         restore(files, saved)
+    for file in files:
+        flip_word(file, W.LAYOUT, 5)
+    reject(source, probe, solver, launcher, f'reject_layout_{label}', HEADER_ERROR)
+    restore(files, saved)
     # FullDiag provenance: step/time must be zero and the state inside D.
     for word, value in ((W.STEP, 1), (W.TIME, struct.unpack('<Q', struct.pack('<d', 1.))[0]),
                         (W.STATE, len(source.hq))):
@@ -162,13 +166,19 @@ def checkpoint_mode(hphi, probe, launcher, ranks):
                   flush=True)
     for solver, label, backend_launcher in backends:
         backend_ranks = common.spingc.mpi_size(backend_launcher)
-        files, saved = negative_cases(by_name, probe, solver, backend_launcher, label,
-                                      backend_ranks)
-        if backend_ranks > 1:
-            # Files written by more ranks are rejected by a one-rank reader.
-            source = by_name['Spin_L6_k1']
-            restore(files, saved)
-            reject(source, probe, 0, [], f'reject_rank_count_{label}', HEADER_ERROR)
+        negative_cases(by_name, probe, solver, backend_launcher, label,
+                       backend_ranks)
+    if ranks > 1:
+        # Probe actions run before the numerical eigensolver, so this covers
+        # v1/v2 rank redistribution without requiring ELPA or ScaLAPACK.
+        for source, version, name in ((by_name['Spin_L6_k1'], 1, 'Spin'),
+                                      (by_name['Kondo_P3_k0'], 2, 'Kondo')):
+            write_checkpoint(source, probe, 0, launcher,
+                             f'cross_rank_source_{name}')
+            text = common.run_probe(source, probe, 0, [],
+                                    'fulldiag-checkpoint-import',
+                                    f'cross_rank_import_{name}', clean=False)
+            assert f'FullDiagProbe checkpoint import ok state=0 format={version}' in text, text
 
 
 GREEN_GLOBS = ('*cisajs*', '*ThreeBody*', '*FourBody*', '*SixBody*', '*NBodyG*')
