@@ -316,8 +316,8 @@ static int inspect_vector_header(struct BindStruct *X, const struct RestartManif
   uint64_t expected[RESTART_V3_WORDS];
   uint64_t *offsets = NULL, *dims = NULL; int status = 0;
   if (agree(row->set > INT_MAX || row->gen > 1 || row->ncomp < 1 || row->ncomp > 2 ||
-            comp < 0 || comp >= (int)row->ncomp || P > SIZE_MAX / sizeof(uint64_t), "manifest row")) return -1;
-  if (agree(P != (uint64_t)nproc, "rank count (rank redistribution arrives in PR-3)")) return -1;
+            comp < 0 || comp >= (int)row->ncomp || P > INT_MAX ||
+            P > SIZE_MAX / sizeof(uint64_t), "manifest row")) return -1;
   if (agree(X->Def.RestartSourceRanks > 0 && (uint64_t)X->Def.RestartSourceRanks != P, "RestartSourceRanks does not match the saved rank count")) return -1;
   if (agree(build_identity(X, expected) != 0, "identity")) return -1;
   offsets = calloc(P, sizeof(*offsets)); dims = calloc(P, sizeof(*dims));
@@ -427,6 +427,7 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
             X->Check.idim_max >= SIZE_MAX / sizeof(double complex), "local interval / allocation size")) goto fail;
   uint64_t b = a + X->Check.idim_max;
   double complex *tmp = calloc(X->Check.idim_max + 1, sizeof(*tmp));
+  unsigned long payload_files_opened = 0;
   invalid = tmp == NULL;
   for (uint64_t j = 0; !invalid && j < P; ++j) {
     uint64_t lo, hi;
@@ -434,6 +435,7 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
     char name[D_FileNameMax];
     if (vector_name(name, sizeof(name), X, row, comp, (int)j, base) != 0) { invalid = 1; break; }
     FILE *fp = open_output(name, "rb");
+    if (fp != NULL) ++payload_files_opened;
     uint64_t byte = RESTART_V3_HEADER_BYTES + 16 * (lo - offsets[j]);
     invalid = fp == NULL || byte > (uint64_t)LONG_MAX || fseek(fp, (long)byte, SEEK_SET) != 0;
     for (uint64_t g = lo; !invalid && g < hi; ++g) {
@@ -445,6 +447,9 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
     if (fp != NULL) fclose(fp);
   }
   if (agree(invalid, "payload read")) { free(tmp); goto fail; }
+  payload_files_opened = SumMPI_li(payload_files_opened);
+  fprintf(stdoutMPI, "Restart read: header files %" PRIu64
+          ", payload files opened %lu.\n", P, payload_files_opened);
   uint64_t x = 0, s = 0, gx, gs; double norm = 0;
   for (unsigned long i = 1; i <= X->Check.idim_max; ++i) {
     double re = creal(tmp[i]), im = cimag(tmp[i]);
@@ -527,10 +532,6 @@ int RestartImportVector(struct BindStruct *X, const char *base, double complex *
   *format = (enum RestartFileFormat)kind; *source_ranks = ranks;
   if (agree(X->Def.RestartSourceRanks > 0 && X->Def.RestartSourceRanks != ranks,
             "RestartSourceRanks does not match the saved rank count")) return -1;
-  if (ranks != nproc) {
-    fprintf(stdoutMPI, "Error: restart checkpoint MPI rank count differs.\n");
-    if (import_probe_failure(X, 1, "rank count (rank redistribution arrives in PR-3)")) return -1;
-  }
   memset(provenance, 0, sizeof(*provenance));
   if (kind == RESTART_FORMAT_V3) {
     const struct RestartManifestRow row = {0, (uint64_t)ranks, 0, 0, 1};

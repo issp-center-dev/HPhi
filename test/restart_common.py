@@ -14,6 +14,29 @@ def mpi_size():
             return int(MPI[i + 1])
     return 1
 
+def launcher(ranks):
+    """Return MPIRUN with its process count replaced by *ranks*.
+
+    Rank-redistribution tests execute both the writer and reader from one
+    CTest process.  A serial run needs no launcher; a non-serial run without
+    an explicit ``-np``/``-n`` launcher cannot be expressed portably and is
+    skipped with CTest's conventional return code.
+    """
+    if ranks < 1:
+        raise ValueError("MPI rank count must be positive")
+    if not MPI:
+        if ranks == 1:
+            return []
+        print("Skipping: MPIRUN is required for {} ranks".format(ranks), flush=True)
+        sys.exit(77)
+    command = list(MPI)
+    for i, arg in enumerate(command[:-1]):
+        if arg in ("-np", "-n"):
+            command[i + 1] = str(ranks)
+            return command
+    print("Skipping: could not replace -np/-n in MPIRUN={!r}".format(MPI), flush=True)
+    sys.exit(77)
+
 def hphi():
     return str(Path(sys.argv[1]).resolve())
 
