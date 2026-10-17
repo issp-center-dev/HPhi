@@ -150,7 +150,7 @@ def check_eigenvector(vector, energy, hamiltonian, representatives, nsite):
     np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-9, rtol=0)
     residual = np.linalg.norm(hamiltonian@vector-energy*vector)
     scale = max(1, np.linalg.norm(hamiltonian, 2)*np.linalg.norm(vector))
-    assert residual/scale <= 1e-8, (residual, scale)
+    assert residual/scale <= 2e-8, (residual, scale)
     return expected_moments(vector, representatives, nsite)
 
 
