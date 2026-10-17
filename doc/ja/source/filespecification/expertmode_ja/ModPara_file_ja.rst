@@ -103,9 +103,11 @@ ModParaファイル
    **形式 :** int型 (0以上 ``INT_MAX`` 未満、デフォルト値 0)
 
    **説明 :** restart/import fileに期待するMPI process数です。0は現在の
-   process数を表します。正の値は自己記述v3/sector fileと一致する必要があります。
-   このreleaseは保存時と現在のprocess数が異なる読込を拒否します。このparameterは
-   source検証用であり、再配置を有効にしません。
+   process数をlegacy raw fileのsource数として扱います。legacy raw file一式を
+   異なるprocess数で読む場合は、このparameterに保存時のrank file数を必ず指定し、
+   要素数0のrankを含む全fileを残してください。v3とsector v1/v2は保存process数を
+   自己記述し、自動的に再配置します。これらの形式では指定は任意ですが、正の値を
+   指定した場合はmanifestまたはheaderのprocess数と一致する必要があります。
 
 -  ``Nsite``
 

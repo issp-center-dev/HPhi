@@ -25,8 +25,8 @@
    反復が終了した時点で再計算用のデータをファイル出力する。
 
    CG、mTPQ、cTPQ、TimeEvolutionはraw基底と ``TransSym`` 基底でv3継続
-   checkpointを使います。このreleaseでは同じMPI process数が必要ですが、v3では
-   sector metadata layout 0/1の変更を許します。``EigenVecIO="In"`` の状態importは新しい評価・時刻列を開始し、
+   checkpointを使います。v3ではMPI process数とsector metadata layout 0/1を変更できます。
+   ``EigenVecIO="In"`` の状態importは新しい評価・時刻列を開始し、
    solver継続ではありません。Lanczos/spectrum restartは別のlegacy経路です。
 
 *  ``CheckpointInterval``
@@ -42,9 +42,10 @@
 
    **形式 :** 0以上 ``INT_MAX`` 未満の整数（デフォルトは省略で、``0`` と同じ）
 
-   **説明 :** restart/import vector fileに期待するprocess数です。0は現在の数です。
-   このreleaseは異なる保存process数を拒否するため、sourceを検証しますが再配置は
-   行いません。Standard modeは指定された場合だけ出力します。
+   **説明 :** restart/import vector fileに期待するprocess数です。legacy raw fileでは
+   0は現在の数を表し、rank数を変更する読込には保存数の明示が必要です。v3とsector
+   v1/v2は自己記述し自動再配置するため指定は任意ですが、正の値はmanifest/headerと
+   一致する必要があります。Standard modeは指定された場合だけ出力します。
 
 *  ``Lanczos_max``
 

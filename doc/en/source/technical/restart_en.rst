@@ -14,10 +14,11 @@ Solver continuation
 1 starts a new run and writes checkpoints, 2 reads and updates checkpoints,
 and 3 reads checkpoints without rewriting them. The v3 manifest and vector
 format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and ``TransSym``
-bases. This release requires the saved and current MPI process counts to be
-equal. Sector v3 continuation permits metadata layout changes between
-``replicated`` (0) and ``distributed`` (1); vector ownership and global order
-remain unchanged. Rank redistribution is not supported.
+bases. The saved and current MPI process counts may differ. HPhi reads the
+saved contiguous global intervals and redistributes their intersections to
+the current ownership. Sector v3 continuation also permits metadata layout
+changes between ``replicated`` (0) and ``distributed`` (1). The global vector
+order remains unchanged even though rank ownership changes.
 
 ``Lanczos_max`` is an absolute final bound for v3 continuation. CG resumes at
 the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
@@ -41,15 +42,39 @@ State import validates the model, basis identity, sector and phase, payload
 length, norm and digest. Source method, state, step, time and solver scalars
 are provenance; they do not resume the source solver. CG evaluates an imported
 state. TimeEvolution starts at step zero on its current time grid. v3 imports
-currently require the same process count. Sector v3 imports permit metadata
-layout 0/1 changes, while old sector v1/v2 imports still require the same
-layout. Rank redistribution and v1/v2 layout relaxation are not supported in
-this release. The output-file reference gives the required copy procedure.
+are redistributed automatically when the saved and current process counts
+differ. Sector v3 and old sector v1/v2 imports also permit metadata layout
+0/1 changes. For v1/v2, HPhi verifies the payload checksum using the saved
+partition before redistribution and uses the partition-independent sector
+digest to validate global basis order. The output-file reference gives the
+required copy procedure.
+
+Changing the MPI process count
+------------------------------
+
+Keep every source-rank file, including a file for an empty owner. For v3
+continuation, copy the manifest and every vector file named by it, then run
+with the desired process count; no extra parameter is needed. For v3 or
+sector v1/v2 state import, copy every source file under the import prefix and
+run with the desired process count. Their headers provide the source count.
+``RestartSourceRanks`` is optional for these formats and acts only as an
+additional equality check.
+
+For legacy raw import or continuation, copy every saved per-rank file and add
+``RestartSourceRanks=<saved process count>`` to ``ModPara`` before changing
+the process count. HPhi never guesses this value from file names, because a
+missing empty trailing rank would otherwise be indistinguishable from a
+smaller complete file set.
 
 Legacy and spectrum behavior
 ----------------------------
 
 Legacy raw ``tmpvec_set*_rank_*.dat`` remains readable by CG and TPQ/cTPQ.
+Because this format stores neither its source rank count nor identity words,
+rank-changing reads require ``RestartSourceRanks``. Keep every saved rank
+file, including an empty trailing rank; HPhi checks all native headers, file
+lengths, steps and the global dimension before redistribution, but cannot
+validate model or sector identity from the files.
 Legacy CG keeps its historical additional-iteration meaning: iteration labels
 restart at one and the old ``Lanczos_Step`` prefix is not recovered. Legacy
 TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next

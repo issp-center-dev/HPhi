@@ -115,10 +115,13 @@ Common parameters
    **Type :** Int (non-negative, less than ``INT_MAX``; default value: 0)
 
    **Description :** Expected MPI process count in restart/import files.
-   Zero means the current process count. A positive value must match the
-   self-described v3 or sector file. This release rejects a saved count that
-   differs from the current run; the parameter validates the source and does
-   not enable redistribution.
+   Zero means the current process count for a legacy raw file. When a legacy
+   raw file set is read with a different process count, this parameter is
+   mandatory and gives the number of saved rank files; all files, including
+   files for empty ranks, must be present. v3 and sector v1/v2 files describe
+   their saved count themselves and are redistributed automatically. For
+   those formats this parameter is optional, but a positive value must match
+   the count in the manifest or header.
 
 *  ``Nsite``
 

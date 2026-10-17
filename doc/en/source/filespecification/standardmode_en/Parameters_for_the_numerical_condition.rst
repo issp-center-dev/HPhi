@@ -23,8 +23,8 @@ Parameters for the numerical condition
    ``"Restart"`` for ``"Restart_out"`` + ``"Restart_in"``.
 
    CG, mTPQ, cTPQ and TimeEvolution use v3 continuation checkpoints in raw
-   and ``TransSym`` bases. This release requires the same MPI process count
-   and permits sector metadata layout 0/1 changes for v3. State import through
+   and ``TransSym`` bases. v3 permits a different MPI process count and sector
+   metadata layout 0/1 changes. State import through
    ``EigenVecIO="In"`` starts a new evaluation or time grid and is not solver
    continuation. Lanczos/spectrum restart remains a separate legacy path.
 
@@ -44,9 +44,11 @@ Parameters for the numerical condition
    equivalent to ``0``)
 
    **Description :** Expected process count in restart or imported vector
-   files. Zero means the current count. This release rejects a different
-   saved count, so this value validates the source but does not redistribute
-   it. Standard mode writes it only when specified.
+   files. For legacy raw files, zero means the current count and a rank-changing
+   read requires the saved count explicitly. v3 and sector v1/v2 files are
+   self-describing and redistribute automatically; a positive value is optional
+   for them but must match their manifest or header. Standard mode writes this
+   parameter only when specified.
 
 *  ``Lanczos_max``
 

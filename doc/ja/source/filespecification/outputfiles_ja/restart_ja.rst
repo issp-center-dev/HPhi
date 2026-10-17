@@ -4,11 +4,12 @@ v3 solver restartファイル
 =========================
 
 CG、mTPQ、cTPQ、TimeEvolutionは ``ReStart`` 継続にこの形式を使います。
-このreleaseは保存時と現在のMPI process数が同じ場合だけを受理し、``TransSym``
-v3継続ではmetadata layoutを ``replicated`` (0) と ``distributed`` (1) の間で
-変更できます。vectorの所有範囲と順序は変わりません。独立して公開するTPQ set間では
-保存layoutが異なる場合がありますが、同じset内の全rank fileは一致が必要です。
-旧sector v1/v2 importでは同じlayoutが必要です。このreleaseはrank再配置に非対応です。
+保存時と現在のMPI process数は異なってもかまいません。HPhiは保存されたglobal連続区間と
+現在の所有区間の交差を読み、vectorを再配置します。``TransSym`` v3継続ではglobal
+vector順序を変えずにmetadata layoutも ``replicated`` (0) と ``distributed`` (1) の
+間で変更できます。独立して公開するTPQ set間では保存rank数・layoutが異なる場合が
+ありますが、同じset内の全rank fileは一致が必要です。旧sector v1/v2状態importも
+rank数とlayoutの変更に対応します。
 
 名前、単位、manifest
 --------------------
@@ -177,6 +178,70 @@ data digestは各global indexと実部・虚部のbit列をhashし、rank間でX
 集約します。sector順序digestはglobal index、代表状態、orbit size、stabilizer sizeを
 hashします。この2種類の集約により、分割に依存せず破損と並べ替えを検出します。
 
+rank再配置
+----------
+
+v3とsector v1/v2 fileは、保存rank数、offset、local dimensionを記録します。
+保存rank 0から保存rank数−1まで、payloadが0のfileも含めて全fileを残してください。
+HPhiは保存file一式を検証し、各保存区間と現在区間の交差部分を読みます。
+自己記述形式なので ``RestartSourceRanks`` は不要ですが、指定する場合は保存rank数と
+一致する必要があります。
+
+sector v1/v2では、保存時の分割に依存するDATA checksumを保存fileから最初に再現し、
+検証に成功してからpayloadを再配置します。分割非依存sector digestでglobal基底順序も
+検証します。source/destination layoutは0または1のどちらでも構いませんが、同じ
+checkpointのsource fileは全て同じ有効なlayoutを宣言する必要があります。
+
+legacy raw fileはnative 12-byteの ``STEP`` / local dimension headerだけを持ち、
+保存rank数もidentityも記録しません。このためrank数を変えるlegacy読込では
+``RestartSourceRanks=<保存rank数>`` が必須です。宣言した全fileの存在、header、長さ、
+共通step、次元和を検証し、模型・sector identityではなく次元だけを検査したことを
+表示します。
+
+rank変更専用の回帰試験coverageは次のとおりです。
+
+.. list-table:: rank変更restart/import回帰試験表
+   :header-rows: 1
+   :widths: 18 18 20 44
+
+   * - 形式
+     - 用途
+     - 基底・手法
+     - 試験済みsourceからdestination
+   * - v3
+     - 継続
+     - raw CG
+     - 4→1、4→16、16→4、1→4 rank
+   * - v3
+     - 継続
+     - raw mTPQ/cTPQ/TE
+     - mTPQ 4→2、cTPQ 4→2、TE 4→1 rank
+   * - v3
+     - 継続
+     - sector CG
+     - 3 distributed→6 replicated・16 distributed rank（空ownerを含む）
+   * - v3
+     - 状態import
+     - raw CG/TE
+     - 4→1 rank
+   * - sector v1/v2
+     - 状態import
+     - Spin/Kondo
+     - Spin v1 4→1/2/16、Kondo v2 4→1 rank。layout変更とchecksum破損も検査
+   * - legacy raw
+     - 状態import
+     - CG
+     - 4→1・4→16 rank。空source rank fileの欠落拒否も検査
+   * - legacy raw
+     - 継続
+     - mTPQ
+     - 4→2 rank
+
+sector v3のmTPQ/cTPQ/TimeEvolution継続と状態import、legacy rawのCG/cTPQ/
+TimeEvolution継続とTE状態importには、rank変更専用の数値回帰試験がまだありません。
+これらも同じ区間readerを使いますが、専用caseが無いことを追加の数値検証と解釈しないで
+ください。
+
 復旧とlegacy選択
 ----------------
 
@@ -184,7 +249,7 @@ hashします。この2種類の集約により、分割に依存せず破損と
 致命的で、legacyへfallbackしません。行が無い場合だけ完全なlegacy fileを検証して
 使います。両方無ければ ``ReStart=2`` は新規setを開始し、``ReStart=3`` はエラーです。
 sector v1/v2はimport専用です。legacy CGは追加反復をlabel 1から始め、以前のCG履歴prefixを
-復旧しません。
+復旧しません。legacyのrank数変更には上記の ``RestartSourceRanks`` が必要です。
 
 履歴復旧は ``STEP`` より前の行を保持し、それ以後とEOFの未完断片を削除し、途中の破損を
 拒否します。終端CG行は現在の収束判定も満たす場合だけ保持します。TPQ aggregate行は
@@ -197,6 +262,6 @@ manifestからsetとgenerationを選び、全rankの
 ``..._restart_set<k>_comp0_gen<g>_rank_<r>.dat`` を既存のimport名へcopyします。
 TimeEvolutionでは ``<SpectrumVec>_rank_<r>.dat``、CGでは
 ``<CDataFileHead>_eigenvec_<state>_rank_<r>.dat`` です。全source rank fileを保持し、
-明示する場合はその数を ``RestartSourceRanks`` に指定します。このreleaseではprocess数、
-sectorではlayoutも現在の実行と一致する必要があります。importは新しいsolver時計を始め、
-継続ではありません。
+``RestartSourceRanks`` を指定する場合はその数にします。v3では指定は任意ですが、指定値は
+保存rank数と一致する必要があります。現在のrank数と、sectorではlayoutも変更できます。
+importは新しいsolver時計を始め、継続ではありません。

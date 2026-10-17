@@ -4,12 +4,13 @@ v3 solver restart files
 =======================
 
 CG, mTPQ, cTPQ and TimeEvolution use these files for ``ReStart`` continuation.
-This release accepts only the same saved and current MPI process count; a
-``TransSym`` v3 continuation permits metadata layout 0/1 changes between
-``replicated`` and ``distributed`` without changing vector ownership or order.
-Independently published TPQ sets may therefore have different saved layouts;
-all rank files within one set must agree. Old sector v1/v2 imports still require
-the same layout. Rank redistribution is not supported in this release.
+The saved and current MPI process counts may differ. HPhi reconstructs the
+global vector from the saved contiguous intervals and reads their intersections
+with the current ownership. A ``TransSym`` v3 continuation may also change
+metadata layout 0/1 between ``replicated`` and ``distributed`` without changing
+global vector order. Independently published TPQ sets may therefore have
+different saved rank counts and layouts; all rank files within one set must
+agree. Old sector v1/v2 state imports also permit rank-count and layout changes.
 
 Names, units and manifest
 -------------------------
@@ -186,6 +187,74 @@ the global index, representative, orbit size and stabilizer size. The pair of
 reductions detects corruption and ordering changes without depending on the
 partition.
 
+Rank redistribution
+-------------------
+
+v3 and sector v1/v2 files carry their saved rank count, offsets and local
+dimensions. Keep every file from rank 0 through the saved count minus one,
+including files with zero payload. HPhi validates the complete saved set and
+then reads each overlap between a saved interval and the current interval.
+``RestartSourceRanks`` is not required for these self-describing formats; if
+given, it must match the saved count.
+
+For sector v1/v2, HPhi first reproduces the old partition-dependent DATA
+checksum from the saved files. Only after that check succeeds is the payload
+redistributed. The partition-independent sector digest verifies global basis
+order. Source and destination layouts may be either 0 or 1, but every source
+file in one checkpoint must declare the same valid layout.
+
+Legacy raw files have only a native 12-byte ``STEP``/local-dimension header.
+They do not record the saved rank count or identity. A rank-changing legacy
+read therefore requires ``RestartSourceRanks=<saved count>``. HPhi requires
+all declared files, verifies their headers, lengths, common step and summed
+dimension, and reports that only dimensions—not model or sector identity—were
+checked.
+
+The dedicated cross-rank regression coverage is:
+
+.. list-table:: Rank-changing restart/import regression matrix
+   :header-rows: 1
+   :widths: 18 18 20 44
+
+   * - Format
+     - Purpose
+     - Basis/method
+     - Tested source to destination
+   * - v3
+     - continuation
+     - raw CG
+     - 4 to 1, 4 to 16, 16 to 4, and 1 to 4 ranks
+   * - v3
+     - continuation
+     - raw mTPQ/cTPQ/TE
+     - mTPQ 4 to 2, cTPQ 4 to 2, and TE 4 to 1 ranks
+   * - v3
+     - continuation
+     - sector CG
+     - 3 distributed to 6 replicated and 16 distributed ranks, including empty owners
+   * - v3
+     - state import
+     - raw CG/TE
+     - 4 to 1 rank
+   * - sector v1/v2
+     - state import
+     - Spin/Kondo
+     - Spin v1 4 to 1/2/16 and Kondo v2 4 to 1 rank; layout changes and checksum corruption are covered
+   * - legacy raw
+     - state import
+     - CG
+     - 4 to 1 and 4 to 16 ranks, including rejection of a missing empty source rank
+   * - legacy raw
+     - continuation
+     - mTPQ
+     - 4 to 2 ranks
+
+There is not yet a dedicated rank-changing numerical regression for sector v3
+mTPQ/cTPQ/TimeEvolution continuation or sector v3 state import, nor for legacy
+raw CG/cTPQ/TimeEvolution continuation or TE state import. These paths use the
+same interval reader, but the absence of a dedicated case should not be read as
+additional numerical validation.
+
 Recovery and legacy selection
 -----------------------------
 
@@ -194,7 +263,8 @@ referenced v3 file is fatal and never falls back to legacy data. Without a
 row, complete legacy files are validated and used. ``ReStart=2`` starts a new
 set only if neither source exists; ``ReStart=3`` reports an error. v1/v2
 sector files are import-only. Legacy CG restarts additional iterations with
-labels starting at one and do not recover the old CG history prefix.
+labels starting at one and do not recover the old CG history prefix. A legacy
+rank change requires ``RestartSourceRanks`` as described above.
 
 History recovery preserves rows before ``STEP``, removes later rows and an
 incomplete EOF fragment, and rejects corrupt interior text. Terminal CG keeps
@@ -210,5 +280,6 @@ Read the selected set and generation from the manifest. Copy every
 name, ``<SpectrumVec>_rank_<r>.dat`` for TimeEvolution or
 ``<CDataFileHead>_eigenvec_<state>_rank_<r>.dat`` for CG. Keep all source rank
 files and set ``RestartSourceRanks`` to that count when specifying it. This
-release still requires that count, and for a sector the layout, to match the
-current run. Import starts a new solver clock; it is not continuation.
+parameter is optional for v3, but must match the saved count when present.
+The current rank count and, for a sector, layout may differ. Import starts a
+new solver clock; it is not continuation.
