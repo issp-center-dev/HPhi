@@ -19,20 +19,11 @@
 */
 #include <stdio.h>
 #include "global.h"
+#include "version.h"
 /**
 @brief Print logo mark and version number
 */
 void splash(){
-   int ver_maj =
-#include "version_major.h"
-;
-   int ver_min =
-#include "version_minor.h"
-;
-   int ver_pat =
-#include "version_patch.h"
-;
-
   fprintf(stdoutMPI, "                                                                \n");
   fprintf(stdoutMPI, "      ,ammmmmmmmmmmmmmb,,        Welcome to the                 \n");
   fprintf(stdoutMPI, "    ,@@` dm          mb  ===m                                    \n");
@@ -45,7 +36,8 @@ void splash(){
   fprintf(stdoutMPI, "  ~@@b      @@@@@@@      ,@@~    @@          @@     @@@@@@@@    \n");
   fprintf(stdoutMPI, "    ~@@@m,,@@@@@@@@@  ,m@~`      @@          @@        @@       \n");
   fprintf(stdoutMPI, "        ~~9@@@@@@@@@  ~                                         \n");
-  fprintf(stdoutMPI, "           9@P~~~9@P             Version %d.%d.%d    \n", ver_maj, ver_min, ver_pat);
+  fprintf(stdoutMPI, "           9@P~~~9@P             Version %d.%d.%d    \n",
+          HPHI_VERSION_MAJOR, HPHI_VERSION_MINOR, HPHI_VERSION_PATCH);
   fprintf(stdoutMPI, "                                                                \n");
 
 }/*void splash()*/
