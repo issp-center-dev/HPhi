@@ -132,7 +132,7 @@ var NAVTREE =
         [ "Typedefs", "globals_type.html", null ],
         [ "Enumerations", "globals_enum.html", null ],
         [ "Enumerator", "globals_eval.html", null ],
-        [ "Macros", "globals_defs.html", null ]
+        [ "Macros", "globals_defs.html", "globals_defs" ]
       ] ]
     ] ]
   ] ]
@@ -141,24 +141,25 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "CG__EigenVector_8c.html",
-"ErrorMessage_8c.html#a9710ebc651a3382d8b1b019da42cfb5e",
-"LogMessage_8c.html#a9ec9a54f2680d0b638842e420ce000fb",
-"ProgressMessage_8h.html#a85740ac8e64c0acb39dbdb5d8976954f",
-"eigenIO_8c.html#a4dce135a2c787539fb2851ee47f5c63e",
-"functions_vars_v.html",
-"global_8h.html#ab538774090492f5d85b8470c1d618a8c",
-"matrixlapack_8c.html#a596697b79bdc66f04188551b1366d4fd",
-"mltplyMPIHubbardCore_8h.html#aa75433739ab440051ac2bc23e628ff30",
-"mltplySpin_8h.html#a020b096c079862b71fb71eb799e95180",
-"page_codingrule.html#sec_coding_testing",
-"structBoostList.html#a1dad7c40df79747182b9100445852830",
-"structDefineList.html#af746986c155b96c5130ad704f54d0b47",
-"structSymmetryBasisDistributionStats.html#ab2a9add670f64c843bce1f71d293487c",
-"structSymmetryMpiLookupResponse.html#a8e70fed8bdee9f0a958bf2d7d301d112",
-"symmetry__basis_8c.html#af7b60d9d76c45c99846291160e7e8ef6",
-"symmetry__fulldiag_8c.html#a4641cc47fade4a28d69bf7372e95fb39",
-"symmetry__mpi__exchange_8h.html#a9c7571ffc1fbe840d9bd3a62e7e58856",
-"wrapperMPI_8c.html#ad03fb793bdd71c39a37c76a8e8fd56de"
+"ErrorMessage_8c.html#a555e61e3812f4a7501983309bf343d36",
+"LogMessage_8c.html#a68e859f29dcdaa3a7a1c4f00b3885757",
+"ProgressMessage_8c.html#aead2c0d63388c7b0fbdadf9345bbbd09",
+"diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456",
+"functions_vars.html",
+"global_8h.html#a9705c5a555c717a9667442bd8f6f2c6b",
+"index.html",
+"mltplyMPIBoost_8c.html",
+"mltplySpinCore_8h.html#a51041879d0e2877713d258bdb75a4a3a",
+"output_8h.html",
+"restart__checkpoint_8h.html#a358fe4cfa60979d554eeae58643cb634",
+"structCorrelationOrbit.html#a97cd870e15e221e6d53a432a8a704588",
+"structGreenOutputManifestRecord.html#a1e64ffc6533b6e10d251fa26d7f6e2e1",
+"structSymmetryBasisDistributionStats.html#a9633446683109bf786c5329583a6a261",
+"structSymmetryMpiExchangeStats.html#ad1c148055fabeb03569b7c68ec0bde4c",
+"symmetry__basis_8c.html#abc7c0ae431b0f2587cd4596948030d36",
+"symmetry__distribution_8h.html#a5b824ae8652e0560ecd32683d1e4c02a",
+"symmetry__mpi__exchange_8c.html#ad8a5c99900f5a0646121589fcbe7e3dc",
+"version__major_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

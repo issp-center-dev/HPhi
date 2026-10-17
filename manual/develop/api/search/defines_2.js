@@ -9,5 +9,7 @@ var searchData=
   ['checkpoint_5fmagic_6',['CHECKPOINT_MAGIC',['../symmetry__checkpoint_8c.html#ac4d106301815da9d14215ca470d37b88',1,'symmetry_checkpoint.c']]],
   ['cmp_7',['CMP',['../symmetry__kondo__terms_8c.html#adf44891366ab95806ded6886a9f1c2ee',1,'symmetry_kondo_terms.c']]],
   ['corrmode_8',['CORRMODE',['../DefCommon_8h.html#aa1c58bc238c2f29814c7d5c0ee642ebf',1,'DefCommon.h']]],
-  ['ctpq_9',['cTPQ',['../DefCommon_8h.html#a487b3980c5e2dd8d53d5e209cd96a34e',1,'DefCommon.h']]]
+  ['ctpq_9',['cTPQ',['../DefCommon_8h.html#a487b3980c5e2dd8d53d5e209cd96a34e',1,'DefCommon.h']]],
+  ['ctpq_5fagree_5for_5freturn_10',['CTPQ_AGREE_OR_RETURN',['../CalcByCanonicalTPQ_8c.html#ae880b0cd9e59d1eb390d3067224937b5',1,'CalcByCanonicalTPQ.c']]],
+  ['ctpq_5freturn_5ferror_11',['CTPQ_RETURN_ERROR',['../CalcByCanonicalTPQ_8c.html#aa8234d545b186ed23a435f9042e3bb35',1,'CalcByCanonicalTPQ.c']]]
 ];

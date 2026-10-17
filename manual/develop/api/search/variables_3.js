@@ -37,7 +37,7 @@ var searchData=
   ['directory_5frequest_5fentries_5freceived_34',['directory_request_entries_received',['../structSymmetryRepresentativeBatchStats.html#a5fcf8d7d0a4b3ed1584bbb8ce9fdf650',1,'SymmetryRepresentativeBatchStats']]],
   ['directory_5frequest_5fentries_5fsent_35',['directory_request_entries_sent',['../structSymmetryRepresentativeBatchStats.html#a92122e5a75cc4397811f596e02e1e805',1,'SymmetryRepresentativeBatchStats']]],
   ['directory_5frequester_5fpeer_5fcount_5fmax_36',['directory_requester_peer_count_max',['../structSymmetryRepresentativeBatchStats.html#a10fc7ccbea862f947b2f8efd59d7f5b7',1,'SymmetryRepresentativeBatchStats']]],
-  ['displacements_37',['displacements',['../structSymmetryMpiRawResult.html#ac659600711158a135d40d5532ce36621',1,'SymmetryMpiRawResult::displacements'],['../structStateBuffers.html#a7712bd583a2af66d6fb7bf014401da98',1,'StateBuffers::displacements'],['../structSymmetryMpiUnsignedLongResult.html#ac3db4ccfb9fd48d543e0f0178436e0a2',1,'SymmetryMpiUnsignedLongResult::displacements'],['../structSymmetryMpiExchangeResult.html#aeef8334dd97b4b78004fdb47d7612206',1,'SymmetryMpiExchangeResult::displacements'],['../structSymmetryMpiLookupResponseResult.html#ab1ddce9b8229a473464146bfce0f452d',1,'SymmetryMpiLookupResponseResult::displacements'],['../structSymmetryMpiExchangeLayout.html#ac9da3afb58321b0f9f3605abf05e2af2',1,'SymmetryMpiExchangeLayout::displacements']]],
+  ['displacements_37',['displacements',['../structSymmetryMpiExchangeLayout.html#ac9da3afb58321b0f9f3605abf05e2af2',1,'SymmetryMpiExchangeLayout::displacements'],['../structSymmetryMpiExchangeResult.html#aeef8334dd97b4b78004fdb47d7612206',1,'SymmetryMpiExchangeResult::displacements'],['../structSymmetryMpiUnsignedLongResult.html#ac3db4ccfb9fd48d543e0f0178436e0a2',1,'SymmetryMpiUnsignedLongResult::displacements'],['../structSymmetryMpiLookupResponseResult.html#ab1ddce9b8229a473464146bfce0f452d',1,'SymmetryMpiLookupResponseResult::displacements'],['../structStateBuffers.html#a7712bd583a2af66d6fb7bf014401da98',1,'StateBuffers::displacements'],['../structSymmetryMpiRawResult.html#ac659600711158a135d40d5532ce36621',1,'SymmetryMpiRawResult::displacements']]],
   ['distributed_5flayout_38',['distributed_layout',['../structSymmetryMethodCapability.html#a9a30df5d30b01472f859f7ecef30ba50',1,'SymmetryMethodCapability']]],
   ['distribution_5fmemory_5fbyte_5flimit_39',['distribution_memory_byte_limit',['../structSymmetryBasisDistributionStats.html#a1c85c975388a91b0cf811c68f95a3773',1,'SymmetryBasisDistributionStats']]],
   ['distribution_5fmemory_5fwarning_5fbyte_5fthreshold_40',['distribution_memory_warning_byte_threshold',['../structSymmetryBasisDistributionStats.html#a899e2f265539b347dafcbdbb7883ac3c',1,'SymmetryBasisDistributionStats']]],
@@ -47,8 +47,9 @@ var searchData=
   ['dnup_44',['dNup',['../structSectorShift.html#a3ed6a84216b8e2557b40dff91b30e8bb',1,'SectorShift']]],
   ['doublon_45',['doublon',['../structPhysList.html#a39b5e349b2c3e4bd893491956698d299',1,'PhysList']]],
   ['doublon2_46',['doublon2',['../structPhysList.html#ad5d3ebba16dafc8b6afa8f94e6c1c789',1,'PhysList']]],
-  ['dsfmt_5fglobal_5fdata_47',['dsfmt_global_data',['../dSFMT_8c.html#adfee3c4c3505ddcfc334251f94968737',1,'dsfmt_global_data:&#160;dSFMT.c'],['../dSFMT_8h.html#adfee3c4c3505ddcfc334251f94968737',1,'dsfmt_global_data:&#160;dSFMT.c']]],
-  ['dsfmt_5fglobal_5fmexp_48',['dsfmt_global_mexp',['../dSFMT_8h.html#ab5bb9876d117b3cdf8143c701a3f8cdf',1,'dSFMT.h']]],
-  ['dsfmt_5fmexp_49',['dsfmt_mexp',['../dSFMT_8c.html#a3720bab32cfc7fed812b49d96cde8636',1,'dSFMT.c']]],
-  ['dtotal2sz_50',['dTotal2Sz',['../structSectorShift.html#aa865583c0e1978af2d166f4de8828729',1,'SectorShift']]]
+  ['drop_5funlisted_5fsets_47',['drop_unlisted_sets',['../structRestartSeriesSpec.html#ac66caedc7a2fb4319ed768a69bcc8a6e',1,'RestartSeriesSpec']]],
+  ['dsfmt_5fglobal_5fdata_48',['dsfmt_global_data',['../dSFMT_8c.html#adfee3c4c3505ddcfc334251f94968737',1,'dsfmt_global_data:&#160;dSFMT.c'],['../dSFMT_8h.html#adfee3c4c3505ddcfc334251f94968737',1,'dsfmt_global_data:&#160;dSFMT.c']]],
+  ['dsfmt_5fglobal_5fmexp_49',['dsfmt_global_mexp',['../dSFMT_8h.html#ab5bb9876d117b3cdf8143c701a3f8cdf',1,'dSFMT.h']]],
+  ['dsfmt_5fmexp_50',['dsfmt_mexp',['../dSFMT_8c.html#a3720bab32cfc7fed812b49d96cde8636',1,'dSFMT.c']]],
+  ['dtotal2sz_51',['dTotal2Sz',['../structSectorShift.html#aa865583c0e1978af2d166f4de8828729',1,'SectorShift']]]
 ];

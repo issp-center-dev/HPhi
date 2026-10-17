@@ -8,6 +8,10 @@ tmpvec files
 The TPQ/cTPQ and LOBPCG (CG) solvers use these binary files for the
 legacy ``ReStart`` mechanism. Ground-state Lanczos does not use this
 format; it uses the ``recalcvec`` and ``TMComponents`` files instead.
+New checkpoints use the v3 manifest format in :ref:`Subsec:restart_v3` and
+do not write ``tmpvec``. Legacy CG treats ``Lanczos_max`` as additional
+iterations, restarts its displayed iteration labels at one, and does not
+recover the previous ``Lanczos_Step`` prefix.
 
 File name
 ~~~~~~~~~

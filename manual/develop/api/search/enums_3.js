@@ -1,4 +1,9 @@
 var searchData=
 [
-  ['tracequantity_0',['TraceQuantity',['../expec__trace_8h.html#a60ef16cc6aa4d2ad6804947ec92d98df',1,'expec_trace.h']]]
+  ['sectorshiftreason_0',['SectorShiftReason',['../ExcitationSectorShift_8h.html#a8b74493070ccaced5cc7a67292d9e71f',1,'ExcitationSectorShift.h']]],
+  ['symmetrybasisdigestalgorithm_1',['SymmetryBasisDigestAlgorithm',['../symmetry__basis_8h.html#aeae344538a65d9992c200691c3953b4b',1,'symmetry_basis.h']]],
+  ['symmetrybasislayout_2',['SymmetryBasisLayout',['../symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7',1,'symmetry_basis.h']]],
+  ['symmetrycolumnwidth_3',['SymmetryColumnWidth',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398',1,'symmetry_matvec_plan.h']]],
+  ['symmetryfulldiagoutput_4',['SymmetryFullDiagOutput',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262',1,'symmetry_sector.h']]],
+  ['symmetryhamiltoniandigestkind_5',['SymmetryHamiltonianDigestKind',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6c',1,'symmetry_checkpoint.h']]]
 ];

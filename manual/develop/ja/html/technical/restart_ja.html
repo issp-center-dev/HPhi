@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.6. リスタート機構 &#8212; HΦ マニュアル 3.7.1 ドキュメント</title>
+    <title>6.6. リスタートと状態import &#8212; HΦ マニュアル 3.7.1 ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
@@ -13,7 +13,6 @@
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/translations.js?v=4755f45a"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="6.7. 並列全対角化" href="parallel_fulldiag_ja.html" />
@@ -35,67 +34,63 @@
 
           <div class="body" role="main">
             
-  <section id="id1">
-<h1><span class="section-number">6.6. </span>リスタート機構<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
-<p>本節では <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> のlegacyリスタート機構と
-固有ベクトル入力を説明します。</p>
-<section id="restart">
-<h2><span class="section-number">6.6.1. </span><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> モード<a class="headerlink" href="#restart" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> 入力ファイルの <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> はsolverの継続方法を指定します。</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: リスタートしない</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: リスタートデータを出力する</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: リスタートデータを読み込み、更新したデータを出力する</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>: リスタートデータを読み込む</p></li>
-</ul>
-<p>legacyファイルはsolverごとに異なります。</p>
-<ul class="simple">
-<li><p>基底状態Lanczos法は <code class="docutils literal notranslate"><span class="pre">##_recalcvec_rank_$$.dat</span></code> と
-<code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code> を使用します。後者にはMPIプロセス数とOpenMP
-スレッド数を記録します。不一致は拒否し、環境行を持たない旧形式は警告付きで
-読み込みます。</p></li>
-<li><p>LOBPCG（CG）、TPQ、cTPQは <code class="docutils literal notranslate"><span class="pre">tmpvec_set&amp;&amp;_rank_$$.dat</span></code> を使用します。
-このファイル名に <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> は付きません。</p></li>
-<li><p>実時間発展では <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> のとき
-<code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code> を出力します。ヘッダのstepは次に実行する
-stepを表します。</p></li>
-</ul>
-<p>バイナリ構造の詳細は出力ファイル仕様を参照してください。これらの形式は
-実行環境に依存します。</p>
+  <section id="import">
+<h1><span class="section-number">6.6. </span>リスタートと状態import<a class="headerlink" href="#import" title="Link to this heading">¶</a></h1>
+<p>HPhiには独立した3つの機能があります。<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は保存したalgorithm状態から
+solverを継続します。<code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> はCGでの評価、または新しい時刻を0から
+始めるTimeEvolutionの初期状態としてvectorをimportします。<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 4/5は
+<code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> と <code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> によりLanczos spectrum列を継続します。異なる
+機能のファイルを互いに置き換えて使用することはできません。</p>
+<section id="solver">
+<h2><span class="section-number">6.6.1. </span>solverの継続<a class="headerlink" href="#solver" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> の <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は、0が継続なし、1が新規計算とcheckpoint出力、
+2がcheckpoint読込と更新、3が読込のみです。v3 manifest/vector形式はraw基底と
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> 基底のCG、mTPQ、cTPQ、TimeEvolutionで使われます。このreleaseでは
+保存時と現在のMPI process数が同じでなければなりません。sector v3継続ではmetadata
+layoutを <code class="docutils literal notranslate"><span class="pre">replicated</span></code> (0) と <code class="docutils literal notranslate"><span class="pre">distributed</span></code> (1) の間で変更できます。vectorの
+所有範囲とglobal順序は変わりません。rank再配置には対応していません。</p>
+<p>v3継続の <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> は絶対的な最終上限です。CGは保存した反復label、
+TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。CGでは上限が保存反復label
+より小さい場合、TPQ/cTPQとTimeEvolutionでは上限が保存した次step以下の場合、
+復元状態を評価し、時系列行を追加せず、checkpointも書き直しません。CGは
+<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> と同じlabelの反復を含み、TPQ/cTPQとTimeEvolutionはそのstepを含みません。
+収束終端CG checkpointは現在の <code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code> で再判定します。厳しい許容誤差では
+反復を再開できますが、上限によるno-opを現在も収束しているとは表示しません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">CheckpointInterval</span></code> はCG、mTPQ、cTPQの周期checkpointを指定し、0は終了時だけを
+意味します。TimeEvolutionは継続checkpointに <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> を使い、時刻表は
+保存された次stepを含む必要があります。詳細は
+<a class="reference internal" href="../filespecification/outputfiles_ja/restart_ja.html"><span class="doc">restartファイル仕様</span></a> を参照してください。</p>
 </section>
-<section id="inputeigenvec">
-<h2><span class="section-number">6.6.2. </span><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> モード<a class="headerlink" href="#inputeigenvec" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> は保存済み固有ベクトルの入力であり、<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> とは別です。</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 固有ベクトルを読み込まない</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 固有ベクトルを読み込み、そのまま使用する</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: 固有ベクトルを読み込み、<span class="math notranslate nohighlight">\(H\)</span> を1回作用させ、規格化してから
-物理量を評価する（legacy Lanczos入力経路）</p></li>
-</ul>
-<p>固有ベクトルの入力は固有値solverの反復を再開しません。
-<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> は結果の固有ベクトルファイルを出力します。</p>
+<section id="id1">
+<h2><span class="section-number">6.6.2. </span>状態import<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>状態importでは模型、basis identity、sector、phase、payload長、norm、digestを検証します。
+source method/state/step/timeとsolver scalarは来歴であり、source solverを再開しません。
+CGはimport状態を評価し、TimeEvolutionは現在の時刻表のstep 0から開始します。v3 importは
+現在、同じprocess数を必要とします。sector v3 importではmetadata layout 0/1の
+変更を許しますが、旧sector v1/v2 importは同じlayoutが必要です。rank再配置とv1/v2の
+layout制約緩和はこのreleaseの対象外です。必要なcopy手順は出力ファイル仕様に示します。</p>
+</section>
+<section id="legacyspectrum">
+<h2><span class="section-number">6.6.3. </span>legacyとspectrumの挙動<a class="headerlink" href="#legacyspectrum" title="Link to this heading">¶</a></h2>
+<p>legacy raw <code class="docutils literal notranslate"><span class="pre">tmpvec_set*_rank_*.dat</span></code> はCGとTPQ/cTPQで引き続き読めます。legacy CGは
+従来の追加反復の意味を維持し、反復labelは1から始まり、以前の <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefixを
+復旧しません。legacy TPQ/cTPQとraw TimeEvolutionは、可能な場合に検証済みの次stepより
+前の出力行を復旧します。旧sector v1/v2は状態import形式で、solver継続checkpointでは
+ありません。</p>
+<p>基底状態Lanczosと <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 4/5は、従来の <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> / <code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> と
+反復回数の意味を維持し、v3 solver manifestを使いません。</p>
 </section>
 <section id="id2">
-<h2><span class="section-number">6.6.3. </span>反復回数<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p>legacy LanczosおよびLOBPCGリスタートでは、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> は保存点からの
-追加反復数です。TPQ/cTPQおよび実時間発展では総step数なので、保存stepより
-大きな値を指定します。</p>
-</section>
-<section id="mpi">
-<h2><span class="section-number">6.6.4. </span>MPIの要件<a class="headerlink" href="#mpi" title="Link to this heading">¶</a></h2>
-<p>各MPIプロセスが自分のrankファイルを読み込みます。legacyリスタートおよび
-固有ベクトルファイルでは、保存時と同じMPIプロセス数が必須であり、プロセス数の
-変更には対応していません。model、Hilbert空間の分割、必要な場合はOpenMP
-スレッド数、および実行バイナリの環境も一致させてください。</p>
-</section>
-<section id="legacy">
-<h2><span class="section-number">6.6.5. </span>legacy出力の制限<a class="headerlink" href="#legacy" title="Link to this heading">¶</a></h2>
-<p>現在の実時間発展の継続では <code class="docutils literal notranslate"><span class="pre">SS.dat</span></code> と <code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> をwrite modeで
-開き直すため、以前の時系列行を置き換えます。またlegacy TPQ/cTPQの
-<code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> は <code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code> を保存しないため、継続後の
-<code class="docutils literal notranslate"><span class="pre">Norm_rand</span></code> の同列には0を出力します。</p>
-<p>長時間計算を継続する前に、リスタートファイルと時系列出力を退避し、継続後に
-保存量を確認してください。</p>
+<h2><span class="section-number">6.6.4. </span>出力の復旧<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>追記前に全checkpointを検証し、復旧境界以後の完全な行と未完の末尾行を削除します。
+途中の不正な行はエラーです。履歴ファイルが無い場合は新規作成され、その後の行だけが
+書かれます。失われたprefixは再構成できません。set別fileとCG/TimeEvolution履歴は
+中断なし実行と同じ行順です。共有TPQ aggregateは実行順なので、複数setの継続結果は
+<code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">step,</span> <span class="pre">observable)</span></code> keyでsortして比較してください。</p>
+<p><code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> の <code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">write</span></code> (7100)、<code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">read</span></code> (7110)、
+<code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">recover</span> <span class="pre">outputs</span></code> (7120)は、それぞれv3公開、継続vector読込、時系列の
+検証・書換えを計測します。これは機能別の計測値であり、管理されたstorage benchmark
+ではありません。</p>
 </section>
 </section>
 
@@ -133,12 +128,11 @@ stepを表します。</p></li>
 <li class="toctree-l2"><a class="reference internal" href="openmp_ja.html">6.3. OpenMP並列化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="memory_ja.html">6.4. メモリ管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="precision_ja.html">6.5. 数値精度</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. リスタート機構</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#restart">6.6.1. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> モード</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#inputeigenvec">6.6.2. <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> モード</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">6.6.3. 反復回数</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mpi">6.6.4. MPIの要件</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#legacy">6.6.5. legacy出力の制限</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. リスタートと状態import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#solver">6.6.1. solverの継続</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.6.2. 状態import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacyspectrum">6.6.3. legacyとspectrumの挙動</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.6.4. 出力の復旧</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_ja.html">6.7. 並列全対角化</a></li>

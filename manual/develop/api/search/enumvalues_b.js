@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['scalar_0',['SCALAR',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba7efbb6cac96595e63e8fa171bde1eb68',1,'symmetry_checkpoint.c']]],
-  ['sector_5fcount_1',['SECTOR_COUNT',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba791d4bc960c894523568536d4c316049',1,'symmetry_checkpoint.c']]],
-  ['sector_5fsum_2',['SECTOR_SUM',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55baac2968ee05e0fad937b24c97165d3de8',1,'symmetry_checkpoint.c']]],
-  ['sector_5fxor_3',['SECTOR_XOR',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55baa9b0e58df8f379e2e4cbef716cb5402d',1,'symmetry_checkpoint.c']]],
-  ['state_4',['STATE',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55bab21bb6164a68674f388520d4d59e4da1',1,'symmetry_checkpoint.c']]],
-  ['step_5',['STEP',['../symmetry__checkpoint_8c.html#a06fc87d81c62e9abb8790b6e5713c55bac0ba526afb7f54207517b48a892961c2',1,'symmetry_checkpoint.c']]],
+  ['scalar_0',['SCALAR',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04a7efbb6cac96595e63e8fa171bde1eb68',1,'symmetry_checkpoint.c']]],
+  ['sector_5fcount_1',['SECTOR_COUNT',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04a791d4bc960c894523568536d4c316049',1,'symmetry_checkpoint.c']]],
+  ['sector_5fsum_2',['SECTOR_SUM',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04aac2968ee05e0fad937b24c97165d3de8',1,'symmetry_checkpoint.c']]],
+  ['sector_5fxor_3',['SECTOR_XOR',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04aa9b0e58df8f379e2e4cbef716cb5402d',1,'symmetry_checkpoint.c']]],
+  ['state_4',['STATE',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04ab21bb6164a68674f388520d4d59e4da1',1,'symmetry_checkpoint.c']]],
+  ['step_5',['STEP',['../symmetry__checkpoint_8c.html#abc6126af1d45847bc59afa0aa3216b04ac0ba526afb7f54207517b48a892961c2',1,'symmetry_checkpoint.c']]],
   ['sym_5ffd_5fcorrelations_6',['SYM_FD_CORRELATIONS',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262acecb9162da7908260315edd16a8f8ca2',1,'symmetry_sector.h']]],
   ['sym_5ffd_5feigenvalues_7',['SYM_FD_EIGENVALUES',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262a3b0cd8e1e073b271903a999691f666bc',1,'symmetry_sector.h']]],
   ['sym_5ffd_5feigenvectors_8',['SYM_FD_EIGENVECTORS',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262af7f713b1afdfb2d61a915c7f6e494e22',1,'symmetry_sector.h']]],

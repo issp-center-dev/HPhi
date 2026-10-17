@@ -111,6 +111,21 @@ filename for one-body Green’s function becomes
 “<strong>xxx_Lanczos_cisajs.dat</strong>” (xxx are the characters set by
 <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>).</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CheckpointInterval</span></code></p>
+<p><strong>Type :</strong> Int (non-negative, less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>; default value: 0)</p>
+<p><strong>Description :</strong> Period between v3 continuation checkpoints for CG,
+mTPQ and cTPQ. Zero writes only the terminal checkpoint. A positive value
+requires <code class="docutils literal notranslate"><span class="pre">ReStart=1</span></code> or 2. TimeEvolution does not use this parameter;
+it uses <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code></p>
+<p><strong>Type :</strong> Int (non-negative, less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>; default value: 0)</p>
+<p><strong>Description :</strong> Expected MPI process count in restart/import files.
+Zero means the current process count. A positive value must match the
+self-described v3 or sector file. This release rejects a saved count that
+differs from the current run; the parameter validates the source and does
+not enable redistribution.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Nsite</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The number of sites.</p>
@@ -223,7 +238,10 @@ and a first excited state when <code class="docutils literal notranslate"><span 
 calculation. When the convergence within the specified accuracy is
 satisfied, the calculation is completed before a step reaches
 <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>. For a legacy LOBPCG restart, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is the
-number of <strong>additional</strong> iterations after the saved point.</p>
+number of <strong>additional</strong> iterations after the saved point. For a v3 CG
+continuation it is the absolute final iteration label. If it is below the
+saved next label, HPhi evaluates the restored vectors without iteration;
+this upper-limit no-op does not assert current convergence.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -240,7 +258,9 @@ the 2-norm of the residual vector becomes smaller than
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of TPQ steps is specified with
 this parameter. This remains an absolute total step count during a
-TPQ/cTPQ restart and must be larger than the saved step.</p>
+TPQ/cTPQ restart. A value at or below the saved next step is a valid no-op:
+HPhi evaluates the restored state without appending time-series rows or
+rewriting the checkpoint.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>Type :</strong> Double</p>
@@ -379,7 +399,8 @@ keeps the single-bra behavior.</p>
 <p><strong>Type :</strong> Int (positive integer)</p>
 <p><strong>Description :</strong> The total number of real time evolution steps is
 specified with this parameter. This remains an absolute total step
-count during restart and must be larger than the saved next step.</p>
+count during v3 restart. A value at or below the saved next step is a
+valid no-op after the time-grid boundary has been validated.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>
@@ -407,7 +428,9 @@ calculating the correlation functions.</div>
 <div class="line"><strong>Description :</strong> An integer giving the interval steps of output
 the wave function.</div>
 <div class="line">The wave vector is output when <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> in <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>
-file. A positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> is then required. Explicit interval
+file, and the v3 TimeEvolution continuation checkpoint is written when
+<code class="docutils literal notranslate"><span class="pre">ReStart=1</span></code> or 2. A positive <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> is required in either
+case. The time table must contain the saved next step. Explicit interval
 and iteration-count values must be finite integers less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>.</div>
 </div>
 </li>

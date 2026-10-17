@@ -5,10 +5,11 @@ var searchData=
   ['ui_5f1d_5fallocate_2',['ui_1d_allocate',['../setmemory_8c.html#ae40f1176b0f9f5412f87f6b1c9271368',1,'ui_1d_allocate(const long unsigned int N):&#160;setmemory.c'],['../setmemory_8h.html#ae40f1176b0f9f5412f87f6b1c9271368',1,'ui_1d_allocate(const long unsigned int N):&#160;setmemory.c']]],
   ['uint64_5fc_3',['UINT64_C',['../dSFMT_8h.html#a014ce50c36f4de34281551e4da3d5195',1,'dSFMT.h']]],
   ['unique_5fkeys_4',['unique_keys',['../structSymmetryCorrelationStats.html#a5e38a000c7bf5b72b5215d88e4576480',1,'SymmetryCorrelationStats']]],
-  ['unreadable_5fline_5',['unreadable_line',['../symmetry__hamiltonian__io_8c.html#ab2cbcfc7dec5081a9ee1369981812836',1,'symmetry_hamiltonian_io.c']]],
-  ['unresolvedrowcontext_6',['UnresolvedRowContext',['../structUnresolvedRowContext.html',1,'']]],
-  ['unsigned_5flong_5fresult_5fis_5fempty_7',['unsigned_long_result_is_empty',['../symmetry__mpi__exchange_8c.html#a4ad81ef1c2259ee6d4085c41f00daf7d',1,'symmetry_mpi_exchange.c']]],
-  ['update_5flists_8',['update_lists',['../sz_8h.html#aa7e0ac1848def68ae59b0e08141d1bb7',1,'update_lists(long unsigned int i, long unsigned int ihfbit, long unsigned int *list_1_, long unsigned int *list_2_1_, long unsigned int *list_2_2_, long unsigned int *ja, long unsigned int *jb, long unsigned int *prev_ib, long unsigned int Nsite):&#160;sz.c'],['../sz_8c.html#aa7e0ac1848def68ae59b0e08141d1bb7',1,'update_lists(long unsigned int i, long unsigned int ihfbit, long unsigned int *list_1_, long unsigned int *list_2_1_, long unsigned int *list_2_2_, long unsigned int *ja, long unsigned int *jb, long unsigned int *prev_ib, long unsigned int Nsite):&#160;sz.c']]],
-  ['usage_9',['usage',['../page_time.html#subsec_time_basic',1,'Basic Usage'],['../page_time.html#sec_time_usage',1,'Timer Usage']]],
-  ['used_5fchunked_10',['used_chunked',['../structSymmetryMpiExchangeStats.html#aab6a7aa1538373f5c29c990b0bb2312b',1,'SymmetryMpiExchangeStats']]]
+  ['unpack_5fmanifest_5',['unpack_manifest',['../restart__manifest__io_8c.html#a1f6e46670813457df0ed151a3130ef7c',1,'restart_manifest_io.c']]],
+  ['unreadable_5fline_6',['unreadable_line',['../symmetry__hamiltonian__io_8c.html#ab2cbcfc7dec5081a9ee1369981812836',1,'symmetry_hamiltonian_io.c']]],
+  ['unresolvedrowcontext_7',['UnresolvedRowContext',['../structUnresolvedRowContext.html',1,'']]],
+  ['unsigned_5flong_5fresult_5fis_5fempty_8',['unsigned_long_result_is_empty',['../symmetry__mpi__exchange_8c.html#a4ad81ef1c2259ee6d4085c41f00daf7d',1,'symmetry_mpi_exchange.c']]],
+  ['update_5flists_9',['update_lists',['../sz_8h.html#aa7e0ac1848def68ae59b0e08141d1bb7',1,'update_lists(long unsigned int i, long unsigned int ihfbit, long unsigned int *list_1_, long unsigned int *list_2_1_, long unsigned int *list_2_2_, long unsigned int *ja, long unsigned int *jb, long unsigned int *prev_ib, long unsigned int Nsite):&#160;sz.c'],['../sz_8c.html#aa7e0ac1848def68ae59b0e08141d1bb7',1,'update_lists(long unsigned int i, long unsigned int ihfbit, long unsigned int *list_1_, long unsigned int *list_2_1_, long unsigned int *list_2_2_, long unsigned int *ja, long unsigned int *jb, long unsigned int *prev_ib, long unsigned int Nsite):&#160;sz.c']]],
+  ['usage_10',['usage',['../page_time.html#subsec_time_basic',1,'Basic Usage'],['../page_time.html#sec_time_usage',1,'Timer Usage']]],
+  ['used_5fchunked_11',['used_chunked',['../structSymmetryMpiExchangeStats.html#aab6a7aa1538373f5c29c990b0bb2312b',1,'SymmetryMpiExchangeStats']]]
 ];

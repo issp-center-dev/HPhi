@@ -6,5 +6,6 @@ var symmetry__checkpoint_8h =
       [ "SYMMETRY_HAMILTONIAN_MATRIX_V1", "symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6cab83e5d1a16c33904b58d09561e1184b5", null ]
     ] ],
     [ "ReadSymmetryCheckpoint", "symmetry__checkpoint_8h.html#a180eb395b8ae31f66a08c4992b432a3a", null ],
+    [ "SymmetryCheckpointIdentityWords", "symmetry__checkpoint_8h.html#adea9a0f0428cf8a6c1c1f3037b7e9a79", null ],
     [ "WriteSymmetryCheckpoint", "symmetry__checkpoint_8h.html#ae2923e7edb0f642dc68371e4e23d83d5", null ]
 ];

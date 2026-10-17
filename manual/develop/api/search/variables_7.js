@@ -12,5 +12,6 @@ var searchData=
   ['hamiltonian_5fdigest_5fkind_9',['hamiltonian_digest_kind',['../structSymmetryCheckpointInfo.html#aab16599fe7ad8db185c76c79b3efe987',1,'SymmetryCheckpointInfo']]],
   ['hampanelld_10',['hampanelld',['../global_8c.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c'],['../global_8h.html#a00b395372bc258741d2f2455bf951abb',1,'HamPanelLd:&#160;global.c']]],
   ['hard_5fbyte_5flimit_11',['hard_byte_limit',['../structSymmetryMemoryPolicy.html#ae0a1f58f6b7f950fbb4db21b0c49946f',1,'SymmetryMemoryPolicy']]],
-  ['hundcoupling_12',['HundCoupling',['../structDefineList.html#a67120f094230a63d8d074afcc7f676b5',1,'DefineList']]]
+  ['header_5fprefix_12',['header_prefix',['../structRestartSeriesSpec.html#a73d1f3cce743ba536c369cede6c9dceb',1,'RestartSeriesSpec']]],
+  ['hundcoupling_13',['HundCoupling',['../structDefineList.html#a67120f094230a63d8d074afcc7f676b5',1,'DefineList']]]
 ];

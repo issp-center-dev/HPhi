@@ -39,7 +39,9 @@
 <span id="subsec-ssrand"></span><h1>SS_rand.dat<a class="headerlink" href="#ss-rand-dat" title="Link to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">(TPQ法でのみ出力)TPQ法での有限温度計算結果を出力します。
-再計算の場合は値が追記されます。 以下にファイル例を示します。</div>
+継続前に、検証済みの次step以後の行とEOFの未完行を削除してから再開行を追記します。
+集約行は実行順で、中断なしの複数set実行と順序が異なる場合があります。
+以下にファイル例を示します。</div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i
 0.017471  5.526334 45.390269 1.464589 6.000000 1

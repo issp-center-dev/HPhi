@@ -37,7 +37,11 @@
 <span id="subsec-restart"></span><h1>tmpvec files<a class="headerlink" href="#tmpvec-files" title="Link to this heading">¶</a></h1>
 <p>The TPQ/cTPQ and LOBPCG (CG) solvers use these binary files for the
 legacy <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> mechanism. Ground-state Lanczos does not use this
-format; it uses the <code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> and <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> files instead.</p>
+format; it uses the <code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> and <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> files instead.
+New checkpoints use the v3 manifest format in <a class="reference internal" href="restart_en.html#subsec-restart-v3"><span class="std std-ref">v3 solver restart files</span></a> and
+do not write <code class="docutils literal notranslate"><span class="pre">tmpvec</span></code>. Legacy CG treats <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> as additional
+iterations, restarts its displayed iteration labels at one, and does not
+recover the previous <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix.</p>
 <section id="file-name">
 <h2>File name<a class="headerlink" href="#file-name" title="Link to this heading">¶</a></h2>
 <ul class="simple">

@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['sectorshiftreason_0',['SectorShiftReason',['../ExcitationSectorShift_8h.html#a8b74493070ccaced5cc7a67292d9e71f',1,'ExcitationSectorShift.h']]],
-  ['symmetrybasisdigestalgorithm_1',['SymmetryBasisDigestAlgorithm',['../symmetry__basis_8h.html#aeae344538a65d9992c200691c3953b4b',1,'symmetry_basis.h']]],
-  ['symmetrybasislayout_2',['SymmetryBasisLayout',['../symmetry__basis_8h.html#ab238af451edb03426e47ab8f36a457a7',1,'symmetry_basis.h']]],
-  ['symmetrycolumnwidth_3',['SymmetryColumnWidth',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398',1,'symmetry_matvec_plan.h']]],
-  ['symmetryfulldiagoutput_4',['SymmetryFullDiagOutput',['../symmetry__sector_8h.html#aee13045877a116ca632f395148d21262',1,'symmetry_sector.h']]],
-  ['symmetryhamiltoniandigestkind_5',['SymmetryHamiltonianDigestKind',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6c',1,'symmetry_checkpoint.h']]]
+  ['restartbasiskind_0',['RestartBasisKind',['../restart__checkpoint_8h.html#ab0f5695728f4d054057fa4bcae3b5c57',1,'restart_checkpoint.h']]],
+  ['restartcomponent_1',['RestartComponent',['../restart__checkpoint_8h.html#abfa658672853838f9d61fa136449b9a2',1,'restart_checkpoint.h']]],
+  ['restartfileformat_2',['RestartFileFormat',['../restart__checkpoint_8h.html#a4d2a258a1856dafea5ca144e7b945d0d',1,'restart_checkpoint.h']]],
+  ['restartreadpurpose_3',['RestartReadPurpose',['../restart__checkpoint_8h.html#a0e6295500641a7b3112327167b603505',1,'restart_checkpoint.h']]],
+  ['restartsource_4',['RestartSource',['../restart__checkpoint_8h.html#a6c9496bcf0c8205a08ab9be86bc1e7b5',1,'restart_checkpoint.h']]],
+  ['restartword_5',['RestartWord',['../restart__checkpoint_8h.html#ab46a4253602a851b3047520569dcf7b0',1,'restart_checkpoint.h']]]
 ];

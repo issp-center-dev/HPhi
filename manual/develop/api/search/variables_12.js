@@ -14,13 +14,13 @@ var searchData=
   ['temporary_5fpeak_5fbytes_11',['temporary_peak_bytes',['../structSymmetryUnresolvedMatvecBlock.html#a5ed48868a365b892cc30cb7e34103a77',1,'SymmetryUnresolvedMatvecBlock']]],
   ['tend_12',['tend',['../structTimeKeepStruct.html#aa99971131764062c93f2bf54c8a0bb4b',1,'TimeKeepStruct']]],
   ['term_5findices_13',['term_indices',['../structMPISpinExchangeGroup.html#a4a916cccef8c10960645d0adcf4750f1',1,'MPISpinExchangeGroup']]],
-  ['terms_14',['terms',['../structPolynomial.html#ad878f5eb07ac18ec4996c499ed0a6ae8',1,'Polynomial::terms'],['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial::terms']]],
+  ['terms_14',['terms',['../structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb',1,'Polynomial::terms'],['../structPolynomial.html#ad878f5eb07ac18ec4996c499ed0a6ae8',1,'Polynomial::terms']]],
   ['tetime_15',['TETime',['../structDefineList.html#af26d0e477bb666f009625a2c5531661b',1,'DefineList']]],
   ['tetransfer_16',['TETransfer',['../structDefineList.html#a8b120ff7907dfc198c3475b0e8e35d95',1,'DefineList']]],
   ['tetransferdiagonal_17',['TETransferDiagonal',['../structDefineList.html#a586f32dbd000db66684ed6eee14bb65f',1,'DefineList']]],
   ['text_18',['text',['../structMatrixReader.html#a7091fa053d44b0c7839eca21addc92d1',1,'MatrixReader']]],
   ['threads_19',['threads',['../structSymmetryCorrelationStats.html#a1769910aa03ca680a5b532d8ac3f59e0',1,'SymmetryCorrelationStats::threads'],['../structCorrelationContext.html#a3e61528b81c7ef48ba642ca3e6ab77a6',1,'CorrelationContext::threads']]],
-  ['time_20',['time',['../structSymmetryCheckpointInfo.html#a88adb4fad2a9d2b20d40630283d0c118',1,'SymmetryCheckpointInfo']]],
+  ['time_20',['time',['../structSymmetryCheckpointInfo.html#a88adb4fad2a9d2b20d40630283d0c118',1,'SymmetryCheckpointInfo::time'],['../structRestartVectorInfo.html#a1b47074543e3e856fa6f6c1ef0736f1d',1,'RestartVectorInfo::time']]],
   ['timer_21',['timer',['../global_8h.html#a4a670a9b6759f2b8087ab87fd70c6c68',1,'Timer:&#160;global.c'],['../global_8c.html#a4a670a9b6759f2b8087ab87fd70c6c68',1,'Timer:&#160;global.c']]],
   ['timerstart_22',['timerstart',['../global_8h.html#aeeeff4ed34e4a32b23cc2424cf15893b',1,'TimerStart:&#160;global.c'],['../global_8c.html#aeeeff4ed34e4a32b23cc2424cf15893b',1,'TimerStart:&#160;global.c']]],
   ['timeslice_23',['TimeSlice',['../structParamList.html#aad0e0715ccb564b4be2777b36443256a',1,'ParamList']]],
@@ -44,6 +44,7 @@ var searchData=
   ['transfer_5fvalues_41',['transfer_values',['../structSymmetryTEHamiltonian.html#afce8377cb30388da13e2816690f44f7c',1,'SymmetryTEHamiltonian']]],
   ['transform_5fcalls_42',['transform_calls',['../structSymmetryBasisCollector.html#a78a9e67c1d4f47e53057d0aa13307d37',1,'SymmetryBasisCollector']]],
   ['transition_5fcount_43',['transition_count',['../structSymmetryUnresolvedMatvecBlock.html#a783bd60b8f61f12b1c46bbb32a60c4cc',1,'SymmetryUnresolvedMatvecBlock']]],
-  ['transitions_44',['transitions',['../structSymmetryCorrelationStats.html#a88b49ef6d52b784796e59a241c62216f',1,'SymmetryCorrelationStats::transitions'],['../structSymmetryUnresolvedMatvecBlock.html#a113f416b3a8c45536e8d67c5e9919755',1,'SymmetryUnresolvedMatvecBlock::transitions'],['../structUnresolvedRowContext.html#a5b7360eb6db55f39a679ef374e790f1d',1,'UnresolvedRowContext::transitions']]],
-  ['tstart_45',['tstart',['../structTimeKeepStruct.html#abb4d510ac3897933e41b1d6610d5807d',1,'TimeKeepStruct']]]
+  ['transitions_44',['transitions',['../structUnresolvedRowContext.html#a5b7360eb6db55f39a679ef374e790f1d',1,'UnresolvedRowContext::transitions'],['../structSymmetryUnresolvedMatvecBlock.html#a113f416b3a8c45536e8d67c5e9919755',1,'SymmetryUnresolvedMatvecBlock::transitions'],['../structSymmetryCorrelationStats.html#a88b49ef6d52b784796e59a241c62216f',1,'SymmetryCorrelationStats::transitions']]],
+  ['tstart_45',['tstart',['../structTimeKeepStruct.html#abb4d510ac3897933e41b1d6610d5807d',1,'TimeKeepStruct']]],
+  ['type_46',['type',['../restart__manifest_8c.html#ac765329451135abec74c45e1897abf26',1,'restart_manifest.c']]]
 ];

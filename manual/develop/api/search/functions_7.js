@@ -5,7 +5,7 @@ var searchData=
   ['has_5ffixed_5fspin_5fsector_2',['has_fixed_spin_sector',['../symmetry__basis__io_8c.html#aec1864a6e33eb57b055e15bc253ec8f5',1,'symmetry_basis_io.c']]],
   ['has_5ffixed_5fspinful_5fsector_3',['has_fixed_spinful_sector',['../symmetry__basis__io_8c.html#a0fc0ca3dd2da8d07c604041348a6b7e5',1,'symmetry_basis_io.c']]],
   ['has_5ffixed_5fspinless_5fsector_4',['has_fixed_spinless_sector',['../symmetry__basis__io_8c.html#a5e95387875a1cd0ffbfcaf3474da32ca',1,'symmetry_basis_io.c']]],
-  ['hash_5fbytes_5',['hash_bytes',['../symmetry__vector__halo_8c.html#a0f1637a67ef1428abd9d512df7e2a71e',1,'symmetry_vector_halo.c']]],
+  ['hash_5fbytes_5',['hash_bytes',['../restart__digest_8c.html#ac5f263b91159a4df3d54a5f240631c86',1,'hash_bytes(uint64_t hash, const unsigned char *bytes, size_t n):&#160;restart_digest.c'],['../symmetry__vector__halo_8c.html#a0f1637a67ef1428abd9d512df7e2a71e',1,'hash_bytes(unsigned long long hash, const void *data, size_t size):&#160;symmetry_vector_halo.c']]],
   ['hash_5fcomponent_6',['hash_component',['../symmetry__hamiltonian__io_8c.html#a9582a04b41443f64d4aac0a5e655f532',1,'symmetry_hamiltonian_io.c']]],
   ['hash_5fdouble_7',['hash_double',['../symmetry__sector_8c.html#a51bf26ead98aaeb77daac52497313039',1,'symmetry_sector.c']]],
   ['hash_5felement_8',['hash_element',['../symmetry__hamiltonian__io_8c.html#a34d16a3ba1b09eb6f9497ea37814ba31',1,'symmetry_hamiltonian_io.c']]],

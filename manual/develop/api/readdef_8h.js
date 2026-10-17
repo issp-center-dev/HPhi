@@ -63,5 +63,6 @@ var readdef_8h =
     [ "ReadDefFileIdxPara", "readdef_8h.html#a052f987ad0a4602ab76d31af1c257e30", null ],
     [ "ReadDefFileNInt", "readdef_8h.html#a17c76a94fb506b26d2c69919ff9d5cd1", null ],
     [ "ResetInteractionNum", "readdef_8h.html#a4eaefb0cf68dd2e8cb6cc64b831d67da", null ],
-    [ "SetConvergenceFactor", "readdef_8h.html#a961b43e36e61cc013d0188dc268707a2", null ]
+    [ "SetConvergenceFactor", "readdef_8h.html#a961b43e36e61cc013d0188dc268707a2", null ],
+    [ "ValidateRestartKeys", "readdef_8h.html#a24066f873acdf6945b137920c1a61afe", null ]
 ];

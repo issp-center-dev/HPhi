@@ -88,6 +88,8 @@ var global_8h =
     [ "cFileNamePhys_FullDiag", "global_8h.html#aef4eadd082d736f9a2bf428fc1f3447b", null ],
     [ "cFileNamePhys_FullDiag_GC", "global_8h.html#a57906b940facbac6518c17e3eb653765", null ],
     [ "cFileNamePhys_FullDiag_Ham", "global_8h.html#aaaf912994205177d54302bb87cb1e6e4", null ],
+    [ "cFileNameRestartManifest", "global_8h.html#a40ed6c415d73775c34e9b9f633f4afba", null ],
+    [ "cFileNameRestartVector", "global_8h.html#a259b6e1e84cdc57caf2a4a4697e1a1b7", null ],
     [ "cFileNameSS", "global_8h.html#acadf97babfa9bfc5cf119890911f1799", null ],
     [ "cFileNameSS_TPQ_Aggregate", "global_8h.html#ab176b3d0d643afa234b36caf057eb9c7", null ],
     [ "cFileNameSSRand", "global_8h.html#a5b7ad7cb0e6551af2d7635fbe3300fcf", null ],

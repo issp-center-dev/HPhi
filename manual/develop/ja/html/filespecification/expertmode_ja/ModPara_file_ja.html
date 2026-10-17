@@ -106,6 +106,19 @@ ExpecInterval  20
 <p><strong>説明 :</strong>
 アウトプットファイルのヘッダ。例えば、一体のGreen関数の出力ファイル名が<strong>xxx_Lanczos_cisajs.dat</strong>として出力されます(xxxに<code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>で指定した文字が記載)。</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CheckpointInterval</span></code></p>
+<p><strong>形式 :</strong> int型 (0以上 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満、デフォルト値 0)</p>
+<p><strong>説明 :</strong> CG、mTPQ、cTPQのv3継続checkpoint周期です。0は終端だけで
+書きます。正の値には <code class="docutils literal notranslate"><span class="pre">ReStart=1</span></code> または2が必要です。TimeEvolutionでは
+使わず、<code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> を使います。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code></p>
+<p><strong>形式 :</strong> int型 (0以上 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満、デフォルト値 0)</p>
+<p><strong>説明 :</strong> restart/import fileに期待するMPI process数です。0は現在の
+process数を表します。正の値は自己記述v3/sector fileと一致する必要があります。
+このreleaseは保存時と現在のprocess数が異なる読込を拒否します。このparameterは
+source検証用であり、再配置を有効にしません。</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Nsite</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> サイト数を指定する整数。</p>
@@ -199,7 +212,8 @@ legacy Lanczosリスタートでは、<code class="docutils literal notranslate"
 指定した精度内で収束した場合には、これより短い回数で終了します。
 この回数以内で収束しない場合はエラー終了します。
 legacy LOBPCGリスタートでは、<code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>は保存点からの
-<a href="#id5"><span class="problematic" id="id6">**</span></a>追加**反復数です。</p>
+<a href="#id5"><span class="problematic" id="id6">**</span></a>追加**反復数です。v3 CG継続では絶対的な最終反復labelです。保存した次labelより
+小さい場合は反復せず復元vectorを評価します。この上限no-opは現在の収束を主張しません。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
@@ -214,7 +228,8 @@ legacy LOBPCGリスタートでは、<code class="docutils literal notranslate">
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> TPQ法の総ステップ数を与えます。
-TPQ/cTPQリスタートでも絶対的な総step数を表し、保存stepより大きな値が必要です。</p>
+TPQ/cTPQリスタートでも絶対的な総step数を表します。保存した次step以下も有効な
+no-opで、時系列行を追加せずcheckpointを書き直さずに復元状態を評価します。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LargeValue</span></code></p>
 <p><strong>形式 :</strong> double型 (実数)</p>
@@ -351,7 +366,8 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 実時間発展法の総ステップ数を与えます。
-リスタートでも絶対的な総step数を表し、保存された次stepより大きな値が必要です。</p>
+v3リスタートでも絶対的な総step数を表します。保存された次step以下は、
+時刻表境界の検証後に有効なno-opです。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code></p>
 <p>実時間発展では指定が必須です。 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満の正の整数を指定してください。</p>
@@ -375,7 +391,9 @@ ket 演算子<span class="math notranslate nohighlight">\(m\)</span>・bra セ�
 頻度を上げると計算コストが増大するので注意してください。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> の場合は正の値が必要です。明示指定したintervalと反復回数は
+<p><code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> の場合、および <code class="docutils literal notranslate"><span class="pre">ReStart=1</span></code> または2でv3 TimeEvolution
+continuation checkpointを書く場合は正の値が必要です。時刻表は保存された次stepを
+含む必要があります。明示指定したintervalと反復回数は
 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満の有限な整数に限ります。</p>
 <p><strong>形式 :</strong> int型 (自然数)</p>
 <p><strong>説明 :</strong> 時間発展中の波動関数を出力するステップ間隔を指定する整数。

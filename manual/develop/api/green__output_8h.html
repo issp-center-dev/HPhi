@@ -161,12 +161,12 @@ Functions</h2></td></tr>
 <tr class="separator:ab8d4a5290861d4720b54ab23cd37e168"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee427ef00f9bdb2ce7e8c9b0c8887181" id="r_aee427ef00f9bdb2ce7e8c9b0c8887181"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#aee427ef00f9bdb2ce7e8c9b0c8887181">GreenOutputInitializeAggregateFiles</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="separator:aee427ef00f9bdb2ce7e8c9b0c8887181"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab15b57d80c6edb0fcfe9f99592a6e63c" id="r_ab15b57d80c6edb0fcfe9f99592a6e63c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#ab15b57d80c6edb0fcfe9f99592a6e63c">GreenOutputAgreeSectorError</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int failed)</td></tr>
-<tr class="separator:ab15b57d80c6edb0fcfe9f99592a6e63c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9eb4b702565d794125dda430486790f7" id="r_a9eb4b702565d794125dda430486790f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#a9eb4b702565d794125dda430486790f7">GreenOutputAgreeError</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int failed)</td></tr>
+<tr class="separator:a9eb4b702565d794125dda430486790f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab80e5d0a66aa837aad8af699a793a57c" id="r_ab80e5d0a66aa837aad8af699a793a57c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#ab80e5d0a66aa837aad8af699a793a57c">GreenOutputCloseChecked</a> (FILE *fp)</td></tr>
 <tr class="separator:ab80e5d0a66aa837aad8af699a793a57c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fd05599f717efbdc2d7caadafacb2c4" id="r_a3fd05599f717efbdc2d7caadafacb2c4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#a3fd05599f717efbdc2d7caadafacb2c4">GreenOutputReportSectorFailure</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="green__output_8h.html#a7aa7e113532582a034a8340e9f9bcce3">GreenOutputKind</a> kind, const char *<a class="el" href="symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, const char *operation)</td></tr>
-<tr class="separator:a3fd05599f717efbdc2d7caadafacb2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3523ff7830ca8c678f2af12e8019c152" id="r_a3523ff7830ca8c678f2af12e8019c152"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#a3523ff7830ca8c678f2af12e8019c152">GreenOutputReportFailure</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, <a class="el" href="green__output_8h.html#a7aa7e113532582a034a8340e9f9bcce3">GreenOutputKind</a> kind, const char *<a class="el" href="restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, const char *operation)</td></tr>
+<tr class="separator:a3523ff7830ca8c678f2af12e8019c152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a347aee615816580da90186164f5b6a34" id="r_a347aee615816580da90186164f5b6a34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="green__output_8h.html#a347aee615816580da90186164f5b6a34">GreenOutputSetPartialSuffix</a> (int rank)</td></tr>
 <tr class="memdesc:a347aee615816580da90186164f5b6a34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a partial-output session for rank-local Green aggregate writes (phase 3a, Mode 1 / state-task-parallel FullDiag).  <br /></td></tr>
 <tr class="separator:a347aee615816580da90186164f5b6a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -243,14 +243,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ab15b57d80c6edb0fcfe9f99592a6e63c" name="ab15b57d80c6edb0fcfe9f99592a6e63c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab15b57d80c6edb0fcfe9f99592a6e63c">&#9670;&#160;</a></span>GreenOutputAgreeSectorError()</h2>
+<a id="a9eb4b702565d794125dda430486790f7" name="a9eb4b702565d794125dda430486790f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9eb4b702565d794125dda430486790f7">&#9670;&#160;</a></span>GreenOutputAgreeError()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int GreenOutputAgreeSectorError </td>
+          <td class="memname">int GreenOutputAgreeError </td>
           <td>(</td>
           <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
@@ -271,9 +271,9 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00125">125</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00210">expec_cisajscktaltdc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00209">expec_cisajscktaltdc()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00245">GreenOutputInitializeTPQDataFile()</a>, <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
 
 </div>
 </div>
@@ -295,9 +295,9 @@ Functions</h2></td></tr>
 
 <p>End the current partial-output session. After this call, <a class="el" href="green__output_8h.html#add6be1b5e588d731466598c946040b88" title="Open the aggregate Green-output file for the given kind.">GreenOutputOpenAggregate()</a>/GreenOutputCloseAggregate() behave exactly as they do outside any session (the non-partial, childfopenMPI + <a class="el" href="green__output_8h.html#a78630330b0df26ce2486679925226ddb">GreenOutputOpenMode()</a> path). Does NOT clear the manifest &ndash; the manifest from the just-ended session remains readable (e.g. by <a class="el" href="green__output_8h.html#aecc17bf744e454e3022d340f316b9089" title="Rank 0 merges every rank&#39;s partial Green-output files into the final aggregate files,...">GreenOutputMergePartials()</a>) until the next <a class="el" href="green__output_8h.html#a347aee615816580da90186164f5b6a34" title="Start a partial-output session for rank-local Green aggregate writes (phase 3a, Mode 1 / state-task-p...">GreenOutputSetPartialSuffix()</a> call zeroes it. </p>
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00347">347</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00361">361</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00336">g_greenOutputPartialActive</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00350">g_greenOutputPartialActive</a>.</p>
 
 </div>
 </div>
@@ -328,15 +328,15 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Close a FILE* previously returned by <a class="el" href="green__output_8h.html#add6be1b5e588d731466598c946040b88" title="Open the aggregate Green-output file for the given kind.">GreenOutputOpenAggregate()</a>. </p>
-<p>Outside a partial-output session: plain fclose().</p>
+<p>Outside a partial-output session: checked ferror() and fclose().</p>
 <p>Inside a session: records bytes = ftell(fp) taken immediately before fclose() (the running total for this rank/kind, since the file is opened in append mode after the first write) and closed_ok (sticky: once a close fails for a kind, closed_ok stays false for the rest of the session even if a later close of the same kind succeeds), then fclose()s fp.</p>
 <dl class="section return"><dt>Returns</dt><dd>0 on success, -1 on failure. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00404">404</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00424">424</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00326">GreenOutputManifestRecord::bytes</a>, <a class="el" href="green__output_8c_source.html#l00325">GreenOutputManifestRecord::closed_ok</a>, <a class="el" href="green__output_8c_source.html#l00335">g_greenOutputCloseFailed</a>, <a class="el" href="green__output_8c_source.html#l00331">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00336">g_greenOutputPartialActive</a>, <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, and <a class="el" href="green__output_8c_source.html#l00131">GreenOutputCloseChecked()</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00340">GreenOutputManifestRecord::bytes</a>, <a class="el" href="green__output_8c_source.html#l00339">GreenOutputManifestRecord::closed_ok</a>, <a class="el" href="green__output_8c_source.html#l00349">g_greenOutputCloseFailed</a>, <a class="el" href="green__output_8c_source.html#l00345">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00350">g_greenOutputPartialActive</a>, <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, and <a class="el" href="green__output_8c_source.html#l00140">GreenOutputCloseChecked()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00198">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, and <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00197">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, and <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>.</p>
 
 </div>
 </div>
@@ -356,9 +356,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00131">131</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00140">140</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00198">close_green_file()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00404">GreenOutputCloseAggregate()</a>, and <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00197">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00424">GreenOutputCloseAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00245">GreenOutputInitializeTPQDataFile()</a>, and <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>.</p>
 
 </div>
 </div>
@@ -398,7 +398,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="green__output_8c_source.html#l00025">GreenOutputAggregateFamily()</a>, <a class="el" href="green__output_8c_source.html#l00058">GreenOutputFormatForFamily()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00365">GreenOutputOpenAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00143">GreenOutputReportSectorFailure()</a>, and <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00379">GreenOutputOpenAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00152">GreenOutputReportFailure()</a>, <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>, <a class="el" href="tpq__restart_8c_source.html#l00078">recover_green_aggregates()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00149">te_recover_green()</a>.</p>
 
 </div>
 </div>
@@ -418,11 +418,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00176">176</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00182">182</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, <a class="el" href="green__output_8h_source.html#l00012">GreenOutputFourBody</a>, <a class="el" href="green__output_8h_source.html#l00014">GreenOutputNBody</a>, <a class="el" href="green__output_8h_source.html#l00009">GreenOutputOneBody</a>, <a class="el" href="green__output_8h_source.html#l00013">GreenOutputSixBody</a>, <a class="el" href="green__output_8h_source.html#l00011">GreenOutputThreeBody</a>, <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>, <a class="el" href="green__output_8h_source.html#l00010">GreenOutputTwoBody</a>, <a class="el" href="green__output_8c_source.html#l00042">GreenOutputUsesAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, <a class="el" href="green__output_8h_source.html#l00012">GreenOutputFourBody</a>, <a class="el" href="green__output_8h_source.html#l00014">GreenOutputNBody</a>, <a class="el" href="green__output_8h_source.html#l00009">GreenOutputOneBody</a>, <a class="el" href="green__output_8h_source.html#l00013">GreenOutputSixBody</a>, <a class="el" href="green__output_8h_source.html#l00011">GreenOutputThreeBody</a>, <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>, <a class="el" href="green__output_8h_source.html#l00010">GreenOutputTwoBody</a>, <a class="el" href="green__output_8c_source.html#l00042">GreenOutputUsesAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>, <a class="el" href="phys_8c_source.html#l00137">phys()</a>, and <a class="el" href="symmetry__fulldiag_8c_source.html#l00180">ProcessSymmetryFullDiagStates()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>, <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="phys_8c_source.html#l00137">phys()</a>, and <a class="el" href="symmetry__fulldiag_8c_source.html#l00180">ProcessSymmetryFullDiagStates()</a>.</p>
 
 </div>
 </div>
@@ -442,11 +442,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00254">254</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00268">268</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00239">GreenOutputInitializeTPQDataFile()</a>, <a class="el" href="green__output_8h_source.html#l00021">GreenOutputTPQDataFlct</a>, <a class="el" href="green__output_8h_source.html#l00020">GreenOutputTPQDataNorm</a>, <a class="el" href="green__output_8h_source.html#l00019">GreenOutputTPQDataSS</a>, <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00245">GreenOutputInitializeTPQDataFile()</a>, <a class="el" href="green__output_8h_source.html#l00021">GreenOutputTPQDataFlct</a>, <a class="el" href="green__output_8h_source.html#l00020">GreenOutputTPQDataNorm</a>, <a class="el" href="green__output_8h_source.html#l00019">GreenOutputTPQDataSS</a>, <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -480,7 +480,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="green__output_8c_source.html#l00042">GreenOutputUsesAggregate()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00198">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00365">GreenOutputOpenAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00143">GreenOutputReportSectorFailure()</a>, <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00197">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00379">GreenOutputOpenAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00152">GreenOutputReportFailure()</a>, <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00149">te_recover_green()</a>.</p>
 
 </div>
 </div>
@@ -506,9 +506,9 @@ Functions</h2></td></tr>
 <p>On success: for every kind attempted by at least one rank, rank 0 concatenates every attempting rank's part file in rank order into a private "&lt;final&gt;.tmp_merge" file (every fread/fwrite/fclose checked). Only after ALL kinds concatenate cleanly, existing finals are moved to unique "&lt;final&gt;.bak_merge.&lt;pid&gt;.&lt;slot&gt;" recovery files and every temp is renamed onto its final name (this publish step is the Mode-1 replacement for <a class="el" href="green__output_8h.html#aee427ef00f9bdb2ce7e8c9b0c8887181">GreenOutputInitializeAggregateFiles()</a>, which Mode 1 must NOT call directly). If any backup/publish rename fails, already-published new files are removed or atomically replaced by their backups, so the pre-merge set of finals is restored; no part file is deleted and every rank returns non-zero. If the rollback system calls themselves fail, an explicit ROLLBACK FAILED diagnostic names the recovery artifact. An orphaned backup left by an interrupted or failed cleanup does not block later merges. On success, this merge's backups and part files are deleted. A truncated file can therefore never appear under a final aggregate name, even on a mid-merge disk-full/write error.</p>
 <p>In a build without MPI this is a no-op that returns 0 (no cross-rank partial files can exist to merge). </p>
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00427">427</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00448">448</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00322">GreenOutputManifestRecord::attempted</a>, <a class="el" href="green__output_8c_source.html#l00326">GreenOutputManifestRecord::bytes</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="green__output_8c_source.html#l00325">GreenOutputManifestRecord::closed_ok</a>, <a class="el" href="wrapperMPI_8c_source.html#l00221">exitMPI()</a>, <a class="el" href="green__output_8c_source.html#l00328">GreenOutputManifestRecord::final_path</a>, <a class="el" href="green__output_8c_source.html#l00331">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00307">GREEN_OUTPUT_NKIND</a>, <a class="el" href="green__output_8c_source.html#l00358">GreenOutputJoinOutputPath()</a>, <a class="el" href="green__output_8c_source.html#l00021">GreenOutputRename</a>, <a class="el" href="green__output_8c_source.html#l00324">GreenOutputManifestRecord::open_error</a>, <a class="el" href="green__output_8c_source.html#l00323">GreenOutputManifestRecord::opened</a>, <a class="el" href="green__output_8c_source.html#l00327">GreenOutputManifestRecord::part_path</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00336">GreenOutputManifestRecord::attempted</a>, <a class="el" href="green__output_8c_source.html#l00340">GreenOutputManifestRecord::bytes</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="green__output_8c_source.html#l00339">GreenOutputManifestRecord::closed_ok</a>, <a class="el" href="wrapperMPI_8c_source.html#l00221">exitMPI()</a>, <a class="el" href="green__output_8c_source.html#l00342">GreenOutputManifestRecord::final_path</a>, <a class="el" href="green__output_8c_source.html#l00345">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00321">GREEN_OUTPUT_NKIND</a>, <a class="el" href="green__output_8c_source.html#l00372">GreenOutputJoinOutputPath()</a>, <a class="el" href="green__output_8c_source.html#l00021">GreenOutputRename</a>, <a class="el" href="green__output_8c_source.html#l00338">GreenOutputManifestRecord::open_error</a>, <a class="el" href="green__output_8c_source.html#l00337">GreenOutputManifestRecord::opened</a>, <a class="el" href="green__output_8c_source.html#l00341">GreenOutputManifestRecord::part_path</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 </div>
 </div>
@@ -549,9 +549,9 @@ Functions</h2></td></tr>
 <p>Inside a partial-output session (see <a class="el" href="green__output_8h.html#a347aee615816580da90186164f5b6a34" title="Start a partial-output session for rank-local Green aggregate writes (phase 3a, Mode 1 / state-task-p...">GreenOutputSetPartialSuffix()</a>): opens this rank's private part file for <code>kind</code> instead of the shared aggregate file. The FIRST open of a given kind in the session unlinks any stale part file and creates it fresh ("w"); every subsequent open of the same kind in the same session appends ("a") &ndash; expec_* functions open/close a kind repeatedly across the state loop, once per evaluated eigenstate, and all of those writes must land in one contiguous per-rank file. Records attempted=1 on first attempt for the kind; open_error is sticky (once set, every later open of the same kind in the session fails immediately without touching the filesystem again).</p>
 <dl class="section return"><dt>Returns</dt><dd>0 on success, -1 on failure (including: kind is not aggregate for X, or the derived part/final path would exceed the manifest record's 256-byte path fields). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00365">365</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00379">379</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00322">GreenOutputManifestRecord::attempted</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="green__output_8c_source.html#l00328">GreenOutputManifestRecord::final_path</a>, <a class="el" href="green__output_8c_source.html#l00331">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00336">g_greenOutputPartialActive</a>, <a class="el" href="green__output_8c_source.html#l00337">g_greenOutputPartialRank</a>, <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00358">GreenOutputJoinOutputPath()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00053">GreenOutputOpenMode()</a>, <a class="el" href="green__output_8c_source.html#l00324">GreenOutputManifestRecord::open_error</a>, <a class="el" href="green__output_8c_source.html#l00323">GreenOutputManifestRecord::opened</a>, <a class="el" href="green__output_8c_source.html#l00327">GreenOutputManifestRecord::part_path</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00336">GreenOutputManifestRecord::attempted</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="green__output_8c_source.html#l00342">GreenOutputManifestRecord::final_path</a>, <a class="el" href="green__output_8c_source.html#l00345">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00350">g_greenOutputPartialActive</a>, <a class="el" href="green__output_8c_source.html#l00351">g_greenOutputPartialRank</a>, <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00372">GreenOutputJoinOutputPath()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00053">GreenOutputOpenMode()</a>, <a class="el" href="green__output_8c_source.html#l00338">GreenOutputManifestRecord::open_error</a>, <a class="el" href="green__output_8c_source.html#l00337">GreenOutputManifestRecord::opened</a>, <a class="el" href="green__output_8c_source.html#l00341">GreenOutputManifestRecord::part_path</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
 
@@ -577,18 +577,18 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="green__output_8c_source.html#l00042">GreenOutputUsesAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00365">GreenOutputOpenAggregate()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00379">GreenOutputOpenAggregate()</a>.</p>
 
 </div>
 </div>
-<a id="a3fd05599f717efbdc2d7caadafacb2c4" name="a3fd05599f717efbdc2d7caadafacb2c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3fd05599f717efbdc2d7caadafacb2c4">&#9670;&#160;</a></span>GreenOutputReportSectorFailure()</h2>
+<a id="a3523ff7830ca8c678f2af12e8019c152" name="a3523ff7830ca8c678f2af12e8019c152"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3523ff7830ca8c678f2af12e8019c152">&#9670;&#160;</a></span>GreenOutputReportFailure()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int GreenOutputReportSectorFailure </td>
+          <td class="memname">int GreenOutputReportFailure </td>
           <td>(</td>
           <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
           <td class="paramname"><em>X</em>, </td>
@@ -619,11 +619,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00143">143</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00152">152</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="symmetry__hamiltonian__io_8c_source.html#l00383">name</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00198">close_green_file()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00153">GreenOutputTruncateFile()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00197">close_green_file()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="green__output_8c_source.html#l00163">GreenOutputTruncateFile()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00184">open_green_file()</a>.</p>
 
 </div>
 </div>
@@ -652,9 +652,9 @@ Functions</h2></td></tr>
 </dl>
 <p>NOTE: partial-mode opens still go through <a class="el" href="FileIO_8c.html#a7d23a0790b28a52d128e0b93bc832cfb" title="Only the root process open file in output/ directory.">childfopenMPI()</a>/fopenMPI(), so on ranks other than 0 they only reach the real filesystem while ExpecLocal mode is active (see <a class="el" href="wrapperMPI_8h.html#aff930f2bd7493b14a01a95dde0397d94" title="ExpecLocal mode: per-rank, no-communication evaluation of FullDiag observables (phase 3a)....">ExpecLocalEnter()</a>/ExpecLocalLeave() in <a class="el" href="wrapperMPI_8h.html" title="Global variables related to MPI and OpenMP.">wrapperMPI.h</a>). The Mode 1 driver activates both together, in the actual order the driver runs them (<a class="el" href="phys__distributed__local_8c.html" title="ExpecMode 1 (state-task-parallel) MPI-free local observable loop; also completes whatever the ExpecMo...">src/phys_distributed_local.c</a> + <a class="el" href="phys__distributed_8c.html" title="ExpecMode 1 (state-task-parallel) FullDiag observables driver: MPI orchestration layer.">src/phys_distributed.c</a>): <a class="el" href="wrapperMPI_8h.html#aff930f2bd7493b14a01a95dde0397d94" title="ExpecLocal mode: per-rank, no-communication evaluation of FullDiag observables (phase 3a)....">ExpecLocalEnter()</a>; GreenOutputSetPartialSuffix(myrank); ... state loop ... <a class="el" href="green__output_8h.html#a63d8bd642c886bc2140f01cfe8ae9b78" title="End the current partial-output session. After this call, GreenOutputOpenAggregate()/GreenOutputCloseA...">GreenOutputClearPartialSuffix()</a>; <a class="el" href="wrapperMPI_8h.html#ab0a0f068368d495f801d98957ddff65e" title="Leave ExpecLocal mode. Asserts the mode was active.">ExpecLocalLeave()</a>; ... (rank-0 gather, collective) ... GreenOutputMergePartials(X); <a class="el" href="green__output_8h.html#a63d8bd642c886bc2140f01cfe8ae9b78" title="End the current partial-output session. After this call, GreenOutputOpenAggregate()/GreenOutputCloseA...">GreenOutputClearPartialSuffix()</a> runs before the collective <a class="el" href="green__output_8h.html#aecc17bf744e454e3022d340f316b9089" title="Rank 0 merges every rank&#39;s partial Green-output files into the final aggregate files,...">GreenOutputMergePartials()</a> (not after, as an earlier draft of this comment showed) &ndash; this is manifest-neutral: Clear only stops future opens from targeting the just-ended session's part-file suffix, it does not touch the manifest or delete any part file, so ending the session before Merge runs does not affect what Merge later reads. </p>
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00339">339</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00353">353</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00335">g_greenOutputCloseFailed</a>, <a class="el" href="green__output_8c_source.html#l00331">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00336">g_greenOutputPartialActive</a>, and <a class="el" href="green__output_8c_source.html#l00337">g_greenOutputPartialRank</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00349">g_greenOutputCloseFailed</a>, <a class="el" href="green__output_8c_source.html#l00345">g_greenOutputManifest</a>, <a class="el" href="green__output_8c_source.html#l00350">g_greenOutputPartialActive</a>, and <a class="el" href="green__output_8c_source.html#l00351">g_greenOutputPartialRank</a>.</p>
 
 </div>
 </div>
@@ -690,11 +690,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00212">212</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00218">218</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00202">GreenOutputTPQDataBaseName()</a>, <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00208">GreenOutputTPQDataBaseName()</a>, <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>, and <a class="el" href="green__output_8c_source.html#l00239">GreenOutputInitializeTPQDataFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="green__output_8c_source.html#l00245">GreenOutputInitializeTPQDataFile()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00097">TPQRestartRecoverOutputs()</a>.</p>
 
 </div>
 </div>
@@ -718,7 +718,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="green__output_8c_source.html#l00025">GreenOutputAggregateFamily()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00176">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, and <a class="el" href="green__output_8c_source.html#l00053">GreenOutputOpenMode()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="green__output_8c_source.html#l00182">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00053">GreenOutputOpenMode()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00097">TPQRestartRecoverOutputs()</a>.</p>
 
 </div>
 </div>
@@ -738,11 +738,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00196">196</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00202">202</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
 <p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00027">cTPQ</a>, <a class="el" href="DefCommon_8h_source.html#l00066">OUTPUTGREENFORMAT_AGGREGATE</a>, <a class="el" href="DefCommon_8h_source.html#l00023">TPQCalc</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>, <a class="el" href="green__output_8c_source.html#l00254">GreenOutputInitializeTPQDataAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00239">GreenOutputInitializeTPQDataFile()</a>, <a class="el" href="green__output_8c_source.html#l00212">GreenOutputTPQDataFileName()</a>, <a class="el" href="green__output_8c_source.html#l00287">GreenOutputWriteTPQFlctRow()</a>, <a class="el" href="green__output_8c_source.html#l00276">GreenOutputWriteTPQNormRow()</a>, and <a class="el" href="green__output_8c_source.html#l00263">GreenOutputWriteTPQSSRow()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="green__output_8c_source.html#l00268">GreenOutputInitializeTPQDataAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00245">GreenOutputInitializeTPQDataFile()</a>, <a class="el" href="green__output_8c_source.html#l00218">GreenOutputTPQDataFileName()</a>, <a class="el" href="green__output_8c_source.html#l00301">GreenOutputWriteTPQFlctRow()</a>, <a class="el" href="green__output_8c_source.html#l00290">GreenOutputWriteTPQNormRow()</a>, and <a class="el" href="green__output_8c_source.html#l00277">GreenOutputWriteTPQSSRow()</a>.</p>
 
 </div>
 </div>
@@ -776,7 +776,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="green__output_8c_source.html#l00025">GreenOutputAggregateFamily()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00474">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00404">expec_cisajs_HubbardGC()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00807">expec_cisajs_SpinGCGeneral()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00740">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00655">expec_cisajs_SpinGeneral()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00594">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00067">expec_cisajs_Symmetry()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00794">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00675">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l02000">expec_cisajscktalt_SpinGCGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01887">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01237">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00937">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00210">expec_cisajscktaltdc()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01581">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01520">expec_nbodyg_symmetry()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01357">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01743">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01072">expec_Threebody_SpinGeneral()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00062">write_symmetry_green_row()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00472">expec_cisajs_Hubbard()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00402">expec_cisajs_HubbardGC()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00805">expec_cisajs_SpinGCGeneral()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00738">expec_cisajs_SpinGCHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00653">expec_cisajs_SpinGeneral()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00592">expec_cisajs_SpinHalf()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00067">expec_cisajs_Symmetry()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00792">expec_cisajscktalt_Hubbard()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00673">expec_cisajscktalt_HubbardGC()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01998">expec_cisajscktalt_SpinGCGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01885">expec_cisajscktalt_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01235">expec_cisajscktalt_SpinGeneral()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00935">expec_cisajscktalt_SpinHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00209">expec_cisajscktaltdc()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01579">expec_Fourbody_SpinGCHalf()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01520">expec_nbodyg_symmetry()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01355">expec_Sixbody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01741">expec_Threebody_SpinGCHalf()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l01070">expec_Threebody_SpinGeneral()</a>, <a class="el" href="expec__trace_8c_source.html#l00524">expec_trace_onebody_output()</a>, <a class="el" href="expec__trace_8c_source.html#l00595">expec_trace_twobody_output()</a>, and <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00062">write_symmetry_green_row()</a>.</p>
 
 </div>
 </div>
@@ -818,11 +818,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00287">287</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00301">301</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -876,11 +876,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00276">276</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00290">290</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
 
 </div>
 </div>
@@ -922,11 +922,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00263">263</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="green__output_8c_source.html#l00277">277</a> of file <a class="el" href="green__output_8c_source.html">green_output.c</a>.</p>
 
-<p class="reference">References <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00061">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00096">CalcByTPQ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, and <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
 
 </div>
 </div>

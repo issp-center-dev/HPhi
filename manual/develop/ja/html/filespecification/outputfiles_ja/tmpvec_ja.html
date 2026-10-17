@@ -38,7 +38,10 @@
 <span id="subsec-restart"></span><h1>tmpvecファイル<a class="headerlink" href="#tmpvec" title="Link to this heading">¶</a></h1>
 <p>TPQ/cTPQ法およびLOBPCG（CG）法のlegacy <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> で使用する
 バイナリファイルです。基底状態Lanczos法はこの形式を使用せず、
-<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> と <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> を使用します。</p>
+<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> と <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> を使用します。
+新しいcheckpointは <a class="reference internal" href="restart_ja.html#subsec-restart-v3"><span class="std std-ref">v3 solver restartファイル</span></a> のv3 manifest形式を使い、
+<code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> を出力しません。legacy CGの <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> は追加反復数で、表示する
+反復labelを1から開始し、以前の <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefixを復旧しません。</p>
 <section id="id1">
 <h2>ファイル名<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <ul class="simple">

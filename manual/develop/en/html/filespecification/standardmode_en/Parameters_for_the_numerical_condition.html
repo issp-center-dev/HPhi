@@ -51,12 +51,35 @@ for starting calculation from scratch and generating a restart-file
 after the calculation finishes, <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code> for starting
 calculation with the restart-file generated in the previous run,
 <code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code> + <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>.</p>
+<p>CG, mTPQ, cTPQ and TimeEvolution use v3 continuation checkpoints in raw
+and <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. This release requires the same MPI process count
+and permits sector metadata layout 0/1 changes for v3. State import through
+<code class="docutils literal notranslate"><span class="pre">EigenVecIO=&quot;In&quot;</span></code> starts a new evaluation or time grid and is not solver
+continuation. Lanczos/spectrum restart remains a separate legacy path.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CheckpointInterval</span></code></p>
+<p><strong>Type :</strong> Non-negative integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> (default: omitted,
+equivalent to <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p>
+<p><strong>Description :</strong> Periodic v3 checkpoint interval for CG, mTPQ and cTPQ.
+Zero writes only at the end. A positive value requires <code class="docutils literal notranslate"><span class="pre">Restart_out</span></code> or
+<code class="docutils literal notranslate"><span class="pre">Restart</span></code>. TimeEvolution uses <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> instead. Standard mode
+writes this expert parameter only when it is specified.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code></p>
+<p><strong>Type :</strong> Non-negative integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> (default: omitted,
+equivalent to <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p>
+<p><strong>Description :</strong> Expected process count in restart or imported vector
+files. Zero means the current count. This release rejects a different
+saved count, so this value validates the source but does not redistribute
+it. Standard mode writes it only when specified.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Positive integer (default value: <code class="docutils literal notranslate"><span class="pre">2000</span></code>)</p>
 <p><strong>Description :</strong> The upper limit of the Lanczos/LOBCG/BiCG step and
 the number of steps for TPQ/Time=evolution are specified with this
-parameter.</p>
+parameter. For v3 continuation this is an absolute total/final bound;
+lowering it below the saved next step produces a valid no-op evaluation.
+Legacy CG and Lanczos retain their historical additional-step meaning.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>Type :</strong> Integer (default value: <code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p>

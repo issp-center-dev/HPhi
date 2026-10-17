@@ -10,6 +10,7 @@ var wrapperMPI_8c =
     [ "ExpecLocalError", "wrapperMPI_8c.html#a2e8c8c683b658389145e337fd4c6fd9a", null ],
     [ "ExpecLocalLeave", "wrapperMPI_8c.html#ab0a0f068368d495f801d98957ddff65e", null ],
     [ "ExpecLocalSetError", "wrapperMPI_8c.html#a0526428f7152437bfb0ba396db59aa17", null ],
+    [ "ExscanMPI_li", "wrapperMPI_8c.html#a0e077e31a1de6b8b8480877821aa97ca", null ],
     [ "fgetsMPI", "wrapperMPI_8c.html#a9436224cf1cda3468767ab28d9359e9a", null ],
     [ "fgetsMPIAllowComments", "wrapperMPI_8c.html#a099e95b0342590904014b1518b46cdbe", null ],
     [ "fgetsMPIImpl", "wrapperMPI_8c.html#aaeae5e7752af34cdc8ac7f828a4c1497", null ],

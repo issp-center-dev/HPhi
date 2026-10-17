@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>v3 solver restart files &#8212; HΦ Documentation 3.7.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=9814fe92" />
+    <script src="../../_static/documentation_options.js?v=86e43a22"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="DynamicalGreen.dat" href="DynamicalGreen_en.html" />
+    <link rel="prev" title="eigenvec.dat" href="excitedvec_en.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="v3-solver-restart-files">
+<span id="subsec-restart-v3"></span><h1>v3 solver restart files<a class="headerlink" href="#v3-solver-restart-files" title="Link to this heading">¶</a></h1>
+<p>CG, mTPQ, cTPQ and TimeEvolution use these files for <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> continuation.
+This release accepts only the same saved and current MPI process count; a
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> v3 continuation permits metadata layout 0/1 changes between
+<code class="docutils literal notranslate"><span class="pre">replicated</span></code> and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> without changing vector ownership or order.
+Independently published TPQ sets may therefore have different saved layouts;
+all rank files within one set must agree. Old sector v1/v2 imports still require
+the same layout. Rank redistribution is not supported in this release.</p>
+<section id="names-units-and-manifest">
+<h2>Names, units and manifest<a class="headerlink" href="#names-units-and-manifest" title="Link to this heading">¶</a></h2>
+<p>Vectors are named
+<code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_restart_set&lt;k&gt;_comp&lt;c&gt;_gen&lt;g&gt;_rank_&lt;r&gt;.dat</span></code>. <code class="docutils literal notranslate"><span class="pre">k</span></code> is a CG
+state, TPQ sample, or zero for TimeEvolution; component 0 is the state and CG
+component 1 is its search direction. The generation is 0 or 1. The publication
+unit is all states and both components for CG, one sample for TPQ/cTPQ, and set
+0 for TimeEvolution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_restart_manifest.dat</span></code> is the sole pointer to published data:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>hphi_restart_manifest 1
+method &lt;CG|TPQ|cTPQ|TimeEvolution&gt;
+basis &lt;raw|sector&gt;
+set &lt;k&gt; ranks &lt;P&gt; gen &lt;g&gt; step &lt;STEP&gt; ncomp &lt;1|2&gt;
+</pre></div>
+</div>
+<p>CG rows have one rank count, generation and step. TPQ rows are independent.
+<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> never modifies these files. A new <code class="docutils literal notranslate"><span class="pre">ReStart=1</span></code> publication
+replaces unrelated old rows. Writers create every <code class="docutils literal notranslate"><span class="pre">.part</span></code> file, rename the
+complete unit, then atomically publish the manifest. Only after publication
+are superseded files removed. The manifest therefore never names a partial
+unit.</p>
+</section>
+<section id="binary-header">
+<h2>Binary header<a class="headerlink" href="#binary-header" title="Link to this heading">¶</a></h2>
+<p>Each vector contains 40 little-endian unsigned 64-bit words, followed by
+<code class="docutils literal notranslate"><span class="pre">LOCAL_DIM</span></code> pairs of IEEE binary64 real and imaginary values. Vector index
+zero is omitted.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 4.6 </span><span class="caption-text">v3 header words</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 7.0%" />
+<col style="width: 22.0%" />
+<col style="width: 71.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>MAGIC</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0x0a31565349485048</span></code> (<code class="docutils literal notranslate"><span class="pre">HPHISV1\n</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>VERSION</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>PHASE</p></td>
+<td><p>Basis phase convention; checked even for import</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>SCALAR</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">128</span></code> for binary64 complex payloads</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>MODEL</p></td>
+<td><p>Normalized input model identity</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>NSITE</p></td>
+<td><p>Number of sites in the saved basis</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>NUP</p></td>
+<td><p>Fixed up count, otherwise zero</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>NDOWN</p></td>
+<td><p>Fixed down count, otherwise zero</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>NE</p></td>
+<td><p>Fixed particle count, otherwise zero</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>FULL_DIM</p></td>
+<td><p>Sector full dimension; zero for raw</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>DIM</p></td>
+<td><p>Global vector dimension</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>RANKS</p></td>
+<td><p>Saved MPI process count; equals the manifest row</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>RANK</p></td>
+<td><p>Saved rank index</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>LAYOUT</p></td>
+<td><p>2 for raw; 0 replicated or 1 distributed for sector</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>OFFSET</p></td>
+<td><p>Zero-based global start of this payload</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>LOCAL_DIM</p></td>
+<td><p>Number of payload entries</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>GROUP</p></td>
+<td><p>Sector group digest; zero for raw</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>SECTOR_COUNT</p></td>
+<td><p>Partition-independent sector count</p></td>
+</tr>
+<tr class="row-even"><td><p>18</p></td>
+<td><p>SECTOR_XOR</p></td>
+<td><p>Partition-independent sector XOR digest</p></td>
+</tr>
+<tr class="row-odd"><td><p>19</p></td>
+<td><p>SECTOR_SUM</p></td>
+<td><p>Partition-independent sector sum digest</p></td>
+</tr>
+<tr class="row-even"><td><p>20</p></td>
+<td><p>ORDER</p></td>
+<td><p>Sector global-order XOR digest</p></td>
+</tr>
+<tr class="row-odd"><td><p>21</p></td>
+<td><p>HAMILTONIAN</p></td>
+<td><p>Informational Hamiltonian digest; zero/unknown for raw</p></td>
+</tr>
+<tr class="row-even"><td><p>22</p></td>
+<td><p>METHOD</p></td>
+<td><p>Source <code class="docutils literal notranslate"><span class="pre">CalcType</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>23</p></td>
+<td><p>STATE</p></td>
+<td><p>Set index; equals the file name and manifest</p></td>
+</tr>
+<tr class="row-even"><td><p>24</p></td>
+<td><p>STEP</p></td>
+<td><p>Next iteration/step, or terminal CG row as selected by FLAGS</p></td>
+</tr>
+<tr class="row-odd"><td><p>25</p></td>
+<td><p>TIME</p></td>
+<td><p>TimeEvolution physical-time bits; zero otherwise</p></td>
+</tr>
+<tr class="row-even"><td><p>26</p></td>
+<td><p>DATA_XOR</p></td>
+<td><p>Partition-independent payload XOR digest</p></td>
+</tr>
+<tr class="row-odd"><td><p>27</p></td>
+<td><p>DATA_SUM</p></td>
+<td><p>Partition-independent payload sum digest</p></td>
+</tr>
+<tr class="row-even"><td><p>28</p></td>
+<td><p>LOCAL_SITE_MASK</p></td>
+<td><p>Kondo localized-site mask; zero otherwise</p></td>
+</tr>
+<tr class="row-odd"><td><p>29</p></td>
+<td><p>FIXED_FLAGS</p></td>
+<td><p>Raw fixed quantities or sector Kondo flags</p></td>
+</tr>
+<tr class="row-even"><td><p>30</p></td>
+<td><p>BASIS_KIND</p></td>
+<td><p>0 raw, 1 sector</p></td>
+</tr>
+<tr class="row-odd"><td><p>31</p></td>
+<td><p>COMPONENT</p></td>
+<td><p>0 state, 1 CG direction</p></td>
+</tr>
+<tr class="row-even"><td><p>32</p></td>
+<td><p>TOTAL2SZ</p></td>
+<td><p>Fixed raw <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> bit representation, otherwise zero</p></td>
+</tr>
+<tr class="row-odd"><td><p>33</p></td>
+<td><p>SITE_DIGEST</p></td>
+<td><p>Raw site/local-spin identity digest</p></td>
+</tr>
+<tr class="row-even"><td><p>34</p></td>
+<td><p>ORDER_SUM</p></td>
+<td><p>Sector global-order sum digest</p></td>
+</tr>
+<tr class="row-odd"><td><p>35</p></td>
+<td><p>NSET</p></td>
+<td><p>CG state count or source TPQ sample count; 1 for TE</p></td>
+</tr>
+<tr class="row-even"><td><p>36</p></td>
+<td><p>SCALAR_A</p></td>
+<td><p>CG eigenvalue or TPQ first norm</p></td>
+</tr>
+<tr class="row-odd"><td><p>37</p></td>
+<td><p>SCALAR_B</p></td>
+<td><p>cTPQ accumulated inverse temperature; zero otherwise</p></td>
+</tr>
+<tr class="row-even"><td><p>38</p></td>
+<td><p>SCALAR_C</p></td>
+<td><p>cTPQ <code class="docutils literal notranslate"><span class="pre">delta_tau</span></code>; zero otherwise</p></td>
+</tr>
+<tr class="row-odd"><td><p>39</p></td>
+<td><p>FLAGS</p></td>
+<td><p>Bit 0 marks a terminal converged CG checkpoint; other bits are invalid</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparison-and-digests">
+<h2>Comparison and digests<a class="headerlink" href="#comparison-and-digests" title="Link to this heading">¶</a></h2>
+<p>Across ranks of one set/component, only <code class="docutils literal notranslate"><span class="pre">RANK</span></code>, <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code> and
+<code class="docutils literal notranslate"><span class="pre">LOCAL_DIM</span></code> differ. CG state and direction components may additionally
+differ in <code class="docutils literal notranslate"><span class="pre">COMPONENT</span></code> and data digests. CG states may differ in <code class="docutils literal notranslate"><span class="pre">STATE</span></code>,
+data digests and <code class="docutils literal notranslate"><span class="pre">SCALAR_A</span></code>; all share step, flags, set count, generation
+and rank count. TPQ samples may have independent state, step, data/scalars
+and manifest rows, but their basis identity and method agree.</p>
+<p>The data digest hashes each global index and the exact real/imaginary bits,
+then reduces both XOR and unsigned sum across ranks. Sector order digests hash
+the global index, representative, orbit size and stabilizer size. The pair of
+reductions detects corruption and ordering changes without depending on the
+partition.</p>
+</section>
+<section id="recovery-and-legacy-selection">
+<h2>Recovery and legacy selection<a class="headerlink" href="#recovery-and-legacy-selection" title="Link to this heading">¶</a></h2>
+<p>For every required set, HPhi first uses a manifest row. A missing or corrupt
+referenced v3 file is fatal and never falls back to legacy data. Without a
+row, complete legacy files are validated and used. <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> starts a new
+set only if neither source exists; <code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> reports an error. v1/v2
+sector files are import-only. Legacy CG restarts additional iterations with
+labels starting at one and do not recover the old CG history prefix.</p>
+<p>History recovery preserves rows before <code class="docutils literal notranslate"><span class="pre">STEP</span></code>, removes later rows and an
+incomplete EOF fragment, and rejects corrupt interior text. Terminal CG keeps
+its already emitted terminal row only when it still satisfies the current
+convergence test. Aggregate TPQ rows are appended in execution order; compare
+multiple resumed sets after sorting by <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">step,</span> <span class="pre">observable)</span></code>.</p>
+</section>
+<section id="using-a-v3-vector-as-an-imported-state">
+<h2>Using a v3 vector as an imported state<a class="headerlink" href="#using-a-v3-vector-as-an-imported-state" title="Link to this heading">¶</a></h2>
+<p>Read the selected set and generation from the manifest. Copy every
+<code class="docutils literal notranslate"><span class="pre">..._restart_set&lt;k&gt;_comp0_gen&lt;g&gt;_rank_&lt;r&gt;.dat</span></code> file to the existing import
+name, <code class="docutils literal notranslate"><span class="pre">&lt;SpectrumVec&gt;_rank_&lt;r&gt;.dat</span></code> for TimeEvolution or
+<code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;r&gt;.dat</span></code> for CG. Keep all source rank
+files and set <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> to that count when specifying it. This
+release still requires that count, and for a sector the layout, to match the
+current run. Import starts a new solver clock; it is not continuation.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo_HPhi.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction_en.html">1. What is <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtouse/ho-index.html">2. How to use <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../fi-index.html">4. File specification</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../standardmode_en/index_standardmode_en.html">4.1. Input files for <em>Standard</em> mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expertmode_en/index_expertmode_en.html">4.2. Input files for <em>Expert</em> mode</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index_outputfiles_en.html">4.3. Output files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index_outputfiles_en.html#quick-reference">4.3.1. Quick Reference</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index_outputfiles_en.html#detailed-specifications">4.3.2. Detailed Specifications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical/index.html">6. Technical Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../related/index.html">7. Related Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgement_en.html">8. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../fi-index.html"><span class="section-number">4. </span>File specification</a><ul>
+  <li><a href="index_outputfiles_en.html"><span class="section-number">4.3. </span>Output files</a><ul>
+      <li>Previous: <a href="excitedvec_en.html" title="previous chapter">eigenvec.dat</a></li>
+      <li>Next: <a href="DynamicalGreen_en.html" title="next chapter">DynamicalGreen.dat</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2022, The University of Tokyo.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/filespecification/outputfiles_en/restart_en.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

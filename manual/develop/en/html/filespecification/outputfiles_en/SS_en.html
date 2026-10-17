@@ -38,10 +38,10 @@
 <span id="subsec-sste"></span><h1>SS.dat<a class="headerlink" href="#ss-dat" title="Link to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">(For the real time evolution method) This file is outputted to show
-the calculation results. In the current legacy restart path, this file
-is reopened in write mode; previous rows are replaced rather than
-appended. Preserve a copy before restarting if the earlier time series
-is required. An example of the file format is as follows.</div>
+the calculation results. A validated v3 or legacy continuation preserves
+complete rows before its saved next step, removes any later tail or partial
+EOF row, and then appends resumed rows. If the file is missing, only new
+rows can be written. An example of the file format is as follows.</div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span> # time, energy, phys_var, phys_doublon, phys_num, step_i
 0.0000000000000000  -6.0412438187293001 38.8635272290786489 ...

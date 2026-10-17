@@ -138,6 +138,11 @@ CalcModファイル
    1: 入力あり
    から選択することが出来ます。
 
+   状態importはsolver継続とは別です。CGは最適化を再開せず入力状態を評価し、
+   TimeEvolutionはstep 0から新しい時計を開始します。v3 importはsourceの
+   method/state/step/time/scalarを来歴として記録し、basis identityとphaseの一致を
+   検査します。copy手順は :ref:`Subsec:restart_v3` を参照してください。
+
 -  ``ReStart``
 
    **形式 :** int型 (デフォルト値 0)
@@ -149,15 +154,18 @@ CalcModファイル
    3: リスタートベクトル入力あり、出力なし
    から選択することが出来ます。
 
-   raw基底のTimeEvolutionでは、binary vectorのheaderに **次に実行するstep** を保存し、
-   途中保存と最終保存で同じ規約を使います。restartには全rankのstepが一致し、
-   ``[0, Lanczos_max)`` にあることが必要です。Hamiltonianと時刻列は前回と整合させてください。
-   ``ReStart=0`` は新しい初期状態として扱い、保存されたstepは使いません。
-   旧版の途中保存ファイルは完了したstepを保存していたため、restartに使う際にはheaderのstepを
-   1増やす必要があります。旧版の最終保存ファイルは既に次stepを保存していました。
-   raw最終vectorのファイル名は従来の ``<CDataFileHead>_eigenvec_0_rank_<rank>.dat`` を維持します。
-   途中保存のファイル名は完了したstep番号ですが、headerは次stepです。
-   欠損・truncation・非有限値・非互換な入力は全rankで異常終了します。
+   CG、mTPQ、cTPQ、TimeEvolutionはraw基底と ``TransSym`` 基底でv3 manifest形式を
+   使います。このreleaseでは保存時と現在のMPI process数が同じである必要があります。
+   sector v3継続ではmetadata layout 0/1の変更を許します。``ReStart=3`` はcheckpointを書き直しません。v3の
+   ``Lanczos_max`` は絶対的な最終上限です。小さくした上限でno-opになる場合、復元状態を
+   評価しますが、履歴行の追加とcheckpoint更新は行いません。CG収束終端checkpointは現在の
+   ``LanczosEps`` で再判定し、厳しい許容誤差では反復を再開できます。上限によるno-opは
+   現在の収束を主張しません。manifestが参照するv3 dataの欠損・破損はfatalで、legacyへ
+   fallbackしません。詳細は :ref:`Subsec:restart_v3` を参照してください。
+
+   legacy raw CG/TPQとTimeEvolutionは従来の意味で読込可能です。特にlegacy CGは追加反復の
+   labelを1から開始し、以前の ``Lanczos_Step`` prefixを復旧しません。基底状態Lanczosと
+   ``CalcSpec`` restartは別のlegacy経路です。
 
 -  ``CalcSpec``
 
@@ -506,8 +514,10 @@ FullDiag（2）はSolver 0/1/3（LAPACK/ScaLAPACK/ELPA）を使い、指定し�
 Hamiltonian入出力、非serial ExpecModeは非対応です。
 CGはsectorベクトルの読込・出力に対応し、TEは読込必須、出力任意です。
 どちらもFullDiagの固有状態を読み込めます。
-読込は新しい評価・時間列を開始する操作でありrestartではありません。
-全sector手法で ``ReStart`` は非対応です。機能表と実行可能なexpert入力例は
+読込は新しい評価・時間列を開始する操作です。これとは別にCG、TPQ、cTPQ、
+TimeEvolutionは同じprocess数でv3 solver継続に対応し、sector metadata layout 0/1の
+変更も許します。
+FullDiagとLanczosはこのsector継続経路を使いません。機能表と実行可能なexpert入力例は
 :ref:`Subsec:TransSym` を参照してください。
 
 .. raw:: latex

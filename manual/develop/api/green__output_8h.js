@@ -14,7 +14,7 @@ var green__output_8h =
       [ "GreenOutputTPQDataNorm", "green__output_8h.html#ac94a98dd43b6bb40823275a7f8d0f917a87dc3dc615656b48dadb9fd7db4e2c4c", null ],
       [ "GreenOutputTPQDataFlct", "green__output_8h.html#ac94a98dd43b6bb40823275a7f8d0f917a9a4c1cb7db20ed803eab8c07741991db", null ]
     ] ],
-    [ "GreenOutputAgreeSectorError", "green__output_8h.html#ab15b57d80c6edb0fcfe9f99592a6e63c", null ],
+    [ "GreenOutputAgreeError", "green__output_8h.html#a9eb4b702565d794125dda430486790f7", null ],
     [ "GreenOutputClearPartialSuffix", "green__output_8h.html#a63d8bd642c886bc2140f01cfe8ae9b78", null ],
     [ "GreenOutputCloseAggregate", "green__output_8h.html#a5983b362c0f4febffcbc812c4d83eeab", null ],
     [ "GreenOutputCloseChecked", "green__output_8h.html#ab80e5d0a66aa837aad8af699a793a57c", null ],
@@ -25,7 +25,7 @@ var green__output_8h =
     [ "GreenOutputMergePartials", "green__output_8h.html#aecc17bf744e454e3022d340f316b9089", null ],
     [ "GreenOutputOpenAggregate", "green__output_8h.html#add6be1b5e588d731466598c946040b88", null ],
     [ "GreenOutputOpenMode", "green__output_8h.html#a78630330b0df26ce2486679925226ddb", null ],
-    [ "GreenOutputReportSectorFailure", "green__output_8h.html#a3fd05599f717efbdc2d7caadafacb2c4", null ],
+    [ "GreenOutputReportFailure", "green__output_8h.html#a3523ff7830ca8c678f2af12e8019c152", null ],
     [ "GreenOutputSetPartialSuffix", "green__output_8h.html#a347aee615816580da90186164f5b6a34", null ],
     [ "GreenOutputTPQDataFileName", "green__output_8h.html#a1c4072927fb1f19e96de20149422dec3", null ],
     [ "GreenOutputUsesAggregate", "green__output_8h.html#a4fd882ab4154c3bfb2117156aa07aa67", null ],

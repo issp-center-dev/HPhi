@@ -117,6 +117,7 @@ $(document).ready(function(){initNavTree('CalcByTPQ_8c.html',''); initResizable(
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">CalcByTPQ.c File Reference</div></div>
 </div><!--header-->
@@ -132,6 +133,9 @@ $(document).ready(function(){initNavTree('CalcByTPQ_8c.html',''); initResizable(
 <code>#include &quot;<a class="el" href="nbody__correlation_8h_source.html">nbody_correlation.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="anomalous__pair_8h_source.html">anomalous_pair.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="green__output_8h_source.html">green_output.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="restart__checkpoint_8h_source.html">restart_checkpoint.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="restart__manifest_8h_source.html">restart_manifest.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="tpq__restart_8h_source.html">tpq_restart.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="CalcByTPQ_8h_source.html">CalcByTPQ.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="FileIO_8h_source.html">FileIO.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wrapperMPI_8h_source.html">wrapperMPI.h</a>&quot;</code><br />
@@ -139,8 +143,23 @@ $(document).ready(function(){initNavTree('CalcByTPQ_8c.html',''); initResizable(
 </div>
 <p><a href="CalcByTPQ_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a76b60d47d6a1dbc7d5e6af9192e17b8d" id="r_a76b60d47d6a1dbc7d5e6af9192e17b8d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#a76b60d47d6a1dbc7d5e6af9192e17b8d">HPHI_TPQ_REPORT_DRIVER_FAILURE</a>()&#160;&#160;&#160;do { } while (0)</td></tr>
+<tr class="separator:a76b60d47d6a1dbc7d5e6af9192e17b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7400ffb2fd64fa304c35616ad5f97ae" id="r_af7400ffb2fd64fa304c35616ad5f97ae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#af7400ffb2fd64fa304c35616ad5f97ae">TPQ_RETURN_ERROR</a>()&#160;&#160;&#160;do { <a class="el" href="tpq__restart_8h.html#ae9ad54932872726d02d5312528fd8102">TPQRestartFreePlan</a>(&amp;restart_plan); return -1; } while (0)</td></tr>
+<tr class="separator:af7400ffb2fd64fa304c35616ad5f97ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b1e63d3aeae316ec26e314c8538d0f2" id="r_a3b1e63d3aeae316ec26e314c8538d0f2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#a3b1e63d3aeae316ec26e314c8538d0f2">TPQ_AGREE_OR_RETURN</a>(status)</td></tr>
+<tr class="separator:a3b1e63d3aeae316ec26e314c8538d0f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ae9874be9ab4d7f46757ec6b69d569138" id="r_ae9874be9ab4d7f46757ec6b69d569138"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#ae9874be9ab4d7f46757ec6b69d569138">tpq_output_open</a> (const char *<a class="el" href="restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, const char *mode, FILE **fp)</td></tr>
+<tr class="separator:ae9874be9ab4d7f46757ec6b69d569138"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62d21ce1b18f36bd4563ade769ede3e5" id="r_a62d21ce1b18f36bd4563ade769ede3e5"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#a62d21ce1b18f36bd4563ade769ede3e5">tpq_output_close</a> (FILE **fp)</td></tr>
+<tr class="separator:a62d21ce1b18f36bd4563ade769ede3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a057d49893e677ec0d5319c1bcaab8613" id="r_a057d49893e677ec0d5319c1bcaab8613"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#a057d49893e677ec0d5319c1bcaab8613">tpq_expectation_status</a> (int status)</td></tr>
+<tr class="separator:a057d49893e677ec0d5319c1bcaab8613"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae03e6c3be031f570a98eaf087be6efd7" id="r_ae03e6c3be031f570a98eaf087be6efd7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTPQ_8c.html#ae03e6c3be031f570a98eaf087be6efd7">CalcByTPQ</a> (const int <a class="el" href="global_8c.html#a1e22af59b031f04f2928772d4b7f12af">NumAve</a>, const int ExpecInterval, struct <a class="el" href="structEDMainCalStruct.html">EDMainCalStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:ae03e6c3be031f570a98eaf087be6efd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main driver for TPQ calculation.  <br /></td></tr>
 <tr class="separator:ae03e6c3be031f570a98eaf087be6efd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,7 +185,75 @@ Functions</h2></td></tr>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a76b60d47d6a1dbc7d5e6af9192e17b8d" name="a76b60d47d6a1dbc7d5e6af9192e17b8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76b60d47d6a1dbc7d5e6af9192e17b8d">&#9670;&#160;</a></span>HPHI_TPQ_REPORT_DRIVER_FAILURE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HPHI_TPQ_REPORT_DRIVER_FAILURE</td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td>&#160;&#160;&#160;do { } while (0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00078">78</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
+
+</div>
+</div>
+<a id="a3b1e63d3aeae316ec26e314c8538d0f2" name="a3b1e63d3aeae316ec26e314c8538d0f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b1e63d3aeae316ec26e314c8538d0f2">&#9670;&#160;</a></span>TPQ_AGREE_OR_RETURN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TPQ_AGREE_OR_RETURN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">status</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">        <span class="keywordflow">do</span> { \</div>
+<div class="line">        <span class="keywordtype">int</span> tpq_local_failed = (status) != 0; \</div>
+<div class="line">        if (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(tpq_local_failed) != 0) { \</div>
+<div class="line">            <span class="comment">/* The probe marker lets MPI tests prove every rank crossed the \</span></div>
+<div class="line"><span class="comment">               agreement boundary before the top-level abort. */</span> \</div>
+<div class="line">            HPHI_TPQ_REPORT_DRIVER_FAILURE(); \</div>
+<div class="line">            fprintf(<a class="code hl_variable" href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a>, \</div>
+<div class="line">                    <span class="stringliteral">&quot;Error: mTPQ driver operation failed on one or more MPI ranks.\n&quot;</span>); \</div>
+<div class="line">            TPQ_RETURN_ERROR(); \</div>
+<div class="line">        } \</div>
+<div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="aglobal_8c_html_abacbc82cf67663cd6f3708f1274ac207"><div class="ttname"><a href="global_8c.html#abacbc82cf67663cd6f3708f1274ac207">stdoutMPI</a></div><div class="ttdeci">FILE * stdoutMPI</div><div class="ttdoc">File pointer to the standard output defined in InitializeMPI()</div><div class="ttdef"><b>Definition</b> <a href="global_8c_source.html#l00202">global.c:202</a></div></div>
+<div class="ttc" id="awrapperMPI_8h_html_aeab38d65c1c82094276a9b250b9a5049"><div class="ttname"><a href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a></div><div class="ttdeci">int SumMPI_i(int idim)</div><div class="ttdoc">MPI wrapper function to obtain sum of integer across processes.</div><div class="ttdef"><b>Definition</b> <a href="wrapperMPI_8c_source.html#l00458">wrapperMPI.c:458</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="af7400ffb2fd64fa304c35616ad5f97ae" name="af7400ffb2fd64fa304c35616ad5f97ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7400ffb2fd64fa304c35616ad5f97ae">&#9670;&#160;</a></span>TPQ_RETURN_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TPQ_RETURN_ERROR</td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td>&#160;&#160;&#160;do { <a class="el" href="tpq__restart_8h.html#ae9ad54932872726d02d5312528fd8102">TPQRestartFreePlan</a>(&amp;restart_plan); return -1; } while (0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="ae03e6c3be031f570a98eaf087be6efd7" name="ae03e6c3be031f570a98eaf087be6efd7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae03e6c3be031f570a98eaf087be6efd7">&#9670;&#160;</a></span>CalcByTPQ()</h2>
 
@@ -230,11 +317,121 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <p>Compute expectation value at infinite temperature</p>
 <p>Compute v1=0, and compute v0 = H*v1</p>
 
-<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00096">96</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00161">161</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
 
-<p class="reference">References <a class="el" href="struct_8h_source.html#l00543">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00046">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00064">cFileNameFlctRand</a>, <a class="el" href="global_8c_source.html#l00098">cFileNameInputVector</a>, <a class="el" href="global_8c_source.html#l00063">cFileNameNormRand</a>, <a class="el" href="global_8c_source.html#l00096">cFileNameOutputVector</a>, <a class="el" href="global_8c_source.html#l00061">cFileNameSSRand</a>, <a class="el" href="global_8c_source.html#l00062">cFileNameTPQStep</a>, <a class="el" href="struct_8h_source.html#l00533">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="LogMessage_8c_source.html#l00145">cLogFlctRand</a>, <a class="el" href="LogMessage_8c_source.html#l00150">cLogInputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00149">cLogInputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00144">cLogNormRand</a>, <a class="el" href="LogMessage_8c_source.html#l00152">cLogOutputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00151">cLogOutputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00143">cLogSSRand</a>, <a class="el" href="ProgressMessage_8c_source.html#l00043">cLogTPQ_End</a>, <a class="el" href="ProgressMessage_8c_source.html#l00042">cLogTPQ_Start</a>, <a class="el" href="LogMessage_8c_source.html#l00147">cLogTPQEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00142">cLogTPQRand</a>, <a class="el" href="LogMessage_8c_source.html#l00146">cLogTPQStep</a>, <a class="el" href="LogMessage_8c_source.html#l00154">cOutputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00153">cOutputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00079">cTPQStep</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Def</a>, <a class="el" href="struct_8h_source.html#l00477">PhysList::energy</a>, <a class="el" href="wrapperMPI_8c_source.html#l00221">exitMPI()</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00210">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00070">expec_energy_flct()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="FirstMultiply_8c_source.html#l00042">FirstMultiply()</a>, <a class="el" href="global_8c_source.html#l00161">global_1st_norm</a>, <a class="el" href="global_8c_source.html#l00160">global_norm</a>, <a class="el" href="green__output_8c_source.html#l00176">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00254">GreenOutputInitializeTPQDataAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00212">GreenOutputTPQDataFileName()</a>, <a class="el" href="green__output_8h_source.html#l00021">GreenOutputTPQDataFlct</a>, <a class="el" href="green__output_8h_source.html#l00020">GreenOutputTPQDataNorm</a>, <a class="el" href="green__output_8h_source.html#l00019">GreenOutputTPQDataSS</a>, <a class="el" href="green__output_8c_source.html#l00196">GreenOutputUsesTPQDataAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00287">GreenOutputWriteTPQFlctRow()</a>, <a class="el" href="green__output_8c_source.html#l00276">GreenOutputWriteTPQNormRow()</a>, <a class="el" href="green__output_8c_source.html#l00263">GreenOutputWriteTPQSSRow()</a>, <a class="el" href="struct_8h_source.html#l00425">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::iOutputDataHead</a>, <a class="el" href="struct_8h_source.html#l00088">DefineList::irand</a>, <a class="el" href="struct_8h_source.html#l00322">DefineList::iReStart</a>, <a class="el" href="struct_8h_source.html#l00087">DefineList::istep</a>, <a class="el" href="struct_8h_source.html#l00083">DefineList::Lanczos_max</a>, <a class="el" href="global_8c_source.html#l00157">LargeValue</a>, <a class="el" href="wrapperMPI_8c_source.html#l00351">MaxMPI_li()</a>, <a class="el" href="Multiply_8c_source.html#l00045">Multiply()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="struct_8h_source.html#l00066">DefineList::NsiteMPI</a>, <a class="el" href="global_8c_source.html#l00158">NumAve</a>, <a class="el" href="struct_8h_source.html#l00535">BindStruct::Phys</a>, <a class="el" href="DefCommon_8h_source.html#l00093">RESTART_IN</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="DefCommon_8h_source.html#l00090">RESTART_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::St</a>, <a class="el" href="time_8c_source.html#l00695">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="global_8c_source.html#l00162">step_spin</a>, <a class="el" href="time_8c_source.html#l00707">StopTimer()</a>, <a class="el" href="struct_8h_source.html#l00551">TimeKeepStruct::tend</a>, <a class="el" href="log_8c_source.html#l00117">TimeKeeperWithRandAndStep()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="struct_8h_source.html#l00549">TimeKeepStruct::tstart</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="tpq__restart_8h_source.html#l00013">TPQRestartPlan::any_resume</a>, <a class="el" href="struct_8h_source.html#l00547">EDMainCalStruct::Bind</a>, <a class="el" href="struct_8h_source.html#l00047">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00064">cFileNameFlctRand</a>, <a class="el" href="global_8c_source.html#l00098">cFileNameInputVector</a>, <a class="el" href="global_8c_source.html#l00063">cFileNameNormRand</a>, <a class="el" href="global_8c_source.html#l00061">cFileNameSSRand</a>, <a class="el" href="global_8c_source.html#l00062">cFileNameTPQStep</a>, <a class="el" href="struct_8h_source.html#l00537">BindStruct::Check</a>, <a class="el" href="struct_8h_source.html#l00041">ParamList::CheckpointInterval</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="LogMessage_8c_source.html#l00145">cLogFlctRand</a>, <a class="el" href="LogMessage_8c_source.html#l00150">cLogInputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00149">cLogInputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00144">cLogNormRand</a>, <a class="el" href="LogMessage_8c_source.html#l00152">cLogOutputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00151">cLogOutputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00143">cLogSSRand</a>, <a class="el" href="ProgressMessage_8c_source.html#l00043">cLogTPQ_End</a>, <a class="el" href="ProgressMessage_8c_source.html#l00042">cLogTPQ_Start</a>, <a class="el" href="LogMessage_8c_source.html#l00147">cLogTPQEnd</a>, <a class="el" href="LogMessage_8c_source.html#l00142">cLogTPQRand</a>, <a class="el" href="LogMessage_8c_source.html#l00146">cLogTPQStep</a>, <a class="el" href="LogMessage_8c_source.html#l00154">cOutputVecFinish</a>, <a class="el" href="LogMessage_8c_source.html#l00153">cOutputVecStart</a>, <a class="el" href="LogMessage_8c_source.html#l00079">cTPQStep</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00536">BindStruct::Def</a>, <a class="el" href="struct_8h_source.html#l00481">PhysList::energy</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00209">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00070">expec_energy_flct()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="FirstMultiply_8c_source.html#l00042">FirstMultiply()</a>, <a class="el" href="global_8c_source.html#l00163">global_1st_norm</a>, <a class="el" href="global_8c_source.html#l00162">global_norm</a>, <a class="el" href="green__output_8c_source.html#l00182">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00268">GreenOutputInitializeTPQDataAggregateFiles()</a>, <a class="el" href="green__output_8c_source.html#l00218">GreenOutputTPQDataFileName()</a>, <a class="el" href="green__output_8h_source.html#l00021">GreenOutputTPQDataFlct</a>, <a class="el" href="green__output_8h_source.html#l00020">GreenOutputTPQDataNorm</a>, <a class="el" href="green__output_8h_source.html#l00019">GreenOutputTPQDataSS</a>, <a class="el" href="green__output_8c_source.html#l00202">GreenOutputUsesTPQDataAggregate()</a>, <a class="el" href="green__output_8c_source.html#l00301">GreenOutputWriteTPQFlctRow()</a>, <a class="el" href="green__output_8c_source.html#l00290">GreenOutputWriteTPQNormRow()</a>, <a class="el" href="green__output_8c_source.html#l00277">GreenOutputWriteTPQSSRow()</a>, <a class="el" href="struct_8h_source.html#l00429">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00284">DefineList::iOutputDataHead</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::irand</a>, <a class="el" href="struct_8h_source.html#l00325">DefineList::iReStart</a>, <a class="el" href="struct_8h_source.html#l00088">DefineList::istep</a>, <a class="el" href="struct_8h_source.html#l00084">DefineList::Lanczos_max</a>, <a class="el" href="global_8c_source.html#l00159">LargeValue</a>, <a class="el" href="tpq__restart_8h_source.html#l00015">TPQRestartPlan::manifest</a>, <a class="el" href="Multiply_8c_source.html#l00045">Multiply()</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="struct_8h_source.html#l00067">DefineList::NsiteMPI</a>, <a class="el" href="global_8c_source.html#l00160">NumAve</a>, <a class="el" href="struct_8h_source.html#l00366">DefineList::Param</a>, <a class="el" href="struct_8h_source.html#l00539">BindStruct::Phys</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00013">RESTART_COMP_STATE</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00014">RESTART_READ_CONTINUATION</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_NONE</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_V3</a>, <a class="el" href="restart__manifest_8c_source.html#l00144">RestartManifestFind()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00475">RestartReadVector()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00036">RestartVectorInfo::scalar_a</a>, <a class="el" href="tpq__restart_8h_source.html#l00011">TPQRestartPlan::sources</a>, <a class="el" href="struct_8h_source.html#l00090">DefineList::St</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00032">RestartVectorInfo::step</a>, <a class="el" href="global_8c_source.html#l00161">step_i</a>, <a class="el" href="global_8c_source.html#l00164">step_spin</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="struct_8h_source.html#l00555">TimeKeepStruct::tend</a>, <a class="el" href="log_8c_source.html#l00117">TimeKeeperWithRandAndStep()</a>, <a class="el" href="CalcByTPQ_8c.html#a3b1e63d3aeae316ec26e314c8538d0f2">TPQ_AGREE_OR_RETURN</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00120">tpq_expectation_status()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00100">tpq_output_close()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00081">tpq_output_open()</a>, <a class="el" href="CalcByTPQ_8c.html#af7400ffb2fd64fa304c35616ad5f97ae">TPQ_RETURN_ERROR</a>, <a class="el" href="tpq__restart_8c_source.html#l00189">TPQRestartFreePlan()</a>, <a class="el" href="tpq__restart_8c_source.html#l00024">TPQRestartPlanSets()</a>, <a class="el" href="tpq__restart_8c_source.html#l00097">TPQRestartRecoverOutputs()</a>, <a class="el" href="tpq__restart_8c_source.html#l00173">TPQRestartWriteCheckpoint()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="struct_8h_source.html#l00553">TimeKeepStruct::tstart</a>, <a class="el" href="global_8c_source.html#l00133">v0</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00767">main()</a>.</p>
+
+</div>
+</div>
+<a id="a057d49893e677ec0d5319c1bcaab8613" name="a057d49893e677ec0d5319c1bcaab8613"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a057d49893e677ec0d5319c1bcaab8613">&#9670;&#160;</a></span>tpq_expectation_status()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int tpq_expectation_status </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>status</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00120">120</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
+
+</div>
+</div>
+<a id="a62d21ce1b18f36bd4563ade769ede3e5" name="a62d21ce1b18f36bd4563ade769ede3e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62d21ce1b18f36bd4563ade769ede3e5">&#9670;&#160;</a></span>tpq_output_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int tpq_output_close </td>
+          <td>(</td>
+          <td class="paramtype">FILE **&#160;</td>
+          <td class="paramname"><em>fp</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00100">100</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
+
+</div>
+</div>
+<a id="ae9874be9ab4d7f46757ec6b69d569138" name="ae9874be9ab4d7f46757ec6b69d569138"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9874be9ab4d7f46757ec6b69d569138">&#9670;&#160;</a></span>tpq_output_open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int tpq_output_open </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FILE **&#160;</td>
+          <td class="paramname"><em>fp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTPQ_8c_source.html#l00081">81</a> of file <a class="el" href="CalcByTPQ_8c_source.html">CalcByTPQ.c</a>.</p>
+
+<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>.</p>
 
 </div>
 </div>

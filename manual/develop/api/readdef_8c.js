@@ -34,6 +34,8 @@ var readdef_8c =
     [ "ResetInteractionNum", "readdef_8c.html#a4eaefb0cf68dd2e8cb6cc64b831d67da", null ],
     [ "ResolveSolver", "readdef_8c.html#a8b5690ffb749c6877cdbcc44422c6882", null ],
     [ "SetConvergenceFactor", "readdef_8c.html#a961b43e36e61cc013d0188dc268707a2", null ],
+    [ "SetRestartIdentity", "readdef_8c.html#ad3515a90eb8acf1ffe5afd4239a3218c", null ],
+    [ "ValidateRestartKeys", "readdef_8c.html#a24066f873acdf6945b137920c1a61afe", null ],
     [ "ValidateValue", "readdef_8c.html#a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a", null ],
     [ "cFileNameListFile", "readdef_8c.html#aa50055512dbd173f336dcf0387c280dc", null ],
     [ "cKWListOfFileNameList", "readdef_8c.html#a97b626327a0973224a8744d36b254429", null ],

@@ -5,14 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.6. Restart Mechanism &#8212; HΦ Documentation 3.7.1 documentation</title>
+    <title>6.6. Restart and state import &#8212; HΦ Documentation 3.7.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=9814fe92" />
     <script src="../_static/documentation_options.js?v=86e43a22"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="6.7. Parallel full diagonalization" href="parallel_fulldiag_en.html" />
@@ -34,72 +33,73 @@
 
           <div class="body" role="main">
             
-  <section id="restart-mechanism">
-<h1><span class="section-number">6.6. </span>Restart Mechanism<a class="headerlink" href="#restart-mechanism" title="Link to this heading">¶</a></h1>
-<p>This section describes the legacy restart and eigenvector-input
-mechanisms in <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>.</p>
-<section id="restart-modes">
-<h2><span class="section-number">6.6.1. </span><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> modes<a class="headerlink" href="#restart-modes" title="Link to this heading">¶</a></h2>
-<p>In the <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code> input file, <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> selects solver continuation:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: no restart</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: write restart data</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: read restart data and write updated restart data</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code>: read restart data</p></li>
-</ul>
-<p>The legacy files depend on the solver:</p>
-<ul class="simple">
-<li><p>Ground-state Lanczos writes <code class="docutils literal notranslate"><span class="pre">##_recalcvec_rank_$$.dat</span></code> and
-<code class="docutils literal notranslate"><span class="pre">##_TMComponents.dat</span></code>. The latter records the MPI process and OpenMP
-thread counts. A mismatch is rejected; an older file without the
-environment line is accepted with a warning.</p></li>
-<li><p>LOBPCG (CG), TPQ, and cTPQ write
-<code class="docutils literal notranslate"><span class="pre">tmpvec_set&amp;&amp;_rank_$$.dat</span></code>. These names do not contain
-<code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code>.</p></li>
-<li><p>Real-time evolution writes <code class="docutils literal notranslate"><span class="pre">##_eigenvec_&amp;&amp;_rank_$$.dat</span></code> when
-<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>. The header records the next step to execute.</p></li>
-</ul>
-<p>See the output-file reference for the binary layouts. These formats are
-platform-dependent.</p>
+  <section id="restart-and-state-import">
+<h1><span class="section-number">6.6. </span>Restart and state import<a class="headerlink" href="#restart-and-state-import" title="Link to this heading">¶</a></h1>
+<p>HPhi has three independent mechanisms. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> continues a solver from
+its saved algorithmic state. <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> imports a state for CG
+evaluation or as the first state of a new TimeEvolution clock. <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>
+4/5 resumes the Lanczos spectrum sequence through <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> and
+<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code>. Files from one mechanism must not be substituted for another.</p>
+<section id="solver-continuation">
+<h2><span class="section-number">6.6.1. </span>Solver continuation<a class="headerlink" href="#solver-continuation" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> has the following values in <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>: 0 disables continuation,
+1 starts a new run and writes checkpoints, 2 reads and updates checkpoints,
+and 3 reads checkpoints without rewriting them. The v3 manifest and vector
+format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>
+bases. This release requires the saved and current MPI process counts to be
+equal. Sector v3 continuation permits metadata layout changes between
+<code class="docutils literal notranslate"><span class="pre">replicated</span></code> (0) and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> (1); vector ownership and global order
+remain unchanged. Rank redistribution is not supported.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is an absolute final bound for v3 continuation. CG resumes at
+the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
+step. If the bound is below the saved CG iteration label, or at or below
+the saved TPQ/cTPQ/TimeEvolution next step, HPhi evaluates the restored state,
+does not add time-series rows, and does not rewrite a checkpoint. CG includes
+the iteration labeled <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code>, whereas TPQ/cTPQ/TimeEvolution exclude
+that step. A terminal CG checkpoint is rechecked with the current
+<code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code>. A stricter tolerance can resume iterations; an upper-limit
+no-op must not be described as currently converged.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CheckpointInterval</span></code> controls periodic CG, mTPQ and cTPQ checkpoints. Zero
+means end-only. TimeEvolution uses <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> for continuation
+checkpoints, and its time table must contain the saved next step. See
+<a class="reference internal" href="../filespecification/outputfiles_en/restart_en.html"><span class="doc">the restart file specification</span></a>.</p>
 </section>
-<section id="inputeigenvec-modes">
-<h2><span class="section-number">6.6.2. </span><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> modes<a class="headerlink" href="#inputeigenvec-modes" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> loads a saved eigenvector; it is distinct from
-<code class="docutils literal notranslate"><span class="pre">ReStart</span></code>:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: do not load an eigenvector.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: load the eigenvector and use it directly.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: load the eigenvector, apply <span class="math notranslate nohighlight">\(H\)</span> once, and normalize the
-resulting vector before evaluating observables (legacy Lanczos input
-path).</p></li>
-</ul>
-<p>Loading an eigenvector does not resume the eigensolver iteration.
-<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> writes the resulting eigenvector files.</p>
+<section id="state-import">
+<h2><span class="section-number">6.6.2. </span>State import<a class="headerlink" href="#state-import" title="Link to this heading">¶</a></h2>
+<p>State import validates the model, basis identity, sector and phase, payload
+length, norm and digest. Source method, state, step, time and solver scalars
+are provenance; they do not resume the source solver. CG evaluates an imported
+state. TimeEvolution starts at step zero on its current time grid. v3 imports
+currently require the same process count. Sector v3 imports permit metadata
+layout 0/1 changes, while old sector v1/v2 imports still require the same
+layout. Rank redistribution and v1/v2 layout relaxation are not supported in
+this release. The output-file reference gives the required copy procedure.</p>
 </section>
-<section id="iteration-limits">
-<h2><span class="section-number">6.6.3. </span>Iteration limits<a class="headerlink" href="#iteration-limits" title="Link to this heading">¶</a></h2>
-<p>For legacy Lanczos and LOBPCG restart, <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is the number of
-additional iterations after the saved point. For TPQ/cTPQ and real-time
-evolution it is the total step count, so it must exceed the saved step.</p>
+<section id="legacy-and-spectrum-behavior">
+<h2><span class="section-number">6.6.3. </span>Legacy and spectrum behavior<a class="headerlink" href="#legacy-and-spectrum-behavior" title="Link to this heading">¶</a></h2>
+<p>Legacy raw <code class="docutils literal notranslate"><span class="pre">tmpvec_set*_rank_*.dat</span></code> remains readable by CG and TPQ/cTPQ.
+Legacy CG keeps its historical additional-iteration meaning: iteration labels
+restart at one and the old <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix is not recovered. Legacy
+TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
+step when possible. Old sector v1/v2 files are state-import formats, not solver
+continuation checkpoints.</p>
+<p>Ground-state Lanczos and <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 4/5 retain their existing
+<code class="docutils literal notranslate"><span class="pre">TMComponents</span></code>/<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> behavior and iteration meaning. They do not use
+the v3 solver manifest.</p>
 </section>
-<section id="mpi-requirements">
-<h2><span class="section-number">6.6.4. </span>MPI requirements<a class="headerlink" href="#mpi-requirements" title="Link to this heading">¶</a></h2>
-<p>Each MPI process reads its own rank file. The number of MPI processes
-must match the run that wrote the legacy restart or eigenvector files;
-changing the process count is not supported by these formats. Use the
-same model, Hilbert-space decomposition, OpenMP thread count where
-required, and compatible executable architecture.</p>
-</section>
-<section id="legacy-output-limitations">
-<h2><span class="section-number">6.6.5. </span>Legacy output limitations<a class="headerlink" href="#legacy-output-limitations" title="Link to this heading">¶</a></h2>
-<p>The current real-time evolution continuation reopens <code class="docutils literal notranslate"><span class="pre">SS.dat</span></code> and
-<code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> in write mode, so earlier time-series rows are replaced.
-The legacy TPQ/cTPQ <code class="docutils literal notranslate"><span class="pre">tmpvec</span></code> file does not store
-<code class="docutils literal notranslate"><span class="pre">global_1st_norm</span></code>; continued <code class="docutils literal notranslate"><span class="pre">Norm_rand</span></code> rows therefore use zero in
-that column.</p>
-<p>Before a long continuation, keep backup copies of the restart files and
-the time-series outputs, and verify the conserved quantities after the
-restart.</p>
+<section id="output-recovery">
+<h2><span class="section-number">6.6.4. </span>Output recovery<a class="headerlink" href="#output-recovery" title="Link to this heading">¶</a></h2>
+<p>Before appending, HPhi validates every required checkpoint, removes complete
+rows at or after the recovery boundary, drops an incomplete final line, and
+rejects malformed interior rows. A missing history file is created and only
+new rows can then be written; a missing prefix cannot be reconstructed.
+Per-set files and CG/TimeEvolution histories reproduce uninterrupted row
+order. Shared TPQ aggregate files follow execution order, so compare them by
+sorted <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">step,</span> <span class="pre">observable)</span></code> keys when several sets resume.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> rows <code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">write</span></code> (7100), <code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">read</span></code> (7110)
+and <code class="docutils literal notranslate"><span class="pre">Restart</span> <span class="pre">recover</span> <span class="pre">outputs</span></code> (7120) measure v3 publication, continuation
+vector loading, and time-series validation/rewrite respectively. They are
+instrumentation totals, not a controlled storage benchmark.</p>
 </section>
 </section>
 
@@ -137,12 +137,11 @@ restart.</p>
 <li class="toctree-l2"><a class="reference internal" href="openmp_en.html">6.3. OpenMP Parallelization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="memory_en.html">6.4. Memory Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart Mechanism</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#restart-modes">6.6.1. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> modes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#inputeigenvec-modes">6.6.2. <code class="docutils literal notranslate"><span class="pre">InputEigenVec</span></code> modes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#iteration-limits">6.6.3. Iteration limits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mpi-requirements">6.6.4. MPI requirements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#legacy-output-limitations">6.6.5. Legacy output limitations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart and state import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#solver-continuation">6.6.1. Solver continuation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-import">6.6.2. State import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy-and-spectrum-behavior">6.6.3. Legacy and spectrum behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-recovery">6.6.4. Output recovery</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_en.html">6.7. Parallel full diagonalization</a></li>

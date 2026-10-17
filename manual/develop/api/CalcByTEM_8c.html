@@ -117,6 +117,7 @@ $(document).ready(function(){initNavTree('CalcByTEM_8c.html',''); initResizable(
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">CalcByTEM.c File Reference</div></div>
 </div><!--header-->
@@ -144,9 +145,17 @@ $(document).ready(function(){initNavTree('CalcByTEM_8c.html',''); initResizable(
 <code>#include &lt;inttypes.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__checkpoint_8h_source.html">symmetry_checkpoint.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="symmetry__te_8h_source.html">symmetry_te.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="restart__checkpoint_8h_source.html">restart_checkpoint.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="restart__manifest_8h_source.html">restart_manifest.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="restart__output_8h_source.html">restart_output.h</a>&quot;</code><br />
 </div>
 <p><a href="CalcByTEM_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a0d36895a1089bf2a6dbe7b73d98d8fc0" id="r_a0d36895a1089bf2a6dbe7b73d98d8fc0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a0d36895a1089bf2a6dbe7b73d98d8fc0">TE_AGREE_OR_RETURN</a>(call)</td></tr>
+<tr class="separator:a0d36895a1089bf2a6dbe7b73d98d8fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a406cb643e48539a16d8d3fa2e35e4433" id="r_a406cb643e48539a16d8d3fa2e35e4433"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a406cb643e48539a16d8d3fa2e35e4433">MakeTEDTransfer</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const int timeidx)</td></tr>
@@ -155,8 +164,18 @@ Functions</h2></td></tr>
 <tr class="memitem:aa92e7f454d59e5d2f77c5b1abced8a7d" id="r_aa92e7f454d59e5d2f77c5b1abced8a7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#aa92e7f454d59e5d2f77c5b1abced8a7d">MakeTEDInterAll</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const int timeidx)</td></tr>
 <tr class="memdesc:aa92e7f454d59e5d2f77c5b1abced8a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set interall interactions at timeidx-th time.  <br /></td></tr>
 <tr class="separator:aa92e7f454d59e5d2f77c5b1abced8a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05c11a9ff5ccda2fe91e5ea082c51dcc" id="r_a05c11a9ff5ccda2fe91e5ea082c51dcc"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a05c11a9ff5ccda2fe91e5ea082c51dcc">record_sector_te</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structSymmetryCheckpointInfo.html">SymmetryCheckpointInfo</a> *source, const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *view)</td></tr>
-<tr class="separator:a05c11a9ff5ccda2fe91e5ea082c51dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add3633a7053788a7681eb5d2ce0388bb" id="r_add3633a7053788a7681eb5d2ce0388bb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#add3633a7053788a7681eb5d2ce0388bb">te_open</a> (const char *<a class="el" href="restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, const char *mode, FILE **fp)</td></tr>
+<tr class="separator:add3633a7053788a7681eb5d2ce0388bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa555b06a8976730359803b77f9964d58" id="r_aa555b06a8976730359803b77f9964d58"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#aa555b06a8976730359803b77f9964d58">te_time_label</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *view, int step, double dt)</td></tr>
+<tr class="separator:aa555b06a8976730359803b77f9964d58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21ccc15391f826ff0c32df9a94a4fddd" id="r_a21ccc15391f826ff0c32df9a94a4fddd"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a21ccc15391f826ff0c32df9a94a4fddd">te_checkpoint_write</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int next_step, double time)</td></tr>
+<tr class="separator:a21ccc15391f826ff0c32df9a94a4fddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3792feee9e99bcd19f1eca7cf1d181f0" id="r_a3792feee9e99bcd19f1eca7cf1d181f0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a3792feee9e99bcd19f1eca7cf1d181f0">te_restore</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *view, double dt, int *step_initial, double *restored_time, int *is_v3, int *legacy_step)</td></tr>
+<tr class="separator:a3792feee9e99bcd19f1eca7cf1d181f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7e61ed07bbd8430757282ed14ae278b" id="r_af7e61ed07bbd8430757282ed14ae278b"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#af7e61ed07bbd8430757282ed14ae278b">te_recover_green</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structRestartSeriesRule.html">RestartSeriesRule</a> *rule)</td></tr>
+<tr class="separator:af7e61ed07bbd8430757282ed14ae278b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e14889bcdbcd352cc30e914484dc8ba" id="r_a3e14889bcdbcd352cc30e914484dc8ba"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a3e14889bcdbcd352cc30e914484dc8ba">record_sector_te</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structSymmetryCheckpointInfo.html">SymmetryCheckpointInfo</a> *source, const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *view, int continuation)</td></tr>
+<tr class="separator:a3e14889bcdbcd352cc30e914484dc8ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21cd871d7ccc485b0da64a0f191916c7" id="r_a21cd871d7ccc485b0da64a0f191916c7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#a21cd871d7ccc485b0da64a0f191916c7">write_sector_te_vector</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int step, double time, uint64_t state, int final)</td></tr>
 <tr class="separator:a21cd871d7ccc485b0da64a0f191916c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad18aaf5fd27c486799605050e800b553" id="r_ad18aaf5fd27c486799605050e800b553"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CalcByTEM_8c.html#ad18aaf5fd27c486799605050e800b553">write_raw_te_vector</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, int label, int next_step)</td></tr>
@@ -189,7 +208,31 @@ Functions</h2></td></tr>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a0d36895a1089bf2a6dbe7b73d98d8fc0" name="a0d36895a1089bf2a6dbe7b73d98d8fc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d36895a1089bf2a6dbe7b73d98d8fc0">&#9670;&#160;</a></span>TE_AGREE_OR_RETURN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TE_AGREE_OR_RETURN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">call</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span> { <span class="keywordtype">int</span> te_failed = (call) != 0; \</div>
+<div class="line">  if (<a class="code hl_function" href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a>(te_failed) != 0) return -1; } while (0)</div>
+<div class="ttc" id="awrapperMPI_8h_html_aeab38d65c1c82094276a9b250b9a5049"><div class="ttname"><a href="wrapperMPI_8h.html#aeab38d65c1c82094276a9b250b9a5049">SumMPI_i</a></div><div class="ttdeci">int SumMPI_i(int idim)</div><div class="ttdoc">MPI wrapper function to obtain sum of integer across processes.</div><div class="ttdef"><b>Definition</b> <a href="wrapperMPI_8c_source.html#l00458">wrapperMPI.c:458</a></div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00078">78</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="a337437e6d2bb71c13b9fd505a676411c" name="a337437e6d2bb71c13b9fd505a676411c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a337437e6d2bb71c13b9fd505a676411c">&#9670;&#160;</a></span>calc_by_tem()</h2>
 
@@ -257,11 +300,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 <dd>
 Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00174">174</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00259">259</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="wrapperMPI_8c_source.html#l00478">BcastMPI_i()</a>, <a class="el" href="struct_8h_source.html#l00543">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00060">c_InputEigenVectorStart</a>, <a class="el" href="struct_8h_source.html#l00046">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00104">cFileNameFlct</a>, <a class="el" href="global_8c_source.html#l00103">cFileNameNorm</a>, <a class="el" href="global_8c_source.html#l00102">cFileNameSS</a>, <a class="el" href="global_8c_source.html#l00101">cFileNameTEStep</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00533">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="LogMessage_8c_source.html#l00160">cLogFlct</a>, <a class="el" href="LogMessage_8c_source.html#l00159">cLogNorm</a>, <a class="el" href="LogMessage_8c_source.html#l00158">cLogSS</a>, <a class="el" href="ProgressMessage_8c_source.html#l00065">cLogTEM_End</a>, <a class="el" href="ProgressMessage_8c_source.html#l00064">cLogTEM_Start</a>, <a class="el" href="LogMessage_8c_source.html#l00157">cLogTEStep</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="LogMessage_8c_source.html#l00083">cTEStep</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Def</a>, <a class="el" href="struct_8h_source.html#l00478">PhysList::doublon</a>, <a class="el" href="struct_8h_source.html#l00479">PhysList::doublon2</a>, <a class="el" href="struct_8h_source.html#l00114">DefineList::EDNTransfer</a>, <a class="el" href="struct_8h_source.html#l00477">PhysList::energy</a>, <a class="el" href="struct_8h_source.html#l00039">ParamList::ExpandCoef</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00210">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00070">expec_energy_flct()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="readdef_8c_source.html#l04136">GetFileNameByKW()</a>, <a class="el" href="global_8c_source.html#l00160">global_norm</a>, <a class="el" href="green__output_8c_source.html#l00176">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="struct_8h_source.html#l00425">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00217">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="struct_8h_source.html#l00277">DefineList::iInputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00281">DefineList::iOutputDataHead</a>, <a class="el" href="struct_8h_source.html#l00276">DefineList::iOutputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00322">DefineList::iReStart</a>, <a class="el" href="struct_8h_source.html#l00087">DefineList::istep</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="struct_8h_source.html#l00083">DefineList::Lanczos_max</a>, <a class="el" href="CalcByTEM_8c_source.html#l00495">MakeTEDInterAll()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00472">MakeTEDTransfer()</a>, <a class="el" href="Multiply_8c_source.html#l00092">MultiplyForTEM()</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="struct_8h_source.html#l00174">DefineList::NInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00371">DefineList::NLaser</a>, <a class="el" href="struct_8h_source.html#l00391">DefineList::NTEInterAllMax</a>, <a class="el" href="struct_8h_source.html#l00367">DefineList::NTETimeSteps</a>, <a class="el" href="struct_8h_source.html#l00376">DefineList::NTETransferMax</a>, <a class="el" href="struct_8h_source.html#l00480">PhysList::num</a>, <a class="el" href="struct_8h_source.html#l00481">PhysList::num2</a>, <a class="el" href="struct_8h_source.html#l00038">ParamList::OutputInterval</a>, <a class="el" href="struct_8h_source.html#l00362">DefineList::Param</a>, <a class="el" href="struct_8h_source.html#l00535">BindStruct::Phys</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00226">ReadSymmetryCheckpoint()</a>, <a class="el" href="symmetry__te_8c_source.html#l00161">RebuildSymmetryTEPlan()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00075">record_sector_te()</a>, <a class="el" href="DefCommon_8h_source.html#l00090">RESTART_NOT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="symmetry__te_8c_source.html#l00040">SelectSymmetryTEHamiltonian()</a>, <a class="el" href="struct_8h_source.html#l00089">DefineList::St</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00159">step_i</a>, <a class="el" href="global_8c_source.html#l00162">step_spin</a>, <a class="el" href="wrapperMPI_8c_source.html#l00418">SumMPI_d()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__te_8c_source.html#l00018">SymmetryTETime()</a>, <a class="el" href="struct_8h_source.html#l00482">PhysList::Sz</a>, <a class="el" href="struct_8h_source.html#l00483">PhysList::Sz2</a>, <a class="el" href="struct_8h_source.html#l00368">DefineList::TETime</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="struct_8h_source.html#l00037">ParamList::TimeSlice</a>, <a class="el" href="struct_8h_source.html#l00036">ParamList::Tinit</a>, <a class="el" href="HPhiTrans_8c_source.html#l00092">TransferWithPeierls()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00131">v0</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="symmetry__te_8c_source.html#l00118">ValidateSymmetryTESchedule()</a>, <a class="el" href="struct_8h_source.html#l00485">PhysList::var</a>, <a class="el" href="CalcByTEM_8c_source.html#l00125">write_raw_te_vector()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00114">write_sector_te_vector()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="wrapperMPI_8c_source.html#l00478">BcastMPI_i()</a>, <a class="el" href="struct_8h_source.html#l00547">EDMainCalStruct::Bind</a>, <a class="el" href="LogMessage_8c_source.html#l00060">c_InputEigenVectorStart</a>, <a class="el" href="struct_8h_source.html#l00047">DefineList::CDataFileHead</a>, <a class="el" href="global_8c_source.html#l00106">cFileNameFlct</a>, <a class="el" href="global_8c_source.html#l00105">cFileNameNorm</a>, <a class="el" href="global_8c_source.html#l00104">cFileNameSS</a>, <a class="el" href="global_8c_source.html#l00103">cFileNameTEStep</a>, <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="struct_8h_source.html#l00537">BindStruct::Check</a>, <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="LogMessage_8c_source.html#l00160">cLogFlct</a>, <a class="el" href="LogMessage_8c_source.html#l00159">cLogNorm</a>, <a class="el" href="LogMessage_8c_source.html#l00158">cLogSS</a>, <a class="el" href="ProgressMessage_8c_source.html#l00065">cLogTEM_End</a>, <a class="el" href="ProgressMessage_8c_source.html#l00064">cLogTEM_Start</a>, <a class="el" href="LogMessage_8c_source.html#l00157">cLogTEStep</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="LogMessage_8c_source.html#l00083">cTEStep</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="struct_8h_source.html#l00536">BindStruct::Def</a>, <a class="el" href="struct_8h_source.html#l00482">PhysList::doublon</a>, <a class="el" href="struct_8h_source.html#l00483">PhysList::doublon2</a>, <a class="el" href="struct_8h_source.html#l00115">DefineList::EDNTransfer</a>, <a class="el" href="struct_8h_source.html#l00481">PhysList::energy</a>, <a class="el" href="struct_8h_source.html#l00039">ParamList::ExpandCoef</a>, <a class="el" href="anomalous__pair_8c_source.html#l00582">expec_anomalousg()</a>, <a class="el" href="expec__cisajs_8c_source.html#l00144">expec_cisajs()</a>, <a class="el" href="expec__cisajscktaltdc_8c_source.html#l00209">expec_cisajscktaltdc()</a>, <a class="el" href="expec__energy__flct_8c_source.html#l00070">expec_energy_flct()</a>, <a class="el" href="nbody__correlation_8c_source.html#l01597">expec_nbodyg()</a>, <a class="el" href="global_8h_source.html#l00025">FALSE</a>, <a class="el" href="readdef_8c_source.html#l04184">GetFileNameByKW()</a>, <a class="el" href="global_8c_source.html#l00162">global_norm</a>, <a class="el" href="green__output_8c_source.html#l00140">GreenOutputCloseChecked()</a>, <a class="el" href="green__output_8c_source.html#l00182">GreenOutputInitializeAggregateFiles()</a>, <a class="el" href="struct_8h_source.html#l00429">CheckList::idim_max</a>, <a class="el" href="struct_8h_source.html#l00218">DefineList::iFlgSymmetryBasis</a>, <a class="el" href="struct_8h_source.html#l00280">DefineList::iInputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00284">DefineList::iOutputDataHead</a>, <a class="el" href="struct_8h_source.html#l00279">DefineList::iOutputEigenVec</a>, <a class="el" href="struct_8h_source.html#l00325">DefineList::iReStart</a>, <a class="el" href="struct_8h_source.html#l00088">DefineList::istep</a>, <a class="el" href="readdef_8h_source.html#l00050">KWSpectrumVec</a>, <a class="el" href="struct_8h_source.html#l00084">DefineList::Lanczos_max</a>, <a class="el" href="CalcByTEM_8c_source.html#l00620">MakeTEDInterAll()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00597">MakeTEDTransfer()</a>, <a class="el" href="Multiply_8c_source.html#l00092">MultiplyForTEM()</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="struct_8h_source.html#l00175">DefineList::NInterAll_OffDiagonal</a>, <a class="el" href="struct_8h_source.html#l00375">DefineList::NLaser</a>, <a class="el" href="struct_8h_source.html#l00395">DefineList::NTEInterAllMax</a>, <a class="el" href="struct_8h_source.html#l00371">DefineList::NTETimeSteps</a>, <a class="el" href="struct_8h_source.html#l00380">DefineList::NTETransferMax</a>, <a class="el" href="struct_8h_source.html#l00484">PhysList::num</a>, <a class="el" href="struct_8h_source.html#l00485">PhysList::num2</a>, <a class="el" href="struct_8h_source.html#l00038">ParamList::OutputInterval</a>, <a class="el" href="struct_8h_source.html#l00366">DefineList::Param</a>, <a class="el" href="struct_8h_source.html#l00539">BindStruct::Phys</a>, <a class="el" href="symmetry__te_8c_source.html#l00161">RebuildSymmetryTEPlan()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00164">record_sector_te()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00067">RESTART_FORMAT_V3</a>, <a class="el" href="DefCommon_8h_source.html#l00093">RESTART_IN</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00497">RestartImportVector()</a>, <a class="el" href="restart__output_8c_source.html#l00008">RestartRecoverTimeSeries()</a>, <a class="el" href="symmetry__te_8c_source.html#l00040">SelectSymmetryTEHamiltonian()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00031">RestartVectorInfo::set</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="struct_8h_source.html#l00090">DefineList::St</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="global_8c_source.html#l00161">step_i</a>, <a class="el" href="global_8c_source.html#l00164">step_spin</a>, <a class="el" href="wrapperMPI_8c_source.html#l00418">SumMPI_d()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__te_8c_source.html#l00018">SymmetryTETime()</a>, <a class="el" href="struct_8h_source.html#l00486">PhysList::Sz</a>, <a class="el" href="struct_8h_source.html#l00487">PhysList::Sz2</a>, <a class="el" href="CalcByTEM_8c_source.html#l00078">TE_AGREE_OR_RETURN</a>, <a class="el" href="CalcByTEM_8c_source.html#l00100">te_checkpoint_write()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00081">te_open()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00149">te_recover_green()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>, <a class="el" href="struct_8h_source.html#l00372">DefineList::TETime</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="log_8c_source.html#l00042">TimeKeeper()</a>, <a class="el" href="log_8c_source.html#l00078">TimeKeeperWithStep()</a>, <a class="el" href="struct_8h_source.html#l00037">ParamList::TimeSlice</a>, <a class="el" href="struct_8h_source.html#l00036">ParamList::Tinit</a>, <a class="el" href="HPhiTrans_8c_source.html#l00092">TransferWithPeierls()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="global_8c_source.html#l00133">v0</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, <a class="el" href="symmetry__te_8c_source.html#l00118">ValidateSymmetryTESchedule()</a>, <a class="el" href="struct_8h_source.html#l00489">PhysList::var</a>, <a class="el" href="CalcByTEM_8c_source.html#l00210">write_raw_te_vector()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00199">write_sector_te_vector()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00458">CalcByTEM()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00583">CalcByTEM()</a>.</p>
 
 </div>
 </div>
@@ -291,9 +334,9 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00458">458</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00583">583</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="struct_8h_source.html#l00543">EDMainCalStruct::Bind</a>, <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>, <a class="el" href="struct_8h_source.html#l00532">BindStruct::Def</a>, <a class="el" href="symmetry__te_8c_source.html#l00033">FreeSymmetryTEHamiltonian()</a>, <a class="el" href="symmetry__te_8c_source.html#l00012">SymmetryTEIsDynamic()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="struct_8h_source.html#l00547">EDMainCalStruct::Bind</a>, <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>, <a class="el" href="struct_8h_source.html#l00536">BindStruct::Def</a>, <a class="el" href="symmetry__te_8c_source.html#l00033">FreeSymmetryTEHamiltonian()</a>, <a class="el" href="symmetry__te_8c_source.html#l00012">SymmetryTEIsDynamic()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="HPhiMain_8c_source.html#l00767">main()</a>.</p>
 
@@ -334,11 +377,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00495">495</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00620">620</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
 
 </div>
 </div>
@@ -377,16 +420,16 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00472">472</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00597">597</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
 <p class="reference">References <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
 
 </div>
 </div>
-<a id="a05c11a9ff5ccda2fe91e5ea082c51dcc" name="a05c11a9ff5ccda2fe91e5ea082c51dcc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05c11a9ff5ccda2fe91e5ea082c51dcc">&#9670;&#160;</a></span>record_sector_te()</h2>
+<a id="a3e14889bcdbcd352cc30e914484dc8ba" name="a3e14889bcdbcd352cc30e914484dc8ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e14889bcdbcd352cc30e914484dc8ba">&#9670;&#160;</a></span>record_sector_te()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -410,7 +453,13 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *&#160;</td>
-          <td class="paramname"><em>view</em>&#160;</td>
+          <td class="paramname"><em>view</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>continuation</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -425,11 +474,275 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00075">75</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00164">164</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__te_8h_source.html#l00012">SymmetryTEHamiltonian::digests</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00024">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__hamiltonian__io_8c_source.html#l00383">name</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="dSFMT_8h_source.html#l00115">PRIx64</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="symmetry__te_8c_source.html#l00018">SymmetryTETime()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__te_8h_source.html#l00012">SymmetryTEHamiltonian::digests</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="dSFMT_8h_source.html#l00115">PRIx64</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__te_8c_source.html#l00018">SymmetryTETime()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
+
+</div>
+</div>
+<a id="a21ccc15391f826ff0c32df9a94a4fddd" name="a21ccc15391f826ff0c32df9a94a4fddd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21ccc15391f826ff0c32df9a94a4fddd">&#9670;&#160;</a></span>te_checkpoint_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int te_checkpoint_write </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>next_step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>time</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00100">100</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00227">RestartWriteUnit()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00033">RestartVectorInfo::time</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
+
+</div>
+</div>
+<a id="add3633a7053788a7681eb5d2ce0388bb" name="add3633a7053788a7681eb5d2ce0388bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add3633a7053788a7681eb5d2ce0388bb">&#9670;&#160;</a></span>te_open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int te_open </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FILE **&#160;</td>
+          <td class="paramname"><em>fp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00081">81</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
+
+</div>
+</div>
+<a id="af7e61ed07bbd8430757282ed14ae278b" name="af7e61ed07bbd8430757282ed14ae278b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7e61ed07bbd8430757282ed14ae278b">&#9670;&#160;</a></span>te_recover_green()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int te_recover_green </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct <a class="el" href="structRestartSeriesRule.html">RestartSeriesRule</a> *&#160;</td>
+          <td class="paramname"><em>rule</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00149">149</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="green__output_8h_source.html#l00015">GreenOutputAnomalous</a>, <a class="el" href="green__output_8c_source.html#l00096">GreenOutputFileName()</a>, <a class="el" href="green__output_8c_source.html#l00047">GreenOutputKindUsesAggregate()</a>, <a class="el" href="green__output_8h_source.html#l00009">GreenOutputOneBody</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="restart__output_8c_source.html#l00008">RestartRecoverTimeSeries()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00078">TE_AGREE_OR_RETURN</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
+
+</div>
+</div>
+<a id="a3792feee9e99bcd19f1eca7cf1d181f0" name="a3792feee9e99bcd19f1eca7cf1d181f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3792feee9e99bcd19f1eca7cf1d181f0">&#9670;&#160;</a></span>te_restore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int te_restore </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *&#160;</td>
+          <td class="paramname"><em>view</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>step_initial</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>restored_time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>is_v3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>legacy_step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00110">110</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="struct_8h_source.html#l00375">DefineList::NLaser</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00013">RESTART_COMP_STATE</a>, <a class="el" href="DefCommon_8h_source.html#l00093">RESTART_IN</a>, <a class="el" href="DefCommon_8h_source.html#l00092">RESTART_INOUT</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00014">RESTART_READ_CONTINUATION</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_V3</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00585">RestartClassifySet()</a>, <a class="el" href="restart__manifest_8c_source.html#l00144">RestartManifestFind()</a>, <a class="el" href="restart__manifest_8c_source.html#l00178">RestartManifestFree()</a>, <a class="el" href="restart__manifest__io_8c_source.html#l00150">RestartManifestLoad()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00475">RestartReadVector()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00032">RestartVectorInfo::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00093">te_time_label()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00033">RestartVectorInfo::time</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
+
+</div>
+</div>
+<a id="aa555b06a8976730359803b77f9964d58" name="aa555b06a8976730359803b77f9964d58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa555b06a8976730359803b77f9964d58">&#9670;&#160;</a></span>te_time_label()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static double te_time_label </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct <a class="el" href="structSymmetryTEHamiltonian.html">SymmetryTEHamiltonian</a> *&#160;</td>
+          <td class="paramname"><em>view</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00093">93</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__te_8h_source.html#l00008">SymmetryTEHamiltonian::base</a>, <a class="el" href="symmetry__te_8c_source.html#l00018">SymmetryTETime()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>.</p>
 
 </div>
 </div>
@@ -473,11 +786,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00125">125</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00210">210</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__hamiltonian__io_8c_source.html#l00383">name</a>, <a class="el" href="global_8c_source.html#l00200">stdoutMPI</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
 
 </div>
 </div>
@@ -533,11 +846,11 @@ Kazuyoshi Yoshimi (The University of Tokyo) </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00114">114</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="CalcByTEM_8c_source.html#l00199">199</a> of file <a class="el" href="CalcByTEM_8c_source.html">CalcByTEM.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8c_source.html#l00197">myrank</a>, <a class="el" href="symmetry__hamiltonian__io_8c_source.html#l00383">name</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="global_8c_source.html#l00132">v1</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00166">WriteSymmetryCheckpoint()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00174">calc_by_tem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>.</p>
 
 </div>
 </div>

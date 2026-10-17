@@ -171,6 +171,11 @@ see <a class="reference internal" href="../outputfiles_en/eigenvec_en.html#subse
 <div class="line">0: Not input an eigenvector</div>
 <div class="line">1: Input an eigenvector.</div>
 </div>
+<p>State import is distinct from solver continuation. CG evaluates the
+supplied state without resuming optimization. TimeEvolution starts a new
+clock at step zero. v3 import records the source method, state, step, time
+and scalar values as provenance, while still requiring matching basis
+identity and phase. See <a class="reference internal" href="../outputfiles_en/restart_en.html#subsec-restart-v3"><span class="std std-ref">v3 solver restart files</span></a> for the copy procedure.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ReStart</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
@@ -181,18 +186,20 @@ see <a class="reference internal" href="../outputfiles_en/eigenvec_en.html#subse
 <div class="line">2: Input a restart vector and output a new restart vector</div>
 <div class="line">3: Input a restart vector.</div>
 </div>
-<p>For raw-basis TimeEvolution, the binary vector header stores the <strong>next</strong>
-step to execute. Periodic and final output use this same convention.
-A restart requires that step to be in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">Lanczos_max)</span></code> and identical
-across ranks. Keep the Hamiltonian and time grid consistent with the
-original run. With <code class="docutils literal notranslate"><span class="pre">ReStart=0</span></code> the input is a new initial state and its
-saved step is ignored.
-Older periodic TE files stored the completed step, so their header step
-must be incremented by one before use as a restart; older final files
-already stored the next step. The final raw vector retains the legacy
-<code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_eigenvec_0_rank_&lt;rank&gt;.dat</span></code> alias. Periodic filenames use
-the completed step as their index, even though the header stores the next
-step. Missing, truncated, non-finite or incompatible input fails collectively.</p>
+<p>CG, mTPQ, cTPQ and TimeEvolution use the v3 manifest format in raw and
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. The saved and current MPI process counts must match in
+this release; sector v3 continuation permits metadata layout 0/1 changes.
+<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> never rewrites the checkpoint. v3 <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is an
+absolute final bound. A no-op at a lowered bound evaluates the restored
+state without adding history rows or rewriting the checkpoint. A terminal
+CG checkpoint is rechecked with the current <code class="docutils literal notranslate"><span class="pre">LanczosEps</span></code>; a stricter
+tolerance can resume it, while an upper-limit no-op makes no current
+convergence claim. Missing or corrupt manifest-referenced v3 data is fatal
+and does not fall back to legacy files. See <a class="reference internal" href="../outputfiles_en/restart_en.html#subsec-restart-v3"><span class="std std-ref">v3 solver restart files</span></a>.</p>
+<p>Legacy raw CG/TPQ and TimeEvolution inputs remain readable with their
+historical meanings. In particular, legacy CG starts additional iteration
+labels at one and does not restore the old <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix.
+Ground-state Lanczos and <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> restart remain separate legacy paths.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code></p>
 <p><strong>Type :</strong> Int (default value: 0)</p>
@@ -536,9 +543,12 @@ for <code class="docutils literal notranslate"><span class="pre">CalcType=0,1,2,
 FullDiag (2) uses Solver 0/1/3 (LAPACK/ScaLAPACK/ELPA) and can write requested
 correlations and every eigenstate (<code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code>); MAGMA, vector input,
 Hamiltonian I/O and nonserial ExpecMode are unsupported.
-CG accepts sector vector import/export; TE requires sector vector import and
-optionally exports vectors. Both can import FullDiag eigenstates. Import starts a new evaluation/time grid, not a
-restart: <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> is unsupported for every sector method.
+CG accepts sector vector import/export; TE accepts sector vector import and
+optionally exports vectors. Both can import FullDiag eigenstates. Import starts
+a new evaluation/time grid. Separately, CG, TPQ, cTPQ and TimeEvolution support
+same-process-count v3 solver continuation, including sector metadata layout
+0/1 changes; FullDiag and Lanczos do
+not use that sector continuation path.
 For the full feature table and a runnable expert example, see <a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>.</p>
 </section>
 </section>

@@ -38,9 +38,10 @@
 <span id="subsec-ssrand"></span><h1>SS_rand.dat<a class="headerlink" href="#ss-rand-dat" title="Link to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">(For the TPQ method) This file is outputted to show the calculation
-results for the TPQ method. In the restart calculation, the values are
-added to the previous file. An example of the file format is as
-follows.</div>
+results for the TPQ method. Before continuation, rows at or after the
+validated saved next step and a partial EOF row are removed; resumed rows
+are then appended. Aggregate rows follow execution order, which can differ
+from an uninterrupted multi-set run. An example follows.</div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># inv_tmp, energy, phys_var, phys_doublon, phys_num, step_i
 0.017471  5.526334 45.390269 1.464589 6.000000 1
