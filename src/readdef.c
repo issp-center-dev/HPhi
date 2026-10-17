@@ -733,6 +733,34 @@ static char *ReadNBodyLineMPI(FILE *fp, size_t *len)
   return line;
 }
 
+/* Restart identity words are normalized here, after every definition file was interpreted and
+   before CheckMPI reduces the quantum numbers or sz() rewrites NConserved models. */
+void SetRestartIdentity(struct DefineList *X)
+{
+  int model = X->iCalcModel, flags = 0;
+  int ne_fixed = model == Hubbard || model == HubbardNConserved || model == Kondo || model == KondoNConserved ||
+                 model == tJ || model == tJNConserved || model == SpinlessFermion;
+  int nconserved = model == HubbardNConserved || model == KondoNConserved || model == tJNConserved;
+  if (ne_fixed) flags |= 1;
+  if (model == Spin || (ne_fixed && !nconserved && model != SpinlessFermion)) flags |= 2;   /* Spin covers general spin (iFlgGeneralSpin) */
+  X->iCalcModelInput = model;
+  X->iRestartFixedFlags = flags;
+}
+
+int ValidateRestartKeys(const struct DefineList *X)
+{
+  if (X->Param.CheckpointInterval > 0 && X->iCalcType == TimeEvolution) {
+    fprintf(stdoutMPI, "Error: CheckpointInterval is not used by TimeEvolution; use OutputInterval.\n");
+    return -1;
+  }
+  if (X->Param.CheckpointInterval > 0 &&
+      X->iReStart != RESTART_OUT && X->iReStart != RESTART_INOUT) {
+    fprintf(stdoutMPI, "Error: CheckpointInterval requires ReStart=1 or 2.\n");
+    return -1;
+  }
+  return 0;
+}
+
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
@@ -781,6 +809,8 @@ int ReadDefFileNInt(
   InitializeInteractionNum(X);
   NumAve=1;
   X->Param.ExpecInterval=1;
+  X->Param.CheckpointInterval=0;
+  X->RestartSourceRanks=0;
   cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
   X->PreCG = 0;
 
@@ -942,6 +972,22 @@ int ReadDefFileNInt(
                   return -1;
                 }
                 X->Param.OutputInterval=(int)dtmp;
+              }
+              else if(strcmp(ctmp, "CheckpointInterval")==0){
+                if (!isfinite(dtmp) || dtmp < 0 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: CheckpointInterval must be a non-negative integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->Param.CheckpointInterval=(int)dtmp;
+              }
+              else if(strcmp(ctmp, "RestartSourceRanks")==0){
+                if (!isfinite(dtmp) || dtmp < 0 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: RestartSourceRanks must be a non-negative integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->RestartSourceRanks=(int)dtmp;
               }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {
                 X->Param.ExpecInterval = (int) dtmp;
@@ -1531,6 +1577,8 @@ int ReadDefFileNInt(
   X->NdownMPI=X->Ndown;
   X->NupOrg=X->Nup;
   X->NdownOrg=X->Ndown;
+  SetRestartIdentity(X);
+  if (ValidateRestartKeys(X) != 0) return -1;
   return 0;
 }
 

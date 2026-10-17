@@ -237,6 +237,10 @@ int ReadDefFileNInt(
                     struct BoostList *xBoost
                     );
 
+int ValidateRestartKeys(
+                        const struct DefineList *X
+                        );
+
 int ReadDefFileIdxPara(
                        struct DefineList *X,
                        struct BoostList *xBoost

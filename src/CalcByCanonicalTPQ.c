@@ -22,6 +22,9 @@
 #include "anomalous_pair.h"
 #include "green_output.h"
 #include "MakeIniVec.h"
+#include "restart_checkpoint.h"
+#include "restart_manifest.h"
+#include "tpq_restart.h"
 #include "CalcByCanonicalTPQ.h"
 #include "FileIO.h"
 #include "wrapperMPI.h"
@@ -31,6 +34,7 @@
 #include <limits.h>
 #include "symmetry_sector.h"
 #ifdef HPHI_TEST_SYMMETRY_PROBE
+#include "symmetry_fulldiag_probe.h"
 #include "symmetry_sector_probe.h"
 #endif
 #ifdef MPI
@@ -44,6 +48,61 @@
  * @brief  File for giving functions of the canonical TPQ (cTPQ) method
  *
  */
+
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+static void ctpq_report_agreed_failure(const char *stage)
+{
+    fprintf(stdout, "cTPQ agreed failure stage=%s rank=%d\n", stage, myrank);
+    fflush(stdout);
+}
+#define HPHI_CTPQ_REPORT_DRIVER_FAILURE() \
+    ctpq_report_agreed_failure("driver")
+#else
+#define HPHI_CTPQ_REPORT_DRIVER_FAILURE() do { } while (0)
+#endif
+
+static int ctpq_output_open(const char *name, const char *mode, FILE **fp)
+{
+    int failed = childfopenMPI(name, mode, fp) != 0 || *fp == NULL;
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    if (SymmetryFullDiagTestFail("ctpq_output_open")) failed = 1;
+#endif
+    if (SumMPI_i(failed) == 0) return 0;
+    if (*fp != NULL) {
+        fclose(*fp);
+        *fp = NULL;
+    }
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    ctpq_report_agreed_failure("output_open");
+#endif
+    fprintf(stdoutMPI,
+            "Error: cTPQ output open failed on one or more MPI ranks.\n");
+    return -1;
+}
+
+static int ctpq_output_close(FILE **fp)
+{
+    int failed = *fp == NULL;
+    if (*fp != NULL) {
+        if (ferror(*fp) != 0) failed = 1;
+        if (fclose(*fp) != 0) failed = 1;
+        *fp = NULL;
+    }
+    if (SumMPI_i(failed) == 0) return 0;
+    fprintf(stdoutMPI,
+            "Error: cTPQ output close failed on one or more MPI ranks.\n");
+    return -1;
+}
+
+static int ctpq_expectation_status(int status)
+{
+    /* Expectation helpers have left any ExpecLocal session before returning.
+       Keep the injected rank-local status at that same driver boundary. */
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+    if (SymmetryFullDiagTestFail("ctpq_expec_status")) status = -1;
+#endif
+    return status;
+}
 
 /** 
  * 
@@ -73,12 +132,12 @@ int CalcByCanonicalTPQ(
     unsigned long int i_max;
     int step_i,step_iO=0;
     FILE *fp;
-    double inv_temp,Ns,delta_tau;
+    double inv_temp,delta_tau;
     struct TimeKeepStruct tstruct;
-    size_t byte_size;
     int green_output_initialized = 0;
     int tpq_data_output_initialized = 0;
     int tpq_data_output_aggregate = 0;
+    struct TPQRestartPlan restart_plan;
     /*[s] for inverse temperatures*/
     double *read_invtemp=NULL;
     int    *read_nmax=NULL,*read_physcal=NULL,*read_eigen=NULL; 
@@ -216,17 +275,41 @@ int CalcByCanonicalTPQ(
     X->Bind.Def.St=0;
     fprintf(stdoutMPI, "%s", cLogTPQ_Start);
     tpq_data_output_aggregate = GreenOutputUsesTPQDataAggregate(&(X->Bind));
+    if (TPQRestartPlanSets(&(X->Bind), rand_max, &restart_plan) != 0) {
+        free(read_invtemp); free(read_nmax); free(read_physcal); free(read_eigen);
+        return -1;
+    }
+    if (TPQRestartRecoverOutputs(&(X->Bind), &restart_plan,
+                                 tpq_data_output_aggregate) != 0) {
+        TPQRestartFreePlan(&restart_plan);
+        free(read_invtemp); free(read_nmax); free(read_physcal); free(read_eigen);
+        return -1;
+    }
+#define CTPQ_RETURN_ERROR() do { \
+        TPQRestartFreePlan(&restart_plan); \
+        free(read_invtemp); free(read_nmax); free(read_physcal); free(read_eigen); \
+        return -1; \
+    } while (0)
+#define CTPQ_AGREE_OR_RETURN(status) do { \
+        int ctpq_local_failed = (status) != 0; \
+        if (SumMPI_i(ctpq_local_failed) != 0) { \
+            /* The probe marker lets MPI tests prove every rank crossed the \
+               agreement boundary before the top-level abort. */ \
+            HPHI_CTPQ_REPORT_DRIVER_FAILURE(); \
+            fprintf(stdoutMPI, \
+                    "Error: cTPQ driver operation failed on one or more MPI ranks.\n"); \
+            CTPQ_RETURN_ERROR(); \
+        } \
+    } while (0)
     for (rand_i = 0; rand_i<rand_max; rand_i++){
+        int resumed_noop = 0;
         if(tpq_data_output_aggregate){
-            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataSS, sdt_phys) != 0) {
-                return -1;
-            }
-            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataNorm, sdt_norm) != 0) {
-                return -1;
-            }
-            if (GreenOutputTPQDataFileName(&(X->Bind), GreenOutputTPQDataFlct, sdt_flct) != 0) {
-                return -1;
-            }
+            CTPQ_AGREE_OR_RETURN(GreenOutputTPQDataFileName(
+                &(X->Bind), GreenOutputTPQDataSS, sdt_phys));
+            CTPQ_AGREE_OR_RETURN(GreenOutputTPQDataFileName(
+                &(X->Bind), GreenOutputTPQDataNorm, sdt_norm));
+            CTPQ_AGREE_OR_RETURN(GreenOutputTPQDataFileName(
+                &(X->Bind), GreenOutputTPQDataFlct, sdt_flct));
         }else if(X->Bind.Def.iOutputDataHead==1){
             int prefix_length;
             prefix_length = sprintf(sdt_phys, "%s_", X->Bind.Def.CDataFileHead);
@@ -240,89 +323,102 @@ int CalcByCanonicalTPQ(
             sprintf(sdt_norm, cFileNameNormRand, rand_i);
             sprintf(sdt_flct, cFileNameFlctRand, rand_i);
         }
-        Ns = 1.0 * X->Bind.Def.NsiteMPI;
         fprintf(stdoutMPI, cLogTPQRand, rand_i+1, rand_max);
         iret=0;
         X->Bind.Def.irand=rand_i;
+        step_i = 0;
 
         //Make or Read initial vector
-        if(X->Bind.Def.iReStart==RESTART_INOUT || X->Bind.Def.iReStart==RESTART_IN) {
+        if (restart_plan.sources[rand_i] != RESTART_SOURCE_NONE) {
+            struct RestartVectorInfo info;
             StartTimer(3600);
             TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
             fprintf(stdoutMPI, "%s", cLogInputVecStart);
-            sprintf(sdt, cFileNameInputVector, rand_i, myrank);
-            childfopenALL(sdt, "rb", &fp);
-            if(fp==NULL){
-                fprintf(stderr, "A file of Inputvector does not exist (rank %d).\n", myrank);
-                iret=1;
-            }
-            /* All ranks must agree on the fallback: tmpvec files are per-rank and a
-               partially missing set would otherwise split ranks across the restart
-               and fresh-start branches, whose MPI collectives do not match. */
-            iret = (int)MaxMPI_li((unsigned long int)iret);
-            if(iret==1){
-                if(fp != NULL) fclose(fp);
-                fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
-                StopTimer(3600);
-            }else{
-                byte_size = fread(&step_i, sizeof(step_i), 1, fp);
-                byte_size = fread(&i_max, sizeof(long int), 1, fp);
-                if(i_max != X->Bind.Check.idim_max){
-                    fprintf(stderr, "Error: A file of Inputvector is incorrect.\n");
-                    exitMPI(-1);
+            if (restart_plan.sources[rand_i] == RESTART_SOURCE_V3) {
+                const struct RestartManifestRow *row =
+                    RestartManifestFind(&restart_plan.manifest, (uint64_t)rand_i);
+                iret = RestartReadVector(&(X->Bind), row, RESTART_COMP_STATE,
+                                         RESTART_READ_CONTINUATION, v0, &info);
+                if (iret != 0) {
+                    StopTimer(3600);
                 }
-                byte_size = fread(v0, sizeof(complex double), X->Bind.Check.idim_max+1, fp);
-                TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
-                fprintf(stdoutMPI, "%s", cLogInputVecFinish);
-                fclose(fp);
-                StopTimer(3600);
-                X->Bind.Def.istep=step_i;
-                StartTimer(3200);
-                iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
-                StopTimer(3200);
-                if(iret != 0) return -1;
-                step_iO = step_i-1;
+                CTPQ_AGREE_OR_RETURN(iret);
+                step_i = (int)info.step;
+                global_1st_norm = info.scalar_a;
+                inv_temp = info.scalar_b;
+                delta_tau = info.scalar_c;
+            } else {
+                int read_failed = 0;
+                sprintf(sdt, cFileNameInputVector, rand_i, myrank);
+                read_failed = childfopenALL(sdt, "rb", &fp) != 0 || fp == NULL;
+                if (!read_failed)
+                    read_failed = fread(&step_i, sizeof(step_i), 1, fp) != 1 ||
+                                  fread(&i_max, sizeof(long int), 1, fp) != 1 ||
+                                  i_max != X->Bind.Check.idim_max ||
+                                  fread(v0, sizeof(complex double),
+                                        X->Bind.Check.idim_max + 1, fp) !=
+                                      X->Bind.Check.idim_max + 1;
+                if (fp != NULL && fclose(fp) != 0) read_failed = 1;
+                if (SumMPI_i(read_failed) != 0) {
+                    fprintf(stdoutMPI, "Error: legacy recovery payload read failed.\n");
+                    StopTimer(3600);
+                    CTPQ_RETURN_ERROR();
+                }
                 /* Legacy tmpvec stores only the vector: rebuild the uniform
                    imaginary-time grid and reset the first-norm column. */
                 delta_tau = 1.0 / LargeValue;
                 inv_temp = (double)(step_i - 1) * delta_tau;
                 global_1st_norm = 0.0;
-                if (byte_size == 0) printf("byte_size: %d \n", (int)byte_size);
             }
+            TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
+            fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+            StopTimer(3600);
+            X->Bind.Def.istep=step_i;
+            StartTimer(3200);
+            iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
+            StopTimer(3200);
+            CTPQ_AGREE_OR_RETURN(iret);
+            step_iO = step_i-1;
+            resumed_noop = step_i >= X->Bind.Def.Lanczos_max;
+            if (resumed_noop)
+                fprintf(stdoutMPI,
+                        "  cTPQ: no remaining steps (set %d, saved step %d, "
+                        "Lanczos_max %d).\n", rand_i, step_i,
+                        X->Bind.Def.Lanczos_max);
         }
-        if(X->Bind.Def.iReStart==RESTART_NOT || X->Bind.Def.iReStart==RESTART_OUT || iret ==1) {
+        if (restart_plan.sources[rand_i] == RESTART_SOURCE_NONE) {
+            if (X->Bind.Def.iReStart == RESTART_INOUT)
+                fprintf(stdoutMPI, "Start to calculate in normal procedure.\n");
             StartTimer(3600);
-            if (green_output_initialized == 0) {
-                if (GreenOutputInitializeAggregateFiles(&(X->Bind)) != 0) {
-                    return -1;
-                }
+            if (!restart_plan.any_resume && green_output_initialized == 0) {
+                CTPQ_AGREE_OR_RETURN(
+                    GreenOutputInitializeAggregateFiles(&(X->Bind)));
                 green_output_initialized = 1;
             }
             if (tpq_data_output_aggregate) {
-                if (tpq_data_output_initialized == 0) {
-                    if (GreenOutputInitializeTPQDataAggregateFiles(&(X->Bind)) != 0) {
-                        return -1;
-                    }
+                if (!restart_plan.any_resume && tpq_data_output_initialized == 0) {
+                    CTPQ_AGREE_OR_RETURN(
+                        GreenOutputInitializeTPQDataAggregateFiles(&(X->Bind)));
                     tpq_data_output_initialized = 1;
                 }
             } else {
-                if (childfopenMPI(sdt_phys, "w", &fp) != 0) {
-                    return -1;
+                if (ctpq_output_open(sdt_phys, "w", &fp) != 0) {
+                    CTPQ_RETURN_ERROR();
                 }
                 fprintf(fp, "%s", cLogSSRand);
-                fclose(fp);
+                if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
                 // for norm
-                if (childfopenMPI(sdt_norm, "w", &fp) != 0) {
-                    return -1;
+                if (ctpq_output_open(sdt_norm, "w", &fp) != 0) {
+                    CTPQ_RETURN_ERROR();
                 }
                 fprintf(fp, "%s", cLogNormRand);
-                fclose(fp);
+                if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
                 // for fluctuations
-                if (childfopenMPI(sdt_flct, "w", &fp) != 0) {
-                    return -1;
+                if (ctpq_output_open(sdt_flct, "w", &fp) != 0) {
+                    CTPQ_RETURN_ERROR();
                 }
                 fprintf(fp, "%s", cLogFlctRand);
-                fclose(fp);
+                if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
             }
             StopTimer(3600);
             step_i = 0;
@@ -338,14 +434,15 @@ int CalcByCanonicalTPQ(
             iret = MakeIniVec(rand_i, &(X->Bind));
             if (iret != 0) {
                 StopTimer(3100);
-                return -1;
             }
+            CTPQ_AGREE_OR_RETURN(iret);
 #ifdef HPHI_TEST_SYMMETRY_PROBE
-            if (SymmetryProbeWriteVector(&(X->Bind), v1, "initial", rand_i, 0,
-                                         global_1st_norm) != 0) {
+            iret = SymmetryProbeWriteVector(&(X->Bind), v1, "initial", rand_i,
+                                            0, global_1st_norm);
+            if (iret != 0) {
                 StopTimer(3100);
-                return -1;
             }
+            CTPQ_AGREE_OR_RETURN(iret);
 #endif
             /*[s] tau*/
             inv_temp  = 0.0;
@@ -353,46 +450,46 @@ int CalcByCanonicalTPQ(
             /*[e] tau*/
             StopTimer(3100);
             // for norm
-            if (childfopenMPI(sdt_norm, "a", &fp) != 0) {
-                return -1;
+            if (ctpq_output_open(sdt_norm, "a", &fp) != 0) {
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_1st_norm, global_1st_norm);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
             /**@brief
              Compute expectation value at infinite temperature
             */
             X->Bind.Def.istep = 0;
             StartTimer(3300);
-            iret=expec_cisajs(&(X->Bind), v1);
+            iret=ctpq_expectation_status(expec_cisajs(&(X->Bind), v1));
             StopTimer(3300);
-            if(iret !=0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
 
             StartTimer(3400);
             iret=expec_cisajscktaltdc(&(X->Bind), v1);
             StopTimer(3400);
-            if(iret !=0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
             iret=expec_nbodyg(&(X->Bind), v1);
-            if(iret !=0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
             iret=expec_anomalousg(&(X->Bind), v1);
-            if(iret !=0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
         
             StartTimer(3200);
             iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
             StopTimer(3200);
-            if(iret !=0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
             //inv_temp = 0; /* (2.0 / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);*/
-            if (childfopenMPI(sdt_phys, "a", &fp) != 0) {
-                return -1;
+            if (ctpq_output_open(sdt_phys, "a", &fp) != 0) {
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
             StartTimer(3600);
             // for fluctuations
-            if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
-                return -1;
+            if (ctpq_output_open(sdt_flct, "a", &fp) != 0) {
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
             StopTimer(3600);
             step_i += 1;
             X->Bind.Def.istep = step_i;
@@ -433,69 +530,68 @@ int CalcByCanonicalTPQ(
             StartTimer(3500);
             iret = MultiplyForCanonicalTPQ(&(X->Bind), delta_tau);
             StopTimer(3500);
-            if (iret != 0) return -1;
+            CTPQ_AGREE_OR_RETURN(iret);
 
             StartTimer(3200);
             iret=expec_energy_flct(&(X->Bind)); //v1 <- v0 and v0 = H*v1
             StopTimer(3200);
-            if(iret !=0) return -1;
-            //inv_temp = (2.0*step_i / Ns) / (LargeValue - X->Bind.Phys.energy / Ns);
+            CTPQ_AGREE_OR_RETURN(iret);
             //printf("step_i = %d  inv_temp = %lf delta_tau = %lf\n", step_i, inv_temp,delta_tau);
             inv_temp  += delta_tau;
             //temp      = 1.0/inv_temp;
 
             StartTimer(3600);
-            if(childfopenMPI(sdt_phys, "a", &fp)!=0){
-                return FALSE;
+            if(ctpq_output_open(sdt_phys, "a", &fp)!=0){
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQSSRow(fp, &(X->Bind), step_i, inv_temp);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
 
-            if(childfopenMPI(sdt_norm, "a", &fp)!=0){
-                return FALSE;
+            if(ctpq_output_open(sdt_norm, "a", &fp)!=0){
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQNormRow(fp, &(X->Bind), step_i, inv_temp, global_norm, global_1st_norm);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
 
             // for fluctuations
-            if (childfopenMPI(sdt_flct, "a", &fp) != 0) {
-                return -1;
+            if (ctpq_output_open(sdt_flct, "a", &fp) != 0) {
+                CTPQ_RETURN_ERROR();
             }
             GreenOutputWriteTPQFlctRow(fp, &(X->Bind), step_i, inv_temp);
-            fclose(fp);
+            if (ctpq_output_close(&fp) != 0) CTPQ_RETURN_ERROR();
             StopTimer(3600);
 
             if (flag_read_invtemp == 1){
                 if (read_physcal[step_i] == 1){
                     StartTimer(3300);
-                    iret=expec_cisajs(&(X->Bind),v1);
+                    iret=ctpq_expectation_status(expec_cisajs(&(X->Bind),v1));
                     StopTimer(3300);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
 
                     StartTimer(3400);
                     iret=expec_cisajscktaltdc(&(X->Bind), v1);
                     StopTimer(3400);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                     iret=expec_nbodyg(&(X->Bind), v1);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                     iret=expec_anomalousg(&(X->Bind), v1);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                 }
             }else{  
                 if (step_i%step_spin == 0){
                     StartTimer(3300);
-                    iret=expec_cisajs(&(X->Bind),v1);
+                    iret=ctpq_expectation_status(expec_cisajs(&(X->Bind),v1));
                     StopTimer(3300);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
 
                     StartTimer(3400);
                     iret=expec_cisajscktaltdc(&(X->Bind), v1);
                     StopTimer(3400);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                     iret=expec_nbodyg(&(X->Bind), v1);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                     iret=expec_anomalousg(&(X->Bind), v1);
-                    if(iret !=0) return -1;
+                    CTPQ_AGREE_OR_RETURN(iret);
                 }
             }
             if (flag_read_invtemp == 1 && read_eigen[step_i]==1){
@@ -511,19 +607,25 @@ int CalcByCanonicalTPQ(
                 fclose(fp);
                 TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
                 fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
-            }  
+            }
+            if ((X->Bind.Def.iReStart == RESTART_OUT ||
+                 X->Bind.Def.iReStart == RESTART_INOUT) &&
+                X->Bind.Def.Param.CheckpointInterval > 0 &&
+                step_i % X->Bind.Def.Param.CheckpointInterval == 0)
+                if (TPQRestartWriteCheckpoint(&(X->Bind), rand_i, step_i + 1,
+                                              global_1st_norm, inv_temp,
+                                              delta_tau) != 0)
+                    CTPQ_RETURN_ERROR();
         }
-        if(X->Bind.Def.iReStart== RESTART_OUT || X->Bind.Def.iReStart==RESTART_INOUT){
+        if (!resumed_noop &&
+            (X->Bind.Def.iReStart == RESTART_OUT ||
+             X->Bind.Def.iReStart == RESTART_INOUT)) {
             TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecStart, "a", rand_i, step_i);
             fprintf(stdoutMPI, "%s", cLogOutputVecStart);
-            sprintf(sdt, cFileNameOutputVector, rand_i, myrank);
-            if(childfopenALL(sdt, "wb", &fp)!=0){
-                exitMPI(-1);
-            }
-            fwrite(&step_i, sizeof(step_i), 1, fp);
-            fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max),1,fp);
-            fwrite(v1, sizeof(complex double),X->Bind.Check.idim_max+1, fp);
-            fclose(fp);
+            if (TPQRestartWriteCheckpoint(&(X->Bind), rand_i, step_i,
+                                          global_1st_norm, inv_temp,
+                                          delta_tau) != 0)
+                CTPQ_RETURN_ERROR();
             TimeKeeperWithRandAndStep(&(X->Bind), cFileNameTPQStep, cOutputVecFinish, "a", rand_i, step_i);
             fprintf(stdoutMPI, "%s", cLogOutputVecFinish);
         }
@@ -532,6 +634,7 @@ int CalcByCanonicalTPQ(
 
     tstruct.tend=time(NULL);
     fprintf(stdoutMPI, cLogTPQEnd, (int)(tstruct.tend-tstruct.tstart));
+    TPQRestartFreePlan(&restart_plan);
     /*[s] Free memory for inverse temperature data if it was read from a file */
     if (flag_read_invtemp == 1){
         free(read_invtemp);
@@ -540,6 +643,9 @@ int CalcByCanonicalTPQ(
         free(read_eigen);
     }
     /*[e] Free memory for inverse temperature data if it was read from a file */
+#undef CTPQ_RETURN_ERROR
+#undef CTPQ_AGREE_OR_RETURN
+#undef HPHI_CTPQ_REPORT_DRIVER_FAILURE
     return TRUE;
 }
 

@@ -1614,11 +1614,10 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     int open_failed = GreenOutputKindUsesAggregate(X, GreenOutputNBody)
         ? GreenOutputOpenAggregate(X, GreenOutputNBody, &fp) != 0
         : childfopenMPI(sdt, "w", &fp) != 0;
-    /* Only rank 0 opens the real file; agree before the sector collective. */
-    if (GreenOutputAgreeSectorError(X, open_failed) != 0) {
+    /* Only rank 0 opens the real file; agree before any numerical collective. */
+    if (GreenOutputAgreeError(X, open_failed) != 0) {
       if (fp != NULL) fclose(fp);
-      if (X->Def.iFlgSymmetryBasis == TRUE)
-        GreenOutputReportSectorFailure(X, GreenOutputNBody, sdt, "open");
+      GreenOutputReportFailure(X, GreenOutputNBody, sdt, "open");
       return -1;
     }
   }
@@ -1646,9 +1645,8 @@ int expec_nbodyg(struct BindStruct *X, double complex *vec)
     int close_failed = GreenOutputKindUsesAggregate(X, GreenOutputNBody)
         ? GreenOutputCloseAggregate(GreenOutputNBody, fp) != 0
         : GreenOutputCloseChecked(fp) != 0;
-    if (X->Def.iFlgSymmetryBasis == TRUE &&
-        GreenOutputAgreeSectorError(X, sector_status != 0 || close_failed) != 0) {
-      if (close_failed) GreenOutputReportSectorFailure(X, GreenOutputNBody, sdt, "close");
+    if (GreenOutputAgreeError(X, sector_status != 0 || close_failed) != 0) {
+      if (close_failed) GreenOutputReportFailure(X, GreenOutputNBody, sdt, "close");
       return -1;
     }
   }

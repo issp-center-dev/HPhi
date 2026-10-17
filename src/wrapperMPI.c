@@ -459,8 +459,8 @@ int SumMPI_i(
   int idim//!<[in] Value to be summed
 ) {
   /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above).
-     Not currently called from the expec_* layer, but kept on the frozen
-     ExpecLocal allow-list as harmless headroom. */
+     Observable output agreement uses this locally; the FullDiag driver
+     aggregates failures only after leaving the uneven owned-state loop. */
   if (iExpecLocal) return idim;
 #ifdef MPI
   int ierr;
@@ -571,3 +571,16 @@ double complex VecProdMPI(
 
   return(prod);
 }/*double complex VecProdMPI*/
+
+unsigned long int ExscanMPI_li(unsigned long int value)
+{
+#ifdef MPI
+  unsigned long int result = 0;
+  int ierr = MPI_Exscan(&value, &result, 1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+  if (ierr != 0) exitMPI(-1);
+  return myrank == 0 ? 0 : result;
+#else
+  (void)value;
+  return 0;
+#endif
+}

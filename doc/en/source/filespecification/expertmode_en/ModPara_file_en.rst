@@ -101,6 +101,25 @@ Common parameters
    "**xxx_Lanczos_cisajs.dat**" (xxx are the characters set by
    ``CDataFileHead``).
 
+*  ``CheckpointInterval``
+
+   **Type :** Int (non-negative, less than ``INT_MAX``; default value: 0)
+
+   **Description :** Period between v3 continuation checkpoints for CG,
+   mTPQ and cTPQ. Zero writes only the terminal checkpoint. A positive value
+   requires ``ReStart=1`` or 2. TimeEvolution does not use this parameter;
+   it uses ``OutputInterval``.
+
+*  ``RestartSourceRanks``
+
+   **Type :** Int (non-negative, less than ``INT_MAX``; default value: 0)
+
+   **Description :** Expected MPI process count in restart/import files.
+   Zero means the current process count. A positive value must match the
+   self-described v3 or sector file. This release rejects a saved count that
+   differs from the current run; the parameter validates the source and does
+   not enable redistribution.
+
 *  ``Nsite``
 
    **Type :** Int (positive integer)
@@ -235,7 +254,10 @@ CG method
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
    ``Lanczos_max``. For a legacy LOBPCG restart, ``Lanczos_max`` is the
-   number of **additional** iterations after the saved point.
+   number of **additional** iterations after the saved point. For a v3 CG
+   continuation it is the absolute final iteration label. If it is below the
+   saved next label, HPhi evaluates the restored vectors without iteration;
+   this upper-limit no-op does not assert current convergence.
 
 *  ``LanczosEps``
 
@@ -256,7 +278,9 @@ TPQ (mTPQ/cTPQ) method
 
    **Description :** The total number of TPQ steps is specified with
    this parameter. This remains an absolute total step count during a
-   TPQ/cTPQ restart and must be larger than the saved step.
+   TPQ/cTPQ restart. A value at or below the saved next step is a valid no-op:
+   HPhi evaluates the restored state without appending time-series rows or
+   rewriting the checkpoint.
 
 *  ``LargeValue``
 
@@ -419,7 +443,8 @@ Real time evolution method
 
    **Description :** The total number of real time evolution steps is
    specified with this parameter. This remains an absolute total step
-   count during restart and must be larger than the saved next step.
+   count during v3 restart. A value at or below the saved next step is a
+   valid no-op after the time-grid boundary has been validated.
 
 *  ``ExpandCoef``
 
@@ -453,7 +478,9 @@ Real time evolution method
    | **Description :** An integer giving the interval steps of output
      the wave function.
    | The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod``
-     file. A positive ``OutputInterval`` is then required. Explicit interval
+     file, and the v3 TimeEvolution continuation checkpoint is written when
+     ``ReStart=1`` or 2. A positive ``OutputInterval`` is required in either
+     case. The time table must contain the saved next step. Explicit interval
      and iteration-count values must be finite integers less than ``INT_MAX``.
 
 

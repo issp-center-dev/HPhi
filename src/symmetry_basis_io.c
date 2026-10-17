@@ -338,11 +338,11 @@ struct SymmetryMethodCapability {
 static const struct SymmetryMethodCapability symmetry_method_capabilities[] = {
   /* calc_type     name             enabled dist corr spec rest evout evin hout hin */
   { Lanczos,       "Lanczos",       1,      1,   1,   0,   0,   0,    0,   0,   0   },
-  { TPQCalc,       "TPQ",           1,      1,   1,   0,   0,   0,    0,   0,   0   },
+  { TPQCalc,       "TPQ",           1,      1,   1,   0,   1,   0,    0,   0,   0   },
   { FullDiag,      "FullDiag",      1,      0,   1,   0,   0,   1,    0,   1,   1   },
-  { CG,            "CG",            1,      1,   1,   0,   0,   1,    1,   0,   0   },
-  { TimeEvolution, "TimeEvolution", 1,      1,   1,   0,   0,   1,    1,   0,   0   },
-  { cTPQ,          "cTPQ",          1,      1,   1,   0,   0,   0,    0,   0,   0   },
+  { CG,            "CG",            1,      1,   1,   0,   1,   1,    1,   0,   0   },
+  { TimeEvolution, "TimeEvolution", 1,      1,   1,   0,   1,   1,    1,   0,   0   },
+  { cTPQ,          "cTPQ",          1,      1,   1,   0,   1,   0,    0,   0,   0   },
 };
 
 /* Fails to compile when a CalcType is added without a row in the table. */
@@ -528,7 +528,8 @@ static int validate_symmetry_method_capability(const struct DefineList *def)
   }
   if (cap->enabled == 0) return reject_unsupported_method(cap);
   if (def->iCalcType == TimeEvolution) {
-    if (def->iInputEigenVec != 1) {
+    if (def->iInputEigenVec != 1 && def->iReStart != RESTART_INOUT &&
+        def->iReStart != RESTART_IN) {
       fprintf(stdoutMPI, "Error: TransSym TimeEvolution requires sector checkpoint InputEigenVec=1.\n");
       return -1;
     }

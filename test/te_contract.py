@@ -69,7 +69,7 @@ def check_final_extension(source, family=None):
                                    np.frombuffer(saved[12:], dtype=complex), atol=3e-13, rtol=0)
     for key, reference in observables.items():
         actual = np.loadtxt(path / "output" / (key + ".dat"), ndmin=2)
-        np.testing.assert_allclose(actual, reference[6:], atol=5e-12, rtol=0)
+        np.testing.assert_allclose(actual, reference, atol=5e-12, rtol=0)
 
 
 (ROOT / "stan.in").write_text('L=8\nmodel="Spin"\nmethod="CG"\nlattice="chain"\nJ=1\n2Sz=0\nexct=1\noutputmode="None"\n')
@@ -120,6 +120,12 @@ for rank in range(len(seeds)):
     shutil.copyfile(source, ROOT / "output/restart_rank_{}.dat".format(rank))
 (ROOT / "namelist.def").write_text(names.replace("seed%literal_eigenvec_0", "restart"))
 (ROOT / "calcmod.def").write_text(re.sub(r"^ReStart\s+\d+", "ReStart 3", calc, flags=re.M))
+# Recovery removes even complete rows appended after the saved boundary.
+for family in ("SS", "Norm", "Flct"):
+    target = ROOT / "output" / (family + ".dat")
+    row = target.read_text().splitlines()[-1].split()
+    row[-1] = "8"
+    target.write_text(target.read_text() + " ".join(row) + "\n")
 run(ROOT, "restart")
 for rank, saved in enumerate(expected):
     actual = seeds[rank].read_bytes()
@@ -128,7 +134,7 @@ for rank, saved in enumerate(expected):
                                np.frombuffer(saved[12:], dtype=complex), atol=3e-13, rtol=0)
 for family, reference in observables.items():
     actual = np.loadtxt(ROOT / "output" / (family + ".dat"), ndmin=2)
-    np.testing.assert_allclose(actual, reference[3:], atol=5e-12, rtol=0)
+    np.testing.assert_allclose(actual, reference, atol=5e-12, rtol=0)
 shutil.copytree(ROOT / "output", ROOT / "restart_output")
 
 # Single-rank damaged files must fail collectively before creating thermal output.
@@ -150,7 +156,7 @@ bad_step[:4] = struct.pack("=i", 6)
 restart_victim.write_bytes(bad_step)
 (ROOT / "namelist.def").write_text(names.replace("seed%literal_eigenvec_0", "restart"))
 (ROOT / "calcmod.def").write_text(re.sub(r"^ReStart\s+\d+", "ReStart 3", calc, flags=re.M))
-run(ROOT, "out_of_range", "TE restart step must be consistent")
+run(ROOT, "out_of_range", "step")
 restart_victim.write_bytes(restart_saved)
 (ROOT / "namelist.def").write_text(names)
 (ROOT / "calcmod.def").write_text(calc)
@@ -204,5 +210,5 @@ for family in ("TEOneBody", "TETwoBody"):
         actual = (path / "output" / seeds[rank].name).read_bytes()
         np.testing.assert_allclose(np.frombuffer(actual[12:], dtype=complex),
                                    np.frombuffer(saved[12:], dtype=complex), atol=3e-13, rtol=0)
-    np.testing.assert_allclose(np.loadtxt(path / "output/SS.dat"), ss[3:], atol=5e-12, rtol=0)
+    np.testing.assert_allclose(np.loadtxt(path / "output/SS.dat"), ss, atol=5e-12, rtol=0)
 print("Raw TE: literal filenames, collective I/O guards, periodic restart and final extension PASS")

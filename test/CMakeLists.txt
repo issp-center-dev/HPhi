@@ -50,6 +50,59 @@ macro(add_hphi_mpi_test_with_srcdir test_name mode)
     )
 endmacro()
 
+add_executable(unittest_restart_manifest
+    ${CMAKE_SOURCE_DIR}/test/unit/restart_manifest_check.c
+    ${CMAKE_SOURCE_DIR}/src/restart_manifest.c)
+target_include_directories(unittest_restart_manifest PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include
+    ${CMAKE_SOURCE_DIR}/test/unit)
+add_test(NAME unittest_restart_manifest COMMAND unittest_restart_manifest)
+set_tests_properties(unittest_restart_manifest PROPERTIES LABELS "unit;restart")
+
+add_executable(unittest_restart_manifest_io
+    ${CMAKE_SOURCE_DIR}/test/unit/restart_manifest_io_check.c
+    ${CMAKE_SOURCE_DIR}/src/restart_manifest.c
+    ${CMAKE_SOURCE_DIR}/src/restart_manifest_io.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c)
+target_include_directories(unittest_restart_manifest_io PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include
+    ${CMAKE_SOURCE_DIR}/test/unit)
+target_compile_definitions(unittest_restart_manifest_io PRIVATE
+    DSFMT_MEXP=19937 HPHI_TEST_RESTART_IO)
+target_link_libraries(unittest_restart_manifest_io m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_restart_manifest_io ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_restart_manifest_io COMMAND unittest_restart_manifest_io)
+set_tests_properties(unittest_restart_manifest_io PROPERTIES LABELS "unit;restart")
+if(MPI_FOUND)
+    add_test(NAME unittest_restart_manifest_io_mpi
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:unittest_restart_manifest_io>
+                ${MPIEXEC_POSTFLAGS})
+    set_tests_properties(unittest_restart_manifest_io_mpi PROPERTIES
+        LABELS "unit;restart;mpi" PROCESSORS 4)
+    add_test(NAME unittest_restart_manifest_io_mpi_rank_local_assertion
+        COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/restart_manifest_io_assertion.sh
+                ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:unittest_restart_manifest_io>
+                --rank-local-assertion ${MPIEXEC_POSTFLAGS})
+    set_tests_properties(unittest_restart_manifest_io_mpi_rank_local_assertion
+        PROPERTIES LABELS "unit;restart;mpi" PROCESSORS 4 TIMEOUT 30)
+endif()
+
+add_executable(unittest_restart_output
+    ${CMAKE_SOURCE_DIR}/test/unit/restart_output_check.c
+    ${CMAKE_SOURCE_DIR}/src/restart_output_core.c)
+target_include_directories(unittest_restart_output PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include
+    ${CMAKE_SOURCE_DIR}/test/unit)
+target_compile_definitions(unittest_restart_output PRIVATE HPHI_TEST_RESTART_IO)
+add_test(NAME unittest_restart_output COMMAND unittest_restart_output)
+set_tests_properties(unittest_restart_output PROPERTIES LABELS "unit;restart")
+
 add_executable(unittest_symmetry_kondo
     ${CMAKE_SOURCE_DIR}/test/unittest_symmetry_kondo.c
     ${CMAKE_SOURCE_DIR}/src/makeHamSym.c
@@ -1103,6 +1156,7 @@ add_hphi_test_with_srcdir(tpq_spin_kagome_randomsphere)
 add_hphi_test(tpq_small_lanczos_max)
 add_hphi_test(tpq_restart_missing_vector_fallback)
 add_hphi_test(tpq_legacy_restart)
+add_hphi_test(restart_tpq_contract)
 
 set_tests_properties(
     tpq_spin_kagome tpq_spin_kagome_randomsphere
@@ -1116,6 +1170,8 @@ set_tests_properties(
 set_tests_properties(
     tpq_legacy_restart
     PROPERTIES LABELS "tpq;restart;validation" TIMEOUT 600)
+set_tests_properties(restart_tpq_contract
+    PROPERTIES LABELS "restart;tpq;validation" TIMEOUT 900)
 
 #
 # cTPQ
@@ -1124,6 +1180,8 @@ add_hphi_test_with_srcdir(ctpq_spin_kagome)
 add_hphi_test_with_srcdir(ctpq_spin_kagome_randomsphere)
 add_hphi_test_with_srcdir(read_ctpq_spin_chain)
 add_hphi_test(ctpq_invtemp_validation)
+add_test(NAME restart_ctpq_contract
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/restart_tpq_contract.sh ctpq)
 
 set_tests_properties(
     ctpq_spin_kagome ctpq_spin_kagome_randomsphere read_ctpq_spin_chain
@@ -1131,6 +1189,8 @@ set_tests_properties(
 set_tests_properties(
     ctpq_invtemp_validation
     PROPERTIES LABELS "ctpq;validation")
+set_tests_properties(restart_ctpq_contract
+    PROPERTIES LABELS "restart;tpq;ctpq;validation" TIMEOUT 900)
 
 #
 # Three body for spin 1 Heisenberg chain
@@ -1138,6 +1198,11 @@ set_tests_properties(
 # Regression test for run_with_mpi_precheck.sh itself (no HPhi / MPI launch).
 add_hphi_test_with_srcdir(precheck_modes)
 set_tests_properties(precheck_modes PROPERTIES LABELS "validation")
+
+add_hphi_test(restart_input_validation)
+set_tests_properties(
+    restart_input_validation
+    PROPERTIES LABELS "restart;validation;input")
 
 # spin-1 model: MPI ranks must be a power of 3 (serial run is also allowed).
 add_hphi_mpi_test_with_srcdir(lobcg_spinone_chain_threebody pow:3)
@@ -1613,3 +1678,55 @@ endif()
 set_tests_properties(symmetry_kondo_basis symmetry_kondo_observables
     symmetry_kondo_checkpoint symmetry_kondo_thermal symmetry_kondo_te
     symmetry_kondo_fulldiag PROPERTIES TIMEOUT 1800)
+
+add_executable(unittest_restart_digest ${CMAKE_SOURCE_DIR}/test/unit/restart_digest_check.c ${CMAKE_SOURCE_DIR}/src/restart_digest.c)
+target_include_directories(unittest_restart_digest PRIVATE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/test/unit)
+add_test(NAME unittest_restart_digest COMMAND unittest_restart_digest)
+set_tests_properties(unittest_restart_digest PROPERTIES LABELS "unit;restart")
+
+add_executable(unittest_restart_checkpoint
+    ${CMAKE_SOURCE_DIR}/test/unit/restart_checkpoint_check.c
+    ${CMAKE_SOURCE_DIR}/src/restart_checkpoint.c
+    ${CMAKE_SOURCE_DIR}/src/restart_digest.c
+    ${CMAKE_SOURCE_DIR}/src/restart_manifest.c
+    ${CMAKE_SOURCE_DIR}/src/restart_manifest_io.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c)
+target_include_directories(unittest_restart_checkpoint PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/test/unit)
+target_compile_definitions(unittest_restart_checkpoint PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_restart_checkpoint m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_restart_checkpoint ${MPI_C_LIBRARIES})
+endif()
+add_test(NAME unittest_restart_checkpoint COMMAND unittest_restart_checkpoint)
+set_tests_properties(unittest_restart_checkpoint PROPERTIES LABELS "unit;restart" TIMEOUT 60)
+if(MPI_FOUND)
+    add_test(NAME unittest_restart_checkpoint_mpi
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4
+                ${MPIEXEC_PREFLAGS} $<TARGET_FILE:unittest_restart_checkpoint>
+                ${MPIEXEC_POSTFLAGS})
+    set_tests_properties(unittest_restart_checkpoint_mpi PROPERTIES
+        LABELS "unit;restart;mpi" PROCESSORS 4 TIMEOUT 60)
+endif()
+
+add_hphi_test(restart_cg_contract)
+set_tests_properties(restart_cg_contract PROPERTIES LABELS "restart;cg;validation" TIMEOUT 900)
+
+add_hphi_test(restart_cg_noop)
+set_tests_properties(restart_cg_noop PROPERTIES LABELS "restart;cg;validation" TIMEOUT 900)
+
+add_hphi_test(restart_publish_failures)
+set_tests_properties(restart_publish_failures PROPERTIES
+    LABELS "restart;validation" TIMEOUT 1200)
+
+add_hphi_test(restart_legacy_compat)
+set_tests_properties(restart_legacy_compat PROPERTIES
+    LABELS "restart;validation" TIMEOUT 1200)
+
+add_hphi_test(restart_te_contract)
+set_tests_properties(restart_te_contract PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)
+
+add_hphi_test(restart_import)
+set_tests_properties(restart_import PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)

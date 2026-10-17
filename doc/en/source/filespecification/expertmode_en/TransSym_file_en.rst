@@ -221,8 +221,10 @@ Use rules
    other by a symmetry operation have the same value, and an operator that
    leaves the sector gives zero. For canonical ``Spin``,
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected at startup as in the
-   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG``, spectrum
-   calculations and restart are not supported together with this file.
+   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG`` and
+   spectrum calculations are not supported together with this file. CG,
+   mTPQ, cTPQ and TimeEvolution support v3 solver continuation with the same
+   MPI process count, including metadata layout 0/1 changes.
    Eigenvector I/O is available for CG and
    TimeEvolution through the sector checkpoint format below; FullDiag can
    export every eigenstate in that format. Hamiltonian input and output are
@@ -339,7 +341,10 @@ products can be written as ``InterAll``. An empty Hamiltonian is valid.
      - No / No
      - Both
 
-Both layouts mean ``replicated`` and ``distributed``. MPI ranks with no
+Both layouts mean ``replicated`` and ``distributed``. CG, mTPQ, cTPQ and
+TimeEvolution support v3 continuation with the same process count, including
+metadata layout 0/1 changes;
+this is separate from the state import/export column. MPI ranks with no
 owned sector rows still participate in collective operations and state I/O.
 FullDiag supports LAPACK (``Solver=0``), ScaLAPACK (1) and ELPA (3) when
 built with those backends; the process-grid restrictions below apply.
@@ -385,9 +390,9 @@ invariant ``TEOneBody`` hopping increments in a consistent gauge.
 
 General spin, new Standard-mode Kondo momentum generation, ``NBodyInterAll``,
 ``AnomalousTerm``, ``AnomalousG``, ``CalcSpec``, spin-axis rotations,
-antiunitary operations, multidimensional irreducible representations,
-solver restart and rank-changing checkpoint redistribution remain
-unsupported. Hamiltonian I/O is limited to the FullDiag sector matrix file.
+antiunitary operations, multidimensional irreducible representations, and
+rank-changing checkpoint redistribution remain unsupported. Hamiltonian I/O
+is limited to the FullDiag sector matrix file.
 FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial ``ExpecMode``.
 
@@ -477,7 +482,9 @@ statistical weights; a single sector sample is not such a sum.
 CG vector import evaluates supplied states without restarting optimization.
 TE import starts a new time grid; it can use a different Hamiltonian within
 the same sector (quench). Same rank count, ownership, model, sector and phase
-are required. Neither import is solver restart; ``ReStart`` remains rejected.
+are required. Neither import is solver restart. ``ReStart`` separately
+continues CG, mTPQ, cTPQ and TimeEvolution from v3 data at the same process
+count; metadata layout 0/1 changes are allowed.
 SpinGC checkpoints retain version 1 with ``model=4`` and zero ``nup/ndown/ne``
 header fields. Their Hamiltonian fingerprint is
 ``hphi-parsed-hamiltonian-fnv1a64-v3``, which includes parsed PairLift rows.
@@ -489,8 +496,8 @@ Taylor rule described below. Every used slice is checked before propagation.
 ``Laser`` is rejected; use invariant on-site ``TEOneBody`` or spin-product
 ``TETwoBody`` entries instead. General spin, Boost, new Standard-mode
 SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
-operations, multidimensional irreducible representations, spectrum,
-solver restart and rank-changing checkpoint redistribution are unsupported
+operations, multidimensional irreducible representations, spectrum, and
+rank-changing checkpoint redistribution are unsupported
 (Hamiltonian I/O is limited to the FullDiag sector matrix file). ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
 ``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
 rejects vector input, distributed basis metadata, MAGMA, and nonserial
@@ -574,8 +581,10 @@ meaning :math:`\langle H^2\rangle`, not the subtracted variance.
 ``OutputGreenFormat=1`` selects the usual aggregate files for SS/Norm/Flct and
 for the correlation functions. Correlation functions are recomputed at the TPQ
 evaluation steps selected by ``ExpecInterval``; requesting every site pair at
-every step can be expensive for large sectors. Restart, vector I/O, and
-spectrum remain unavailable with ``TransSym``.
+every step can be expensive for large sectors. v3 restart is available with
+the same process count, including metadata layout 0/1 changes; state vector
+import/export and spectrum
+remain unavailable for TPQ.
 
 These results estimate the trace within a **single symmetry sector**; they
 are not a thermal average over the entire fixed-quantum-number space.
@@ -600,7 +609,10 @@ at zero and be finite and nondecreasing. Repeated beta values represent a zero s
 integer less than ``INT_MAX``, and both flags are 0 or 1. The order on row
 ``i`` advances from beta ``i`` to beta ``i+1``; the final order is unused.
 Sector cTPQ rejects any nonzero ``eigen`` flag, including at the initial or
-final point. Vector I/O and restart remain unsupported.
+final point. Vector I/O remains unsupported. Uniform-schedule cTPQ can use v3
+restart with the same process count, including metadata layout 0/1 changes;
+``InvTemp`` cannot be combined
+with ``ReStart=2`` or 3.
 For an explicit schedule, correlation functions are written at the initial
 point and at rows whose ``physcal`` flag is 1. Without ``InvTemp``,
 ``ExpecInterval`` selects the correlation steps. ``OutputGreenFormat=1``
@@ -613,7 +625,8 @@ Sector time evolution with a static Hamiltonian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In expert mode, ``CalcType=4`` evolves a sector checkpoint with a static
-Hamiltonian. Set ``InputEigenVec=1``, ``ReStart=0``, a positive integer
+Hamiltonian. For a new imported trajectory set ``InputEigenVec=1``,
+``ReStart=0``, a positive integer
 ``ExpandCoef``, and ``SpectrumVec seed_eigenvec_0`` in the namelist. The
 rank files ``output/seed_eigenvec_0_rank_<rank>.dat`` must use the sector
 format below. A CG run with ``OutputEigenVec=1`` provides such files, and so
@@ -643,7 +656,10 @@ convergence.
 Correlation functions are evaluated after propagation at the steps selected
 by ``ExpecInterval``. ``OutputGreenFormat=1`` collects them into files indexed
 by the zero-based time-grid step. Requesting every site pair at every step can
-be expensive for large sectors. ``ReStart`` remains unsupported.
+be expensive for large sectors. v3 ``ReStart`` continues a saved TE clock
+with the same process count, including metadata layout 0/1 changes; it does
+not use import provenance as
+the new clock.
 The sector manifest records the actual time grid, Taylor order, and source
 checkpoint's method, state, step, time and Hamiltonian digest. For a FullDiag
 source it adds ``source_hamiltonian_kind=sector_matrix_v1``: that digest
@@ -707,8 +723,12 @@ with zero-based state and rank indices. All ranks write a file, including
 empty owners. Reading requires the same model, fixed quantum numbers,
 group/character, sector, MPI rank count, basis layout, local ownership,
 global-index-to-representative mapping, and basis phase convention.
-Legacy raw-basis vector files are rejected. ``InputEigenVec=2`` and
-``ReStart`` remain unsupported. A CG input run evaluates the supplied states;
+Legacy raw-basis vector files are rejected. ``InputEigenVec=2`` remains
+unsupported for this import format. Solver continuation uses the separate v3
+manifest/vector files described in :ref:`Subsec:restart_v3`. Those v3 files
+also support state import with metadata layout 0/1 changes at the same rank
+count; the same-layout restriction above applies to the old v1/v2 format.
+A CG input run evaluates the supplied states;
 it does not solve for new eigenstates or resume iterations.
 
 The source Hamiltonian digest is recorded separately and may differ from the

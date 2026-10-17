@@ -38,4 +38,7 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                            double complex *vector,
                            struct SymmetryCheckpointInfo *info);
 
+/* Collective identity for words 0..29; preserves v1/v2 encoding. */
+int SymmetryCheckpointIdentityWords(const struct BindStruct *X, uint64_t *words);
+
 #endif

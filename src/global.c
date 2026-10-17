@@ -96,6 +96,8 @@ const char* cFileNameAnomalousG_TE_Aggregate="%s_AnomalousG_te.dat";
 const char* cFileNameOutputVector="tmpvec_set%d_rank_%d.dat";
 const char* cFileNameTPQVector="tpqvec_set%d_rank%d_step%d.dat";
 const char* cFileNameInputVector="tmpvec_set%d_rank_%d.dat";
+const char* cFileNameRestartVector="%s_restart_set%d_comp%d_gen%d_rank_%d.dat";
+const char* cFileNameRestartManifest="%s_restart_manifest.dat";
 
 //Fot Time evolution
 const char* cFileNameTEStep="%s_Time_TE_Step.dat";

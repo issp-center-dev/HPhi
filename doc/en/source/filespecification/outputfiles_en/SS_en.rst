@@ -6,10 +6,10 @@ SS.dat
 ------
 
 | (For the real time evolution method) This file is outputted to show
-  the calculation results. In the current legacy restart path, this file
-  is reopened in write mode; previous rows are replaced rather than
-  appended. Preserve a copy before restarting if the earlier time series
-  is required. An example of the file format is as follows.
+  the calculation results. A validated v3 or legacy continuation preserves
+  complete rows before its saved next step, removes any later tail or partial
+  EOF row, and then appends resumed rows. If the file is missing, only new
+  rows can be written. An example of the file format is as follows.
 
 ::
 
