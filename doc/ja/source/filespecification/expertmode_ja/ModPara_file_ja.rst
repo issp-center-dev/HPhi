@@ -106,8 +106,10 @@ ModParaファイル
    process数をlegacy raw fileのsource数として扱います。legacy raw file一式を
    異なるprocess数で読む場合は、このparameterに保存時のrank file数を必ず指定し、
    要素数0のrankを含む全fileを残してください。v3とsector v1/v2は保存process数を
-   自己記述し、自動的に再配置します。これらの形式では指定は任意ですが、正の値を
-   指定した場合はmanifestまたはheaderのprocess数と一致する必要があります。
+   自己記述し、自動的に再配置します。v3継続ではこのparameterを無視して各manifest行の
+   process数を使うため、TPQ/cTPQの一部sampleだけがv3へ移行済みでも再開できます。
+   v3およびsector v1/v2の状態importでは指定は任意ですが、正の値を指定した場合は
+   headerのprocess数と一致する必要があります。
 
 -  ``Nsite``
 

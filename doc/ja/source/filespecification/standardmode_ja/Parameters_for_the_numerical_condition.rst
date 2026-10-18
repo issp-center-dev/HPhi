@@ -44,8 +44,9 @@
 
    **説明 :** restart/import vector fileに期待するprocess数です。legacy raw fileでは
    0は現在の数を表し、rank数を変更する読込には保存数の明示が必要です。v3とsector
-   v1/v2は自己記述し自動再配置するため指定は任意ですが、正の値はmanifest/headerと
-   一致する必要があります。Standard modeは指定された場合だけ出力します。
+   v1/v2は自己記述し自動再配置します。v3継続ではこのparameterを無視して各manifest行を
+   使います。v3およびsector v1/v2の状態importでは正の値は任意ですが、headerと一致する
+   必要があります。Standard modeは指定された場合だけ出力します。
 
 *  ``Lanczos_max``
 

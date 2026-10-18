@@ -194,14 +194,17 @@ v3 and sector v1/v2 files carry their saved rank count, offsets and local
 dimensions. Keep every file from rank 0 through the saved count minus one,
 including files with zero payload. HPhi validates the complete saved set and
 then reads each overlap between a saved interval and the current interval.
-``RestartSourceRanks`` is not required for these self-describing formats; if
-given, it must match the saved count.
+``RestartSourceRanks`` is not required for these self-describing formats. v3
+continuation ignores it and uses the count in each manifest row. A v3 or
+sector v1/v2 state import treats a positive value as an optional equality
+check against the saved count.
 
 For sector v1/v2, HPhi first reproduces the old partition-dependent DATA
 checksum from the saved files. Only after that check succeeds is the payload
-redistributed. The partition-independent sector digest verifies global basis
-order. Source and destination layouts may be either 0 or 1, but every source
-file in one checkpoint must declare the same valid layout.
+redistributed. The partition-independent sector digest verifies the basis
+set; the canonical representative-state sort fixes its global order. Source
+and destination layouts may be either 0 or 1, but every source file in one
+checkpoint must declare the same valid layout.
 
 Legacy raw files have only a native 12-byte ``STEP``/local-dimension header.
 They do not record the saved rank count or identity. A rank-changing legacy

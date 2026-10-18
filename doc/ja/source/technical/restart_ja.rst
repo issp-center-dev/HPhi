@@ -39,16 +39,22 @@ source method/state/step/timeとsolver scalarは来歴であり、source solver�
 CGはimport状態を評価し、TimeEvolutionは現在の時刻表のstep 0から開始します。v3 importは
 保存時と現在のprocess数が異なる場合も自動的に再配置します。sector v3と旧sector
 v1/v2 importはmetadata layout 0/1の変更も許します。v1/v2では保存時の分割に従って
-payload checksumを検証してから再配置し、分割非依存のsector digestでglobal基底順序を
-検証します。必要なcopy手順は出力ファイル仕様に示します。
+payload checksumを検証してから再配置し、分割非依存のsector digestで基底集合を
+検証します。global順序はbasis builderが代表状態をcanonicalにsortする規則で決まるため、
+集合が同じなら順序も同じです。必要なcopy手順は出力ファイル仕様に示します。
 
 MPI process数を変更する手順
 -----------------------------
 
 要素を持たないownerのfileも含め、全source rank fileを残します。v3継続ではmanifestと
 そこから参照される全vector fileをcopyし、希望するprocess数で実行します。追加parameterは
-不要です。v3またはsector v1/v2状態importでは、全source fileをimport用prefixへcopyし、
-希望するprocess数で実行します。source数はheaderから得られます。これらの形式での
+不要です。v3継続は各manifest行のprocess数を使い、 ``RestartSourceRanks`` を無視します。
+このため、TPQ/cTPQの移行中断後に、新しいprocess数で書いたv3 sampleと移行前のlegacy
+sampleが混在していても再開できます。このparameterは残ったlegacy sampleだけに適用され、
+全sampleがv3として再出力された後は削除できます。
+
+v3またはsector v1/v2状態importでは、全source fileをimport用prefixへcopyし、希望する
+process数で実行します。source数はheaderから得られます。状態importでの
 ``RestartSourceRanks`` は任意で、指定値の一致を追加検査するだけです。
 
 legacy raw importまたは継続では、保存済みrank別fileを全てcopyし、process数を変更する前に

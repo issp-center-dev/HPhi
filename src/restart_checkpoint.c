@@ -318,7 +318,14 @@ static int inspect_vector_header(struct BindStruct *X, const struct RestartManif
   if (agree(row->set > INT_MAX || row->gen > 1 || row->ncomp < 1 || row->ncomp > 2 ||
             comp < 0 || comp >= (int)row->ncomp || P > INT_MAX ||
             P > SIZE_MAX / sizeof(uint64_t), "manifest row")) return -1;
-  if (agree(X->Def.RestartSourceRanks > 0 && (uint64_t)X->Def.RestartSourceRanks != P, "RestartSourceRanks does not match the saved rank count")) return -1;
+  /* A continuation manifest is self-describing.  In particular, TPQ sets may
+   * be migrated from legacy raw files to v3 one at a time, so a source-rank
+   * hint for the remaining legacy sets must not reject an already migrated
+   * v3 set.  Explicit state import keeps the optional equality check. */
+  if (purpose == RESTART_READ_IMPORT &&
+      agree(X->Def.RestartSourceRanks > 0 &&
+            (uint64_t)X->Def.RestartSourceRanks != P,
+            "RestartSourceRanks does not match the saved rank count")) return -1;
   if (agree(build_identity(X, expected) != 0, "identity")) return -1;
   offsets = calloc(P, sizeof(*offsets)); dims = calloc(P, sizeof(*dims));
   if (agree(offsets == NULL || dims == NULL, "allocation")) goto fail;
@@ -688,8 +695,12 @@ static int read_sector_cross_rank(struct BindStruct *X, const char *base,
   info->hamiltonian_digest = reference[RW_HAMILTONIAN];
   info->hamiltonian_digest_kind = reference[RW_METHOD] == FullDiag
       ? SYMMETRY_HAMILTONIAN_MATRIX_V1 : SYMMETRY_HAMILTONIAN_PARSED;
+  /* The sector digest is an order-independent set digest.  Equality of the
+   * set implies equality of global order because the basis builder sorts
+   * canonical representatives by their representative state. */
   fprintf(stdoutMPI, "Symmetry checkpoint cross-rank v1/v2 read: payload checksum verified, "
-          "basis order guaranteed by sector digest (ORDER word not compared).\n");
+          "basis set verified by sector digest and ordered canonically by representative "
+          "(ORDER word not compared).\n");
   free(offsets);
   free(dims);
   return 0;
@@ -796,7 +807,8 @@ static int scan_legacy_raw(struct BindStruct *X, const char *pattern, int set,
   missing_rank = BcastMPI_i(0, missing_rank);
   saved_step = BcastMPI_i(0, saved_step);
   if (status != 0) {
-    if (X->Def.RestartSourceRanks == 0 && present != 0) {
+    if (X->Def.RestartSourceRanks == 0 && present != 0 &&
+        (status == 9 || status == 10)) {
       fprintf(stdoutMPI, "Error: RestartSourceRanks is required for rank-changing "
               "legacy input; otherwise check missing or incompatible legacy files.\n");
     } else if (status == 9 && missing_rank >= 0) {

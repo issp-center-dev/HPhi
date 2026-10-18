@@ -370,9 +370,10 @@ physical-space digest and fixed quantities separately from the Hamiltonian
 digest. The model, physical space, sector and ordering must match for import,
 while the rank count and layout may change. For these v2 files, the payload
 checksum is verified with the saved partition before redistribution and the
-sector digest verifies global basis order. CG evaluates an imported state
-without restarting optimization; TE starts a new time grid and permits a
-Hamiltonian quench.
+sector digest verifies the basis set. The canonical representative-state sort
+fixes the global basis order. CG evaluates an imported state without
+restarting optimization; TE starts a new time grid and permits a Hamiltonian
+quench.
 All four CG/TE import directions are supported. Non-Kondo checkpoints keep
 version 1 / phase 1 / 28 words unchanged.
 

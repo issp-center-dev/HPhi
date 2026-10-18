@@ -46,19 +46,26 @@ are redistributed automatically when the saved and current process counts
 differ. Sector v3 and old sector v1/v2 imports also permit metadata layout
 0/1 changes. For v1/v2, HPhi verifies the payload checksum using the saved
 partition before redistribution and uses the partition-independent sector
-digest to validate global basis order. The output-file reference gives the
-required copy procedure.
+digest to validate the basis set. The basis builder's canonical
+representative-state sort fixes its global order, so an equal set has the
+same order. The output-file reference gives the required copy procedure.
 
 Changing the MPI process count
 ------------------------------
 
 Keep every source-rank file, including a file for an empty owner. For v3
 continuation, copy the manifest and every vector file named by it, then run
-with the desired process count; no extra parameter is needed. For v3 or
-sector v1/v2 state import, copy every source file under the import prefix and
-run with the desired process count. Their headers provide the source count.
-``RestartSourceRanks`` is optional for these formats and acts only as an
-additional equality check.
+with the desired process count; no extra parameter is needed. v3 continuation
+uses the count in each manifest row and ignores ``RestartSourceRanks``. This
+also permits an interrupted TPQ/cTPQ migration to resume when some samples
+are v3 files written by the new process count and other samples are legacy
+files: the parameter applies only to those remaining legacy samples. It can
+be removed after all samples have been republished as v3.
+
+For v3 or sector v1/v2 state import, copy every source file under the import
+prefix and run with the desired process count. Their headers provide the
+source count. ``RestartSourceRanks`` is optional for state import and acts
+only as an additional equality check.
 
 For legacy raw import or continuation, copy every saved per-rank file and add
 ``RestartSourceRanks=<saved process count>`` to ``ModPara`` before changing

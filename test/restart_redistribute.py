@@ -140,7 +140,7 @@ def sector_scenario(path, model, length, momentum, states, raw, projector):
         text = run_np(v1, "import{}".format(ranks), ranks, namelist="sym.def",
                       env={"HPHI_SYMMETRY_BASIS_LAYOUT": layout})
         assert ("cross-rank v1/v2 read: payload checksum verified, "
-                "basis order guaranteed by sector digest") in text
+                "basis set verified by sector digest") in text
         np.testing.assert_allclose(energies(v1), expected_energy, rtol=0, atol=1e-10)
     files = sorted((v1 / "output").glob("zvo_eigenvec_0_rank_*.dat"))
     victim = next(file for file in files

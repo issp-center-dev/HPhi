@@ -46,9 +46,10 @@ Parameters for the numerical condition
    **Description :** Expected process count in restart or imported vector
    files. For legacy raw files, zero means the current count and a rank-changing
    read requires the saved count explicitly. v3 and sector v1/v2 files are
-   self-describing and redistribute automatically; a positive value is optional
-   for them but must match their manifest or header. Standard mode writes this
-   parameter only when specified.
+   self-describing and redistribute automatically. v3 continuation ignores
+   this parameter and uses each manifest row. For v3 and sector v1/v2 state
+   import, a positive value is optional but must match the header. Standard
+   mode writes this parameter only when specified.
 
 *  ``Lanczos_max``
 

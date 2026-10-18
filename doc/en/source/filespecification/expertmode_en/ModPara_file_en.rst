@@ -119,9 +119,11 @@ Common parameters
    raw file set is read with a different process count, this parameter is
    mandatory and gives the number of saved rank files; all files, including
    files for empty ranks, must be present. v3 and sector v1/v2 files describe
-   their saved count themselves and are redistributed automatically. For
-   those formats this parameter is optional, but a positive value must match
-   the count in the manifest or header.
+   their saved count themselves and are redistributed automatically. v3
+   continuation ignores this parameter and uses the count in each manifest
+   row; this permits a partially migrated TPQ/cTPQ run to combine v3 and
+   legacy samples. For v3 and sector v1/v2 state import, the parameter is
+   optional, but a positive value must match the count in the header.
 
 *  ``Nsite``
 

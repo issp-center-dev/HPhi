@@ -184,13 +184,15 @@ rank再配置
 v3とsector v1/v2 fileは、保存rank数、offset、local dimensionを記録します。
 保存rank 0から保存rank数−1まで、payloadが0のfileも含めて全fileを残してください。
 HPhiは保存file一式を検証し、各保存区間と現在区間の交差部分を読みます。
-自己記述形式なので ``RestartSourceRanks`` は不要ですが、指定する場合は保存rank数と
-一致する必要があります。
+自己記述形式なので ``RestartSourceRanks`` は不要です。v3継続ではこのparameterを無視して
+各manifest行のrank数を使います。v3またはsector v1/v2状態importでは、正の値を保存rank数
+との任意の一致検査に使います。
 
 sector v1/v2では、保存時の分割に依存するDATA checksumを保存fileから最初に再現し、
-検証に成功してからpayloadを再配置します。分割非依存sector digestでglobal基底順序も
-検証します。source/destination layoutは0または1のどちらでも構いませんが、同じ
-checkpointのsource fileは全て同じ有効なlayoutを宣言する必要があります。
+検証に成功してからpayloadを再配置します。分割非依存sector digestで基底集合を検証し、
+global順序は代表状態のcanonical sort規則で決まります。source/destination layoutは0または
+1のどちらでも構いませんが、同じcheckpointのsource fileは全て同じ有効なlayoutを
+宣言する必要があります。
 
 legacy raw fileはnative 12-byteの ``STEP`` / local dimension headerだけを持ち、
 保存rank数もidentityも記録しません。このためrank数を変えるlegacy読込では

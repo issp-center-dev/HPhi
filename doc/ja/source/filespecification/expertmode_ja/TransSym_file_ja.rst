@@ -349,7 +349,8 @@ flagsはKondoが3、NConservedが1、GCが0で、GCの ``nup/ndown/ne`` fieldは
 manifestは局在mask・物理空間digest・固定量をHamiltonian digestと分離して記録
 します。importでは模型・物理空間・sector・順序の一致が必要ですが、rank数とlayoutは
 変更できます。このv2形式では保存時の分割でpayload checksumを検証した後に再配置し、
-sector digestでglobal基底順序を検証します。
+sector digestで基底集合を検証します。global基底順序は代表状態のcanonical sort規則で
+決まります。
 CGはimport状態を評価し、最適化を再開しません。TEは新しい時刻列で開始し、
 Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応します。
 非Kondoのcheckpointはversion 1 / phase 1 / 28 wordのままです。

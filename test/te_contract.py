@@ -147,7 +147,8 @@ for label, data in [("short_header", saved[:2]), ("short_payload", saved[:-1]),
     victim.write_bytes(data)
     diagnostic = ("missing, truncated or incompatible TE Inputvector"
                   if label == "short_header" and len(seeds) == 1 else
-                  "RestartSourceRanks is required")
+                  "validation failed (code={}".format(
+                      3 if label == "short_header" else 6))
     run(ROOT, label, diagnostic)
 victim.unlink()
 run(ROOT, "missing", "missing, truncated or incompatible TE Inputvector"
@@ -161,7 +162,7 @@ restart_victim.write_bytes(bad_step)
 (ROOT / "namelist.def").write_text(names.replace("seed%literal_eigenvec_0", "restart"))
 (ROOT / "calcmod.def").write_text(re.sub(r"^ReStart\s+\d+", "ReStart 3", calc, flags=re.M))
 run(ROOT, "out_of_range", "TE restart step must be consistent"
-    if len(seeds) == 1 else "RestartSourceRanks is required")
+    if len(seeds) == 1 else "validation failed (code=5")
 restart_victim.write_bytes(restart_saved)
 (ROOT / "namelist.def").write_text(names)
 (ROOT / "calcmod.def").write_text(calc)

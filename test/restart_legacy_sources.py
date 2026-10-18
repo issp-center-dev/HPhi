@@ -117,6 +117,55 @@ np.testing.assert_allclose(actual[actual[:, -1] >= 8][:, :2],
                            rtol=0, atol=1e-10)
 
 
+# A TPQ migration can be interrupted after one sample has been republished as
+# v3 with the new rank count while another sample is still legacy raw.  The
+# legacy source-count hint must apply only to the legacy sample; the v3 row is
+# self-describing.  Cover both mTPQ and cTPQ with NumAve >= 2.
+for method, label in (("TPQ", "tpq"), ("cTPQ", "ctpq")):
+    mixed_input = (TPQ.replace('method="TPQ"', 'method="{}"'.format(method))
+                   .replace("NumAve=1", "NumAve=2"))
+    legacy_base = ROOT / ("mixed_{}_legacy".format(label))
+    rc.generate(legacy_base, mixed_input)
+    rc.set_key(legacy_base, "calcmod.def", "ReStart", 1)
+    rc.set_key(legacy_base, "modpara.def", "Lanczos_max", 8)
+    run_np(legacy_base, "legacy_source", 4)
+    for sample in (0, 1):
+        rc.v3_to_legacy_tmpvec(legacy_base, "zvo", sample)
+    (legacy_base / "output/zvo_restart_manifest.dat").unlink()
+    for checkpoint in (legacy_base / "output").glob("zvo_restart_set*"):
+        checkpoint.unlink()
+
+    mixed_reference = ROOT / ("mixed_{}_ref".format(label))
+    shutil.copytree(legacy_base, mixed_reference)
+    rc.set_key(mixed_reference, "calcmod.def", "ReStart", 3)
+    rc.set_key(mixed_reference, "modpara.def", "Lanczos_max", 20)
+    rc.set_key(mixed_reference, "modpara.def", "RestartSourceRanks", 4)
+    run_np(mixed_reference, "finish_from_legacy", 2)
+
+    mixed = ROOT / ("mixed_{}".format(label))
+    shutil.copytree(legacy_base, mixed)
+    rc.set_key(mixed, "calcmod.def", "ReStart", 2)
+    rc.set_key(mixed, "modpara.def", "Lanczos_max", 20)
+    rc.set_key(mixed, "modpara.def", "CheckpointInterval", 4)
+    rc.set_key(mixed, "modpara.def", "RestartSourceRanks", 4)
+    run_np(mixed, "interrupt_migration", 2, binary=rc.probe(),
+           env={"HPHI_TEST_RESTART_ABORT_AFTER": "0:13"})
+    mixed_rows = rc.manifest(mixed)[1]
+    assert set(mixed_rows) == {0} and mixed_rows[0]["ranks"] == 2, mixed_rows
+    assert len(list((mixed / "output").glob("tmpvec_set1_rank_*.dat"))) == 4
+
+    rc.set_key(mixed, "calcmod.def", "ReStart", 3)
+    rc.drop_key(mixed, "modpara.def", "CheckpointInterval")
+    run_np(mixed, "finish_migration", 2)
+    for sample in (0, 1):
+        for family in ("SS", "Norm", "Flct"):
+            name = "{}_rand{}.dat".format(family, sample)
+            np.testing.assert_allclose(rc.rows(mixed, name),
+                                       rc.rows(mixed_reference, name),
+                                       rtol=0, atol=1e-10,
+                                       err_msg="{} {}".format(method, name))
+
+
 # cTPQ v3 continuation completes the TPQ-family rank-redistribution matrix.
 ctpq_input = TPQ.replace('method="TPQ"', 'method="cTPQ"')
 ctpq_reference = ROOT / "ctpq_ref"

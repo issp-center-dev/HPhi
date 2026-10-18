@@ -167,9 +167,18 @@ def exercise(seed, root, layout=None):
     continuing = clone(evolved, root / 'continuation_count')
     rc.set_key(continuing, 'calcmod.def', 'ReStart', 3)
     rc.set_key(continuing, 'modpara.def', 'RestartSourceRanks', len(files)+1)
-    before = snapshot(continuing)
-    run(continuing, 'ranks', layout, fail='RestartSourceRanks does not match')
-    assert snapshot(continuing) == before
+    series_name = ('zvo_' if sector else '') + 'SS.dat'
+    expected_series = rc.rows(continuing, series_name).copy()
+    checkpoint_before = {
+        p.name: p.read_bytes()
+        for p in (continuing / 'output').glob('zvo_restart*')
+    }
+    text = run(continuing, 'ranks', layout)
+    assert 'no remaining steps' in text
+    np.testing.assert_allclose(rc.rows(continuing, series_name), expected_series,
+                               rtol=0, atol=0)
+    assert {p.name: p.read_bytes()
+            for p in (continuing / 'output').glob('zvo_restart*')} == checkpoint_before
     # A genuinely different destination process count, not a forged header.
     # Both named-state import and manifest continuation redistribute v3 files.
     if not sector and len(files) > 1:
