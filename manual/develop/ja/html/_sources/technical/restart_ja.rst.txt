@@ -12,10 +12,11 @@ solverの継続
 
 ``CalcMod`` の ``ReStart`` は、0が継続なし、1が新規計算とcheckpoint出力、
 2がcheckpoint読込と更新、3が読込のみです。v3 manifest/vector形式はraw基底と
-``TransSym`` 基底のCG、mTPQ、cTPQ、TimeEvolutionで使われます。このreleaseでは
-保存時と現在のMPI process数が同じでなければなりません。sector v3継続ではmetadata
-layoutを ``replicated`` (0) と ``distributed`` (1) の間で変更できます。vectorの
-所有範囲とglobal順序は変わりません。rank再配置には対応していません。
+``TransSym`` 基底のCG、mTPQ、cTPQ、TimeEvolutionで使われます。保存時と現在の
+MPI process数は異なってもかまいません。HPhiは保存済みglobal連続区間と現在の
+所有区間の交差を読み、vectorを再配置します。sector v3継続ではmetadata layoutも
+``replicated`` (0) と ``distributed`` (1) の間で変更できます。rank所有は変わっても
+global vector順序は変わりません。
 
 v3継続の ``Lanczos_max`` は絶対的な最終上限です。CGは保存した反復label、
 TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。CGでは上限が保存反復label
@@ -36,14 +37,39 @@ TPQ/cTPQとTimeEvolutionは保存した次stepから再開します。CGでは�
 状態importでは模型、basis identity、sector、phase、payload長、norm、digestを検証します。
 source method/state/step/timeとsolver scalarは来歴であり、source solverを再開しません。
 CGはimport状態を評価し、TimeEvolutionは現在の時刻表のstep 0から開始します。v3 importは
-現在、同じprocess数を必要とします。sector v3 importではmetadata layout 0/1の
-変更を許しますが、旧sector v1/v2 importは同じlayoutが必要です。rank再配置とv1/v2の
-layout制約緩和はこのreleaseの対象外です。必要なcopy手順は出力ファイル仕様に示します。
+保存時と現在のprocess数が異なる場合も自動的に再配置します。sector v3と旧sector
+v1/v2 importはmetadata layout 0/1の変更も許します。v1/v2では保存時の分割に従って
+payload checksumを検証してから再配置し、分割非依存のsector digestで基底集合を
+検証します。global順序はbasis builderが代表状態をcanonicalにsortする規則で決まるため、
+集合が同じなら順序も同じです。必要なcopy手順は出力ファイル仕様に示します。
+
+MPI process数を変更する手順
+-----------------------------
+
+要素を持たないownerのfileも含め、全source rank fileを残します。v3継続ではmanifestと
+そこから参照される全vector fileをcopyし、希望するprocess数で実行します。追加parameterは
+不要です。v3継続は各manifest行のprocess数を使い、 ``RestartSourceRanks`` を無視します。
+このため、TPQ/cTPQの移行中断後に、新しいprocess数で書いたv3 sampleと移行前のlegacy
+sampleが混在していても再開できます。このparameterは残ったlegacy sampleだけに適用され、
+全sampleがv3として再出力された後は削除できます。
+
+v3またはsector v1/v2状態importでは、全source fileをimport用prefixへcopyし、希望する
+process数で実行します。source数はheaderから得られます。状態importでの
+``RestartSourceRanks`` は任意で、指定値の一致を追加検査するだけです。
+
+legacy raw importまたは継続では、保存済みrank別fileを全てcopyし、process数を変更する前に
+``ModPara`` へ ``RestartSourceRanks=<保存process数>`` を追加します。末尾の空rank fileが
+欠けた状態と、より少ないrankで完結したfile一式を区別できないため、HPhiはfile名から
+この値を推測しません。
 
 legacyとspectrumの挙動
 ----------------------
 
-legacy raw ``tmpvec_set*_rank_*.dat`` はCGとTPQ/cTPQで引き続き読めます。legacy CGは
+legacy raw ``tmpvec_set*_rank_*.dat`` はCGとTPQ/cTPQで引き続き読めます。
+この形式はsource rank数もidentity語も保存しないため、rank数を変更する読込では
+``RestartSourceRanks`` が必須です。要素数0の末尾rankを含む全保存fileを残してください。
+HPhiは再配置前にnative header、file長、step、global次元を検証しますが、fileだけから
+模型やsectorのidentityを検証することはできません。legacy CGは
 従来の追加反復の意味を維持し、反復labelは1から始まり、以前の ``Lanczos_Step`` prefixを
 復旧しません。legacy TPQ/cTPQとraw TimeEvolutionは、可能な場合に検証済みの次stepより
 前の出力行を復旧します。旧sector v1/v2は状態import形式で、solver継続checkpointでは

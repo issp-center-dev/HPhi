@@ -187,8 +187,8 @@ identity and phase. See <a class="reference internal" href="../outputfiles_en/re
 <div class="line">3: Input a restart vector.</div>
 </div>
 <p>CG, mTPQ, cTPQ and TimeEvolution use the v3 manifest format in raw and
-<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. The saved and current MPI process counts must match in
-this release; sector v3 continuation permits metadata layout 0/1 changes.
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. The saved and current MPI process counts may differ;
+sector v3 continuation also permits metadata layout 0/1 changes.
 <code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> never rewrites the checkpoint. v3 <code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is an
 absolute final bound. A no-op at a lowered bound evaluates the restored
 state without adding history rows or rewriting the checkpoint. A terminal

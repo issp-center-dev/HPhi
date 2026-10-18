@@ -46,10 +46,11 @@ evaluation or as the first state of a new TimeEvolution clock. <code class="docu
 1 starts a new run and writes checkpoints, 2 reads and updates checkpoints,
 and 3 reads checkpoints without rewriting them. The v3 manifest and vector
 format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>
-bases. This release requires the saved and current MPI process counts to be
-equal. Sector v3 continuation permits metadata layout changes between
-<code class="docutils literal notranslate"><span class="pre">replicated</span></code> (0) and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> (1); vector ownership and global order
-remain unchanged. Rank redistribution is not supported.</p>
+bases. The saved and current MPI process counts may differ. HPhi reads the
+saved contiguous global intervals and redistributes their intersections to
+the current ownership. Sector v3 continuation also permits metadata layout
+changes between <code class="docutils literal notranslate"><span class="pre">replicated</span></code> (0) and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> (1). The global vector
+order remains unchanged even though rank ownership changes.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is an absolute final bound for v3 continuation. CG resumes at
 the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
 step. If the bound is below the saved CG iteration label, or at or below
@@ -70,14 +71,42 @@ checkpoints, and its time table must contain the saved next step. See
 length, norm and digest. Source method, state, step, time and solver scalars
 are provenance; they do not resume the source solver. CG evaluates an imported
 state. TimeEvolution starts at step zero on its current time grid. v3 imports
-currently require the same process count. Sector v3 imports permit metadata
-layout 0/1 changes, while old sector v1/v2 imports still require the same
-layout. Rank redistribution and v1/v2 layout relaxation are not supported in
-this release. The output-file reference gives the required copy procedure.</p>
+are redistributed automatically when the saved and current process counts
+differ. Sector v3 and old sector v1/v2 imports also permit metadata layout
+0/1 changes. For v1/v2, HPhi verifies the payload checksum using the saved
+partition before redistribution and uses the partition-independent sector
+digest to validate the basis set. The basis builder’s canonical
+representative-state sort fixes its global order, so an equal set has the
+same order. The output-file reference gives the required copy procedure.</p>
+</section>
+<section id="changing-the-mpi-process-count">
+<h2><span class="section-number">6.6.3. </span>Changing the MPI process count<a class="headerlink" href="#changing-the-mpi-process-count" title="Link to this heading">¶</a></h2>
+<p>Keep every source-rank file, including a file for an empty owner. For v3
+continuation, copy the manifest and every vector file named by it, then run
+with the desired process count; no extra parameter is needed. v3 continuation
+uses the count in each manifest row and ignores <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code>. This
+also permits an interrupted TPQ/cTPQ migration to resume when some samples
+are v3 files written by the new process count and other samples are legacy
+files: the parameter applies only to those remaining legacy samples. It can
+be removed after all samples have been republished as v3.</p>
+<p>For v3 or sector v1/v2 state import, copy every source file under the import
+prefix and run with the desired process count. Their headers provide the
+source count. <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> is optional for state import and acts
+only as an additional equality check.</p>
+<p>For legacy raw import or continuation, copy every saved per-rank file and add
+<code class="docutils literal notranslate"><span class="pre">RestartSourceRanks=&lt;saved</span> <span class="pre">process</span> <span class="pre">count&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">ModPara</span></code> before changing
+the process count. HPhi never guesses this value from file names, because a
+missing empty trailing rank would otherwise be indistinguishable from a
+smaller complete file set.</p>
 </section>
 <section id="legacy-and-spectrum-behavior">
-<h2><span class="section-number">6.6.3. </span>Legacy and spectrum behavior<a class="headerlink" href="#legacy-and-spectrum-behavior" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.6.4. </span>Legacy and spectrum behavior<a class="headerlink" href="#legacy-and-spectrum-behavior" title="Link to this heading">¶</a></h2>
 <p>Legacy raw <code class="docutils literal notranslate"><span class="pre">tmpvec_set*_rank_*.dat</span></code> remains readable by CG and TPQ/cTPQ.
+Because this format stores neither its source rank count nor identity words,
+rank-changing reads require <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code>. Keep every saved rank
+file, including an empty trailing rank; HPhi checks all native headers, file
+lengths, steps and the global dimension before redistribution, but cannot
+validate model or sector identity from the files.
 Legacy CG keeps its historical additional-iteration meaning: iteration labels
 restart at one and the old <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix is not recovered. Legacy
 TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
@@ -88,7 +117,7 @@ continuation checkpoints.</p>
 the v3 solver manifest.</p>
 </section>
 <section id="output-recovery">
-<h2><span class="section-number">6.6.4. </span>Output recovery<a class="headerlink" href="#output-recovery" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.6.5. </span>Output recovery<a class="headerlink" href="#output-recovery" title="Link to this heading">¶</a></h2>
 <p>Before appending, HPhi validates every required checkpoint, removes complete
 rows at or after the recovery boundary, drops an incomplete final line, and
 rejects malformed interior rows. A missing history file is created and only
@@ -140,8 +169,9 @@ instrumentation totals, not a controlled storage benchmark.</p>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart and state import</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#solver-continuation">6.6.1. Solver continuation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#state-import">6.6.2. State import</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#legacy-and-spectrum-behavior">6.6.3. Legacy and spectrum behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#output-recovery">6.6.4. Output recovery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-the-mpi-process-count">6.6.3. Changing the MPI process count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy-and-spectrum-behavior">6.6.4. Legacy and spectrum behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-recovery">6.6.5. Output recovery</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_en.html">6.7. Parallel full diagonalization</a></li>

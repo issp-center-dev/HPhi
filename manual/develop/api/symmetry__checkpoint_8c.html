@@ -214,6 +214,8 @@ Functions</h2></td></tr>
 <tr class="separator:adb5cf7757a2d0e7e589e28a537e59df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d0d0771499857c333ed841fcadf7d38" id="r_a6d0d0771499857c333ed841fcadf7d38"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__checkpoint_8c.html#a6d0d0771499857c333ed841fcadf7d38">vector_digest</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const double complex *vector, uint64_t *xor_hash, uint64_t *sum_hash)</td></tr>
 <tr class="separator:a6d0d0771499857c333ed841fcadf7d38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a279bf5e8364c1203a9ee08a6e797cbda" id="r_a279bf5e8364c1203a9ee08a6e797cbda"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__checkpoint_8c.html#a279bf5e8364c1203a9ee08a6e797cbda">SymmetryCheckpointLegacyFileHash</a> (FILE *fp, uint64_t rank, uint64_t offset, uint64_t local_dim, uint64_t *hash, double *norm2)</td></tr>
+<tr class="separator:a279bf5e8364c1203a9ee08a6e797cbda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2923e7edb0f642dc68371e4e23d83d5" id="r_ae2923e7edb0f642dc68371e4e23d83d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__checkpoint_8c.html#ae2923e7edb0f642dc68371e4e23d83d5">WriteSymmetryCheckpoint</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const char *<a class="el" href="restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, const double complex *vector, const struct <a class="el" href="structSymmetryCheckpointInfo.html">SymmetryCheckpointInfo</a> *info)</td></tr>
 <tr class="separator:ae2923e7edb0f642dc68371e4e23d83d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a180eb395b8ae31f66a08c4992b432a3a" id="r_a180eb395b8ae31f66a08c4992b432a3a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="symmetry__checkpoint_8c.html#a180eb395b8ae31f66a08c4992b432a3a">ReadSymmetryCheckpoint</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const char *<a class="el" href="restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb">name</a>, double complex *vector, struct <a class="el" href="structSymmetryCheckpointInfo.html">SymmetryCheckpointInfo</a> *info)</td></tr>
@@ -348,7 +350,7 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">LOCAL_DIM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">OFFSET</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">ORDER</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">RANK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -378,7 +380,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00044">44</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -420,7 +422,7 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, and <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00076">SymmetryCheckpointIdentityWords()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00076">SymmetryCheckpointIdentityWords()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -460,7 +462,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00062">62</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">SymmetryCheckpointLegacyFileHash()</a>.</p>
 
 </div>
 </div>
@@ -502,7 +504,7 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__sector_8c_source.html#l00019">SymmetryHashInteger()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00076">SymmetryCheckpointIdentityWords()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00076">SymmetryCheckpointIdentityWords()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">SymmetryCheckpointLegacyFileHash()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>.</p>
 
 </div>
 </div>
@@ -556,7 +558,7 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00076">SymmetryCheckpointIdentityWords()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -596,7 +598,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00056">56</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -638,11 +640,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">231</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">254</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00037">CHECKPOINT_MAGIC</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_SUM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_XOR</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">DIM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00062">get_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">HAMILTONIAN</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00024">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00031">identity_names</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00028">LOCAL_SITE_MASK</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">MAGIC</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">METHOD</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="dSFMT_8h_source.html#l00115">PRIx64</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STATE</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STEP</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00012">SYMMETRY_HAMILTONIAN_PARSED</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">TIME</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V1_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V2_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">VERSION</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00050">word_double()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00037">CHECKPOINT_MAGIC</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_SUM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_XOR</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">DIM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00062">get_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">HAMILTONIAN</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00022">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00025">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00031">identity_names</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">LAYOUT</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00028">LOCAL_SITE_MASK</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">MAGIC</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">METHOD</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="dSFMT_8h_source.html#l00115">PRIx64</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STATE</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STEP</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00014">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_PARSED</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::time</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">TIME</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V1_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V2_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">VERSION</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00050">word_double()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00497">RestartImportVector()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00911">RestartImportVector()</a>.</p>
 
 </div>
 </div>
@@ -676,7 +678,65 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__checkpoint_8c_source.html#l00037">CHECKPOINT_MAGIC</a>, <a class="el" href="symmetry__sector_8c_source.html#l00081">ComputeSymmetryGroupDigest()</a>, <a class="el" href="symmetry__sector_8c_source.html#l00146">ComputeSymmetryHamiltonianDigest()</a>, <a class="el" href="symmetry__sector_8c_source.html#l00195">ComputeSymmetrySectorDigest()</a>, <a class="el" href="symmetry__sector_8h_source.html#l00011">SymmetrySectorDigest::count</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">DIM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::fixed_flags</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00028">FIXED_FLAGS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00038">FNV_OFFSET</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">FULL_DIM</a>, <a class="el" href="symmetry__kondo_8c_source.html#l00287">GetSymmetryKondoIdentity()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">GROUP</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">HAMILTONIAN</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00040">hash_word()</a>, <a class="el" href="symmetry__kondo_8c_source.html#l00022">IsSymmetryKondoModel()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">LAYOUT</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">LOCAL_DIM</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::local_site_mask</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00028">LOCAL_SITE_MASK</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">MAGIC</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">MODEL</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::ndown</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">NDOWN</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::ne</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">NE</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">NSITE</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::nup</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">NUP</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">OFFSET</a>, <a class="el" href="symmetry__basis_8h_source.html#l00014">SymmetryBasisVector::orbit_size</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">ORDER</a>, <a class="el" href="symmetry__kondo_8h_source.html#l00007">SymmetryKondoIdentity::phase</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">PHASE</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">RANK</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00025">RANKS</a>, <a class="el" href="symmetry__basis_8h_source.html#l00013">SymmetryBasisVector::rep_state</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">SCALAR</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">SECTOR_COUNT</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">SECTOR_SUM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">SECTOR_XOR</a>, <a class="el" href="DefCommon_8h_source.html#l00048">SpinGC</a>, <a class="el" href="symmetry__basis_8h_source.html#l00015">SymmetryBasisVector::stabilizer_size</a>, <a class="el" href="symmetry__sector_8h_source.html#l00013">SymmetrySectorDigest::sum_hash</a>, <a class="el" href="symmetry__basis_8h_source.html#l00116">SymmetryBasisLocalEntry()</a>, <a class="el" href="global_8h_source.html#l00026">TRUE</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">VERSION</a>, <a class="el" href="struct_8c_source.html#l00020">X</a>, and <a class="el" href="symmetry__sector_8h_source.html#l00012">SymmetrySectorDigest::xor_hash</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00061">build_identity()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00061">build_identity()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>.</p>
+
+</div>
+</div>
+<a id="a279bf5e8364c1203a9ee08a6e797cbda" name="a279bf5e8364c1203a9ee08a6e797cbda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a279bf5e8364c1203a9ee08a6e797cbda">&#9670;&#160;</a></span>SymmetryCheckpointLegacyFileHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int SymmetryCheckpointLegacyFileHash </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>rank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>offset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>local_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t *&#160;</td>
+          <td class="paramname"><em>hash</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>norm2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">171</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
+
+<p class="reference">References <a class="el" href="symmetry__checkpoint_8c_source.html#l00038">FNV_OFFSET</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00062">get_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00040">hash_word()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00050">word_double()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>.</p>
 
 </div>
 </div>
@@ -730,7 +790,7 @@ Variables</h2></td></tr>
 
 <p class="reference">References <a class="el" href="symmetry__checkpoint_8c_source.html#l00044">double_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00038">FNV_OFFSET</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00040">hash_word()</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="wrapperMPI_8c_source.html#l00418">SumMPI_d()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">WriteSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">WriteSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>
@@ -760,7 +820,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00050">50</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, and <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">SymmetryCheckpointLegacyFileHash()</a>.</p>
 
 </div>
 </div>
@@ -802,11 +862,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00171">171</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00194">194</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_SUM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_XOR</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00044">double_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">HAMILTONIAN</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00024">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">METHOD</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00056">put_word()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STATE</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STEP</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00012">SYMMETRY_HAMILTONIAN_PARSED</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">TIME</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V1_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V2_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">VERSION</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="DefCommon_8h_source.html#l00025">CG</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00135">consistent_header()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_SUM</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">DATA_XOR</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00044">double_word()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00070">failure()</a>, <a class="el" href="DefCommon_8h_source.html#l00024">FullDiag</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00026">HAMILTONIAN</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00022">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00025">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00124">make_header()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">MAX_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">METHOD</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00056">put_word()</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STATE</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">STEP</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00014">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_PARSED</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::time</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00027">TIME</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V1_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00029">V2_WORDS</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00146">vector_digest()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00024">VERSION</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00843">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00199">write_sector_te_vector()</a>, and <a class="el" href="symmetry__fulldiag_8c_source.html#l00160">write_state()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00839">CalcByLOBPCG()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00199">write_sector_te_vector()</a>, and <a class="el" href="symmetry__fulldiag_8c_source.html#l00160">write_state()</a>.</p>
 
 </div>
 </div>
@@ -839,7 +899,7 @@ Variables</h2></td></tr>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="symmetry__checkpoint_8c_source.html#l00031">31</a> of file <a class="el" href="symmetry__checkpoint_8c_source.html">symmetry_checkpoint.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>.</p>
 
 </div>
 </div>

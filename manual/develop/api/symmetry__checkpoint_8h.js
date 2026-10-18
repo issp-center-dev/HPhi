@@ -7,5 +7,6 @@ var symmetry__checkpoint_8h =
     ] ],
     [ "ReadSymmetryCheckpoint", "symmetry__checkpoint_8h.html#a180eb395b8ae31f66a08c4992b432a3a", null ],
     [ "SymmetryCheckpointIdentityWords", "symmetry__checkpoint_8h.html#adea9a0f0428cf8a6c1c1f3037b7e9a79", null ],
+    [ "SymmetryCheckpointLegacyFileHash", "symmetry__checkpoint_8h.html#a279bf5e8364c1203a9ee08a6e797cbda", null ],
     [ "WriteSymmetryCheckpoint", "symmetry__checkpoint_8h.html#ae2923e7edb0f642dc68371e4e23d83d5", null ]
 ];

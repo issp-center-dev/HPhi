@@ -36,7 +36,7 @@ var searchData=
   ['peak_5fbytes_33',['peak_bytes',['../structSymmetryCorrelationStats.html#aee1c612816626c32d860a4cf9b7b1c0a',1,'SymmetryCorrelationStats']]],
   ['perm_34',['perm',['../structGroupDigestEntry.html#a83512d8e31ed81c50583b9827e0cedd4',1,'GroupDigestEntry']]],
   ['permutation_35',['permutation',['../structPolynomial.html#aaf34ae0d7f4a421ee1537f01b0ee2860',1,'Polynomial']]],
-  ['phase_36',['phase',['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase'],['../structSymmetryKondoIdentity.html#a537c08f4e6371e6cfac0eece6f4be135',1,'SymmetryKondoIdentity::phase'],['../structSymmetryHamiltonianIdentity.html#af2ebdb7c23bbf3c944a519d61ebd4f83',1,'SymmetryHamiltonianIdentity::phase'],['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase']]],
+  ['phase_36',['phase',['../structSymmetryHamiltonianIdentity.html#af2ebdb7c23bbf3c944a519d61ebd4f83',1,'SymmetryHamiltonianIdentity::phase'],['../structSymmetryKondoIdentity.html#a537c08f4e6371e6cfac0eece6f4be135',1,'SymmetryKondoIdentity::phase'],['../structSymmetryRepresentativeResult.html#a8939368a95d521a62e5368c3e32748bd',1,'SymmetryRepresentativeResult::phase'],['../structSymmetryCanonicalResult.html#a3e50fb1e877311ac5e1f6e31152bf8d4',1,'SymmetryCanonicalResult::phase']]],
   ['phased_5fhval_37',['phased_hval',['../structSymmetryUnresolvedTransition.html#ae141bc8a7a8edb470d3d9d526625ed6f',1,'SymmetryUnresolvedTransition']]],
   ['phys_38',['Phys',['../structBindStruct.html#a4779085fc0aeb372e1b3f3b0a20dee5d',1,'BindStruct']]],
   ['policy_39',['policy',['../structCorrelationContext.html#a0788a7ac96a876eb7309ed4ac8f3066e',1,'CorrelationContext']]],
@@ -44,5 +44,6 @@ var searchData=
   ['prdct_5fallreduce_5fcalls_41',['prdct_allreduce_calls',['../structSymmetryMatvecPlan.html#a8c3f32679c46af009aed9aac410e233a',1,'SymmetryMatvecPlan']]],
   ['precg_42',['PreCG',['../structDefineList.html#a0addab7d71a29ad52070e5132f39a271',1,'DefineList']]],
   ['prefix_5fconduction_43',['prefix_conduction',['../structSymmetryStateEnumerator.html#a544f7e9504bf8b15acdecf039b04f2ac',1,'SymmetryStateEnumerator']]],
-  ['prefix_5flocal_44',['prefix_local',['../structSymmetryStateEnumerator.html#ac08581b9d3464e531dd110998b1ea0ab',1,'SymmetryStateEnumerator']]]
+  ['prefix_5flocal_44',['prefix_local',['../structSymmetryStateEnumerator.html#ac08581b9d3464e531dd110998b1ea0ab',1,'SymmetryStateEnumerator']]],
+  ['present_45',['present',['../structLegacyRawScan.html#ac911c7c62fdc7a3315915bffd691ab58',1,'LegacyRawScan']]]
 ];

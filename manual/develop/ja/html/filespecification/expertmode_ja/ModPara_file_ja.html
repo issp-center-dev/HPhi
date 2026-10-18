@@ -115,9 +115,13 @@ ExpecInterval  20
 <li><p><code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code></p>
 <p><strong>形式 :</strong> int型 (0以上 <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> 未満、デフォルト値 0)</p>
 <p><strong>説明 :</strong> restart/import fileに期待するMPI process数です。0は現在の
-process数を表します。正の値は自己記述v3/sector fileと一致する必要があります。
-このreleaseは保存時と現在のprocess数が異なる読込を拒否します。このparameterは
-source検証用であり、再配置を有効にしません。</p>
+process数をlegacy raw fileのsource数として扱います。legacy raw file一式を
+異なるprocess数で読む場合は、このparameterに保存時のrank file数を必ず指定し、
+要素数0のrankを含む全fileを残してください。v3とsector v1/v2は保存process数を
+自己記述し、自動的に再配置します。v3継続ではこのparameterを無視して各manifest行の
+process数を使うため、TPQ/cTPQの一部sampleだけがv3へ移行済みでも再開できます。
+v3およびsector v1/v2の状態importでは指定は任意ですが、正の値を指定した場合は
+headerのprocess数と一致する必要があります。</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Nsite</span></code></p>
 <p><strong>形式 :</strong> int型 (自然数)</p>

@@ -23,6 +23,7 @@ var annotated_dup =
     [ "GroupDigestEntry", "structGroupDigestEntry.html", "structGroupDigestEntry" ],
     [ "LargeList", "structLargeList.html", "structLargeList" ],
     [ "LegacyApplyContext", "structLegacyApplyContext.html", "structLegacyApplyContext" ],
+    [ "LegacyRawScan", "structLegacyRawScan.html", "structLegacyRawScan" ],
     [ "LocalBlock", "structLocalBlock.html", "structLocalBlock" ],
     [ "MatrixReader", "structMatrixReader.html", "structMatrixReader" ],
     [ "Monomial", "structMonomial.html", "structMonomial" ],

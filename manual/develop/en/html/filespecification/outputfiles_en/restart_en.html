@@ -36,12 +36,13 @@
   <section id="v3-solver-restart-files">
 <span id="subsec-restart-v3"></span><h1>v3 solver restart files<a class="headerlink" href="#v3-solver-restart-files" title="Link to this heading">¶</a></h1>
 <p>CG, mTPQ, cTPQ and TimeEvolution use these files for <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> continuation.
-This release accepts only the same saved and current MPI process count; a
-<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> v3 continuation permits metadata layout 0/1 changes between
-<code class="docutils literal notranslate"><span class="pre">replicated</span></code> and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> without changing vector ownership or order.
-Independently published TPQ sets may therefore have different saved layouts;
-all rank files within one set must agree. Old sector v1/v2 imports still require
-the same layout. Rank redistribution is not supported in this release.</p>
+The saved and current MPI process counts may differ. HPhi reconstructs the
+global vector from the saved contiguous intervals and reads their intersections
+with the current ownership. A <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> v3 continuation may also change
+metadata layout 0/1 between <code class="docutils literal notranslate"><span class="pre">replicated</span></code> and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> without changing
+global vector order. Independently published TPQ sets may therefore have
+different saved rank counts and layouts; all rank files within one set must
+agree. Old sector v1/v2 state imports also permit rank-count and layout changes.</p>
 <section id="names-units-and-manifest">
 <h2>Names, units and manifest<a class="headerlink" href="#names-units-and-manifest" title="Link to this heading">¶</a></h2>
 <p>Vectors are named
@@ -260,6 +261,88 @@ the global index, representative, orbit size and stabilizer size. The pair of
 reductions detects corruption and ordering changes without depending on the
 partition.</p>
 </section>
+<section id="rank-redistribution">
+<h2>Rank redistribution<a class="headerlink" href="#rank-redistribution" title="Link to this heading">¶</a></h2>
+<p>v3 and sector v1/v2 files carry their saved rank count, offsets and local
+dimensions. Keep every file from rank 0 through the saved count minus one,
+including files with zero payload. HPhi validates the complete saved set and
+then reads each overlap between a saved interval and the current interval.
+<code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> is not required for these self-describing formats. v3
+continuation ignores it and uses the count in each manifest row. A v3 or
+sector v1/v2 state import treats a positive value as an optional equality
+check against the saved count.</p>
+<p>For sector v1/v2, HPhi first reproduces the old partition-dependent DATA
+checksum from the saved files. Only after that check succeeds is the payload
+redistributed. The partition-independent sector digest verifies the basis
+set; the canonical representative-state sort fixes its global order. Source
+and destination layouts may be either 0 or 1, but every source file in one
+checkpoint must declare the same valid layout.</p>
+<p>Legacy raw files have only a native 12-byte <code class="docutils literal notranslate"><span class="pre">STEP</span></code>/local-dimension header.
+They do not record the saved rank count or identity. A rank-changing legacy
+read therefore requires <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks=&lt;saved</span> <span class="pre">count&gt;</span></code>. HPhi requires
+all declared files, verifies their headers, lengths, common step and summed
+dimension, and reports that only dimensions—not model or sector identity—were
+checked.</p>
+<p>The dedicated cross-rank regression coverage is:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-number">Table 4.7 </span><span class="caption-text">Rank-changing restart/import regression matrix</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 18.0%" />
+<col style="width: 20.0%" />
+<col style="width: 44.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Basis/method</p></th>
+<th class="head"><p>Tested source to destination</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>v3</p></td>
+<td><p>continuation</p></td>
+<td><p>raw CG</p></td>
+<td><p>4 to 1, 4 to 16, 16 to 4, and 1 to 4 ranks</p></td>
+</tr>
+<tr class="row-odd"><td><p>v3</p></td>
+<td><p>continuation</p></td>
+<td><p>raw mTPQ/cTPQ/TE</p></td>
+<td><p>mTPQ 4 to 2, cTPQ 4 to 2, and TE 4 to 1 ranks</p></td>
+</tr>
+<tr class="row-even"><td><p>v3</p></td>
+<td><p>continuation</p></td>
+<td><p>sector CG</p></td>
+<td><p>3 distributed to 6 replicated and 16 distributed ranks, including empty owners</p></td>
+</tr>
+<tr class="row-odd"><td><p>v3</p></td>
+<td><p>state import</p></td>
+<td><p>raw CG/TE</p></td>
+<td><p>4 to 1 rank</p></td>
+</tr>
+<tr class="row-even"><td><p>sector v1/v2</p></td>
+<td><p>state import</p></td>
+<td><p>Spin/Kondo</p></td>
+<td><p>Spin v1 4 to 1/2/16 and Kondo v2 4 to 1 rank; layout changes and checksum corruption are covered</p></td>
+</tr>
+<tr class="row-odd"><td><p>legacy raw</p></td>
+<td><p>state import</p></td>
+<td><p>CG</p></td>
+<td><p>4 to 1 and 4 to 16 ranks, including rejection of a missing empty source rank</p></td>
+</tr>
+<tr class="row-even"><td><p>legacy raw</p></td>
+<td><p>continuation</p></td>
+<td><p>mTPQ</p></td>
+<td><p>4 to 2 ranks</p></td>
+</tr>
+</tbody>
+</table>
+<p>There is not yet a dedicated rank-changing numerical regression for sector v3
+mTPQ/cTPQ/TimeEvolution continuation or sector v3 state import, nor for legacy
+raw CG/cTPQ/TimeEvolution continuation or TE state import. These paths use the
+same interval reader, but the absence of a dedicated case should not be read as
+additional numerical validation.</p>
+</section>
 <section id="recovery-and-legacy-selection">
 <h2>Recovery and legacy selection<a class="headerlink" href="#recovery-and-legacy-selection" title="Link to this heading">¶</a></h2>
 <p>For every required set, HPhi first uses a manifest row. A missing or corrupt
@@ -267,7 +350,8 @@ referenced v3 file is fatal and never falls back to legacy data. Without a
 row, complete legacy files are validated and used. <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> starts a new
 set only if neither source exists; <code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> reports an error. v1/v2
 sector files are import-only. Legacy CG restarts additional iterations with
-labels starting at one and do not recover the old CG history prefix.</p>
+labels starting at one and do not recover the old CG history prefix. A legacy
+rank change requires <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> as described above.</p>
 <p>History recovery preserves rows before <code class="docutils literal notranslate"><span class="pre">STEP</span></code>, removes later rows and an
 incomplete EOF fragment, and rejects corrupt interior text. Terminal CG keeps
 its already emitted terminal row only when it still satisfies the current
@@ -281,8 +365,9 @@ multiple resumed sets after sorting by <code class="docutils literal notranslate
 name, <code class="docutils literal notranslate"><span class="pre">&lt;SpectrumVec&gt;_rank_&lt;r&gt;.dat</span></code> for TimeEvolution or
 <code class="docutils literal notranslate"><span class="pre">&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;r&gt;.dat</span></code> for CG. Keep all source rank
 files and set <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> to that count when specifying it. This
-release still requires that count, and for a sector the layout, to match the
-current run. Import starts a new solver clock; it is not continuation.</p>
+parameter is optional for v3, but must match the saved count when present.
+The current rank count and, for a sector, layout may differ. Import starts a
+new solver clock; it is not continuation.</p>
 </section>
 </section>
 

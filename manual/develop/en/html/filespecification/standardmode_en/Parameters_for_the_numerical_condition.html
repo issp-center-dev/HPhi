@@ -52,8 +52,8 @@ after the calculation finishes, <code class="docutils literal notranslate"><span
 calculation with the restart-file generated in the previous run,
 <code class="docutils literal notranslate"><span class="pre">&quot;Restart&quot;</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;Restart_out&quot;</span></code> + <code class="docutils literal notranslate"><span class="pre">&quot;Restart_in&quot;</span></code>.</p>
 <p>CG, mTPQ, cTPQ and TimeEvolution use v3 continuation checkpoints in raw
-and <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. This release requires the same MPI process count
-and permits sector metadata layout 0/1 changes for v3. State import through
+and <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> bases. v3 permits a different MPI process count and sector
+metadata layout 0/1 changes. State import through
 <code class="docutils literal notranslate"><span class="pre">EigenVecIO=&quot;In&quot;</span></code> starts a new evaluation or time grid and is not solver
 continuation. Lanczos/spectrum restart remains a separate legacy path.</p>
 </li>
@@ -69,9 +69,12 @@ writes this expert parameter only when it is specified.</p>
 <p><strong>Type :</strong> Non-negative integer less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code> (default: omitted,
 equivalent to <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p>
 <p><strong>Description :</strong> Expected process count in restart or imported vector
-files. Zero means the current count. This release rejects a different
-saved count, so this value validates the source but does not redistribute
-it. Standard mode writes it only when specified.</p>
+files. For legacy raw files, zero means the current count and a rank-changing
+read requires the saved count explicitly. v3 and sector v1/v2 files are
+self-describing and redistribute automatically. v3 continuation ignores
+this parameter and uses each manifest row. For v3 and sector v1/v2 state
+import, a positive value is optional but must match the header. Standard
+mode writes this parameter only when specified.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code></p>
 <p><strong>Type :</strong> Positive integer (default value: <code class="docutils literal notranslate"><span class="pre">2000</span></code>)</p>

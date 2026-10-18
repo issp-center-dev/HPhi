@@ -11,6 +11,7 @@ var symmetry__checkpoint_8c =
     [ "put_word", "symmetry__checkpoint_8c.html#ac67c23acbb8f0a5551be50ca4ad9cd9a", null ],
     [ "ReadSymmetryCheckpoint", "symmetry__checkpoint_8c.html#a180eb395b8ae31f66a08c4992b432a3a", null ],
     [ "SymmetryCheckpointIdentityWords", "symmetry__checkpoint_8c.html#a9772a3eb1db2ba12340a367ec40cebdf", null ],
+    [ "SymmetryCheckpointLegacyFileHash", "symmetry__checkpoint_8c.html#a279bf5e8364c1203a9ee08a6e797cbda", null ],
     [ "vector_digest", "symmetry__checkpoint_8c.html#a6d0d0771499857c333ed841fcadf7d38", null ],
     [ "word_double", "symmetry__checkpoint_8c.html#ad5dfc450271486062a62fb9775f1a7dd", null ],
     [ "WriteSymmetryCheckpoint", "symmetry__checkpoint_8c.html#ae2923e7edb0f642dc68371e4e23d83d5", null ],

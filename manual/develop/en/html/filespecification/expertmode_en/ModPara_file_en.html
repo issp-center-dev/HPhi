@@ -121,10 +121,15 @@ it uses <code class="docutils literal notranslate"><span class="pre">OutputInter
 <li><p><code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code></p>
 <p><strong>Type :</strong> Int (non-negative, less than <code class="docutils literal notranslate"><span class="pre">INT_MAX</span></code>; default value: 0)</p>
 <p><strong>Description :</strong> Expected MPI process count in restart/import files.
-Zero means the current process count. A positive value must match the
-self-described v3 or sector file. This release rejects a saved count that
-differs from the current run; the parameter validates the source and does
-not enable redistribution.</p>
+Zero means the current process count for a legacy raw file. When a legacy
+raw file set is read with a different process count, this parameter is
+mandatory and gives the number of saved rank files; all files, including
+files for empty ranks, must be present. v3 and sector v1/v2 files describe
+their saved count themselves and are redistributed automatically. v3
+continuation ignores this parameter and uses the count in each manifest
+row; this permits a partially migrated TPQ/cTPQ run to combine v3 and
+legacy samples. For v3 and sector v1/v2 state import, the parameter is
+optional, but a positive value must match the count in the header.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Nsite</span></code></p>
 <p><strong>Type :</strong> Int (positive integer)</p>

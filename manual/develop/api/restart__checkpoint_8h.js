@@ -77,6 +77,7 @@ var restart__checkpoint_8h =
     [ "RestartIntersect", "restart__checkpoint_8h.html#a6f4d477c7f5fd2d1a12350cb5ad65581", null ],
     [ "RestartLocalOffset", "restart__checkpoint_8h.html#ae3d7000d8a78b66784ad30813f746f75", null ],
     [ "RestartPutWord", "restart__checkpoint_8h.html#ace07e81ec2c8c4296d58cb7fe6dda035", null ],
+    [ "RestartReadLegacyRaw", "restart__checkpoint_8h.html#a170b95648784ec99271d4662ac64bfc5", null ],
     [ "RestartReadVector", "restart__checkpoint_8h.html#afca5bb906ed4cd4f1ccbd6de8de3dfbe", null ],
     [ "RestartWordDouble", "restart__checkpoint_8h.html#a418e0e04a2857d03c42c08401faffa11", null ],
     [ "RestartWriteUnit", "restart__checkpoint_8h.html#a73da2c394d9c3b225598725763c53a44", null ]

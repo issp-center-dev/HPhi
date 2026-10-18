@@ -232,6 +232,8 @@ Functions</h2></td></tr>
 <tr class="separator:afca5bb906ed4cd4f1ccbd6de8de3dfbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3a612881b40fe557ab61fb56664652e" id="r_ab3a612881b40fe557ab61fb56664652e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="restart__checkpoint_8h.html#ab3a612881b40fe557ab61fb56664652e">RestartClassifySet</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const struct <a class="el" href="structRestartManifest.html">RestartManifest</a> *manifest, uint64_t set, const char *legacy_pattern, enum <a class="el" href="restart__checkpoint_8h.html#a6c9496bcf0c8205a08ab9be86bc1e7b5">RestartSource</a> *source, int *legacy_step)</td></tr>
 <tr class="separator:ab3a612881b40fe557ab61fb56664652e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a170b95648784ec99271d4662ac64bfc5" id="r_a170b95648784ec99271d4662ac64bfc5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="restart__checkpoint_8h.html#a170b95648784ec99271d4662ac64bfc5">RestartReadLegacyRaw</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const char *pattern, int set, int source_ranks, double complex *vector, int *step)</td></tr>
+<tr class="separator:a170b95648784ec99271d4662ac64bfc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a358fe4cfa60979d554eeae58643cb634" id="r_a358fe4cfa60979d554eeae58643cb634"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="restart__checkpoint_8h.html#a358fe4cfa60979d554eeae58643cb634">RestartImportVector</a> (struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>, const char *base, double complex *vector, struct <a class="el" href="structRestartVectorInfo.html">RestartVectorInfo</a> *provenance, enum <a class="el" href="restart__checkpoint_8h.html#a4d2a258a1856dafea5ca144e7b945d0d">RestartFileFormat</a> *format, int *source_ranks)</td></tr>
 <tr class="separator:a358fe4cfa60979d554eeae58643cb634"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3d7000d8a78b66784ad30813f746f75" id="r_ae3d7000d8a78b66784ad30813f746f75"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="restart__checkpoint_8h.html#ae3d7000d8a78b66784ad30813f746f75">RestartLocalOffset</a> (const struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
@@ -329,7 +331,7 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a4d2a258a1856dafea5ca144e7b945d0da6a8fea91142324cbf9ed080e4b6e9d9b" name="a4d2a258a1856dafea5ca144e7b945d0da6a8fea91142324cbf9ed080e4b6e9d9b"></a>RESTART_FORMAT_V3&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8h_source.html#l00067">67</a> of file <a class="el" href="restart__checkpoint_8h_source.html">restart_checkpoint.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8h_source.html#l00074">74</a> of file <a class="el" href="restart__checkpoint_8h_source.html">restart_checkpoint.h</a>.</p>
 
 </div>
 </div>
@@ -483,11 +485,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00585">585</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l01006">1006</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
 
-<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="restart__manifest_8h_source.html#l00015">RestartManifest::basis</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00039">basis_kind()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00478">BcastMPI_i()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="restart__manifest_8h_source.html#l00014">RestartManifest::method</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00040">open_output()</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00011">RESTART_LEGACY_HEADER_BYTES</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_LEGACY</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_NONE</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_V3</a>, <a class="el" href="restart__manifest_8c_source.html#l00144">RestartManifestFind()</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::set</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::step</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00127">step_lower_bound()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="DefCommon_8h_source.html#l00026">TimeEvolution</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00554">validate_set_boundary()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="restart__manifest_8h_source.html#l00015">RestartManifest::basis</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00039">basis_kind()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00720">free_legacy_scan()</a>, <a class="el" href="restart__manifest_8h_source.html#l00014">RestartManifest::method</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00716">LegacyRawScan::present</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_LEGACY</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_NONE</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00015">RESTART_SOURCE_V3</a>, <a class="el" href="restart__manifest_8c_source.html#l00144">RestartManifestFind()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00740">scan_legacy_raw()</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::set</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00717">LegacyRawScan::step</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00127">step_lower_bound()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00975">validate_set_boundary()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00327">cg_restore()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00024">TPQRestartPlanSets()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00320">cg_restore()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00024">TPQRestartPlanSets()</a>.</p>
 
 </div>
 </div>
@@ -539,7 +541,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="restart__digest_8c_source.html#l00018">RestartDoubleWord()</a>, <a class="el" href="restart__digest_8c_source.html#l00011">RestartHashTag()</a>, and <a class="el" href="restart__digest_8c_source.html#l00012">RestartHashWord()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>.</p>
 
 </div>
 </div>
@@ -593,7 +595,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="restart__digest_8c_source.html#l00026">26</a> of file <a class="el" href="restart__digest_8c_source.html">restart_digest.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00308">inspect_vector_header()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00497">RestartImportVector()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00308">inspect_vector_header()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00911">RestartImportVector()</a>.</p>
 
 </div>
 </div>
@@ -705,11 +707,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00497">497</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00911">911</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
 
-<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00478">BcastMPI_i()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00024">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00487">import_probe_failure()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00030">RestartVectorInfo::method</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00040">open_output()</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::ranks</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00231">ReadSymmetryCheckpoint()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00380">record_import()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00013">RESTART_COMP_STATE</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00067">RESTART_FORMAT_LEGACY_RAW</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00067">RESTART_FORMAT_V3</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00014">RESTART_READ_IMPORT</a>, <a class="el" href="restart__digest_8c_source.html#l00026">RestartGetWord()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00020">RW_RANKS</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00031">RestartVectorInfo::set</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00017">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00032">RestartVectorInfo::step</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00013">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00033">RestartVectorInfo::time</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::time</a>, <a class="el" href="dSFMT_8h_source.html#l00120">UINT64_C</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00298">vector_name()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00478">BcastMPI_i()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00022">SymmetryCheckpointInfo::hamiltonian_digest</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00025">SymmetryCheckpointInfo::hamiltonian_digest_kind</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00499">import_probe_failure()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00030">RestartVectorInfo::method</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00040">open_output()</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::ranks</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, <a class="el" href="symmetry__checkpoint_8c_source.html#l00254">ReadSymmetryCheckpoint()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00387">record_import()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00013">RESTART_COMP_STATE</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00074">RESTART_FORMAT_LEGACY_RAW</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00074">RESTART_FORMAT_V3</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00014">RESTART_READ_IMPORT</a>, <a class="el" href="restart__digest_8c_source.html#l00026">RestartGetWord()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00846">RestartReadLegacyRaw()</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00020">RW_RANKS</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00031">RestartVectorInfo::set</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00018">SymmetryCheckpointInfo::source_method</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00019">SymmetryCheckpointInfo::state_index</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00032">RestartVectorInfo::step</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::step</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00020">SymmetryCheckpointInfo::step</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00014">SYMMETRY_HAMILTONIAN_MATRIX_V1</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00033">RestartVectorInfo::time</a>, <a class="el" href="symmetry__checkpoint_8h_source.html#l00021">SymmetryCheckpointInfo::time</a>, <a class="el" href="dSFMT_8h_source.html#l00120">UINT64_C</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00298">vector_name()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>, and <a class="el" href="CalcByLOBPCG_8c_source.html#l00843">CalcByLOBPCG()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByTEM_8c_source.html#l00259">calc_by_tem()</a>, and <a class="el" href="CalcByLOBPCG_8c_source.html#l00839">CalcByLOBPCG()</a>.</p>
 
 </div>
 </div>
@@ -765,7 +767,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="restart__digest_8c_source.html#l00045">45</a> of file <a class="el" href="restart__digest_8c_source.html">restart_digest.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00846">RestartReadLegacyRaw()</a>.</p>
 
 </div>
 </div>
@@ -789,7 +791,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="wrapperMPI_8c_source.html#l00575">ExscanMPI_li()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00846">RestartReadLegacyRaw()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>.</p>
 
 </div>
 </div>
@@ -822,6 +824,64 @@ Functions</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="restart__digest_8c_source.html#l00020">20</a> of file <a class="el" href="restart__digest_8c_source.html">restart_digest.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>.</p>
+
+</div>
+</div>
+<a id="a170b95648784ec99271d4662ac64bfc5" name="a170b95648784ec99271d4662ac64bfc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a170b95648784ec99271d4662ac64bfc5">&#9670;&#160;</a></span>RestartReadLegacyRaw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int RestartReadLegacyRaw </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structBindStruct.html">BindStruct</a> *&#160;</td>
+          <td class="paramname"><em>X</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>set</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>source_ranks</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double complex *&#160;</td>
+          <td class="paramname"><em>vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00846">846</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
+
+<p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00715">LegacyRawScan::dims</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00720">free_legacy_scan()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00728">legacy_raw_name()</a>, <a class="el" href="restart__manifest_8c_source.html#l00012">name</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00714">LegacyRawScan::offsets</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00040">open_output()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00716">LegacyRawScan::present</a>, <a class="el" href="restart__digest_8c_source.html#l00045">RestartIntersect()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00047">RestartLocalOffset()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00740">scan_legacy_raw()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00717">LegacyRawScan::step</a>, <a class="el" href="wrapperMPI_8c_source.html#l00418">SumMPI_d()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00279">legacy_initialize_wave()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00911">RestartImportVector()</a>.</p>
 
 </div>
 </div>
@@ -875,11 +935,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00475">475</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restart__checkpoint_8c_source.html#l00487">487</a> of file <a class="el" href="restart__checkpoint_8c_source.html">restart_checkpoint.c</a>.</p>
 
-<p class="reference">References <a class="el" href="eigenIO_8c_source.html#l00019">comp()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="eigenIO_8c_source.html#l00019">comp()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00327">cg_restore()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, <a class="el" href="CalcByTPQ_8c_source.html#l00161">CalcByTPQ()</a>, <a class="el" href="CalcByLOBPCG_8c_source.html#l00320">cg_restore()</a>, and <a class="el" href="CalcByTEM_8c_source.html#l00110">te_restore()</a>.</p>
 
 </div>
 </div>
@@ -901,7 +961,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="restart__digest_8c_source.html#l00019">19</a> of file <a class="el" href="restart__digest_8c_source.html">restart_digest.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00308">inspect_vector_header()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00413">read_set_files()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="restart__checkpoint_8c_source.html#l00308">inspect_vector_header()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00536">read_sector_cross_rank()</a>, and <a class="el" href="restart__checkpoint_8c_source.html#l00420">read_set_files()</a>.</p>
 
 </div>
 </div>
@@ -953,7 +1013,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="restart__checkpoint_8c_source.html#l00024">agree()</a>, <a class="el" href="restart__manifest_8h_source.html#l00015">RestartManifest::basis</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00039">basis_kind()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00061">build_identity()</a>, <a class="el" href="global_8c_source.html#l00020">cParentOutputFolder</a>, <a class="el" href="global_8h_source.html#l00023">D_FileNameMax</a>, <a class="el" href="wrapperMPI_8c_source.html#l00175">FinalizeMPI()</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::gen</a>, <a class="el" href="restart__manifest_8h_source.html#l00014">RestartManifest::method</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00043">RestartUnit::ncomp</a>, <a class="el" href="global_8c_source.html#l00198">nproc</a>, <a class="el" href="restart__manifest_8h_source.html#l00016">RestartManifest::nrows</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00041">RestartUnit::nset</a>, <a class="el" href="dSFMT_8h_source.html#l00114">PRIu64</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00149">remove_generation()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00167">remove_superseded_files()</a>, <a class="el" href="DefCommon_8h_source.html#l00091">RESTART_OUT</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00011">RESTART_V3_WORDS</a>, <a class="el" href="restart__manifest_8c_source.html#l00186">RestartChooseGeneration()</a>, <a class="el" href="restart__manifest_8c_source.html#l00178">RestartManifestFree()</a>, <a class="el" href="restart__manifest__io_8c_source.html#l00150">RestartManifestLoad()</a>, <a class="el" href="restart__manifest__io_8c_source.html#l00234">RestartManifestPublish()</a>, <a class="el" href="restart__manifest_8c_source.html#l00153">RestartManifestUpsert()</a>, <a class="el" href="restart__manifest_8h_source.html#l00017">RestartManifest::rows</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00031">RestartVectorInfo::set</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00042">RestartUnit::sets</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="restart__checkpoint_8h_source.html#l00032">RestartVectorInfo::step</a>, <a class="el" href="restart__manifest_8h_source.html#l00010">RestartManifestRow::step</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="restart__checkpoint_8c_source.html#l00186">write_part()</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00304">cg_checkpoint_write()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00100">te_checkpoint_write()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00173">TPQRestartWriteCheckpoint()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="CalcByLOBPCG_8c_source.html#l00297">cg_checkpoint_write()</a>, <a class="el" href="CalcByTEM_8c_source.html#l00100">te_checkpoint_write()</a>, and <a class="el" href="tpq__restart_8c_source.html#l00173">TPQRestartWriteCheckpoint()</a>.</p>
 
 </div>
 </div>

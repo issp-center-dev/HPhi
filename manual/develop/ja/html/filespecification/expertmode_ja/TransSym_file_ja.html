@@ -214,8 +214,8 @@ spinlessのraw solverでは非対角 <code class="docutils literal notranslate">
 sectorの外へ出る演算子は0になります。canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> はraw基底と同様に起動時に拒否されます。
 同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> とスペクトル計算は
-本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionは同じMPI process数で
-v3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
+本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
+変更したv3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
 CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
 全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
 識別情報付きのsector行列ファイル（<a class="reference internal" href="../outputfiles_ja/ham_ja.html#subsec-ham"><span class="std std-ref">ham.dat</span></a>）を使います。
@@ -344,7 +344,7 @@ KondoGCは上限を含まない厳密不等号を要求します。</p>
 </tbody>
 </table>
 <p>両方とは <code class="docutils literal notranslate"><span class="pre">replicated</span></code> と <code class="docutils literal notranslate"><span class="pre">distributed</span></code> です。CG、mTPQ、cTPQ、TimeEvolutionは
-同じprocess数でv3継続に対応し、metadata layout 0/1の変更も許します。
+process数を変更したv3継続に対応し、metadata layout 0/1の変更も許します。
 状態import/export欄とは別の機能です。
 所有するセクター行が0のMPI
 rankもcollectiveと状態I/Oへ参加します。FullDiagはbuildに含まれるLAPACK
@@ -364,7 +364,10 @@ wordを使います。後述のversion 1のfieldに <code class="docutils litera
 <code class="docutils literal notranslate"><span class="pre">fixed_quantity_flags</span></code> を追加したものです。phase 2は上記の物理的並進規約です。
 flagsはKondoが3、NConservedが1、GCが0で、GCの <code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> fieldは0です。
 manifestは局在mask・物理空間digest・固定量をHamiltonian digestと分離して記録
-します。importには模型・物理空間・sector・順序・rank数・layoutの一致が必要です。
+します。importでは模型・物理空間・sector・順序の一致が必要ですが、rank数とlayoutは
+変更できます。このv2形式では保存時の分割でpayload checksumを検証した後に再配置し、
+sector digestで基底集合を検証します。global基底順序は代表状態のcanonical sort規則で
+決まります。
 CGはimport状態を評価し、最適化を再開しません。TEは新しい時刻列で開始し、
 Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応します。
 非Kondoのcheckpointはversion 1 / phase 1 / 28 wordのままです。</p>
@@ -379,7 +382,7 @@ Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応�
 場合は、整合するゲージで明示的な不変 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> hopping増分を指定してください。</p>
 <p>general spin、新しいStandard-modeのKondo運動量生成、 <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
 <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>、 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>、スピン軸回転、反ユニタリ操作、
-多次元既約表現、rank数変更を伴うcheckpoint再分配は非対応です。
+多次元既約表現は非対応です。
 Hamiltonian I/OはFullDiagのsector行列ファイルに限ります。
 FullDiagはさらにベクトル入力、distributed基底metadata、
 MAGMA、nonserial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> を除外します。</p>
@@ -473,10 +476,10 @@ CGに <code class="docutils literal notranslate"><span class="pre">Sz2</span></c
 熱標本であり、全SpinGC空間の熱平均ではありません。sector間の和には適切な統計的
 重みが必要で、単一sectorの標本はその和を表しません。</p>
 <p>CGのベクトル読込は入力状態を評価し、最適化を再開しません。TEの読込は新しい時間列を
-開始し、同一sector内のHamiltonian変更（quench）も許します。rank数、所有範囲、模型、
-sectorと位相規約は一致させます。どちらもsolver restartではありません。<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は
-これとは別に、同じprocess数でCG、mTPQ、cTPQ、TimeEvolutionのv3 dataを
-継続します。metadata layout 0/1の変更も許します。
+開始し、同一sector内のHamiltonian変更（quench）も許します。模型、sector、global基底
+順序、位相規約は一致させますが、rank数、所有範囲、metadata layoutは変更できます。
+どちらもsolver restartではありません。<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> はこれとは別に、process数とmetadata
+layout 0/1を変更してCG、mTPQ、cTPQ、TimeEvolutionのv3 dataを継続できます。
 SpinGC checkpointもversion 1で、headerは <code class="docutils literal notranslate"><span class="pre">model=4</span></code>、<code class="docutils literal notranslate"><span class="pre">nup/ndown/ne</span></code> は0です。
 Hamiltonian fingerprintは解析済みPairLift行を含む
 <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v3</span></code> です。非Kondoのcanonical模型はv2と既存checkpoint形式を
@@ -485,9 +488,8 @@ Hamiltonian fingerprintは解析済みPairLift行を含む
 使用する全時刻の入力を伝播前に検査します。<code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否されます。
 代わりに、群不変なサイト内 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> またはスピン積の <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を指定してください。
 general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、
-rank数を変更したcheckpoint再分配は対象外です（Hamiltonian入出力は
-FullDiagのsector行列ファイルに限ります）。
+全スピン反転、反ユニタリ操作、多次元既約表現、spectrumは対象外です
+（Hamiltonian入出力はFullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> も非対応です。FullDiagはベクトル入力、distributed基底metadata、
 MAGMAと非serial <code class="docutils literal notranslate"><span class="pre">ExpecMode</span></code> も拒否します。</p>
@@ -557,8 +559,8 @@ SSの <code class="docutils literal notranslate"><span class="pre">phys_var</spa
 エネルギー平均の二乗を引いた分散ではありません。
 <code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> によりSS/Norm/Flctと相関関数の集約出力を使えます。
 相関関数は <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> が選ぶTPQ評価stepで再計算されます。大規模sectorで
-全site pairを毎step要求すると高コストになります。v3 restartは同じprocess数で
-利用でき、metadata layout 0/1の変更も許します。TPQの状態vector import/exportとスペクトルは
+全site pairを毎step要求すると高コストになります。v3 restartではprocess数と
+metadata layout 0/1を変更できます。TPQの状態vector import/exportとスペクトルは
 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と併用できません。</p>
 <p>計算結果は <strong>単一の対称性セクター内</strong> のtraceを推定します。
 固定量子数空間全体の熱平均ではありません。manifestには
@@ -579,7 +581,7 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 両flagは0または1です。行 <code class="docutils literal notranslate"><span class="pre">i</span></code> の次数はbeta <code class="docutils literal notranslate"><span class="pre">i</span></code> から <code class="docutils literal notranslate"><span class="pre">i+1</span></code> への発展に使い、
 最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
 <code class="docutils literal notranslate"><span class="pre">eigen</span></code> が非ゼロの行を拒否します。ベクトル入出力は引き続き非対応です。
-一様scheduleのcTPQは同じprocess数でv3 restartを利用でき、metadata layout 0/1の
+一様scheduleのcTPQはprocess数を変更したv3 restartを利用でき、metadata layout 0/1の
 変更も許しますが、
 <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> は <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> または3と組み合わせられません。
 明示scheduleでは初期点と <code class="docutils literal notranslate"><span class="pre">physcal=1</span></code> の行で相関関数を出力します。<code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> を
@@ -596,8 +598,9 @@ manifestには <code class="docutils literal notranslate"><span class="pre">cano
 指定し、namelistへ <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span> <span class="pre">seed_eigenvec_0</span></code> を追加します。
 <code class="docutils literal notranslate"><span class="pre">output/seed_eigenvec_0_rank_&lt;rank&gt;.dat</span></code> は下記のsector形式が必要です。
 CGの <code class="docutils literal notranslate"><span class="pre">OutputEigenVec=1</span></code> で作成できます。セクターFullDiagも全固有状態をこの形式で
-出力します（<a class="reference internal" href="../outputfiles_ja/eigenvec_ja.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a> を参照）。基底・sector・MPI数・layoutは一致が
-必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
+出力します（<a class="reference internal" href="../outputfiles_ja/eigenvec_ja.html#subsec-eigenvec"><span class="std std-ref">eigenvec.dat</span></a> を参照）。基底・sector・global順序・位相規約は
+一致が必要ですが、MPI数とlayoutは変更でき、quenchのためHamiltonianも変更できます。
+既定layoutはdistributed、
 <code class="docutils literal notranslate"><span class="pre">HPHI_SYMMETRY_BASIS_LAYOUT=replicated</span></code> で参照用layoutを選択できます。</p>
 <p>TE実行前にCGのseedを全rank分、別prefixで保存するか、TE側の
 <code class="docutils literal notranslate"><span class="pre">CDataFileHead</span></code> を変更してください。入出力のprefixが同じ場合、row 0の出力
@@ -613,8 +616,8 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 時間間隔を減らして収束を確認してください。相関関数は伝播後、<code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> が
 選ぶstepで評価されます。<code class="docutils literal notranslate"><span class="pre">OutputGreenFormat=1</span></code> は0始まりの時刻stepを添字として
 集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
-なります。v3 <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> は同じprocess数で保存済みTE時計を継続し、metadata layout
-0/1の変更も許します。
+なります。v3 <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> はprocess数とmetadata layout 0/1を変更して保存済みTE時計を
+継続できます。
 import来歴を新しい時計としては使いません。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
 記録します。FullDiag由来の場合は <code class="docutils literal notranslate"><span class="pre">source_hamiltonian_kind=sector_matrix_v1</span></code> も
@@ -661,12 +664,13 @@ raw Hilbert空間を列挙し直す必要がなく、項の出現・消滅にも
 セクターFullDiagも全固有状態を同じ形式で出力します。
 ファイル名は <code class="docutils literal notranslate"><span class="pre">output/&lt;CDataFileHead&gt;_eigenvec_&lt;state&gt;_rank_&lt;rank&gt;.dat</span></code> で、
 状態・rankの番号は0始まりです。要素を持たないrankもファイルを出力します。
-読込には、模型・固定量子数・群と指標・sector・MPI rank数・layout・局所分担・
-global indexと代表状態の対応・基底位相規約の一致が必要です。
+読込には、模型・固定量子数・群と指標・sector・global indexと代表状態の対応・
+基底位相規約の一致が必要です。MPI rank数、layout、局所分担は変更できます。
 従来のraw基底vectorと <code class="docutils literal notranslate"><span class="pre">InputEigenVec=2</span></code> はこのimport形式では拒否します。
 solver継続には <a class="reference internal" href="../outputfiles_ja/restart_ja.html#subsec-restart-v3"><span class="std std-ref">v3 solver restartファイル</span></a> の別のv3 manifest/vector fileを使います。
-v3は同じrank数でmetadata layout 0/1を変更した状態importにも対応します。
-上記の同じlayoutの制約は旧v1/v2形式に適用されます。
+v3はrank数とmetadata layout 0/1を変更した状態importにも対応します。旧v1/v2では
+保存時の分割でDATA checksumを検証してから再配置します。source file一式のlayoutは
+同じ有効値である必要がありますが、現在のlayoutは変更できます。
 CGの入力実行は与えた状態の物理量を評価し、固有状態の再計算や反復再開は行いません。</p>
 <p>生成時のHamiltonian digestは別に記録し、同一sector内のquench用に現在のHamiltonianと
 異なる場合も読み込めます。変更の有無をログへ表示します。この状態読込はsolverのrestartとは別です。
@@ -767,7 +771,8 @@ statusとこの行を併せて確認してください。</p>
 canonical化を行い、読み込んだ値の <code class="docutils literal notranslate"><span class="pre">matrix_digest</span></code> を記録します。manifestは
 <code class="docutils literal notranslate"><span class="pre">matrix_source=input</span></code> で、固有値だけの指定でも <code class="docutils literal notranslate"><span class="pre">output_scope=requested</span></code> と
 なります。行列ファイルはrank数やsolverを変えて読み込めますが、固有状態の
-checkpointは同じrank数・layoutで使います。保存した状態をTEやCGで使うと、
+checkpointもCGまたはTEへ別のrank数・metadata layoutでimportできます。v1/v2のDATA
+checksumは保存時の分割に従って検証してから再配置します。保存した状態をTEやCGで使うと、
 利用側の定義ファイルのHamiltonianで評価されます。</p>
 <p><code class="docutils literal notranslate"><span class="pre">CalcTimer.dat</span></code> には
 <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">input</span></code> [5800]、 <code class="docutils literal notranslate"><span class="pre">Sector</span> <span class="pre">matrix</span> <span class="pre">output</span></code> [5900]、
