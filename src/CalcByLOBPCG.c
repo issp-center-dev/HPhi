@@ -276,24 +276,17 @@ static void Initialize_wave(
   }/*else if(initial_mode==1)*/
 }/*static void Initialize_wave*/
 /* Header and complete-unit validation precede this legacy X-only read. */
-static int legacy_initialize_wave(struct BindStruct *X, double complex **wave)
+static int legacy_initialize_wave(struct BindStruct *X, double complex **wave,
+                                  int expected_step)
 {
   fprintf(stdoutMPI, "%s", cLogInputVecStart);
+  int source_ranks = X->Def.RestartSourceRanks > 0
+      ? X->Def.RestartSourceRanks : nproc;
   for (int ie = 0; ie < X->Def.k_exct; ++ie) {
-    FILE *fp = NULL;
-    char name[D_FileNameMax];
-    int step, bad;
-    unsigned long dim;
-    sprintf(name, cFileNameInputVector, ie, myrank);
-    childfopenALL(name, "rb", &fp);
-    bad = fp == NULL;
-    if (!bad) {
-      bad = fread(&step, sizeof(step), 1, fp) != 1 ||
-            fread(&dim, sizeof(dim), 1, fp) != 1 || dim != X->Check.idim_max;
-      if (!bad) bad = fread(wave[ie], sizeof(double complex), dim + 1, fp) != dim + 1;
-      bad |= fclose(fp) != 0;
-    }
-    if (SumMPI_i(bad) != 0) {
+    int step = 0;
+    if (RestartReadLegacyRaw(X, cFileNameInputVector, ie, source_ranks,
+                             wave[ie], &step) != 0 ||
+        SumMPI_i(step != expected_step) != 0) {
       fprintf(stdoutMPI, "Error: CG legacy restart read failed.\n"); return -1;
     }
   }
@@ -355,7 +348,10 @@ static int cg_restore(struct BindStruct *X, double complex ***wxp, double *eig, 
     if (X->Def.iReStart == RESTART_IN) { fprintf(stdoutMPI, "Error: restart manifest is required for ReStart=3.\n"); return -1; }
     fprintf(stdoutMPI, "Start from scratch.\n"); return 0;
   }
-  if (source == RESTART_SOURCE_LEGACY) { RestartManifestFree(&m); return legacy_initialize_wave(X, wxp[1]) == 0 ? 2 : -1; }
+  if (source == RESTART_SOURCE_LEGACY) {
+    RestartManifestFree(&m);
+    return legacy_initialize_wave(X, wxp[1], first_legacy_step) == 0 ? 2 : -1;
+  }
   if (m.method != CG) { fprintf(stdoutMPI, "Error: restart manifest belongs to another method.\n"); RestartManifestFree(&m); return -1; }
   const struct RestartManifestRow *first = RestartManifestFind(&m, 0);
   struct RestartVectorInfo first_info = {0};
@@ -845,8 +841,7 @@ int CalcByLOBPCG(
 )
 {
   char sdt[D_FileNameMax];
-  size_t byte_size = 0;
-  long int i_max = 0, ie, idim;
+  long int ie, idim;
   FILE *fp;
 
   fprintf(stdoutMPI, "######  Eigenvalue with LOBPCG  #######\n\n");
@@ -914,37 +909,17 @@ int CalcByLOBPCG(
       if (SumMPI_i(length < 0 || (size_t)length >= sizeof(sdt)) != 0) return FALSE;
       int imported = RestartImportVector(&(X->Bind), sdt, v1, &info, &format, &source_ranks);
       if (imported == -1) return FALSE;
-      if (imported == 0) {
-        if (format != RESTART_FORMAT_V3 &&
-            SumMPI_i(info.set != (uint64_t)ie || info.step > INT_MAX) != 0) {
-          fprintf(stdoutMPI, "Error: symmetry checkpoint state index or step is invalid for CG input.\n");
-          return FALSE;
-        }
-        X->Bind.Large.itr = format == RESTART_FORMAT_V3 ? 0 : (int)info.step;
-        step_i = 0;
-        for (idim = 0; idim < X->Bind.Check.idim_max; ++idim)
-          L_vec[ie][idim] = v1[idim + 1];
-        continue;
-      }
-      sprintf(sdt, cFileNameInputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
-      invalid = childfopenALL(sdt, "rb", &fp) != 0;
-      if (!invalid) {
-        invalid = fread(&step_i, sizeof(int), 1, fp) != 1 ||
-                  fread(&i_max, sizeof(long int), 1, fp) != 1 ||
-                  i_max < 0 || (unsigned long)i_max != X->Bind.Check.idim_max;
-        if (!invalid) {
-          byte_size = fread(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
-          invalid = byte_size != X->Bind.Check.idim_max + 1;
-        }
-        if (fclose(fp) != 0) invalid = 1;
-        fp = NULL;
-      }
-      if (SumMPI_i(invalid) != 0) {
-        fprintf(stdoutMPI, "Error: missing, truncated or incompatible CG Inputvector file.\n");
+      if ((format == RESTART_FORMAT_SECTOR_V1 ||
+           format == RESTART_FORMAT_SECTOR_V2) &&
+          SumMPI_i(info.set != (uint64_t)ie || info.step > INT_MAX) != 0) {
+        fprintf(stdoutMPI, "Error: symmetry checkpoint state index or step is invalid for CG input.\n");
         return FALSE;
       }
-#pragma omp parallel for default(none) shared(L_vec, v1) firstprivate(i_max, ie), private(idim)
-      for (idim = 0; idim < i_max; idim++) {
+      X->Bind.Large.itr = (format == RESTART_FORMAT_SECTOR_V1 ||
+                           format == RESTART_FORMAT_SECTOR_V2)
+          ? (int)info.step : 0;
+      step_i = 0;
+      for (idim = 0; idim < X->Bind.Check.idim_max; idim++) {
         L_vec[ie][idim] = v1[idim + 1];
       }
     }/*for (ie = 0; ie < X->Def.k_exct; ie++)*/
@@ -1012,9 +987,9 @@ int CalcByLOBPCG(
       }
       sprintf(sdt, cFileNameOutputEigen, X->Bind.Def.CDataFileHead, ie, myrank);
       if (childfopenALL(sdt, "wb", &fp) != 0) exitMPI(-1);
-      byte_size = fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
-      byte_size = fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
-      byte_size = fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
+      fwrite(&X->Bind.Large.itr, sizeof(X->Bind.Large.itr), 1, fp);
+      fwrite(&X->Bind.Check.idim_max, sizeof(X->Bind.Check.idim_max), 1, fp);
+      fwrite(v1, sizeof(complex double), X->Bind.Check.idim_max + 1, fp);
       fclose(fp);
     }/*for (ie = 0; ie < X->Bind.Def.k_exct; ie++)*/
 

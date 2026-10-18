@@ -13,11 +13,17 @@ def write_times(path, times):
                                   ''.join('{} 0\n'.format(t) for t in times))
 
 
-def build_time_table_case(root, times):
+def build_time_table_case(root, times, writer_ranks=None):
     """Reusable raw fixture (Task 21): CG seed followed by a quenched TE grid."""
     rc.generate(root, 'L=8\nmodel="Spin"\nmethod="CG"\nlattice="chain"\nJ=1\n2Sz=0\nexct=1\noutputmode="None"\n')
     rc.set_key(root, 'calcmod.def', 'OutputEigenVec', 1)
-    rc.run(root, 'cg')
+    saved = rc.MPI
+    if writer_ranks is not None:
+        rc.MPI = rc.launcher(writer_ranks)
+    try:
+        rc.run(root, 'cg')
+    finally:
+        rc.MPI = saved
     for p in (root / 'output').glob('zvo_eigenvec_0_rank_*.dat'):
         shutil.copyfile(p, p.with_name(p.name.replace('zvo_', 'seed_')))
     p = root / 'exchange.def'

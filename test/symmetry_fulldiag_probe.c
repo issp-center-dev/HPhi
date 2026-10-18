@@ -10,6 +10,7 @@ struct BindStruct;
 #include "makeHamSym.h"
 #include "symmetry_basis.h"
 #include "symmetry_checkpoint.h"
+#include "restart_checkpoint.h"
 #include "symmetry_hamiltonian_io.h"
 #include "symmetry_fulldiag_probe.h"
 
@@ -281,6 +282,52 @@ done:
   return status;
 }
 
+/* Exercise the public state-import dispatcher.  Unlike the low-level
+ * per-rank reader above, this path accepts a checkpoint written by another
+ * MPI rank count and verifies its old-partition DATA checksum first. */
+static int checkpoint_import_action(struct BindStruct *X)
+{
+  struct BindStruct local = local_view(X);
+  struct RestartVectorInfo provenance;
+  enum RestartFileFormat format;
+  int source_ranks = 0;
+  size_t count = X->Sym->local_dim + 1;
+  double complex *vector = malloc(count * sizeof(*vector));
+  double complex *sentinel = malloc(count * sizeof(*sentinel));
+  int status = -1;
+  if (SumMPI_i(vector == NULL || sentinel == NULL) != 0) goto done;
+  for (size_t i = 0; i < count; ++i) vector[i] = sentinel[i] = 7.0 + 7.0*I;
+  int imported = RestartImportVector(&local, "zvo_eigenvec_0", vector,
+                                     &provenance, &format, &source_ranks);
+  if (imported != 0) {
+    if (SumMPI_i(memcmp(vector, sentinel, count * sizeof(*vector)) != 0) == 0)
+      fprintf(stdoutMPI, "FullDiagProbe sentinel intact after rejected checkpoint import.\n");
+    goto done;
+  }
+  int mismatch = (format != RESTART_FORMAT_SECTOR_V1 &&
+                  format != RESTART_FORMAT_SECTOR_V2) ||
+                 source_ranks < 1 || provenance.method != FullDiag ||
+                 provenance.set != 0 || provenance.step != 0 ||
+                 provenance.time != 0;
+  for (unsigned long i = 1; i <= X->Sym->local_dim; ++i) {
+    uint64_t global = X->Sym->local_offset + i;
+    double complex expected = global == 1 ? 1.0 : 0.0;
+    if (vector[i] != expected) mismatch = 1;
+  }
+  if (SumMPI_i(mismatch) != 0) {
+    fprintf(stdoutMPI, "Error: FullDiag probe checkpoint import changed the state or provenance.\n");
+    goto done;
+  }
+  fprintf(stdoutMPI, "FullDiagProbe checkpoint import ok state=%" PRIu64
+          " format=%d source_ranks=%d\n", provenance.set, (int)format,
+          source_ranks);
+  status = 1;
+done:
+  free(vector);
+  free(sentinel);
+  return status;
+}
+
 int SymmetryFullDiagTestFail(const char *stage)
 {
   static int fired;
@@ -311,6 +358,7 @@ int SymmetryFullDiagProbe(struct BindStruct *X, const char *action)
   if (strcmp(action, "fulldiag-checkpoint") == 0 ||
       strcmp(action, "fulldiag-checkpoint-known") == 0) return checkpoint_action(X, action);
   if (strcmp(action, "fulldiag-checkpoint-read") == 0) return checkpoint_read_action(X);
+  if (strcmp(action, "fulldiag-checkpoint-import") == 0) return checkpoint_import_action(X);
   fprintf(stdoutMPI, "Error: unknown FullDiag probe action %s.\n", action);
   return -1;
 }

@@ -176,8 +176,8 @@ The parameters correlated with the keywords are as follows.
    | 3: Input a restart vector.
 
    CG, mTPQ, cTPQ and TimeEvolution use the v3 manifest format in raw and
-   ``TransSym`` bases. The saved and current MPI process counts must match in
-   this release; sector v3 continuation permits metadata layout 0/1 changes.
+   ``TransSym`` bases. The saved and current MPI process counts may differ;
+   sector v3 continuation also permits metadata layout 0/1 changes.
    ``ReStart=3`` never rewrites the checkpoint. v3 ``Lanczos_max`` is an
    absolute final bound. A no-op at a lowered bound evaluates the restored
    state without adding history rows or rewriting the checkpoint. A terminal

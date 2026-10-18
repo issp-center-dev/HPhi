@@ -287,14 +287,15 @@ for source_case in (cont, agg):
         rc.run(bad, "reject_boundary", fail="restart checkpoint")
         assert series_snapshot(bad) == before
 
-for damage in ("short", "step0"):
+for damage, code in (("short", 3), ("step0", 4)):
     bad = ROOT / ("bad_legacy_" + damage)
     shutil.copytree(leg, bad)
     q = sorted((bad / "output").glob("tmpvec_set0_rank_*.dat"))[0]
     data = q.read_bytes()
     q.write_bytes(data[:4] if damage == "short" else struct.pack("=i", 0) + data[4:])
     before = series_snapshot(bad)
-    rc.run(bad, "reject_legacy", fail="legacy recovery")
+    rc.run(bad, "reject_legacy",
+           fail="validation failed (code={}".format(code))
     assert series_snapshot(bad) == before
 
 # TPQ FLAGS must be zero. cTPQ additionally rejects negative cumulative beta

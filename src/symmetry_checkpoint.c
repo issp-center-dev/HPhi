@@ -168,6 +168,29 @@ static int vector_digest(const struct BindStruct *X, const double complex *vecto
   return 0;
 }
 
+int SymmetryCheckpointLegacyFileHash(FILE *fp, uint64_t rank, uint64_t offset,
+                                     uint64_t local_dim, uint64_t *hash,
+                                     double *norm2)
+{
+  if (fp == NULL || hash == NULL || norm2 == NULL) return -1;
+  uint64_t h = hash_word(FNV_OFFSET, rank);
+  h = hash_word(h, offset);
+  h = hash_word(h, local_dim);
+  double n = 0;
+  for (uint64_t i = 0; i < local_dim; ++i) {
+    uint64_t re_word, im_word;
+    if (get_word(fp, &re_word) != 0 || get_word(fp, &im_word) != 0) return -1;
+    double re = word_double(re_word), im = word_double(im_word);
+    if (!isfinite(re) || !isfinite(im)) return -1;
+    h = hash_word(hash_word(h, re_word), im_word);
+    n += re*re + im*im;
+  }
+  if (!isfinite(n)) return -1;
+  *hash = h;
+  *norm2 = n;
+  return 0;
+}
+
 int WriteSymmetryCheckpoint(const struct BindStruct *X, const char *name,
                             const double complex *vector,
                             const struct SymmetryCheckpointInfo *info)
@@ -254,8 +277,12 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
   int words = version == 2 ? V2_WORDS : V1_WORDS;
   for (int i = 2; !invalid && i < words; ++i) invalid = get_word(fp, &header[i]) != 0;
   if (failure(invalid, "header / sector / layout validation")) goto fail;
-  /* H is deliberately excluded: this is a quench-capable state import. */
+  /* H is deliberately excluded: this is a quench-capable state import.
+   * Replicated and distributed sector layouts have the same canonical index
+   * order, so a layout change is also valid for an import. */
+  invalid = header[LAYOUT] > 1;
   for (int i = 0; !invalid && i < HAMILTONIAN; ++i) {
+    if (i == LAYOUT) continue;
     invalid = header[i] != expected[i];
     if (invalid) fprintf(stderr, "Error: rank %d checkpoint %s: %s differs (file=%" PRIu64
                          ", expected=%" PRIu64 ").\n", myrank, name,

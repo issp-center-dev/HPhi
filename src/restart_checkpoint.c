@@ -316,9 +316,16 @@ static int inspect_vector_header(struct BindStruct *X, const struct RestartManif
   uint64_t expected[RESTART_V3_WORDS];
   uint64_t *offsets = NULL, *dims = NULL; int status = 0;
   if (agree(row->set > INT_MAX || row->gen > 1 || row->ncomp < 1 || row->ncomp > 2 ||
-            comp < 0 || comp >= (int)row->ncomp || P > SIZE_MAX / sizeof(uint64_t), "manifest row")) return -1;
-  if (agree(P != (uint64_t)nproc, "rank count (rank redistribution arrives in PR-3)")) return -1;
-  if (agree(X->Def.RestartSourceRanks > 0 && (uint64_t)X->Def.RestartSourceRanks != P, "RestartSourceRanks does not match the saved rank count")) return -1;
+            comp < 0 || comp >= (int)row->ncomp || P > INT_MAX ||
+            P > SIZE_MAX / sizeof(uint64_t), "manifest row")) return -1;
+  /* A continuation manifest is self-describing.  In particular, TPQ sets may
+   * be migrated from legacy raw files to v3 one at a time, so a source-rank
+   * hint for the remaining legacy sets must not reject an already migrated
+   * v3 set.  Explicit state import keeps the optional equality check. */
+  if (purpose == RESTART_READ_IMPORT &&
+      agree(X->Def.RestartSourceRanks > 0 &&
+            (uint64_t)X->Def.RestartSourceRanks != P,
+            "RestartSourceRanks does not match the saved rank count")) return -1;
   if (agree(build_identity(X, expected) != 0, "identity")) return -1;
   offsets = calloc(P, sizeof(*offsets)); dims = calloc(P, sizeof(*dims));
   if (agree(offsets == NULL || dims == NULL, "allocation")) goto fail;
@@ -427,6 +434,7 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
             X->Check.idim_max >= SIZE_MAX / sizeof(double complex), "local interval / allocation size")) goto fail;
   uint64_t b = a + X->Check.idim_max;
   double complex *tmp = calloc(X->Check.idim_max + 1, sizeof(*tmp));
+  unsigned long payload_files_opened = 0;
   invalid = tmp == NULL;
   for (uint64_t j = 0; !invalid && j < P; ++j) {
     uint64_t lo, hi;
@@ -434,6 +442,7 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
     char name[D_FileNameMax];
     if (vector_name(name, sizeof(name), X, row, comp, (int)j, base) != 0) { invalid = 1; break; }
     FILE *fp = open_output(name, "rb");
+    if (fp != NULL) ++payload_files_opened;
     uint64_t byte = RESTART_V3_HEADER_BYTES + 16 * (lo - offsets[j]);
     invalid = fp == NULL || byte > (uint64_t)LONG_MAX || fseek(fp, (long)byte, SEEK_SET) != 0;
     for (uint64_t g = lo; !invalid && g < hi; ++g) {
@@ -445,6 +454,9 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
     if (fp != NULL) fclose(fp);
   }
   if (agree(invalid, "payload read")) { free(tmp); goto fail; }
+  payload_files_opened = SumMPI_li(payload_files_opened);
+  fprintf(stdoutMPI, "Restart read: header files %" PRIu64
+          ", payload files opened %lu.\n", P, payload_files_opened);
   uint64_t x = 0, s = 0, gx, gs; double norm = 0;
   for (unsigned long i = 1; i <= X->Check.idim_max; ++i) {
     double re = creal(tmp[i]), im = cimag(tmp[i]);
@@ -494,10 +506,413 @@ static int import_probe_failure(const struct BindStruct *X, int invalid, const c
   return -1;
 }
 
+static int sector_legacy_runtime_identity(const uint64_t *expected,
+                                          const uint64_t *header, int words)
+{
+  for (int i = RW_MAGIC; i <= RW_DIM; ++i)
+    if (header[i] != expected[i]) return -1;
+  for (int i = RW_GROUP; i <= RW_SECTOR_SUM; ++i)
+    if (header[i] != expected[i]) return -1;
+  if (words == 30 &&
+      (header[RW_LOCAL_SITE_MASK] != expected[RW_LOCAL_SITE_MASK] ||
+       header[RW_FIXED_FLAGS] != expected[RW_FIXED_FLAGS])) return -1;
+  return 0;
+}
+
+static int sector_legacy_same_unit(const uint64_t *reference,
+                                   const uint64_t *header, int words)
+{
+  for (int i = 0; i < words; ++i) {
+    if (i == RW_RANK || i == RW_OFFSET || i == RW_LOCAL_DIM || i == RW_ORDER)
+      continue;
+    if (header[i] != reference[i]) return -1;
+  }
+  return 0;
+}
+
+/* Read a sector v1/v2 state with a different rank count.  The old DATA words
+ * hash each writer-rank partition, so first reproduce that checksum over every
+ * old file, then read only the intervals intersecting this run's ownership. */
+static int read_sector_cross_rank(struct BindStruct *X, const char *base,
+                                  int version, int source_ranks,
+                                  double complex *vector,
+                                  struct SymmetryCheckpointInfo *info)
+{
+  const int words = version == RESTART_FORMAT_SECTOR_V2 ? 30 : 28;
+  const uint64_t P = (uint64_t)source_ranks;
+  uint64_t expected[RESTART_V3_WORDS] = {0};
+  uint64_t reference[RESTART_V3_WORDS] = {0};
+  uint64_t *offsets = NULL, *dims = NULL;
+  int status = 0, invalid = 0;
+  if (agree(base == NULL || vector == NULL || info == NULL ||
+            (version != RESTART_FORMAT_SECTOR_V1 &&
+             version != RESTART_FORMAT_SECTOR_V2) || source_ranks < 1,
+            "sector cross-rank arguments")) return -1;
+  if (SymmetryCheckpointIdentityWords(X, expected) != 0) return -1;
+  offsets = calloc(P, sizeof(*offsets));
+  dims = calloc(P, sizeof(*dims));
+  if (agree(offsets == NULL || dims == NULL, "sector cross-rank allocation")) goto fail;
+
+  if (myrank == 0) {
+    uint64_t running = 0;
+    for (uint64_t rank = 0; rank < P && status == 0; ++rank) {
+      uint64_t header[RESTART_V3_WORDS] = {0};
+      char name[D_FileNameMax];
+      FILE *fp = NULL;
+      if (vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0) {
+        status = 1;
+        break;
+      }
+      fp = open_output(name, "rb");
+      if (fp == NULL) {
+        status = 2;
+        break;
+      }
+      for (int i = 0; i < words && status == 0; ++i)
+        if (RestartGetWord(fp, &header[i]) != 0) status = 3;
+      if (status == 0 &&
+          (sector_legacy_runtime_identity(expected, header, words) != 0 ||
+           header[RW_RANKS] != P || header[RW_RANK] != rank ||
+           header[RW_LAYOUT] > 1 || header[RW_OFFSET] != running)) status = 4;
+      if (status == 0) {
+        long end = -1;
+        uint64_t bytes = (uint64_t)(8 * words);
+        if (header[RW_LOCAL_DIM] > (UINT64_MAX - bytes) / 16 ||
+            fseek(fp, 0, SEEK_END) != 0 || (end = ftell(fp)) < 0 ||
+            (uint64_t)end != bytes + 16 * header[RW_LOCAL_DIM]) status = 5;
+      }
+      if (status == 0) {
+        double time = RestartWordDouble(header[RW_TIME]);
+        invalid = !isfinite(time) ||
+                  (header[RW_METHOD] != FullDiag && header[RW_METHOD] != CG &&
+                   header[RW_METHOD] != TimeEvolution);
+        if (header[RW_METHOD] == FullDiag)
+          invalid |= header[RW_STEP] != 0 || header[RW_TIME] != 0 ||
+                     header[RW_STATE] >= header[RW_DIM];
+        if (invalid) status = 6;
+      }
+      if (status == 0) {
+        if (rank == 0) memcpy(reference, header, sizeof(reference));
+        else if (sector_legacy_same_unit(reference, header, words) != 0) status = 7;
+      }
+      if (status == 0) {
+        if (header[RW_LOCAL_DIM] > UINT64_MAX - running) status = 8;
+        else {
+          offsets[rank] = header[RW_OFFSET];
+          dims[rank] = header[RW_LOCAL_DIM];
+          running += header[RW_LOCAL_DIM];
+        }
+      }
+      if (fclose(fp) != 0 && status == 0) status = 9;
+    }
+    if (status == 0 && running != reference[RW_DIM]) status = 10;
+  }
+  status = BcastMPI_i(0, status);
+  if (agree(status != 0, "sector cross-rank header scan")) goto fail;
+  bcast_words(reference, (uint64_t)words);
+  bcast_words(offsets, P);
+  bcast_words(dims, P);
+
+  uint64_t local_xor = 0, local_sum = 0, global_xor = 0, global_sum = 0;
+  double local_norm = 0;
+  for (uint64_t rank = (uint64_t)myrank; !invalid && rank < P; rank += (uint64_t)nproc) {
+    char name[D_FileNameMax];
+    FILE *fp = NULL;
+    uint64_t hash;
+    double norm;
+    invalid = vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0;
+    if (!invalid) fp = open_output(name, "rb");
+    invalid |= fp == NULL || fseek(fp, 8L * words, SEEK_SET) != 0 ||
+               SymmetryCheckpointLegacyFileHash(fp, rank, offsets[rank],
+                                                dims[rank], &hash, &norm) != 0;
+    if (!invalid) {
+      local_xor ^= hash;
+      local_sum += hash;
+      local_norm += norm;
+    }
+    if (fp != NULL && fclose(fp) != 0) invalid = 1;
+  }
+  if (agree(invalid, "sector v1/v2 old-partition DATA read")) goto fail;
+  allreduce_xor_sum(local_xor, local_sum, &global_xor, &global_sum);
+  double norm = SumMPI_d(local_norm);
+  invalid = global_xor != reference[RW_DATA_XOR] ||
+            global_sum != reference[RW_DATA_SUM] || !isfinite(norm) ||
+            fabs(norm - 1.0) > 1e-8;
+  if (agree(invalid, "sector v1/v2 payload checksum / norm")) goto fail;
+
+  uint64_t a = RestartLocalOffset(X);
+  if (agree(a > reference[RW_DIM] || X->Check.idim_max > reference[RW_DIM] - a ||
+            X->Check.idim_max >= SIZE_MAX / sizeof(double complex),
+            "sector cross-rank local interval")) goto fail;
+  uint64_t b = a + X->Check.idim_max;
+  double complex *temporary = calloc(X->Check.idim_max + 1, sizeof(*temporary));
+  invalid = temporary == NULL;
+  for (uint64_t rank = 0; !invalid && rank < P; ++rank) {
+    uint64_t lo, hi;
+    if (!RestartIntersect(a, b, offsets[rank], dims[rank], &lo, &hi)) continue;
+    char name[D_FileNameMax];
+    FILE *fp = NULL;
+    uint64_t byte = (uint64_t)(8 * words) + 16 * (lo - offsets[rank]);
+    invalid = vector_name(name, sizeof(name), X, NULL, 0, (int)rank, base) != 0;
+    if (!invalid) fp = open_output(name, "rb");
+    invalid |= fp == NULL || byte > (uint64_t)LONG_MAX ||
+               fseek(fp, (long)byte, SEEK_SET) != 0;
+    for (uint64_t global = lo; !invalid && global < hi; ++global) {
+      uint64_t re_word, im_word;
+      invalid = RestartGetWord(fp, &re_word) != 0 ||
+                RestartGetWord(fp, &im_word) != 0;
+      if (!invalid) {
+        double components[2] = {RestartWordDouble(re_word),
+                                RestartWordDouble(im_word)};
+        if (!isfinite(components[0]) || !isfinite(components[1])) invalid = 1;
+        else memcpy(&temporary[(global - a) + 1], components, sizeof(components));
+      }
+    }
+    if (fp != NULL && fclose(fp) != 0) invalid = 1;
+  }
+  if (agree(invalid, "sector cross-rank payload read")) {
+    free(temporary);
+    goto fail;
+  }
+  local_norm = 0;
+  for (unsigned long i = 1; i <= X->Check.idim_max; ++i) {
+    double re = creal(temporary[i]), im = cimag(temporary[i]);
+    local_norm += re*re + im*im;
+  }
+  norm = SumMPI_d(local_norm);
+  if (agree(!isfinite(norm) || fabs(norm - 1.0) > 1e-8,
+            "sector cross-rank redistributed norm")) {
+    free(temporary);
+    goto fail;
+  }
+  memcpy(vector, temporary,
+         (X->Check.idim_max + 1) * sizeof(*temporary));
+  free(temporary);
+  info->source_method = reference[RW_METHOD];
+  info->state_index = reference[RW_STATE];
+  info->step = reference[RW_STEP];
+  info->time = RestartWordDouble(reference[RW_TIME]);
+  info->hamiltonian_digest = reference[RW_HAMILTONIAN];
+  info->hamiltonian_digest_kind = reference[RW_METHOD] == FullDiag
+      ? SYMMETRY_HAMILTONIAN_MATRIX_V1 : SYMMETRY_HAMILTONIAN_PARSED;
+  /* The sector digest is an order-independent set digest.  Equality of the
+   * set implies equality of global order because the basis builder sorts
+   * canonical representatives by their representative state. */
+  fprintf(stdoutMPI, "Symmetry checkpoint cross-rank v1/v2 read: payload checksum verified, "
+          "basis set verified by sector digest and ordered canonically by representative "
+          "(ORDER word not compared).\n");
+  free(offsets);
+  free(dims);
+  return 0;
+fail:
+  free(offsets);
+  free(dims);
+  return -1;
+}
+
+struct LegacyRawScan {
+  uint64_t *offsets;
+  uint64_t *dims;
+  int present;
+  int step;
+};
+
+static void free_legacy_scan(struct LegacyRawScan *scan)
+{
+  if (scan == NULL) return;
+  free(scan->offsets);
+  free(scan->dims);
+  memset(scan, 0, sizeof(*scan));
+}
+
+static int legacy_raw_name(char *name, size_t size, const char *pattern,
+                           int set, int rank)
+{
+  int length = set < 0
+      ? snprintf(name, size, "%s_rank_%d.dat", pattern, rank)
+      : snprintf(name, size, pattern, set, rank);
+  return length < 0 || (size_t)length >= size ? -1 : 0;
+}
+
+/* Inspect every declared writer file on rank zero.  No file-name probing is
+ * used to infer P: legacy raw files do not carry a source-rank count, and an
+ * omitted empty trailing rank would make such inference ambiguous. */
+static int scan_legacy_raw(struct BindStruct *X, const char *pattern, int set,
+                           int P, int minimum_step,
+                           struct LegacyRawScan *scan)
+{
+  int status = 0, missing_rank = -1, present = 0, saved_step = 0;
+  uint64_t running = 0;
+  if (agree(X == NULL || pattern == NULL || scan == NULL || P < 1 ||
+            P > INT_MAX || (uint64_t)P > SIZE_MAX / sizeof(uint64_t),
+            "legacy raw arguments")) return -1;
+  memset(scan, 0, sizeof(*scan));
+  scan->offsets = calloc((size_t)P, sizeof(*scan->offsets));
+  scan->dims = calloc((size_t)P, sizeof(*scan->dims));
+  if (agree(scan->offsets == NULL || scan->dims == NULL,
+            "legacy raw allocation")) goto fail;
+
+  if (myrank == 0) {
+    for (int rank = 0; rank < P && status == 0; ++rank) {
+      char name[D_FileNameMax];
+      FILE *fp = NULL;
+      int file_step = 0;
+      unsigned long local_dim = 0;
+      if (legacy_raw_name(name, sizeof(name), pattern, set, rank) != 0) {
+        status = 1;
+        break;
+      }
+      errno = 0;
+      fp = open_output(name, "rb");
+      if (fp == NULL) {
+        if (errno == ENOENT) {
+          if (missing_rank < 0) missing_rank = rank;
+          continue;
+        }
+        status = 2;
+        break;
+      }
+      ++present;
+      if (fread(&file_step, sizeof(file_step), 1, fp) != 1 ||
+          fread(&local_dim, sizeof(local_dim), 1, fp) != 1) status = 3;
+      if (status == 0 &&
+          (file_step < minimum_step || file_step > INT_MAX - 1)) status = 4;
+      if (status == 0 && present == 1) saved_step = file_step;
+      if (status == 0 && file_step != saved_step) status = 5;
+      if (status == 0) {
+        const uint64_t header = sizeof(int) + sizeof(unsigned long);
+        const uint64_t dim = (uint64_t)local_dim;
+        long end = -1;
+        if (dim > (UINT64_MAX - header - 16) / 16 ||
+            fseek(fp, 0, SEEK_END) != 0 || (end = ftell(fp)) < 0 ||
+            (uint64_t)end != header + 16 * (dim + 1)) status = 6;
+      }
+      if (status == 0) {
+        uint64_t dim = (uint64_t)local_dim;
+        if (dim > UINT64_MAX - running) status = 7;
+        else {
+          scan->offsets[rank] = running;
+          scan->dims[rank] = dim;
+          running += dim;
+        }
+      }
+      if (fclose(fp) != 0 && status == 0) status = 8;
+    }
+    if (status == 0 && present != 0 && present != P) status = 9;
+    if (status == 0 && present == P && running != X->Check.idim_maxMPI)
+      status = 10;
+  }
+  status = BcastMPI_i(0, status);
+  present = BcastMPI_i(0, present);
+  missing_rank = BcastMPI_i(0, missing_rank);
+  saved_step = BcastMPI_i(0, saved_step);
+  if (status != 0) {
+    if (X->Def.RestartSourceRanks == 0 && present != 0 &&
+        (status == 9 || status == 10)) {
+      fprintf(stdoutMPI, "Error: RestartSourceRanks is required for rank-changing "
+              "legacy input; otherwise check missing or incompatible legacy files.\n");
+    } else if (status == 9 && missing_rank >= 0) {
+      fprintf(stdoutMPI, "Error: legacy restart file for rank_%d is missing "
+              "(RestartSourceRanks=%d).\n", missing_rank, P);
+    } else if (status == 10) {
+      fprintf(stdoutMPI, "Error: legacy restart dimensions do not sum to the "
+              "current global dimension (RestartSourceRanks=%d).\n", P);
+    } else {
+      fprintf(stdoutMPI, "Error: legacy recovery header / step / file length "
+              "validation failed (code=%d, RestartSourceRanks=%d).\n", status, P);
+    }
+    goto fail;
+  }
+  scan->present = present;
+  scan->step = saved_step;
+  if (present == 0) return 0;
+  bcast_words(scan->offsets, (uint64_t)P);
+  bcast_words(scan->dims, (uint64_t)P);
+  if (P == nproc) {
+    int incompatible = scan->dims[myrank] != (uint64_t)X->Check.idim_max;
+    if (agree(incompatible, "legacy raw local dimension")) {
+      if (X->Def.RestartSourceRanks == 0)
+        fprintf(stdoutMPI, "Error: RestartSourceRanks is required for rank-changing "
+                "legacy input; otherwise check missing or incompatible legacy files.\n");
+      goto fail;
+    }
+  }
+  return 0;
+fail:
+  free_legacy_scan(scan);
+  return -1;
+}
+
+int RestartReadLegacyRaw(struct BindStruct *X, const char *pattern, int set,
+                         int source_ranks, double complex *vector, int *step)
+{
+  struct LegacyRawScan scan;
+  double complex *temporary = NULL;
+  int invalid = 0;
+  if (agree(vector == NULL || step == NULL || X == NULL ||
+            X->Def.iFlgSymmetryBasis, "legacy raw read arguments")) return -1;
+  if (scan_legacy_raw(X, pattern, set, source_ranks, 0, &scan) != 0)
+    return -1;
+  if (scan.present == 0) {
+    fprintf(stdoutMPI, "Error: legacy restart input is missing "
+            "(RestartSourceRanks=%d).\n", source_ranks);
+    free_legacy_scan(&scan);
+    return -1;
+  }
+  uint64_t a = RestartLocalOffset(X);
+  uint64_t global_dim = X->Check.idim_maxMPI;
+  if (agree(a > global_dim || X->Check.idim_max > global_dim - a ||
+            X->Check.idim_max >= SIZE_MAX / sizeof(*temporary),
+            "legacy raw local interval")) goto fail;
+  uint64_t b = a + X->Check.idim_max;
+  temporary = calloc(X->Check.idim_max + 1, sizeof(*temporary));
+  invalid = temporary == NULL;
+  for (int rank = 0; !invalid && rank < source_ranks; ++rank) {
+    uint64_t lo, hi;
+    if (!RestartIntersect(a, b, scan.offsets[rank], scan.dims[rank], &lo, &hi))
+      continue;
+    char name[D_FileNameMax];
+    FILE *fp = NULL;
+    const uint64_t header = sizeof(int) + sizeof(unsigned long);
+    uint64_t byte = header + 16 * (1 + lo - scan.offsets[rank]);
+    uint64_t count = hi - lo;
+    invalid = legacy_raw_name(name, sizeof(name), pattern, set, rank) != 0;
+    if (!invalid) fp = open_output(name, "rb");
+    invalid |= fp == NULL || byte > (uint64_t)LONG_MAX || count > SIZE_MAX ||
+               fseek(fp, (long)byte, SEEK_SET) != 0;
+    if (!invalid)
+      invalid = fread(&temporary[(lo - a) + 1], sizeof(*temporary),
+                      (size_t)count, fp) != (size_t)count;
+    if (fp != NULL && fclose(fp) != 0) invalid = 1;
+  }
+  if (agree(invalid, "legacy raw payload read")) goto fail;
+  double local_norm = 0;
+  for (unsigned long i = 1; i <= X->Check.idim_max; ++i) {
+    double re = creal(temporary[i]), im = cimag(temporary[i]);
+    if (!isfinite(re) || !isfinite(im)) invalid = 1;
+    local_norm += re*re + im*im;
+  }
+  double norm = SumMPI_d(local_norm);
+  if (agree(invalid || !isfinite(norm) || norm <= 0,
+            "legacy raw finite vector / norm")) goto fail;
+  memcpy(vector, temporary,
+         (X->Check.idim_max + 1) * sizeof(*temporary));
+  *step = scan.step;
+  fprintf(stdoutMPI, "Legacy raw files carry no identity words; only dimensions were checked.\n");
+  free(temporary);
+  free_legacy_scan(&scan);
+  return 0;
+fail:
+  free(temporary);
+  free_legacy_scan(&scan);
+  return -1;
+}
+
 int RestartImportVector(struct BindStruct *X, const char *base, double complex *vector,
                         struct RestartVectorInfo *provenance, enum RestartFileFormat *format, int *source_ranks)
 {
-  int status = 0, kind = RESTART_FORMAT_LEGACY_RAW, ranks = nproc;
+  int status = 0, kind = RESTART_FORMAT_LEGACY_RAW;
+  int ranks = X->Def.RestartSourceRanks > 0 ? X->Def.RestartSourceRanks : nproc;
   if (agree(base == NULL || vector == NULL || provenance == NULL || format == NULL ||
             source_ranks == NULL, "import arguments")) return -1;
   if (myrank == 0) {
@@ -525,12 +940,9 @@ int RestartImportVector(struct BindStruct *X, const char *base, double complex *
   kind = BcastMPI_i(0, kind); ranks = BcastMPI_i(0, ranks);
   if (import_probe_failure(X, status, "import format / version / source rank count")) return -1;
   *format = (enum RestartFileFormat)kind; *source_ranks = ranks;
-  if (agree(X->Def.RestartSourceRanks > 0 && X->Def.RestartSourceRanks != ranks,
+  if (agree(kind != RESTART_FORMAT_LEGACY_RAW && X->Def.RestartSourceRanks > 0 &&
+            X->Def.RestartSourceRanks != ranks,
             "RestartSourceRanks does not match the saved rank count")) return -1;
-  if (ranks != nproc) {
-    fprintf(stdoutMPI, "Error: restart checkpoint MPI rank count differs.\n");
-    if (import_probe_failure(X, 1, "rank count (rank redistribution arrives in PR-3)")) return -1;
-  }
   memset(provenance, 0, sizeof(*provenance));
   if (kind == RESTART_FORMAT_V3) {
     const struct RestartManifestRow row = {0, (uint64_t)ranks, 0, 0, 1};
@@ -538,13 +950,22 @@ int RestartImportVector(struct BindStruct *X, const char *base, double complex *
   }
   if (kind == RESTART_FORMAT_LEGACY_RAW) {
     if (import_probe_failure(X, X->Def.iFlgSymmetryBasis, "legacy raw import requires a raw basis")) return -1;
-    return -2;
+    int step = 0;
+    if (RestartReadLegacyRaw(X, base, -1, ranks, vector, &step) != 0) return -1;
+    provenance->method = (uint64_t)X->Def.iCalcType;
+    provenance->step = (uint64_t)step;
+    return 0;
   }
   if (agree(!X->Def.iFlgSymmetryBasis, "sector import requires a sector basis")) return -1;
-  char name[D_FileNameMax];
   struct SymmetryCheckpointInfo info;
-  if (agree(vector_name(name, sizeof(name), X, NULL, 0, myrank, base) != 0, "import filename")) return -1;
-  if (ReadSymmetryCheckpoint(X, name, vector, &info) != 0) return -1;
+  if (ranks != nproc) {
+    if (read_sector_cross_rank(X, base, kind, ranks, vector, &info) != 0) return -1;
+  } else {
+    char name[D_FileNameMax];
+    if (agree(vector_name(name, sizeof(name), X, NULL, 0, myrank, base) != 0,
+              "import filename")) return -1;
+    if (ReadSymmetryCheckpoint(X, name, vector, &info) != 0) return -1;
+  }
   provenance->method = info.source_method; provenance->set = info.state_index;
   provenance->step = info.step; provenance->time = info.time;
   return record_import(X, provenance, info.hamiltonian_digest,
@@ -594,30 +1015,17 @@ int RestartClassifySet(struct BindStruct *X, const struct RestartManifest *manif
     *source = RESTART_SOURCE_V3; return 0;
   }
   if (legacy_pattern == NULL) return 0;
-  if (X->Def.RestartSourceRanks > 0 && X->Def.RestartSourceRanks != nproc) {
-    fprintf(stdoutMPI, "Error: legacy restart files with a different rank count arrive in a later release (RestartSourceRanks).\n");
-    return -1;   /* PR-3 lifts this */
+  int P = X->Def.RestartSourceRanks > 0 ? X->Def.RestartSourceRanks : nproc;
+  struct LegacyRawScan scan;
+  if (scan_legacy_raw(X, legacy_pattern, (int)set, P,
+                      (int)step_lower_bound(X->Def.iCalcType), &scan) != 0)
+    return -1;
+  if (scan.present == 0) {
+    free_legacy_scan(&scan);
+    return 0;
   }
-  char name[D_FileNameMax];
-  if (X->Def.iCalcType == TimeEvolution) snprintf(name, sizeof(name), legacy_pattern, myrank);
-  else snprintf(name, sizeof(name), legacy_pattern, (int)set, myrank);
-  FILE *fp = open_output(name, "rb"); int present = fp != NULL, step = 0, bad = fp == NULL && errno != ENOENT;
-  uint64_t dim = 0;
-  if (present) {
-    long end = -1;
-    bad |= fread(&step, sizeof(int), 1, fp) != 1 || fread(&dim, sizeof(dim), 1, fp) != 1;
-    bad |= step < (int)step_lower_bound(X->Def.iCalcType) || step > INT_MAX - 1;
-    bad |= dim != (uint64_t)X->Check.idim_max || dim > (UINT64_MAX - 28) / 16;
-    bad |= fseek(fp, 0, SEEK_END) != 0 || (end = ftell(fp)) < 0;
-    if (!bad) bad = (uint64_t)end != RESTART_LEGACY_HEADER_BYTES + 16 * (dim + 1);
-    bad |= fclose(fp) != 0;
-  }
-  if (agree(bad, "legacy recovery header / step / file length")) return -1;
-  int count = SumMPI_i(present);
-  if (count == 0) return 0;
-  if (count != nproc) { fprintf(stdoutMPI, "Error: legacy restart files for set %" PRIu64 " exist on %d of %d ranks.\n", set, count, nproc); return -1; }
-  int root_step = BcastMPI_i(0, step);
-  if (agree(bad || step != root_step, "legacy header step agreement")) return -1;
-  *source = RESTART_SOURCE_LEGACY; *legacy_step = step;
+  *source = RESTART_SOURCE_LEGACY;
+  *legacy_step = scan.step;
+  free_legacy_scan(&scan);
   return 0;
 }
