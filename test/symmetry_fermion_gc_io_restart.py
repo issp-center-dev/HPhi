@@ -106,7 +106,8 @@ def check_mismatches(root, hphi, launcher):
     source = save(root, 'source_even', even, hphi, launcher, env)
     for name, target, detail in [
             ('parity', Case('HubbardGC', 4, -1, 1), None),
-            ('full', Case('HubbardGC', 3, 0, 1), None),
+            # The same sites without a parity: twice the raw space.
+            ('full', Case('HubbardGC', 4, 0, 1), 'raw dimension'),
             ('momentum', Case('HubbardGC', 4, 1, 3), 'group/character digest'),
             ('model', Case('SpinlessFermionGC', 8, 1, 1), None)]:
         if name in ('parity', 'momentum'):

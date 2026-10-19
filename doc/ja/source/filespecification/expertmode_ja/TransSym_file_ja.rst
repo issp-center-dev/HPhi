@@ -328,7 +328,7 @@ pair項を含めて正規順序化したハミルトニアン全体について�
 6つの計算手法すべてに対応します。FullDiagはLAPACK、ScaLAPACK、ELPAで、pair項を
 含むdenseなsector行列を作ります。TimeEvolutionではpair項の係数は時間によらず、
 ``TEOneBody`` / ``TETwoBody`` はそれ以外の項を駆動し、各時刻で対称性を保つ必要が
-あります。6種類の相関関数と ``AnomalousG`` （:ref:`Subsec:anomalousgoutput`）は、
+あります。 ``Laser`` は拒否します。6種類の相関関数と ``AnomalousG`` （:ref:`Subsec:anomalousgoutput`）は、
 rawの計算と同じファイル名・形式でsector内で計算します。ハミルトニアンにpair項が
 なくても計算します（例えば粒子数の異なる成分を含むTEの状態）。 :math:`N`、
 :math:`N^2`、 :math:`S_z`、 :math:`S_z^2`、二重占有数は状態から計算します。
@@ -757,9 +757,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 
 ``TEOneBody`` または ``TETwoBody`` の1種類で駆動できます。
 canonical模型とKondoの3空間では ``Laser`` も選べます。Kondoには上記の幾何・
-ゲージ制限が適用され、SpinGCでは拒否します。
+ゲージ制限が適用され、SpinGC、HubbardGC、SpinlessFermionGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJ、HubbardGC、SpinlessFermionGCと
+Kondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。
 
 初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、

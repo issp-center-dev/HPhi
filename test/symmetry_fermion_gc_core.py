@@ -11,6 +11,7 @@ from symmetry_kondo_common import read_manifest, read_vector_parts, run_probe, s
 from symmetry_kondo_observables import (add_correlation_requests, arbitrary_vector,
                                         check_correlation_outputs, parse_energy, parse_moments)
 from symmetry_spingc_common import definition, mpi_size, run_case
+from symmetry_fulldiag_common import require_backends
 from symmetry_fermion_gc_common import expert_case
 from symmetry_fermion_gc_reference import (Case, MODELS, PARITIES, make_reference,
                                            operator_matrix, pair_operator, pair_rows,
@@ -220,6 +221,7 @@ def check_fulldiag(root, hphi, launcher):
         else:
             print(f'{label} not exercised: backend unavailable or launcher has one rank', flush=True)
     env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='replicated')
+    exercised = {}
     for solver, label, backend_launcher in backends:
         for model in MODELS:
             case = Case(model, SITES[model]-1, -1, 1)
@@ -250,8 +252,11 @@ def check_fulldiag(root, hphi, launcher):
                 np.testing.assert_allclose(actual, expected, atol=REFERENCE_TOL, rtol=0)
                 checked += 1
             assert checked >= len(energies)//2, (model, checked)
+            exercised.setdefault(label, []).append((model, len(energies), ranks))
             print(f'{model} FullDiag {label} error={error:.3e}, {checked} AnomalousG states passed',
                   flush=True)
+    # A CI job that requires a backend must not pass on its skip message.
+    require_backends(exercised)
 
 
 def check_pair_free_limit(root, hphi):
@@ -292,8 +297,9 @@ def check_raw(root, hphi):
     rows = anomalous_requests(model)
     values = {}
     for label, transsym in (('raw', False), ('sector', True)):
+        # An explicit ParticleParity 0 is the full space in raw input and sectors alike.
         path = gc_case(root, f'raw_{model}_{label}', Case(model, SITES[model], 0, k), 3,
-                       options={'ModPara': {'LanczosEps': CG_LANCZOS_EPS}})
+                       options={'ModPara': {'LanczosEps': CG_LANCZOS_EPS, 'ParticleParity': 0}})
         definition(path, 'anomalousg.def', rows)
         names = (path/'sym.def').read_text() + 'AnomalousG anomalousg.def\n'
         if not transsym:

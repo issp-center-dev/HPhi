@@ -346,7 +346,7 @@ normal-ordered Hamiltonian including the pairs.
 All six methods are available. FullDiag builds the pairs into the dense sector
 matrix with LAPACK, ScaLAPACK and ELPA. In TimeEvolution the pair coefficients
 are static; ``TEOneBody`` / ``TETwoBody`` drive the other terms and must keep
-the symmetry at every time. The six correlation formats and ``AnomalousG``
+the symmetry at every time, and ``Laser`` is rejected. The six correlation formats and ``AnomalousG``
 (:ref:`Subsec:anomalousgoutput`) are evaluated in the sector with the file names
 and formats of the raw calculation, also when the Hamiltonian has no pair terms
 (for example, for a TE state that mixes particle numbers). :math:`N`,
@@ -823,11 +823,13 @@ Time-dependent sector Hamiltonians
 
 ``TEOneBody`` or ``TETwoBody`` may drive the sector Hamiltonian.
 ``Laser`` is available for the canonical models and all three Kondo spaces,
-subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
+subject to the Kondo geometry/gauge restrictions above; SpinGC, HubbardGC and
+SpinlessFermionGC reject it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ, HubbardGC, SpinlessFermionGC and all three
+Kondo spaces, including spinless fermions. The raw
 spinless solver's diagonal-TE restriction is unchanged.
 
 Before loading the initial vector or writing time-series data, HPhi checks

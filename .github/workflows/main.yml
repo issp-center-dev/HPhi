@@ -60,6 +60,7 @@ jobs:
         env:
           MPIRUN: mpiexec --oversubscribe -np 2
           HPHI_TEST_FERMION_GC_CORE_SCOPE: fulldiag
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
         run: |
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^symmetry_fermion_gc_core$'

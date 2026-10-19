@@ -9,6 +9,7 @@ import numpy as np
 from symmetry_kondo_common import run_probe, selected_layouts
 from symmetry_spingc_common import mpi_size, run_case
 from symmetry_fermion_gc_common import expert_case, hamiltonian_families
+from symmetry_fermion_gc_evolution import drive_matrix, drive_rows
 from symmetry_fermion_gc_reference import (Case, PARITIES, equivalent_pair_rows,
                                            make_reference, pair_rows, raw_words,
                                            sector_matrix, self_test, width)
@@ -69,6 +70,15 @@ def sector_suite(root, probe):
     return max_error
 
 
+def matvec_error(path, case, probe, ref, h, pairs):
+    result = run_probe(path, case, probe, action='matvec', layout=selected_layouts()[0])
+    manifest_check(result['manifest'], case, ref, pairs)
+    np.testing.assert_array_equal(result['representatives'], ref.representatives)
+    error = np.linalg.norm(result['matrix']-h, 2)
+    assert np.isfinite(error) and error <= 1e-11*max(1, np.linalg.norm(h, 2)), (case, error)
+    return error
+
+
 def equivalent_input_suite(root, probe):
     """A rewritten pair input of the same H passes the invariance check and gives Q^dagger H Q."""
     max_error = 0.
@@ -76,15 +86,18 @@ def equivalent_input_suite(root, probe):
         pairs = pair_rows(case.model, case.sites)
         rewritten = equivalent_pair_rows(pairs)
         ref = make_reference(case, pairs=pairs)
-        h = sector_matrix(ref)
         path = expert_case(root/f'equivalent_{case.model}', case, method=3, pairs=rewritten)
-        result = run_probe(path, case, probe, action='matvec', layout=selected_layouts()[0])
-        manifest_check(result['manifest'], case, ref, rewritten)
-        np.testing.assert_array_equal(result['representatives'], ref.representatives)
-        error = np.linalg.norm(result['matrix']-h, 2)
-        assert np.isfinite(error) and error <= 1e-11*max(1, np.linalg.norm(h, 2)), (case, error)
-        max_error = max(max_error, error)
+        max_error = max(max_error, matvec_error(path, case, probe, ref, sector_matrix(ref), rewritten))
     print('rewritten pair inputs passed', flush=True)
+    # A spinless sector takes off-diagonal InterAll without the spinful rewrite.
+    case = Case('SpinlessFermionGC', 5, 1, 2)
+    pairs = pair_rows(case.model, case.sites)
+    ref = make_reference(case, pairs=pairs)
+    h = sector_matrix(ref)+drive_matrix(ref, case, 'twobody')
+    path = expert_case(root/'spinless_interall', case, method=3, pairs=pairs,
+                       options={'families': {'InterAll': drive_rows(case, 'twobody')}})
+    max_error = max(max_error, matvec_error(path, case, probe, ref, h, pairs))
+    print('spinless off-diagonal InterAll passed', flush=True)
     return max_error
 
 
@@ -125,6 +138,13 @@ def rejection_suite(root, hphi, launcher, env):
     drop_transsym(path)
     run_case(path, hphi, 'reject', [], env,
              expected_error='SpinlessFermion / SpinlessFermionGC are not currently supported for FullDiag')
+    # The raw spinless matvec has no off-diagonal InterAll; only sectors accept it.
+    interall = Case('SpinlessFermionGC', 5, 0, 0)
+    path = expert_case(root/'reject_raw_spinless_interall', interall, method=3,
+                       options={'families': {'InterAll': drive_rows(interall, 'twobody')}})
+    drop_transsym(path)
+    run_case(path, hphi, 'reject', launcher, env,
+             expected_error='Error: Indices and Parameters of Definition files(*.def) are incomplete.')
     reject('spinless_hund', spinless, 'Hund is not active in SpinlessFermion/SpinlessFermionGC.',
            options={'families': {'Hund': [(0, 1, .1)]}})
     broken = hamiltonian_families(Case('SpinlessFermionGC', 4, 0, 0))

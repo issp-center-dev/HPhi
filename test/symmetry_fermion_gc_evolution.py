@@ -26,6 +26,8 @@ MOMENTS = ('N', 'N2', 'D', 'D2', 'Sz', 'Sz2')
 ERRORS = dict(vector=0., endpoint=0., data=0.)
 CASES = {'HubbardGC': Case('HubbardGC', 4, 1, 1), 'SpinlessFermionGC': Case('SpinlessFermionGC', 6, 0, 1)}
 SPINLESS_DRIVE = .07+.04j
+# Correlated hopping c+_j c_{j+2} n_{j+1}: an off-diagonal spinless InterAll.
+SPINLESS_TWOBODY = .06-.05j
 
 
 def layout_env(layout, **extra):
@@ -36,12 +38,18 @@ def layout_env(layout, **extra):
 def drive_terms(case, kind, amplitude=1.):
     if case.model == 'HubbardGC':
         return hubbard_drive_terms(case.sites, kind, amplitude)
-    assert kind == 'onebody', kind
-    f = amplitude*SPINLESS_DRIVE
     terms = []
     for j in range(case.sites):
-        nxt = (j+1) % case.sites
-        terms += [(-f, [(1, nxt), (0, j)]), (-np.conj(f), [(1, j), (0, nxt)])]
+        nxt, far = (j+1) % case.sites, (j+2) % case.sites
+        if kind == 'onebody':
+            f = amplitude*SPINLESS_DRIVE
+            terms += [(-f, [(1, nxt), (0, j)]), (-np.conj(f), [(1, j), (0, nxt)])]
+        elif kind == 'twobody':
+            p = amplitude*SPINLESS_TWOBODY
+            terms += [(p, [(1, j), (0, far), (1, nxt), (0, nxt)]),
+                      (np.conj(p), [(1, nxt), (0, nxt), (1, far), (0, j)])]
+        else:
+            raise ValueError(kind)
     return terms
 
 
@@ -51,8 +59,14 @@ def drive_rows(case, kind):
         return hubbard_drive_rows(case.sites, kind)
     rows = []
     for j in range(case.sites):
-        nxt = (j+1) % case.sites
-        rows += [((nxt, 0, j, 0), SPINLESS_DRIVE), ((j, 0, nxt, 0), np.conj(SPINLESS_DRIVE))]
+        nxt, far = (j+1) % case.sites, (j+2) % case.sites
+        if kind == 'onebody':
+            rows += [((nxt, 0, j, 0), SPINLESS_DRIVE), ((j, 0, nxt, 0), np.conj(SPINLESS_DRIVE))]
+        elif kind == 'twobody':
+            rows += [((j, 0, far, 0, nxt, 0, nxt, 0), SPINLESS_TWOBODY),
+                     ((nxt, 0, nxt, 0, far, 0, j, 0), np.conj(SPINLESS_TWOBODY))]
+        else:
+            raise ValueError(kind)
     return [(*indices, z.real, z.imag) for indices, z in merged_rows(rows)]
 
 
@@ -341,6 +355,17 @@ def preflight_negatives(root, hphi, env):
     assert not (path/'output/zvo_SS.dat').exists()
     assert not list((path/'output').glob('zvo_eigenvec_[0-9]*'))
     print('rejected noninvariant drive before TE output', flush=True)
+    # Peierls driving is not validated for these sectors; TEOneBody/TETwoBody are.
+    for model, case in CASES.items():
+        path = expert_case(root/f'reject_laser_{model}', case, method=4,
+                           pairs=pair_rows(model, case.sites))
+        (path/'laser.def').write_text('====\nNLaser 9\n====\n====\n====\n' + ''.join(
+            f'p{i} {v}\n' for i, v in enumerate([2, .4, 1, 1, 0, 8, 1, 1, 0])))
+        with (path/'sym.def').open('a') as f:
+            f.write('Laser laser.def\n')
+        run_case(path, hphi, 'reject', [], env,
+                 f'{model} TransSym does not support Laser; use TEOneBody/TETwoBody.')
+    print('rejected Laser in both sectors', flush=True)
 
 
 def main():
@@ -365,8 +390,7 @@ def main():
         case = CASES[model]
         seed = seed_cg(root, model+'_seed', case, hphi, launcher, env)
         free_seed = seed_cg(root, model+'_free_seed', case, hphi, launcher, env, pairs=False)
-        drives = ['static', 'free_quench', 'onebody'] + (['twobody'] if model == 'HubbardGC' else [])
-        for drive in drives:
+        for drive in ('static', 'free_quench', 'onebody', 'twobody'):
             result = evolve(root, f'{model}_{drive}', case, seed, 'zvo_eigenvec_0', drive,
                             hphi, launcher, env, interval=2 if drive == 'twobody' else 1)
             if drive == 'onebody':

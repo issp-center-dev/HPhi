@@ -449,7 +449,7 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
       !IsSymmetrySpinlessFermionModel(def->iCalcModel) &&
       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
       !IsSymmetryKondoModel(def->iCalcModel)) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, tJ, and Kondo models.\n");
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, SpinlessFermionGC, Hubbard, HubbardGC, tJ, Kondo, and KondoGC models.\n");
     return -1;
   }
   if (IsSymmetryFermionGCModel(def->iCalcModel)) {
@@ -706,8 +706,10 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym does not support Boost.\n");
     return -1;
   }
-  if (def->iCalcModel == SpinGC && def->NLaser) {
-    fprintf(stdoutMPI, "Error: SpinGC TransSym does not support Laser; use TEOneBody/TETwoBody.\n");
+  if ((def->iCalcModel == SpinGC || IsSymmetryFermionGCModel(def->iCalcModel)) && def->NLaser) {
+    fprintf(stdoutMPI, "Error: %s TransSym does not support Laser; use TEOneBody/TETwoBody.\n",
+            def->iCalcModel == SpinGC ? "SpinGC" :
+            def->iCalcModel == HubbardGC ? "HubbardGC" : "SpinlessFermionGC");
     return -1;
   }
   if (validate_symmetry_method_capability(def) != 0) return -1;

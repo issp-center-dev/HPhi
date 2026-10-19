@@ -2132,7 +2132,8 @@ int ReadDefFileIdxPara(
             /* The symmetry term iterator applies spinless products directly.
              * The legacy raw spinless matvec has no InterAll off-diagonal
              * path, so retain its existing rejection outside TransSym. */
-            if (!(X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis) &&
+            if (!((X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC) &&
+                  X->iFlgSymmetryBasis) &&
                 ArrangeInterAllOffDiagonal(
                     X->NInterAll_OffDiagonal,
                     X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
@@ -2764,7 +2765,8 @@ int ReadDefFileIdxPara(
                   return (-1);
               }
 
-                if (!(X->iFlgSymmetryBasis && X->iCalcModel == SpinlessFermion) &&
+                if (!(X->iFlgSymmetryBasis &&
+                      (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC)) &&
                    ArrangeInterAllOffDiagonal(
                         X->NTEInterAllOffDiagonal[idx],
                         X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
