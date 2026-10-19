@@ -1,5 +1,6 @@
 var NAVTREEINDEX13 =
 {
+"structFermion.html":[9,0,17],
 "structFermion.html#a609b3b4a06f8345a5d0012debd8849b7":[9,0,17,0],
 "structFermion.html#acd3c4230270be735a1017db92046e2a3":[9,0,17,1],
 "structFillEntriesContext.html":[9,0,18],
@@ -248,6 +249,5 @@ var NAVTREEINDEX13 =
 "structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21],
 "structSymmetryBasisDistributionStats.html#a1c85c975388a91b0cf811c68f95a3773":[9,0,49,2],
 "structSymmetryBasisDistributionStats.html#a1fb2c39767820d49801dbc1709bb6da5":[9,0,49,6],
-"structSymmetryBasisDistributionStats.html#a227c3d36a45a13da240e9d4b1f051f10":[9,0,49,26],
-"structSymmetryBasisDistributionStats.html#a23c772cf5058c471df8217a78da96b19":[9,0,49,7]
+"structSymmetryBasisDistributionStats.html#a227c3d36a45a13da240e9d4b1f051f10":[9,0,49,26]
 };

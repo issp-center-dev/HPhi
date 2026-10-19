@@ -1,5 +1,6 @@
 var NAVTREEINDEX15 =
 {
+"structSymmetryMpiExchangeResult.html#a709f405ec5be3f4131ef3e342f6d3ad2":[9,0,75,4],
 "structSymmetryMpiExchangeResult.html#ad259982c82029849c06a10c1a4cca1c9":[9,0,75,1],
 "structSymmetryMpiExchangeResult.html#aeef8334dd97b4b78004fdb47d7612206":[9,0,75,2],
 "structSymmetryMpiExchangeResult.html#aef4e2ccff43a2d3c3082534732640bf7":[9,0,75,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX15 =
 "symmetry__basis_8c.html#a682638159f3f8344db1883626c0db9f9":[10,0,89,4],
 "symmetry__basis_8c.html#a6eb0f540c7f6bce3450e76d43a68fa99":[10,0,89,50],
 "symmetry__basis_8c.html#a768a8533acf78aa8cd0baf26321fcf24":[10,0,89,13],
-"symmetry__basis_8c.html#a76b48276c539e0bfd3d8a518ad0829f9":[10,0,89,1],
-"symmetry__basis_8c.html#a8faca5ed2fdd79cfc0fbe8a42917f46b":[10,0,89,25]
+"symmetry__basis_8c.html#a76b48276c539e0bfd3d8a518ad0829f9":[10,0,89,1]
 };

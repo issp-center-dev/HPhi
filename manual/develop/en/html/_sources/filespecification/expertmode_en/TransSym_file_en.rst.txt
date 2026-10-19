@@ -189,7 +189,8 @@ Use rules
 *  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, ``FullDiag``, and ``TimeEvolution`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
-   Spin-one-half ``SpinGC`` without fixed Sz is also supported as described below.
+   ``Hubbard`` / ``tJ`` with only ``Ncond`` fixed and spin-one-half ``SpinGC``
+   without fixed Sz are also supported as described below.
    Expert-mode Hamiltonian terms are:
 
    * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
@@ -231,6 +232,68 @@ Use rules
    available for FullDiag only, through the identified sector matrix file
    (:ref:`Subsec:ham`). Unsupported
    combinations terminate with an error.
+
+
+Hubbard and tJ sectors with fixed particle number only (expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=0`` (Hubbard) or ``CalcModel=9`` (tJ) with ``TransSym`` and
+``Ncond``, and without ``2Sz``, ``Nup`` and ``Ndown``, selects a
+spatial-symmetry sector in which only the particle number
+:math:`N=` ``Ncond`` is fixed. Total :math:`S_z` is not fixed, so the
+Hamiltonian may contain spin-mixing ``Trans`` terms (spin-orbit-type hopping,
+transverse fields) and ``InterAll`` terms that change :math:`S_z`, such as
+:math:`S^+_iS^+_j`. When ``Ncond`` is given together with ``2Sz``, or with
+both ``Nup`` and ``Ndown`` whose sum equals ``Ncond``, the fixed-:math:`S_z`
+``Hubbard`` / ``tJ`` sector above is used. If ``2Sz`` is omitted and both
+``Nup`` and ``Ndown`` are specified with ``Ncond``, their sum must equal
+``Ncond``; otherwise the input is rejected. When ``Ncond`` and ``2Sz`` are
+both specified, the existing canonical input handling determines ``Nup``
+and ``Ndown`` from those two values.
+
+.. list-table:: Fixed-N sectors
+   :header-rows: 1
+   :widths: 22 26 52
+
+   * - Space
+     - Particle number
+     - Dimension before projection
+   * - HubbardNConserved (internal model 6)
+     - :math:`1\leq N\leq 2N_{\rm site}`
+     - :math:`\binom{2N_{\rm site}}{N}`
+   * - tJNConserved (internal model 11)
+     - :math:`1\leq N\leq N_{\rm site}`
+     - :math:`\binom{N_{\rm site}}{N}2^N` (no doubly occupied site)
+
+Both require ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2``. As in the
+raw basis, ``Ncond=0`` is rejected; empty symmetry sectors are rejected as
+well. States use the two-bit site encoding and the fermion permutation sign of
+``Hubbard`` / ``tJ`` above, and the tJ projection is applied to the result of a
+whole operator product.
+
+The supported Hamiltonian families are those of ``Hubbard`` / ``tJ`` above
+without the spin restriction: ``Trans`` (including spin-mixing and complex
+terms), ``CoulombIntra``, ``CoulombInter``, ``Hund``, ``Ising``, ``Exchange``,
+``PairHop`` and ``InterAll``. Hermiticity and group invariance are checked for
+the whole normal-ordered Hamiltonian; every product of creation-annihilation
+pairs conserves :math:`N`. ``PairLift``, ``NBodyInterAll``, anomalous terms and
+``CalcSpec`` remain unsupported.
+
+All six methods, the six correlation formats (spin-flip operators included),
+state import/export, the FullDiag sector matrix file, v3 continuation across
+process counts and both basis layouts are available as for the fixed-:math:`S_z`
+sectors. ``TEOneBody`` / ``TETwoBody`` may mix spins at every time if they keep
+the symmetry. In the energy, TPQ and TE outputs, :math:`N` and :math:`N^2` equal
+``Ncond`` and its square, while :math:`S_z`, :math:`S_z^2` and the doublon
+number are computed from the state (the doublon number is zero for tJ).
+
+State files keep version 1, phase 1 and 28 header words. The model word (6 or
+11) and the particle number identify the space, and ``nup`` / ``ndown`` are 0;
+v3 restart files and the matrix file have ``fixed_flags`` 0. The sector
+manifest records ``model=HubbardNConserved`` or ``model=tJNConserved``,
+``fixed_quantities=ncond`` and ``fixed_ne``. Files of a fixed-:math:`S_z`
+sector, another particle number, the other model or another momentum are
+rejected even when the dimensions agree.
 
 
 Kondo sectors (spin one-half, expert mode)

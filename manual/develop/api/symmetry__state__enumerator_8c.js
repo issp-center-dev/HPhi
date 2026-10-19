@@ -2,6 +2,7 @@ var symmetry__state__enumerator_8c =
 [
     [ "checked_product", "symmetry__state__enumerator_8c.html#a84c86870bd0f3d9154001ec7b8a7f1fe", null ],
     [ "ComputeSymmetryKondoDimension", "symmetry__state__enumerator_8c.html#a91ca778fb0f9037b003b0eadbb1ec9ce", null ],
+    [ "ComputeSymmetryNConservedDimension", "symmetry__state__enumerator_8c.html#a7a78c0b10c4bd29c3b88b5b6075d8ff0", null ],
     [ "CountSymmetryKondoCompletions", "symmetry__state__enumerator_8c.html#a9fd376868d6768b572fda3a37b3427ca", null ],
     [ "dimension_product", "symmetry__state__enumerator_8c.html#a8cd4d3bc8179eadd854c156eb54824e9", null ],
     [ "enumerator_binomial", "symmetry__state__enumerator_8c.html#a027115be1571d4e543e30aa90b0fc933", null ],
@@ -15,5 +16,7 @@ var symmetry__state__enumerator_8c =
     [ "kondo_state_at", "symmetry__state__enumerator_8c.html#a914a0756ed0a5316e8bb9f4313e43a81", null ],
     [ "SymmetryStateEnumeratorStateAt", "symmetry__state__enumerator_8c.html#aabf1b4a84cf97fa4ac4172ebd6f65597", null ],
     [ "tj_completion_count", "symmetry__state__enumerator_8c.html#aa14599cb7a1ad711529f454ad4d0c643", null ],
+    [ "tj_nconserved_completion_count", "symmetry__state__enumerator_8c.html#ad6f52978ba035ea850c204d5ccdf6840", null ],
+    [ "tj_nconserved_state_at", "symmetry__state__enumerator_8c.html#a36e6bfbefe724cfb29617b64674a543a", null ],
     [ "tj_state_at", "symmetry__state__enumerator_8c.html#afe40078aeea4198ab0eb069fd8468e15", null ]
 ];

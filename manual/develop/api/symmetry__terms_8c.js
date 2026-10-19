@@ -12,6 +12,8 @@ var symmetry__terms_8c =
     [ "compare_monomials", "symmetry__terms_8c.html#a4f5b6cdc6cf3e4023191d1acd3d1aa90", null ],
     [ "emit", "symmetry__terms_8c.html#aadedc3aa938b85c70b5a8fe763c23aae", null ],
     [ "EnumerateSymmetryTerms", "symmetry__terms_8c.html#aa4968f118950dd5356a18763999cee79", null ],
+    [ "IsSymmetrySpinfulFermionModel", "symmetry__terms_8c.html#a58e8361921f0cb7b44c4c2cc396e7adf", null ],
+    [ "IsSymmetryTJModel", "symmetry__terms_8c.html#a3028229944aa796ffe015298d3b1f94c", null ],
     [ "SymmetryUsesExtendedTerms", "symmetry__terms_8c.html#a545cd05495b1ee6860e72a1afb95a599", null ],
     [ "ValidateSymmetryTerms", "symmetry__terms_8c.html#a080e0a545c06190375a7d65473e94023", null ]
 ];

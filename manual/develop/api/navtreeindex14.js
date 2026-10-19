@@ -1,5 +1,6 @@
 var NAVTREEINDEX14 =
 {
+"structSymmetryBasisDistributionStats.html#a23c772cf5058c471df8217a78da96b19":[9,0,49,7],
 "structSymmetryBasisDistributionStats.html#a2dea7afa568a8186063ecdd9120bc45c":[9,0,49,31],
 "structSymmetryBasisDistributionStats.html#a38beeaba876b7d5062a8309873c3e29e":[9,0,49,18],
 "structSymmetryBasisDistributionStats.html#a4020e7d5d3fea200f2d97df62c3225e7":[9,0,49,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX14 =
 "structSymmetryMpiExchangeOptions.html":[9,0,74],
 "structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045":[9,0,74,1],
 "structSymmetryMpiExchangeOptions.html#a8ebbde61eab876ed93ae9989f0c42a00":[9,0,74,0],
-"structSymmetryMpiExchangeResult.html":[9,0,75],
-"structSymmetryMpiExchangeResult.html#a709f405ec5be3f4131ef3e342f6d3ad2":[9,0,75,4]
+"structSymmetryMpiExchangeResult.html":[9,0,75]
 };

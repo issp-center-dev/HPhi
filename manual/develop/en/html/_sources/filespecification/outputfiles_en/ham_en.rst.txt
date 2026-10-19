@@ -127,7 +127,8 @@ with ``TransSym`` (6 sites, momentum :math:`k=1`, :math:`D=3`):
    order. Integers are decimal; masks and digests have 16 hexadecimal digits:
    ``format=sector-hamiltonian-v1``, ``scalar=complex-binary64``, ``model``
    (``Spin``, ``SpinGC``, ``SpinlessFermion``, ``Hubbard``, ``tJ``,
-   ``Kondo``, ``KondoNConserved``, ``KondoGC``), ``nsite``, ``nup``,
+   ``Kondo``, ``KondoNConserved``, ``KondoGC``, ``HubbardNConserved``,
+   ``tJNConserved``), ``nsite``, ``nup``,
    ``ndown``, ``ne``, ``local_site_mask``, ``fixed_flags``, ``phase``,
    ``full_dim``, ``sector_dim``, ``group_digest``, ``sector_count``,
    ``sector_xor``, ``sector_sum`` and ``basis_order``. The values are the

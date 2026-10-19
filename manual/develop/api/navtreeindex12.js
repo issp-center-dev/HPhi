@@ -1,5 +1,6 @@
 var NAVTREEINDEX12 =
 {
+"structCorrelationContext.html#a9be5141a76376224ea67aea3533fb3b7":[9,0,5,12],
 "structCorrelationContext.html#abc30e99ca763b81e609eafed00e9acca":[9,0,5,7],
 "structCorrelationContext.html#adcc935dee19b551a88ae9fd4ad44f35e":[9,0,5,2],
 "structCorrelationContext.html#ae01e624d2769a458a674e0edafe38a8b":[9,0,5,8],
@@ -248,6 +249,5 @@ var NAVTREEINDEX12 =
 "structExpansion.html#a65abf02a2a137d2c8a6d39e5f0b73ff7":[9,0,16,3],
 "structExpansion.html#a7223c12b5ca80b4a756e6a4fced17797":[9,0,16,2],
 "structExpansion.html#a7842660123b87396f38962aaf3f3b2ec":[9,0,16,1],
-"structExpansion.html#ae3d8af4030ffd0d8b8003177844c4fae":[9,0,16,0],
-"structFermion.html":[9,0,17]
+"structExpansion.html#ae3d8af4030ffd0d8b8003177844c4fae":[9,0,16,0]
 };

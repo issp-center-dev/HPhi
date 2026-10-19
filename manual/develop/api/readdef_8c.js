@@ -26,6 +26,7 @@ var readdef_8c =
     [ "InputInterAllInfo", "readdef_8c.html#a25894f16253990c29ea8fa87cc1360fc", null ],
     [ "IsSkippableNBodyLine", "readdef_8c.html#a607817fb08b8e5ca6450e9dfb14c46a1", null ],
     [ "JudgeDefType", "readdef_8c.html#a8bc4135515c28a940d030463bb568a9d", null ],
+    [ "normalize_symmetry_fixed_n", "readdef_8c.html#a3fe6f6579781b9d81ae0e69ef865e399", null ],
     [ "ReadcalcmodFile", "readdef_8c.html#ab8b765c6b13b09923368a2c8bec319ca", null ],
     [ "ReadDefFileError", "readdef_8c.html#a21479192d729f0d76654f014b63b6d7a", null ],
     [ "ReadDefFileIdxPara", "readdef_8c.html#a052f987ad0a4602ab76d31af1c257e30", null ],

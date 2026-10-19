@@ -188,7 +188,8 @@ the counting for spins.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
 <span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
-Spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> without fixed Sz is also supported as described below.
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with only <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> fixed and spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>
+without fixed Sz are also supported as described below.
 Expert-mode Hamiltonian terms are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: longitudinal <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (local diagonal fields), <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>,
@@ -232,6 +233,72 @@ combinations terminate with an error.</p>
 </li>
 </ul>
 </section>
+<section id="hubbard-and-tj-sectors-with-fixed-particle-number-only-expert-mode">
+<h2>Hubbard and tJ sectors with fixed particle number only (expert mode)<a class="headerlink" href="#hubbard-and-tj-sectors-with-fixed-particle-number-only-expert-mode" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=0</span></code> (Hubbard) or <code class="docutils literal notranslate"><span class="pre">CalcModel=9</span></code> (tJ) with <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>, and without <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>, selects a
+spatial-symmetry sector in which only the particle number
+<span class="math notranslate nohighlight">\(N=\)</span> <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> is fixed. Total <span class="math notranslate nohighlight">\(S_z\)</span> is not fixed, so the
+Hamiltonian may contain spin-mixing <code class="docutils literal notranslate"><span class="pre">Trans</span></code> terms (spin-orbit-type hopping,
+transverse fields) and <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> terms that change <span class="math notranslate nohighlight">\(S_z\)</span>, such as
+<span class="math notranslate nohighlight">\(S^+_iS^+_j\)</span>. When <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> is given together with <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, or with
+both <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> whose sum equals <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>, the fixed-<span class="math notranslate nohighlight">\(S_z\)</span>
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> sector above is used. If <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> is omitted and both
+<code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> are specified with <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>, their sum must equal
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>; otherwise the input is rejected. When <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> and <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> are
+both specified, the existing canonical input handling determines <code class="docutils literal notranslate"><span class="pre">Nup</span></code>
+and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> from those two values.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 4.3 </span><span class="caption-text">Fixed-N sectors</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 26.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Space</p></th>
+<th class="head"><p>Particle number</p></th>
+<th class="head"><p>Dimension before projection</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>HubbardNConserved (internal model 6)</p></td>
+<td><p><span class="math notranslate nohighlight">\(1\leq N\leq 2N_{\rm site}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\binom{2N_{\rm site}}{N}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>tJNConserved (internal model 11)</p></td>
+<td><p><span class="math notranslate nohighlight">\(1\leq N\leq N_{\rm site}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\binom{N_{\rm site}}{N}2^N\)</span> (no doubly occupied site)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Both require <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;=</span> <span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)/2</span></code>. As in the
+raw basis, <code class="docutils literal notranslate"><span class="pre">Ncond=0</span></code> is rejected; empty symmetry sectors are rejected as
+well. States use the two-bit site encoding and the fermion permutation sign of
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> above, and the tJ projection is applied to the result of a
+whole operator product.</p>
+<p>The supported Hamiltonian families are those of <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> above
+without the spin restriction: <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (including spin-mixing and complex
+terms), <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>, <code class="docutils literal notranslate"><span class="pre">Hund</span></code>, <code class="docutils literal notranslate"><span class="pre">Ising</span></code>, <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PairHop</span></code> and <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>. Hermiticity and group invariance are checked for
+the whole normal-ordered Hamiltonian; every product of creation-annihilation
+pairs conserves <span class="math notranslate nohighlight">\(N\)</span>. <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, anomalous terms and
+<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> remain unsupported.</p>
+<p>All six methods, the six correlation formats (spin-flip operators included),
+state import/export, the FullDiag sector matrix file, v3 continuation across
+process counts and both basis layouts are available as for the fixed-<span class="math notranslate nohighlight">\(S_z\)</span>
+sectors. <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may mix spins at every time if they keep
+the symmetry. In the energy, TPQ and TE outputs, <span class="math notranslate nohighlight">\(N\)</span> and <span class="math notranslate nohighlight">\(N^2\)</span> equal
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> and its square, while <span class="math notranslate nohighlight">\(S_z\)</span>, <span class="math notranslate nohighlight">\(S_z^2\)</span> and the doublon
+number are computed from the state (the doublon number is zero for tJ).</p>
+<p>State files keep version 1, phase 1 and 28 header words. The model word (6 or
+11) and the particle number identify the space, and <code class="docutils literal notranslate"><span class="pre">nup</span></code> / <code class="docutils literal notranslate"><span class="pre">ndown</span></code> are 0;
+v3 restart files and the matrix file have <code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code> 0. The sector
+manifest records <code class="docutils literal notranslate"><span class="pre">model=HubbardNConserved</span></code> or <code class="docutils literal notranslate"><span class="pre">model=tJNConserved</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fixed_quantities=ncond</span></code> and <code class="docutils literal notranslate"><span class="pre">fixed_ne</span></code>. Files of a fixed-<span class="math notranslate nohighlight">\(S_z\)</span>
+sector, another particle number, the other model or another momentum are
+rejected even when the dimensions agree.</p>
+</section>
 <section id="kondo-sectors-spin-one-half-expert-mode">
 <h2>Kondo sectors (spin one-half, expert mode)<a class="headerlink" href="#kondo-sectors-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> supports the following three Kondo spaces. <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> counts
@@ -239,8 +306,8 @@ both the <span class="math notranslate nohighlight">\(L\)</span> localized-spin 
 <code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> must mark each localized spin as spin one-half (value 1) and
 each conduction site as 0. Every group operation must preserve this mask;
 localized and conduction sites need not be contiguous or alternate.</p>
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-number">Table 4.3 </span><span class="caption-text">Kondo input and fixed quantities</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-number">Table 4.4 </span><span class="caption-text">Kondo input and fixed quantities</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 24.0%" />
 <col style="width: 39.0%" />
@@ -302,8 +369,8 @@ checking Hermiticity, group invariance and the model’s fixed quantities.
 Transverse and compensating spin flips are permitted when those checks
 allow them. Dedicated <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> input is unsupported; allowed pair-spin
 products can be written as <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>. An empty Hamiltonian is valid.</p>
-<table class="docutils align-default" id="id2">
-<caption><span class="caption-number">Table 4.4 </span><span class="caption-text">Kondo sector method and feature support (all three spaces)</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-number">Table 4.5 </span><span class="caption-text">Kondo sector method and feature support (all three spaces)</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 19.0%" />
 <col style="width: 28.0%" />
@@ -436,8 +503,8 @@ still required. For <span class="math notranslate nohighlight">\(E_i^{ab}=|a\ran
 <p>There is no additional factor of one-half. Reversed and duplicate rows add;
 a same-site row vanishes. These rules do not relax the fixed-Sz restriction
 of canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>.</p>
-<table class="docutils align-default" id="id3">
-<caption><span class="caption-number">Table 4.5 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-number">Table 4.6 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id4" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />

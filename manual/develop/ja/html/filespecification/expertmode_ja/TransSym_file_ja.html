@@ -185,8 +185,9 @@ NQPTrans          2
 因子を与えるため、偶・奇セクターの次元はスピン系の数え方とは異なります。</p></li>
 <li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、 <code class="docutils literal notranslate"><span class="pre">CG</span></code>、 <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> （microcanonical TPQ）、 <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、 <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>、 <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
 固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
-<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。固定Szを持たないスピン1/2の
-<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> にも対応します（下記参照）。expert mode では次の項に対応します。</p>
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> だけを固定した
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> と、固定Szを持たないスピン1/2の <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> にも対応します
+（下記参照）。expert mode では次の項に対応します。</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: 縦磁場の <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、
 <code class="docutils literal notranslate"><span class="pre">Hund</span></code>、固定Szを保存する <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>。</p></li>
@@ -224,14 +225,76 @@ CGとTimeEvolutionで下記のsector checkpoint形式により利用できます
 </ul>
 </section>
 </section>
+<section id="hubbardtj-expert-mode">
+<h1>粒子数だけを固定したHubbard・tJセクター（expert mode）<a class="headerlink" href="#hubbardtj-expert-mode" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=0</span></code> （Hubbard）または <code class="docutils literal notranslate"><span class="pre">CalcModel=9</span></code> （tJ）で <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> と
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を指定し、 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を省略すると、粒子数
+<span class="math notranslate nohighlight">\(N=\)</span> <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> だけを固定した空間対称性セクターになります。全スピンz成分
+<span class="math notranslate nohighlight">\(S_z\)</span> は固定しないため、スピンを混ぜる <code class="docutils literal notranslate"><span class="pre">Trans</span></code> （スピン軌道型のホッピング、
+横磁場）や、 <span class="math notranslate nohighlight">\(S^+_iS^+_j\)</span> のように <span class="math notranslate nohighlight">\(S_z\)</span> を変える <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> を
+ハミルトニアンに含められます。 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> と <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を同時に指定した場合、または
+和が <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> に等しい <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を両方指定した場合は、上記の固定
+<span class="math notranslate nohighlight">\(S_z\)</span> の <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> セクターになります。 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を省略し、
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> と <code class="docutils literal notranslate"><span class="pre">Nup</span></code> / <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を併記した場合は、 <code class="docutils literal notranslate"><span class="pre">Nup+Ndown</span></code> が
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> と一致しない入力を拒否します。 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> と <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を同時に
+指定した場合は、従来のcanonical入力処理に従い、この2値から <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
+<code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を決定します。</p>
+<table class="docutils align-default" id="id8">
+<caption><span class="caption-number">表 4.3 </span><span class="caption-text">粒子数を固定したセクター</span><a class="headerlink" href="#id8" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 26.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>空間</p></th>
+<th class="head"><p>粒子数</p></th>
+<th class="head"><p>対称性射影前の次元</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>HubbardNConserved（内部model 6）</p></td>
+<td><p><span class="math notranslate nohighlight">\(1\leq N\leq 2N_{\rm site}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\binom{2N_{\rm site}}{N}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>tJNConserved（内部model 11）</p></td>
+<td><p><span class="math notranslate nohighlight">\(1\leq N\leq N_{\rm site}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\binom{N_{\rm site}}{N}2^N\)</span> （二重占有なし）</p></td>
+</tr>
+</tbody>
+</table>
+<p>どちらも <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">Nsite</span> <span class="pre">&lt;=</span> <span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)/2</span></code> を要求します。
+raw基底と同様に <code class="docutils literal notranslate"><span class="pre">Ncond=0</span></code> は拒否し、空の対称性セクターも拒否します。状態は上記の
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> と同じサイトあたり2 bitの表現とフェルミオン置換符号を使い、
+tJの射影は演算子の積全体を作用させた結果に適用します。</p>
+<p>ハミルトニアンの項は、上記の <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> の項からスピンの制約を除いた
+ものです。 <code class="docutils literal notranslate"><span class="pre">Trans</span></code> （スピンを混ぜる項・複素係数を含む）、 <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、
+<code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、 <code class="docutils literal notranslate"><span class="pre">Hund</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>
+に対応します。正規順序化したハミルトニアン全体についてHermite性と群不変性を
+検査します。生成・消滅の対の積はすべて <span class="math notranslate nohighlight">\(N\)</span> を保存します。 <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、
+<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、異常項、 <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> は非対応です。</p>
+<p>6つの計算手法、6種類の相関関数（スピン反転演算子を含む）、状態の入出力、
+FullDiagのsector行列ファイル、MPI process数を変更したv3継続、両basis layoutは、
+固定 <span class="math notranslate nohighlight">\(S_z\)</span> のセクターと同様に利用できます。 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> は、
+各時刻で対称性を保つ限りスピンを混ぜてかまいません。エネルギー、TPQ、TEの出力では
+<span class="math notranslate nohighlight">\(N\)</span> と <span class="math notranslate nohighlight">\(N^2\)</span> は <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> とその2乗に等しく、 <span class="math notranslate nohighlight">\(S_z\)</span>、
+<span class="math notranslate nohighlight">\(S_z^2\)</span>、二重占有数は状態から計算します（tJでは二重占有数は0です）。</p>
+<p>状態ファイルはversion 1、phase 1、28語のheaderのままです。model語（6または11）と
+粒子数で空間を識別し、 <code class="docutils literal notranslate"><span class="pre">nup</span></code> / <code class="docutils literal notranslate"><span class="pre">ndown</span></code> は0です。v3 restartファイルと行列
+ファイルの <code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code> は0です。sector manifestには
+<code class="docutils literal notranslate"><span class="pre">model=HubbardNConserved</span></code> または <code class="docutils literal notranslate"><span class="pre">model=tJNConserved</span></code>、
+<code class="docutils literal notranslate"><span class="pre">fixed_quantities=ncond</span></code>、 <code class="docutils literal notranslate"><span class="pre">fixed_ne</span></code> を記録します。固定 <span class="math notranslate nohighlight">\(S_z\)</span> の
+セクター、異なる粒子数、もう一方のmodel、異なる運動量のファイルは、次元が一致
+しても拒否します。</p>
+</section>
 <section id="kondo-1-2expert-mode">
 <h1>Kondoセクター（スピン1/2、expert mode）<a class="headerlink" href="#kondo-1-2expert-mode" title="Link to this heading">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> は次の3種類のKondo空間に対応します。 <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> は局在スピンの
 <span class="math notranslate nohighlight">\(L\)</span> サイトと伝導電子の <span class="math notranslate nohighlight">\(C\)</span> サイトの合計です。 <code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> では局在
 スピン1/2を1、伝導サイトを0とします。全群操作はこの配置maskを保存する必要が
 あります。局在・伝導サイトは連続配置でも交互配置でもかまいません。</p>
-<table class="docutils align-default" id="id8">
-<caption><span class="caption-number">表 4.3 </span><span class="caption-text">Kondoの入力と固定量</span><a class="headerlink" href="#id8" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-number">表 4.4 </span><span class="caption-text">Kondoの入力と固定量</span><a class="headerlink" href="#id9" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 24.0%" />
 <col style="width: 39.0%" />
@@ -287,8 +350,8 @@ KondoGCは上限を含まない厳密不等号を要求します。</p>
 検査します。横磁場や補償するスピン反転は、この検査を満たす場合に使えます。
 専用 <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> 入力は非対応ですが、許されるスピン対積は <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> で記述
 できます。空Hamiltonianも有効です。</p>
-<table class="docutils align-default" id="id9">
-<caption><span class="caption-number">表 4.4 </span><span class="caption-text">Kondoセクターの手法と機能（3空間共通）</span><a class="headerlink" href="#id9" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-number">表 4.5 </span><span class="caption-text">Kondoセクターの手法と機能（3空間共通）</span><a class="headerlink" href="#id10" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 19.0%" />
 <col style="width: 28.0%" />
@@ -408,8 +471,8 @@ Hermitian性と群の各操作に対する不変性は必要です。
 <span class="eqno">(4.9)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-2" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
 <p>追加の1/2はありません。逆向きの行と重複行は加算され、同一サイトの行は0です。
 canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の固定Sz条件は変更しません。</p>
-<table class="docutils align-default" id="id10">
-<caption><span class="caption-number">表 4.5 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id10" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-number">表 4.6 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id11" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />
