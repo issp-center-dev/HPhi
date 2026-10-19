@@ -46,7 +46,7 @@ int EvaluateSymmetryStateDiagonal(
   unsigned int bit_count;
   struct DiagonalContext context = {def, state, 0.0};
   if (def == NULL || diagonal == NULL || def->Nsite == 0U) return -1;
-  if (def->iCalcModel == Hubbard || def->iCalcModel == tJ ||
+  if (IsSymmetrySpinfulFermionModel(def->iCalcModel) ||
       IsSymmetryKondoModel(def->iCalcModel)) {
     if (def->Nsite > word_bits / 2U) return -1;
     bit_count = 2U * def->Nsite;

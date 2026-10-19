@@ -6,12 +6,25 @@
 #include "symmetry_kondo.h"
 #include "symmetry_kondo_terms.h"
 
+int IsSymmetrySpinfulFermionModel(int model)
+{
+  return model == Hubbard || model == HubbardNConserved ||
+         model == tJ || model == tJNConserved;
+}
+
+int IsSymmetryTJModel(int model)
+{
+  return model == tJ || model == tJNConserved;
+}
+
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
+  /* The legacy plan only has the fixed-Sz Hubbard hopping kernel. */
   return IsSymmetryKondoModel(def->iCalcModel) || def->iCalcModel == SpinGC ||
       (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
           (def->NLaser || def->NTETransferMax || def->NTEInterAllMax)) ||
-      def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
+      IsSymmetryTJModel(def->iCalcModel) || def->iCalcModel == HubbardNConserved ||
+      def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
       def->NInterAll_OffDiagonal || def->NPairHopping ||
       (def->iCalcModel == Hubbard && (def->NCoulombInter || def->NHundCoupling ||
        def->NExchangeCoupling || def->NIsingCoupling)) ||
@@ -63,7 +76,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   if (!def || !callback || kind < -1 || kind > 1 || def->Nsite == 0 ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
        def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) || def->iFlgGeneralSpin ||
       def->NNBodyInterAll || def->NAnomalousTerm ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
@@ -95,7 +108,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     if (emit(def, kind, 2, def->InterAll_OffDiagonal[p],
              def->ParaInterAll_OffDiagonal[p], callback, context)) return -1;
   CHECK_STORAGE(def->NCoulombIntra, def->CoulombIntra, def->ParaCoulombIntra);
-  if (def->NCoulombIntra && def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+  if (def->NCoulombIntra && !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NCoulombIntra; ++p) {
     a = def->CoulombIntra[p][0];
@@ -136,7 +149,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     EMIT(2, def->ParaPairLiftCoupling[p], a,0,a,1,b,0,b,1);
   }
   CHECK_STORAGE(def->NPairHopping, def->PairHopping, def->ParaPairHopping);
-  if (def->NPairHopping && def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+  if (def->NPairHopping && !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NPairHopping; ++p) {
     a = def->PairHopping[p][0]; b = def->PairHopping[p][1];
@@ -153,13 +166,13 @@ int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
 {
   unsigned int f, nint;
   double s = 1.0;
-  unsigned int width = (def && (def->iCalcModel == Hubbard || def->iCalcModel == tJ ||
+  unsigned int width = (def && (IsSymmetrySpinfulFermionModel(def->iCalcModel) ||
       IsSymmetryKondoModel(def->iCalcModel))) ? 2U : 1U;
   if (!def || !index || !out || !sign || factors < 1U || factors > UINT_MAX / 4U ||
       def->Nsite == 0 || def->Nsite > CHAR_BIT * sizeof(state) / width ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
        def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel))) return -1;
   if (IsSymmetryKondoModel(def->iCalcModel) &&
       !SymmetryKondoStateIsPhysical(def, state)) return -1;
@@ -189,7 +202,8 @@ int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
     }
   }
   /* Project only after the complete product, preserving virtual states. */
-  if (def->iCalcModel == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
+  if (IsSymmetryTJModel(def->iCalcModel) && (state & (state >> 1U) & (ULONG_MAX / 3UL)))
+    return 0;
   if (IsSymmetryKondoModel(def->iCalcModel) &&
       !SymmetryKondoStateIsPhysical(def, state)) return 0;
   *out = state;
@@ -271,7 +285,7 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
     }
     return 0;
   } else {
-    int width = (poly->def->iCalcModel == Hubbard || poly->def->iCalcModel == tJ) ? 2 : 1;
+    int width = IsSymmetrySpinfulFermionModel(poly->def->iCalcModel) ? 2 : 1;
     int a = width*x[0]+x[1], b = width*x[2]+x[3];
     if (n == 1) {
       key[0] = 1; key[1] = a; key[2] = b;
@@ -285,7 +299,8 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
       if (a == c || b == d) return 0;
       /* P O P vanishes if a normal-ordered string creates or annihilates
        * a doublon. Retain any contraction emitted above before discarding it. */
-      if (poly->def->iCalcModel == tJ && (a / 2 == c / 2 || b / 2 == d / 2)) return 0;
+      if (IsSymmetryTJModel(poly->def->iCalcModel) && (a / 2 == c / 2 || b / 2 == d / 2))
+        return 0;
       value = -value;
       if (a > c) { tmp = a; a = c; c = tmp; value = -value; }
       if (b > d) { tmp = b; b = d; d = tmp; value = -value; }
@@ -337,6 +352,7 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   for (i = 0; i < base.count; ++i) {
     const int *key = base.terms[i].key;
     int delta = 0, f;
+    /* NConserved models fix only N, which every c^dagger c product keeps. */
     if (def->iCalcModel == Spin)
       for (f = 0; f < key[0]; ++f) delta += key[2+3*f] - key[3+3*f];
     else if (def->iCalcModel == Hubbard || def->iCalcModel == tJ)

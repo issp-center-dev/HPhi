@@ -376,6 +376,8 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
               def->iCalcModel == SpinGC ? "SpinGC" :
               def->iCalcModel == Spin ? "Spin" :
               def->iCalcModel == SpinlessFermion ? "SpinlessFermion" :
+              def->iCalcModel == HubbardNConserved ? "HubbardNConserved" :
+              def->iCalcModel == tJNConserved ? "tJNConserved" :
               def->iCalcModel == tJ ? "tJ" : "Hubbard";
       switch (def->iCalcType) {
       case Lanczos: method = "Lanczos"; break;
@@ -409,6 +411,9 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       else if (def->iCalcModel == Spin)
         fprintf(fp, "fixed_2sz=%d\n", (int)def->Nup - (int)def->Ndown);
       else {
+        /* Canonical manifest bytes are unchanged; NConserved leaves Nup/Ndown free. */
+        if (def->iCalcModel == HubbardNConserved || def->iCalcModel == tJNConserved)
+          fprintf(fp, "fixed_quantities=ncond\n");
         fprintf(fp, "fixed_ne=%u\n", def->Ne);
         if (def->iCalcModel == Hubbard || def->iCalcModel == tJ)
           fprintf(fp, "fixed_nup=%u\nfixed_ndown=%u\n", def->Nup, def->Ndown);

@@ -186,7 +186,9 @@ int SymmetryApplyToState(const struct DefineList *def,
     return 0;
   }
   case Hubbard:
+  case HubbardNConserved:
   case tJ:
+  case tJNConserved:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);
   default:
     return -1;

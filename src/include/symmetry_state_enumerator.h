@@ -34,6 +34,12 @@ int CountSymmetryKondoCompletions(int model, unsigned int local_sites,
     unsigned int conduction_sites, int nup, int ndown, int ncond,
     unsigned long *count);
 
+/* Fixed-N spinful sectors without fixed Sz: C(2L,N) for HubbardNConserved
+ * and C(L,N)*2^N for tJNConserved, with 1 <= N and the same LONG_MAX bound
+ * as the Kondo count. */
+int ComputeSymmetryNConservedDimension(const struct DefineList *def,
+                                       unsigned long *dimension);
+
 int InitSymmetryStateEnumerator(
     const struct DefineList *def,
     unsigned long int expected_raw_dim,

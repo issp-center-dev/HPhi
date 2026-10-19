@@ -761,6 +761,34 @@ int ValidateRestartKeys(const struct DefineList *X)
   return 0;
 }
 
+/* TransSym Hubbard/tJ with Ncond and no 2Sz. Consistent Nup/Ndown (given
+ * together, checked earlier) keep the fixed-Sz canonical model; Ncond alone
+ * fixes only N. Raw input is unchanged. */
+static int normalize_symmetry_fixed_n(struct DefineList *X, int has_spin_numbers)
+{
+  const char *model = X->iCalcModel == tJ ? "tJ" : "Hubbard";
+  unsigned int maximum = X->iCalcModel == tJ ? X->Nsite : 2U * X->Nsite;
+  if (has_spin_numbers) {
+    if (X->Nup + X->Ndown != X->NCond) {
+      fprintf(stdoutMPI, "Error: TransSym %s Ncond=%u conflicts with Nup+Ndown=%u.\n",
+              model, X->NCond, X->Nup + X->Ndown);
+      return -1;
+    }
+    X->Ne = X->NCond;
+    return 0;
+  }
+  /* Nsite<=0 is diagnosed after all ModPara keys. */
+  if (X->NCond < 1U || (X->Nsite > 0U && X->NCond > maximum)) {
+    fprintf(stdoutMPI, "Error: TransSym %sNConserved requires 1 <= Ncond <= %u.\n",
+            model, maximum);
+    return -1;
+  }
+  X->Ne = X->NCond;
+  X->Nup = X->Ndown = 0U;
+  X->iCalcModel = X->iCalcModel == tJ ? tJNConserved : HubbardNConserved;
+  return 0;
+}
+
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
@@ -1426,7 +1454,11 @@ int ReadDefFileNInt(
           X->Nup/=2;
           X->Ndown/=2;
         }else{
-          if(X->iCalcModel == Hubbard ){
+          if (X->iFlgSymmetryBasis == TRUE &&
+              (X->iCalcModel == Hubbard || X->iCalcModel == tJ)) {
+            if (normalize_symmetry_fixed_n(X, iReadNup && iReadNdown) != 0)
+              return -1;
+          }else if(X->iCalcModel == Hubbard ){
             X->Ne=X->NCond;
             if(X->Ne <1){
               fprintf(stdoutMPI, "Ncond is incorrect.\n");

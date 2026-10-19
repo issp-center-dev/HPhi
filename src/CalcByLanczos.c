@@ -107,7 +107,9 @@ int CalcByLanczos(
       initial_mode = 1; // 1 -> random initial vector
       break;
     case Hubbard:
+    case HubbardNConserved:
     case tJ:
+    case tJNConserved:
     case Kondo:
     case KondoNConserved:
     case KondoGC:

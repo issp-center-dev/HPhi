@@ -48,6 +48,14 @@ jobs:
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|fulldiag_output_open_failure_scalapack|fulldiag_eigenvector_output_elpa_np2|fulldiag_eigenvector_output_scalapack_np2|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2|symmetry_spingc_fulldiag|symmetry_kondo_fulldiag)$'
 
+      - name: NConserved sector FullDiag backends (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_TEST_NCONSERVED_CORE_SCOPE: fulldiag
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_nconserved_core$'
+
       - name: Sector FullDiag states, correlations, matrix I/O and reuse (2 ranks)
         env:
           MPIRUN: mpiexec --oversubscribe -np 2

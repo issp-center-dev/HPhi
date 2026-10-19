@@ -733,7 +733,15 @@ static int state_matches_sector(int model,
     return (unsigned int)count_hubbard_spin(state, nsite, 0U) == nup &&
            (unsigned int)count_hubbard_spin(state, nsite, 1U) == ndown;
   }
+  /* NConserved: nup is the total particle number over 2*nsite orbitals. */
+  if (model == tJNConserved && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
   return (unsigned int)popcount_ulong(state) == nup;
+}
+
+static int is_spinful_enumerator_model(int model)
+{
+  return model == Hubbard || model == tJ ||
+         model == HubbardNConserved || model == tJNConserved;
 }
 
 static void assert_state_enumerator_sequence(int model,
@@ -745,16 +753,17 @@ static void assert_state_enumerator_sequence(int model,
 {
   struct DefineList def;
   struct SymmetryStateEnumerator enumerator;
-  unsigned long int limit = 1UL << ((model == Hubbard || model == tJ) ? 2U * nsite : nsite);
+  unsigned long int limit = 1UL << (is_spinful_enumerator_model(model) ? 2U * nsite : nsite);
   unsigned long int state, raw, dim = 0UL;
   unsigned long int *states;
   int failed = 0;
+  int nconserved = model == HubbardNConserved || model == tJNConserved;
   memset(&def, 0, sizeof(def));
   def.iCalcModel = model;
   def.Nsite = nsite;
-  def.Nup = nup;
-  def.Ndown = ndown;
-  def.Ne = model == SpinlessFermion ? nup : nup + ndown;
+  def.Nup = nconserved ? 0U : nup;
+  def.Ndown = nconserved ? 0U : ndown;
+  def.Ne = model == SpinlessFermion || nconserved ? nup : nup + ndown;
   if (model == Spin) def.iFlgSzConserved = TRUE;
   for (state = 0UL; state < limit; state++) {
     if (state_matches_sector(model, state, nsite, nup, ndown)) dim++;
@@ -788,6 +797,93 @@ static void assert_state_enumerator_sequence(int model,
   }
   assert_ulong_eq(raw, dim, label);
   free(states);
+}
+
+static void assert_nconserved_enumerator_limits(void)
+{
+  const unsigned int half = (unsigned int)(CHAR_BIT * sizeof(unsigned long int)) / 2U;
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned long int dimension, state = 123UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = HubbardNConserved;
+  def.Nsite = 4U;
+  def.Ne = 3U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved dimension");
+  assert_ulong_eq(dimension, 56UL, "HubbardNConserved dimension is C(2L,N)");
+  def.iCalcModel = tJNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "tJNConserved dimension");
+  assert_ulong_eq(dimension, 32UL, "tJNConserved dimension is C(L,N)*2^N");
+  def.Ne = 0U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved rejects the vacuum");
+  def.iCalcModel = HubbardNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved rejects the vacuum");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "HubbardNConserved enumerator rejects the vacuum");
+  def.Ne = 9U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved rejects N > 2L");
+  def.iCalcModel = tJNConserved;
+  def.Ne = 5U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved rejects N > L");
+  def.Ne = 3U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 31UL, &enumerator), -1,
+                "tJNConserved dimension mismatch rejects");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 32UL, &enumerator), 0,
+                "tJNConserved enumerator initializes");
+  enumerator.ndown = 1U;
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), -1,
+                "inconsistent NConserved metadata rejects");
+  assert_ulong_eq(state, 123UL, "invalid NConserved enumerator preserves output");
+
+  /* Word-width extremes: C(64,32) and 2^32 still fit the LONG_MAX bound. */
+  def.iCalcModel = HubbardNConserved;
+  def.Nsite = half;
+  def.Ne = half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved half filling at word width");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "HubbardNConserved word-width enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "HubbardNConserved first word-width state");
+  assert_ulong_eq(state, ULONG_MAX >> half, "HubbardNConserved lowest word-width state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "HubbardNConserved last word-width state");
+  assert_ulong_eq(state, ULONG_MAX << half, "HubbardNConserved highest word-width state");
+  def.Ne = 2U * half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved full filling at word width");
+  assert_ulong_eq(dimension, 1UL, "HubbardNConserved full filling is one state");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "HubbardNConserved full filling initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "HubbardNConserved full filling enumerates");
+  assert_ulong_eq(state, ULONG_MAX, "HubbardNConserved full word-width state");
+  def.iCalcModel = tJNConserved;
+  def.Ne = half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "tJNConserved full filling at word width");
+  assert_ulong_eq(dimension, 1UL << half, "tJNConserved full filling is 2^L");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "tJNConserved word-width enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "tJNConserved first word-width state");
+  assert_ulong_eq(state, ULONG_MAX / 3UL, "tJNConserved all-up word-width state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "tJNConserved last word-width state");
+  assert_ulong_eq(state, (ULONG_MAX / 3UL) << 1U, "tJNConserved all-down word-width state");
+  def.Nsite = half + 1U;
+  def.Ne = 1U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved state wider than unsigned long rejects");
+  def.iCalcModel = HubbardNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved state wider than unsigned long rejects");
 }
 
 static void assert_state_enumerator_exact(void)
@@ -826,8 +922,18 @@ static void assert_state_enumerator_exact(void)
                 "tJ enumerator matches exhaustive no-double-occupancy states");
         }
       }
+      for (nup = 1U; nup <= 2U * nsite; nup++) {
+        assert_state_enumerator_sequence(
+            HubbardNConserved, nsite, nup, 0U, thread_count,
+            "HubbardNConserved enumerator matches exhaustive fixed-N states");
+        if (nup <= nsite)
+          assert_state_enumerator_sequence(
+              tJNConserved, nsite, nup, 0U, thread_count,
+              "tJNConserved enumerator matches exhaustive fixed-N states");
+      }
     }
   }
+  assert_nconserved_enumerator_limits();
 
   for (nsite = 1U; nsite <= 8U; nsite++) {
     unsigned long int raw_dim = 1UL << nsite;
