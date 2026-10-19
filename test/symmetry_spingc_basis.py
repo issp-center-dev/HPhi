@@ -299,8 +299,9 @@ def validation(root, hphi):
              lambda path: extra(path, 'PairHop', [(0, 1, .2)]))
     negative('unsupported_method', 'CalcType:',
              lambda path: replace(path, 'calc.def', 'CalcType 3', 'CalcType 6'))
+    # tJGC has no TransSym sector; HubbardGC and SpinlessFermionGC do.
     negative('unsupported_model', 'supports only SpinGC, Spin',
-             lambda path: (replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 3'),
+             lambda path: (replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 10'),
                            c.definition(path, 'loc.def', [(i, 0) for i in range(4)], 0)), empty)
     import shutil
     restart = root/'cg_restart'

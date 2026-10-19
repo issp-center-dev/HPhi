@@ -17,6 +17,7 @@ struct SymmetryStateEnumerator {
   unsigned int bit_count;
   unsigned long local_site_mask;
   unsigned int ncond;
+  int particle_parity; /* GC fermions: 0 all N, 1 even N, -1 odd N */
   unsigned int prefix_local[HPHI_SYMMETRY_STATE_WORD_BITS / 2U + 1U];
   unsigned int prefix_conduction[HPHI_SYMMETRY_STATE_WORD_BITS / 2U + 1U];
   unsigned long int raw_dim;
@@ -39,6 +40,12 @@ int CountSymmetryKondoCompletions(int model, unsigned int local_sites,
  * as the Kondo count. */
 int ComputeSymmetryNConservedDimension(const struct DefineList *def,
                                        unsigned long *dimension);
+
+/* GC fermion sectors over M orbitals (2L for HubbardGC, L for
+ * SpinlessFermionGC): 2^M, or 2^(M-1) with a ParticleParity, before the
+ * space-group projection. M must fit the state word and the count LONG_MAX. */
+int ComputeSymmetryFermionGCDimension(const struct DefineList *def,
+                                      unsigned long *dimension);
 
 int InitSymmetryStateEnumerator(
     const struct DefineList *def,

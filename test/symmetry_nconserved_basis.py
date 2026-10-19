@@ -87,7 +87,8 @@ def rejection_suite(root, hphi, launcher, env):
                        else (*row[:4], 1.5*row[4], 1.5*row[5]) for row in broken['Trans']]
     reject('nonuniform_spin_mixing', Case('HubbardNConserved', 3, 2, 0),
            'Error: TransSym Hamiltonian invariance failed', options={'families': broken})
-    reject('anomalous_term', hubbard, 'Error: AnomalousTerm is currently supported only for HubbardGC.',
+    reject('anomalous_term', hubbard,
+           'Error: TransSym AnomalousTerm is supported only for HubbardGC and SpinlessFermionGC.',
            options={'families': {'AnomalousTerm': [(1, 0, 0, 1, 1, .1, 0.), (0, 1, 1, 0, 0, .1, 0.)]}})
     reject('empty_sector', Case('HubbardNConserved', 2, 4, 1),
            'Error: TransSym sector has zero basis dimension.')

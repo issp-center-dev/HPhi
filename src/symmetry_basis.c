@@ -174,6 +174,7 @@ int SymmetryApplyToState(const struct DefineList *def,
     result->amplitude = 1.0;
     return 0;
   case SpinlessFermion:
+  case SpinlessFermionGC:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 1U, result);
   case Kondo:
   case KondoNConserved:
@@ -187,6 +188,7 @@ int SymmetryApplyToState(const struct DefineList *def,
   }
   case Hubbard:
   case HubbardNConserved:
+  case HubbardGC:
   case tJ:
   case tJNConserved:
     return apply_fermion_site_permutation(state, def->SymTrans[op], def->Nsite, 2U, result);

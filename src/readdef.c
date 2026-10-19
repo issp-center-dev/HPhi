@@ -829,6 +829,7 @@ int ReadDefFileNInt(
   X->iFlgSymmetryBasis=FALSE;
   X->NSymTrans=0;
   X->iSymMomentumIndex=-1;
+  X->iParticleParity=0;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   int iReadNup=FALSE;
@@ -952,6 +953,14 @@ int ReadDefFileNInt(
                 }
                 X->NCond = (int) dtmp;
                 iReadNCond = TRUE;
+              }
+              else if (CheckWords(ctmp, "ParticleParity") == 0) {
+                if (dtmp != 0.0 && dtmp != 1.0 && dtmp != -1.0) {
+                  fprintf(stdoutMPI, "Error: ParticleParity must be 0 (all N), 1 (even N) or -1 (odd N).\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->iParticleParity = (int) dtmp;
               }
               else if (CheckWords(ctmp, "Lanczos_max") == 0) {
                 if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
@@ -1376,10 +1385,9 @@ int ReadDefFileNInt(
   }
 
   /* TransSym is read after CalcMod. Only the sector-specific dense builder
-     supports canonical spinless FullDiag; the raw makeHam path still does not. */
-  if (X->iCalcType == FullDiag &&
-      (X->iCalcModel == SpinlessFermionGC ||
-       (X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis == FALSE))) {
+     supports spinless FullDiag; the raw makeHam path still does not. */
+  if (X->iCalcType == FullDiag && X->iFlgSymmetryBasis == FALSE &&
+      (X->iCalcModel == SpinlessFermionGC || X->iCalcModel == SpinlessFermion)) {
     fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
     return -1;
   }
@@ -1538,16 +1546,18 @@ int ReadDefFileNInt(
     /* Preserve the raw GC warning below. */
     /* fall through */
   case SpinGC:
+  case HubbardGC:
+  case SpinlessFermionGC:
     if (X->iFlgSymmetryBasis &&
         (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
-      fprintf(stdoutMPI, "Error: SpinGC TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n");
+      fprintf(stdoutMPI, "Error: %s TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n",
+              X->iCalcModel == SpinGC ? "SpinGC" :
+              X->iCalcModel == HubbardGC ? "HubbardGC" : "SpinlessFermionGC");
       return -1;
     }
     /* Preserve the raw GC warning below. */
     /* fall through */
-  case HubbardGC:
   case tJGC:
-  case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
       //return(-1);
@@ -1555,6 +1565,14 @@ int ReadDefFileNInt(
     break;
   default:
     break;
+  }
+
+  /* Raw and other models keep their Hilbert space; 0 is the full GC space. */
+  if (X->iParticleParity != 0 &&
+      (X->iFlgSymmetryBasis != TRUE ||
+       (X->iCalcModel != HubbardGC && X->iCalcModel != SpinlessFermionGC))) {
+    fprintf(stdoutMPI, "Error: ParticleParity requires TransSym with HubbardGC or SpinlessFermionGC.\n");
+    return -1;
   }
 
     /* Check values (Positive)*/

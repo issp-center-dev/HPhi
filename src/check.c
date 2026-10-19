@@ -122,6 +122,12 @@ int check(struct BindStruct *X){
   //idim_max
   switch(X->Def.iCalcModel){
   case HubbardGC:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryFermionGCDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     //comb_sum = 2^(2*Ns)=4^Ns
     comb_sum = 1;
     for(i=0;i<2*X->Def.Nsite;i++){
@@ -130,6 +136,12 @@ int check(struct BindStruct *X){
     break;
   case SpinGC:
   case SpinlessFermionGC:
+    if (X->Def.iCalcModel == SpinlessFermionGC && X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryFermionGCDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     //comb_sum = 2^(Ns)
     comb_sum = 1;
     if(X->Def.iFlgGeneralSpin ==FALSE){

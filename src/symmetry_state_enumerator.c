@@ -5,6 +5,7 @@
 #include "symmetry_state_enumerator.h"
 #include "struct.h"
 #include "symmetry_kondo.h"
+#include "symmetry_terms.h"
 
 static int initialize_binomial_table(
     struct SymmetryStateEnumerator *enumerator, unsigned int maximum)
@@ -169,6 +170,31 @@ int ComputeSymmetryNConservedDimension(const struct DefineList *def,
   return 0;
 }
 
+static unsigned int fermion_gc_orbitals(int model, unsigned int nsite)
+{
+  return model == HubbardGC ? 2U * nsite : nsite;
+}
+
+int ComputeSymmetryFermionGCDimension(const struct DefineList *def,
+                                      unsigned long *dimension)
+{
+  unsigned int orbitals, exponent;
+  if (def == NULL || dimension == NULL) return -1;
+  *dimension = 0;
+  if (!IsSymmetryFermionGCModel(def->iCalcModel) || def->Nsite == 0U ||
+      def->Nsite >= HPHI_SYMMETRY_STATE_WORD_BITS ||
+      def->iParticleParity < -1 || def->iParticleParity > 1)
+    return -1;
+  orbitals = fermion_gc_orbitals(def->iCalcModel, def->Nsite);
+  exponent = orbitals - (def->iParticleParity != 0 ? 1U : 0U);
+  /* 2^63 exceeds LONG_MAX, so the full space allows at most 62 orbitals. */
+  if (orbitals >= HPHI_SYMMETRY_STATE_WORD_BITS ||
+      exponent >= HPHI_SYMMETRY_STATE_WORD_BITS - 1U)
+    return -1;
+  *dimension = 1UL << exponent;
+  return 0;
+}
+
 static int initialize_kondo(const struct DefineList *def, unsigned long expected,
                             struct SymmetryStateEnumerator *e)
 {
@@ -268,6 +294,17 @@ int InitSymmetryStateEnumerator(
     initialized.ndown = 0U;
     initialized.bit_count = 2U * def->Nsite;
     if (initialize_binomial_table(&initialized, initialized.bit_count) != 0) return -1;
+    initialized.raw_dim = raw_dim;
+    *enumerator = initialized;
+    return 0;
+  }
+
+  if (IsSymmetryFermionGCModel(def->iCalcModel)) {
+    if (ComputeSymmetryFermionGCDimension(def, &raw_dim) != 0 ||
+        raw_dim != expected_raw_dim) return -1;
+    initialized.nup = initialized.ndown = 0U;
+    initialized.bit_count = fermion_gc_orbitals(def->iCalcModel, def->Nsite);
+    initialized.particle_parity = def->iParticleParity;
     initialized.raw_dim = raw_dim;
     *enumerator = initialized;
     return 0;
@@ -469,6 +506,27 @@ int SymmetryStateEnumeratorStateAt(
       return -1;
     }
     *state = raw_index - 1UL;
+    return 0;
+  }
+  if (IsSymmetryFermionGCModel(enumerator->model)) {
+    unsigned long int rank = raw_index - 1UL, parity = 0UL, rest;
+    unsigned int selected = enumerator->particle_parity != 0 ? 1U : 0U;
+    if (enumerator->nsite == 0U || enumerator->bit_count == 0U ||
+        enumerator->bit_count >= word_bits ||
+        enumerator->bit_count !=
+            fermion_gc_orbitals(enumerator->model, enumerator->nsite) ||
+        enumerator->particle_parity < -1 || enumerator->particle_parity > 1 ||
+        enumerator->raw_dim != (1UL << (enumerator->bit_count - selected))) {
+      return -1;
+    }
+    if (!selected) {
+      *state = rank;
+      return 0;
+    }
+    /* The lowest orbital completes the requested popcount parity, which
+     * keeps the selected states in increasing integer order. */
+    for (rest = rank; rest != 0UL; rest &= rest - 1UL) parity ^= 1UL;
+    *state = (rank << 1) | (parity ^ (enumerator->particle_parity < 0 ? 1UL : 0UL));
     return 0;
   }
   if (enumerator->model == HubbardNConserved || enumerator->model == tJNConserved) {
