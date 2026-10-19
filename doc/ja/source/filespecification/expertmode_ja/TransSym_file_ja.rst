@@ -185,8 +185,9 @@ TransSym指定ファイル
 
 -  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。固定Szを持たないスピン1/2の
-   ``SpinGC`` にも対応します（下記参照）。expert mode では次の項に対応します。
+   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。 ``Ncond`` だけを固定した
+   ``Hubbard`` / ``tJ`` と、固定Szを持たないスピン1/2の ``SpinGC`` にも対応します
+   （下記参照）。expert mode では次の項に対応します。
 
    - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
      ``Hund``、固定Szを保存する ``InterAll``。
@@ -221,6 +222,64 @@ TransSym指定ファイル
    全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
    識別情報付きのsector行列ファイル（:ref:`Subsec:ham`）を使います。
    未対応の組み合わせはエラーで終了します。
+
+
+粒子数だけを固定したHubbard・tJセクター（expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=0`` （Hubbard）または ``CalcModel=9`` （tJ）で ``TransSym`` と
+``Ncond`` を指定し、 ``2Sz``、 ``Nup``、 ``Ndown`` を省略すると、粒子数
+:math:`N=` ``Ncond`` だけを固定した空間対称性セクターになります。全スピンz成分
+:math:`S_z` は固定しないため、スピンを混ぜる ``Trans`` （スピン軌道型のホッピング、
+横磁場）や、 :math:`S^+_iS^+_j` のように :math:`S_z` を変える ``InterAll`` を
+ハミルトニアンに含められます。 ``Ncond`` と ``2Sz`` を同時に指定した場合、または
+和が ``Ncond`` に等しい ``Nup`` と ``Ndown`` を両方指定した場合は、上記の固定
+:math:`S_z` の ``Hubbard`` / ``tJ`` セクターになります。 ``2Sz`` を省略し、
+``Ncond`` と ``Nup`` / ``Ndown`` を併記した場合は、 ``Nup+Ndown`` が
+``Ncond`` と一致しない入力を拒否します。 ``Ncond`` と ``2Sz`` を同時に
+指定した場合は、従来のcanonical入力処理に従い、この2値から ``Nup`` と
+``Ndown`` を決定します。
+
+.. list-table:: 粒子数を固定したセクター
+   :header-rows: 1
+   :widths: 22 26 52
+
+   * - 空間
+     - 粒子数
+     - 対称性射影前の次元
+   * - HubbardNConserved（内部model 6）
+     - :math:`1\leq N\leq 2N_{\rm site}`
+     - :math:`\binom{2N_{\rm site}}{N}`
+   * - tJNConserved（内部model 11）
+     - :math:`1\leq N\leq N_{\rm site}`
+     - :math:`\binom{N_{\rm site}}{N}2^N` （二重占有なし）
+
+どちらも ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2`` を要求します。
+raw基底と同様に ``Ncond=0`` は拒否し、空の対称性セクターも拒否します。状態は上記の
+``Hubbard`` / ``tJ`` と同じサイトあたり2 bitの表現とフェルミオン置換符号を使い、
+tJの射影は演算子の積全体を作用させた結果に適用します。
+
+ハミルトニアンの項は、上記の ``Hubbard`` / ``tJ`` の項からスピンの制約を除いた
+ものです。 ``Trans`` （スピンを混ぜる項・複素係数を含む）、 ``CoulombIntra``、
+``CoulombInter``、 ``Hund``、 ``Ising``、 ``Exchange``、 ``PairHop``、 ``InterAll``
+に対応します。正規順序化したハミルトニアン全体についてHermite性と群不変性を
+検査します。生成・消滅の対の積はすべて :math:`N` を保存します。 ``PairLift``、
+``NBodyInterAll``、異常項、 ``CalcSpec`` は非対応です。
+
+6つの計算手法、6種類の相関関数（スピン反転演算子を含む）、状態の入出力、
+FullDiagのsector行列ファイル、MPI process数を変更したv3継続、両basis layoutは、
+固定 :math:`S_z` のセクターと同様に利用できます。 ``TEOneBody`` / ``TETwoBody`` は、
+各時刻で対称性を保つ限りスピンを混ぜてかまいません。エネルギー、TPQ、TEの出力では
+:math:`N` と :math:`N^2` は ``Ncond`` とその2乗に等しく、 :math:`S_z`、
+:math:`S_z^2`、二重占有数は状態から計算します（tJでは二重占有数は0です）。
+
+状態ファイルはversion 1、phase 1、28語のheaderのままです。model語（6または11）と
+粒子数で空間を識別し、 ``nup`` / ``ndown`` は0です。v3 restartファイルと行列
+ファイルの ``fixed_flags`` は0です。sector manifestには
+``model=HubbardNConserved`` または ``model=tJNConserved``、
+``fixed_quantities=ncond``、 ``fixed_ne`` を記録します。固定 :math:`S_z` の
+セクター、異なる粒子数、もう一方のmodel、異なる運動量のファイルは、次元が一致
+しても拒否します。
 
 
 Kondoセクター（スピン1/2、expert mode）

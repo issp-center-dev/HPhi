@@ -190,7 +190,7 @@ def correlation_reference(case: Case, ref, vector: np.ndarray,
 
 def check_correlation_outputs(path: Path, aggregate: bool,
                               requests: dict[str, list[list[int]]],
-                              expected: dict[str, np.ndarray]) -> None:
+                              expected: dict[str, np.ndarray], *, atol: float = 1e-8) -> None:
     for kind, rows in requests.items():
         stem = CORRELATION_FILES[kind]
         filename = f'zvo_{stem}_eigen.dat' if aggregate else f'zvo_{stem}_eigen0.dat'
@@ -201,7 +201,7 @@ def check_correlation_outputs(path: Path, aggregate: bool,
             np.testing.assert_array_equal(data[:, 0], 0)
         np.testing.assert_array_equal(data[:, prefix:-2], np.asarray(rows))
         actual = data[:, -2] + 1j * data[:, -1]
-        np.testing.assert_allclose(actual, expected[kind], atol=1e-8, rtol=0, err_msg=filename)
+        np.testing.assert_allclose(actual, expected[kind], atol=atol, rtol=0, err_msg=filename)
 
 
 def check_correlations(root: Path, executable: Path, launcher: list[str]) -> None:

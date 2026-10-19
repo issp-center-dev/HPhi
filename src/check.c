@@ -151,6 +151,12 @@ int check(struct BindStruct *X){
     break;
 
   case HubbardNConserved:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryNConservedDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     comb_sum=0;
     if(X->Def.Ne > X->Def.Nsite){
       iMinup = X->Def.Ne-X->Def.Nsite;
@@ -184,6 +190,12 @@ int check(struct BindStruct *X){
     break;
 
   case tJNConserved:
+    if (X->Def.iFlgSymmetryBasis == TRUE) {
+      unsigned long dimension;
+      if (ComputeSymmetryNConservedDimension(&X->Def, &dimension)) return FALSE;
+      comb_sum = dimension;
+      break;
+    }
     if (X->Def.iFlgInvalidProc == TRUE
         || X->Def.Ne > (int)Ns) {
       comb_sum = 0;

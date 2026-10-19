@@ -447,10 +447,22 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
 {
   if (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
       def->iCalcModel != SpinlessFermion &&
-      def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+      !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
       !IsSymmetryKondoModel(def->iCalcModel)) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, tJ, and Kondo models.\n");
     return -1;
+  }
+  if (def->iCalcModel == HubbardNConserved || def->iCalcModel == tJNConserved) {
+    unsigned long dimension;
+    int tj = def->iCalcModel == tJNConserved;
+    if (def->Nup != 0U || def->Ndown != 0U ||
+        ComputeSymmetryNConservedDimension(def, &dimension) != 0) {
+      fprintf(stdoutMPI, "Error: TransSym %s with Ncond only requires "
+              "1 <= Ncond <= %u and Nsite <= %u.\n", tj ? "tJ" : "Hubbard",
+              tj ? def->Nsite : 2U * def->Nsite,
+              (unsigned int)(CHAR_BIT * sizeof(unsigned long)) / 2U);
+      return -1;
+    }
   }
   if (IsSymmetryKondoModel(def->iCalcModel)) {
     unsigned long dimension;
@@ -655,7 +667,7 @@ static int validate_symmetry_term_families(const struct DefineList *def)
 {
   if (def->NNBodyInterAll || def->NAnomalousTerm ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
-      (def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+      (!IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel) &&
        (def->NCoulombIntra || def->NPairHopping)) ||
       (def->iCalcModel == SpinlessFermion &&

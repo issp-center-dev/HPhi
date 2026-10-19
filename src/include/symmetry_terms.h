@@ -31,5 +31,10 @@ int ApplySymmetryTerm(const struct DefineList *def,
                       unsigned long *out, double complex *value);
 int ValidateSymmetryTerms(const struct DefineList *def);
 int SymmetryUsesExtendedTerms(const struct DefineList *def);
+/* Itinerant spinful fermions without local spins, with fixed Sz (Hubbard,
+ * tJ) or with only N fixed (HubbardNConserved, tJNConserved). */
+int IsSymmetrySpinfulFermionModel(int model);
+/* Spinful models whose physical states exclude doubly occupied sites. */
+int IsSymmetryTJModel(int model);
 
 #endif

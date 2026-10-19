@@ -28,6 +28,7 @@
 #include "diagonalcalc.h"
 #include "symmetry_basis.h"
 #include "symmetry_matvec_plan.h"
+#include "symmetry_terms.h"
 
 /**
  * @file   mltply.c
@@ -126,7 +127,7 @@ int mltply(struct BindStruct *X, double complex *tmp_v0,double complex *tmp_v1) 
     }
     if (X->Def.iCalcModel != Spin && X->Def.iCalcModel != SpinGC &&
         X->Def.iCalcModel != SpinlessFermion &&
-        X->Def.iCalcModel != Hubbard && X->Def.iCalcModel != tJ &&
+        !IsSymmetrySpinfulFermionModel(X->Def.iCalcModel) &&
         !IsSymmetryKondoModel(X->Def.iCalcModel)) {
       fprintf(stdoutMPI, "Error: symmetry basis mltply supports only Spin, SpinGC, SpinlessFermion, Hubbard, tJ, and Kondo in this version.\n");
       StopTimer(1);

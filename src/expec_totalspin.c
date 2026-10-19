@@ -683,9 +683,11 @@ int expec_totalSz(
  double complex *vec
 ) {
   X->Large.mode = M_TOTALS;
+  /* Sectors without fixed Sz evaluate it from the state. */
   if (X->Def.iFlgSymmetryBasis == TRUE &&
       (X->Def.iCalcModel == Kondo || X->Def.iCalcModel == KondoGC ||
-       X->Def.iCalcModel == KondoNConserved))
+       X->Def.iCalcModel == KondoNConserved ||
+       X->Def.iCalcModel == HubbardNConserved || X->Def.iCalcModel == tJNConserved))
     return EvaluateHubbardMoments(X, vec);
   switch (X->Def.iCalcModel) {
     case Spin:

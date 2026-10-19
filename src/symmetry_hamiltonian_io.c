@@ -383,7 +383,8 @@ typedef char matrix_keys_follow_identity
 static const struct { int model; const char *name; } matrix_models[] = {
   { Spin, "Spin" }, { SpinGC, "SpinGC" }, { SpinlessFermion, "SpinlessFermion" },
   { Hubbard, "Hubbard" }, { tJ, "tJ" }, { Kondo, "Kondo" },
-  { KondoNConserved, "KondoNConserved" }, { KondoGC, "KondoGC" }
+  { KondoNConserved, "KondoNConserved" }, { KondoGC, "KondoGC" },
+  { HubbardNConserved, "HubbardNConserved" }, { tJNConserved, "tJNConserved" }
 };
 
 static const char *model_name(uint64_t model)
