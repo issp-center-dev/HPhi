@@ -16,7 +16,8 @@ from symmetry_spingc_common import (checkpoint_digest, join_rank_vectors, mpi_si
                                     read_checkpoint, run_case)
 from symmetry_spingc_te import AMPLITUDES, TIMES, checkpoints, schedule
 from symmetry_nconserved_common import drive_rows, expert_case, hamiltonian_families
-from symmetry_nconserved_core import correlation_operators, correlation_requests, expectations
+from symmetry_nconserved_core import (REFERENCE_TOL, correlation_operators, correlation_requests,
+                                      expectations)
 from symmetry_nconserved_reference import (Case, DEFAULT, MODELS, drive_matrix, make_reference,
                                            sector_matrix)
 
@@ -70,7 +71,8 @@ def check_thermal_correlations(path, aggregate, emitted, history, ref, operators
             for sample in range(NUM_AVE):
                 for step in emitted:
                     check_correlation_block(data[offset:offset+len(rows)], rows,
-                                            expected[sample][step], 2, f'{kind} {sample} {step}')
+                                            expected[sample][step], 2, f'{kind} {sample} {step}',
+                                            atol=REFERENCE_TOL)
                     offset += len(rows)
         else:
             for sample in range(NUM_AVE):
@@ -80,7 +82,7 @@ def check_thermal_correlations(path, aggregate, emitted, history, ref, operators
                         assert not file.exists(), file
                     else:
                         check_correlation_block(finite_data(file), rows, expected[sample][step],
-                                                0, f'{kind} {sample} {step}')
+                                                0, f'{kind} {sample} {step}', atol=REFERENCE_TOL)
 
 
 def run_thermal(root, hphi, launcher, case, kind, explicit, aggregate):
@@ -206,7 +208,8 @@ def evolve(root, name, case, source, label, drive, hphi, launcher, env, interval
         values = expectations(ref, vector, operators)
         for kind, rows_ in requests.items():
             check_correlation_block(finite_data(path/'output'/f'zvo_{CORRELATION_FILES[kind]}_step{step}.dat'),
-                                    rows_, values[kind], 0, f'{name} {kind} step{step}')
+                                    rows_, values[kind], 0, f'{name} {kind} step{step}',
+                                    atol=REFERENCE_TOL)
     for family_name, expected in (('SS', ss), ('Norm', norms), ('Flct', flct)):
         actual = finite_data(path/'output'/f'zvo_{family_name}.dat')
         expected = np.asarray(expected)

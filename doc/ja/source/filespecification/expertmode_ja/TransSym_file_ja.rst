@@ -234,8 +234,11 @@ TransSym指定ファイル
 横磁場）や、 :math:`S^+_iS^+_j` のように :math:`S_z` を変える ``InterAll`` を
 ハミルトニアンに含められます。 ``Ncond`` と ``2Sz`` を同時に指定した場合、または
 和が ``Ncond`` に等しい ``Nup`` と ``Ndown`` を両方指定した場合は、上記の固定
-:math:`S_z` の ``Hubbard`` / ``tJ`` セクターになります。指定したスピン量子数を
-無視することはなく、 ``Nup+Ndown`` が一致しない入力は拒否します。
+:math:`S_z` の ``Hubbard`` / ``tJ`` セクターになります。 ``2Sz`` を省略し、
+``Ncond`` と ``Nup`` / ``Ndown`` を併記した場合は、 ``Nup+Ndown`` が
+``Ncond`` と一致しない入力を拒否します。 ``Ncond`` と ``2Sz`` を同時に
+指定した場合は、従来のcanonical入力処理に従い、この2値から ``Nup`` と
+``Ndown`` を決定します。
 
 .. list-table:: 粒子数を固定したセクター
    :header-rows: 1

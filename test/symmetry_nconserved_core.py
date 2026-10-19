@@ -9,7 +9,7 @@ import sys
 import numpy as np
 from symmetry_kondo_common import read_manifest, read_vector_parts, run_probe, selected_layouts
 from symmetry_kondo_observables import (add_correlation_requests, arbitrary_vector,
-                                        check_correlation_outputs, check_eigenvector,
+                                        check_correlation_outputs,
                                         parse_energy, parse_moments)
 from symmetry_spingc_common import mpi_size, run_case
 from symmetry_nconserved_common import expert_case
@@ -17,6 +17,24 @@ from symmetry_nconserved_reference import (Case, DEFAULT, MODELS, make_reference
                                            operator_matrix, sector_matrix)
 
 LAYOUT = os.environ.get('HPHI_SYMMETRY_BASIS_LAYOUT', 'distributed')
+REFERENCE_TOL = 1e-10
+# LOBCG uses 10**(-LanczosEps/2); leave margin below the accepted residual.
+CG_LANCZOS_EPS = 22
+
+
+def reference_tolerance(expected):
+    return REFERENCE_TOL * max(1., float(np.max(np.abs(expected))))
+
+
+def check_ground_state(vector, h, expected_energy, label):
+    np.testing.assert_allclose(np.linalg.norm(vector), 1., atol=1e-12, rtol=0)
+    hv = h @ vector
+    energy = float(np.vdot(vector, hv).real)
+    assert abs(energy-expected_energy) <= reference_tolerance(expected_energy), label
+    residual = np.linalg.norm(hv-energy*vector) / max(1., np.linalg.norm(h, 2))
+    assert residual <= REFERENCE_TOL, (label, residual)
+    print(f'{label} relative residual={residual:.3e} passed', flush=True)
+    return energy
 
 
 def check_moments(root, probe):
@@ -48,19 +66,20 @@ def check_solvers(root, executable, launcher):
             name = {3: 'cg', 0: 'lanczos'}[method]
             path = expert_case(root/f'{model}_k{k}_{name}', case, method=method,
                                options={'CalcMod': {'CalcEigenVec': 1},
-                                        'ModPara': {'LanczosEps': 18}})
+                                        'ModPara': {'LanczosEps': CG_LANCZOS_EPS if method == 3 else 18}})
             env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=LAYOUT, HPHI_TEST_SYMMETRY_CAPTURE='1')
             if method == 0:
                 env['HPHI_TEST_SYMMETRY_ACTION'] = 'lanczos'
             run_case(path, executable, name, launcher, env)
             reported, text = parse_energy(path)
             vector = read_vector_parts(path, 'sector_final_sample0_step0.rank', len(h))
-            energy = check_eigenvector(vector, h, np.linalg.eigvalsh(h)[0])
-            assert abs(reported-energy) <= 3e-8
+            energy = check_ground_state(vector, h, np.linalg.eigvalsh(h)[0], path.name)
+            assert abs(reported-energy) <= reference_tolerance(energy)
             weights = abs(ref.basis @ vector)**2
             for key, label in (('Sz', 'Sz'), ('D', 'Doublon')):
                 actual = float(re.search(rf'^\s*{label}\s+([^\s]+)', text, re.M).group(1))
-                assert abs(actual-weights @ ref.moments[key]) <= 1e-8, (model, k, key)
+                expected = weights @ ref.moments[key]
+                assert abs(actual-expected) <= reference_tolerance(expected), (model, k, key)
             # Sz is evaluated from the state, never copied from an input value.
             assert abs(weights @ ref.moments['Sz']) > 1e-3
 
@@ -125,14 +144,15 @@ def check_correlations(root, executable, launcher):
             form = 'aggregate' if aggregate else 'legacy'
             path = expert_case(root/f'correlation_{model}_{form}', case, method=3,
                                options={'CalcMod': {'CalcEigenVec': 1},
-                                        'ModPara': {'LanczosEps': 18}})
+                                        'ModPara': {'LanczosEps': CG_LANCZOS_EPS}})
             add_correlation_requests(path, requests, aggregate)
             env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=LAYOUT, HPHI_TEST_SYMMETRY_CAPTURE='1')
             run_case(path, executable, 'correlation', launcher, env)
             vector = read_vector_parts(path, 'sector_final_sample0_step0.rank', len(h))
-            check_eigenvector(vector, h, np.linalg.eigvalsh(h)[0])
+            check_ground_state(vector, h, np.linalg.eigvalsh(h)[0], path.name)
             check_correlation_outputs(path, aggregate, requests,
-                                      correlation_reference(case, ref, vector, requests))
+                                      correlation_reference(case, ref, vector, requests),
+                                      atol=REFERENCE_TOL)
 
 
 def fulldiag_spectrum(path):
@@ -159,8 +179,9 @@ def check_fulldiag(root, hphi, launcher):
                                options={'CalcMod': {'Solver': solver, 'NGPU': 0}})
             text = run_case(path, hphi, 'fulldiag', backend_launcher, env)
             assert f'FullDiag solver: {label}' in text, text
-            error = np.max(abs(fulldiag_spectrum(path)-np.linalg.eigvalsh(sector_matrix(ref))))
-            assert error <= 3e-8, (model, label, error)
+            expected = np.linalg.eigvalsh(sector_matrix(ref))
+            error = np.max(abs(fulldiag_spectrum(path)-expected))
+            assert error <= reference_tolerance(expected), (model, label, error)
             assert read_manifest(path)['model'] == model
             print(f'{model} FullDiag {label} error={error:.3e} passed', flush=True)
 
@@ -190,13 +211,13 @@ def check_raw(root, hphi):
         energies = [np.linalg.eigvalsh(sector_matrix(make_reference(Case(model, 4, 3, k))))[0]
                     for k in range(4)]
         path = expert_case(root/f'raw_{model}', Case(model, 4, 3, 0), method=3,
-                           options={'ModPara': {'LanczosEps': 18}})
+                           options={'ModPara': {'LanczosEps': CG_LANCZOS_EPS}})
         names = (path/'sym.def').read_text().replace('TransSym group.def\n', '')
         (path/'sym.def').write_text(names)
         # Raw MPI site splitting is not part of this suite; run it serially.
         run_case(path, hphi, 'raw', [], dict(os.environ))
         assert not (path/'output/zvo_symmetry_sector.dat').exists()
-        assert abs(parse_energy(path)[0]-min(energies)) <= 3e-8
+        assert abs(parse_energy(path)[0]-min(energies)) <= reference_tolerance(min(energies))
 
 
 def check_rejections(root, hphi, launcher):

@@ -245,8 +245,11 @@ Hamiltonian may contain spin-mixing ``Trans`` terms (spin-orbit-type hopping,
 transverse fields) and ``InterAll`` terms that change :math:`S_z`, such as
 :math:`S^+_iS^+_j`. When ``Ncond`` is given together with ``2Sz``, or with
 both ``Nup`` and ``Ndown`` whose sum equals ``Ncond``, the fixed-:math:`S_z`
-``Hubbard`` / ``tJ`` sector above is used; the spin quantum numbers are never
-ignored, and an inconsistent ``Nup+Ndown`` is rejected.
+``Hubbard`` / ``tJ`` sector above is used. If ``2Sz`` is omitted and both
+``Nup`` and ``Ndown`` are specified with ``Ncond``, their sum must equal
+``Ncond``; otherwise the input is rejected. When ``Ncond`` and ``2Sz`` are
+both specified, the existing canonical input handling determines ``Nup``
+and ``Ndown`` from those two values.
 
 .. list-table:: Fixed-N sectors
    :header-rows: 1
