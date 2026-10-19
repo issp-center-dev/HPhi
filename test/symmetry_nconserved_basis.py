@@ -3,10 +3,11 @@
 from pathlib import Path
 import os
 import shlex
+import shutil
 import sys
 import numpy as np
 from symmetry_kondo_common import run_probe, selected_layouts
-from symmetry_spingc_common import run_case
+from symmetry_spingc_common import mpi_size, run_case
 from symmetry_nconserved_common import expert_case, hamiltonian_families
 from symmetry_nconserved_reference import (Case, DEFAULT, make_reference, raw_dimension,
                                            sector_matrix, self_test)
@@ -40,8 +41,10 @@ def sector_suite(root, probe):
                     continue
                 h = sector_matrix(ref)
                 scale = max(1, np.linalg.norm(h, 2))
-                # Both layouts on the largest fixture; one elsewhere bounds CI time.
-                layouts = selected_layouts() if (sites, n) == (4, 3) else selected_layouts()[:1]
+                # Both layouts on the largest fixture at a complex momentum; one
+                # elsewhere bounds CI time.
+                layouts = (selected_layouts() if (sites, n, k) == (4, 3, 1)
+                           else selected_layouts()[:1])
                 for layout in layouts:
                     path = expert_case(root/f'{model}_L{sites}_N{n}_k{k}_{layout}', case, method=3)
                     result = run_probe(path, case, probe, action='matvec', layout=layout)
@@ -117,10 +120,14 @@ def main():
     hphi, probe = (Path(p).resolve() for p in sys.argv[1:3])
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     env = dict(os.environ)
+    # Collective rejection is covered up to np4; larger jobs reject serially.
+    reject_launcher = launcher if (mpi_size(launcher) or 1) <= 4 else []
     root = Path('symmetry_nconserved_basis')
+    if root.exists():
+        shutil.rmtree(root)
     # The oracle's own CAR, character and spectrum-sum checks run first.
     self_test()
-    rejection_suite(root, hphi, launcher, env)
+    rejection_suite(root, hphi, reject_launcher, env)
     canonical_suite(root, probe)
     error = sector_suite(root, probe)
     print(f'NConserved basis/matvec/manifest/gates passed; maximum error {error:.3e}')

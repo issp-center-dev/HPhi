@@ -179,7 +179,9 @@ jobs:
         if: ${{ matrix.mpisize == 16 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -E spinone -LE "consistency|batching"
+        # The NConserved TPQ/cTPQ/TE suite is a pre-release np16 check;
+        # its continuation smoke stays in symmetry_nconserved_io_restart.
+        run: ctest -V -E "spinone|^symmetry_nconserved_evolution$" -LE "consistency|batching"
 
       - name: ctest (mpisize=16, mpi batching)
         if: ${{ matrix.mpisize == 16 }}

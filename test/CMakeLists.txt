@@ -1687,7 +1687,11 @@ set_tests_properties(symmetry_nconserved_core PROPERTIES
     LABELS "symmetry;nconserved;lobcg;lanczos;correlation;fulldiag")
 add_hphi_test(symmetry_nconserved_io_restart)
 set_tests_properties(symmetry_nconserved_io_restart PROPERTIES
-    LABELS "symmetry;nconserved;checkpoint;fulldiag")
+    LABELS "symmetry;nconserved;checkpoint;fulldiag;restart")
+# The np16 CI baseline excludes this suite by name; it runs at np16 before release.
+add_hphi_test(symmetry_nconserved_evolution)
+set_tests_properties(symmetry_nconserved_evolution PROPERTIES
+    LABELS "symmetry;nconserved;tpq;ctpq;te;correlation")
 if(USE_SCALAPACK)
     set_property(TEST symmetry_nconserved_core APPEND PROPERTY
         ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
@@ -1697,7 +1701,7 @@ if(ELPA_FOUND)
         ENVIRONMENT "HPHI_HAS_ELPA=1")
 endif()
 set_tests_properties(symmetry_nconserved_basis symmetry_nconserved_core
-    symmetry_nconserved_io_restart PROPERTIES TIMEOUT 1800)
+    symmetry_nconserved_io_restart symmetry_nconserved_evolution PROPERTIES TIMEOUT 1800)
 
 add_executable(unittest_restart_digest ${CMAKE_SOURCE_DIR}/test/unit/restart_digest_check.c ${CMAKE_SOURCE_DIR}/src/restart_digest.c)
 target_include_directories(unittest_restart_digest PRIVATE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/test/unit)

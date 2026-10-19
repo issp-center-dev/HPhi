@@ -147,6 +147,32 @@ def physical_terms(sites, parameters):
 
 DEFAULT = dict(t=.73*np.exp(.17j), mu=.23, hz=.11, soc=.21+.07j, soc2=-.09+.04j,
                hx=.27-.05j, u=.41, v=.13, w=.08-.03j)
+# Uniform N-conserving TE drives; both change Sz.
+DRIVE = dict(field=.06+.03j, pair=.05-.02j)
+
+
+def drive_terms(sites, kind, amplitude=1.):
+    """'onebody': -A(f S+_j + h.c.) as a Transfer; 'twobody': A(p S+_j S+_{j+1} + h.c.)."""
+    terms = []
+    for j in range(sites):
+        nxt = (j+1) % sites
+        if kind == 'onebody':
+            f = amplitude*DRIVE['field']
+            terms += [hopping(j, 0, j, 1, -f), hopping(j, 1, j, 0, -np.conj(f))]
+        elif kind == 'twobody':
+            p = amplitude*DRIVE['pair']
+            terms += [(p, [(1, orbital(j, 0)), (0, orbital(j, 1)),
+                           (1, orbital(nxt, 0)), (0, orbital(nxt, 1))]),
+                      (np.conj(p), [(1, orbital(nxt, 1)), (0, orbital(nxt, 0)),
+                                    (1, orbital(j, 1)), (0, orbital(j, 0))])]
+        else:
+            raise ValueError(kind)
+    return terms
+
+
+def drive_matrix(reference: Reference, case: Case, kind: str, amplitude=1.) -> np.ndarray:
+    raw = operator_matrix(case, reference.words, drive_terms(case.sites, kind, amplitude))
+    return reference.basis.conj().T @ raw @ reference.basis
 
 
 def make_reference(case: Case, parameters=None, *, empty=False) -> Reference:
@@ -205,6 +231,18 @@ def self_test():
     ref = make_reference(Case('HubbardNConserved', 3, 2, 0))
     sz = ref.moments['Sz']
     assert np.count_nonzero(abs(ref.hamiltonian[np.ix_(sz == 1, sz == -1)]) > 1e-12)
+    # TE drives are Hermitian, translation invariant and Sz mixing.
+    for model in MODELS:
+        case = Case(model, 3, 2, 0)
+        words = raw_words(case)
+        t1 = translation_matrix(case, words, 1)
+        moments = make_reference(case, empty=True).moments
+        for kind, delta in (('onebody', 1), ('twobody', 2)):
+            d = operator_matrix(case, words, drive_terms(3, kind))
+            assert np.allclose(d, d.conj().T, atol=1e-13) and np.allclose(t1 @ d, d @ t1)
+            block = d[np.ix_(moments['Sz'] == moments['Sz'].min()+delta,
+                             moments['Sz'] == moments['Sz'].min())]
+            assert np.count_nonzero(abs(block) > 1e-12), (model, kind)
     # tJ projects only the result: c+_{1dn} c_{0dn} c+_{0up} c_{1up} passes through
     # the doubly occupied site 0 and maps |0dn,1up> to -|0up,1dn>.
     case = Case('tJNConserved', 2, 2, 0)

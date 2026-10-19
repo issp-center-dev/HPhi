@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 from symmetry_spingc_common import definition
 from symmetry_kondo_common import merged_rows
-from symmetry_nconserved_reference import Case, DEFAULT
+from symmetry_nconserved_reference import Case, DEFAULT, DRIVE
 
 INPUT_MODEL = {'HubbardNConserved': 0, 'tJNConserved': 9}
 
@@ -39,6 +39,23 @@ def hamiltonian_families(sites, parameters=None):
     if any(abs(v) for _, _, v in coulomb):
         families['CoulombInter'] = [(i, j, float(v)) for i, j, v in coulomb]
     return {key: rows for key, rows in families.items() if rows}
+
+
+def drive_rows(sites, kind, amplitude=1.):
+    """TEOneBody (Transfer sign) or TETwoBody (InterAll) rows for reference.drive_terms."""
+    rows = []
+
+    def pair(key, value):
+        rows.extend([(key, complex(value)), (_adjoint(key), complex(value).conjugate())])
+    for j in range(sites):
+        nxt = (j+1) % sites
+        if kind == 'onebody':
+            pair((j, 0, j, 1), amplitude*DRIVE['field'])
+        elif kind == 'twobody':
+            pair((j, 0, j, 1, nxt, 0, nxt, 1), amplitude*DRIVE['pair'])
+        else:
+            raise ValueError(kind)
+    return [(*indices, z.real, z.imag) for indices, z in merged_rows(rows)]
 
 
 def expert_case(path, case: Case, *, method: int, options: dict | None = None,

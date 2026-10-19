@@ -11,7 +11,8 @@ from symmetry_kondo_common import read_manifest
 from symmetry_kondo_observables import check_eigenvector, parse_energy
 from symmetry_spingc_checkpoint import checkpoint_files, import_copy
 from symmetry_spingc_common import checkpoint_digest, mpi_size, read_checkpoint, run_case
-from symmetry_nconserved_common import expert_case
+from symmetry_spingc_te import checkpoints
+from symmetry_nconserved_common import drive_rows, expert_case
 from symmetry_nconserved_reference import (Case, DEFAULT, make_reference, raw_dimension,
                                            sector_matrix)
 
@@ -52,10 +53,10 @@ def import_into(root, name, source, target_case, mod=None, parameters=None):
     return path
 
 
-def check_states(root, hphi, launcher, layout):
+def check_states(root, hphi, launcher, layout, models=tuple(MODEL_ID)):
     env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout)
     ranks = mpi_size(launcher)
-    for model in MODEL_ID:
+    for model in models:
         case = Case(model, 4, 3, 1)
         h = sector_matrix(make_reference(case))
         source = save(root, f'{model}_{layout}', case, hphi, launcher, env)
@@ -181,20 +182,172 @@ def check_restart_identity(root, hphi, launcher):
         assert 'basis sector' in (path/'output/zvo_restart_manifest.dat').read_text()
 
 
+# Reader rank counts for each writer: 1<->4 and 4<->16 across the CI jobs.
+READERS = {1: (1, 4), 4: (4, 1, 16), 16: (4,)}
+TE_TIMES = (0., .03, .09, .09, .13, .2, .25, .3)
+TE_AMPLITUDES = (0., .5, -.3, -.3, .2, .4, -.1, .3)
+
+
+def with_ranks(launcher, ranks):
+    """MPIRUN with another process count; None if it cannot be expressed."""
+    if ranks == 1:
+        return []
+    command = list(launcher)
+    for i, arg in enumerate(command[:-1]):
+        if arg in ('-np', '-n'):
+            command[i+1] = str(ranks)
+            return command
+    return None
+
+
+def readers(launcher):
+    found = []
+    for ranks in READERS.get(mpi_size(launcher), (mpi_size(launcher),)):
+        command = with_ranks(launcher, ranks)
+        if command is None:
+            print(f'rank change to {ranks} not exercised: MPIRUN has no -np/-n', flush=True)
+        else:
+            found.append((ranks, command))
+    return found
+
+
+def set_key(path, name, key, value=None):
+    """Replace, append (value given) or drop (value None) a `key value` line."""
+    lines = [line for line in (path/name).read_text().splitlines()
+             if line.split()[:1] != [key]]
+    if value is not None:
+        lines.append(f'{key} {value}')
+    (path/name).write_text('\n'.join(lines)+'\n')
+
+
+def history(path, method):
+    if method == 3:
+        energy = [float(line.split()[1]) for line in
+                  (path/'output/zvo_energy.dat').read_text().splitlines()
+                  if line.strip().startswith('Energy')]
+        return {'energy': np.array(energy),
+                'steps': np.loadtxt(path/'output/zvo_Lanczos_Step.dat', skiprows=1, ndmin=2)}
+    names = (['zvo_SS.dat', 'zvo_Norm.dat', 'zvo_Flct.dat'] if method == 4 else
+             [f'zvo_{family}_rand{s}.dat' for family in ('SS', 'Norm', 'Flct') for s in (0, 1)])
+    return {name: np.loadtxt(path/'output'/name, ndmin=2) for name in names}
+
+
+def same_history(actual, expected, method, label):
+    assert actual.keys() == expected.keys()
+    for key, value in expected.items():
+        assert actual[key].shape == value.shape, (label, key)
+        if key == 'steps':
+            # Residual columns of a continued CG agree to the solver precision.
+            np.testing.assert_allclose(actual[key][:, 3:], value[:, 3:], rtol=0, atol=1e-9,
+                                       err_msg=label)
+            np.testing.assert_allclose(actual[key][:, 1], value[:, 1], rtol=1e-6, atol=1e-12,
+                                       err_msg=label)
+        else:
+            np.testing.assert_allclose(actual[key], value, rtol=0,
+                                       atol=5e-12 if method == 4 else 1e-10, err_msg=label)
+
+
+def te_schedule(path, case):
+    rows = drive_rows(case.sites, 'onebody')
+    text = f'====\nNTimeSteps {len(TE_TIMES)}\n====\n====\n====\n'
+    for time, amplitude in zip(TE_TIMES, TE_AMPLITUDES):
+        active = rows if amplitude else []
+        text += f'{time} {len(active)}\n' + ''.join(
+            ' '.join(map(str, [*row[:-2], amplitude*row[-2], amplitude*row[-1]]))+'\n'
+            for row in active)
+    (path/'TEOneBody.def').write_text(text)
+    with (path/'sym.def').open('a') as f:
+        f.write('TEOneBody TEOneBody.def\nSpectrumVec seed\n')
+
+
+def continuation_case(root, name, case, method, hphi, launcher, env):
+    """Inputs for one solver; TE starts from a CG state of the writer rank count."""
+    mod = {3: {'LanczosEps': 12},
+           1: {'NumAve': 2, 'Lanczos_max': 20, 'LargeValue': 4, 'ExpecInterval': 1000},
+           5: {'NumAve': 2, 'Lanczos_max': 20, 'LargeValue': 50, 'ExpandCoef': 12,
+               'ExpecInterval': 1000},
+           4: {'Lanczos_max': len(TE_TIMES), 'ExpandCoef': 8, 'OutputInterval': 2,
+               'ExpecInterval': 1}}[method]
+    calc = {'InputEigenVec': 1, 'OutputEigenVec': 1} if method == 4 else {}
+    path = expert_case(root/name, case, method=method,
+                       options={'CalcMod': calc, 'ModPara': mod})
+    if method == 4:
+        seed = save(root, name+'_seed', case, hphi, launcher, env)
+        (path/'output').mkdir()
+        for rank, file in enumerate(checkpoints(seed, 'zvo_eigenvec_0')):
+            shutil.copy2(file, path/'output'/f'seed_rank_{rank}.dat')
+        te_schedule(path, case)
+    return path
+
+
+def check_continuations(root, hphi, probe, launcher):
+    """Interrupted v3 runs continue with other rank counts and layouts."""
+    plans = [('HubbardNConserved', 3, '0:2', 1), ('tJNConserved', 3, '0:2', 1),
+             ('HubbardNConserved', 1, '1:13', 4), ('tJNConserved', 5, '1:13', 4),
+             ('HubbardNConserved', 4, '0:6', None), ('tJNConserved', 4, '0:6', None)]
+    writer = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='distributed')
+    for index, (model, method, abort, interval) in enumerate(plans):
+        case = Case(model, 4, 3, 1)
+        label = f'{model}_method{method}'
+        ref = continuation_case(root, label+'_ref', case, method, hphi, launcher, writer)
+        run_case(ref, hphi, 'ref', launcher, writer)
+        expected = history(ref, method)
+        saved = continuation_case(root, label+'_saved', case, method, hphi, launcher, writer)
+        set_key(saved, 'calc.def', 'ReStart', 1)
+        if interval:
+            set_key(saved, 'mod.def', 'CheckpointInterval', interval)
+        text = run_case(saved, probe, 'save', launcher,
+                        dict(writer, HPHI_TEST_RESTART_ABORT_AFTER=abort))
+        assert 'Test hook: stopping after checkpoint publication' in text, text
+        for header in (struct.unpack('<40Q', file.read_bytes()[:320]) for file in
+                       (saved/'output').glob('zvo_restart_set*_rank_*.dat')):
+            assert tuple(header[4:9]) == (MODEL_ID[model], 4, 0, 0, 3) and header[29] == 0
+        for position, (ranks, command) in enumerate(readers(launcher)):
+            # Alternate the reader layout; each method sees both across the CI jobs
+            # and the writer layout is always distributed.
+            for layout in [('replicated', 'distributed')[(index+position) % 2]]:
+                path = root/f'{label}_to{ranks}_{layout}'
+                shutil.copytree(saved, path)
+                set_key(path, 'calc.def', 'ReStart', 3)
+                set_key(path, 'mod.def', 'CheckpointInterval')
+                if method == 4:
+                    set_key(path, 'calc.def', 'InputEigenVec', 0)
+                text = run_case(path, hphi, 'resume', command,
+                                dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT=layout))
+                # TPQ set 0 finished before the interruption; set 1 must continue.
+                if method in (1, 5):
+                    assert 'no remaining steps (set 1' not in text, text
+                else:
+                    assert 'no remaining steps' not in text, text
+                same_history(history(path, method), expected, method, path.name)
+        print(label, 'continued with', [r for r, _ in readers(launcher)], 'ranks', flush=True)
+    # A saved checkpoint is never continued in another physical space or sector.
+    source = root/'HubbardNConserved_method3_saved'
+    for name, target, detail in [('model', Case('tJNConserved', 4, 3, 1), 'model'),
+                                 ('momentum', Case('HubbardNConserved', 4, 3, 3),
+                                  'group/character digest')]:
+        path = expert_case(root/('resume_reject_'+name), target, method=3,
+                           options={'CalcMod': {'ReStart': 3}, 'ModPara': {'LanczosEps': 12}})
+        shutil.copytree(source/'output', path/'output')
+        run_case(path, hphi, 'reject', launcher, writer, f'restart checkpoint {detail} differs')
+        print('resume rejected', name, flush=True)
+
+
 def main():
-    hphi = Path(sys.argv[1]).resolve()
+    hphi, probe = (Path(p).resolve() for p in sys.argv[1:3])
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     assert mpi_size(launcher) is not None
     root = Path('symmetry_nconserved_io_restart')
     if root.exists():
         shutil.rmtree(root)
     root.mkdir()
-    for layout in ('replicated', 'distributed'):
-        check_states(root, hphi, launcher, layout)
+    check_states(root, hphi, launcher, 'replicated', ('HubbardNConserved',))
+    check_states(root, hphi, launcher, 'distributed')
     check_mismatches(root, hphi, launcher)
     check_fulldiag_files(root, hphi)
     check_restart_identity(root, hphi, launcher)
-    print('NConserved state/matrix/restart identity passed')
+    check_continuations(root, hphi, probe, launcher)
+    print('NConserved state/matrix/restart identity and continuation passed')
 
 
 if __name__ == '__main__':

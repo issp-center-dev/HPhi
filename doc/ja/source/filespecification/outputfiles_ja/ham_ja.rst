@@ -115,7 +115,8 @@ sector FullDiagのハミルトニアン
    整数は10進、maskとdigestは16桁の16進です。
    ``format=sector-hamiltonian-v1``、 ``scalar=complex-binary64``、
    ``model`` （ ``Spin``、 ``SpinGC``、 ``SpinlessFermion``、 ``Hubbard``、
-   ``tJ``、 ``Kondo``、 ``KondoNConserved``、 ``KondoGC`` ）、
+   ``tJ``、 ``Kondo``、 ``KondoNConserved``、 ``KondoGC``、 ``HubbardNConserved``、
+   ``tJNConserved`` ）、
    ``nsite``、 ``nup``、 ``ndown``、 ``ne``、 ``local_site_mask``、
    ``fixed_flags``、 ``phase``、 ``full_dim``、 ``sector_dim``、
    ``group_digest``、 ``sector_count``、 ``sector_xor``、 ``sector_sum``、

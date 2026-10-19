@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import re
 import shlex
+import shutil
 import sys
 import numpy as np
 from symmetry_kondo_common import read_manifest, read_vector_parts, run_probe, selected_layouts
@@ -84,24 +85,33 @@ def correlation_requests():
     }
 
 
-def correlation_reference(case, ref, vector, requests):
-    psi = ref.basis @ vector
-    values = {}
+def correlation_operators(case, ref, requests):
+    """Raw-space matrices of each requested ordered c^dagger c product."""
+    operators = {}
     for kind, rows in requests.items():
-        result = []
+        operators[kind] = []
         for row in rows:
             data = row[1:] if kind == 'nbody' else row
             string = []
             for f in range(0, len(data), 4):
                 i, s, j, t = data[f:f+4]
                 string += [(1, 2*i+s), (0, 2*j+t)]
-            op = operator_matrix(case, ref.words, [(1, string)])
-            result.append(np.vdot(psi, op @ psi))
-        result = np.asarray(result)
+            operators[kind].append(operator_matrix(case, ref.words, [(1, string)]))
+    return operators
+
+
+def expectations(ref, vector, operators):
+    psi = ref.basis @ vector
+    return {kind: np.array([np.vdot(psi, op @ psi) for op in ops])
+            for kind, ops in operators.items()}
+
+
+def correlation_reference(case, ref, vector, requests):
+    values = expectations(ref, vector, correlation_operators(case, ref, requests))
+    for kind, result in values.items():
         assert np.isfinite(result).all() and abs(result[0]-result[-1]) < 1e-12
         # Spin-flip rows are nonzero only because Sz is not fixed.
         assert abs(result[1]) > 1e-6, (kind, result)
-        values[kind] = result
     return values
 
 
@@ -202,6 +212,9 @@ def main():
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
     assert mpi_size(launcher) is not None
     root = Path('symmetry_nconserved_core')
+    # Captured vectors of a run with another rank count must not be reread.
+    if root.exists():
+        shutil.rmtree(root)
     # The ELPA job selects only the dense backends with scope=fulldiag.
     scope = os.environ.get('HPHI_TEST_NCONSERVED_CORE_SCOPE', 'all')
     assert scope in ('all', 'fulldiag'), scope
