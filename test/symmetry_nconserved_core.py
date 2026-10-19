@@ -50,7 +50,10 @@ def check_moments(root, probe):
             weights = abs(ref.basis @ vector)**2
             expected = {key: float(weights @ value) for key, value in ref.moments.items()}
             assert expected['Sz2']-expected['Sz']**2 > 1e-3, expected
-            assert expected['N'] == 3 and expected['N2'] == 9
+            # Projection and normalization introduce floating-point roundoff.
+            np.testing.assert_allclose([expected['N'], expected['N2']],
+                                       [case.n, case.n**2], atol=1e-12, rtol=0,
+                                       err_msg=f'{model}: fixed-N reference moments')
             if model == 'tJNConserved':
                 assert expected['D'] == 0
             for key, value in actual.items():
