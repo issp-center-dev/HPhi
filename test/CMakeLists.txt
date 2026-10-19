@@ -1703,6 +1703,31 @@ endif()
 set_tests_properties(symmetry_nconserved_basis symmetry_nconserved_core
     symmetry_nconserved_io_restart symmetry_nconserved_evolution PROPERTIES TIMEOUT 1800)
 
+# HubbardGC/SpinlessFermionGC sectors, ParticleParity, AnomalousTerm and AnomalousG.
+add_hphi_test(symmetry_fermion_gc_basis)
+set_tests_properties(symmetry_fermion_gc_basis PROPERTIES
+    LABELS "symmetry;fermion_gc;anomalous;basis")
+add_hphi_test(symmetry_fermion_gc_core)
+set_tests_properties(symmetry_fermion_gc_core PROPERTIES
+    LABELS "symmetry;fermion_gc;anomalous;lobcg;lanczos;correlation;fulldiag")
+add_hphi_test(symmetry_fermion_gc_io_restart)
+set_tests_properties(symmetry_fermion_gc_io_restart PROPERTIES
+    LABELS "symmetry;fermion_gc;anomalous;checkpoint;fulldiag;restart")
+# The np16 CI baseline excludes this suite by name; it runs at np16 before release.
+add_hphi_test(symmetry_fermion_gc_evolution)
+set_tests_properties(symmetry_fermion_gc_evolution PROPERTIES
+    LABELS "symmetry;fermion_gc;anomalous;tpq;ctpq;te;correlation")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_fermion_gc_core APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_fermion_gc_core APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
+set_tests_properties(symmetry_fermion_gc_basis symmetry_fermion_gc_core
+    symmetry_fermion_gc_io_restart symmetry_fermion_gc_evolution PROPERTIES TIMEOUT 1800)
+
 add_executable(unittest_restart_digest ${CMAKE_SOURCE_DIR}/test/unit/restart_digest_check.c ${CMAKE_SOURCE_DIR}/src/restart_digest.c)
 target_include_directories(unittest_restart_digest PRIVATE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/test/unit)
 add_test(NAME unittest_restart_digest COMMAND unittest_restart_digest)

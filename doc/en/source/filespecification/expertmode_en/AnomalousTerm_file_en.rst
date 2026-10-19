@@ -6,7 +6,8 @@ AnomalousTerm file
 ------------------
 
 This file specifies anomalous pair Hamiltonian terms for HubbardGC
-calculations. A line with type ``0`` represents
+calculations and for HubbardGC and SpinlessFermionGC symmetry sectors
+(:ref:`Subsec:TransSym`). A line with type ``0`` represents
 :math:`c_{i\sigma_1}c_{j\sigma_2}`, and a line with type ``1`` represents
 :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}`. An example of the
 file format is as follows.
@@ -72,6 +73,7 @@ Parameters
    | **Description :** An integer giving a spin index:
    | 0: Up-spin,
    | 1: Down-spin.
+   | For SpinlessFermionGC, the spin index must be 0.
 
 *  [double01], [double02]
 
@@ -86,14 +88,16 @@ Use rules
 
 *  Headers cannot be omitted.
 
-*  This file is currently supported only for HubbardGC calculations.
+*  Without ``TransSym``, this file is supported only for HubbardGC
+   calculations. MPI execution is supported for Lanczos, CG, TPQ, and cTPQ
+   calculations; MPI execution with the FullDiag method and time evolution
+   calculations are not supported for ``AnomalousTerm``.
 
-*  MPI execution is supported for Lanczos, CG, TPQ, and cTPQ calculations.
-   MPI execution with the FullDiag method is not supported for
-   ``AnomalousTerm``.
+*  With ``TransSym``, HubbardGC and SpinlessFermionGC sectors support every
+   method, including FullDiag with MPI backends and time evolution with static
+   pair coefficients (:ref:`Subsec:TransSym`).
 
-*  ``AnomalousTerm`` is not supported for time evolution calculations or
-   ``CalcSpec`` calculations.
+*  ``AnomalousTerm`` is not supported for ``CalcSpec`` calculations.
 
 *  The same fermion operator cannot be used twice in one anomalous pair.
 
