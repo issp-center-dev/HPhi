@@ -433,10 +433,11 @@ static int calc_by_tem(
       Time = is_v3 ? restored_time : X->Bind.Def.Param.Tinit + step_initial * dt;
       if (!isfinite(previous_time) || !isfinite(Time)) return -1;
       TE_AGREE_OR_RETURN(TransferWithPeierls(&(X->Bind), previous_time));
-    } else if (X->Bind.Def.NTETransferMax > 0) {
-      MakeTEDTransfer(&(X->Bind), step_initial - 1);
-    } else if (X->Bind.Def.NTEInterAllMax > 0) {
-      MakeTEDInterAll(&(X->Bind), step_initial - 1);
+    } else {
+      if (X->Bind.Def.NTETransferCapacity > 0)
+        MakeTEDTransfer(&(X->Bind), step_initial - 1);
+      if (X->Bind.Def.NTEInterAllMax > 0)
+        MakeTEDInterAll(&(X->Bind), step_initial - 1);
     }
     for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
     TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
@@ -482,9 +483,12 @@ static int calc_by_tem(
                 "Error: Time Evolution mode does not support TEOneBody and TETwoBody interactions at the same time. \n");
         return -1;
       }
-      else if (X->Bind.Def.NTETransferMax > 0) { //One-Body type
+      /* TETwoBody normalization can contribute to both arrays, even when
+       * there is no TEOneBody input. Apply both parts at the same time. */
+      if (X->Bind.Def.NTETransferCapacity > 0) {
         MakeTEDTransfer(&(X->Bind), step_i);
-      }else if (X->Bind.Def.NTEInterAllMax > 0) { //Two-Body type
+      }
+      if (X->Bind.Def.NTEInterAllMax > 0) {
         MakeTEDInterAll(&(X->Bind), step_i);
       }
       //[e] Yoshimi
@@ -570,7 +574,7 @@ int CalcByTEM(const int ExpecInterval, struct EDMainCalStruct *X)
 void MakeTEDTransfer(struct BindStruct *X, const int timeidx) {
   int i,j;
   //Clear values
-  for(i=0; i<X->Def.NTETransferMax ;i++) {
+  for(i=0; i<X->Def.NTETransferCapacity ;i++) {
     for(j =0; j<4; j++) {
       X->Def.EDGeneralTransfer[i + X->Def.EDNTransfer][j] = 0;
     }

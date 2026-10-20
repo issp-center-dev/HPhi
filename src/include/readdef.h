@@ -156,7 +156,11 @@ int ArrangeInterAllOffDiagonal
  const int NInterAllOffDiagonal,
  int **InterAllOffDiagonal,
  complex double *ParaInterAllOffDiagonal,
- const int iCalcModel
+ const int iCalcModel,
+ unsigned int *NTransfer,
+ const unsigned int transfer_capacity,
+ int **Transfer,
+ double complex *ParaTransfer
 );
 
 int JudgeDefType
