@@ -156,6 +156,10 @@ SymmetryBasisReplicatedGlobalEntry(
 }
 
 int ValidateSymmetryGroupInput(const struct DefineList *def);
+/* SpinFlipParity: double a validated input group G to G x Z2 in place.
+ * Rows n..2n-1 repeat the site permutations with Px and chi(g,1) = chi(g) p.
+ * No-op when SpinFlipParity is 0; fails if the group was already extended. */
+int ExtendSymmetryGroupWithSpinFlip(struct DefineList *def);
 unsigned long int SymmetryApplyToSpinBits(unsigned long int state,
                                           const int *perm,
                                           unsigned int nsite);

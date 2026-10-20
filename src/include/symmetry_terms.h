@@ -45,6 +45,10 @@ int ApplySymmetryTerm(const struct DefineList *def,
                       unsigned long *out, double complex *value);
 int ValidateSymmetryTerms(const struct DefineList *def);
 int SymmetryUsesExtendedTerms(const struct DefineList *def);
+/* SpinFlipParity of a Spin/SpinGC TransSym sector: Px = prod_i sigma^x_i. */
+int SymmetryUsesSpinFlip(const struct DefineList *def);
+/* 1 when TransSym operation op applies Px after its site permutation. */
+int SymmetryOperationFlipsSpins(const struct DefineList *def, unsigned int op);
 /* Itinerant spinful fermions without local spins, with fixed Sz (Hubbard,
  * tJ), with only N fixed (HubbardNConserved, tJNConserved) or with N free
  * (HubbardGC). */

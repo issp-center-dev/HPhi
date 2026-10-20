@@ -21,6 +21,9 @@ int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *dige
  * N, even N and odd N are 0, 4 and 12. Other models return -1. */
 int GetSymmetryFermionGCFixedFlags(const struct DefineList *def, uint64_t *flags);
 int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest);
+/* "hphi-group-fnv1a64-v1", or the SpinFlipParity domain whose digest also
+ * covers the Px flag of every operation and p. */
+const char *SymmetryGroupDigestDomain(const struct DefineList *def);
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest);
 /* Collective: all ranks must call, including ranks with no local entries. */
 int ComputeSymmetrySectorDigest(const struct SymmetryBasisRuntime *sym,

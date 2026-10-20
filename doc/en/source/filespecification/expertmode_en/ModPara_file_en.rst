@@ -160,6 +160,17 @@ Common parameters
    (1) or odd :math:`N` (-1). Other values, and a nonzero value without
    ``TransSym`` or with another model, are rejected.
 
+*  ``SpinFlipParity``
+
+   **Type :** Int (0, 1 or -1)
+
+   **Description :** For a spin-one-half SpinGC sector, or a Spin sector with
+   ``2Sz=0`` (``TransSym``), selects the eigenvalue :math:`p=+1` (1) or
+   :math:`p=-1` (-1) of the global spin flip
+   :math:`P_x=\prod_i\sigma^x_i`; 0 (default) does not use :math:`P_x`.
+   Other values, and a nonzero value without ``TransSym``, with another model
+   or with :math:`S_z\neq 0`, are rejected. See :ref:`Subsec:TransSymSpinFlip`.
+
 *  ``initial_iv``
 
    **Type :** Int
@@ -519,6 +530,8 @@ sector; ``InvTemp`` cannot request eigenvector output in sector cTPQ.
 TE uses positive ``ExpandCoef``, a finite nondecreasing time grid, and
 ``ExpecInterval``/``OutputInterval`` for observables/checkpoints. See
 :ref:`Subsec:TransSym` for magnetization moments, import semantics and examples.
+``SpinFlipParity`` adds the global spin flip to the sector, also for ``Spin``
+with ``2Sz=0`` (:ref:`Subsec:TransSymSpinFlip`).
 
 .. raw:: latex
 

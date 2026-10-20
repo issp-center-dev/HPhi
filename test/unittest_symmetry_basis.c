@@ -2106,6 +2106,143 @@ static void assert_spin_plan(unsigned int nsite,
   list_Diagonal = NULL;
 }
 
+static int flip_storage[8];
+
+/* SpinFlipParity on the cyclic group of setup_cyclic_def: rows nsite..2nsite-1. */
+static int extend_cyclic_def_with_spin_flip(struct DefineList *def, int parity,
+                                            unsigned int capacity)
+{
+  unsigned int g;
+  for (g = def->NSymTrans; g < 2U * def->NSymTrans && g < 8U; g++) {
+    perm_rows[g] = perm_storage[g];
+    anti_rows[g] = anti_storage[g];
+  }
+  memset(flip_storage, 0, sizeof(flip_storage));
+  def->SymTransFlip = flip_storage;
+  def->NSymTransInput = def->NSymTrans;
+  def->NSymTransCapacity = capacity;
+  def->iSpinFlipParity = parity;
+  return ExtendSymmetryGroupWithSpinFlip(def);
+}
+
+static void assert_spin_flip_group(const char *label)
+{
+  struct BindStruct X;
+  struct DefineList def;
+  struct SymmetryTransformResult moved;
+  unsigned long int raw;
+  unsigned int site, flipped = 0U;
+  int perm64[64], anti64[64], flips64[2] = {0, 1};
+  int *rows64[2] = {perm64, perm64}, *antis64[2] = {anti64, anti64};
+  double complex chars64[2] = {1.0, -1.0};
+  double complex saved;
+
+  /* (g,f) applies the site permutation, then Px on the L state bits. */
+  setup_cyclic_def(&def, 4, 1);
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&def, -1, 8U), 0, label);
+  assert_int_eq((int)def.NSymTrans, 8, label);
+  assert_int_eq(ValidateSymmetryGroupInput(&def), 0, label);
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 4U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0xcUL, label);
+  assert_complex_bitwise(moved.amplitude, 1.0, label);
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 5U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0x9UL, label);
+  assert_complex_bitwise(def.SymTransChar[5], -def.SymTransChar[1], label);
+  /* The group is extended once; a second call fails. */
+  assert_int_eq(ExtendSymmetryGroupWithSpinFlip(&def), -1, label);
+  /* (T,0) and (T,1) differ; one permutation with equal flags is a duplicate. */
+  flip_storage[5] = 0;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), -1, label);
+  flip_storage[5] = 1;
+  /* chi(g,1) must carry p: (e,1)(T,1) = (T,0) is not multiplicative otherwise. */
+  saved = def.SymTransChar[4];
+  def.SymTransChar[4] = 1.0;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), -1, label);
+  def.SymTransChar[4] = saved;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), 0, label);
+  /* Fermion models never apply a flip. */
+  def.iCalcModel = SpinlessFermion;
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 4U, &moved), -1, label);
+  /* Too small a capacity leaves the group unextended. */
+  setup_cyclic_def(&def, 4, 0);
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&def, 1, 7U), -1, label);
+  assert_int_eq((int)def.NSymTrans, 4, label);
+
+  /* A word-sized L flips every bit and nothing beyond it. */
+  memset(&def, 0, sizeof(def));
+  for (site = 0U; site < 64U; site++) {
+    perm64[site] = (int)site;
+    anti64[site] = 1;
+  }
+  def.iFlgSymmetryBasis = TRUE;
+  def.iCalcModel = Spin;
+  def.Nsite = 64U;
+  def.NSymTrans = 2U;
+  def.SymTrans = rows64;
+  def.SymTransAnti = antis64;
+  def.SymTransChar = chars64;
+  def.SymTransFlip = flips64;
+  assert_int_eq(SymmetryApplyToState(&def, 0x0123456789abcdefUL, 1U, &moved), 0, label);
+  assert_ulong_eq(moved.state, ~0x0123456789abcdefUL, label);
+  def.Nsite = 5U;
+  assert_int_eq(SymmetryApplyToState(&def, 0x5UL, 1U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0x1aUL, label);
+
+  /* Every SpinGC state is reached from its representative by the recorded
+   * operation. States of the other Sz sign need a flip, so the inverse of
+   * (g,1) must be (g^-1,1), never a pure translation. */
+  setup_bind(&X, 4, 2, 0);
+  X.Def.iCalcModel = SpinGC;
+  X.Def.iFlgSzConserved = FALSE;
+  X.Def.Nup = X.Def.Ndown = X.Def.Ne = 0U;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = (unsigned long int *)calloc(17U, sizeof(*list_1));
+  list_Diagonal = (double *)calloc(17U, sizeof(*list_Diagonal));
+  if (list_1 == NULL || list_Diagonal == NULL) {
+    fprintf(stderr, "%s: allocation failed\n", label);
+    exit(1);
+  }
+  for (raw = 1UL; raw <= 16UL; raw++) list_1[raw] = raw - 1UL;
+  X.Check.idim_max = test_raw_dim = 16UL;
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&X.Def, 1, 8U), 0, label);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  for (raw = 1UL; raw <= X.Check.idim_max; raw++) {
+    struct SymmetryRepresentativeResult representative;
+    assert_int_eq(SymmetryFindRepresentative(&X, list_1[raw], &representative), 0, label);
+    assert_int_eq(SymmetryApplyToState(&X.Def, representative.rep_state,
+                                       representative.op_rep_to_state, &moved), 0, label);
+    assert_ulong_eq(moved.state, list_1[raw], label);
+    assert_complex_bitwise(representative.phase,
+                           X.Def.SymTransChar[representative.op_rep_to_state] * moved.amplitude,
+                           label);
+    if (representative.op_rep_to_state >= 4U) flipped++;
+  }
+  assert_int_eq(flipped > 0U, 1, label);
+  FreeSymmetryBasis(X.Sym);
+
+  /* The plan of a Spin Sz=0 Px sector, including the Neel orbit fixed by
+   * T Px, is the canonicalized projected exchange matrix. */
+  for (raw = 0UL; raw < 2UL; raw++) {
+    setup_bind(&X, 4, 2, raw == 0UL ? 0U : 2U);
+    assert_int_eq(extend_cyclic_def_with_spin_flip(&X.Def, raw == 0UL ? 1 : -1, 8U), 0, label);
+    if (BuildSymmetryBasis(&X) != 0) {
+      fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+      exit(1);
+    }
+    /* The one-state Neel sector has no repeated plan entry to merge. */
+    assert_plan_matches_canonicalized_matrix(&X, raw == 0UL, label);
+    FreeSymmetryBasis(X.Sym);
+  }
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
 static void assert_spin_diagonal_only_plan(const char *label)
 {
   struct BindStruct X;
@@ -6012,6 +6149,7 @@ int main(int argc, char **argv)
                    "C6 k=0 Spin local-row plan matches canonicalized matrix");
   assert_spin_plan(6, 3, 1, 1.0,
                    "C6 k=pi/3 Spin local-row plan matches canonicalized matrix");
+  assert_spin_flip_group("G x Z2 action, inverse, duplicates and characters with Px");
   assert_spin_diagonal_only_plan(
       "C6 k=pi/3 diagonal-only local-row plan matches canonicalized matrix");
   assert_spinless_plan(6, 3, 0, 0.25,
