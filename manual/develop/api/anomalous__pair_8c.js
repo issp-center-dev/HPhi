@@ -2,6 +2,7 @@ var anomalous__pair_8c =
 [
     [ "AddAnomalousTermToHamHubbardGC", "anomalous__pair_8c.html#a1cc48cdad93b364ffb182a9e97e4fe96", null ],
     [ "anomalous_hubbardgc_partner_rank", "anomalous__pair_8c.html#a684c78d0a4d0af4ca32aa16998c52bdd", null ],
+    [ "anomalousg_symmetry_values", "anomalous__pair_8c.html#a86bc766a99eaa1d015d03e48b6d69e2e", null ],
     [ "apply_annihilate_mask", "anomalous__pair_8c.html#a554352de6619d8d7d94465a0f0ba6f4e", null ],
     [ "apply_anomalous_rank_annihilate", "anomalous__pair_8c.html#ad29fba132bd9b50b0283a753e2d03215", null ],
     [ "apply_anomalous_rank_create", "anomalous__pair_8c.html#a5a922429dfa58c830f5b839c2c9cd94a", null ],

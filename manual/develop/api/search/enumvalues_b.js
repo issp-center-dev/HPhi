@@ -18,5 +18,8 @@ var searchData=
   ['symmetry_5fcolumn_5fu32_15',['SYMMETRY_COLUMN_U32',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398ad91b17c594be85913c2aad66a528df7b',1,'symmetry_matvec_plan.h']]],
   ['symmetry_5fcolumn_5fu64_16',['SYMMETRY_COLUMN_U64',['../symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398a4cae16bc473efbd650032fc2cd88a785',1,'symmetry_matvec_plan.h']]],
   ['symmetry_5fhamiltonian_5fmatrix_5fv1_17',['SYMMETRY_HAMILTONIAN_MATRIX_V1',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6cab83e5d1a16c33904b58d09561e1184b5',1,'symmetry_checkpoint.h']]],
-  ['symmetry_5fhamiltonian_5fparsed_18',['SYMMETRY_HAMILTONIAN_PARSED',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6ca0c5cfa7383ac944539258051fa454f41',1,'symmetry_checkpoint.h']]]
+  ['symmetry_5fhamiltonian_5fparsed_18',['SYMMETRY_HAMILTONIAN_PARSED',['../symmetry__checkpoint_8h.html#a67da16a1a519a6b0ef2e049bc10f7a6ca0c5cfa7383ac944539258051fa454f41',1,'symmetry_checkpoint.h']]],
+  ['symmetry_5fterm_5fannihilate_5fpair_19',['SYMMETRY_TERM_ANNIHILATE_PAIR',['../symmetry__terms_8h.html#a272f13794c030bf312b89e977bbac0abaae82ca93d6ac8c9c69fc76601d2e0f06',1,'symmetry_terms.h']]],
+  ['symmetry_5fterm_5fbilinears_20',['SYMMETRY_TERM_BILINEARS',['../symmetry__terms_8h.html#a272f13794c030bf312b89e977bbac0abaecf9049ad2034cc5a50379915810aeb6',1,'symmetry_terms.h']]],
+  ['symmetry_5fterm_5fcreate_5fpair_21',['SYMMETRY_TERM_CREATE_PAIR',['../symmetry__terms_8h.html#a272f13794c030bf312b89e977bbac0abafba43e16c6f717c1bd6d3ce5de6f02c6',1,'symmetry_terms.h']]]
 ];

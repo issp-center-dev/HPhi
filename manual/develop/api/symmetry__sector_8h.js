@@ -11,6 +11,7 @@ var symmetry__sector_8h =
     [ "ComputeSymmetryHamiltonianDigest", "symmetry__sector_8h.html#ab263ee775708858df57b601fbf21acb1", null ],
     [ "ComputeSymmetryKondoSpaceDigest", "symmetry__sector_8h.html#a7bb01b52927f4f7ac375eea9b31c0d22", null ],
     [ "ComputeSymmetrySectorDigest", "symmetry__sector_8h.html#a1cfb83ddd21deabb61a9d37676a87db1", null ],
+    [ "GetSymmetryFermionGCFixedFlags", "symmetry__sector_8h.html#a9d86db2fd5a49be6697ca95b63f13b6e", null ],
     [ "SymmetryFullDiagOutputMask", "symmetry__sector_8h.html#a35cc143c39a92b27d555005f4f2e6d29", null ],
     [ "SymmetryHashInteger", "symmetry__sector_8h.html#a02dbeb4fb1d3f21596c482490e98a40c", null ],
     [ "WriteSymmetryCanonicalTPQSchedule", "symmetry__sector_8h.html#abb43f283a3ecf555d84b6aa95231a050", null ],

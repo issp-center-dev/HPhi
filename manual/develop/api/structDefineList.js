@@ -59,6 +59,7 @@ var structDefineList =
     [ "iOutputGreenFormat", "structDefineList.html#a36904ad709645675dd1d21dac97acc1d", null ],
     [ "iOutputHam", "structDefineList.html#aa6191742550a4166495131646fd44547", null ],
     [ "iOutputMode", "structDefineList.html#a52ec31f6fd2f4a1ba202bba98eddaed7", null ],
+    [ "iParticleParity", "structDefineList.html#a4cebca8f1b509a0cb4567fb7131e57b3", null ],
     [ "irand", "structDefineList.html#af1a607bc77f32d6efe6a799ee78a9456", null ],
     [ "iReStart", "structDefineList.html#a449a44ba48cb6a9f2f841709233b4f43", null ],
     [ "iRestartFixedFlags", "structDefineList.html#adad4c640823161d8c9eb3aa2d67161c6", null ],

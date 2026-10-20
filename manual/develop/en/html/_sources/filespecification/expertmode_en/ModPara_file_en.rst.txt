@@ -151,6 +151,15 @@ Common parameters
    single-excitation off-diagonal (bra-ket) dynamical Green's function for
    2Sz-nonconserving (cross-spin) systems.
 
+*  ``ParticleParity``
+
+   **Type :** Int (0, 1 or -1)
+
+   **Description :** For a HubbardGC or SpinlessFermionGC symmetry sector
+   (``TransSym``), selects all particle numbers (0, default), even :math:`N`
+   (1) or odd :math:`N` (-1). Other values, and a nonzero value without
+   ``TransSym`` or with another model, are rejected.
+
 *  ``initial_iv``
 
    **Type :** Int
@@ -488,6 +497,14 @@ Real time evolution method
      case. The time table must contain the saved next step. Explicit interval
      and iteration-count values must be finite integers less than ``INT_MAX``.
 
+
+HubbardGC and SpinlessFermionGC with TransSym
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Omit ``2Sz``, ``Nup``, ``Ndown`` and ``Ncond``; explicit values, including
+zero, are rejected. ``ParticleParity`` optionally restricts the sector to even
+or odd particle numbers. See :ref:`Subsec:TransSym` for the dimensions, pair
+terms and file identity.
 
 SpinGC with TransSym
 ~~~~~~~~~~~~~~~~~~~~

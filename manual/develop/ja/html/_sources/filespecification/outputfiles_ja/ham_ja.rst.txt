@@ -116,7 +116,7 @@ sector FullDiagのハミルトニアン
    ``format=sector-hamiltonian-v1``、 ``scalar=complex-binary64``、
    ``model`` （ ``Spin``、 ``SpinGC``、 ``SpinlessFermion``、 ``Hubbard``、
    ``tJ``、 ``Kondo``、 ``KondoNConserved``、 ``KondoGC``、 ``HubbardNConserved``、
-   ``tJNConserved`` ）、
+   ``tJNConserved``、 ``HubbardGC``、 ``SpinlessFermionGC`` ）、
    ``nsite``、 ``nup``、 ``ndown``、 ``ne``、 ``local_site_mask``、
    ``fixed_flags``、 ``phase``、 ``full_dim``、 ``sector_dim``、
    ``group_digest``、 ``sector_count``、 ``sector_xor``、 ``sector_sum``、

@@ -1,5 +1,8 @@
 var NAVTREEINDEX13 =
 {
+"structExpansion.html#a7223c12b5ca80b4a756e6a4fced17797":[9,0,16,2],
+"structExpansion.html#a7842660123b87396f38962aaf3f3b2ec":[9,0,16,1],
+"structExpansion.html#ae3d8af4030ffd0d8b8003177844c4fae":[9,0,16,0],
 "structFermion.html":[9,0,17],
 "structFermion.html#a609b3b4a06f8345a5d0012debd8849b7":[9,0,17,0],
 "structFermion.html#acd3c4230270be735a1017db92046e2a3":[9,0,17,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX13 =
 "structSymmetryBasisDistributionStats.html#a103846d769bc765a9b28712e29f15a50":[9,0,49,11],
 "structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f":[9,0,49,25],
 "structSymmetryBasisDistributionStats.html#a1a9644ccc03a5c5c15bca050801e58eb":[9,0,49,8],
-"structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21],
-"structSymmetryBasisDistributionStats.html#a1c85c975388a91b0cf811c68f95a3773":[9,0,49,2],
-"structSymmetryBasisDistributionStats.html#a1fb2c39767820d49801dbc1709bb6da5":[9,0,49,6],
-"structSymmetryBasisDistributionStats.html#a227c3d36a45a13da240e9d4b1f051f10":[9,0,49,26]
+"structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21]
 };

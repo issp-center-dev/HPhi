@@ -1,11 +1,13 @@
 var symmetry__state__enumerator_8c =
 [
     [ "checked_product", "symmetry__state__enumerator_8c.html#a84c86870bd0f3d9154001ec7b8a7f1fe", null ],
+    [ "ComputeSymmetryFermionGCDimension", "symmetry__state__enumerator_8c.html#a8279b70daec454fac7fcdce6ac550d7a", null ],
     [ "ComputeSymmetryKondoDimension", "symmetry__state__enumerator_8c.html#a91ca778fb0f9037b003b0eadbb1ec9ce", null ],
     [ "ComputeSymmetryNConservedDimension", "symmetry__state__enumerator_8c.html#a7a78c0b10c4bd29c3b88b5b6075d8ff0", null ],
     [ "CountSymmetryKondoCompletions", "symmetry__state__enumerator_8c.html#a9fd376868d6768b572fda3a37b3427ca", null ],
     [ "dimension_product", "symmetry__state__enumerator_8c.html#a8cd4d3bc8179eadd854c156eb54824e9", null ],
     [ "enumerator_binomial", "symmetry__state__enumerator_8c.html#a027115be1571d4e543e30aa90b0fc933", null ],
+    [ "fermion_gc_orbitals", "symmetry__state__enumerator_8c.html#a855761cec91f3051eea8f870da6ccb9a", null ],
     [ "fixed_popcount_state_at", "symmetry__state__enumerator_8c.html#a7835b2567f657b2024a9198971efaffa", null ],
     [ "hubbard_state_at", "symmetry__state__enumerator_8c.html#ab7ee8b74173e182c702ce509db62507d", null ],
     [ "initialize_binomial_table", "symmetry__state__enumerator_8c.html#aafea85b569a1ddc41528e73404079014", null ],

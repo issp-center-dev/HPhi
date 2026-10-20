@@ -5,7 +5,8 @@
 AnomalousTerm指定ファイル
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-HubbardGC計算で用いる異常ペアのハミルトニアン項を指定します。typeが ``0``
+HubbardGC計算と、HubbardGC・SpinlessFermionGCの対称性セクター
+（:ref:`Subsec:TransSym`）で用いる異常ペアのハミルトニアン項を指定します。typeが ``0``
 の行は :math:`c_{i\sigma_1}c_{j\sigma_2}`、typeが ``1`` の行は
 :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}` を表します。以下に
 ファイル例を記載します。
@@ -70,6 +71,7 @@ HubbardGC計算で用いる異常ペアのハミルトニアン項を指定し�
    | **説明 :** スピンを指定する整数。
    | 0: アップスピン、
    | 1: ダウンスピン。
+   | SpinlessFermionGCでは0を指定します。
 
 -  :math:`[`\ double01\ :math:`]`, :math:`[`\ double02\ :math:`]`
 
@@ -85,12 +87,15 @@ HubbardGC計算で用いる異常ペアのハミルトニアン項を指定し�
 
 -  行数固定で読み込みを行う為、ヘッダの省略はできません。
 
--  現在はHubbardGC計算でのみ使用できます。
+-  ``TransSym`` なしではHubbardGC計算でのみ使用できます。Lanczos法、CG法、
+   TPQ法、cTPQ法のMPI実行で使用でき、FullDiag法のMPI実行と時間発展計算では
+   使用できません。
 
--  ``AnomalousTerm`` はLanczos法、CG法、TPQ法、cTPQ法のMPI実行で使用できます。
-   FullDiag法のMPI実行では使用できません。
+-  ``TransSym`` を指定したHubbardGC・SpinlessFermionGCのセクターでは、MPIの
+   バックエンドを使うFullDiag法と、pair係数を時間によらず保つ時間発展計算を含め、
+   すべての計算手法で使用できます（:ref:`Subsec:TransSym`）。
 
--  ``AnomalousTerm`` は時間発展計算および ``CalcSpec`` 計算では使用できません。
+-  ``AnomalousTerm`` は ``CalcSpec`` 計算では使用できません。
 
 -  同じフェルミオン演算子を1つのペア内で2回指定することはできません。
 

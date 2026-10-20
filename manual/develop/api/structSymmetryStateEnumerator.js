@@ -8,6 +8,7 @@ var structSymmetryStateEnumerator =
     [ "ndown", "structSymmetryStateEnumerator.html#afcc9ab00bf65ff7f995b6f18848a0d1f", null ],
     [ "nsite", "structSymmetryStateEnumerator.html#ab999798933d25fff2908d8a52aaa19d9", null ],
     [ "nup", "structSymmetryStateEnumerator.html#af221fdb369e611595a9f5b0698a4f612", null ],
+    [ "particle_parity", "structSymmetryStateEnumerator.html#ab3560db21b188a76f4a77b4f6d25dce4", null ],
     [ "prefix_conduction", "structSymmetryStateEnumerator.html#a544f7e9504bf8b15acdecf039b04f2ac", null ],
     [ "prefix_local", "structSymmetryStateEnumerator.html#ac08581b9d3464e531dd110998b1ea0ab", null ],
     [ "raw_dim", "structSymmetryStateEnumerator.html#abbe70d6bd93fda02879772808f5ba430", null ]

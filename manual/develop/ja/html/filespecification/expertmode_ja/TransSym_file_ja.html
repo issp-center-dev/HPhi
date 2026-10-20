@@ -186,7 +186,8 @@ NQPTrans          2
 <li><p>対応手法は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、 <code class="docutils literal notranslate"><span class="pre">CG</span></code>、 <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> （microcanonical TPQ）、 <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、 <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>、 <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> です。模型は <span class="math notranslate nohighlight">\(S=1/2\)</span> で <code class="docutils literal notranslate"><span class="pre">2Sz</span></code> を
 固定した <code class="docutils literal notranslate"><span class="pre">Spin</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code> と
 <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> を固定した <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> です。 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> だけを固定した
-<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> と、固定Szを持たないスピン1/2の <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> にも対応します
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> 、固定Szを持たないスピン1/2の <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> 、pair項と
+任意の粒子数偶奇を持つ <code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code> / <code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> にも対応します
 （下記参照）。expert mode では次の項に対応します。</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: 縦磁場の <code class="docutils literal notranslate"><span class="pre">Trans</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">CoulombInter</span></code>、
@@ -214,8 +215,8 @@ spinlessのraw solverでは非対角 <code class="docutils literal notranslate">
 値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
 sectorの外へ出る演算子は0になります。canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> はraw基底と同様に起動時に拒否されます。
-同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> とスペクトル計算は
-本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
+同じ積は <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> で指定できます。<code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は下記のフェルミオン
+大正準セクターでだけ使え、スペクトル計算は本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
 変更したv3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
 CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
 全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
@@ -287,14 +288,85 @@ FullDiagのsector行列ファイル、MPI process数を変更したv3継続、�
 セクター、異なる粒子数、もう一方のmodel、異なる運動量のファイルは、次元が一致
 しても拒否します。</p>
 </section>
+<section id="pair-expert-mode">
+<h1>pair項を持つフェルミオン大正準セクター（expert mode）<a class="headerlink" href="#pair-expert-mode" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=3</span></code> （HubbardGC）または <code class="docutils literal notranslate"><span class="pre">CalcModel=8</span></code> （SpinlessFermionGC）で
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定すると、粒子数 <span class="math notranslate nohighlight">\(N\)</span> も <span class="math notranslate nohighlight">\(S_z\)</span> も固定しない大正準空間の
+空間対称性セクターになります。 <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>、 <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、 <code class="docutils literal notranslate"><span class="pre">Nup</span></code>、 <code class="docutils literal notranslate"><span class="pre">Ndown</span></code> は省略して
+ください。0を含め明示的な値は拒否します。ModParaファイルの <code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> を
+指定すると、さらに <span class="math notranslate nohighlight">\((-1)^N\)</span> を固定します。</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-number">表 4.4 </span><span class="caption-text">フェルミオン大正準セクター</span><a class="headerlink" href="#id9" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 22.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code></p></th>
+<th class="head"><p>粒子数</p></th>
+<th class="head"><p>対称性射影前の次元</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0（既定値）</p></td>
+<td><p>すべての <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>偶数の <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^{M-1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>-1</p></td>
+<td><p>奇数の <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^{M-1}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>ここで <span class="math notranslate nohighlight">\(M\)</span> はHubbardGCで <span class="math notranslate nohighlight">\(2N_{\rm site}\)</span>、SpinlessFermionGCで
+<span class="math notranslate nohighlight">\(N_{\rm site}\)</span> です。全空間は <span class="math notranslate nohighlight">\(M\leq\)</span> <code class="docutils literal notranslate"><span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)-2</span></code>、
+偶奇を指定した空間は <span class="math notranslate nohighlight">\(M\leq\)</span> <code class="docutils literal notranslate"><span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)-1</span></code> を要求します
+（64-bit環境のHubbardGCでは31サイトまで）。サイトの置換は <span class="math notranslate nohighlight">\(N\)</span> を保つので、
+各運動量セクターは偶数部分と奇数部分に分かれます。両者の次元の和は偶奇を指定しない
+セクターの次元に等しくなりますが、一般に両者は等しくありません。 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> なし、
+または他の模型での0以外の <code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> はエラーです。</p>
+<p>ハミルトニアンには、上記の <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> （HubbardGC）または <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code>
+（SpinlessFermionGC）の項（スピンを混ぜる項を含む）と、
+<a class="reference internal" href="AnomalousTerm_file_ja.html#subsec-anomalousterm"><span class="std std-ref">AnomalousTermファイル</span></a> のpair項
+<span class="math notranslate nohighlight">\(c_ic_j\)</span>、 <span class="math notranslate nohighlight">\(c^\dagger_ic^\dagger_j\)</span> （隣接するHermite共役の組で指定し、
+SpinlessFermionGCのスピン添字は0）を含められます。pair項は <span class="math notranslate nohighlight">\(N\)</span> を2変え、
+<span class="math notranslate nohighlight">\((-1)^N\)</span> を保ちます。各演算子は右から順にフェルミオン符号付きで状態へ作用し、
+pair項を含めて正規順序化したハミルトニアン全体について群不変性を検査します。</p>
+<p>6つの計算手法すべてに対応します。FullDiagはLAPACK、ScaLAPACK、ELPAで、pair項を
+含むdenseなsector行列を作ります。TimeEvolutionではpair項の係数は時間によらず、
+<code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> はそれ以外の項を駆動し、各時刻で対称性を保つ必要が
+あります。 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否します。6種類の相関関数と <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> （<a class="reference internal" href="../outputfiles_ja/AnomalousG_ja.html#subsec-anomalousgoutput"><span class="std std-ref">AnomalousG.dat</span></a>）は、
+rawの計算と同じファイル名・形式でsector内で計算します。ハミルトニアンにpair項が
+なくても計算します（例えば粒子数の異なる成分を含むTEの状態）。 <span class="math notranslate nohighlight">\(N\)</span>、
+<span class="math notranslate nohighlight">\(N^2\)</span>、 <span class="math notranslate nohighlight">\(S_z\)</span>、 <span class="math notranslate nohighlight">\(S_z^2\)</span>、二重占有数は状態から計算します。
+<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> は非対応で、rawのSpinlessFermionGCは引き続きFullDiagを使えません。</p>
+<p>状態ファイルはversion 2、phase 1、30語のheaderです。model語は3または8、 <code class="docutils literal notranslate"><span class="pre">nup</span></code>、
+<code class="docutils literal notranslate"><span class="pre">ndown</span></code>、 <code class="docutils literal notranslate"><span class="pre">ne</span></code> と局在サイトmaskは0で、固定量flagsはすべての <span class="math notranslate nohighlight">\(N\)</span>、偶数、
+奇数に対してそれぞれ0、4、12です（bit 2が偶奇の指定、bit 3が奇数）。v3 restart
+ファイルと行列ファイル（ <code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code> ）も同じ値を持ちます。sector manifestには
+<code class="docutils literal notranslate"><span class="pre">model=HubbardGC</span></code> または <code class="docutils literal notranslate"><span class="pre">model=SpinlessFermionGC</span></code>、 <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code>、
+<code class="docutils literal notranslate"><span class="pre">particle_parity</span></code> （ <code class="docutils literal notranslate"><span class="pre">full</span></code> 、 <code class="docutils literal notranslate"><span class="pre">even</span></code> 、 <code class="docutils literal notranslate"><span class="pre">odd</span></code> ）、 <code class="docutils literal notranslate"><span class="pre">term_scope</span></code> 内の
+pair行数 <code class="docutils literal notranslate"><span class="pre">anomalous:</span></code> 、pair項を含む <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v4</span></code> の
+digestを記録します。異なる偶奇、粒子数を固定したセクター、もう一方のmodel、異なる
+運動量のファイルは、次元が一致しても拒否します。同じセクターの状態は、pair係数を
+変えたハミルトニアンへ読み込めます（quench）。v3継続ではこの変更を
+<code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=yes</span></code> と表示します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> なしの <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> と <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> の対応範囲は従来どおり
+（HubbardGCのみ）です。各ファイルの説明を参照してください。</p>
+</section>
 <section id="kondo-1-2expert-mode">
 <h1>Kondoセクター（スピン1/2、expert mode）<a class="headerlink" href="#kondo-1-2expert-mode" title="Link to this heading">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> は次の3種類のKondo空間に対応します。 <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> は局在スピンの
 <span class="math notranslate nohighlight">\(L\)</span> サイトと伝導電子の <span class="math notranslate nohighlight">\(C\)</span> サイトの合計です。 <code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> では局在
 スピン1/2を1、伝導サイトを0とします。全群操作はこの配置maskを保存する必要が
 あります。局在・伝導サイトは連続配置でも交互配置でもかまいません。</p>
-<table class="docutils align-default" id="id9">
-<caption><span class="caption-number">表 4.4 </span><span class="caption-text">Kondoの入力と固定量</span><a class="headerlink" href="#id9" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-number">表 4.5 </span><span class="caption-text">Kondoの入力と固定量</span><a class="headerlink" href="#id10" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 24.0%" />
 <col style="width: 39.0%" />
@@ -350,8 +422,8 @@ KondoGCは上限を含まない厳密不等号を要求します。</p>
 検査します。横磁場や補償するスピン反転は、この検査を満たす場合に使えます。
 専用 <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> 入力は非対応ですが、許されるスピン対積は <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> で記述
 できます。空Hamiltonianも有効です。</p>
-<table class="docutils align-default" id="id10">
-<caption><span class="caption-number">表 4.5 </span><span class="caption-text">Kondoセクターの手法と機能（3空間共通）</span><a class="headerlink" href="#id10" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-number">表 4.6 </span><span class="caption-text">Kondoセクターの手法と機能（3空間共通）</span><a class="headerlink" href="#id11" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 19.0%" />
 <col style="width: 28.0%" />
@@ -471,8 +543,8 @@ Hermitian性と群の各操作に対する不変性は必要です。
 <span class="eqno">(4.9)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-2" title="Link to this equation">¶</a></span>\[J(E_i^{10}E_j^{10}+E_i^{01}E_j^{01}).\]</div>
 <p>追加の1/2はありません。逆向きの行と重複行は加算され、同一サイトの行は0です。
 canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の固定Sz条件は変更しません。</p>
-<table class="docutils align-default" id="id11">
-<caption><span class="caption-number">表 4.6 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id11" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-number">表 4.7 </span><span class="caption-text">SpinGCセクターの手法と機能</span><a class="headerlink" href="#id12" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />
@@ -698,9 +770,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 <h2>時間依存するセクターHamiltonian<a class="headerlink" href="#hamiltonian" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> または <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の1種類で駆動できます。
 canonical模型とKondoの3空間では <code class="docutils literal notranslate"><span class="pre">Laser</span></code> も選べます。Kondoには上記の幾何・
-ゲージ制限が適用され、SpinGCでは拒否します。
+ゲージ制限が適用され、SpinGC、HubbardGC、SpinlessFermionGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJ、HubbardGC、SpinlessFermionGCと
+Kondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。</p>
 <p>初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、
 固定量子数の保存、指定群に対する不変性を検査します。後の時刻だけで対称性が
@@ -963,7 +1036,7 @@ version 2ではサイト内ポテンシャル、pair hopping、分離済みの�
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

@@ -37,7 +37,8 @@
             
   <section id="anomalousterm">
 <span id="subsec-anomalousterm"></span><h1>AnomalousTerm指定ファイル<a class="headerlink" href="#anomalousterm" title="Link to this heading">¶</a></h1>
-<p>HubbardGC計算で用いる異常ペアのハミルトニアン項を指定します。typeが <code class="docutils literal notranslate"><span class="pre">0</span></code>
+<p>HubbardGC計算と、HubbardGC・SpinlessFermionGCの対称性セクター
+（<a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a>）で用いる異常ペアのハミルトニアン項を指定します。typeが <code class="docutils literal notranslate"><span class="pre">0</span></code>
 の行は <span class="math notranslate nohighlight">\(c_{i\sigma_1}c_{j\sigma_2}\)</span>、typeが <code class="docutils literal notranslate"><span class="pre">1</span></code> の行は
 <span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\)</span> を表します。以下に
 ファイル例を記載します。</p>
@@ -90,6 +91,7 @@ NAnomalousTerm 2
 <div class="line"><strong>説明 :</strong> スピンを指定する整数。</div>
 <div class="line">0: アップスピン、</div>
 <div class="line">1: ダウンスピン。</div>
+<div class="line">SpinlessFermionGCでは0を指定します。</div>
 </div>
 </li>
 <li><p><span class="math notranslate nohighlight">\([\)</span>double01<span class="math notranslate nohighlight">\(]\)</span>, <span class="math notranslate nohighlight">\([\)</span>double02<span class="math notranslate nohighlight">\(]\)</span></p>
@@ -106,10 +108,13 @@ NAnomalousTerm 2
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
 <li><p>行数固定で読み込みを行う為、ヘッダの省略はできません。</p></li>
-<li><p>現在はHubbardGC計算でのみ使用できます。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> はLanczos法、CG法、TPQ法、cTPQ法のMPI実行で使用できます。
-FullDiag法のMPI実行では使用できません。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> は時間発展計算および <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 計算では使用できません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> なしではHubbardGC計算でのみ使用できます。Lanczos法、CG法、
+TPQ法、cTPQ法のMPI実行で使用でき、FullDiag法のMPI実行と時間発展計算では
+使用できません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定したHubbardGC・SpinlessFermionGCのセクターでは、MPIの
+バックエンドを使うFullDiag法と、pair係数を時間によらず保つ時間発展計算を含め、
+すべての計算手法で使用できます（<a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> は <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 計算では使用できません。</p></li>
 <li><p>同じフェルミオン演算子を1つのペア内で2回指定することはできません。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> は隣接するエルミート共役ペアとして記述してください。項
 <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">i</span> <span class="pre">spin_i</span> <span class="pre">j</span> <span class="pre">spin_j</span> <span class="pre">V</span></code> に対し、次の行には逆のtype、逆順の演算子、
@@ -201,7 +206,7 @@ FullDiag法のMPI実行では使用できません。</p></li>
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

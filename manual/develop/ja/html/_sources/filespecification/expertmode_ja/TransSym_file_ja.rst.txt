@@ -186,7 +186,8 @@ TransSym指定ファイル
 -  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
    ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。 ``Ncond`` だけを固定した
-   ``Hubbard`` / ``tJ`` と、固定Szを持たないスピン1/2の ``SpinGC`` にも対応します
+   ``Hubbard`` / ``tJ`` 、固定Szを持たないスピン1/2の ``SpinGC`` 、pair項と
+   任意の粒子数偶奇を持つ ``HubbardGC`` / ``SpinlessFermionGC`` にも対応します
    （下記参照）。expert mode では次の項に対応します。
 
    - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
@@ -215,8 +216,8 @@ TransSym指定ファイル
    値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
-   同じ積は ``NBodyG`` で指定できます。``AnomalousG`` とスペクトル計算は
-   本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
+   同じ積は ``NBodyG`` で指定できます。``AnomalousG`` は下記のフェルミオン
+   大正準セクターでだけ使え、スペクトル計算は本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
    変更したv3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
    全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
@@ -280,6 +281,73 @@ FullDiagのsector行列ファイル、MPI process数を変更したv3継続、�
 ``fixed_quantities=ncond``、 ``fixed_ne`` を記録します。固定 :math:`S_z` の
 セクター、異なる粒子数、もう一方のmodel、異なる運動量のファイルは、次元が一致
 しても拒否します。
+
+
+pair項を持つフェルミオン大正準セクター（expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=3`` （HubbardGC）または ``CalcModel=8`` （SpinlessFermionGC）で
+``TransSym`` を指定すると、粒子数 :math:`N` も :math:`S_z` も固定しない大正準空間の
+空間対称性セクターになります。 ``Ncond``、 ``2Sz``、 ``Nup``、 ``Ndown`` は省略して
+ください。0を含め明示的な値は拒否します。ModParaファイルの ``ParticleParity`` を
+指定すると、さらに :math:`(-1)^N` を固定します。
+
+.. list-table:: フェルミオン大正準セクター
+   :header-rows: 1
+   :widths: 30 22 48
+
+   * - ``ParticleParity``
+     - 粒子数
+     - 対称性射影前の次元
+   * - 0（既定値）
+     - すべての :math:`N`
+     - :math:`2^M`
+   * - 1
+     - 偶数の :math:`N`
+     - :math:`2^{M-1}`
+   * - -1
+     - 奇数の :math:`N`
+     - :math:`2^{M-1}`
+
+ここで :math:`M` はHubbardGCで :math:`2N_{\rm site}`、SpinlessFermionGCで
+:math:`N_{\rm site}` です。全空間は :math:`M\leq` ``CHAR_BIT*sizeof(unsigned long)-2``、
+偶奇を指定した空間は :math:`M\leq` ``CHAR_BIT*sizeof(unsigned long)-1`` を要求します
+（64-bit環境のHubbardGCでは31サイトまで）。サイトの置換は :math:`N` を保つので、
+各運動量セクターは偶数部分と奇数部分に分かれます。両者の次元の和は偶奇を指定しない
+セクターの次元に等しくなりますが、一般に両者は等しくありません。 ``TransSym`` なし、
+または他の模型での0以外の ``ParticleParity`` はエラーです。
+
+ハミルトニアンには、上記の ``Hubbard`` （HubbardGC）または ``SpinlessFermion``
+（SpinlessFermionGC）の項（スピンを混ぜる項を含む）と、
+:ref:`AnomalousTermファイル <Subsec:anomalousterm>` のpair項
+:math:`c_ic_j`、 :math:`c^\dagger_ic^\dagger_j` （隣接するHermite共役の組で指定し、
+SpinlessFermionGCのスピン添字は0）を含められます。pair項は :math:`N` を2変え、
+:math:`(-1)^N` を保ちます。各演算子は右から順にフェルミオン符号付きで状態へ作用し、
+pair項を含めて正規順序化したハミルトニアン全体について群不変性を検査します。
+
+6つの計算手法すべてに対応します。FullDiagはLAPACK、ScaLAPACK、ELPAで、pair項を
+含むdenseなsector行列を作ります。TimeEvolutionではpair項の係数は時間によらず、
+``TEOneBody`` / ``TETwoBody`` はそれ以外の項を駆動し、各時刻で対称性を保つ必要が
+あります。 ``Laser`` は拒否します。6種類の相関関数と ``AnomalousG`` （:ref:`Subsec:anomalousgoutput`）は、
+rawの計算と同じファイル名・形式でsector内で計算します。ハミルトニアンにpair項が
+なくても計算します（例えば粒子数の異なる成分を含むTEの状態）。 :math:`N`、
+:math:`N^2`、 :math:`S_z`、 :math:`S_z^2`、二重占有数は状態から計算します。
+``CalcSpec`` は非対応で、rawのSpinlessFermionGCは引き続きFullDiagを使えません。
+
+状態ファイルはversion 2、phase 1、30語のheaderです。model語は3または8、 ``nup``、
+``ndown``、 ``ne`` と局在サイトmaskは0で、固定量flagsはすべての :math:`N`、偶数、
+奇数に対してそれぞれ0、4、12です（bit 2が偶奇の指定、bit 3が奇数）。v3 restart
+ファイルと行列ファイル（ ``fixed_flags`` ）も同じ値を持ちます。sector manifestには
+``model=HubbardGC`` または ``model=SpinlessFermionGC``、 ``fixed_quantities=none``、
+``particle_parity`` （ ``full`` 、 ``even`` 、 ``odd`` ）、 ``term_scope`` 内の
+pair行数 ``anomalous:`` 、pair項を含む ``hphi-parsed-hamiltonian-fnv1a64-v4`` の
+digestを記録します。異なる偶奇、粒子数を固定したセクター、もう一方のmodel、異なる
+運動量のファイルは、次元が一致しても拒否します。同じセクターの状態は、pair係数を
+変えたハミルトニアンへ読み込めます（quench）。v3継続ではこの変更を
+``hamiltonian_changed=yes`` と表示します。
+
+``TransSym`` なしの ``AnomalousTerm`` と ``AnomalousG`` の対応範囲は従来どおり
+（HubbardGCのみ）です。各ファイルの説明を参照してください。
 
 
 Kondoセクター（スピン1/2、expert mode）
@@ -689,9 +757,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 
 ``TEOneBody`` または ``TETwoBody`` の1種類で駆動できます。
 canonical模型とKondoの3空間では ``Laser`` も選べます。Kondoには上記の幾何・
-ゲージ制限が適用され、SpinGCでは拒否します。
+ゲージ制限が適用され、SpinGC、HubbardGC、SpinlessFermionGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJ、HubbardGC、SpinlessFermionGCと
+Kondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。
 
 初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、

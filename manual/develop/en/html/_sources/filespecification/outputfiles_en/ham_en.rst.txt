@@ -128,7 +128,7 @@ with ``TransSym`` (6 sites, momentum :math:`k=1`, :math:`D=3`):
    ``format=sector-hamiltonian-v1``, ``scalar=complex-binary64``, ``model``
    (``Spin``, ``SpinGC``, ``SpinlessFermion``, ``Hubbard``, ``tJ``,
    ``Kondo``, ``KondoNConserved``, ``KondoGC``, ``HubbardNConserved``,
-   ``tJNConserved``), ``nsite``, ``nup``,
+   ``tJNConserved``, ``HubbardGC``, ``SpinlessFermionGC``), ``nsite``, ``nup``,
    ``ndown``, ``ne``, ``local_site_mask``, ``fixed_flags``, ``phase``,
    ``full_dim``, ``sector_dim``, ``group_digest``, ``sector_count``,
    ``sector_xor``, ``sector_sum`` and ``basis_order``. The values are the

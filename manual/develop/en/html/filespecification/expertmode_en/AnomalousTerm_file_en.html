@@ -37,7 +37,8 @@
   <section id="anomalousterm-file">
 <span id="subsec-anomalousterm"></span><h1>AnomalousTerm file<a class="headerlink" href="#anomalousterm-file" title="Link to this heading">¶</a></h1>
 <p>This file specifies anomalous pair Hamiltonian terms for HubbardGC
-calculations. A line with type <code class="docutils literal notranslate"><span class="pre">0</span></code> represents
+calculations and for HubbardGC and SpinlessFermionGC symmetry sectors
+(<a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>). A line with type <code class="docutils literal notranslate"><span class="pre">0</span></code> represents
 <span class="math notranslate nohighlight">\(c_{i\sigma_1}c_{j\sigma_2}\)</span>, and a line with type <code class="docutils literal notranslate"><span class="pre">1</span></code> represents
 <span class="math notranslate nohighlight">\(c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\)</span>. An example of the
 file format is as follows.</p>
@@ -92,6 +93,7 @@ Hamiltonian terms.</p>
 <div class="line"><strong>Description :</strong> An integer giving a spin index:</div>
 <div class="line">0: Up-spin,</div>
 <div class="line">1: Down-spin.</div>
+<div class="line">For SpinlessFermionGC, the spin index must be 0.</div>
 </div>
 </li>
 <li><p>[double01], [double02]</p>
@@ -108,12 +110,14 @@ respectively.</div>
 <h2>Use rules<a class="headerlink" href="#use-rules" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Headers cannot be omitted.</p></li>
-<li><p>This file is currently supported only for HubbardGC calculations.</p></li>
-<li><p>MPI execution is supported for Lanczos, CG, TPQ, and cTPQ calculations.
-MPI execution with the FullDiag method is not supported for
-<code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> is not supported for time evolution calculations or
-<code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> calculations.</p></li>
+<li><p>Without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, this file is supported only for HubbardGC
+calculations. MPI execution is supported for Lanczos, CG, TPQ, and cTPQ
+calculations; MPI execution with the FullDiag method and time evolution
+calculations are not supported for <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code>.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, HubbardGC and SpinlessFermionGC sectors support every
+method, including FullDiag with MPI backends and time evolution with static
+pair coefficients (<a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> is not supported for <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> calculations.</p></li>
 <li><p>The same fermion operator cannot be used twice in one anomalous pair.</p></li>
 <li><p>Terms must appear as adjacent Hermitian conjugate pairs. For a term
 <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">i</span> <span class="pre">spin_i</span> <span class="pre">j</span> <span class="pre">spin_j</span> <span class="pre">V</span></code>, the next term must have the opposite type,
@@ -208,7 +212,7 @@ defined values.</p></li>
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"diagonalcalc_8c.html#a719a974666d65bf6d1d766f047f1d144":[10,0,18,7],
 "diagonalcalc_8c.html#a8aa25ee91e1e969763cdfdcb95d50456":[10,0,18,1],
 "diagonalcalc_8c.html#aa8384a120b6131a6f4ba29823b6bc9e1":[10,0,18,8],
 "diagonalcalc_8c.html#ac0c46bfcea684ca1a9c4f339d396b902":[10,0,18,9],
@@ -227,8 +228,8 @@ var NAVTREEINDEX4 =
 "expec__trace__internal_8h.html#aef7f21230c7fef822dcd2a29728c5a0b":[10,0,1,34,26],
 "expec__trace__internal_8h_source.html":[10,0,1,34],
 "files.html":[10,0],
-"functions.html":[9,2,0,0],
 "functions.html":[9,2,0],
+"functions.html":[9,2,0,0],
 "functions_b.html":[9,2,0,1],
 "functions_c.html":[9,2,0,2],
 "functions_d.html":[9,2,0,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "functions_s.html":[9,2,0,17],
 "functions_t.html":[9,2,0,18],
 "functions_u.html":[9,2,0,19],
-"functions_v.html":[9,2,0,20],
-"functions_vars.html":[9,2,1]
+"functions_v.html":[9,2,0,20]
 };

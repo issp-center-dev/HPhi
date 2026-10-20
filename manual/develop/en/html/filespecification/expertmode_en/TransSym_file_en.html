@@ -188,8 +188,9 @@ the counting for spins.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code> (microcanonical TPQ), <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code>, and <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> methods support <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with
 <span class="math notranslate nohighlight">\(S=1/2\)</span> and fixed <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Ncond</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with fixed <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>.
-<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with only <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> fixed and spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>
-without fixed Sz are also supported as described below.
+<code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> / <code class="docutils literal notranslate"><span class="pre">tJ</span></code> with only <code class="docutils literal notranslate"><span class="pre">Ncond</span></code> fixed, spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>
+without fixed Sz, and <code class="docutils literal notranslate"><span class="pre">HubbardGC</span></code> / <code class="docutils literal notranslate"><span class="pre">SpinlessFermionGC</span></code> with pair terms
+and an optional particle-number parity are also supported as described below.
 Expert-mode Hamiltonian terms are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code>: longitudinal <code class="docutils literal notranslate"><span class="pre">Trans</span></code> (local diagonal fields), <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>,
@@ -220,8 +221,9 @@ the exact expectation values in the sector; rows that are mapped onto each
 other by a symmetry operation have the same value, and an operator that
 leaves the sector gives zero. For canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>,
 <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>/<code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code> are rejected at startup as in the
-raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products. <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> and
-spectrum calculations are not supported together with this file. CG,
+raw basis; <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code> expresses the same products. <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> is
+available only in the fermion grand-canonical sectors below, and spectrum
+calculations are not supported together with this file. CG,
 mTPQ, cTPQ and TimeEvolution support v3 solver continuation across MPI
 process counts, including metadata layout 0/1 changes.
 Eigenvector I/O is available for CG and
@@ -299,6 +301,83 @@ manifest records <code class="docutils literal notranslate"><span class="pre">mo
 sector, another particle number, the other model or another momentum are
 rejected even when the dimensions agree.</p>
 </section>
+<section id="fermion-grand-canonical-sectors-with-pair-terms-expert-mode">
+<h2>Fermion grand-canonical sectors with pair terms (expert mode)<a class="headerlink" href="#fermion-grand-canonical-sectors-with-pair-terms-expert-mode" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CalcModel=3</span></code> (HubbardGC) or <code class="docutils literal notranslate"><span class="pre">CalcModel=8</span></code> (SpinlessFermionGC) with
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> selects a spatial-symmetry sector of the grand-canonical space, in
+which neither the particle number <span class="math notranslate nohighlight">\(N\)</span> nor <span class="math notranslate nohighlight">\(S_z\)</span> is fixed. Omit
+<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>, <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>, <code class="docutils literal notranslate"><span class="pre">Nup</span></code> and <code class="docutils literal notranslate"><span class="pre">Ndown</span></code>; explicit values, including zero, are
+rejected. The optional <code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> of the ModPara file also fixes
+<span class="math notranslate nohighlight">\((-1)^N\)</span>:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-number">Table 4.4 </span><span class="caption-text">Fermion GC sectors</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 22.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code></p></th>
+<th class="head"><p>Particle numbers</p></th>
+<th class="head"><p>Dimension before projection</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 (default)</p></td>
+<td><p>all <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>even <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^{M-1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>-1</p></td>
+<td><p>odd <span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2^{M-1}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>Here <span class="math notranslate nohighlight">\(M=2N_{\rm site}\)</span> for HubbardGC and <span class="math notranslate nohighlight">\(M=N_{\rm site}\)</span> for
+SpinlessFermionGC. The full space requires <span class="math notranslate nohighlight">\(M\leq\)</span>
+<code class="docutils literal notranslate"><span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)-2</span></code> and one parity <span class="math notranslate nohighlight">\(M\leq\)</span>
+<code class="docutils literal notranslate"><span class="pre">CHAR_BIT*sizeof(unsigned</span> <span class="pre">long)-1</span></code> (at most 31 HubbardGC sites on 64-bit
+systems). Site permutations keep <span class="math notranslate nohighlight">\(N\)</span>, so each momentum sector splits into
+its even and odd parts; their dimensions add up to the full sector but are not
+equal in general. A nonzero <code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> or with
+another model is an error.</p>
+<p>The Hamiltonian may contain the families of <code class="docutils literal notranslate"><span class="pre">Hubbard</span></code> (HubbardGC) or
+<code class="docutils literal notranslate"><span class="pre">SpinlessFermion</span></code> (SpinlessFermionGC) above, including spin-mixing terms, and
+the pair terms <span class="math notranslate nohighlight">\(c_ic_j\)</span> and <span class="math notranslate nohighlight">\(c^\dagger_ic^\dagger_j\)</span> of the
+<a class="reference internal" href="AnomalousTerm_file_en.html#subsec-anomalousterm"><span class="std std-ref">AnomalousTerm file</span></a> (adjacent Hermitian conjugate
+pairs; the spin index is 0 for SpinlessFermionGC). A pair changes <span class="math notranslate nohighlight">\(N\)</span> by
+two and keeps <span class="math notranslate nohighlight">\((-1)^N\)</span>. Every operator acts on a state from the right with
+its fermion sign, and the group invariance is checked for the whole
+normal-ordered Hamiltonian including the pairs.</p>
+<p>All six methods are available. FullDiag builds the pairs into the dense sector
+matrix with LAPACK, ScaLAPACK and ELPA. In TimeEvolution the pair coefficients
+are static; <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> drive the other terms and must keep
+the symmetry at every time, and <code class="docutils literal notranslate"><span class="pre">Laser</span></code> is rejected. The six correlation formats and <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code>
+(<a class="reference internal" href="../outputfiles_en/AnomalousG_en.html#subsec-anomalousgoutput"><span class="std std-ref">AnomalousG.dat</span></a>) are evaluated in the sector with the file names
+and formats of the raw calculation, also when the Hamiltonian has no pair terms
+(for example, for a TE state that mixes particle numbers). <span class="math notranslate nohighlight">\(N\)</span>,
+<span class="math notranslate nohighlight">\(N^2\)</span>, <span class="math notranslate nohighlight">\(S_z\)</span>, <span class="math notranslate nohighlight">\(S_z^2\)</span> and the doublon number are computed from
+the state. <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> is not supported, and raw SpinlessFermionGC still
+cannot use FullDiag.</p>
+<p>State files use version 2, phase 1 and 30 header words: the model word is 3 or
+8, <code class="docutils literal notranslate"><span class="pre">nup</span></code>, <code class="docutils literal notranslate"><span class="pre">ndown</span></code>, <code class="docutils literal notranslate"><span class="pre">ne</span></code> and the local-site mask are 0, and the fixed-quantity
+flags are 0, 4 or 12 for all, even or odd <span class="math notranslate nohighlight">\(N\)</span> (bit 2 selects a parity,
+bit 3 the odd one). The v3 restart files and the matrix file (<code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code>)
+carry the same values. The sector manifest records <code class="docutils literal notranslate"><span class="pre">model=HubbardGC</span></code> or
+<code class="docutils literal notranslate"><span class="pre">model=SpinlessFermionGC</span></code>, <code class="docutils literal notranslate"><span class="pre">fixed_quantities=none</span></code>, <code class="docutils literal notranslate"><span class="pre">particle_parity</span></code>
+(<code class="docutils literal notranslate"><span class="pre">full</span></code>, <code class="docutils literal notranslate"><span class="pre">even</span></code> or <code class="docutils literal notranslate"><span class="pre">odd</span></code>), the number of pair rows as <code class="docutils literal notranslate"><span class="pre">anomalous:</span></code> in
+<code class="docutils literal notranslate"><span class="pre">term_scope</span></code>, and a <code class="docutils literal notranslate"><span class="pre">hphi-parsed-hamiltonian-fnv1a64-v4</span></code> digest that includes
+the pair terms. Files of another parity, a fixed-<span class="math notranslate nohighlight">\(N\)</span> sector, the other
+model or another momentum are rejected even when the dimensions agree. A state
+of the same sector may be imported with other pair coefficients (a quench); a
+v3 continuation reports such a change as <code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=yes</span></code>.</p>
+<p>Without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, <code class="docutils literal notranslate"><span class="pre">AnomalousTerm</span></code> and <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> keep their raw scope
+(HubbardGC only; see those files).</p>
+</section>
 <section id="kondo-sectors-spin-one-half-expert-mode">
 <h2>Kondo sectors (spin one-half, expert mode)<a class="headerlink" href="#kondo-sectors-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> supports the following three Kondo spaces. <code class="docutils literal notranslate"><span class="pre">Nsite</span></code> counts
@@ -306,8 +385,8 @@ both the <span class="math notranslate nohighlight">\(L\)</span> localized-spin 
 <code class="docutils literal notranslate"><span class="pre">LocSpin</span></code> must mark each localized spin as spin one-half (value 1) and
 each conduction site as 0. Every group operation must preserve this mask;
 localized and conduction sites need not be contiguous or alternate.</p>
-<table class="docutils align-default" id="id2">
-<caption><span class="caption-number">Table 4.4 </span><span class="caption-text">Kondo input and fixed quantities</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-number">Table 4.5 </span><span class="caption-text">Kondo input and fixed quantities</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 24.0%" />
 <col style="width: 39.0%" />
@@ -369,8 +448,8 @@ checking Hermiticity, group invariance and the model’s fixed quantities.
 Transverse and compensating spin flips are permitted when those checks
 allow them. Dedicated <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> input is unsupported; allowed pair-spin
 products can be written as <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>. An empty Hamiltonian is valid.</p>
-<table class="docutils align-default" id="id3">
-<caption><span class="caption-number">Table 4.5 </span><span class="caption-text">Kondo sector method and feature support (all three spaces)</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-number">Table 4.6 </span><span class="caption-text">Kondo sector method and feature support (all three spaces)</span><a class="headerlink" href="#id4" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 19.0%" />
 <col style="width: 28.0%" />
@@ -503,8 +582,8 @@ still required. For <span class="math notranslate nohighlight">\(E_i^{ab}=|a\ran
 <p>There is no additional factor of one-half. Reversed and duplicate rows add;
 a same-site row vanishes. These rules do not relax the fixed-Sz restriction
 of canonical <code class="docutils literal notranslate"><span class="pre">Spin</span></code>.</p>
-<table class="docutils align-default" id="id4">
-<caption><span class="caption-number">Table 4.6 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id4" title="Link to this table">¶</a></caption>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-number">Table 4.7 </span><span class="caption-text">SpinGC sector method and feature support</span><a class="headerlink" href="#id5" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 17.0%" />
 <col style="width: 24.0%" />
@@ -756,11 +835,13 @@ not a restart. Raw TE binary files use their existing, different format.</p>
 <h2>Time-dependent sector Hamiltonians<a class="headerlink" href="#time-dependent-sector-hamiltonians" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive the sector Hamiltonian.
 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> is available for the canonical models and all three Kondo spaces,
-subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
+subject to the Kondo geometry/gauge restrictions above; SpinGC, HubbardGC and
+SpinlessFermionGC reject it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ, HubbardGC, SpinlessFermionGC and all three
+Kondo spaces, including spinless fermions. The raw
 spinless solver’s diagonal-TE restriction is unchanged.</p>
 <p>Before loading the initial vector or writing time-series data, HPhi checks
 every used time slice for finite coefficients, conserved quantum numbers,
@@ -1055,7 +1136,7 @@ input. Existing calculation outputs and <code class="docutils literal notranslat
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

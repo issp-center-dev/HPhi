@@ -137,6 +137,11 @@ headerのprocess数と一致する必要があります。</p>
 <p><strong>説明 :</strong>
 <span class="math notranslate nohighlight">\(2S_z\)</span>を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で<span class="math notranslate nohighlight">\(S_z\)</span>保存の計算を行う場合には<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>を指定する必要があります。<code class="docutils literal notranslate"><span class="pre">CalcModel</span></code> = 0（電子系 Hubbard 模型）において<code class="docutils literal notranslate"><span class="pre">2Sz</span></code>を指定せず<code class="docutils literal notranslate"><span class="pre">Ncond</span></code>のみを与えると、電子数を固定しつつ<span class="math notranslate nohighlight">\(S_z\)</span>を自由とする<code class="docutils literal notranslate"><span class="pre">HubbardNConserved</span></code>模型が選択されます。これは 2Sz 非保存（スピン交差）系の一体励起非対角（ブラ・ケット）動的グリーン関数で用いるセクターです。</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code></p>
+<p><strong>形式 :</strong> int型 (0、1、-1)</p>
+<p><strong>説明 :</strong>
+HubbardGCまたはSpinlessFermionGCの対称性セクター（<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>）で、すべての粒子数（0、既定値）、偶数の<span class="math notranslate nohighlight">\(N\)</span>（1）、奇数の<span class="math notranslate nohighlight">\(N\)</span>（-1）を選びます。それ以外の値と、<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>なしまたは他の模型での0以外の値は拒否します。</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>形式 :</strong> int型 (整数)</p>
 <p><strong>説明 :</strong> 初期条件のベクトルを与えます。</p>
@@ -406,6 +411,12 @@ continuation checkpointを書く場合は正の値が必要です。時刻表は
 </ul>
 </section>
 </section>
+<section id="transsymhubbardgcspinlessfermiongc">
+<h1>TransSymを使うHubbardGC・SpinlessFermionGC<a class="headerlink" href="#transsymhubbardgcspinlessfermiongc" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、<code class="docutils literal notranslate"><span class="pre">Nup</span></code>、<code class="docutils literal notranslate"><span class="pre">Ndown</span></code>、<code class="docutils literal notranslate"><span class="pre">Ncond</span></code> を省略してください。0を含む明示指定は
+拒否します。<code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> で偶数または奇数の粒子数に限定できます。次元、
+pair項、ファイルの識別は <a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> を参照してください。</p>
+</section>
 <section id="transsymspingc">
 <h1>TransSymを使うSpinGC<a class="headerlink" href="#transsymspingc" title="Link to this heading">¶</a></h1>
 <p>スピン1/2のSpinGC sector（<code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code>）では <code class="docutils literal notranslate"><span class="pre">2Sz</span></code>、<code class="docutils literal notranslate"><span class="pre">Nup</span></code>、
@@ -499,7 +510,7 @@ TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

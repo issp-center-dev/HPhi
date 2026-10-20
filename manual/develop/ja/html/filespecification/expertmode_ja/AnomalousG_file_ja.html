@@ -37,7 +37,8 @@
             
   <section id="anomalousg">
 <span id="subsec-anomalousg"></span><h1>AnomalousG指定ファイル<a class="headerlink" href="#anomalousg" title="Link to this heading">¶</a></h1>
-<p>HubbardGC計算で出力する異常ペアグリーン関数を指定します。typeが <code class="docutils literal notranslate"><span class="pre">0</span></code> の
+<p>HubbardGC計算と、HubbardGC・SpinlessFermionGCの対称性セクター
+（<a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a>）で出力する異常ペアグリーン関数を指定します。typeが <code class="docutils literal notranslate"><span class="pre">0</span></code> の
 行は <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}c_{j\sigma_2}\rangle\)</span>、typeが <code class="docutils literal notranslate"><span class="pre">1</span></code> の行は
 <span class="math notranslate nohighlight">\(\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle\)</span> を表します。
 以下にファイル例を記載します。</p>
@@ -99,9 +100,12 @@ NAnomalousG 2
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
 <li><p>行数固定で読み込みを行う為、ヘッダの省略はできません。</p></li>
-<li><p>現在はHubbardGC計算でのみ使用できます。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> はLanczos法、CG法、TPQ法、cTPQ法、実時間発展法のMPI実行で使用できます。
-FullDiag法のMPI実行では使用できません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> なしではHubbardGC計算でのみ使用できます。Lanczos法、CG法、
+TPQ法、cTPQ法、実時間発展法のMPI実行で使用でき、FullDiag法のMPI実行では
+使用できません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TransSym</span></code> を指定したHubbardGC・SpinlessFermionGCのセクターでは、FullDiag法の
+各固有状態を含むすべての計算手法で計算します。ハミルトニアンにpair項がなくても
+計算します（<a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a>）。SpinlessFermionGCのスピン添字は0です。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> は <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 計算では使用できません。</p></li>
 <li><p>同じフェルミオン演算子を1つのペア内で2回指定することはできません。</p></li>
 <li><p><span class="math notranslate nohighlight">\([\)</span>int01<span class="math notranslate nohighlight">\(]\)</span>と定義されている異常ペアグリーン関数成分の総数が異なる場合はエラー終了します。</p></li>
@@ -191,7 +195,7 @@ FullDiag法のMPI実行では使用できません。</p></li>
       &#169;2022, The University of Tokyo.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

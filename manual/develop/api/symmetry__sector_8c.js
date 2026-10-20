@@ -9,6 +9,8 @@ var symmetry__sector_8c =
     [ "ComputeSymmetryKondoSpaceDigest", "symmetry__sector_8c.html#a7bb01b52927f4f7ac375eea9b31c0d22", null ],
     [ "ComputeSymmetrySectorDigest", "symmetry__sector_8c.html#a1cfb83ddd21deabb61a9d37676a87db1", null ],
     [ "format_fulldiag_outputs", "symmetry__sector_8c.html#a85bb62dd5efa2c854a59f0e3c65e9702", null ],
+    [ "GetSymmetryFermionGCFixedFlags", "symmetry__sector_8c.html#a9d86db2fd5a49be6697ca95b63f13b6e", null ],
+    [ "hamiltonian_digest_version", "symmetry__sector_8c.html#a1d7ba7b4fa06253cc1d91cc6b5218e44", null ],
     [ "hash_double", "symmetry__sector_8c.html#a51bf26ead98aaeb77daac52497313039", null ],
     [ "hash_tag", "symmetry__sector_8c.html#a3de58548d41c689902dbb2a4bb795223", null ],
     [ "hash_terms", "symmetry__sector_8c.html#acb444605e819f27b1f248dcb3cd944d4", null ],

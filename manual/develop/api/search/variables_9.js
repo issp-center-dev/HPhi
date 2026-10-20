@@ -5,7 +5,8 @@ var searchData=
   ['kernel_2',['kernel',['../structTraceExecutionPlan.html#a2596c16d4999521d327aa84c8d460195',1,'TraceExecutionPlan']]],
   ['key_3',['key',['../structCorrelationTransition.html#a5d6dff29f62754453c7b44c5625b66db',1,'CorrelationTransition::key'],['../structMonomial.html#ac6fbf493e0c23601978019cc2c338258',1,'Monomial::key']]],
   ['keys_4',['keys',['../structSymmetryLocalRepresentativeIndex.html#a1e987778e3ba62a363d1b7567acb6994',1,'SymmetryLocalRepresentativeIndex']]],
-  ['kondo_5flocal_5fsign_5',['kondo_local_sign',['../structSymmetryBasisRuntime.html#a8d2fa46d5f746c18f9b786ab344cf203',1,'SymmetryBasisRuntime']]],
-  ['kprime_6',['kprime',['../structTraceMap.html#a10369a1a035ee1a772451767df11261b',1,'TraceMap']]],
-  ['ktracecap_7',['kTraceCap',['../expec__trace_8c.html#a4588dfb8f4353745117f2bbe7d14fbed',1,'expec_trace.c']]]
+  ['kind_5',['kind',['../structSymmetryCorrelationOperator.html#afcd541346f5550f2340742b47b66673d',1,'SymmetryCorrelationOperator::kind'],['../structSymmetryTerm.html#aca39a2fa45a3e84b27e5f733a6360ae6',1,'SymmetryTerm::kind'],['../structCorrelationOrbit.html#ac02ceb7c8cf7447f2ebe1c367221c8e5',1,'CorrelationOrbit::kind']]],
+  ['kondo_5flocal_5fsign_6',['kondo_local_sign',['../structSymmetryBasisRuntime.html#a8d2fa46d5f746c18f9b786ab344cf203',1,'SymmetryBasisRuntime']]],
+  ['kprime_7',['kprime',['../structTraceMap.html#a10369a1a035ee1a772451767df11261b',1,'TraceMap']]],
+  ['ktracecap_8',['kTraceCap',['../expec__trace_8c.html#a4588dfb8f4353745117f2bbe7d14fbed',1,'expec_trace.c']]]
 ];

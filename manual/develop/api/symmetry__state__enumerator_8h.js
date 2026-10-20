@@ -2,6 +2,7 @@ var symmetry__state__enumerator_8h =
 [
     [ "SymmetryStateEnumerator", "structSymmetryStateEnumerator.html", "structSymmetryStateEnumerator" ],
     [ "HPHI_SYMMETRY_STATE_WORD_BITS", "symmetry__state__enumerator_8h.html#acb68ae6047ee01ccdc3b39553891e677", null ],
+    [ "ComputeSymmetryFermionGCDimension", "symmetry__state__enumerator_8h.html#a8279b70daec454fac7fcdce6ac550d7a", null ],
     [ "ComputeSymmetryKondoDimension", "symmetry__state__enumerator_8h.html#a91ca778fb0f9037b003b0eadbb1ec9ce", null ],
     [ "ComputeSymmetryNConservedDimension", "symmetry__state__enumerator_8h.html#a7a78c0b10c4bd29c3b88b5b6075d8ff0", null ],
     [ "CountSymmetryKondoCompletions", "symmetry__state__enumerator_8h.html#a9fd376868d6768b572fda3a37b3427ca", null ],
