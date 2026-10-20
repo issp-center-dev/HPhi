@@ -9,6 +9,7 @@
 #include <math.h>
 #include "Common.h"
 #include "CalcTime.h"
+#include "anomalous_pair.h"
 #include "expec_cisajs.h"
 #include "expec_cisajscktaltdc.h"
 #include "green_output.h"
@@ -223,7 +224,8 @@ int ProcessSymmetryFullDiagStates(const struct BindStruct *X,
       StartTimer(5720);
       failed = expec_cisajs(&local, buffers.owned) != 0 ||
                expec_cisajscktaltdc(&local, buffers.owned) != 0 ||
-               expec_nbodyg(&local, buffers.owned) != 0;
+               expec_nbodyg(&local, buffers.owned) != 0 ||
+               expec_anomalousg(&local, buffers.owned) != 0;
       StopTimer(5720);
       if (failed) {
         fprintf(stdoutMPI, "Error: correlations of sector FullDiag eigenstate %lu failed.\n", state);

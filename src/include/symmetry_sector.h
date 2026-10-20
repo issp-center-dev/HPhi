@@ -16,6 +16,10 @@ struct SymmetrySectorDigest {
 /* FNV-1a 64-bit step over the low `bytes` (4 or 8) little-endian bytes. */
 uint64_t SymmetryHashInteger(uint64_t hash, uint64_t value, unsigned int bytes);
 int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *digest);
+/* HubbardGC/SpinlessFermionGC fixed-quantity flags: neither N (bit0) nor Sz
+ * (bit1) is fixed; bit2 marks a ParticleParity and bit3 the odd one, so all
+ * N, even N and odd N are 0, 4 and 12. Other models return -1. */
+int GetSymmetryFermionGCFixedFlags(const struct DefineList *def, uint64_t *flags);
 int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest);
 int ComputeSymmetryHamiltonianDigest(const struct DefineList *def, uint64_t *digest);
 /* Collective: all ranks must call, including ranks with no local entries. */

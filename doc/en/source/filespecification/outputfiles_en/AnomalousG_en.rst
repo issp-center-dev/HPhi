@@ -6,7 +6,9 @@ AnomalousG.dat
 --------------
 
 This file is the output file for anomalous pair Green's functions specified
-by the input file with the keyword ``AnomalousG``. A line with type ``0`` is
+by the input file with the keyword ``AnomalousG``. HubbardGC and
+SpinlessFermionGC symmetry sectors (:ref:`Subsec:TransSym`) write the same
+file names and formats. A line with type ``0`` is
 the expectation value of :math:`c_{i\sigma_1}c_{j\sigma_2}`, and a line with
 type ``1`` is the expectation value of
 :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}`. An example of the

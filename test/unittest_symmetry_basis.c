@@ -886,6 +886,107 @@ static void assert_nconserved_enumerator_limits(void)
                 "HubbardNConserved state wider than unsigned long rejects");
 }
 
+/* GC fermions: all states of the 2L (HubbardGC) or L orbitals, or those of
+ * one popcount parity, in increasing integer order. */
+static void assert_fermion_gc_enumerator_sequence(int model, unsigned int nsite,
+                                                  int parity, const char *label)
+{
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned int bits = model == HubbardGC ? 2U * nsite : nsite;
+  unsigned long int state, got, raw = 0UL, dimension = 0UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = model;
+  def.Nsite = nsite;
+  def.iParticleParity = parity;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, label);
+  assert_ulong_eq(dimension, (1UL << bits) >> (parity != 0 ? 1U : 0U), label);
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0, label);
+  for (state = 0UL; state < (1UL << bits); state++) {
+    if (parity != 0 && (popcount_ulong(state) % 2U == 0U) != (parity > 0)) continue;
+    raw++;
+    assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, raw, &got), 0, label);
+    assert_ulong_eq(got, state, label);
+  }
+  assert_ulong_eq(raw, dimension, label);
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension + 1UL, &got), -1, label);
+}
+
+static void assert_fermion_gc_enumerator_limits(void)
+{
+  const unsigned int word_bits = (unsigned int)(CHAR_BIT * sizeof(unsigned long int));
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned long int dimension, state = 123UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = HubbardGC;
+  def.Nsite = 3U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, "HubbardGC dimension");
+  assert_ulong_eq(dimension, 64UL, "HubbardGC dimension is 4^L");
+  def.iParticleParity = -1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, "odd HubbardGC dimension");
+  assert_ulong_eq(dimension, 32UL, "one parity halves the GC dimension");
+  def.iParticleParity = 2;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "ParticleParity outside -1..1 rejects");
+  def.iParticleParity = 1;
+  def.iCalcModel = Hubbard;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "GC dimension rejects a canonical model");
+  def.iCalcModel = SpinlessFermionGC;
+  def.Nsite = 0U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "GC dimension rejects Nsite=0");
+  def.Nsite = 4U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 16UL, &enumerator), -1,
+                "even SpinlessFermionGC dimension mismatch rejects");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), 0,
+                "even SpinlessFermionGC enumerator initializes");
+  enumerator.particle_parity = 0;
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), -1,
+                "inconsistent GC parity metadata rejects");
+  assert_ulong_eq(state, 123UL, "invalid GC enumerator preserves output");
+
+  /* Word-width extremes: the full space needs 2^M <= LONG_MAX. */
+  def.iParticleParity = 0;
+  def.Nsite = word_bits - 2U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "SpinlessFermionGC full space at the LONG_MAX bound");
+  assert_ulong_eq(dimension, 1UL << (word_bits - 2U), "full spinless GC bound dimension");
+  def.Nsite = word_bits - 1U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "SpinlessFermionGC full space above LONG_MAX rejects");
+  def.iParticleParity = 1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "SpinlessFermionGC parity space at the word width");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "word-width even GC enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "last word-width even GC state");
+  assert_ulong_eq(state, (ULONG_MAX >> 1U) - 1UL, "highest even state below the top bit");
+  def.iParticleParity = -1;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "word-width odd GC enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "first word-width odd GC state");
+  assert_ulong_eq(state, 1UL, "lowest odd state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "last word-width odd GC state");
+  assert_ulong_eq(state, ULONG_MAX >> 1U, "highest odd state below the top bit");
+  def.Nsite = word_bits;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "SpinlessFermionGC state wider than unsigned long rejects");
+  def.iCalcModel = HubbardGC;
+  def.iParticleParity = 0;
+  def.Nsite = word_bits / 2U - 1U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "HubbardGC full space at the LONG_MAX bound");
+  def.Nsite = word_bits / 2U;
+  def.iParticleParity = 1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "HubbardGC state as wide as unsigned long rejects");
+}
+
 static void assert_state_enumerator_exact(void)
 {
   const unsigned int word_bits =
@@ -934,6 +1035,19 @@ static void assert_state_enumerator_exact(void)
     }
   }
   assert_nconserved_enumerator_limits();
+  for (nsite = 1U; nsite <= 8U; nsite++) {
+    int parity;
+    for (parity = -1; parity <= 1; parity++) {
+      assert_fermion_gc_enumerator_sequence(
+          SpinlessFermionGC, nsite, parity,
+          "SpinlessFermionGC enumerator matches exhaustive parity states");
+      if (nsite <= 5U)
+        assert_fermion_gc_enumerator_sequence(
+            HubbardGC, nsite, parity,
+            "HubbardGC enumerator matches exhaustive parity states");
+    }
+  }
+  assert_fermion_gc_enumerator_limits();
 
   for (nsite = 1U; nsite <= 8U; nsite++) {
     unsigned long int raw_dim = 1UL << nsite;

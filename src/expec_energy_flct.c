@@ -120,7 +120,12 @@ int expec_energy_flct(struct BindStruct *X){
   
   switch(X->Def.iCalcModel){
   case HubbardGC:
-      expec_energy_flct_HubbardGC(X);
+      /* A sector stores representatives, not the raw GC list. */
+      if (X->Def.iFlgSymmetryBasis == TRUE) {
+          if (expec_energy_flct_Hubbard(X) != 0) return -1;
+      } else {
+          expec_energy_flct_HubbardGC(X);
+      }
   break;
   case Hubbard:
   case HubbardNConserved:
@@ -171,7 +176,11 @@ int expec_energy_flct(struct BindStruct *X){
 
   case SpinlessFermionGC:
       // Grand canonical: calculate particle number from wavefunction
-      expec_energy_flct_SpinlessFermionGC(X);
+      if (X->Def.iFlgSymmetryBasis == TRUE) {
+          if (EvaluateSymmetrySpinlessGCMoments(X, v0) != 0) return -1;
+      } else {
+          expec_energy_flct_SpinlessFermionGC(X);
+      }
     break;
 
   default:

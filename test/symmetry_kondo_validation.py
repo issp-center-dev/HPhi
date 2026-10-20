@@ -62,9 +62,9 @@ def main():
     negative('pairlift', 'PairLift is active only in SpinGC', gc, {'families': {'PairLift': [(0, 1, .1)]}})
     negative('nbody_interall', 'unsupported term families', gc,
              {'families': {'NBodyInterAll': [(3, 0, 0, 0, 0, 1, 0, 1, 0, 2, 0, 2, 0, .2, 0)]}})
-    negative('anomalous_term', 'AnomalousTerm is currently supported only for HubbardGC', gc,
+    negative('anomalous_term', 'TransSym AnomalousTerm is supported only for HubbardGC and SpinlessFermionGC', gc,
              {'families': {'AnomalousTerm': [(0, 2, 0, 2, 1, .3, 0), (1, 2, 1, 2, 0, .3, 0)]}})
-    negative('anomalous_g', 'AnomalousG is currently supported only for HubbardGC', gc,
+    negative('anomalous_g', 'TransSym AnomalousG is supported only for HubbardGC and SpinlessFermionGC', gc,
              {'families': {'AnomalousG': [(0, 2, 0, 2, 1)]}})
     negative('nonhermitian' , 'Hermite', gc, {'families': {'Trans': [(2, 0, 3, 0, .2, .1)]}})
     negative('nontranslation', 'invariance', gc, {'families': {'Trans': [(0, 0, 0, 0, .2, 0)]}})

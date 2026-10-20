@@ -131,6 +131,13 @@ ModParaファイル
    **説明 :**
    :math:`2S_z`\ を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で\ :math:`S_z`\ 保存の計算を行う場合には\ ``Ncond``\ を指定する必要があります。\ ``CalcModel`` = 0（電子系 Hubbard 模型）において\ ``2Sz``\ を指定せず\ ``Ncond``\ のみを与えると、電子数を固定しつつ\ :math:`S_z`\ を自由とする\ ``HubbardNConserved``\ 模型が選択されます。これは 2Sz 非保存（スピン交差）系の一体励起非対角（ブラ・ケット）動的グリーン関数で用いるセクターです。
 
+-  ``ParticleParity``
+
+   **形式 :** int型 (0、1、-1)
+
+   **説明 :**
+   HubbardGCまたはSpinlessFermionGCの対称性セクター（\ ``TransSym``\ ）で、すべての粒子数（0、既定値）、偶数の\ :math:`N`\ （1）、奇数の\ :math:`N`\ （-1）を選びます。それ以外の値と、\ ``TransSym``\ なしまたは他の模型での0以外の値は拒否します。
+
 -  ``initial_iv``
 
    **形式 :** int型 (整数)
@@ -448,6 +455,13 @@ TPQ法で使用するパラメータ
    (``CalcMod``\ ファイルで\ ``OutputEigenVec=1``\ にすると有効になります)
 
 
+
+TransSymを使うHubbardGC・SpinlessFermionGC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``2Sz``、``Nup``、``Ndown``、``Ncond`` を省略してください。0を含む明示指定は
+拒否します。``ParticleParity`` で偶数または奇数の粒子数に限定できます。次元、
+pair項、ファイルの識別は :ref:`Subsec:TransSym` を参照してください。
 
 TransSymを使うSpinGC
 ~~~~~~~~~~~~~~~~~~~~

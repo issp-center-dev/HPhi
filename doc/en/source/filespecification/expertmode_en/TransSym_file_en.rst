@@ -189,8 +189,9 @@ Use rules
 *  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, ``FullDiag``, and ``TimeEvolution`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
-   ``Hubbard`` / ``tJ`` with only ``Ncond`` fixed and spin-one-half ``SpinGC``
-   without fixed Sz are also supported as described below.
+   ``Hubbard`` / ``tJ`` with only ``Ncond`` fixed, spin-one-half ``SpinGC``
+   without fixed Sz, and ``HubbardGC`` / ``SpinlessFermionGC`` with pair terms
+   and an optional particle-number parity are also supported as described below.
    Expert-mode Hamiltonian terms are:
 
    * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
@@ -222,8 +223,9 @@ Use rules
    other by a symmetry operation have the same value, and an operator that
    leaves the sector gives zero. For canonical ``Spin``,
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected at startup as in the
-   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG`` and
-   spectrum calculations are not supported together with this file. CG,
+   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG`` is
+   available only in the fermion grand-canonical sectors below, and spectrum
+   calculations are not supported together with this file. CG,
    mTPQ, cTPQ and TimeEvolution support v3 solver continuation across MPI
    process counts, including metadata layout 0/1 changes.
    Eigenvector I/O is available for CG and
@@ -294,6 +296,79 @@ manifest records ``model=HubbardNConserved`` or ``model=tJNConserved``,
 ``fixed_quantities=ncond`` and ``fixed_ne``. Files of a fixed-:math:`S_z`
 sector, another particle number, the other model or another momentum are
 rejected even when the dimensions agree.
+
+
+Fermion grand-canonical sectors with pair terms (expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=3`` (HubbardGC) or ``CalcModel=8`` (SpinlessFermionGC) with
+``TransSym`` selects a spatial-symmetry sector of the grand-canonical space, in
+which neither the particle number :math:`N` nor :math:`S_z` is fixed. Omit
+``Ncond``, ``2Sz``, ``Nup`` and ``Ndown``; explicit values, including zero, are
+rejected. The optional ``ParticleParity`` of the ModPara file also fixes
+:math:`(-1)^N`:
+
+.. list-table:: Fermion GC sectors
+   :header-rows: 1
+   :widths: 30 22 48
+
+   * - ``ParticleParity``
+     - Particle numbers
+     - Dimension before projection
+   * - 0 (default)
+     - all :math:`N`
+     - :math:`2^M`
+   * - 1
+     - even :math:`N`
+     - :math:`2^{M-1}`
+   * - -1
+     - odd :math:`N`
+     - :math:`2^{M-1}`
+
+Here :math:`M=2N_{\rm site}` for HubbardGC and :math:`M=N_{\rm site}` for
+SpinlessFermionGC. The full space requires :math:`M\leq`
+``CHAR_BIT*sizeof(unsigned long)-2`` and one parity :math:`M\leq`
+``CHAR_BIT*sizeof(unsigned long)-1`` (at most 31 HubbardGC sites on 64-bit
+systems). Site permutations keep :math:`N`, so each momentum sector splits into
+its even and odd parts; their dimensions add up to the full sector but are not
+equal in general. A nonzero ``ParticleParity`` without ``TransSym`` or with
+another model is an error.
+
+The Hamiltonian may contain the families of ``Hubbard`` (HubbardGC) or
+``SpinlessFermion`` (SpinlessFermionGC) above, including spin-mixing terms, and
+the pair terms :math:`c_ic_j` and :math:`c^\dagger_ic^\dagger_j` of the
+:ref:`AnomalousTerm file <Subsec:anomalousterm>` (adjacent Hermitian conjugate
+pairs; the spin index is 0 for SpinlessFermionGC). A pair changes :math:`N` by
+two and keeps :math:`(-1)^N`. Every operator acts on a state from the right with
+its fermion sign, and the group invariance is checked for the whole
+normal-ordered Hamiltonian including the pairs.
+
+All six methods are available. FullDiag builds the pairs into the dense sector
+matrix with LAPACK, ScaLAPACK and ELPA. In TimeEvolution the pair coefficients
+are static; ``TEOneBody`` / ``TETwoBody`` drive the other terms and must keep
+the symmetry at every time, and ``Laser`` is rejected. The six correlation formats and ``AnomalousG``
+(:ref:`Subsec:anomalousgoutput`) are evaluated in the sector with the file names
+and formats of the raw calculation, also when the Hamiltonian has no pair terms
+(for example, for a TE state that mixes particle numbers). :math:`N`,
+:math:`N^2`, :math:`S_z`, :math:`S_z^2` and the doublon number are computed from
+the state. ``CalcSpec`` is not supported, and raw SpinlessFermionGC still
+cannot use FullDiag.
+
+State files use version 2, phase 1 and 30 header words: the model word is 3 or
+8, ``nup``, ``ndown``, ``ne`` and the local-site mask are 0, and the fixed-quantity
+flags are 0, 4 or 12 for all, even or odd :math:`N` (bit 2 selects a parity,
+bit 3 the odd one). The v3 restart files and the matrix file (``fixed_flags``)
+carry the same values. The sector manifest records ``model=HubbardGC`` or
+``model=SpinlessFermionGC``, ``fixed_quantities=none``, ``particle_parity``
+(``full``, ``even`` or ``odd``), the number of pair rows as ``anomalous:`` in
+``term_scope``, and a ``hphi-parsed-hamiltonian-fnv1a64-v4`` digest that includes
+the pair terms. Files of another parity, a fixed-:math:`N` sector, the other
+model or another momentum are rejected even when the dimensions agree. A state
+of the same sector may be imported with other pair coefficients (a quench); a
+v3 continuation reports such a change as ``hamiltonian_changed=yes``.
+
+Without ``TransSym``, ``AnomalousTerm`` and ``AnomalousG`` keep their raw scope
+(HubbardGC only; see those files).
 
 
 Kondo sectors (spin one-half, expert mode)
@@ -748,11 +823,13 @@ Time-dependent sector Hamiltonians
 
 ``TEOneBody`` or ``TETwoBody`` may drive the sector Hamiltonian.
 ``Laser`` is available for the canonical models and all three Kondo spaces,
-subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
+subject to the Kondo geometry/gauge restrictions above; SpinGC, HubbardGC and
+SpinlessFermionGC reject it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ, HubbardGC, SpinlessFermionGC and all three
+Kondo spaces, including spinless fermions. The raw
 spinless solver's diagonal-TE restriction is unchanged.
 
 Before loading the initial vector or writing time-series data, HPhi checks

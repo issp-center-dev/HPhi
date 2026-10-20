@@ -446,11 +446,25 @@ static int reject_first_unsupported_option(const struct SymmetryMethodCapability
 static int validate_symmetry_model_sector(const struct DefineList *def)
 {
   if (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
-      def->iCalcModel != SpinlessFermion &&
+      !IsSymmetrySpinlessFermionModel(def->iCalcModel) &&
       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
       !IsSymmetryKondoModel(def->iCalcModel)) {
-    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, Hubbard, tJ, and Kondo models.\n");
+    fprintf(stdoutMPI, "Error: TransSym symmetry basis supports only SpinGC, Spin, SpinlessFermion, SpinlessFermionGC, Hubbard, HubbardGC, tJ, Kondo, and KondoGC models.\n");
     return -1;
+  }
+  if (IsSymmetryFermionGCModel(def->iCalcModel)) {
+    unsigned long dimension;
+    const unsigned int word_bits = (unsigned int)(CHAR_BIT * sizeof(unsigned long));
+    int hubbard = def->iCalcModel == HubbardGC;
+    /* Full GC needs 2^M <= LONG_MAX; one parity halves the count. */
+    unsigned int max_orbitals = word_bits - (def->iParticleParity != 0 ? 1U : 2U);
+    if (def->Nup != 0U || def->Ndown != 0U || def->Ne != 0U || def->NCond != 0U ||
+        ComputeSymmetryFermionGCDimension(def, &dimension) != 0) {
+      fprintf(stdoutMPI, "Error: TransSym %s requires 1 <= Nsite <= %u and no fixed particle numbers.\n",
+              hubbard ? "HubbardGC" : "SpinlessFermionGC",
+              hubbard ? max_orbitals / 2U : max_orbitals);
+      return -1;
+    }
   }
   if (def->iCalcModel == HubbardNConserved || def->iCalcModel == tJNConserved) {
     unsigned long dimension;
@@ -606,9 +620,11 @@ static int validate_symmetry_output_capability(const struct DefineList *def)
       def->NNBodyG > 0,
       symmetry_method_supports(cap, cap->correlation) },
     { "correlation functions (AnomalousG)",
-      "AnomalousG is not available in a canonical sector",
+      IsSymmetryFermionGCModel(def->iCalcModel) ? correlation_reason
+          : "AnomalousG is not available in a canonical sector",
       def->NAnomalousG > 0,
-      0 },
+      IsSymmetryFermionGCModel(def->iCalcModel) &&
+          symmetry_method_supports(cap, cap->correlation) },
   };
   return reject_first_unsupported_option(
       cap, gates, sizeof(gates) / sizeof(gates[0]));
@@ -665,12 +681,13 @@ static int validate_kondo_input_forms(const struct DefineList *def)
 /* 4. Model-specific Hamiltonian term families. */
 static int validate_symmetry_term_families(const struct DefineList *def)
 {
-  if (def->NNBodyInterAll || def->NAnomalousTerm ||
+  if (def->NNBodyInterAll ||
+      (def->NAnomalousTerm && !IsSymmetryFermionGCModel(def->iCalcModel)) ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
       (!IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel) &&
        (def->NCoulombIntra || def->NPairHopping)) ||
-      (def->iCalcModel == SpinlessFermion &&
+      (IsSymmetrySpinlessFermionModel(def->iCalcModel) &&
        (def->NHundCoupling || def->NIsingCoupling || def->NExchangeCoupling))) {
     fprintf(stdoutMPI, "Error: TransSym rejects unsupported term families for this canonical model.\n");
     return -1;
@@ -689,8 +706,10 @@ int ValidateSymmetryRuntimeOptions(const struct BindStruct *X)
     fprintf(stdoutMPI, "Error: TransSym does not support Boost.\n");
     return -1;
   }
-  if (def->iCalcModel == SpinGC && def->NLaser) {
-    fprintf(stdoutMPI, "Error: SpinGC TransSym does not support Laser; use TEOneBody/TETwoBody.\n");
+  if ((def->iCalcModel == SpinGC || IsSymmetryFermionGCModel(def->iCalcModel)) && def->NLaser) {
+    fprintf(stdoutMPI, "Error: %s TransSym does not support Laser; use TEOneBody/TETwoBody.\n",
+            def->iCalcModel == SpinGC ? "SpinGC" :
+            def->iCalcModel == HubbardGC ? "HubbardGC" : "SpinlessFermionGC");
     return -1;
   }
   if (validate_symmetry_method_capability(def) != 0) return -1;

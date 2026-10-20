@@ -556,7 +556,7 @@ static void test_expectation(struct BindStruct *X, size_t expected_orbits, unsig
                              const char *label)
 {
   int index[4096];
-  struct SymmetryCorrelationOperator ops[512];
+  struct SymmetryCorrelationOperator ops[512] = {{0}}; /* kind: c^dagger c products */
   double complex values[512];
   struct SymmetryCorrelationStats stats;
   double complex *a;

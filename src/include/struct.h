@@ -221,6 +221,7 @@ struct DefineList {
   int **SymTransAnti;              /**< [NSymTrans][Nsite], v1 accepts only 1 */
   double complex *SymTransChar;    /**< [NSymTrans], scalar 1D character */
   int iSymMomentumIndex;           /**< "# MomentumIndex m" metadata of the TransSym file, -1 if absent */
+  int iParticleParity;             /**< TransSym HubbardGC/SpinlessFermionGC: 0 all N, 1 even N, -1 odd N */
 
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/

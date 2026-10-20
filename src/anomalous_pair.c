@@ -19,6 +19,8 @@
 #include "FileIO.h"
 #include "green_output.h"
 #include "mltplyCommon.h"
+#include "symmetry_correlation.h"
+#include "symmetry_mpi_exchange.h"
 #include "wrapperMPI.h"
 #include "hamstore.h"
 
@@ -109,6 +111,7 @@ static int validate_anomalous_pair(const struct DefineList *D, const int term[5]
   const int spin1 = term[2];
   const int site2 = term[3];
   const int spin2 = term[4];
+  const int spin_max = D->iCalcModel == SpinlessFermionGC ? 0 : 1;
 
   if (type != 0 && type != 1) {
     fprintf(stdoutMPI, "Error: %s type must be 0 or 1.\n", name);
@@ -119,7 +122,7 @@ static int validate_anomalous_pair(const struct DefineList *D, const int term[5]
     fprintf(stdoutMPI, "Error: Site index of %s is incorrect.\n", name);
     return -1;
   }
-  if (spin1 < 0 || spin1 > 1 || spin2 < 0 || spin2 > 1) {
+  if (spin1 < 0 || spin1 > spin_max || spin2 < 0 || spin2 > spin_max) {
     fprintf(stdoutMPI, "Error: Spin index of %s is incorrect.\n", name);
     return -1;
   }
@@ -135,7 +138,13 @@ static int validate_anomalous_scope_common(const struct DefineList *D, unsigned 
   unsigned int t;
   int **terms = (strcmp(name, "AnomalousTerm") == 0) ? D->AnomalousTerm : D->AnomalousG;
   if (n == 0) return 0;
-  if (D->iCalcModel != HubbardGC) {
+  if (D->iFlgSymmetryBasis == TRUE) {
+    /* Sectors build pairs on the common term path, including dense FullDiag. */
+    if (D->iCalcModel != HubbardGC && D->iCalcModel != SpinlessFermionGC) {
+      fprintf(stdoutMPI, "Error: TransSym %s is supported only for HubbardGC and SpinlessFermionGC.\n", name);
+      return -1;
+    }
+  } else if (D->iCalcModel != HubbardGC) {
     fprintf(stdoutMPI, "Error: %s is currently supported only for HubbardGC.\n", name);
     return -1;
   }
@@ -143,7 +152,7 @@ static int validate_anomalous_scope_common(const struct DefineList *D, unsigned 
     fprintf(stdoutMPI, "Error: %s does not support CalcSpec.\n", name);
     return -1;
   }
-  if (nproc > 1 && D->iCalcType == FullDiag) {
+  if (D->iFlgSymmetryBasis != TRUE && nproc > 1 && D->iCalcType == FullDiag) {
     fprintf(stdoutMPI, "Error: %s does not support MPI FullDiag.\n", name);
     return -1;
   }
@@ -156,7 +165,8 @@ static int validate_anomalous_scope_common(const struct DefineList *D, unsigned 
 int ValidateAnomalousTermScope(const struct DefineList *D)
 {
   if (D->NAnomalousTerm == 0) return 0;
-  if (D->iCalcType == TimeEvolution) {
+  /* A sector keeps the static pairs while TE rebuilds the other terms. */
+  if (D->iCalcType == TimeEvolution && D->iFlgSymmetryBasis != TRUE) {
     fprintf(stdoutMPI, "Error: AnomalousTerm is not supported in TimeEvolution.\n");
     return -1;
   }
@@ -579,15 +589,39 @@ static int get_anomalousg_filename(struct BindStruct *X, char *sdt)
   return 0;
 }
 
+/* Sector states: every row in one collective orbit evaluation. The rows
+ * keep their operator order, so F_ij = -F_ji follows from the group action. */
+static int anomalousg_symmetry_values(struct BindStruct *X, double complex *vec,
+                                      double complex *values)
+{
+  unsigned int t;
+  struct SymmetryCorrelationOperator *ops =
+      calloc((size_t)X->Def.NAnomalousG, sizeof(*ops));
+  int status = -1;
+  if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), ops == NULL) != 0) goto done;
+  for (t = 0; t < X->Def.NAnomalousG; t++) {
+    const int *row = X->Def.AnomalousG[t];
+    ops[t].factors = 1U;
+    ops[t].index = row + 1;
+    ops[t].kind = row[0] ? SYMMETRY_TERM_CREATE_PAIR : SYMMETRY_TERM_ANNIHILATE_PAIR;
+  }
+  status = SymmetryCorrelationExpectation(X, vec, ops, X->Def.NAnomalousG, values);
+done:
+  free(ops);
+  return status;
+}
+
 int expec_anomalousg(struct BindStruct *X, double complex *vec)
 {
   FILE *fp = NULL;
   char sdt[D_FileNameMax];
   unsigned int t;
   int use_aggregate;
+  int sector = X->Def.iFlgSymmetryBasis == TRUE;
+  double complex *values = NULL;
 
   if (X->Def.NAnomalousG < 1) return 0;
-  if (X->Def.iCalcModel != HubbardGC) {
+  if (!sector && X->Def.iCalcModel != HubbardGC) {
     fprintf(stdoutMPI, "Error: AnomalousG is currently supported only for HubbardGC.\n");
     return -1;
   }
@@ -601,11 +635,21 @@ int expec_anomalousg(struct BindStruct *X, double complex *vec)
     return GreenOutputReportFailure(X, GreenOutputAnomalous, sdt, "open");
   }
 
+  if (sector) {
+    values = calloc((size_t)X->Def.NAnomalousG, sizeof(*values));
+    if (SymmetryMpiAgreeError(SymmetryMpiCollectivesActive(), values == NULL) != 0 ||
+        anomalousg_symmetry_values(X, vec, values) != 0) {
+      free(values);
+      if (fp != NULL) fclose(fp);
+      return -1;
+    }
+  }
   for (t = 0; t < X->Def.NAnomalousG; t++) {
-    const double complex value = calc_anomalousg_term_hubbardgc(X, t, vec);
+    const double complex value = sector ? values[t] : calc_anomalousg_term_hubbardgc(X, t, vec);
     if (use_aggregate) GreenOutputWriteIndexPrefix(fp, X);
     write_anomalousg_line(fp, &X->Def, t, value);
   }
+  free(values);
 
   failed = use_aggregate
       ? GreenOutputCloseAggregate(GreenOutputAnomalous, fp) != 0

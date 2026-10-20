@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "Common.h"
+#include "symmetry_terms.h"
 
 struct BindStruct;
 struct DefineList;
@@ -12,9 +13,12 @@ struct DefineList;
 #define HPHI_SYMMETRY_CORRELATION_BLOCK_TRANSITIONS UINT64_C(8388608)
 #endif
 
+/* BILINEARS: factors c^dagger c products. Pair kinds (GC fermions only):
+ * factors=1 and index (i, si, j, sj) of c_i c_j or c^dagger_i c^dagger_j. */
 struct SymmetryCorrelationOperator {
   unsigned int factors;
   const int *index;
+  enum SymmetryTermKind kind;
 };
 
 struct SymmetryCorrelationStats {

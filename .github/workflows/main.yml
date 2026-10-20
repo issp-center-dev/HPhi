@@ -56,6 +56,15 @@ jobs:
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^symmetry_nconserved_core$'
 
+      - name: Fermion GC sector FullDiag backends with pairs (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_TEST_FERMION_GC_CORE_SCOPE: fulldiag
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_fermion_gc_core$'
+
       - name: Sector FullDiag states, correlations, matrix I/O and reuse (2 ranks)
         env:
           MPIRUN: mpiexec --oversubscribe -np 2
@@ -179,9 +188,9 @@ jobs:
         if: ${{ matrix.mpisize == 16 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        # The NConserved TPQ/cTPQ/TE suite is a pre-release np16 check;
-        # its continuation smoke stays in symmetry_nconserved_io_restart.
-        run: ctest -V -E "spinone|^symmetry_nconserved_evolution$" -LE "consistency|batching"
+        # The NConserved and fermion GC TPQ/cTPQ/TE suites are pre-release np16
+        # checks; their continuation smoke stays in the io_restart suites.
+        run: ctest -V -E "spinone|^symmetry_nconserved_evolution$|^symmetry_fermion_gc_evolution$" -LE "consistency|batching"
 
       - name: ctest (mpisize=16, mpi batching)
         if: ${{ matrix.mpisize == 16 }}

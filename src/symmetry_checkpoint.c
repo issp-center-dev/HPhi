@@ -5,6 +5,7 @@
 #include "symmetry_basis.h"
 #include "symmetry_sector.h"
 #include "symmetry_kondo.h"
+#include "symmetry_terms.h"
 #include "symmetry_checkpoint.h"
 #include "wrapperMPI.h"
 #ifdef HPHI_TEST_SYMMETRY_PROBE
@@ -19,7 +20,9 @@
  * Phase 1: normalized sum_g conjugate(chi(g)) T_g |smallest representative>,
  * with a positive real coefficient at that representative.
  * Kondo version 2 appends the local-site mask and fixed-quantity flags,
- * using phase 2 (physical Kondo translation). */
+ * using phase 2 (physical Kondo translation). HubbardGC/SpinlessFermionGC
+ * also use version 2, with phase 1, a zero mask and the ParticleParity in the
+ * flags (see GetSymmetryFermionGCFixedFlags). */
 enum {
   MAGIC, VERSION, PHASE, SCALAR, MODEL, NSITE, NUP, NDOWN, NE,
   FULL_DIM, DIM, RANKS, RANK, LAYOUT, OFFSET, LOCAL_DIM, GROUP,
@@ -111,6 +114,13 @@ int SymmetryCheckpointIdentityWords(const struct BindStruct *X, uint64_t *header
     header[NUP] = identity.nup; header[NDOWN] = identity.ndown; header[NE] = identity.ne;
     header[LOCAL_SITE_MASK] = identity.local_site_mask;
     header[FIXED_FLAGS] = identity.fixed_flags;
+  } else if (IsSymmetryFermionGCModel(X->Def.iCalcModel)) {
+    uint64_t flags;
+    if (failure(GetSymmetryFermionGCFixedFlags(&X->Def, &flags) != 0,
+                "GC particle-parity identity")) return -1;
+    header[VERSION] = 2;
+    header[NUP] = header[NDOWN] = header[NE] = 0;
+    header[FIXED_FLAGS] = flags;
   }
   header[FULL_DIM] = X->Sym->full_dim; header[DIM] = X->Sym->dim;
   header[RANKS] = nproc; header[RANK] = myrank;
