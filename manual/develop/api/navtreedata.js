@@ -151,15 +151,15 @@ var NAVTREEINDEX =
 "mltplyMPIBatched_8h_source.html",
 "mltplySpinCore_8h.html#a4feba938bc2bbe410ee848a831c24032",
 "output_8c_source.html",
-"restart__checkpoint_8c.html#af25dae736f9b5c9215f20454a0fe7fe2",
-"structCorrelationContext.html#a610199dbe3eb6beb262e03e5d73a531e",
-"structExpansion.html#a7223c12b5ca80b4a756e6a4fced17797",
-"structSymmetryBasisDistributionStats.html#a1c85c975388a91b0cf811c68f95a3773",
-"structSymmetryMpiExchangeOptions.html",
-"symmetry__basis_8c.html#a66f2cee21b88b44da7e947d90ae86ef8",
-"symmetry__distribution_8c.html#a34d34058e6f7e6333c621e8fadab78fe",
-"symmetry__mpi__exchange_8c.html#a4ad81ef1c2259ee6d4085c41f00daf7d",
-"sz_8h.html#aa7e0ac1848def68ae59b0e08141d1bb7"
+"restart__checkpoint_8c.html#ae3d7000d8a78b66784ad30813f746f75",
+"structCorrelationContext.html#a602947b261b961ca37a55c75e84be7ef",
+"structExcitationOperatorSet.html#ad7602344575738d5206a028ad5a09c34",
+"structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f",
+"structSymmetryMpiExchangeMemoryBudget.html",
+"symmetry__basis_8c.html#a5b824ae8652e0560ecd32683d1e4c02a",
+"symmetry__distribution_8c.html#a103387f76bde91c9a43cf7c9ef376a56",
+"symmetry__mpi__exchange_8c.html#a36f3a230f4a9419925d9c32695541a83",
+"sz_8h.html#a93cc15b67e42f1f9452550ee66c2b3e5"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,5 +1,8 @@
 var NAVTREEINDEX14 =
 {
+"structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f":[9,0,49,25],
+"structSymmetryBasisDistributionStats.html#a1a9644ccc03a5c5c15bca050801e58eb":[9,0,49,8],
+"structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21],
 "structSymmetryBasisDistributionStats.html#a1c85c975388a91b0cf811c68f95a3773":[9,0,49,2],
 "structSymmetryBasisDistributionStats.html#a1fb2c39767820d49801dbc1709bb6da5":[9,0,49,6],
 "structSymmetryBasisDistributionStats.html#a227c3d36a45a13da240e9d4b1f051f10":[9,0,49,26],
@@ -246,8 +249,5 @@ var NAVTREEINDEX14 =
 "structSymmetryMpiExchangeLayout.html#a6a65b0d140d5655feb30934c681c1a6d":[9,0,72,0],
 "structSymmetryMpiExchangeLayout.html#ac9da3afb58321b0f9f3605abf05e2af2":[9,0,72,2],
 "structSymmetryMpiExchangeLayout.html#ad4528f4d438f945a2904aa8077fb7dff":[9,0,72,1],
-"structSymmetryMpiExchangeLayout.html#adb7d8ae7a18c043d992366ca2d79f614":[9,0,72,3],
-"structSymmetryMpiExchangeMemoryBudget.html":[9,0,73],
-"structSymmetryMpiExchangeMemoryBudget.html#a13e7b28780201e1bcc2f2dfa9b911021":[9,0,73,1],
-"structSymmetryMpiExchangeMemoryBudget.html#a41ee54c4b01413a2b560f100172a56a3":[9,0,73,0]
+"structSymmetryMpiExchangeLayout.html#adb7d8ae7a18c043d992366ca2d79f614":[9,0,72,3]
 };

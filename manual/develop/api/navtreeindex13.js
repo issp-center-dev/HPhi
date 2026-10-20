@@ -1,5 +1,8 @@
 var NAVTREEINDEX13 =
 {
+"structExcitationOperatorSet.html#ad7602344575738d5206a028ad5a09c34":[9,0,15,3],
+"structExpansion.html":[9,0,16],
+"structExpansion.html#a65abf02a2a137d2c8a6d39e5f0b73ff7":[9,0,16,3],
 "structExpansion.html#a7223c12b5ca80b4a756e6a4fced17797":[9,0,16,2],
 "structExpansion.html#a7842660123b87396f38962aaf3f3b2ec":[9,0,16,1],
 "structExpansion.html#ae3d8af4030ffd0d8b8003177844c4fae":[9,0,16,0],
@@ -246,8 +249,5 @@ var NAVTREEINDEX13 =
 "structSymmetryBasisDistributionStats.html":[9,0,49],
 "structSymmetryBasisDistributionStats.html#a03b776f951430681dbcf7a821e7f67c7":[9,0,49,29],
 "structSymmetryBasisDistributionStats.html#a0c4abe35838c32be49ab115467336fec":[9,0,49,5],
-"structSymmetryBasisDistributionStats.html#a103846d769bc765a9b28712e29f15a50":[9,0,49,11],
-"structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f":[9,0,49,25],
-"structSymmetryBasisDistributionStats.html#a1a9644ccc03a5c5c15bca050801e58eb":[9,0,49,8],
-"structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21]
+"structSymmetryBasisDistributionStats.html#a103846d769bc765a9b28712e29f15a50":[9,0,49,11]
 };

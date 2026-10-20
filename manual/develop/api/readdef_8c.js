@@ -1,6 +1,7 @@
 var readdef_8c =
 [
-    [ "ArrangeInterAllOffDiagonal", "readdef_8c.html#a321ace04a85b891db02aa66da0c451cf", null ],
+    [ "AppendTransfer", "readdef_8c.html#a9c290f33f322794591f865f0d7b193cb", null ],
+    [ "ArrangeInterAllOffDiagonal", "readdef_8c.html#ae52c48c2d659ca69c2eed3aed89776c9", null ],
     [ "CheckFormatForKondoInt", "readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea", null ],
     [ "CheckFormatForSpinInt", "readdef_8c.html#afbe7cae20c834c11ef23ad8a1674ac6d", null ],
     [ "CheckGeneralSpinIndexForInterAll", "readdef_8c.html#a159fe255d7b06db68c9739671189dec9", null ],
