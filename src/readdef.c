@@ -94,6 +94,30 @@ int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0])
  **/
 static char (*cFileNameListFile)[D_CharTmpReadDef];
 
+/* Aggregate in the input convention H_1 = -sum(t_ij c_i^dagger c_j).
+ * The caller reserves declared transfers + one row per InterAll row. */
+static int AppendTransfer(unsigned int *count, unsigned int capacity,
+                          int **indices, double complex *values,
+                          int i, int s, int j, int t, double complex value)
+{
+  for (unsigned int p = 0; p < *count; ++p) {
+    if (indices[p][0] == i && indices[p][1] == s &&
+        indices[p][2] == j && indices[p][3] == t) {
+      values[p] += value;
+      return 0;
+    }
+  }
+  if (*count >= capacity) {
+    fprintf(stdoutMPI, "Error: insufficient transfer capacity during InterAll normalization.\n");
+    return -1;
+  }
+  unsigned int p = (*count)++;
+  indices[p][0] = i; indices[p][1] = s;
+  indices[p][2] = j; indices[p][3] = t;
+  values[p] = value;
+  return 0;
+}
+
 int CheckTETransferHermite(struct DefineList *X,
                            const int NTETrans,
                            const int idx);
@@ -1668,8 +1692,7 @@ int ReadDefFileIdxPara(
   int ilineIn=0;
   int ilineIn2=0;
   int itmp=0;
-  int icnt_trans=0;
-  int iflg_trans=0;
+  unsigned int icnt_trans=0;
   int icnt_interall=0;
   char *nbody_line=NULL;
   int *nbody_factors=NULL;
@@ -1775,24 +1798,12 @@ int ReadDefFileIdxPara(
               }
             }
             
-            iflg_trans=0;
-            for( i=0; i < icnt_trans; i++){
-              if(isite1 ==X->GeneralTransfer[i][0] && isite2 == X->GeneralTransfer[i][2]
-                 && isigma1 == X->GeneralTransfer[i][1] && isigma2 == X->GeneralTransfer[i][3])
-                {
-                  X->ParaGeneralTransfer[i] += dvalue_re+dvalue_im*I;
-                  iflg_trans=1;
-                  continue;
-                }
-            }
-            
-            if(iflg_trans == 0){
-              X->GeneralTransfer[icnt_trans][0]=isite1;
-              X->GeneralTransfer[icnt_trans][1]=isigma1;
-              X->GeneralTransfer[icnt_trans][2]=isite2;
-              X->GeneralTransfer[icnt_trans][3]=isigma2;
-              X->ParaGeneralTransfer[icnt_trans] = dvalue_re+dvalue_im*I;
-              icnt_trans++;
+            if (AppendTransfer(&icnt_trans, X->NTransferCapacity,
+                               X->GeneralTransfer, X->ParaGeneralTransfer,
+                               isite1, isigma1, isite2, isigma2,
+                               dvalue_re + dvalue_im*I) != 0) {
+              fclose(fp);
+              return -1;
             }
             idx++;
           }
@@ -1805,16 +1816,7 @@ int ReadDefFileIdxPara(
       
       X->NTransfer = icnt_trans;
       
-      if(CheckSpinIndexForTrans(X)==FALSE){
-        fclose(fp);
-        return(-1);
-      }
-      
-      if(CheckTransferHermite(X) !=0){
-        fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
-        fclose(fp);
-        return(-1);
-      }
+      /* Finalize after InterAll has contributed its one-body contractions. */
       break;
       
     case KWCoulombIntra:
@@ -2137,7 +2139,8 @@ int ReadDefFileIdxPara(
                 ArrangeInterAllOffDiagonal(
                     X->NInterAll_OffDiagonal,
                     X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
-                    X->iCalcModel
+                    X->iCalcModel, &X->NTransfer, X->NTransferCapacity,
+                    X->GeneralTransfer, X->ParaGeneralTransfer
             )!=0){
                 fclose(fp);
                 return(-1);
@@ -2653,6 +2656,7 @@ int ReadDefFileIdxPara(
           idx=0;
           while(fgetsMPI(ctmp2, 256, fp) != NULL){
             sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTETransfer[idx]));
+            icnt_trans = 0;
             for(i=0; i<X->NTETransfer[idx]; ++i ){
               fgetsMPI(ctmp2, 256, fp);
               sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
@@ -2663,17 +2667,15 @@ int ReadDefFileIdxPara(
                      &dvalue_re,
                      &dvalue_im
                     );
-              X->TETransfer[idx][i][0]= isite1;
-              X->TETransfer[idx][i][1]= isigma1;
-              X->TETransfer[idx][i][2]= isite2;
-              X->TETransfer[idx][i][3] = isigma2;
-              X->ParaTETransfer[idx][i]=dvalue_re+dvalue_im*I;
+              if (AppendTransfer(&icnt_trans, X->NTETransferCapacity,
+                                 X->TETransfer[idx], X->ParaTETransfer[idx],
+                                 isite1, isigma1, isite2, isigma2,
+                                 dvalue_re + dvalue_im*I) != 0) {
+                fclose(fp);
+                return -1;
+              }
             }
-            //check Transfer Hermite
-            if(CheckTETransferHermite(X, X->NTETransfer[idx], idx)!=0){
-              fclose(fp);
-              return ReadDefFileError(defname);
-            }
+            X->NTETransfer[idx] = icnt_trans;
             idx++;
           }
           if(idx!=X->NTETimeSteps){
@@ -2770,7 +2772,8 @@ int ReadDefFileIdxPara(
                    ArrangeInterAllOffDiagonal(
                         X->NTEInterAllOffDiagonal[idx],
                         X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
-                        X->iCalcModel
+                        X->iCalcModel, &X->NTETransfer[idx], X->NTETransferCapacity,
+                        X->TETransfer[idx], X->ParaTETransfer[idx]
                 )!=0){
                     fclose(fp);
                     return(-1);
@@ -3052,6 +3055,16 @@ int ReadDefFileIdxPara(
     }
   }
 
+  if (CheckSpinIndexForTrans(X) == FALSE) return -1;
+  if (CheckTransferHermite(X) != 0) {
+    fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
+    return -1;
+  }
+  if (X->iCalcType == TimeEvolution) {
+    for (i = 0; i < X->NTETimeSteps; ++i) {
+      if (CheckTETransferHermite(X, X->NTETransfer[i], i) != 0) return -1;
+    }
+  }
   ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
@@ -3163,6 +3176,17 @@ int CheckTransferHermite
   unsigned int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
   icntchemi=0;
+  /* Keep the historical order: explicit transfer diagonals, then InterAll
+   * contractions. The latter were extracted before this final check, so park
+   * them beyond the transfer entries while building the diagonal prefix.
+   * Each InterAll row supplies either a diagonal or an off-site contraction;
+   * NTransfer + interall_chemi therefore fits the reserved input bound. */
+  unsigned int interall_chemi = X->EDNChemi;
+  if (interall_chemi) {
+    memmove(X->EDChemi + X->NTransfer, X->EDChemi, interall_chemi * sizeof(*X->EDChemi));
+    memmove(X->EDSpinChemi + X->NTransfer, X->EDSpinChemi, interall_chemi * sizeof(*X->EDSpinChemi));
+    memmove(X->EDParaChemi + X->NTransfer, X->EDParaChemi, interall_chemi * sizeof(*X->EDParaChemi));
+  }
   
   for(i=0; i<X->NTransfer; i++){
     isite1=X->GeneralTransfer[i][0];
@@ -3231,7 +3255,12 @@ int CheckTransferHermite
     return -1;
   }
   X->EDNTransfer=2*icntHermite;
-  X->EDNChemi=icntchemi;
+  if (interall_chemi) {
+    memmove(X->EDChemi + icntchemi, X->EDChemi + X->NTransfer, interall_chemi * sizeof(*X->EDChemi));
+    memmove(X->EDSpinChemi + icntchemi, X->EDSpinChemi + X->NTransfer, interall_chemi * sizeof(*X->EDSpinChemi));
+    memmove(X->EDParaChemi + icntchemi, X->EDParaChemi + X->NTransfer, interall_chemi * sizeof(*X->EDParaChemi));
+  }
+  X->EDNChemi=icntchemi + interall_chemi;
 
   //To realize ido-san's result
     for(i=0; i<X->EDNTransfer; i++){
@@ -3728,7 +3757,11 @@ int ArrangeInterAllOffDiagonal
                 const int NInterAllOffDiagonal,
                 int **InterAllOffDiagonal,
                 complex double *ParaInterAllOffDiagonal,
-                const int iCalcModel
+                const int iCalcModel,
+                unsigned int *NTransfer,
+                const unsigned int transfer_capacity,
+                int **Transfer,
+                double complex *ParaTransfer
         ) {
     unsigned int i, tmp_i;
     int isite1, isite2, isite3, isite4;
@@ -3757,6 +3790,19 @@ int ArrangeInterAllOffDiagonal
                 if (isigma1 == isigma2 && isigma3 == isigma4) {
                     continue;
                 } else if (isigma1 == isigma4 && isigma2 == isigma3) {
+                    /* c_i^dag c_j c_k^dag c_l =
+                     * delta(j,k) c_i^dag c_l - c_i^dag c_l c_k^dag c_j.
+                     * Fully diagonal contractions were handled earlier.
+                     * These rows are Hermitian pairs; emit both transfers
+                     * before replacing the original quartet and its partner. */
+                    if (isite2 == isite3 && isite1 != isite4) {
+                        double complex value = -ParaInterAllOffDiagonal[2 * i];
+                        if (AppendTransfer(NTransfer, transfer_capacity, Transfer, ParaTransfer,
+                                           isite1, isigma1, isite4, isigma1, value) != 0 ||
+                            AppendTransfer(NTransfer, transfer_capacity, Transfer, ParaTransfer,
+                                           isite4, isigma1, isite1, isigma1, conj(value)) != 0)
+                            return -1;
+                    }
                     InterAllOffDiagonal[2 * i][0] = isite1;
                     InterAllOffDiagonal[2 * i][1] = isigma1;
                     InterAllOffDiagonal[2 * i][2] = isite4;
@@ -4061,6 +4107,7 @@ void InitializeInteractionNum
  )
 {
   X->NTransfer=0;
+  X->NTransferCapacity=0;
   X->NCoulombIntra=0;
   X->NCoulombInter=0;
   X->NIsingCoupling=0;
@@ -4090,6 +4137,7 @@ void InitializeInteractionNum
   X->NPairExcitationOperatorBra=0;
   //[s] Time Evolution
   X->NTETimeSteps=0;
+  X->NTETransferCapacity=0;
   X->NLaser=0;
   X->NTEInterAll=0;
   X->NTETransfer=0;

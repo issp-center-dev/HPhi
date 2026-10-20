@@ -112,6 +112,7 @@ struct DefineList {
 
     //[s] Transfer
   unsigned int NTransfer;/**<@brief Number of transfer integrals obtained by a def file.*/
+  unsigned int NTransferCapacity;/**<@brief Storage including one-body contractions from InterAll.*/
   unsigned int EDNTransfer;/**<@brief Number of transfer integrals for calculation. */
   int **GeneralTransfer;/**<@brief Index of transfer integrals obtained by a def file. 
                         malloc in setmem_def().\n
@@ -379,6 +380,7 @@ struct DefineList {
 
     //Information of Transfer integrals
     unsigned int NTETransferMax;
+    unsigned int NTETransferCapacity;/**<@brief Includes TETwoBody contractions; not an input-mode flag. */
     unsigned int *NTETransfer;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
                Data Format [NTE]*/
     unsigned int *NTETransferDiagonal;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
