@@ -2362,7 +2362,9 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
     int all_up, all_down, all_loc,tmp_res,num_loc,num_loc_up,num_loc_down;
     long unsigned int tmp_1,tmp_2,tmp_3;
     int all_cond,all_cond_up,all_cond_down,num_cond;
+    long int **comb;
 
+    comb = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
     Ne   = X->Def.Ne;
             
     jb      = 0;
@@ -2415,11 +2417,15 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
                 all_down = (X->Def.Nsite)/2-all_loc;
             }
             //printf("all_loc %d all_up %d  all_down %d Ne %d Nsite %d\n",all_loc,all_up,all_down,X->Def.Ne,X->Def.Nsite);
-            if (num_up+num_down==X->Def.Ne-all_loc){
-               jb       += X->Def.Tpow[all_loc];
-            }
+            // The lower half holds all_loc local spins (2^all_loc states) and
+            // all_up+all_down itinerant spin-orbitals, which have to take
+            // the electrons that are left over from the upper half.
+            num_cond = X->Def.Ne-all_loc-(num_up+num_down);
+            tmp_1    = Binomial(all_up+all_down, num_cond, comb, X->Def.Nsite);
+            jb      += X->Def.Tpow[all_loc]*tmp_1;
         }
     }
+    free_li_2d_allocate(comb);
 /*           
         list_jb[ib] = jb;
         i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))
