@@ -647,6 +647,8 @@ set_tests_properties(kondo_basis_bounds PROPERTIES LABELS "validation;kondo" TIM
 if(MPI_FOUND)
     add_hphi_mpi_test(kondo_basis_bounds_mpi pow:4)
     set_tests_properties(kondo_basis_bounds_mpi PROPERTIES LABELS "validation;kondo;mpi" TIMEOUT 300)
+    add_hphi_mpi_test(kondo_mpi_dimension pow:4)
+    set_tests_properties(kondo_mpi_dimension PROPERTIES LABELS "validation;kondo;mpi" TIMEOUT 300)
 endif()
 add_hphi_test(lobcg_spin_kagome)
 add_hphi_test(symmetry_spin_chain_lobcg)
