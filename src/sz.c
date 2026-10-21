@@ -1455,14 +1455,15 @@ int omp_sz_Kondo_hacker(
   ja           = 1;
   tmp_num_up   = num_up;
   tmp_num_down = num_down;
-  if(icheck_loc ==1){
-    //for(ia=0;ia<X->Check.sdim;ia++){
-    ia = X->Def.Tpow[X->Def.Nup+X->Def.Ndown-tmp_num_up-tmp_num_down]-1;
-    //ia = 1;
-    //if(ia < X->Check.sdim && ia!=0){
-    //ia = snoob(ia);
-    while(ia < X->Check.sdim && ia!=0){
-    // for(ia=0;ia<X->Check.sdim;ia++){
+  // Reject impossible upper halves before subtracting unsigned occupations.
+  if(icheck_loc == 1 && tmp_num_up <= X->Def.Nup &&
+     tmp_num_down <= X->Def.Ndown){
+    const long unsigned int remaining =
+      (X->Def.Nup - tmp_num_up) + (X->Def.Ndown - tmp_num_down);
+    // Each half contains Nsite bits, including a split site for odd Nsite.
+    if(remaining > (long unsigned int)X->Def.Nsite) return 0;
+    ia = X->Def.Tpow[remaining]-1;
+    while(ia < X->Check.sdim){
         //[s] proceed ja
         i        = ia;
         num_up   =  tmp_num_up;
@@ -1504,10 +1505,10 @@ int omp_sz_Kondo_hacker(
           list_2_2_[ib]=jb+1;
           ja+=1;
         }
+        // The vacuum is a candidate once; snoob(0) would divide by zero.
+        if(ia == 0) break;
         ia = snoob(ia);
         //[e] proceed ja
-        //ia+=1;
-      //}
     }
   }
 //[e] get ja
