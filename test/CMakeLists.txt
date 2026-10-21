@@ -614,6 +614,40 @@ set_tests_properties(
 add_hphi_test(lobcg_hubbard_square)
 add_hphi_test(lobcg_hubbard_szunconserv)
 add_hphi_test(lobcg_kondo_chain)
+
+# Small canonical Kondo basis oracle. It calls no MPI functions and runs
+# directly, even in jobs where MPIRUN requests multiple ranks.
+add_executable(unittest_kondo_basis unit/kondo_basis_check.c
+    ${CMAKE_SOURCE_DIR}/src/sz.c
+    ${CMAKE_SOURCE_DIR}/src/bitcalc.c
+    ${CMAKE_SOURCE_DIR}/src/common/setmemory.c
+    ${CMAKE_SOURCE_DIR}/src/global.c
+    ${CMAKE_SOURCE_DIR}/src/log.c
+    ${CMAKE_SOURCE_DIR}/src/FileIO.c
+    ${CMAKE_SOURCE_DIR}/src/ErrorMessage.c
+    ${CMAKE_SOURCE_DIR}/src/LogMessage.c
+    ${CMAKE_SOURCE_DIR}/src/ProgressMessage.c
+    ${CMAKE_SOURCE_DIR}/src/wrapperMPI.c
+    ${CMAKE_SOURCE_DIR}/src/splash.c)
+target_include_directories(unittest_kondo_basis PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_compile_definitions(unittest_kondo_basis PRIVATE DSFMT_MEXP=19937)
+target_link_libraries(unittest_kondo_basis m)
+if(MPI_FOUND)
+    target_link_libraries(unittest_kondo_basis ${MPI_C_LIBRARIES})
+endif()
+if(OpenMP_C_FOUND)
+    target_link_libraries(unittest_kondo_basis OpenMP::OpenMP_C)
+endif()
+add_test(NAME unittest_kondo_basis COMMAND unittest_kondo_basis)
+set_tests_properties(unittest_kondo_basis PROPERTIES LABELS "unit;kondo" TIMEOUT 60)
+
+# Arbitrary local-spin placements run serially even in MPI CI jobs.
+add_hphi_test(kondo_basis_bounds)
+set_tests_properties(kondo_basis_bounds PROPERTIES LABELS "validation;kondo" TIMEOUT 300)
+if(MPI_FOUND)
+    add_hphi_mpi_test(kondo_basis_bounds_mpi pow:4)
+    set_tests_properties(kondo_basis_bounds_mpi PROPERTIES LABELS "validation;kondo;mpi" TIMEOUT 300)
+endif()
 add_hphi_test(lobcg_spin_kagome)
 add_hphi_test(symmetry_spin_chain_lobcg)
 add_hphi_test(symmetry_spin_chain_lobcg_preconditioner)
