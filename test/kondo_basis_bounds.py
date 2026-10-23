@@ -101,11 +101,22 @@ def run(path, hphi, method, launcher, env, timeout=180):
     logpath = path/('cg.log' if method == 3 else 'fulldiag.log')
     try:
         with logpath.open('w') as log:
-            result = subprocess.run(launcher + [hphi, '-e', 'namelist.def'],
-                                    cwd=path, env=env, stdout=log,
-                                    stderr=subprocess.STDOUT, timeout=timeout)
-        if result.returncode:
-            raise RuntimeError(f'{path.name}: method={method} exit={result.returncode}')
+            process = subprocess.Popen(launcher + [hphi, '-e', 'namelist.def'],
+                                       cwd=path, env=env, stdout=log,
+                                       stderr=subprocess.STDOUT)
+            try:
+                returncode = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                # Give mpiexec time to stop its ranks before forced termination.
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+                raise
+        if returncode:
+            raise RuntimeError(f'{path.name}: method={method} exit={returncode}')
     except (RuntimeError, subprocess.TimeoutExpired):
         print(logpath.read_text(), flush=True)
         raise
