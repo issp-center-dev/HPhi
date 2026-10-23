@@ -12,6 +12,7 @@
 #include "symmetry_mpi_exchange.h"
 #include "symmetry_state_enumerator.h"
 #include "symmetry_kondo.h"
+#include "symmetry_terms.h"
 #include "struct.h"
 #include "CalcTime.h"
 #include "wrapperMPI.h"
@@ -165,12 +166,26 @@ int SymmetryApplyToState(const struct DefineList *def,
                          unsigned int op,
                          struct SymmetryTransformResult *result)
 {
+  int flip;
   if (def == NULL || result == NULL || op >= def->NSymTrans) return -1;
   memset(result, 0, sizeof(*result));
+  /* Read the flag directly: this runs for every operation of every model.
+   * Px exists only for spin-1/2 Spin/SpinGC; never give a fermion a flip. */
+  flip = def->SymTransFlip != NULL && def->SymTransFlip[op] != 0;
+  if (flip && def->iCalcModel != Spin && def->iCalcModel != SpinGC) return -1;
   switch (def->iCalcModel) {
   case Spin:
   case SpinGC:
     result->state = SymmetryApplyToSpinBits(state, def->SymTrans[op], def->Nsite);
+    /* Px exchanges up and down at every site with amplitude +1. Only the
+     * L state bits flip; a word-sized L uses the full mask. */
+    if (flip) {
+      const unsigned int max_bits =
+          (unsigned int)(sizeof(unsigned long int) * CHAR_BIT);
+      if (def->Nsite == 0U || def->Nsite > max_bits) return -1;
+      result->state ^= def->Nsite == max_bits
+          ? ~0UL : (1UL << def->Nsite) - 1UL;
+    }
     result->amplitude = 1.0;
     return 0;
   case SpinlessFermion:
@@ -250,15 +265,28 @@ static int same_perm(const int *a, const int *b, unsigned int nsite)
   return TRUE;
 }
 
-static int find_perm(const struct DefineList *def, const int *perm)
+/* An operation is the pair (site permutation, Px flag): (g,0) and (g,1)
+ * are different elements of G x Z2. */
+static int same_operation(const struct DefineList *def, unsigned int a,
+                          unsigned int b)
+{
+  return SymmetryOperationFlipsSpins(def, a) ==
+             SymmetryOperationFlipsSpins(def, b) &&
+         same_perm(def->SymTrans[a], def->SymTrans[b], def->Nsite);
+}
+
+static int find_operation(const struct DefineList *def, const int *perm,
+                          int flip)
 {
   unsigned int g;
   for (g = 0; g < def->NSymTrans; g++) {
-    if (same_perm(def->SymTrans[g], perm, def->Nsite) == TRUE) return (int)g;
+    if (SymmetryOperationFlipsSpins(def, g) == flip &&
+        same_perm(def->SymTrans[g], perm, def->Nsite) == TRUE) return (int)g;
   }
   return -1;
 }
 
+/* (g,f)^-1 = (g^-1,f): the inverse keeps the Px flag of the operation. */
 static int build_group_inverse(const struct DefineList *def,
                                struct SymmetryBasisRuntime *sym)
 {
@@ -273,6 +301,8 @@ static int build_group_inverse(const struct DefineList *def,
   for (g = 0U; g < def->NSymTrans; g++) {
     int found = FALSE;
     for (h = 0U; h < def->NSymTrans; h++) {
+      if (SymmetryOperationFlipsSpins(def, g) !=
+          SymmetryOperationFlipsSpins(def, h)) continue;
       for (site = 0U; site < def->Nsite; site++) {
         int mapped = def->SymTrans[g][site];
         if (mapped < 0 || (unsigned int)mapped >= def->Nsite ||
@@ -298,6 +328,12 @@ static int is_identity_perm(const int *perm, unsigned int nsite)
     if (perm[site] != (int)site) return FALSE;
   }
   return TRUE;
+}
+
+static int is_identity_operation(const struct DefineList *def, unsigned int g)
+{
+  return !SymmetryOperationFlipsSpins(def, g) &&
+         is_identity_perm(def->SymTrans[g], def->Nsite);
 }
 
 static int validate_bijection_and_anti(const struct DefineList *def)
@@ -360,13 +396,13 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
       return -1;
     }
     for (prev = 0; prev < g; prev++) {
-      if (same_perm(def->SymTrans[g], def->SymTrans[prev], def->Nsite) == TRUE) {
+      if (same_operation(def, g, prev) == TRUE) {
         fprintf(stdoutMPI, "Error: duplicate TransSym operation: op %u and op %u are identical.\n",
                 prev, g);
         return -1;
       }
     }
-    if (is_identity_perm(def->SymTrans[g], def->Nsite) == TRUE) {
+    if (is_identity_operation(def, g) == TRUE) {
       if (identity >= 0) {
         fprintf(stdoutMPI, "Error: TransSym contains duplicate identity operations.\n");
         return -1;
@@ -391,7 +427,10 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
       for (site = 0; site < def->Nsite; site++) {
         composed[site] = def->SymTrans[g][def->SymTrans[h][site]];
       }
-      gh = find_perm(def, composed);
+      /* Px commutes with every site permutation. */
+      gh = find_operation(def, composed,
+                          SymmetryOperationFlipsSpins(def, g) ^
+                              SymmetryOperationFlipsSpins(def, h));
       if (gh < 0) {
         free(composed);
         fprintf(stdoutMPI, "Error: TransSym operations are not closed; op %u * op %u is missing.\n",
@@ -407,6 +446,41 @@ int ValidateSymmetryGroupInput(const struct DefineList *def)
     }
   }
   free(composed);
+  return 0;
+}
+
+int ExtendSymmetryGroupWithSpinFlip(struct DefineList *def)
+{
+  unsigned int g, n;
+  if (def == NULL) return -1;
+  if (def->iSpinFlipParity == 0) return 0;
+  n = def->NSymTransInput;
+  /* Extend the validated input group once: (g,0) keep their rows and
+   * (g,1) follow in the same order, with chi(g,1) = chi(g) p. */
+  if ((def->iSpinFlipParity != 1 && def->iSpinFlipParity != -1) ||
+      (def->iCalcModel != Spin && def->iCalcModel != SpinGC) ||
+      def->iFlgSymmetryBasis != TRUE || n == 0U || def->NSymTrans != n ||
+      n > UINT_MAX / 2U || def->NSymTransCapacity < 2U * n ||
+      def->SymTrans == NULL || def->SymTransAnti == NULL ||
+      def->SymTransChar == NULL || def->SymTransFlip == NULL) {
+    fprintf(stdoutMPI, "Error: SpinFlipParity could not extend the TransSym group.\n");
+    return -1;
+  }
+  for (g = 0U; g < n; g++) {
+    if (def->SymTransFlip[g] != 0) {
+      fprintf(stdoutMPI, "Error: SpinFlipParity could not extend the TransSym group.\n");
+      return -1;
+    }
+  }
+  for (g = 0U; g < n; g++) {
+    memcpy(def->SymTrans[n + g], def->SymTrans[g],
+           (size_t)def->Nsite * sizeof(**def->SymTrans));
+    memcpy(def->SymTransAnti[n + g], def->SymTransAnti[g],
+           (size_t)def->Nsite * sizeof(**def->SymTransAnti));
+    def->SymTransChar[n + g] = def->SymTransChar[g] * (double)def->iSpinFlipParity;
+    def->SymTransFlip[n + g] = 1;
+  }
+  def->NSymTrans = 2U * n;
   return 0;
 }
 

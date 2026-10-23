@@ -282,6 +282,73 @@ static void test_validation(void)
     fail("SpinGC still checks site permutation invariance");
 }
 
+/* Px maps E_st to E_(1-s)(1-t) without conjugating the value: Sx and
+ * Sy_0 Sz_1 + Sz_0 Sy_1 (complex units) are invariant, Sy and Sz are not. */
+static void test_spin_flip_validation(void)
+{
+  struct DefineList def;
+  int identity[2] = {0, 1};
+  int *permutations[2] = {identity, identity};
+  int flips[2] = {0, 1};
+  int transfer[2][4] = {{0, 1, 0, 0}, {0, 0, 0, 1}};
+  int *transfer_rows[2] = {transfer[0], transfer[1]};
+  double complex sx[2] = {-0.4, -0.4}, sy[2] = {0.5 * I, -0.5 * I};
+  int diagonal[2][4] = {{0, 1, 0, 1}, {0, 0, 0, 0}};
+  int *diagonal_rows[2] = {diagonal[0], diagonal[1]};
+  double complex sz[2] = {-0.5, 0.5};
+  int interall[8][8];
+  int *interall_rows[8];
+  double complex interall_values[8];
+  unsigned int row = 0, c, site;
+  for (site = 0; site < 2; ++site) {
+    for (c = 0; c < 2; ++c) {
+      double sz_c = c ? 0.5 : -0.5;
+      /* Sy_site Sz_other: E10 carries -i/2, E01 carries +i/2. */
+      int pattern[2][8] = {{(int)site, 1, (int)site, 0, (int)(1-site), (int)c, (int)(1-site), (int)c},
+                           {(int)site, 0, (int)site, 1, (int)(1-site), (int)c, (int)(1-site), (int)c}};
+      memcpy(interall[row], pattern[0], sizeof(pattern[0]));
+      interall_values[row++] = -0.5 * I * sz_c;
+      memcpy(interall[row], pattern[1], sizeof(pattern[1]));
+      interall_values[row++] = 0.5 * I * sz_c;
+    }
+  }
+  for (row = 0; row < 8; ++row) interall_rows[row] = interall[row];
+  memset(&def, 0, sizeof(def));
+  def.iFlgSymmetryBasis = TRUE;
+  def.iCalcModel = SpinGC;
+  def.Nsite = 1;
+  def.iSpinFlipParity = -1;
+  def.NSymTrans = 2;
+  def.NSymTransInput = 1;
+  def.SymTrans = permutations;
+  def.SymTransFlip = flips;
+  def.EDNTransfer = 2;
+  def.EDGeneralTransfer = transfer_rows;
+  def.EDParaGeneralTransfer = sx;
+  if (ValidateSymmetryTerms(&def) != 0) fail("Px keeps the transverse field");
+  def.EDParaGeneralTransfer = sy;
+  if (ValidateSymmetryTerms(&def) != -1) fail("Px rejects a Sy field");
+  def.EDGeneralTransfer = diagonal_rows;
+  def.EDParaGeneralTransfer = sz;
+  if (ValidateSymmetryTerms(&def) != -1) fail("Px rejects a Sz field");
+  def.Nsite = 2;
+  def.EDNTransfer = 0;
+  def.NInterAll_OffDiagonal = 8;
+  def.InterAll_OffDiagonal = interall_rows;
+  def.ParaInterAll_OffDiagonal = interall_values;
+  if (ValidateSymmetryTerms(&def) != 0) fail("Px keeps Sy_0 Sz_1 + Sz_0 Sy_1");
+  /* Sy_0 (E00 + E11)_1 / 2: the same complex units, now Px odd. */
+  def.NInterAll_OffDiagonal = 4;
+  interall_values[0] = -interall_values[0];
+  interall_values[1] = -interall_values[1];
+  if (ValidateSymmetryTerms(&def) != -1) fail("Px rejects Sy_0 times the identity");
+  interall_values[0] = -interall_values[0];
+  interall_values[1] = -interall_values[1];
+  def.NInterAll_OffDiagonal = 8;
+  flips[1] = 0;
+  if (ValidateSymmetryTerms(&def) != 0) fail("the flag selects Px per operation");
+}
+
 int main(void)
 {
   stdoutMPI = stdout;
@@ -290,6 +357,7 @@ int main(void)
   test_iterator_families();
   test_invalid_enumeration();
   test_validation();
+  test_spin_flip_validation();
   puts("unittest_symmetry_spingc_terms: PASS");
   return 0;
 }

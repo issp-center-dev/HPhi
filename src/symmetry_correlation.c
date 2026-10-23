@@ -143,15 +143,18 @@ static int validate_operator(const struct DefineList *def,
   return 0;
 }
 
+/* U_g E U_g^dagger of a factor tuple. With Px, a Spin local unit E_st
+ * becomes E_(1-s)(1-t); only Spin/SpinGC operations carry a flip. */
 static void permute_tuple(const struct DefineList *def, unsigned int g,
                           unsigned int factors, const int *in, int *out)
 {
   unsigned int f;
+  const int flip = SymmetryOperationFlipsSpins(def, g);
   for (f = 0; f < factors; ++f) {
     out[4*f]   = def->SymTrans[g][in[4*f]];
-    out[4*f+1] = in[4*f+1];
+    out[4*f+1] = flip ? 1 - in[4*f+1] : in[4*f+1];
     out[4*f+2] = def->SymTrans[g][in[4*f+2]];
-    out[4*f+3] = in[4*f+3];
+    out[4*f+3] = flip ? 1 - in[4*f+3] : in[4*f+3];
   }
 }
 
@@ -177,6 +180,9 @@ static int build_orbit_table(const struct DefineList *def,
   int status = -1;
   memset(table, 0, sizeof(*table));
   if (def == NULL || ops == NULL || def->NSymTrans == 0U || def->SymTrans == NULL) return -1;
+  for (t = 0; t < def->NSymTrans; t++)
+    if (SymmetryOperationFlipsSpins(def, (unsigned int)t) &&
+        def->iCalcModel != Spin && def->iCalcModel != SpinGC) return -1;
   table->orbits = (struct CorrelationOrbit *)calloc(count, sizeof(*table->orbits));
   table->op_to_orbit = (size_t *)calloc(count, sizeof(*table->op_to_orbit));
   if (table->orbits == NULL || table->op_to_orbit == NULL) goto done;
