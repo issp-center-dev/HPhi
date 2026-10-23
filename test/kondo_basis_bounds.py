@@ -95,17 +95,28 @@ def prepare(path, nsite, local, ncond, sz2, hs):
     return transfer, interall
 
 
-def run(path, hphi, method, launcher, env):
+def run(path, hphi, method, launcher, env, timeout=180):
     (path/'calc.def').write_text(f'CalcModel 2\nCalcType {method}\nOutputMode 0\n'
                                + ('OutputEigenVec 1\n' if method == 3 else 'Solver 0\n'))
     logpath = path/('cg.log' if method == 3 else 'fulldiag.log')
     try:
         with logpath.open('w') as log:
-            result = subprocess.run(launcher + [hphi, '-e', 'namelist.def'],
-                                    cwd=path, env=env, stdout=log,
-                                    stderr=subprocess.STDOUT, timeout=180)
-        if result.returncode:
-            raise RuntimeError(f'{path.name}: method={method} exit={result.returncode}')
+            process = subprocess.Popen(launcher + [hphi, '-e', 'namelist.def'],
+                                       cwd=path, env=env, stdout=log,
+                                       stderr=subprocess.STDOUT)
+            try:
+                returncode = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                # Give mpiexec time to stop its ranks before forced termination.
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+                raise
+        if returncode:
+            raise RuntimeError(f'{path.name}: method={method} exit={returncode}')
     except (RuntimeError, subprocess.TimeoutExpired):
         print(logpath.read_text(), flush=True)
         raise
@@ -134,7 +145,7 @@ def vector(path, words, nsite, ranks):
     return psi
 
 
-def check_result(path, hphi, case, hs, launcher, ranks, env, dense):
+def check_result(path, hphi, case, hs, launcher, ranks, env, dense, timeout=180):
     nsite, local, ncond, sz2 = case
     words = basis(*case)
     transfer, interall = prepare(path, *case, hs)
@@ -142,11 +153,11 @@ def check_result(path, hphi, case, hs, launcher, ranks, env, dense):
     expected = np.linalg.eigvalsh(h)
     tolerance = 1e-10*max(1, np.max(abs(expected)))
     if dense:
-        run(path, hphi, 2, [], env)
+        run(path, hphi, 2, [], env, timeout)
         actual = np.loadtxt(path/'output/Eigenvalue.dat', ndmin=2)[:, 1]
         assert actual.shape == expected.shape, (path, actual.shape, expected.shape)
         np.testing.assert_allclose(actual, expected, atol=tolerance, rtol=0)
-    run(path, hphi, 3, launcher, env)
+    run(path, hphi, 3, launcher, env, timeout)
     psi = vector(path, words, nsite, ranks)
     energy = np.vdot(psi, h @ psi).real
     residual = np.linalg.norm(h @ psi-energy*psi)/max(1, np.max(abs(expected)))

@@ -245,13 +245,19 @@ int check(struct BindStruct *X){
       comb_sum = dimension;
       break;
     }
+    /* MPI subtraction can wrap an unsigned particle count on empty ranks.
+       Reject these counts before converting to int or using a loop bound. */
+    if (X->Def.Nup > Ns || X->Def.Ndown > Ns) {
+      comb_sum = 0;
+      break;
+    }
     //idim_max
     // calculation of dimension
     // Nup      = u_loc+u_cond
     // Ndown    = d_loc+d_cond
     // NLocSpn  = u_loc+d_loc
     // Ncond    = Nsite-NLocSpn
-    // idim_max = \sum_{u_loc=0}^{u_loc=Nup} 
+    // idim_max = \sum_{u_loc=0}^{min(Nup,NLocSpn)}
     //              Binomial(NLocSpn,u_loc)
     //             *Binomial(NCond,Nup-u_loc)
     //             *Binomial(NCond,Ndown+u_loc-NLocSpn)
@@ -263,7 +269,7 @@ int check(struct BindStruct *X){
     NCond   = X->Def.Nsite-X->Def.NLocSpn;
     NLocSpn = X->Def.NLocSpn;
     comb_sum = 0;
-    for(u_loc=0;u_loc<=X->Def.Nup;u_loc++){
+    for(u_loc=0;u_loc<=Nup && u_loc<=NLocSpn;u_loc++){
       comb_1     = Binomial(NLocSpn,u_loc,comb,Ns);
       comb_2     = Binomial(NCond,Nup-u_loc,comb,Ns);
       comb_3     = Binomial(NCond,Ndown+u_loc-NLocSpn,comb,Ns);

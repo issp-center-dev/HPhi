@@ -91,6 +91,15 @@ jobs:
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^symmetry_fulldiag_(states|correlations|hamiltonian|reuse)$'
 
+      # Keep this in the existing Debug build: optimization can mask the
+      # signed-overflow loop on empty canonical Kondo ranks.
+      - name: Canonical Kondo empty ranks (16 ranks, Debug)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 16
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^kondo_mpi_dimension$'
+
       - name: ELPA three-rank regression tests
         env:
           MPIRUN: mpiexec --oversubscribe -np 3
