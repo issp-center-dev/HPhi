@@ -3514,8 +3514,8 @@ int CheckInterAllHermite_simple
      * Candidates with the partner's indices are visited in increasing row
      * number, as in a plain scan, so the pairs and their order are unchanged:
      * row i is paired with the first matching row j >= i. */
-    order = (unsigned int *) malloc(sizeof(unsigned int) *
-                                    (NInterAllOffDiagonal > 0 ? NInterAllOffDiagonal : 1));
+    order = (unsigned int *) calloc(NInterAllOffDiagonal > 0 ? NInterAllOffDiagonal : 1,
+                                    sizeof(unsigned int));
     if (order == NULL) {
         fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
         return (-1);
@@ -4451,6 +4451,9 @@ static unsigned long InterAllRowHash(const int *key) {
 /// The table has at least twice as many slots as rows, so probing stays short.
 static int InterAllRowIndexInit(struct InterAllRowIndex *index, int capacity) {
   unsigned long size = 16;
+  index->slot = NULL;
+  /* 2 * capacity must fit, and so must the next power of two above it. */
+  if (capacity > 0 && (unsigned long) capacity > (ULONG_MAX >> 2)) return -1;
   while (size < 2UL * (unsigned long) (capacity > 0 ? capacity : 1)) size <<= 1;
   index->slot = (unsigned int *) calloc(size, sizeof(unsigned int));
   index->mask = size - 1;

@@ -94,11 +94,13 @@ for d in ordered shuffled_split; do
 done
 
 python3 - <<'PYEOF'
-import sys
+import math, sys
 def read(p):
     return sorted(float(l.split()[1]) for l in open(p) if l.strip())
 a = read("ordered/output/Eigenvalue.dat")
 b = read("shuffled_split/output/Eigenvalue.dat")
+if not all(math.isfinite(x) for x in a + b):
+    sys.exit("[interall_large_input] non-finite eigenvalue")
 if len(a) != 16 or len(a) != len(b):
     sys.exit("[interall_large_input] %d and %d eigenvalues, expected 16" % (len(a), len(b)))
 d = max(abs(x - y) for x, y in zip(a, b))
