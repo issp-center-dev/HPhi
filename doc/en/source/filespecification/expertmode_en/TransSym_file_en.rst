@@ -351,8 +351,7 @@ the symmetry at every time, and ``Laser`` is rejected. The six correlation forma
 and formats of the raw calculation, also when the Hamiltonian has no pair terms
 (for example, for a TE state that mixes particle numbers). :math:`N`,
 :math:`N^2`, :math:`S_z`, :math:`S_z^2` and the doublon number are computed from
-the state. ``CalcSpec`` is not supported, and raw SpinlessFermionGC still
-cannot use FullDiag.
+the state. ``CalcSpec`` is not supported.
 
 State files use version 2, phase 1 and 30 header words: the model word is 3 or
 8, ``nup``, ``ndown``, ``ne`` and the local-site mask are 0, and the fixed-quantity

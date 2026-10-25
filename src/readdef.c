@@ -1408,14 +1408,6 @@ int ReadDefFileNInt(
     fclose(fp);
   }
 
-  /* TransSym is read after CalcMod. Only the sector-specific dense builder
-     supports spinless FullDiag; the raw makeHam path still does not. */
-  if (X->iCalcType == FullDiag && X->iFlgSymmetryBasis == FALSE &&
-      (X->iCalcModel == SpinlessFermionGC || X->iCalcModel == SpinlessFermion)) {
-    fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
-    return -1;
-  }
-
   /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
      as a distributed column panel rather than the full replicated matrix.
      The raw OutputHam/InputHam need the full replicated matrix, so that

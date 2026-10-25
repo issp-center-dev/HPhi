@@ -65,7 +65,6 @@ extern char *cWarnSolverConflict;
 extern char *cErrScaLAPACK;
 extern char *cErrSpectrumFullDiagSolver;
 extern char *cErrExpecMode;
-extern char *cErrSpinlessFullDiag;
 
 extern char *cErrKW;
 extern char *cErrKW_ShowList;

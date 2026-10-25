@@ -231,10 +231,6 @@ int ValidateNBodyInterAllScope(const struct DefineList *D)
     fprintf(stdoutMPI, "Error: NBodyInterAll does not support tJNConserved with CalcSpec.\n");
     return -1;
   }
-  if (nbody_is_spinless_model(D) == TRUE && D->iCalcType == FullDiag) {
-    fprintf(stdoutMPI, "Error: NBodyInterAll is not yet supported in FullDiag for SpinlessFermion / SpinlessFermionGC.\n");
-    return -1;
-  }
   if (nbody_is_kondo_model(D) == TRUE) {
     unsigned int site;
     for (site = 0; site < D->Nsite; site++) {
@@ -1879,6 +1875,68 @@ int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X)
       int rank_out = 0;
       int sign = 1;
       int ret = apply_nbody_interall_hubbardgc_full(
+        X, term, j - 1, myrank, &local_out, &rank_out, &sign);
+      if (ret == 1) {
+        if (rank_out != myrank) {
+          fprintf(stdoutMPI, "Error: FullDiag NBodyInterAll cannot handle inter-process output.\n");
+          return -1;
+        }
+        AddHamElem(local_out + 1, j, X->Def.ParaNBodyInterAll[term] * sign);
+      }
+    }
+  }
+  return 0;
+}
+
+int AddNBodyInterAllToHamSpinless(struct BindStruct *X)
+{
+  unsigned int p;
+  unsigned long int j;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != SpinlessFermion) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
+    const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
+    for (j = hs_jb; j <= hs_je; j++) {
+      unsigned long int local_out = 0;
+      unsigned long int j_out = 0;
+      int rank_out = 0;
+      int sign = 1;
+      int ret = apply_nbody_interall_spinless_full(
+        X, term, list_1[j], myrank, &local_out, &rank_out, &sign);
+      if (ret == 1) {
+        if (rank_out != myrank) {
+          fprintf(stdoutMPI, "Error: FullDiag NBodyInterAll cannot handle inter-process output.\n");
+          return -1;
+        }
+        if (GetOffComp(list_2_1, list_2_2, local_out,
+                       X->Large.irght, X->Large.ilft, X->Large.ihfbit, &j_out) == TRUE) {
+          AddHamElem(j_out, j, X->Def.ParaNBodyInterAll[term] * sign);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+int AddNBodyInterAllToHamSpinlessGC(struct BindStruct *X)
+{
+  unsigned int p;
+  unsigned long int j;
+  long int hs_jb = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColBegin : 1;
+  long int hs_je = (iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) ? HamColEnd : (long int)X->Check.idim_max;
+  if (X->Def.NNBodyInterAll_OffDiagonal == 0) return 0;
+  if (X->Def.iCalcModel != SpinlessFermionGC) return -1;
+
+  for (p = 0; p < X->Def.NNBodyInterAll_OffDiagonal; p++) {
+    const unsigned int term = X->Def.NBodyInterAll_OffDiagonalIndex[p];
+    for (j = hs_jb; j <= hs_je; j++) {
+      unsigned long int local_out = 0;
+      int rank_out = 0;
+      int sign = 1;
+      int ret = apply_nbody_interall_spinless_full(
         X, term, j - 1, myrank, &local_out, &rank_out, &sign);
       if (ret == 1) {
         if (rank_out != myrank) {

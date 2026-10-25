@@ -204,9 +204,6 @@ Use rules
 *  NBodyInterAll does not support CalcSpec for HubbardNConserved,
    tJNConserved, or KondoNConserved.
 
-*  NBodyInterAll is not supported in FullDiag for
-   SpinlessFermion/SpinlessFermionGC.
-
 .. raw:: latex
 
    \newpage
