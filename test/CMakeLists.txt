@@ -472,6 +472,10 @@ add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
 add_hphi_test_with_srcdir(lanczos_spinless_nbodyg)
 add_hphi_test_with_srcdir(nbody_spinless_validation)
 add_hphi_test_with_srcdir(spinless_interall_diagonal)
+add_hphi_test(interall_large_input)
+# An O(N^2) InterAll reader takes minutes on this input; the indexed one, seconds.
+set_tests_properties(interall_large_input PROPERTIES
+    LABELS "interall;validation" TIMEOUT 120 ENVIRONMENT "OMP_NUM_THREADS=1")
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
