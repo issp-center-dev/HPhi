@@ -7,7 +7,9 @@
 # two-body term on 16 sites, 262,144 rows, twice:
 #
 #  (1) in natural order;
-#  (2) shuffled, with every element split over two repeated rows (524,288 rows).
+#  (2) shuffled, with every element split over two repeated rows (524,288 rows);
+#      a row and its partner are split differently, so they pair up only
+#      after repeated rows are summed.
 #
 # One electron (16 states) keeps the diagonalization cheap. Both must give
 # the same FullDiag spectrum, and the test has a timeout
@@ -80,10 +82,14 @@ def line(r, v):
 
 all_rows = list(rows())
 write_case("ordered", [line(r, v) for r, v in all_rows])
+# A row and its Hermitian partner are split in different proportions, so the
+# pieces only pair up once repeated rows are summed.
 split = []
 for r, v in all_rows:
-    split.append(line(r, 0.25 * v))
-    split.append(line(r, 0.75 * v))
+    partner = (r[6], r[7], r[4], r[5], r[2], r[3], r[0], r[1])
+    f = 0.25 if r < partner else 0.5
+    split.append(line(r, f * v))
+    split.append(line(r, (1 - f) * v))
 rng.shuffle(split)
 write_case("shuffled_split", split)
 PYEOF
