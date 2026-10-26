@@ -852,8 +852,11 @@ int ReadDefFileNInt(
   X->iFlgSzConserved=FALSE;
   X->iFlgSymmetryBasis=FALSE;
   X->NSymTrans=0;
+  X->NSymTransInput=0;
+  X->NSymTransCapacity=0;
   X->iSymMomentumIndex=-1;
   X->iParticleParity=0;
+  X->iSpinFlipParity=0;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   int iReadNup=FALSE;
@@ -985,6 +988,14 @@ int ReadDefFileNInt(
                   return -1;
                 }
                 X->iParticleParity = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "SpinFlipParity") == 0) {
+                if (dtmp != 0.0 && dtmp != 1.0 && dtmp != -1.0) {
+                  fprintf(stdoutMPI, "Error: SpinFlipParity must be 0 (no Px sector), 1 (Px=+1) or -1 (Px=-1).\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->iSpinFlipParity = (int) dtmp;
               }
               else if (CheckWords(ctmp, "Lanczos_max") == 0) {
                 if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
@@ -1597,6 +1608,23 @@ int ReadDefFileNInt(
        (X->iCalcModel != HubbardGC && X->iCalcModel != SpinlessFermionGC))) {
     fprintf(stdoutMPI, "Error: ParticleParity requires TransSym with HubbardGC or SpinlessFermionGC.\n");
     return -1;
+  }
+  /* Px = prod_i sigma^x_i maps Sz to -Sz, so a fixed-Sz Spin sector is
+   * invariant only at Sz=0. Pass an identity TransSym for Px alone. */
+  if (X->iSpinFlipParity != 0) {
+    if (X->iFlgSymmetryBasis != TRUE ||
+        (X->iCalcModel != Spin && X->iCalcModel != SpinGC)) {
+      fprintf(stdoutMPI, "Error: SpinFlipParity requires TransSym with Spin or SpinGC.\n");
+      return -1;
+    }
+    if (X->iCalcModel == Spin && X->Nup != X->Ndown) {
+      fprintf(stdoutMPI, "Error: SpinFlipParity with Spin requires 2Sz=0.\n");
+      return -1;
+    }
+    if (X->NSymTrans > UINT_MAX / 2U) {
+      fprintf(stdoutMPI, "Error: TransSym NQPTrans is too large for SpinFlipParity.\n");
+      return -1;
+    }
   }
 
     /* Check values (Positive)*/

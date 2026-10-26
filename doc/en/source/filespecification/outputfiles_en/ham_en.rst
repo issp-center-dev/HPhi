@@ -134,7 +134,10 @@ with ``TransSym`` (6 sites, momentum :math:`k=1`, :math:`D=3`):
    ``sector_xor``, ``sector_sum`` and ``basis_order``. The values are the
    basis identity of a sector checkpoint; some of them, such as the group and
    sector digests, also appear in the sector manifest of
-   :ref:`Subsec:TransSym`.
+   :ref:`Subsec:TransSym`. A sector with ``SpinFlipParity`` also has the
+   comment line ``% spin_flip_operator=product_sigma_x spin_flip_parity=+1``
+   (or ``-1``) after the ``scalar`` line; readers skip it, and the
+   ``group_digest`` identifies :math:`P_x` and :math:`p`.
 
 *  The dimension line is ``D D nnz`` and each data line is
    ``row column real imag``. Only the one-based lower triangle
