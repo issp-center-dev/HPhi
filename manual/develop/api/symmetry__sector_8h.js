@@ -13,6 +13,7 @@ var symmetry__sector_8h =
     [ "ComputeSymmetrySectorDigest", "symmetry__sector_8h.html#a1cfb83ddd21deabb61a9d37676a87db1", null ],
     [ "GetSymmetryFermionGCFixedFlags", "symmetry__sector_8h.html#a9d86db2fd5a49be6697ca95b63f13b6e", null ],
     [ "SymmetryFullDiagOutputMask", "symmetry__sector_8h.html#a35cc143c39a92b27d555005f4f2e6d29", null ],
+    [ "SymmetryGroupDigestDomain", "symmetry__sector_8h.html#a2d4b8448205842306bfe1bd1f9b95303", null ],
     [ "SymmetryHashInteger", "symmetry__sector_8h.html#a02dbeb4fb1d3f21596c482490e98a40c", null ],
     [ "WriteSymmetryCanonicalTPQSchedule", "symmetry__sector_8h.html#abb43f283a3ecf555d84b6aa95231a050", null ],
     [ "WriteSymmetryFullDiagCompletion", "symmetry__sector_8h.html#a39cdc8b42d0396153ca6ad19169e2911", null ],

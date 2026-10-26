@@ -142,7 +142,11 @@
 <code class="docutils literal notranslate"><span class="pre">fixed_flags</span></code>、 <code class="docutils literal notranslate"><span class="pre">phase</span></code>、 <code class="docutils literal notranslate"><span class="pre">full_dim</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_dim</span></code>、
 <code class="docutils literal notranslate"><span class="pre">group_digest</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_count</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_xor</span></code>、 <code class="docutils literal notranslate"><span class="pre">sector_sum</span></code>、
 <code class="docutils literal notranslate"><span class="pre">basis_order</span></code> 。値はsector checkpointの基底識別と同じです。群とsectorの
-digestなど一部は <a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> のmanifestにも記録されます。</p></li>
+digestなど一部は <a class="reference internal" href="../expertmode_ja/TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> のmanifestにも記録されます。
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> を指定したsectorでは、 <code class="docutils literal notranslate"><span class="pre">scalar</span></code> 行の後にコメント行
+<code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">spin_flip_operator=product_sigma_x</span> <span class="pre">spin_flip_parity=+1</span></code> （または <code class="docutils literal notranslate"><span class="pre">-1</span></code> ）も
+書きます。読込ではこの行を読み飛ばし、 <span class="math notranslate nohighlight">\(P_x\)</span> と <span class="math notranslate nohighlight">\(p\)</span> は <code class="docutils literal notranslate"><span class="pre">group_digest</span></code>
+で識別します。</p></li>
 <li><p>次元行は <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">D</span> <span class="pre">nnz</span></code> 、データ行は <code class="docutils literal notranslate"><span class="pre">row</span> <span class="pre">column</span> <span class="pre">real</span> <span class="pre">imag</span></code> です。
 1始まりの下三角（ <span class="math notranslate nohighlight">\({\rm row}\ge{\rm column}\)</span> ）だけを書きます。
 HPhiは列の昇順・列内の行の昇順に、0でない要素だけを有効数字17桁で書きます

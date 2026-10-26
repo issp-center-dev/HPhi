@@ -213,6 +213,9 @@ invariance and conserved quantum numbers. The coefficient tolerance is
 <span class="math notranslate nohighlight">\(10^{-10}\)</span>. For these canonical models, <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>, and anomalous
 terms remain unsupported. SpinGC supports <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> as described below. The raw spinless solver still rejects off-diagonal <code class="docutils literal notranslate"><span class="pre">InterAll</span></code>;
 this extension applies to <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>. Standard-mode generation is unchanged.</p>
+<p>For spin-one-half <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> and <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code>, the global spin
+flip <span class="math notranslate nohighlight">\(P_x=\prod_i\sigma^x_i\)</span> can be added to the group with
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> (<a class="reference internal" href="#subsec-transsymspinflip"><span class="std std-ref">Global spin flip Px (spin one-half, expert mode)</span></a>).</p>
 <p>Correlation functions (<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>,
 <code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>, <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>, and <code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>) are computed in the sector for
 <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>, <code class="docutils literal notranslate"><span class="pre">CG</span></code>, <code class="docutils literal notranslate"><span class="pre">TPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> and, for every
@@ -665,8 +668,9 @@ The manifest has <code class="docutils literal notranslate"><span class="pre">fi
 <p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> and <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> may drive SpinGC using the right-endpoint
 Taylor rule described below. Every used slice is checked before propagation.
 <code class="docutils literal notranslate"><span class="pre">Laser</span></code> is rejected; use invariant on-site <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or spin-product
-<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. General spin, Boost, new Standard-mode
-SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
+<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> entries instead. The global spin flip <span class="math notranslate nohighlight">\(P_x\)</span> is available
+with <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> (<a class="reference internal" href="#subsec-transsymspinflip"><span class="std std-ref">Global spin flip Px (spin one-half, expert mode)</span></a>). General spin, Boost,
+new Standard-mode SpinGC momentum input, other spin-axis rotations, antiunitary
 operations, multidimensional irreducible representations, and spectrum are unsupported
 (Hamiltonian I/O is limited to the FullDiag sector matrix file). <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>, <code class="docutils literal notranslate"><span class="pre">PairHop</span></code>, <code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code> and
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> are not supported in this SpinGC sector path. FullDiag also
@@ -714,6 +718,90 @@ CG example, request <span class="math notranslate nohighlight">\(S_i^z S_j^z\)</
 <span class="math notranslate nohighlight">\(i,j\)</span> (each <span class="math notranslate nohighlight">\(S_i^z=(E_i^{11}-E_i^{00})/2\)</span>).
 This example does not add or require a Standard-mode keyword.</p>
 </section>
+</section>
+<section id="global-spin-flip-px-spin-one-half-expert-mode">
+<span id="subsec-transsymspinflip"></span><h2>Global spin flip Px (spin one-half, expert mode)<a class="headerlink" href="#global-spin-flip-px-spin-one-half-expert-mode" title="Link to this heading">¶</a></h2>
+<p>The global spin flip</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-3">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-3" title="Link to this equation">¶</a></span>\[P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1,\]</div>
+<p>exchanges up and down at every site with amplitude <span class="math notranslate nohighlight">\(+1\)</span>. It keeps
+<span class="math notranslate nohighlight">\(S^x_i\)</span> and reverses <span class="math notranslate nohighlight">\(S^y_i\)</span> and <span class="math notranslate nohighlight">\(S^z_i\)</span>. <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code>
+of the ModPara file selects its eigenvalue <span class="math notranslate nohighlight">\(p=+1\)</span> or <span class="math notranslate nohighlight">\(p=-1\)</span> inside
+the sector of <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>:</p>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-number">Table 4.8 </span><span class="caption-text">Models with <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code></span><a class="headerlink" href="#id6" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> (<code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code>)</p></td>
+<td><p>spin one-half; <span class="math notranslate nohighlight">\(S_z\)</span> is not fixed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code> (<code class="docutils literal notranslate"><span class="pre">CalcModel=1</span></code>)</p></td>
+<td><p>spin one-half with <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> (<span class="math notranslate nohighlight">\(P_x\)</span> maps <span class="math notranslate nohighlight">\(S_z\)</span> to <span class="math notranslate nohighlight">\(-S_z\)</span>)</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">SpinFlipParity=0</span></code> or no entry keeps the previous sector, its files and its
+digests. A nonzero value requires <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>; to use <span class="math notranslate nohighlight">\(P_x\)</span> alone, give a
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> file with only the identity (<code class="docutils literal notranslate"><span class="pre">NQPTrans</span> <span class="pre">1</span></code>, character 1,
+<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">i</span> <span class="pre">i</span> <span class="pre">1</span></code> for every site). Other values, fermion and Kondo models, general
+spin and <code class="docutils literal notranslate"><span class="pre">Spin</span></code> with <span class="math notranslate nohighlight">\(S_z\neq 0\)</span> are rejected. <span class="math notranslate nohighlight">\(P_x\)</span> is a
+different symmetry from <span class="math notranslate nohighlight">\(P_z=\prod_i\sigma^z_i\)</span>, from the fermion
+<code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code> and from time reversal; the <code class="docutils literal notranslate"><span class="pre">Anti</span></code> column of this file is
+not used for it.</p>
+<p>HPhi extends the group <span class="math notranslate nohighlight">\(G\)</span> of the file to <span class="math notranslate nohighlight">\(G\times Z_2\)</span>. The
+operation <span class="math notranslate nohighlight">\((g,f)\)</span> applies <span class="math notranslate nohighlight">\(T_g\)</span> and then <span class="math notranslate nohighlight">\(P_x^f\)</span>, with</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-en-transsym-file-en-4">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-filespecification-expertmode-en-transsym-file-en-4" title="Link to this equation">¶</a></span>\[(g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f,\]</div>
+<p>so the projector is <span class="math notranslate nohighlight">\(\Pi_\chi(1+pP_x)/2\)</span>. The first <span class="math notranslate nohighlight">\(|G|\)</span>
+operations are the file’s ones and the next <span class="math notranslate nohighlight">\(|G|\)</span> are their products
+with <span class="math notranslate nohighlight">\(P_x\)</span>; <code class="docutils literal notranslate"><span class="pre">group_order</span></code> in the manifest and the log is <span class="math notranslate nohighlight">\(2|G|\)</span>.
+Representatives are the smallest words of the <span class="math notranslate nohighlight">\(G\times Z_2\)</span> orbits, with
+positive real coefficients. For each character
+<span class="math notranslate nohighlight">\(D(\chi,+)+D(\chi,-)=D(\chi)\)</span>, but the two dimensions are not equal in
+general: for example, at four sites the Neel words are fixed by translation
+times <span class="math notranslate nohighlight">\(P_x\)</span> and survive only for <span class="math notranslate nohighlight">\((k=0,p=+1)\)</span> and <span class="math notranslate nohighlight">\((k=\pi,p=-1)\)</span>.
+An empty sector stops with <code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">sector</span> <span class="pre">has</span> <span class="pre">zero</span> <span class="pre">basis</span> <span class="pre">dimension</span></code>.</p>
+<p>The whole Hamiltonian must commute with <span class="math notranslate nohighlight">\(P_x\)</span>. The check maps every local
+unit <span class="math notranslate nohighlight">\(E^{st}_i=|s\rangle_i\langle t|\)</span> to <span class="math notranslate nohighlight">\(E^{1-s,1-t}_i\)</span> (the
+coefficient is not conjugated) and compares the combined terms, so single input
+rows need not be invariant. Transverse fields <span class="math notranslate nohighlight">\(h_xS^x\)</span>, <code class="docutils literal notranslate"><span class="pre">Ising</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Exchange</span></code>, real <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> and products such as
+<span class="math notranslate nohighlight">\(S^y_iS^z_j+S^z_iS^y_j\)</span> are allowed; <span class="math notranslate nohighlight">\(h_zS^z\)</span>, <span class="math notranslate nohighlight">\(h_yS^y\)</span>,
+imaginary <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> coefficients and the <code class="docutils literal notranslate"><span class="pre">Spin</span></code> term
+<span class="math notranslate nohighlight">\(i(S^+_iS^-_j-S^-_iS^+_j)\)</span> are not. A violation is reported as
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span> <span class="pre">...</span> <span class="pre">under</span> <span class="pre">op</span></code> <span class="math notranslate nohighlight">\(n\)</span> with
+<span class="math notranslate nohighlight">\(n\geq|G|\)</span>. A transverse field needs <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code>: it does not keep the
+<span class="math notranslate nohighlight">\(S_z\)</span> of a <code class="docutils literal notranslate"><span class="pre">Spin</span></code> sector.</p>
+<p>All six methods are available as for the sectors above, with both basis
+layouts, correlations of all formats, CG/TE vector import and export, FullDiag
+state and Hamiltonian files, and v3 continuation across MPI process counts. In
+a <span class="math notranslate nohighlight">\(P_x\)</span> sector <span class="math notranslate nohighlight">\(\langle S_z\rangle=0\)</span> and the
+energy and Flct files report <code class="docutils literal notranslate"><span class="pre">Sz</span></code> = 0; <span class="math notranslate nohighlight">\(S_z^2\)</span> is evaluated from the
+state. Correlations of operators that change sign under <span class="math notranslate nohighlight">\(P_x\)</span>, such as
+<span class="math notranslate nohighlight">\(S^z_i\)</span> and <span class="math notranslate nohighlight">\(S^y_i\)</span>, vanish, while <span class="math notranslate nohighlight">\(\langle S^x_i\rangle\)</span>
+can be nonzero and <span class="math notranslate nohighlight">\(\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2\)</span>.
+Every <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code>/<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> slice must keep <span class="math notranslate nohighlight">\(P_x\)</span>; a slice with, for
+example, <span class="math notranslate nohighlight">\(h_z(t)\neq 0\)</span> stops the run before propagation. TPQ and cTPQ
+estimate a single <span class="math notranslate nohighlight">\((\chi,p)\)</span> sector, not the full thermal ensemble.
+Transitions between different <span class="math notranslate nohighlight">\(p\)</span> and <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> are not supported.</p>
+<p>State, restart and matrix files keep their formats: <code class="docutils literal notranslate"><span class="pre">Spin</span></code>/<code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> state
+files remain version 1. The group digest becomes
+<code class="docutils literal notranslate"><span class="pre">hphi-group-spinflip-fnv1a64-v1</span></code>, which covers the <span class="math notranslate nohighlight">\(P_x\)</span> flag of each
+operation and <span class="math notranslate nohighlight">\(p\)</span>. Files of the other <span class="math notranslate nohighlight">\(p\)</span>, of another character or
+without <span class="math notranslate nohighlight">\(P_x\)</span> are therefore rejected even when the dimensions agree, and
+files without <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> keep the <code class="docutils literal notranslate"><span class="pre">hphi-group-fnv1a64-v1</span></code> digest. The
+manifest adds <code class="docutils literal notranslate"><span class="pre">spin_flip_operator=product_sigma_x</span></code>,
+<code class="docutils literal notranslate"><span class="pre">spin_flip_parity=+1</span></code> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> and <code class="docutils literal notranslate"><span class="pre">input_group_order</span></code>; the Hamiltonian
+matrix file adds a comment line with the same operator and parity. Standard
+mode does not write <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code>.</p>
 </section>
 <section id="sector-lanczos-basis-layout">
 <h2>Sector Lanczos basis layout<a class="headerlink" href="#sector-lanczos-basis-layout" title="Link to this heading">¶</a></h2>
@@ -1033,7 +1121,10 @@ completion or convergence.</p>
 characters after sorting operations lexicographically by permutation.
 Renumbering operations does not change it. Character components are rounded
 to integer multiples of <span class="math notranslate nohighlight">\(10^{-10}\)</span>; this quantization is not a general
-equivalence test for floating-point inputs near a rounding boundary.</p></li>
+equivalence test for floating-point inputs near a rounding boundary.
+With <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code>, <code class="docutils literal notranslate"><span class="pre">hphi-group-spinflip-fnv1a64-v1</span></code> also hashes the
+<span class="math notranslate nohighlight">\(P_x\)</span> flag of each operation (sorted after the permutation) and
+<span class="math notranslate nohighlight">\(p\)</span>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sector_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-sector-multiset-v1:count:xor:sum</span></code> hashes each
 representative state, orbit size, and stabilizer size with FNV-1a 64 and
 combines the hashes without dependence on entry order or MPI ownership.

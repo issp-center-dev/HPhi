@@ -87,8 +87,9 @@ var searchData=
   ['ispectrumloopexct_84',['iSpectrumLoopExct',['../structDefineList.html#adc11ba7b2a9ff6d545205ff2621dca36',1,'DefineList']]],
   ['ispectrumnumbra_85',['iSpectrumNumBra',['../structDefineList.html#aa9e1e769951b8b9fc84a1d4dc0e95f85',1,'DefineList']]],
   ['ispectrumnumop_86',['iSpectrumNumOp',['../structDefineList.html#a32f4ad0abed9db0ff5946fef5ce910d0',1,'DefineList']]],
-  ['istep_87',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
-  ['isymmomentumindex_88',['iSymMomentumIndex',['../structDefineList.html#ad1cd67975005cbcd124ce0c479cc859d',1,'DefineList']]],
-  ['itr_89',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
-  ['iv_90',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
+  ['ispinflipparity_87',['iSpinFlipParity',['../structDefineList.html#ade6f2232cb1a938ba23971e05dbdc996',1,'DefineList']]],
+  ['istep_88',['istep',['../structDefineList.html#abe80758171b3ffeca7b5fa790e5ede22',1,'DefineList']]],
+  ['isymmomentumindex_89',['iSymMomentumIndex',['../structDefineList.html#ad1cd67975005cbcd124ce0c479cc859d',1,'DefineList']]],
+  ['itr_90',['itr',['../structLargeList.html#a45c95c0c5b81c69a75ceb2dde08127b2',1,'LargeList']]],
+  ['iv_91',['iv',['../structLargeList.html#a43ad4f4969278cf56fe8556bdf2e7a56',1,'LargeList']]]
 ];

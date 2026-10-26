@@ -11,12 +11,13 @@ var searchData=
   ['flags_8',['flags',['../structRestartVectorInfo.html#ad13dfb7902c5b287ec519cfddeba8d9b',1,'RestartVectorInfo']]],
   ['flg_5fgeneral_5fspin_9',['flg_general_spin',['../structTraceCap.html#add664dbae90dffb314c43878dd9d8ab8',1,'TraceCap']]],
   ['flgboost_10',['flgBoost',['../structBoostList.html#a1d8d1333163c827f71ec8bfb6f955703',1,'BoostList']]],
-  ['fnv1a64_11',['fnv1a64',['../structSymmetryBasisDigest.html#a646e03df2b08551cc8d51507314aaf07',1,'SymmetryBasisDigest']]],
-  ['force_5fchunked_12',['force_chunked',['../structSymmetryRepresentativeBatchOptions.html#a4c14755f2350f4c99becc790b1533378',1,'SymmetryRepresentativeBatchOptions::force_chunked'],['../structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045',1,'SymmetryMpiExchangeOptions::force_chunked']]],
-  ['found_13',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
-  ['fp_14',['fp',['../structMatrixReader.html#a3383f62df8cb74fa4b9d66a85333c20b',1,'MatrixReader']]],
-  ['from_5ffile_15',['from_file',['../structSymmetryHamiltonianInfo.html#a329c62432b8f249ea2f0e69525ffd766',1,'SymmetryHamiltonianInfo']]],
-  ['fsgn_16',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
-  ['full_5fdim_17',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime::full_dim'],['../structSymmetryHamiltonianIdentity.html#a149210e504f4b18321c6ae7c4634dd15',1,'SymmetryHamiltonianIdentity::full_dim']]],
-  ['full_5fv1_18',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
+  ['flip_11',['flip',['../structGroupDigestEntry.html#af13d18952aad000a1c6ba1a5a6948da9',1,'GroupDigestEntry::flip'],['../structPolynomial.html#a8fca4b428890630258095d3f927f5be2',1,'Polynomial::flip']]],
+  ['fnv1a64_12',['fnv1a64',['../structSymmetryBasisDigest.html#a646e03df2b08551cc8d51507314aaf07',1,'SymmetryBasisDigest']]],
+  ['force_5fchunked_13',['force_chunked',['../structSymmetryRepresentativeBatchOptions.html#a4c14755f2350f4c99becc790b1533378',1,'SymmetryRepresentativeBatchOptions::force_chunked'],['../structSymmetryMpiExchangeOptions.html#a08e80178fd4eb6f64a1a5e69ea565045',1,'SymmetryMpiExchangeOptions::force_chunked']]],
+  ['found_14',['found',['../structSymmetryCanonicalResult.html#aa7e75257fd8cb616b6a29251276fdc53',1,'SymmetryCanonicalResult']]],
+  ['fp_15',['fp',['../structMatrixReader.html#a3383f62df8cb74fa4b9d66a85333c20b',1,'MatrixReader']]],
+  ['from_5ffile_16',['from_file',['../structSymmetryHamiltonianInfo.html#a329c62432b8f249ea2f0e69525ffd766',1,'SymmetryHamiltonianInfo']]],
+  ['fsgn_17',['fsgn',['../structMPITransferGroup.html#aac762b696ee5a871a0fd3cbb3c281894',1,'MPITransferGroup::Fsgn'],['../structMPIDoubleTransferGroup.html#a2233b555e8dee34064388fae1b4ebd32',1,'MPIDoubleTransferGroup::Fsgn']]],
+  ['full_5fdim_18',['full_dim',['../structSymmetryBasisRuntime.html#a5e56f540af7fc94291c68d8ec61ddcda',1,'SymmetryBasisRuntime::full_dim'],['../structSymmetryHamiltonianIdentity.html#a149210e504f4b18321c6ae7c4634dd15',1,'SymmetryHamiltonianIdentity::full_dim']]],
+  ['full_5fv1_19',['full_v1',['../structLegacyApplyContext.html#af50894866b0e34147f8cb71b82f50f77',1,'LegacyApplyContext']]]
 ];

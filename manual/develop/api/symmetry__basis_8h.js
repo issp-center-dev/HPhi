@@ -20,6 +20,7 @@ var symmetry__basis_8h =
     [ "BuildSymmetryBasis", "symmetry__basis_8h.html#aa4b23a374c23a23ed228057aee5f0953", null ],
     [ "BuildSymmetryBasisForLayout", "symmetry__basis_8h.html#aa2f13d7300cd597bb1986dedaaf52ce1", null ],
     [ "ComputeSymmetryBasisDigest", "symmetry__basis_8h.html#abc7c0ae431b0f2587cd4596948030d36", null ],
+    [ "ExtendSymmetryGroupWithSpinFlip", "symmetry__basis_8h.html#a9738990188db86db6e0a16be0082a731", null ],
     [ "FreeSymmetryBasis", "symmetry__basis_8h.html#a974a6f9fc737d8164c388631556112e3", null ],
     [ "GetOwnedHamiltonianDiagonal", "symmetry__basis_8h.html#a553d48544025749a5b447434c8355b54", null ],
     [ "ReleaseSymmetryBasisRepresentativeDirectoryHeavyStorage", "symmetry__basis_8h.html#a9b2a2ed33c8d3d168825f37f19567ccd", null ],

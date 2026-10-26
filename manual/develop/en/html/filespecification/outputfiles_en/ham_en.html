@@ -148,7 +148,10 @@ order. Integers are decimal; masks and digests have 16 hexadecimal digits:
 <code class="docutils literal notranslate"><span class="pre">sector_xor</span></code>, <code class="docutils literal notranslate"><span class="pre">sector_sum</span></code> and <code class="docutils literal notranslate"><span class="pre">basis_order</span></code>. The values are the
 basis identity of a sector checkpoint; some of them, such as the group and
 sector digests, also appear in the sector manifest of
-<a class="reference internal" href="../expertmode_en/TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>.</p></li>
+<a class="reference internal" href="../expertmode_en/TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a>. A sector with <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> also has the
+comment line <code class="docutils literal notranslate"><span class="pre">%</span> <span class="pre">spin_flip_operator=product_sigma_x</span> <span class="pre">spin_flip_parity=+1</span></code>
+(or <code class="docutils literal notranslate"><span class="pre">-1</span></code>) after the <code class="docutils literal notranslate"><span class="pre">scalar</span></code> line; readers skip it, and the
+<code class="docutils literal notranslate"><span class="pre">group_digest</span></code> identifies <span class="math notranslate nohighlight">\(P_x\)</span> and <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
 <li><p>The dimension line is <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">D</span> <span class="pre">nnz</span></code> and each data line is
 <code class="docutils literal notranslate"><span class="pre">row</span> <span class="pre">column</span> <span class="pre">real</span> <span class="pre">imag</span></code>. Only the one-based lower triangle
 (<span class="math notranslate nohighlight">\({\rm row}\ge{\rm column}\)</span>) is written. HPhi writes the nonzero

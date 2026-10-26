@@ -52,7 +52,7 @@ var symmetry__hamiltonian__io_8c =
     [ "unreadable_line", "symmetry__hamiltonian__io_8c.html#ab2cbcfc7dec5081a9ee1369981812836", null ],
     [ "validate_storage", "symmetry__hamiltonian__io_8c.html#a9f13c2b0ec7bf3c7727b1dafde69eee7", null ],
     [ "write_column", "symmetry__hamiltonian__io_8c.html#a6f226c173e8d1b359fa6661d77a3d6fe", null ],
-    [ "write_matrix_header", "symmetry__hamiltonian__io_8c.html#a32c47e0a9818e2fdf700620e747e9879", null ],
+    [ "write_matrix_header", "symmetry__hamiltonian__io_8c.html#a29ea2759bfd902e04eb5d61c465f56f6", null ],
     [ "matrix_models", "symmetry__hamiltonian__io_8c.html#a2e8dd22d14b91873d746b621ed3ae966", null ],
     [ "model", "symmetry__hamiltonian__io_8c.html#a027a1f1731d22465c926ce57be2364c3", null ],
     [ "name", "symmetry__hamiltonian__io_8c.html#a8f8f80d37794cde9472343e4487ba3eb", null ],

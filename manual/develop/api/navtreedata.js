@@ -153,13 +153,13 @@ var NAVTREEINDEX =
 "output_8c_source.html",
 "restart__checkpoint_8c.html#ae3d7000d8a78b66784ad30813f746f75",
 "structCorrelationContext.html#a602947b261b961ca37a55c75e84be7ef",
-"structExcitationOperatorSet.html#ad7602344575738d5206a028ad5a09c34",
-"structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f",
-"structSymmetryMpiExchangeMemoryBudget.html",
-"symmetry__basis_8c.html#a5b824ae8652e0560ecd32683d1e4c02a",
-"symmetry__distribution_8c.html#a103387f76bde91c9a43cf7c9ef376a56",
-"symmetry__mpi__exchange_8c.html#a36f3a230f4a9419925d9c32695541a83",
-"sz_8h.html#a93cc15b67e42f1f9452550ee66c2b3e5"
+"structExcitationOperatorSet.html#a22497aeef9b925bf2ecad9918f86fed3",
+"structSymmetryBasisDigest.html#af6187e4797f686b240678e0d2ff75f15",
+"structSymmetryMethodCapability.html#afec9c95354d77bdbaf5ec952d64452ec",
+"symmetry__basis_8c.html#a217f35077b6f19c04e45edb2f4aaacc7",
+"symmetry__directory_8h.html#ab374c640c4d48b22cf92a9f647949d34",
+"symmetry__memory__policy_8h.html#ab987015217abea38ec446a31e0cac44a",
+"sz_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

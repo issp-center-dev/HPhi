@@ -1,5 +1,11 @@
 var NAVTREEINDEX14 =
 {
+"structSymmetryBasisDigest.html#af6187e4797f686b240678e0d2ff75f15":[9,0,48,3],
+"structSymmetryBasisDigest.html#afd93a20171057070107d3e6bcd62a6f6":[9,0,48,0],
+"structSymmetryBasisDistributionStats.html":[9,0,49],
+"structSymmetryBasisDistributionStats.html#a03b776f951430681dbcf7a821e7f67c7":[9,0,49,29],
+"structSymmetryBasisDistributionStats.html#a0c4abe35838c32be49ab115467336fec":[9,0,49,5],
+"structSymmetryBasisDistributionStats.html#a103846d769bc765a9b28712e29f15a50":[9,0,49,11],
 "structSymmetryBasisDistributionStats.html#a198baf8ea153d71670a4d82e4090e24f":[9,0,49,25],
 "structSymmetryBasisDistributionStats.html#a1a9644ccc03a5c5c15bca050801e58eb":[9,0,49,8],
 "structSymmetryBasisDistributionStats.html#a1abbaa9dedda180d1ebac369978d9417":[9,0,49,21],
@@ -243,11 +249,5 @@ var NAVTREEINDEX14 =
 "structSymmetryMethodCapability.html#a9a30df5d30b01472f859f7ecef30ba50":[9,0,71,2],
 "structSymmetryMethodCapability.html#aae50ef9bf4a909fc8165020ff3c05443":[9,0,71,3],
 "structSymmetryMethodCapability.html#ae4c6c20f7287c20daf6bb5a63c7c0ec8":[9,0,71,0],
-"structSymmetryMethodCapability.html#ae5ba6563c744f59d2afc874fba4ea6bc":[9,0,71,8],
-"structSymmetryMethodCapability.html#afec9c95354d77bdbaf5ec952d64452ec":[9,0,71,6],
-"structSymmetryMpiExchangeLayout.html":[9,0,72],
-"structSymmetryMpiExchangeLayout.html#a6a65b0d140d5655feb30934c681c1a6d":[9,0,72,0],
-"structSymmetryMpiExchangeLayout.html#ac9da3afb58321b0f9f3605abf05e2af2":[9,0,72,2],
-"structSymmetryMpiExchangeLayout.html#ad4528f4d438f945a2904aa8077fb7dff":[9,0,72,1],
-"structSymmetryMpiExchangeLayout.html#adb7d8ae7a18c043d992366ca2d79f614":[9,0,72,3]
+"structSymmetryMethodCapability.html#ae5ba6563c744f59d2afc874fba4ea6bc":[9,0,71,8]
 };

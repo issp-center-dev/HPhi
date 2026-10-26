@@ -209,6 +209,9 @@ MPIプロセス数でも実行できます。</p></li>
 SpinGCは下記のとおり <code class="docutils literal notranslate"><span class="pre">PairLift</span></code> に対応します。
 spinlessのraw solverでは非対角 <code class="docutils literal notranslate"><span class="pre">InterAll</span></code> は引き続き非対応で、今回の拡張は
 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> に適用されます。Standard modeの入力生成は変更していません。</p>
+<p>スピン1/2の <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> と <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> の <code class="docutils literal notranslate"><span class="pre">Spin</span></code> では、 <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> で
+全スピン反転 <span class="math notranslate nohighlight">\(P_x=\prod_i\sigma^x_i\)</span> を群に加えられます
+（<a class="reference internal" href="#subsec-transsymspinflip"><span class="std std-ref">全スピン反転Px（スピン1/2、expert mode）</span></a>）。</p>
 <p>相関関数（<code class="docutils literal notranslate"><span class="pre">OneBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">TwoBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">ThreeBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">FourBodyG</span></code>、
 <code class="docutils literal notranslate"><span class="pre">SixBodyG</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyG</span></code>）は <code class="docutils literal notranslate"><span class="pre">Lanczos</span></code>、<code class="docutils literal notranslate"><span class="pre">CG</span></code>、<code class="docutils literal notranslate"><span class="pre">TPQ</span></code>、<code class="docutils literal notranslate"><span class="pre">cTPQ</span></code>、
 <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> と、全固有状態についての <code class="docutils literal notranslate"><span class="pre">FullDiag</span></code> でsector内計算されます。
@@ -622,8 +625,9 @@ Hamiltonian fingerprintは解析済みPairLift行を含む
 <p>SpinGCは <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の駆動に対応し、下記の右端Taylor規約を使います。
 使用する全時刻の入力を伝播前に検査します。<code class="docutils literal notranslate"><span class="pre">Laser</span></code> は拒否されます。
 代わりに、群不変なサイト内 <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> またはスピン積の <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を指定してください。
-general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrumは対象外です
+全スピン反転 <span class="math notranslate nohighlight">\(P_x\)</span> は <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> で使えます（<a class="reference internal" href="#subsec-transsymspinflip"><span class="std std-ref">全スピン反転Px（スピン1/2、expert mode）</span></a>）。
+general spin、Boost、新しいStandard-modeのSpinGC運動量入力、その他のスピン軸回転、
+反ユニタリ操作、多次元既約表現、spectrumは対象外です
 （Hamiltonian入出力はFullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では <code class="docutils literal notranslate"><span class="pre">CoulombIntra</span></code>、<code class="docutils literal notranslate"><span class="pre">PairHop</span></code>、<code class="docutils literal notranslate"><span class="pre">NBodyInterAll</span></code>、
 <code class="docutils literal notranslate"><span class="pre">AnomalousG</span></code> も非対応です。FullDiagはベクトル入力、distributed基底metadata、
@@ -936,7 +940,9 @@ gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
 <li><p><code class="docutils literal notranslate"><span class="pre">group_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-group-fnv1a64-v1</span></code> は、操作をサイト置換の辞書順に
 並べて置換と指標を hash 化します。操作番号の変更には依存しません。
 指標の各成分は <span class="math notranslate nohighlight">\(10^{-10}\)</span> 刻みに丸めます。この量子化は、丸め境界付近の
-浮動小数点入力を一般的に同値判定するものではありません。</p></li>
+浮動小数点入力を一般的に同値判定するものではありません。
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> を指定した場合の <code class="docutils literal notranslate"><span class="pre">hphi-group-spinflip-fnv1a64-v1</span></code> は、
+各操作の <span class="math notranslate nohighlight">\(P_x\)</span> の有無（置換の次の並べ替えキー）と <span class="math notranslate nohighlight">\(p\)</span> も hash 化します。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sector_digest</span></code>: <code class="docutils literal notranslate"><span class="pre">hphi-sector-multiset-v1:count:xor:sum</span></code> は、各基底の
 代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
 MPI 分割によらず集約します。整数は固定幅 little-endian、和は <span class="math notranslate nohighlight">\(2^{64}\)</span> を
@@ -953,6 +959,85 @@ version 2ではサイト内ポテンシャル、pair hopping、分離済みの�
 順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
 従来の計算結果と <code class="docutils literal notranslate"><span class="pre">CalcTimerRankStats.dat</span></code> の形式は変更しません。</p>
 </section>
+</section>
+<section id="px-1-2expert-mode">
+<span id="subsec-transsymspinflip"></span><h1>全スピン反転Px（スピン1/2、expert mode）<a class="headerlink" href="#px-1-2expert-mode" title="Link to this heading">¶</a></h1>
+<p>全スピン反転</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-3">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-3" title="Link to this equation">¶</a></span>\[P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1\]</div>
+<p>は、全サイトの上向きと下向きを振幅 <span class="math notranslate nohighlight">\(+1\)</span> で交換します。 <span class="math notranslate nohighlight">\(S^x_i\)</span> を保ち、
+<span class="math notranslate nohighlight">\(S^y_i\)</span> と <span class="math notranslate nohighlight">\(S^z_i\)</span> の符号を反転します。ModParaファイルの
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> で、 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> のセクター内で固有値 <span class="math notranslate nohighlight">\(p=+1\)</span> または
+<span class="math notranslate nohighlight">\(p=-1\)</span> を選びます。</p>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-number">表 4.8 </span><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> を使える模型</span><a class="headerlink" href="#id13" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>模型</p></th>
+<th class="head"><p>条件</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> （<code class="docutils literal notranslate"><span class="pre">CalcModel=4</span></code>）</p></td>
+<td><p>スピン1/2。 <span class="math notranslate nohighlight">\(S_z\)</span> は固定しません</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Spin</span></code> （<code class="docutils literal notranslate"><span class="pre">CalcModel=1</span></code>）</p></td>
+<td><p>スピン1/2で <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> （<span class="math notranslate nohighlight">\(P_x\)</span> は <span class="math notranslate nohighlight">\(S_z\)</span> を <span class="math notranslate nohighlight">\(-S_z\)</span> に写します）</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">SpinFlipParity=0</span></code> または指定なしでは、従来のセクター、ファイル、digestを
+そのまま使います。0以外の値には <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> が必要です。 <span class="math notranslate nohighlight">\(P_x\)</span> だけを
+使う場合は、恒等操作だけの <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> ファイル（ <code class="docutils literal notranslate"><span class="pre">NQPTrans</span> <span class="pre">1</span></code>、指標1、
+全サイトについて <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">i</span> <span class="pre">i</span> <span class="pre">1</span></code>）を指定してください。それ以外の値、フェルミオン模型と
+Kondo模型、general spin、 <span class="math notranslate nohighlight">\(S_z\neq 0\)</span> の <code class="docutils literal notranslate"><span class="pre">Spin</span></code> は拒否します。
+<span class="math notranslate nohighlight">\(P_x\)</span> は <span class="math notranslate nohighlight">\(P_z=\prod_i\sigma^z_i\)</span>、フェルミオンの <code class="docutils literal notranslate"><span class="pre">ParticleParity</span></code>、
+時間反転とは別の対称性です。このファイルの <code class="docutils literal notranslate"><span class="pre">Anti</span></code> 列は使いません。</p>
+<p>HPhiはファイルの群 <span class="math notranslate nohighlight">\(G\)</span> を <span class="math notranslate nohighlight">\(G\times Z_2\)</span> に拡張します。操作
+<span class="math notranslate nohighlight">\((g,f)\)</span> は <span class="math notranslate nohighlight">\(T_g\)</span> の後に <span class="math notranslate nohighlight">\(P_x^f\)</span> を作用させ、</p>
+<div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-transsym-file-ja-4">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-filespecification-expertmode-ja-transsym-file-ja-4" title="Link to this equation">¶</a></span>\[(g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f\]</div>
+<p>とします。射影演算子は <span class="math notranslate nohighlight">\(\Pi_\chi(1+pP_x)/2\)</span> です。最初の <span class="math notranslate nohighlight">\(|G|\)</span> 個の
+操作はファイルの操作、次の <span class="math notranslate nohighlight">\(|G|\)</span> 個はそれらと <span class="math notranslate nohighlight">\(P_x\)</span> の積です。manifestと
+ログの <code class="docutils literal notranslate"><span class="pre">group_order</span></code> は <span class="math notranslate nohighlight">\(2|G|\)</span> です。代表状態は <span class="math notranslate nohighlight">\(G\times Z_2\)</span> 軌道の
+最小のbit列で、係数は正の実数です。各指標で
+<span class="math notranslate nohighlight">\(D(\chi,+)+D(\chi,-)=D(\chi)\)</span> ですが、2つの次元は一般に等しくありません。
+例えば4サイトでは、Neel状態は並進と <span class="math notranslate nohighlight">\(P_x\)</span> の積で不変なため、
+<span class="math notranslate nohighlight">\((k=0,p=+1)\)</span> と <span class="math notranslate nohighlight">\((k=\pi,p=-1)\)</span> にだけ現れます。空のセクターは
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">sector</span> <span class="pre">has</span> <span class="pre">zero</span> <span class="pre">basis</span> <span class="pre">dimension</span></code> で終了します。</p>
+<p>ハミルトニアン全体が <span class="math notranslate nohighlight">\(P_x\)</span> と可換でなければなりません。検査では各局所単位
+<span class="math notranslate nohighlight">\(E^{st}_i=|s\rangle_i\langle t|\)</span> を <span class="math notranslate nohighlight">\(E^{1-s,1-t}_i\)</span> に写し（係数は
+複素共役しません）、集約した項を比較します。入力の各行が個別に不変である必要は
+ありません。横磁場 <span class="math notranslate nohighlight">\(h_xS^x\)</span>、 <code class="docutils literal notranslate"><span class="pre">Ising</span></code>、 <code class="docutils literal notranslate"><span class="pre">Exchange</span></code>、実数の <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、
+<span class="math notranslate nohighlight">\(S^y_iS^z_j+S^z_iS^y_j\)</span> のような積は使えます。 <span class="math notranslate nohighlight">\(h_zS^z\)</span>、
+<span class="math notranslate nohighlight">\(h_yS^y\)</span>、虚数係数の <code class="docutils literal notranslate"><span class="pre">PairLift</span></code>、 <code class="docutils literal notranslate"><span class="pre">Spin</span></code> の
+<span class="math notranslate nohighlight">\(i(S^+_iS^-_j-S^-_iS^+_j)\)</span> は使えません。違反は
+<code class="docutils literal notranslate"><span class="pre">TransSym</span> <span class="pre">Hamiltonian</span> <span class="pre">invariance</span> <span class="pre">failed</span> <span class="pre">...</span> <span class="pre">under</span> <span class="pre">op</span></code> <span class="math notranslate nohighlight">\(n\)</span>
+（<span class="math notranslate nohighlight">\(n\geq|G|\)</span>）で報告します。横磁場には <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> が必要です。
+<code class="docutils literal notranslate"><span class="pre">Spin</span></code> セクターの <span class="math notranslate nohighlight">\(S_z\)</span> を保たないためです。</p>
+<p>上記のセクターと同様に6つの計算手法、両basis layout、全形式の相関関数、CG/TEの
+ベクトル入出力、FullDiagの状態・Hamiltonianファイル、MPI process数を変更した
+v3継続に対応します。 <span class="math notranslate nohighlight">\(P_x\)</span> セクターでは <span class="math notranslate nohighlight">\(\langle S_z\rangle=0\)</span> で、
+エネルギーとFlctのファイルの <code class="docutils literal notranslate"><span class="pre">Sz</span></code> は0です。 <span class="math notranslate nohighlight">\(S_z^2\)</span> は状態から計算します。
+<span class="math notranslate nohighlight">\(S^z_i\)</span> や <span class="math notranslate nohighlight">\(S^y_i\)</span> のように <span class="math notranslate nohighlight">\(P_x\)</span> で符号が変わる演算子の相関は0、
+<span class="math notranslate nohighlight">\(\langle S^x_i\rangle\)</span> は0とは限らず、
+<span class="math notranslate nohighlight">\(\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2\)</span> です。
+<code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> の各時刻の入力も <span class="math notranslate nohighlight">\(P_x\)</span> を保つ必要があり、例えば
+<span class="math notranslate nohighlight">\(h_z(t)\neq 0\)</span> の時刻があれば伝播の前に終了します。TPQとcTPQは単一の
+<span class="math notranslate nohighlight">\((\chi,p)\)</span> セクターの推定で、全体の熱平均ではありません。異なる <span class="math notranslate nohighlight">\(p\)</span>
+の間の遷移と <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> は非対応です。</p>
+<p>状態、restart、行列のファイル形式は変更しません。 <code class="docutils literal notranslate"><span class="pre">Spin</span></code> / <code class="docutils literal notranslate"><span class="pre">SpinGC</span></code> の状態
+ファイルはversion 1のままです。group digestは <code class="docutils literal notranslate"><span class="pre">hphi-group-spinflip-fnv1a64-v1</span></code>
+になり、各操作の <span class="math notranslate nohighlight">\(P_x\)</span> の有無と <span class="math notranslate nohighlight">\(p\)</span> を含みます。このため他の <span class="math notranslate nohighlight">\(p\)</span>、
+他の指標、 <span class="math notranslate nohighlight">\(P_x\)</span> なしのファイルは、次元が一致しても拒否します。
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> なしのファイルは <code class="docutils literal notranslate"><span class="pre">hphi-group-fnv1a64-v1</span></code> のdigestのままです。
+manifestには <code class="docutils literal notranslate"><span class="pre">spin_flip_operator=product_sigma_x</span></code>、 <code class="docutils literal notranslate"><span class="pre">spin_flip_parity=+1</span></code>
+または <code class="docutils literal notranslate"><span class="pre">-1</span></code>、 <code class="docutils literal notranslate"><span class="pre">input_group_order</span></code> を追加し、Hamiltonian行列ファイルには同じ
+演算子とparityのコメント行を追加します。Standard modeは <code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> を
+出力しません。</p>
 </section>
 
 

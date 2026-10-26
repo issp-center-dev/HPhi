@@ -17,6 +17,8 @@ var symmetry__terms_8c =
     [ "IsSymmetrySpinfulFermionModel", "symmetry__terms_8c.html#a58e8361921f0cb7b44c4c2cc396e7adf", null ],
     [ "IsSymmetrySpinlessFermionModel", "symmetry__terms_8c.html#a8120d3a77e071cb8999be8466344d73c", null ],
     [ "IsSymmetryTJModel", "symmetry__terms_8c.html#a3028229944aa796ffe015298d3b1f94c", null ],
+    [ "SymmetryOperationFlipsSpins", "symmetry__terms_8c.html#a9307d84e6d9c65bcd9adad096db009d5", null ],
     [ "SymmetryUsesExtendedTerms", "symmetry__terms_8c.html#a545cd05495b1ee6860e72a1afb95a599", null ],
+    [ "SymmetryUsesSpinFlip", "symmetry__terms_8c.html#afde30b6b581c37e32894d8f19af0721d", null ],
     [ "ValidateSymmetryTerms", "symmetry__terms_8c.html#a080e0a545c06190375a7d65473e94023", null ]
 ];

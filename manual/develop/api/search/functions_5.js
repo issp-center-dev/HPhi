@@ -22,7 +22,7 @@ var searchData=
   ['find_5fbasis_5findex_5fby_5frep_19',['find_basis_index_by_rep',['../symmetry__basis_8c.html#ac4de6c5a03e9c8263f4d2820eb1e5834',1,'symmetry_basis.c']]],
   ['find_5fghost_20',['find_ghost',['../symmetry__correlation_8c.html#a8c48f2772356bb952312caa976b9e932',1,'symmetry_correlation.c']]],
   ['find_5fghost_5fposition_21',['find_ghost_position',['../symmetry__matvec__plan_8c.html#ad1ea0ec53d23edec435d574b07ea8d5a',1,'symmetry_matvec_plan.c']]],
-  ['find_5fperm_22',['find_perm',['../symmetry__basis_8c.html#af3e492178ce909774ca78511ce91f012',1,'symmetry_basis.c']]],
+  ['find_5foperation_22',['find_operation',['../symmetry__basis_8c.html#ae6b437c1b5847c43c11291d43cb98ebf',1,'symmetry_basis.c']]],
   ['find_5frepresentative_5fstate_23',['find_representative_state',['../symmetry__basis_8c.html#ab61d3cce9d903ee5d2ff7576d99a98a6',1,'symmetry_basis.c']]],
   ['find_5fresolved_5frequest_24',['find_resolved_request',['../symmetry__matvec__plan_8c.html#a6742de8a3ba2393b04375774d16f5de0',1,'symmetry_matvec_plan.c']]],
   ['find_5fsite_25',['find_site',['../nbody__correlation_8c.html#aea5776ccdfaaced857139e29f927c50a',1,'find_site(const int *sites, unsigned int n, int site):&#160;nbody_correlation.c'],['../nbody__interall_8c.html#aea5776ccdfaaced857139e29f927c50a',1,'find_site(const int *sites, unsigned int n, int site):&#160;nbody_interall.c']]],

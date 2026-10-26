@@ -215,6 +215,10 @@ Use rules
    terms remain unsupported. SpinGC supports ``PairLift`` as described below. The raw spinless solver still rejects off-diagonal ``InterAll``;
    this extension applies to ``TransSym``. Standard-mode generation is unchanged.
 
+   For spin-one-half ``SpinGC`` and ``Spin`` with ``2Sz=0``, the global spin
+   flip :math:`P_x=\prod_i\sigma^x_i` can be added to the group with
+   ``SpinFlipParity`` (:ref:`Subsec:TransSymSpinFlip`).
+
    Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
    ``FourBodyG``, ``SixBodyG``, and ``NBodyG``) are computed in the sector for
    ``Lanczos``, ``CG``, ``TPQ``, ``cTPQ``, ``TimeEvolution`` and, for every
@@ -637,8 +641,9 @@ The manifest has ``fixed_quantities=none`` and ``full_dim=2^Nsite``.
 ``TEOneBody`` and ``TETwoBody`` may drive SpinGC using the right-endpoint
 Taylor rule described below. Every used slice is checked before propagation.
 ``Laser`` is rejected; use invariant on-site ``TEOneBody`` or spin-product
-``TETwoBody`` entries instead. General spin, Boost, new Standard-mode
-SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
+``TETwoBody`` entries instead. The global spin flip :math:`P_x` is available
+with ``SpinFlipParity`` (:ref:`Subsec:TransSymSpinFlip`). General spin, Boost,
+new Standard-mode SpinGC momentum input, other spin-axis rotations, antiunitary
 operations, multidimensional irreducible representations, and spectrum are unsupported
 (Hamiltonian I/O is limited to the FullDiag sector matrix file). ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
 ``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
@@ -689,6 +694,95 @@ Run ``HPhi -e sym.def`` (or ``mpiexec -np 4 HPhi -e sym.def``) with
 CG example, request :math:`S_i^z S_j^z` via ``TwoBodyG`` and sum over all
 :math:`i,j` (each :math:`S_i^z=(E_i^{11}-E_i^{00})/2`).
 This example does not add or require a Standard-mode keyword.
+
+.. _Subsec:TransSymSpinFlip:
+
+Global spin flip Px (spin one-half, expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The global spin flip
+
+.. math::
+
+   P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1,
+
+exchanges up and down at every site with amplitude :math:`+1`. It keeps
+:math:`S^x_i` and reverses :math:`S^y_i` and :math:`S^z_i`. ``SpinFlipParity``
+of the ModPara file selects its eigenvalue :math:`p=+1` or :math:`p=-1` inside
+the sector of ``TransSym``:
+
+.. list-table:: Models with ``SpinFlipParity``
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Model
+     - Condition
+   * - ``SpinGC`` (``CalcModel=4``)
+     - spin one-half; :math:`S_z` is not fixed
+   * - ``Spin`` (``CalcModel=1``)
+     - spin one-half with ``2Sz=0`` (:math:`P_x` maps :math:`S_z` to :math:`-S_z`)
+
+``SpinFlipParity=0`` or no entry keeps the previous sector, its files and its
+digests. A nonzero value requires ``TransSym``; to use :math:`P_x` alone, give a
+``TransSym`` file with only the identity (``NQPTrans 1``, character 1,
+``0 i i 1`` for every site). Other values, fermion and Kondo models, general
+spin and ``Spin`` with :math:`S_z\neq 0` are rejected. :math:`P_x` is a
+different symmetry from :math:`P_z=\prod_i\sigma^z_i`, from the fermion
+``ParticleParity`` and from time reversal; the ``Anti`` column of this file is
+not used for it.
+
+HPhi extends the group :math:`G` of the file to :math:`G\times Z_2`. The
+operation :math:`(g,f)` applies :math:`T_g` and then :math:`P_x^f`, with
+
+.. math::
+
+   (g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f,
+
+so the projector is :math:`\Pi_\chi(1+pP_x)/2`. The first :math:`|G|`
+operations are the file's ones and the next :math:`|G|` are their products
+with :math:`P_x`; ``group_order`` in the manifest and the log is :math:`2|G|`.
+Representatives are the smallest words of the :math:`G\times Z_2` orbits, with
+positive real coefficients. For each character
+:math:`D(\chi,+)+D(\chi,-)=D(\chi)`, but the two dimensions are not equal in
+general: for example, at four sites the Neel words are fixed by translation
+times :math:`P_x` and survive only for :math:`(k=0,p=+1)` and :math:`(k=\pi,p=-1)`.
+An empty sector stops with ``TransSym sector has zero basis dimension``.
+
+The whole Hamiltonian must commute with :math:`P_x`. The check maps every local
+unit :math:`E^{st}_i=|s\rangle_i\langle t|` to :math:`E^{1-s,1-t}_i` (the
+coefficient is not conjugated) and compares the combined terms, so single input
+rows need not be invariant. Transverse fields :math:`h_xS^x`, ``Ising``,
+``Exchange``, real ``PairLift`` and products such as
+:math:`S^y_iS^z_j+S^z_iS^y_j` are allowed; :math:`h_zS^z`, :math:`h_yS^y`,
+imaginary ``PairLift`` coefficients and the ``Spin`` term
+:math:`i(S^+_iS^-_j-S^-_iS^+_j)` are not. A violation is reported as
+``TransSym Hamiltonian invariance failed ... under op`` :math:`n` with
+:math:`n\geq|G|`. A transverse field needs ``SpinGC``: it does not keep the
+:math:`S_z` of a ``Spin`` sector.
+
+All six methods are available as for the sectors above, with both basis
+layouts, correlations of all formats, CG/TE vector import and export, FullDiag
+state and Hamiltonian files, and v3 continuation across MPI process counts. In
+a :math:`P_x` sector :math:`\langle S_z\rangle=0` and the
+energy and Flct files report ``Sz`` = 0; :math:`S_z^2` is evaluated from the
+state. Correlations of operators that change sign under :math:`P_x`, such as
+:math:`S^z_i` and :math:`S^y_i`, vanish, while :math:`\langle S^x_i\rangle`
+can be nonzero and :math:`\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2`.
+Every ``TEOneBody``/``TETwoBody`` slice must keep :math:`P_x`; a slice with, for
+example, :math:`h_z(t)\neq 0` stops the run before propagation. TPQ and cTPQ
+estimate a single :math:`(\chi,p)` sector, not the full thermal ensemble.
+Transitions between different :math:`p` and ``CalcSpec`` are not supported.
+
+State, restart and matrix files keep their formats: ``Spin``/``SpinGC`` state
+files remain version 1. The group digest becomes
+``hphi-group-spinflip-fnv1a64-v1``, which covers the :math:`P_x` flag of each
+operation and :math:`p`. Files of the other :math:`p`, of another character or
+without :math:`P_x` are therefore rejected even when the dimensions agree, and
+files without ``SpinFlipParity`` keep the ``hphi-group-fnv1a64-v1`` digest. The
+manifest adds ``spin_flip_operator=product_sigma_x``,
+``spin_flip_parity=+1`` or ``-1`` and ``input_group_order``; the Hamiltonian
+matrix file adds a comment line with the same operator and parity. Standard
+mode does not write ``SpinFlipParity``.
 
 Sector Lanczos basis layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1043,6 +1137,9 @@ Three versioned fingerprints are included:
   Renumbering operations does not change it. Character components are rounded
   to integer multiples of :math:`10^{-10}`; this quantization is not a general
   equivalence test for floating-point inputs near a rounding boundary.
+  With ``SpinFlipParity``, ``hphi-group-spinflip-fnv1a64-v1`` also hashes the
+  :math:`P_x` flag of each operation (sorted after the permutation) and
+  :math:`p`.
 * ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` hashes each
   representative state, orbit size, and stabilizer size with FNV-1a 64 and
   combines the hashes without dependence on entry order or MPI ownership.

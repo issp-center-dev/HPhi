@@ -158,6 +158,15 @@ single-excitation off-diagonal (bra-ket) dynamical Green’s function for
 (1) or odd <span class="math notranslate nohighlight">\(N\)</span> (-1). Other values, and a nonzero value without
 <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> or with another model, are rejected.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code></p>
+<p><strong>Type :</strong> Int (0, 1 or -1)</p>
+<p><strong>Description :</strong> For a spin-one-half SpinGC sector, or a Spin sector with
+<code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> (<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>), selects the eigenvalue <span class="math notranslate nohighlight">\(p=+1\)</span> (1) or
+<span class="math notranslate nohighlight">\(p=-1\)</span> (-1) of the global spin flip
+<span class="math notranslate nohighlight">\(P_x=\prod_i\sigma^x_i\)</span>; 0 (default) does not use <span class="math notranslate nohighlight">\(P_x\)</span>.
+Other values, and a nonzero value without <code class="docutils literal notranslate"><span class="pre">TransSym</span></code>, with another model
+or with <span class="math notranslate nohighlight">\(S_z\neq 0\)</span>, are rejected. See <a class="reference internal" href="TransSym_file_en.html#subsec-transsymspinflip"><span class="std std-ref">Global spin flip Px (spin one-half, expert mode)</span></a>.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>Type :</strong> Int</p>
 <p><strong>Description :</strong> An initial vector is specified with this parameter.</p>
@@ -466,7 +475,9 @@ usual meaning. TPQ/cTPQ parameters describe samples within one symmetry
 sector; <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> cannot request eigenvector output in sector cTPQ.
 TE uses positive <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>, a finite nondecreasing time grid, and
 <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code>/<code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code> for observables/checkpoints. See
-<a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a> for magnetization moments, import semantics and examples.</p>
+<a class="reference internal" href="TransSym_file_en.html#subsec-transsym"><span class="std std-ref">TransSym file</span></a> for magnetization moments, import semantics and examples.
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> adds the global spin flip to the sector, also for <code class="docutils literal notranslate"><span class="pre">Spin</span></code>
+with <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> (<a class="reference internal" href="TransSym_file_en.html#subsec-transsymspinflip"><span class="std std-ref">Global spin flip Px (spin one-half, expert mode)</span></a>).</p>
 </section>
 </section>
 

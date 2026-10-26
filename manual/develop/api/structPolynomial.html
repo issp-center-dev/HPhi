@@ -136,6 +136,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:aaf34ae0d7f4a421ee1537f01b0ee2860"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c86ec1643aaf77c549c52e1f18289cb" id="r_a0c86ec1643aaf77c549c52e1f18289cb"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structMonomial.html">Monomial</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPolynomial.html#a0c86ec1643aaf77c549c52e1f18289cb">terms</a></td></tr>
 <tr class="separator:a0c86ec1643aaf77c549c52e1f18289cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fca4b428890630258095d3f927f5be2" id="r_a8fca4b428890630258095d3f927f5be2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPolynomial.html#a8fca4b428890630258095d3f927f5be2">flip</a></td></tr>
+<tr class="separator:a8fca4b428890630258095d3f927f5be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -155,7 +157,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__kondo__terms_8c_source.html#l00161">161</a> of file <a class="el" href="symmetry__kondo__terms_8c_source.html">symmetry_kondo_terms.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00306">append_monomial()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00321">append_monomial()</a>.</p>
 
 </div>
 </div>
@@ -173,7 +175,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__kondo__terms_8c_source.html#l00161">161</a> of file <a class="el" href="symmetry__kondo__terms_8c_source.html">symmetry_kondo_terms.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00306">append_monomial()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00321">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00404">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00422">ValidateSymmetryTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00321">append_monomial()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00336">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00426">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00444">ValidateSymmetryTerms()</a>.</p>
 
 </div>
 </div>
@@ -191,7 +193,25 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__kondo__terms_8c_source.html#l00162">162</a> of file <a class="el" href="symmetry__kondo__terms_8c_source.html">symmetry_kondo_terms.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00321">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00179">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00404">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00422">ValidateSymmetryTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00336">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00179">canonical_term()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00426">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00444">ValidateSymmetryTerms()</a>.</p>
+
+</div>
+</div>
+<a id="a8fca4b428890630258095d3f927f5be2" name="a8fca4b428890630258095d3f927f5be2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fca4b428890630258095d3f927f5be2">&#9670;&#160;</a></span>flip</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Polynomial::flip</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00318">318</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00336">canonical_term()</a>.</p>
 
 </div>
 </div>
@@ -209,7 +229,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__kondo__terms_8c_source.html#l00163">163</a> of file <a class="el" href="symmetry__kondo__terms_8c_source.html">symmetry_kondo_terms.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00321">canonical_term()</a>, and <a class="el" href="symmetry__kondo__terms_8c_source.html#l00179">canonical_term()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__terms_8c_source.html#l00336">canonical_term()</a>, and <a class="el" href="symmetry__kondo__terms_8c_source.html#l00179">canonical_term()</a>.</p>
 
 </div>
 </div>
@@ -227,7 +247,7 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="symmetry__kondo__terms_8c_source.html#l00160">160</a> of file <a class="el" href="symmetry__kondo__terms_8c_source.html">symmetry_kondo_terms.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00306">append_monomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00404">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00422">ValidateSymmetryTerms()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="symmetry__kondo__terms_8c_source.html#l00165">append()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00321">append_monomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00200">collect()</a>, <a class="el" href="symmetry__terms_8c_source.html#l00426">collect_polynomial()</a>, <a class="el" href="symmetry__kondo__terms_8c_source.html#l00219">ValidateSymmetryKondoTerms()</a>, and <a class="el" href="symmetry__terms_8c_source.html#l00444">ValidateSymmetryTerms()</a>.</p>
 
 </div>
 </div>
@@ -243,7 +263,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00300">300</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="symmetry__terms_8c_source.html#l00314">314</a> of file <a class="el" href="symmetry__terms_8c_source.html">symmetry_terms.c</a>.</p>
 
 </div>
 </div>

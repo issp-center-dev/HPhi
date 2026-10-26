@@ -142,6 +142,11 @@ headerのprocess数と一致する必要があります。</p>
 <p><strong>説明 :</strong>
 HubbardGCまたはSpinlessFermionGCの対称性セクター（<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>）で、すべての粒子数（0、既定値）、偶数の<span class="math notranslate nohighlight">\(N\)</span>（1）、奇数の<span class="math notranslate nohighlight">\(N\)</span>（-1）を選びます。それ以外の値と、<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>なしまたは他の模型での0以外の値は拒否します。</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code></p>
+<p><strong>形式 :</strong> int型 (0、1、-1)</p>
+<p><strong>説明 :</strong>
+スピン1/2のSpinGC、または<code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code>のSpinの対称性セクター（<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>）で、全スピン反転<span class="math notranslate nohighlight">\(P_x=\prod_i\sigma^x_i\)</span>の固有値<span class="math notranslate nohighlight">\(p=+1\)</span>（1）または<span class="math notranslate nohighlight">\(p=-1\)</span>（-1）を選びます。0（既定値）では<span class="math notranslate nohighlight">\(P_x\)</span>を使いません。それ以外の値と、<code class="docutils literal notranslate"><span class="pre">TransSym</span></code>なし、他の模型、<span class="math notranslate nohighlight">\(S_z\neq 0\)</span>での0以外の値は拒否します。<a class="reference internal" href="TransSym_file_ja.html#subsec-transsymspinflip"><span class="std std-ref">全スピン反転Px（スピン1/2、expert mode）</span></a>を参照してください。</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_iv</span></code></p>
 <p><strong>形式 :</strong> int型 (整数)</p>
 <p><strong>説明 :</strong> 初期条件のベクトルを与えます。</p>
@@ -426,7 +431,9 @@ pair項、ファイルの識別は <a class="reference internal" href="TransSym_
 TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector cTPQの
 <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> は固有ベクトル出力を要求できません。TEは正の <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>、
 有限で非減少の時間列、観測量・checkpointの <code class="docutils literal notranslate"><span class="pre">ExpecInterval</span></code> / <code class="docutils literal notranslate"><span class="pre">OutputInterval</span></code>
-を使います。磁化モーメント、読込の意味、入力例は <a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> を参照してください。</p>
+を使います。磁化モーメント、読込の意味、入力例は <a class="reference internal" href="TransSym_file_ja.html#subsec-transsym"><span class="std std-ref">TransSym指定ファイル</span></a> を参照してください。
+<code class="docutils literal notranslate"><span class="pre">SpinFlipParity</span></code> でセクターに全スピン反転を加えられます。 <code class="docutils literal notranslate"><span class="pre">2Sz=0</span></code> の <code class="docutils literal notranslate"><span class="pre">Spin</span></code> でも
+使えます（<a class="reference internal" href="TransSym_file_ja.html#subsec-transsymspinflip"><span class="std std-ref">全スピン反転Px（スピン1/2、expert mode）</span></a>）。</p>
 </section>
 
 

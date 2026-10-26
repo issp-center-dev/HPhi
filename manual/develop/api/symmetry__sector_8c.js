@@ -16,6 +16,7 @@ var symmetry__sector_8c =
     [ "hash_terms", "symmetry__sector_8c.html#acb444605e819f27b1f248dcb3cd944d4", null ],
     [ "manifest_name", "symmetry__sector_8c.html#a6ec874d8e748390a7fab1d5e3d58f968", null ],
     [ "SymmetryFullDiagOutputMask", "symmetry__sector_8c.html#a35cc143c39a92b27d555005f4f2e6d29", null ],
+    [ "SymmetryGroupDigestDomain", "symmetry__sector_8c.html#a2d4b8448205842306bfe1bd1f9b95303", null ],
     [ "SymmetryHashInteger", "symmetry__sector_8c.html#a02dbeb4fb1d3f21596c482490e98a40c", null ],
     [ "WriteSymmetryCanonicalTPQSchedule", "symmetry__sector_8c.html#abb43f283a3ecf555d84b6aa95231a050", null ],
     [ "WriteSymmetryFullDiagCompletion", "symmetry__sector_8c.html#a39cdc8b42d0396153ca6ad19169e2911", null ],
