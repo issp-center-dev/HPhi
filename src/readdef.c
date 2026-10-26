@@ -135,6 +135,16 @@ int CheckInterAllCondition(
         int isite4, int isigma4
 );
 
+/* Hash table from the eight indices of an InterAll row to the row number,
+ * so that InputInterAllInfo finds a repeated row without scanning all rows. */
+struct InterAllRowIndex {
+  unsigned int *slot; /* row number + 1; 0 marks an empty slot */
+  unsigned long mask;
+};
+
+static int InterAllRowIndexInit(struct InterAllRowIndex *index, int capacity);
+static void InterAllRowIndexFree(struct InterAllRowIndex *index);
+
 int InputInterAllInfo(
         int *icnt_interall,
         int **iInterAllInfo,
@@ -143,7 +153,8 @@ int InputInterAllInfo(
         int isite2, int isigma2,
         int isite3, int isigma3,
         int isite4, int isigma4,
-        double re_value, double im_value
+        double re_value, double im_value,
+        struct InterAllRowIndex *index
 );
 
 
@@ -2064,10 +2075,16 @@ int ReadDefFileIdxPara(
       X->NInterAll_Diagonal=0;
       X->NInterAll_OffDiagonal=0;
       if(X->NInterAll>0) {
+        struct InterAllRowIndex interall_index;
         icnt_interall =0;
         icnt_diagonal=0;
+        if (InterAllRowIndexInit(&interall_index, X->NInterAll) != 0) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
         while (fgetsMPI(ctmp2, 256, fp) != NULL) {
           if (idx == X->NInterAll) {
+            InterAllRowIndexFree(&interall_index);
             fclose(fp);
             return ReadDefFileError(defname);
           }
@@ -2088,6 +2105,7 @@ int ReadDefFileIdxPara(
                                      X->iFlgSymmetryBasis, X->LocSpn,
                                      isite1, isigma1, isite2, isigma2,
                                      isite3, isigma3, isite4, isigma4) != 0) {
+            InterAllRowIndexFree(&interall_index);
             fclose(fp);
             return ReadDefFileError(defname);
           }
@@ -2099,12 +2117,14 @@ int ReadDefFileIdxPara(
                                 isite2, isigma2,
                                 isite3, isigma3,
                                 isite4, isigma4,
-                                dvalue_re, dvalue_im
+                                dvalue_re, dvalue_im,
+                                &interall_index
           ) != 0) {
             icnt_diagonal += 1;
           }
           idx++;
         }
+        InterAllRowIndexFree(&interall_index);
       }
 
       X->NInterAll = icnt_interall;
@@ -2718,8 +2738,13 @@ int ReadDefFileIdxPara(
           idx=0;
           while(fgetsMPI(ctmp2, 256, fp) != NULL) {
             sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTEInterAll[idx]));
+            struct InterAllRowIndex te_interall_index;
             icnt_interall =0;
             icnt_diagonal=0;
+            if (InterAllRowIndexInit(&te_interall_index, X->NTEInterAll[idx]) != 0) {
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
             for (i = 0; i < X->NTEInterAll[idx]; ++i) {
               fgetsMPI(ctmp2, 256, fp);
               sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
@@ -2738,6 +2763,7 @@ int ReadDefFileIdxPara(
                                      X->iFlgSymmetryBasis, X->LocSpn,
                                          isite1, isigma1, isite2, isigma2,
                                          isite3, isigma3, isite4, isigma4) != 0) {
+                InterAllRowIndexFree(&te_interall_index);
                 fclose(fp);
                 return ReadDefFileError(defname);
               }
@@ -2748,11 +2774,13 @@ int ReadDefFileIdxPara(
                                     isite2, isigma2,
                                     isite3, isigma3,
                                     isite4, isigma4,
-                                    dvalue_re, dvalue_im
+                                    dvalue_re, dvalue_im,
+                                    &te_interall_index
               ) != 0) {
                 icnt_diagonal += 1;
               }
             }
+            InterAllRowIndexFree(&te_interall_index);
 
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx] = icnt_diagonal;
@@ -3461,6 +3489,33 @@ int CheckInterAllHermite
   return 0;
 }
 
+/* Rows of InterAllOffDiagonal, ordered by CompareInterAllRowOrder for the
+ * Hermitian-partner lookup in CheckInterAllHermite_simple (qsort has no
+ * context argument). */
+static int **sInterAllRowsForSort = NULL;
+
+/* Lexicographic order of the eight indices of a row; ties by row number, so
+ * rows with equal indices stay in input order. */
+static int CompareInterAllRowOrder(const void *pa, const void *pb) {
+    unsigned int a = *(const unsigned int *) pa;
+    unsigned int b = *(const unsigned int *) pb;
+    int k;
+    for (k = 0; k < 8; k++) {
+        if (sInterAllRowsForSort[a][k] != sInterAllRowsForSort[b][k]) {
+            return sInterAllRowsForSort[a][k] < sInterAllRowsForSort[b][k] ? -1 : 1;
+        }
+    }
+    return (a > b) - (a < b);
+}
+
+static int CompareInterAllKey(const int *key, const int *row) {
+    int k;
+    for (k = 0; k < 8; k++) {
+        if (key[k] != row[k]) return key[k] < row[k] ? -1 : 1;
+    }
+    return 0;
+}
+
 int CheckInterAllHermite_simple
         (
                 int **InterAll,
@@ -3473,13 +3528,30 @@ int CheckInterAllHermite_simple
     unsigned int i, j, icntincorrect, itmpret;
     int isite1, isite2, isite3, isite4;
     int isigma1, isigma2, isigma3, isigma4;
-    int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
-    int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
+    int partner[8];
     unsigned int itmpIdx, icntHermite;
+    unsigned int ipos, ilo, ihi, imid;
+    unsigned int *order;
     int icheckHermiteCount = FALSE;
     double complex ddiff_intall;
     icntincorrect = 0;
     icntHermite = 0;
+
+    /* The partner of row i is looked up in the rows sorted by their indices,
+     * instead of by scanning every row: O(N log N) instead of O(N^2).
+     * Candidates with the partner's indices are visited in increasing row
+     * number, as in a plain scan, so the pairs and their order are unchanged:
+     * row i is paired with the first matching row j >= i. */
+    order = (unsigned int *) calloc(NInterAllOffDiagonal > 0 ? NInterAllOffDiagonal : 1,
+                                    sizeof(unsigned int));
+    if (order == NULL) {
+        fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+        return (-1);
+    }
+    for (i = 0; i < NInterAllOffDiagonal; i++) order[i] = i;
+    sInterAllRowsForSort = InterAllOffDiagonal;
+    qsort(order, NInterAllOffDiagonal, sizeof(unsigned int), CompareInterAllRowOrder);
+    sInterAllRowsForSort = NULL;
 
     for (i = 0; i < NInterAllOffDiagonal; i++) {
         itmpret = 0;
@@ -3492,37 +3564,43 @@ int CheckInterAllHermite_simple
         isite4 = InterAllOffDiagonal[i][6];
         isigma4 = InterAllOffDiagonal[i][7];
         icheckHermiteCount = FALSE;
-        for (j = 0; j < NInterAllOffDiagonal; j++) {
-            itmpsite1 = InterAllOffDiagonal[j][0];
-            itmpsigma1 = InterAllOffDiagonal[j][1];
-            itmpsite2 = InterAllOffDiagonal[j][2];
-            itmpsigma2 = InterAllOffDiagonal[j][3];
-            itmpsite3 = InterAllOffDiagonal[j][4];
-            itmpsigma3 = InterAllOffDiagonal[j][5];
-            itmpsite4 = InterAllOffDiagonal[j][6];
-            itmpsigma4 = InterAllOffDiagonal[j][7];
-            if (isite1 == itmpsite4 && isite2 == itmpsite3 && isite3 == itmpsite2 && isite4 == itmpsite1) {
-                if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
-                    ddiff_intall = cabs(ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]));
-                    if (cabs(ddiff_intall) < eps_CheckImag0) {
-                        itmpret = 1;
-                        if (icheckHermiteCount == FALSE) {
-                            if (i <= j) {
-                                icheckHermiteCount = TRUE; //for not double counting
-                                if (2 * icntHermite >= NInterAllOffDiagonal) {
-                                    fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
-                                    return (-1);
-                                }
-                                for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                                    InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
-                                    InterAll[2 * icntHermite + 1][itmpIdx] = InterAllOffDiagonal[j][itmpIdx];
-                                }
-                                ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
-                                ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
-                                icntHermite++;
-                                break;
-                            }
+        /* Hermitian partner of (i1 s1 i2 s2 i3 s3 i4 s4) is (i4 s4 i3 s3 i2 s2 i1 s1). */
+        partner[0] = isite4; partner[1] = isigma4;
+        partner[2] = isite3; partner[3] = isigma3;
+        partner[4] = isite2; partner[5] = isigma2;
+        partner[6] = isite1; partner[7] = isigma1;
+        ilo = 0;
+        ihi = NInterAllOffDiagonal;
+        while (ilo < ihi) {
+            imid = ilo + (ihi - ilo) / 2;
+            if (CompareInterAllKey(partner, InterAllOffDiagonal[order[imid]]) > 0) {
+                ilo = imid + 1;
+            } else {
+                ihi = imid;
+            }
+        }
+        for (ipos = ilo; ipos < NInterAllOffDiagonal &&
+                         CompareInterAllKey(partner, InterAllOffDiagonal[order[ipos]]) == 0; ipos++) {
+            j = order[ipos];
+            ddiff_intall = cabs(ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]));
+            if (cabs(ddiff_intall) < eps_CheckImag0) {
+                itmpret = 1;
+                if (icheckHermiteCount == FALSE) {
+                    if (i <= j) {
+                        icheckHermiteCount = TRUE; //for not double counting
+                        if (2 * icntHermite >= NInterAllOffDiagonal) {
+                            fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                            free(order);
+                            return (-1);
                         }
+                        for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+                            InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
+                            InterAll[2 * icntHermite + 1][itmpIdx] = InterAllOffDiagonal[j][itmpIdx];
+                        }
+                        ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
+                        ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
+                        icntHermite++;
+                        break;
                     }
                 }
             }
@@ -3534,6 +3612,7 @@ int CheckInterAllHermite_simple
             icntincorrect++;
         }
     }
+    free(order);
 
     //if (icntincorrect != 0) {
     if (icntincorrect != 0 || NInterAllOffDiagonal != 2*icntHermite) {
@@ -4386,6 +4465,34 @@ int CheckInterAllCondition(
   return 0;
 }
 
+static unsigned long InterAllRowHash(const int *key) {
+  unsigned long long h = 1469598103934665603ULL; /* FNV-1a */
+  int k;
+  for (k = 0; k < 8; k++) {
+    h ^= (unsigned int) key[k];
+    h *= 1099511628211ULL;
+  }
+  return (unsigned long) (h ^ (h >> 32));
+}
+
+/// \brief Allocate an empty row index for up to \p capacity InterAll rows.
+/// The table has at least twice as many slots as rows, so probing stays short.
+static int InterAllRowIndexInit(struct InterAllRowIndex *index, int capacity) {
+  unsigned long size = 16;
+  index->slot = NULL;
+  /* 2 * capacity must fit, and so must the next power of two above it. */
+  if (capacity > 0 && (unsigned long) capacity > (ULONG_MAX >> 2)) return -1;
+  while (size < 2UL * (unsigned long) (capacity > 0 ? capacity : 1)) size <<= 1;
+  index->slot = (unsigned int *) calloc(size, sizeof(unsigned int));
+  index->mask = size - 1;
+  return index->slot == NULL ? -1 : 0;
+}
+
+static void InterAllRowIndexFree(struct InterAllRowIndex *index) {
+  free(index->slot);
+  index->slot = NULL;
+}
+
 ///
 /// \brief Input InterAll Interactions (Operators of the same kinds are grouped together).
 /// \param icnt_interall total number of interall interactions
@@ -4401,6 +4508,8 @@ int CheckInterAllCondition(
 /// \param[in] isigma4 a spin index on the site 4.
 /// \param dvalue_re
 /// \param dvalue_im
+/// \param index hash table of the rows read so far (see InterAllRowIndexInit);
+///   NULL falls back to scanning every row.
 /// \return 0 Interaction is off-diagonal
 /// \return 1 Interaction is diagonal
 int InputInterAllInfo(
@@ -4411,19 +4520,36 @@ int InputInterAllInfo(
         int isite2, int isigma2,
         int isite3, int isigma3,
         int isite4, int isigma4,
-        double dvalue_re, double dvalue_im
+        double dvalue_re, double dvalue_im,
+        struct InterAllRowIndex *index
 ) {
   int i = 0;
   int iflg_interall = 0;
+  int key[8];
+  unsigned long pos = 0;
+  key[0] = isite1; key[1] = isigma1; key[2] = isite2; key[3] = isigma2;
+  key[4] = isite3; key[5] = isigma3; key[6] = isite4; key[7] = isigma4;
   //Collect and sum same components of InterAll interactions
-  for (i = 0; i < *icnt_interall; i++) {
-    if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
-        isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
-        isigma1 == iInterAllInfo[i][1] && isigma2 == iInterAllInfo[i][3] &&
-        isigma3 == iInterAllInfo[i][5] && isigma4 == iInterAllInfo[i][7]) {
-      cInterAllValue[i] += dvalue_re + dvalue_im * I;
-      iflg_interall = 1;
-      return 0;
+  if (index != NULL) {
+    pos = InterAllRowHash(key) & index->mask;
+    while (index->slot[pos] != 0) {
+      i = (int) index->slot[pos] - 1;
+      if (memcmp(iInterAllInfo[i], key, sizeof(key)) == 0) {
+        cInterAllValue[i] += dvalue_re + dvalue_im * I;
+        return 0;
+      }
+      pos = (pos + 1) & index->mask;
+    }
+  } else {
+    for (i = 0; i < *icnt_interall; i++) {
+      if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
+          isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
+          isigma1 == iInterAllInfo[i][1] && isigma2 == iInterAllInfo[i][3] &&
+          isigma3 == iInterAllInfo[i][5] && isigma4 == iInterAllInfo[i][7]) {
+        cInterAllValue[i] += dvalue_re + dvalue_im * I;
+        iflg_interall = 1;
+        return 0;
+      }
     }
   }
 
@@ -4438,6 +4564,7 @@ int InputInterAllInfo(
     iInterAllInfo[*icnt_interall][6] = isite4;
     iInterAllInfo[*icnt_interall][7] = isigma4;
     cInterAllValue[*icnt_interall] = dvalue_re + I * dvalue_im;
+    if (index != NULL) index->slot[pos] = (unsigned int) (*icnt_interall + 1);
     *icnt_interall+=1;
     //Check Diagonal part or not
     if (isite1 == isite2 && isite3 == isite4 &&
