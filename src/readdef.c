@@ -3708,6 +3708,76 @@ int GetDiagonalInterAll
   return 0;
 }
 
+/* A diagonal operator n(i1 s1) n(i2 s2), with (i1 s1) <= (i2 s2); n(a) n(a)
+ * stands for n(a). im is the imaginary part of one contribution to its
+ * coefficient. */
+struct InterAllDiagonalImag {
+    int idx[4];
+    double im;
+};
+
+static int CompareInterAllDiagonalImag(const void *pa, const void *pb) {
+    const int *a = ((const struct InterAllDiagonalImag *) pa)->idx;
+    const int *b = ((const struct InterAllDiagonalImag *) pb)->idx;
+    int k;
+    for (k = 0; k < 4; k++) {
+        if (a[k] != b[k]) return a[k] < b[k] ? -1 : 1;
+    }
+    return 0;
+}
+
+static void SetInterAllDiagonalImag(struct InterAllDiagonalImag *e,
+                                    int isite1, int isigma1, int isite2, int isigma2, double im) {
+    if (isite1 > isite2 || (isite1 == isite2 && isigma1 > isigma2)) {
+        int itmp = isite1; isite1 = isite2; isite2 = itmp;
+        itmp = isigma1; isigma1 = isigma2; isigma2 = itmp;
+    }
+    e->idx[0] = isite1; e->idx[1] = isigma1;
+    e->idx[2] = isite2; e->idx[3] = isigma2;
+    e->im = im;
+}
+
+/* The diagonal rows keep only their real parts, so the imaginary parts must
+ * cancel for each operator: c+_a c_a c+_b c_b gives n(a) n(b), and
+ * c+_a c_b c+_b c_a gives n(a) - n(a) n(b). Rows whose imaginary parts cancel,
+ * such as (a a b b) and (b b a a) with conjugate values, are Hermitian. */
+static int CheckInterAllDiagonalReal(int **InterAll, complex double *ParaInterAll, const int NInterAll) {
+    struct InterAllDiagonalImag *terms;
+    int i, k, n = 0, icntincorrect = 0;
+    double im;
+
+    terms = (struct InterAllDiagonalImag *) calloc(NInterAll > 0 ? 2 * (size_t) NInterAll : 1,
+                                                  sizeof(*terms));
+    if (terms == NULL) {
+        fprintf(stdoutMPI, "Error: memory allocation failed while checking InterAll.\n");
+        return (-1);
+    }
+    for (i = 0; i < NInterAll; i++) {
+        const int *r = InterAll[i];
+        im = cimag(ParaInterAll[i]);
+        if (r[0] == r[2] && r[4] == r[6] && r[1] == r[3] && r[5] == r[7]) {
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[4], r[5], im);
+        } else if (r[0] == r[6] && r[2] == r[4] && r[1] == r[7] && r[3] == r[5]) {
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[0], r[1], im);
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[2], r[3], -im);
+        }
+    }
+    qsort(terms, n, sizeof(*terms), CompareInterAllDiagonalImag);
+    for (i = 0; i < n; i = k) {
+        im = 0.0;
+        for (k = i; k < n && CompareInterAllDiagonalImag(&terms[i], &terms[k]) == 0; k++) {
+            im += terms[k].im;
+        }
+        if (fabs(im) >= eps_CheckImag0) {
+            fprintf(stdoutMPI, cErrNonHermiteInterAllDiagonal, terms[i].idx[0], terms[i].idx[1],
+                    terms[i].idx[2], terms[i].idx[3], im);
+            icntincorrect++;
+        }
+    }
+    free(terms);
+    return icntincorrect == 0 ? 0 : -1;
+}
+
 int GetDiagonalInterAll_simple
         (
                 int **InterAll,
@@ -3729,6 +3799,10 @@ int GetDiagonalInterAll_simple
     int isigma1, isigma2, isigma3, isigma4;
     icnt_diagonal=0;
     icnt_offdiagonal=0;
+
+    if (CheckInterAllDiagonalReal(InterAll, ParaInterAll, NInterAll) != 0) {
+        return (-1);
+    }
 
     for(i=0; i<NInterAll; i++){
         isite1=InterAll[i][0];

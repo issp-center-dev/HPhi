@@ -1845,6 +1845,10 @@ add_hphi_test(interall_contraction)
 set_tests_properties(interall_contraction PROPERTIES
     LABELS "interall;fulldiag;lobcg;te" TIMEOUT 900)
 
+add_hphi_test(interall_diagonal_hermite)
+set_tests_properties(interall_diagonal_hermite PROPERTIES
+    LABELS "interall;validation" TIMEOUT 120 ENVIRONMENT "OMP_NUM_THREADS=1")
+
 add_hphi_mpi_test(restart_redistribute min:4)
 set_tests_properties(restart_redistribute PROPERTIES
     LABELS "restart;mpi;validation" TIMEOUT 1800)
