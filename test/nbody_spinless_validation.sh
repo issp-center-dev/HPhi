@@ -45,7 +45,7 @@ make_spinless_base() {
   cd ..
 }
 
-rm -rf accept bad_spin_interall bad_spin_nbodyg bad_pair diag_im bad_fulldiag
+rm -rf accept bad_spin_interall bad_spin_nbodyg bad_pair diag_im
 
 make_spinless_base accept
 cat > accept/nbodyinterall.def <<EOF
@@ -134,26 +134,6 @@ NNBodyG 0
 ========================
 EOF
 
-make_spinless_base bad_fulldiag
-awk '{if ($1 == "CalcType") print "CalcType   2"; else print}' \
-  bad_fulldiag/calcmod.def > bad_fulldiag/calcmod.tmp
-mv bad_fulldiag/calcmod.tmp bad_fulldiag/calcmod.def
-cat > bad_fulldiag/nbodyinterall.def <<EOF
-========================
-NNBodyInterAll 1
-========================
-========NBodyInterAll===
-========================
-1 0 0 0 0 0.1000000000000000 0.0000000000000000
-EOF
-cat > bad_fulldiag/nbodyg.def <<EOF
-========================
-NNBodyG 0
-========================
-========NBodyG==========
-========================
-EOF
-
 cd accept
 run_hphi log_accept.txt ${MPIRUNFC} "${hphi}" -e namelist.def
 cd ..
@@ -162,12 +142,5 @@ expect_fail bad_spin_interall "Spin index of NBodyInterAll is incorrect"
 expect_fail bad_spin_nbodyg "Spin index of NBodyG is incorrect"
 expect_fail bad_pair "Off-diagonal NBodyInterAll terms must appear as adjacent Hermite pairs"
 expect_fail diag_im "Diagonal NBodyInterAll term has a finite imaginary part"
-# SpinlessFermion + FullDiag is now rejected outright at startup (readdef.c
-# cErrSpinlessFullDiag gate: the hopping is not built into the FullDiag
-# Hamiltonian and the particle number is not populated), which fires BEFORE the
-# NBodyInterAll-in-FullDiag capability check. The bad_fulldiag fixture still
-# exercises rejection of this SpinlessFermion FullDiag input; only the reason it
-# reports changed to the broader startup gate.
-expect_fail bad_fulldiag "not currently supported for FullDiag"
 
 echo "Spinless NBody validation accepts cross-site fermion factors and rejects malformed inputs."

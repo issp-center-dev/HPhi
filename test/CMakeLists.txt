@@ -472,6 +472,7 @@ add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
 add_hphi_test_with_srcdir(lanczos_spinless_nbodyg)
 add_hphi_test_with_srcdir(nbody_spinless_validation)
 add_hphi_test_with_srcdir(spinless_interall_diagonal)
+add_hphi_test(fulldiag_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
@@ -1608,6 +1609,9 @@ endif(USE_ELPA)
 # This case exercises the ScaLAPACK solver and must remain available in a
 # USE_SCALAPACK=ON, USE_ELPA=OFF build as well as in an ELPA build.
 if(USE_SCALAPACK)
+    add_hphi_mpi_test(fulldiag_scalapack_dim1 min:2)
+    set_tests_properties(fulldiag_scalapack_dim1
+        PROPERTIES LABELS "fulldiag;scalapack;mpi" TIMEOUT 60)
     add_hphi_mpi_test(fulldiag_output_open_failure_scalapack exact:2)
     set_tests_properties(
         fulldiag_output_open_failure_scalapack

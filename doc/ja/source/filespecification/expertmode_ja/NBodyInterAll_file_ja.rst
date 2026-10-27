@@ -187,8 +187,6 @@ Spin/SpinGC の場合、各因子はフェルミオンの一体演算子では�
 -  NBodyInterAll は HubbardNConserved, tJNConserved, KondoNConserved の
    CalcSpec では使用できません。
 
--  NBodyInterAll は SpinlessFermion/SpinlessFermionGC の FullDiag では使用できません。
-
 .. raw:: latex
 
    \newpage
