@@ -93,8 +93,7 @@
    undefined reference to splash() must still be resolved at link time
    (same reasoning as unit/elpa_eigen_check.c's `int myrank = 0;` stub for
    src/matrixscalapack.o). We deliberately do not link src/splash.c here
-   (it pulls in version_major.h/version_minor.h/version_patch.h for no
-   benefit to this test), so provide a trivial stub instead. */
+   (it pulls in version.h for no benefit to this test), so provide a trivial stub instead. */
 void splash(void) { }
 
 static int g_ok = 1;
