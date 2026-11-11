@@ -19,7 +19,7 @@ var searchData=
   ['st_16',['St',['../structDefineList.html#a1ff331495c1f203f90e497c95b835619',1,'DefineList']]],
   ['state1check_17',['state1check',['../structMPITransferGroup.html#a94b622ddd93fcbffeb7a5ce0fdc5d596',1,'MPITransferGroup::state1check'],['../structMPISpinExchangeGroup.html#aaa0498eeb5b3d280b0ee9b4b276bf094',1,'MPISpinExchangeGroup::state1check']]],
   ['status_18',['status',['../structDSFMT__T.html#aa7b5e6f3e8e109b75493514525854931',1,'DSFMT_T']]],
-  ['stdoutmpi_19',['stdoutmpi',['../global_8c.html#abacbc82cf67663cd6f3708f1274ac207',1,'stdoutMPI:&#160;global.c'],['../global_8h.html#abacbc82cf67663cd6f3708f1274ac207',1,'stdoutMPI:&#160;global.c']]],
+  ['stdoutmpi_19',['stdoutMPI',['../global_8c.html#abacbc82cf67663cd6f3708f1274ac207',1,'stdoutMPI:&#160;global.c'],['../global_8h.html#abacbc82cf67663cd6f3708f1274ac207',1,'stdoutMPI:&#160;global.c']]],
   ['step_5fi_20',['step_i',['../global_8c.html#ae4b3c259843556181feaef44545e833f',1,'step_i:&#160;global.c'],['../global_8h.html#ae4b3c259843556181feaef44545e833f',1,'step_i:&#160;global.c']]],
   ['step_5fspin_21',['step_spin',['../global_8c.html#a3a933eb9d9a4329b3525beeb81f1e57e',1,'step_spin:&#160;global.c'],['../global_8h.html#a3a933eb9d9a4329b3525beeb81f1e57e',1,'step_spin:&#160;global.c']]],
   ['sum2_22',['sum2',['../structBiCGVectorDiag.html#ac3987ea5794752341c0ea765b17cc6d6',1,'BiCGVectorDiag']]],

@@ -52,9 +52,9 @@ var NAVTREE =
       ] ],
       [ "Main Data Structures", "page_variable.html#sec_data_struct", [
         [ "BindStruct (X)", "page_variable.html#subsec_bindstruct", null ],
-        [ "DefineList (X->Def)", "page_variable.html#subsec_definelist", null ],
-        [ "LargeList (X->Large)", "page_variable.html#subsec_largelist", null ],
-        [ "PhysList (X->Phys)", "page_variable.html#subsec_physlist", null ]
+        [ "DefineList (X-&gt;Def)", "page_variable.html#subsec_definelist", null ],
+        [ "LargeList (X-&gt;Large)", "page_variable.html#subsec_largelist", null ],
+        [ "PhysList (X-&gt;Phys)", "page_variable.html#subsec_physlist", null ]
       ] ]
     ] ],
     [ "Various kind of Logs", "page_log.html", [
@@ -154,5 +154,6 @@ var NAVTREEINDEX =
 "structMPITransferGroup.html#a94b622ddd93fcbffeb7a5ce0fdc5d596"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';

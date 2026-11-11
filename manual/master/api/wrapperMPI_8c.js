@@ -1,5 +1,6 @@
 var wrapperMPI_8c =
 [
+    [ "HPHI_MPI_ABORT_GRACE_MS", "wrapperMPI_8c.html#a050d09755689d90c2355a4b3b8454013", null ],
     [ "BarrierMPI", "wrapperMPI_8c.html#a1de4e228440442f34d491eedd7973622", null ],
     [ "BcastMPI_li", "wrapperMPI_8c.html#a6c950c3f54e22b4572174c6cd4ce36b0", null ],
     [ "exitMPI", "wrapperMPI_8c.html#ae0504dbbe2857fc4f3c84ef0b7bc45ed", null ],
@@ -14,5 +15,6 @@ var wrapperMPI_8c =
     [ "SumMPI_dc", "wrapperMPI_8c.html#a7a90e7c667189b600a621be9856fa650", null ],
     [ "SumMPI_i", "wrapperMPI_8c.html#aeab38d65c1c82094276a9b250b9a5049", null ],
     [ "SumMPI_li", "wrapperMPI_8c.html#afd4574e9353708ef2aa039a1721440b8", null ],
-    [ "VecProdMPI", "wrapperMPI_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ]
+    [ "VecProdMPI", "wrapperMPI_8c.html#a5af83380d39b0c221d6d1e7f572e3d6d", null ],
+    [ "WaitAbortGrace", "wrapperMPI_8c.html#a13ee7c4da96cd6e6e892c73f5a384cde", null ]
 ];

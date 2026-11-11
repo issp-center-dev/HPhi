@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['calcmod_0',['Add new calculation mode into calcmod',['../page_addcalcmod.html',1,'']]],
-  ['calculation_20mode_20into_20calcmod_1',['Add new calculation mode into calcmod',['../page_addcalcmod.html',1,'']]],
-  ['cmake_2',['Add new source-file, executable, scripts (handle CMake)',['../page_cmake.html',1,'']]],
-  ['coding_20rule_3',['Coding rule',['../page_codingrule.html',1,'']]],
-  ['compute_20elapsed_20time_20for_20new_20functions_4',['Compute elapsed time for new functions',['../page_time.html',1,'']]]
+  ['2_3a_20add_20file_20type_0',['Step 2: Add File Type',['../page_addexpert.html#subsec_expert_step2',1,'']]],
+  ['2_3a_20add_20keyword_1',['Step 2: Add Keyword',['../page_addmodpara.html#subsec_modpara_step2',1,'']]],
+  ['2_3a_20create_20implementation_2',['Step 2: Create Implementation',['../page_addcalcmod.html#subsec_calcmod_step2',1,'']]],
+  ['2d_20arrays_3',['2D Arrays',['../page_setmem.html#subsec_setmem_2d',1,'']]]
 ];
