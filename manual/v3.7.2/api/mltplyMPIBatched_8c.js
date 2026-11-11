@@ -1,0 +1,27 @@
+var mltplyMPIBatched_8c =
+[
+    [ "ComputeInterAllOrigin", "mltplyMPIBatched_8c.html#a4875e93815be871ef21aaa3f74402284", null ],
+    [ "FinalizeMPIBatchedDoubleTransfers", "mltplyMPIBatched_8c.html#a9cc628effd5f8e3dbd527bf88103d2e0", null ],
+    [ "FinalizeMPIBatchedInterAll", "mltplyMPIBatched_8c.html#a22d51c7fd62201de633917bde74a7bc2", null ],
+    [ "FinalizeMPIBatchedSpinExchange", "mltplyMPIBatched_8c.html#ab7e08263a22bfcda19dadaa0abdea9b1", null ],
+    [ "FinalizeMPIBatchedTransfers", "mltplyMPIBatched_8c.html#a2a2a479d510e69d2dc7f50919fae02f1", null ],
+    [ "InitializeMPIBatchedDoubleTransfers_Hubbard", "mltplyMPIBatched_8c.html#aa14de2090f9b31b82534a2b426cadb72", null ],
+    [ "InitializeMPIBatchedDoubleTransfers_HubbardGC", "mltplyMPIBatched_8c.html#a5e4695508a3d198eb77316ac71fb9888", null ],
+    [ "InitializeMPIBatchedExchange_Spin", "mltplyMPIBatched_8c.html#a9ee4050cdafbc9d1816a398e08e86bf7", null ],
+    [ "InitializeMPIBatchedExchange_SpinGC", "mltplyMPIBatched_8c.html#ad06ecbb627cf0f321740e07b15d67377", null ],
+    [ "InitializeMPIBatchedInterAll_HubbardGC", "mltplyMPIBatched_8c.html#a05a6a1ebed541119bc9ae066214a75d3", null ],
+    [ "InitializeMPIBatchedTransfers_Hubbard", "mltplyMPIBatched_8c.html#a043cd1269b584aee514cc7662c6b5726", null ],
+    [ "InitializeMPIBatchedTransfers_HubbardGC", "mltplyMPIBatched_8c.html#afc5319c3b4567168bf45df6aaf35205f", null ],
+    [ "InitializeMPIBatchedTransfers_SpinlessFermion", "mltplyMPIBatched_8c.html#a729d4d12be5404b5148c84ba03123f71", null ],
+    [ "InitializeMPIBatchedTransfers_SpinlessFermionGC", "mltplyMPIBatched_8c.html#a40acca467492b81322d24cf3a737b5ab", null ],
+    [ "MPIBatchingEnabled", "mltplyMPIBatched_8c.html#aa79073d57a52953050379bd00da22984", null ],
+    [ "X_child_GC_CisAitCiuAiv_spin_MPIsingle_batched", "mltplyMPIBatched_8c.html#a641423f7dc8a4c155b9d7872d3eb41b7", null ],
+    [ "X_child_GC_general_hopp_MPIdouble_batched", "mltplyMPIBatched_8c.html#a0c6382fced1d9cccf45baadaeb832879", null ],
+    [ "X_child_GC_general_hopp_MPIsingle_batched", "mltplyMPIBatched_8c.html#a7d15a052749852d4fa9f9c6eb1ae6019", null ],
+    [ "X_child_GC_general_hopp_SpinlessFermion_MPIsingle_batched", "mltplyMPIBatched_8c.html#ae75430e963f9c905755bb977dbc99e7e", null ],
+    [ "X_child_GC_InterAll_Hubbard_MPI_batched", "mltplyMPIBatched_8c.html#a18072cc9e7e5b5ccc2d0c83647f22966", null ],
+    [ "X_child_general_hopp_MPIdouble_batched", "mltplyMPIBatched_8c.html#a1f720f67aa54f545f6cdeb7583f5b333", null ],
+    [ "X_child_general_hopp_MPIsingle_batched", "mltplyMPIBatched_8c.html#a725a882a03efbcc2199738d5d79f045f", null ],
+    [ "X_child_general_hopp_Spinless_MPIsingle_batched", "mltplyMPIBatched_8c.html#ac1b66a8e0607685f5c2c014f6301e880", null ],
+    [ "X_child_general_int_spin_MPIsingle_batched", "mltplyMPIBatched_8c.html#a40754dcbb1a9b1eac932fcc12c817e87", null ]
+];
