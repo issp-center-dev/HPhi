@@ -88,6 +88,7 @@ char *cErrNonHermiteTransForAll= "Error: NonHermite Pair exists in transfer inte
 char *cErrNonHermiteInterAll="Error: NonHermite (i, spni, j, spnj, k, spnk, l, spnl) = (%d, %d, %d, %d, %d, %d, %d, %d), InterAll_re= %lf, InterAll_im= %lf . \n";
 char *cErrNonConservedInterAll="Error: This operator breaks Sz Symmetry (i, spni, j, spnj, k, spnk, l, spnl) = (%d, %d, %d, %d, %d, %d, %d, %d), InterAll_re= %lf, InterAll_im= %lf . \n";
 char *cErrNonHermiteInterAllForAll= "Error: NonHermite Pair exists in InterAll. \n";
+char *cErrNonHermiteInterAllDiagonal="Error: NonHermite diagonal InterAll: the coefficient of n(%d, %d) n(%d, %d) has the imaginary part %lf . \n";
 char *cErrIncorrectFormatForKondoInt= "Error: Site component of (i, j, k, l) =(%d, %d, %d, %d) is incorrect.\n";
 char *cErrIncorrectFormatForKondoTrans= "Error: Site component of (i, j) =(%d, %d) is incorrect.\n";
 
