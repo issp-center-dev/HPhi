@@ -138,6 +138,13 @@ ModParaファイル
    **説明 :**
    HubbardGCまたはSpinlessFermionGCの対称性セクター（\ ``TransSym``\ ）で、すべての粒子数（0、既定値）、偶数の\ :math:`N`\ （1）、奇数の\ :math:`N`\ （-1）を選びます。それ以外の値と、\ ``TransSym``\ なしまたは他の模型での0以外の値は拒否します。
 
+-  ``SpinFlipParity``
+
+   **形式 :** int型 (0、1、-1)
+
+   **説明 :**
+   スピン1/2のSpinGC、または\ ``2Sz=0``\ のSpinの対称性セクター（\ ``TransSym``\ ）で、全スピン反転\ :math:`P_x=\prod_i\sigma^x_i`\ の固有値\ :math:`p=+1`\ （1）または\ :math:`p=-1`\ （-1）を選びます。0（既定値）では\ :math:`P_x`\ を使いません。それ以外の値と、\ ``TransSym``\ なし、他の模型、\ :math:`S_z\neq 0`\ での0以外の値は拒否します。\ :ref:`Subsec:TransSymSpinFlip`\ を参照してください。
+
 -  ``initial_iv``
 
    **形式 :** int型 (整数)
@@ -474,6 +481,8 @@ TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector
 ``InvTemp`` は固有ベクトル出力を要求できません。TEは正の ``ExpandCoef``、
 有限で非減少の時間列、観測量・checkpointの ``ExpecInterval`` / ``OutputInterval``
 を使います。磁化モーメント、読込の意味、入力例は :ref:`Subsec:TransSym` を参照してください。
+``SpinFlipParity`` でセクターに全スピン反転を加えられます。 ``2Sz=0`` の ``Spin`` でも
+使えます（:ref:`Subsec:TransSymSpinFlip`）。
 
 .. raw:: latex
 

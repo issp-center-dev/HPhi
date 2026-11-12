@@ -22,7 +22,9 @@
  * Kondo version 2 appends the local-site mask and fixed-quantity flags,
  * using phase 2 (physical Kondo translation). HubbardGC/SpinlessFermionGC
  * also use version 2, with phase 1, a zero mask and the ParticleParity in the
- * flags (see GetSymmetryFermionGCFixedFlags). */
+ * flags (see GetSymmetryFermionGCFixedFlags). A SpinFlipParity sector keeps
+ * version 1: g runs over G x Z2 with chi(g,1) = chi(g) p, and GROUP is the
+ * spin-flip group digest, which separates p and Px-off sectors. */
 enum {
   MAGIC, VERSION, PHASE, SCALAR, MODEL, NSITE, NUP, NDOWN, NE,
   FULL_DIM, DIM, RANKS, RANK, LAYOUT, OFFSET, LOCAL_DIM, GROUP,

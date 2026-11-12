@@ -43,6 +43,7 @@ int ReadTransSymNInt(const char *defname, struct DefineList *def)
   fclose(fp);
   def->iFlgSymmetryBasis = TRUE;
   def->NSymTrans = ntrans;
+  def->NSymTransInput = ntrans;
   return 0;
 }
 
@@ -181,7 +182,9 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
     fclose(fp);
     return -1;
   }
-  if (ntrans != def->NSymTrans) {
+  /* The rows are read once, into the input group before any Px extension. */
+  if (ntrans != def->NSymTransInput || def->NSymTrans != def->NSymTransInput ||
+      def->NSymTransCapacity < def->NSymTrans) {
     fclose(fp);
     return ReadDefFileError(defname);
   }
@@ -270,6 +273,15 @@ int ReadTransSymFile(const char *defname, struct DefineList *def)
   free(seen_perm);
   fclose(fp);
   if (ValidateSymmetryGroupInput(def) != 0) return -1;
+  if (def->iSpinFlipParity != 0) {
+    /* Check the extended operations as a group too: duplicates, identity,
+     * closure and multiplicative characters now include the Px flag. */
+    if (ExtendSymmetryGroupWithSpinFlip(def) != 0 ||
+        ValidateSymmetryGroupInput(def) != 0) return -1;
+    fprintf(stdoutMPI, "TransSym SpinFlipParity: Px=prod_i sigma^x_i, p=%+d, "
+            "group order %u -> %u.\n", def->iSpinFlipParity,
+            def->NSymTransInput, def->NSymTrans);
+  }
   if (def->iSymMomentumIndex >= 0) {
     fprintf(stdoutMPI, "TransSym metadata: MomentumIndex=%d\n", def->iSymMomentumIndex);
   }
@@ -487,6 +499,15 @@ static int validate_symmetry_model_sector(const struct DefineList *def)
   if ((def->iCalcModel == Spin || def->iCalcModel == SpinGC) &&
       def->iFlgGeneralSpin != FALSE) {
     fprintf(stdoutMPI, "Error: TransSym symmetry basis v1 supports only Spin-1/2.\n");
+    return -1;
+  }
+  /* readdef rejects these first; also guard sectors set up without it. */
+  if (def->iSpinFlipParity != 0 &&
+      ((def->iCalcModel != Spin && def->iCalcModel != SpinGC) ||
+       (def->iCalcModel == Spin && def->Nup != def->Ndown) ||
+       (def->iSpinFlipParity != 1 && def->iSpinFlipParity != -1) ||
+       def->SymTransFlip == NULL || def->NSymTrans != 2U * def->NSymTransInput)) {
+    fprintf(stdoutMPI, "Error: SpinFlipParity requires a Spin-1/2 SpinGC sector or a Spin sector with 2Sz=0.\n");
     return -1;
   }
   if (def->iCalcModel == SpinGC &&

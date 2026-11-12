@@ -472,6 +472,10 @@ add_hphi_test_with_srcdir(lanczos_spinless_nbody_interall)
 add_hphi_test_with_srcdir(lanczos_spinless_nbodyg)
 add_hphi_test_with_srcdir(nbody_spinless_validation)
 add_hphi_test_with_srcdir(spinless_interall_diagonal)
+add_hphi_test(interall_large_input)
+# An O(N^2) InterAll reader takes minutes on this input; the indexed one, seconds.
+set_tests_properties(interall_large_input PROPERTIES
+    LABELS "interall;validation" TIMEOUT 120 ENVIRONMENT "OMP_NUM_THREADS=1")
 add_hphi_test(fulldiag_spinless)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
@@ -1768,6 +1772,31 @@ endif()
 set_tests_properties(symmetry_fermion_gc_basis symmetry_fermion_gc_core
     symmetry_fermion_gc_io_restart symmetry_fermion_gc_evolution PROPERTIES TIMEOUT 1800)
 
+# Spin(2Sz=0)/SpinGC sectors of the spin flip Px = prod_i sigma^x_i (SpinFlipParity).
+add_hphi_test(symmetry_spinflip_basis)
+set_tests_properties(symmetry_spinflip_basis PROPERTIES
+    LABELS "symmetry;spinflip;basis")
+add_hphi_test(symmetry_spinflip_core)
+set_tests_properties(symmetry_spinflip_core PROPERTIES
+    LABELS "symmetry;spinflip;lobcg;lanczos;correlation;fulldiag")
+if(USE_SCALAPACK)
+    set_property(TEST symmetry_spinflip_core APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST symmetry_spinflip_core APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
+add_hphi_test(symmetry_spinflip_io_restart)
+set_tests_properties(symmetry_spinflip_io_restart PROPERTIES
+    LABELS "symmetry;spinflip;checkpoint;fulldiag;restart")
+# The np16 CI baseline excludes this suite by name; it runs at np16 before release.
+add_hphi_test(symmetry_spinflip_evolution)
+set_tests_properties(symmetry_spinflip_evolution PROPERTIES
+    LABELS "symmetry;spinflip;tpq;ctpq;te;correlation")
+set_tests_properties(symmetry_spinflip_basis symmetry_spinflip_core
+    symmetry_spinflip_io_restart symmetry_spinflip_evolution PROPERTIES TIMEOUT 1800)
+
 add_executable(unittest_restart_digest ${CMAKE_SOURCE_DIR}/test/unit/restart_digest_check.c ${CMAKE_SOURCE_DIR}/src/restart_digest.c)
 target_include_directories(unittest_restart_digest PRIVATE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/test/unit)
 add_test(NAME unittest_restart_digest COMMAND unittest_restart_digest)
@@ -1823,6 +1852,10 @@ set_tests_properties(restart_import PROPERTIES LABELS "restart;te;validation" TI
 add_hphi_test(interall_contraction)
 set_tests_properties(interall_contraction PROPERTIES
     LABELS "interall;fulldiag;lobcg;te" TIMEOUT 900)
+
+add_hphi_test(interall_diagonal_hermite)
+set_tests_properties(interall_diagonal_hermite PROPERTIES
+    LABELS "interall;validation" TIMEOUT 120 ENVIRONMENT "OMP_NUM_THREADS=1")
 
 add_hphi_mpi_test(restart_redistribute min:4)
 set_tests_properties(restart_redistribute PROPERTIES

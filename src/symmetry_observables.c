@@ -3,6 +3,7 @@
 #include "wrapperMPI.h"
 #include "symmetry_basis.h"
 #include "symmetry_observables.h"
+#include "symmetry_terms.h"
 
 int EvaluateSymmetrySpinGCMoments(struct BindStruct *X,
                                   const double complex *vec)
@@ -23,6 +24,10 @@ int EvaluateSymmetrySpinGCMoments(struct BindStruct *X,
   }
   if (SumMPI_i(invalid) != 0) return -1;
 
+  /* Sz is constant on a site-permutation orbit. With Px an orbit holds Sz
+   * and -Sz with equal weight in every sector vector, so <Sz> = 0 and only
+   * Sz^2 is read from the representative. */
+  const int spin_flip = SymmetryUsesSpinFlip(&X->Def);
   invalid = 0;
   for (unsigned long int j = 1; j <= X->Sym->local_dim; ++j) {
     const struct SymmetryBasisVector *entry =
@@ -41,7 +46,7 @@ int EvaluateSymmetrySpinGCMoments(struct BindStruct *X,
     }
     double magnetization = (double)count - 0.5*(double)X->Def.Nsite;
     double weight = real*real + imag*imag;
-    local_sz += weight*magnetization;
+    if (!spin_flip) local_sz += weight*magnetization;
     local_sz2 += weight*magnetization*magnetization;
   }
   invalid |= !isfinite(local_sz) || !isfinite(local_sz2);

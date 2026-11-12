@@ -141,16 +141,29 @@ def parse_energy(path):
     return float(match.group(1)), text
 
 
-def check_eigenvector(vector, energy, hamiltonian, representatives, nsite):
+def check_eigenvector(vector, energy, hamiltonian, representatives, nsite,
+                      *, label, require_residual=True):
     assert np.isfinite(vector).all() and np.isfinite(hamiltonian).all()
     assert np.isfinite(energy)
     ground_energy = np.linalg.eigvalsh(hamiltonian)[0]
     assert np.isfinite(ground_energy)
-    np.testing.assert_allclose(energy, ground_energy, atol=3e-8, rtol=0)
-    np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-9, rtol=0)
-    residual = np.linalg.norm(hamiltonian@vector-energy*vector)
+    np.testing.assert_allclose(energy, ground_energy, atol=3e-8, rtol=0,
+                               err_msg=label)
+    np.testing.assert_allclose(np.vdot(vector, vector), 1, atol=1e-9, rtol=0,
+                               err_msg=label)
+    hv = hamiltonian @ vector
+    vector_energy = np.vdot(vector, hv)
+    np.testing.assert_allclose(vector_energy, ground_energy, atol=3e-8, rtol=0,
+                               err_msg=label)
+    np.testing.assert_allclose(energy, vector_energy, atol=3e-8, rtol=0,
+                               err_msg=label)
+    residual = np.linalg.norm(hv-energy*vector)
     scale = max(1, np.linalg.norm(hamiltonian, 2)*np.linalg.norm(vector))
-    assert residual/scale <= 2e-8, (residual, scale)
+    if require_residual:
+        assert residual/scale <= 2e-8, (label, residual, scale)
+    residual_check = 'passed' if require_residual else 'diagnostic only'
+    print(f'{label} ground-state energy passed; relative residual={residual/scale:.3e} '
+          f'({residual_check})', flush=True)
     return expected_moments(vector, representatives, nsite)
 
 
@@ -290,7 +303,7 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     energy, energy_text = parse_energy(cg_path)
     vector = checkpoint_vector(cg_path, dimension)
     moments = check_eigenvector(vector, energy, hamiltonian,
-                                representatives, nsite)
+                                representatives, nsite, label=f'{label} {layout} CG')
     output_sz = re.search(r'^\s*Sz\s+([^\s]+)', energy_text, re.M)
     assert output_sz
     np.testing.assert_allclose(float(output_sz.group(1)), moments[0], atol=1e-8, rtol=0)
@@ -314,8 +327,11 @@ def exercise_fixture(root, label, hphi, probe, launcher, layout):
     energy, energy_text = parse_energy(lanczos_path)
     vector = final_lanczos_vector(lanczos_path, dimension,
                                   representatives, ranks)
+    # Lanczos is a compatibility check: its Ritz-energy stopping rule does not
+    # enforce the CG residual bound. Check the returned state's energy instead.
     moments = check_eigenvector(vector, energy, hamiltonian,
-                                representatives, nsite)
+                                representatives, nsite, label=f'{label} {layout} Lanczos',
+                                require_residual=False)
     output_sz = re.search(r'^Sz\s+([^\s]+)', energy_text, re.M)
     assert output_sz
     np.testing.assert_allclose(float(output_sz.group(1)), moments[0], atol=1e-8, rtol=0)

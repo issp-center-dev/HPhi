@@ -164,11 +164,17 @@ void setmem_def
   }
 
   {
-    const unsigned int symtrans = X->Def.NSymTrans > 0 ? X->Def.NSymTrans : 1;
+    /* SpinFlipParity appends (g, Px) after the input operations; readdef
+     * rejects a doubled count that does not fit. Without room the extension
+     * itself fails, so never allocate a wrapped size here. */
+    unsigned int symtrans = X->Def.NSymTrans > 0 ? X->Def.NSymTrans : 1;
     const unsigned int symsites = X->Def.Nsite > 0 ? X->Def.Nsite : 1;
+    if (X->Def.iSpinFlipParity != 0 && symtrans <= UINT_MAX / 2U) symtrans *= 2U;
+    X->Def.NSymTransCapacity = symtrans;
     X->Def.SymTrans = i_2d_allocate(symtrans, symsites);
     X->Def.SymTransAnti = i_2d_allocate(symtrans, symsites);
     X->Def.SymTransChar = cd_1d_allocate(symtrans);
+    X->Def.SymTransFlip = i_1d_allocate(symtrans);
   }
 
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);

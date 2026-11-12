@@ -50,8 +50,10 @@ struct GroupDigestEntry {
   const int *anti;
   double complex character;
   unsigned int nsite;
+  int flip;
 };
 
+/* (g,0) and (g,1) share a permutation; the Px flag completes the key. */
 static int compare_group_entries(const void *a, const void *b)
 {
   const struct GroupDigestEntry *left = a, *right = b;
@@ -60,7 +62,13 @@ static int compare_group_entries(const void *a, const void *b)
     if (left->perm[site] < right->perm[site]) return -1;
     if (left->perm[site] > right->perm[site]) return 1;
   }
-  return 0;
+  return (left->flip > right->flip) - (left->flip < right->flip);
+}
+
+const char *SymmetryGroupDigestDomain(const struct DefineList *def)
+{
+  return SymmetryUsesSpinFlip(def) ? "hphi-group-spinflip-fnv1a64-v1"
+                                   : "hphi-group-fnv1a64-v1";
 }
 
 int ComputeSymmetryKondoSpaceDigest(const struct DefineList *def, uint64_t *digest)
@@ -93,12 +101,18 @@ int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest)
 {
   struct GroupDigestEntry *entries;
   unsigned int g, site;
-  uint64_t hash = hash_tag(FNV_OFFSET, "hphi-group-fnv1a64-v1");
+  int spin_flip;
+  uint64_t hash;
   if (digest == NULL) return -1;
   *digest = 0;
   if (def == NULL || def->Nsite == 0 || def->NSymTrans == 0 ||
       def->SymTrans == NULL || def->SymTransAnti == NULL ||
       def->SymTransChar == NULL) return -1;
+  /* Without Px the domain and bytes stay those of v1 group digests. */
+  spin_flip = SymmetryUsesSpinFlip(def);
+  if (spin_flip && (def->SymTransFlip == NULL ||
+                    def->NSymTrans != 2U * def->NSymTransInput)) return -1;
+  hash = hash_tag(FNV_OFFSET, SymmetryGroupDigestDomain(def));
   entries = calloc(def->NSymTrans, sizeof(*entries));
   if (entries == NULL) return -1;
   for (g = 0; g < def->NSymTrans; ++g) {
@@ -113,15 +127,22 @@ int ComputeSymmetryGroupDigest(const struct DefineList *def, uint64_t *digest)
     entries[g].anti = def->SymTransAnti[g];
     entries[g].character = ch;
     entries[g].nsite = def->Nsite;
+    entries[g].flip = SymmetryOperationFlipsSpins(def, g);
   }
   qsort(entries, def->NSymTrans, sizeof(*entries), compare_group_entries);
   hash = SymmetryHashInteger(hash, def->Nsite, 4);
   hash = SymmetryHashInteger(hash, def->NSymTrans, 4);
+  if (spin_flip) {
+    /* The operator convention and p also enter, not only chi(g,1). */
+    hash = hash_tag(hash, "product_sigma_x");
+    hash = SymmetryHashInteger(hash, (uint32_t)def->iSpinFlipParity, 4);
+  }
   for (g = 0; g < def->NSymTrans; ++g) {
     for (site = 0; site < def->Nsite; ++site) {
       hash = SymmetryHashInteger(hash, (uint32_t)entries[g].perm[site], 4);
       hash = SymmetryHashInteger(hash, (uint32_t)entries[g].anti[site], 4);
     }
+    if (spin_flip) hash = SymmetryHashInteger(hash, (uint32_t)entries[g].flip, 4);
     hash = SymmetryHashInteger(hash,
         (uint64_t)(int64_t)llround(1e10 * creal(entries[g].character)), 8);
     hash = SymmetryHashInteger(hash,
@@ -453,10 +474,15 @@ int WriteSymmetrySectorManifest(const struct BindStruct *X)
       }
       if (def->iSymMomentumIndex >= 0)
         fprintf(fp, "momentum_index=%d\n", def->iSymMomentumIndex);
-      fprintf(fp, "group_digest=hphi-group-fnv1a64-v1:%016" PRIx64 "\n"
+      /* group_order above is that of G x Z2; the TransSym file had half. */
+      if (SymmetryUsesSpinFlip(def))
+        fprintf(fp, "spin_flip_operator=product_sigma_x\nspin_flip_parity=%+d\n"
+                "input_group_order=%u\n", def->iSpinFlipParity, def->NSymTransInput);
+      fprintf(fp, "group_digest=%s:%016" PRIx64 "\n"
               "sector_digest=hphi-sector-multiset-v1:%" PRIu64 ":%016" PRIx64 ":%016" PRIx64 "\n"
               "hamiltonian_digest=hphi-parsed-hamiltonian-fnv1a64-v%d:%016" PRIx64 "\n",
-              group, sector.count, sector.xor_hash, sector.sum_hash,
+              SymmetryGroupDigestDomain(def), group,
+              sector.count, sector.xor_hash, sector.sum_hash,
               hamiltonian_digest_version(def), hamiltonian);
       fprintf(fp, "basis_layout=%s\nmpi_ranks=%d\nomp_threads=%d\n"
               "term_scope=transfer:%u coulomb_intra:%u coulomb_inter:%u hund:%u exchange:%u ising:%u pair_hopping:%u chemi:%u interall_diagonal:%u interall_offdiagonal:%u",

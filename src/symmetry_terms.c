@@ -27,10 +27,24 @@ int IsSymmetryFermionGCModel(int model)
   return model == HubbardGC || model == SpinlessFermionGC;
 }
 
+int SymmetryUsesSpinFlip(const struct DefineList *def)
+{
+  return def != NULL && def->iFlgSymmetryBasis && def->iSpinFlipParity != 0 &&
+         (def->iCalcModel == Spin || def->iCalcModel == SpinGC);
+}
+
+int SymmetryOperationFlipsSpins(const struct DefineList *def, unsigned int op)
+{
+  return def != NULL && def->SymTransFlip != NULL && op < def->NSymTrans &&
+         def->SymTransFlip[op] != 0;
+}
+
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
-  /* The legacy plan only has the fixed-Sz Hubbard hopping kernel. */
+  /* The legacy plan only has the fixed-Sz Hubbard hopping kernel. Its Spin
+   * invariance checks permute sites only, so Px also takes the common path. */
   return IsSymmetryKondoModel(def->iCalcModel) || def->iCalcModel == SpinGC ||
+      SymmetryUsesSpinFlip(def) ||
       (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
           (def->NLaser || def->NTETransferMax || def->NTEInterAllMax)) ||
       IsSymmetryTJModel(def->iCalcModel) || def->iCalcModel == HubbardNConserved ||
@@ -301,6 +315,7 @@ struct Polynomial {
   size_t count, capacity;
   const struct DefineList *def;
   const int *permutation;
+  int flip; /* Px: E_st -> E_(1-s)(1-t) at every Spin factor */
 };
 
 static int append_monomial(struct Polynomial *poly, const int key[7], double complex value)
@@ -326,6 +341,13 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
   memcpy(x, input->index, sizeof(x));
   if (poly->permutation)
     for (i = 0; i < 4*n; i += 2) x[i] = poly->permutation[x[i]];
+  /* Px is unitary: flip both local indices, never conjugate the value.
+   * It precedes the same-site product contraction and the E00 expansion. */
+  if (poly->flip) {
+    if ((poly->def->iCalcModel != Spin && poly->def->iCalcModel != SpinGC) ||
+        input->kind != SYMMETRY_TERM_BILINEARS) return -1;
+    for (i = 1; i < 4*n; i += 2) x[i] = 1 - x[i];
+  }
   if (input->kind != SYMMETRY_TERM_BILINEARS) {
     int width = IsSymmetrySpinfulFermionModel(poly->def->iCalcModel) ? 2 : 1;
     int a = width*x[0]+x[1], b = width*x[2]+x[3];
@@ -445,6 +467,7 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   for (g = 0; g < def->NSymTrans; ++g) {
     mapped.count = 0;
     mapped.permutation = def->SymTrans[g];
+    mapped.flip = SymmetryOperationFlipsSpins(def, g);
     if (collect_polynomial(&mapped)) goto done;
     if (base.count != mapped.count) goto invariant_error;
     for (i = 0; i < base.count; ++i)
@@ -456,6 +479,9 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   goto done;
 invariant_error:
   fprintf(stdoutMPI, "Error: TransSym Hamiltonian invariance failed for normalized terms under op %u.\n", g);
+  if (SymmetryOperationFlipsSpins(def, g))
+    fprintf(stdoutMPI, "Error: op %u applies the spin flip Px of SpinFlipParity; "
+            "the Hamiltonian must commute with Px = prod_i sigma^x_i.\n", g);
 done:
   free(base.terms); free(mapped.terms);
   if (error) fprintf(stdoutMPI, "Error: invalid or unsupported TransSym Hamiltonian terms.\n");

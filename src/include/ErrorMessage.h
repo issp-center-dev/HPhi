@@ -87,6 +87,7 @@ extern char *cErrNonHermiteTransForAll;
 extern char *cErrNonHermiteInterAll;
 extern char *cErrNonConservedInterAll;
 extern char *cErrNonHermiteInterAllForAll;
+extern char *cErrNonHermiteInterAllDiagonal;
 extern char *cErrIncorrectFormatForKondoInt;
 extern char *cErrIncorrectFormatForKondoTrans;
 extern char *cErrIncorrectFormatInter;

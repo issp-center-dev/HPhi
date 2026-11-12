@@ -210,6 +210,10 @@ TransSym指定ファイル
    spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
+   スピン1/2の ``SpinGC`` と ``2Sz=0`` の ``Spin`` では、 ``SpinFlipParity`` で
+   全スピン反転 :math:`P_x=\prod_i\sigma^x_i` を群に加えられます
+   （:ref:`Subsec:TransSymSpinFlip`）。
+
    相関関数（``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
    ``SixBodyG``、``NBodyG``）は ``Lanczos``、``CG``、``TPQ``、``cTPQ``、
    ``TimeEvolution`` と、全固有状態についての ``FullDiag`` でsector内計算されます。
@@ -592,8 +596,9 @@ Hamiltonian fingerprintは解析済みPairLift行を含む
 SpinGCは ``TEOneBody`` / ``TETwoBody`` の駆動に対応し、下記の右端Taylor規約を使います。
 使用する全時刻の入力を伝播前に検査します。``Laser`` は拒否されます。
 代わりに、群不変なサイト内 ``TEOneBody`` またはスピン積の ``TETwoBody`` を指定してください。
-general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrumは対象外です
+全スピン反転 :math:`P_x` は ``SpinFlipParity`` で使えます（:ref:`Subsec:TransSymSpinFlip`）。
+general spin、Boost、新しいStandard-modeのSpinGC運動量入力、その他のスピン軸回転、
+反ユニタリ操作、多次元既約表現、spectrumは対象外です
 （Hamiltonian入出力はFullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
 ``AnomalousG`` も非対応です。FullDiagはベクトル入力、distributed基底metadata、
@@ -945,6 +950,8 @@ gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
   並べて置換と指標を hash 化します。操作番号の変更には依存しません。
   指標の各成分は :math:`10^{-10}` 刻みに丸めます。この量子化は、丸め境界付近の
   浮動小数点入力を一般的に同値判定するものではありません。
+  ``SpinFlipParity`` を指定した場合の ``hphi-group-spinflip-fnv1a64-v1`` は、
+  各操作の :math:`P_x` の有無（置換の次の並べ替えキー）と :math:`p` も hash 化します。
 - ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` は、各基底の
   代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
   MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
@@ -960,6 +967,90 @@ gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
 これらは照合のための fingerprint であり、衝突のない同値性の証明ではありません。
 順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
 従来の計算結果と ``CalcTimerRankStats.dat`` の形式は変更しません。
+
+.. _Subsec:TransSymSpinFlip:
+
+全スピン反転Px（スピン1/2、expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+全スピン反転
+
+.. math::
+
+   P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1
+
+は、全サイトの上向きと下向きを振幅 :math:`+1` で交換します。 :math:`S^x_i` を保ち、
+:math:`S^y_i` と :math:`S^z_i` の符号を反転します。ModParaファイルの
+``SpinFlipParity`` で、 ``TransSym`` のセクター内で固有値 :math:`p=+1` または
+:math:`p=-1` を選びます。
+
+.. list-table:: ``SpinFlipParity`` を使える模型
+   :header-rows: 1
+   :widths: 30 70
+
+   * - 模型
+     - 条件
+   * - ``SpinGC`` （``CalcModel=4``）
+     - スピン1/2。 :math:`S_z` は固定しません
+   * - ``Spin`` （``CalcModel=1``）
+     - スピン1/2で ``2Sz=0`` （:math:`P_x` は :math:`S_z` を :math:`-S_z` に写します）
+
+``SpinFlipParity=0`` または指定なしでは、従来のセクター、ファイル、digestを
+そのまま使います。0以外の値には ``TransSym`` が必要です。 :math:`P_x` だけを
+使う場合は、恒等操作だけの ``TransSym`` ファイル（ ``NQPTrans 1``、指標1、
+全サイトについて ``0 i i 1``）を指定してください。それ以外の値、フェルミオン模型と
+Kondo模型、general spin、 :math:`S_z\neq 0` の ``Spin`` は拒否します。
+:math:`P_x` は :math:`P_z=\prod_i\sigma^z_i`、フェルミオンの ``ParticleParity``、
+時間反転とは別の対称性です。このファイルの ``Anti`` 列は使いません。
+
+HPhiはファイルの群 :math:`G` を :math:`G\times Z_2` に拡張します。操作
+:math:`(g,f)` は :math:`T_g` の後に :math:`P_x^f` を作用させ、
+
+.. math::
+
+   (g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f
+
+とします。射影演算子は :math:`\Pi_\chi(1+pP_x)/2` です。最初の :math:`|G|` 個の
+操作はファイルの操作、次の :math:`|G|` 個はそれらと :math:`P_x` の積です。manifestと
+ログの ``group_order`` は :math:`2|G|` です。代表状態は :math:`G\times Z_2` 軌道の
+最小のbit列で、係数は正の実数です。各指標で
+:math:`D(\chi,+)+D(\chi,-)=D(\chi)` ですが、2つの次元は一般に等しくありません。
+例えば4サイトでは、Neel状態は並進と :math:`P_x` の積で不変なため、
+:math:`(k=0,p=+1)` と :math:`(k=\pi,p=-1)` にだけ現れます。空のセクターは
+``TransSym sector has zero basis dimension`` で終了します。
+
+ハミルトニアン全体が :math:`P_x` と可換でなければなりません。検査では各局所単位
+:math:`E^{st}_i=|s\rangle_i\langle t|` を :math:`E^{1-s,1-t}_i` に写し（係数は
+複素共役しません）、集約した項を比較します。入力の各行が個別に不変である必要は
+ありません。横磁場 :math:`h_xS^x`、 ``Ising``、 ``Exchange``、実数の ``PairLift``、
+:math:`S^y_iS^z_j+S^z_iS^y_j` のような積は使えます。 :math:`h_zS^z`、
+:math:`h_yS^y`、虚数係数の ``PairLift``、 ``Spin`` の
+:math:`i(S^+_iS^-_j-S^-_iS^+_j)` は使えません。違反は
+``TransSym Hamiltonian invariance failed ... under op`` :math:`n`
+（:math:`n\geq|G|`）で報告します。横磁場には ``SpinGC`` が必要です。
+``Spin`` セクターの :math:`S_z` を保たないためです。
+
+上記のセクターと同様に6つの計算手法、両basis layout、全形式の相関関数、CG/TEの
+ベクトル入出力、FullDiagの状態・Hamiltonianファイル、MPI process数を変更した
+v3継続に対応します。 :math:`P_x` セクターでは :math:`\langle S_z\rangle=0` で、
+エネルギーとFlctのファイルの ``Sz`` は0です。 :math:`S_z^2` は状態から計算します。
+:math:`S^z_i` や :math:`S^y_i` のように :math:`P_x` で符号が変わる演算子の相関は0、
+:math:`\langle S^x_i\rangle` は0とは限らず、
+:math:`\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2` です。
+``TEOneBody`` / ``TETwoBody`` の各時刻の入力も :math:`P_x` を保つ必要があり、例えば
+:math:`h_z(t)\neq 0` の時刻があれば伝播の前に終了します。TPQとcTPQは単一の
+:math:`(\chi,p)` セクターの推定で、全体の熱平均ではありません。異なる :math:`p`
+の間の遷移と ``CalcSpec`` は非対応です。
+
+状態、restart、行列のファイル形式は変更しません。 ``Spin`` / ``SpinGC`` の状態
+ファイルはversion 1のままです。group digestは ``hphi-group-spinflip-fnv1a64-v1``
+になり、各操作の :math:`P_x` の有無と :math:`p` を含みます。このため他の :math:`p`、
+他の指標、 :math:`P_x` なしのファイルは、次元が一致しても拒否します。
+``SpinFlipParity`` なしのファイルは ``hphi-group-fnv1a64-v1`` のdigestのままです。
+manifestには ``spin_flip_operator=product_sigma_x``、 ``spin_flip_parity=+1``
+または ``-1``、 ``input_group_order`` を追加し、Hamiltonian行列ファイルには同じ
+演算子とparityのコメント行を追加します。Standard modeは ``SpinFlipParity`` を
+出力しません。
 
 .. raw:: latex
 

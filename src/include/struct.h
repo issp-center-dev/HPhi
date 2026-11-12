@@ -217,12 +217,16 @@ struct DefineList {
   int **AnomalousG;/**<@brief [DefineList::NAnomalousG][5]: type, site1, spin1, site2, spin2*/
 
   int iFlgSymmetryBasis;
-  unsigned int NSymTrans;
+  unsigned int NSymTrans;          /**< group order in use; 2*NSymTransInput after the Px extension */
+  unsigned int NSymTransInput;     /**< operations read from the TransSym file */
+  unsigned int NSymTransCapacity;  /**< rows allocated for SymTrans/SymTransAnti/SymTransChar/SymTransFlip */
   int **SymTrans;                  /**< [NSymTrans][Nsite], site permutation */
   int **SymTransAnti;              /**< [NSymTrans][Nsite], v1 accepts only 1 */
   double complex *SymTransChar;    /**< [NSymTrans], scalar 1D character */
+  int *SymTransFlip;               /**< [NSymTrans], 1 when the op applies Px after the site permutation */
   int iSymMomentumIndex;           /**< "# MomentumIndex m" metadata of the TransSym file, -1 if absent */
   int iParticleParity;             /**< TransSym HubbardGC/SpinlessFermionGC: 0 all N, 1 even N, -1 odd N */
+  int iSpinFlipParity;             /**< TransSym Spin-1/2 Spin(Sz=0)/SpinGC: 0 off, +1/-1 eigenvalue of Px = prod_i sigma^x_i */
 
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
