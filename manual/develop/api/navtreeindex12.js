@@ -1,5 +1,11 @@
 var NAVTREEINDEX12 =
 {
+"structCorrelationContext.html":[9,0,5],
+"structCorrelationContext.html#a0788a7ac96a876eb7309ed4ac8f3066e":[9,0,5,5],
+"structCorrelationContext.html#a07dea1316f8d26469e0c3fb339ad079c":[9,0,5,10],
+"structCorrelationContext.html#a3b02f34da10e4784dea588aa06540c48":[9,0,5,4],
+"structCorrelationContext.html#a3c55e5727f146b857788300e7814bead":[9,0,5,0],
+"structCorrelationContext.html#a3e61528b81c7ef48ba642ca3e6ab77a6":[9,0,5,9],
 "structCorrelationContext.html#a602947b261b961ca37a55c75e84be7ef":[9,0,5,11],
 "structCorrelationContext.html#a610199dbe3eb6beb262e03e5d73a531e":[9,0,5,1],
 "structCorrelationContext.html#a9be5141a76376224ea67aea3533fb3b7":[9,0,5,12],
@@ -243,11 +249,5 @@ var NAVTREEINDEX12 =
 "structDenseSymmetryColumn.html#a149b24f2b7b4d6a76f72c9885339fed3":[9,0,11,0],
 "structDenseSymmetryColumn.html#a8cfa6c104461f827a9b841dbf0844460":[9,0,11,1],
 "structDiagonalContext.html":[9,0,12],
-"structDiagonalContext.html#a392393d9b85643cf845687ea6be37542":[9,0,12,2],
-"structDiagonalContext.html#a8b54a7664f608cb8c15d1da4206bde68":[9,0,12,1],
-"structDiagonalContext.html#aec817f45eac98efb365fff720291f556":[9,0,12,0],
-"structEDMainCalStruct.html":[9,0,14],
-"structEDMainCalStruct.html#ac28ad147bf75b9b2864d9feb74bd4d29":[9,0,14,0],
-"structExcitationOperatorSet.html":[9,0,15],
-"structExcitationOperatorSet.html#a218292e6c153ffbb9015bd05c51ea92d":[9,0,15,1]
+"structDiagonalContext.html#a392393d9b85643cf845687ea6be37542":[9,0,12,2]
 };

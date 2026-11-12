@@ -39,7 +39,7 @@ var searchData=
   ['manifest_5fname_36',['manifest_name',['../symmetry__sector_8c.html#a6ec874d8e748390a7fab1d5e3d58f968',1,'symmetry_sector.c']]],
   ['manifest_5fok_37',['MANIFEST_OK',['../restart__manifest__io_8c.html#ae6d0d38244babcf718d7b8d58d693fe5a3b5b874533034b262a0febcab0072403',1,'restart_manifest_io.c']]],
   ['manifest_5fpath_38',['manifest_path',['../restart__manifest__io_8c.html#a376b98ccfda2b86f1e1219af813523c1',1,'restart_manifest_io.c']]],
-  ['mask_39',['mask',['../structMPITransferGroup.html#af7ea47ba4426c505ba4a98674eb798e6',1,'MPITransferGroup']]],
+  ['mask_39',['mask',['../structMPITransferGroup.html#af7ea47ba4426c505ba4a98674eb798e6',1,'MPITransferGroup::mask'],['../structInterAllRowIndex.html#af15e4b8789b5198125bb0ec01d1dd9da',1,'InterAllRowIndex::mask']]],
   ['mask_5fbetween_5fsites_40',['mask_between_sites',['../symmetry__matvec__plan_8c.html#a3f94f905180a00c62f271d3ace43d351',1,'symmetry_matvec_plan.c']]],
   ['match_5fmomentum_5findex_5fkey_41',['match_momentum_index_key',['../symmetry__basis__io_8c.html#a863d756a5d15d0156bbea47bd297242a',1,'symmetry_basis_io.c']]],
   ['matrix_5fdigest_42',['matrix_digest',['../structSymmetryHamiltonianInfo.html#a1ef7ac955856c9bc847382434cc75b92',1,'SymmetryHamiltonianInfo']]],

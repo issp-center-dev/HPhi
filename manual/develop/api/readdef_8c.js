@@ -1,5 +1,6 @@
 var readdef_8c =
 [
+    [ "InterAllRowIndex", "structInterAllRowIndex.html", "structInterAllRowIndex" ],
     [ "AppendTransfer", "readdef_8c.html#a9c290f33f322794591f865f0d7b193cb", null ],
     [ "ArrangeInterAllOffDiagonal", "readdef_8c.html#ae52c48c2d659ca69c2eed3aed89776c9", null ],
     [ "CheckFormatForKondoInt", "readdef_8c.html#a530ff519fae4063e6f2e08a11316d5ea", null ],
@@ -18,13 +19,18 @@ var readdef_8c =
     [ "CheckTotal2Sz", "readdef_8c.html#a41c26debd050ab7eaab68b5ee0caf0a0", null ],
     [ "CheckTransferHermite", "readdef_8c.html#a512f5660363476a6f0c915ea496a9943", null ],
     [ "CheckWords", "readdef_8c.html#afad6a8fbb4fc6acbd22bd70e699eb21c", null ],
+    [ "CompareInterAllKey", "readdef_8c.html#a8087c6a898a7605067aeadf4f0dfd610", null ],
+    [ "CompareInterAllRowOrder", "readdef_8c.html#a6e086e864b1d53aec380c0b4a36d3078", null ],
     [ "GetDiagonalInterAll", "readdef_8c.html#ac5a8a45ecec5aa4484c187a2ba130f5f", null ],
     [ "GetDiagonalInterAll_simple", "readdef_8c.html#a4e63d701b6b58ee5af0f3843a4ab49e2", null ],
     [ "GetFileName", "readdef_8c.html#a500b57266b13cf3bc4a89f222179a03d", null ],
     [ "GetFileNameByKW", "readdef_8c.html#afa1a7211e33cdb1be5abc85e4bb42d9c", null ],
     [ "GetKWWithIdx", "readdef_8c.html#a3d8c84b499f7188fc876ad1d53349b79", null ],
     [ "InitializeInteractionNum", "readdef_8c.html#a1422ba60c3e8b188b44a30ed63e4ce68", null ],
-    [ "InputInterAllInfo", "readdef_8c.html#a25894f16253990c29ea8fa87cc1360fc", null ],
+    [ "InputInterAllInfo", "readdef_8c.html#a4e53fec9d0cb68736b8e61a406368a84", null ],
+    [ "InterAllRowHash", "readdef_8c.html#a04e114e4305f5c8dd8a4ccccacf9370c", null ],
+    [ "InterAllRowIndexFree", "readdef_8c.html#a66caac73c74331ace50e8eeab697f90b", null ],
+    [ "InterAllRowIndexInit", "readdef_8c.html#a3defef60c7671c5412a1ad0fe91ec13b", null ],
     [ "IsSkippableNBodyLine", "readdef_8c.html#a607817fb08b8e5ca6450e9dfb14c46a1", null ],
     [ "JudgeDefType", "readdef_8c.html#a8bc4135515c28a940d030463bb568a9d", null ],
     [ "normalize_symmetry_fixed_n", "readdef_8c.html#a3fe6f6579781b9d81ae0e69ef865e399", null ],
@@ -41,5 +47,6 @@ var readdef_8c =
     [ "ValidateValue", "readdef_8c.html#a87fdc6e7a1d1ea9e10f42aa6ef0a0b7a", null ],
     [ "cFileNameListFile", "readdef_8c.html#aa50055512dbd173f336dcf0387c280dc", null ],
     [ "cKWListOfFileNameList", "readdef_8c.html#a97b626327a0973224a8744d36b254429", null ],
-    [ "D_iKWNumDef", "readdef_8c.html#aa1a4cb0fc2864b92690212e05951baa8", null ]
+    [ "D_iKWNumDef", "readdef_8c.html#aa1a4cb0fc2864b92690212e05951baa8", null ],
+    [ "sInterAllRowsForSort", "readdef_8c.html#a375f2ef79fb594f07c6bd5e3bbd6da6d", null ]
 ];

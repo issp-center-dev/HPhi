@@ -21,6 +21,7 @@ var annotated_dup =
     [ "FillEntriesContext", "structFillEntriesContext.html", "structFillEntriesContext" ],
     [ "GreenOutputManifestRecord", "structGreenOutputManifestRecord.html", "structGreenOutputManifestRecord" ],
     [ "GroupDigestEntry", "structGroupDigestEntry.html", "structGroupDigestEntry" ],
+    [ "InterAllRowIndex", "structInterAllRowIndex.html", "structInterAllRowIndex" ],
     [ "LargeList", "structLargeList.html", "structLargeList" ],
     [ "LegacyApplyContext", "structLegacyApplyContext.html", "structLegacyApplyContext" ],
     [ "LegacyRawScan", "structLegacyRawScan.html", "structLegacyRawScan" ],

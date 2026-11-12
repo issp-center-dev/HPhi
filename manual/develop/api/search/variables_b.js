@@ -2,7 +2,7 @@ var searchData=
 [
   ['manifest_0',['manifest',['../structTPQRestartPlan.html#a8efbe352156419f296ab7877f6d2eadd',1,'TPQRestartPlan']]],
   ['manifest_5fexists_1',['manifest_exists',['../structTPQRestartPlan.html#a71677238358280649e213449b5b64d2a',1,'TPQRestartPlan']]],
-  ['mask_2',['mask',['../structMPITransferGroup.html#af7ea47ba4426c505ba4a98674eb798e6',1,'MPITransferGroup']]],
+  ['mask_2',['mask',['../structMPITransferGroup.html#af7ea47ba4426c505ba4a98674eb798e6',1,'MPITransferGroup::mask'],['../structInterAllRowIndex.html#af15e4b8789b5198125bb0ec01d1dd9da',1,'InterAllRowIndex::mask']]],
   ['matrix_5fdigest_3',['matrix_digest',['../structSymmetryHamiltonianInfo.html#a1ef7ac955856c9bc847382434cc75b92',1,'SymmetryHamiltonianInfo']]],
   ['matrix_5fmodels_4',['matrix_models',['../symmetry__hamiltonian__io_8c.html#aab369efec7df5e002baea3f025957359',1,'symmetry_hamiltonian_io.c']]],
   ['matrix_5fstorage_5fbytes_5',['matrix_storage_bytes',['../structSymmetryMatvecPlan.html#a05bcb289c2c357dc9ac4f9953cdca2d0',1,'SymmetryMatvecPlan']]],
