@@ -1,5 +1,13 @@
 var NAVTREEINDEX17 =
 {
+"symmetry__directory_8c.html#ad34643643f25da19a68d6702ad2902b7":[10,0,94,14],
+"symmetry__directory_8c.html#ad578b5a21f71bae2a40b8293e60300c6":[10,0,94,9],
+"symmetry__directory_8c.html#adca82346ac9f4f99938482c7a3b76e06":[10,0,94,25],
+"symmetry__directory_8c.html#ae167d5a860d6633209977aeed63857be":[10,0,94,22],
+"symmetry__directory_8c.html#ae56125c9e9f046adf37c3f5fe595d6a7":[10,0,94,21],
+"symmetry__directory_8c.html#ae74c18d5d953827596bb7789c7737051":[10,0,94,20],
+"symmetry__directory_8c.html#af9ea91ec791720e648e81ed22b225d90":[10,0,94,30],
+"symmetry__directory_8c_source.html":[10,0,94],
 "symmetry__directory_8h.html":[10,0,1,100],
 "symmetry__directory_8h.html#a0b2220d39c63862434a90c4f9bd654af":[10,0,1,100,15],
 "symmetry__directory_8h.html#a19cad1b0460aece0effe7e4deee8a4c9":[10,0,1,100,6],
@@ -241,13 +249,5 @@ var NAVTREEINDEX17 =
 "symmetry__matvec__plan_8h.html#a8bff573bcd104eb486e68b4d88ef5db2":[10,0,1,106,26],
 "symmetry__matvec__plan_8h.html#aa279c7799042513650d2b4147fe0b862":[10,0,1,106,24],
 "symmetry__matvec__plan_8h.html#ab06cc7128d9877fd3cae058a18080d60":[10,0,1,106,17],
-"symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398":[10,0,1,106,13],
-"symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398a4cae16bc473efbd650032fc2cd88a785":[10,0,1,106,13,1],
-"symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398ad91b17c594be85913c2aad66a528df7b":[10,0,1,106,13,0],
-"symmetry__matvec__plan_8h.html#ae697bbbac42f61003a4d126311aa6aa6":[10,0,1,106,10],
-"symmetry__matvec__plan_8h.html#af10ffc811b9b64746de262a238f52715":[10,0,1,106,19],
-"symmetry__matvec__plan_8h.html#af901da253e7415f4e48fe311eca8b6a2":[10,0,1,106,25],
-"symmetry__matvec__plan_8h_source.html":[10,0,1,106],
-"symmetry__memory__policy_8c.html":[10,0,101],
-"symmetry__memory__policy_8c.html#a44944071f23b7acb3bb4180d2ba5474a":[10,0,101,1]
+"symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398":[10,0,1,106,13]
 };

@@ -44,6 +44,7 @@ var ErrorMessage_8c =
     [ "cErrNoModel", "ErrorMessage_8c.html#a8805bd8a881c156822b26b5533caddc0", null ],
     [ "cErrNonConservedInterAll", "ErrorMessage_8c.html#acc21ca5fc2ced4a54c5eb4c751a02764", null ],
     [ "cErrNonHermiteInterAll", "ErrorMessage_8c.html#aa78f849f6d98e4da52896bf4c788f875", null ],
+    [ "cErrNonHermiteInterAllDiagonal", "ErrorMessage_8c.html#a9cb7204bd9d611210f89f73c6696ddbd", null ],
     [ "cErrNonHermiteInterAllForAll", "ErrorMessage_8c.html#addee1ce117b507077302516340e8254f", null ],
     [ "cErrNonHermiteTrans", "ErrorMessage_8c.html#acca591576e8a4012d3675e3aca48a5dc", null ],
     [ "cErrNonHermiteTransForAll", "ErrorMessage_8c.html#a8e14f544cc87d0136505dc3531c0cbe9", null ],

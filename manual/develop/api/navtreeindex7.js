@@ -1,5 +1,7 @@
 var NAVTREEINDEX7 =
 {
+"hamstore_8h.html#aa7326bbb899a78d411d8fcd7d3a48ffb":[10,0,1,40,0],
+"hamstore_8h.html#ace4c8d4321aa37aaa352c81fb44817eb":[10,0,1,40,4],
 "hamstore_8h_source.html":[10,0,1,40],
 "index.html":[],
 "input_8c.html":[10,0,36],
@@ -247,7 +249,5 @@ var NAVTREEINDEX7 =
 "mltplyMPIBatched_8h.html#aa79073d57a52953050379bd00da22984":[10,0,1,60,22],
 "mltplyMPIBatched_8h.html#ab7e08263a22bfcda19dadaa0abdea9b1":[10,0,1,60,11],
 "mltplyMPIBatched_8h.html#ac1b66a8e0607685f5c2c014f6301e880":[10,0,1,60,30],
-"mltplyMPIBatched_8h.html#ad06ecbb627cf0f321740e07b15d67377":[10,0,1,60,16],
-"mltplyMPIBatched_8h.html#ae75430e963f9c905755bb977dbc99e7e":[10,0,1,60,26],
-"mltplyMPIBatched_8h.html#afc5319c3b4567168bf45df6aaf35205f":[10,0,1,60,19]
+"mltplyMPIBatched_8h.html#ad06ecbb627cf0f321740e07b15d67377":[10,0,1,60,16]
 };
