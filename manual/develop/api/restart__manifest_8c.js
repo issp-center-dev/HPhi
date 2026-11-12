@@ -10,7 +10,7 @@ var restart__manifest_8c =
     [ "RestartManifestFree", "restart__manifest_8c.html#af4fd978d0a0e8d9e40ee932a0184d7ee", null ],
     [ "RestartManifestParse", "restart__manifest_8c.html#abdebc76f7cd895ce2336f6c7f0acc123", null ],
     [ "RestartManifestUpsert", "restart__manifest_8c.html#ad4310f5758f21264c11a0b53f1899844", null ],
-    [ "methods", "restart__manifest_8c.html#ad74b51a7530f2b77a12a8440dea7302a", null ],
+    [ "methods", "restart__manifest_8c.html#aa2741f54d7731c4a7439d13c13d621d3", null ],
     [ "name", "restart__manifest_8c.html#a8f8f80d37794cde9472343e4487ba3eb", null ],
     [ "type", "restart__manifest_8c.html#ac765329451135abec74c45e1897abf26", null ]
 ];

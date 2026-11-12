@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['global_20variables_20and_20data_20structure_0',['Global variables and Data structure',['../page_variable.html',1,'']]]
+  ['basic_20usage_0',['Basic Usage',['../page_time.html#subsec_time_basic',1,'']]],
+  ['bindstruct_20x_1',['BindStruct (X)',['../page_variable.html#subsec_bindstruct',1,'']]],
+  ['build_20options_2',['CMake Build Options',['../page_cmake.html#sec_cmake_options',1,'']]]
 ];

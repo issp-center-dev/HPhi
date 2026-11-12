@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['malloc_20vectors_0',['Malloc vectors',['../page_setmem.html',1,'']]],
-  ['mode_1',['Add new input-file for Expert mode',['../page_addexpert.html',1,'']]],
-  ['mode_20into_20calcmod_2',['Add new calculation mode into calcmod',['../page_addcalcmod.html',1,'']]],
-  ['modpara_3',['Add new parameter into modpara',['../page_addmodpara.html',1,'']]]
+  ['general_20rules_0',['General Rules',['../page_codingrule.html#sec_coding_general',1,'']]],
+  ['global_20variables_1',['Global Variables',['../page_variable.html#sec_global_vars',1,'']]],
+  ['global_20variables_20and_20data_20structure_2',['Global variables and Data structure',['../page_variable.html',1,'']]],
+  ['guidelines_3',['File Format Guidelines',['../page_addexpert.html#sec_expert_format',1,'']]]
 ];

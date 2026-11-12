@@ -2,7 +2,7 @@ var searchData=
 [
   ['b_5fspin_0',['B_spin',['../structLargeList.html#a7d84518da32ee1be30b4031b77e4b282',1,'LargeList']]],
   ['base_1',['base',['../structSymmetryTEHamiltonian.html#a08cfb9d79211b7c10aa8ed537a2c60c2',1,'SymmetryTEHamiltonian']]],
-  ['basis_2',['basis',['../structSymmetryBasisRuntime.html#a4615bb14519b8656206a9b7df14e2d6a',1,'SymmetryBasisRuntime::basis'],['../structRestartManifest.html#a533269dde2e34ebc469754a0da5ecfd4',1,'RestartManifest::basis']]],
+  ['basis_2',['basis',['../structRestartManifest.html#a533269dde2e34ebc469754a0da5ecfd4',1,'RestartManifest::basis'],['../structSymmetryBasisRuntime.html#a4615bb14519b8656206a9b7df14e2d6a',1,'SymmetryBasisRuntime::basis']]],
   ['basis_5fcompatible_5fsurvivors_3',['basis_compatible_survivors',['../structSymmetryBasisRuntime.html#aa144e70d3da139322f6d97757f3c20a8',1,'SymmetryBasisRuntime']]],
   ['basis_5fdiagonal_5fevaluator_5fcalls_4',['basis_diagonal_evaluator_calls',['../structSymmetryBasisRuntime.html#a0ec54815f178f967889feb9b29f445b8',1,'SymmetryBasisRuntime']]],
   ['basis_5fgather_5fbytes_5',['basis_gather_bytes',['../structSymmetryBasisRuntime.html#a2cc24151390310647064a3fa514c0516',1,'SymmetryBasisRuntime']]],
@@ -39,7 +39,7 @@ var searchData=
   ['batched_5ftransfers_5fhubbard_5finitialized_36',['batched_transfers_Hubbard_initialized',['../mltplyHubbard_8c.html#a2cde70b4f4af5b8d243767b663d672a5',1,'mltplyHubbard.c']]],
   ['batched_5ftransfers_5fhubbardgc_37',['batched_transfers_HubbardGC',['../mltplyHubbard_8c.html#adb6153c3a5ac68fc5f68eeb04aafe62f',1,'mltplyHubbard.c']]],
   ['batched_5ftransfers_5fhubbardgc_5finitialized_38',['batched_transfers_HubbardGC_initialized',['../mltplyHubbard_8c.html#ab3e730f9e070a65214299166140696bd',1,'mltplyHubbard.c']]],
-  ['beta_39',['beta',['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'beta:&#160;global.h'],['../global_8c.html#a5c7b96103ba8c775791fd817c42782ae',1,'beta:&#160;global.c'],['../structCanonicalColumnContext.html#a17e2c3ad3c6f703d51873ca6d43651dd',1,'CanonicalColumnContext::beta']]],
+  ['beta_39',['beta',['../structCanonicalColumnContext.html#a17e2c3ad3c6f703d51873ca6d43651dd',1,'CanonicalColumnContext::beta'],['../global_8c.html#a5c7b96103ba8c775791fd817c42782ae',1,'beta:&#160;global.c'],['../global_8h.html#acfb326d0978323ff7ff092dc0e2efc53',1,'beta:&#160;global.h']]],
   ['bind_40',['Bind',['../structEDMainCalStruct.html#ac28ad147bf75b9b2864d9feb74bd4d29',1,'EDMainCalStruct']]],
   ['binomial_41',['binomial',['../structSymmetryStateEnumerator.html#aa08322dadfe02ef54f10439b4e8de434',1,'SymmetryStateEnumerator']]],
   ['bit1diff_42',['bit1diff',['../structMPITransferGroup.html#a9c421c95245ae78449b9b4ffc00014e5',1,'MPITransferGroup']]],
@@ -63,5 +63,5 @@ var searchData=
   ['build_5ftemporary_5fpeak_5fbytes_60',['build_temporary_peak_bytes',['../structSymmetryMatvecPlan.html#a5d6ea0b8ac3de61fb0956baf7834a501',1,'SymmetryMatvecPlan']]],
   ['builtin_5ftype_61',['builtin_type',['../structSymmetryMpiPayloadDescriptor.html#aaec934c62c3c8e8b9fc48ebe33941619',1,'SymmetryMpiPayloadDescriptor']]],
   ['byte_5flimit_62',['byte_limit',['../structSymmetryMpiExchangeMemoryBudget.html#a41ee54c4b01413a2b560f100172a56a3',1,'SymmetryMpiExchangeMemoryBudget']]],
-  ['bytes_63',['bytes',['../structCorrelationOrbitTable.html#a6161832c306c896b0bf006c3500259ce',1,'CorrelationOrbitTable::bytes'],['../structGreenOutputManifestRecord.html#a1e64ffc6533b6e10d251fa26d7f6e2e1',1,'GreenOutputManifestRecord::bytes']]]
+  ['bytes_63',['bytes',['../structGreenOutputManifestRecord.html#a1e64ffc6533b6e10d251fa26d7f6e2e1',1,'GreenOutputManifestRecord::bytes'],['../structCorrelationOrbitTable.html#a6161832c306c896b0bf006c3500259ce',1,'CorrelationOrbitTable::bytes']]]
 ];

@@ -17,6 +17,6 @@ var searchData=
   ['hash_5fword_14',['hash_word',['../symmetry__checkpoint_8c.html#aa2e2c5994dce4a2715a48aaee8bcd857',1,'symmetry_checkpoint.c']]],
   ['hermitian_5fpair_15',['hermitian_pair',['../symmetry__hamiltonian__io_8c.html#a8d68a8375ede7330edf4721d38ee02d0',1,'symmetry_hamiltonian_io.c']]],
   ['hex_5ffield_16',['hex_field',['../symmetry__hamiltonian__io_8c.html#a161d90c209383f6a7541bf3bb54253ec',1,'symmetry_hamiltonian_io.c']]],
-  ['hphitrans_17',['hphitrans',['../HPhiTrans_8c.html#a00c103e199376bcb62c80ae8a87b801e',1,'HPhiTrans(struct BindStruct *X):&#160;HPhiTrans.c'],['../HPhiTrans_8h.html#a00c103e199376bcb62c80ae8a87b801e',1,'HPhiTrans(struct BindStruct *X):&#160;HPhiTrans.c']]],
+  ['hphitrans_17',['HPhiTrans',['../HPhiTrans_8c.html#a00c103e199376bcb62c80ae8a87b801e',1,'HPhiTrans(struct BindStruct *X):&#160;HPhiTrans.c'],['../HPhiTrans_8h.html#a00c103e199376bcb62c80ae8a87b801e',1,'HPhiTrans(struct BindStruct *X):&#160;HPhiTrans.c']]],
   ['hubbard_5fstate_5fat_18',['hubbard_state_at',['../symmetry__state__enumerator_8c.html#ab7ee8b74173e182c702ce509db62507d',1,'symmetry_state_enumerator.c']]]
 ];

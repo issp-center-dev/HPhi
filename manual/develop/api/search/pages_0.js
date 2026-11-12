@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['add_20new_20calculation_20mode_20into_20calcmod_0',['Add new calculation mode into calcmod',['../page_addcalcmod.html',1,'']]],
-  ['add_20new_20input_20file_20for_20expert_20mode_1',['Add new input-file for Expert mode',['../page_addexpert.html',1,'']]],
-  ['add_20new_20parameter_20into_20modpara_2',['Add new parameter into modpara',['../page_addmodpara.html',1,'']]],
-  ['add_20new_20source_20file_20executable_20scripts_20handle_20cmake_3',['Add new source-file, executable, scripts (handle CMake)',['../page_cmake.html',1,'']]],
-  ['and_20data_20structure_4',['Global variables and Data structure',['../page_variable.html',1,'']]]
+  ['1_3a_20add_20to_20definelist_0',['Step 1: Add to DefineList',['../page_addmodpara.html#subsec_modpara_step1',1,'']]],
+  ['1_3a_20define_20keywords_1',['Step 1: Define Keywords',['../page_addexpert.html#subsec_expert_step1',1,'']]],
+  ['1_3a_20define_20mode_20constant_2',['Step 1: Define Mode Constant',['../page_addcalcmod.html#subsec_calcmod_step1',1,'']]],
+  ['1d_20arrays_3',['1D Arrays',['../page_setmem.html#subsec_setmem_1d',1,'']]]
 ];
