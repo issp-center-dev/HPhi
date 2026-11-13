@@ -1,5 +1,8 @@
 var NAVTREEINDEX13 =
 {
+"structDefineList.html#afb0fb56d5d02820791901e094e6202b3":[9,0,10,20],
+"structDefineList.html#afb8a2f22e15c09891db3e83e6f16deb9":[9,0,10,72],
+"structDefineList.html#afef310367a7f3e42dc885d267ff4eb2c":[9,0,10,53],
 "structDenseSymmetryColumn.html":[9,0,11],
 "structDenseSymmetryColumn.html#a149b24f2b7b4d6a76f72c9885339fed3":[9,0,11,0],
 "structDenseSymmetryColumn.html#a8cfa6c104461f827a9b841dbf0844460":[9,0,11,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX13 =
 "structSectorShift.html#a971f102f37a62c84b8a8491ac7dd50e8":[9,0,47,1],
 "structSectorShift.html#aa865583c0e1978af2d166f4de8828729":[9,0,47,3],
 "structSectorShift.html#abd127373d1588ea2f6ba21fa00a4faa1":[9,0,47,5],
-"structSectorShift.html#ac6245c3550d3d0e3b188aefafcc106f3":[9,0,47,4],
-"structStateBuffers.html":[9,0,48],
-"structStateBuffers.html#a3f0597053d21ac7a2b5ec8f7a17638ba":[9,0,48,3],
-"structStateBuffers.html#a6ae79ca392b3d785373bb7c96b241fb4":[9,0,48,0]
+"structSectorShift.html#ac6245c3550d3d0e3b188aefafcc106f3":[9,0,47,4]
 };

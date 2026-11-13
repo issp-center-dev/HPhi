@@ -3,6 +3,8 @@ var nbody__interall_8h =
     [ "AddNBodyInterAllToHamHubbard", "nbody__interall_8h.html#aab23d376b0972153aa8c392ce15bfcf4", null ],
     [ "AddNBodyInterAllToHamHubbardGC", "nbody__interall_8h.html#a54b87f352317037a3966b2a1673d4f3d", null ],
     [ "AddNBodyInterAllToHamSpinGC", "nbody__interall_8h.html#a792e02152c230b226b0a6f60c9747664", null ],
+    [ "AddNBodyInterAllToHamSpinless", "nbody__interall_8h.html#aa007869362b6c1e4795aef0143dcdfdb", null ],
+    [ "AddNBodyInterAllToHamSpinlessGC", "nbody__interall_8h.html#a048bf4d62d1c610f619dc312e10e2d7c", null ],
     [ "ApplyNBodyInterAllSpinGC", "nbody__interall_8h.html#a43959f8ddcfac4b77c4268fd220caf06", null ],
     [ "CheckNBodyInterAllHermitePairs", "nbody__interall_8h.html#a2e58f420a94e4851cdeacd9141892d38", null ],
     [ "CheckNBodyInterAllHubbardConservation", "nbody__interall_8h.html#a69eb1909a531821351fd147621044f87", null ],

@@ -3,6 +3,8 @@ var nbody__interall_8c =
     [ "AddNBodyInterAllToHamHubbard", "nbody__interall_8c.html#aab23d376b0972153aa8c392ce15bfcf4", null ],
     [ "AddNBodyInterAllToHamHubbardGC", "nbody__interall_8c.html#a54b87f352317037a3966b2a1673d4f3d", null ],
     [ "AddNBodyInterAllToHamSpinGC", "nbody__interall_8c.html#a792e02152c230b226b0a6f60c9747664", null ],
+    [ "AddNBodyInterAllToHamSpinless", "nbody__interall_8c.html#aa007869362b6c1e4795aef0143dcdfdb", null ],
+    [ "AddNBodyInterAllToHamSpinlessGC", "nbody__interall_8c.html#a048bf4d62d1c610f619dc312e10e2d7c", null ],
     [ "apply_hubbardgc_annihilate_mask", "nbody__interall_8c.html#ad4fdcb6e97236e3bdc06f659bacd6f4e", null ],
     [ "apply_hubbardgc_create_mask", "nbody__interall_8c.html#a10bd22d67a38bf96cf7d6947b1d450c2", null ],
     [ "apply_hubbardgc_rank_annihilate", "nbody__interall_8c.html#a2e0cce2ad61ad7280861e37ae7e45982", null ],

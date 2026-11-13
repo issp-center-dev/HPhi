@@ -1,5 +1,8 @@
 var NAVTREEINDEX17 =
 {
+"symmetry__directory_8c.html#ab65b4266aae9e72898d5a2c7a3630973":[10,0,94,6],
+"symmetry__directory_8c.html#abb12d51119ad332ec41874730cddfd23":[10,0,94,11],
+"symmetry__directory_8c.html#ace7c9c1a968126835737c90fdd1745bd":[10,0,94,32],
 "symmetry__directory_8c.html#ad34643643f25da19a68d6702ad2902b7":[10,0,94,14],
 "symmetry__directory_8c.html#ad578b5a21f71bae2a40b8293e60300c6":[10,0,94,9],
 "symmetry__directory_8c.html#adca82346ac9f4f99938482c7a3b76e06":[10,0,94,25],
@@ -246,8 +249,5 @@ var NAVTREEINDEX17 =
 "symmetry__matvec__plan_8h.html#a81fd8b8bfbc524c5e996aac83d74fa2c":[10,0,1,106,20],
 "symmetry__matvec__plan_8h.html#a8331c430c7115be8a32ecfe51e747468":[10,0,1,106,15],
 "symmetry__matvec__plan_8h.html#a87a0fc2196bed941578ad1478f35f58b":[10,0,1,106,14],
-"symmetry__matvec__plan_8h.html#a8bff573bcd104eb486e68b4d88ef5db2":[10,0,1,106,26],
-"symmetry__matvec__plan_8h.html#aa279c7799042513650d2b4147fe0b862":[10,0,1,106,24],
-"symmetry__matvec__plan_8h.html#ab06cc7128d9877fd3cae058a18080d60":[10,0,1,106,17],
-"symmetry__matvec__plan_8h.html#ac50bf3a3629ddbe305714ac77359f398":[10,0,1,106,13]
+"symmetry__matvec__plan_8h.html#a8bff573bcd104eb486e68b4d88ef5db2":[10,0,1,106,26]
 };

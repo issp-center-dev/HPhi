@@ -1,5 +1,8 @@
 var NAVTREEINDEX14 =
 {
+"structStateBuffers.html":[9,0,48],
+"structStateBuffers.html#a3f0597053d21ac7a2b5ec8f7a17638ba":[9,0,48,3],
+"structStateBuffers.html#a6ae79ca392b3d785373bb7c96b241fb4":[9,0,48,0],
 "structStateBuffers.html#a7712bd583a2af66d6fb7bf014401da98":[9,0,48,1],
 "structStateBuffers.html#adfe534804d849930b9908dd549599582":[9,0,48,2],
 "structSymmetryBasisCollector.html":[9,0,49],
@@ -246,8 +249,5 @@ var NAVTREEINDEX14 =
 "structSymmetryMatvecPlan.html#ad48d46790fd9ca227b4b9388069d9be0":[9,0,70,6],
 "structSymmetryMatvecPlan.html#ad49f6d1c102d9f36c18e9ea21ca3cf0c":[9,0,70,25],
 "structSymmetryMatvecPlan.html#adb067c5e8713054cc2d04b3e088b2d8e":[9,0,70,18],
-"structSymmetryMatvecPlan.html#adc6b63b81d22c4c7d361ba4042cdbe05":[9,0,70,26],
-"structSymmetryMatvecPlan.html#ae7353afe34bd6a7fd7e9227496d036de":[9,0,70,15],
-"structSymmetryMatvecPlan.html#aed9cc85871bce88ae7c43328ba5afb3c":[9,0,70,14],
-"structSymmetryMatvecPlan.html#af5c0cd06ad99638b15b5f8eacbb7c4bc":[9,0,70,3]
+"structSymmetryMatvecPlan.html#adc6b63b81d22c4c7d361ba4042cdbe05":[9,0,70,26]
 };

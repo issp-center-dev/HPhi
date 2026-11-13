@@ -1,5 +1,8 @@
 var NAVTREEINDEX15 =
 {
+"structSymmetryMatvecPlan.html#ae7353afe34bd6a7fd7e9227496d036de":[9,0,70,15],
+"structSymmetryMatvecPlan.html#aed9cc85871bce88ae7c43328ba5afb3c":[9,0,70,14],
+"structSymmetryMatvecPlan.html#af5c0cd06ad99638b15b5f8eacbb7c4bc":[9,0,70,3],
 "structSymmetryMemoryPolicy.html":[9,0,71],
 "structSymmetryMemoryPolicy.html#ae0a1f58f6b7f950fbb4db21b0c49946f":[9,0,71,0],
 "structSymmetryMemoryPolicy.html#af18f92f58836c9e685445fa2b7750d91":[9,0,71,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX15 =
 "structTraceMap.html#a44740dd9c2ddce7ed7131f35e3617332":[9,0,104,0],
 "structTraceMap.html#ab4e577038330880653c50b455d5f2f3b":[9,0,104,3],
 "structUnresolvedRowContext.html":[9,0,105],
-"structUnresolvedRowContext.html#a5b7360eb6db55f39a679ef374e790f1d":[9,0,105,2],
-"structUnresolvedRowContext.html#a7cdb936f89b9f63777e38ffd7aa15bcc":[9,0,105,3],
-"structUnresolvedRowContext.html#a9c0195a12294fd822fe4ee4b0eb612d5":[9,0,105,1],
-"structUnresolvedRowContext.html#afeb3f05711a3f7ed85a82233cb360e5b":[9,0,105,0]
+"structUnresolvedRowContext.html#a5b7360eb6db55f39a679ef374e790f1d":[9,0,105,2]
 };

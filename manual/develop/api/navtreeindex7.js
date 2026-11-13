@@ -1,7 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"hamstore_8h.html#aa7326bbb899a78d411d8fcd7d3a48ffb":[10,0,1,40,0],
-"hamstore_8h.html#ace4c8d4321aa37aaa352c81fb44817eb":[10,0,1,40,4],
 "hamstore_8h_source.html":[10,0,1,40],
 "index.html":[],
 "input_8c.html":[10,0,36],
@@ -34,6 +32,7 @@ var NAVTREEINDEX7 =
 "makeHamSym_8h.html#a96b5abf2f8a9a946817b4cf474e79dc7":[10,0,1,50,0],
 "makeHamSym_8h_source.html":[10,0,1,50],
 "makeHam_8c.html":[10,0,42],
+"makeHam_8c.html#a3f6330efd5a5d0487b141b27d51a56e7":[10,0,42,3],
 "makeHam_8c.html#a460d5b90ee970a19d8b66c2b30c8cb0b":[10,0,42,2],
 "makeHam_8c.html#a812abc05ff87e8cc2d14262734e38ec8":[10,0,42,1],
 "makeHam_8c.html#aa3bafdd239756b7f24e6eeecb249a354":[10,0,42,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX7 =
 "mltplyMPIBatched_8h.html#aa79073d57a52953050379bd00da22984":[10,0,1,60,22],
 "mltplyMPIBatched_8h.html#ab7e08263a22bfcda19dadaa0abdea9b1":[10,0,1,60,11],
 "mltplyMPIBatched_8h.html#ac1b66a8e0607685f5c2c014f6301e880":[10,0,1,60,30],
-"mltplyMPIBatched_8h.html#ad06ecbb627cf0f321740e07b15d67377":[10,0,1,60,16]
+"mltplyMPIBatched_8h.html#ad06ecbb627cf0f321740e07b15d67377":[10,0,1,60,16],
+"mltplyMPIBatched_8h.html#ae75430e963f9c905755bb977dbc99e7e":[10,0,1,60,26]
 };

@@ -72,7 +72,6 @@ var ErrorMessage_8c =
     [ "cErrSolverBuild", "ErrorMessage_8c.html#a3c8bfea464a12820f357b820cbcb9f9d", null ],
     [ "cErrSolverCalcType", "ErrorMessage_8c.html#abe623c9f7c0e77061ccd3dac24dcf502", null ],
     [ "cErrSpectrumFullDiagSolver", "ErrorMessage_8c.html#a54ab5302ea8c9ce07587615787cc3c5f", null ],
-    [ "cErrSpinlessFullDiag", "ErrorMessage_8c.html#ae75dc34db7720038bb984913c8bb1001", null ],
     [ "cErrSz", "ErrorMessage_8c.html#a0cfbc728538f8286bd0430b68d31b8ae", null ],
     [ "cErrSz_NoFile", "ErrorMessage_8c.html#af24d77e632edb2f89c47a6556c7a307b", null ],
     [ "cErrSz_NoFile_Show", "ErrorMessage_8c.html#a10620f172b03defb78350a626a45ec22", null ],

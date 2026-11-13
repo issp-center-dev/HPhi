@@ -167,7 +167,6 @@ Variables</h2></td></tr>
 <tr class="memitem:a5a44ad07ac75e91388fef35c1d9a2200" id="r_a5a44ad07ac75e91388fef35c1d9a2200"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a44ad07ac75e91388fef35c1d9a2200">cErrScaLAPACK</a> =&quot;Error in %s\n ScaLAPACK: \n 0: Use LAPACK for <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> mode,\n 1: Use ScaLAPACK for <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> mode.\n&quot;</td></tr>
 <tr class="memitem:a54ab5302ea8c9ce07587615787cc3c5f" id="r_a54ab5302ea8c9ce07587615787cc3c5f"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54ab5302ea8c9ce07587615787cc3c5f">cErrSpectrumFullDiagSolver</a> =&quot;Error in %s\n CalcSpec (spectrum calculation) with <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> is requested together with Solver %d,\n but <a class="el" href="CalcSpectrumByFullDiag_8c.html#a21c861e5fa09c2e946fcdaf43c7650f7">CalcSpectrumByFullDiag</a>() reads eigenvectors from <a class="el" href="global_8c.html#af964b432d6b4264b8f3e88ec42754730">L_vec</a>, which this solver does not fill\n (eigenvectors stay distributed). Use \&quot;Solver 0\&quot; (LAPACK), or \&quot;Solver 1\&quot; (ScaLAPACK) with <a class="el" href="global_8c.html#ae68326adc3b3862f1162832f70727b06">nproc</a>==1.\n&quot;</td></tr>
 <tr class="memitem:a21561f8f71b8827aa4e15d1fd57bc708" id="r_a21561f8f71b8827aa4e15d1fd57bc708"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21561f8f71b8827aa4e15d1fd57bc708">cErrExpecMode</a> =&quot;Error in %s\n ExpecMode: must be 0 (serial), 1 (state-parallel), or 2 (trace kernels),\n and requires CalcType = <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> with Solver 1 (ScaLAPACK) or 3 (ELPA).\n&quot;</td></tr>
-<tr class="memitem:ae75dc34db7720038bb984913c8bb1001" id="r_ae75dc34db7720038bb984913c8bb1001"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae75dc34db7720038bb984913c8bb1001">cErrSpinlessFullDiag</a> =&quot;Error in %s\n <a class="el" href="DefCommon_8h.html#a69d939c08019c29c828946968859a70d">SpinlessFermion</a> / <a class="el" href="DefCommon_8h.html#a20155e0a89abd94eef1d35f4ae7c7c90">SpinlessFermionGC</a> are not currently supported for <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> (CalcType=2) in this version:\n the hopping (Trans) term is not built into the <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> Hamiltonian and the particle-number <a class="el" href="output_8h.html#ac374eec41d2f3fc839286a068a4d4d90">output</a> is not populated,\n so the results would be incorrect. This is tracked separately and will be addressed in a future release.\n&quot;</td></tr>
 <tr class="memitem:a986090a0dfd2900cd73c4d4d6ce0fa8d" id="r_a986090a0dfd2900cd73c4d4d6ce0fa8d"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a986090a0dfd2900cd73c4d4d6ce0fa8d">cErrNcond</a> = &quot;Error in %s\n Ncond must be greater than 0.\n &quot;</td></tr>
 <tr class="memitem:a62ed33d6c8e390d717eb7f572ff0ca30" id="r_a62ed33d6c8e390d717eb7f572ff0ca30"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62ed33d6c8e390d717eb7f572ff0ca30">cErrNsite</a> = &quot;Error in %s\n Nsite must be positive value.\n &quot;</td></tr>
 <tr class="memitem:aff3c64e17eba277b8a37cb8b0268a773" id="r_aff3c64e17eba277b8a37cb8b0268a773"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff3c64e17eba277b8a37cb8b0268a773">cErrNumAve</a> = &quot;Error in %s\n <a class="el" href="global_8c.html#a1e22af59b031f04f2928772d4b7f12af">NumAve</a> must be positive value.\n &quot;</td></tr>
@@ -443,7 +442,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00072">72</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00071">71</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -499,7 +498,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in <a class="el" href="FileIO_8c.html" title="Functions to open file(s) in output/ directory.">FileIO.c</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00124">124</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00123">123</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="FileIO_8c_source.html#l00050">childfopenALL()</a>, and <a class="el" href="FileIO_8c_source.html#l00027">childfopenMPI()</a>.</p>
 
@@ -517,7 +516,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00085">85</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00084">84</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -535,9 +534,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00092">92</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00091">91</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04145">CheckFormatForKondoInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04137">CheckFormatForKondoInt()</a>.</p>
 
 </div>
 </div>
@@ -553,9 +552,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00093">93</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00092">92</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -571,7 +570,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00096">96</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00095">95</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 </div>
 </div>
@@ -587,9 +586,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00099">99</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00098">98</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -605,9 +604,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00100">100</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00099">99</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04347">CheckGeneralSpinIndexForInterAll()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04339">CheckGeneralSpinIndexForInterAll()</a>.</p>
 
 </div>
 </div>
@@ -623,9 +622,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00101">101</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00100">100</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04374">CheckSpinIndexForTrans()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04366">CheckSpinIndexForTrans()</a>.</p>
 
 </div>
 </div>
@@ -695,7 +694,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00079">79</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00078">78</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00637">GetFileName()</a>.</p>
 
@@ -713,7 +712,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00082">82</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00081">81</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00637">GetFileName()</a>.</p>
 
@@ -731,7 +730,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00081">81</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00080">80</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00637">GetFileName()</a>.</p>
 
@@ -749,7 +748,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00080">80</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00079">79</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00637">GetFileName()</a>.</p>
 
@@ -767,7 +766,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00074">74</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00073">73</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -785,7 +784,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00073">73</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00072">72</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -803,7 +802,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00075">75</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00074">74</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -821,7 +820,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00076">76</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00075">75</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -857,7 +856,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00084">84</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00083">83</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -877,7 +876,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in mltiply.c. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00120">120</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00119">119</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 </div>
 </div>
@@ -909,7 +908,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00069">69</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00068">68</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -945,7 +944,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00113">113</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00112">112</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 </div>
 </div>
@@ -963,7 +962,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in diagonal calc.c. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00112">112</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00111">111</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="check_8c_source.html#l00079">check()</a>, <a class="el" href="bitcalc_8c_source.html#l00091">GetSplitBitByModel()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00443">SetDiagonalChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00645">SetDiagonalCoulombInter()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00322">SetDiagonalCoulombIntra()</a>, <a class="el" href="diagonalcalc_8c_source.html#l00964">SetDiagonalHund()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01295">SetDiagonalInterAll()</a>, <a class="el" href="diagonalcalc_8c_source.html#l02019">SetDiagonalTEChemi()</a>, <a class="el" href="diagonalcalc_8c_source.html#l01682">SetDiagonalTEInterAll()</a>, and <a class="el" href="diagonalcalc_8c_source.html#l02201">SetDiagonalTETransfer()</a>.</p>
 
@@ -981,9 +980,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00089">89</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00088">88</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03937">ArrangeInterAllOffDiagonal()</a>, and <a class="el" href="readdef_8c_source.html#l03651">GetDiagonalInterAll()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03929">ArrangeInterAllOffDiagonal()</a>, and <a class="el" href="readdef_8c_source.html#l03643">GetDiagonalInterAll()</a>.</p>
 
 </div>
 </div>
@@ -999,9 +998,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00088">88</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00087">87</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03351">CheckInterAllHermite()</a>, and <a class="el" href="readdef_8c_source.html#l03520">CheckInterAllHermite_simple()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03343">CheckInterAllHermite()</a>, and <a class="el" href="readdef_8c_source.html#l03512">CheckInterAllHermite_simple()</a>.</p>
 
 </div>
 </div>
@@ -1017,9 +1016,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00091">91</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00090">90</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03823">CheckInterAllDiagonalReal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l03815">CheckInterAllDiagonalReal()</a>.</p>
 
 </div>
 </div>
@@ -1035,9 +1034,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00090">90</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00089">89</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1053,9 +1052,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00086">86</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00085">85</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04666">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l03216">CheckTransferHermite()</a>, and <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04658">CheckTETransferHermite()</a>, <a class="el" href="readdef_8c_source.html#l03208">CheckTransferHermite()</a>, and <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1071,9 +1070,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00087">87</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00086">86</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
@@ -1089,7 +1088,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00107">107</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00106">106</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CheckMPI_8c_source.html#l00069">CheckMPI()</a>.</p>
 
@@ -1107,7 +1106,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00106">106</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00105">105</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CheckMPI_8c_source.html#l00069">CheckMPI()</a>.</p>
 
@@ -1127,7 +1126,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in <a class="el" href="CheckMPI_8c.html" title="Determine MPI decomposition of Hilbert space.">CheckMPI.c</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00104">104</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00103">103</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CheckMPI_8c_source.html#l00069">CheckMPI()</a>.</p>
 
@@ -1145,7 +1144,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00108">108</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00107">107</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CheckMPI_8c_source.html#l00069">CheckMPI()</a>.</p>
 
@@ -1163,7 +1162,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00105">105</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00104">104</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CheckMPI_8c_source.html#l00069">CheckMPI()</a>.</p>
 
@@ -1181,7 +1180,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00070">70</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00069">69</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -1199,7 +1198,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00071">71</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00070">70</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
 
@@ -1433,7 +1432,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in <a class="el" href="bitcalc_8c.html" title="File for giving functions of treating bits on the target of Hilbert space.">bitcalc.c</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00116">116</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00115">115</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="bitcalc_8c_source.html#l00058">GetSplitBit()</a>, and <a class="el" href="bitcalc_8c_source.html#l00143">GetSplitBitForGeneralSpin()</a>.</p>
 
@@ -1511,24 +1510,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ae75dc34db7720038bb984913c8bb1001" name="ae75dc34db7720038bb984913c8bb1001"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae75dc34db7720038bb984913c8bb1001">&#9670;&#160;</a></span>cErrSpinlessFullDiag</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char* cErrSpinlessFullDiag =&quot;Error in %s\n <a class="el" href="DefCommon_8h.html#a69d939c08019c29c828946968859a70d">SpinlessFermion</a> / <a class="el" href="DefCommon_8h.html#a20155e0a89abd94eef1d35f4ae7c7c90">SpinlessFermionGC</a> are not currently supported for <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> (CalcType=2) in this version:\n the hopping (Trans) term is not built into the <a class="el" href="DefCommon_8h.html#a7f6b1308cdb6cc196f106ff63c26849b">FullDiag</a> Hamiltonian and the particle-number <a class="el" href="output_8h.html#ac374eec41d2f3fc839286a068a4d4d90">output</a> is not populated,\n so the results would be incorrect. This is tracked separately and will be addressed in a future release.\n&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00067">67</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l00838">ReadDefFileNInt()</a>.</p>
-
-</div>
-</div>
 <a id="a0cfbc728538f8286bd0430b68d31b8ae" name="a0cfbc728538f8286bd0430b68d31b8ae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0cfbc728538f8286bd0430b68d31b8ae">&#9670;&#160;</a></span>cErrSz</h2>
 
@@ -1543,7 +1524,7 @@ Variables</h2></td></tr>
 
 <p>Error Message in <a class="el" href="sz_8c.html" title="Generate restricted Hilbert space for canonical ensembles.">sz.c</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00127">127</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00126">126</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="sz_8c_source.html#l00109">sz()</a>.</p>
 
@@ -1561,7 +1542,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00128">128</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00127">127</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="sz_8c_source.html#l01799">Read_sz()</a>.</p>
 
@@ -1579,7 +1560,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00129">129</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00128">128</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="sz_8c_source.html#l01799">Read_sz()</a>.</p>
 
@@ -1597,7 +1578,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00131">131</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00130">130</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="sz_8c_source.html#l00109">sz()</a>.</p>
 
@@ -1615,7 +1596,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00130">130</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00129">129</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="sz_8c_source.html#l00109">sz()</a>.</p>
 
@@ -1653,9 +1634,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00097">97</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00096">96</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04117">CheckFormatForSpinInt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l04109">CheckFormatForSpinInt()</a>.</p>
 
 </div>
 </div>
@@ -1671,9 +1652,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00098">98</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorMessage_8c_source.html#l00097">97</a> of file <a class="el" href="ErrorMessage_8c_source.html">ErrorMessage.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01710">ReadDefFileIdxPara()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="readdef_8c_source.html#l01702">ReadDefFileIdxPara()</a>.</p>
 
 </div>
 </div>
