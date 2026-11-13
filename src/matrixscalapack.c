@@ -268,6 +268,14 @@ int diag_scalapack_cmp(long int xNsize, double complex **A,
     if (rank == 0) fprintf(stderr, "Error: ScaLAPACK diagonalization failed.\n");
     goto fail;
   }
+  if (n == 1) {
+    /* The eigenvector of a 1x1 matrix is 1 up to a phase. pzheev has no N=1
+       quick return and was observed (Intel MKL) to return 1+1i, whose norm
+       sqrt(2) doubled every expectation value; see also copy_state() in
+       symmetry_fulldiag.c. */
+    const double complex z_one = 1.0;
+    pzelset_(Z, &n, &n, descZ, &z_one);
+  }
   if (rank == 0) for (i = 0; i < n; ++i) r[i] = W[i];
   free(A_distr); free(work); free(rwork); free(W);
   use_scalapack = 1; /* descZ's grid remains alive until eigenvectors are freed. */

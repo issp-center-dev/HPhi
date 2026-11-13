@@ -18,6 +18,7 @@
 #include "mltplyCommon.h"
 #include "mltplyHubbardCore.h"
 #include "mltplySpinCore.h"
+#include "mltplySpinless.h"
 #include "makeHam.h"
 #include "wrapperMPI.h"
 #include "nbody_interall.h"
@@ -36,6 +37,62 @@
 #define HS_JE(full) \
   ((iHamPanelActive && iHamSinkMode != HAM_SINK_TRACE_COLLECT) \
      ? HamColEnd : (long int)(full))
+
+/**
+ * @brief Matrix element of a spinless hopping pair for the FullDiag Hamiltonian.
+ *
+ * Element-wise counterpart of CisAjt_Hermite() in mltplySpinless.c: for the
+ * basis state j, apply whichever of c^+_1 c_2 (coefficient trans) or its
+ * Hermitian partner c^+_2 c_1 (coefficient conj(trans)) is allowed, and
+ * return the matrix element H[off][j].
+ *
+ * @param j [in] 1-based column index of the basis state
+ * @param X [in] Struct for the model and the split bits of list_2_*
+ * @param is1_spin [in] Bit mask of site 1
+ * @param is2_spin [in] Bit mask of site 2
+ * @param sum_spin [in] is1_spin + is2_spin
+ * @param diff_spin [in] Mask of the bits strictly between site 1 and site 2
+ * @param trans [in] Coefficient of c^+_1 c_2
+ * @param off [out] 1-based row index; set only when the return value is nonzero
+ *
+ * @return Matrix element, or 0 when neither term acts on (or stays in the
+ *         sector of) state j
+ */
+static double complex SpinlessHoppElement(
+    long unsigned int j,
+    struct BindStruct *X,
+    long unsigned int is1_spin,
+    long unsigned int is2_spin,
+    long unsigned int sum_spin,
+    long unsigned int diff_spin,
+    double complex trans,
+    long unsigned int *off
+) {
+  long unsigned int org_bit, ibit_tmp, iexchg, tmp_off;
+  double complex coef;
+  int sgn;
+
+  org_bit = (X->Def.iCalcModel == SpinlessFermionGC) ? j - 1 : list_1[j];
+
+  ibit_tmp = org_bit & sum_spin;
+  if (ibit_tmp == 0 || ibit_tmp == sum_spin) return 0.0;
+  if ((org_bit & is1_spin) == 0) {
+    coef = trans;        /* c^+_1 c_2 */
+  } else {
+    coef = conj(trans);  /* c^+_2 c_1 */
+  }
+  SgnBit(org_bit & diff_spin, &sgn);
+  iexchg = org_bit ^ sum_spin;
+
+  if (X->Def.iCalcModel == SpinlessFermionGC) {
+    tmp_off = iexchg + 1;
+  } else if (GetOffComp(list_2_1, list_2_2, iexchg, X->Large.irght, X->Large.ilft,
+                        X->Large.ihfbit, &tmp_off) != TRUE) {
+    return 0.0;
+  }
+  *off = tmp_off;
+  return coef * sgn;
+}
 
 /**
  * @file   makeHam.c
@@ -720,6 +777,38 @@ int makeHam(struct BindStruct *X) {
         }
       }
 
+      break;
+
+    case SpinlessFermion:
+    case SpinlessFermionGC:
+      /* Transfer. As in mltplySpinlessFermion(), the hopping list stores each
+         term next to its Hermitian partner, and one call handles both. FullDiag
+         keeps every site on each process (see check()), so there are no
+         inter-process sites here. */
+      for (i = 0; i < X->Def.EDNTransfer; i += 2) {
+        isite1 = X->Def.EDGeneralTransfer[i][0] + 1;
+        isite2 = X->Def.EDGeneralTransfer[i][2] + 1;
+        if (child_general_hopp_GetInfo_Spinless(X, isite1, isite2) != 0) {
+          return -1;
+        }
+        tmp_trans = -X->Def.EDParaGeneralTransfer[i];
+
+        hs_jb = HS_JB();
+        hs_je = HS_JE(X->Large.i_max);
+        for (j = hs_jb; j <= hs_je; j++) {
+          dmv = SpinlessHoppElement(j, X, X->Large.is1_spin, X->Large.is2_spin,
+                                    X->Large.isA_spin, X->Large.A_spin, tmp_trans, &tmp_off);
+          if (dmv != 0.0) AddHamElem(tmp_off, j, dmv);
+        }
+      }
+
+      if (X->Def.NNBodyInterAll_OffDiagonal > 0) {
+        if (X->Def.iCalcModel == SpinlessFermionGC) {
+          if (AddNBodyInterAllToHamSpinlessGC(X) != 0) return -1;
+        } else {
+          if (AddNBodyInterAllToHamSpinless(X) != 0) return -1;
+        }
+      }
       break;
   }
   return 0;

@@ -67,3 +67,5 @@ int MultiplyNBodyInterAllSpinless(
 int AddNBodyInterAllToHamSpinGC(struct BindStruct *X);
 int AddNBodyInterAllToHamHubbardGC(struct BindStruct *X);
 int AddNBodyInterAllToHamHubbard(struct BindStruct *X);
+int AddNBodyInterAllToHamSpinless(struct BindStruct *X);
+int AddNBodyInterAllToHamSpinlessGC(struct BindStruct *X);

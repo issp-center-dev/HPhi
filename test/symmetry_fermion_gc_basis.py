@@ -134,10 +134,16 @@ def rejection_suite(root, hphi, launcher, env):
     drop_transsym(path)
     run_case(path, hphi, 'reject', launcher, env,
              expected_error='ParticleParity requires TransSym with HubbardGC or SpinlessFermionGC.')
-    path = expert_case(root/'reject_raw_spinless_fulldiag', Case('SpinlessFermionGC', 4, 0, 0), method=2)
+    # Raw spinless FullDiag (no TransSym) diagonalizes the whole Fock space.
+    case = Case('SpinlessFermionGC', 4, 0, 0)
+    path = expert_case(root/'raw_spinless_fulldiag', case, method=2)
     drop_transsym(path)
-    run_case(path, hphi, 'reject', [], env,
-             expected_error='SpinlessFermion / SpinlessFermionGC are not currently supported for FullDiag')
+    run_case(path, hphi, 'raw_fulldiag', [], env)
+    files = sorted((path/'output').glob('*Eigenvalue.dat'))
+    assert len(files) == 1, files
+    got = np.sort([float(line.split()[1]) for line in files[0].read_text().splitlines() if line.strip()])
+    want = np.linalg.eigvalsh(make_reference(case).hamiltonian)
+    np.testing.assert_allclose(got, want, rtol=0, atol=1e-8)
     # The raw spinless matvec has no off-diagonal InterAll; only sectors accept it.
     interall = Case('SpinlessFermionGC', 5, 0, 0)
     path = expert_case(root/'reject_raw_spinless_interall', interall, method=3,

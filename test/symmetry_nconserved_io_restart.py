@@ -61,7 +61,7 @@ def check_states(root, hphi, launcher, layout, models=tuple(MODEL_ID)):
         h = sector_matrix(make_reference(case))
         source = save(root, f'{model}_{layout}', case, hphi, launcher, env)
         vector = v1_parts(source, case, ranks, layout)
-        check_eigenvector(vector, h, np.linalg.eigvalsh(h)[0])
+        check_eigenvector(vector, h, np.linalg.eigvalsh(h)[0], label=source.name)
         assert read_manifest(source)['model'] == model
         same = import_copy(root, f'{model}_{layout}_cg', source)
         with (same/'calc.def').open('a') as f:

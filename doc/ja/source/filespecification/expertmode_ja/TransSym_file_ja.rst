@@ -336,7 +336,7 @@ pair項を含めて正規順序化したハミルトニアン全体について�
 rawの計算と同じファイル名・形式でsector内で計算します。ハミルトニアンにpair項が
 なくても計算します（例えば粒子数の異なる成分を含むTEの状態）。 :math:`N`、
 :math:`N^2`、 :math:`S_z`、 :math:`S_z^2`、二重占有数は状態から計算します。
-``CalcSpec`` は非対応で、rawのSpinlessFermionGCは引き続きFullDiagを使えません。
+``CalcSpec`` は非対応です。
 
 状態ファイルはversion 2、phase 1、30語のheaderです。model語は3または8、 ``nup``、
 ``ndown``、 ``ne`` と局在サイトmaskは0で、固定量flagsはすべての :math:`N`、偶数、

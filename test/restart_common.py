@@ -71,16 +71,22 @@ def drop_key(path, filename, key):
 
 def run(path, label, binary=None, env=None, fail=None, mpi=True, timeout=600,
         namelist="namelist.def"):
+    # Single-rank rejection tests need the diagnostic, not launcher forwarding:
+    # mpiexec can lose the final output when the process calls MPI_Abort.
+    # Keep multi-rank launches to exercise collective rejection paths.
+    if fail is not None and mpi_size() == 1:
+        mpi = False
     cmd = (MPI if mpi else []) + [binary or hphi(), "-e", namelist]
     e = dict(os.environ); e.update(env or {})
     log = path / (label + ".log")
     with log.open("w") as fp:
         r = subprocess.run(cmd, cwd=str(path), env=e, stdout=fp, stderr=subprocess.STDOUT, timeout=timeout)
     text = log.read_text()
+    diagnostic = "{} [{}], exit {}:\n{}".format(path, label, r.returncode, text)
     if fail is not None:
-        assert r.returncode != 0 and fail in text, text
+        assert r.returncode != 0 and fail in text, diagnostic
     else:
-        assert r.returncode == 0, text
+        assert r.returncode == 0, diagnostic
     return text
 
 def manifest(path, head="zvo"):
