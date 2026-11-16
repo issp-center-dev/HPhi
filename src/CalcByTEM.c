@@ -417,30 +417,18 @@ static int calc_by_tem(
 
   int iInterAllOffDiagonal_org = X->Bind.Def.NInterAll_OffDiagonal;
   int iTransfer_org = X->Bind.Def.EDNTransfer;
-  /* Raw no-op has only vector output, so no H psi reconstruction is needed.
-   * In particular Laser has no saved-step table-length contract. Sector
-   * output still needs its preceding Hamiltonian/digest selected. */
-  if (step_initial > 0 && (!no_remaining || X->Bind.Def.iFlgSymmetryBasis)) {
-    /* Raw TE files store the next step. Restore H|psi> at the preceding
-     * time point: MultiplyForTEM consumes both psi (v1) and H psi (v0).
-     * Without this, a restarted run silently loses its first Taylor term. */
+  /* Legacy raw Laser stores the next step, but no clock. v3 restores its
+   * clock above; table-driven paths select their time inside the loop. */
+  if (!is_v3 && !view && X->Bind.Def.NLaser > 0 && step_initial > 0) {
+    Time = X->Bind.Def.Param.Tinit + step_initial * dt;
+    if (!isfinite(Time)) return -1;
+  }
+  /* A sector no-op still needs the saved Hamiltonian/digest for vector
+   * output. Active steps select H in the loop; MultiplyForTEM builds H*psi. */
+  if (no_remaining && view) {
     step_i = X->Bind.Def.istep = step_initial - 1;
-    if (view) {
-      if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_initial - 1, restored_time) != 0 ||
-          RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
-    } else if (X->Bind.Def.NLaser > 0) {
-      double previous_time = X->Bind.Def.Param.Tinit + (step_initial - 1) * dt;
-      Time = is_v3 ? restored_time : X->Bind.Def.Param.Tinit + step_initial * dt;
-      if (!isfinite(previous_time) || !isfinite(Time)) return -1;
-      TE_AGREE_OR_RETURN(TransferWithPeierls(&(X->Bind), previous_time));
-    } else {
-      if (X->Bind.Def.NTETransferCapacity > 0)
-        MakeTEDTransfer(&(X->Bind), step_initial - 1);
-      if (X->Bind.Def.NTEInterAllMax > 0)
-        MakeTEDInterAll(&(X->Bind), step_initial - 1);
-    }
-    for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
-    TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
+    if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_initial - 1, restored_time) != 0 ||
+        RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
   }
   int progress_interval = X->Bind.Def.Lanczos_max / 10;
   if (progress_interval < 1) progress_interval = 1;  /* avoid % 0 when Lanczos_max < 10 */
@@ -461,9 +449,6 @@ static int calc_by_tem(
       if (SelectSymmetryTEHamiltonian(&(X->Bind), view, step_i, Time) != 0 ||
           RebuildSymmetryTEPlan(&(X->Bind)) != 0) return -1;
       X->Bind.Def.Param.TimeSlice = dt;
-      /* All Taylor powers use the SAME current H, including the first one. */
-      for (unsigned long i = 1; i <= X->Bind.Check.idim_max; ++i) v0[i] = v1[i];
-      TE_AGREE_OR_RETURN(expec_energy_flct(&(X->Bind)));
     }
     else if(X->Bind.Def.NLaser !=0) {
       TE_AGREE_OR_RETURN(TransferWithPeierls(&(X->Bind), Time));

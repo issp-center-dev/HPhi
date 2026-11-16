@@ -82,7 +82,9 @@ int Multiply
 /**
  * @brief  Function of multiplying Hamiltonian for Time Evolution.
  *
- * Make @f$ |v_0 \rangle = |\psi(t+dt) \rangle @f$ from @f$ |v_1 \rangle = | \psi(t) \rangle  @f$ and @f$ |v_0 \rangle = H |\psi(t) \rangle @f$.
+ * Make @f$ |v_0 \rangle = |\psi(t+dt) \rangle @f$ from
+ * @f$ |v_1 \rangle = |\psi(t) \rangle @f$ using the selected Hamiltonian.
+ * v0 and v2 are workspace; v1 is overwritten during propagation.
  * @param X [in] data list for calculation (idim_max and TimeSlice)
  *
  * @retval 0  normally finished
@@ -111,20 +113,21 @@ int MultiplyForTEM
     return -1;
   }
 
-  //Make |v0> = |psi(t+dt)> from |v1> = |psi(t)> and |v0> = H |psi(t)>
+  //Make |v0> = |psi(t+dt)> from |v1> = |psi(t)>.
   i_max=X->Check.idim_max;
-  // mltply is in expec_energy.c v0=H*v1
   if(dt == 0.0){
-#pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp2)
+#pragma omp parallel for default(none) private(i) shared(v0, v1) firstprivate(i_max)
     for(i = 1; i <= i_max; i++){
-      tmp2 = v0[i];
-      v0[i]=v1[i];  //v0=(1-i*dt*H)*v1
-      v1[i]=tmp2;
-      v2[i]= 0.0 + I*0.0;
+      v0[i]=v1[i];
     }
-    if (SumMPI_i(mltply(X, v2, v1) != 0) != 0) return -1;
   }
   else {
+    /* The observable cache may contain H(previous)*psi, or no H*psi on
+     * the first Laser step. Recompute with the selected H so every Taylor
+     * power uses the same Hamiltonian, including after a restart. */
+#pragma omp parallel for default(none) private(i) shared(v0) firstprivate(i_max)
+    for (i = 1; i <= i_max; i++) v0[i] = 0;
+    if (SumMPI_i(mltply(X, v0, v1) != 0) != 0) return -1;
     tmp1 *= -I * dt;
 #pragma omp parallel for default(none) reduction(+: dnorm) private(i) shared(v0, v1, v2) firstprivate(i_max, dt, tmp1, tmp2)
     for (i = 1; i <= i_max; i++) {
