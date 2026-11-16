@@ -74,12 +74,19 @@ keywords.</p>
 <ul class="simple">
 <li><p>After setting keywords at [string01], the half-width state is needed
 for writing a filename. You can set the filename freely.</p></li>
+<li><p>Each nonempty, non-comment line must contain a keyword and a filename
+separated by whitespace. A line with only one of these is an error.
+Filenames cannot contain whitespace.</p></li>
+<li><p>A filename can contain at most 199 bytes. Each line, including comments
+and trailing text, can contain at most 255 bytes excluding the newline.
+Longer filenames or lines are rejected rather than truncated.</p></li>
 <li><p>Keywords for input files are shown in <a class="reference internal" href="#table-4-2"><span class="std std-numref">Table 4.2</span></a></p></li>
 <li><p>Essential keywords are “CalcMod”, “ModPara”, and “LocSpin”.</p></li>
 <li><p>Keywords can be set in random order.</p></li>
 <li><p>If the keywords or filenames are incorrect, the program is
 terminated.</p></li>
-<li><p>When the head of a line is &quot;#”, the line is skipped.</p></li>
+<li><p>Blank lines and lines whose first non-whitespace character is <code class="docutils literal notranslate"><span class="pre">#</span></code> are
+skipped.</p></li>
 </ul>
 <span id="table-4-2"></span><table class="docutils align-default" id="id1">
 <caption><span class="caption-number">Table 4.2 </span><span class="caption-text">List of the definition files</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>

@@ -79,11 +79,15 @@ TransSym qptransidx.def
 <p>本ファイルを使用するにあたってのルールは以下の通りです。</p>
 <ul class="simple">
 <li><p>キーワードを記載後、半角空白を開けた後にファイル名を書きます。ファイル名は自由に設定できます。</p></li>
+<li><p>空行・コメント行を除き、各行にはキーワードとファイル名を空白で区切って記載します。
+片方しかない行はエラーになります。ファイル名に空白は含められません。</p></li>
+<li><p>ファイル名は最大199バイト、各行は改行を除いて最大255バイトです。
+行の上限はコメントや末尾の文字列も含みます。上限を超えた場合は切り詰めず、エラー終了します。</p></li>
 <li><p>必ず指定しなければいけないパラメータはCalcMod, ModPara,
 LocSpinです。</p></li>
 <li><p>各キーワードは順不同に記述できます。</p></li>
 <li><p>指定したキーワード、ファイルが存在しない場合はエラー終了します。</p></li>
-<li><p><span class="math notranslate nohighlight">\(\#\)</span>で始まる行は読み飛ばされます。</p></li>
+<li><p>空行、および先頭の空白を除いて <code class="docutils literal notranslate"><span class="pre">#</span></code> で始まる行は読み飛ばされます。</p></li>
 <li><p>ファイル読込用キーワードは <a class="reference internal" href="#table-4-2"><span class="std std-numref">表 4.2</span></a> により指定します。</p></li>
 </ul>
 <span id="table-4-2"></span><table class="docutils align-default" id="id5">
