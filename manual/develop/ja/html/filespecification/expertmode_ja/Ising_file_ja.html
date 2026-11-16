@@ -38,13 +38,15 @@
   <section id="ising">
 <h1>Ising指定ファイル<a class="headerlink" href="#ising" title="Link to this heading">¶</a></h1>
 <p>Ising相互作用をハミルトニアンに付け加えます
-(<span class="math notranslate nohighlight">\(S=1/2\)</span>の系でのみ使用可能)。 電子系の場合には</p>
+(<span class="math notranslate nohighlight">\(S=1/2\)</span>の系でのみ使用可能)。 付け加える項は以下で与えられます。</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-ising-file-ja-0">
-<span class="eqno">(4.25)<a class="headerlink" href="#equation-filespecification-expertmode-ja-ising-file-ja-0" title="Link to this equation">¶</a></span>\[\mathcal{H}+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} )\]</div>
-<p>が付け加えられ、スピン系の場合には</p>
+<span class="eqno">(4.25)<a class="headerlink" href="#equation-filespecification-expertmode-ja-ising-file-ja-0" title="Link to this equation">¶</a></span>\[\mathcal{H}+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z\]</div>
+<p>電子系の場合には</p>
 <div class="math notranslate nohighlight" id="equation-filespecification-expertmode-ja-ising-file-ja-1">
-<span class="eqno">(4.26)<a class="headerlink" href="#equation-filespecification-expertmode-ja-ising-file-ja-1" title="Link to this equation">¶</a></span>\[\mathcal{H}+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z\]</div>
-<p>が付け加えられます。 以下にファイル例を記載します。</p>
+<span class="eqno">(4.26)<a class="headerlink" href="#equation-filespecification-expertmode-ja-ising-file-ja-1" title="Link to this equation">¶</a></span>\[S_{i}^{z} = \frac{1}{2}(n_{i\uparrow}-n_{i\downarrow})\]</div>
+<p>であり、Ising相互作用はHundカップリング<span class="math notranslate nohighlight">\(J_{ij}^{\rm Hund}=-J_{ij}^{z}/2\)</span>と
+サイト間クーロン相互作用<span class="math notranslate nohighlight">\(V_{ij}=-J_{ij}^{z}/4\)</span>の組と等価です。
+以下にファイル例を記載します。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================
 NIsing 6
 ======================
