@@ -50,7 +50,7 @@ cd ..
 mkdir -p solver_keyword_nonfulldiag/
 cd solver_keyword_nonfulldiag
 cat > stan.in <<EOF
-L = 4
+L = 8
 model = "Spin"
 method = "Lanczos"
 lattice = "chain"
