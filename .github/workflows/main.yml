@@ -52,9 +52,20 @@ jobs:
         env:
           MPIRUN: mpiexec --oversubscribe -np 2
           HPHI_TEST_NCONSERVED_CORE_SCOPE: fulldiag
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
         run: |
-          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure --no-tests=error \
             -R '^symmetry_nconserved_core$'
+
+      - name: Spinless FullDiag states and correlations (2 and 16 ranks)
+        env:
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          for ranks in 2 16; do
+            MPIRUN="mpiexec --oversubscribe -np $ranks" \
+              ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure --no-tests=error \
+              -R '^fulldiag_spinless_backends$'
+          done
 
       - name: Fermion GC sector FullDiag backends with pairs (2 ranks)
         env:
