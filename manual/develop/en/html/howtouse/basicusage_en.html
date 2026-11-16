@@ -234,10 +234,20 @@ NlocalSpin     3
 </section>
 <section id="printing-version-id">
 <h2><span class="section-number">2.4.5. </span>Printing version ID<a class="headerlink" href="#printing-version-id" title="Link to this heading">¶</a></h2>
-<p>By using the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option as follows, you can check which version of <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> you are using.</p>
+<p>By using the <code class="docutils literal notranslate"><span class="pre">-v</span></code> (or <code class="docutils literal notranslate"><span class="pre">--version</span></code>) option as follows, you can check which version of <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> you are using.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></p>
 </div></blockquote>
+<p>The version number is printed in the following form, and <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> finishes with the exit status 0.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi version 3.7.2 (ec323885)
+</pre></div>
+</div>
+<p>The string in the parentheses is the first 8 digits of the hash of the git commit
+from which <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> was built.
+<code class="docutils literal notranslate"><span class="pre">-dirty</span></code> follows it, as <code class="docutils literal notranslate"><span class="pre">(211bd466-dirty)</span></code>, when the source had changes which were not committed
+(files which are not under the version control are not taken into account).
+The hash is printed also when <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span> is built from a release archive.
+It is not printed when the commit is not known, e.g., for a plain copy of the source.</p>
 </section>
 </section>
 

@@ -113,6 +113,7 @@ var files_dup =
     [ "time.c", "time_8c.html", "time_8c" ],
     [ "tpq_restart.c", "tpq__restart_8c.html", "tpq__restart_8c" ],
     [ "vec12.c", "vec12_8c.html", "vec12_8c" ],
+    [ "version.c", "version_8c.html", "version_8c" ],
     [ "wrapperMPI.c", "wrapperMPI_8c.html", "wrapperMPI_8c" ],
     [ "xsetmem.c", "xsetmem_8c.html", "xsetmem_8c" ]
 ];

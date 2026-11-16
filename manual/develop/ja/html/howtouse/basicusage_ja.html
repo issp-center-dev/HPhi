@@ -238,11 +238,20 @@ NlocalSpin     3
 </section>
 <section id="id5">
 <h2><span class="section-number">2.4.4. </span>バージョン番号の確認<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
-<p>次のように<code class="docutils literal notranslate"><span class="pre">-v</span></code>オプションをつけて<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を実行すると,
+<p>次のように<code class="docutils literal notranslate"><span class="pre">-v</span></code>(または<code class="docutils literal notranslate"><span class="pre">--version</span></code>)オプションをつけて<span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>を実行すると,
 バージョン番号を標準出力した後終了します。</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">PATH/HPhi</span> <span class="pre">-v</span></code></p>
 </div></blockquote>
+<p>バージョン番号は以下の形式で出力され, 終了ステータスは0です。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HPhi version 3.7.2 (ec323885)
+</pre></div>
+</div>
+<p>括弧内の文字列は, ビルドに用いたgitコミットのハッシュ値の先頭8桁です。
+コミットされていない変更がソースにある場合は, <code class="docutils literal notranslate"><span class="pre">(211bd466-dirty)</span></code>のように<code class="docutils literal notranslate"><span class="pre">-dirty</span></code>が付きます
+(バージョン管理の対象でないファイルは考慮しません)。
+リリース版のアーカイブからビルドした場合にもハッシュ値が出力されます。
+ソースを単にコピーした場合など, コミットがわからないときは出力されません。</p>
 </section>
 </section>
 

@@ -70,8 +70,7 @@ var searchData=
   ['vectors_67',['Wavefunction Vectors',['../page_variable.html#subsec_wave_vars',1,'']]],
   ['vectors_68',['Malloc vectors',['../page_setmem.html',1,'']]],
   ['version_69',['VERSION',['../symmetry__checkpoint_8c.html#aa3712442ca75ef81cc72530ed3d42791a52f49aba124a600ad9581caabe6a099a',1,'symmetry_checkpoint.c']]],
-  ['version_5fmajor_2eh_70',['version_major.h',['../version__major_8h.html',1,'']]],
-  ['version_5fminor_2eh_71',['version_minor.h',['../version__minor_8h.html',1,'']]],
-  ['version_5fpatch_2eh_72',['version_patch.h',['../version__patch_8h.html',1,'']]],
-  ['vg_73',['vg',['../global_8c.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c'],['../global_8h.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c']]]
+  ['version_2ec_70',['version.c',['../version_8c.html',1,'']]],
+  ['version_2eh_71',['version.h',['../version_8h.html',1,'']]],
+  ['vg_72',['vg',['../global_8c.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c'],['../global_8h.html#aef2e4feead917f53bb9fbe523eea642b',1,'vg:&#160;global.c']]]
 ];
