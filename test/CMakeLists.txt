@@ -397,6 +397,9 @@ add_hphi_test(lanczos_hubbard_square_ncond_calchs2)
 add_hphi_test(modpara_parse_validation)
 set_tests_properties(modpara_parse_validation
     PROPERTIES LABELS "validation;input")
+add_hphi_test(namelist_parse_validation)
+set_tests_properties(namelist_parse_validation
+    PROPERTIES LABELS "validation;input" TIMEOUT 120)
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)

@@ -49,6 +49,14 @@ Use rules
 *  After setting keywords at [string01], the half-width state is needed
    for writing a filename. You can set the filename freely.
 
+*  Each nonempty, non-comment line must contain a keyword and a filename
+   separated by whitespace. A line with only one of these is an error.
+   Filenames cannot contain whitespace.
+
+*  A filename can contain at most 199 bytes. Each line, including comments
+   and trailing text, can contain at most 255 bytes excluding the newline.
+   Longer filenames or lines are rejected rather than truncated.
+
 *  Keywords for input files are shown in :numref:`Table 4.2`
 
 *  Essential keywords are “CalcMod", “ModPara", and “LocSpin".
@@ -58,7 +66,8 @@ Use rules
 *  If the keywords or filenames are incorrect, the program is
    terminated.
 
-*  When the head of a line is \"#", the line is skipped.
+*  Blank lines and lines whose first non-whitespace character is ``#`` are
+   skipped.
 
 .. _Table 4.2:
 .. csv-table:: List of the definition files
