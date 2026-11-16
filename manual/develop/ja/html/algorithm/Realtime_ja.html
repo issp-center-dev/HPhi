@@ -46,8 +46,49 @@
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-1">
 <span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="Link to this equation">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
 <p>と近似しています。展開次数の上限<span class="math notranslate nohighlight">\(m\)</span>は<code class="docutils literal notranslate"><span class="pre">ModPara</span></code>ファイルの<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>で指定することができます。
-展開次数が十分かどうかは、
-ノルム<span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span>が成立しているかで検証することができます。</p>
+各ステップの状態は正規化され、<code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> には正規化前のノルムが出力されます。
+この値と <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> を増やした際の収束を確認して、Taylor打切り誤差を評価してください。
+時間に依存しないHamiltonianでは、エネルギー保存も確認できます。</p>
+<section id="hamiltonian">
+<h2><span class="section-number">5.5.1. </span>時間依存Hamiltonian<a class="headerlink" href="#hamiltonian" title="Link to this heading">¶</a></h2>
+<p>各ステップでは、一次項を含む <strong>全てのTaylor項に同じHamiltonian</strong> を使います。
+時刻の規約は次のとおりです。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code>: 行0は入力状態を伝播せず記録します。
+行 <span class="math notranslate nohighlight">\(n&gt;0\)</span> は <span class="math notranslate nohighlight">\(\Delta t_n=t_n-t_{n-1}\)</span> の区間を
+<span class="math notranslate nohighlight">\(H(t_n)`（右端点）で伝播し、時刻 :math:`t_n\)</span> の状態・物理量を出力します。
+同じ時刻が連続する場合は状態を伝播しません。</p></li>
+<li><p>raw基底のExpert mode <code class="docutils literal notranslate"><span class="pre">Laser</span></code>: step <span class="math notranslate nohighlight">\(n\)</span> は
+<span class="math notranslate nohighlight">\(H(T_{\mathrm{init}}+n\Delta t)\)</span> を使い、step 0から <code class="docutils literal notranslate"><span class="pre">TimeSlice</span></code> だけ伝播します。
+出力時刻は <span class="math notranslate nohighlight">\(T_{\mathrm{init}}+(n+1)\Delta t\)</span> です。
+エネルギーはそのステップの伝播に使ったHamiltonianで評価します。</p></li>
+<li><p>対称性sectorの <code class="docutils literal notranslate"><span class="pre">Laser</span></code>: 行0は <code class="docutils literal notranslate"><span class="pre">Tinit</span></code> の入力状態を記録し、
+以降は右端点規約を使います。詳細は <code class="docutils literal notranslate"><span class="pre">TransSym</span></code> ファイルの仕様を参照してください。</p></li>
+</ul>
+<p>Standard modeの <code class="docutils literal notranslate"><span class="pre">PumpType</span></code> が <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> を生成する場合は、
+laser駆動を含めて時刻表の規約に従います。raw Expert modeの <code class="docutils literal notranslate"><span class="pre">Laser</span></code> とは区別してください。</p>
+<p><code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> を増やすと、各区間で固定したHの指数関数の近似が改善します。
+時間離散化の精度次数が上がるわけではありません。
+滑らかな時間依存Hに対する端点評価は一般に一次精度なので、最終時刻を固定して
+時間刻みを半分ずつにした収束も確認してください。
+例えば <span class="math notranslate nohighlight">\(H(t)=(1+t)K\)</span> の厳密な伝播は <span class="math notranslate nohighlight">\(\exp[-iK(T+T^2/2)]\)</span> であり、
+十分高いTaylor次数でも右端点評価の誤差は時間刻みに比例します。</p>
+</section>
+<section id="te">
+<h2><span class="section-number">5.5.2. </span>旧バージョンのTE結果との互換性<a class="headerlink" href="#te" title="Link to this heading">¶</a></h2>
+<p>バージョン3.0.0から3.7.2までのraw TEは、一次項に前ステップの <span class="math notranslate nohighlight">\(H\psi\)</span>、
+高次項に現在のHを使っていました。
+<span class="math notranslate nohighlight">\(H\psi\)</span> が用意されないまま始まったステップでは、状態が伝播されませんでした。
+これは新規に始めたraw Expert mode <code class="docutils literal notranslate"><span class="pre">Laser</span></code> の初回ステップと、
+<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> = 2 または 3 で再開したraw TEの最初のステップで起き、後者は静的Hでも起きます。
+修正によって時間依存系の軌道に加え、再開した静的Hの軌道も変わります。
+再開しない静的Hの時刻表による伝播は変わりません。
+この修正は、上記の時刻規約を変更しません。</p>
+<p>checkpoint形式は変更していません。再開時も、保存状態と選択したHamiltonianから
+<span class="math notranslate nohighlight">\(H\psi\)</span> を作り直します。ただし旧binaryのcheckpointを読んでも、保存状態に既に
+蓄積された誤差は取り消せません。影響する軌道について修正済みの結果が必要な場合は、
+元の初期状態から再計算してください。</p>
+</section>
 </section>
 
 
@@ -82,7 +123,11 @@
 <li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_ja.html">5.2. 完全対角化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="TPQ_ja.html">5.3. 熱的純粋量子状態による有限温度計算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DynamicalGreen_ja.html">5.4. 動的グリーン関数</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. 実時間発展</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. 実時間発展</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hamiltonian">5.5.1. 時間依存Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#te">5.5.2. 旧バージョンのTE結果との互換性</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="Bogoliubov_ja.html">5.6. Bogoliubov表現</a></li>
 </ul>
 </li>

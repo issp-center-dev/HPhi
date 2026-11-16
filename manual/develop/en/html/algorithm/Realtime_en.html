@@ -43,8 +43,58 @@
 In calculation, we approximate <span class="math notranslate nohighlight">\(\exp (-i {\cal H}  \Delta t_n)\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-en-1">
 <span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-en-1" title="Link to this equation">¶</a></span>\[\exp (-i {\cal H}  \Delta t_n) =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l .\]</div>
-<p>Here, the cut-off integer <span class="math notranslate nohighlight">\(m\)</span> can be set by <cite>ExpandCoef</cite> in <cite>ModPara</cite>.
-We can judge whether the expansion order is enough or not by checking the norm conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\Phi (t_n)\rangle=1\)</span> and energy conservation <span class="math notranslate nohighlight">\(\langle \Phi (t_n)|\hat{\cal H}|\Phi (t_n)\rangle=E\)</span>.</p>
+<p>Here, the cut-off integer <span class="math notranslate nohighlight">\(m\)</span> is set by <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> in <code class="docutils literal notranslate"><span class="pre">ModPara</span></code>.
+Each step is normalized; <code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> reports the norm before that
+normalization. Check this value and convergence with increasing
+<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> to assess polynomial truncation. Energy conservation is an
+additional check only for a time-independent Hamiltonian.</p>
+<section id="time-dependent-hamiltonians">
+<h2><span class="section-number">5.5.1. </span>Time-dependent Hamiltonians<a class="headerlink" href="#time-dependent-hamiltonians" title="Link to this heading">¶</a></h2>
+<p>Each step uses one selected Hamiltonian for <strong>all</strong> Taylor powers,
+including the first term. The time conventions are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> / <code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code>: row 0 records the input state without
+propagation. Row <span class="math notranslate nohighlight">\(n&gt;0\)</span> propagates over
+<span class="math notranslate nohighlight">\(\Delta t_n=t_n-t_{n-1}\)</span> with <span class="math notranslate nohighlight">\(H(t_n)\)</span> (right endpoint),
+then reports the state and observables at <span class="math notranslate nohighlight">\(t_n\)</span>.
+Equal consecutive times do not propagate the state.</p></li>
+<li><p>Raw-basis expert <code class="docutils literal notranslate"><span class="pre">Laser</span></code>: step <span class="math notranslate nohighlight">\(n\)</span> uses
+<span class="math notranslate nohighlight">\(H(T_{\mathrm{init}}+n\Delta t)\)</span> and propagates for <code class="docutils literal notranslate"><span class="pre">TimeSlice</span></code>,
+including step 0. Its output time is
+<span class="math notranslate nohighlight">\(T_{\mathrm{init}}+(n+1)\Delta t\)</span>; energy uses the Hamiltonian
+selected for that step.</p></li>
+<li><p>Symmetry-sector <code class="docutils literal notranslate"><span class="pre">Laser</span></code>: row 0 records the input state at <code class="docutils literal notranslate"><span class="pre">Tinit</span></code>.
+Subsequent rows use the right-endpoint convention, as described in the
+<code class="docutils literal notranslate"><span class="pre">TransSym</span></code> file specification.</p></li>
+</ul>
+<p>Standard-mode <code class="docutils literal notranslate"><span class="pre">PumpType</span></code> inputs that generate <code class="docutils literal notranslate"><span class="pre">TEOneBody</span></code> or
+<code class="docutils literal notranslate"><span class="pre">TETwoBody</span></code> follow the time-table convention, including laser pumps.
+The raw expert <code class="docutils literal notranslate"><span class="pre">Laser</span></code> convention is distinct.</p>
+<p>Increasing <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> improves the approximation of a frozen-H
+exponential. It does not raise the order of the time discretization:
+endpoint sampling is generally first order for smooth time-dependent H.
+Compare successively smaller time steps at a fixed final time as well.
+For example, <span class="math notranslate nohighlight">\(H(t)=(1+t)K\)</span> has the exact propagator
+<span class="math notranslate nohighlight">\(\exp[-iK(T+T^2/2)]\)</span>; the right-endpoint error is proportional to
+the step size even with a sufficiently high Taylor order.</p>
+</section>
+<section id="compatibility-of-earlier-te-results">
+<h2><span class="section-number">5.5.2. </span>Compatibility of earlier TE results<a class="headerlink" href="#compatibility-of-earlier-te-results" title="Link to this heading">¶</a></h2>
+<p>Releases 3.0.0 through 3.7.2 reused, in raw TE, the previous step’s
+<span class="math notranslate nohighlight">\(H\psi\)</span> for the first Taylor term while applying the current H to
+higher powers. A step that started without a prepared <span class="math notranslate nohighlight">\(H\psi\)</span> did
+not propagate the state. This happened in the first step of a new raw expert
+<code class="docutils literal notranslate"><span class="pre">Laser</span></code> run, and in the first step after resuming a raw TE run with
+<code class="docutils literal notranslate"><span class="pre">ReStart</span></code> = 2 or 3, even for a static Hamiltonian.
+The correction changes time-dependent trajectories and resumed static
+trajectories. Uninterrupted static time-table propagation is unchanged.
+The correction preserves the time conventions described above.</p>
+<p>The checkpoint format is unchanged. A resumed calculation now builds
+<span class="math notranslate nohighlight">\(H\psi\)</span> from the selected Hamiltonian and the saved state.
+Reading a checkpoint produced by an earlier binary cannot undo errors
+already accumulated in that state. Recompute affected trajectories from
+their original initial state when corrected results are required.</p>
+</section>
 </section>
 
 
@@ -79,7 +129,11 @@ We can judge whether the expansion order is enough or not by checking the norm c
 <li class="toctree-l2"><a class="reference internal" href="FullDiagonalization_en.html">5.2. Full Diagonalization method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="TPQ_en.html">5.3. Finite-temperature calculations by the TPQ method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DynamicalGreen_en.html">5.4. Dynamical Green’s function</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. Real time evolution method</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. Real time evolution method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time-dependent-hamiltonians">5.5.1. Time-dependent Hamiltonians</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compatibility-of-earlier-te-results">5.5.2. Compatibility of earlier TE results</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="Bogoliubov_en.html">5.6. Bogoliubov representation</a></li>
 </ul>
 </li>
