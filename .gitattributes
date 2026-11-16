@@ -1,0 +1,2 @@
+# filled in with the hash of the commit by "git archive"
+cmake/git_archive.txt export-subst
