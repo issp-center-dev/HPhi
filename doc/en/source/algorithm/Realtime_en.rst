@@ -57,12 +57,15 @@ the step size even with a sufficiently high Taylor order.
 Compatibility of earlier TE results
 --------------------------------------
 
-Before the current-H correction (including releases 3.6.0 and 3.7.2),
-raw TE reused the previous step's :math:`H\psi` in its first Taylor
-term while using the current H for higher powers. The first raw expert
-``Laser`` step could also lack this term. Time-dependent states and
-observables therefore change with the correction; static time-table
-propagation and the time labels above are unchanged.
+Releases 3.0.0 through 3.7.2 reused, in raw TE, the previous step's
+:math:`H\psi` for the first Taylor term while applying the current H to
+higher powers. A step that started without a prepared :math:`H\psi` did
+not propagate the state. This happened in the first step of a new raw expert
+``Laser`` run, and in the first step after resuming a raw TE run with
+``ReStart`` = 2 or 3, even for a static Hamiltonian.
+The correction changes time-dependent trajectories and resumed static
+trajectories. Uninterrupted static time-table propagation is unchanged.
+The correction preserves the time conventions described above.
 
 The checkpoint format is unchanged. A resumed calculation now builds
 :math:`H\psi` from the selected Hamiltonian and the saved state.

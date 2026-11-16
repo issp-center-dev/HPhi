@@ -187,6 +187,7 @@ def restart_checks(reference):
             shutil.copytree(reference, path)
             calc = (path / "calc.def").read_text()
             mod = (path / "mod.def").read_text()
+            assert "Lanczos_max 5\n" in mod and "ReStart 0\n" in calc
             (path / "calc.def").write_text(calc.replace("ReStart 0", f"ReStart {int(v3)}"))
             (path / "mod.def").write_text(mod.replace("Lanczos_max 5", f"Lanczos_max {split}"))
             run(path, "prefix")
@@ -233,7 +234,7 @@ def main():
     for label, *args in cases:
         try:
             path = check(label, *args)
-            if label in ("one", "two", "laser"):
+            if label in ("static", "one", "two", "laser"):
                 restart_checks(path)
         except (AssertionError, subprocess.TimeoutExpired) as error:
             failures.append((label, str(error)))
